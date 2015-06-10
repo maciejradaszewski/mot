@@ -87,6 +87,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
 </table>
 
 <?php echo $this->partial('user-admin/partials/roles-and-associations.phtml', ['presenter' => $presenter]) ?>
+<?php echo $this->partial('user-admin/partials/tester-qualification-status.phtml', ['presenter' => $presenter]) ?>
 
 <div class="grid-row">
     <div class="column-third">

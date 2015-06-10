@@ -324,4 +324,23 @@ class ArrayUtils
         $arr[$key] = $valueHolder;
         return array_reverse($arr, true);
     }
+
+    /**
+     * To check if all values on a one dimension array are null
+     *
+     * @param array $array
+     * @return bool
+     */
+    public static function containsOnlyNull($array)
+    {
+        foreach ($array as $item){
+
+            if (!is_null($item)) {
+                return false;
+            }
+
+        }
+
+        return true;
+    }
 }

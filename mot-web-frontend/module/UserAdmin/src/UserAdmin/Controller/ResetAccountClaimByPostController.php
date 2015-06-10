@@ -7,6 +7,7 @@ use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use UserAdmin\Presenter\UserProfilePresenter;
 use UserAdmin\Service\HelpdeskAccountAdminService;
+use UserAdmin\Service\TesterQualificationStatusService;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -27,12 +28,19 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
      */
     private $accountAdminService;
 
+    /** @var TesterQualificationStatusService */
+    private $testerQualificationStatusService;
+
     /**
      * @param HelpdeskAccountAdminService $accountAdminService
      */
-    public function __construct(HelpdeskAccountAdminService $accountAdminService)
+    public function __construct(
+        HelpdeskAccountAdminService $accountAdminService,
+        TesterQualificationStatusService $testerQualificationStatusService
+    )
     {
         $this->accountAdminService = $accountAdminService;
+        $this->testerQualificationStatusService = $testerQualificationStatusService;
     }
 
     public function indexAction()
@@ -66,7 +74,7 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
     {
         $person = $this->accountAdminService->getUserProfile($personId);
 
-        $profilePresenter = new UserProfilePresenter($person);
+        $profilePresenter = new UserProfilePresenter($person, $this->testerQualificationStatusService->getPersonGroupQualificationStatus($personId));
         $profilePresenter->setId($personId);
 
         $this->layout('layout/layout-govuk.phtml');

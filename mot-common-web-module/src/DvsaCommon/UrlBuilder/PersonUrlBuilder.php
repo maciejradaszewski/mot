@@ -127,12 +127,12 @@ class PersonUrlBuilder extends AbstractUrlBuilder
     /**
      * Return the url to get the person mot test list
      *
-     * @param $id
+     * @param int $personId
      * @return $this
      */
-    public static function motTesting($id)
+    public static function motTesting($personId)
     {
-        return self::byId($id)->appendRoutesAndParams(self::MOT_TESTING);
+        return self::byId($personId)->appendRoutesAndParams(self::MOT_TESTING);
     }
 
     /**

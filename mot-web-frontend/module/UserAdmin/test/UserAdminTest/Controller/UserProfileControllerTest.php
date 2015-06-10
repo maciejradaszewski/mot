@@ -12,6 +12,7 @@ use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
 use UserAdmin\Controller\UserProfileController;
 use UserAdmin\Service\HelpdeskAccountAdminService;
+use UserAdmin\Service\TesterQualificationStatusService;
 use Zend\View\Model\ViewModel;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use Zend\Session\Container;
@@ -22,6 +23,7 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
 
     private $accountAdminServiceMock;
     private $authorisationMock;
+    private $testerQualificationStatusServiceMock;
 
     public function setUp()
     {
@@ -31,11 +33,13 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
 
         $this->authorisationMock = XMock::of(MotAuthorisationServiceInterface::class);
         $this->accountAdminServiceMock = XMock::of(HelpdeskAccountAdminService::class);
+        $this->testerQualificationStatusServiceMock = XMock::of(TesterQualificationStatusService::class);
 
         $this->setController(
             new UserProfileController(
                 $this->authorisationMock,
-                $this->accountAdminServiceMock
+                $this->accountAdminServiceMock,
+                $this->testerQualificationStatusServiceMock
             )
         );
 

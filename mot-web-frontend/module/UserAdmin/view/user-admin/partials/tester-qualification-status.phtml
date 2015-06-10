@@ -1,0 +1,34 @@
+<?php
+/** @var \UserAdmin\Presenter\UserProfilePresenter $presenter */
+
+use \DvsaCommon\Enum\VehicleClassGroupCode;
+use \DvsaCommon\Enum\VehicleClassCode;
+use \UserAdmin\Service\TesterQualificationStatusService;
+?>
+
+<?php
+if ($presenter->hasQualificationStatus()):
+    ?>
+    <h3 class="heading-medium">Tester qualification status</h3>
+    <table class="key-value-list">
+        <tbody>
+
+        <?php
+            foreach ($presenter->getQualificationStatus() as $group => $status):
+                $classes = \UserAdmin\Service\TesterQualificationStatusService::getGroupPrintableClasses($group);
+            ?>
+            <tr>
+                <th class="key-value-list__key">
+                    Group <?php echo $group ?>
+                    <span class="key-value-list__meta"><?php echo $classes ?></span>
+                </th>
+                <td class="key-value-list__value" id="<?php echo sprintf('group-%s-qualification-status', $group); ?>">
+                    <?php echo $status ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php
+endif;
+?>

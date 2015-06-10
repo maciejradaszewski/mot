@@ -52,5 +52,12 @@ public class DVSAAccessUserProfileTest extends BaseTest {
                 "Check that the password reset button is not displayed");
         assertFalse(helpDeskUserProfilePage.isUsernameResetDisplayed(),
                 "Check that the username reset button is not displayed");
+        assertEquals(helpDeskUserProfilePage.getQualificationStatusGroupA(),
+                Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP.assertion,
+                "Check that the correct Qualification Status for the Group A is displayed");
+        assertEquals(helpDeskUserProfilePage.getQualificationStatusGroupB(),
+                Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP.assertion,
+                "Check that the correct Qualification Status for the Group B is displayed");
+
     }
 }

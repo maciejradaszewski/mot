@@ -6,7 +6,9 @@ use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
+use DvsaCommonTest\TestUtils\XMock;
 use UserAdmin\Presenter\UserProfilePresenter;
+use UserAdmin\Service\TesterQualificationStatusService;
 use Zend\Mvc\Controller\Plugin\Url;
 
 /**
@@ -17,10 +19,19 @@ class UserProfilePresenterTest extends \PHPUnit_Framework_TestCase
     /** @var UserProfilePresenter $presenter */
     private $presenter;
 
+    /** @var TesterQualificationStatusService */
+    private $testerQualificationStatusMock;
+
+    public function setUp()
+    {
+        $this->testerQualificationStatusMock = XMock::of(TesterQualificationStatusService::class);
+    }
+
     public function testDisplayInformation()
     {
         $this->presenter = new UserProfilePresenter(
             $this->buildPersonHelpDeskProfileDto(),
+            $this->testerQualificationStatusMock->getPersonGroupQualificationStatus(5),
             true
         );
         $this->presenter->setId(1);
@@ -68,6 +79,7 @@ class UserProfilePresenterTest extends \PHPUnit_Framework_TestCase
     {
         $this->presenter = new UserProfilePresenter(
             $this->buildPersonHelpDeskProfileDto(),
+            $this->testerQualificationStatusMock->getPersonGroupQualificationStatus(5),
             false
         );
         $this->assertEquals('user-admin/user-profile/unrestricted-profile.phtml', $this->presenter->getTemplate());
