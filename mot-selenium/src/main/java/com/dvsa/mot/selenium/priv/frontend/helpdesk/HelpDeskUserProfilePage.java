@@ -45,6 +45,10 @@ public class HelpDeskUserProfilePage extends BasePage {
 
     @FindBy(id = "validation-message--failure") private WebElement validationMessageFailure;
 
+    @FindBy(id = "group-A-qualification-status") private WebElement qualificationStatusGroupA;
+
+    @FindBy(id = "group-B-qualification-status") private WebElement qualificationStatusGroupB;
+
     public HelpDeskUserProfilePage(WebDriver driver) {
         super(driver);
         checkTitle(PAGE_TITLE);
@@ -88,6 +92,14 @@ public class HelpDeskUserProfilePage extends BasePage {
 
     public String getEmail() {
         return email.getText();
+    }
+
+    public String getQualificationStatusGroupA() {
+        return qualificationStatusGroupA.getText();
+    }
+
+    public String getQualificationStatusGroupB() {
+        return qualificationStatusGroupB.getText();
     }
 
     public String getTelephoneNumber() {

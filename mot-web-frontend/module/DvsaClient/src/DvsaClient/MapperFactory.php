@@ -17,6 +17,7 @@ use DvsaClient\Mapper\RoleMapper;
 use DvsaClient\Mapper\SecurityQuestionMapper;
 use DvsaClient\Mapper\SitePositionMapper;
 use DvsaClient\Mapper\SiteRoleMapper;
+use DvsaClient\Mapper\TesterQualificationStatusMapper;
 use DvsaClient\Mapper\UserAdminMapper;
 use DvsaClient\Mapper\UserMapper;
 use DvsaClient\Mapper\VehicleMapper;
@@ -29,8 +30,10 @@ use Zend\Http\Client;
 /**
  * Class MapperFactory
  *
+ * @property-read AccountMapper                                      $Account
  * @property-read EquipmentMapper                                    $Equipment
  * @property-read EquipmentModelMapper                               $EquipmentModel
+ * @property-read EventMapper                                        $Event
  * @property-read MotTestInProgressMapper                            $MotTestInProgress
  * @property-read MotTestLogMapper                                   $MotTestLog
  * @property-read OrganisationMapper                                 $Organisation
@@ -39,17 +42,16 @@ use Zend\Http\Client;
  * @property-read OrganisationSitesMapper                            $OrganisationSites
  * @property-read PersonMapper                                       $Person
  * @property-read RoleMapper                                         $Role
+ * @property-read SecurityQuestionMapper                             $SecurityQuestion
  * @property-read SitePositionMapper                                 $SitePosition
  * @property-read SiteRoleMapper                                     $SiteRole
+ * @property-read TesterQualificationStatusMapper                    $TesterQualificationStatus
+ * @property-read UserAdminMapper                                    $UserAdmin
  * @property-read UserMapper                                         $User
+ * @property-read VehicleMapper                                      $Vehicle
  * @property-read VehicleTestingStationMapper                        $VehicleTestingStation
  * @property-read VehicleTestingStationDtoMapper                     $VehicleTestingStationDto
  * @property-read VehicleTestingStationOpeningHoursMapper            $VehicleTestingStationOpeningHours
- * @property-read VehicleMapper                                      $Vehicle
- * @property-read SecurityQuestionMapper                             $SecurityQuestion
- * @property-read EventMapper                                        $Event
- * @property-read UserAdminMapper                                    $UserAdmin
- * @property-read AccountMapper                                      $Account
  *
  * @package DvsaClient
  */

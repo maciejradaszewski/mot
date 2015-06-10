@@ -11,6 +11,7 @@ use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Constants\Role;
 use DvsaCommon\Utility\AddressUtils;
+use UserAdmin\Service\TesterQualificationStatusService;
 use Zend\Mvc\Controller\Plugin\Url as UrlPlugin;
 
 /**
@@ -24,18 +25,26 @@ class UserProfilePresenter implements AddressPresenterInterface
     const UNRESTRICTED_PROFILE_TEMPLATE = 'user-admin/user-profile/unrestricted-profile.phtml';
 
     /* @var int */
-    protected $id;
+    private $id;
     /* @var PersonHelpDeskProfileDto $person */
-    protected $person;
+    private $person;
+    /** @var array */
+    private $testerQualificationStatusService;
     /* @var bool */
-    protected $isDvsaUser;
+    private $isDvsaUser;
 
     /**
      * @param PersonHelpDeskProfileDto $person
+     * @param TesterQualificationStatusService $testerQualificationStatusService
+     * @param bool $isDvsaUser
      */
-    public function __construct(PersonHelpDeskProfileDto $person, $isDvsaUser = false)
+    public function __construct(
+        PersonHelpDeskProfileDto $person,
+        $testerQualificationStatus,
+        $isDvsaUser = false)
     {
         $this->person = $person;
+        $this->testerQualificationStatus = $testerQualificationStatus;
         $this->isDvsaUser = $isDvsaUser;
     }
 
@@ -224,6 +233,22 @@ class UserProfilePresenter implements AddressPresenterInterface
         return $processedRoles;
     }
 
+    /**
+     * @return array
+     */
+    public function getQualificationStatus()
+    {
+        return $this->testerQualificationStatus;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasQualificationStatus()
+    {
+        return !empty($this->testerQualificationStatus);
+    }
+    
     /**
      * Get the profile template depending on the authentication status
      *

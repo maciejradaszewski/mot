@@ -12,6 +12,7 @@ use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use DvsaMotTest\Controller\AbstractDvsaMotTestController;
 use UserAdmin\Presenter\UserProfilePresenter;
 use UserAdmin\Service\HelpdeskAccountAdminService;
+use UserAdmin\Service\TesterQualificationStatusService;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -28,6 +29,8 @@ class UserProfileController extends AbstractDvsaMotTestController
     private $userAccountAdminService;
     /** @var MotAuthorisationServiceInterface*/
     private $authorisationService;
+    /** @var TesterQualificationStatusService */
+    private $testerQualificationStatusService;
 
     /**
      * @param MotAuthorisationServiceInterface $$authorisationService
@@ -35,10 +38,12 @@ class UserProfileController extends AbstractDvsaMotTestController
      */
     public function __construct(
         MotAuthorisationServiceInterface $authorisationService,
-        HelpdeskAccountAdminService $userAccountAdminService
+        HelpdeskAccountAdminService $userAccountAdminService,
+        TesterQualificationStatusService $testerQualificationStatusService
     ) {
         $this->userAccountAdminService = $userAccountAdminService;
         $this->authorisationService = $authorisationService;
+        $this->testerQualificationStatusService = $testerQualificationStatusService;
     }
 
     /**
@@ -55,6 +60,7 @@ class UserProfileController extends AbstractDvsaMotTestController
 
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
+            $this->testerQualificationStatusService->getPersonGroupQualificationStatus($personId),
             $this->authorisationService->isGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE_DVSA_USER) &&
             !$this->authorisationService->hasRole(Role::CUSTOMER_SERVICE_CENTRE_OPERATIVE)
         );
@@ -76,7 +82,10 @@ class UserProfileController extends AbstractDvsaMotTestController
         $this->authorisationService->assertGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE);
 
         $personId = $this->params()->fromRoute('personId');
-        $presenter = new UserProfilePresenter($this->userAccountAdminService->getUserProfile($personId));
+        $presenter = new UserProfilePresenter(
+            $this->userAccountAdminService->getUserProfile($personId),
+            $this->testerQualificationStatusService->getPersonGroupQualificationStatus($personId)
+        );
         $presenter->setId($personId);
         $pageTitleSuccess = 'Reset password for ' . $presenter->displayFullName();
         $pageTitleFailure = 'Unable to reset password for ' . $presenter->displayFullName();
@@ -99,7 +108,10 @@ class UserProfileController extends AbstractDvsaMotTestController
         $this->authorisationService->assertGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE);
 
         $personId = $this->params()->fromRoute('personId');
-        $presenter = new UserProfilePresenter($this->userAccountAdminService->getUserProfile($personId));
+        $presenter = new UserProfilePresenter(
+            $this->userAccountAdminService->getUserProfile($personId),
+            $this->testerQualificationStatusService->getPersonGroupQualificationStatus($personId)
+        );
         $presenter->setId($personId);
         $pageTitleSuccess = 'Recover username for ' . $presenter->displayFullName();
 
@@ -158,7 +170,10 @@ class UserProfileController extends AbstractDvsaMotTestController
         if ($this->getRequest()->isPost() === true) {
             return $this->claimAccountProcess($personId, $prgHelper);
         }
-        $presenter = new UserProfilePresenter($this->userAccountAdminService->getUserProfile($personId));
+        $presenter = new UserProfilePresenter(
+            $this->userAccountAdminService->getUserProfile($personId),
+            $this->testerQualificationStatusService->getPersonGroupQualificationStatus($personId)
+        );
 
         $pageTitle = 'Reclaim account';
         $view = $this->createViewModel($personId, $pageTitle, $presenter);

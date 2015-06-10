@@ -3,8 +3,10 @@
 namespace UserAdmin;
 
 use UserAdmin\Factory\Service\HelpdeskAccountAdminServiceFactory;
+use UserAdmin\Factory\Service\TesterQualificationStatusServiceFactory;
 use UserAdmin\Factory\UserAdminSessionManagerFactory;
 use UserAdmin\Service\HelpdeskAccountAdminService;
+use UserAdmin\Service\TesterQualificationStatusService;
 use UserAdmin\Service\UserAdminSessionManager;
 
 /**
@@ -37,6 +39,7 @@ class Module
             'factories' => [
                 UserAdminSessionManager::class => UserAdminSessionManagerFactory::class,
                 HelpdeskAccountAdminService::class => HelpdeskAccountAdminServiceFactory::class,
+                TesterQualificationStatusService::class => TesterQualificationStatusServiceFactory::class,
             ],
         ];
     }

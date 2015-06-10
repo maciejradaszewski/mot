@@ -9,6 +9,7 @@ use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\TestUtils\XMock;
 use UserAdmin\Controller\ResetAccountClaimByPostController;
 use UserAdmin\Service\HelpdeskAccountAdminService;
+use UserAdmin\Service\TesterQualificationStatusService;
 use Zend\View\Model\ViewModel;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
@@ -27,6 +28,8 @@ class ResetAccountClaimByPostControllerTest extends AbstractFrontendControllerTe
     /** @var HelpdeskAccountAdminService|\PHPUnit_Framework_MockObject_MockObject */
     private $accountAdminServiceMock;
 
+    private $testerQualificationStatusServiceMock;
+
     public function setUp()
     {
         $serviceManager = Bootstrap::getServiceManager();
@@ -34,9 +37,12 @@ class ResetAccountClaimByPostControllerTest extends AbstractFrontendControllerTe
         $this->setServiceManager($serviceManager);
 
         $this->accountAdminServiceMock = XMock::of(HelpdeskAccountAdminService::class);
+        $this->testerQualificationStatusServiceMock = XMock::of(TesterQualificationStatusService::class);
 
         $this->setController(
-            new ResetAccountClaimByPostController($this->accountAdminServiceMock)
+            new ResetAccountClaimByPostController(
+                $this->accountAdminServiceMock,
+                $this->testerQualificationStatusServiceMock)
         );
 
         $this->getController()->setServiceLocator($serviceManager);

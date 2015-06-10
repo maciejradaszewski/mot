@@ -10,6 +10,7 @@ use DvsaCommonApi\Service\AbstractService;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\Mapper\ReasonForCancelMapper;
 use DvsaCommonApi\Service\Mapper\ReasonForRefusalMapper;
+use DvsaEntities\Entity\AuthorisationForTestingMotStatus;
 use DvsaEntities\Entity\BrakeTestType;
 use DvsaEntities\Entity\Colour;
 use DvsaEntities\Entity\CountryOfRegistration;
@@ -243,6 +244,13 @@ class DataCatalogService extends AbstractService
     {
         $this->authService->assertGranted(PermissionInSystem::DATA_CATALOG_READ);
         $items = $this->entityManager->getRepository(EmptyVinReason::class)->findAll();
+        return $this->extractType2EnumValues($items, self::ENUM_TYPE_STANDARD);
+    }
+
+    public function getQualificationStatus()
+    {
+        $this->authService->assertGranted(PermissionInSystem::DATA_CATALOG_READ);
+        $items = $this->entityManager->getRepository(AuthorisationForTestingMotStatus::class)->findAll();
         return $this->extractType2EnumValues($items, self::ENUM_TYPE_STANDARD);
     }
 

@@ -1042,6 +1042,38 @@ class StubRestForCatalog
                 "code": "NOTR",
                 "name": "Not required"
             }
+        ],
+        "qualificationStatus": [
+            {
+                "id": 0,
+                "code": "UNKN",
+                "name": "Unknown"
+            },
+            {
+                "id": 7,
+                "code": "ITRN",
+                "name": "Initial Training Needed"
+            },
+            {
+                "id": 8,
+                "code": "DMTN",
+                "name": "Demo Test Needed"
+            },
+            {
+                "id": 9,
+                "code": "QLFD",
+                "name": "Qualified"
+            },
+            {
+                "id": 10,
+                "code": "RFSHN",
+                "name": "Refresher Needed"
+            },
+            {
+                "id": 11,
+                "code": "SPND",
+                "name": "Suspended"
+            }
         ]
     }
 }',

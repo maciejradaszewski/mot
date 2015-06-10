@@ -215,6 +215,7 @@ public class Assertion {
     //DVSA User search
     public static final Assertion ASSERTION_TESTER_VTS = new Assertion("Popular Garages");
     public static final Assertion ASSERTION_USER_ADDRESS = new Assertion("Address");
+    public static final Assertion ASSERTION_QUALIFICATION_STATUS_GROUP = new Assertion("Qualified");
 
     public static final Assertion ASSERTION_EMAIL_WARNING = new Assertion(
             "The email address should be one you have easy and regular access to and will be used "

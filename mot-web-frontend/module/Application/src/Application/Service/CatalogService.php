@@ -271,4 +271,18 @@ class CatalogService
         }
         return $reasons;
     }
+
+    /**
+     * A.K.A. auth_for_testing_mot_status
+     *
+     * @return array
+     */
+    public function getQualificationStatus()
+    {
+        $reasons = [];
+        foreach ($this->getData()['qualificationStatus'] as $reason) {
+            $reasons[$reason['code']] = $reason['name'];
+        }
+        return $reasons;
+    }
 }

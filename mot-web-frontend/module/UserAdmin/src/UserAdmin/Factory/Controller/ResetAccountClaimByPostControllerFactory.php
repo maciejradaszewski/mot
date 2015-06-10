@@ -4,6 +4,7 @@ namespace UserAdmin\Factory\Controller;
 
 use UserAdmin\Controller\ResetAccountClaimByPostController;
 use UserAdmin\Service\HelpdeskAccountAdminService;
+use UserAdmin\Service\TesterQualificationStatusService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
@@ -19,7 +20,11 @@ class ResetAccountClaimByPostControllerFactory implements FactoryInterface
 
         /** @var HelpdeskAccountAdminService */
         $accountAdminService = $appServiceLocator->get(HelpdeskAccountAdminService::class);
+        $testerQualificationStatusService = $appServiceLocator->get(TesterQualificationStatusService::class);
 
-        return new ResetAccountClaimByPostController($accountAdminService);
+        return new ResetAccountClaimByPostController(
+            $accountAdminService,
+            $testerQualificationStatusService
+        );
     }
 }
