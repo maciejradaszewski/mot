@@ -1,6 +1,9 @@
 ALTER TABLE `person`
   ADD COLUMN `is_password_change_required` TINYINT UNSIGNED DEFAULT '0' AFTER `is_account_claim_required`;
 
+ALTER TABLE `person_hist`
+  ADD COLUMN `is_password_change_required` TINYINT UNSIGNED DEFAULT '0' AFTER `is_account_claim_required`;
+
 DROP TRIGGER `tr_person_au`;
 
 CREATE TRIGGER `tr_person_au` AFTER
@@ -76,6 +79,8 @@ CREATE TRIGGER `tr_person_au` AFTER
         OLD.`last_updated_on`,
         OLD.`version`,
         OLD.`batch_number`);
+
+DROP trigger `tr_person_ad`;
 
 CREATE TRIGGER `tr_person_ad` AFTER
     DELETE 
