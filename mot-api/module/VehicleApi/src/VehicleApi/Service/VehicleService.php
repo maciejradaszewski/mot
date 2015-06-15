@@ -13,21 +13,19 @@ use DvsaEntities\Entity\DvlaVehicle;
 use DvsaEntities\Entity\DvlaVehicleImportChangeLog;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\Vehicle;
+use DvsaEntities\Entity\VehicleV5C;
 use DvsaEntities\Repository\DvlaMakeModelMapRepository;
 use DvsaEntities\Repository\DvlaVehicleImportChangesRepository;
 use DvsaEntities\Repository\DvlaVehicleRepository;
 use DvsaEntities\Repository\VehicleRepository;
+use DvsaEntities\Repository\VehicleV5CRepository;
 use DvsaMotApi\Service\OtpService;
 use DvsaMotApi\Service\Validator\VehicleValidator;
 use VehicleApi\Service\Mapper\DvlaVehicleMapper;
 use VehicleApi\Service\Mapper\VehicleMapper;
-use DvsaEntities\Repository\VehicleV5CRepository;
-use DvsaEntities\Entity\VehicleV5C;
 
 /**
- * Class VehicleService
- *
- * @package VehicleApi\Service
+ * Class VehicleService.
  */
 class VehicleService
 {
@@ -112,6 +110,7 @@ class VehicleService
 
     /**
      * @param $vehicleId
+     *
      * @return \DvsaCommon\Dto\Vehicle\VehicleDto
      */
     public function getVehicleDto($vehicleId)
@@ -150,19 +149,34 @@ class VehicleService
 
         // Logic
         $makeModelName = self::DEFAULT_MAKE_MODEL_NAME;
+
+        $legacyMakeName  = $this->vehicleCatalog->getMakeNameByDvlaCode($makeCode);
+        $legacyModelName = $this->vehicleCatalog->getModelNameByDvlaCode($makeCode, $modelCode);
+
         if (!$dvlaVehicle->getMakeInFull()) {
             if (!is_null($makeCode) || !is_null($modelCode)) {
                 $map = $this->vehicleCatalog->getMakeModelMapByDvlaCode($makeCode, $modelCode);
 
                 if ($map) {
-                    $makeName = (!$map->getMake())? self::DEFAULT_MAKE_MODEL_NAME : $map->getMake()->getName();
-                    $modelName = (!$map->getModel())? self::DEFAULT_MAKE_MODEL_NAME : $map->getModel()->getName();
+                    $makeName = (!$map->getMake()) ? self::DEFAULT_MAKE_MODEL_NAME : $map->getMake()->getName();
+                    $modelName = (!$map->getModel()) ? self::DEFAULT_MAKE_MODEL_NAME : $map->getModel()->getName();
+                } else {
+                    $makeName  = $legacyMakeName;
+                    $modelName = $legacyModelName;
+                }
 
-                    $makeModelName = $makeName . ' ' . $modelName;
+                $makeModelName = $makeName . ' ' . $modelName;
+
+                if (!$makeName && !$modelName) {
+                    $makeModelName = self::DEFAULT_MAKE_MODEL_NAME;
                 }
             }
         } else {
-            $makeModelName = $dvlaVehicle->getMakeInFull();
+            if (!$legacyMakeName && !$legacyModelName) {
+                $makeModelName = $dvlaVehicle->getMakeInFull();
+            } else {
+                $makeModelName = $legacyMakeName . ' ' . $legacyModelName;
+            }
         }
 
         // Search in DVSA make and model tables if no mapping is found
@@ -208,10 +222,10 @@ class VehicleService
         $v5cDocumentNumber = $dvlaVehicle->getV5DocumentNumber();
         if (null !== $v5cDocumentNumber) {
             // VM-7220: Create corresponding V5C record.
-            $vehicleV5C = (new VehicleV5C)
+            $vehicleV5C = (new VehicleV5C())
                 ->setVehicle($vehicle)
                 ->setV5cRef($dvlaVehicle->getV5DocumentNumber())
-                ->setFirstSeen(new \DateTime);
+                ->setFirstSeen(new \DateTime());
             $this->vehicleV5CRepository->save($vehicleV5C);
         }
 
@@ -219,12 +233,12 @@ class VehicleService
     }
 
     /**
-     * @param Person $person
+     * @param Person  $person
      * @param Vehicle $vehicle
-     * @param int $vehicleClassCode
-     * @param int $primaryColourCode
-     * @param int $secondaryColourCode
-     * @param string $fuelTypeCode
+     * @param int     $vehicleClassCode
+     * @param int     $primaryColourCode
+     * @param int     $secondaryColourCode
+     * @param string  $fuelTypeCode
      */
     public function logDvlaVehicleImportChanges(
         Person $person,
@@ -250,7 +264,7 @@ class VehicleService
 
     /**
      * @param DvlaVehicle $dvlaVehicle
-     * @param Vehicle $vehicle
+     * @param Vehicle     $vehicle
      */
     private function importWeight(DvlaVehicle $dvlaVehicle, Vehicle $vehicle)
     {
@@ -301,14 +315,14 @@ class VehicleService
                 $vehicle->setFreeTextModelName($data['modelOther']);
             }
         }
-        
-        if(!empty($data['manufactureDate'])) {
-           $vehicle->setManufactureDate(DateUtils::toDate($data['manufactureDate']));
+
+        if (!empty($data['manufactureDate'])) {
+            $vehicle->setManufactureDate(DateUtils::toDate($data['manufactureDate']));
         }
-        if(!empty($data['firstRegistrationDate'])) {
+        if (!empty($data['firstRegistrationDate'])) {
             $vehicle->setFirstRegistrationDate(DateUtils::toDate($data['firstRegistrationDate']));
         }
-        
+
         if (!empty($data['modelType'])) {
             $vehicle->setModelDetail($vehDic->getModelDetail($data['modelType'], true));
         }
@@ -318,7 +332,6 @@ class VehicleService
         if (!empty($data['secondaryColour'])) {
             $vehicle->setSecondaryColour($vehDic->getColourByCode($data['secondaryColour'], true));
         }
-
 
         if (!empty($data['emptyVrmReason'])) {
             $vehicle->setEmptyVrmReason($this->vehicleCatalog->getEmptyVrmReasonByCode($data['emptyVrmReason']));

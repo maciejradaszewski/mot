@@ -3,13 +3,13 @@
 namespace DataCatalogApi\Service;
 
 use Doctrine\ORM\EntityManager;
-use DvsaEntities\Entity\EmptyVinReason;
-use DvsaEntities\Entity\EmptyVrmReason;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\Entity\BodyType;
 use DvsaEntities\Entity\Colour;
 use DvsaEntities\Entity\CountryOfRegistration;
 use DvsaEntities\Entity\DvlaMakeModelMap;
+use DvsaEntities\Entity\EmptyVinReason;
+use DvsaEntities\Entity\EmptyVrmReason;
 use DvsaEntities\Entity\FuelType;
 use DvsaEntities\Entity\Make;
 use DvsaEntities\Entity\Model;
@@ -34,7 +34,8 @@ use DvsaEntities\Repository\WeightSourceRepository;
  * Provides access to all vehicle feature related entities like make, model, fuelType, etc.
  * A class created to reduce the number of dependencies needed to inject in the context
  * of vehicle related operations.
- * For entities
+ * For entities.
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class VehicleCatalogService
@@ -74,6 +75,7 @@ class VehicleCatalogService
 
     /**
      * @param string $code
+     *
      * @return Make|null
      */
     public function findMakeByCode($code)
@@ -123,8 +125,10 @@ class VehicleCatalogService
     /**
      * @param string $makeCode
      * @param string $modelCode
-     * @return Model
+     *
      * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     *
+     * @return Model
      */
     public function getModel($makeCode, $modelCode)
     {
@@ -134,6 +138,7 @@ class VehicleCatalogService
     /**
      * @param string $makeCode
      * @param string $modelCode
+     *
      * @return Model|null
      */
     public function findModel($makeCode, $modelCode)
@@ -162,7 +167,7 @@ class VehicleCatalogService
 
     /**
      * @param integer $id
-     * @param bool $refOnly
+     * @param bool    $refOnly
      *
      * @return \DvsaEntities\Entity\FuelType
      */
@@ -177,8 +182,9 @@ class VehicleCatalogService
     /**
      * @param string $code
      *
-     * @return \DvsaEntities\Entity\FuelType
      * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     *
+     * @return \DvsaEntities\Entity\FuelType
      */
     public function getFuelTypeByCode($code)
     {
@@ -187,6 +193,7 @@ class VehicleCatalogService
 
     /**
      * @param string $code
+     *
      * @return \DvsaEntities\Entity\FuelType|null
      */
     public function findFuelTypeByPropulsionCode($code)
@@ -196,7 +203,7 @@ class VehicleCatalogService
 
     /**
      * @param string $id
-     * @param bool $refOnly
+     * @param bool   $refOnly
      *
      * @return CountryOfRegistration
      */
@@ -221,7 +228,7 @@ class VehicleCatalogService
      *
      * @param string $dvlaMakeCode
      * @param string $dvlaModelCode
-     * @param bool $fallbackToDvsa Search in DVSA make and model tables if no mapping is found
+     * @param bool   $fallbackToDvsa Search in DVSA make and model tables if no mapping is found
      *
      * @return DvlaMakeModelMap|null
      */
@@ -231,7 +238,7 @@ class VehicleCatalogService
             ->entityManager
             ->getRepository(DvlaMakeModelMap::class)
             ->findOneBy([
-                'dvlaMakeCode' => $dvlaMakeCode,
+                'dvlaMakeCode'  => $dvlaMakeCode,
                 'dvlaModelCode' => $dvlaModelCode,
             ]);
 
@@ -240,9 +247,13 @@ class VehicleCatalogService
                 ->entityManager
                 ->getRepository(Model::class)
                 ->findOneBy([
-                    'code' => $dvlaModelCode,
-                    'makeCode' => $dvlaMakeCode
+                    'code'     => $dvlaModelCode,
+                    'makeCode' => $dvlaMakeCode,
                 ]);
+
+            if (!$model) {
+                return;
+            }
 
             $map = (new DvlaMakeModelMap())
                 ->setModel($model);
@@ -254,6 +265,46 @@ class VehicleCatalogService
         }
 
         return $map;
+    }
+
+    /**
+     * Retrieves DVLA Make name by Code.
+     *
+     * @param $dvlaMakeCode
+     *
+     * @return bool|string
+     */
+    public function getMakeNameByDvlaCode($dvlaMakeCode)
+    {
+        $sql = "SELECT name FROM dvla_make WHERE code = :code LIMIT 1";
+
+        $stmt = $this->entityManager->getConnection()->prepare($sql);
+        $stmt->bindParam(':code', $dvlaMakeCode);
+        $stmt->execute();
+        $make = $stmt->fetchColumn();
+
+        return $make;
+    }
+
+    /**
+     * Retrieved DVLA Model name by Code.
+     *
+     * @param $dvlaMakeCode
+     * @param $dvlaModelCode
+     *
+     * @return bool|string
+     */
+    public function getModelNameByDvlaCode($dvlaMakeCode, $dvlaModelCode)
+    {
+        $sql = "SELECT name FROM dvla_model WHERE code = :modelCode AND make_code = :makeCode LIMIT 1";
+
+        $stmt = $this->entityManager->getConnection()->prepare($sql);
+        $stmt->bindParam(':modelCode', $dvlaModelCode);
+        $stmt->bindParam(':makeCode', $dvlaMakeCode);
+        $stmt->execute();
+        $make = $stmt->fetchColumn();
+
+        return $make;
     }
 
     /**
@@ -287,7 +338,7 @@ class VehicleCatalogService
     }
 
     /**
-     * @param int $id
+     * @param int  $id
      * @param bool $refOnly
      *
      * @return \DvsaEntities\Entity\Colour
@@ -299,6 +350,7 @@ class VehicleCatalogService
 
     /**
      * @param string $code
+     *
      * @return Colour|null
      */
     public function findColourByCode($code)
@@ -308,8 +360,10 @@ class VehicleCatalogService
 
     /**
      * @param string $code
-     * @return Colour
+     *
      * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     *
+     * @return Colour
      */
     public function getColourByCode($code)
     {
@@ -342,6 +396,7 @@ class VehicleCatalogService
 
     /**
      * @param string $code
+     *
      * @return \DvsaEntities\Entity\EmptyVinReason
      */
     public function getEmptyVinReasonByCode($code)
@@ -351,6 +406,7 @@ class VehicleCatalogService
 
     /**
      * @param string $code
+     *
      * @return \DvsaEntities\Entity\EmptyVrmReason
      */
     public function getEmptyVrmReasonByCode($code)
@@ -378,10 +434,9 @@ class VehicleCatalogService
         return $this->vehicleClassRepository()->getByCode($vehicleClassCode);
     }
 
-
     /**
-     * @param integer $id Vehicle Class Id
-     * @param bool $refOnly
+     * @param integer $id      Vehicle Class Id
+     * @param bool    $refOnly
      *
      * @return \DvsaEntities\Entity\VehicleClass
      */
@@ -397,8 +452,9 @@ class VehicleCatalogService
     /**
      * @param string $code
      *
-     * @return \DvsaEntities\Entity\WeightSource
      * @throws NotFoundException
+     *
+     * @return \DvsaEntities\Entity\WeightSource
      */
     public function getWeightSourceByCode($code)
     {

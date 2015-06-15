@@ -3,20 +3,16 @@
 namespace VehicleApi\Service\Mapper;
 
 use DataCatalogApi\Service\VehicleCatalogService;
-use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommon\Dto\Vehicle\DvlaVehicleDto;
 use DvsaCommon\Dto\Vehicle\MakeDto;
-use DvsaCommon\Dto\Vehicle\ModelDetailDto;
 use DvsaCommon\Dto\Vehicle\ModelDto;
+use DvsaCommon\Dto\Vehicle\VehicleParamDto;
 use DvsaCommon\Utility\TypeCheck;
 use DvsaCommonApi\Service\Mapper\ColourMapper;
 use DvsaEntities\Entity\DvlaVehicle;
-use DvsaCommon\Dto\Vehicle\VehicleParamDto;
 
 /**
- * Class DvlaVehicleMapper
- *
- * @package VehicleApi\Service\Mapper
+ * Class DvlaVehicleMapper.
  */
 class DvlaVehicleMapper extends AbstractVehicleMapper
 {
@@ -34,6 +30,7 @@ class DvlaVehicleMapper extends AbstractVehicleMapper
      * @param DvlaVehicle $vehicle
      *
      * @throws \Exception
+     *
      * @return DvlaVehicleDto
      */
     public function toDto($vehicle)
@@ -80,8 +77,17 @@ class DvlaVehicleMapper extends AbstractVehicleMapper
                 ->setName($modelEntity->getName());
         }
 
-        $dto->setModelName($modelDto->getName());
-        $dto->setMakeName($makeDto->getName());
+        if ($modelDto->getName()) {
+            $dto->setModelName($modelDto->getName());
+        } else {
+            $dto->setModelName($this->vehicleCatalog->getModelNameByDvlaCode($makeCode, $modelCode));
+        }
+
+        if ($makeDto->getName()) {
+            $dto->setMakeName($makeDto->getName());
+        } else {
+            $dto->setMakeName($this->vehicleCatalog->getMakeNameByDvlaCode($makeCode));
+        }
 
         $fuelTypeDto = new VehicleParamDto();
         $fuelTypeCode = $vehicle->getFuelType();
