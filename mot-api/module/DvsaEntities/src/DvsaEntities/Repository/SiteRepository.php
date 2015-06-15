@@ -408,6 +408,9 @@ class SiteRepository extends AbstractMutableRepository
             $sql .= " HAVING COUNT(DISTINCT vc.code) = :NUMBER_SITE_VEHICLE_CLASS";
         }
 
+        // Temporary limit for 1.10
+        $sql .= " LIMIT 100";
+
         $query = $this->_em
             ->createNativeQuery($sql, $this->getResultSetMappingFindSites($isCount))
             ->setParameter(':BUSINESS', 'BUS');
