@@ -6,10 +6,12 @@ use DataCatalogApi\Service\VehicleCatalogService;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Date\DateTimeApiFormat;
+use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaEntities\Entity\Colour;
 use DvsaEntities\Entity\DvlaVehicle;
 use DvsaEntities\Entity\FuelType;
+use DvsaEntities\Entity\MotTest;
 use DvsaEntities\Entity\Vehicle;
 use DvsaEntities\Repository\DvlaVehicleImportChangesRepository;
 use DvsaEntities\Repository\DvlaVehicleRepository;
@@ -17,19 +19,16 @@ use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\VehicleRepository;
 use DvsaMotApi\Helper\FuzzySearchRegexHelper;
 use DvsaMotApi\Service\TesterService;
-use DvsaCommon\Obfuscate\ParamObfuscator;
-use DvsaEntities\Entity\MotTest;
 
 /**
- * Class VehicleService
+ * Class VehicleService.
  */
 class VehicleSearchService
 {
-
     private static $simpleCharGroups
         = [
             ['0', 'O'],
-            ['1', 'I']
+            ['1', 'I'],
         ];
 
     private static $fullCharGroups
@@ -42,7 +41,7 @@ class VehicleSearchService
             ['6', 'b', 'G'],
             ['7', 'L', 'T'],
             ['8', 'B'],
-            ['9', 'g', 'q']
+            ['9', 'g', 'q'],
         ];
 
     /** @var  VehicleRepository */
@@ -65,14 +64,14 @@ class VehicleSearchService
     private $allowFuzzySearch;
 
     /**
-     * @param AuthorisationServiceInterface $authService
-     * @param VehicleRepository $vehicleRepository
-     * @param DvlaVehicleRepository $dvlaVehicleRepository
+     * @param AuthorisationServiceInterface      $authService
+     * @param VehicleRepository                  $vehicleRepository
+     * @param DvlaVehicleRepository              $dvlaVehicleRepository
      * @param DvlaVehicleImportChangesRepository $dvlaVehicleImportChangesRepository
-     * @param MotTestRepository $motTestRepository
-     * @param TesterService $testerService
-     * @param VehicleCatalogService $vehicleCatalog
-     * @param ParamObfuscator $paramObfuscator
+     * @param MotTestRepository                  $motTestRepository
+     * @param TesterService                      $testerService
+     * @param VehicleCatalogService              $vehicleCatalog
+     * @param ParamObfuscator                    $paramObfuscator
      * @param $vehicleSearchFuzzyEnabled
      */
     public function __construct(
@@ -98,11 +97,11 @@ class VehicleSearchService
     }
 
     /**
-     * @param string $vin VIN number
-     * @param string $reg Registration number
-     * @param bool $isFullVin Indicates whether passed VIN number is full
-     * @param bool $searchDvla True to search DVLA data source as well
-     * @param integer $limit Max records to search for in the query
+     * @param string  $vin        VIN number
+     * @param string  $reg        Registration number
+     * @param bool    $isFullVin  Indicates whether passed VIN number is full
+     * @param bool    $searchDvla True to search DVLA data source as well
+     * @param integer $limit      Max records to search for in the query
      *
      * @return array
      */
@@ -139,8 +138,8 @@ class VehicleSearchService
                     return $this->extractDvlaVehicles($vehicles);
                 }
             }
-
         }
+
         return [];
     }
 
@@ -165,10 +164,10 @@ class VehicleSearchService
     }
 
     /**
-     * @param string $vin VIN number
-     * @param string $reg Registration number
-     * @param bool $searchDvla True to search DVLA data source as well
-     * @param integer $limit Max records to search for in the query
+     * @param string  $vin        VIN number
+     * @param string  $reg        Registration number
+     * @param bool    $searchDvla True to search DVLA data source as well
+     * @param integer $limit      Max records to search for in the query
      *
      * @return array
      */
@@ -236,8 +235,6 @@ class VehicleSearchService
      * @param Vehicle $v
      *
      * 'mot_id' => $vehicle['mot_id'],
-    'mot_completed_date' => $vehicle['mot_completed_date'],
-    'total_mot_tests' => $vehicle['total_mot_tests']
      *
      * @return array
      */
@@ -247,26 +244,26 @@ class VehicleSearchService
         $emptyVinReason = $v->getEmptyVinReason() ? $v->getEmptyVinReason()->getCode() : null;
 
         $result = [
-            'id'               => $v->getId(),
-            'registration' => $v->getRegistration(),
+            'id'                      => $v->getId(),
+            'registration'            => $v->getRegistration(),
             'emptyRegistrationReason' => $emptyVrmReason,
-            'vin' => $v->getVin(),
-            'emptyVinReason' => $emptyVinReason,
-            'year' => $v->getYear(),
-            'firstUsedDate' => DateTimeApiFormat::date($v->getFirstUsedDate()),
-            'cylinderCapacity' => $v->getCylinderCapacity(),
-            'make' => $v->getMakeName(),
-            'model' => $v->getModelName(),
-            'modelDetail' => $v->getModelDetail() ? $v->getModelDetail()->getName() : null,
-            'vehicleClass' => $v->getVehicleClass() ? $v->getVehicleClass()->getCode() : null,
-            'primaryColour' => self::extractColour($v->getColour()),
-            'secondaryColour' => self::extractColour($v->getSecondaryColour()),
-            'fuelType' => self::extractFuelType($v->getFuelType()),
-            'bodyType' => $v->getBodyType() ? $v->getBodyType()->getName() : null,
-            'transmissionType' => $v->getTransmissionType() ? $v->getTransmissionType()->getName() : null,
-            'weight' => $v->getWeight(),
-            'isDvla' => false,
-            'creationDate' => DateTimeApiFormat::date($v->getCreatedOn())
+            'vin'                     => $v->getVin(),
+            'emptyVinReason'          => $emptyVinReason,
+            'year'                    => $v->getYear(),
+            'firstUsedDate'           => DateTimeApiFormat::date($v->getFirstUsedDate()),
+            'cylinderCapacity'        => $v->getCylinderCapacity(),
+            'make'                    => $v->getMakeName(),
+            'model'                   => $v->getModelName(),
+            'modelDetail'             => $v->getModelDetail() ? $v->getModelDetail()->getName() : null,
+            'vehicleClass'            => $v->getVehicleClass() ? $v->getVehicleClass()->getCode() : null,
+            'primaryColour'           => self::extractColour($v->getColour()),
+            'secondaryColour'         => self::extractColour($v->getSecondaryColour()),
+            'fuelType'                => self::extractFuelType($v->getFuelType()),
+            'bodyType'                => $v->getBodyType() ? $v->getBodyType()->getName() : null,
+            'transmissionType'        => $v->getTransmissionType() ? $v->getTransmissionType()->getName() : null,
+            'weight'                  => $v->getWeight(),
+            'isDvla'                  => false,
+            'creationDate'            => DateTimeApiFormat::date($v->getCreatedOn()),
         ];
 
         if ($getMotTestData) {
@@ -275,9 +272,9 @@ class VehicleSearchService
             $result = array_merge(
                 $result,
                 [
-                    'mot_id' => '',
+                    'mot_id'              => '',
                     'mot_completion_date' => '',
-                    'total_mot_tests' => '0'
+                    'total_mot_tests'     => '0',
                 ]
             );
 
@@ -312,8 +309,8 @@ class VehicleSearchService
             $modelName       = $map->getModel() ? $map->getModel()->getName() : '';
             $modelDetailName = $map->getModelDetail() ? $map->getModelDetail()->getName() : '';
         } else {
-            $makeName        = '';
-            $modelName       = '';
+            $makeName        = $this->vehicleCatalog->getMakeNameByDvlaCode($v->getMakeCode());
+            $modelName       = $this->vehicleCatalog->getModelNameByDvlaCode($v->getMakeCode(), $v->getModelCode());
             $modelDetailName = '';
         }
 
@@ -332,7 +329,7 @@ class VehicleSearchService
             'firstUsedDate'     => DateTimeApiFormat::date($v->getFirstUsedDate()),
             'transmissionType'  => '', // FIXME: Implemente migration
             'weight'            => $v->getDesignedGrossWeight(),
-            'isDvla'            => true
+            'isDvla'            => true,
         ];
 
         return $result;
@@ -348,7 +345,8 @@ class VehicleSearchService
         if ($code) {
             return $this->vehicleCatalog->findFuelTypeByPropulsionCode($code);
         }
-        return null;
+
+        return;
     }
 
     private function extractBodyTypeName($bodyTypeCode)
@@ -358,11 +356,12 @@ class VehicleSearchService
             $bodyType = $this->vehicleCatalog->findBodyTypeByCode($bodyTypeCode);
             $bodyTypeName = ($bodyType) ? $bodyType->getName() : null;
         }
+
         return $bodyTypeName;
     }
 
     /**
-     * Returns array [id => '..', name => '..'] or null
+     * Returns array [id => '..', name => '..'] or null.
      *
      * @param Colour $c
      *
@@ -371,13 +370,13 @@ class VehicleSearchService
     private static function extractColour(Colour $c = null)
     {
         return $c ? [
-            'id' => $c->getId(),
-            'name' => $c->getName()
+            'id'   => $c->getId(),
+            'name' => $c->getName(),
         ] : null;
     }
 
     /**
-     * Returns array [id => '..', name => '..'] or null
+     * Returns array [id => '..', name => '..'] or null.
      *
      * @param FuelType $f
      *
@@ -387,12 +386,12 @@ class VehicleSearchService
     {
         return $f ? [
             'id'   => $f->getId(),
-            'name' => $f->getName()
+            'name' => $f->getName(),
         ] : null;
     }
 
     /**
-     * Returns array [id => '..', name => '..'] or null
+     * Returns array [id => '..', name => '..'] or null.
      *
      * @param string $code
      *
@@ -401,6 +400,7 @@ class VehicleSearchService
     private function extractColourForCode($code)
     {
         $colour = $this->vehicleCatalog->getColourByCode($code);
+
         return self::extractColour($colour);
     }
 
@@ -412,6 +412,7 @@ class VehicleSearchService
     private function extractOptionalColourForCode($code)
     {
         $colour = $this->vehicleCatalog->findColourByCode($code);
+
         return self::extractColour($colour);
     }
 }

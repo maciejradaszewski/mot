@@ -100,7 +100,7 @@ if ($this->form->has('contingency')) {
                         <a href="<?php echo $url ?>">
                             <?php
                                 echo ($vehicle->getMake() || $vehicle->getModel()) ?
-                                     $this->escapeHtml($vehicle->getMakeAndModel()) : 'Unknown';
+                                     $this->escapeHtml($vehicle->getMakeAndModel()) : 'N/A';
                             ?>
                         </a>
                     </strong>
