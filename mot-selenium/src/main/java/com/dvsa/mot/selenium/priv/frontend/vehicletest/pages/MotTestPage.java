@@ -96,13 +96,14 @@ public class MotTestPage extends BasePage {
 
     public static MotTestPage navigateHereFromLoginPage(WebDriver driver, Login login,
             Vehicle vehicle) {
-        return MotTestOptionsPage.navigateHereFromLoginPage(driver, login, vehicle).returnToHome()
+        return MotTestStartedPage.navigateHereFromLoginPage(driver, login, vehicle).returnToHome()
                 .resumeMotTest();
     }
 
     public static MotTestPage navigateHereFromLoginPage(WebDriver driver, Login login,
             Vehicle vehicle, Site site) {
-        return MotTestOptionsPage.navigateHereFromLoginPage(driver, login, vehicle, site)
+
+        return MotTestStartedPage.navigateHereFromLoginPage(driver, login, vehicle, site)
                 .returnToHome().resumeMotTest();
     }
 
@@ -123,6 +124,13 @@ public class MotTestPage extends BasePage {
 
     public String getCarYear() {
         return carYear.getText();
+    }
+
+
+
+    public MotTestPage clickMoreButton() {
+        toggleDetails.click();
+        return this;
     }
 
     public String getDisplayedOdometerReading() {
@@ -311,7 +319,7 @@ public class MotTestPage extends BasePage {
     }
 
     public TestSummary createCertificate() {
-        
+
         createCertificate.click();
         return new TestSummary(driver);
     }

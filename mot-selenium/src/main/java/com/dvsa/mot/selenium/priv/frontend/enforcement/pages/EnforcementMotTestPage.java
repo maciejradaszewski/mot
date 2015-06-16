@@ -88,7 +88,7 @@ public class EnforcementMotTestPage extends BasePage {
 
     public static MotTestPage navigateHereFromLoginPage(WebDriver driver, Login login,
             Vehicle vehicle) {
-        return MotTestOptionsPage.navigateHereFromLoginPage(driver, login, vehicle).returnToHome()
+        return MotTestStartedPage.navigateHereFromLoginPage(driver, login, vehicle).returnToHome()
                 .resumeMotTest();
     }
 

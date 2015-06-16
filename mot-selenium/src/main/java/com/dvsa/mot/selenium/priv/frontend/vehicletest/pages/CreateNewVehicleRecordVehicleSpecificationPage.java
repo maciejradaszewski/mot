@@ -134,9 +134,9 @@ public class CreateNewVehicleRecordVehicleSpecificationPage extends BasePage {
         return this;
     }
 
-    public NewVehicleRecordSummaryPage submit() {
+    public NewVehicleRecordConfirmPage submit() {
         submitButton.click();
-        return new NewVehicleRecordSummaryPage(driver);
+        return new NewVehicleRecordConfirmPage(driver);
     }
 
     public CreateNewVehicleRecordVehicleSpecificationPage submitDetailsExpectingError() {
@@ -145,7 +145,7 @@ public class CreateNewVehicleRecordVehicleSpecificationPage extends BasePage {
     }
 
 
-    public NewVehicleRecordSummaryPage enterVehicleDetailsAndSubmit(Vehicle vehicle) {
+    public NewVehicleRecordConfirmPage enterVehicleDetailsAndSubmit(Vehicle vehicle) {
         enterVehicleDetails(vehicle);
         return submit();
     }

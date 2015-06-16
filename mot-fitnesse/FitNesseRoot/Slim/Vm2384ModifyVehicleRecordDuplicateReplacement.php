@@ -28,7 +28,7 @@ class Vm2384ModifyVehicleRecordDuplicateReplacement
     private $model;
     private $makeId;
     private $make;
-    private $countryOfRegistrationId;
+    private $countryOfRegistration;
     private $oneTimePassword;
 
     /** @var  \MotFitnesse\Testing\ReplacementCertificateHelper */
@@ -111,7 +111,7 @@ class Vm2384ModifyVehicleRecordDuplicateReplacement
                 'registrationNumber'    => $this->registration,
                 'make'                  => $this->makeId,
                 'model'                 => $this->modelId,
-                'countryOfRegistration' => $this->countryOfRegistrationId,
+                'countryOfRegistration' => $this->countryOfRegistration,
             ]
         );
     }
@@ -177,9 +177,9 @@ class Vm2384ModifyVehicleRecordDuplicateReplacement
         $this->make = $value;
     }
 
-    public function setCountryOfRegistrationId($value)
+    public function setCountryOfRegistration($value)
     {
-        $this->countryOfRegistrationId = $value;
+        $this->countryOfRegistration = $value;
     }
 
     public function setOneTimePassword($value)

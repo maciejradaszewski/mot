@@ -2,20 +2,26 @@ package com.dvsa.mot.selenium.datasource.enums;
 
 public enum BodyType {
 
-    Hatchback("h"),
-    Motorcycle("18"),
-    Limousine("12"),
-    Pickup("26"),
-    Coupe("05"),
-    FlatLorry("38");
+    Hatchback("Hatchback", "h"),
+    Motorcycle("Motorcycle", "18"),
+    Limousine("Limousine", "12"),
+    Pickup("Pickup", "26"),
+    Coupe("Coupe", "05"),
+    FlatLorry("FlatLorry", "38");
 
+    private final String bodyName;
     private final String code;
 
-    private BodyType(String code) {
+    private BodyType(String bodyName, String code) {
+        this.bodyName = bodyName;
         this.code = code;
     }
 
     public String getCode() {
         return code;
+    }
+
+    public String getName() {
+        return this.bodyName;
     }
 }

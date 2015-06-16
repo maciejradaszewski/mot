@@ -116,6 +116,16 @@ abstract class AbstractMotTest extends MotApi
         return $this->setFinalState($token, $testNumber, $params);
     }
 
+    public function abortTestByVE($token, $testNumber)
+    {
+        $params = [
+            'reasonForAbort' => 'the test was incorrect',
+            'status' => 'ABORTED_VE',
+        ];
+
+        return $this->setFinalState($token, $testNumber, $params);
+    }
+
     /**
      * @param string $token
      * @param int $testNumber

@@ -3,6 +3,9 @@
 use DvsaCommon\Enum\VehicleClassCode;
 use MotFitnesse\Util\UrlBuilder;
 use DvsaCommon\Enum\ColourCode;
+use MotFitnesse\Util\TestSupportUrlBuilder;
+use DvsaCommon\Enum\CountryOfRegistrationCode;
+use \DvsaCommon\Enum\FuelTypeCode;
 /**
  * Calls API for generating new vehicles
  */
@@ -31,6 +34,7 @@ class VehicleTestHelper
 
         $data = [
             'registrationNumber'    => $vrm,
+            'bodyType'              => '12',
             'vin'                   => $vin,
             'make'                  => '18811',
             'makeOther'             => '',
@@ -40,11 +44,11 @@ class VehicleTestHelper
             'colour'                => ColourCode::ORANGE,
             'secondaryColour'       => ColourCode::BLACK,
             'dateOfFirstUse'        => '1999-01-01',
-            'fuelType'              => 'PE',
+            'fuelType'              => FuelTypeCode::PETROL,
             'testClass'             => VehicleClassCode::CLASS_4,
-            'countryOfRegistration' => 4,
+            'countryOfRegistration' => CountryOfRegistrationCode::GBG_GG_GUERNSEY,
             'cylinderCapacity'      => 1234,
-            'transmissionType'      => 1,
+            'transmissionType'      => 'a',
             'oneTimePassword'       => '123456',
             'returnOriginalId'      => 'true'
         ];
@@ -53,7 +57,7 @@ class VehicleTestHelper
             $data = array_merge($data, $spec);
         }
 
-        return $this->api->post((new UrlBuilder())->vehicle(), $data);
+        return $this->api->post((new TestSupportUrlBuilder())->vehicleCreate(), $data);
     }
 
     public function generateV5c(

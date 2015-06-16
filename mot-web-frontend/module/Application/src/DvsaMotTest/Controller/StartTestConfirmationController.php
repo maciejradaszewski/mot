@@ -8,7 +8,7 @@ use Application\Service\ContingencySessionManager;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\Assertion\RefuseToTestAssertion;
 use DvsaCommon\Auth\PermissionInSystem;
-use DvsaCommon\Constants\Network;
+use Core\Service\RemoteAddress;
 use DvsaCommon\Dto\Common\ColourDto;
 use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
 use DvsaCommon\Dto\Vehicle\AbstractVehicleDto;
@@ -249,7 +249,13 @@ class StartTestConfirmationController extends AbstractDvsaMotTestController
         return $data;
     }
 
-
+    /**
+     * @return string
+     */
+    protected function getClientIp()
+    {
+        return RemoteAddress::getIp();
+    }
 
     /**
      * @return array

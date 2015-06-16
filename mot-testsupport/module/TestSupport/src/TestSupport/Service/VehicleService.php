@@ -19,6 +19,31 @@ class VehicleService
     }
 
     /**
+     * Uses save internally to minimise what data is needed to be provided
+     * @param array $overrideData
+     * @return int
+     */
+    public function createWithDefaults(array $overrideData = [])
+    {
+        $defaults = [
+            'countryOfRegistration' => 'GB',
+            'make' => 'BMW',
+            'model' => 'Mini',
+            'transmissionType' => 'a',
+            'colour' => 'S',
+            'secondaryColour' => 'P',
+            'fuelType' => 'PE',
+            'testClass' => 4,
+            'bodyType' => '01',
+            // Not required for a save but required for the API
+            'registrationNumber' => 'ABCD123',
+            'dateOfFirstUse' => '1980/01/01'
+        ];
+        $data = array_merge($defaults, $overrideData);
+        return $this->save($data);
+    }
+
+    /**
      * @param array $data
      * @return int
      */
@@ -99,6 +124,10 @@ class VehicleService
         $vehicleData["first_used_date"] = ArrayUtils::tryGet($data, 'dateOfFirstUse');
 
         $vehicleData["created_by"] = ArrayUtils::tryGet($data, 'createdBy', 2);
+
+        $vehicleData["manufacture_date"] = ArrayUtils::tryGet($data, 'manufactureDate', null);
+
+        $vehicleData["first_registration_date"] = ArrayUtils::tryGet($data, 'firstRegistrationDate', null);
 
         return $vehicleData;
     }

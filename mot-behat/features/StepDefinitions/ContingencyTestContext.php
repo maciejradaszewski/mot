@@ -30,6 +30,11 @@ class ContingencyTestContext implements Context
     private $contingencyData;
 
     /**
+     * @var string
+     */
+    private $dailyContingencyCode;
+
+    /**
      * @param ContingencyTest $contingencyTest
      */
     public function __construct(ContingencyTest $contingencyTest)
@@ -46,11 +51,19 @@ class ContingencyTestContext implements Context
     }
 
     /**
+     * @Given I called the helpdesk to ask for a daily contingency code
+     */
+    public function iCalledHelpdeskToAskForDailyContingencyCode()
+    {
+        $this->dailyContingencyCode = '12345A';
+    }
+
+    /**
      * @When /^I create a new (.*) contingency test$/
      */
     public function iCreateANewContingencyTest($testType)
     {
-        $this->createContingencyCode($testType, '12345A', 'PI');
+        $this->createContingencyCode($testType, $this->dailyContingencyCode, 'PI');
     }
 
     /**
@@ -58,7 +71,7 @@ class ContingencyTestContext implements Context
      */
     public function iAttemptToCreateANewContingencyTest($testType)
     {
-        $this->createContingencyCode($testType, '12345A', 'PI');
+        $this->createContingencyCode($testType, $this->dailyContingencyCode, 'PI');
     }
 
     /**

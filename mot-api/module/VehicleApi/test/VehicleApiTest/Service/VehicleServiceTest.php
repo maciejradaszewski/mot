@@ -3,8 +3,13 @@
 namespace VehicleApiTest\Service;
 
 use DataCatalogApi\Service\VehicleCatalogService;
+use Doctrine\ORM\EntityManager;
+use DvsaAuthentication\Model\Identity;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use DvsaCommon\Auth\MotIdentityInterface;
+use DvsaCommon\Auth\MotIdentityProviderInterface;
+use DvsaCommon\Database\Transaction;
 use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommon\Dto\Vehicle\AbstractVehicleDto;
 use DvsaCommon\Dto\Vehicle\DvlaVehicleDto;
@@ -16,7 +21,6 @@ use DvsaCommon\Enum\VehicleClassId;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommonApi\Service\Exception\OtpException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
-use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\ArgCapture;
 use DvsaCommonTest\TestUtils\MultiCallStubBuilder;
 use DvsaCommonTest\TestUtils\XMock;
@@ -24,20 +28,24 @@ use DvsaEntities\Entity\DvlaVehicle;
 use DvsaEntities\Entity\DvlaMakeModelMap;
 use DvsaEntities\Entity\Make;
 use DvsaEntities\Entity\Model;
+use DvsaEntities\Entity\MotTest;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\Vehicle;
 use DvsaEntities\Entity\VehicleV5C;
 use DvsaEntities\Repository\DvlaVehicleImportChangesRepository;
 use DvsaEntities\Repository\DvlaVehicleRepository;
+use DvsaEntities\Repository\PersonRepository;
 use DvsaEntities\Repository\VehicleRepository;
 use DvsaEntities\Repository\VehicleV5CRepository;
 use Doctrine\ORM\EntityRepository;
+use DvsaMotApi\Service\MotTestService;
+use DvsaMotApi\Service\MotTestServiceProvider;
 use DvsaMotApi\Service\OtpService;
 use DvsaMotApi\Service\Validator\VehicleValidator;
 use DvsaMotApiTest\Factory\VehicleObjectsFactory as VOF;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use VehicleApi\Service\VehicleService;
-use Zend\Http\Header\Date;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * it test functionality of class VehicleService
@@ -72,6 +80,16 @@ class VehicleServiceTest extends AbstractServiceTestCase
     private $mockOtpService;
     /** @var ParamObfuscator */
     private $paramObfuscator;
+    /** @var MotTestServiceProvider */
+    private $motTestServiceProvider;
+    /** @var PersonRepository */
+    private $personRepository;
+    /** @var MotTestService|MockObj */
+    private $mockMotTestService;
+    /** @var MotIdentityProviderInterface */
+    private $motIdentityProviderInterface;
+    /** @var Transaction */
+    private $transaction;
 
     private $serviceManager;
 
@@ -83,8 +101,14 @@ class VehicleServiceTest extends AbstractServiceTestCase
         $this->mockDvlaVehicleRepository = XMock::of(DvlaVehicleRepository::class);
         $this->mockDvlaVehicleImportChangesRepository = XMock::of(DvlaVehicleImportChangesRepository::class);
         $this->mockVehicleCatalog = XMock::of(VehicleCatalogService::class);
-
         $this->mockDvlaMakeModelMapRepository = XMock::of(EntityRepository::class);
+        $this->mockMotTestService = XMock::of(MotTestService::class);
+        $this->motIdentityProviderInterface = XMock::of(MotIdentityProviderInterface::class);
+        $this->motIdentityProviderInterface->expects($this->any())->method('getIdentity')
+                                                          ->willReturn(XMock::of(MotIdentityInterface::class));
+        $this->personRepository = XMock::of(PersonRepository::class);
+        $this->personRepository->expects($this->any())->method('get')->willReturn(new Person());
+        $this->transaction = new Transaction(XMock::of(EntityManager::class));
 
         $this->paramObfuscator = XMock::of(ParamObfuscator::class);
         $this->mockValidator = new VehicleValidator();
@@ -96,6 +120,8 @@ class VehicleServiceTest extends AbstractServiceTestCase
                 ->add(self::OTP_VALID, true)
                 ->build()
         );
+        $this->motTestServiceProvider = XMock::of(MotTestServiceProvider::class);
+        $this->motTestServiceProvider->expects($this->any())->method('getService')->willReturn($this->mockMotTestService);
     }
 
     public function testGetVehicleById()
@@ -807,6 +833,10 @@ class VehicleServiceTest extends AbstractServiceTestCase
                                     ->with($vehicleCapture())
                                     ->willReturn(VOF::vehicle(5));
 
+        $this->mockMotTestService->expects($this->any())
+                                 ->method('createMotTest')
+                                 ->willReturn(new MotTest());
+
         $this->returningOn(
             $this->mockVehicleCatalog,
             MultiCallStubBuilder::of()
@@ -912,6 +942,7 @@ class VehicleServiceTest extends AbstractServiceTestCase
             'countryOfRegistration' => 9,
             'transmissionType'      => 10,
             'secondaryColour'       => 'G',
+            'vtsId'                 => 1
         ];
     }
 
@@ -927,7 +958,11 @@ class VehicleServiceTest extends AbstractServiceTestCase
             $this->mockVehicleCatalog,
             $this->mockValidator,
             $this->mockOtpService,
-            $this->paramObfuscator
+            $this->paramObfuscator,
+            $this->motTestServiceProvider,
+            $this->motIdentityProviderInterface,
+            $this->personRepository,
+            $this->transaction
         );
     }
 

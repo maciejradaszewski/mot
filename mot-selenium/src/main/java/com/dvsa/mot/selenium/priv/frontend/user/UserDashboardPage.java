@@ -177,6 +177,11 @@ public class UserDashboardPage extends BasePage {
         startMotTestButton.click();
     }
 
+    public MotTestPage resumeMotTestButton() {
+        resumeMotTestButton.click();
+        return new MotTestPage(driver);
+    }
+
     public LocationSelectPage startMotTestAsManyVtsTesterWithoutVtsChosen() {
         startMotTestButton.click();
         return new LocationSelectPage(driver);

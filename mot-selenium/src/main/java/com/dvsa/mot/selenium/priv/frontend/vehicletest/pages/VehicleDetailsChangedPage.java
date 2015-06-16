@@ -22,16 +22,16 @@ public class VehicleDetailsChangedPage extends BasePage {
         return this;
     }
 
-    public MotTestOptionsPage confirmVehicleChanges(String password) {
+    public MotTestStartedPage confirmVehicleChanges(String password) {
         enterOneTimePassword(password);
         confirmButton.click();
-        return new MotTestOptionsPage(driver);
+        return new MotTestStartedPage(driver);
     }
 
-    public MotTestOptionsPage confirmVehicleChangesExpectingMottestOptionsPage(String password) {
+    public MotTestStartedPage confirmVehicleChangesExpectingMottestOptionsPage(String password) {
         enterOneTimePassword(password);
         confirmButton.click();
-        return new MotTestOptionsPage(driver);
+        return new MotTestStartedPage(driver);
     }
 
 }

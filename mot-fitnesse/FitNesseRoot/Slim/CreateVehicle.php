@@ -8,10 +8,12 @@ class CreateVehicle
     private $result;
     private $input = [];
     private $testerUsername;
+    private $vtsId;
 
-    public function __construct($testerUsername)
+    public function __construct($testerUsername, $vtsId)
     {
         $this->testerUsername = $testerUsername;
+        $this->vtsId = $vtsId;
     }
 
     public function execute()
@@ -20,6 +22,7 @@ class CreateVehicle
 
         $this->setInputValue('makeOther', '');
         $this->setInputValue('modelOther', '');
+        $this->setInputValue('vtsId', $this->vtsId);
 
         $this->result = TestShared::execCurlFormPostForJsonFromUrlBuilder(
             new \MotFitnesse\Util\CredentialsProvider($this->testerUsername,

@@ -26,4 +26,5 @@ Extra scenario included for vehicle with no previous test using VIN239
 |VIN102|        |YES   |=~/mi/     |Active pass, will return normal details                                                |
 |VIN001|        |YES   |=~/PRE1960/|No Pass, manufacture date null, registration date before 1960, will return pre1960 text|
 |VIN002|        |YES   |=~/mi/     |Expired, PASS, will return normal details                                              |
-|VIN003|        |YES   |=~/PRE1960/|Expired, PASS, registration date before 1960, will return pre1960 text                 |                             |
+|VIN003|        |YES   |=~/PRE1960/|Expired, PASS, registration date before 1960, will return pre1960 text                 |
+

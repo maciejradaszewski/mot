@@ -5,24 +5,32 @@ namespace VehicleApi\Service;
 use DataCatalogApi\Service\VehicleCatalogService;
 use Doctrine\ORM\EntityRepository;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
+use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Database\Transaction;
 use DvsaCommon\Date\DateUtils;
+use DvsaCommon\Dto\Vehicle\VehicleCreatedDto;
+use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Enum\WeightSourceCode;
+use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaEntities\Entity\DvlaVehicle;
 use DvsaEntities\Entity\DvlaVehicleImportChangeLog;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\Vehicle;
 use DvsaEntities\Entity\VehicleV5C;
-use DvsaEntities\Repository\DvlaMakeModelMapRepository;
 use DvsaEntities\Repository\DvlaVehicleImportChangesRepository;
 use DvsaEntities\Repository\DvlaVehicleRepository;
+use DvsaEntities\Repository\PersonRepository;
 use DvsaEntities\Repository\VehicleRepository;
 use DvsaEntities\Repository\VehicleV5CRepository;
+use DvsaMotApi\Service\MotTestServiceProvider;
 use DvsaMotApi\Service\OtpService;
 use DvsaMotApi\Service\Validator\VehicleValidator;
 use VehicleApi\Service\Mapper\DvlaVehicleMapper;
 use VehicleApi\Service\Mapper\VehicleMapper;
+use DvsaMotApi\Controller\MotTestController;
+use DvsaCommon\Constants\Network;
 
 /**
  * Class VehicleService.
@@ -55,6 +63,14 @@ class VehicleService
     /** @var  OtpService */
     private $otpService;
 
+    private $motTestServiceProvider;
+
+    private $identityProvider;
+
+    private $personRepository;
+
+    private $transaction;
+
     public function __construct(
         AuthorisationServiceInterface $authService,
         VehicleRepository $repository,
@@ -64,7 +80,12 @@ class VehicleService
         EntityRepository $dvlaMakeModelMapRepository,
         VehicleCatalogService $vehicleCatalog,
         VehicleValidator $validator,
-        OtpService $otpService
+        OtpService $otpService,
+        ParamObfuscator $paramObfuscator,
+        MotTestServiceProvider $motTestServiceProvider,
+        MotIdentityProviderInterface $identityProvider,
+        PersonRepository $personRepository,
+        Transaction $transaction
     ) {
         $this->authService = $authService;
         $this->vehicleRepository = $repository;
@@ -76,6 +97,11 @@ class VehicleService
         $this->vehicleCatalog = $vehicleCatalog;
         $this->validator = $validator;
         $this->otpService = $otpService;
+        $this->paramObfuscator = $paramObfuscator;
+        $this->motTestServiceProvider = $motTestServiceProvider;
+        $this->identityProvider = $identityProvider;
+        $this->personRepository = $personRepository;
+        $this->transaction = $transaction;
     }
 
     public function create($data)
@@ -89,9 +115,55 @@ class VehicleService
         }
 
         $vehicle = $this->mapVehicle($data);
-        $this->vehicleRepository->save($vehicle);
 
-        return $vehicle->getId();
+        $this->transaction->begin();
+
+        try {
+            $this->vehicleRepository->save($vehicle);
+
+            $clientIp = ArrayUtils::tryGet($data, MotTestController::FIELD_CLIENT_IP, Network::DEFAULT_CLIENT_IP);
+            $motTest = $this->startMotTest($vehicle, $data['vtsId'], $clientIp);
+
+            $this->transaction->commit();
+            $dto = new VehicleCreatedDto();
+            $dto->setStartedMotTestNumber($motTest->getNumber());
+
+            if (isset($data['returnOriginalId'])) {
+                $dto->setVehicleId($vehicle->getId());
+            } else {
+                $dto->setVehicleId(
+                    $this->paramObfuscator->obfuscateEntry(ParamObfuscator::ENTRY_VEHICLE_ID, $vehicle->getId())
+                );
+            }
+
+            return $dto;
+        } catch (\Exception $e) {
+            $this->transaction->rollback();
+            throw $e;
+        }
+    }
+
+    /**
+     * @param Vehicle $vehicle
+     * @param int     $vtsId    The VTS where the test is being conducted
+     * @param string  $clientIp
+     * @return \DvsaEntities\Entity\MotTest
+     */
+    private function startMotTest(Vehicle $vehicle, $vtsId, $clientIp)
+    {
+        return $this->motTestServiceProvider->getService()->createMotTest(
+            $this->personRepository->get($this->identityProvider->getIdentity()->getUserId()),
+            $vehicle->getId(),
+            $vtsId,
+            $vehicle->getColour()->getCode(),
+            $vehicle->getSecondaryColour()->getCode(),
+            $vehicle->getFuelType()->getCode(),
+            $vehicle->getVehicleClass()->getCode(),
+            true,
+            null,
+            MotTestTypeCode::NORMAL_TEST,
+            $clientIp
+        );
     }
 
     public function getVehicle($id)

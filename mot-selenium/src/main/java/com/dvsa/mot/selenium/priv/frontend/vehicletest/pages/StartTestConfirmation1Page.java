@@ -157,7 +157,7 @@ public class StartTestConfirmation1Page extends BasePage {
         return new RefuseToTestPage(driver);
     }
 
-    public MotTestOptionsPage submitConfirm() {
+    public MotTestStartedPage submitConfirm() {
         confirmButton.click();
 
         if (exist2FAFieldInCurrentPage()) {
@@ -165,7 +165,7 @@ public class StartTestConfirmation1Page extends BasePage {
                     new VehicleDetailsChangedPage(driver);
             return vehicleDetailsChangedPage.confirmVehicleChanges(Text.TEXT_PASSCODE);
         } else {
-            return new MotTestOptionsPage(driver);
+            return new MotTestStartedPage(driver);
         }
     }
 

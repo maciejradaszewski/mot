@@ -69,9 +69,9 @@ class VehicleContext implements Context
     }
 
     /**
-     * @Then /^the Vehicle Record is Created$/
+     * @Then the Vehicle Record is Created with an MOT Test Number allocated
      */
-    public function theVehicleRecordIsCreated()
+    public function theVehicleRecordIsCreatedWithAnMotTestNumberAllocated()
     {
         PHPUnit::assertEquals(200, $this->vehicleCreateResponse->getStatusCode());
         PHPUnit::assertTrue(isset($this->vehicleCreateResponse->getBody()['data']), 'Vehicle not created');
@@ -106,8 +106,8 @@ class VehicleContext implements Context
      */
     public function iCreateADuplicateVehicleTechnicalRecordWithClassOf($testClass)
     {
-        $this->createVehicle(['testClass' => $testClass]);
-        $this->createVehicle(['testClass' => $testClass]);
+        $this->createVehicleFromApi(['testClass' => $testClass]);
+        $this->createVehicleFromApi(['testClass' => $testClass]);
     }
 
     /**
@@ -137,7 +137,7 @@ class VehicleContext implements Context
      */
     public function iCreateANewVehicleTechnicalRecord($class, $make, $model, $fuelType, $transmissionType, $countryOfRegistration, $cylinderCapacity, $dateOfFirstUse)
     {
-        $this->createVehicle(
+        $this->createVehicleFromApi(
             [
                 'countryOfRegistration' => $countryOfRegistration,
                 'cylinderCapacity' => $cylinderCapacity,
@@ -158,7 +158,7 @@ class VehicleContext implements Context
      */
     public function iCreateANewVehicleTechnicalRecordWithADateOfFirstUseOf($dateOfFirstUse)
     {
-        $this->createVehicle(['dateOfFirstUse' => $dateOfFirstUse]);
+        $this->createVehicleFromApi(['dateOfFirstUse' => $dateOfFirstUse]);
     }
 
     /**
@@ -170,21 +170,24 @@ class VehicleContext implements Context
     {
         $hash = $table->getColumnsHash();
 
-        foreach ($hash as $row) {
-            $vehicleData = [
-                'countryOfRegistration' => $row['countryOfRegistration'],
-                'cylinderCapacity' => $row['cylinderCapacity'],
-                'fuelType' => $row['fuelType'],
-                'make' => $row['make'],
-                'model' => $row['model'],
-                'testClass' => $row['class'],
-                'transmissionType' => $row['transmissionType'],
-                'dateOfFirstUse' => $row['dateOfFirstUse'],
-            ];
-
-            $createdVehicle = $this->vehicle->create($this->sessionContext->getCurrentAccessToken(), $vehicleData);
-            array_push($this->vehicles, $createdVehicle);
+        if (count($hash) !== 1) {
+            throw new \InvalidArgumentException(sprintf('Expected a single vehicle record but got: %d', count($hash)));
         }
+
+        $row = $hash[0];
+
+        $vehicleData = [
+            'countryOfRegistration' => $row['countryOfRegistration'],
+            'cylinderCapacity' => $row['cylinderCapacity'],
+            'fuelType' => $row['fuelType'],
+            'make' => $row['make'],
+            'model' => $row['model'],
+            'testClass' => $row['class'],
+            'transmissionType' => $row['transmissionType'],
+            'dateOfFirstUse' => $row['dateOfFirstUse'],
+        ];
+
+        $this->createVehicleFromApi($vehicleData);
     }
 
     /**
@@ -192,7 +195,7 @@ class VehicleContext implements Context
      */
     public function iCreateANewVehicleTechnicalRecordWithCylinderCapacityOf($cylinderCapacity)
     {
-        $this->createVehicle(['cylinderCapacity' => $cylinderCapacity]);
+        $this->createVehicleFromApi(['cylinderCapacity' => $cylinderCapacity]);
     }
 
     /**
@@ -203,7 +206,7 @@ class VehicleContext implements Context
      */
     public function iCreateAVehicleOfClassAndFuelType($class, $fuelType)
     {
-        $this->createVehicle(['fuelType' => $fuelType, 'testClass' => $class]);
+        $this->createVehicleFromApi(['fuelType' => $fuelType, 'testClass' => $class]);
     }
 
     /**
@@ -211,9 +214,9 @@ class VehicleContext implements Context
      */
     public function theVehicleDetailsAreCorrect()
     {
-        $carData = $this->vehicle->getVehicleDetails($this->sessionContext->getCurrentAccessToken(), $this->vehicleCreateResponse->getBody()['data']);
+        $carData = $this->vehicle->getVehicleDetails($this->sessionContext->getCurrentAccessToken(), $this->vehicleCreateResponse->getBody()['data']['vehicleId']);
 
-        PHPUnit::assertEquals($this->vehicleCreateResponse->getBody()['data'], $carData->getBody()['data']['id'], 'Vehicle id does not match.');
+        PHPUnit::assertEquals($this->vehicleCreateResponse->getBody()['data']['vehicleId'], $carData->getBody()['data']['id'], 'Vehicle id does not match.');
     }
 
     /**
@@ -237,15 +240,27 @@ class VehicleContext implements Context
     }
 
     /**
+     * Creates the vehicle and automatically starts an MOT for it
      * @param array $vehicleDetails
-     *
      * @return string|null
      */
-    public function createVehicle(array $vehicleDetails = [])
+    private function createVehicleFromApi(array $vehicleDetails = [])
     {
         $this->vehicleCreateResponse = $this->vehicle->create($this->sessionContext->getCurrentAccessToken(), $vehicleDetails);
 
         return 200 === $this->vehicleCreateResponse->getStatusCode() ? $this->getCurrentVehicleId() : null;
+    }
+
+    /**
+     * Uses TestSupport to create the vehicle
+     * @param array $vehicleDetails
+     * @return int
+     */
+    public function createVehicle(array $vehicleDetails = [])
+    {
+        $vehicleService = $this->testSupportHelper->getVehicleService();
+        $this->vehicleId = $vehicleService->createWithDefaults($vehicleDetails);
+        return $this->getCurrentVehicleId();
     }
 
     /**
@@ -262,7 +277,7 @@ class VehicleContext implements Context
     public function getCurrentVehicleId()
     {
         if (null === $this->vehicleId && null !== $this->vehicleCreateResponse) {
-            $this->vehicleId = (string) $this->vehicleCreateResponse->getBody()['data'];
+            $this->vehicleId = (string) $this->vehicleCreateResponse->getBody()['data']['vehicleId'];
         }
 
         if (null === $this->vehicleId) {

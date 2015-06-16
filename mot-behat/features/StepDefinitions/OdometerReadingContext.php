@@ -52,9 +52,15 @@ class OdometerReadingContext implements Context
     public function theTesterAddsNoOdometerReading($type)
     {
         if ($type == 'NO METER') {
-            $this->odometerReading->addNoMeterReadingToTest($this->sessionContext->getCurrentAccessToken(), $this->motTestContext->getMotTestNumber());
+            $this->odometerReading->addNoMeterReadingToTest(
+                $this->sessionContext->getCurrentAccessToken(),
+                $this->motTestContext->getMotTestNumber()
+            );
         } else {
-            $this->odometerReading->addOdometerNotReadToTest($this->sessionContext->getCurrentAccessToken(), $this->motTestContext->getMotTestNumber());
+            $this->odometerReading->addOdometerNotReadToTest(
+                $this->sessionContext->getCurrentAccessToken(),
+                $this->motTestContext->getMotTestNumber()
+            );
         }
     }
 

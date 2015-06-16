@@ -33,6 +33,7 @@ class TestSupportUrlBuilder extends AbstractUrlBuilder
     const CREATE_TEST_MOT_TEST = '/mottest';
 
     const TEST_SUPPORT_VEHICLE         = '/vehicle';
+    const TEST_SUPPORT_VEHICLE_CREATE  = '/create';
     const TEST_SUPPORT_VEHICLE_ADD_V5C = '/v5c-add';
 
     const TEST_SUPPORT_DVLA_VEHICLE = '/dvla-vehicle/create';
@@ -71,7 +72,8 @@ class TestSupportUrlBuilder extends AbstractUrlBuilder
                 self::CREATE_USER_CUSTOMER_SERVICE_CENTRE_OPERATIVE => '',
                 self::CREATE_TEST_MOT_TEST                          => '',
                 self::TEST_SUPPORT_VEHICLE                          => [
-                    self::TEST_SUPPORT_VEHICLE_ADD_V5C => ''
+                    self::TEST_SUPPORT_VEHICLE_ADD_V5C => '',
+                    self::TEST_SUPPORT_VEHICLE_CREATE => '',
                 ],
                 self::TEST_SUPPORT_DVLA_VEHICLE => '',
                 self::CREATE_USER_DVLA_OPERATIVE                    => '',
@@ -252,6 +254,14 @@ class TestSupportUrlBuilder extends AbstractUrlBuilder
             ->appendRoutesAndParams(self::TEST_SUPPORT)
             ->appendRoutesAndParams(self::TEST_SUPPORT_VEHICLE)
             ->appendRoutesAndParams(self::TEST_SUPPORT_VEHICLE_ADD_V5C);
+    }
+
+    public function vehicleCreate()
+    {
+        return $this
+            ->appendRoutesAndParams(self::TEST_SUPPORT)
+            ->appendRoutesAndParams(self::TEST_SUPPORT_VEHICLE)
+            ->appendRoutesAndParams(self::TEST_SUPPORT_VEHICLE_CREATE);
     }
 
     public function createDvlaOperative()

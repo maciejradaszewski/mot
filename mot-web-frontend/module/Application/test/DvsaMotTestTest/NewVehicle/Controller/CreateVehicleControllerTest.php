@@ -1,17 +1,16 @@
 <?php
 namespace DvsaMotTestTest\Controller;
 
+use Core\Service\MotFrontendIdentityProviderInterface;
 use CoreTest\Service\StubCatalogService;
 use CoreTest\Service\StubRestForCatalog;
 use DvsaAuthentication\Model\Identity;
 use DvsaAuthentication\Model\VehicleTestingStation;
-use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaCommon\UrlBuilder\VehicleUrlBuilder;
-use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\MultiCallStubBuilder;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTest\NewVehicle\Controller\CreateVehicleController;
@@ -22,10 +21,11 @@ use DvsaMotTest\NewVehicle\Container\NewVehicleContainer;
 use UserAdminTest\Controller\AbstractLightWebControllerTest;
 use Zend\Http\Request;
 use Zend\Http\Response;
-use Zend\InputFilter\InputFilter;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayObject;
 use Zend\Stdlib\Parameters;
+use Core\Service\RemoteAddress;
 
 /* @method CreateVehicleController sut() service/controller under test, see parent::sut() */
 class CreateVehicleControllerTest extends AbstractLightWebControllerTest
@@ -42,6 +42,7 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
     /** @var  NewVehicleContainer */
     private $container;
 
+    /** @var MotFrontendIdentityProviderInterface */
     private $identityProvider;
 
     protected function setUp()
@@ -53,7 +54,7 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
 
         $this->request = new Request();
         $this->container = new NewVehicleContainer(new ArrayObject());
-        $this->identityProvider = XMock::of(MotIdentityProviderInterface::class);
+        $this->identityProvider = XMock::of(MotFrontendIdentityProviderInterface::class);
 
         $catalogService = new StubCatalogService();
 
@@ -160,6 +161,8 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
             'modelOther' => '',
             'emptyVrmReason' => '',
             'emptyVinReason' => '',
+            'vtsId' => 1,
+            'clientIp' => RemoteAddress::getIp()
         ];
 
         $this->request->setMethod('post');
@@ -171,7 +174,9 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
         $this->client->expects($this->any())->method('postJson')
             ->with(VehicleUrlBuilder::vehicle(), $expectedData);
 
-        $this->expectRedirect(CreateVehicleController::ROUTE, ['action' => 'complete']);
+        $this->redirectPluginMock
+            ->expects(\PHPUnit_Framework_TestCase::once())
+            ->method('toUrl');
 
         $this->sut()->confirmAction();
 
