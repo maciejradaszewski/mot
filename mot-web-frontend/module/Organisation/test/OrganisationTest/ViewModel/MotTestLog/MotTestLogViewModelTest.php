@@ -36,8 +36,8 @@ class MotTestLogViewModelTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->sundayLastWeek = (new \DateTime('@' . strtotime('monday this week - 1 second')))->setTime(0, 0, 0);
-        $this->mondayLastWeek = (new \DateTime('@' . strtotime('monday this week - 7 days')))->setTime(0, 0, 0);
+        $this->sundayLastWeek = new \DateTime('@' . strtotime('monday this week - 1 second'));
+        $this->mondayLastWeek = new \DateTime('@' . strtotime('monday this week - 7 days'));
 
         //  logic block :: prepare instance of tested class
         $this->orgDto = (new OrganisationDto())->setId(self::ORG_ID);
@@ -108,8 +108,8 @@ class MotTestLogViewModelTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDownloadUrl()
     {
-        $dateFromTs = $this->mondayLastWeek->setTime(0, 0, 0)->getTimestamp();
-        $dateToTs = $this->sundayLastWeek->setTime(23, 59, 59)->getTimestamp();
+        $dateFromTs = $this->mondayLastWeek->getTimestamp();
+        $dateToTs = $this->sundayLastWeek->getTimestamp();
 
         $expect = AuthorisedExaminerUrlBuilderWeb::motTestLogDownloadCsv(self::ORG_ID)->toString() .
             '?' .

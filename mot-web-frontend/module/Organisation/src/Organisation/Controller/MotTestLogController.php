@@ -303,8 +303,8 @@ class MotTestLogController extends AbstractAuthActionController
 
         //  logical block: set filter parameters   --
         if ($formModel !== null) {
-            $dateFrom = $formModel->getDateFrom()->getDate()->setTime(0, 0, 0)->getTimestamp();
-            $dateTo = $formModel->getDateTo()->getDate()->setTime(23, 59, 59)->getTimestamp();
+            $dateFrom = $formModel->getDateFrom()->getDate()->getTimestamp();
+            $dateTo = $formModel->getDateTo()->getDate()->getTimestamp();
         } else {
             $dateFrom = $queryParams->get(SearchParamConst::SEARCH_DATE_FROM_QUERY_PARAM);
             $dateTo = $queryParams->get(SearchParamConst::SEARCH_DATE_TO_QUERY_PARAM);

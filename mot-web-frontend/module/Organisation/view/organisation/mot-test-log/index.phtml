@@ -11,8 +11,8 @@ use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
  * @var \DvsaCommon\Dto\Organisation\OrganisationDto               $organisation
  * @var \DvsaCommon\Dto\Organisation\MotTestLogSummaryDto          $logSummary
  * @var \Organisation\ViewModel\MotTestLog\MotTestLogFormViewModel $formModel
- * @var \DvsaClient\ViewModel\DateViewModel                        $dateFrom
- * @var \DvsaClient\ViewModel\DateViewModel                        $dateTo
+ * @var \DvsaClient\ViewModel\DateTimeViewModel                    $dateFrom
+ * @var \DvsaClient\ViewModel\DateTimeViewModel                    $dateTo
  * @var \Report\Table\Table                                        $table
  */
 
@@ -90,7 +90,7 @@ if ($dateLinks->findOneBy('active', true)) {
         if ($rowsTotalCount > 0) {
             echo $this->partial(
                 'report/top-line', [
-                    'text'        => 'Showing <strong>%s</strong> tests performed <strong>%s</strong>',
+                    'text'        => '<strong>%s</strong> tests performed <strong>%s</strong>',
                     'itemsNumber' => $rowsTotalCount,
                     'range'       => $topLineLabel
                 ]

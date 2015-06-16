@@ -3,7 +3,7 @@
 namespace Organisation\ViewModel\MotTestLog;
 
 use DvsaClient\ViewModel\AbstractFormModel;
-use DvsaClient\ViewModel\DateViewModel;
+use DvsaClient\ViewModel\DateTimeViewModel;
 use DvsaCommon\Constants\SearchParamConst;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Messages\DateErrors;
@@ -17,15 +17,19 @@ class MotTestLogFormViewModel extends AbstractFormModel
 
     const VALIDATION_MAX_DAYS = 31;
 
-    /**  @var DateViewModel */
+    /**
+     * @var DateTimeViewModel
+     */
     private $dateFrom;
-    /**  @var DateViewModel */
+    /**
+     * @var DateTimeViewModel
+     */
     private $dateTo;
 
     public function __construct()
     {
-        $this->setDateFrom(new DateViewModel());
-        $this->setDateTo(new DateViewModel());
+        $this->setDateFrom(new DateTimeViewModel());
+        $this->setDateTo(new DateTimeViewModel());
     }
 
     /**
@@ -42,7 +46,7 @@ class MotTestLogFormViewModel extends AbstractFormModel
 
             if (!empty($date)) {
                 $this->setDateFrom(
-                    new DateViewModel(
+                    new DateTimeViewModel(
                         ArrayUtils::tryGet($date, 'Year'),
                         ArrayUtils::tryGet($date, 'Month'),
                         ArrayUtils::tryGet($date, 'Day')
@@ -54,10 +58,11 @@ class MotTestLogFormViewModel extends AbstractFormModel
 
             if (!empty($date)) {
                 $this->setDateTo(
-                    new DateViewModel(
+                    new DateTimeViewModel(
                         ArrayUtils::tryGet($date, 'Year'),
                         ArrayUtils::tryGet($date, 'Month'),
-                        ArrayUtils::tryGet($date, 'Day')
+                        ArrayUtils::tryGet($date, 'Day'),
+                        23, 59, 59
                     )
                 );
             }
@@ -65,12 +70,12 @@ class MotTestLogFormViewModel extends AbstractFormModel
         } else {
             $date = $formData->get(SearchParamConst::SEARCH_DATE_FROM_QUERY_PARAM);
             if (!empty($date)) {
-                $this->setDateFrom((new DateViewModel())->setDate(new \DateTime('@' . $date)));
+                $this->setDateFrom((new DateTimeViewModel())->setDate(new \DateTime('@' . $date)));
             }
 
             $date = $formData->get(SearchParamConst::SEARCH_DATE_TO_QUERY_PARAM);
             if (!empty($date)) {
-                $this->setDateTo((new DateViewModel())->setDate(new \DateTime('@' . $date)));
+                $this->setDateTo((new DateTimeViewModel())->setDate(new \DateTime('@' . $date)));
             }
         }
 
@@ -78,7 +83,7 @@ class MotTestLogFormViewModel extends AbstractFormModel
     }
 
     /**
-     * @return DateViewModel
+     * @return DateTimeViewModel
      */
     public function getDateFrom()
     {
@@ -86,19 +91,18 @@ class MotTestLogFormViewModel extends AbstractFormModel
     }
 
     /**
-     * @param DateViewModel $dateFrom
+     * @param DateTimeViewModel $dateFrom
      *
      * @return $this
      */
-    public function setDateFrom(DateViewModel $dateFrom)
+    public function setDateFrom(DateTimeViewModel $dateFrom)
     {
         $this->dateFrom = $dateFrom;
-
         return $this;
     }
 
     /**
-     * @return DateViewModel
+     * @return DateTimeViewModel
      */
     public function getDateTo()
     {
@@ -106,14 +110,13 @@ class MotTestLogFormViewModel extends AbstractFormModel
     }
 
     /**
-     * @param DateViewModel $dateTo
+     * @param DateTimeViewModel $dateTo
      *
      * @return $this
      */
-    public function setDateTo(DateViewModel $dateTo)
+    public function setDateTo(DateTimeViewModel $dateTo)
     {
         $this->dateTo = $dateTo;
-
         return $this;
     }
 

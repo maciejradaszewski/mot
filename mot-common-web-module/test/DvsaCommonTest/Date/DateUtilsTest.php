@@ -4,9 +4,7 @@ namespace DvsaCommonTest\Date;
 use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Date\Exception\DateException;
-use DvsaCommon\Date\Exception\DateTimeErrorException;
 use DvsaCommon\Date\Exception\IncorrectDateFormatException;
-use DvsaCommon\Date\Exception\NonexistentDateException;
 use PHPUnit_Framework_TestCase;
 use Zend\Form\Element\Date;
 use Zend\Form\Element\DateTime;
@@ -500,6 +498,108 @@ class DateUtilsTest extends PHPUnit_Framework_TestCase
             ['2015-07-29', '2015-06-30'],
             ['2015-07-28', '2015-06-29'],
             ['2015-04-30', '2015-03-31'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderTestToDateTimeFromParts
+     */
+    public function testToDateTimeFromParts($parts, $expect)
+    {
+        if (isset($expect['exception'])) {
+            $exception = $expect['exception'];
+            $this->setExpectedException($exception['class'], $exception['message']);
+        }
+
+        $actual = call_user_func_array(DateUtils::class . '::toDateTimeFromParts', $parts);
+
+        if (isset($expect['result'])) {
+            $this->assertEquals($expect['result'], $actual);
+        }
+    }
+
+    public function dataProviderTestToDateTimeFromParts()
+    {
+        return [
+            [
+                //  date without time
+                'parts'  => [
+                    'year'  => '2011',
+                    'month' => '2',
+                    'day'   => '3',
+                ],
+                'expect' => [
+                    'result' => new \DateTime('2011-02-03'),
+                ],
+            ],
+            [
+                //  date without time
+                'parts'  => [
+                    'year'  => 2011,
+                    'month' => 10,
+                    'day'   => 9,
+                ],
+                'expect' => [
+                    'result' => new \DateTime('2011-10-09'),
+                ],
+            ],
+            [
+                //  date with time
+                'parts'  => [
+                    'year'   => 2011,
+                    'month'  => 10,
+                    'day'    => 9,
+                    'hour'   => 23,
+                    'minute' => 24,
+                    'second' => 25,
+                ],
+                'expect' => [
+                    'result' => new \DateTime('2011-10-09 23:24:25'),
+                ],
+            ],
+            [
+                //  invalid year
+                'parts'  => [
+                    'year'   => 11,
+                    'month'  => 10,
+                    'day'    => 9,
+                ],
+                'expect' => [
+                    'exception' => [
+                        'class' => IncorrectDateFormatException::class,
+                        'message' => 'wrong params length or type',
+                    ],
+                ],
+            ],
+            [
+                //  invalid month
+                'parts'  => [
+                    'year'   => 2011,
+                    'month'  => 'a',
+                    'day'    => 9,
+                ],
+                'expect' => [
+                    'exception' => [
+                        'class' => IncorrectDateFormatException::class,
+                        'message' => 'wrong params length or type',
+                    ],
+                ],
+            ],
+            [
+                //  invalid hour
+                'parts'  => [
+                    'year'   => 2011,
+                    'month'  => 10,
+                    'day'    => 9,
+                    'hour'   => 'b',
+                ],
+                'expect' => [
+                    'exception' => [
+                        'class' => IncorrectDateFormatException::class,
+                        'message' => 'wrong params length or type',
+                    ],
+                ],
+            ],
         ];
     }
 }

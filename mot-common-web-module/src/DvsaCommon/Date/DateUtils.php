@@ -476,6 +476,20 @@ final class DateUtils
         return self::toDate($year . '-' . $month . '-' . $day);
     }
 
+    public static function toDateTimeFromParts($year, $month, $day, $hour = 0, $minute = 0, $second = 0)
+    {
+        $dateTimeStr = sprintf('%04s-%02s-%02sT%02s:%02s:%02sZ', $year, $month, $day, $hour, $minute, $second);
+
+        if (strlen($year) !== 4 || !preg_match(self::$FORMAT_ISO8601TZ, $dateTimeStr)) {
+            throw new IncorrectDateFormatException(
+                'numeric: day, month, year, hour, minute, second',
+                'wrong params length or type'
+            );
+        }
+
+        return self::toDateTime($dateTimeStr);
+    }
+
     /**
      * Parses string input (see $FORMAT_DATETIME_DESC) to DateTime object
      *
