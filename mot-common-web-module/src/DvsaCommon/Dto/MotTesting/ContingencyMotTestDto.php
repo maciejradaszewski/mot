@@ -240,9 +240,8 @@ class ContingencyMotTestDto extends AbstractDataTransferObject
     protected function filterDateFormat($date)
     {
         $dateTime = \DateTime::createFromFormat('Y-m-d', $date);
-
         if ($dateTime instanceof \DateTime) {
-            return $dateTime->format('Y-m-d');
+            return $dateTime->setTime(0, 0, 0)->format('Y-m-d');
         } else {
             return $date;
         }

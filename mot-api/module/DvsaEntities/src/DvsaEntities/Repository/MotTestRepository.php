@@ -8,9 +8,11 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use DvsaCommon\Constants\SearchParamConst;
 use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
+use DvsaCommonApi\Model\SearchParam;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\Exception\ServiceException;
 use DvsaEntities\DqlBuilder\NativeQueryBuilder;
@@ -27,6 +29,7 @@ use DvsaEntities\Entity\Vehicle;
  * Class MotTestRepository
  *
  * @package DvsaEntities\Repository
+ * @codeCoverageIgnore
  */
 class MotTestRepository extends AbstractMutableRepository
 {
@@ -857,7 +860,8 @@ class MotTestRepository extends AbstractMutableRepository
     public function getNumberOfMotTestsForToday($organisationId)
     {
         $sql =
-            'SELECT
+            '
+            SELECT
               COUNT(test.id) as `today`
             FROM
               mot_test AS test
@@ -972,47 +976,64 @@ class MotTestRepository extends AbstractMutableRepository
                 ->setParameter('DATE_TO', $searchParam->getDateTo() ?: new \DateTime());
         }
 
-        return $qb;
-    }
+        //  logical block: define order by statement
+        $orderBy = $searchParam->getSortColumnNameDatabase();
+        if (!empty($orderBy)) {
+            if (!is_array($orderBy)) {
+                $orderBy = [$orderBy];
+            }
 
-    public function getMotTestLogsResult(MotTestSearchParam $searchParam)
-    {
-        $qb = $this->prepareMotTest($searchParam);
-        $qb
-            ->resetPart('select', 'all')
-            ->select('mt.number, mt.client_ip, ts.name AS status, mt.started_date')
-            ->select('mt.registration, mt.vin')
-            ->select(
-                'vma.code as make_code, COALESCE(vma.name, mt.make_name) AS makeName, ' .
-                'vma.code as make_code, COALESCE(vmo.name, mt.model_name) AS modelName'
-            )
-            ->select('vc.name AS vehicle_class')
-            ->select('s.site_number AS siteNumber, p.username as userName, tt.description as testTypeName')
-            ->select(
-                'CASE WHEN eml.id IS NOT NULL THEN emp.username ELSE NULL END AS emRecTester,
-                 CASE WHEN eml.id IS NOT NULL THEN mt.created_on ELSE NULL END AS emRecDateTime,
-                 COALESCE(emcm.comment, emrl.name) AS emReason,
-                 eml.number AS emCode',
-                'emergency'
-            )
-            ->join('emergency_log', 'eml', 'eml.id = mt.emergency_log_id', NativeQueryBuilder::JOIN_TYPE_LEFT)
-            ->join(
-                'emergency_reason_lookup',
-                'emrl',
-                'emrl.id = mt.emergency_reason_lookup_id',
-                NativeQueryBuilder::JOIN_TYPE_LEFT
-            )
-            ->join('comment', 'emcm', 'emcm.id = mt.emergency_reason_comment_id', NativeQueryBuilder::JOIN_TYPE_LEFT)
-            ->join('person', 'emp', 'emp.id = mt.created_by')
-            ->join('mot_test_status', 'ts', 'ts.id = mt.status_id')
-            ->join('vehicle_class', 'vc', 'vc.id = mt.vehicle_class_id');
+            foreach ($orderBy as $order) {
+                $qb->orderBy($order . ' ' . $searchParam->getSortDirection());
+            }
+        }
 
+        //  logical block: define pagination statement
         if ($searchParam->getStart() > 0) {
             $qb->setOffset($searchParam->getStart());
         }
 
         if ($searchParam->getRowCount() > 0) {
             $qb->setLimit($searchParam->getRowCount());
+        }
+
+        return $qb;
+    }
+
+    public function getMotTestLogsResult(SearchParam $searchParam)
+    {
+        $qb = $this->prepareMotTest($searchParam);
+        $qb
+            ->resetPart('select', 'all')
+            ->select('mt.number, mt.client_ip, ts.name AS status')
+            ->select('mt.registration, mt.vin')
+            ->select('vma.code as make_code, COALESCE(vma.name, mt.make_name) AS makeName')
+            ->select('vma.code as make_code, COALESCE(vmo.name, mt.model_name) AS modelName')
+            ->select('vc.name AS vehicle_class')
+            ->select('s.site_number AS siteNumber, p.username as userName, tt.description as testTypeName')
+            ->select('mt.emergency_log_id AS emLogId')
+            ->join('vehicle_class', 'vc', 'vc.id = mt.vehicle_class_id');
+
+        if ($searchParam->getFormat() === SearchParamConst::FORMAT_DATA_CSV) {
+            $qb
+                ->select(
+                    'CASE WHEN eml.id IS NOT NULL THEN emp.username ELSE NULL END AS emRecTester,
+                    CASE WHEN eml.id IS NOT NULL THEN mt.created_on ELSE NULL END AS emRecDateTime,
+                    COALESCE(emcm.comment, emrl.name) AS emReason,
+                    eml.number AS emCode',
+                    'emergency'
+                )
+                ->join('emergency_log', 'eml', 'eml.id = mt.emergency_log_id', NativeQueryBuilder::JOIN_TYPE_LEFT)
+                ->join(
+                    'emergency_reason_lookup',
+                    'emrl',
+                    'emrl.id = mt.emergency_reason_lookup_id',
+                    NativeQueryBuilder::JOIN_TYPE_LEFT
+                )
+                ->join(
+                    'comment', 'emcm', 'emcm.id = mt.emergency_reason_comment_id', NativeQueryBuilder::JOIN_TYPE_LEFT
+                )
+                ->join('person', 'emp', 'emp.id = mt.created_by');
         }
 
         $sql = $this->getEntityManager()->getConnection()->prepare($qb->getSql());
@@ -1024,8 +1045,12 @@ class MotTestRepository extends AbstractMutableRepository
 
     public function getMotTestLogsResultCount(MotTestSearchParam $searchParam)
     {
-        $qb = $this->prepareMotTest($searchParam);
-        $qb->resetPart('select')->select('count(mt.id) AS count');
+        $qb = $this->prepareMotTest($searchParam)
+            ->resetPart('select')
+            ->select('count(mt.id) AS count')
+            ->resetPart('orderBy')
+            ->resetPart('offset')
+            ->resetPart('limit');
 
         $sql = $this->getEntityManager()->getConnection()->prepare($qb->getSql());
         $qb->bindParametersToStatement($sql);

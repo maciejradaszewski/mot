@@ -12,16 +12,30 @@ use PHPUnit_Framework_TestCase;
  */
 class OrganisationUrlBuilderTest extends PHPUnit_Framework_TestCase
 {
-    public function test_organisationPosition_shouldBeOk()
+    const ORG_ID = 1111;
+
+    public function test()
     {
-        $this->assertSame('organisation/1', OrganisationUrlBuilder::organisationById(1)->toString());
+        $base = 'organisation/' . self::ORG_ID;
+        $this->checkUrl(OrganisationUrlBuilder::organisationById(self::ORG_ID), $base);
+
+        $positionId = 9999;
+        $this->checkUrl(
+            OrganisationUrlBuilder::position(self::ORG_ID, $positionId),
+            $base . '/position/' . $positionId
+        );
+        $this->checkUrl(OrganisationUrlBuilder::sites(self::ORG_ID), $base . '/site');
+
+        $urlBuilder = OrganisationUrlBuilder::organisationById(self::ORG_ID);
+        $this->checkUrl($urlBuilder->usage(), $base . '/slot-usage');
+
+        $urlBuilder = OrganisationUrlBuilder::organisationById(self::ORG_ID);
+        $this->checkUrl($urlBuilder->usage()->periodData(), $base . '/slot-usage/period-data');
     }
 
-    public function test_organisationPosition_removeRole_shouldBeOk()
+    private function checkUrl(OrganisationUrlBuilder $urlBuilder, $expectUrl)
     {
-        $this->assertSame(
-            'organisation/1/position/1',
-            OrganisationUrlBuilder::organisationById(1)->position()->routeParam('positionId', 1)->toString()
-        );
+        $this->assertEquals($expectUrl, $urlBuilder->toString());
+        $this->assertInstanceOf(OrganisationUrlBuilder::class, $urlBuilder);
     }
 }

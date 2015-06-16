@@ -9,7 +9,8 @@ import org.openqa.selenium.support.PageFactory;
 
 public class AedmTestLogs extends BasePage {
 
-    public static final String PAGE_TITLE = "AUTHORISED EXAMINER :: TEST LOGS";
+    public static final String PAGE_TITLE = "TEST LOGS OF AUTHORISED EXAMINER\n"
+            + "TEST ORGANISATION";
 
     @FindBy(id = "dateFrom-Day") private WebElement fromWhichDay;
 
@@ -25,11 +26,11 @@ public class AedmTestLogs extends BasePage {
 
     @FindBy(id = "btn_search") private WebElement downloadCsvReport;
 
-    @FindBy(id = "validation-summary-id") private WebElement errorMessage;
+    @FindBy(id = "validation-message--failure") private WebElement errorMessage;
 
-    public AedmTestLogs(WebDriver driver) {
+    public AedmTestLogs(WebDriver driver, String title) {
         super(driver);
-        checkTitle(PAGE_TITLE);
+        checkTitle(PAGE_TITLE + " " + title);
         PageFactory.initElements(driver, this);
     }
 
@@ -66,6 +67,10 @@ public class AedmTestLogs extends BasePage {
     public AedmTestLogs downloadCsvReport() {
         downloadCsvReport.click();
         return this;
+    }
+
+    public boolean isValidationSummaryDisplayed(){
+        return errorMessage.isDisplayed();
     }
 
 }

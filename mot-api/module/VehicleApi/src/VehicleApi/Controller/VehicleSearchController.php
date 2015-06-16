@@ -45,10 +45,8 @@ class VehicleSearchController extends AbstractDvsaRestfulController
     public function getList()
     {
         try {
-
             $vehicles = $this->searchService->findVehicles($this->vehicleSearchParam);
             return ApiResponse::jsonOk($vehicles);
-
 
         } catch (\UnexpectedValueException $e) {
             return $this->returnBadRequestResponseModel(
@@ -58,5 +56,4 @@ class VehicleSearchController extends AbstractDvsaRestfulController
             );
         }
     }
-
 }

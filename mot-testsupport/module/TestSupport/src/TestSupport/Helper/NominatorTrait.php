@@ -28,10 +28,8 @@ trait NominatorTrait
         };
 
         foreach ($organisationIds as $aeId) {
-
             $response = $client->post(
-                OrganisationUrlBuilder::of()->organisationById($aeId)
-                    ->position()->toString(),
+                OrganisationUrlBuilder::position($aeId)->toString(),
                 [
                     'nomineeId' => $nomineeId,
                     'roleId' => $organisationRoleId

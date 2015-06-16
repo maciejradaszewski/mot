@@ -4,10 +4,13 @@ namespace DvsaClientTest\Mapper;
 
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\UrlBuilder\AbstractUrlBuilder;
+use DvsaCommonTest\TestUtils\TestCaseTrait;
 use DvsaCommonTest\TestUtils\XMock;
 
 abstract class AbstractMapperTest extends \PHPUnit_Framework_TestCase
 {
+    use TestCaseTrait;
+
     /** @var $client Client|\PHPUnit_Framework_MockObject_MockObject */
     protected $client;
 
@@ -27,45 +30,46 @@ abstract class AbstractMapperTest extends \PHPUnit_Framework_TestCase
      */
     protected function setupClientMockGet($url, $return)
     {
-        $url = (is_object($url) ? $url->toString() : $url);
-
-        $this->mockMethod('get', $this->once(), $return, $url);
+        $this->mockMethod($this->client, 'get', $this->once(), $return, [$this->getUrlAsString($url)]);
     }
 
     /**
-     * Mock a method of specified mock object
-     *
-     * @param string                                          $method
-     * @param \PHPUnit_Framework_MockObject_Matcher_Invocation $invocation
-     * @param mixed|\PHPUnit_Framework_MockObject_Stub         $returnValue
-     * @param array[]                                         $withParams (PHPUnit_Framework_Constraint or value)
-     *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @param AbstractUrlBuilder|String $url
+     * @param mixed $data
+     * @param mixed $return
      */
-    public function mockMethod(
-        $method,
-        $invocation = null,
-        $returnValue = null,
-        $withParams = null
-    ) {
-        $method = $this->client
-            ->expects($invocation ? $invocation : $this->any())
-            ->method($method);
+    protected function setupClientMockPost($url, $data, $return)
+    {
+        $this->mockMethod($this->client, 'post', $this->once(), $return, [$this->getUrlAsString($url), $data]);
+    }
 
-        if (is_array($withParams) && !empty($withParams)) {
-            $method->withConsecutive($withParams);
-        } elseif (!empty($withParams)) {
-            $method->with($this->equalTo($withParams));
-        }
+    /**
+     * @param AbstractUrlBuilder|String $url
+     * @param mixed $data
+     * @param mixed $return
+     */
+    protected function setupClientMockPut($url, $data, $return)
+    {
+        $this->mockMethod($this->client, 'put', $this->once(), $return, [$this->getUrlAsString($url), $data]);
+    }
 
-        if ($returnValue !== null) {
-            if ($returnValue instanceof \PHPUnit_Framework_MockObject_Stub) {
-                $method->will($returnValue);
-            } elseif ($returnValue instanceof \Exception) {
-                $method->willThrowException($returnValue);
-            } else {
-                $method->willReturn($returnValue);
-            }
-        }
+
+    /**
+     * @param AbstractUrlBuilder|String $url
+     * @param mixed $return
+     */
+    protected function setupClientMockDelete($url, $return)
+    {
+        $this->mockMethod($this->client, 'delete', $this->once(), $return, $this->getUrlAsString($url));
+    }
+
+    /**
+     * @param AbstractUrlBuilder|String $url
+     *
+     * @return string
+     */
+    private function getUrlAsString($url)
+    {
+        return (is_object($url) ? $url->toString() : $url);
     }
 }

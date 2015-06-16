@@ -2,6 +2,9 @@
 
 namespace DvsaCommon\Dto\Search;
 
+use DvsaCommon\Constants\SearchParamConst;
+use Zend\Stdlib\Parameters;
+
 /**
  * Class MotTestLogDto
  *
@@ -22,9 +25,9 @@ class MotTestSearchParamsDto extends SearchParamsDto
     /** @var string */
     private $vehicleRegNr;
     /** @var int */
-    private $dateFromTS;
+    private $dateFromTs;
     /** @var int */
-    private $dateToTS;
+    private $dateToTs;
     /** @var string[] */
     private $status = [];
     /** @var string[] */
@@ -154,9 +157,9 @@ class MotTestSearchParamsDto extends SearchParamsDto
     /**
      * @return int
      */
-    public function getDateFromTS()
+    public function getDateFromTs()
     {
-        return $this->dateFromTS;
+        return $this->dateFromTs;
     }
 
     /**
@@ -164,9 +167,9 @@ class MotTestSearchParamsDto extends SearchParamsDto
      *
      * return SearchParamsDto
      */
-    public function setDateFromTS($val = null)
+    public function setDateFromTs($val = null)
     {
-        $this->dateFromTS = $val;
+        $this->dateFromTs = $val;
 
         return $this;
     }
@@ -174,9 +177,9 @@ class MotTestSearchParamsDto extends SearchParamsDto
     /**
      * @return int
      */
-    public function getDateToTS()
+    public function getDateToTs()
     {
-        return $this->dateToTS;
+        return $this->dateToTs;
     }
 
     /**
@@ -184,9 +187,9 @@ class MotTestSearchParamsDto extends SearchParamsDto
      *
      * return SearchParamsDto
      */
-    public function setDateToTS($val = null)
+    public function setDateToTs($val = null)
     {
-        $this->dateToTS = $val;
+        $this->dateToTs = $val;
 
         return $this;
     }
@@ -229,5 +232,20 @@ class MotTestSearchParamsDto extends SearchParamsDto
         $this->testType = $testType;
 
         return $this;
+    }
+
+    public function toQueryParams()
+    {
+        $params = new Parameters(
+            parent::toQueryParams()->toArray()
+            + array_filter(
+                [
+                    SearchParamConst::SEARCH_DATE_FROM_QUERY_PARAM => $this->getDateFromTs(),
+                    SearchParamConst::SEARCH_DATE_TO_QUERY_PARAM   => $this->getDateToTs(),
+                ]
+            )
+        );
+
+        return $params;
     }
 }

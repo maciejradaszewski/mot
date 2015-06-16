@@ -2,10 +2,10 @@
 
 namespace SiteTest\Controller;
 
+use Core\Service\MotFrontendAuthorisationServiceInterface;
 use DvsaClient\Entity\SiteDailyOpeningHours;
 use DvsaClient\Mapper\VehicleTestingStationMapper;
 use DvsaClient\MapperFactory;
-use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Date\Time;
 use DvsaCommonTest\Bootstrap;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
@@ -37,7 +37,7 @@ class SiteTestingDailyScheduleControllerTest extends AbstractFrontendControllerT
 
         $this->mapperFactoryMock = $this->getMapperFactoryMock($this->vtsMapper);
         $serviceManager->setService(MapperFactory::class, $this->mapperFactoryMock);
-        $authorisationService = XMock::of(MotAuthorisationServiceInterface::class);
+        $authorisationService = XMock::of(MotFrontendAuthorisationServiceInterface::class);
         $serviceManager->setService('AuthorisationService', $authorisationService);
 
         $this->controller->setServiceLocator($serviceManager);

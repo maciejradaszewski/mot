@@ -16,11 +16,11 @@ $min = (int)$this->min;
 $max = (int)$this->max;
 $maxLength = (int)$this->maxLength;
 
-$cntrCssClass = (string)$this->cntrCssClass;
+$escCntrCssClass = $this->cntrCssClass;
 $cssClass = (string)$this->cssClass;
 ?>
 
-<div class="form-group <?php echo $this->escapeCss($cntrCssClass); ?>">
+<div class="form-group <?php echo $escCntrCssClass; ?>">
     <?php
     echo $this->partial(
         'partials/form/label-element.phtml',
@@ -28,7 +28,6 @@ $cssClass = (string)$this->cssClass;
             'forId'    => $id,
             'label'    => $label,
             'required' => $isRequire,
-
         ]
     );
 

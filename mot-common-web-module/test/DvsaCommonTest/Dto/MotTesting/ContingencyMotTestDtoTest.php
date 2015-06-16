@@ -21,5 +21,4 @@ class ContingencyMotTestDtoTest extends AbstractDtoTester
         // test date filter
         $this->assertEquals('2014-01-01', $dto->setPerformedAt('2014-1-1')->getPerformedAt());
     }
-
 }

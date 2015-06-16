@@ -1,7 +1,10 @@
 <?php
 
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use Organisation\Controller\MotTestLogController;
 use Organisation\ViewModel\MotTestLog\MotTestLogFormViewModel;
 use Organisation\ViewModel\MotTestLog\MotTestLogViewModel;
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 
 /**
  * @var MotTestLogViewModel                                        $viewModel
@@ -10,111 +13,199 @@ use Organisation\ViewModel\MotTestLog\MotTestLogViewModel;
  * @var \Organisation\ViewModel\MotTestLog\MotTestLogFormViewModel $formModel
  * @var \DvsaClient\ViewModel\DateViewModel                        $dateFrom
  * @var \DvsaClient\ViewModel\DateViewModel                        $dateTo
+ * @var \Report\Table\Table                                        $table
  */
+
+$this->headScript()->appendFile('/js/partials/date-group.js');
+$this->headScript()->appendFile('/js/organisation/mot-test-log.js');
 
 $viewModel = $this->viewModel;
 
 $organisation = $viewModel->getOrganisation();
 $logSummary = $viewModel->getMotTestLogSummary();
+$dateLinks = $viewModel->getFilterBuilder()->getTimePeriodNavigation($this);
 
-//  --  get search parameters   --
+//  logical block: get form parameters   --
 $formModel = $viewModel->getFormModel();
 $dateFrom = $formModel->getDateFrom();
 $dateTo = $formModel->getDateTo();
 
-$title = 'Authorised Examiner :: Test logs';
-$this->headTitle($title);
-
-$this->headScript()->appendFile('/js/partials/date-group.js');
-$this->headScript()->appendFile('/js/organisation/mot-test-log.js');
-
-$this->layout()->setVariable('pageSubTitle', $title);
-$this->layout()->setVariable('pageTitle', $this->escapeHtml($viewModel->getOrganisation()->getName()));
-
 $numberFormatter = (new NumberFormatter('en_GB', NumberFormatter::DECIMAL));
 
+//  logical blocks: define dates interval in showing block
+if ($dateLinks->findOneBy('active', true)) {
+    $topLineLabel = $dateLinks->findOneBy('active', true)->getLabel();
+} else {
+    $topLineLabel = join(
+        ' ', [
+            'from', DateTimeDisplayFormat::date($dateFrom->getDate()),
+            'to', DateTimeDisplayFormat::date($dateTo->getDate()),
+        ]
+    );
+}
 ?>
 
-<div class="col-lg-12">
-    <br>
-    <div class="row slot-usage-totals">
-        <div class="col-md-3">
-            <h4>Total tests</h4>
+<div class="grid-row">
+    <div class="column-third">
+        <strong class="heading-medium">Total tests</strong>
+    </div>
+    <div class="column-two-thirds">
+        <div class="column-quarter">
+            <strong class="heading-large">
+                <?php echo $this->escapeHtml($numberFormatter->format($logSummary->getToday())); ?>
+            </strong><br>
+            <span class="small">Today</span>
         </div>
-        <div class="col-md-9">
-            <div class="row">
-                <div class="col-md-3 report-quarter">
-                    <h3 id="todayCount"><?php echo $numberFormatter->format($logSummary->getToday());?></h3>
-                    <span>Today</span>
-                </div>
-                <div class="col-md-3 report-quarter">
-                    <h3 id="lastWeekCount"><?php echo $numberFormatter->format($logSummary->getWeek());?></h3>
-                    <span>Last week<br>(Mon-Sun)</span>
-                </div>
-                <div class="col-md-3 report-quarter">
-                    <h3 id="LastMonthCount"><?php echo $numberFormatter->format($logSummary->getMonth());?></h3>
-                    <span>
-                        Last month<br>
-                        (<?php echo date('M Y', strtotime('first day of previous month')); ?>)
-                    </span>
-                </div>
-                <div class="col-md-3 report-quarter">
-                    <h3 id="LastYearCount"><?php echo $numberFormatter->format($logSummary->getYear());?></h3>
-                    <span>Last 365 days<br>(including today)</span>
-                </div>
-            </div>
+        <div class="column-quarter">
+            <strong class="heading-large">
+                <?php echo $this->escapeHtml($numberFormatter->format($logSummary->getWeek())); ?>
+            </strong><br>
+            <span class="small">Last week<br>(Mon-Sun)</span>
+        </div>
+        <div class="column-quarter">
+            <strong class="heading-large">
+                <?php echo $this->escapeHtml($numberFormatter->format($logSummary->getMonth())); ?>
+            </strong><br>
+            <span class="small">
+                Last month<br>
+                (<?php echo $this->escapeHtml(date('M Y', strtotime('first day of previous month'))); ?>)
+            </span>
+        </div>
+        <div class="column-quarter">
+            <strong class="heading-large">
+                <?php echo $this->escapeHtml($numberFormatter->format($logSummary->getYear())); ?>
+            </strong><br>
+            <span class="small">Last 365 days<br>(inc. today)</span>
         </div>
     </div>
 </div>
 
-<?php
-echo $this->partial('errorMessages', ['getFromFlash' => true, 'isShowHidden' => true]);
-echo $this->partial('infoMessages', ['getFromFlash' => true]);
-?>
+<br>
 
-<div class="row">
-    <div class="col-md-4">
-        <p>&nbsp;</p>
+<div class="layout-filter-data">
+    <div class="layout-filter-data__results">
+        <?php
+        $rowsTotalCount = $viewModel->getTable()->getRowsTotalCount();
+
+        if ($rowsTotalCount > 0) {
+            echo $this->partial(
+                'report/top-line', [
+                    'text'        => 'Showing <strong>%s</strong> tests performed <strong>%s</strong>',
+                    'itemsNumber' => $rowsTotalCount,
+                    'range'       => $topLineLabel
+                ]
+            );
+        }
+
+        $errorMessages      = $this->layout()->flashMessenger->getErrorMessages();
+        echo $this->partial(
+            'partial/gds/general/system-message', ['messages' => $errorMessages, 'type' => 'failure']
+        );
+        ?>
+
+        <?php if ($rowsTotalCount > 0) :
+            echo $viewModel->getTable()->renderTable($this);
+            echo $viewModel->getTable()->renderFooter($this);
+
+            if ($rowsTotalCount > MotTestLogController::MAX_TESTS_COUNT) :
+                echo $this->partial(
+                    'partial/gds/general/system-message', [
+                        'heading'  => 'Too many records to download a CSV file.',
+                        'messages' => [
+                            sprintf(
+                                'The filter currently spans over %s tests. ' .
+                                'Please narrow the date range and try again.',
+                                $numberFormatter->format(MotTestLogController::MAX_TESTS_COUNT)
+                            ),
+                        ],
+                        'type'     => 'important'
+                    ]
+                );
+            else: ?>
+                <div class="result__actions">
+                    <p>
+                        Download test logs as a
+                        <a class="" href="<?php echo $viewModel->getDownloadUrl(); ?>">CSV (Spreadsheet)</a>
+                        file.
+                    </p>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="layout-filter-data__filters">
+        <h2 class="filter__group-heading">Filters</h2>
+
         <form id="customDateSearch" action="" method="GET" name="customDateSearch" class="form-vertical">
             <?php echo $this->csrfToken() ?>
-            <div class="module-filters">
-                <h3 class="module-filters__header">Date range of report</h3>
 
-                <div class="form-group custom-date-range" id="dateRangeFields">
-                    <fieldset>
-                        <?php
-                        echo $this->partial(
-                            'partials/form/date-group.phtml',
-                            [
-                                'legend'     => 'From',
-                                'fieldKey'   => MotTestLogFormViewModel::FLD_DATE_FROM,
-                                'valueDay'   => $dateFrom->getDay(),
-                                'valueMonth' => $dateFrom->getMonth(),
-                                'valueYear'  => $dateFrom->getYear(),
-                            ]
-                        );
+            <div class="filter">
+                <h3 class="filter__heading">Performed</h3>
 
-                        echo $this->partial(
-                            'partials/form/date-group.phtml',
-                            [
-                                'legend'     => 'To',
-                                'fieldKey'   => MotTestLogFormViewModel::FLD_DATE_TO,
-                                'valueDay'   => $dateTo->getDay(),
-                                'valueMonth' => $dateTo->getMonth(),
-                                'valueYear'  => $dateTo->getYear(),
-                            ]
-                        );
-                        ?>
-                    </fieldset>
+                <div class="filter__content">
+                    <?php echo $this->partial(
+                        'filter/view/helper/ranges-helper.phtml', ['navigation' => $dateLinks]
+                    ); ?>
                 </div>
 
-                <div>
-                    <input id="btn_search" class="btn btn-primary" type="submit" value="Download CSV report">
+                <h3 class="filter__heading">Custom date range</h3>
+
+                <div class="filter__content">
+                    <div class="form-group custom-date-range" id="dateRangeFields">
+                        <fieldset>
+                            <?php
+                            echo $this->partial(
+                                'partials/form/date-group.phtml',
+                                [
+                                    'legend'       => 'From',
+                                    'fieldKey'     => MotTestLogFormViewModel::FLD_DATE_FROM,
+                                    'valueDay'     => $dateFrom->getDay(),
+                                    'valueMonth'   => $dateFrom->getMonth(),
+                                    'valueYear'    => $dateFrom->getYear(),
+                                    'errorMessage' => $formModel->getError(MotTestLogFormViewModel::FLD_DATE_FROM),
+                                ]
+                            );
+                            ?>
+                        </fieldset>
+                    </div>
+
+                    <div class="form-group custom-date-range" id="dateRangeFields">
+                        <fieldset>
+                            <?php
+                            echo $this->partial(
+                                'partials/form/date-group.phtml',
+                                [
+                                    'legend'       => 'To',
+                                    'fieldKey'     => MotTestLogFormViewModel::FLD_DATE_TO,
+                                    'valueDay'     => $dateTo->getDay(),
+                                    'valueMonth'   => $dateTo->getMonth(),
+                                    'valueYear'    => $dateTo->getYear(),
+                                    'errorMessage' => $formModel->getError(MotTestLogFormViewModel::FLD_DATE_TO),
+                                ]
+                            );
+                            ?>
+                        </fieldset>
+                    </div>
                 </div>
 
-                <p class="help-block">It is the responsibility of the requesting individual or entity to keep
-                    the contents of this report confidential</p>
+                <span class="filter__help">For example, <strong>21 11 2014</strong></span>
             </div>
+
+            <div class="filter__actions">
+                <button id="btn_search" class="button" type="submit">Update result</button>
+            </div>
+
         </form>
     </div>
 </div>
+
+<nav class="content-navigation">
+    <?php echo $this->partial(
+        'partial/gds/form/control-navigation-secondary',
+        [
+            'navigation' => [
+                'Return to Authorised Examiner' => AuthorisedExaminerUrlBuilderWeb::of($organisation->getId())
+            ]
+        ]
+    ); ?>
+</nav>

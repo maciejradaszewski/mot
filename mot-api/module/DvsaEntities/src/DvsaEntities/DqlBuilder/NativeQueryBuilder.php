@@ -5,7 +5,7 @@ namespace DvsaEntities\DqlBuilder;
 use Doctrine\DBAL\Driver\Statement;
 
 /**
- * @deprecated
+ * @deprecated use Doctrine
  */
 class NativeQueryBuilder
 {
@@ -32,8 +32,11 @@ class NativeQueryBuilder
         $parts = [
             'SELECT', join(', ', $this->select),
             'FROM', join(', ', $this->from),
-            join(' ', $this->join),
         ];
+
+        if (!empty($this->join)) {
+            $parts[] = join(' ', $this->join);
+        }
 
         if (!empty($this->where)) {
             array_push($parts, 'WHERE 1=1', join(' ', $this->where));
@@ -43,10 +46,10 @@ class NativeQueryBuilder
             array_push($parts, 'ORDER BY', join(', ', $this->orderBy));
         }
 
-        if ($this->limit > 0) {
+        if (isset($this->limit) && $this->limit > 0) {
             array_push($parts, 'LIMIT', (string)$this->limit);
 
-            if ($this->offset !== null) {
+            if (isset($this->offset) && $this->offset > 0) {
                 array_push($parts, 'OFFSET', $this->offset);
             }
         }
@@ -152,15 +155,16 @@ class NativeQueryBuilder
     public function join($tableName, $alias = null, $condition, $type = self::JOIN_TYPE_INNER)
     {
         $this->join[$alias ?: $tableName] = join(
-            ' ',
-            [
-                $type,
-                'JOIN',
-                $tableName,
-                ($alias ? 'AS ' . $alias : null),
-                'ON',
-                $condition,
-            ]
+            ' ', array_filter(
+                [
+                    $type,
+                    'JOIN',
+                    $tableName,
+                    ($alias ? 'AS ' . $alias : null),
+                    'ON',
+                    $condition,
+                ]
+            )
         );
 
         return $this;
@@ -177,9 +181,9 @@ class NativeQueryBuilder
     public function andWhere($condition, $key = null)
     {
         if ($key === null) {
-            $this->where[] = ' AND ' . $condition;
+            $this->where[] = 'AND ' . $condition;
         } else {
-            $this->where[$key] = ' AND ' . $condition;
+            $this->where[$key] = 'AND ' . $condition;
         }
 
         return $this;

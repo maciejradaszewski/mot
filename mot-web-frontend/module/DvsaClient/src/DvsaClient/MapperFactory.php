@@ -7,6 +7,7 @@ use DvsaClient\Mapper\EquipmentMapper;
 use DvsaClient\Mapper\EquipmentModelMapper;
 use DvsaClient\Mapper\EventMapper;
 use DvsaClient\Mapper\MotTestInProgressMapper;
+use DvsaClient\Mapper\MotTestLogMapper;
 use DvsaClient\Mapper\OrganisationMapper;
 use DvsaClient\Mapper\OrganisationPositionMapper;
 use DvsaClient\Mapper\OrganisationRoleMapper;
@@ -28,10 +29,10 @@ use Zend\Http\Client;
 /**
  * Class MapperFactory
  *
- * @property-read AuthorisedExaminerSlotMapper                       $AuthorisedExaminerSlot
  * @property-read EquipmentMapper                                    $Equipment
  * @property-read EquipmentModelMapper                               $EquipmentModel
  * @property-read MotTestInProgressMapper                            $MotTestInProgress
+ * @property-read MotTestLogMapper                                   $MotTestLog
  * @property-read OrganisationMapper                                 $Organisation
  * @property-read OrganisationPositionMapper                         $OrganisationPosition
  * @property-read OrganisationRoleMapper                             $OrganisationRole
@@ -70,6 +71,7 @@ class MapperFactory
     const USER_ADMIN = 'UserAdmin';
     const ACCOUNT = 'Account';
     const SECURITY_QUESTION = 'SecurityQuestion';
+    const MOT_TEST_LOG = 'MotTestLog';
 
     protected $client;
 

@@ -23,14 +23,6 @@ use DvsaCommonTest\TestUtils\XMock;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use UserAdmin\Service\UserAdminSessionManager;
 use Zend\View\Model\ViewModel;
-use Zend\Http\Request;
-use Zend\Http\Response;
-use Zend\Mvc\Controller\Plugin\FlashMessenger;
-use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\Http\TreeRouteStack as HttpRouter;
-use Zend\Mvc\Router\RouteMatch;
-use Zend\Session\Container;
-use Zend\Stdlib\Parameters;
 
 /**
  * Class PasswordResetControllerTest

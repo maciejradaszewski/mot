@@ -7,6 +7,7 @@ use DvsaCommon\Dto\Search\SearchResultDto;
 use DvsaCommonApi\Model\OutputFormat;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaMotApi\Model\OutputFormat\OutputFormatDataCsvMotTestLog;
+use DvsaMotApi\Model\OutputFormat\OutputFormatDataTablesMotTestLog;
 
 /**
  * Class ESDocMotTestLog
@@ -29,9 +30,14 @@ class ESDocMotTestLog extends ESDocType
     {
         $format = $results->getSearched()->getFormat();
 
+        $outputFormat = null;
         if ($format == SearchParamConst::FORMAT_DATA_CSV) {
             $outputFormat = new OutputFormatDataCsvMotTestLog();
+        } elseif ($format == SearchParamConst::FORMAT_DATA_TABLES) {
+            $outputFormat = new OutputFormatDataTablesMotTestLog();
+        }
 
+        if ($outputFormat instanceof OutputFormat) {
             $outputFormat->setSourceType(
                 $results->isElasticSearch()
                 ? OutputFormat::SOURCE_TYPE_ES

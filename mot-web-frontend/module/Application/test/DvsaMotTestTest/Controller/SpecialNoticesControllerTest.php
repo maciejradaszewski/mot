@@ -23,8 +23,9 @@ class SpecialNoticesControllerTest extends AbstractDvsaMotTestTestCase
     protected function setUp()
     {
         $serviceManager = Bootstrap::getServiceManager();
-        $markdown       = $serviceManager->get('MaglMarkdown\MarkdownService');
-        $controller     = new SpecialNoticesController($markdown, XMock::of(WebAcknowledgeSpecialNoticeAssertion::class));
+
+        $markdown = $serviceManager->get('MaglMarkdown\MarkdownService');
+        $controller = new SpecialNoticesController($markdown, XMock::of(WebAcknowledgeSpecialNoticeAssertion::class));
 
         $this->setServiceManager($serviceManager);
         $this->setController($controller);
@@ -270,7 +271,7 @@ class SpecialNoticesControllerTest extends AbstractDvsaMotTestTestCase
         $headers  = $response->getHeaders();
 
         // Status code
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
 
         // Check Content-Type
         $this->assertTrue($headers->has('Content-Type'));
@@ -278,7 +279,10 @@ class SpecialNoticesControllerTest extends AbstractDvsaMotTestTestCase
 
         // Check Content-Disposition
         $this->assertTrue($headers->has('Content-Disposition'));
-        $this->assertEquals('attachment; filename="Special Notice.pdf"', $headers->get('Content-Disposition')->getFieldValue());
+        $this->assertEquals(
+            'attachment; filename="Special Notice.pdf"',
+            $headers->get('Content-Disposition')->getFieldValue()
+        );
 
         $this->assertNotEmpty($response->getBody());
     }

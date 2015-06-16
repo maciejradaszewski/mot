@@ -25,6 +25,7 @@ class TestShared
     const ROW_COUNT_PARAM = 'rowCount';
     const TYPE_PARAM = 'type';
     const ES_ENABLED = 'esEnabled';
+    const SORT_DIRECTION = 'sortDirection';
 
     const FORMAT_PARAM = 'format';
     const FORMAT_DATA_OBJECT = 'DATA_OBJECT';

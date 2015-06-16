@@ -13,7 +13,6 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
     const EDIT                                  = '/edit';
 
     const SLOTS                                 = '/slots';
-    const SLOTS_USAGE                           = '/usage[/page/:page][:extension]';
     const SLOTS_SETTINGS                        = '/settings';
     const SLOTS_PURCHASE                        = '/purchase';
     const SLOTS_PURCHASE_DETAILS                = '/details';
@@ -39,7 +38,7 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
     const TRANSACTIONS                          = '/transactions[/page/:page][:extension]';
 
     const MOT_TEST_LOG                          = '/mot-test-log';
-    const MOT_TEST_LOG_DOWNLOAD_CSV             = '/download/csv';
+    const MOT_TEST_LOG_CSV                      = '/csv';
 
     protected $routesStructure
         = [
@@ -49,7 +48,6 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
                     self::CREATE         => '',
                     self::EDIT           => '',
                     self::SLOTS          => [
-                        self::SLOTS_USAGE    => '',
                         self::SLOTS_SETTINGS => '',
                         self::SLOTS_PURCHASE => [
                             self::SLOTS_PURCHASE_DETAILS          => '',
@@ -74,7 +72,7 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
                     self::REMOVE_PRINCIPAL_CONFIRMATION => '',
                     self::VEHICLE_TESTING_STATION => '',
                     self::MOT_TEST_LOG             => [
-                        self::MOT_TEST_LOG_DOWNLOAD_CSV => '',
+                        self::MOT_TEST_LOG_CSV => '',
                     ],
                 ],
         ];
@@ -145,40 +143,11 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
      */
     public static function motTestLogDownloadCsv($orgId)
     {
-        return self::motTestLog($orgId)->appendRoutesAndParams(self::MOT_TEST_LOG_DOWNLOAD_CSV);
+        return self::motTestLog($orgId)->appendRoutesAndParams(self::MOT_TEST_LOG_CSV);
     }
 
     public static function slots($aeId)
     {
         return self::of($aeId)->appendRoutesAndParams(self::SLOTS);
-    }
-
-    public static function slotsUsage($aeId, $page = null, $extension = null)
-    {
-        $url = self::slots($aeId)
-            ->appendRoutesAndParams(self::SLOTS_USAGE);
-
-        if ($page > 0) {
-            $url->routeParam('page', (int)$page);
-        }
-
-        if (!empty($extension)) {
-            $url->routeParam('extension', $extension);
-        }
-
-        return $url;
-    }
-
-    public static function siteSlotUsage($aeId, $siteId, $pageNr = null)
-    {
-        $url = self::of($aeId)
-            ->appendRoutesAndParams(self::SITE_SLOT_USAGE)
-            ->routeParam('id', $siteId);
-
-        if ($pageNr > 0) {
-            $url->routeParam('page', $pageNr);
-        }
-
-        return $url;
     }
 }

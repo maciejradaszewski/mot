@@ -295,6 +295,7 @@ class MotTestSearchController extends AbstractAuthActionController
         $searchParamsDto
             ->setVehicleId($vehicleId)
             ->setFormat(SearchParamConst::FORMAT_DATA_TABLES)
+            ->setSortBy('0')    //  sort by testDate
             ->setSortDirection(SearchParamConst::SORT_DIRECTION_DESC)
             ->setRowsCount(500);
 

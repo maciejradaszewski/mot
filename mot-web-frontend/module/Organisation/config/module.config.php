@@ -2,7 +2,6 @@
 
 use DvsaCommon\Validator\UsernameValidator;
 use Organisation\Controller\AuthorisedExaminerPrincipalController;
-use Organisation\Controller\ListController;
 use Organisation\Controller\MotTestLogController;
 use Organisation\Controller\RoleController;
 use Organisation\Controller\SearchController;
@@ -106,6 +105,20 @@ return [
                             'defaults'    => [
                                 'controller' => MotTestLogController::class,
                                 'action'     => 'index',
+
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'download'    => [
+                                'type'    => 'segment',
+                                'options' => [
+                                    'route'       => '/csv',
+                                    'defaults'    => [
+                                        'controller' => MotTestLogController::class,
+                                        'action'     => 'downloadCsv',
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -215,16 +228,16 @@ return [
     'controllers'    => [
         'invokables' => [
             SearchController::class                      => SearchController::class,
-            ListController::class                        => ListController::class,
             ViewController::class                        => ViewController::class,
             SlotsUsageController::class                  => SlotsUsageController::class,
-            MotTestLogController::class                  => MotTestLogController::class,
             VehicleTestingStationController::class       => VehicleTestingStationController::class,
         ],
     ],
     'view_manager'   => [
         'template_map'        => [
-            'organisationAddressDetails' => __DIR__ . '/../view/partials/address-details.phtml',
+            'organisationAddressDetails'                 => __DIR__ . '/../view/partials/address-details.phtml',
+            'mot-test-log/formatter/vehicle-model-sub-row' =>
+                __DIR__ . '/../view/organisation/mot-test-log/formatter/vehicle-model-sub-row.phtml',
         ],
         'template_path_stack' => [
             __DIR__ . '/../view',

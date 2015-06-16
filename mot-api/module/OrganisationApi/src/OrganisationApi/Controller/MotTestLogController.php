@@ -7,7 +7,7 @@ use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApi\Model\ApiResponse;
 use DvsaElasticSearch\Service\ElasticSearchService;
-use DvsaEntities\DqlBuilder\SearchParam\MotTestSearchParam;
+use DvsaEntities\DqlBuilder\SearchParam\MotTestLogSearchParam;
 use OrganisationApi\Service\MotTestLogService;
 
 /**
@@ -44,22 +44,23 @@ class MotTestLogController extends AbstractDvsaRestfulController
         );
     }
 
-    public function create($data)
+    public function logDataAction()
     {
         $orgId = (int) $this->params()->fromRoute('id');
-
-        $searchParams = new MotTestSearchParam($this->entityManager);
-        $searchParams
-            ->fromDto(DtoHydrator::jsonToDto($data))
-            ->setOrganisationId($orgId);
-
         if ($orgId <= 0) {
             return $this->returnBadRequestResponseModel(
-                'invalid organisation identifier',
+                self::ERR_ORG_ID,
                 self::ERROR_CODE_REQUIRED,
                 self::ERR_ORG_ID
             );
         }
+
+        $postData = $this->processBodyContent($this->getRequest());
+
+        $searchParams = new MotTestLogSearchParam($this->entityManager);
+        $searchParams
+            ->fromDto(DtoHydrator::jsonToDto($postData))
+            ->setOrganisationId($orgId);
 
         return ApiResponse::jsonOk($this->elasticSearchService->findTestsLog($searchParams));
     }

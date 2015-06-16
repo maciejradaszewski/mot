@@ -67,7 +67,7 @@ class VehicleTestingStationDtoMapperTest extends AbstractMapperTest
         $apiUrl = VehicleTestingStationUrlBuilder::contactUpdate(self::ID);
         $jsonContact = DtoHydrator::dtoToJson($contactDto);
 
-        $this->mockMethod('put', $this->once(), ['id' => self::ID], [$apiUrl, $jsonContact]);
+        $this->setupClientMockPut($apiUrl, $jsonContact, ['id' => self::ID]);
 
         $this->mapper->updateContactDetails(self::ID, $contactDto);
     }

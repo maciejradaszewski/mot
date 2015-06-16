@@ -92,7 +92,7 @@ class VehicleSearchParamTest extends AbstractServiceTestCase
             'searchType' => 'vin',
             'registration' => null,
             'vin' => 'FNZ6110',
-            'sortDirection' => 'ASC',
+            'sortDirection' => null,
             'rowCount' => 10,
             'start' => 0,
         ];

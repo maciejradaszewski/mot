@@ -2,24 +2,27 @@
 
 namespace Organisation\Controller;
 
+use Core\Service\MotFrontendAuthorisationServiceInterface;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
+use DvsaClient\Mapper\MotTestLogMapper;
 use DvsaClient\Mapper\OrganisationMapper;
 use DvsaClient\MapperFactory;
-use DvsaCommon\Auth\NotLoggedInException;
-use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Auth\PermissionAtOrganisation;
+use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\SearchParamConst;
 use DvsaCommon\Dto\Organisation\MotTestLogSummaryDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Dto\Search\MotTestSearchParamsDto;
 use DvsaCommon\Dto\Search\SearchResultDto;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
-use DvsaCommon\Messages\DateErrors;
+use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use DvsaCommonTest\TestUtils\TestCasePermissionTrait;
 use DvsaCommonTest\TestUtils\XMock;
 use Organisation\ViewModel\MotTestLog\MotTestLogFormViewModel;
+use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
 use Zend\View\Model\ViewModel;
@@ -32,10 +35,30 @@ use Zend\View\Renderer\PhpRenderer;
  */
 class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
 {
+    use TestCasePermissionTrait;
+
     private static $AE_ID = 1;
 
-    /** @var DtoHydrator */
+    /**
+     * @var DtoHydrator
+     */
     private $dtoHydrator;
+    /**
+     * @var  MotFrontendAuthorisationServiceInterface|MockObj
+     */
+    private $mockAuthSrv;
+    /**
+     * @var  MapperFactory|MockObj
+     */
+    private $mockMapperFactory;
+    /**
+     * @var  MotTestLogMapper|MockObj
+     */
+    private $mockMotTestLogMapper;
+    /**
+     * @var  OrganisationMapper|MockObj
+     */
+    private $mockOrganisationMapper;
 
     public function setUp()
     {
@@ -45,10 +68,16 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
         $serviceManager->setAllowOverride(true);
         $this->setServiceManager($serviceManager);
 
-        $this->setController(new MotTestLogController());
-        $this->getController()->setServiceLocator($serviceManager);
+        $this->mockMapperFactory = $this->getMapperFactory();
+        $this->mockAuthSrv = XMock::of(MotFrontendAuthorisationServiceInterface::class);
 
-        $serviceManager->setService(MapperFactory::class, $this->getMapperFactory());
+        $this->setController(
+            new MotTestLogController(
+                $this->mockAuthSrv,
+                $this->mockMapperFactory
+            )
+        );
+        $this->getController()->setServiceLocator($serviceManager);
 
         $this->createHttpRequestForController('MotTestLog');
 
@@ -63,18 +92,17 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
      * @param array   $permissions     User has permissions
      * @param string  $expectedUrl     Expect redirect if failure
      *
-     * @dataProvider dataProviderMotTestLogControllerTestCanAccessHasRight
+     * @dataProvider dataProviderMotTestLogControllerTestCanNotAccess
      */
-    public function testMotTestLogControllerCanAccessHasRight(
+    public function testMotTestLogControllerCanNotAccess(
         $action,
         $params = [],
         $permissions = [],
         $expectedUrl = null
     ) {
-        $this->setupAuthenticationServiceForIdentity(StubIdentityAdapter::asAedm());
-        $this->setupAuthorizationService($permissions);
-
-        $this->getRestClientMock('get', $this->getMotTestLogSummaryApiMock());
+        if (!empty($permissions)) {
+            $this->mockIsGrantedAtOrganisation($this->mockAuthSrv, $permissions, $params['id']);
+        }
 
         $this->getResponseForAction($action, $params);
 
@@ -85,15 +113,15 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
         }
     }
 
-    public function dataProviderMotTestLogControllerTestCanAccessHasRight()
+    public function dataProviderMotTestLogControllerTestCanNotAccess()
     {
         $homeUrl = '/';
 
         return [
             ['index', [], [], $homeUrl],
-            ['index', ['id' => self::$AE_ID], [PermissionAtOrganisation::AE_TEST_LOG], ],
             ['index', ['id' => self::$AE_ID], [PermissionInSystem::MOT_TEST_READ], $homeUrl],
             ['index', ['id' => self::$AE_ID], [], $homeUrl],
+            ['downloadCsv', ['id' => self::$AE_ID], [], $homeUrl],
         ];
     }
 
@@ -161,14 +189,20 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
             ->setResultCount(count($apiResult))
             ->setTotalResultCount(9999);
 
-        $paramsDto = $this->getSearchParams();
-
         //  --  mock    --
-        $this->getRestClientMock('post', $this->getMotTestLogResultApiMock($resultDto));
+        $this->mockMethod($this->mockMotTestLogMapper, 'getData', null, $resultDto);
 
         //  --  call    --
+        $this->mockIsGrantedAtOrganisation($this->mockAuthSrv, [PermissionAtOrganisation::AE_TEST_LOG], self::$AE_ID);
+
+        $queryParams = [
+            SearchParamConst::SEARCH_DATE_FROM_QUERY_PARAM => (new \DateTime('2013-12-11'))->getTimestamp(),
+            SearchParamConst::SEARCH_DATE_TO_QUERY_PARAM   => (new \DateTime('2014-03-02'))->getTimestamp(),
+        ];
+        $this->getResultForAction2('get', 'downloadCsv', ['id' => self::$AE_ID], $queryParams);
+
         /** @var Response $response */
-        $response = XMock::invokeMethod($this->getController(), 'downloadCsv', [self::$AE_ID, $paramsDto]);
+        $response = $this->getController()->getResponse();
 
         //  ----  check   ----
         $this->assertResponseStatus(self::HTTP_OK_CODE, $response);
@@ -203,20 +237,30 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
 
     /**
      * Test class methods getLogDataBySearchCriteria and getLogSummary
+     *
      * @dataProvider dataProviderTestGetLogX
      */
-    public function testGetMotLogX($httpMethod, $classMethod, $postResult, $expect)
+    public function testGetMotLogX($classMethod, $mocks, $expect)
     {
-        $this->getRestClientMock($httpMethod, $postResult);
+        if ($mocks !== null) {
+            foreach ($mocks as $mock) {
+                $this->mockMethod(
+                    $this->{$mock['class']}, $mock['method'], $this->once(), $mock['result'], $mock['params']
+                );
+            }
+        }
 
+        //  logical block: call
         $result = XMock::invokeMethod($this->getController(), $classMethod['name'], $classMethod['params']);
 
+        //  logical block: check
         if (!empty($expect['errorMsg'])) {
             $this->assertSame(
                 $expect['errorMsg'],
                 $this->controller->flashMessenger()->getCurrentErrorMessages()[0]
             );
         }
+
         $this->assertSame($expect['return'], $result);
     }
 
@@ -225,47 +269,117 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
         $paramsDto = $this->getSearchParams();
 
         return [
+            //  getLogDataBySearchCriteria
             [
-                'httpMethod' => 'post',
                 'method' => [
                     'name' => 'getLogDataBySearchCriteria',
                     'params' => [self::$AE_ID, $paramsDto],
                 ],
-                'postResult' => $this->getMotTestLogResultApiMock(['RESULT']),
+                'mocks'  => [
+                    [
+                        'class'  => 'mockMotTestLogMapper',
+                        'method' => 'getData',
+                        'params' => [self::$AE_ID, $paramsDto],
+                        'result' => ['RESULT'],
+                    ],
+                ],
                 'expect'     => [
                     'return' => ['RESULT'],
                 ],
             ],
             [
-                'httpMethod' => 'post',
                 'method' => [
                     'name' => 'getLogDataBySearchCriteria',
                     'params' => [self::$AE_ID, $paramsDto],
                 ],
-                'postResult' => new RestApplicationException('/', 'post', [], 10, [['displayMessage' => 'ErrorText']]),
+                'mocks'  => [
+                    [
+                        'class'  => 'mockMotTestLogMapper',
+                        'method' => 'getData',
+                        'params' => [self::$AE_ID, $paramsDto],
+                        'result' => new RestApplicationException(
+                            '/', 'post', [], 10, [['displayMessage' => 'ErrorText']]
+                        ),
+                    ],
+                ],
                 'expect'     => [
                     'return'   => null,
                     'errorMsg' => 'ErrorText',
                 ],
             ],
+
+            //  getLogSummary
             [
-                'httpMethod' => 'get',
                 'method' => [
                     'name' => 'getLogSummary',
                     'params' => [self::$AE_ID],
                 ],
-                'postResult' => $this->getMotTestLogResultApiMock(['RESULT']),
+                'mocks'  => [
+                    [
+                        'class'  => 'mockMotTestLogMapper',
+                        'method' => 'getSummary',
+                        'params' => [self::$AE_ID],
+                        'result' => ['RESULT'],
+                    ],
+                ],
                 'expect'     => [
                     'return' => ['RESULT'],
                 ],
             ],
             [
-                'httpMethod' => 'get',
                 'method' => [
                     'name' => 'getLogSummary',
                     'params' => [self::$AE_ID],
                 ],
-                'postResult' => new RestApplicationException('/', 'get', [], 10, [['displayMessage' => 'ErrorText']]),
+                'mocks'  => [
+                    [
+                        'class'  => 'mockMotTestLogMapper',
+                        'method' => 'getSummary',
+                        'params' => [self::$AE_ID],
+                        'result' => new RestApplicationException(
+                            '/', 'get', [], 10, [['displayMessage' => 'ErrorText']]
+                        ),
+                    ],
+                ],
+                'expect'     => [
+                    'return'   => null,
+                    'errorMsg' => 'ErrorText',
+                ],
+            ],
+
+            //  getAuthorisedExaminer
+            [
+                'method' => [
+                    'name' => 'getAuthorisedExaminer',
+                    'params' => [self::$AE_ID],
+                ],
+                'mocks'  => [
+                    [
+                        'class'  => 'mockOrganisationMapper',
+                        'method' => 'getAuthorisedExaminer',
+                        'params' => [self::$AE_ID],
+                        'result' => ['RESULT'],
+                    ],
+                ],
+                'expect'     => [
+                    'return' => ['RESULT'],
+                ],
+            ],
+            [
+                'method' => [
+                    'name' => 'getAuthorisedExaminer',
+                    'params' => [self::$AE_ID],
+                ],
+                'mocks'  => [
+                    [
+                        'class'  => 'mockOrganisationMapper',
+                        'method' => 'getAuthorisedExaminer',
+                        'params' => [self::$AE_ID],
+                        'result' => new RestApplicationException(
+                            '/', 'get', [], 10, [['displayMessage' => 'ErrorText']]
+                        ),
+                    ],
+                ],
                 'expect'     => [
                     'return'   => null,
                     'errorMsg' => 'ErrorText',
@@ -283,17 +397,16 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
      *
      * @dataProvider dataProviderTestErrors
      */
-    public function testErrors($postData, $apiResult, $expectErr)
+    public function testErrors($postData, $mocks, $expectErr)
     {
-        $this->setupAuthenticationServiceForIdentity(StubIdentityAdapter::asAedm());
-        $this->setupAuthorizationService([PermissionAtOrganisation::AE_TEST_LOG]);
-
         //  ----  mock    ----
-        $this->getOrganisationMapperMock();
-
-        $mockRestClient = $this->getRestClientMock('get', $this->getMotTestLogSummaryApiMock());
-        if ($apiResult) {
-            $this->mockMethod($mockRestClient, 'post', $this->any(), $this->getMotTestLogResultApiMock($apiResult));
+        if ($mocks !== null) {
+            foreach ($mocks as $mock) {
+                $this->mockMethod(
+                    $this->{$mock['class']}, $mock['method'], $this->once(), $mock['result'],
+                    ArrayUtils::tryGet($mock, 'params')
+                );
+            }
         }
 
         //  --  error messages  --
@@ -301,86 +414,59 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
         $this->getController()->getPluginManager()->setService('flashMessenger', $flashMock, false);
 
         foreach ($expectErr as $idx => $err) {
-            $flashMock->expects($this->at($idx))
-                ->method('addErrorMessage')
-                ->with($err);
+            $this->mockMethod($flashMock, 'addErrorMessage', $this->at($idx), null, $err);
         }
 
-        $flashMock->expects($this->once())
-            ->method('getCurrentErrorMessages')
-            ->willReturn($apiResult ? null : count($expectErr));
+        //  logic block: call
+        $this->mockIsGrantedAtOrganisation($this->mockAuthSrv, [PermissionAtOrganisation::AE_TEST_LOG], self::$AE_ID);
 
-        //  --  request --
-        $this->setGetAndQueryParams($postData + ['_csrf_token' => true]);
-        $this->getResultForAction('index', ['id' => self::$AE_ID]);
+        $this->getResultForAction2('get', 'index', ['id' => self::$AE_ID], $postData + ['_csrf_token' => true]);
 
         $this->assertResponseStatus(self::HTTP_OK_CODE);
     }
 
     public function dataProviderTestErrors()
     {
-        $currDate = new \DateTime();
-        $currYear = (int)$currDate->format('Y');
+        $orgDto = new OrganisationDto();
+        $orgDto->setId(self::$AE_ID);
 
-        $dateNull = ['Day' => null, 'Month' => null, 'Year' => null];
+        $currDate = new \DateTime();
+        $currYear = (int) $currDate->format('Y');
+
         $dateFrom = ['Day' => $currDate->format('j'), 'Month' => $currDate->format('n'), 'Year' => $currYear];
         $dateTo   = ['Day' => $currDate->format('j'), 'Month' => $currDate->format('n'), 'Year' => $currYear];
 
-        $resultDto = new SearchResultDto();
+        $resultDto = (new SearchResultDto())
+            ->setSearched(new MotTestSearchParamsDto());
 
         return [
-            [
-                'post'  => [
-                    MotTestLogFormViewModel::FLD_DATE_FROM => $dateNull,
-                    MotTestLogFormViewModel::FLD_DATE_TO   => ['Year'  => $currYear + 1] + $dateTo,
-                ],
-                'apiResult' => null,
-                'expect' => [
-                    '1' => sprintf(DateErrors::DATE_INVALID, 'From'),
-                    '3' => sprintf(DateErrors::DATE_FUTURE, 'To'),
-                ],
-            ],
-            [
-                'post'  => [
-                    MotTestLogFormViewModel::FLD_DATE_FROM => ['Year'  => $currYear + 1] + $dateFrom,
-                    MotTestLogFormViewModel::FLD_DATE_TO   => $dateNull,
-                ],
-                'apiResult' => null,
-                'expect' => [
-                    '1' => sprintf(DateErrors::DATE_FUTURE, 'From'),
-                    '3' => sprintf(DateErrors::DATE_INVALID, 'To'),
-                ],
-            ],
-            [
-                'post'  => [
-                    MotTestLogFormViewModel::FLD_DATE_FROM => $dateFrom,
-                    MotTestLogFormViewModel::FLD_DATE_TO   => ['Year'  => $currYear - 1] + $dateTo,
-                ],
-                'apiResult' => null,
-                'expect' => [
-                    '1' => sprintf(DateErrors::INCORRECT_INTERVAL, 'To', 'From'),
-                ],
-            ],
+            //  date interval is valid, api return empty result (0 rows)
             [
                 'post'  => [
                     MotTestLogFormViewModel::FLD_DATE_FROM => $dateFrom,
                     MotTestLogFormViewModel::FLD_DATE_TO   => $dateTo,
                 ],
-                'apiResult' => self::cloneObject($resultDto)->setTotalResultCount(0),
-                'expect' => [
-                    '3' => MotTestLogController::ERR_NO_DATA,
+                'mocks'  => [
+                    [
+                        'class'  => 'mockOrganisationMapper',
+                        'method' => 'getAuthorisedExaminer',
+                        'params' => [self::$AE_ID],
+                        'result' => $orgDto,
+                    ],
+                    [
+                        'class'  => 'mockMotTestLogMapper',
+                        'method' => 'getSummary',
+                        'params' => [self::$AE_ID],
+                        'result' => new MotTestLogSummaryDto(),
+                    ],
+                    [
+                        'class'  => 'mockMotTestLogMapper',
+                        'method' => 'getData',
+                        'result' => self::cloneObject($resultDto)->setTotalResultCount(0),
+                    ],
                 ],
-            ],
-            [
-                'post'  => [
-                    MotTestLogFormViewModel::FLD_DATE_FROM => $dateFrom,
-                    MotTestLogFormViewModel::FLD_DATE_TO   => $dateTo,
-                ],
-                'apiResult' => self::cloneObject($resultDto)->setTotalResultCount(51000),
                 'expect' => [
-                    '3' => sprintf(
-                        MotTestLogController::ERR_TOO_MANY_RECORDS, 51000, MotTestLogController::MAX_TESTS_COUNT
-                    ),
+                    '1' => MotTestLogController::ERR_NO_DATA,
                 ],
             ],
         ];
@@ -392,19 +478,22 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
         $paramsDto = new MotTestSearchParamsDto();
         $paramsDto
             ->setStatus([MotTestStatusName::PASSED])
-            ->setDateFromTS((new \DateTime('2013-12-11'))->getTimestamp())
-            ->setDateToTS((new \DateTime('2014-03-02'))->getTimestamp());
+            ->setDateFromTs((new \DateTime('2013-12-11'))->getTimestamp())
+            ->setDateToTs((new \DateTime('2014-03-02'))->getTimestamp());
 
         return $paramsDto;
     }
-
 
     private function getMapperFactory()
     {
         $mockMapperFactory = XMock::of(MapperFactory::class);
 
+        $this->mockOrganisationMapper = XMock::of(OrganisationMapper::class);
+        $this->mockMotTestLogMapper = XMock::of(MotTestLogMapper::class);
+
         $map = [
-            [MapperFactory::ORGANISATION, $this->getOrganisationMapperMock()],
+            [MapperFactory::ORGANISATION, $this->mockOrganisationMapper],
+            [MapperFactory::MOT_TEST_LOG, $this->mockMotTestLogMapper],
         ];
 
         $mockMapperFactory->expects($this->any())
@@ -412,31 +501,6 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
             ->will($this->returnValueMap($map));
 
         return $mockMapperFactory;
-    }
-
-    private function getOrganisationMapperMock()
-    {
-        $orgDto = new OrganisationDto();
-        $orgDto->setId(self::$AE_ID);
-
-        $mapper = XMock::of(OrganisationMapper::class);
-
-        $mapper->expects($this->any())
-            ->method('getAuthorisedExaminer')
-            ->with(self::$AE_ID)
-            ->will($this->returnValue($orgDto));
-
-        return $mapper;
-    }
-
-    private function getMotTestLogSummaryApiMock()
-    {
-        return ['data' => $this->dtoHydrator->extract(new MotTestLogSummaryDto())];
-    }
-
-    private function getMotTestLogResultApiMock($data)
-    {
-        return ['data' => $data];
     }
 
     /**

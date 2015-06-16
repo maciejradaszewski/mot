@@ -5,13 +5,14 @@ namespace OrganisationApiTest\Controller;
 use Doctrine\ORM\EntityManager;
 use DvsaCommon\Dto\Organisation\MotTestLogSummaryDto;
 use DvsaCommon\Dto\Search\MotTestSearchParamsDto;
-use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\DtoHydrator;
+use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApiTest\Controller\AbstractRestfulControllerTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaElasticSearch\Service\ElasticSearchService;
 use OrganisationApi\Controller\MotTestLogController;
 use OrganisationApi\Service\MotTestLogService;
+use PHPUnit_Framework_MockObject_MockObject as MockObj;
 
 /**
  * Class MotTestLogControllerTest
@@ -20,129 +21,162 @@ use OrganisationApi\Service\MotTestLogService;
  */
 class MotTestLogControllerTest extends AbstractRestfulControllerTestCase
 {
-    const ORGANISATION_ID = 1;
+    const CONTENT_TYPE_JSON =  'application/json; charset=utf-8';
 
-    /** @var MotTestLogService */
-    private $motTestLogService;
-    /** @var ElasticSearchService */
-    private $elasticSearchService;
-    /** @var EntityManager */
-    private $entityManager;
+    protected static $AE_ID = 1;
+
+    /**
+     * @var MotTestLogService|MockObj
+     */
+    private $mockMotTestLogSrv;
+    /**
+     * @var ElasticSearchService|MockObj
+     */
+    private $mockEsSrv;
+    /**
+     * @var EntityManager
+     */
+    private $mockEntityManager;
 
     protected function setUp()
     {
-        $this->motTestLogService = XMock::of(MotTestLogService::class);
-        $this->elasticSearchService = XMock::of(ElasticSearchService::class);
-        $this->entityManager = XMock::of(EntityManager::class);
+        $this->mockMotTestLogSrv = XMock::of(MotTestLogService::class);
+        $this->mockEsSrv = XMock::of(ElasticSearchService::class);
+        $this->mockEntityManager = XMock::of(EntityManager::class);
 
-        $controller = new MotTestLogController(
-            $this->motTestLogService,
-            $this->elasticSearchService,
-            $this->entityManager
+        $this->setController(
+            new MotTestLogController(
+                $this->mockMotTestLogSrv,
+                $this->mockEsSrv,
+                $this->mockEntityManager
+            )
         );
-        $this->setController($controller);
 
         parent::setUp();
-
     }
 
-
-
     /**
+     * Test access for specified action and parameters
+     *
+     * @param string $method HTTP request type (get, post, put)
+     * @param string $action Route action
+     * @param array  $params Route, post parameters
+     * @param array  $mocks  Service Mocks
+     * @param array  $expect Expected result
+     *
      * @dataProvider dataProviderTestActionsResultAndAccess
      */
     public function testActionsResultAndAccess($method, $action, $params, $mocks, $expect)
     {
         $result = null;
 
+        //  logic block: mock
         if ($mocks !== null) {
             foreach ($mocks as $mock) {
                 $this->mockMethod(
-                    $this->{$mock['class']},
-                    $mock['method'],
-                    isset($mock['call']) ? $mock['call'] : $this->once(),
-                    $mock['result'],
-                    $mock['params']
+                    $this->{$mock['class']}, $mock['method'], $this->once(), $mock['result'], $mock['params']
                 );
             }
         }
 
-        //  --  set expected exception  --
+        //  logic block: check exception
         if (!empty($expect['exception'])) {
             $exception = $expect['exception'];
-            $this->setExpectedException($exception['class'], $exception['message']);
+            $this->setExpectedException($exception['class'], $exception['message'], $exception['code']);
         }
 
-        $result = $this->getResultForAction(
-            $method,
-            $action,
-            ArrayUtils::tryGet($params, 'route'),
-            ArrayUtils::tryGet($params, 'get'),
-            ArrayUtils::tryGet($params, 'post')
-        );
+        //  logic block: call
+        if (isset($params['postContent'])) {
+            $this->request->setContent(json_encode($params['postContent']));
+            $this->request->getHeaders()->addHeaderLine('Content-Type', self::CONTENT_TYPE_JSON);
+        }
 
-        //  --  check   --
-        if (!empty($expect['result'])) {
-            $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, $expect['result'], $result);
+        $result = $this->getResultForAction($method, $action, $params['route']);
+
+        //  logic block: check
+        if (isset($expect['error'])) {
+            $this->assertResponseStatusAndResultHasError(
+                $this->getController()->getResponse(),
+                $expect['statusCode'],
+                $result,
+                $expect['error']['message'],
+                $expect['error']['code']
+            );
+        } else {
+            $this->assertResponseStatusAndResult($expect['statusCode'], $expect['result'], $result);
         }
     }
 
-
     public function dataProviderTestActionsResultAndAccess()
     {
-        $searchParamsDto = new MotTestSearchParamsDto();
+        $dto = (new MotTestLogSummaryDto())
+            ->setYear(1024)
+            ->setMonth(1);
+
         return [
-            //  --  summary: access action  --
+            // get summary
             [
-                'method' => 'get',
-                'action' => 'summary',
-                'params' => [
-                    'route' => ['id' => self::ORGANISATION_ID],
+                'method'        => 'get',
+                'action'        => 'summary',
+                'params'        => [
+                    'route' => [
+                        'id' => self::$AE_ID,
+                    ],
                 ],
                 'mocks' => [
                     [
-                        'class' => 'motTestLogService',
+                        'class'  => 'mockMotTestLogSrv',
                         'method' => 'getMotTestLogSummaryForOrganisation',
-                        'params' => [
-                            self::ORGANISATION_ID,
-                        ],
-                        'result' => new MotTestLogSummaryDto(),
-                    ],
+                        'params' => self::$AE_ID,
+                        'result' => $dto,
+                    ]
                 ],
-                'expect' => [
-                    'result' => ['data' => DtoHydrator::dtoToJson(new MotTestLogSummaryDto())],
-                ],
-            ],
-            //  --  create: access action  --
-            [
-                'method' => 'post',
-                'action' => null,
-                'params' => [
-                    'post' => DtoHydrator::dtoToJson($searchParamsDto),
-                    'route' => ['id' => self::ORGANISATION_ID],
-                ],
-                'mocks' => [
-                    [
-                        'class' => 'elasticSearchService',
-                        'method' => 'findTestsLog',
-                        'params' => [],
-                        'result' => 'Success',
-                    ],
-                ],
-                'expect' => [
-                    'result' => ['data' => 'Success'],
+                'expect'  => [
+                    'statusCode' => self::HTTP_OK_CODE,
+                    'result'     => ['data' => DtoHydrator::dtoToJson($dto)],
                 ],
             ],
-            //  --  create: access action  --
+
+            //  get log data :: invalid id
             [
-                'method' => 'post',
-                'action' => null,
-                'params' => [
-                    'post' => DtoHydrator::dtoToJson($searchParamsDto),
-                    'route' => ['id' => -1],
+                'method'        => 'post',
+                'action'        => 'logData',
+                'params'        => [
+                    'route' => [
+                        'id' => 'invalidId'
+                    ],
                 ],
                 'mocks' => [],
-                'expect' => [],
+                'expect'  => [
+                    'statusCode' => self::HTTP_ERR_400,
+                    'error' => [
+                        'message' => MotTestLogController::ERR_ORG_ID,
+                        'code'    => AbstractDvsaRestfulController::ERROR_CODE_REQUIRED,
+                    ],
+                ],
+            ],
+            //  get log data :: valid id
+            [
+                'method'        => 'post',
+                'action'        => 'logData',
+                'params'        => [
+                    'route' => [
+                        'id' => self::$AE_ID,
+                        ],
+                    'postContent' => DtoHydrator::dtoToJson(new MotTestSearchParamsDto()),
+                ],
+                'mocks' => [
+                    [
+                        'class'  => 'mockEsSrv',
+                        'method' => 'findTestsLog',
+                        'params' => null,
+                        'result' => 'SERVICE RESULT',
+                    ]
+                ],
+                'expect'  => [
+                    'statusCode' => self::HTTP_OK_CODE,
+                    'result' => ['data' => 'SERVICE RESULT'],
+                ],
             ],
         ];
     }

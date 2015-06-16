@@ -2,74 +2,77 @@
 
 namespace Organisation\ViewModel\MotTestLog;
 
+use DvsaClient\ViewModel\AbstractFormModel;
 use DvsaClient\ViewModel\DateViewModel;
+use DvsaCommon\Constants\SearchParamConst;
 use DvsaCommon\Date\DateUtils;
+use DvsaCommon\Messages\DateErrors;
 use DvsaCommon\Utility\ArrayUtils;
+use Zend\Stdlib\Parameters;
 
-class MotTestLogFormViewModel
+class MotTestLogFormViewModel extends AbstractFormModel
 {
     const FLD_DATE_FROM = 'dateFrom';
     const FLD_DATE_TO = 'dateTo';
+
+    const VALIDATION_MAX_DAYS = 31;
 
     /**  @var DateViewModel */
     private $dateFrom;
     /**  @var DateViewModel */
     private $dateTo;
 
-    public function __construct(array $formData = null)
+    public function __construct()
     {
-        $this->parseData($formData);
+        $this->setDateFrom(new DateViewModel());
+        $this->setDateTo(new DateViewModel());
     }
 
     /**
-     * Map field values from POST data
+     * Map field values from POST/GET data
      *
-     * @param $postData
+     * @param Parameters $formData
      *
-     * return MotTestLogViewModel
+     * @return MotTestLogViewModel
      */
-    public function parseData($postData)
+    public function parseData(Parameters $formData)
     {
-        $date = ArrayUtils::tryGet($postData, MotTestLogFormViewModel::FLD_DATE_FROM, []);
-        $this->setDateFrom(
-            new DateViewModel(
-                ArrayUtils::tryGet($date, 'Year'),
-                ArrayUtils::tryGet($date, 'Month'),
-                ArrayUtils::tryGet($date, 'Day')
-            )
-        );
+        if ($formData->get('_csrf_token', false)) {
+            $date = $formData->get(MotTestLogFormViewModel::FLD_DATE_FROM, []);
 
-        $date = ArrayUtils::tryGet($postData, MotTestLogFormViewModel::FLD_DATE_TO, []);
-        $this->setDateTo(
-            new DateViewModel(
-                ArrayUtils::tryGet($date, 'Year'),
-                ArrayUtils::tryGet($date, 'Month'),
-                ArrayUtils::tryGet($date, 'Day')
-            )
-        );
+            if (!empty($date)) {
+                $this->setDateFrom(
+                    new DateViewModel(
+                        ArrayUtils::tryGet($date, 'Year'),
+                        ArrayUtils::tryGet($date, 'Month'),
+                        ArrayUtils::tryGet($date, 'Day')
+                    )
+                );
+            }
 
-        return $this;
-    }
+            $date = $formData->get(MotTestLogFormViewModel::FLD_DATE_TO, []);
 
+            if (!empty($date)) {
+                $this->setDateTo(
+                    new DateViewModel(
+                        ArrayUtils::tryGet($date, 'Year'),
+                        ArrayUtils::tryGet($date, 'Month'),
+                        ArrayUtils::tryGet($date, 'Day')
+                    )
+                );
+            }
 
-    /**
-     * Parse query params
-     *
-     * @param $postData
-     *
-     * return MotTestLogViewModel
-     */
-    public function parseQuery(array $queryData)
-    {
-        $date = ArrayUtils::tryGet($queryData, MotTestLogFormViewModel::FLD_DATE_FROM);
-        $this->setDateFrom(
-            (new DateViewModel())->setDate(DateUtils::toDate($date))
-        );
+        } else {
+            $date = $formData->get(SearchParamConst::SEARCH_DATE_FROM_QUERY_PARAM);
+            if (!empty($date)) {
+                $this->setDateFrom((new DateViewModel())->setDate(new \DateTime('@' . $date)));
+            }
 
-        $date = ArrayUtils::tryGet($queryData, MotTestLogFormViewModel::FLD_DATE_TO);
-        $this->setDateTo(
-            (new DateViewModel())->setDate(DateUtils::toDate($date))
-        );
+            $date = $formData->get(SearchParamConst::SEARCH_DATE_TO_QUERY_PARAM);
+            if (!empty($date)) {
+                $this->setDateTo((new DateViewModel())->setDate(new \DateTime('@' . $date)));
+            }
+        }
 
         return $this;
     }
@@ -85,7 +88,7 @@ class MotTestLogFormViewModel
     /**
      * @param DateViewModel $dateFrom
      *
-     * return MotTestLogViewModel
+     * @return $this
      */
     public function setDateFrom(DateViewModel $dateFrom)
     {
@@ -105,12 +108,49 @@ class MotTestLogFormViewModel
     /**
      * @param DateViewModel $dateTo
      *
-     * return MotTestLogViewModel
+     * @return $this
      */
     public function setDateTo(DateViewModel $dateTo)
     {
         $this->dateTo = $dateTo;
 
         return $this;
+    }
+
+    public function isValid()
+    {
+        $dateFrom = $this->getDateFrom()->getDate();
+        $dateTo = $this->getDateTo()->getDate();
+
+        $this->validateDate($dateFrom, MotTestLogFormViewModel::FLD_DATE_FROM);
+        $this->validateDate($dateTo, MotTestLogFormViewModel::FLD_DATE_TO);
+
+        if ($dateFrom && $dateTo && $dateFrom > $dateTo) {
+            $this->addError(MotTestLogFormViewModel::FLD_DATE_FROM, DateErrors::ERR_DATE_AFTER);
+        }
+
+        if ($dateFrom && $dateTo) {
+            $this->checkCustomDateRangeNotMoreThan31Days($dateFrom, $dateTo);
+        }
+
+        return !$this->hasErrors();
+    }
+
+    private function validateDate($date, $field)
+    {
+        if ($date === null) {
+            $this->addError($field, DateErrors::ERR_DATE_MISSING);
+        } elseif ($date < (new \DateTime)->setDate(1900, 1, 1)) {
+            $this->addError($field, DateErrors::ERR_DATE_INVALID);
+        } elseif (DateUtils::isDateInFuture($date)) {
+            $this->addError($field, DateErrors::ERR_DATE_INVALID);
+        }
+    }
+
+    private function checkCustomDateRangeNotMoreThan31Days(\DateTime $dateFrom, \DateTime $dateTo)
+    {
+        if ($dateFrom->diff($dateTo)->days > self::VALIDATION_MAX_DAYS ) {
+            $this->addError(MotTestLogFormViewModel::FLD_DATE_FROM, DateErrors::ERR_DATE_RANGE);
+        }
     }
 }

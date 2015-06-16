@@ -33,7 +33,7 @@ trait ReportControllerTrait
      * @param string  $documentName
      * @param boolean $renderHeader
      *
-     * @return Zend\View\Model\ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function renderReport($reportVariables, $reportTemplate, $documentName, $renderHeader = true)
     {

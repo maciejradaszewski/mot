@@ -18,7 +18,8 @@ $config = [
         'Vehicle',
         'ZendDeveloperTools',
         'MaglMarkdown',
-        'Soflomo\Purifier'
+        'Soflomo\Purifier',
+        'Report',
     ],
 ];
 
@@ -37,7 +38,8 @@ $config['test_namespaces'] = [
     'OrganisationTest' => realpath(__DIR__ . '/../module/Organisation/test/OrganisationTest'),
     'SessionTest' => realpath(__DIR__ . '/../module/Session/test/SessionTest'),
     'Site' => realpath(__DIR__ . '/../module/Site/test/SiteTest'),
-    'UserAdminTest' => realpath(__DIR__ . '/../module/UserAdmin/test/UserAdminTest')
+    'UserAdminTest' => realpath(__DIR__ . '/../module/UserAdmin/test/UserAdminTest'),
+    'ReportTest' => realpath(__DIR__ . '/../module/Report/test/ReportTest'),
 ];
 
 return $config;

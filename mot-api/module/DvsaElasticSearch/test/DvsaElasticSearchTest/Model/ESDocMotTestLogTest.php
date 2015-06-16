@@ -7,7 +7,7 @@ use DvsaCommon\Constants\SearchParamConst;
 use DvsaCommon\Dto\Search\SearchParamsDto;
 use DvsaCommon\Dto\Search\SearchResultDto;
 use DvsaCommonApi\Service\Exception\BadRequestException;
-use DvsaCommonTest\TestUtils\XMock;
+use DvsaCommonTest\TestUtils\TestCaseTrait;
 use DvsaElasticSearch\Model\ESDocMotTestLog;
 use PHPUnit_Framework_TestCase;
 
@@ -18,46 +18,75 @@ use PHPUnit_Framework_TestCase;
  */
 class ESDocMotTestLogTest extends \PHPUnit_Framework_TestCase
 {
+    use TestCaseTrait;
+
     const INVALID_FORMAT = 'invalid-Format';
 
-    /** @var ESDocMotTestLog */
+    /**
+     * @var ESDocMotTestLog
+     */
     protected $docMotTestLog;
-
-    protected $mockSearchResultDto;
-    protected $mockSearchParamsDto;
+    /**
+     * @var SearchResultDto
+     */
+    protected $searchResultDto;
 
     public function setUp()
     {
-        $this->mockSearchResultDto = XMock::of(SearchResultDto::class, ['getSearched', 'isElasticSearch']);
-        $this->mockSearchParamsDto = XMock::of(SearchParamsDto::class, ['getFormat']);
+        $this->searchResultDto = new SearchResultDto();
 
         $this->docMotTestLog = new ESDocMotTestLog();
     }
 
-    public function testEsDocMotTestLogAsEsDataReturnValue()
+    /**
+     * @dataProvider dataProviderTest
+     */
+    public function test(SearchParamsDto $searchParams, $isES, $expect)
     {
-        $this->mockSearchResultDto->expects($this->any())
-            ->method('getSearched')
-            ->willReturn($this->mockSearchParamsDto);
+        $this->searchResultDto
+            ->setIsElasticSearch($isES)
+            ->setSearched($searchParams);
 
-        $this->mockSearchParamsDto->expects($this->any())
-            ->method('getFormat')
-            ->willReturn(SearchParamConst::FORMAT_DATA_CSV);
+        if (!empty($expect['exception'])) {
+            $this->setExpectedException(BadRequestException::class, $expect['exception']['message']);
+        }
 
-        $this->assertSame([], $this->docMotTestLog->asJson($this->mockSearchResultDto));
+        $actual = $this->docMotTestLog->asJson($this->searchResultDto);
+
+        if (!empty($expect['isResult'])) {
+            $this->assertSame([], $actual);
+        }
     }
 
-    public function testEsDocMotTestAsJsonReturnException()
+    public function dataProviderTest()
     {
-        $this->mockSearchResultDto->expects($this->any())
-            ->method('getSearched')
-            ->willReturn($this->mockSearchParamsDto);
-
-        $this->mockSearchParamsDto->expects($this->any())
-            ->method('getFormat')
-            ->willReturn(self::INVALID_FORMAT);
-
-        $this->setExpectedException(BadRequestException::class);
-        $this->docMotTestLog->asJson($this->mockSearchResultDto);
+        return [
+            [
+                'searchParams' => (new SearchParamsDto())
+                    ->setFormat(SearchParamConst::FORMAT_DATA_CSV),
+                'isES'  => false,
+                'expect' => [
+                    'isResult' => true,
+                ],
+            ],
+            [
+                'searchParams' => (new SearchParamsDto())
+                    ->setFormat(SearchParamConst::FORMAT_DATA_TABLES),
+                'isES'  => true,
+                'expect' => [
+                    'isResult' => true,
+                ],
+            ],
+            [
+                'searchParams' => (new SearchParamsDto())
+                    ->setFormat(self::INVALID_FORMAT),
+                'isES'  => false,
+                'expect' => [
+                    'exception' => [
+                        'message' => 'Unknown search format: '.self::INVALID_FORMAT,
+                    ],
+                ],
+            ],
+        ];
     }
 }

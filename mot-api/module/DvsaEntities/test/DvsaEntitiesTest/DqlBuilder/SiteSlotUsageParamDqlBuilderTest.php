@@ -3,13 +3,13 @@
 namespace DvsaEntitiesTest\DqlBuilder;
 
 use Doctrine\ORM\EntityManager;
+use DvsaCommon\Constants\SearchParamConst;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaEntities\DqlBuilder\SearchParam\SiteSlotUsageParam;
 use DvsaEntities\DqlBuilder\SiteSlotUsageParamDqlBuilder;
 
 class SiteSlotUsageParamDqlBuilderTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var SiteSlotUsageParamDqlBuilder
      */
@@ -54,7 +54,7 @@ class SiteSlotUsageParamDqlBuilderTest extends \PHPUnit_Framework_TestCase
             . "AND (t.vehicleTestingStation = :SITE_ID) "
             . "AND (t.completedDate >= :DATE_FROM) "
             . "AND (t.completedDate <= :DATE_TO) "
-            . "ORDER BY t.completedDate ASC";
+            . "ORDER BY t.completedDate ";
 
         $this->assertInstanceOf(\DvsaEntities\DqlBuilder\SiteSlotUsageParamDqlBuilder::class, $result);
         $this->assertEquals($searchDql, $this->dqlBuilder->getSearchDql());
@@ -62,7 +62,9 @@ class SiteSlotUsageParamDqlBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerateWithTesterSort()
     {
-        $this->dqlBuilder->getParams()->setSortColumnId(SiteSlotUsageParam::SORT_COL_TESTER);
+        $this->dqlBuilder->getParams()
+            ->setSortColumnId(SiteSlotUsageParam::SORT_COL_TESTER)
+            ->setSortDirection(SearchParamConst::SORT_DIRECTION_DESC);
 
         $this->dqlBuilder->generate();
 
@@ -76,7 +78,7 @@ class SiteSlotUsageParamDqlBuilderTest extends \PHPUnit_Framework_TestCase
             . "AND (t.vehicleTestingStation = :SITE_ID) "
             . "AND (t.completedDate >= :DATE_FROM) "
             . "AND (t.completedDate <= :DATE_TO) "
-            . "ORDER BY p.firstName ASC, p.familyName";
+            . "ORDER BY p.firstName DESC, p.familyName";
 
         $this->assertEquals($searchDql, $this->dqlBuilder->getSearchDql());
     }
@@ -97,7 +99,7 @@ class SiteSlotUsageParamDqlBuilderTest extends \PHPUnit_Framework_TestCase
             . "AND (t.vehicleTestingStation = :SITE_ID) "
             . "AND (t.completedDate >= :DATE_FROM) "
             . "AND (t.completedDate <= :DATE_TO) "
-            . "ORDER BY v.registration ASC";
+            . "ORDER BY v.registration ";
 
         $this->assertEquals($searchDql, $this->dqlBuilder->getSearchDql());
     }

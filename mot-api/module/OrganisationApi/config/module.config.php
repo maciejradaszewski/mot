@@ -79,6 +79,7 @@ return [
                             'route'    => '/mot-test-log',
                             'defaults' => [
                                 'controller' => MotTestLogControllerFactory::class,
+                                'action'     => 'logData',
                             ],
                         ],
                         'may_terminate' => true,

@@ -1,14 +1,14 @@
 <?php
 namespace DvsaMotTestTest\Controller;
 
-use Core\Authorisation\Assertion\WebPerformMotTestAssertion;
-use DvsaCommon\Dto\Common\MotTestDto;
-use DvsaCommon\Dto\Person\PersonDto;
 use Dvsa\Mot\Frontend\Plugin\AjaxResponsePlugin;
+use DvsaCommon\Dto\Common\MotTestDto;
+use DvsaCommon\Dto\Common\MotTestTypeDto;
+use DvsaCommon\Dto\Person\PersonDto;
+use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\Enum\MotTestTypeCode;
+use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\UrlBuilder;
-use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
-use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTest\Controller\TestItemSelectorController;
 use Zend\Http\Header\Location;
 use Zend\Stdlib\Parameters;
@@ -38,14 +38,14 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
             "mot-test/$motTestNumber/test-item-selector/$testItemSelectorId"
         );
 
-        $this->routeMatch->setParam('action', 'testItemSelectors');
-        $this->routeMatch->setParam('motTestNumber', $motTestNumber);
-        $this->routeMatch->setParam('tis-id', $testItemSelectorId);
+        $routeParams = [
+            'motTestNumber' => $motTestNumber,
+            'tis-id'        => $testItemSelectorId,
+        ];
 
-        $result = $this->controller->dispatch($this->request);
-        $response = $this->controller->getResponse();
+        $result = $this->getResultForAction('testItemSelectors', $routeParams);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
         $variables = $result->getVariables();
         $testData = $this->getTestDataItemSelectors($testItemSelectorId);
         $testData = $testData['data']['testItemSelectors'];
@@ -67,14 +67,14 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
             "mot-test/$motTestNumber/test-item-selector/$testItemSelectorId"
         );
 
-        $this->routeMatch->setParam('action', 'testItemSelectors');
-        $this->routeMatch->setParam('motTestNumber', $motTestNumber);
-        $this->routeMatch->setParam('tis-id', $testItemSelectorId);
+        $routeParams = [
+            'motTestNumber' => $motTestNumber,
+            'tis-id'        => $testItemSelectorId,
+        ];
 
-        $result = $this->controller->dispatch($this->request);
-        $response = $this->controller->getResponse();
+        $result = $this->getResultForAction('testItemSelectors', $routeParams);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
 
         $variables = $result->getVariables();
         $this->assertEquals(0, count($variables['breadcrumbItemSelectors']));
@@ -95,14 +95,14 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
             "mot-test/$motTestNumber/test-item-selector/$testItemSelectorId"
         );
 
-        $this->routeMatch->setParam('action', 'testItemSelectors');
-        $this->routeMatch->setParam('motTestNumber', $motTestNumber);
-        $this->routeMatch->setParam('tis-id', $testItemSelectorId);
+        $routeParams = [
+            'motTestNumber' => $motTestNumber,
+            'tis-id'        => $testItemSelectorId,
+        ];
 
-        $result = $this->controller->dispatch($this->request);
-        $response = $this->controller->getResponse();
+        $result = $this->getResultForAction('testItemSelectors', $routeParams);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
 
         $variables = $result->getVariables();
         $this->assertEquals(2, count($variables['breadcrumbItemSelectors']));
@@ -119,14 +119,15 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
             "mot-test/$motTestNumber/test-item-selector/$testItemSelectorId"
         );
 
-        $this->routeMatch->setParam('action', 'testItemSelectors');
-        $this->routeMatch->setParam('motTestNumber', $motTestNumber);
-        $this->routeMatch->setParam('tis-id', $testItemSelectorId);
+        $routeParams = [
+            'motTestNumber' => $motTestNumber,
+            'tis-id'        => $testItemSelectorId,
+        ];
 
-        $result = $this->controller->dispatch($this->request);
-        $response = $this->controller->getResponse();
+        $result = $this->getResultForAction('testItemSelectors', $routeParams);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
+
         $variables = $result->getVariables();
         $testData = $this->getEmptyTestItemsDto();
         $motTestData = $testData['data']['motTest'];
@@ -147,7 +148,8 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $result = $this->controller->dispatch($this->request);
         $response = $this->controller->getResponse();
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
+
         $variables = $result->getVariables();
         $this->assertEmpty($variables['testItemSelectors']);
     }
@@ -164,9 +166,9 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $this->routeMatch->setParam('tis-id', $testItemSelectorId);
 
         $result = $this->controller->dispatch($this->request);
-        $response = $this->controller->getResponse();
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
+
         $variables = $result->getVariables();
         $this->assertEmpty($variables['testItemSelectors']);
     }
@@ -181,9 +183,9 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $rfrs = [['id' => 1], ['id' => 2]];
         $restData = [
             'data' => [
-                'searchDetails'        => ['hasMore' => $hasMore],
+                'searchDetails'       => ['hasMore' => $hasMore],
                 'reasonsForRejection' => $rfrs,
-                'motTest'              => (new MotTestDto())->setMotTestNumber(1),
+                'motTest'             => $this->getMotTest()->setMotTestNumber(1),
             ]
         ];
 
@@ -206,9 +208,9 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         );
 
         $result = $this->controller->dispatch($this->request);
-        $response = $this->controller->getResponse();
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
+
         $variables = $result->getVariables();
         $this->assertEquals($rfrs, $variables['reasonsForRejection']);
         $this->assertEquals($motTestNumber, $variables['motTestNumber']);
@@ -225,7 +227,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
             'data' => [
                 'searchDetails'        => ['hasMore' => false],
                 'reasonsForRejection' => [],
-                'motTest'              => (new MotTestDto())->setMotTestNumber(1),
+                'motTest'              => $this->getMotTest()->setMotTestNumber(1),
             ]
         ];
 
@@ -242,9 +244,8 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $this->request->setQuery(new Parameters(['search' => $searchString]));
 
         $this->controller->dispatch($this->request);
-        $response = $this->controller->getResponse();
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
     }
 
     public function testSearchDisplaysRestException()
@@ -296,9 +297,9 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $this->routeMatch->setParam('tis-id', $testItemSelectorId);
 
         $result = $this->controller->dispatch($this->request);
-        $response = $this->controller->getResponse();
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
+
         $variables = $result->getVariables();
         $testData = $this->getTestDataItemRfrs($testItemSelectorId);
         $testData = $testData['data']['reasonsForRejection'];
@@ -320,7 +321,8 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $result = $this->controller->dispatch($this->request);
         $response = $this->controller->getResponse();
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
+
         $variables = $result->getVariables();
         $this->assertEmpty($variables['reasonsForRejection']);
     }
@@ -368,8 +370,9 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
          * @var JsonModel $result
          */
         $result = $this->controller->dispatch($this->request);
-        $response = $this->controller->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
+
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
+
         $redirectUrl = $result->getVariables()['redirectUrl'];
         $this->assertEquals(
             $redirectUrl,
@@ -399,8 +402,9 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
             ->method('postJson');
 
         $result = $this->controller->dispatch($this->request);
-        $response = $this->controller->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
+
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
+
         $redirectUrl = $result->getVariables()['redirectUrl'];
         $this->assertEquals(
             "/mot-test/$motTestNumber/test-item-selector-search?search=$searchStringUri", $redirectUrl
@@ -424,8 +428,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
 
         $result = $this->controller->dispatch($this->request);
 
-        $response = $this->controller->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
 
         $jsonMessage = $result->getVariables()['data']['messages'][0];
         $this->assertEquals($jsonMessage, $errorMessage);
@@ -442,17 +445,14 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
             "mot-test/$motTestNumber/test-item-selector/$testItemSelectorId"
         );
 
-        $this->routeMatch->setParam('action', 'testItemSelectors');
-        $this->routeMatch->setParam('motTestNumber', $motTestNumber);
-        $this->routeMatch->setParam('tis-id', $testItemSelectorId);
+        $routeParams = [
+            'motTestNumber' => $motTestNumber,
+            'tis-id'        => $testItemSelectorId,
+        ];
 
-        $this->controller->dispatch($this->request);
-        $response = $this->controller->getResponse();
+        $this->getResultForAction('testItemSelectors', $routeParams);
 
-        /** @var Location $locationHeader */
-        $locationHeader = $response->getHeaders()->get('location');
-
-        $this->assertEquals("/mot-test/$motTestNumber", $locationHeader->getUri());
+        $this->assertRedirectLocation2(MotTestUrlBuilderWeb::motTest($motTestNumber));
     }
 
     public function test_suggestionsAction_transfers_data_from_api()
@@ -467,8 +467,8 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $this->getRestClientMock('get', $apiReturnData, $route);
 
         $result = $this->controller->dispatch($this->request);
-        $response = $this->controller->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
+
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
 
         $controllerReturnData = $result->getVariables();
 
@@ -547,7 +547,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
                 ],
             ],
             "reasonsForRejection" => [],
-            "motTest"                 => (new MotTestDto())->setStatus('ACTIVE')->setTester((new PersonDto())->setId(1))
+            "motTest"                 => $this->getMotTest(MotTestStatusName::ACTIVE, 1),
         ],
         ];
     }
@@ -585,7 +585,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
                         "sectionTestItemSelector"     => "5000"
                     ],
                 ],
-                "motTest"                 => (new MotTestDto())->setStatus($status)->setTester((new PersonDto())->setId($testerId))
+                "motTest"                 => $this->getMotTest($status, $testerId),
             ]
         ];
     }
@@ -715,8 +715,23 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
             "testItemSelector"        => [],
             "testItemSelectors"       => [],
             "parentTestItemSelectors" => [],
-            "reasonsForRejection" => [],
-            "motTest"                 => (new MotTestDto())->setStatus('ACTIVE')->setTester((new PersonDto())->setId(1))
+            "reasonsForRejection"     => [],
+            "motTest"                 => $this->getMotTest(),
         ]];
+    }
+
+    /**
+     * @return MotTestDto
+     */
+    private function getMotTest($status = null, $testerId = null)
+    {
+        return (new MotTestDto())
+            ->setStatus($status ?: 'ACTIVE')
+            ->setTester(
+                (new PersonDto())->setId($testerId ?: 1)
+            )
+            ->setTestType(
+                (new MotTestTypeDto())->setCode(MotTestTypeCode::NORMAL_TEST)
+            );
     }
 }

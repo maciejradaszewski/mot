@@ -3,6 +3,8 @@
 namespace Organisation\Controller;
 
 use Core\Controller\AbstractAuthActionController;
+use Core\Service\MotFrontendAuthorisationServiceInterface;
+use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Constants\SearchParamConst;
 use DvsaCommon\Date\DateUtils;
@@ -12,11 +14,8 @@ use DvsaCommon\Dto\Search\SearchResultDto;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
-use DvsaCommon\Messages\DateErrors;
-use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilder;
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
-use DvsaCommon\Utility\DtoHydrator;
-use Organisation\Traits\OrganisationServicesTrait;
 use Organisation\ViewModel\MotTestLog\MotTestLogFormViewModel;
 use Organisation\ViewModel\MotTestLog\MotTestLogViewModel;
 use Zend\View\Model\ViewModel;
@@ -30,6 +29,9 @@ class MotTestLogController extends AbstractAuthActionController
 {
     const TABLE_ROWS_COUNT = 10;
     const MAX_TESTS_COUNT = 50000;
+
+    const DEF_SORT_BY = 'testDateTime';
+    const DEF_SORT_DIRECTION = SearchParamConst::SORT_DIRECTION_DESC;
 
     private static $DATETIME_FORMAT = 'd/m/Y H:i:s';
     private static $DATETIME_FORMAT_EMERG = 'd/m/Y';
@@ -54,62 +56,82 @@ class MotTestLogController extends AbstractAuthActionController
         ];
 
     const ERR_NO_DATA = 'There are no test logs for the selected date range. Please select a wider date range.';
-    const ERR_TOO_MANY_RECORDS = 'Your requested report would contain %1$s test logs. The limit is %2$s. Please shorten the date range.';
 
-    use OrganisationServicesTrait;
+    /**
+     * @var MotFrontendAuthorisationServiceInterface
+     */
+    private $authService;
+    /**
+     * @var  \Zend\Http\Request
+     */
+    protected $request;
+
+    public function __construct(
+        MotFrontendAuthorisationServiceInterface $authService,
+        MapperFactory $mapperFactory
+    ) {
+        $this->authService = $authService;
+        $this->mapperFactory = $mapperFactory;
+    }
 
     public function indexAction()
     {
         $organisationId = $this->params()->fromRoute('id');
 
-        if (!$this->getAuthorizationService()->isGrantedAtOrganisation(
+        if (!$this->authService->isGrantedAtOrganisation(
             PermissionAtOrganisation::AE_TEST_LOG, $organisationId
         )) {
             return $this->redirect()->toUrl(PersonUrlBuilderWeb::home());
         }
 
-        //  --  get auth examiner and summary data  --
+        $this->request = $this->getRequest();
+
+        //  logical block :: get auth examiner and summary data
         $organisation = $this->getAuthorisedExaminer($organisationId);
         $motTestLogs = $this->getLogSummary($organisationId);
 
-        //  --  prepare models for view --
-        $formModel = new MotTestLogFormViewModel();
-        $viewModel = new MotTestLogViewModel($organisation, $motTestLogs, $formModel);
+        //  logical block :: prepare models for view
+        $viewModel = new MotTestLogViewModel($organisation, $motTestLogs);
+        $viewModel->parseData($this->request->getQuery());
 
-        /** @var \Zend\Http\Request $request */
-        $request = $this->getRequest();
-
-        //  --  process post    --
-        $formData = $request->getQuery()->toArray();
-
-        if (isset($formData['_csrf_token'])) {
-            //  --  form model for view   --
-            $formModel->parseData($formData);
-
-            //  --  date and range validation   --
-            $isValid = $this->validateDatesAndRange($formModel);
-
-            if ($isValid) {
-                //  --  create object with parameters for sending to api   --
-                $searchParams = $this->prepareSearchParams($formModel);
-                $searchParams->setIsApiGetData(false);
-
-                //  --  request total count of records(mot tests in log)    --
-                $apiResult = $this->getLogDataBySearchCriteria($organisationId, $searchParams);
-
-                $totalRecordsCount = (int) $apiResult->getTotalResultCount();
-                if ($totalRecordsCount === 0) {
-                    $this->addErrorMessages(self::ERR_NO_DATA);
-                } elseif ($totalRecordsCount > self::MAX_TESTS_COUNT) {
-                    $this->addErrorMessages(
-                        sprintf(self::ERR_TOO_MANY_RECORDS, $totalRecordsCount, self::MAX_TESTS_COUNT)
-                    );
-                } else {
-                    //  --  request data for csv and output file to browser --
-                    return $this->downloadCsv($organisationId, $searchParams);
-                }
+        $formModel = $viewModel->getFormModel();
+        if ($formModel->isValid()) {
+            //  logical block :: create object with parameters for sending to api   --
+            $searchParams = $this->prepareSearchParams($formModel);
+            if ($searchParams->getRowsCount() === 0) {
+                $searchParams->setRowsCount($viewModel->getTable()->getTableOptions()->getItemsPerPage());
             }
+
+            //  logical block :: request total count of records(mot tests in log)
+            $apiResult = $this->getLogDataBySearchCriteria($organisationId, $searchParams);
+
+            $totalRecordsCount = (int) $apiResult->getTotalResultCount();
+            if ($totalRecordsCount === 0) {
+                $this->addErrorMessages(self::ERR_NO_DATA);
+            }
+
+            //  logical block :: set search parameters and date to table
+            $viewModel->getTable()
+                ->setSearchParams($apiResult->getSearched())
+                ->setRowsTotalCount($apiResult->getTotalResultCount())
+                ->setData($apiResult->getData());
+
+            //  logical block :: set search parameters to date range
+            $viewModel->getFilterBuilder()
+                ->setQueryParams($apiResult->getSearched()->toQueryParams());
         }
+
+        //  logic block: prepare view
+        $this->layout('layout/layout-govuk.phtml');
+
+        $breadcrumbs = [
+            $organisation->getName() => AuthorisedExaminerUrlBuilderWeb::of($organisationId),
+            'Test logs' => '',
+        ];
+        $this->layout()->setVariable('progressBar', ['breadcrumbs' => $breadcrumbs]);
+
+        $this->layout()->setVariable('pageTitle', $viewModel->getOrganisation()->getName());
+        $this->layout()->setVariable('pageSubTitle', 'Test logs of Authorised Examiner');
 
         return new ViewModel(
             [
@@ -118,23 +140,37 @@ class MotTestLogController extends AbstractAuthActionController
         );
     }
 
-    private function downloadCsv($orgId, MotTestSearchParamsDto $searchParams)
+    public function downloadCsvAction()
     {
+        $organisationId = $this->params()->fromRoute('id');
+
+        if (!$this->authService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_TEST_LOG, $organisationId
+        )) {
+            return $this->redirect()->toUrl(PersonUrlBuilderWeb::home());
+        }
+
+        //  --  create object with parameters for sending to api   --
+        $searchParams = $this->prepareSearchParams();
         $searchParams
             ->setFormat(SearchParamConst::FORMAT_DATA_CSV)
-            ->setRowsCount()
+            ->setRowsCount(self::MAX_TESTS_COUNT)
             ->setIsApiGetTotalCount(false)
             ->setIsApiGetData(true);
 
-        $apiResult = $this->getLogDataBySearchCriteria($orgId, $searchParams);
+        $apiResult = $this->getLogDataBySearchCriteria($organisationId, $searchParams);
 
-        //  --  create content of csv  --
-        $csvBody = $this->prepareCsvBody($apiResult->getData());
+        //  --  define content of csv file  --
+        if ($apiResult->getResultCount() > 0) {
+            $csvBody = $this->prepareCsvBody($apiResult->getData());
+        } else {
+            $csvBody = '';
+        }
 
         //  --  define csv file name     --
         $fileName = 'test-log-' .
-            (new \DateTime('@' . $searchParams->getDateFromTS()))->format('dmY') . '-' .
-            (new \DateTime('@' . $searchParams->getDateToTS()))->format('dmY') . '.csv';
+            (new \DateTime('@' . $searchParams->getDateFromTs()))->format('dmY') . '-' .
+            (new \DateTime('@' . $searchParams->getDateToTs()))->format('dmY') . '.csv';
 
         //  --  set response    --
         /** @var \Zend\Http\Response $response */
@@ -190,21 +226,12 @@ class MotTestLogController extends AbstractAuthActionController
     }
 
     /**
-     * @param MotTestSearchParamsDto $searchParams
-     *
      * @return SearchResultDto|null
      */
     private function getLogDataBySearchCriteria($orgId, MotTestSearchParamsDto $searchParams)
     {
-        //  --  create object with parameters for sending to api   --
         try {
-            $apiUrl = AuthorisedExaminerUrlBuilder::motTestLog($orgId)->toString();
-            $apiResult = $this->getRestClient()->post(
-                $apiUrl,
-                DtoHydrator::dtoToJson($searchParams)
-            );
-
-            return DtoHydrator::jsonToDto($apiResult['data']);
+            return $this->mapperFactory->MotTestLog->getData($orgId, $searchParams);
         } catch (RestApplicationException $e) {
             $this->addErrorMessages($e->getDisplayMessages());
         }
@@ -218,7 +245,7 @@ class MotTestLogController extends AbstractAuthActionController
     protected function getAuthorisedExaminer($organisationId)
     {
         try {
-            return $this->getMapperFactory()->Organisation->getAuthorisedExaminer($organisationId);
+            return $this->mapperFactory->Organisation->getAuthorisedExaminer($organisationId);
         } catch (RestApplicationException $e) {
             $this->addErrorMessages($e->getDisplayMessages());
         }
@@ -236,10 +263,7 @@ class MotTestLogController extends AbstractAuthActionController
     protected function getLogSummary($organisationId)
     {
         try {
-            $apiUrl = AuthorisedExaminerUrlBuilder::motTestLogSummary($organisationId);
-            $apiResult = $this->getRestClient()->get($apiUrl);
-
-            return DtoHydrator::jsonToDto($apiResult['data']);
+            return $this->mapperFactory->MotTestLog->getSummary($organisationId);
         } catch (RestApplicationException $e) {
             $this->addErrorMessages($e->getDisplayMessages());
         }
@@ -247,40 +271,13 @@ class MotTestLogController extends AbstractAuthActionController
         return null;
     }
 
-    private function validateDatesAndRange(MotTestLogFormViewModel $formModel)
+    private function prepareSearchParams(MotTestLogFormViewModel $formModel = null)
     {
-        $dateFrom = $formModel->getDateFrom()->getDate();
-        $dateTo = $formModel->getDateTo()->getDate();
+        $queryParams = $this->request->getQuery();
 
-        $this->validateDate($dateFrom, 'From');
-        $this->validateDate($dateTo, 'To');
-
-        if ($dateFrom && $dateTo && $dateFrom > $dateTo) {
-            $this->addErrorMessages(sprintf(DateErrors::INCORRECT_INTERVAL, 'To', 'From'));
-        }
-
-        return count($this->flashMessenger()->getCurrentErrorMessages()) === 0;
-    }
-
-    private function validateDate($date, $fieldSfx)
-    {
-        if ($date === null) {
-            $this->addErrorMessages(sprintf(DateErrors::DATE_INVALID, $fieldSfx));
-        } elseif (DateUtils::isDateInFuture($date)) {
-            $this->addErrorMessages(sprintf(DateErrors::DATE_FUTURE, $fieldSfx));
-        }
-    }
-
-    private function prepareSearchParams(MotTestLogFormViewModel $formModel)
-    {
         $dto = new MotTestSearchParamsDto();
-
         $dto
             ->setFormat(SearchParamConst::FORMAT_DATA_TABLES)
-            ->setRowsCount(self::TABLE_ROWS_COUNT)
-            ->setPageNr(1)
-            ->setDateFromTS($formModel->getDateFrom()->getDate()->setTime(0, 0, 0)->getTimestamp())
-            ->setDateToTS($formModel->getDateTo()->getDate()->setTime(23, 59, 59)->getTimestamp())
             ->setStatus(
                 [
                     MotTestStatusName::ABANDONED,
@@ -298,7 +295,24 @@ class MotTestLogController extends AbstractAuthActionController
                     MotTestTypeCode::PARTIAL_RETEST_REPAIRED_AT_VTS,
                     MotTestTypeCode::RE_TEST,
                 ]
-            );
+            )
+            ->setRowsCount($queryParams->get(SearchParamConst::ROW_COUNT, 0))
+            ->setPageNr($queryParams->get(SearchParamConst::PAGE_NR, 1))
+            ->setSortBy($queryParams->get(SearchParamConst::SORT_BY, self::DEF_SORT_BY))
+            ->setSortDirection($queryParams->get(SearchParamConst::SORT_DIRECTION, self::DEF_SORT_DIRECTION));
+
+        //  logical block: set filter parameters   --
+        if ($formModel !== null) {
+            $dateFrom = $formModel->getDateFrom()->getDate()->setTime(0, 0, 0)->getTimestamp();
+            $dateTo = $formModel->getDateTo()->getDate()->setTime(23, 59, 59)->getTimestamp();
+        } else {
+            $dateFrom = $queryParams->get(SearchParamConst::SEARCH_DATE_FROM_QUERY_PARAM);
+            $dateTo = $queryParams->get(SearchParamConst::SEARCH_DATE_TO_QUERY_PARAM);
+        }
+
+        $dto
+            ->setDateFromTs($dateFrom)
+            ->setDateToTs($dateTo);
 
         return $dto;
     }

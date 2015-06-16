@@ -12,7 +12,6 @@ use DvsaCommon\UrlBuilder\OrganisationUrlBuilder;
  */
 class OrganisationPositionMapper extends DtoMapper
 {
-
     /**
      * @param $organisationId
      *
@@ -20,16 +19,20 @@ class OrganisationPositionMapper extends DtoMapper
      */
     public function fetchAllPositionsForOrganisation($organisationId)
     {
-        $url = $this->createUrlBuilder($organisationId)->position()->toString();
+        $url = OrganisationUrlBuilder::position($organisationId);
 
         return $this->get($url);
     }
 
-    public function post($organisationId, $nomineeId, $roleId)
+    public function createPosition($organisationId, $nomineeId, $roleId)
     {
-        $url = $this->createUrlBuilder($organisationId)->position()->toString();
-        $data = ['nomineeId' => $nomineeId, 'roleId' => $roleId];
-        $this->client->postJson($url, $data);
+        $apiUrl = OrganisationUrlBuilder::position($organisationId);
+        $data = [
+            'nomineeId' => $nomineeId,
+            'roleId'    => $roleId
+        ];
+
+        return parent::post($apiUrl, $data);
     }
 
     /**
@@ -38,20 +41,10 @@ class OrganisationPositionMapper extends DtoMapper
      * @param $organisationId
      * @param $positionId
      */
-    public function delete($organisationId, $positionId)
+    public function deletePosition($organisationId, $positionId)
     {
-        $urlBuilder = (new OrganisationUrlBuilder())
-            ->organisationById($organisationId)->position()->routeParam('positionId', $positionId);
-        $this->client->delete($urlBuilder->toString());
-    }
+        $urlBuilder = OrganisationUrlBuilder::position($organisationId, $positionId);
 
-    /**
-     * @param int $organisationId
-     *
-     * @return OrganisationUrlBuilder
-     */
-    private function createUrlBuilder($organisationId)
-    {
-        return OrganisationUrlBuilder::organisationById($organisationId);
+        return parent::delete($urlBuilder->toString());
     }
 }

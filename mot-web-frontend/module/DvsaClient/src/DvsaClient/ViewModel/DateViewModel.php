@@ -48,6 +48,7 @@ class DateViewModel
         try {
             return DateUtils::toDateFromParts($this->getDay(), $this->getMonth(), $this->getYear());
         } catch (\Exception $e) {
+            //  if incorrect date just return null
         }
 
         return null;

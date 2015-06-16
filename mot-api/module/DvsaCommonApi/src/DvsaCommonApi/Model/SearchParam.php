@@ -3,7 +3,6 @@ namespace DvsaCommonApi\Model;
 
 use Doctrine\ORM\EntityManager;
 use DvsaCommon\Constants\SearchParamConst;
-use DvsaCommon\Constants\VehicleSearchType;
 use DvsaCommon\Dto\AbstractDataTransferObject;
 use DvsaCommon\Dto\Search\SearchParamsDto;
 use Zend\Http\Request;
@@ -13,10 +12,20 @@ use Zend\Http\Request;
  */
 class SearchParam
 {
+    const SEARCH_DATA_FORMAT_QUERY_PARAMETER = 'format';
+
+    private static $SORT_DIRECTIONS = [
+        SearchParamConst::SORT_DIRECTION_ASC => 1,
+        SearchParamConst::SORT_DIRECTION_DESC => 1,
+    ];
+
     protected $sortColumnId = 0;
-    protected $sortDirection = SearchParamConst::SORT_DIRECTION_ASC;
+    protected $sortDirection;
+
+    protected $pageNr = 1;
     protected $rowCount = 10;
     protected $start = 0;
+
     protected $format = SearchParamConst::FORMAT_DATA_OBJECT;
     /** @var bool   Tell to API is Es enable for this search */
     protected $isEsEnabled;
@@ -26,7 +35,6 @@ class SearchParam
     /** @var bool   Tell to API get total count of records */
     protected $isApiGetTotalCount = true;
 
-    const SEARCH_DATA_FORMAT_QUERY_PARAMETER = 'format';
 
     /**
      * Performs processing of the passed search string into
@@ -82,6 +90,11 @@ class SearchParam
         return $this;
     }
 
+    public function getSortColumnNameDatabase()
+    {
+        return null;
+    }
+
     /**
      * Remove words with invalid characters in them
      *
@@ -127,8 +140,9 @@ class SearchParam
             );
         }
 
-        $this->setSortColumnId($dto->getSortColumnId());
+        $this->setSortColumnId($dto->getSortBy());
         $this->setSortDirection($dto->getSortDirection());
+        $this->setPageNr($dto->getPageNr());
         $this->setRowCount($dto->getRowsCount());
         $this->setStart($dto->getStart());
         $this->setFormat($dto->getFormat() ?: SearchParamConst::FORMAT_DATA_OBJECT);
@@ -153,8 +167,9 @@ class SearchParam
             $dto = new SearchParamsDto();
         }
 
-        $dto->setSortColumnId($this->getSortColumnId());
+        $dto->setSortBy($this->getSortColumnId());
         $dto->setSortDirection($this->getSortDirection());
+        $dto->setPageNr($this->getPageNr());
         $dto->setRowsCount($this->getRowCount());
         $dto->setStart($this->getStart());
         $dto->setFormat($this->getFormat());
@@ -163,6 +178,26 @@ class SearchParam
         $dto->setIsApiGetTotalCount($this->isApiGetTotalCount());
 
         return $dto;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPageNr()
+    {
+        return max(0, $this->pageNr);
+    }
+
+    /**
+     * @param int $pageNr
+     *
+     * @return $this
+     */
+    public function setPageNr($pageNr)
+    {
+        $this->pageNr = (int) $pageNr;
+
+        return $this;
     }
 
     /**
@@ -199,7 +234,7 @@ class SearchParam
      */
     public function setSortColumnId($sortColumnId)
     {
-        $this->sortColumnId = (int)$sortColumnId;
+        $this->sortColumnId = $sortColumnId;
 
         return $this;
     }
@@ -227,19 +262,19 @@ class SearchParam
     /**
      * Utility function to help get a default value for sort direction.
      *
-     * @param $sortDirection
+     * @param $direction
      *
      * @return string DESC|ASC
      */
-    public function getValidSortDirectionValue($sortDirection)
+    public function getValidSortDirectionValue($direction)
     {
-        $sortDirection = strtoupper($sortDirection);
+        $direction = strtoupper($direction);
 
-        if (!in_array($sortDirection, [SearchParamConst::SORT_DIRECTION_ASC, SearchParamConst::SORT_DIRECTION_DESC])) {
-            return SearchParamConst::SORT_DIRECTION_ASC;
+        if (isset(self::$SORT_DIRECTIONS[$direction])) {
+            return $direction;
         }
 
-        return $sortDirection;
+        return null;
     }
 
     /**
@@ -257,7 +292,7 @@ class SearchParam
      */
     public function setStart($start)
     {
-        $this->start = (int)$start;
+        $this->start = (int) $start;
 
         return $this;
     }
@@ -267,6 +302,10 @@ class SearchParam
      */
     public function getStart()
     {
+        if ($this->start === 0 && $this->getPageNr() > 1) {
+            return ($this->getPageNr() - 1) * $this->getRowCount();
+        }
+
         return $this->start;
     }
 
