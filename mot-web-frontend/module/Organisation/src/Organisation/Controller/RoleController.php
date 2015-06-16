@@ -3,7 +3,6 @@
 namespace Organisation\Controller;
 
 use Core\Controller\AbstractAuthActionController;
-use Doctrine\Tests\ORM\Functional\Ticket\User;
 use DvsaCommon\Dto\Organisation\OrganisationPositionDto;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
@@ -41,7 +40,7 @@ class RoleController extends AbstractAuthActionController
 
     /**
      * @param UsernameValidator $usernameValidator
-     * @param HTMLPurififer     $htmlPurifier
+     * @param HTMLPurifier      $htmlPurifier
      */
     public function __construct(UsernameValidator $usernameValidator, HTMLPurifier $htmlPurifier)
     {
@@ -170,7 +169,7 @@ class RoleController extends AbstractAuthActionController
             try {
                 $organisationPosition = $mapperFactory->OrganisationPosition;
 
-                $organisationPosition->delete($organisationId, $positionId);
+                $organisationPosition->deletePosition($organisationId, $positionId);
                 $this->addSuccessMessage(
                     'You have removed the role of ' . $position->getRole() . ' from ' . $position->getPerson()->getFullName()
                 );
@@ -235,7 +234,7 @@ class RoleController extends AbstractAuthActionController
 
         if ($this->getRequest()->isPost()) {
             try {
-                $mapperFactory->OrganisationPosition->post($organisationId, $nomineeId, $roleId);
+                $mapperFactory->OrganisationPosition->createPosition($organisationId, $nomineeId, $roleId);
 
                 $this->addSuccessMessage('A role notification has been sent to ' . $nominee->getUsername() . '.');
 

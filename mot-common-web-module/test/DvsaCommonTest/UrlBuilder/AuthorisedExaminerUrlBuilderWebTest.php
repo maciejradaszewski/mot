@@ -2,37 +2,46 @@
 
 namespace DvsaCommonTest\UrlBuilder;
 
-use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilder;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
-use PHPUnit_Framework_TestCase;
 
 /**
  * Class AuthorisedExaminerUrlBuilderWebTest
+ *
  * @package DvsaCommonTest\UrlBuilder
  */
-class AuthorisedExaminerUrlBuilderWebTest extends PHPUnit_Framework_TestCase
+class AuthorisedExaminerUrlBuilderWebTest extends \PHPUnit_Framework_TestCase
 {
-    const AE_ID     = 1;
+    const AE_ID = 1;
     const AE_NUMBER = 'A12345';
 
-    public function testUserAdminUrlBuilder()
+    public function test()
     {
-        $urlBuilder = new AuthorisedExaminerUrlBuilderWeb(self::AE_ID);
+        $base = '/authorised-examiner/' . self::AE_ID;
 
-        $this->assertEquals(
-            '/authorised-examiner/' . self::AE_ID . '/create',
-            $urlBuilder->aeCreate()->toString()
+        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID), $base);
+        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->aeCreate(), $base . '/create');
+        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->aeSearch(), $base . '/search');
+        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->aeEdit(), $base . '/edit');
+
+        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::motTestLog(self::AE_ID), $base . '/mot-test-log');
+        $this->checkUrl(
+            AuthorisedExaminerUrlBuilderWeb::motTestLogDownloadCsv(self::AE_ID), $base . '/mot-test-log/csv'
         );
-        $urlBuilder = AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID);
-        $this->assertInstanceOf(AuthorisedExaminerUrlBuilderWeb::class, $urlBuilder);
-        $this->assertEquals('/authorised-examiner/' . self::AE_ID . '/search', $urlBuilder->aeSearch()->toString());
-        $this->assertEquals('/authorised-examiner/' . self::AE_ID . '/edit', AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->aeEdit()->toString());
-        $this->assertEquals('/authorised-examiner/' . self::AE_ID . '/mot-test-log', AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->motTestLog(self::AE_ID)->toString());
-        $this->assertEquals('/authorised-examiner/' . self::AE_ID . '/mot-test-log/download/csv', AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->motTestLogDownloadCsv(self::AE_ID)->toString());
-        $this->assertEquals('/authorised-examiner/' . self::AE_ID . '/slots', AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->slots(self::AE_ID)->toString());
-        $this->assertEquals('/authorised-examiner/' . self::AE_ID . '/slots/usage', AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->slotsUsage(self::AE_ID)->toString());
-        $this->assertEquals('/authorised-examiner/' . self::AE_ID . '/slots/usage/page/1', AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->slotsUsage(self::AE_ID, 1)->toString());
-        $this->assertEquals('/authorised-examiner/' . self::AE_ID . '/slots/usage/page/1', AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->slotsUsage(self::AE_ID, 1, 1)->toString());
+
+        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::slots(self::AE_ID), $base . '/slots');
+
+        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::roles(self::AE_ID), $base . '/roles');
+        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->principals(), $base . '/principals');
+        $this->checkUrl(
+            AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->principalRemove(8888),
+            $base . '/8888/remove-principal-confirmation'
+        );
+
     }
 
+    private function checkUrl(AuthorisedExaminerUrlBuilderWeb $urlBuilder, $expectUrl)
+    {
+        $this->assertEquals($expectUrl, $urlBuilder->toString());
+        $this->assertInstanceOf(AuthorisedExaminerUrlBuilderWeb::class, $urlBuilder);
+    }
 }

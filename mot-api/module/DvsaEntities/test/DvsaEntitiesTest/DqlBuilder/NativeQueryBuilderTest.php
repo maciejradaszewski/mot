@@ -15,96 +15,95 @@ use DvsaEntities\DqlBuilder\NativeQueryBuilder;
  */
 class NativeQueryBuilderTest extends AbstractServiceTestCase
 {
+    /**
+     * @var NativeQueryBuilder
+     */
     protected $queryBuilder;
-
 
     public function setup()
     {
         $this->queryBuilder = new NativeQueryBuilder;
     }
 
-    /**
-     * @dataProvider provideParts
-     */
-    public function testGetSql($parts)
+    public function testResetPart()
     {
-        foreach ($parts as $partType => $part) {
-            switch ($partType) {
-                case 'select':
-                    foreach ($part as $aSelect) {
-                        $this->queryBuilder->select($aSelect);
-                    }
-            break;
-                case 'from':
-                    foreach ($part as $aFrom) {
-                        $this->queryBuilder->from($aFrom[0], $aFrom[1]);
-                    }
-            break;
-                case 'join':
-                    foreach ($part as $aJoin) {
-                        $this->queryBuilder->join($aJoin[0], $aJoin[1], $aJoin[2]);
-                    }
-            break;
-                case 'where':
-                    foreach ($part as $aWhere) {
-                        $this->queryBuilder->andWhere($aWhere);
-                    }
-            break;
-                case 'param':
-                    foreach ($part as $aParam) {
-                        $this->queryBuilder->setParameter($aParam[0], $aParam[1]);
-                    }
-            break;
-                case 'offset':
-                    $this->queryBuilder->setOffset($part);
-            break;
-                case 'limit':
-                    $this->queryBuilder->setLimit($part);
-            break;
-            }
-        }
-        $this->assertEquals($parts['expected'], $this->queryBuilder->getSql(), 'Sql does not match defined expected string');
+        $this->queryBuilder->select('testSelect1', 'select1')
+            ->select('testSelect2', 'select2')
+            ->from('testFrom1', 'from1')
+            ->from('testFrom2')
+            ->join('testJoin1', 'join1', 'cond')
+            ->join('testJoin2', null, 'cond')
+            ->join('testJoin3', null, 'cond')
+            ->andWhere('testWhere1')
+            ->andWhere('testWhere2', 'where2')
+            ->orderBy('testOrder1', 'orderBy1')
+            ->orderBy('testOrder2')
+            ->setLimit(100)
+            ->setOffset(99);
+
+        $expect =
+            'SELECT testSelect1, testSelect2 ' .
+            'FROM testFrom1 AS from1, testFrom2 ' .
+            'INNER JOIN testJoin1 AS join1 ON cond ' .
+            'INNER JOIN testJoin2 ON cond ' .
+            'INNER JOIN testJoin3 ON cond ' .
+            'WHERE 1=1 AND testWhere1 AND testWhere2 ' .
+            'ORDER BY testOrder1, testOrder2 ' .
+            'LIMIT 100 OFFSET 99';
+
+        $this->assertEquals($expect, $this->queryBuilder->getSql());
+
+        //  logic block:: remove parts by key
+        $this->queryBuilder
+            ->resetPart('select', 'select1')
+            ->resetPart('from', 'testFrom2')
+            ->resetPart('join', 'join1')
+            ->resetPart('join', 'testJoin3')
+            ->resetPart('where', 'where2')
+            ->resetPart('orderBy', 'orderBy1')
+            ->setOffset(0);
+
+        $expect =
+            'SELECT testSelect2 ' .
+            'FROM testFrom1 AS from1 ' .
+            'INNER JOIN testJoin2 ON cond ' .
+            'WHERE 1=1 AND testWhere1 ' .
+            'ORDER BY testOrder2 ' .
+            'LIMIT 100';
+
+        $this->assertEquals($expect, $this->queryBuilder->getSql());
+
+        //  logic block:: remove parts and Substitute
+        $this->queryBuilder
+            ->resetPart('select')
+            ->select('testSelectX')
+            ->resetPart('from')
+            ->from('testFromX')
+            ->resetPart('join')
+            ->resetPart('where')
+            ->resetPart('orderBy')
+            ->setLimit(0);
+
+        $this->assertEquals('' . 'SELECT testSelectX FROM testFromX', $this->queryBuilder->getSql());
     }
 
-    public static function provideParts()
+    public function testParameters()
     {
-        return
-            [
-                [
-                    [
-                        'select' =>
-                            ['mt.number, ts.name AS status, mt.started_date',
-                            'mt.registration, mt.vin, mt.make_code, mt.model_code',
-                            's.site_number AS siteNumber, p.username as userName, tt.description as testTypeName',
-                            'COALESCE(mt.completed_date, mt.started_date) AS testDate'
-                        ],
-                        'from' =>
-                            [
-                            ['mot_test', 'mt']
-                            ],
-                        'join' =>
-                            [
-                            ['site', 's', 's.id = mt.site_id'],
-                            ['vehicle', 'v', 'v.id = mt.vehicle_id'],
-                            ['make', 'vma', 'vma.code = mt.make_code'],
-                            ['model', 'vmo', 'vmo.code = mt.model_code AND vmo.make_code = vma.code'],
-                            ['mot_test_type', 'tt', 'tt.id = mt.mot_test_type_id'],
-                            ['person', 'p', 'p.id = mt.person_id'],
-                            ['mot_test_status', 'ts', 'ts.id = mt.status_id'],
-                        ],
-                        'where'  => [
-                            'mt.number = :mtnumber',
-                            'ts.name = :mtstatus',
-                        ],
-                        'param'  => [
-                            ['mtnumber', 20],
-                            ['mtstatus', 30],
-                        ],
-                        'offset' => 5,
-                        'limit'  => 10,
-                        'expected' => 'SELECT mt.number, ts.name AS status, mt.started_date, mt.registration, mt.vin, mt.make_code, mt.model_code, s.site_number AS siteNumber, p.username as userName, tt.description as testTypeName, COALESCE(mt.completed_date, mt.started_date) AS testDate FROM mot_test AS mt INNER JOIN site AS s ON s.id = mt.site_id INNER JOIN vehicle AS v ON v.id = mt.vehicle_id INNER JOIN make AS vma ON vma.code = mt.make_code INNER JOIN model AS vmo ON vmo.code = mt.model_code AND vmo.make_code = vma.code INNER JOIN mot_test_type AS tt ON tt.id = mt.mot_test_type_id INNER JOIN person AS p ON p.id = mt.person_id INNER JOIN mot_test_status AS ts ON ts.id = mt.status_id WHERE 1=1  AND mt.number = :mtnumber  AND ts.name = :mtstatus LIMIT 10 OFFSET 5'
-                    ]
-                ],
-            ];
+        $params= [
+            [':mtnumber' => 20],
+            [':mtstatus' => 30],
+        ];
+
+        //  logic block:: set few parameters
+        $this->queryBuilder->setParameters($params);
+        $this->assertEquals($params, $this->queryBuilder->getParameters());
+
+        //  logic block:: add parameter
+        $this->queryBuilder->setParameter('dateTime', new \DateTime('2013-12-11 23:24:25'));
+
+        $this->assertEquals(
+            [':dateTime' => '2013-12-11 23:24:25'] + $params,
+            $this->queryBuilder->getParameters()
+        );
     }
 }

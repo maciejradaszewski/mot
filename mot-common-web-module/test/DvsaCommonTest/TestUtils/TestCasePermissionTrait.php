@@ -48,6 +48,17 @@ trait TestCasePermissionTrait
             );
     }
 
+    protected function mockIsGrantedAtOrganisation(MockObj $authService, $permissions, $orgId)
+    {
+        $authService->expects($this->any())
+            ->method("isGrantedAtOrganisation")
+            ->willReturnCallback(
+                function ($chkPermission, $chkOrgId) use (&$permissions, $orgId) {
+                    return ($chkOrgId == $orgId && in_array($chkPermission, $permissions));
+                }
+            );
+    }
+
     protected function mockAssertGranted(MockObj $authService, $permissions)
     {
         $authService->expects($this->any())

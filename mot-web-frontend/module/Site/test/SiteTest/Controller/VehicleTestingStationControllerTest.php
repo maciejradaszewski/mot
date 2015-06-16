@@ -9,8 +9,6 @@ use DvsaClient\Mapper\MotTestInProgressMapper;
 use DvsaClient\Mapper\VehicleTestingStationDtoMapper;
 use DvsaClient\Mapper\VehicleTestingStationMapper;
 use DvsaClient\MapperFactory;
-use DvsaCommon\Auth\NotLoggedInException;
-use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Site\SiteContactDto;
@@ -238,7 +236,6 @@ class VehicleTestingStationControllerTest extends AbstractFrontendControllerTest
 
         $this->mapperFactoryMock = $this->getMapperFactoryMock();
 
-        $serviceManager->setService('CatalogService', XMock::of(CatalogService::class));
         $serviceManager->setService(MapperFactory::class, $this->mapperFactoryMock);
 
         $this->createHttpRequestForController('VehicleTestingStation');

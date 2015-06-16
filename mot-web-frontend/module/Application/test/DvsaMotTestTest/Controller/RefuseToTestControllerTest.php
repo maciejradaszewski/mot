@@ -2,9 +2,9 @@
 
 namespace DvsaMotTestTest\Controller;
 
+use Core\Service\MotFrontendAuthorisationServiceInterface;
 use DvsaClient\Mapper\VehicleMapper;
 use DvsaClient\MapperFactory;
-use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Obfuscate\EncryptionKey;
 use DvsaCommon\Obfuscate\ParamEncoder;
@@ -197,7 +197,7 @@ class RefuseToTestControllerTest extends AbstractDvsaMotTestTestCase
 
     private function mockAuthServiceAsserts()
     {
-        $authService = XMock::of(MotAuthorisationServiceInterface::class);
+        $authService = XMock::of(MotFrontendAuthorisationServiceInterface::class);
         $authService->expects($this->any())->method('isGranted')->willReturn(true);
         $authService->expects($this->any())->method('isGrantedAtSite')->willReturn(true);
         $this->getServiceManager()->setService('AuthorisationService', $authService);

@@ -20,7 +20,7 @@ public class AEDMUserJourneyTest extends BaseTest {
 
         AuthorisedExaminerOverviewPage authorisedExaminerOverviewPage =
                 AuthorisedExaminerOverviewPage.navigateHereFromLoginPage(driver, aedmLogin);
-        AedmTestLogs aedmTestLogs = authorisedExaminerOverviewPage.viewTestLogs();
+        AedmTestLogs aedmTestLogs = authorisedExaminerOverviewPage.viewTestLogs("testAedmEntersInvalidDateRange");
         aedmTestLogs.setFromWhichDay(DateRange.PUBLIC_HOLIDAY.startDay);
         aedmTestLogs.setFromWhichMonth(DateRange.PUBLIC_HOLIDAY.startMonth);
         aedmTestLogs.setFromWhichYear(DateRange.PUBLIC_HOLIDAY.startYear);
@@ -29,7 +29,7 @@ public class AEDMUserJourneyTest extends BaseTest {
         aedmTestLogs.setToWhichYear(DateRange.PUBLIC_HOLIDAY.endYear);
         aedmTestLogs.downloadCsvReport();
 
-        assertThat(ValidationSummary.isValidationSummaryDisplayed(driver), is(true));
+        assertThat(aedmTestLogs.isValidationSummaryDisplayed(), is(true));
     }
 
 }

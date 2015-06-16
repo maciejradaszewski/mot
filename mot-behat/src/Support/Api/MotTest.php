@@ -118,7 +118,7 @@ class MotTest extends AbstractMotTest
             'format' => "DATA_TABLES",
             'pageNr' => 0,
             'rowsCount' => 25000,
-            'sortColumnId' => 5, //sort by started date, id assigned in MotTestSearchParam class
+            'sortBy' => 3, //sort by started date, id assigned in MotTestSearchParam class
             'sortDirection' => "DESC",
             '_class' => 'DvsaCommon\Dto\Search\MotTestSearchParamsDto',
         ];

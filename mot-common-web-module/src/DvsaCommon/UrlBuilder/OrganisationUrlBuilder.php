@@ -31,9 +31,11 @@ class OrganisationUrlBuilder extends UrlBuilder
         return (new self())->appendRoutesAndParams(self::ORGANISATION)->routeParam('id', $id);
     }
 
-    public function position()
+    public static function position($orgId, $positionId = null)
     {
-        return $this->appendRoutesAndParams(self::POSITION);
+        return self::organisationById($orgId)
+            ->appendRoutesAndParams(self::POSITION)
+            ->routeParam('positionId', $positionId);
     }
 
     public function usage()

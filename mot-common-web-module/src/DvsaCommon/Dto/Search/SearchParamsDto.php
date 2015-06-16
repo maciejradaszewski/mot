@@ -2,7 +2,9 @@
 
 namespace DvsaCommon\Dto\Search;
 
+use DvsaCommon\Constants\SearchParamConst;
 use DvsaCommon\Dto\AbstractDataTransferObject;
+use Zend\Stdlib\Parameters;
 
 /**
  * Common class to pass search parameters to api
@@ -12,15 +14,15 @@ class SearchParamsDto extends AbstractDataTransferObject
     /** @var string */
     private $format;
     /** @var int */
-    private $rowsCount = 10;
+    private $rowsCount = SearchParamConst::DEF_ROWS_COUNT;
     /** @var int */
-    private $pageNr = 0;
+    private $pageNr = SearchParamConst::DEF_PAGE_NR;
     /** @var int */
-    private $start = 0;
+    private $start;
     /** @var string */
-    private $sortColumnId;
+    private $sortBy;
     /** @var string */
-    private $sortDirection = 'ASC';
+    private $sortDirection;
     /** @var boolean */
     private $isSearchRecent = false;
     /** @var string */
@@ -104,7 +106,7 @@ class SearchParamsDto extends AbstractDataTransferObject
     }
 
     /**
-     * @param int|null $rowsCount   Set null to get all records
+     * @param int|null $rowsCount Set null to get all records
      *
      * @return $this
      */
@@ -138,19 +140,19 @@ class SearchParamsDto extends AbstractDataTransferObject
     /**
      * @return string
      */
-    public function getSortColumnId()
+    public function getSortBy()
     {
-        return $this->sortColumnId;
+        return $this->sortBy;
     }
 
     /**
      * @param string $sortColumnId
      *
-     * @return SearchParamsDto
+     * @return $this
      */
-    public function setSortColumnId($sortColumnId)
+    public function setSortBy($sortColumnId)
     {
-        $this->sortColumnId = $sortColumnId;
+        $this->sortBy = $sortColumnId;
 
         return $this;
     }
@@ -273,5 +275,19 @@ class SearchParamsDto extends AbstractDataTransferObject
         $this->isEsEnable = $value;
 
         return $this;
+    }
+
+    public function toQueryParams()
+    {
+        return new Parameters(
+            array_filter(
+                [
+                    SearchParamConst::ROW_COUNT      => $this->getRowsCount(),
+                    SearchParamConst::PAGE_NR        => $this->getPageNr(),
+                    SearchParamConst::SORT_BY        => $this->getSortBy(),
+                    SearchParamConst::SORT_DIRECTION => $this->getSortDirection(),
+                ]
+            )
+        );
     }
 }

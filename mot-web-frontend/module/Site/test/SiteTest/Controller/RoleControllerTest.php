@@ -2,6 +2,7 @@
 
 namespace SiteTest\Controller;
 
+use Application\Service\CatalogService;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaClient\Entity\Person;
 use DvsaClient\Entity\VehicleTestingStation;
@@ -11,11 +12,11 @@ use DvsaClient\Mapper\SiteRoleMapper;
 use DvsaClient\Mapper\VehicleTestingStationMapper;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
+use DvsaCommon\Validator\UsernameValidator;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
 use Site\Controller\RoleController;
-use Site\Traits\SiteServicesTrait;
-use DvsaCommon\Validator\UsernameValidator;
+use Zend\View\Model\ViewModel;
 
 /**
  * Class RoleControllerTest.
@@ -45,6 +46,7 @@ class RoleControllerTest extends AbstractFrontendControllerTestCase
 
         $usernameValidatorMock = $this->createUsernameValidatorMock(true);
         $htmlPurifier          = $this->getMock('HTMLPurifier');
+
         $this->controller      = new RoleController($usernameValidatorMock, $htmlPurifier);
         $this->controller->setServiceLocator($serviceManager);
 
@@ -61,6 +63,7 @@ class RoleControllerTest extends AbstractFrontendControllerTestCase
         );
 
         $serviceManager->setService(MapperFactory::class, $this->mapperFactoryMock);
+        $serviceManager->setService('CatalogService', XMock::of(CatalogService::class));
 
         $this->controller->setServiceLocator($serviceManager);
 
@@ -69,46 +72,43 @@ class RoleControllerTest extends AbstractFrontendControllerTestCase
 
     public function testSearchForPersonActionCanBeAccessed()
     {
-        $response = $this->getResponseForAction(
+        $this->getResponseForAction(
             'searchForPerson',
             [
                 'vehicleTestingStationId' => $this->siteId,
             ]
         );
-        $this->assertEquals(self::HTTP_OK_CODE, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
     }
 
     public function testSearchForPersonReturnsViewModel()
     {
-        $this->routeMatch->setParam('action', 'searchForPerson');
-        $this->routeMatch->setParam('vehicleTestingStationId', $this->vehicleTestingStationId);
-        $this->request->setMethod('get');
+        $result = $this->getResultForAction(
+            'searchForPerson', ['vehicleTestingStationId' => $this->vehicleTestingStationId]
+        );
 
-        $viewModelArray = $this->controller->dispatch($this->request);
-
-        $this->assertEquals($viewModelArray['vehicleTestingStationId'], $this->vehicleTestingStationId);
-        $this->assertEquals($viewModelArray['form'], []);
-        $this->assertEquals($viewModelArray['personId'], '');
-        $this->assertEquals($viewModelArray['userNotFound'], false);
-        $this->assertInstanceOf(VehicleTestingStation::class, $viewModelArray['vehicleTestingStation']);
+        $this->assertEquals($result['vehicleTestingStationId'], $this->vehicleTestingStationId);
+        $this->assertEquals($result['form'], []);
+        $this->assertEquals($result['personId'], '');
+        $this->assertEquals($result['userNotFound'], false);
+        $this->assertInstanceOf(VehicleTestingStation::class, $result['vehicleTestingStation']);
     }
 
     public function testListUserRolesActionCanBeAccessed()
     {
-        //   $this->getMockBuilder()
-        $response = $this->getResponseForAction(
+        $this->getResponseForAction(
             'listUserRoles',
             [
                 'vehicleTestingStationId' => $this->siteId,
                 'personId'                => $this->personId
             ]
         );
-        $this->assertEquals(self::HTTP_OK_CODE, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
     }
 
     public function testAssignConfirmationActionCanBeAccessed()
     {
-        $response = $this->getResponseForAction(
+        $this->getResponseForAction(
             'confirmNomination',
             [
                 'nomineeId'               => $this->nomineeId,
@@ -117,7 +117,7 @@ class RoleControllerTest extends AbstractFrontendControllerTestCase
             ]
         );
 
-        $this->assertEquals(self::HTTP_OK_CODE, $response->getStatusCode());
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
     }
 
     /**
@@ -209,7 +209,8 @@ class RoleControllerTest extends AbstractFrontendControllerTestCase
         return $personMapperMock;
     }
 
-    private function getVehicleTestingStationMapperMock() {
+    private function getVehicleTestingStationMapperMock()
+    {
         $vehicleTestingStationMapperMock = XMock::of(VehicleTestingStationMapper::class);
 
         $vehicleTestingStation = new VehicleTestingStation();
@@ -229,9 +230,12 @@ class RoleControllerTest extends AbstractFrontendControllerTestCase
      * @return \PHPUnit_Framework_MockObject_MockObject
      * @throws \Exception
      */
-    private function getMapperFactoryMock($personMapperMock, $roleMapperMock, $positionMapperMock,
-                                          $vehicleTestingStationMock)
-    {
+    private function getMapperFactoryMock(
+        $personMapperMock,
+        $roleMapperMock,
+        $positionMapperMock,
+        $vehicleTestingStationMock
+    ) {
         $mapperFactoryMock = XMock::of(MapperFactory::class);
 
         $map = [

@@ -190,7 +190,7 @@ class MotTestSearchParam extends SearchParam
         if ($this->sortColumnName !== null) {
             return $this->sortColumnName;
         }
-        
+
         if (isset(self::$esSortByColumns[$this->getSortColumnId()])) {
             return self::$esSortByColumns[$this->getSortColumnId()];
         }
@@ -466,12 +466,12 @@ class MotTestSearchParam extends SearchParam
         $this->setStatus($dto->getStatus());
         $this->setTestType($dto->getTestType());
 
-        $dateTs = (int)$dto->getDateFromTS();
+        $dateTs = (int) $dto->getDateFromTs();
         if ($dateTs) {
             $this->setDateFrom(new \DateTime('@' . $dateTs));
         }
 
-        $dateTs = (int)$dto->getDateToTS();
+        $dateTs = (int) $dto->getDateToTs();
         if ($dateTs) {
             $this->setDateTo(new \DateTime('@' . $dateTs));
         }
@@ -502,11 +502,11 @@ class MotTestSearchParam extends SearchParam
         $dto->setVehicleVin($this->getVin());
 
         if ($this->getDateFrom() instanceof \DateTime) {
-            $dto->setDateFromTS($this->getDateFrom()->getTimestamp());
+            $dto->setDateFromTs($this->getDateFrom()->getTimestamp());
         }
 
         if ($this->getDateTo() instanceof \DateTime) {
-            $dto->setDateToTS($this->getDateTo()->getTimestamp());
+            $dto->setDateToTs($this->getDateTo()->getTimestamp());
         }
 
         $dto->setOrganisationId($this->getOrganisationId());

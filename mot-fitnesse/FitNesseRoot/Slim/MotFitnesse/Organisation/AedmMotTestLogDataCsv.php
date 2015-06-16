@@ -107,8 +107,8 @@ class MotFitnesse_Organisation_AedmMotTestLogDataCsv
             ->setFormat(SearchParamConst::FORMAT_DATA_CSV)
             ->setRowsCount()
             ->setPageNr(1)
-            ->setDateFromTS($this->dateFrom->setTime(0, 0, 0)->getTimestamp())
-            ->setDateToTS($this->dateTo->setTime(23, 59, 59)->getTimestamp())
+            ->setDateFromTs($this->dateFrom->setTime(0, 0, 0)->getTimestamp())
+            ->setDateToTs($this->dateTo->setTime(23, 59, 59)->getTimestamp())
             ->setStatus(
                 [
                     MotTestStatusName::ABANDONED,
@@ -163,7 +163,6 @@ class MotFitnesse_Organisation_AedmMotTestLogDataCsv
 
         $testerA = $testSupportHelper->createTester($userName, [$vtsId]);
         $testerUserName = $testerA['username'];
-
 
         // --   Creating mottest    --
         $statuses = [
@@ -224,8 +223,8 @@ class MotFitnesse_Organisation_AedmMotTestLogDataCsv
         $vehicleTestHelper = new VehicleTestHelper(FitMotApiClient::create($username, TestShared::PASSWORD));
         $vehicleId = $vehicleTestHelper->generateVehicle();
 
-        $this->testSupportHelper->createMotTest($username, $siteId, $vehicleId, $outcome, null, 12345, $dateSet, $testType);
+        $this->testSupportHelper->createMotTest(
+            $username, $siteId, $vehicleId, $outcome, null, 12345, $dateSet, $testType
+        );
     }
-
 }
- 

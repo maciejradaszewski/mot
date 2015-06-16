@@ -33,16 +33,35 @@ if ($valueDate) {
 }
 
 $isRequire = ($this->isRequired === true);
+
+$escCssClass = join(
+    ' ', array_filter(
+        [
+            'form-group',
+            (!empty($this->errorMessage) ? 'has-error' : null),
+        ]
+    )
+);
+
+$hint = (isset($this->hint) ? $this->hint : 'For example, 31 3 1980');
 ?>
 
-
-<div class="form-group">
+<div class="<?php echo $escCssClass; ?>">
     <fieldset>
         <?php if ($legend) : ?>
-            <legend class="form-label" style="font-weight: bold;"><?php echo $this->escapeHtml($legend); ?></legend>
+            <legend class="form-label"><?php echo $this->escapeHtml($legend); ?></legend>
         <?php endif; ?>
 
-        <div class="date-group">
+        <div class="form-date">
+            <?php if (!empty($hint)): ?>
+                <span class="form-hint"><?php echo $this->escapeHtml($hint); ?></span>
+            <?php endif; ?>
+
+            <?php if (!empty($this->errorMessage)): ?>
+                <span class="validation-message"><?php echo $this->escapeHtml($this->errorMessage); ?></span>
+            <?php endif; ?>
+
+
             <?php
             //  --  day element   --
             echo $this->partial(

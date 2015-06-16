@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d4201fa0753904751dac5c85e7bb18c0",
+    "hash": "203cde72c81666bfcabb967b80047364",
     "packages": [
         {
             "name": "cpms/client",
@@ -281,7 +281,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -354,7 +354,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -502,7 +502,7 @@
                 {
                     "name": "Marco Pivetta",
                     "email": "ocramius@gmail.com",
-                    "homepage": "http://marco-pivetta.com/",
+                    "homepage": "http://ocramius.github.com/",
                     "role": "Developer"
                 },
                 {
@@ -512,7 +512,7 @@
                 {
                     "name": "Michaël Gallego",
                     "email": "mic.gallego@gmail.com",
-                    "homepage": "http://www.michaelgallego.fr"
+                    "homepage": "http://michaelgallego.fr"
                 }
             ],
             "description": "Zend Framework 2 Module that provides Doctrine basic functionality required for ORM and ODM modules",
@@ -584,7 +584,7 @@
                 {
                     "name": "Marco Pivetta",
                     "email": "ocramius@gmail.com",
-                    "homepage": "http://marco-pivetta.com/",
+                    "homepage": "http://ocramius.github.com/",
                     "role": "Developer"
                 },
                 {
@@ -1023,11 +1023,11 @@
         },
         {
             "name": "dvsa/web-frontend-assets",
-            "version": "v0.2.7",
+            "version": "v0.2.10",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/web-frontend-assets.git",
-                "reference": "fdf19bcbd777beae175b05757e99b81c553504bb"
+                "reference": "450dec4f55fe5ee0c6517194ee307bdfda955728"
             },
             "type": "library",
             "authors": [
@@ -1036,7 +1036,7 @@
                     "email": ""
                 }
             ],
-            "time": "2015-05-12 07:21:34"
+            "time": "2015-06-08 12:25:28"
         },
         {
             "name": "erusev/parsedown",

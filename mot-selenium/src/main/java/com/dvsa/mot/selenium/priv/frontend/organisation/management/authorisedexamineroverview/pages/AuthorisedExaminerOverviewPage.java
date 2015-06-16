@@ -272,9 +272,9 @@ public class AuthorisedExaminerOverviewPage extends BasePage {
         return isElementDisplayed(slotsAdjustmentLink);
     }
 
-    public AedmTestLogs viewTestLogs() {
+    public AedmTestLogs viewTestLogs(String title) {
         viewTestLogs.click();
-        return new AedmTestLogs(driver);
+        return new AedmTestLogs(driver, title.toUpperCase());
     }
 
     private RemoveRolePage clickRemoveAEDMRoleButtonForUser(Role role, Person person) {

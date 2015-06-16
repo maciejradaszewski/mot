@@ -1,0 +1,24 @@
+<?php
+/**
+ * @var \Zend\Navigation\Navigation $navigation
+ * @var \Zend\Navigation\Page\Uri   $page
+ */
+
+$navigation = $this->navigation;
+?>
+
+<ul class="filter__list">
+    <?php foreach ($navigation->getPages() as $page): ?>
+        <li>
+            <?php if ($page->isActive()): ?>
+                <strong><?php echo $this->escapeHtml($page->getLabel()); ?></strong>
+            <?php else: ?>
+                <?php $linkId = lcfirst(str_replace(' ', '', ucwords($page->getLabel()))); ?>
+                <a href="<?php echo $page->getUri(); ?>"
+                   id="<?php echo $this->escapeHtmlAttr($linkId); ?>">
+                    <?php echo $this->escapeHtml($page->getLabel()); ?>
+                </a>
+            <?php endif; ?>
+        </li>
+    <?php endforeach; ?>
+</ul>

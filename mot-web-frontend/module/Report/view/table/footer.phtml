@@ -1,0 +1,53 @@
+<?php
+
+use DvsaCommon\Dto\Search\SearchParamsDto;
+
+/**
+ * @var \Zend\Paginator\Paginator               $paginator
+ * @var \SlotPurchase\Report\Table\TableOptions $tableOptions
+ * @var  SearchParamsDto                        $searchParams
+ */
+
+$searchParams = $this->searchParams;
+?>
+
+<div class="pagination-wrapper">
+    <div class="page-results-control pull-left">
+        Show:
+        <?php
+        foreach ($tableOptions->getItemsPerPageOptions() as $limit):
+            $escLimit = $this->escapeHtml($limit);
+
+            if ($limit != $searchParams->getRowsCount()) :
+                $urlSearchParams = clone $searchParams;
+                $urlSearchParams
+                    ->setPageNr(1)
+                    ->setRowsCount($limit);
+
+                $escUrl = $this->url(null, [], ['query' => $urlSearchParams->toQueryParams()->toArray()], true);
+                ?>
+                <a id="length<?php echo $this->escapeHtmlAttr($limit); ?>"
+                   href="<?php echo $escUrl; ?>"
+                    ><?php echo $escLimit ?></a>
+
+            <?php else: ?>
+                <strong><?php echo $escLimit; ?></strong>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        results per page
+    </div>
+</div>
+
+<?php
+echo $this->paginationControl(
+    $this->paginator,
+    'Sliding',
+    'table/paginator',
+    [
+        'route'        => null,
+        'routeOptions' => [
+            'query' => $searchParams->toQueryParams()->toArray(),
+        ]
+    ]
+);
+?>

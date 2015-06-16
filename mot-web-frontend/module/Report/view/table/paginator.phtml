@@ -1,0 +1,40 @@
+<?php
+
+use DvsaCommon\Constants\SearchParamConst;
+
+if ($this->pageCount > 1): ?>
+    <ul class="data-paging">
+        <!-- Previous page link -->
+        <?php if (isset($this->previous)):
+            $routeParams = $this->routeOptions;
+            $routeParams['query'][SearchParamConst::PAGE_NR] = $this->previous;
+            ?>
+            <li class="data-paging__prev">
+                <a class="data-paging__link"
+                   href="<?php echo $this->url($this->route, [], $routeParams, true); ?>">
+                    Previous
+                    <span class="data-paging__page">page</span>
+                    <span class="data-paging__numbers">
+                        <?php echo $this->escapeHtml($this->previous .' of ' . $this->pageCount); ?>
+                    </span>
+                </a>
+            </li>
+        <?php endif; ?>
+
+        <!-- Next page link -->
+        <?php if (isset($this->next)):
+            $routeParams = $this->routeOptions;
+            $routeParams['query'][SearchParamConst::PAGE_NR] = $this->next;
+            ?>
+            <li class="data-paging__next">
+                <a class="data-paging__link"
+                   href="<?php echo $this->url($this->route, [], $routeParams, true); ?>">
+                    <span class="data-paging__page">Next page</span>
+                    <span class="data-paging__numbers">
+                        <?php echo $this->escapeHtml($this->next .' of ' . $this->pageCount); ?>
+                    </span>
+                </a>
+            </li>
+        <?php endif; ?>
+    </ul>
+<?php endif; ?>

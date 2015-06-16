@@ -144,8 +144,8 @@ class MotTestSearchParamTest extends AbstractServiceTestCase
         $dto = new MotTestSearchParamsDto();
 
         $dto
-            ->setDateFromTS((new \DateTime('1974-11-08'))->getTimestamp())
-            ->setDateToTS((new \DateTime())->getTimestamp())
+            ->setDateFromTs((new \DateTime('1974-11-08'))->getTimestamp())
+            ->setDateToTs((new \DateTime())->getTimestamp())
             ->setOrganisationId(999)
             ->setPersonId(8888)
             ->setSiteNr('V5555')
@@ -164,8 +164,8 @@ class MotTestSearchParamTest extends AbstractServiceTestCase
         $this->assertEquals($dto->getVehicleId(), $obj->getVehicleId());
         $this->assertEquals($dto->getVehicleRegNr(), $obj->getRegistration());
         $this->assertEquals($dto->getVehicleVin(), $obj->getVin());
-        $this->assertEquals($dto->getDateFromTS(), $obj->getDateFrom()->getTimestamp());
-        $this->assertEquals($dto->getDateToTS(), $obj->getDateTo()->getTimestamp());
+        $this->assertEquals($dto->getDateFromTs(), $obj->getDateFrom()->getTimestamp());
+        $this->assertEquals($dto->getDateToTs(), $obj->getDateTo()->getTimestamp());
         $this->assertEquals($dto->getStatus(), $obj->getStatus());
         $this->assertEquals($dto->getTestType(), $obj->getTestType());
     }
@@ -195,8 +195,8 @@ class MotTestSearchParamTest extends AbstractServiceTestCase
         $this->assertEquals($dto->getVehicleId(), $obj->getVehicleId());
         $this->assertEquals($dto->getVehicleVin(), $obj->getVin());
         $this->assertEquals($dto->getVehicleRegNr(), $obj->getRegistration());
-        $this->assertEquals($dto->getDateFromTS(), $obj->getDateFrom()->getTimestamp());
-        $this->assertEquals($dto->getDateToTS(), $obj->getDateTo()->getTimestamp());
+        $this->assertEquals($dto->getDateFromTs(), $obj->getDateFrom()->getTimestamp());
+        $this->assertEquals($dto->getDateToTs(), $obj->getDateTo()->getTimestamp());
         $this->assertEquals($dto->getStatus(), $obj->getStatus());
         $this->assertEquals($dto->getTestType(), $obj->getTestType());
     }

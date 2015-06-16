@@ -20,7 +20,7 @@ class SearchVehicles
     private $searchFilter;
     private $vin;
     private $registration;
-
+    private $sortDirection;
 
     private function fetchSearchResult()
     {
@@ -33,6 +33,7 @@ class SearchVehicles
                     ->queryParam(TestShared::ROW_COUNT_PARAM, $this->rowCount)
                     ->queryParam(TestShared::FORMAT_PARAM, $this->format)
                     ->queryParam(TestShared::TYPE_PARAM, $this->searchFilter)
+                    ->queryParam(TestShared::SORT_DIRECTION, $this->sortDirection)
             );
 
             $this->searchResult = $result['data'];
@@ -45,7 +46,6 @@ class SearchVehicles
         $this->fetchSearchResult();
         return $this->searchResult['resultCount'] === null ? 'false' : 'true';
     }
-
 
     public function getSearchFilter()
     {
@@ -70,6 +70,11 @@ class SearchVehicles
     public function setFormat($format)
     {
         $this->format = $format;
+    }
+
+    public function setSortDirection($direction)
+    {
+        $this->sortDirection = $direction;
     }
 
     public function getRegistration()
@@ -121,6 +126,7 @@ class SearchVehicles
     {
         return $this->searchResult['searched']['sortDirection'];
     }
+
     public function rowCount()
     {
         return $this->searchResult['searched']['rowCount'];
