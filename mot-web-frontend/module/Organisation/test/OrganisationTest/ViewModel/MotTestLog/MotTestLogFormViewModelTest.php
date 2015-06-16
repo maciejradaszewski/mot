@@ -2,7 +2,7 @@
 
 namespace OrganisationTest\ViewModel\MotTestLog;
 
-use DvsaClient\ViewModel\DateViewModel;
+use DvsaClient\ViewModel\DateTimeViewModel;
 use DvsaCommon\Constants\SearchParamConst;
 use DvsaCommon\Messages\DateErrors;
 use Organisation\ViewModel\MotTestLog\MotTestLogFormViewModel;
@@ -52,12 +52,12 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'property' => 'dateFrom',
-                'value'    => new DateViewModel(2013, 12, 11),
+                'value'    => new DateTimeViewModel(2013, 12, 11),
             ],
             [
                 'property' => 'dateTo',
-                'value'    => (new DateViewModel())->setDate(new \DateTime('2012-11-10')),
-                'expect'   => new DateViewModel(2012, 11, 10),
+                'value'    => (new DateTimeViewModel())->setDate(new \DateTime('2012-11-10')),
+                'expect'   => new DateTimeViewModel(2012, 11, 10),
             ],
         ];
     }
@@ -84,8 +84,8 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                     '_csrf_token' => 1,
                 ],
                 'expect'      => [
-                    'dateFrom' => new DateViewModel(),
-                    'dateTo'   => new DateViewModel(),
+                    'dateFrom' => new DateTimeViewModel(),
+                    'dateTo'   => new DateTimeViewModel(),
                 ],
             ],
             //  both dates are set
@@ -103,10 +103,9 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                         'Day'   => '03',
                     ],
                 ],
-
                 'expect'      => [
-                    'dateFrom' => new DateViewModel(2010, 9, 8),
-                    'dateTo'   => new DateViewModel(2001, 02, 03),
+                    'dateFrom' => new DateTimeViewModel(2010, 9, 8),
+                    'dateTo'   => new DateTimeViewModel(2001, 02, 03, 23, 59, 59),
                 ],
             ],
 
@@ -116,10 +115,9 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                 'queryParams' => [
                     '_csrf_token' => null,
                 ],
-
                 'expect'      => [
-                    'dateFrom' => new DateViewModel(),
-                    'dateTo'   => new DateViewModel(),
+                    'dateFrom' => new DateTimeViewModel(),
+                    'dateTo'   => new DateTimeViewModel(),
                 ],
             ],
             //  both dates are set
@@ -129,10 +127,9 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                     SearchParamConst::SEARCH_DATE_FROM_QUERY_PARAM => (new \DateTime('2005-06-07'))->getTimestamp(),
                     SearchParamConst::SEARCH_DATE_TO_QUERY_PARAM   => (new \DateTime('1990-01-02'))->getTimestamp(),
                 ],
-
                 'expect'      => [
-                    'dateFrom' => new DateViewModel(2005, 6, 7),
-                    'dateTo'   => new DateViewModel(1990, 1, 2),
+                    'dateFrom' => new DateTimeViewModel(2005, 6, 7),
+                    'dateTo'   => new DateTimeViewModel(1990, 1, 2),
                 ],
             ],
         ];
@@ -162,9 +159,10 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
     public function dataProviderTestValidation()
     {
         return [
+            //  from date is invalid, to date in future
             [
-                'dateFrom' => new DateViewModel(2013, 12, 'a'),
-                'dateTo'   => new DateViewModel(date("Y") + 1, 01, 02),
+                'dateFrom' => new DateTimeViewModel(2013, 12, 'a'),
+                'dateTo'   => new DateTimeViewModel(date("Y") + 1, 01, 02),
                 'expect'   => [
                     'isValid' => false,
                     'errors'  => [
@@ -173,9 +171,10 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
             ],
+            //  from date in future, to date is invalid 30 February
             [
-                'dateFrom' => new DateViewModel(date("Y") + 1, 10, 9),
-                'dateTo'   => new DateViewModel(1900, 2, 30),       //  30  February
+                'dateFrom' => new DateTimeViewModel(date("Y") + 1, 10, 9),
+                'dateTo'   => new DateTimeViewModel(1900, 2, 30),
                 'expect'   => [
                     'isValid' => false,
                     'errors'  => [
@@ -184,9 +183,10 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
             ],
+            //  date from after date to
             [
-                'dateFrom' => new DateViewModel(2015, 5, 10),
-                'dateTo'   => new DateViewModel(2015, 5, 9),
+                'dateFrom' => new DateTimeViewModel(2015, 5, 10),
+                'dateTo'   => new DateTimeViewModel(2015, 5, 9),
                 'expect'   => [
                     'isValid' => false,
                     'errors'  => [
@@ -194,9 +194,10 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
             ],
+            //  date interval more than 31 day
             [
-                'dateFrom' => new DateViewModel(2014, 3, 2),
-                'dateTo'   => new DateViewModel(2015, 4, 3),
+                'dateFrom' => new DateTimeViewModel(2014, 3, 2),
+                'dateTo'   => new DateTimeViewModel(2015, 4, 3),
                 'expect'   => [
                     'isValid' => false,
                     'errors'  => [
@@ -204,9 +205,10 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                     ]
                 ],
             ],
+            //  date before 1900
             [
-                'dateFrom' => new DateViewModel(1610, 7, 4), // interesting date ...
-                'dateTo'   => new DateViewModel(1985, 7, 7),
+                'dateFrom' => new DateTimeViewModel(1610, 7, 4), // interesting date ...
+                'dateTo'   => new DateTimeViewModel(1985, 7, 7),
                 'expect'   => [
                     'isValid' => false,
                     'errors'  => [
@@ -214,9 +216,10 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                     ]
                 ],
             ],
+            //  valid
             [
-                'dateFrom' => new DateViewModel(2015, 3, 2),
-                'dateTo'   => new DateViewModel(2015, 3, 4),
+                'dateFrom' => new DateTimeViewModel(2015, 3, 2),
+                'dateTo'   => new DateTimeViewModel(2015, 3, 4),
                 'expect'   => [
                     'isValid' => true
                 ],

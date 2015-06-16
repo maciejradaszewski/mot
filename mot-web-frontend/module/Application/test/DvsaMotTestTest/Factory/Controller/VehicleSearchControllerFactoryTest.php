@@ -13,8 +13,6 @@ use DvsaMotTest\Service\VehicleSearchService;
 
 /**
  * Class VehicleSearchControllerFactoryTest.
- *
- * @covers \DvsaMotTest\Controller\VehicleSearchControllerFactory
  */
 class VehicleSearchControllerFactoryTest extends \PHPUnit_Framework_TestCase
 {

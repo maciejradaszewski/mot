@@ -68,9 +68,9 @@ class MotTestLogViewModel
             ->queryParams(
                 [
                     SearchParamConst::SEARCH_DATE_FROM_QUERY_PARAM =>
-                        $this->formModel->getDateFrom()->getDate()->setTime(0, 0, 0)->getTimestamp(),
+                        $this->formModel->getDateFrom()->getDate()->getTimestamp(),
                     SearchParamConst::SEARCH_DATE_TO_QUERY_PARAM   =>
-                        $this->formModel->getDateTo()->getDate()->setTime(23, 59, 59)->getTimestamp(),
+                        $this->formModel->getDateTo()->getDate()->getTimestamp(),
                 ]
             )->toString();
     }
@@ -86,7 +86,6 @@ class MotTestLogViewModel
                     'sub'    => [
                         [
                             'field'     => 'testDate',
-                            'formatter' => MotTestLink::class,
                         ],
                         [
                             'field'     => 'testTime',
