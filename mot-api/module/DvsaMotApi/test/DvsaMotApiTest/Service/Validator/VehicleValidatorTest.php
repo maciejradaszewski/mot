@@ -221,6 +221,7 @@ class VehicleValidatorTest extends PHPUnit_Framework_TestCase
             'cylinderCapacity' => '60',
             'transmissionType' => '1',
             'fuelType' => FuelTypeCode::DIESEL,
+            'vtsId' => 10,
         ];
     }
 

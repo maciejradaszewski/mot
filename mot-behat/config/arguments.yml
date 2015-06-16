@@ -5,7 +5,6 @@ parameters:
           Dvsa\Mot\Behat\Support\Api\AuthorisedExaminer: dvsa.authorised_examiner
           Dvsa\Mot\Behat\Support\Api\BrakeTestResult: dvsa.brake_test_result
           Dvsa\Mot\Behat\Support\Api\Certificate: dvsa.certificate
-          Dvsa\Mot\Behat\Support\Api\CompleteMotTest: dvsa.complete_mot_test
           Dvsa\Mot\Behat\Support\Api\ContingencyTest: dvsa.contingency_test
           Dvsa\Mot\Behat\Support\Api\CustomerService: dvsa.customer_service
           Dvsa\Mot\Behat\Support\Api\DemoTest: dvsa.demo_test

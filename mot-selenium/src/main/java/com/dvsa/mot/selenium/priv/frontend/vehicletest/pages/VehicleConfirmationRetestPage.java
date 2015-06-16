@@ -32,7 +32,7 @@ public class VehicleConfirmationRetestPage extends StartTestConfirmation1Page {
                 .submitSearchWithPreviousTestNumber(previousTestNo);
     }
 
-    public MotTestOptionsPage submitConfirm() {
+    public MotTestStartedPage submitConfirm() {
         confirmButton.click();
 
         if (exist2FAFieldInCurrentPage()) {
@@ -41,7 +41,7 @@ public class VehicleConfirmationRetestPage extends StartTestConfirmation1Page {
             return vehicleDetailsChangedPage
                     .confirmVehicleChangesExpectingMottestOptionsPage(Text.TEXT_PASSCODE);
         } else {
-            return new MotTestOptionsPage(driver);
+            return new MotTestStartedPage(driver);
         }
     }
 

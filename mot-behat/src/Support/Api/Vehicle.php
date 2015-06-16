@@ -47,19 +47,14 @@ class Vehicle extends MotApi
             'vin' => self::randomVin(),
             'dateOfFirstUse' => '1990-01-01',
             'oneTimePassword' => Authentication::ONE_TIME_PASSWORD,
+            'vtsId' => 1,
         ], $vehicleMerge);
 
         $body = $vehicleMergeData;
         $body['make'] = $this->mapMakeToCode($body['make']);
         $body['model'] = $this->mapModelToCode($body['model']);
-        $body = json_encode($body);
 
-        return $this->client->request(new Request(
-            'POST',
-            self::PATH,
-            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
-            $body
-        ));
+        return $this->sendRequest($token, MotApi::METHOD_POST, self::PATH, $body);
     }
 
     public function getVehicleDetails($token, $vehicle_id)

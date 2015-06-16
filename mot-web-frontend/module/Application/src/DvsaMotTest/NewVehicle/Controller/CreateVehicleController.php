@@ -3,8 +3,8 @@
 namespace DvsaMotTest\NewVehicle\Controller;
 
 use Application\Service\CatalogService;
-
 use Application\Service\ContingencySessionManager;
+use Core\Service\MotFrontendIdentityProviderInterface;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionInSystem;
@@ -13,6 +13,7 @@ use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\HttpRestJson\Exception\OtpApplicationException;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\Model\FuelTypeAndCylinderCapacity;
+use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaCommon\UrlBuilder\VehicleUrlBuilder;
 use DvsaMotTest\Controller\AbstractDvsaMotTestController;
@@ -28,7 +29,9 @@ use Zend\Form\Element;
 use Zend\Form\Element\DateSelect;
 use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
+use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
+use Core\Service\RemoteAddress;
 
 /**
  * @description Vehicle Generation as part of the MOT TEST process
@@ -58,7 +61,7 @@ class CreateVehicleController extends AbstractDvsaMotTestController
     public function __construct(
         AuthorisedClassesService $authorisedClassesService,
         CatalogService $catalogService,
-        MotIdentityProviderInterface $identityProvider,
+        MotFrontendIdentityProviderInterface $identityProvider,
         MotAuthorisationServiceInterface $authorisationService,
         NewVehicleContainer $container,
         Request $request,
@@ -215,11 +218,16 @@ class CreateVehicleController extends AbstractDvsaMotTestController
                 $data = $form->toArray() + $this->request->getPost()->toArray();
                 $apiUrl = VehicleUrlBuilder::vehicle();
 
-                $this->client->postJson($apiUrl, $data);
+                $data['vtsId'] = $this->identityProvider->getIdentity()->getCurrentVts()->getVtsId();
+                $data['clientIp'] = RemoteAddress::getIp();
+
+                $result = $this->client->postJson($apiUrl, $data);
+
+                $motTestNumber = $result['data']['startedMotTestNumber'];
 
                 $this->container->clearAllData();
 
-                return $this->redirect()->toRoute(self::ROUTE, ['action' => 'complete']);
+                return $this->redirect()->toUrl(MotTestUrlBuilderWeb::options($motTestNumber)->toString());
             } catch (OtpApplicationException $e) {
                 $errorData = $e->getErrorData();
 

@@ -4,10 +4,8 @@ Feature: Permissions
   So that I can control how users interact with the application
 
   Scenario Outline: Vehicle Examiner is not authorised to perform an MOT Test for any Class
-    Given I am logged in as a Tester
-    And I Create a new Vehicle Technical Record with Class of <class>
-    And I am logged in as a Vehicle Examiner
-    When I attempt to start an Mot Test with a Class <class> Vehicle
+    Given I am logged in as a Vehicle Examiner
+    When I attempt to start an Mot Test for a class <class> vehicle
     Then I should receive a Forbidden response
   Examples:
     | class |

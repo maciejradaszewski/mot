@@ -8,9 +8,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class NewVehicleRecordSummaryPage extends BasePage {
+public class NewVehicleRecordConfirmPage extends BasePage {
 
-    public static final String PAGE_TITLE = "SUMMARY OF NEW VEHICLE RECORD";
+    public static final String PAGE_TITLE = "CONFIRM NEW VEHICLE RECORD";
 
     @FindBy(id = "registrationNumber") private WebElement registrationNumber;
 
@@ -46,7 +46,7 @@ public class NewVehicleRecordSummaryPage extends BasePage {
 
     @FindBy(id = "secondaryColour") private WebElement secondaryColour;
 
-    @FindBy(id = "confirm_test_result") private WebElement confirmAndSave;
+    @FindBy(id = "confirm_test_result") private WebElement startMOTTest;
 
     @FindBy(id = "oneTimePassword") private WebElement oneTimePassword;
 
@@ -57,12 +57,12 @@ public class NewVehicleRecordSummaryPage extends BasePage {
     @FindBy(id = "back-link") private WebElement backLink;
 
 
-    public NewVehicleRecordSummaryPage(WebDriver driver) {
+    public NewVehicleRecordConfirmPage(WebDriver driver) {
         super(driver);
         checkTitle(PAGE_TITLE);
     }
 
-    public static NewVehicleRecordSummaryPage navigateHereFromLoginPage(WebDriver driver,
+    public static NewVehicleRecordConfirmPage navigateHereFromLoginPage(WebDriver driver,
             Login login, Vehicle vehicle) {
         return CreateNewVehicleRecordVehicleSpecificationPage
                 .navigateHereFromLoginPage(driver, login, vehicle)
@@ -135,19 +135,19 @@ public class NewVehicleRecordSummaryPage extends BasePage {
         return secondaryColour.getText();
     }
 
-    public NewVehicleRecordCompletionPage confirmAndSave(String oneTimePassword) {
+    public MotTestStartedPage saveVehicleRecord(String oneTimePassword) {
         enterOneTimePassword(oneTimePassword);
-        confirmAndSave.click();
-        return new NewVehicleRecordCompletionPage(driver);
+        startMOTTest.click();
+        return new MotTestStartedPage(driver);
     }
 
-    public NewVehicleRecordSummaryPage confirmAndSaveExpectingError(String oneTimePassword) {
+    public NewVehicleRecordConfirmPage confirmAndSaveExpectingError(String oneTimePassword) {
         enterOneTimePassword(oneTimePassword);
-        confirmAndSave.click();
-        return new NewVehicleRecordSummaryPage(driver);
+        startMOTTest.click();
+        return new NewVehicleRecordConfirmPage(driver);
     }
 
-    public NewVehicleRecordSummaryPage enterOneTimePassword(String otp) {
+    public NewVehicleRecordConfirmPage enterOneTimePassword(String otp) {
         oneTimePassword.sendKeys(otp);
         return this;
     }

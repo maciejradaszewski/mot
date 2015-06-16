@@ -6,7 +6,7 @@ Feature: Create new vehicle record
   Scenario Outline: Create a new vehicle record for all Classes
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with Class of <class>
-    Then the Vehicle Record is Created
+    Then the Vehicle Record is Created with an MOT Test Number allocated
     Examples:
       | class |
       | 1     |
@@ -32,7 +32,7 @@ Feature: Create new vehicle record
   Scenario Outline: Create Vehicle Technical Record with all fuel types
     Given I am logged in as a Tester
     When I create a Vehicle of Class <class> and Fuel Type <fuelType>
-    Then the Vehicle Record is Created
+    Then the Vehicle Record is Created with an MOT Test Number allocated
     Examples:
       | class | fuelType |
       | 1     | PE       |
@@ -90,103 +90,122 @@ Feature: Create new vehicle record
       | 7     | FC       |
       | 7     | OT       |
 
-  Scenario: Create a Class 1 vehicle record with various transmission types
+  Scenario Outline: Create a Class 1 vehicle record with various transmission types
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with the following data:
-      | class | make  | model | fuelType | transmissionType | countryOfRegistration | cylinderCapacity | dateOfFirstUse |
-      | 1     | Suzuk | Band  | PE       | 1                | 1                     | 1200             | 1990-01-31     |
-      | 1     | Suzuk | Band  | PE       | 1                | 2                     | 1200             | 2014-01-31     |
-      | 1     | Suzuk | Band  | PE       | 2                | 3                     | 1200             | 1990-01-31     |
-      | 1     | Suzuk | Band  | PE       | 2                | 4                     | 1200             | 2014-01-31     |
-    Then the Vehicle Records are Created
+      | class | make  | model | fuelType | transmissionType   | countryOfRegistration   | cylinderCapacity | dateOfFirstUse   |
+      | 1     | Suzuk | Band  | PE       | <transmissionType> | <countryOfRegistration> | 1200             | <dateOfFirstUse> |
+    Then the Vehicle Record is Created with an MOT Test Number allocated
+    Examples:
+      | transmissionType | countryOfRegistration | dateOfFirstUse |
+      | 1                | 1                     | 1990-01-31     |
+      | 1                | 2                     | 2014-01-31     |
+      | 2                | 3                     | 1990-01-31     |
+      | 2                | 4                     | 2014-01-31     |
 
-  Scenario: Create a Class 2 vehicle record with various transmission types
-    Given I am logged in as a Tester
-    When I Create a new Vehicle Technical Record with the following data:
-      | class | make  | model | fuelType | transmissionType | countryOfRegistration | cylinderCapacity | dateOfFirstUse |
-      | 2     | Suzuk | Haya  | PE       | 1                | 1                     | 1200             | 1990-01-31     |
-      | 2     | Suzuk | Haya  | PE       | 1                | 2                     | 1200             | 2014-01-31     |
-    Then the Vehicle Records are Created
 
-  Scenario: Create a Class 3 vehicle record with various transmission types
+  Scenario Outline: Create a Class 2 vehicle record with various transmission types
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with the following data:
-      | class | make  | model | fuelType | transmissionType | countryOfRegistration | cylinderCapacity | dateOfFirstUse |
-      | 3     | Piagg | MP3   | PE       | 1                | 1                     | 1598             | 1990-01-31     |
-      | 3     | Piagg | MP3   | PE       | 2                | 2                     | 1598             | 2014-01-31     |
-    Then the Vehicle Records are Created
+      | class | make  | model | fuelType | transmissionType   | countryOfRegistration   | cylinderCapacity | dateOfFirstUse   |
+      | 2     | Suzuk | Haya  | PE       | <transmissionType> | <countryOfRegistration> | 1200             | <dateOfFirstUse> |
+    Then the Vehicle Record is Created with an MOT Test Number allocated
+    Examples:
+      | transmissionType | countryOfRegistration | dateOfFirstUse |
+      | 1                | 1                     | 1990-01-31     |
+      | 2                | 2                     | 2014-01-31     |
 
-  Scenario: Create a Class 4 vehicle record with various transmission types
+  Scenario Outline: Create a Class 3 vehicle record with various transmission types
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with the following data:
-      | class | make | model | fuelType | transmissionType | countryOfRegistration | cylinderCapacity | dateOfFirstUse |
-      | 4     | BMW  | Mini  | PE       | 1                | 1                     | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 2                     | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 2                | 3                     | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 1                | 4                     | 1598             | 2014-01-31     |
-    Then the Vehicle Records are Created
+      | class | make  | model | fuelType | transmissionType   | countryOfRegistration   | cylinderCapacity | dateOfFirstUse   |
+      | 3     | Piagg | MP3   | PE       | <transmissionType> | <countryOfRegistration> | 1598             | <dateOfFirstUse> |
+    Then the Vehicle Record is Created with an MOT Test Number allocated
+    Examples:
+      | transmissionType | countryOfRegistration | dateOfFirstUse |
+      | 1                | 1                     | 1990-01-31     |
+      | 2                | 2                     | 2014-01-31     |
 
-  Scenario: Create a Class 5 vehicle record with various transmission types
+  Scenario Outline: Create a Class 4 vehicle record with various transmission types
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with the following data:
-      | class | make | model | fuelType | transmissionType | countryOfRegistration | cylinderCapacity | dateOfFirstUse |
-      | 5     | Ford | Supe  | PE       | 1                | 1                     | 1598             | 1990-01-31     |
-      | 5     | Ford | Supe  | DI       | 2                | 2                     | 1598             | 2014-01-31     |
-      | 5     | Ford | Supe  | PE       | 2                | 3                     | 1598             | 1990-01-31     |
-      | 5     | Ford | Supe  | DI       | 1                | 4                     | 1598             | 2014-01-31     |
-    Then the Vehicle Records are Created
+      | class | make | model | fuelType   | transmissionType   | countryOfRegistration   | cylinderCapacity | dateOfFirstUse   |
+      | 4     | BMW  | Mini  | <fuelType> | <transmissionType> | <countryOfRegistration> | 1598             | <dateOfFirstUse> |
+    Then the Vehicle Record is Created with an MOT Test Number allocated
+    Examples:
+      | fuelType | transmissionType | countryOfRegistration | dateOfFirstUse |
+      | PE       | 1                | 1                     | 1990-01-31     |
+      | DI       | 2                | 2                     | 2014-01-31     |
+      | PE       | 2                | 3                     | 1990-01-31     |
+      | DI       | 1                | 4                     | 2014-01-31     |
 
-  Scenario: Create a Class 7 vehicle record with various transmission types
+  Scenario Outline: Create a Class 5 vehicle record with various transmission types
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with the following data:
-      | class | make  | model | fuelType | transmissionType | countryOfRegistration | cylinderCapacity | dateOfFirstUse |
-      | 7     | Merce | Anto  | PE       | 1                | 1                     | 1598             | 1990-01-31     |
-      | 7     | Merce | Anto  | DI       | 2                | 2                     | 1598             | 2014-01-31     |
-      | 7     | Merce | Anto  | PE       | 2                | 3                     | 1598             | 1990-01-31     |
-      | 7     | Merce | Anto  | DI       | 1                | 4                     | 1598             | 2014-01-31     |
-    Then the Vehicle Records are Created
+      | class | make | model | fuelType   | transmissionType   | countryOfRegistration   | cylinderCapacity | dateOfFirstUse   |
+      | 5     | Ford | Supe  | <fuelType> | <transmissionType> | <countryOfRegistration> | 1598             | <dateOfFirstUse> |
+    Then the Vehicle Record is Created with an MOT Test Number allocated
+    Examples:
+      | fuelType | transmissionType | countryOfRegistration | dateOfFirstUse |
+      | PE       | 1                | 1                     | 1990-01-31     |
+      | DI       | 2                | 2                     | 2014-01-31     |
+      | PE       | 2                | 3                     | 1990-01-31     |
+      | DI       | 1                | 4                     | 2014-01-31     |
+
+  Scenario Outline: Create a Class 7 vehicle record with various transmission types
+    Given I am logged in as a Tester
+    When I Create a new Vehicle Technical Record with the following data:
+      | class | make  | model | fuelType   | transmissionType   | countryOfRegistration   | cylinderCapacity | dateOfFirstUse   |
+      | 7     | Merce | Anto  | <fuelType> | <transmissionType> | <countryOfRegistration> | 1598             | <dateOfFirstUse> |
+    Then the Vehicle Record is Created with an MOT Test Number allocated
+    Examples:
+      | fuelType | transmissionType | countryOfRegistration | dateOfFirstUse |
+      | PE       | 1                | 1                     | 1990-01-31     |
+      | DI       | 2                | 2                     | 2014-01-31     |
+      | PE       | 2                | 3                     | 1990-01-31     |
+      | DI       | 1                | 4                     | 2014-01-31     |
 
   Scenario: Create a Class 1 vehicle record
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with the following data:
       | class | make  | model | fuelType | transmissionType | countryOfRegistration | cylinderCapacity | dateOfFirstUse |
       | 1     | Suzuk | Band  | PE       | 1                | 1                     | 1200             | 1990-01-31     |
-    Then the Vehicle Records are Created
+    Then the Vehicle Record is Created with an MOT Test Number allocated
 
   Scenario: Create a Class 2 vehicle record
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with the following data:
       | class | make  | model | fuelType | transmissionType | countryOfRegistration | cylinderCapacity | dateOfFirstUse |
       | 2     | Suzuk | Haya  | PE       | 1                | 1                     | 1200             | 1990-01-31     |
-    Then the Vehicle Records are Created
+    Then the Vehicle Record is Created with an MOT Test Number allocated
 
   Scenario: Create a Class 3 vehicle record
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with the following data:
       | class | make  | model | fuelType | transmissionType | countryOfRegistration | cylinderCapacity | dateOfFirstUse |
       | 3     | Piagg | MP3   | PE       | 1                | 1                     | 1200             | 1990-01-31     |
-    Then the Vehicle Records are Created
+    Then the Vehicle Record is Created with an MOT Test Number allocated
 
   Scenario: Create a Class 4 vehicle record
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with the following data:
       | class | make | model | fuelType | transmissionType | countryOfRegistration | cylinderCapacity | dateOfFirstUse |
       | 4     | BMW  | Mini  | PE       | 1                | 1                     | 1798             | 1990-01-31     |
-    Then the Vehicle Records are Created
+    Then the Vehicle Record is Created with an MOT Test Number allocated
 
   Scenario: Create a Class 5 vehicle record
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with the following data:
       | class | make | model | fuelType | transmissionType | countryOfRegistration | cylinderCapacity | dateOfFirstUse |
       | 5     | Ford | Supe  | PE       | 1                | 1                     | 1200             | 1990-01-31     |
-    Then the Vehicle Records are Created
+    Then the Vehicle Record is Created with an MOT Test Number allocated
 
   Scenario: Create a Class 7 vehicle record
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with the following data:
       | class | make  | model | fuelType | transmissionType | countryOfRegistration | cylinderCapacity | dateOfFirstUse |
       | 7     | Merce | Anto  | PE       | 1                | 1                     | 5000             | 1990-01-31     |
-    Then the Vehicle Records are Created
+    Then the Vehicle Record is Created with an MOT Test Number allocated
 
   Scenario Outline: Create a new vehicle with invalid Class
     Given I am logged in as a Tester
@@ -244,47 +263,50 @@ Feature: Create new vehicle record
       | -              |
       | $$-$$-$$       |
 
-  Scenario: Create Class 4 vehicles registered to a different country
+  Scenario Outline: Create Class 4 vehicles registered to a different country
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with the following data:
-      | class | make | model | fuelType | transmissionType | countryOfRegistration | cylinderCapacity | dateOfFirstUse |
-      | 4     | BMW  | Mini  | PE       | 1                | 1                     | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 2                     | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 3                     | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 4                     | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 5                     | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 6                     | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 7                     | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 8                     | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 9                     | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 10                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 11                    | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 12                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 13                    | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 14                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 15                    | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 16                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 17                    | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 18                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 19                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 20                    | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 21                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 22                    | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 23                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 24                    | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 25                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 26                    | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 27                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 28                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 29                    | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 30                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 31                    | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 32                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 33                    | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 34                    | 1598             | 1990-01-31     |
-      | 4     | BMW  | Mini  | DI       | 2                | 35                    | 1598             | 2014-01-31     |
-      | 4     | BMW  | Mini  | PE       | 1                | 36                    | 1598             | 1990-01-31     |
-    Then the Vehicle Records are Created
+      | class | make | model | fuelType   | transmissionType   | countryOfRegistration   | cylinderCapacity | dateOfFirstUse   |
+      | 4     | BMW  | Mini  | <fuelType> | <transmissionType> | <countryOfRegistration> | 1598             | <dateOfFirstUse> |
+    Then the Vehicle Record is Created with an MOT Test Number allocated
+    Examples:
+      | fuelType | transmissionType | countryOfRegistration | dateOfFirstUse |
+      | PE       | 1                | 1                     | 1990-01-31     |
+      | DI       | 2                | 2                     | 2014-01-31     |
+      | PE       | 1                | 3                     | 1990-01-31     |
+      | DI       | 2                | 4                     | 2014-01-31     |
+      | PE       | 1                | 5                     | 1990-01-31     |
+      | DI       | 2                | 6                     | 2014-01-31     |
+      | PE       | 1                | 7                     | 1990-01-31     |
+      | DI       | 2                | 8                     | 2014-01-31     |
+      | PE       | 1                | 9                     | 1990-01-31     |
+      | PE       | 1                | 10                    | 1990-01-31     |
+      | DI       | 2                | 11                    | 2014-01-31     |
+      | PE       | 1                | 12                    | 1990-01-31     |
+      | DI       | 2                | 13                    | 2014-01-31     |
+      | PE       | 1                | 14                    | 1990-01-31     |
+      | DI       | 2                | 15                    | 2014-01-31     |
+      | PE       | 1                | 16                    | 1990-01-31     |
+      | DI       | 2                | 17                    | 2014-01-31     |
+      | PE       | 1                | 18                    | 1990-01-31     |
+      | PE       | 1                | 19                    | 1990-01-31     |
+      | DI       | 2                | 20                    | 2014-01-31     |
+      | PE       | 1                | 21                    | 1990-01-31     |
+      | DI       | 2                | 22                    | 2014-01-31     |
+      | PE       | 1                | 23                    | 1990-01-31     |
+      | DI       | 2                | 24                    | 2014-01-31     |
+      | PE       | 1                | 25                    | 1990-01-31     |
+      | DI       | 2                | 26                    | 2014-01-31     |
+      | PE       | 1                | 27                    | 1990-01-31     |
+      | PE       | 1                | 28                    | 1990-01-31     |
+      | DI       | 2                | 29                    | 2014-01-31     |
+      | PE       | 1                | 30                    | 1990-01-31     |
+      | DI       | 2                | 31                    | 2014-01-31     |
+      | PE       | 1                | 32                    | 1990-01-31     |
+      | DI       | 2                | 33                    | 2014-01-31     |
+      | PE       | 1                | 34                    | 1990-01-31     |
+      | DI       | 2                | 35                    | 2014-01-31     |
+      | PE       | 1                | 36                    | 1990-01-31     |
 
   Scenario Outline: Vehicles with decimal cylinder capacity cannot be created
     Given I am logged in as a Tester
@@ -301,7 +323,7 @@ Feature: Create new vehicle record
   Scenario Outline: Vehicles created
     Given I am logged in as a Tester
     When I Create a new Vehicle Technical Record with Class of <class>
-    Then the Vehicle Record is Created
+    Then the Vehicle Record is Created with an MOT Test Number allocated
     And the vehicle details are correct
     Examples:
       | class |

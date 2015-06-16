@@ -2,14 +2,13 @@
 
 namespace Core\Service;
 
-use DvsaCommon\Auth\MotIdentityInterface;
-use DvsaCommon\Auth\MotIdentityProviderInterface;
+use DvsaAuthentication\Model\MotFrontendIdentityInterface;
 use Zend\Authentication\AuthenticationService;
 
 /**
- * MotIdentityProviderInterface that delegates to Zend Framework
+ * MotFrontendIdentityProviderInterface that delegates to Zend Framework
  */
-class MotFrontendIdentityProvider implements MotIdentityProviderInterface
+class MotFrontendIdentityProvider implements MotFrontendIdentityProviderInterface
 {
 
     /** @var AuthenticationService $zendAuthenticationService */
@@ -28,7 +27,7 @@ class MotFrontendIdentityProvider implements MotIdentityProviderInterface
         $this->zendAuthenticationService = $zendAuthenticationService;
     }
 
-    /** @return MotIdentityInterface */
+    /** @return MotFrontendIdentityInterface */
     public function getIdentity()
     {
         if ($this->zendAuthenticationService->hasIdentity()) {

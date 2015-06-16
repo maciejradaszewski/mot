@@ -4,7 +4,6 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Dvsa\Mot\Behat\Datasource\Authentication;
 use Dvsa\Mot\Behat\Support\Api\BrakeTestResult;
-use Dvsa\Mot\Behat\Support\Api\CompleteMotTest;
 use Dvsa\Mot\Behat\Support\Api\ContingencyTest;
 use Dvsa\Mot\Behat\Support\Api\DemoTest;
 use Dvsa\Mot\Behat\Support\Api\MotTest;
@@ -17,6 +16,10 @@ use PHPUnit_Framework_Assert as PHPUnit;
 
 class MotTestContext implements Context
 {
+    const SITE_NUMBER = 'V1234';
+
+    private $brakeTestResultData;
+
     /**
      * @var Response
      */
@@ -25,6 +28,10 @@ class MotTestContext implements Context
     /**
      * @var Response
      */
+    private $motData;
+
+    private $contingencyData;
+
     private $statusData;
 
     /**
@@ -36,11 +43,6 @@ class MotTestContext implements Context
      * @var BrakeTestResult
      */
     private $brakeTestResult;
-
-    /**
-     * @var CompleteMotTest
-     */
-    private $completeMotTest;
 
     /**
      * @var MotTest
@@ -83,6 +85,11 @@ class MotTestContext implements Context
     private $vehicleContext;
 
     /**
+     * @var int
+     */
+    private $vehicleId;
+
+    /**
      * @var ContingencyTestContext
      */
     private $contingencyTestContext;
@@ -94,7 +101,6 @@ class MotTestContext implements Context
 
     public function __construct(
         BrakeTestResult $brakeTestResult,
-        CompleteMotTest $completeMotTest,
         MotTest $motTest,
         DemoTest $demoTest,
         ContingencyTest $contingencyTest,
@@ -104,7 +110,6 @@ class MotTestContext implements Context
         TestSupportHelper $testSupportHelper
     ) {
         $this->brakeTestResult = $brakeTestResult;
-        $this->completeMotTest = $completeMotTest;
         $this->motTest = $motTest;
         $this->demoTest = $demoTest;
         $this->contingencyTest = $contingencyTest;
@@ -149,13 +154,14 @@ class MotTestContext implements Context
 
     public function startMotTest()
     {
-        $vehicleId = $this->vehicleContext->createVehicle();
+        $testClass = 4;
+        $vehicleId = $this->vehicleContext->createVehicle(['testClass' => $testClass]);
 
         $this->motTestData = $this->motTest->startNewMotTestWithVehicleId(
             $this->sessionContext->getCurrentAccessToken(),
             $this->sessionContext->getCurrentUserId(),
             $vehicleId,
-            $this->vehicleContext->getCurrentVehicleClass()
+            $testClass
         );
     }
 
@@ -166,7 +172,10 @@ class MotTestContext implements Context
     {
         $vehicleId = $this->vehicleContext->createVehicle();
 
-        $this->motTestData = $this->demoTest->startMotTest($this->sessionContext->getCurrentAccessToken(), $vehicleId);
+        $this->motTestData = $this->demoTest->startMotTest(
+            $this->sessionContext->getCurrentAccessToken(),
+            $vehicleId
+        );
     }
 
     /**
@@ -193,7 +202,7 @@ class MotTestContext implements Context
      */
     public function theTesterFailsTheMotTest()
     {
-        $this->statusData = $this->completeMotTest->failed(
+        $this->statusData = $this->motTest->failed(
             $this->sessionContext->getCurrentAccessToken(),
             $this->getMotTestNumber()
         );
@@ -204,7 +213,7 @@ class MotTestContext implements Context
      */
     public function theTesterPassesTheMotTest()
     {
-        $this->statusData = $this->completeMotTest->passed(
+        $this->statusData = $this->motTest->passed(
             $this->sessionContext->getCurrentAccessToken(),
             $this->getMotTestNumber()
         );
@@ -225,15 +234,31 @@ class MotTestContext implements Context
      */
     public function iStartAnMotTestWithAClassVehicle($testClass)
     {
-        $vehicleId = $this->vehicleContext->createVehicle(
-            [
-                'testClass' => $testClass,
-                'returnOriginalId' => true
-            ]
+        $vehicleId = $this->vehicleContext->createVehicle(['testClass' => $testClass]);
+
+        $this->motTestData = $this->motTest->startNewMotTestWithVehicleId(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->sessionContext->getCurrentUserId(),
+            $vehicleId,
+            $testClass
         );
 
-        $this->motTestData = $this->motTest->startNewMotTestWithVehicleId($this->sessionContext->getCurrentAccessToken(), $this->sessionContext->getCurrentUserId(), $vehicleId, $testClass);
         PHPUnit::assertSame(200, $this->motTestData->getStatusCode());
+    }
+
+    /**
+     * @When I attempt to start an Mot Test for a class :testClass vehicle
+     */
+    public function iAttemptToStartAnMotTestForAClassVehicle($testClass)
+    {
+        $vehicleId = $this->vehicleContext->createVehicle(['testClass' => $testClass]);
+
+        $this->motTestData = $this->motTest->startNewMotTestWithVehicleId(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->sessionContext->getCurrentUserId(),
+            $vehicleId,
+            $testClass
+        );
     }
 
     /**
@@ -242,7 +267,7 @@ class MotTestContext implements Context
     public function theTesterAbortsTheMotTest()
     {
         $currentMotTestNumber = $this->motTest->getInProgressTestId($this->sessionContext->getCurrentAccessToken(), $this->sessionContext->getCurrentUserId());
-        $this->statusData = $this->completeMotTest->cancelTest($this->sessionContext->getCurrentAccessToken(), $currentMotTestNumber);
+        $this->statusData = $this->motTest->abort($this->sessionContext->getCurrentAccessToken(), $currentMotTestNumber);
     }
 
     /**
@@ -288,7 +313,7 @@ class MotTestContext implements Context
     {
         switch (strtolower($status)) {
             case 'passed':
-                $this->statusData = $this->completeMotTest->passed(
+                $this->statusData = $this->motTest->passed(
                     $this->sessionContext->getCurrentAccessToken(),
                     $this->getMotTestNumber()
                 );
@@ -296,12 +321,12 @@ class MotTestContext implements Context
             case 'failed':
                 $rfrId = ($this->vehicleContext->getCurrentVehicleClass() < 3) ? 356 : 8455;
                 $this->reasonForRejection->addFailure($this->sessionContext->getCurrentAccessToken(), $this->getMotTestNumber(), $rfrId);
-                $this->statusData = $this->completeMotTest->failed($this->sessionContext->getCurrentAccessToken(), $this->getMotTestNumber());
+                $this->statusData = $this->motTest->failed($this->sessionContext->getCurrentAccessToken(), $this->getMotTestNumber());
                 break;
             case 'prs':
                 $rfrId = ($this->vehicleContext->getCurrentVehicleClass() < 3) ? 356 : 8455;
                 $this->reasonForRejection->addPrs($this->sessionContext->getCurrentAccessToken(), $this->getMotTestNumber(), $rfrId);
-                $this->statusData = $this->completeMotTest->passed($this->sessionContext->getCurrentAccessToken(), $this->getMotTestNumber());
+                $this->statusData = $this->motTest->passed($this->sessionContext->getCurrentAccessToken(), $this->getMotTestNumber());
                 break;
         }
     }
@@ -352,6 +377,8 @@ class MotTestContext implements Context
         );
     }
 
+
+
     /**
      * @When /^a logged in Vehicle Examiner aborts the test$/
      */
@@ -359,7 +386,7 @@ class MotTestContext implements Context
     {
         $user = $this->session->startSession(Authentication::LOGIN_VEHICLE_EXAMINER_USER, Authentication::PASSWORD_DEFAULT);
 
-        $this->statusData = $this->completeMotTest->abortTestByVE($user->getAccessToken(), $this->getMotTestNumber());
+        $this->statusData = $this->motTest->abortTestByVE($user->getAccessToken(), $this->getMotTestNumber());
     }
 
     /**
@@ -369,7 +396,7 @@ class MotTestContext implements Context
      */
     public function theTesterCancelsTheTestWithAReasonOf($cancelReasonId)
     {
-        $this->statusData = $this->completeMotTest->cancelTestWithReason($this->sessionContext->getCurrentAccessToken(), $this->getMotTestNumber(), $cancelReasonId);
+        $this->statusData = $this->motTest->abandon($this->sessionContext->getCurrentAccessToken(), $this->getMotTestNumber(), $cancelReasonId);
     }
 
     /**
@@ -441,19 +468,18 @@ class MotTestContext implements Context
      */
     public function iStartAContingencyMOTTest()
     {
-        $vehicleId = $this->vehicleContext->createVehicle();
-
+        $testClass = 4;
+        $vehicleId = $this->vehicleContext->createVehicle(['testClass' => $testClass]);
         $this->contingencyTestContext->createContingencyCode();
 
         $emergencyLogId = $this->contingencyTestContext->getEmergencyLogId();
 
-        if (!$this->motTest->isMOTTestInProgressForTester($this->sessionContext->getCurrentAccessToken(), $this->sessionContext->getCurrentUserId())) {
-            $this->motTestData = $this->contingencyTest->startContingencyTest($this->sessionContext->getCurrentAccessToken(), $emergencyLogId, $vehicleId, $this->vehicleContext->getCurrentVehicleClass());
-        } else {
-            $currentMotTestNumber = $this->motTest->getInProgressTestId($this->sessionContext->getCurrentAccessToken(), $this->sessionContext->getCurrentUserId());
-            $this->completeMotTest->cancelTest($this->sessionContext->getCurrentAccessToken(), $currentMotTestNumber);
-            $this->motTestData = $this->contingencyTest->startContingencyTest($this->sessionContext->getCurrentAccessToken(), $emergencyLogId, $vehicleId, $this->vehicleContext->getCurrentVehicleClass());
-        }
+        $this->motTestData = $this->contingencyTest->startContingencyTest(
+            $this->sessionContext->getCurrentAccessToken(),
+            $emergencyLogId,
+            $vehicleId,
+            $testClass
+        );
     }
 
     /**

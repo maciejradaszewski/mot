@@ -5,8 +5,6 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Api\Vehicle;
 use Dvsa\Mot\Behat\Support\Api\MotTest;
-use Dvsa\Mot\Behat\Support\Api\CompleteMotTest;
-use Behat\Behat\Tester\Exception\PendingException;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use Dvsa\Mot\Behat\Support\Api\BrakeTestResult;
 use Dvsa\Mot\Behat\Support\Api\OdometerReading;
@@ -18,7 +16,6 @@ class CherishedTransferContext implements Context
     private $vehicle;
     private $motTest;
     private $testSupportHelper;
-    private $completeMotTest;
     private $brakeTestResult;
     private $odometerReading;
     private $sessionContext;
@@ -36,7 +33,6 @@ class CherishedTransferContext implements Context
         Vehicle $vehicle,
         MotTest $motTest,
         TestSupportHelper $testSupportHelper,
-        CompleteMotTest $completeMotTest,
         BrakeTestResult $brakeTestResult,
         OdometerReading $odometerReading
     ) {
@@ -44,7 +40,6 @@ class CherishedTransferContext implements Context
         $this->vehicle = $vehicle;
         $this->motTest = $motTest;
         $this->testSupportHelper = $testSupportHelper;
-        $this->completeMotTest = $completeMotTest;
         $this->brakeTestResult = $brakeTestResult;
         $this->odometerReading = $odometerReading;
     }
@@ -102,30 +97,25 @@ class CherishedTransferContext implements Context
         // @todo The vehicle service should not have "dual-mode" and returnOriginalId will be removed
         $vehicleData = ['testClass' => 4, 'returnOriginalId' => true];
         $createdVehicle = $this->vehicle->create($testerToken, $vehicleData);
-        $vehicleId = (string) $createdVehicle->getBody()['data'];
 
-        $motTestData = $this->motTest->startNewMotTestWithVehicleId(
-            $testerToken,
-            $testerSession->getUserId(),
-            $vehicleId,
-            $vehicleData['testClass']
-        );
+        $vehicleId = $createdVehicle->getBody()['data']['vehicleId'];
+        $motTestId = $createdVehicle->getBody()['data']['startedMotTestNumber'];
 
         $this->odometerReading->addMeterReading(
             $testerToken,
-            $motTestData->getBody()['data']['motTestNumber'],
+            $motTestId,
             1000,
             'mi'
         );
 
         $this->brakeTestResult->addBrakeTestDecelerometerClass3To7(
             $testerToken,
-            $motTestData->getBody()['data']['motTestNumber']
+            $motTestId
         );
 
-        $this->completeMotTest->passed(
+        $this->motTest->passed(
             $testerToken,
-            $motTestData->getBody()['data']['motTestNumber']
+            $motTestId
         );
 
         return $vehicleId;

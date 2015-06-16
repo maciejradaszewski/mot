@@ -25,6 +25,7 @@ import java.util.Collections;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class VehicleConfirmationTest extends BaseTest {
 
@@ -289,13 +290,11 @@ public class VehicleConfirmationTest extends BaseTest {
         startTestConfirmation1Page.selectVehicleFuel(FuelTypes.Diesel)
                 .submitConfirmExpectingVehicleDetailsChangedPage()
                 .confirmVehicleChanges(Text.TEXT_PASSCODE);
-        MotTestOptionsPage motTestOptionsPage =
-                new MotTestOptionsPage(driver, PageTitles.MOT_TEST_STARTED.getPageTitle());
 
-        assertThat(
-                "Validate that the sign out button is displayed after vehicle details gets changed",
-                motTestOptionsPage.isSignOutButtonDisplayed(), is(true));
-
+        MotTestStartedPage motTestStartedPage =
+                new MotTestStartedPage(driver, PageTitles.MOT_TEST_STARTED.getPageTitle());
+        assertTrue(motTestStartedPage.isSignOutButtonDisplayed(),
+                "Validate that the sign out button is displayed after vehicle details gets changed");
         startTestConfirmation1Page.clickLogout();
     }
 }

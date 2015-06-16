@@ -60,7 +60,7 @@ class OpenInterfaceMotTestService
                 MotTestTypeCode::MOT_COMPLIANCE_SURVEY
             ]
         );
-        
+
         if ($passedMotTest == null || $passedMotTest->isExpired()) {
             $vehicle = $this->repository->findVehicleByVrm($vrm);
 

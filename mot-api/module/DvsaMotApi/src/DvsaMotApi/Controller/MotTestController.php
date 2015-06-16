@@ -13,7 +13,6 @@ use DvsaCommonApi\Transaction\TransactionAwareTrait;
 use DvsaDocument\Service\Document\DocumentService;
 use DvsaEntities\Entity\MotTest;
 use DvsaMotApi\Controller\Validator\CreateMotTestRequestValidator;
-use DvsaMotApi\Service\CertificateCreationService;
 use DvsaMotApi\Service\MotTestService;
 use SiteApi\Service\SiteService;
 use Zend\View\Model\JsonModel;

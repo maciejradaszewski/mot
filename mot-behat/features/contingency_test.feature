@@ -5,6 +5,7 @@ Feature: Contingency Test
 
   Scenario: Tester starts a Contingency MOT Test
     Given I am logged in as a Tester
+    And I called the helpdesk to ask for a daily contingency code
     When I start a Contingency MOT test
     Then I should receive the MOT test number
     And the MOT Test Number should be 12 digits long

@@ -37,6 +37,7 @@ class VehicleValidator extends AbstractValidator
             'testClass',
             'countryOfRegistration',
             'transmissionType',
+            'vtsId',
         ];
 
     public static function getRequiredFields()

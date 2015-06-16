@@ -59,12 +59,14 @@ class VehicleDataController extends BaseTestSupportRestfulController
     public function createAction()
     {
         $data = get_object_vars(json_decode($this->getRequest()->getContent()));
+
+        /** @var VehicleService $vehicleService */
         $vehicleService = $this->getServiceLocator()->get(VehicleService::class);
 
         try {
             $vehicleId = $vehicleService->save($data);
         } catch (\Exception $e) {
-            return TestDataResponseHelper::jsonError('Failed');
+            return TestDataResponseHelper::jsonError($e->getMessage());
         }
 
         return TestDataResponseHelper::jsonOk($vehicleId);

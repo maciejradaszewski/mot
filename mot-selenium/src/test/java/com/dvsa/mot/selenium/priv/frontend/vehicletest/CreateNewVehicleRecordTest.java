@@ -21,7 +21,7 @@ public class CreateNewVehicleRecordTest extends BaseTest {
 
 
     @Test(groups = {"slice_A", "VM-2333", "Sprint 22", "VM-2588", "MOT Testing"},
-            description = "Create a new vehicle and validate that it has been successfully saved in the database")
+            description = "Create a new vehicle and validate that it has been successfully created")
     public void testCreateNewVehicleRecordSuccessfully() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_NON_EXISTENT_6);
@@ -29,14 +29,14 @@ public class CreateNewVehicleRecordTest extends BaseTest {
         VehicleSearchPage searchVehicle =
                 VehicleSearchPage.navigateHereFromLoginPage(driver, login).typeReg(vehicle.carReg)
                         .typeVIN(vehicle.fullVIN).submitSearchExpectingError()
-                        .submitSearchExpectingError().createNewVehicle()
+                        .createNewVehicle()
                         .cancelReturnToVehicleSearch();
 
         assertThat("Search form not displayed", searchVehicle.isVehicleSearchFormDisplayed(),
                 is(true));
 
         searchVehicle.typeReg(vehicle.carReg).typeVIN(vehicle.fullVIN).submitSearchExpectingError()
-                .submitSearchExpectingError().createNewVehicle().enterVehicleDetails(vehicle)
+                .createNewVehicle().enterVehicleDetails(vehicle)
                 .submit().
                 enterVehicleDetailsWithOutCylinderCapacity(vehicle).submitDetailsExpectingError();
 
@@ -75,10 +75,10 @@ public class CreateNewVehicleRecordTest extends BaseTest {
 
         UserDashboardPage userDashboardPage =
                 createNewVehicleRecordVehicleSpecificationPage.submit()
-                        .confirmAndSave(Text.TEXT_PASSCODE).clickHome();
+                        .saveVehicleRecord(Text.TEXT_PASSCODE).returnToHome();
 
         assertThat("Assert user is returned to home page",
-                userDashboardPage.isStartMotTestDisplayed(), is(true));
+                userDashboardPage.existResumeMotTestButton(), is(true));
     }
 
     @Test(groups = {"slice_A", "VM-2333", "VM-2588", "VM-8824", "Sprint 22", "MOT Testing"},
@@ -99,7 +99,7 @@ public class CreateNewVehicleRecordTest extends BaseTest {
         assertThat(createNewVehicleRecordVehicleIdentificationPage.isErrorMessageDisplayed(),
                 is(true));
 
-        NewVehicleRecordSummaryPage newVehicleRecordSummaryPage =
+        NewVehicleRecordConfirmPage newVehicleRecordSummaryPage =
                 createNewVehicleRecordVehicleIdentificationPage.clearRegField()
                         .enterVinValue(vehicle).enterRegValueWithNonUKSelected().submit()
                         .enterVehicleDetailsAndSubmit(vehicle).changeVehicleIdentificationDetails()
@@ -203,7 +203,7 @@ public class CreateNewVehicleRecordTest extends BaseTest {
     public void testTesterIsBlockedWhenInsertThreeInvalidPIN() {
         Login loginToBlock = createTester();
 
-        NewVehicleRecordSummaryPage newVehicleRecordSummaryPage = NewVehicleRecordSummaryPage
+        NewVehicleRecordConfirmPage newVehicleRecordSummaryPage = NewVehicleRecordConfirmPage
                 .navigateHereFromLoginPage(driver, loginToBlock,
                         Vehicle.VEHICLE_CLASS4_NON_EXISTENT_5)
                 .confirmAndSaveExpectingError(Text.TEXT_PASSCODE_INVALID);
@@ -222,27 +222,21 @@ public class CreateNewVehicleRecordTest extends BaseTest {
 
 
     @Test(groups = {"slice_A", "VM-8322", "VM-9272", "VM-8331"})
-    public void verifyReasonForVinRecordedOnCertificateForNewVehicleRecord() {
+    public void testANewVehicleRecordIsCreatedWithNoVinAndAbleToStartAnMotTest() {
 
         Vehicle vehicle = Vehicle.VEHICLE_CLASS4_NON_EXISTENT_12;
-
-        NewVehicleRecordSummaryPage newVehicleRecordSummaryPagePage =
+        NewVehicleRecordConfirmPage newVehicleRecordSummaryPagePage =
                 CreateNewVehicleRecordVehicleIdentificationPage
                         .navigateHereFromLoginPage(driver, login, vehicle)
                         .enterVehicleDetails(vehicle)
                         .selectReasonForEmptyVIN(EmptyRegAndVin.NotFound.getReasonDescription())
                         .submit().enterVehicleDetailsAndSubmit(vehicle);
 
-        String getNewVin = newVehicleRecordSummaryPagePage.getEmptyVinReason();
-
-        StartTestConfirmation1Page startTestConfirmation1Page =
-                newVehicleRecordSummaryPagePage.confirmAndSave(Text.TEXT_PASSCODE).clickHome()
-                        .startMotTest()
-                        .submitSearchWithRegOnlyExpectingVehicleSearchPage(vehicle.carReg)
-                        .clickVehicleCTA();
-
-        assertThat("Assert that vrm is not displayed correctly",
-                startTestConfirmation1Page.getVIN().contains(getNewVin), is(true));
+        MotTestStartedPage motTestStartedPage =
+                newVehicleRecordSummaryPagePage.saveVehicleRecord(Text.TEXT_PASSCODE);
+        assertThat("A new vehicle record is successfully created",
+                motTestStartedPage.isSignOutButtonDisplayed(), is(true));
+        motTestStartedPage.clickLogout();
     }
 
 

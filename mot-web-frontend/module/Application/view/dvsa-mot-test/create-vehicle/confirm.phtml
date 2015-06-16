@@ -13,7 +13,8 @@
 
 <div class="row">
     <div class="col-sm-12">
-        <h1>Summary of new vehicle record</h1>
+        <h1>Confirm new vehicle record</h1>
+        <h2>Vehicle record summary</h2>
     </div>
 </div>
 
@@ -46,6 +47,8 @@ echo $this->partial('infoMessages', array('getFromFlash' => true));
 
         ?>
 
+        <h2>Authenticate and start MOT test</h2>
+
         <form method="post" action="">
             <?php echo $this->csrfToken() ?>
             <?php
@@ -60,7 +63,7 @@ echo $this->partial('infoMessages', array('getFromFlash' => true));
             ?>
 
             <nav class="module-content-navigation">
-                <input type="submit" class="button" value="Save vehicle record" id="confirm_test_result">
+                <input type="submit" class="button" value="Start MOT test" id="confirm_test_result">
                 <ul class="content-navigation_secondary">
                     <li>
                         <input id="back-link" type="submit" class="btn btn-link" value="Back" name="back">

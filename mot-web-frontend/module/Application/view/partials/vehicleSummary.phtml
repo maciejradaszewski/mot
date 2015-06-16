@@ -19,8 +19,8 @@ $firstUsedDate = $vehicle->getFirstUsedDate();
 
 <div class="row vehicle-summary">
     <div class="col-md-8">
-        <ul class="list-unstyled ">
-            <li>
+        <ul class="list-unstyled">
+            <li id="registrationNumber">
                 <?php
                 if ($registration != '') : ?>
                     <span>Registration number</span>
@@ -30,7 +30,7 @@ $firstUsedDate = $vehicle->getFirstUsedDate();
                     <span><?php echo $this->escapeHtml($vin); ?></span>
                 <?php endif; ?>
             </li>
-            <li>
+            <li id="make">
                 <span>Make</span>
                 <span><?php echo $this->escapeHtml($makeAndModel); ?></span>
                 <a href="#" id="toggle-details" data-toggle="collapse" data-target="#vehicle-summary-more"
@@ -46,9 +46,21 @@ $firstUsedDate = $vehicle->getFirstUsedDate();
             'dldtdd', [
                 'dlCssClass' => 'dl-horizontal',
                 'items'      => [
-                    ['VIN/Chassis', $vin],
-                    ['Transmission', $transmissionType],
-                    ['Fuel type', $fuelType],
+                    [
+                        'label' => 'VIN/Chassis',
+                        'value' => $vin,
+                        'id' => 'VINChassis',
+                    ],
+                    [
+                        'label' => 'Transmission',
+                        'value' => $transmissionType,
+                        'id' => 'transmission',
+                    ],
+                    [
+                        'label' => 'Fuel type',
+                        'value' => $fuelType,
+                        'id' => 'fuelType'
+                    ],
                 ],
             ]
         );
@@ -57,9 +69,21 @@ $firstUsedDate = $vehicle->getFirstUsedDate();
             'dldtdd', [
                 'dlCssClass' => 'dl-horizontal',
                 'items'      => [
-                    ['Body type', $bodyType],
-                    ['Cylinder capacity', $cylinderCapacity],
-                    ['First used', DateTimeDisplayFormat::textDate($firstUsedDate)],
+                    [
+                        'label' => 'Body type',
+                        'value' => $bodyType,
+                        'id' => 'bodyType'
+                    ],
+                    [
+                        'label' => 'Cylinder capacity',
+                        'value' => $cylinderCapacity,
+                        'id' => 'cylinderCapacity'
+                    ],
+                    [
+                        'label' => 'First used',
+                        'value' => DateTimeDisplayFormat::textDate($firstUsedDate),
+                        'id' => 'firstUsed',
+                    ],
                 ],
             ]
         );
