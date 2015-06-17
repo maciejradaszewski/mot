@@ -1,0 +1,94 @@
+{
+    "data": {
+        "vehicle": {
+            "registrationMark": "ABC123",
+            "vin": "1234567890A",
+            "make": "AUDI",
+            "model": "A4",
+            "colour": "BLACK",
+            "dateFirstUse": "1997-04-06",
+            "fuelType": "PETROL"
+        },
+        "testHistory": [
+            {
+                "date": "2013-09-03",
+                "latest": true,
+                "result": "PASS",
+                "class": "4",
+                "vehicle": {
+                    "registrationMark": "ABC123",
+                    "vin": "1234567890A",
+                    "make": "AUDI",
+                    "model": "A4",
+                    "colour": "BLACK",
+                    "fuelType": "PETROL"
+                },
+                "odometer": {
+                    "value": 21234,
+                    "unit": "miles"
+                },
+                "number": "1234567890046",
+                "expiryDate": "2014-09-03",
+                "testStation": {
+                    "name": "R. A. Wait",
+                    "number": "V109272",
+                    "phone": "01275866353"
+                },
+                "advisories": []
+            },
+            {
+                "date": "2012-09-03",
+                "result": "FAIL",
+                "class": "4",
+                "vehicle": {
+                    "registrationMark": "DEF456",
+                    "vin": "1234567890A",
+                    "make": "AUDI",
+                    "model": "A4",
+                    "colour": "BLACK"
+                },
+                "odometer": {
+                    "value": 11234,
+                    "unit": "miles"
+                },
+                "number": "1234567890045",
+                "testStation": {
+                    "name": "R. A. Wait",
+                    "number": "V109272",
+                    "phone": "01275866353"
+                },
+                "reasonsForRefusal": [
+                    "Offside Front Tyre tread depth below requirements of 1.6mm (4.1.E.1)"
+                ],
+                "advisories": []
+            },
+            {
+                "date": "2011-09-03",
+                "result": "PASS",
+                "class": "4A",
+                "vehicle": {
+                    "registrationMark": "ABC123",
+                    "make": "AUDI",
+                    "model": "A4",
+                    "colour": "BLACK",
+                    "secondColour": "BROWN"
+                },
+                "odometer": {
+                    "value": 1234,
+                    "unit": "miles"
+                },
+                "number": "1234567890045",
+                "expiryDate": "2012-09-03",
+                "testStation": {
+                    "name": "R. A. Wait",
+                    "number": "V109272",
+                    "phone": "01275866353"
+                },
+                "advisories": [
+                    "Offside Rear Tyre worn close to the legal limit (4.1.E.1)",
+                    "Offside Front Lower Suspension arm has slight play in a ball joint (2.4.G.2)"
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,284 @@
+<?php
+use DvsaCommon\Enum\MotTestStatusName;
+
+$title = 'Mot Test Search Results';
+$this->headTitle($title);
+$this->headLink()->appendStylesheet('/css/jquery.dataTables.css');
+?>
+
+<?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
+<?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
+<?php echo $this->partial('validationMessages', ['getFromFlash' => true]); ?>
+
+<h1><?php echo $this->escapeHtml($this->pageTitle); ?></h1>
+<hr class="hr-thick">
+<h2><?php echo $this->escapeHtml($this->searchTitle); ?></h2>
+
+<div class="info-notice">
+    <p>
+        If these are <strong>not the right results</strong> you can
+        <a href="<?php echo $this->url('mot-test-search') . '?' . $this->searchData ; ?>" id="go-back">go back</a>
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-sm-4">
+        <button id="view" class="btn btn-primary btn-expand" data-toggle="collapse" data-target="#show-form">View Compare Tests Section<span class="fa fa-chevron-down chevron_toggleable"></span></button>
+    </div>
+</div>
+
+<div class="show-hide-container" id="show-form">
+    <div class="row">
+        <form id="compareTests" method="POST">
+            <?php echo $this->csrfToken() ?>
+            <div class="col-sm-4">Add/click completed test numbers to compare...</div>
+            <div class="col-sm-1"><label for="comp1" >VE's&nbsp;test</label></div>
+            <div class="col-sm-2"><input type="text" id="motTestNumber" name="motTestNumber" value="<?php echo $this->escapeHtmlAttr($comparedTest['motTestNumber']); ?>" class="form-control"></div>
+<!--            <div class="col-sm-1"><i class="fa fa-exchange fa-2x" id="swap" title="Swap test numbers"></i></div>-->
+            <div class="col-sm-1"><label for="comp2">Tester's&nbsp;test</label></div>
+            <div class="col-sm-2"><input type="text" id="motTestNumberToCompare" name="motTestNumberToCompare" value="<?php echo $this->escapeHtmlAttr($comparedTest['motTestNumberToCompare']); ?>" class="form-control"></div>
+            <div class="col-sm-2"><input type="submit" value="Compare" class="btn btn-primary" id="compare"></div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="table-responsive">
+            <table class="table table-striped nowrap" id="listMOTs" style="width: 100%">
+                <thead>
+                <tr>
+                    <th>Test date/time utc</th>
+                    <th id="testDate">Test date/time</th>
+                    <th id="result">Result</th>
+                    <th id="summary">Summary</th>
+                    <th id="test">Test</th>
+                    <th id="vin">VIN/Chassis</th>
+                    <th id="reg">Registration</th>
+                    <th id="make">Make</th>
+                    <th id="model">Model</th>
+                    <th id="type">Type</th>
+                    <th id="site">Site</th>
+                    <th id="userId">User ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php $i = 0;
+                $arrMotStatus = [
+                    MotTestStatusName::FAILED,
+                    MotTestStatusName::PASSED,
+                    MotTestStatusName::ABORTED,
+                ];
+                ?>
+                <?php foreach ($this->searchResults as $motTest): ?>
+                    <?php
+                    $canPrintTestDetails = in_array($motTest['status'], $arrMotStatus);
+
+                    $testSummaryUrl = $motTest['link'];
+                    ?>
+                    <?php $escClass = ($i++ % 2 == 0 ? 'even' : 'odd'); ?>
+
+                    <tr class="<?php echo $escClass; ?>">
+
+                        <td><?php echo $this->escapeHtml($motTest['test_date']); ?></td>
+                        <td>
+                            <?php echo $this->escapeHtml($motTest['display_date']); ?>
+                        </td>
+
+                        <td>
+                            <?php echo $this->escapeHtml($motTest['display_status']); ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            echo $this->partial(
+                                'motTestSearchSummaryLink',
+                                [
+                                    'status' => $motTest['status'],
+                                    'url' => $motTest['link'],
+                                    'motTestNumber' => $motTest['motTestNumber']
+                                ]
+                            );
+                            ?>
+                        </td>
+
+                        <td>
+                            <?php if ($canPrintTestDetails): ?>
+                                <a href="javascript:void(0)" class="compare"
+                                   data-test-number="<?php echo $this->escapeHtmlAttr($motTest['motTestNumber']); ?>"
+                                   data-vin="<?php echo $this->escapeHtmlAttr($motTest['vin']); ?>"
+                                   title="Click to use in a Comparison">
+                                    <?php echo $this->escapeHtml($motTest['motTestNumber']); ?>
+                                </a>
+                            <?php else : ?>
+                                <?php echo $this->escapeHtml($motTest['motTestNumber']); ?>
+                            <?php endif; ?>
+                        </td>
+
+                        <td>
+                            <?php echo $this->escapeHtml($motTest['vin']); ?>
+                        </td>
+
+                        <td>
+                            <?php echo $this->escapeHtml($motTest['registration']); ?>
+                        </td>
+
+                        <td>
+                            <?php echo $this->escapeHtml($motTest['make']); ?>
+                        </td>
+
+                        <td title="<?php echo $this->escapeHtmlAttr($motTest['model']); ?>" class="truncate">
+                            <?php echo $this->escapeHtml($motTest['model']); ?>
+                        </td>
+
+                        <td title="<?php echo $this->escapeHtmlAttr($motTest['testType']); ?>"
+                            class="truncate">
+                            <?php echo $this->escapeHtml($motTest['testType']); ?>
+                        </td>
+
+                        <td>
+                            <?php if (isset($motTest['siteNumber'])): ?>
+                                <a href="<?php echo $this->url('vehicle-testing-station-by-site',
+                                    array('sitenumber' => $motTest['siteNumber'])) ?>">
+                                    <?php echo $this->escapeHtml($motTest['siteNumber']); ?>
+                                </a>
+                            <?php else : ?>
+                                N/A
+                            <?php endif; ?>
+                        </td>
+
+                        <td>
+                            <?php echo $this->escapeHtml($motTest['testerUsername']); ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('.show-hide-container').addClass('collapse');
+
+         var oTable = $('#listMOTs').dataTable({				// Usage info here: http://datatables.net/release-datatables/examples/basic_init/filter_only.html
+            "bPaginate": true,					            // Disable pagination
+            "bLengthChange": true,			                // Disable ability to change the number of rows
+            "bFilter": true,						        // Enable filtering
+            "sDom": "<'row'<'col-lg-12'f><'col-lg-12'l>r>t<'row'<'col-lg-12'i><'col-lg-12'p>>",
+            "bSort": true,							        // Enable sorting
+            "aaSorting": [
+                [ 1, "desc" ]
+            ],                   // Sort descending by the 1st column (date/time)
+            "bInfo": true,							        // Suppress the "Showing x to N of N entries" info-footer
+            "bAutoWidth": true,
+            "oLanguage": {"sSearch": "Filter:"},                    // Rename the Search label
+            "bProcessing": false,
+            "bServerSide": false,
+            "bDeferRender": true,
+            "aoColumnDefs": [
+                {
+                    "sClass": "truncate",
+                    "aTargets": [7, 8, 9]
+                },
+                {
+                    'bVisible': false, 'aTargets': [<?php echo ($this->searchType) == 'vin' ?  '5' : '6' ?> ]
+                },
+                {
+                    "bVisible": false, "aTargets": [0]
+                },
+                {
+                    "iDataSort": 0, "aTargets": [1]
+                }
+            ],
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                $('td:eq(6)', nRow).attr('title', aData[7]);
+                $('td:eq(7)', nRow).attr('title', aData[8]);
+                $('td:eq(8)', nRow).attr('title', aData[9]);
+            }
+        });
+
+
+
+
+        $('#listMOTs_filter').find("input").addClass("form-control");
+
+        var formCompare = $('#compareTests'),
+            btnExpand = $('.btn-expand'),
+            motTestNumber = $('#motTestNumber'),
+            motTestNumberToCompare = $('#motTestNumberToCompare');
+
+        btnExpand.click(function() {
+            $(this).find('.chevron_toggleable').toggleClass('fa-chevron-up fa-chevron-down');
+        });
+
+        <?php if( !empty ($comparedTest['motTestNumber']) && !empty ($comparedTest['motTestNumberToCompare'])): ?>
+            btnExpand.click();
+        <?php endif; ?>
+
+        // Click Test Number to add primary and secondary Tests to Comp1 & Comp2 fields...
+        $('#listMOTs_wrapper').on('click', '.compare', function () {
+            var vin = $(this).data('vin');
+            if (btnExpand.find('.chevron_toggleable').hasClass('fa-chevron-down')) {
+                btnExpand.click();
+            }
+            if (motTestNumber.val().trim() == "") {
+                if (motTestNumberToCompare.val().trim() == ""
+                    || motTestNumberToCompare.val().trim() != $(this).data('testNumber')) {
+                    motTestNumber.val($(this).data('testNumber'));
+                    motTestNumber.data('vin', vin);
+                }
+            } else {
+                if (motTestNumber.val().trim() != $(this).data('testNumber')) {
+                    motTestNumberToCompare.val($(this).data('testNumber'));
+                    motTestNumberToCompare.data('vin', vin);
+                }
+            }
+            return false;
+        });
+
+        // Clicking Swap symbol swaps primary and secondary Comp1 & Comp2 fields...
+        $('#swap').on('click',function () {
+            var tempStore = motTestNumber.val();
+            motTestNumber.val(motTestNumberToCompare.val());
+            motTestNumberToCompare.val(tempStore);
+        });
+
+        function motTestCantMatch(val, elem)
+        {
+            return motTestNumber.val() != motTestNumberToCompare.val();
+        }
+
+        jQuery.validator.addMethod('motTestCantMatch', motTestCantMatch);
+
+        var errorContainer = '#validationBox',
+            errorLabelContainer = '#validationBox ol';
+
+        if($('#validation-summary-id').length) {
+            errorContainer = '#validation-summary-id';
+            errorLabelContainer = '#validation-summary-id ol';
+        }
+
+        formCompare.validate({
+            errorClass: 'inputError',
+            messages: {
+                'motTestNumber': {
+                    required: 'A VE\'s Test Number is required',
+                    motTestCantMatch: 'The Mot test number must be different'
+                },
+                'motTestNumberToCompare': 'a Tester\'s Test Number is required'
+            },
+            rules: {
+                'motTestNumber': {required: true, motTestCantMatch: true},
+                'motTestNumberToCompare': {required: true}
+            },
+            errorContainer: errorContainer,
+            errorLabelContainer: errorLabelContainer,
+            wrapper: 'li'
+        });
+    });
+</script>

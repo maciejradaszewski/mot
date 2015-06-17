@@ -1,0 +1,44 @@
+<div class="col-sm-4">
+    <h3><?php echo $this->escapeHtml($this->title); ?></h3>
+    <table class="table result" id="<?php echo $this->escapeHtmlAttr($this->idPrefix); ?>-results">
+        <thead>
+        <tr>
+            <th><?php echo $this->escapeHtml($this->columnTitle); ?></th>
+            <th>Result</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach($this->rows as $row): ?>
+            <tr>
+                <td><?php echo $this->escapeHtml($row['name']); ?></td>
+                <td><?php echo ($row['value'] !== null) ? $this->escapeHtml($row['value']) . '%' : '-'; ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <?php
+    //  --  bottom line with status --
+    $cssClass = 'not-done';
+    $cssIconClass = 'exclamation';
+    $label = 'not performed';
+    if ($this->testPass === true) {
+        $cssClass = 'pass';
+        $label = 'pass';
+        $cssIconClass = 'check';
+    } elseif ($this->testPass === false) {
+        $cssClass = 'fail';
+        $label = 'fail';
+        $cssIconClass = 'times';
+    }
+    ?>
+
+    <div class="brake-result result-<?php echo $this->escapeHtmlAttr($cssClass); ?>"
+         id="<?php echo $this->escapeHtmlAttr($this->idPrefix); ?>-result">
+        <p>
+            <i class="fa fa-<?php echo $this->escapeHtmlAttr($cssIconClass); ?>"></i>
+            <?php echo $this->escapeHtml($this->resultText); ?>
+            <strong><?php echo $this->escapeHtml($label); ?></strong>
+        </p>
+    </div>
+</div>

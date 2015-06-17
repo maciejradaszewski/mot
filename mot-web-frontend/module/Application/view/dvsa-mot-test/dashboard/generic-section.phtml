@@ -1,0 +1,98 @@
+<?php
+
+/**
+ * placeholders:
+ * dashboard-section-body
+ * dashboard-section-js
+ *
+ * @var $sectionId
+ * @var $bodyVisible
+ * @var $actionName
+ * @var $caption
+ * @var $captionValue
+ * @var $useDefaultJS
+ * @var $bodyVisible
+ *
+ */
+$bodyVisible = isset($bodyVisible) ? $bodyVisible : true;
+$useDefaultJS = isset($useDefaultJS) ? $useDefaultJS : true;
+$displayBody = isset($displayBody) ? $displayBody : false;
+?>
+
+<div class="row">
+    <div class="results-entry-item clearfix">
+        <div class="col-sm-10">
+            <div class="row">
+                <div class="col-sm-5" id="dashboard-section-header-caption-<?php echo $sectionId ?>">
+                    <?php echo $this->placeholder('dashboard-section-header-caption'); ?>
+                </div>
+                <div class="col-sm-4" id="dashboard-section-header-value-<?php echo $sectionId ?>">
+                   <?php echo $this->placeholder('dashboard-section-header-value'); ?>
+                </div>
+                <div class="col-sm-3" id="dashboard-section-header-toggler-<?php echo $sectionId ?>">
+                    <?php if($bodyVisible): ?>
+                    <button type="button" class="btn btn-primary pull-right "
+                            id="dashboard-section-toggler-<?php echo $sectionId ?>"
+                            data-toggle="collapse" data-target="#dashboard-section-body-<?php echo $sectionId ?>">
+                        <span>Edit<span class="fa fa-chevron-down"></span></span>
+                    </button>
+                    <?php endif ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php if ($bodyVisible): ?>
+    <div class="row">
+        <div class="col-sm-10">
+            <div id="dashboard-section-body-<?php echo $sectionId ?>" class="show-hide-container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form method="POST">
+                            <?php echo $this->csrfToken() ?>
+                            <?php echo $this->placeholder("dashboard-section-body") ?>
+
+                            <div>
+                                <input type="hidden" name="action" value="<?php echo $actionName ?>"/>
+                                <input type="submit" id="section-<?php echo $sectionId ?>-submit" name="submit"
+                                       value="Submit" class="btn btn-primary"/>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif ?>
+<?php
+$this->placeholder('dashboard-section-js')->captureStart();
+    echo <<<JS
+    jQuery(document).ready(function () {
+            var sectionBody = jQuery("#dashboard-section-body-$sectionId");
+            var displayBody = "$displayBody";
+
+            if(sectionBody) {
+                if (!displayBody) {
+                    sectionBody.addClass("collapse");
+                }
+
+                sectionBody.on('shown.bs.collapse hidden.bs.collapse', function (e) {
+                    e.stopPropagation();
+                    sectionToggler = jQuery("#dashboard-section-toggler-$sectionId");
+                    sectionToggler.find('span.fa').toggleClass("fa-chevron-down fa-chevron-up");
+                });
+            }
+            var toggler = jQuery("#dashboard-section-toggler-$sectionId");
+            toggler.show();
+
+        });
+
+JS;
+$this->placeholder('dashboard-section-js')->captureEnd();
+
+$this->placeholder("dashboard-section-body")->set("");
+?>
+
+

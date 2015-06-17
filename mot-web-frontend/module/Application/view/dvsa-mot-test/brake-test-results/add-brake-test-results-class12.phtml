@@ -1,0 +1,184 @@
+<?php
+use DvsaMotTest\Model\BrakeTestResultClass1And2ViewModel;
+
+/**
+ * @var int $motTestNumber
+ * @var DvsaCommon\Dto\Vehicle\VehicleDto $vehicle
+ * @var BrakeTestResultClass1And2ViewModel $brakeTestResult
+ * @var \DvsaMotTest\Model\BrakeTestConfigurationClass1And2Helper $brakeTestConfiguration
+ */
+
+$title = 'Add Brake Test Results';
+$this->headTitle($title);
+$this->layout()->setVariable('pageSubTitle', 'MOT testing');
+$this->layout()->setVariable('pageTitle', "Brake test results");
+
+$isSidecarAttached = $brakeTestConfiguration->isSidecarAttached();
+
+$this->placeholder('progressBar')->captureStart();
+echo $this->partial(
+    'motTestProgress',
+    ['currentStep' => 2, 'isMotContingency' => $this->isMotContingency]
+);
+$this->placeholder('progressBar')->captureEnd();
+?>
+
+<?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
+<?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
+
+<?php echo $this->partial('vehicleSummary', ['vehicle' => $vehicle]); ?>
+<?php echo $this->partial(
+    'brake-test-results-class-1-and-2/vehicle-weight-details',
+    [
+        'brakeTestConfiguration' => $brakeTestConfiguration,
+        'isSidecarAttached' => $isSidecarAttached,
+    ]
+); ?>
+
+<form method="POST">
+    <?php echo $this->csrfToken() ?>
+    <div class="row">
+        <div class="col-md-8">
+            <fieldset>
+                <?php if ($brakeTestConfiguration->requiresEffortsTypeTest()) : ?>
+                    <legend>Brake effort</legend>
+                    <p>Brake effort is recorded in kilograms</p>
+                    <table
+                        class="table table-bordered <?php echo $isSidecarAttached ? 'table-col-4' : 'table-col-3'; ?>">
+                        <thead>
+                        <tr>
+                            <th scope="col">Brake control</th>
+                            <th scope="col">Front</th>
+                            <th scope="col">Rear</th>
+                            <?php if ($isSidecarAttached) : ?>
+                                <th scope="col">Sidecar</th>
+                            <?php endif; ?>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php echo $this->partial(
+                            'brake-test-results-class-1-and-2/brake-effort',
+                            [
+                                'brakeTestResult' => $brakeTestResult,
+                                'brakeTestConfiguration' => $brakeTestConfiguration,
+                                'isSidecarAttached' => $isSidecarAttached,
+                            ]
+                        ); ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+
+                <?php if ($brakeTestConfiguration->isFloorTypeTest()) : ?>
+                    <legend>Floor brake test</legend>
+
+                    <p>Force in kilograms</p>
+                    <?php echo $this->partial(
+                        'partial/forms/inputBox.phtml',
+                        [
+                            'id' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_1_EFFORT_FRONT,
+                            'label' => 'Control one',
+                            'labelLayout' => 'col-sm-6',
+                            'value' => $brakeTestResult->getEffortFront1(),
+                            'type' => 'number',
+                            'min' => 0,
+                            'max' => 9999,
+                            'pattern' => "\d{0,4}",
+                            'optional' => true,
+                        ]
+                    );
+                    echo $this->partial(
+                        'partial/forms/inputBox.phtml',
+                        [
+                            'id' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_2_EFFORT_FRONT,
+                            'label' => 'Control two',
+                            'labelLayout' => 'col-sm-6',
+                            'value' => $brakeTestResult->getEffortFront2(),
+                            'type' => 'number',
+                            'min' => 0,
+                            'max' => 9999,
+                            'pattern' => "\d{0,4}",
+                            'optional' => true,
+                        ]
+                    ); ?>
+                <?php endif; ?>
+
+                <?php if ($brakeTestConfiguration->isDecelerometerTypeTest()) : ?>
+                    <legend>Decelerometer brake test</legend>
+
+                    <p>Efficiency %</p>
+                    <?php echo $this->partial(
+                        'partial/forms/inputBox.phtml',
+                        [
+                            'id' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_1_BRAKE_EFFICIENCY,
+                            'label' => 'Control one',
+                            'value' => $brakeTestResult->getEfficiency1(),
+                            'labelLayout' => 'col-sm-6',
+                            'type' => 'number',
+                            'min' => 0,
+                            'max' => 999,
+                            'pattern' => "\d{0,3}",
+                            'maxLength' => 3,
+                            'optional' => true,
+                        ]
+                    );
+                    echo $this->partial(
+                        'partial/forms/inputBox.phtml',
+                        [
+                            'id' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_2_BRAKE_EFFICIENCY,
+                            'label' => 'Control two',
+                            'value' => $brakeTestResult->getEfficiency2(),
+                            'labelLayout' => 'col-sm-6',
+                            'type' => 'number',
+                            'min' => 0,
+                            'max' => 999,
+                            'pattern' => "\d{0,3}",
+                            'maxLength' => 3,
+                            'optional' => true,
+                        ]
+                    ); ?>
+                <?php endif; ?>
+
+                <?php if ($brakeTestConfiguration->isGradientTypeTest()) : ?>
+                    <legend>Gradient test</legend>
+
+                    <?php echo $this->partial(
+                        'partial/forms/radioBoxMultiple.phtml',
+                        [
+                            'label' => 'Efficiency for control one',
+                            'name' => BrakeTestResultClass1And2ViewModel::NAME_GRADIENT_CONTROL_1,
+                            'required' => true,
+                            'fieldsetCssClass' => 'label-reg',
+                            'radioOptions' => [
+                                BrakeTestResultClass1And2ViewModel::EFFICIENCY_ABOVE_30,
+                                BrakeTestResultClass1And2ViewModel::EFFICIENCY_BETWEEN_30_AND_25,
+                                BrakeTestResultClass1And2ViewModel::EFFICIENCY_BELOW_25,
+                            ],
+                        ]
+                    );
+                    echo $this->partial(
+                        'partial/forms/radioBoxMultiple.phtml',
+                        [
+                            'label' => 'Efficiency for control two',
+                            'name' => BrakeTestResultClass1And2ViewModel::NAME_GRADIENT_CONTROL_2,
+                            'required' => true,
+                            'fieldsetCssClass' => 'label-reg',
+                            'radioOptions' => [
+                                BrakeTestResultClass1And2ViewModel::EFFICIENCY_ABOVE_30,
+                                BrakeTestResultClass1And2ViewModel::EFFICIENCY_BETWEEN_30_AND_25,
+                                BrakeTestResultClass1And2ViewModel::EFFICIENCY_BELOW_25,
+                            ],
+                        ]
+                    ); ?>
+                <?php endif; ?>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 btn-bar">
+            <input type="submit" id="brake_test_results_submit" name="submit" value="Submit" class="btn btn-primary"/>
+            <a id="brake_test_results_cancel" href="<?php echo $this->url('mot-test', ['motTestNumber' => $motTestNumber]); ?>"
+               class="btn btn-link">Cancel</a>
+        </div>
+    </div>
+</form>
+

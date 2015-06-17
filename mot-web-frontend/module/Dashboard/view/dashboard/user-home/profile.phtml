@@ -1,0 +1,220 @@
+<?php
+
+use Dashboard\Controller\UserHomeController;
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+
+/**
+ * @var \Dashboard\Model\PersonalDetails $personalDetails
+ * @var array                            $motAuthorisations
+ */
+
+$isAllowEdit = $this->isAllowEdit;
+$motAuthorisations = $this->motAuthorisations;
+
+$fullNameArray = array_filter([
+        $personalDetails->getTitle(),
+        $personalDetails->getFirstName(),
+        $personalDetails->getMiddleName(),
+        $personalDetails->getSurname(),
+    ],
+    'strlen');
+
+$fullName = implode(" ",$fullNameArray);
+
+$fullAddressArray = array_filter([
+        $personalDetails->getAddressLine1(),
+        $personalDetails->getAddressLine2(),
+        $personalDetails->getAddressLine3(),
+        $personalDetails->getTown(),
+        $personalDetails->getPostcode(),
+    ],
+    'strlen');
+$fullAddress = implode(", ", $fullAddressArray) ?: null;
+
+$this->layout()->setVariable('pageSubTitle', $isViewingOwnProfile ? 'Your profile' : 'Profile of');
+$this->layout()->setVariable('pageTitle', $this->escapeHtml($fullName));
+
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+?>
+
+<div class="row module-present-data">
+    <div class="col-sm-4">
+        <h3>About<?php if ($isViewingOwnProfile): ?> you<?php endif; ?></h3>
+    </div>
+    <div class="col-sm-8">
+        <?php
+        echo $this->partial(
+            'dldtdd', [
+                'dlCssClass' => 'vertical',
+                'items'      => [
+                    ['Name', $fullName, 'id' => 'display-name'],
+                    [
+                        'Date of birth',
+                        DateTimeDisplayFormat::textDate($personalDetails->getDateOfBirth()),
+                        'id' => 'dateOfBirth',
+                    ],
+                    (
+                        !empty ($drivingLicenceNumber) && !empty($drivingLicenceRegion)
+                        ? ['Driving licence', $drivingLicence , 'id' => 'drivingLicence']
+                        : null
+                    ),
+                    ['Roles', implode(', ', $personalDetails->getRoles()), 'id' => 'display-role'],
+                ],
+            ]
+        );
+        ?>
+    </div>
+</div>
+
+<hr class="hr-thin"/>
+
+<div class="row module-present-data">
+    <div class="col-sm-4">
+        <h3>Contact details</h3>
+        <?php if ($isAllowEdit): ?>
+            <a
+                id="edit-user-profile"
+                href="<?php echo $this->escapeHtmlAttr(PersonUrlBuilderWeb::profileEdit()); ?>">
+                Change details
+            </a>
+        <?php endif; ?>
+    </div>
+    <div class="col-sm-8">
+        <?php
+        echo $this->partial(
+            'dldtdd', [
+                'dlCssClass' => 'vertical',
+                'items'      => [
+                    ['Address', $fullAddress, 'id' => 'full-address'],
+                    ['Telephone number', $personalDetails->getPhoneNumber(), 'id' => 'telephone-number'],
+                    ['Email address', $personalDetails->getEmail(), 'id' => 'email-address'],
+                ],
+            ]
+        );
+        ?>
+    </div>
+</div>
+
+
+    <?php if ($isAllowEdit): ?>
+        <hr class="hr-thin"/>
+        <div class="row module-present-data">
+            <div class="col-sm-4">
+                <h3>Security settings</h3>
+                <a href="<?php echo $this->escapeHtmlAttr(PersonUrlBuilderWeb::securityQuestions());?>" id="change-security-settings">Reset PIN</a>
+            </div>
+            <div class="col-sm-8">
+                <dl class="vertical">
+                    <dt>Manage your</dt>
+                    <dd>Security questions, password and PIN</dd>
+                </dl>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <hr class="hr-thin"/>
+
+
+        <?php
+
+        // if ($this->authorizationHelper()->isGranted(PermissionInSystem::MOT_CAN_ASSIGN_TESTER_PENDING_DEMO_ROLE)) :
+
+        /** @var $motAuthorisations array */
+        $personId = $personalDetails->getId();
+
+        if (AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED === $motAuthorisations['class1']
+            && AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED === $motAuthorisations['class2']
+        ) : ?>
+
+        <p>Initial training for class 1 and 2:</p>
+        <form class="form-horizontal" method="post"
+              action="<?php echo $this->escapeHtmlAttr(PersonUrlBuilderWeb::updateAuthMotTesting($personId)); ?>">
+            <?php echo $this->csrfToken();
+
+            echo $this->partial(
+                'hiddenElement',
+                [
+                    'name'  => 'group',
+                    'value' => '1',
+                ]
+            );
+
+                echo $this->partial(
+                    'submitElement',
+                    [
+                        'id'    => 'initial-training-successful',
+                        'name'  => 'result',
+                        'label' => 'Successful',
+                        'value' => '1',
+
+                ]
+            );
+
+            echo $this->partial(
+                'submitElement',
+                [
+                    'id'       => 'initial-training-fail',
+                    'name'     => 'result',
+                    'label'    => 'Unsuccessful',
+                    'cssClass' => 'btn btn-danger btn-large',
+                    'value'    => '0',
+
+                    ]
+                ); ?>
+            </form>
+
+        <?php endif; ?>
+
+        <?php
+        if (AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED === $motAuthorisations['class3']
+            && AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED === $motAuthorisations['class4']
+            && AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED === $motAuthorisations['class5']
+            && AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED === $motAuthorisations['class7']
+        ) : ?>
+
+            <p>Initial training for class 3 to 7:</p>
+            <form class="form-horizontal" method="post"
+                  action="<?php echo $this->escapeHtmlAttr(PersonUrlBuilderWeb::updateAuthMotTesting($personId)); ?>">
+                <?php echo $this->csrfToken();
+
+                echo $this->partial(
+                    'hiddenElement',
+                    [
+                        'name'  => 'group',
+                        'value' => '2',
+                    ]
+                );
+                echo $this->partial(
+                    'submitElement',
+                    [
+                        'id'    => 'initial-training-successful',
+                        'name'  => 'result',
+                        'label' => 'Successful',
+                        'value' => '1',
+
+                    ]
+                );
+
+                echo $this->partial(
+                    'submitElement',
+                    [
+                        'id'       => 'initial-training-fail',
+                        'name'     => 'result',
+                        'label'    => 'Unsuccessful',
+                        'cssClass' => 'btn btn-danger btn-large',
+                        'value'    => '0',
+                    ]
+                ); ?>
+            </form>
+
+    <?php endif; ?>
+
+<nav class="module-content-navigation">
+    <ul class="content-navigation_secondary">
+        <li>
+            <a href="<?php echo $this->escapeHtmlAttr($this->url(UserHomeController::ROUTE));?>">Return Home</a>
+        </li>
+    </ul>
+</nav>

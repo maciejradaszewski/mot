@@ -1,0 +1,383 @@
+<?php
+
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode;
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
+use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
+use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
+use DvsaCommon\Utility\AddressUtils;
+use Organisation\Controller\RoleController;
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+
+/**
+ * @var \Organisation\ViewModel\View\Index\IndexViewModel $viewModel
+ * @var \Organisation\Presenter\AuthorisedExaminerPresenter $presenter
+ * @var \Application\View\Helper\AuthorisationHelper      $authHelper
+ * @var \DvsaCommon\Dto\Organisation\OrganisationDto $organisation
+ */
+$authHelper = $this->authorisationHelper();
+
+?>
+
+<?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
+<?php
+$successMessages = $this->layout()->flashMessenger->getSuccessMessages();
+echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
+?>
+<h3 class="key-value-list__header">Business details</h3>
+<table class="key-value-list">
+    <tbody>
+    <tr>
+        <th class="key-value-list__key">
+            AE name
+        </th>
+        <td id="ae-name" class="key-value-list__value">
+            <?php echo $presenter->getName(); ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            AE number
+        </th>
+        <td id="ae-number" class="key-value-list__value--numeric">
+            <?php echo $presenter->getNumber(); ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Trading name
+        </th>
+        <td id="ae-tradename" class="key-value-list__value">
+            <?php echo $presenter->getTradingName(); ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Business type
+        </th>
+        <td id="ae-type" class="key-value-list__value">
+            <?php echo $presenter->getCompanyType(); ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Company number
+        </th>
+        <td id="ae-company-number" class="key-value-list__value--numeric">
+            <?php echo $presenter->getCompanyNumber(); ?>
+        </td>
+    </tr>
+<?php if ($viewModel->getViewAuthorisation()->canViewAeStatus()):
+
+    $aeAuth = $organisation->getAuthorisedExaminerAuthorisation();
+    $aeAuthStatus = $aeAuth->getStatus();
+    if (AuthorisationForAuthorisedExaminerStatusCode::WITHDRAWN === $aeAuthStatus->getCode()
+        && !empty($aeAuth->getExpiryDate())) {
+        $withdrawalDate = DateTimeDisplayFormat::textDate($aeAuth->getExpiryDate());
+    } else {
+        $withdrawalDate = "N/A";
+    }
+
+?>  <tr>
+        <th class="key-value-list__key">
+            Status
+        </th>
+        <td id="ae-auth-status" class="key-value-list__value">
+            <?php echo $this->escapeHtml($aeAuthStatus->getName()); ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Status valid from
+        </th>
+        <td id="ae-status-valid-from" class="key-value-list__value">
+            <?php echo DateTimeDisplayFormat::textDate($aeAuth->getValidFrom()) ?: ""; ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            AE Appeal status
+        </th>
+        <td id="ae-appeal-status" class="key-value-list__value">
+            <?php echo "N/A"; /* @todo will be implemented in future */ ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            AE Withdrawal date
+        </th>
+        <td id="ae-withdraw-date" class="key-value-list__value">
+            <?php echo $this->escapeHtml($withdrawalDate); ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Data disclosure indicator
+        </th>
+        <td id="ae-disclosure-indicator" class="key-value-list__value">
+            <?php echo $this->escapeHtml(
+                ($organisation->getDataMayBeDisclosed()) ? 'May be disclosed' : 'May not be disclosed'
+            ); ?>
+        </td>
+    </tr>
+<?php endif; ?>
+    </tbody>
+</table>
+
+<?php if ($this->eventButton): ?>
+    <div class="row">
+        <div class="vertical col-sm-4"></div>
+        <div class="vertical col-sm-4">
+            <a id="event-history" href="<?php echo EventUrlBuilderWeb::of()->eventList($organisationId, 'ae'); ?>"
+                >AE events history</a>
+        </div>
+    </div>
+<?php endif; ?>
+
+<h3 class="key-value-list__header">Contact details</h3>
+<?php if ($viewModel->getViewAuthorisation()->canUpdateAE()): ?>
+    <a id="change-contact-details" href="<?php echo $this->escapeHtmlAttr($presenter->getChangeDetailsUrl()); ?>"
+        class="key-value-list__action">Change contact details</a>
+<?php endif; ?>
+<?php $contactDetail = $organisation->getRegisteredCompanyContactDetail(); ?>
+<?php if($contactDetail): ?>
+    <table class="key-value-list">
+        <thead>
+        <tr>
+            <th colspan="2">Registered office</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th class="key-value-list__key">
+                Address
+            </th>
+            <td id="value_AE_address" class="key-value-list__value">
+                <?php echo (AddressUtils::stringify($contactDetail->getAddress()) ?: 'N/A') ?>
+            </td>
+        </tr>
+        <tr>
+            <th class="key-value-list__key">
+                Email
+            </th>
+            <td class="key-value-list__value">
+                <?php $email = $contactDetail->getPrimaryEmailAddress(); ?>
+                <?php if ($email): ?>
+                    <a href="mailto:<?php echo $this->escapeHtmlAttr($email) ?>"><?php echo $this->escapeHtml($email); ?></a>
+                <?php else: ?>
+                    N/A
+                <?php endif; ?>
+            </td>
+        </tr>
+        <tr>
+            <th class="key-value-list__key">
+                Telephone
+            </th>
+            <td class="key-value-list__value--numeric">
+                <?php echo ($contactDetail->getPrimaryPhoneNumber() ?: 'N/A'); ?>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+<?php endif; ?>
+
+<?php //todo maybe use partial for contact details ?>
+<?php $correspondenceDetail = $organisation->getCorrespondenceContactDetail(); ?>
+<?php if($correspondenceDetail): ?>
+    <table class="key-value-list">
+        <thead>
+        <tr>
+            <th colspan="2">Correspondence</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th class="key-value-list__key">
+                Address
+            </th>
+            <td id="cor_address" class="key-value-list__value">
+                <?php echo (AddressUtils::stringify($correspondenceDetail->getAddress()) ?: 'N/A') ?>
+            </td>
+        </tr>
+        <tr>
+            <th class="key-value-list__key">
+                Email
+            </th>
+            <td id="cor_email" class="key-value-list__value">
+                <?php $email = $correspondenceDetail->getPrimaryEmailAddress(); ?>
+                <?php if ($email): ?>
+                    <a href="mailto:<?php echo $this->escapeHtmlAttr($email); ?>"><?php echo $this->escapeHtml($email); ?></a>
+                <?php else: ?>
+                    N/A
+                <?php endif; ?>
+            </td>
+        </tr>
+        <tr>
+            <th class="key-value-list__key">
+                Telephone
+            </th>
+            <td id="cor_phone" class="key-value-list__value--numeric">
+                <?php echo ($correspondenceDetail->getPrimaryPhoneNumber() ?: 'N/A'); ?>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+<?php endif; ?>
+<?php if ($viewModel->getViewAuthorisation()->canViewSlotsSection()): ?>
+    <?php echo $this->partial('/organisation/view/partials/slots-section', ['viewModel' => $viewModel, 'organisationId' => $organisationId]); ?>
+<?php endif; ?>
+<?php if($viewModel->getViewAuthorisation()->canViewPersonnel()) :?>
+    <h3 class="key-value-list__header">Roles</h3>
+    <?php if($viewModel->getViewAuthorisation()->canNominate()): ?>
+        <a id="assign-a-role" href="<?php echo AuthorisedExaminerUrlBuilderWeb::roles($organisationId); ?>"
+           class="key-value-list__action" id="assign-role">Assign a role</a>
+    <?php endif; ?>
+    <table class="key-value-list">
+        <tbody>
+        <?php $escUsersWithRolesCount = 0;
+        foreach ($viewModel->getEmployees() as $employee): ?>
+            <tr id="authorised-examiner-designated-manager-<?php echo $escUsersWithRolesCount++; ?>">
+                <th class="key-value-list__key">
+                    <?php if ($viewModel->getViewAuthorisation()->canViewProfile($employee->getPerson())): ?>
+                        <a href="<?php echo PersonUrlBuilderWeb::profile($employee->getPerson()->getId()); ?>">
+                            <?php echo $this->escapeHtml($employee->getPerson()->getFullname()); ?>
+                        </a>
+                    <?php else: ?>
+                        <?php echo $this->escapeHtml($employee->getPerson()->getFullname()); ?>
+                    <?php endif; ?>
+                </th>
+                <td class="key-value-list__value">
+                    <?php foreach ($employee->getPositions() as $pio): ?>
+                        <div id="role-assignment-<?php echo $employee->getPerson()->getId() . "-" . $this->escapeHtml($pio->getRole()); ?>" class="text">
+                            <?php echo $this->escapeHtml($pio->getRole()); ?>
+                            <?php if ($pio->isPending()): ?>
+                                <br />
+                                <span class="key-value-list__meta">Pending</span>
+                            <?php endif; ?>
+                        </div>
+                        <?php if (($pio->isActive() || $pio->isPending()) && $viewModel->getViewAuthorisation()->canRemovePosition($pio)) : ?>
+                            <a id="remove-role" href="<?php echo $this->url(
+                                RoleController::ROUTE_REMOVE_ROLE,
+                                [
+                                    'id'     => $organisationId,
+                                    'roleId' => $pio->getId(),
+                                ]
+                            );?>">Remove</a>
+                        <?php endif ?>
+                    <?php endforeach ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+<?php endif ?>
+
+<?php if ($viewModel->getViewAuthorisation()->canViewVtsList()): ?>
+    <h3 class="key-value-list__header">Vehicle testing stations</h3>
+    <table class="key-value-list">
+        <tbody>
+        <?php
+        $itemCount = 0;
+        $totalItems = count($viewModel->getVehicleTestingStations());
+
+        foreach ($viewModel->getVehicleTestingStations() as $vtsIdx => $vts):
+            $itemCount++; ?>
+            <tr id="<?php echo 'vehicle-testing-station-' . ($vtsIdx + 1); ?>">
+                <th class="key-value-list__key">
+                    <?php if ($viewModel->getViewAuthorisation()->canViewVts($vts->getId())): ?>
+                        <a href="<?php echo VehicleTestingStationUrlBuilderWeb::byId($vts->getId()); ?>">
+                            <?php echo $this->escapeHtml($vts->getName()); ?>
+                        </a>
+                    <?php else: ?>
+                        <?php echo $this->escapeHtml($vts->getName()); ?>
+                    <?php endif; ?>
+
+                    <?php if ('inactive' === $vts->getStatus()) : ?>
+                        <span id="<?php echo 'vehicle-testing-station-' . ($vtsIdx + 1) . '-status-label'; ?>"
+                              class="label label-danger">Inactive</span>
+                    <?php endif; ?>
+
+                    <?php if ($viewModel->shouldViewContactDetailsForVts() && $vts->getContacts()) : ?>
+                        <span class="key-value-list__meta">
+                                <?php echo AddressUtils::stringify($vts->getContacts()[0]->getAddress()) ?>
+                            </span>
+                        <?php endif; ?>
+                    </th>
+
+                <td class="key-value-list__value">
+                    <?php echo $this->escapeHtml($vts->getSiteNumber()); ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+<?php endif; ?>
+
+<?php if ($viewModel->canViewAeSection()): ?>
+    <h3 class="key-value-list__header">AEP</h3>
+        <?php if ($viewModel->getViewAuthorisation()->canCreateAuthorisedExaminerPrincipal()): ?>
+            <a id="add-aep" href="<?php echo AuthorisedExaminerUrlBuilderWeb::of($organisationId)->principals(); ?>" class="key-value-list__action">Add an AEP</a>
+        <?php endif; ?>
+
+            <?php foreach ($viewModel->getPrincipals() as $principalIdx => $principal) :
+                $escPrincipalKey = (int)$principalIdx + 1;
+                ?>
+                <table id="<?php echo 'authorised-examiner-principal-' . $escPrincipalKey; ?>">
+                    <thead>
+                        <tr>
+                            <th colspan="2">
+                                <?php echo $this->escapeHtml($principal->getFullName()); ?>
+                                <a href="#authorised-examiner-principals"
+                                   id="toggle-aep-address-<?php echo $escPrincipalKey; ?>"
+                                   data-toggle="collapse"
+                                   data-target="#authorised-examiner-principal-<?php echo $escPrincipalKey; ?>-addresses"
+                                   class="address-toggle" style="display:none">more <i class="fa fa-caret-down"></i></a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $contact = $viewModel->getPrincipalPersonalContact($principalIdx);
+                        ?>
+                        <tr>
+                            <th class="key-value-list__key">
+                                Address
+                            </th>
+                            <td class="key-value-list__value">
+                                <?php echo $this->escapeHtml(AddressUtils::stringify($contact->getAddress())); ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="key-value-list__key">
+                                E-mail
+                            </th>
+                            <td id="value_AE_email" class="key-value-list__value">
+                                <?php echo $this->escapeHtml($contact->getPrimaryEmailAddress()); ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="key-value-list__key">
+                                Telephone
+                            </th>
+                            <td class="key-value-list__value">
+                                <?php echo $this->escapeHtml($contact->getPrimaryPhoneNumber()); ?>
+                            </td>
+                        </tr>
+                    <?php if ($viewModel->getViewAuthorisation()->canRemoveAuthorisedExaminerPrincipal()): ?>
+                        <tr>
+                            <td colspan="2">
+                                <a id="remove-aep"
+                                   href="<?php echo AuthorisedExaminerUrlBuilderWeb::of($organisationId)
+                                       ->principalRemove($principal->getId()); ?>">Remove</a>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    </tbody>
+                </table>
+                <br/>
+            <?php endforeach; ?>
+        </div>
+    </div>
+<?php endif; ?>
+
+<?php echo $this->partial('/organisation/view/partials/index-buttons', ['urlBack' => $this->urlBack]); ?>

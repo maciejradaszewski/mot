@@ -1,0 +1,48 @@
+// Search module
+.module-search {
+    .compound-control {
+        position: relative;
+    
+        input {
+            width: 100%;
+            @include border-radius(0, 0, 0, 0);
+        }
+    
+        button {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+    
+        i {
+            padding-right: 0;
+        }
+    }
+}
+
+// Resources module
+.module-resources {
+    @extend .list-navigation;
+
+    a[rel="external"]:after {
+        content: "\A0\A0\A0\A0\A0\A0\A0";
+        background-position: left 8px bottom 8px;
+    }
+
+    ul {
+        padding-left: 0;
+    }
+
+    li {
+        list-style-type: none;
+        @include font-bold16;
+    }
+}
+
+.resources_additional-information {
+    @include font-core14;
+    color: $grey-1;
+    display: block;
+    margin-bottom: 5px;
+}
+

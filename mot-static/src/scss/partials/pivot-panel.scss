@@ -1,0 +1,120 @@
+/*
+    @name pivot-panel
+
+    @status production
+    
+    @comments
+    Used on dashboard panels to create lists, special notice, notification and AE panels
+    .pivot-panel_meta-list is used on lists which contain VTS data 
+
+    Bootstrap dependency: None
+
+    @example 
+    <div class="module-pivot-panel">
+        <header class="pivot-panel_header">
+            <h2 class="pivot-panel_title">
+                Applications
+            </h2>
+        </header>
+        <p>You can submit the following applications</p>
+        <ul>
+            <li>
+                <a href="{example-link}">Apply to be an AEDM</a>
+            </li>
+            <li>
+                <a href="{example-link}">VTS Application</a>
+            </li>
+        </ul>
+    </div>
+    
+    @example-meta-list
+    <section class="module-pivot-panel">
+        <header class="pivot-panel_header">
+            <h2 class="pivot-panel_title">
+                <a href="{example-link}">City and Guilds</a>
+            </h2>
+            <p class="pivot-panel_subtitle">AE number: B000001</p>
+        </header>
+        <p>Your vehicle testing stations</p>
+        <ul class="pivot-panel_meta-list">
+            <li>
+                <a title="" class="site-link" href="/vehicle-testing-station/1">(V1234) Popular Garages</a>
+                <span class="pivot-panel_subtitle">tester</span>
+            </li>
+        </ul>
+        <p class="pivot-panel_slot-count">
+            <strong>11086</strong> 
+            Slots available.
+        </p>
+    </section>
+*/
+
+.module-pivot-panel {
+    
+    .pivot-panel_header {
+        padding: 15px 0;
+    }
+    
+    .pivot-panel_title {
+        line-height: 1.4em;
+        margin: 0;
+    
+        a {
+            display: inline;
+            text-decoration: none;
+    
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+    
+    p + ul {
+        // lead-in paragraph
+        margin-top: -10px;
+    }
+    
+    ol,
+    ul {
+        list-style: none outside none;
+        padding: 0;
+        margin: 0;
+    
+        li {
+            margin: 0;
+            padding: 7px 0;
+        }
+    }
+    
+    .pivot-panel_meta-list {
+        @include light-grey-bot-border;
+    
+        li {
+            @include light-grey-top-border;
+        }
+    }
+    
+    .pivot-panel_slot-count {
+        margin: 0;
+        padding-bottom: 10px;
+        padding-top: 10px;
+        color: $grey-1;
+    
+        strong {
+            color: $black;
+            display: block;
+            @include font-bold19;
+        }
+    }
+    
+    .pivot-panel_subtitle {
+        // Used in titles and list items
+        color: $grey-1;
+        display: block;
+        margin: 0;
+    }
+    
+    & + & {
+        margin-top: 60px;
+    }
+}

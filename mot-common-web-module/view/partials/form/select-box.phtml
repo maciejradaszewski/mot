@@ -1,0 +1,34 @@
+<?php
+$id = isset($id) ? $id : '';
+$name = isset($name) ? $name : $id;
+$value = isset($value) ? $value : '';
+$label = isset($label) ? $label : '';
+$cssClass = isset($cssClass) ? $cssClass : '';
+$required = isset($required) ? $required : false;
+$options = (isset($options) && is_array($options)) ? $options : [];
+$showOptionalText = isset($showOptionalText) ? $showOptionalText : false;
+?>
+
+<div class="form-group">
+    <label for="<?php echo $this->escapeHtml($id); ?>"
+           class="col-sm-4 control-label">
+        <?php echo $this->escapeHtml($label); ?><?php if (!$required
+            && $showOptionalText
+        ) : ?> (optional) <?php endif; ?>
+    </label>
+
+    <div class="col-sm-6">
+        <?php
+        echo $this->partial(
+            'selectElement',
+            [
+                'id'       => $id,
+                'name'     => $name,
+                'cssClass' => $cssClass,
+                'options'  => $options,
+                'value'    => $value,
+            ]
+        );
+        ?>
+    </div>
+</div>

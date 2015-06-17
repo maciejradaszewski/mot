@@ -1,0 +1,96 @@
+<?php
+
+use DvsaCommon\Enum\MotTestTypeCode;
+use DvsaCommon\Enum\VehicleClassCode;
+
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motTest */
+$motTest = $this->motTest ? $this->motTest : new \DvsaCommon\Dto\Common\MotTestDto();
+
+$motTestNumber = $motTest->getMotTestNumber();
+/** @var \DvsaCommon\Dto\Vehicle\VehicleDto $vehicle */
+$vehicle = $motTest->getVehicle();
+$motTestType = $motTest->getTestType()->getCode();
+
+$brakeTestResults = $motTest->getBrakeTestResult();
+if ($motTestType === MotTestTypeCode::RE_TEST && $brakeTestResults === null) {
+    $brakeTestResults = $motTest->getMotTestOriginal()->getBrakeTestResult();
+}
+
+$viewOnly = isset($this->viewOnly) ? $this->viewOnly : false;
+
+$title = 'Brake Test Summary';
+$this->headTitle($title);
+$this->layout()->setVariable('pageSubTitle', 'MOT testing');
+$this->layout()->setVariable('pageTitle', "Brake test results");
+
+$this->placeholder('progressBar')->captureStart();
+echo $this->partial(
+    'motTestProgress',
+    ['currentStep' => 2, 'isMotContingency' => $this->isMotContingency]
+);
+$this->placeholder('progressBar')->captureEnd();
+
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+
+if ($vehicle) {
+    echo $this->partial('vehicleSummary', ['vehicle' => $vehicle]);
+}
+?>
+
+<?php
+echo $this->partial(
+    'partials/brake-test-column-summary.phtml',
+    [
+        'vehicle'     => $vehicle,
+        'brakeResult' => $brakeTestResults,
+    ]
+);
+?>
+
+<?php if (!$viewOnly): ?>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="info-notice">
+                <p>Other brake performance related defects like 'grab' or 'judder' can be added as a
+                    <?php
+                    $vehicleClass = $vehicle->getClassCode();
+
+                    // FIXME Move this to the model
+                    if (in_array($vehicleClass, [VehicleClassCode::CLASS_1, VehicleClassCode::CLASS_2])) {
+                        $brakeRfrId = 120;
+                    } else {
+                        $brakeRfrId = 5430;
+                    }
+                    ?>
+                    <a href="<?php
+                    echo $this->url(
+                        'mot-test/test-item-selector',
+                        [
+                            'tis-id'        => $brakeRfrId,
+                            'motTestNumber' => $motTestNumber,
+                        ]
+                    ); ?>">Reason for Rejection</a>
+                </p>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 btn-bar">
+            <a href="<?php echo $this->url('mot-test', ['motTestNumber' => $motTestNumber]); ?>"
+               id="brake_test_summary_done" class="btn btn-primary">Done</a>
+
+            <a href="<?php
+            echo $this->url(
+                'mot-test/brake-test-configuration',
+                [
+                    'tis-id'        => null,
+                    'motTestNumber' => $motTestNumber,
+                ]
+            ); ?>"
+               class="btn btn-default" id="addBrakeTestResults">Edit</a>
+        </div>
+    </div>
+<?php endif ?>

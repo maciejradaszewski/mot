@@ -1,0 +1,63 @@
+<?php
+use DvsaMotTest\Model\BrakeTestResultClass3AndAboveViewModel;
+
+/**
+ * @var \DvsaMotTest\Model\BrakeTestConfigurationClass3AndAboveHelper $brakeTestConfiguration
+ * @var \DvsaMotTest\Model\BrakeTestResultClass3AndAboveViewModel $brakeTestResult
+ * @var string $rowHeader
+ * @var int $parkingBrakeNumber
+ */
+
+$idParkingBrakeEffortNearside = BrakeTestResultClass3AndAboveViewModel::ID_PARKING_EFFORT_NEARSIDE;
+$idParkingBrakeLockNearside = BrakeTestResultClass3AndAboveViewModel::ID_PARKING_LOCK_NEARSIDE;
+$idParkingBrakeEffortOffside = BrakeTestResultClass3AndAboveViewModel::ID_PARKING_EFFORT_OFFSIDE;
+$idParkingBrakeLockOffside = BrakeTestResultClass3AndAboveViewModel::ID_PARKING_LOCK_OFFSIDE;
+
+$valueParkingBrakeEffortNearside = $brakeTestResult->getParkingBrakeEffortNearside();
+$valueParkingBrakeLockNearside = $brakeTestResult->getParkingBrakeLockNearside();
+$valueParkingBrakeEffortOffside = $brakeTestResult->getParkingBrakeEffortOffside();
+$valueParkingBrakeLockOffside = $brakeTestResult->getParkingBrakeLockOffside();
+
+if ($parkingBrakeNumber === 2) {
+    $idParkingBrakeEffortNearside = BrakeTestResultClass3AndAboveViewModel::ID_PARKING_EFFORT_SECONDARY_NEARSIDE;
+    $idParkingBrakeLockNearside = BrakeTestResultClass3AndAboveViewModel::ID_PARKING_LOCK_SECONDARY_NEARSIDE;
+    $idParkingBrakeEffortOffside = BrakeTestResultClass3AndAboveViewModel::ID_PARKING_EFFORT_SECONDARY_OFFSIDE;
+    $idParkingBrakeLockOffside = BrakeTestResultClass3AndAboveViewModel::ID_PARKING_LOCK_SECONDARY_OFFSIDE;
+
+    $valueParkingBrakeEffortNearside = $brakeTestResult->getParkingBrakeEffortSecondaryNearside();
+    $valueParkingBrakeLockNearside = $brakeTestResult->getParkingBrakeLockSecondaryNearside();
+    $valueParkingBrakeEffortOffside = $brakeTestResult->getParkingBrakeEffortSecondaryOffside();
+    $valueParkingBrakeLockOffside = $brakeTestResult->getParkingBrakeLockSecondaryOffside();
+}
+
+?>
+<tr>
+    <th scope="row"><?php echo $this->escapeHtml($rowHeader); ?></th>
+
+    <td>
+        <?php echo $this->partial(
+            'brakeTestInput',
+            [
+                'id' => $idParkingBrakeEffortNearside,
+                'label' => 'Nearside axle',
+                'value' => $valueParkingBrakeEffortNearside,
+                'lockId' => $idParkingBrakeLockNearside,
+                'hideLock' => !$brakeTestConfiguration->locksApplicableToParkingBrake(),
+                'lockValue' => $valueParkingBrakeLockNearside,
+            ]
+        ); ?>
+    </td>
+    <td>
+        <?php echo $this->partial(
+            'brakeTestInput',
+            [
+                'id' => $idParkingBrakeEffortOffside,
+                'label' => 'Offside axle',
+                'value' => $valueParkingBrakeEffortOffside,
+                'lockId' => $idParkingBrakeLockOffside,
+                'hideLock' => !$brakeTestConfiguration->locksApplicableToParkingBrake(),
+                'lockValue' => $valueParkingBrakeLockOffside,
+            ]
+        ); ?>
+    </td>
+</tr>

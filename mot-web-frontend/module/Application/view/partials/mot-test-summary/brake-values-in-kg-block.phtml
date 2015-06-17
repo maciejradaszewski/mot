@@ -1,0 +1,187 @@
+<?php
+
+use DvsaCommon\Enum\WeightSourceCode;
+use DvsaCommon\Enum\VehicleClassCode;
+use DvsaCommon\Utility\ArrayUtils;
+
+const VEHICLE_CLASS_GROUP_12 = '12';
+const VEHICLE_CLASS_GROUP_3PLUS = '3plus';
+
+const BRAKE_TYPE_SERVICE = 'service';
+const BRAKE_TYPE_PARKING = 'parking';
+
+$vehicleClasses3plus = [
+    VehicleClassCode::CLASS_3,
+    VehicleClassCode::CLASS_4,
+    VehicleClassCode::CLASS_5,
+    VehicleClassCode::CLASS_7
+];
+
+/**  @var \DvsaCommon\Dto\Vehicle\VehicleDto $vehicle  */
+$vehicle = $this->vehicle;
+$brakeResult = $this->brakeResult;
+
+if (empty($brakeResult)) {
+    return;
+}
+
+$vehicleClass = $vehicle->getClassCode();
+
+$vehicleClassGroup = null;
+$brakeTestType = '';
+$serviceBrakeTestType = null;
+$parkingBrakeTestType = null;
+
+if (in_array($vehicleClass, [VehicleClassCode::CLASS_1, VehicleClassCode::CLASS_2])) {
+    $brakeTestType = 'Brake test type';
+    $serviceBrakeTestType = $brakeTestTypeCode2Name[ArrayUtils::tryGet($brakeResult, 'brakeTestType')];
+
+    $vehicleClassGroup = VEHICLE_CLASS_GROUP_12;
+
+} elseif (in_array($vehicleClass, $vehicleClasses3plus)) {
+    $brakeTestType = 'Service brake test type';
+    $serviceBrakeTestType = $brakeTestTypeCode2Name[ArrayUtils::tryGet($brakeResult, 'serviceBrake1TestType')];
+    $parkingBrakeTestType = $brakeTestTypeCode2Name[ArrayUtils::tryGet($brakeResult, 'parkingBrakeTestType')];
+
+    $vehicleClassGroup = VEHICLE_CLASS_GROUP_3PLUS;
+}
+
+if (!$vehicleClassGroup) {
+    return;
+}
+?>
+
+<div class="row" id="brakeResultsDetail">
+    <div class="col-sm-4">
+        <h2>Brake values in kg</h2>
+    </div>
+
+    <div class="col-sm-8">
+        <div class="row">
+            <div class="col-sm-3">
+                <p class="primary-item">Vehicle weight:</p>
+            </div>
+
+            <?php if ($vehicleClassGroup == VEHICLE_CLASS_GROUP_12) :
+                $front = number_format(ArrayUtils::tryGet($brakeResult, 'vehicleWeightFront'));
+                $rear = number_format(ArrayUtils::tryGet($brakeResult, 'vehicleWeightRear'));
+                ?>
+                <div class="col-sm-3">
+                    <p class="primary-item">
+                        Front&nbsp;<strong><?php echo $this->escapeHtml($front); ?></strong>
+                    </p>
+                </div>
+                <div class="col-sm-3">
+                    <p class="primary-item">
+                        Rear&nbsp;<strong><?php echo $this->escapeHtml($rear); ?></strong>
+                    </p>
+                </div>
+            <?php elseif ($vehicleClassGroup == VEHICLE_CLASS_GROUP_3PLUS) :
+                if ($brakeResult['weightType'] == WeightSourceCode::NOT_APPLICABLE) {
+                    $weight = 'N/A';
+                } else {
+                    $weight = number_format(ArrayUtils::tryGet($brakeResult, 'vehicleWeight'));
+                }
+                ?>
+                <div class="col-sm-9">
+                    <p class="primary-item">
+                        <strong><?php echo $this->escapeHtml($weight); ?></strong>
+                    </p>
+                </div>
+            <?php endif; ?>
+
+            <span class="divider"> </span>
+        </div>
+
+        <?php if (!empty($serviceBrakeTestType)) : ?>
+            <div class="row">
+                <div class="col-sm-12">
+                    <p class="primary-item">
+                        <?php echo $this->escapeHtml($brakeTestType); ?>:
+                        <strong><?php echo $this->escapeHtml(ucFirst($serviceBrakeTestType)); ?></strong>
+                    </p>
+                </div>
+                <span class="divider"></span>
+            </div>
+        <?php endif; ?>
+
+        <?php if (!empty($parkingBrakeTestType)) : ?>
+            <div class="row">
+                <div class="col-sm-12">
+                    <p class="primary-item">
+                        Parking brake test type:
+                        <strong><?php echo $this->escapeHtml(ucFirst($parkingBrakeTestType)); ?></strong>
+                    </p>
+                </div>
+            </div>
+        <?php endif; ?>
+
+
+        <?php if(!empty($brakeResult)) : ?>
+            <div class="row" style="padding-bottom: 20px;">
+                <?php
+                echo $this->partial(
+                    'partials/brake-test-column-summary.phtml',
+                    [
+                        'vehicle'     => $vehicle,
+                        'brakeResult' => $brakeResult,
+                    ]
+                );
+                ?>
+            </div>
+        <?php endif; ?>
+
+
+        <?php if ($this->isEnforcementUser === true && $vehicleClassGroup == VEHICLE_CLASS_GROUP_3PLUS) :
+
+            echo $this->partial(
+                'partials/mot-test-summary/brake-values-in-kg-result-by-type',
+                [
+                    'label'       => 'Service brake',
+                    'brakeType'   => BRAKE_TYPE_SERVICE,
+                    'brakeResult' => $brakeResult,
+                    'dataKey'     => 'serviceBrake1',
+                ]
+            );
+
+            echo $this->partial(
+                'partials/mot-test-summary/brake-values-in-kg-result-by-type',
+                [
+                    'label'       => 'Service brake 2',
+                    'brakeResult' => $brakeResult,
+                    'brakeType'   => BRAKE_TYPE_SERVICE,
+                    'dataKey'     => 'serviceBrake2',
+                ]
+            );
+
+            $brakeResult['parkingBrakeData'] = [
+                'effortNearsideAxle1' => $brakeResult['parkingBrakeEffortNearside'],
+                'effortOffsideAxle1'  => $brakeResult['parkingBrakeEffortOffside'],
+                'effortNearsideAxle2' => $brakeResult['parkingBrakeEffortSecondaryNearside'],
+                'effortOffsideAxle2'  => $brakeResult['parkingBrakeEffortSecondaryOffside'],
+                'effortSingle'        => $brakeResult['parkingBrakeEffortSingle'],
+                'lockNearsideAxle1'   => $brakeResult['parkingBrakeLockNearside'],
+                'lockOffsideAxle1'    => $brakeResult['parkingBrakeLockOffside'],
+                'lockNearsideAxle2'   => $brakeResult['parkingBrakeLockSecondaryNearside'],
+                'lockOffsideAxle2'    => $brakeResult['parkingBrakeLockSecondaryOffside'],
+                'lockSingle'          => $brakeResult['parkingBrakeLockSingle'],
+                'imbalanceAxle1'      => $brakeResult['parkingBrakeImbalance'],
+                'imbalanceAxle2'      => $brakeResult['parkingBrakeSecondaryImbalance'],
+            ];
+
+            echo $this->partial(
+                'partials/mot-test-summary/brake-values-in-kg-result-by-type',
+                [
+                    'label'       => 'Parking brake',
+                    'brakeType'   => BRAKE_TYPE_PARKING,
+                    'brakeResult' => $brakeResult,
+                    'dataKey'     => 'parkingBrake',
+                ]
+            );
+            ?>
+        <?php endif; ?>
+
+    </div>
+    <span class="divider"></span>
+</div>
+

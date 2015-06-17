@@ -1,0 +1,592 @@
+.second-header {
+  margin-top: 0;
+}
+.vehicle-colour {
+  margin-bottom: 30px;
+  label:first-child {
+    display: block;
+  }
+  select {
+    float:left;
+    width: 40%;
+  }
+  .form-group {
+    margin-bottom: 0;
+    label {
+      float: left;
+      padding-top: .25em;
+      margin: 0 10px;
+    } 
+  } 
+}
+.vehicle-summary {
+  ul {
+    margin-bottom: 20px;
+    li {
+      float: left;
+      margin-right: 30px;
+    }
+    li span:first-child {
+      display: block;
+    }
+    li span+span {
+      @include font-bold24();
+      margin-right: 10px;
+    }
+    li a {
+      color: $link-colour;
+      text-decoration: none;
+      @include font-core14();
+      padding: 4px 8px ;
+    }
+  }
+}
+#vehicle-summary-more {
+  margin-bottom: 20px;
+  background: $panel-colour;
+  dl {
+    margin: 15px 2% 15px 0;
+    width: 48%;
+    float: left;
+  }
+  dd {
+    padding-bottom: 5px;
+  }
+}
+.results-entry {
+  .results-entry-item {
+    margin: 20px 0;
+    h3 {
+      padding: 10px 0;
+    }
+  }
+
+  h3 {
+    @include font-core24();
+    margin: 0;
+  }
+
+  button, a.btn {
+    width: 6em;
+    .fa{
+      margin-left: 10px
+    }
+  }
+
+  h3.result-summary-info {
+    @include font-bold-weight();
+  }
+}
+
+#rfrCount {
+  margin-left: 15px;
+}
+
+.show-hide-container {
+  background: $grey-3;
+  padding: 15px;
+  margin-bottom: 20px;
+
+  .has-error {
+    background: none;
+  }
+}
+
+#showHideRfrResults {
+  h4 {
+    margin-left: 15px;
+    margin-bottom: 0px;
+  }
+}
+
+#rfrResults{
+  .divider{
+    margin: 0;
+  }
+}
+#odometerResults {
+  padding-left: 10px;
+}
+/*---------------------------
+Odometer styles to be deleted after restyle
+---------------------------*/
+ul.odometer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+ul.odometer-list li {
+  margin: 1em 0 0 0;
+}
+ul.odometer-list li input.radio {
+  width: 2em;
+}
+/* RFR SCREEN STYLES*/
+.breadcrumb {
+  padding-left: 0;
+  background: $white;
+}
+.breadcrumb {
+  li {
+    @include font-core16();
+    text-transform: none;
+    background-image: url(../static/img/separator.png);
+    background-position: 100% 50%;
+    background-repeat: no-repeat;
+    float: left;
+    list-style: none;
+    margin-left: 0;
+    margin-right: 0.5em;
+    padding-right: 1em;
+  }
+  li:last-child {
+    background-image: none;
+    margin-right: 0;
+  }
+}
+
+.rfr-count {
+  text-align: right;
+  a{
+    @include font-bold24();
+    display: block;
+    line-height: 1em;
+  }
+}
+.rfr-search {
+  h2 {
+    margin-bottom: 0;
+    @include font-core24();
+  }
+  button, a.btn {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+.rfr-search-panel {
+  label {
+    display: block;
+  }
+  button[type='submit'] {
+    position: absolute;
+    z-index: 4;
+    right: 0;
+    top: 0;
+    width: 40px;
+    height: 34px;
+    border: 1px solid $button-colour;
+    border-width: 0;
+    @include border-radius(0, 0, 0, 0);
+    cursor: pointer;
+    color: $white;
+    background-color: $button-colour;
+    margin: 0;
+  }
+}
+.failure-group {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.failure-group {
+  div>div a{
+    @include btn-default();
+    @include font-core19();
+    position: relative;
+    display: block;
+    margin-bottom: 20px;
+    height: 5.25em;
+    padding: 10px;
+    text-decoration: none;
+  }
+  div>div a:hover {
+    background-color: darken($grey-4, 5%);
+  }
+  div>div a:active{
+    background-color: darken($grey-4, 5%);
+    @include btn-active();
+  }
+}
+@media (max-width: 640px) {
+  .failure-group .col-xs-4  {
+  width: 100%;
+  }
+  .failure-group div>div a{
+    height: auto;
+    margin-bottom: 1px;
+    font-size: 16px;
+  }
+  
+}
+.rfr-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  li {
+    padding: 0 0 8px;
+    margin: 4px 0 0 0; 
+    @include light-grey-bot-border;
+  }
+  li:before,
+  li:after {
+    display: table;
+    content: " ";
+  }
+  li:after {
+    clear: both;
+  }
+  li:last-child {
+  border-bottom: 0;
+  }
+  .list-btns{
+    text-align: right;
+    padding-top: 8px!important;
+    padding:0;
+  }
+  .list-text{
+    padding:0;
+  }
+  h2{
+    @include font-core19();
+    margin: 0;
+    padding: 8px 0 0;
+  }
+  li div.rfr-result {
+    margin-bottom: 0.5em;
+  }
+  .list-inline {
+    color: $secondary-text-colour;
+  }
+    ul li{
+    border-bottom: 0;
+    padding: 0 20px 0 0;
+  }
+
+}
+/* From enforcement*/
+.rfr-vehicle-summary {
+  margin-top: 46px;
+}
+.rfr-vehicle-summary dd.fail{
+  font-weight: normal;
+  color: $fail-text;
+}
+.rfr-vehicle-summary dd.fail span{
+  font-weight: bold;
+  color: $fail-text;
+}
+/*end*/
+@media (max-width: 767px) {
+  .rfr-list .list-btns {
+  text-align: left;
+  }
+}
+.table-col-3, 
+.table-col-4{
+  margin-top: 0;
+  tbody {
+    tr {
+      th, td {
+        vertical-align: middle;
+      }
+    }
+    td {
+      width: 33%;
+    }
+    .has-error {
+      background: $error-background; 
+      .form-control{
+        background: $grey-4;
+        @include border-radius(0, 0, 0, 0);
+        border: 1px solid $fail-text;
+      }
+    }
+    .inline input[type='text'] {
+      width: 50%;
+    }
+  }
+}
+.table-col-4{
+  tbody td {
+      width: 25%;
+    }
+}
+/*******************
+Brake test inputs
+*******************/
+.inline-brake-test {
+  legend {
+    text-align: left;
+    margin-left: -15px;
+    @include font-bold-weight();
+  }
+}
+/********************
+Break test results
+********************/
+.brake-result {
+  padding: 10px;
+  color: $white;
+  p {
+    margin: 0;
+  }
+}
+.brake-result.result-pass {
+  background: $pass-text;
+  border: 1px solid darken($pass-text, 10%);
+}
+.brake-result.result-fail {
+  background: $fail-text;
+  border: 1px solid darken($fail-text, 10%);
+}
+.brake-result.result-not-done {
+  background: $warning-text;
+  border: 1px solid darken($warning-text, 10%);
+}
+
+/********************
+Special Notice Screens
+********************/
+
+#special-notices {
+  .count {
+    font-size: 48px;
+    margin-left: 10px;
+  }
+  img{
+    margin-bottom: 20px;
+  }
+  h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  form{
+    a.btn{
+      margin: 0;
+    }
+  }
+
+  .show-hide-container {
+    padding: 20px;
+  }
+
+  h2.unacknowledged {
+    color: $fail-text;
+  }
+
+  h3 {
+    font-weight: normal;
+  }
+  h4 {
+    font-weight: normal;
+    margin: 10px;
+  }
+
+  .list-unstyled h4 {
+    margin-left: 0;
+  }
+
+  .day-counter {
+    @include font-core14();
+    float:left;
+    padding-top: 0.8em;
+  }
+ .divider {
+   margin-top: 20px;
+ }
+
+  .pull-right {
+    padding-right: 0;
+  }
+
+  sup {
+    font-size: 30%;
+    vertical-align: super;
+  }
+  .message-details {
+    margin-right: 40px;
+    padding: 0;
+  }
+  #view-special-notices {
+    font-weight: bold;
+    .fa{
+      margin-left: 10px
+    }
+  }
+}
+
+.markdown-display {
+
+  ul {
+    list-style-type: disc;
+  }
+
+  p > ul, p > ol {
+    margin-bottom: 20px;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    border: 0;
+  }
+
+  h4, h5, h6 {
+    font-size:1.5em;
+  }
+}
+
+#markdown-guide * {
+  margin: 0;
+  @extend .markdown-display;
+}
+
+
+/********************
+Summary Screens
+********************/
+.list-separator,
+p.primary-item {
+    margin: 20px 0;
+}
+.list-separator li{
+    @include light-grey-bot-border();
+    padding: 8px 0;
+}
+.list-separator li:first-child {
+    padding: 0 0 8px;
+}
+.list-separator li:last-child {
+    border-bottom: 0;
+}
+.primary-item {
+    @include font-core19();
+}
+.list-separator li span {
+    display: block;
+}
+dl.no-bot-marg {
+    margin-bottom: 0;
+}
+.vehicle-summary dd{
+    margin-bottom: 1em;
+}
+h2 span.pass,
+h2 span.fail {
+    display: block;
+    font-size: 42px;
+}
+
+textarea.vert-flexible {
+  resize: vertical;
+}
+
+/**************************
+Special Notices start page
+**************************/
+.special-notice-summary {
+  background: $grey-4;
+  padding: 15px;
+  h2 {
+    @include font-bold19();
+    margin-top: 0;
+  }
+  p {
+    @include font-bold27();
+    margin-bottom: 10px;
+    span {
+      font-size: 45%;
+      display: block;
+      @include font-normal-weight();
+    }
+  }
+}
+
+
+/**************************
+ RED - AMBER - GREEN Band colours
+**************************/
+
+.score-band-total {
+  background-color: $white;
+  padding-left: 15px;
+  overflow: auto;
+  dt {
+    float:left;
+    padding-top: 15px;
+    padding-bottom: 0px;
+  }
+  dd {
+    float:right;
+    @include font-bold36();
+  }
+
+}
+.score-band-red {
+  background-color: $fail-text;
+  color: $white;
+  padding-left: 15px;
+  overflow: auto;
+  dt {
+    float:left;
+    padding-top: 20px;
+    padding-bottom: 25px;
+  }
+  dd
+  {
+    float:right;
+    @include font-bold36();
+  }
+}
+.score-band-amber {
+  background-color: $orange;
+  color: $white;
+  padding-left: 15px;
+  overflow: auto;
+  dt {
+    float:left;
+    padding-top: 20px;
+    padding-bottom: 25px;
+  }
+  dd {
+    float:right;
+    @include font-bold36();
+  }
+}
+.score-band-green {
+  background-color: $pass-text;
+  color: $white;
+  padding-left: 15px;
+  overflow: auto;
+  dt {
+    float:left;
+    padding-top: 20px;
+    padding-bottom: 25px;
+  }
+  dd {
+    float:right;
+    @include font-bold36();
+  }
+}
+
+/**************************
+General styles
+**************************/
+
+span.dividerBold {
+  clear: both;
+  height: 5px;
+  background: darken($grey-4, 70%);
+  display: block;
+  margin-left: 5px;
+  margin-right: 15px;
+}
+
+span.dividerThick {
+  clear: both;
+  height: 3px;
+  background: darken($grey-4, 30%);
+  display: block;
+  margin-left: 5px;
+  margin-right: 15px;
+}
+
+.nowrap {
+  white-space: nowrap;
+}

@@ -1,0 +1,17 @@
+<?php
+$cssDlClass = isset($cssDlClass) ? trim($cssDlClass) : 'col-sm-4';
+$isReinspection = isset($isReinspection) ? (true === $isReinspection) : false;
+$motTestNumber =  isset($motTestNumber) ? $motTestNumber : '';
+?>
+
+<dl class="<?php echo $this->escapeHtmlAttr($cssDlClass); ?>">
+    <?php
+    if ($isReinspection) {
+        $label = 'Reinspection Test Number';
+    } else {
+        $label = 'MOT Test Number';
+    } ?>
+
+    <dt><?php echo $this->escapeHtml($label); ?></dt>
+    <dd id="motTestNumber"><?php echo $this->escapeHtml($motTestNumber); ?></dd>
+</dl>

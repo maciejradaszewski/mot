@@ -1,0 +1,10 @@
+!| GenerateTestDataForOtherFitnesseTests|
+|testerUsername?                        |
+|$testerUsername1=                      |
+
+!| Vm 4497 Create Vehicle                      |
+|login           |User info    |success?|error?|
+|aedm            |aedm         |false   |      |
+|site-manager    |             |false   |      |
+|inactivetester  |             |false   |      |
+|$testerUsername1|active tester|true    |      |

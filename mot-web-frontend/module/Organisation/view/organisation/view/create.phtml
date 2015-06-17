@@ -1,0 +1,177 @@
+<?php
+
+/** @var $form \Organisation\Form\AeCreateForm */
+
+$sectionName = "Authorised Examiner";
+
+$labelBack = "Back to home";
+$labelForward = "Create AE";
+$taskName = "Create AE";
+
+// $title = 'Authorised Examiner';
+$this->headTitle($sectionName . ' - ' . $taskName);
+$this->layout()->setVariable('pageSubTitle', $this->translate($sectionName));
+$this->layout()->setVariable('pageTitle', $this->translate($taskName));
+?>
+
+<?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
+
+<form action="<?php echo $this->escapeHtml($formRoute); ?>" method="POST">
+    <?php echo $this->csrfToken() ?>
+    <div class="row">
+        <div class="col-sm-8">
+            <fieldset>
+                <legend>Business details</legend>
+                <?php
+                echo $this->partial(
+                    'partial/forms/inputBox',
+                    [
+                        'id'        => 'organisationName',
+                        'label'     => 'AE business name',
+                        'required'  => true,
+                        'title'     => 'Enter AE business name',
+                        'maxLength' => 50,
+                        'value'     => $form->getOrganisationName(),
+                    ],
+                    'Core'
+                );
+                echo $this->partial(
+                    'partial/forms/inputBox',
+                    [
+                        'id'        => 'tradingAs',
+                        'label'     => 'AE trading as',
+                        'title'     => 'Enter AE trading as',
+                        'maxLength' => 50,
+                        'value'     => $form->getTradingAs(),
+                    ],
+                    'Core'
+                );
+                echo $this->partial(
+                    'partial/forms/selectBox',
+                    [
+                        'id'       => 'organisationType',
+                        'label'    => 'AE organisation type',
+                        'required' => true,
+                        'value'    => $form->getOrganisationType(),
+                        'options'  => $organisationType,
+                    ],
+                    'Core'
+                );
+                echo $this->partial(
+                    'partial/forms/selectBox',
+                    [
+                        'id'       => 'companyType',
+                        'label'    => 'AE business type',
+                        'required' => true,
+                        'value'    => $form->getCompanyType(),
+                        'options'  => $companyType,
+                    ],
+                    'Core'
+                );
+                echo $this->partial(
+                    'partial/forms/inputBox',
+                    [
+                        'id'        => 'registeredCompanyNumber',
+                        'label'     => 'Company number',
+                        'title'     => 'Enter Company number',
+                        'maxLength' => 11,
+                        'elementId' => 'registeredCompanyNumberDiv',
+                        'value'     => $form->getRegisteredCompanyNumber(),
+                    ],
+                    'Core'
+                );
+                ?>
+            </fieldset>
+            <fieldset>
+                <legend>Business contact details</legend>
+
+                <?php
+                echo $this->partial(
+                    'partial/fragments/address-and-contact-details',
+                    [
+                        'values'  => $form->toArray(),
+                        'showFax' => true
+                    ],
+                    'Core'
+                );
+                ?>
+            </fieldset>
+            <fieldset>
+                <legend>Correspondence contact details</legend>
+                <?php
+                echo $this->partial(
+                    'partial/forms/checkbox-box',
+                    [
+                        'id'        => 'correspondenceContactDetailsSame',
+                        'label'     => 'Same as business contact details',
+                        'value'     => '1',
+                        'isChecked' => $form->isCorrespondenceContactDetailsSame(),
+                    ],
+                    'Core'
+                );
+                ?>
+                <div id="addressAndContactDetailsFragmentDiv">
+                    <?php
+                    echo $this->partial(
+                        'partial/fragments/address-and-contact-details',
+                        [
+                            'values'   => $form->toArray(),
+                            'idPrefix' => 'correspondence',
+                            'showFax'  => true
+                        ],
+                        'Core'
+                    ); ?>
+                </div>
+            </fieldset>
+            <div class="form-group">
+                <?php
+                echo $this->partial(
+                    'partial/forms/submitElement',
+                    [
+                        'label' => $labelForward,
+                        'value' => 'save',
+                        'id'    => 'save'
+                    ],
+                    'Core'
+                ); ?>
+            </div>
+
+            <div class="form-group">
+                <a id="cancel" href="<?php echo $this->escapeHtml($cancelRoute); ?>">
+                    <?php echo $this->escapeHtml($labelBack); ?>
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+
+    (function(){
+
+        var render = function() {
+            if ($("#correspondenceContactDetailsSame").is(":checked")) {
+                var $addressAndContactDetailsFragmentDiv = $("#addressAndContactDetailsFragmentDiv");
+
+                $("input[type='text'], input[type='email']", $addressAndContactDetailsFragmentDiv).each(function () {
+                    $(this).val("");
+                    $(this).removeAttr('required');
+                });
+
+                $addressAndContactDetailsFragmentDiv.slideUp();
+            } else {
+                $("#addressAndContactDetailsFragmentDiv").slideDown();
+
+                $("#correspondenceAddressLine1").prop('required', true);
+                $("#correspondenceTown").prop('required', true);
+                $("#correspondencePostcode").prop('required', true);
+                $("#correspondenceEmail").prop('required', true);
+                $("#correspondenceEmailConfirmation").prop('required', true);
+                $("#correspondencePhoneNumber").prop('required', true);
+            }
+        }
+
+        $(document).ready(render);
+
+        $("#correspondenceContactDetailsSame").change(render);
+    })();
+</script>

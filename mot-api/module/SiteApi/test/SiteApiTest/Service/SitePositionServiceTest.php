@@ -1,0 +1,128 @@
+<?php
+
+namespace SiteApiTest\Service;
+
+use Doctrine\ORM\EntityManager;
+use DvsaAuthorisation\Service\AuthorisationServiceInterface;
+use DvsaCommon\Enum\BusinessRoleStatusCode;
+use DvsaCommon\Enum\SiteBusinessRoleCode;
+use DvsaCommonApi\Service\Exception\BadRequestException;
+use DvsaCommonApiTest\Transaction\TestTransactionExecutor;
+use DvsaCommonTest\TestUtils\ArgCapture;
+use DvsaCommonTest\TestUtils\MockRepositoryHelper;
+use DvsaCommonTest\TestUtils\XMock;
+use DvsaEntities\Entity\BusinessRoleStatus;
+use DvsaEntities\Entity\Person;
+use DvsaEntities\Entity\Site;
+use DvsaEntities\Entity\SiteBusinessRole;
+use DvsaEntities\Entity\SiteBusinessRoleMap;
+use DvsaEntities\Entity\SitePositionHistory;
+use DvsaEntities\Repository\SiteBusinessRoleMapRepository;
+use NotificationApi\Dto\Notification;
+use NotificationApi\Service\NotificationService;
+use SiteApi\Service\SitePositionService;
+use DvsaEventApi\Service\EventService;
+
+/**
+ * Class SitePositionServiceTest
+ *
+ * @package SiteApiTest\Service
+ */
+class SitePositionServiceTest extends \PHPUnit_Framework_TestCase
+{
+    /**
+     * @var  AbstractMotAuthorisationService $authorisationService
+     */
+    private $authorisationService;
+    private $notificationService;
+    private $siteBusinessRoleMapRepository;
+    private $eventService;
+    private $entityManager;
+
+    public function setUp()
+    {
+        $this->authorisationService = XMock::of(AuthorisationServiceInterface::class);
+        $this->notificationService = XMock::of(NotificationService::class);
+        $this->siteBusinessRoleMapRepository = XMock::of(SiteBusinessRoleMapRepository::class);
+        $this->entityManager = XMock::of(EntityManager::class);
+        $this->eventService = XMock::of(EventService::class);
+    }
+
+    private function getServiceWithMockServices($siteBusinessRoleMapMock) {
+        return new SitePositionService(
+            $this->eventService,
+            $siteBusinessRoleMapMock,
+            $this->authorisationService,
+            $this->entityManager,
+            $this->notificationService
+        );
+    }
+
+    public function testRemove_givenValidPosition_properNotificationSent()
+    {
+        $positionId = 5;
+        $orgId = 4;
+        $recipientId = 32;
+
+        $position = $this->validSitePosition($orgId);
+        $position->getPerson()->setId($recipientId);
+
+        $this->siteBusinessRoleMapRepository = XMock::of(SiteBusinessRoleMapRepository::class);
+        $this->siteBusinessRoleMapRepository->expects($this->atLeastOnce())
+                                            ->method('findOneBy')
+                                            ->with([ 'id' => $positionId])
+                                            ->will($this->returnValue($position));
+
+        $notificationPromise = $this->notificationSent();
+
+        $this->getServiceWithMockServices($this->siteBusinessRoleMapRepository)->remove($orgId, $positionId);
+
+        /** @var array $notification */
+        $notification = $notificationPromise->get();
+        $this->assertEquals($recipientId, $notification['recipient']);
+        $this->assertEquals(Notification::TEMPLATE_SITE_POSITION_REMOVED, $notification['template']);
+    }
+
+    public function testRemove_givenInvalidPosition_doNotPersistPosition()
+    {
+        list($positionId, $orgId) = [5, 4];
+        $sitePosition = $this->validSitePosition($orgId);
+
+        $this->siteBusinessRoleMapRepository = XMock::of(SiteBusinessRoleMapRepository::class);
+        $this->siteBusinessRoleMapRepository->expects($this->atLeastOnce())
+            ->method('findOneBy')
+            ->with([ 'id' => $positionId])
+            ->will($this->returnValue($sitePosition));
+
+        $this->setExpectedException(BadRequestException::class);
+
+        $this->getServiceWithMockServices($this->siteBusinessRoleMapRepository)->remove($orgId + 1, $positionId);
+
+        $this->assertFalse(TestTransactionExecutor::isFlushed($sitePosition));
+    }
+
+    private function notificationSent()
+    {
+        $capNotification = ArgCapture::create();
+        $this->notificationService->expects($this->atLeastOnce())->method("add")
+            ->with($capNotification());
+
+        return $capNotification;
+    }
+
+    private function validSitePosition($siteId)
+    {
+        $person = new Person();
+        $role = new SiteBusinessRole();
+        $role->setCode(SiteBusinessRoleCode::TESTER);
+        $site = (new Site())->setId($siteId);
+        $status = (new BusinessRoleStatus())->setCode(BusinessRoleStatusCode::ACTIVE);
+        $map = new SiteBusinessRoleMap();
+        $map->setPerson($person);
+        $map->setSite($site);
+        $map->setSiteBusinessRole($role);
+        $map->setBusinessRoleStatus($status);
+
+        return $map;
+    }
+}

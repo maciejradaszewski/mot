@@ -1,0 +1,37 @@
+<?php
+
+$unreadCount = isset($unreadCount) ? $unreadCount : 0;
+$daysLeftToView = isset($daysLeftToView) ? $daysLeftToView : 0;
+$overdueCount = isset($overdueCount) ? $overdueCount : 0;
+
+$escViewLink = $canRead ? $this->url('special-notices/all') : $this->url('special-notices');
+
+?>
+<section class="module-pivot-panel" id="special-notice-list">
+    <header class="pivot-panel_header">
+        <h2 class="pivot-panel_title">
+            <a id="action-view-all-special-notices" href="<?php echo $escViewLink; ?>">Special notices</a>
+        </h2>
+    </header>
+    <a href="<?php echo $escViewLink; ?>" class="mailbox-status">
+        <span id="unread-special-notice-link"class="mega-number">
+            <strong class="number"><?php echo intval($unreadCount); ?></strong>
+            <span class="super-text">
+                unread 
+                <?php if($unreadCount && $canAcknowledge) : ?>
+                    <span class="meta"><?php echo $this->escapeHtml($daysLeftToView); ?> days left to view</span>
+                <?php endif; ?>
+            </span>
+        </span>
+    </a>
+    <?php if ($canAcknowledge && $overdueCount > 0): ?>
+    <a href="<?php echo $escViewLink; ?>" class="mailbox-status is-overdue">
+        <span id="overdue-unread-special-notice-link" class="mega-number">
+            <strong class="number"><?php echo $this->escapeHtml($overdueCount); ?></strong>
+            <span class="super-text">
+                overdue
+            </span>
+        </span>
+    </a>
+    <?php endif; ?>
+</section>

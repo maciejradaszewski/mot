@@ -1,0 +1,26 @@
+<?php
+
+/* TODO Reduce duplication with errorMessages */
+    $messages = array();
+    if (isset($infoMessages) && count($infoMessages)) {
+        $messages = $infoMessages;
+    }
+    $flashMessages = $this->layout()->flashMessenger->getInfoMessages();
+    if (isset($getFromFlash) && $getFromFlash && count($flashMessages)) {
+        $messages = array_merge($messages, $flashMessages);
+    }
+    $messages = array_filter($messages);
+?>
+<?php if (count($messages)) : ?>
+<div class='row'>
+    <div id="info-message" class="col-sm-8">
+        <div class="info-notice">
+            <?php foreach ($messages as $message): ?>
+                <p>
+                    <?php echo $this->escapeHtml($message) ?>
+                </p>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
+<?php endif ; ?>

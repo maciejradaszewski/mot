@@ -1,0 +1,30 @@
+<div class="pagination-wrapper">
+    <div class="page-results-control pull-left">
+        Show:
+        <?php foreach ($this->limitOptions as $limit): ?>
+            <?php if ($limit != $this->currentLimit): ?>
+            <a href="<?php echo $this->url(null, [], ['query' => array_merge(
+                    $this->queryParams,
+                    [\DvsaCommon\Constants\QueryParam::ROW_COUNT => $limit]
+                )], true); ?>">
+            <?php endif; ?>
+            <?php echo $this->escapeHtml($limit); ?>
+            <?php if ($limit != $this->currentLimit): ?>
+            </a>
+            <?php endif; ?>
+        <?php endforeach; ?> results per page
+    </div>
+    <div class="pull-right">
+<?php echo $this->paginationControl(
+    $this->paginator,
+    'Sliding',
+    'partials/table/pagination-control.phtml',
+    [
+        'route' => null,
+        'routeOptions' => [
+            'query' => $this->queryParams,
+        ]
+    ]
+); ?>
+    </div>
+</div>

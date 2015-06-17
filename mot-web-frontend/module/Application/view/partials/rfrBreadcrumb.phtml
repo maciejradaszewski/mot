@@ -1,0 +1,15 @@
+<?php if ($breadcrumbItemSelectors) : ?>
+<div class="row" id="breadcrumb">
+    <div class="col-sm-12">
+        <ol class="breadcrumb">
+            <?php foreach ($breadcrumbItemSelectors as $selector): ?>
+                <li>
+                    <a href="<?php echo $this->url('mot-test/test-item-selector', ['tis-id' => $selector['id'], 'motTestNumber' => $motTestNumber]); ?>">
+                        <?php echo $this->escapeHtml($selector['name']); ?>
+                    </a>
+                </li>
+            <?php endforeach; ?>
+        </ol>
+    </div>
+</div>
+<?php endif; ?>

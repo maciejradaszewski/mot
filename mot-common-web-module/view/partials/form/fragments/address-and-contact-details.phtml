@@ -1,0 +1,84 @@
+<?php
+$values = (isset($values)) ? $values : [];
+
+$idPrefix = $this->withDefault('')->getValue($idPrefix);
+$showEmail = $this->withDefault(true)->getValue($showEmail);
+$showFax = $this->withDefault(false)->getValue($showFax);
+
+$getValueOrEmptyString = function ($key) use ($values, $idPrefix) {
+    if ('' !== $idPrefix) {
+        $key = $idPrefix . ucfirst($key);
+    }
+
+    if (is_array($values)) {
+        return (isset($values[$key])) ? $values[$key] : '';
+    }
+
+    if (is_object($values)) {
+        return $values->{'get'. ucfirst($key)}();
+    }
+
+    return '';
+};
+
+echo $this->partial(
+    'addressDetailsFragment',
+    [
+        'values'   => $values,
+        'idPrefix' => $idPrefix,
+    ]
+);
+
+if ($showEmail) {
+    echo $this->partial(
+        'inputBox',
+        [
+            'id'        => '' !== $idPrefix ? $idPrefix . 'Email' : 'email',
+            'label'     => 'Email address',
+            'required'  => true,
+            'type'      => 'email',
+            'title'     => 'Enter the e-mail',
+            'maxLength' => 50,
+            'value'     => $getValueOrEmptyString('email'),
+        ]
+    );
+
+    echo $this->partial(
+        'inputBox',
+        [
+            'id'        => '' !== $idPrefix ? $idPrefix . 'EmailConfirmation' : 'emailConfirmation',
+            'label'     => 'Confirm email address',
+            'required'  => true,
+            'type'      => 'email',
+            'title'     => 'Enter the e-mail confirmation',
+            'maxLength' => 50,
+            'value'     => $getValueOrEmptyString('emailConfirmation'),
+        ]
+    );
+}
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id'        => '' !== $idPrefix ? $idPrefix . 'PhoneNumber' : 'phoneNumber',
+        'label'     => 'Telephone number',
+        'pattern'   => "^\+?[\d -]{6,25}$",
+        'required'  => true,
+        'title'     => 'Enter the phone number',
+        'maxLength' => 25,
+        'value'     => $getValueOrEmptyString('phoneNumber'),
+    ]
+);
+
+if($showFax) {
+    echo $this->partial(
+        'inputBox',
+        [
+            'id'        => '' !== $idPrefix ? $idPrefix . 'FaxNumber' : 'faxNumber',
+            'label'     => 'Fax number',
+            'title'     => 'Enter the fax number',
+            'maxLength' => 25,
+            'value'     => $getValueOrEmptyString('faxNumber'),
+        ]
+    );
+}

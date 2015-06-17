@@ -1,0 +1,94 @@
+<?php
+
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaMotTest\Controller\AbstractDvsaMotTestController;
+
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motTest */
+$motTest = $this->motTest;
+
+$vts = $motTest->getVehicleTestingStation();
+/** @var \DvsaCommon\Dto\Person\PersonDto $tester */
+$tester = $motTest->getTester();
+
+/** @var  \DvsaCommon\Dto\Vehicle\VehicleDto $vehicle */
+$vehicle = $motTest->getVehicle();
+
+$testStatus = $motTest->getStatus();
+$motTestNumber = $motTest->getMotTestNumber();
+$testStarted = DateTimeDisplayFormat::textDateTime($motTest->getStartedDate());
+$testerName = $tester->getDisplayName();
+
+$urlToReasonForAborting = $this->url('mot-test/reason-for-aborting', ['motTestNumber' => $motTestNumber]);
+$urlToReturnToVts = $this->url('vehicle-testing-station', ['id' => $vts['id']]);
+
+$testStatus = AbstractDvsaMotTestController::getTestStatusName($motTest->getStatus());
+
+$title = 'Vehicle Testing Station';
+$this->headTitle($title);
+
+$this->layout()->setVariable('pageSubTitle', $title);
+$this->layout()->setVariable('pageTitle', 'MOT Test');
+
+?>
+
+<div class="row module-present-data">
+  
+    <div class="col-sm-6 col-sm-push-6">
+        <?php
+        echo $this->partial(
+            'dldtdd', [
+                'dlCssClass' => 'vertical is-secondary',
+                'items'      => [
+                    [
+                        'Mot Test Status',
+                        'Test <span id="sln-test-status">' . $this->escapeHtml($testStatus) . '</span>',
+                        'escape'     => false,
+                        'cssClass'   => 'font-bold24',
+                        'dtCssClass' => 'visually-hidden',
+                    ],
+                    ['MOT Test Number', $motTestNumber],
+                    ['Test started', $testStarted],
+                    ['Tester', $testerName],
+                ],
+            ]
+        );
+        ?>
+    </div>
+
+    <div class="col-sm-6 col-sm-pull-6">
+        <?php
+        echo $this->partial(
+            'dldtdd', [
+                'dlCssClass' => 'vertical',
+                'items'      => [
+                    [
+                        'Vehicle',
+                        '<span class="compound-value_primary">' .
+                            $this->escapeHtml($vehicle->getRegistration()) .
+                        '</span>' .
+                        '<span class="compound-value_secondary">' .
+                            $this->escapeHtml($vehicle->getMakeAndModel()) .
+                        '</span>',
+                        'escape'     => false,
+                        'cssClass'   => 'compound-value',
+                        'dtCssClass' => 'visually-hidden',
+                    ],
+                    ['Vehicle Identification Number', $vehicle->getVin()],
+                    ['Colour', $vehicle->getColoursNames()],
+                ],
+            ]
+        );
+        ?>
+    </div>
+</div>
+
+<nav class="module-content-navigation">
+    <?php if($canAbortTestAtSite): ?>
+        <a class="button-warning" id="sln-action-abort" href="<?php echo $urlToReasonForAborting ?>">Abort MOT Test</a>
+    <?php endif; ?>
+    <ul class="content-navigation_secondary">
+        <li>
+            <a id="sln-action-return" href="<?php echo $urlToReturnToVts ?>">Return to Vehicle Testing Station</a>
+        </li>
+    </ul>
+</nav>

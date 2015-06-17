@@ -1,0 +1,34 @@
+a {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+.pagination-wrapper {
+    display: none;
+}
+
+table, .table-responsive {
+    overflow: visible;
+}
+
+.report-quarter {
+    display: block;
+    width: 25%;
+    float: left;
+}
+
+.report-third {
+    display: block;
+    width: 33%;
+    float: left;
+}
+
+.report-half {
+    display: block;
+    width: 50%;
+    float: left;
+}
+
+.btn {
+    display: none;
+}

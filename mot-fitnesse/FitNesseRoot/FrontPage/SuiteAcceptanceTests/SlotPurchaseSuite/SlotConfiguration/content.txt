@@ -1,0 +1,11 @@
+!| GenerateTestDataForOtherFitnesseTests|
+|aedmUsername?                          |
+|$aedm1=                                |
+|$aedm2=                                |
+
+'''In order to buy MOT test slots, I the correct MOT configuration is used '''
+
+!| SlotPurchase_SlotConfiguration                                    |
+|aedm  |test slot max amount?|test slot min amount ?|test slot price?|
+|$aedm1|75000                |25                    |2.05            |
+|$aedm2|75000                |25                    |2.05            |

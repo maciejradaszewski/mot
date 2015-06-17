@@ -1,0 +1,36 @@
+<?php
+$id = isset($id) ? $id : '';
+$name = isset($name) ? $name : $id;
+$value = isset($value) ? $value : '';
+$label = isset($label) ? $label : '';
+$cssClass = isset($cssClass) ? $cssClass : '';
+$required = isset($required) ? $required : false;
+$options = (isset($options) && is_array($options)) ? $options : [];
+$showOptionalText = isset($showOptionalText) ? $showOptionalText : false;
+?>
+
+<div class="form-group">
+    <label for="<?php echo $this->escapeHtmlAttr($id); ?>">
+        <?php 
+            echo $this->escapeHtml($label);
+            if (!$required && $optional) {
+                echo ' (optional)';
+            }
+        ?>
+    </label>
+    <?php if (!$required && $showOptionalText) : ?>
+        <p class="help-text">(optional)</p>
+    <?php endif; ?>
+    <?php
+    echo $this->partial(
+        'partial/forms/selectElement.phtml',
+        [
+            'id'       => $id,
+            'name'     => $name,
+            'cssClass' => $cssClass,
+            'options'  => $options,
+            'value'    => $value,
+        ]
+    );
+    ?>
+</div>

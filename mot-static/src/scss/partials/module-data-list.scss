@@ -1,0 +1,113 @@
+/*
+    @name data-list
+
+    @status production
+    
+    @category Molecule
+
+    @comments
+    Used to display data and meta-data using typographic hirachy without labels.
+    Used on "Active MOT Tests" lists amongst others
+
+    Bootstrap dependency: None
+
+    @example
+    <ul class="module-data-list">
+        <li>
+            <a class="data-list_link-heading">
+                <strong>FNZ6 110</strong>
+            </a>
+            <span class="data-list_info-block">
+                <strong>Land Rover</strong>, Range Rover Sport Limited Autobiography Supercharged
+            </span>
+            <span class="data-list_info-block is-subtitle">
+                Bob Thomas Arctor Tester1
+            </span>
+        </li>
+        <li>
+            <a class="data-list_link-heading">
+                <strong>YH07 JWC</strong>
+            </a>
+            <span class="data-list_info-block">
+                <strong>Audi</strong>, A3 S-Line Sportback 1.4 TFSI
+            </span>
+            <span class="data-list_info-block is-subtitle">
+                Bob Thomas Arctor
+            </span>
+        </li>
+        <li>
+            <!-- Some list items may not have a call to action -->
+            <span class="data-list_heading">
+                <strong>YH07 JWC</strong>
+            </span>
+            <span class="data-list_info-block">
+                <strong>Audi</strong>, A3 S-Line Sportback 1.4 TFSI
+            </span>
+            <span class="data-list_info-block is-subtitle">
+                Bob Thomas Arctor
+            </span>
+        </li>
+        <li>
+            <!-- Some list items may not require a heading -->
+            <span class="data-list_info-block">
+                <strong>Stewie Griffin</strong>
+            </span>
+            <span class="data-list_info-block is-subtitle">
+                AEDM (Accepted on 10 October 2010) 
+            </span>
+        </li>
+    </ul>
+*/
+
+.module-data-list {
+    list-style: none outside none;
+    margin-bottom: 0;
+    padding-left: 0;
+
+    li {
+        padding-bottom: 20px;
+        margin: 0;
+
+        + li {
+            @include light-grey-top-border;
+            padding-top: 20px;
+        }
+
+        &:last-child {
+            padding-bottom: 0;
+        }
+	}
+
+    + h4 {
+        margin-top: 30px;
+    }
+
+    .is-subtitle {
+        color: $secondary-text-colour;
+        position: relative;
+
+        a {
+            position: absolute;
+            right: 0;
+        }
+    }
+}
+
+.data-list_link-heading {
+    font-size: 19px;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.data-list_heading {
+    font-size: 19px;
+}
+
+.data-list_info-block {
+    display: block;
+    clear: both;
+}
+

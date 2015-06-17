@@ -1,0 +1,24 @@
+<?php
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
+use Site\Controller\VehicleTestingStationController;
+
+?>
+<div class="module-pivot-panel">
+    <header class="pivot-panel_header">
+        <h2 class="pivot-panel_title">AE management</h2>
+    </header>
+    <p>You can apply for</p>
+    <ul>
+        <li>
+            <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::of()->aeCreate(); ?>"
+               id="createAuthorisedExaminerLink"><?php echo $this->translate('Create AE'); ?>
+            </a>
+        <li>
+            <a id="action-edit-ae" href="#">Edit AE</a>
+        </li>
+        <li>
+            <a id="action-create-vts" href="<?php echo $this->url(VehicleTestingStationController::ROUTE_CREATE); ?>">
+                Create VTS</a>
+        </li>
+    </ul>
+</div>

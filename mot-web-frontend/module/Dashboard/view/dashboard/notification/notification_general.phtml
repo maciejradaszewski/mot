@@ -1,0 +1,26 @@
+<?php
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use Dashboard\Controller\UserHomeController;
+
+/* SINGLE NOTIFICATION VIEW */
+
+/** @var $notification \Dashboard\Model\Notification */
+
+?>
+
+<div class="text"></div>
+
+<div class="text">
+    <p class="lede" id="notification-content">
+        <?php echo $this->escapeHtml($notification->getContent()); ?>
+    </p>
+</div>
+<div class="text">
+    <p id="notification-sent">Notification sent <?php echo DateTimeDisplayFormat::textDateTime($notification->getCreatedOn()); ?></p>
+</div>
+
+<ul class="content-navigation__secondary">
+    <li>
+        <a href="<?php echo $this->url(UserHomeController::ROUTE) ?>" id="link-back-to-home">Back to Home</a>
+    </li>
+</ul>

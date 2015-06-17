@@ -1,0 +1,27 @@
+<?php
+use Dashboard\Controller\UserHomeController;
+use DvsaAuthentication\Controller\AuthenticationController;
+use DvsaCommon\Constants\Role;
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+
+if ($this->authorisationHelper()->hasRole(Role::USER)):
+?>
+<ul class="header-user__menu">
+    <li>
+        <a href="<?php echo $this->url(UserHomeController::ROUTE); ?>"
+           class="selected" id="homepage">
+            Home
+        </a>
+    </li>
+    <li>
+        <a href="<?php echo PersonUrlBuilderWeb::profile(); ?>" id="user-profile">Your Profile</a>
+    </li>
+    <li>
+        <a href="<?php echo $this->url(AuthenticationController::ROUTE_LOGOUT); ?>"
+           id="logout">
+            Sign out
+        </a>
+    </li>
+</ul>
+<?php endif;
+

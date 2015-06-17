@@ -1,0 +1,20 @@
+<?php
+$listAll = isset($listAll);
+if (!is_array($messages)) {
+    $messages = [$messages];
+}
+?>
+<span id="error1" class="validation-message">
+
+    <?php if ($listAll) : ?>
+        <ul>
+            <?php foreach ($messages as $message): ?>
+                <li><?php echo $message ?></li>
+            <?php endforeach ?>
+        </ul>
+    <?php
+    else:
+        echo array_shift($messages);
+    endif; ?>
+</span>
+

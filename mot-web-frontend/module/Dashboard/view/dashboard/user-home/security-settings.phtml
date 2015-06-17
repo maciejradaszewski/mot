@@ -1,0 +1,55 @@
+<?php
+
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+
+?>
+<?php if(isset($pin)): ?>
+
+    <h2>You have successfully reset your PIN</h2>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="info-alert">
+                <p>This PIN is unique to you and must be kept secure. You need your PIN to perform an MOT test.</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8" id="content">
+            <p class="module-second-auth">
+                <img class="second-auth__logo" src="/img/mot-2.svg" onerror="this.src='/img/mot-2.png'; this.onerror=null;" width="55" height="52">
+                Your MOT Testing Service PIN:
+                <strong class="second-auth__pin" id="second-auth-pin"><?php echo $this->escapeHtml($pin); ?></strong>
+            </p>
+        </div>
+    </div>
+    <nav class="module-content-navigation">
+        <ul class="content-navigation_secondary">
+            <li>
+                <a href="<?php echo PersonUrlBuilderWeb::profile($userId); ?>">Return to your profile</a>
+            </li>
+        </ul>
+    </nav>
+
+<?php else: ?>
+
+    <p class="lede">
+        You are about to <strong>reset your PIN</strong>.
+    </p>
+
+    <form action="<?php echo $this->escapeHtmlAttr(PersonUrlBuilderWeb::securitySettings()); ?>" method="POST" autocomplete="off">
+        <?php echo $this->csrfToken(); ?>
+        <nav class="content-navigation">
+            <?php echo $this->partial(
+                'partial/gds/form/control-navigation',
+                [
+                    'id'            => 'reset-pin',
+                    'value'         => 'Reset your PIN',
+                    'navigation'    => [
+                        'Cancel and return to your profile' => PersonUrlBuilderWeb::profile(),
+                    ]
+                ]
+            ); ?>
+        </nav>
+    </form>
+
+<?php endif; ?>

@@ -1,0 +1,144 @@
+<?php
+use DvsaCommon\Utility\ArrayUtils;
+?>
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-9">
+        <ul class="rfr-list row">
+            <?php if ($reasonsForRejection): ?>
+                <?php foreach ($reasonsForRejection as $rfr):
+                    $escRfrId = $this->escapeHtml($rfr['rfrId']);
+                    ?>
+                    <li>
+                        <div class="col-md-8 list-text">
+                            <h2><?php echo $this->escapeHtml($rfr['description']); ?></h2>
+                            <ul class="list-inline">
+                                <li class="category"><?php echo $this->escapeHtml($rfr['testItemSelectorName']); ?></li>
+                                <li class="manual-ref"><span class="visually-hidden">Manual reference</span>
+                                    <a data-toggle="modal"
+                                       href="#rfr-details-dialog-<?php echo $escRfrId; ?>"><?php echo $this->escapeHtml(
+                                            $rfr['inspectionManualReference']
+                                        ); ?></a></li>
+                            </ul>
+                        </div>
+
+                        <!-- details dialogue -->
+                        <div class="modal fade" id="rfr-details-dialog-<?php echo $escRfrId; ?>" tabindex="-1"
+                             role="dialog"
+                             aria-labelledby="Reason for Rejection details - <?php echo $escRfrId; ?>"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"
+                                                aria-hidden="true">&times;</button>
+                                        <h3 class="modal-title">Manual reference <?php echo $this->escapeHtml(
+                                                $rfr['inspectionManualReference']
+                                            ); ?></h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h4>Reason for Rejection</h4>
+                                        <p><?php echo $this->escapeHtml($rfr['inspectionManualDescription']); ?></p>
+
+                                        <?php
+                                        // Manual RFR entries do not have a reference so no link can be produced
+                                        $imr = trim(ArrayUtils::tryGet($rfr, 'inspectionManualReference', ''));
+
+                                        if (strlen($imr)) {
+
+                                            $imrParts = explode('.', $imr);
+
+                                            if (count($imrParts) >= 2 ) {
+
+                                                // reference is at least A.B[.C] so we can make a link
+                                                $imrUrl = sprintf(
+                                                    "http://www.motinfo.gov.uk/htdocs/m4s0%s000%s01.htm",
+                                                    $imrParts[0],
+                                                    $imrParts[1]
+                                                );
+                                                ?><a href="<?php echo $this->escapeHtmlAttr($imrUrl); ?>" target="manual" id="manual-btn-<?php echo $escRfrId; ?>"
+                                                >View manual reference for <?php echo $this->escapeHtml($rfr['inspectionManualReference']); ?></a>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
+                                    </div>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                        <!-- /.modal -->
+                        <!-- /details dialogue -->
+
+                        <div class="col-sm-4 list-btns">
+                            <?php if ($rfr['isAdvisory'] === true && $rfr['isAdvisory'] === true): ?>
+                                <a data-toggle="modal" id="advisory-rfr-<?php echo $escRfrId; ?>"
+                                   href="#rfr-dialog-<?php echo $escRfrId; ?>" data-rfrid="<?php echo $escRfrId; ?>"
+                                   data-type='ADVISORY' class="btn btn-warning rfr-dialog-link rfr-fail">Advisory</a>
+                            <?php endif; ?>
+                            <?php if ($rfr['isPrsFail'] === true): ?>
+                                <a data-toggle="modal" id="prs-rfr-<?php echo $escRfrId; ?>"
+                                   href="#rfr-dialog-<?php echo $escRfrId; ?>" data-rfrid="<?php echo $escRfrId; ?>"
+                                   data-type='PRS' class="btn btn-info rfr-dialog-link rfr-fail">PRS</a>
+                                <a data-toggle="modal" id="fail-rfr-<?php echo $escRfrId; ?>"
+                                   href="#rfr-dialog-<?php echo $escRfrId; ?>" data-rfrid="<?php echo $escRfrId; ?>"
+                                   data-type='FAIL' class="btn btn-danger rfr-dialog-link rfr-fail">Fail</a>
+                            <?php elseif ($rfr['isPrsFail'] === false && $rfr['isAdvisory'] === false) : ?>
+                                <a data-toggle="modal" id="fail-rfr-<?php echo $escRfrId; ?>"
+                                   href="#rfr-dialog-<?php echo $escRfrId; ?>" data-rfrid="<?php echo $escRfrId; ?>"
+                                   data-type='FAIL' class="btn btn-danger rfr-dialog-link rfr-fail">Fail</a>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- location dialogue -->
+                        <?php
+                        echo $this->partial(
+                            'rfrLocationModal', [
+                                'escRfrId'     => $escRfrId,
+                                'rfr'          => $rfr,
+                                'motTestNumber'    => $motTestNumber,
+                                'searchString' => isset($searchString) ? $searchString : ''
+
+                            ]
+                        );
+                        ?>
+                        <!-- /location dialogue -->
+                    </li>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </ul>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.rfr-dialog-link').on('click', function () {
+            var rfrType = $(this).data('type');
+            $('#type-' + $(this).data('rfrid')).val(rfrType);
+            var rfrmodalTitle = $('#modal-rfr-title-' + $(this).data('rfrid'));
+            var rfrmodalDescription = $('#modal-rfr-description-' + $(this).data('rfrid'));
+            var rfrmodalAdvisory = $('#modal-rfr-advisory-' + $(this).data('rfrid'));
+
+            switch (rfrType) {
+                case 'FAIL':
+                    rfrmodalTitle.text('Failure location');
+                    rfrmodalDescription.show();
+                    rfrmodalAdvisory.hide();
+                    break;
+                case 'PRS':
+                    rfrmodalTitle.text('PRS location');
+                    rfrmodalDescription.show();
+                    rfrmodalAdvisory.hide();
+                    break;
+                case 'ADVISORY':
+                    rfrmodalTitle.text('Advisory location');
+                    rfrmodalDescription.hide();
+                    rfrmodalAdvisory.show();
+                    break;
+            }
+        });
+    });
+</script>

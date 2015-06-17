@@ -1,0 +1,86 @@
+<?php
+
+use Site\Controller\RoleController;
+/**
+ * @var \Organisation\Form\SelectRoleForm $form
+ * @var int $vehicleTestingStationId
+ * @var int $personId
+ * @var string $personFullName
+ */
+?>
+
+<header class="content-header">
+    <h1>
+        <span class="content-header__type">
+           Vehicle Testing Station
+        </span>
+
+        <span class="content-header__title">
+            <?php if ($hasRoleOption): ?>
+                Choose a role
+            <?php else: ?>
+                Search for a user
+            <?php endif; ?>
+        </span>
+    </h1>
+</header>
+
+<div class="text">
+    <?php if ($hasRoleOption): ?>
+        <p class="lede">You are assigning a role to '<?php echo $this->escapeHtml($personUsername); ?>'.</p>
+        <p>The roles that this user is permitted to have are displayed below.</p>
+    <?php else: ?>
+        <div class="message--failure">
+            <p>We could not find the user <strong>'<?php echo $this->escapeHtml($personUsername); ?>'</strong>.</p>
+        </div>
+    <?php endif; ?>
+</div>
+
+<div>
+    <?php
+    $form = $this->form;
+    $form->setAttribute('action', 'foo')->prepare();
+    ?>
+    <form action="<?php
+    echo $this->url(
+        'vehicle-testing-station-list-user-roles',
+        [
+            'vehicleTestingStationId' => $vehicleTestingStationId,
+            'personId'                => $personId
+        ]
+    ); ?>" method="POST">
+        <?php echo $this->csrfToken() ?>
+        <?php echo $this->formRow($form->get('csrf')); ?>
+
+        <?php if ($hasRoleOption): ?>
+            <fieldset>
+                <legend class="form-title heading-large">Available roles</legend>
+                    <fieldset>
+                        <div class="form-group <?php echo ($form->getRoleId()->getMessages()) ? ' has-error' : ''; ?>">
+                            <legend class="form-label">Select a role
+                                <?php if ($form->getRoleId()->getMessages()) { ?>
+                                    <span class="validation-message" id="error2">You must select a role</span>
+                                <?php } ?>
+                            </legend>
+                            <?php echo $this->formRow($form->getRoleId(), null, false); ?>
+                        </div>
+                    </fieldset>
+            </fieldset>
+        <?php endif; ?>
+
+        <nav class="content-navigation">
+
+            <?php if ($hasRoleOption): ?>
+                <?php echo $this->formInput($form->get('submit')); ?>
+            <?php endif; ?>
+
+            <ul class="content-navigation__secondary">
+                <li>
+                    <a id="vehicle-testing-station-home"
+                       href="<?php echo $this->url(RoleController::ROUTE_SEARCH_FOR_PERSON, ['vehicleTestingStationId' => $vehicleTestingStationId]); ?>"
+                       class="btn btn-link">Back to user search</a>
+                </li>
+            </ul>
+        </nav>
+    </form>
+</div>

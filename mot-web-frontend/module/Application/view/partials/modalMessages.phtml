@@ -1,0 +1,12 @@
+<?php
+$messagePaneTemplateName = isset($messagePaneTemplateName) ? $messagePaneTemplateName : 'data-message-pane-tpl';
+ ?>
+<script data-message-pane-tpl="<?php echo $this->escapeHtmlAttr($messagePaneTemplateName); ?>" type="text/x-handlebars-template">
+    <div class="validation-summary">
+        <ol>
+            {{#each messages}}
+            <li>{{this}}</li>
+            {{/each}}
+        </ol>
+    </div>
+</script>

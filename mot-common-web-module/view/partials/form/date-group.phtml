@@ -1,0 +1,96 @@
+<?php
+
+/**
+ * @var string           $fieldKey  Date field key
+ * @var string           $label     Date field title
+ * @var string           $legend
+ * @var string           $valueDate Can pass whole date
+ * @var string           $valueDay  or pass date by parts
+ * @var string           $valueMonth
+ * @var string           $valueYear
+ * @var boolean          $isRequire
+ * @var \DateTime|string $valueDate
+ */
+
+$legend = (string)$this->legend;
+
+$label = (string)($this->label ?: '');
+$fieldKey = (string)($this->fieldKey ?: '');
+
+$valueDate = $this->value;
+if ($valueDate) {
+    if (!$valueDate instanceof \DateTime) {
+        $valueDate = \DvsaCommon\Date\DateUtils::toDate($this->value);
+    }
+
+    $valueDay = $valueDate->format('d');
+    $valueMonth = $valueDate->format('m');
+    $valueYear = $valueDate->format('Y');
+} else {
+    $valueDay = ($this->valueDay ?: '');
+    $valueMonth = ($this->valueMonth ?: '');
+    $valueYear = ($this->valueYear ?: '');
+}
+
+$isRequire = ($this->isRequired === true);
+?>
+
+
+<div class="form-group">
+    <fieldset>
+        <?php if ($legend) : ?>
+            <legend class="form-label" style="font-weight: bold;"><?php echo $this->escapeHtml($legend); ?></legend>
+        <?php endif; ?>
+
+        <div class="date-group">
+            <?php
+            //  --  day element   --
+            echo $this->partial(
+                'partials/form/date-group-field-box.phtml',
+                [
+                    'id'           => $fieldKey . '-Day',
+                    'name'         => $fieldKey . '[Day]',
+                    'label'        => 'Day',
+                    'value'        => $valueDay,
+                    'required'     => $isRequire,
+                    'min'          => '1',
+                    'max'          => '31',
+                    'maxLength'    => '2',
+                    'cntrCssClass' => 'form-group-day',
+                ]
+            );
+
+            //  --  day element   --
+            echo $this->partial(
+                'partials/form/date-group-field-box.phtml',
+                [
+                    'id'           => $fieldKey . '-Month',
+                    'name'         => $fieldKey . '[Month]',
+                    'label'        => 'Month',
+                    'value'        => $valueMonth,
+                    'required'     => $isRequire,
+                    'min'          => '1',
+                    'max'          => '12',
+                    'maxLength'    => '2',
+                    'cntrCssClass' => 'form-group-month',
+                ]
+            );
+
+            //  --  year element   --
+            echo $this->partial(
+                'partials/form/date-group-field-box.phtml',
+                [
+                    'id'           => $fieldKey . '-Year',
+                    'name'         => $fieldKey . '[Year]',
+                    'label'        => 'Year',
+                    'value'        => $valueYear,
+                    'required'     => $isRequire,
+                    'max'          => (new \DateTime())->format('Y'),
+                    'maxLength'    => '4',
+                    'cntrCssClass' => 'form-group-year',
+                ]
+            );
+            ?>
+        </div>
+    </fieldset>
+</div>

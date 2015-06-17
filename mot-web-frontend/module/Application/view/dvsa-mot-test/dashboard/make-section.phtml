@@ -1,0 +1,50 @@
+<?php
+
+use DvsaMotTest\View\ReplacementMakeViewModel;
+
+/**
+ * @var ReplacementMakeViewModel $make
+ * @var $makeList
+ */
+?>
+
+<?php $this->placeholder('dashboard-section-header-caption')->captureStart('SET') ?>
+    <h3>Make</h3>
+<?php $this->placeholder('dashboard-section-header-caption')->captureEnd() ?>
+
+
+<?php $this->placeholder('dashboard-section-header-value')->captureStart('SET') ?>
+    <h3><strong><?php echo $this->escapeHTML($make->getName()); ?></strong></h3>
+<?php $this->placeholder('dashboard-section-header-value')->captureEnd() ?>
+
+<?php $this->placeholder('dashboard-section-body')->captureStart('SET') ?>
+    <div class="clearfix">
+        <div>
+            <div class="row">
+                <div class="form-group col-sm-6">
+
+                    <select name="make" id="input-make" class="form-control input-small">
+                        <?php foreach ($makeList as $id => $makeRecord): ?>
+                            <option
+                                value="<?php echo $this->escapeHTML($makeRecord['code']); ?>"<?php if ($makeRecord['code'] == $make->getCode(
+                                )
+                            ): ?> selected<?php endif; ?>><?php echo $this->escapeHTML($makeRecord['name']); ?></option>
+                        <?php endforeach; ?>
+                        <option value="other">Other</option>
+                    </select>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<?php $this->placeholder('dashboard-section-body')->captureEnd() ?>
+
+<?php echo $this->partial(
+    'dvsa-mot-test/dashboard/generic-section',
+    [
+        'sectionId' => 'make',
+        'actionName' => 'updateMake'
+    ]
+);

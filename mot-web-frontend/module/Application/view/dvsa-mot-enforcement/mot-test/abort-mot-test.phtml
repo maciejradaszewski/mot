@@ -1,0 +1,41 @@
+<?php
+use DvsaCommon\Enum\MotTestStatusName;
+
+$title = 'Abort MOT test';
+$this->headTitle($title);
+?>
+
+<div class="row" id="content">
+    <div class="col-lg-12 header-container">
+        <h1><?php echo $this->escapeHtml($title); ?></h1>
+    </div>
+</div>
+
+<?php
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+
+?>
+
+<form action="<?php echo $this->url('enforcement-abort-mot-test', ['motTestNumber' => $this->escapeHtml($motTestNumber)]); ?>" method="POST">
+    <?php echo $this->csrfToken() ?>
+    <fieldset>
+        <div class="form-group">
+            <label for="reasonForAbort">Reason for aborting the test in progress:</label>
+            <textarea name="reasonForAbort" class="form-control" rows="8" required id="reasonForAbort"></textarea>
+            <input type="hidden" name="status" value="<?php echo $this->escapeHtmlAttr(MotTestStatusName::ABORTED_VE); ?>">
+        </div>
+        <div class="row">
+            <div class="col-lg-12 btn-bar">
+                <input type="submit" id="mot_test_abort_confirm" value="Confirm" class="btn btn-primary"/>
+                <a class="btn btn-link" id="return_mot_test_summary" onclick="goBack()">Return to mot test summary</a>
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+<script>
+    function goBack() {
+        window.history.back()
+    }
+</script>

@@ -1,0 +1,8 @@
+bin/
+vendor/
+.idea/
+.DS_Store
+logs/
+phpunit.xml
+junit
+composer.phar

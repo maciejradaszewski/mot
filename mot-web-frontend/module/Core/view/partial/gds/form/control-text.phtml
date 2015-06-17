@@ -1,0 +1,13 @@
+<?php
+$type = (empty($this->type) ? 'text' : $this->type);
+?>
+
+<input
+    type="<?php echo $this->escapeHtmlAttr($type); ?>"
+    id="<?php echo $this->escapeHtmlAttr($id); ?>"
+    name="<?php echo $this->escapeHtmlAttr($name); ?>"
+    value="<?php echo $this->escapeHtmlAttr($value); ?>"
+    class="form-control
+        <?php echo !empty($inputModifier) ? 'form-control-' . $this->escapeHtmlAttr($inputModifier) : ''; ?>"
+    <?php echo !empty($maxLength) ? ' maxlength="'.$this->escapeHtmlAttr($maxLength).'"' : ''; ?>
+    />

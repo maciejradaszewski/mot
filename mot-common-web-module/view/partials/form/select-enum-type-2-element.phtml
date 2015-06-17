@@ -1,0 +1,25 @@
+<?php
+$id = isset($id) ? $id : '';
+$name = isset($name) ? $name : $id;
+$value = isset($value) ? $value : '';
+$label = isset($label) ? $label : '';
+$cssClass = isset($cssClass) ? $cssClass : '';
+$required = isset($required) ? $required : false;
+$disabled = isset($disabled) ? $disabled : false;
+$inputErrorClass = isset($inputErrorClass) ? $inputErrorClass : '';
+?>
+
+<select name="<?php echo $this->escapeHtml($name); ?>"
+        id="<?php echo $this->escapeHtml($id); ?>"
+        class="form-control input-small <?php echo $this->escapeHtml($cssClass); ?><?php echo $inputErrorClass ? ' ' . $inputErrorClass : ''; ?>"
+        <?php if ($disabled) : ?>disabled="disabled"<?php endif; ?>>
+    <?php foreach ($options as $optionValueArray) {
+        $key =  $optionValueArray['id'];
+        $optionValue = $optionValueArray['name'];
+        ?>
+        <option <?php if (strval($key) === strval($value)) : ?>selected<?php endif; ?>
+                value="<?php echo $this->escapeHTML($key); ?>"
+                id="<?php echo $this->escapeHtml($id) . '_' . $this->escapeHTML($key); ?>">
+            <?php echo $this->escapeHtml($optionValue); ?></option>
+    <?php } ?>
+</select>

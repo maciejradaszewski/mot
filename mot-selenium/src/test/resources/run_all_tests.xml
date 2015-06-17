@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="RunAllPackagesOnGrid" parallel="classes" thread-count="50">
+    <test name="RunAllPackagesOnGrid">
+        <packages>
+            <package name="com.dvsa.mot.selenium.priv.frontend.vehicletest"/>
+            <package name="com.dvsa.mot.selenium.priv.frontend.vehicletest.braketest"/>
+            <package name="com.dvsa.mot.selenium.priv.frontend.enforcement.tests"/>
+            <package name="com.dvsa.mot.selenium.priv.frontend.login"/>
+            <package name="com.dvsa.mot.selenium.priv.frontend.payment"/>
+            <package
+                    name="com.dvsa.mot.selenium.priv.frontend.review.application.authorisedexaminer"/>
+            <package name="com.dvsa.mot.selenium.priv.frontend.review.application.tester"/>
+            <package
+                    name="com.dvsa.mot.selenium.priv.frontend.review.application.vehicletestingstation"/>
+            <package name="com.dvsa.mot.selenium.pub.frontend.application.tester"/>
+            <package name="com.dvsa.mot.selenium.pub.frontend.application.authorisedexaminer"/>
+            <package name="com.dvsa.mot.selenium.pub.frontend.application.vehicletestingstation"/>
+        </packages>
+    </test>
+</suite>

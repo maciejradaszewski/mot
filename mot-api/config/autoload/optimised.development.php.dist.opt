@@ -1,0 +1,30 @@
+<?php
+
+return array(
+    'service_manager' => array(
+        'invokables' => array (
+            'Logging\StubSQLLogger' => 'DvsaCommonApi\Logger\StubSQLLogger'
+        )
+    ),
+    'doctrine' => array(
+        'connection'    => array(
+            'orm_default' => array(
+                'params'      => array(
+                    'driverOptions' => array(
+                        'PDO::ATTR_PERSISTENT' => true,
+                    ),
+                ),
+            ),
+        ),
+        'configuration' => array(
+            'orm_default' => array(
+                'sql_logger'       => 'Logging\StubSQLLogger',
+                'result_cache'     => 'apc',
+                'metadata_cache'   => 'apc',
+                'query_cache'      => 'apc',
+                'hydration_cache'  => 'apc',
+                'generate_proxies' => false,
+            ),
+        )
+    ),
+);

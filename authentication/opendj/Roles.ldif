@@ -1,0 +1,45 @@
+version: 1
+
+dn: ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: organizationalUnit
+ou: Roles
+
+dn: cn=AO1,ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: groupOfNames
+cn: AO1
+
+dn: cn=AO2,ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: groupOfNames
+cn: AO2
+
+dn: cn=VE,ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: groupOfNames
+cn: VE
+
+dn: cn=CRTAdmin,ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: groupOfNames
+cn: CRTAdmin
+
+dn: cn=CRTCO,ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: groupOfNames
+cn: CRTCO
+
+dn: cn=Tester,ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: groupOfNames
+cn: Tester
+
+
+
+#dn: cn=Tester,ou=Roles,dc=mot,dc=gov,dc=uk
+#objectClass: groupOfURLs
+#objectClass: top
+#cn: Tester
+#memberURL: ldap:///ou=External,cd=mot,dc=gov,dc=uk??sub=?TestingClasses=tester
+

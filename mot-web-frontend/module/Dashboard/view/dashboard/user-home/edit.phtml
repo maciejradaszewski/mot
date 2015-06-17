@@ -1,0 +1,46 @@
+<?php
+
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+
+$this->layout()->setVariable('pageSubTitle', 'Your profile' );
+$this->layout()->setVariable('pageTitle', 'Change details');
+?>
+<form action="<?php echo PersonUrlBuilderWeb::profileEdit(); ?>" class="form-horizontal"
+      method="POST">
+    <?php echo $this->csrfToken() ?>
+    <?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
+
+    <div class="row">
+        <div class="col-lg-8" id="content">
+            <fieldset>
+                <legend>Contact Details</legend>
+
+                <?php echo $this->partial(
+                    'addressAndContactDetailsFragment',
+                    [
+                        'values'    => $personalDetails,
+                        'showEmail' => true
+                    ]
+                ); ?>
+            </fieldset>
+
+            <?php echo $this->partial(
+                'submitBox',
+                [
+                    'label' => 'Update',
+                    'value' => 'update-profile',
+                    'id'    => 'update-profile'
+                ]
+            ); ?>
+        </div>
+    </div>
+
+    <nav class="module-content-navigation">
+        <ul class="content-navigation_secondary">
+            <li>
+                <a href="<?php echo PersonUrlBuilderWeb::profile(); ?>">Cancel and return to Your Profile</a>
+            </li>
+        </ul>
+    </nav>
+
+</form>

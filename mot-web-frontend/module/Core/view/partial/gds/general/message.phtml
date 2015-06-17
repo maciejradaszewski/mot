@@ -1,0 +1,21 @@
+<?php if (!empty($message)): ?>
+    <div class="message" id="validation-summary-message">
+        <p>
+            <?php if (!empty($link)): ?>
+                <?php echo sprintf($this->escapeHtml($message), '<a href="' . $this->escapeHtmlAttr($link) . '">', '</a>'); ?>
+            <?php else: ?>
+                <?php if (is_array($message)): ?>
+                    <?php foreach ($message as $m): ?>
+                        <?php if (isset($m['type']) && $m['type'] === 'bold'): ?>
+                            <strong><?php echo $this->escapeHtml($m['m']); ?></strong>
+                        <?php else: ?>
+                            <?php echo $this->escapeHtml($m['m']); ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <?php echo $this->escapeHtml($message); ?>
+                <?php endif; ?>
+            <?php endif; ?>
+        </p>
+    </div>
+<?php endif; ?>

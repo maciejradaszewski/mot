@@ -1,0 +1,58 @@
+<?php
+$isShowHidden = (isset($isShowHidden) ? $isShowHidden : false);
+
+    $messages = array();
+    if (isset($errorMessages) && count($errorMessages)) {
+        $messages = $errorMessages;
+    }
+    $flashMessages = $this->layout()->flashMessenger->getErrorMessages();
+    if (isset($getFromFlash) && $getFromFlash && count($flashMessages)) {
+        $messages = array_merge($messages, $flashMessages);
+    }
+
+    use Zend\Session\Container;
+    $containerNamespace = 'formErrorMessages';
+    $containerKey = 'errorData';
+    $container = new Container($containerNamespace);
+    $formMessages = array();
+    if ($container->offsetExists($containerKey)) {
+        $formMessages = $container->offsetGet($containerKey);
+        $container->offsetUnset('errorData');
+    }
+    if (!is_array($formMessages)) { $formMessages = array(); }
+
+    $messages = array_unique(array_filter($messages));
+    $messageCount = count($messages) + count($formMessages);
+?>
+
+<?php if ($messageCount > 0 || $isShowHidden) : ?>
+<div id="validation-summary-id" class="validation-summary"
+    <?php echo ($messageCount == 0  && $isShowHidden ? ' style="display:none;"' : ''); ?>>
+
+    <?php if (isset($errorTitle) && $errorTitle) : ?>
+        <h2><?php echo $this->escapeHtml($errorTitle) ?></h2>
+    <?php endif ?>
+
+    <?php if (isset($errorSummary) && $errorSummary) : ?>
+        <p><?php echo $this->escapeHtml($errorSummary); ?></p>
+    <?php endif ?>
+
+    <?php if (isset($escErrorSummary) && $escErrorSummary) : ?>
+        <p><?php echo $escErrorSummary; ?></p>
+    <?php endif ?>
+
+    <ol>
+    <?php if ($messageCount > 0): ?>
+        <?php foreach ($messages as $message): ?>
+            <li><?php echo $this->escapeHtml($message); ?></li>
+        <?php endforeach; ?>
+
+        <?php foreach ($formMessages as $message): ?>
+            <li>
+                <a href="#error-<?php echo $this->escapeUrl($message['ref']); ?>"><?php echo $this->escapeHtml($message['displayMessage']); ?></a>
+            </li>
+        <?php endforeach; ?>
+    <?php endif ?>
+    </ol>
+</div>
+<?php endif; ?>

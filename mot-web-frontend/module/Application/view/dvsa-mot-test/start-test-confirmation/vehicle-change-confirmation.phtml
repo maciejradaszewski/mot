@@ -1,0 +1,88 @@
+<?php
+//TODO: Refactor. Code below is copied from dvsa-mot-test/start-test-confirmation/index.phtml
+
+/** @var MotTestType $method */
+use DvsaCommon\Enum\MotTestTypeCode;
+
+$method = $this->method;
+$isMethodStandard = ($this->isMethodStandard || $method === MotTestTypeCode::NORMAL_TEST);
+$isMethodRetest = ($this->isMethodRetest || $method === MotTestTypeCode::RE_TEST);
+
+$title = 'Vehicle details changed';
+$header = 'Vehicle Details Changed';
+
+$id = $this->id;
+$noRegistration = $this->noRegistration ? '1' : '0';
+
+/** @var \DvsaCommon\Dto\Vehicle\AbstractVehicleDto $vehicleDetails */
+$vehicleDetails = $this->vehicleDetails;
+$catalog = $this->catalog;
+$eligibilityNotices = $this->eligibilityNotices;
+
+$urlSearch = !empty($this->urlSearch) ? $this->urlSearch : $this->url('vehicle-search');
+
+// FIXME: URL generation should be moved the Controller
+//  --  define action   --
+$actionConfirm = $this->actionConfirm;
+$source = $this->source;
+if (empty($actionConfirm)) {
+    $actionConfirm = '/start-test-confirmation';
+
+    if ($isMethodRetest) {
+        if (empty($eligibilityNotices)) {
+            $actionConfirm = '/start-retest-confirmation';
+        } else {
+            $source = '1';
+        }
+    }
+}
+$actionConfirm .= '/'. $id . '/' . $noRegistration . (!empty($source) ? '/' . $source : '');
+
+$this->headTitle($title);
+echo $this->partial(
+    'motTestProgress',
+    [
+        'currentStep' => 1,
+        'title' => $header,
+        'isMotContingency' => $this->isMotContingency
+    ]
+);
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+?>
+
+<form action="<?php echo $actionConfirm ?>" method="POST">
+
+    <?php echo $this->csrfToken() ?>
+    <input type="hidden" name="primaryColour"
+           value="<?php echo $this->escapeHtmlAttr($vehicleDetails->getColour()->getCode()); ?>" />
+    <input type="hidden" name="secondaryColour"
+           value="<?php echo $this->escapeHtmlAttr($vehicleDetails->getColourSecondary()->getCode()); ?>" />
+    <input type="hidden" name="vehicleClass"
+           value="<?php echo $this->escapeHtmlAttr($vehicleDetails->getClassCode()); ?>" />
+    <input type="hidden" name="fuelType"
+           value="<?php echo $this->escapeHtmlAttr($vehicleDetails->getFuelType()->getCode()); ?>" />
+
+    <div class="row">
+        <div class="col-sm-8">
+            <?php
+                echo $this->partial(
+                    'otpInput',
+                    [
+                        'canTestWithoutOpt' => false,
+                        'errorMessage' => $this->otpErrorMessage,
+                        'shortErrorMessage' => $this->otpErrorShortMessage
+                    ]
+                );
+            ?>
+            <nav class="module-content-navigation">
+                <input type="submit" class="button" value="Confirm changes" id="confirm_vehicle_changes">
+                <ul class="content-navigation_secondary">
+                    <li>
+                        <a href="<?php echo $actionConfirm?>">Cancel vehicle changes</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+</form>

@@ -1,0 +1,46 @@
+<?php
+$label = isset($label) ? $label : '';
+$id = isset($id) ? $id : '';
+$name = isset($name) ? $name : $id;
+$value = isset($value) ? $value : '';
+$hasError = isset($hasError) ? $hasError : false;
+$pattern = isset($pattern) ? $pattern : '\d{0,4}';
+$min = isset($min) ? $min : 0;
+$maxLength = isset($maxLength) ? $maxLength : 4;
+$max = isset($max) ? $max : 9999;
+$lockId = isset($lockId) ? $lockId : '';
+$lockName = isset($lockName) ? $lockName : $lockId;
+$lockValue = isset($lockValue) ? $lockValue : false;
+$hideLock = isset($hideLock) ? $hideLock : false;
+$required = (isset($required)) ? $required : true;
+?>
+
+<div class="inline <?php if ($hasError) : ?> has-error <?php endif; ?>">
+    <label for="<?php echo $this->escapeHtml($id); ?>" class="visually-hidden">
+        <?php echo $this->escapeHtml($label); ?>
+    </label>
+
+    <?php
+    echo $this->partial(
+        'inputElement',
+        [
+            'id' => $id,
+            'name' => $name,
+            'type' => 'number',
+            'value' => $value,
+            'required' => $required,
+            'pattern' => $pattern,
+            'min' => $min,
+            'max' => $max,
+            'maxLength' => $maxLength,
+        ]
+    );
+    ?>
+
+    <?php if ($lockName && !$hideLock): ?>
+    <label class="checkbox-inline" for="<?php echo $this->escapeHtml($lockId); ?>">
+        <input type="hidden" name="<?php echo $this->escapeHtml($lockName); ?>" value="0">
+        <input type="checkbox" id="<?php echo $this->escapeHtml($lockId); ?>" name="<?php echo $this->escapeHtml($lockName); ?>" value="1" <?php echo $lockValue ? 'checked':'';?>> Lock
+    </label>
+    <?php endif; ?>
+</div>

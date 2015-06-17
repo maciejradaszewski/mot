@@ -1,0 +1,11 @@
+<div id="global-error" class="row">
+    <p><a href="/">Home</a></p>
+</div>
+<br />
+<div class="row">
+    <div class="col-sm-12">
+        <h1>This page has an error</h1>
+        <?php echo $this->partial('errorMessages', array('getFromFlash' => true)); ?>
+        <?php echo $this->partial('infoMessages', array('getFromFlash' => true)); ?>
+    </div>
+</div>

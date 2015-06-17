@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="EndToEndTests" parallel="classes" thread-count="1">
+    <test name="AllTests">
+        <classes>
+            <class name="com.dvsa.mot.selenium.e2e.vehicletest.braketest.BrakeTestEndToEndTest"/>-->
+            <class name="com.dvsa.mot.selenium.e2e.vehicletest.NewMotTestEndToEndTest"/>
+            <class name="com.dvsa.mot.selenium.e2e.aedm.application.AEApplicationEndToEndTests"/>
+        </classes>
+    </test>
+</suite>

@@ -1,0 +1,20 @@
+<?php
+/** @var \UserAdmin\Presenter\UserProfilePresenter $presenter */
+/** @var string $userProfileUrl */
+?>
+<div class="row">
+    <div class="col-sm-8" id="recover-username-confirmation">
+        A letter will be sent to <strong><?php echo $this->escapeHtml($presenter->displayFullName()); ?></strong> containing the username for their MOT account.
+    </div>
+</div>
+
+<?php echo $this->partial(
+    'partial/gds/form/control-navigation-secondary',
+    [
+        'navigation'    => [
+            'Back to user profile' => $userProfileUrl,
+            'Return to home' => '/'
+        ]
+    ]
+); ?>
+

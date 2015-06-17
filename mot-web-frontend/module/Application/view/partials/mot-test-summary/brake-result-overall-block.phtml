@@ -1,0 +1,32 @@
+<?php
+
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motTest */
+$motTest = $this->motTest ? $this->motTest : new \DvsaCommon\Dto\Common\MotTestDto();
+
+$brakeTestResult = $motTest->getBrakeTestResult();
+
+?>
+
+<div class="row" id="brakeResults">
+    <div class="col-sm-4">
+        <h2>Brake results overall</h2>
+    </div>
+    <div class="col-sm-8">
+        <p class="primary-item">
+            <?php
+            if ($motTest->getTesterBrakePerformanceNotTested() == true) {
+                $escLabel = 'Not tested';
+            } elseif ($brakeTestResult == null) {
+                $escLabel = 'None Recorded';
+            } elseif ($brakeTestResult['generalPass']) {
+                $escLabel = 'Pass';
+            } else {
+                $escLabel = 'Fail';
+            }
+
+            echo $escLabel;
+            ?>
+        </p>
+    </div>
+    <span class="divider"></span>
+</div>

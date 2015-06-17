@@ -1,0 +1,121 @@
+<?php
+
+use Application\Helper\PrgHelper;
+use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
+
+/**
+ * @var int                                         $motTestNumber
+ * @var int                                         $selectedReasonId
+ * @var \DvsaCommon\Dto\Common\ReasonForCancelDto[] $reasonsForCancel
+ * @var \DvsaCommon\Dto\Common\ReasonForCancelDto   $reasons
+ * @var string                                      $comment
+ * @var PrgHelper                                   $prgHelper
+ */
+$motTestNumber = $this->motTestNumber;
+$selectedReasonId = ($this->selectedReasonId ? $this->selectedReasonId : null);
+$reasonsForCancel = $this->reasonsForCancel;
+$comment = $this->comment;
+
+$title = 'Cancel Mot Test';
+$this->headTitle($title);
+?>
+
+<div class="row" id="content">
+    <div class="col-lg-12 header-container">
+        <h1>Reasons to cancel test</h1>
+    </div>
+</div>
+
+<?php
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+?>
+
+<div class="row">
+    <div class="col-sm-8">
+        <p class="lead">Please note that the reason for cancelling the test will be displayed on documentation.</p>
+    </div>
+</div>
+
+<form action="<?php echo MotTestUrlBuilderWeb::cancel($motTestNumber); ?>" method="POST">
+    <input type="hidden" name="status" value="<?php echo MotTestStatusName::ABORTED; ?>">
+    <?php
+    echo $this->csrfToken();
+    echo ($this->prgHelper instanceof PrgHelper ? $this->prgHelper->getHtml() : '');
+    ?>
+    <fieldset>
+        <legend>Please select a reason for cancelling this test</legend>
+        <div class="form-group">
+            <div>
+                <?php foreach ($reasonsForCancel as $reason) :
+                    $rfcId = $reason->getId();
+                    $selected = ($rfcId == $selectedReasonId);
+                    ?>
+
+                    <div>
+                        <label>
+                            <input type="radio" id="reasonForCancel<?php echo $this->escapeHtmlAttr($rfcId); ?>"
+                                   value="<?php echo $this->escapeHtmlAttr($rfcId); ?>" name="reasonForCancelId"
+                                   data-abandoned="<?php echo $this->escapeHtmlAttr($reason->getAbandoned()) ?>"
+                                   <?php if ($selected): ?>checked="checked" <?php endif; ?>
+                                >
+                            <?php echo $this->escapeHtml($reason->getReasonInLang()); ?>
+                        </label>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- TODO remove the br element here -->
+            <?php if ($this->canAbandonVehicleTest): ?>
+                <div id="abandonAdditionalInput">
+                    <label for="cancelComment">How might this be dangerous or cause damage?</label><br/>
+                    <textarea rows="5" cols="50" id="cancelComment" name="cancelComment"><?php echo $this->escapeHtml($cancelComment); ?></textarea>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <?php
+                            echo $this->partial(
+                                'otpInput',
+                                [
+                                    'canTestWithoutOpt' => false,
+                                    'errorMessage' => $this->otpErrorMessage,
+                                    'shortErrorMessage' => $this->otpErrorShortMessage
+                                ]
+                            );
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+
+
+        <nav class="module-content-navigation">
+            <input type="submit" id="mot_test_cancel_confirm" value="Confirm and cancel test" class="button-warning"/>
+            <ul class="content-navigation_secondary">
+                <li>
+                    <a href="<?php echo MotTestUrlBuilderWeb::motTest($motTestNumber); ?>" id="returnToMotTest"
+                        >Return to test</a>
+                </li>
+            </ul>
+        </nav>
+    </fieldset>
+</form>
+
+<?php $this->inlineScript()->captureStart(); ?> 
+(function() {
+    var toggleAbandonedInfo = function toggleAbandonedInfo(e) {
+        var el = e.target || e,
+            $el = $(el),
+            abandoned = $el.data('abandoned'),
+            checked = $el.is(':checked'),
+            displayAdditionalInfo = (abandoned === 1 && checked);
+
+        $("#abandonAdditionalInput").toggle(displayAdditionalInfo);
+    };
+
+    $("[data-abandoned]").change(toggleAbandonedInfo);
+    toggleAbandonedInfo('[data-abandoned=1]');
+}());
+<?php $this->inlineScript()->captureEnd();
+

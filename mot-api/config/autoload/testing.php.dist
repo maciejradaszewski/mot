@@ -1,0 +1,69 @@
+<?php
+return array(
+    // db credentials
+    'db' => array(
+        'username' => 'motdbuser',
+        'password' => 'password',
+    ),
+    // payment service details
+    // payment service details
+     'cpms_api' => array(
+           'rest_client' => array(
+               'options' => array(
+                   'domain' => 'http://payment-service.psqa-ap01.ps.npm',
+               ),
+           ),
+       ),
+
+    'jasper'         => [
+        'uri'      => 'http://motdv-doc01.mot.npm:8080/jasperserver/rest_v2/reports',
+        'auth'     => [
+            'user' => 'jasperadmin',
+            'pass' => 'jasperadmin'
+        ],
+        'logCalls' => false,
+    ],
+    'DvsaApplicationLogger' => [
+        // will add the $logger object before the current PHP error handler
+        //'registerErrorHandler' => true, // errors logged to your writers
+        'registerExceptionHandler' => true, // exceptions logged to your writers
+        // multiple zend writer output & zend priority filters
+        'writers' => [
+            'api-flat-file' => [
+                'adapter' => '\Zend\Log\Writer\Stream',
+                'options' => [
+                    'output' => getenv('LOG_PATH') ?: '/var/log/dvsa/mot-api.log', // path to file
+                ],
+                // options: EMERG, ALERT, CRIT, ERR, WARN, NOTICE, INFO, DEBUG
+                'filter' => \Zend\Log\Logger::ERR,
+                'enabled' => true
+            ]
+        ]
+    ],
+    'pdf' => [
+        'invalidWatermark'     => true,
+        'invalidWatermarkText' => 'NOT VALID',
+    ],
+    'mailer' => [
+        /**
+         * TESTING: Inhibit email sending when relevant e.g. for testing.
+         */
+        'sendingAllowed' => true,
+
+        /**
+         * Development mode: If this field is present OR has a non-empty value
+         * it will always override the true recipient email address.
+         */
+        // 'recipient'   => 'dummy@example.com',
+
+        /**
+         * API need to know what is the url of the app and whether we use HTTP and HTTPS!
+         */
+        'mot-web-frontend-url'   => 'http://mot-web-frontend.mot.gov.uk',
+
+        /**
+         * This is the standard DVSA Helpdesk telephone number to be used in all emails we send.
+         */
+        'contactNumber' => '01792 454397'
+    ]
+);

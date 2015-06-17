@@ -1,0 +1,49 @@
+<?php
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\Utility\ArrayUtils;
+
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motTest */
+$motTest = $this->motTest;
+if (empty($motTest)) {
+    return;
+}
+
+$pendingDetails = [];
+
+$testStatus = $motTest->getStatus();
+$isTestPass = ($testStatus == MotTestStatusName::PASSED);
+
+if (!$isTestPass) {
+    $pendingDetails = $motTest->getPendingDetails();
+    $pendingStatus = ArrayUtils::tryGet($pendingDetails, 'currentSubmissionStatus');
+    $isTestReadyToPass = ($pendingStatus == MotTestStatusName::PASSED);
+}
+
+if (!$isTestPass && !$isTestReadyToPass) {
+    return;
+}
+
+$cssDlClass = !empty(trim($this->cssDlClass)) ? $this->cssDlClass : 'col-sm-4';
+?>
+
+<dl class="<?php echo $this->escapeHtmlAttr($cssDlClass); ?>">
+    <dt>Expiry date</dt>
+    <dd id="expiryDate">
+        <?php
+        $expireDate = null;
+
+        if ($isTestPass) {
+            $expireDate = $motTest->getExpiryDate();
+        } elseif ($isTestReadyToPass) {
+            $expireDate = ArrayUtils::tryGet($pendingDetails, 'expiryDate');
+        }
+
+        echo $this->escapeHtml(
+            $expireDate
+            ? DateTimeDisplayFormat::textDate($expireDate)
+            : 'N/A'
+        );
+        ?>
+    </dd>
+</dl>

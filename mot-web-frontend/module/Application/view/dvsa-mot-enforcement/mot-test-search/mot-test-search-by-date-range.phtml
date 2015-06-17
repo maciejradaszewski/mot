@@ -1,0 +1,102 @@
+<?php
+use DvsaCommon\Date\DateTimeDisplayFormat;
+
+$title = 'Vehicle Testing Station Search Results';
+$this->headTitle($title);
+$this->headLink()->appendStylesheet('/css/jquery.dataTables.css');
+
+// Subtitle Date Range Information
+$dateRangeInfo = sprintf('From %s to %s (inclusive)', DateTimeDisplayFormat::toMonthYear($this->dateFrom), DateTimeDisplayFormat::toMonthYear($this->dateTo));
+?>
+
+<?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
+<?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
+
+<h1>MOT Test History</h1>
+<hr class="hr-thick">
+<h2><?php echo $this->escapeHtml($this->searchTitle); ?></h2>
+<h3><?php echo $this->escapeHtml($dateRangeInfo); ?></h3>
+<div class="info-notice">
+    <p>
+        If these are <strong>not the right results</strong> you can
+        <a href="<?php echo $this->url('mot-test-search'); ?>?type=<?php echo $this->escapeHtml($this->searchType) ;?>" id="search-again">search again</a>
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="table-responsive">
+            <table class="table table-striped nowrap" id="listMOTs" style="width: 100%">
+                <thead>
+                <tr>
+                    <th>Test date/time utc</th>
+                    <th id="testDate">Test date/time</th>
+                    <th id="result">Result</th>
+                    <th id="vin">VIN/Chassis</th>
+                    <th id="reg">Registration</th>
+                    <th id="summary">Summary</th>
+                    <th id="make">Make</th>
+                    <th id="model">Model</th>
+                    <th id="type">Type</th>
+                    <th id="site">Site</th>
+                    <th id="userId">User ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php $i = 0; ?>
+                <?php foreach ($this->searchResults as $motTest): ?>
+                    <?php $escClass = ($i++ % 2 == 0 ? 'even' : 'odd'); ?>
+                    <tr class="<?php echo $escClass; ?>">
+                        <td><?php echo $this->escapeHtml($motTest['test_date']); ?></td>
+                        <td><?php echo $this->escapeHtml($motTest['display_date']); ?></td>
+                        <td><?php echo $this->escapeHtml($motTest['display_status']); ?></td>
+                        <td><?php echo $this->escapeHtml($motTest['vin']); ?></td>
+                        <td><?php echo $this->escapeHtml($motTest['vrm']); ?></td>
+                        <td>
+                            <?php
+                            echo $this->partial(
+                                'motTestSearchSummaryLink',
+                                [
+                                    'status' => $motTest['status'],
+                                    'url' => $motTest['link'],
+                                    'motTestNumber' => $motTest['motTestNumber']
+                                ]
+                            );
+                            ?>
+                        </td>
+                        <td><?php echo $this->escapeHtml($motTest['make']); ?></td>
+                        <td title="<?php echo $this->escapeHtmlAttr($motTest['model']); ?>" class="truncate">
+                            <?php echo $this->escapeHtml($motTest['model']); ?>
+                        </td>
+                        <td title="<?php echo $this->escapeHtmlAttr($motTest['test_type']); ?>"
+                            class="truncate">
+                            <?php echo $this->escapeHtml($motTest['test_type']); ?>
+                        </td>
+                        <td><?php echo $this->escapeHtml($motTest['site_number']); ?></td>
+                        <td><?php echo $this->escapeHtml($motTest['username']); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    URL_SEARCH_MOT_DATE_RANGE_AJAX = '<?php
+                        echo $this->url(
+                            'enforcement-list-mot-tests-by-date-api',
+                            ['search' => $this->searchTerm],
+                            [
+                                'query' => [
+                                    'type' => $this->searchType,
+                                    'dateFrom' => $this->dateFrom->getTimeStamp(),
+                                    'dateTo' => $this->dateTo->getTimeStamp()
+                                ]
+                            ]
+                        ); ?>';
+    var paramUrlSummaryPage = '?<?php echo $this->escapeJs($this->summaryParams); ?>';
+    var searchType = '<?php echo $this->escapeJs($this->searchType); ?>';
+</script>
+<script src="/js/dvsa-mot-enforcement/search/mot-date-range-results.js"></script>
+

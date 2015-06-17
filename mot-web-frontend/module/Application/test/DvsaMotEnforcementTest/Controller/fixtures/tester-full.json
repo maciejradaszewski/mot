@@ -1,0 +1,17 @@
+{
+    "data": {
+        "resultCount": "1",
+        "totalResultCount": "1",
+        "data": {
+            "1": "tester1, Bob Thomas Arctor"
+        },
+        "searched": {
+            "search": "tester1",
+            "sortColumnId": 0,
+            "sortColumnName": "id",
+            "sortDirection": "ASC",
+            "rowCount": 10,
+            "start": 0
+        }
+    }
+}

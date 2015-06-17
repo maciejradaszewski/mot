@@ -1,0 +1,111 @@
+<?php
+use DvsaCommon\Date\DateTimeDisplayFormat;
+
+$showRemoveButton = isset($showRemoveButton) ? $showRemoveButton : false;
+?>
+<div class="row">
+    <div class="col-sm-12">
+        <?php $noticeCount = count($specialNotices); ?>
+        <?php foreach ($specialNotices as $specialNotice) :
+            $specialNoticeContent = $specialNotice['content'];
+            $specialNoticeContentId = $this->escapeHtml($specialNotice["contentId"]);
+            $overdue = (!$specialNotice['isAcknowledged'] && $specialNotice['isExpired']);
+            $unread = (!$specialNotice['isAcknowledged'] && !$specialNotice['isExpired']);
+        ?>
+        <form id="specialNotice-<?php echo $this->escapeHtmlAttr($specialNoticeContentId); ?>" class="form-inline"
+              action="<?php echo $this->url('special-notice-acknowledge', array('id' => $specialNotice['id'])); ?>"
+              method="POST">
+            <?php echo $this->csrfToken() ?>
+            <ul class="list-unstyled">
+                <li class="row">
+                    <div class="col-sm-12"
+                         id=<?php if ($overdue) : echo "special-notice-overdue-" . $specialNoticeContentId ?>
+                        <?php elseif ($unread) : echo "special-notice-unread-" . $specialNoticeContentId ?>
+                        <?php else : echo "special-notice-" . $specialNoticeContentId;
+                        endif; ?>>
+                        <<?php echo (($overdue || $unread) && $canAcknowledge) ? 'h2' : 'h4 id="title-' . $this->escapeHtmlAttr($specialNoticeContentId) . '"'; ?> class="<?php echo $overdue
+                              ? 'unacknowledged' : ''; ?>">
+                            <?php echo $this->escapeHtml($specialNoticeContent['title']); ?>
+                        </<?php echo ($overdue || $unread) ? 'h2' : 'h4'; ?>>
+                        <ul class="list-inline">
+                            <li class="message-details">
+                                <?php echo $this->escapeHtml(DateTimeDisplayFormat::textDate($specialNoticeContent['issueDate'])); ?>
+                            </li>
+                            <li id="status-<?php echo $this->escapeHtmlAttr($specialNoticeContentId); ?>" class="message-details">
+                                Status: <?php echo $specialNoticeContent['isPublished'] ? "Published" : "Draft" ?>
+                            </li>
+                            <li class="message-details">
+                                Issue number: <?php echo $this->escapeHtml($specialNoticeContent['issueNumber']); ?>
+                            </li>
+                            <li class="message-details">
+                                Classes: <?php echo $this->escapeHtml($specialNoticeContent['targetRoles']); ?>
+                            </li>
+
+                            <li class="message-details pull-right">
+                                <a href="#special-notice-content<?php echo $this->escapeHtmlAttr($specialNoticeContentId); ?>" class="view-special-notices" data-toggle="collapse">
+                                    <span id="<?php if ($overdue) :
+                                        echo 'view-overdue-' . $specialNoticeContentId;
+                                    elseif ($unread) :
+                                        echo 'view-unread-' . $specialNoticeContentId;
+                                    else :
+                                        echo 'view-current-' . $specialNoticeContentId;
+                                    endif;
+                                    ?>">
+                                        View <?php echo (($overdue || $unread) && $canAcknowledge) ? ' and acknowledge' : '' ?>
+                                        <span class="fa fa-chevron-down"></span>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div id="special-notice-content<?php echo $this->escapeHtmlAttr($specialNoticeContentId); ?>"
+                             class="show-hide-container special-notice-content">
+                            <p><?php echo $this->escapeHtml($specialNoticeContent['noticeText']); ?></p>
+                            <?php if ($unread) : ?>
+                                <span class="day-counter">
+                                        <?php echo $this->escapeHtml($specialNotice['daysLeftToView']); ?>
+                                    days left to view
+                                    </span>
+                            <?php endif; ?>
+                            <ul class="list-inline clearfix">
+                                <?php if (($unread || $overdue) && $canAcknowledge) : ?>
+                                    <li class="category pull-right">
+                                        <input type="submit"
+                                               id="special-notice-submit-<?php echo $this->escapeHtml(
+                                                   $specialNoticeContentId
+                                               ); ?>"
+                                               name="submit" value="Acknowledge"
+                                               class="btn btn-primary"/>
+                                    </li>
+                                <?php endif; ?>
+                                <?php if ($showRemoveButton && $canRemove): ?>
+                                    <li class="category pull-right">
+                                        <a id="special-notice-remove-<?php echo $specialNoticeContentId?>"
+                                           class="special-notice-remove-button btn btn-danger"
+                                           href="<?php echo $this->url('special-notices/remove', array('id' => $specialNotice['id'])) ?>">Remove</a>
+                                    </li>
+                                <?php endif; ?>
+                                <?php if (!$specialNoticeContent['isPublished'] && $canUpdate): ?>
+                                    <li class="category pull-right">
+                                        <a id="special-notice-edit-<?php echo $specialNoticeContent['id'] ?>" class="btn btn-primary"
+                                           href="<?php echo $this->url('special-notices/edit', ['id' => $specialNoticeContent['id']]) ?>"
+                                        >Edit
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                                <li class="category pull-right">
+                                    <a id="print-<?php echo $specialNoticeContentId ?>" href="<?php echo $this->url('special-notices/print', array('id' => $specialNotice['contentId'], 'extension' => '.pdf')); ?>" class="btn btn-primary">Print</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </form>
+        <?php if ($noticeCount > 1) : ?>
+            <span class="divider full"></span>
+        <?php endif; ?>
+        <?php $noticeCount--; ?>
+        <?php endforeach; ?>
+    </div>
+</div>

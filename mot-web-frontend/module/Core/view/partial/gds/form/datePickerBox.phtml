@@ -1,0 +1,70 @@
+<?php
+$label = $this->withDefault('')->getValue($label);
+$day = $this->withDefault('')->getValue($day);
+$month = $this->withDefault('')->getValue($month);
+$year = $this->withDefault('')->getValue($year);
+/** @var \DateTime $value */
+$value = $this->withDefault(false)->getValue($value);
+$help  = $this->withDefault(false)->getValue($help);
+
+if (!$value instanceof DateTime) {
+    $value = DateTime::createFromFormat('Y-m-d', $value);
+}
+if ($value instanceof DateTime) {
+    $day   = $value->format('d');
+    $month = $value->format('m');
+    $year  = $value->format('Y');
+}
+?>
+
+<div class="form-group">
+    <fieldset>
+        <legend class="form-label">
+            <?php echo $this->escapeHtml($label); ?>
+        </legend>
+        <div class="form-date">
+            <?php if($help): ?>
+                <span class="form-hint"><?php echo $this->escapeHtml($help) ?></span>
+            <?php endif ?>
+            <?php echo $this->partial(
+                'partial/forms/inputBox.phtml',
+                [
+                    'id'             => 'date1-day',
+                    'label'          => 'Day',
+                    'name'           => 'dobDay',
+                    'classFormGroup' => 'form-group-day',
+                    'value'          => $day,
+                    'required'       => true,
+                    'maxLength'      => 2,
+                ]
+            );
+            ?>
+            <?php echo $this->partial(
+                'partial/forms/inputBox.phtml',
+                [
+                    'id'             => 'date1-month',
+                    'label'          => 'Month',
+                    'name'           => 'dobMonth',
+                    'classFormGroup' => 'form-group-month',
+                    'value'          => $month,
+                    'required'       => true,
+                    'maxLength'      => 2,
+                ]
+            );
+            ?>
+            <?php echo $this->partial(
+                'partial/forms/inputBox.phtml',
+                [
+                    'id'             => 'date1-year',
+                    'label'          => 'Year',
+                    'name'           => 'dobYear',
+                    'classFormGroup' => 'form-group-year',
+                    'value'          => $year,
+                    'required'       => true,
+                    'maxLength'      => 4,
+                ]
+            );
+            ?>
+        </div>
+    </fieldset>
+</div>

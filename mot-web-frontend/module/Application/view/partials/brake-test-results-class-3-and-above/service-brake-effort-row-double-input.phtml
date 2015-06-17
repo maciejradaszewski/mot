@@ -1,0 +1,108 @@
+<?php
+
+use DvsaMotTest\Model\BrakeTestResultClass3AndAboveViewModel;
+
+/**
+ * @var \DvsaMotTest\Model\BrakeTestConfigurationClass3AndAboveHelper $brakeTestConfiguration
+ * @var \DvsaMotTest\Model\BrakeTestResultClass3AndAboveViewModel $brakeTestResult
+ * @var string $rowHeader
+ * @var int $axleNumber
+ * @var int $serviceBrakeNumber
+ */
+
+$idServiceBrakeEffortNearsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_EFFORT_NEARSIDE_AXLE_1;
+$idServiceBrakeLockNearsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_LOCK_NEARSIDE_AXLE_1;
+$idServiceBrakeEffortOffsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_EFFORT_OFFSIDE_AXLE_1;
+$idServiceBrakeLockOffsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_LOCK_OFFSIDE_AXLE_1;
+
+$valueServiceBrakeEffortNearsideAxle = $brakeTestResult->getServiceBrakeEffortNearsideAxle1();
+$valueServiceBrakeLockNearsideAxle = $brakeTestResult->getServiceBrakeLockNearsideAxle1();
+$valueServiceBrakeEffortOffsideAxle = $brakeTestResult->getServiceBrakeEffortOffsideAxle1();
+$valueServiceBrakeLockOffsideAxle = $brakeTestResult->getServiceBrakeLockOffsideAxle1();
+
+if ($serviceBrakeNumber === 1) {
+    if ($axleNumber === 2) {
+        $idServiceBrakeEffortNearsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_EFFORT_NEARSIDE_AXLE_2;
+        $idServiceBrakeLockNearsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_LOCK_NEARSIDE_AXLE_2;
+        $idServiceBrakeEffortOffsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_EFFORT_OFFSIDE_AXLE_2;
+        $idServiceBrakeLockOffsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_LOCK_OFFSIDE_AXLE_2;
+
+        $valueServiceBrakeEffortNearsideAxle = $brakeTestResult->getServiceBrakeEffortNearsideAxle2();
+        $valueServiceBrakeLockNearsideAxle = $brakeTestResult->getServiceBrakeLockNearsideAxle2();
+        $valueServiceBrakeEffortOffsideAxle = $brakeTestResult->getServiceBrakeEffortOffsideAxle2();
+        $valueServiceBrakeLockOffsideAxle = $brakeTestResult->getServiceBrakeLockOffsideAxle2();
+    } elseif ($axleNumber === 3) {
+        $idServiceBrakeEffortNearsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_EFFORT_NEARSIDE_AXLE_3;
+        $idServiceBrakeLockNearsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_LOCK_NEARSIDE_AXLE_3;
+        $idServiceBrakeEffortOffsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_EFFORT_OFFSIDE_AXLE_3;
+        $idServiceBrakeLockOffsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_LOCK_OFFSIDE_AXLE_3;
+
+        $valueServiceBrakeEffortNearsideAxle = $brakeTestResult->getServiceBrakeEffortNearsideAxle2();
+        $valueServiceBrakeLockNearsideAxle = $brakeTestResult->getServiceBrakeLockNearsideAxle2();
+        $valueServiceBrakeEffortOffsideAxle = $brakeTestResult->getServiceBrakeEffortOffsideAxle2();
+        $valueServiceBrakeLockOffsideAxle = $brakeTestResult->getServiceBrakeLockOffsideAxle2();
+    }
+} elseif ($serviceBrakeNumber === 2) {
+    if ($axleNumber === 1) {
+        $idServiceBrakeEffortNearsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_2_EFFORT_NEARSIDE_AXLE_1;
+        $idServiceBrakeLockNearsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_2_LOCK_NEARSIDE_AXLE_1;
+        $idServiceBrakeEffortOffsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_2_EFFORT_OFFSIDE_AXLE_1;
+        $idServiceBrakeLockOffsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_2_LOCK_OFFSIDE_AXLE_1;
+
+        $valueServiceBrakeEffortNearsideAxle = $brakeTestResult->getServiceBrake2EffortNearsideAxle1();
+        $valueServiceBrakeLockNearsideAxle = $brakeTestResult->getServiceBrake2LockNearsideAxle1();
+        $valueServiceBrakeEffortOffsideAxle = $brakeTestResult->getServiceBrake2EffortOffsideAxle1();
+        $valueServiceBrakeLockOffsideAxle = $brakeTestResult->getServiceBrake2LockOffsideAxle1();
+    } elseif ($axleNumber === 2) {
+        $idServiceBrakeEffortNearsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_2_EFFORT_NEARSIDE_AXLE_2;
+        $idServiceBrakeLockNearsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_2_LOCK_NEARSIDE_AXLE_2;
+        $idServiceBrakeEffortOffsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_2_EFFORT_OFFSIDE_AXLE_2;
+        $idServiceBrakeLockOffsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_2_LOCK_OFFSIDE_AXLE_2;
+
+        $valueServiceBrakeEffortNearsideAxle = $brakeTestResult->getServiceBrake2EffortNearsideAxle2();
+        $valueServiceBrakeLockNearsideAxle = $brakeTestResult->getServiceBrake2LockNearsideAxle2();
+        $valueServiceBrakeEffortOffsideAxle = $brakeTestResult->getServiceBrake2EffortOffsideAxle2();
+        $valueServiceBrakeLockOffsideAxle = $brakeTestResult->getServiceBrake2LockOffsideAxle2();
+    } elseif ($axleNumber === 3) {
+        $idServiceBrakeEffortNearsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_2_EFFORT_NEARSIDE_AXLE_3;
+        $idServiceBrakeLockNearsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_2_LOCK_NEARSIDE_AXLE_3;
+        $idServiceBrakeEffortOffsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_2_EFFORT_OFFSIDE_AXLE_3;
+        $idServiceBrakeLockOffsideAxle = BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_2_LOCK_OFFSIDE_AXLE_3;
+
+        $valueServiceBrakeEffortNearsideAxle = $brakeTestResult->getServiceBrake2EffortNearsideAxle3();
+        $valueServiceBrakeLockNearsideAxle = $brakeTestResult->getServiceBrake2LockNearsideAxle3();
+        $valueServiceBrakeEffortOffsideAxle = $brakeTestResult->getServiceBrake2EffortOffsideAxle3();
+        $valueServiceBrakeLockOffsideAxle = $brakeTestResult->getServiceBrake2LockOffsideAxle3();
+    }
+}
+
+?>
+<tr>
+    <th scope="row"><?php echo $this->escapeHtml($rowHeader); ?></th>
+    <td>
+        <?php echo $this->partial(
+            'brakeTestInput',
+            [
+                'id' => $idServiceBrakeEffortNearsideAxle,
+                'label' => 'Nearside axle ' . $axleNumber,
+                'value' => $valueServiceBrakeEffortNearsideAxle,
+                'lockId' => $idServiceBrakeLockNearsideAxle,
+                'hideLock' => !$brakeTestConfiguration->locksApplicableToFirstServiceBrake(),
+                'lockValue' => $valueServiceBrakeLockNearsideAxle,
+            ]
+        ); ?>
+    </td>
+    <td>
+        <?php echo $this->partial(
+            'brakeTestInput',
+            [
+                'id' => $idServiceBrakeEffortOffsideAxle,
+                'label' => 'Offside axle ' . $axleNumber,
+                'value' => $valueServiceBrakeEffortOffsideAxle,
+                'lockId' => $idServiceBrakeLockOffsideAxle,
+                'hideLock' => !$brakeTestConfiguration->locksApplicableToFirstServiceBrake(),
+                'lockValue' => $valueServiceBrakeLockOffsideAxle,
+            ]
+        ); ?>
+    </td>
+</tr>

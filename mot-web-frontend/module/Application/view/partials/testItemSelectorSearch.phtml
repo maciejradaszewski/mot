@@ -1,0 +1,24 @@
+<div class="module-search">
+    <form class="rfr-search" action="<?php echo $this->url(
+        'mot-test/test-item-selector-search', ['motTestNumber' => $motTestNumber]
+    ); ?>"
+          method="GET">
+        <div class="row">
+            <div class="col-sm-8 rfr-search-panel">
+                <label for="rfr-search">Search RFRs</label>
+
+                <div class="compound-control">
+                    <input type="text" id="rfr-search" name="search"
+                           value="<?php echo $this->escapeHtmlAttr($searchString); ?>"
+                           placeholder="e.g. Stop lamp not working"
+                           class="form-control"
+                           maxlength="100">
+                    <button type="submit" id="test-item-selector-btn-search" class="btn-search">
+                        <i class="fa fa-search"></i><span class="visually-hidden">Search</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>

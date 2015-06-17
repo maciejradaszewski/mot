@@ -1,0 +1,218 @@
+<?php
+use Application\Build\BuildConfig;
+use Application\Controller\ManualsAndGuidesController;
+use Dashboard\Controller\UserHomeController;
+use DvsaAuthentication\Controller\AuthenticationController;
+use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\Role;
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+use DvsaMotTest\Controller\LocationSelectController;
+
+use Core\Presenter\MastheadPresenter;
+$mastheadPresenter = new MastheadPresenter;
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <?php echo $this->headTitle('MOT', 'PREPEND')->setSeparator(' - '); ?>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Base Styles -->
+    <?php echo $this->headLink()->appendStylesheet($this->basePath('css/bootstrap.min.css'))
+        ->appendStylesheet($this->basePath('css/font-awesome.min.css'))
+        ->appendStylesheet($this->basePath('css/app.css'));
+    ?>
+
+    <link type="image/x-icon" rel="shortcut icon"
+          href="/assets/images/favicon.ico">
+
+    <?php
+    // Items must be pre-pended in reverse order so that, any items appended will get added
+    // after our files. This guarantees all libraries to be enabled in all pages.
+    $this->headScript()
+        ->prependFile(
+            $this->basePath('js/' . BuildConfig::getJavaScriptLessThanIe9Filename()),
+            'text/javascript',
+            ['conditional' => 'lt IE 9']
+        )
+        ->prependFile($this->basePath('js/' . BuildConfig::getJavaScriptLibrariesFilename()));
+
+    echo $this->headScript();
+    ?>
+</head>
+<body>
+<script type="text/javascript">document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+<header class="module-global-header">
+    <div class="container" id="user-info">
+        <a class="global-header_home-link" href="<?php echo $this->basePath('/'); ?>"><img
+                src="<?php echo $this->basePath('img/logo_mot2.gif'); ?>" alt="MOT"></a>
+
+        <?php if ($this->authorisationHelper()->hasRole(Role::USER)): ?>
+            <p class="global-header_name">
+                <?php echo $this->escapeHtml($this->identityHelper()->getDisplayName()); ?>
+            </p>
+        <?php endif; ?>
+
+        <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::MOT_TEST_READ)): ?>
+            <p class="global-header_address" id="current-site">
+                <?php
+                /** @var $vts \DvsaAuthentication\Model\VehicleTestingStation */
+                $vts = $this->identityHelper()->getCurrentVts(); ?>
+                <?php if (null !== $vts): ?>
+                    <span><?php echo $this->escapeHtml($vts->getName()); ?></span>,
+                    <span><?php echo $this->escapeHtml($vts->getAddress()); ?></span>
+                    <?php echo $this->locationSelector(); ?>
+                <?php endif; ?>
+            </p>
+        <?php endif; ?>
+
+        <?php if ($this->authorisationHelper()->hasRole(Role::USER)): ?>
+            <nav class="global-header_navigation">
+                <ul>
+                    <li>
+                        <a href="<?php echo $this->url(UserHomeController::ROUTE); ?>" class="selected" id="homepage">
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo PersonUrlBuilderWeb::profile(); ?>" id="user-profile">Your Profile</a>
+                    </li>
+                    <li>
+                        <a href="<?php echo $this->url(AuthenticationController::ROUTE_LOGOUT); ?>" id="logout">
+                            Sign out
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        <?php endif; ?>
+    </div>
+</header>
+<div class="container">
+    <div class="module-colour-flash">
+    </div>
+</div>
+<div class="container">
+    <p class="module-phase">
+        <strong class="phase-name is-beta">BETA</strong>
+        This is a new service - your
+        <a id="feedback-link" href="<?php echo $this->escapeHtmlAttr($mastheadPresenter->getFeedbackMailtoUri()) ?>">feedback</a>
+        will help us to improve it.
+    </p>
+</div>
+
+<?php echo $this->placeholder('hero'); ?>
+
+<div class="container">
+
+    <?php echo $this->placeholder('progressBar'); ?>
+
+    <!-- Progress Tracker -->
+    <?php if ($this->progressBar): ?>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="progress-tracker">
+                    <ul class="list-unstyled">
+                        <li class="done"><i class="fa fa-arrow-circle-right"></i>Step name</li>
+                        <li class="active"><i class="fa fa-arrow-circle-right"></i>Step name</li>
+                        <li><i class="fa fa-arrow-circle-right"></i>Step name</li>
+                        <li><i class="fa fa-arrow-circle-right"></i>Step name</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+    <!-- END -->
+
+    <!-- Titles -->
+    <?php if (isset($this->pageSubTitle) or (isset($this->pageTitle))): ?>
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>
+                    <small><?php echo $this->escapeHtml($this->pageSubTitle); ?></small>
+                    <?php echo $this->escapeHtml($this->pageTitle); ?>
+                    <?php if (isset($this->pageTertiaryTitle)): ?>
+                        <small><?php echo $this->escapeHtml($this->pageTertiaryTitle); ?></small>
+                    <?php endif; ?>
+                </h1>
+                <hr class="hr-thick"/>
+            </div>
+        </div>
+    <?php endif; ?>
+    <!-- END -->
+
+    <?php if (isset($applicationNavigator)) : ?>
+
+        <div class="row">
+            <?php echo $this->partial('applicationSteps', ['applicationNavigator' => $applicationNavigator]); ?>
+            <div class="col-sm-8  col-sm-offset-1" id="content">
+                <h1><?php echo $this->escapeHtml($title); ?></h1>
+                <?php echo $this->content; // should be escaped in controller ?>
+            </div>
+        </div>
+
+    <?php else : ?>
+        <div class="row contents">
+            <div class="col-lg-12">
+                <?php echo $this->content; // should be escaped in controller  ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+</div>
+<!-- /container -->
+<footer role="contentinfo" id="footer" class="module-global-footer">
+    <div class="container">
+        <div class="row">
+          <div class="global-footer_meta col-sm-12">
+            <div class="global-footer_resources">
+                <h3>Resources</h3>
+                <nav class="global-footer_navigation-resources">
+                    <ul>
+                        <li>
+                            <a id="footerManuals" href="<?php echo $this->url(ManualsAndGuidesController::ROUTE); ?>"
+                               title="Manuals, guides and standards">
+                                Manuals, guides and standards
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+          </div>
+            <div class="col-sm-9 global-footer_meta">
+                <nav class="global-footer_navigation">
+                    <ul>
+                        <li><a href="https://www.gov.uk/help/cookies">Cookies</a></li>
+                        <li>
+                            Built by the Driver &amp; Vehicle Standards Agency
+                            <?php
+                            $releaseTagTemplate = '<span class="tt-hint">Release {release_tag_name}</span>';
+                            echo $this->getReleaseTag()->renderReleaseTag($releaseTagTemplate);
+                            ?>
+                        </li>
+                    </ul>
+                </nav>
+                <p class="global-footer_licence">
+                    <a href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2"
+                       class="licence-logo">
+                        Open Government Licence
+                    </a>
+                    All content is available under the
+                    <a href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2">
+                        Open Government Licence v2.0
+                    </a>, except where otherwise stated
+                </p>
+            </div>
+            <div class="col-sm-3 global-footer_copyright">
+                <a href="http://www.nationalarchives.gov.uk/information-management/our-services/crown-copyright.htm">
+                    &copy; Crown copyright
+                </a>
+            </div>
+        </div>
+    </div>
+</footer>
+<?php echo $this->inlineScript(); ?>
+<?php echo $this->partial('partial/fragments/google-analytics'); ?>
+</body>
+</html>

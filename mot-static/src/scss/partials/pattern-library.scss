@@ -1,0 +1,107 @@
+.grids [class^=col-] {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: $grey-4;
+    border: 1px solid $grey-3;
+}
+
+.example {
+    border: 1px solid $grey-2;
+    margin: 30px 0;
+    padding: 30px;
+    box-shadow: 0 0 0 15px $grey-4;
+    
+    div [class^=col-] {
+        padding: 0 15px;
+        background-color: $white;
+        border: 0;
+    }
+    
+    h3 {
+        margin-top: 0;
+    }
+}
+
+pre {
+    background: $grey-4;
+    border-color: $grey-2;
+    padding: 0;
+    margin: 30px 0;
+    @include rounded($radius: 0);
+    
+    xmp {
+        margin: 0;
+    }
+}
+
+code {
+    color: $secondary-text-colour;
+    @include rounded($radius: 0);
+}
+
+.font-example-nta {
+    letter-spacing: -1px;
+    line-height: 1em;
+    @include font-core27;
+    color: $grey-1;
+    
+    span {
+        display: block;
+    }
+}
+
+.font-example-reg {
+    letter-spacing: -1px;
+    line-height: 1em;
+    @include font-core27;
+    color: $grey-1;
+    
+    span {
+        display: block;
+    }
+}
+
+.font-example-bold {
+    letter-spacing: -1px;
+    line-height: 1em;
+    @include font-bold27;
+    color: $grey-1;
+   
+    span {
+        display: block;
+    }
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.swatch {
+    width: 60px;
+    height: 60px;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    border-radius: 100%;
+    margin: 0 auto 15px;
+}
+
+.swatch-wrapper {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.swatch-text-pri {
+    background: $text-colour;
+}
+
+.swatch-text-sec {
+    background: $secondary-text-colour;
+}
+
+.swatch-link {
+    background: $link-colour;
+}
+
+.swatch-link-hover {
+    background: $link-hover-colour;
+}

@@ -1,0 +1,76 @@
+<?php
+
+$values = (isset($values)) ? $values : [];
+$idPrefix = $this->withDefault('')->getValue($idPrefix);
+
+$getValueOrEmptyString = function ($key) use ($values, $idPrefix) {
+    if ('' !== $idPrefix) {
+        $key = $idPrefix . ucfirst($key);
+    }
+
+    if (is_array($values)) {
+        return $this->withDefault('')->getValue($values[$key]);
+    }
+
+    if (is_object($values)) {
+        return $values->{'get' . ucfirst($key)}();
+    }
+
+    return '';
+};
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id' => '' !== $idPrefix ? $idPrefix . 'AddressLine1' : 'addressLine1',
+        'label' => 'Address',
+        'required' => true,
+        'title' => 'Enter the address',
+        'maxLength' => 45,
+        'value' => $getValueOrEmptyString('addressLine1'),
+    ]
+);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id' => '' !== $idPrefix ? $idPrefix . 'AddressLine2' : 'addressLine2',
+        'title' => 'Enter the address',
+        'maxLength' => 45,
+        'value' => $getValueOrEmptyString('addressLine2'),
+    ]
+);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id' => '' !== $idPrefix ? $idPrefix . 'AddressLine3' : 'addressLine3',
+        'title' => 'Enter the address',
+        'maxLength' => 45,
+        'value' => $getValueOrEmptyString('addressLine3'),
+    ]
+);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id' => '' !== $idPrefix ? $idPrefix . 'Town' : 'town',
+        'label' => 'Town',
+        'required' => true,
+        'title' => 'Enter the town name',
+        'maxLength' => 50,
+        'value' => $getValueOrEmptyString('town'),
+    ]
+);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id' => '' !== $idPrefix ? $idPrefix . 'Postcode' : 'postcode',
+        'label' => 'Postcode',
+        'required' => true,
+        'title' => 'Enter the postcode',
+        'maxLength' => 10,
+        'value' => $getValueOrEmptyString('postcode'),
+    ]
+);

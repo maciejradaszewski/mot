@@ -1,0 +1,120 @@
+<?php
+
+use Organisation\ViewModel\MotTestLog\MotTestLogFormViewModel;
+use Organisation\ViewModel\MotTestLog\MotTestLogViewModel;
+
+/**
+ * @var MotTestLogViewModel                                        $viewModel
+ * @var \DvsaCommon\Dto\Organisation\OrganisationDto               $organisation
+ * @var \DvsaCommon\Dto\Organisation\MotTestLogSummaryDto          $logSummary
+ * @var \Organisation\ViewModel\MotTestLog\MotTestLogFormViewModel $formModel
+ * @var \DvsaClient\ViewModel\DateViewModel                        $dateFrom
+ * @var \DvsaClient\ViewModel\DateViewModel                        $dateTo
+ */
+
+$viewModel = $this->viewModel;
+
+$organisation = $viewModel->getOrganisation();
+$logSummary = $viewModel->getMotTestLogSummary();
+
+//  --  get search parameters   --
+$formModel = $viewModel->getFormModel();
+$dateFrom = $formModel->getDateFrom();
+$dateTo = $formModel->getDateTo();
+
+$title = 'Authorised Examiner :: Test logs';
+$this->headTitle($title);
+
+$this->headScript()->appendFile('/js/partials/date-group.js');
+$this->headScript()->appendFile('/js/organisation/mot-test-log.js');
+
+$this->layout()->setVariable('pageSubTitle', $title);
+$this->layout()->setVariable('pageTitle', $this->escapeHtml($viewModel->getOrganisation()->getName()));
+
+$numberFormatter = (new NumberFormatter('en_GB', NumberFormatter::DECIMAL));
+
+?>
+
+<div class="col-lg-12">
+    <br>
+    <div class="row slot-usage-totals">
+        <div class="col-md-3">
+            <h4>Total tests</h4>
+        </div>
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-3 report-quarter">
+                    <h3 id="todayCount"><?php echo $numberFormatter->format($logSummary->getToday());?></h3>
+                    <span>Today</span>
+                </div>
+                <div class="col-md-3 report-quarter">
+                    <h3 id="lastWeekCount"><?php echo $numberFormatter->format($logSummary->getWeek());?></h3>
+                    <span>Last week<br>(Mon-Sun)</span>
+                </div>
+                <div class="col-md-3 report-quarter">
+                    <h3 id="LastMonthCount"><?php echo $numberFormatter->format($logSummary->getMonth());?></h3>
+                    <span>
+                        Last month<br>
+                        (<?php echo date('M Y', strtotime('first day of previous month')); ?>)
+                    </span>
+                </div>
+                <div class="col-md-3 report-quarter">
+                    <h3 id="LastYearCount"><?php echo $numberFormatter->format($logSummary->getYear());?></h3>
+                    <span>Last 365 days<br>(including today)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php
+echo $this->partial('errorMessages', ['getFromFlash' => true, 'isShowHidden' => true]);
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+?>
+
+<div class="row">
+    <div class="col-md-4">
+        <p>&nbsp;</p>
+        <form id="customDateSearch" action="" method="GET" name="customDateSearch" class="form-vertical">
+            <?php echo $this->csrfToken() ?>
+            <div class="module-filters">
+                <h3 class="module-filters__header">Date range of report</h3>
+
+                <div class="form-group custom-date-range" id="dateRangeFields">
+                    <fieldset>
+                        <?php
+                        echo $this->partial(
+                            'partials/form/date-group.phtml',
+                            [
+                                'legend'     => 'From',
+                                'fieldKey'   => MotTestLogFormViewModel::FLD_DATE_FROM,
+                                'valueDay'   => $dateFrom->getDay(),
+                                'valueMonth' => $dateFrom->getMonth(),
+                                'valueYear'  => $dateFrom->getYear(),
+                            ]
+                        );
+
+                        echo $this->partial(
+                            'partials/form/date-group.phtml',
+                            [
+                                'legend'     => 'To',
+                                'fieldKey'   => MotTestLogFormViewModel::FLD_DATE_TO,
+                                'valueDay'   => $dateTo->getDay(),
+                                'valueMonth' => $dateTo->getMonth(),
+                                'valueYear'  => $dateTo->getYear(),
+                            ]
+                        );
+                        ?>
+                    </fieldset>
+                </div>
+
+                <div>
+                    <input id="btn_search" class="btn btn-primary" type="submit" value="Download CSV report">
+                </div>
+
+                <p class="help-block">It is the responsibility of the requesting individual or entity to keep
+                    the contents of this report confidential</p>
+            </div>
+        </form>
+    </div>
+</div>

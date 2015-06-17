@@ -1,0 +1,191 @@
+<?php
+use Application\Helper\PrgHelper;
+use DvsaCommon\Domain\MotTestType;
+use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\Enum\MotTestTypeCode;
+use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
+use DvsaCommon\Utility\ArrayUtils;
+use DvsaMotTest\Controller\AbstractDvsaMotTestController;
+
+$defaultValues = $this->defaultValues;
+$formErrors = $this->formErrors;
+
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motDetails */
+$motDetails = $this->motDetails;
+/** @var \DvsaCommon\Dto\Common\MotTestTypeDto $motTestType */
+$motTestType = $motDetails->getTestType();
+
+$pendingDetails = $motDetails->getPendingDetails();
+$pendingStatus = ArrayUtils::tryGet($pendingDetails, 'currentSubmissionStatus');
+
+$isTestReadyToFail = ($pendingStatus == MotTestStatusName::FAILED);
+$isTestReadyToPass = ($pendingStatus == MotTestStatusName::PASSED);
+
+$testStatus = $motDetails->getStatus();
+$canReprint = (
+    ($testStatus == MotTestStatusName::PASSED)
+    || ($testStatus == MotTestStatusName::FAILED)
+    || ($testStatus == MotTestStatusName::ABANDONED)
+);
+$isTestActive = ($testStatus == MotTestStatusName::ACTIVE);
+
+$isReinspection = MotTestType::isReinspection($motTestType->getCode());
+$isNonMot = ($motTestType->getCode() === MotTestTypeCode::NON_MOT_TEST);
+
+$isReinspectionSummaryPage = ($isReinspection && (($isTestReadyToFail || $isTestReadyToPass) && $isTestActive));
+
+//  --  title and header    --
+$testName = AbstractDvsaMotTestController::getTestName($motTestType->getCode());
+
+$title = $testName . ' Summary';
+$header = $testName . ($isTestActive ? ' summary' : ' result');
+
+$this->headTitle($title);
+$this->layout()->setVariable('pageSubTitle', 'MOT testing');
+$this->layout()->setVariable('pageTitle', $header);
+
+$this->placeholder('progressBar')->captureStart();
+echo $this->partial(
+    'motTestProgress',
+    ['currentStep' => 3, 'isMotContingency' => $this->isMotContingency]
+);
+$this->placeholder('progressBar')->captureEnd();
+
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+echo $this->partial('validationMessages');
+
+echo $this->partial(
+    'partials/mot-test-summary/test-summary',
+    [
+        'motTest' => $motDetails,
+        'odometerReading' => $odometerReading,
+        'isReinspection'=>$isReinspectionSummaryPage,
+        'brakeTestTypeCode2Name' => $brakeTestTypeCode2Name,
+    ]
+);
+
+?>
+
+<form id="submit-test-results"
+      action="<?php echo MotTestUrlBuilderWeb::summary($motDetails->getMotTestNumber()); ?>"
+      method="POST">
+    <?php
+    echo $this->csrfToken();
+    echo ($this->prgHelper instanceof PrgHelper ? $this->prgHelper->getHtml() : '');
+    ?>
+
+<?php if ($isReinspectionSummaryPage):
+    // Create typeahead and location text reinspection HTML ready for use
+    $this->partial(
+        'inspectionLocation',
+        [
+            'site'   =>
+                [
+                    'id'         => 'siteidentry',
+                    'value'      => ArrayUtils::tryGet($defaultValues, 'siteidentry', ''),
+                    'cssClass'   => ArrayUtils::tryGet($formErrors, 'siteidentry', ''),
+                    'onSelected' => 'siteIdSelected',
+                    'focus'      => false,
+                ],
+            'location' =>
+                [
+                    'id'       => 'location',
+                    'value'    => ArrayUtils::tryGet($defaultValues, 'location', ''),
+                    'cssClass' => ArrayUtils::tryGet($formErrors, 'location', ''),
+                ]
+        ]
+    );
+    ?>
+
+    <!-- Full/partial retest: removed -->
+    <!-- One person test: removed -->
+    <!-- One person reinspection: removed -->
+
+    <div class="row">
+        <div class="col-lg-4">
+            <h2>Site ID (if applicable)</h2>
+        </div>
+        <div class="col-lg-8">
+            <div style="margin-top: 27px;">
+                <?php echo $this->placeholder('inspectionLocation')->siteidentry; ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <h2>Location (if not at a Site)</h2>
+        </div>
+        <div class="col-lg-8">
+            <div style="margin-top: 27px;">
+                <?php echo $this->placeholder('inspectionLocation')->location; ?>
+            </div>
+        </div>
+    </div>
+
+<?php endif; ?>
+
+<input type="hidden" name="status" value="<?php echo $this->escapeHtml($pendingStatus); ?>">
+
+<div class="row">
+    <div class="col-lg-12 btn-bar">
+        <?php
+        $canPrint = ($motTestType != MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING);
+
+        if (($isTestReadyToFail || $isTestReadyToPass) && $isTestActive) :
+            if ($isReinspection) {
+                $escButtonText = 'Finish reinspection';
+            } else {
+                $escButtonText = 'Finish test';
+            }
+
+            if ($canPrint) {
+                $escButtonText .= ' and print';
+            }
+
+            echo $this->partial(
+                'otpInput',
+                [
+                    'buttonText'        => $escButtonText,
+                    'canTestWithoutOpt' => $this->canTestWithoutOpt,
+                    'buttonId'          => "confirm_test_result",
+                    'errorMessage'      => $this->otpErrorMessage,
+                    'shortErrorMessage' => $this->otpErrorShortMessage
+                ]
+            );
+            ?>
+
+            <nav class="module-content-navigation">
+                <input type="submit" class="button" value="<?php echo $escButtonText; ?>" id="confirm_test_result">
+                <ul class="content-navigation_secondary">
+                    <li>
+                        <a href="<?php echo MotTestUrlBuilderWeb::motTest($motDetails->getMotTestNumber()); ?>"
+                           class="btn btn-link" id="cancel_test_result">Back to results entry</a>
+                    </li>
+                </ul>
+            </nav>
+
+        <?php elseif ($canReprint) :
+            if ($canPrint) :?>
+                <a href="<?php echo MotTestUrlBuilderWeb::printDuplicateResult($motDetails->getMotTestNumber()); ?>"
+                   class="btn btn-primary" id="reprint-certificate">Reprint certificate</a>
+            <?php endif; ?>
+
+            <a href="<?php echo $this->url(\Dashboard\Controller\UserHomeController::ROUTE); ?>"
+               class="btn btn-link" id="reprint-certificate-finish">Back to user home</a>
+        <?php endif; ?>
+    </div>
+</div>
+
+</form>
+</div><!-- end container -->
+
+<script type="application/javascript">
+    /* <![CDATA[ */
+    function siteIdSelected(x, entry) {
+        $('#siteid').val(entry.id);
+    }
+    /* ]]> */
+</script>
+<script src="/js/dvsa-mot-test/display-test-summary.js"></script>

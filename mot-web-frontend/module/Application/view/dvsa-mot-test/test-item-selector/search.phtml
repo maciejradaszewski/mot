@@ -1,0 +1,79 @@
+<?php
+$this->headTitle('Test item selector search');
+
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motTestDetails */
+$latestRfrs = $motTestDetails->getReasonsForRejection();
+?>
+
+<?php echo $this->partial(
+    'motHeaderDetails',
+    [
+        'motTestDetails'    => $motTestDetails,
+        'motTestNumber'     => $motTestNumber,
+        'isMotContingency'     => $this->isMotContingency,
+    ]
+); ?>
+
+<?php echo $this->partial('rfrResultsSummary', ['reasonsForRejection' => $latestRfrs, 'motTestNumber' => $motTestNumber]); ?>
+
+<?php
+/** @var \DvsaCommon\Dto\VehicleClassification\VehicleClassDto $vehicleClass */
+$vehicleClass = $motTestDetails->getVehicleClass();
+echo $this->partial('testItemSelectorSearch', ['motTestNumber' => $motTestNumber, 'searchString' => $searchString, 'vehicleClass' => $vehicleClass->getCode()]); ?>
+<div class="row">
+    <div class="col-sm-12">
+        <a href="<?php echo $this->url('mot-test/test-item-selector', ['motTestNumber' => $motTestNumber]); ?>">View categories</a>
+    </div>
+</div>
+<?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
+<?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
+
+<?php echo $this->partial('rfrList', ['motTestNumber'           => $motTestNumber,
+                                           'reasonsForRejection' => $reasonsForRejection,
+                                           'searchString'        => $searchString]); ?>
+
+<?php  if ($reasonsForRejection && count($reasonsForRejection) > 0) { ?>
+<div class="row">
+    <?php
+        $start = is_null($start) ? 0 : $start;
+        $pageSize = 10;
+        $searchUrl = $this->url(
+            'mot-test/test-item-selector-search', ['motTestNumber' => $motTestNumber],
+            ['query' => ['search' => $searchString]]
+        );
+    ?>
+    <?php  if ($start > 0) { ?>
+    <?php
+        $prevEnd = $start;
+        $prevStart = $start - $pageSize;
+        $escPreviousSearchUrl = $this->url(
+            'mot-test/test-item-selector-search', ['motTestNumber' => $motTestNumber],
+            ['query' => ['search' => $searchString, 'start' => $prevStart, 'end' => $prevEnd]]
+        );
+    ?>
+    <div class="col-sm-1 col-md-1">
+        <a href="<?php echo $escPreviousSearchUrl; ?>" class="btn btn-primary" id="search_previous">Previous</a>
+    </div>
+    <?php } ?>
+    <?php  if ($hasMore) { ?>
+    <?php
+        $nextStart = $start + $pageSize;
+        $nextEnd = $nextStart + $pageSize;
+        $escNextSearchUrl = $this->url(
+            'mot-test/test-item-selector-search', ['motTestNumber' => $motTestNumber],
+            ['query' => ['search' => $searchString, 'start' => $nextStart, 'end' => $nextEnd]]
+        );
+    ?>
+    <div class="col-sm-1 col-md-1">
+        <a href="<?php echo $escNextSearchUrl; ?>" class="btn btn-primary" id="search_next">More Results</a>
+    </div>
+    <?php } ?>
+</div>
+<?php } ?>
+<hr class="hr-thin">
+<div class="row">
+      <div class="col-lg-12">
+        <a href="<?php echo $this->url('mot-test', ['motTestNumber' => $motTestNumber]); ?>"
+        class="btn btn-primary" id="mot-header-details-rfr-done">Done</a>
+    </div>
+</div>

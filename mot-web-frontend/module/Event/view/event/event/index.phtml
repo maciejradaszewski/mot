@@ -1,0 +1,183 @@
+<?php
+
+use DvsaCommon\Date\DateTimeDisplayFormat;
+
+$this->headLink()->appendStylesheet('/css/jquery.dataTables.css');
+
+/**
+ * @var \Event\ViewModel\Event\EventViewModel                   $viewModel
+ * @var \DvsaCommon\Dto\Organisation\OrganisationDto            $organisation
+ * @var array                                                   $site
+ * @var \DvsaClient\Entity\Person                               $person
+ * @var \DvsaCommon\Dto\Event\EventFormDto                      $formModel
+ * @var \DvsaClient\ViewModel\DateViewModel                     $dateFrom
+ * @var \DvsaClient\ViewModel\DateViewModel                     $dateTo
+ */
+
+//  --  get search parameters   --
+$formModel = $viewModel->getFormModel();
+$isShowDate = $formModel->isShowDate();
+$search = $formModel->getSearch();
+$dateFrom = $formModel->getDateFrom();
+$dateTo = $formModel->getDateTo();
+
+//  --  get event list   --
+$events = $viewModel->getEventList()->getEvents();
+?>
+<div class="row contents">
+    <div class="col-lg-12">
+        <h1><span>Events History</span>
+            <small><?php echo $this->escapeHtml($viewModel->getTitle()); ?></small>
+        </h1>
+        <div class="info-notice">
+            <p>
+                If these are <strong>not the right events</strong> you can
+                <a href="<?php echo $viewModel->getGoBackLink(); ?>">go back</a>
+            </p>
+        </div>
+        <?php
+            echo $this->partial('errorMessages', ['getFromFlash' => true, 'isShowHidden' => true]);
+            echo $this->partial('infoMessages', ['getFromFlash' => true]);
+        ?>
+        <a href="<?php echo $viewModel->getCurrentPage(); ?>">Reset filters</a>
+        <div class="row">
+            <div class="col-md-3">
+                <form action="" method="GET" name="CustomDateSearch" class="form-vertical">
+                    <div class="module-results-search">
+                        <label>
+                            <span>Search</span>
+                            <?php
+                            echo $this->partial(
+                                'inputElement',
+                                [
+                                    'name' => 'search',
+                                    'id' => 'search',
+                                    'class' => 'form-control',
+                                    'value' => $search
+                                ]
+                            );
+                            ?>
+                        </label>
+                        <p class="module-results-search___hint">Filter by Type and/or Description.</p>
+                    </div>
+                    <div class="module-filters">
+                        <h3 class="module-filters__header">Filter by date range</h3>
+                        <div class="row contents">
+                            <nav class="col-sm-12 module-filter-nav">
+                                <ul class="module-filter-nav__list">
+                                    <li><a id="allEvents" href="<?php echo $viewModel->getCurrentPage(); ?>">All dates</a></li>
+                                    <li><a id="customRange" class="customRange" href="javascript:void(0)">Custom date range</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <?php
+                        echo $this->partial(
+                            'hiddenElement',
+                            [
+                                'name' => 'isShowDate',
+                                'id' => 'isShowDate',
+                                'value' => $isShowDate
+                            ]
+                        );
+                        ?>
+                        <div class="form-group custom-date-range" id="dateRangeFields">
+                            <fieldset>
+                                <?php
+                                echo $this->partial(
+                                    'partials/form/date-group.phtml',
+                                    [
+                                        'legend'     => 'From',
+                                        'fieldKey'   => \DvsaCommon\Dto\Event\EventFormDto::FLD_DATE_FROM,
+                                        'valueDay'   => $dateFrom->getDay(),
+                                        'valueMonth' => $dateFrom->getMonth(),
+                                        'valueYear'  => $dateFrom->getYear(),
+                                    ]
+                                );
+                                echo $this->partial(
+                                    'partials/form/date-group.phtml',
+                                    [
+                                        'legend'     => 'To',
+                                        'fieldKey'   => \DvsaCommon\Dto\Event\EventFormDto::FLD_DATE_TO,
+                                        'valueDay'   => $dateTo->getDay(),
+                                        'valueMonth' => $dateTo->getMonth(),
+                                        'valueYear'  => $dateTo->getYear(),
+                                    ]
+                                );
+                                ?>
+                                <input type="submit" name="submit" class="btn btn-primary" value="Apply">
+                            </fieldset>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-9 slot-usage-table">
+                <div class="table-responsive">
+                    <table class="table table-striped nowrap" id="listLogs" style="width: 100%">
+                        <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th width="20%">Date</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php $i = 0;?>
+                        <?php foreach ($events as $event): ?>
+                            <?php $escClass = ($i++ % 2 == 0 ? 'even' : 'odd');?>
+                            <tr class="<?php echo $escClass; ?>">
+                                <td class="truncate" title="<?php echo $this->escapeHtml($event->getType()); ?>">
+                                    <a href="<?php echo $viewModel->getEventDetailLink($event->getId()); ?>">
+                                        <?php echo $this->escapeHtml($event->getType()); ?>
+                                    </a>
+                                </td>
+                                <td><?php echo DateTimeDisplayFormat::textDateTimeShort($event->getDate()); ?></td>
+                                <td class="truncate" title="<?php echo $this->escapeHtml($event->getDescription()); ?>">
+                                    <?php echo $this->escapeHtml($event->getDescription()); ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <div class="pagination-wrapper">
+                        <div class="page-results-control pull-left">Show:
+                            <a id="length10" href="javascript:void(0)">10</a>
+                            <a id="length25" href="javascript:void(0)">25</a>
+                            <a id="length50" href="javascript:void(0)">50</a>
+                            events per page
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .item-bold-link-disabled
+    {
+        text-decoration: none !important;
+        color: black !important;
+        cursor: default;
+        font-weight: bold;
+    }
+    .item-link-disabled
+    {
+        text-decoration: none !important;
+        color: black !important;
+        cursor: default;
+    }
+    .dataTables_info
+    {
+        text-decoration: none !important;
+        font-size: 20px;
+    }
+
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        new EventListHelper(
+            <?php echo $isShowDate === true ? 'true' : 'false'; ?>,
+            '<?php echo $viewModel->getCurrentPage(); ?>'
+        );
+    });
+</script>

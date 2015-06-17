@@ -1,0 +1,411 @@
+{
+    "data": {
+        "decisions": [{
+            "id": 1,
+            "decision": "Not applicable"
+        }, {
+            "id": 2,
+            "decision": "Defect missed"
+        }, {
+            "id": 3,
+            "decision": "Incorrect decision"
+        }],
+        "categories": [{
+            "id": 1,
+            "category": "Not applicable"
+        }, {
+            "id": 2,
+            "category": "Immediate"
+        }, {
+            "id": 3,
+            "category": "Delayed"
+        }, {
+            "id": 4,
+            "category": "Inspection notice"
+        }],
+        "outcomes": [{
+            "id": 1,
+            "outcome": "No further action"
+        }, {
+            "id": 2,
+            "outcome": "Advisory warning letter"
+        }, {
+            "id": 3,
+            "outcome": "Disciplinary action report"
+        }],
+        "scores": [{
+            "id": 1,
+            "score": null,
+            "description": "Disregard"
+        }, {
+            "id": 2,
+            "score": 0,
+            "description": "Overruled, marginally wrong"
+        }, {
+            "id": 3,
+            "score": 5,
+            "description": "Obviously wrong"
+        }, {
+            "id": 4,
+            "score": 10,
+            "description": "Significantly wrong"
+        }, {
+            "id": 5,
+            "score": 20,
+            "description": "No defect"
+        }, {
+            "id": 6,
+            "score": 20,
+            "description": "Other defect missed"
+        }, {
+            "id": 7,
+            "score": 20,
+            "description": "Not testable"
+        }, {
+            "id": 8,
+            "score": 30,
+            "description": "Exs. corr\/wear\/damage missed"
+        }, {
+            "id": 9,
+            "score": 40,
+            "description": "Risk of injury missed"
+        }],
+        "reinspections": [{
+            "id": 1,
+            "decision": "Agreed fully with test result"
+        }, {
+            "id": 2,
+            "decision": "Result correct but advisory warranted"
+        }, {
+            "id": 3,
+            "decision": "Result incorrect"
+        }, {
+            "id": 4,
+            "decision": "Other - enter details in section C"
+        }],
+        "visitOutcomes": [{
+            "id": 1,
+            "description": "Satisfactory"
+        }, {
+            "id": 2,
+            "description": "Shortcomings found"
+        }, {
+            "id": 3,
+            "description": "Abandoned"
+        }],
+        "reasonsForSiteVisit": [{
+            "id": 1,
+            "reason": "Directed site visit"
+        }, {
+            "id": 2,
+            "reason": "Site approval visit"
+        }],
+        "reasonForCancel": [{
+            "id": 1,
+            "reason": "Accident or illness of tester",
+            "abandoned": false
+        }, {
+            "id": 2,
+            "reason": "Aborted by VE",
+            "abandoned": false
+        }, {
+            "id": 3,
+            "reason": "Vehicle registered in error",
+            "abandoned": false
+        }, {
+            "id": 4,
+            "reason": "Test equipment issue",
+            "abandoned": false
+        }, {
+            "id": 5,
+            "reason": "VTS incident",
+            "abandoned": false
+        }, {
+            "id": 6,
+            "reason": "Incorrect location",
+            "abandoned": false
+        }, {
+            "id": 7,
+            "reason": "Inspection may be dangerous or cause damage",
+            "abandoned": true
+        }],
+        "colours": [{
+            "id": "A",
+            "name": "Orange"
+        }, {
+            "id": "B",
+            "name": "Black"
+        }, {
+            "id": "C",
+            "name": "Cream"
+        }, {
+            "id": "D",
+            "name": "Yellow"
+        }, {
+            "id": "E",
+            "name": "Green"
+        }, {
+            "id": "G",
+            "name": "Gold"
+        }, {
+            "id": "I",
+            "name": "Pink"
+        }, {
+            "id": "L",
+            "name": "Blue"
+        }, {
+            "id": "M",
+            "name": "Multi-colour"
+        }, {
+            "id": "N",
+            "name": "Brown"
+        }, {
+            "id": "O",
+            "name": "Maroon"
+        }, {
+            "id": "P",
+            "name": "Purple"
+        }, {
+            "id": "Q",
+            "name": "Beige"
+        }, {
+            "id": "R",
+            "name": "Red"
+        }, {
+            "id": "S",
+            "name": "Silver"
+        }, {
+            "id": "T",
+            "name": "Turquoise"
+        }, {
+            "id": "V",
+            "name": "Violet"
+        }, {
+            "id": "W",
+            "name": "White"
+        }, {
+            "id": "X",
+            "name": "Not Stated"
+        }, {
+            "id": "Y",
+            "name": "Grey"
+        }, {
+            "id": "Z",
+            "name": "Bronze"
+        }],
+        "fuelTypes": [{
+            "id": "PE",
+            "name": "Petrol"
+        }, {
+            "id": "DI",
+            "name": "Diesel"
+        }, {
+            "id": "EL",
+            "name": "Electric"
+        }, {
+            "id": "ST",
+            "name": "Steam"
+        }, {
+            "id": "CN",
+            "name": "CNG"
+        }, {
+            "id": "LN",
+            "name": "LNG"
+        }, {
+            "id": "LP",
+            "name": "LPG"
+        }, {
+            "id": "FC",
+            "name": "Fuelcell"
+        }, {
+            "id": "OT",
+            "name": "Other"
+        }],
+        "testerStatus": [{
+            "id": 1,
+            "description": "Qualified"
+        }, {
+            "id": 2,
+            "description": "Demonstration test needed"
+        }, {
+            "id": 3,
+            "description": "Refresher needed"
+        }, {
+            "id": 4,
+            "description": "Initial training needed"
+        }],
+        "demoTestResult": ["Satisfactory", "Unsatisfactory"],
+        "reasonsForRefusal": [{
+            "id": 1,
+            "reason": "Unable to identify date of first use"
+        }, {
+            "id": 2,
+            "reason": "Vehicle is too dirty to examine"
+        }, {
+            "id": 3,
+            "reason": "The vehicle is not fit to be driven"
+        }, {
+            "id": 4,
+            "reason": "Insecurity of load or other items"
+        }, {
+            "id": 5,
+            "reason": "Vehicle configuration\/size unsuitable"
+        }, {
+            "id": 6,
+            "reason": "Vehicle emits substantial smoke"
+        }, {
+            "id": 7,
+            "reason": "Unable to open device (door, boot, etc.)"
+        }, {
+            "id": 8,
+            "reason": "Inspection may be dangerous or cause damage"
+        }, {
+            "id": 9,
+            "reason": "Requested test fee not paid in advance"
+        }, {
+            "id": 10,
+            "reason": "Suspect maintenance history of diesel engine"
+        }, {
+            "id": 11,
+            "reason": "Motorcycle frame stamped not for road use"
+        }, {
+            "id": 12,
+            "reason": "VTS not authorised to test vehicle class"
+        }],
+        "vehicleClass": [{
+            "id": 1,
+            "name": "1"
+        }, {
+            "id": 2,
+            "name": "2"
+        }, {
+            "id": 3,
+            "name": "3"
+        }, {
+            "id": 4,
+            "name": "4"
+        }, {
+            "id": 5,
+            "name": "5"
+        }, {
+            "id": 7,
+            "name": "7"
+        }],
+        "countryOfRegistration": [{
+            "id": 1,
+            "name": "GB, UK, ENG, CYM, SCO (UK) - Great Britain"
+        }, {
+            "id": 2,
+            "name": "GB, NI (UK) - Northern Ireland"
+        }, {
+            "id": 3,
+            "name": "GBA (GG) - Alderney"
+        }, {
+            "id": 4,
+            "name": "GBG (GG) - Guernsey"
+        }, {
+            "id": 5,
+            "name": "GBJ (JE) - Jersey"
+        }, {
+            "id": 6,
+            "name": "GBM (IM) - Isle of Man"
+        }, {
+            "id": 7,
+            "name": "A (AT) - Austria"
+        }, {
+            "id": 8,
+            "name": "B (BE) - Belgium"
+        }, {
+            "id": 9,
+            "name": "BG (BG) - Bulgaria"
+        }, {
+            "id": 10,
+            "name": "CY (CY) - Cyprus"
+        }, {
+            "id": 11,
+            "name": "CZ (CZ) - Czech Republic"
+        }, {
+            "id": 12,
+            "name": "DK (DK) - Denmark"
+        }, {
+            "id": 13,
+            "name": "EST (EE) - Estonia"
+        }, {
+            "id": 14,
+            "name": "FIN (FI) - Finland"
+        }, {
+            "id": 15,
+            "name": "F (FR) - France"
+        }, {
+            "id": 16,
+            "name": "D (DE) - Germany"
+        }, {
+            "id": 17,
+            "name": "GBZ (GI) - Gibraltar"
+        }, {
+            "id": 18,
+            "name": "GR (GR) - Greece"
+        }, {
+            "id": 19,
+            "name": "H (HU) - Hungary"
+        }, {
+            "id": 20,
+            "name": "IRL (IE) - Ireland"
+        }, {
+            "id": 21,
+            "name": "I (IT) - Italy"
+        }, {
+            "id": 22,
+            "name": "LV (LV) - Latvia"
+        }, {
+            "id": 23,
+            "name": "LT (LT) - Lithuania"
+        }, {
+            "id": 24,
+            "name": "L (LU) - Luxembourg"
+        }, {
+            "id": 25,
+            "name": "M (MT) - Malta"
+        }, {
+            "id": 26,
+            "name": "NL (NL) - Netherlands"
+        }, {
+            "id": 27,
+            "name": "PL (PL) - Poland"
+        }, {
+            "id": 28,
+            "name": "P (PT) - Portugal"
+        }, {
+            "id": 29,
+            "name": "RO (RO) - Romania"
+        }, {
+            "id": 30,
+            "name": "SK (SK) - Slovakia"
+        }, {
+            "id": 31,
+            "name": "SLO (SI) - Slovenia"
+        }, {
+            "id": 32,
+            "name": "E (ES) - Spain"
+        }, {
+            "id": 33,
+            "name": "S (SE) - Sweden"
+        }, {
+            "id": 34,
+            "name": "Non EU"
+        }, {
+            "id": 35,
+            "name": "Not Known"
+        }, {
+            "id": 36,
+            "name": "Not Applicable"
+        }],
+        "transmissionType": [{
+            "id": 1,
+            "name": "Automatic"
+        }, {
+            "id": 2,
+            "name": "Manual"
+        }]
+    }
+}

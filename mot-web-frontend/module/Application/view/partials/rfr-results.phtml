@@ -1,0 +1,31 @@
+<?php
+$rfrFail = isset($reasonsForRejection['FAIL']) ? $reasonsForRejection['FAIL'] : '';
+$rfrPRS  = isset($reasonsForRejection['PRS']) ? $reasonsForRejection['PRS'] : '';
+$rfrAdvisory  = isset($reasonsForRejection['ADVISORY']) ? $reasonsForRejection['ADVISORY'] : '';
+$rfrFailureCount = (array_key_exists('FAIL', $reasonsForRejection)) ? count($reasonsForRejection['FAIL']) : 0;
+$rfrPrsCount = (array_key_exists('PRS', $reasonsForRejection)) ? count($reasonsForRejection['PRS']) : 0;
+$rfrAdvisoryCount = (array_key_exists('ADVISORY', $reasonsForRejection)) ? count($reasonsForRejection['ADVISORY']) : 0;
+$allowEditRfr = isset($allowEditRfr) ? $allowEditRfr : true;
+?>
+
+<h3 id="failureCount" class="<?php echo $rfrFailureCount ? 'fail' : '';?> result-summary-info" <?php echo ($rfrFailureCount > 0) ? 'data-toggle="collapse" data-target="#showHideFailureResults"' : ''; ?> >
+    <?php echo $this->escapeHtml($rfrFailureCount); ?>
+    Failure<?php echo $rfrFailureCount != 1 ? 's' : ''; ?>
+</h3>
+<div id="showHideFailureResults" class="show-hide-container clearfix">
+<?php echo $this->partial('rfrResultSet', ['motTestNumber' => $motTestNumber, 'rfrArray' => $rfrFail, 'cssId' => 'failureResults', 'rfrCount' => $rfrFailureCount, 'allowEditRfr' => $allowEditRfr]); ?>
+</div>
+<h3 id="prsCount" class="result-summary-info" <?php echo ($rfrPrsCount > 0) ? 'data-toggle="collapse" data-target="#showHidePrsResults"' : ''; ?>>
+    <?php echo $this->escapeHtml($rfrPrsCount); ?>
+    PRS
+</h3>
+<div id="showHidePrsResults" class="show-hide-container clearfix">
+    <?php echo $this->partial('rfrResultSet', ['motTestNumber' => $motTestNumber, 'rfrArray' => $rfrPRS, 'cssId' => 'prsResults', 'rfrCount' => $rfrPrsCount, 'allowEditRfr' => $allowEditRfr]); ?>
+</div>
+<h3 id="advisoryCount" class="result-summary-info" <?php echo ($rfrAdvisoryCount > 0) ? 'data-toggle="collapse" data-target="#showHideAdvisoryResults"' : ''; ?> >
+    <?php echo $this->escapeHtml($rfrAdvisoryCount); ?>
+    <?php echo $rfrAdvisoryCount != 1 ? 'Advisories' : 'Advisory'; ?>
+</h3>
+<div id="showHideAdvisoryResults" class="show-hide-container clearfix">
+    <?php echo $this->partial('rfrResultSet', ['motTestNumber' => $motTestNumber, 'rfrArray' => $rfrAdvisory, 'cssId' => 'advisoryResults', 'rfrCount' => $rfrAdvisoryCount, 'allowEditRfr' => $allowEditRfr]); ?>
+</div>

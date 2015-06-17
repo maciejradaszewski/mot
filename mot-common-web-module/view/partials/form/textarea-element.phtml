@@ -1,0 +1,40 @@
+<?php
+$id = isset($id) ? $id : '';
+$name = isset($name) ? $name : $id;
+$maxLength = isset($maxLength) && (int)$maxLength > 0 ? $maxLength : null;
+$cols = isset($cols) && (int)$cols > 0 ? $cols : null;
+$rows = isset($rows) && (int)$rows > 0 ? $rows : null;
+$value = isset($value) ? $value : '';
+$error = !empty($formErrors[$id]) ? $formErrors[$id] : null;
+
+// supply 'cssOnly' to explicitly set CSS styles, otherwise the class 'form-control'
+// will be pre-pended to the contents of 'cssClass'
+if (isset($cssOnly)) {
+    $cssClass = $cssOnly;
+} else {
+    $cssClass = 'form-control '
+        . (!empty($cssClass) ? $cssClass : '')
+        . ($error ? ' inputError' : '');
+}
+
+$t = [
+    '<textarea',
+    ' id="', $this->escapeHtml($id), '"',
+    ' name="', $this->escapeHtml($name), '"',
+    ($cssClass ? ' class="' . $this->escapeHtml($cssClass) . '"' : ''),
+    (!empty($cssStyle) ? ' style="' . $this->escapeHtml($cssStyle) . '"' : ''),
+    (!empty($disabled) ? ' disabled="disabled"' : ''),
+    (!empty($required) ? ' required' : ''),
+    (!empty($readonly) ? ' readonly' : ''),
+    ($maxLength ? ' maxlength="' . $maxLength . '"' : ''),
+    ($cols ? ' cols="' . $cols . '"' : ''),
+    ($rows ? ' rows="' . $rows . '"' : ''),
+    (!empty($placeholder) ? ' placeholder="' . $placeholder . '"' : ''),
+    '>',
+    $this->escapeHtml($value),
+    '</textarea>'
+];
+
+echo implode('', $t).
+    $this->partial('fieldErrorMessage', ['error' => $error]);
+

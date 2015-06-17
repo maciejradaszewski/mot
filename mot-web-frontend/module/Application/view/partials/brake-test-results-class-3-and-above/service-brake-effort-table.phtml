@@ -1,0 +1,92 @@
+<?php
+/**
+ * @var \DvsaMotTest\Model\BrakeTestConfigurationClass3AndAboveHelper $brakeTestConfiguration
+ * @var \DvsaMotTest\Model\BrakeTestResultClass3AndAboveViewModel $brakeTestResult
+ * @var int $serviceBrakeNumber
+ */
+
+if ($serviceBrakeNumber === 2) {
+    $tableHeader = 'Service brake 2 for';
+} elseif ($brakeTestConfiguration->hasTwoServiceBrakes()) {
+    $tableHeader = 'Service brake 1 for';
+} else {
+    $tableHeader = 'Service brake for';
+}
+
+?>
+<table class="table table-bordered table-col-3">
+    <thead>
+    <tr>
+        <th scope="col"><?php echo $this->escapeHtml($tableHeader); ?></th>
+        <th scope="col">Nearside</th>
+        <th scope="col">Offside</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <?php if ($brakeTestConfiguration->isSingleWheelInFront() === true) : ?>
+        <?php echo $this->partial(
+            'brake-test-results-class-3-and-above/service-brake-effort-row-single-input',
+            [
+                'brakeTestResult' => $brakeTestResult,
+                'brakeTestConfiguration' => $brakeTestConfiguration,
+                'serviceBrakeNumber' => $serviceBrakeNumber,
+                'rowHeader' => 'Single wheel front',
+            ]
+        ); ?>
+    <?php endif; ?>
+
+    <?php if ($brakeTestConfiguration->isSingleWheelInFront() === null
+        || $brakeTestConfiguration->isSingleWheelInFront() === false
+    ) : ?>
+        <?php echo $this->partial(
+            'brake-test-results-class-3-and-above/service-brake-effort-row-double-input',
+            [
+                'brakeTestResult' => $brakeTestResult,
+                'brakeTestConfiguration' => $brakeTestConfiguration,
+                'serviceBrakeNumber' => $serviceBrakeNumber,
+                'axleNumber' => 1,
+                'rowHeader' => 'Axle 1'
+            ]
+        ); ?>
+    <?php endif; ?>
+    <?php if ($brakeTestConfiguration->isSingleWheelInFront() === null
+        || $brakeTestConfiguration->isSingleWheelInFront() === true
+    ) : ?>
+        <?php echo $this->partial(
+            'brake-test-results-class-3-and-above/service-brake-effort-row-double-input',
+            [
+                'brakeTestResult' => $brakeTestResult,
+                'brakeTestConfiguration' => $brakeTestConfiguration,
+                'serviceBrakeNumber' => $serviceBrakeNumber,
+                'axleNumber' => 2,
+                'rowHeader' => 'Axle 2'
+            ]
+        ); ?>
+        <?php if ($serviceBrakeNumber === 1 && $brakeTestConfiguration->hasThreeAxles()) : ?>
+            <?php echo $this->partial(
+                'brake-test-results-class-3-and-above/service-brake-effort-row-double-input',
+                [
+                    'brakeTestResult' => $brakeTestResult,
+                    'brakeTestConfiguration' => $brakeTestConfiguration,
+                    'serviceBrakeNumber' => $serviceBrakeNumber,
+                    'axleNumber' => 3,
+                    'rowHeader' => 'Axle 3',
+                ]
+            ); ?>
+        <?php endif; ?>
+    <?php endif; ?>
+
+    <?php if ($brakeTestConfiguration->isSingleWheelInFront() === false) : ?>
+        <?php echo $this->partial(
+            'brake-test-results-class-3-and-above/service-brake-effort-row-single-input',
+            [
+                'brakeTestResult' => $brakeTestResult,
+                'brakeTestConfiguration' => $brakeTestConfiguration,
+                'serviceBrakeNumber' => $serviceBrakeNumber,
+                'rowHeader' => 'Single wheel rear',
+            ]
+        ); ?>
+    <?php endif; ?>
+    </tbody>
+</table>

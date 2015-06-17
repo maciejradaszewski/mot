@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<talendfile:ContextType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:talendfile="platform:/resource/org.talend.model/model/TalendFile.xsd" confirmationNeeded="false" name="Default">
+  <contextParameter comment="" name="databaseHost" prompt="databaseHost?" promptNeeded="false" type="id_String" value="mot-web-frontend"/>
+  <contextParameter comment="" name="ldapHost" prompt="ldapHost?" promptNeeded="false" type="id_String" value="openam.mot.gov.uk"/>
+  <contextParameter comment="" name="databasePassword" prompt="databasePassword?" promptNeeded="false" type="id_String" value="password"/>
+  <contextParameter comment="" name="databaseUserName" prompt="databaseUserName?" promptNeeded="false" type="id_String" value="motdbuser"/>
+  <contextParameter comment="" name="databasePort" prompt="databasePort?" promptNeeded="false" type="id_Integer" value="3306"/>
+  <contextParameter comment="" name="ldapOU" prompt="ldapOU?" promptNeeded="false" type="id_String" value="External"/>
+</talendfile:ContextType>

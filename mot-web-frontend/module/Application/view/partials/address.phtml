@@ -1,0 +1,21 @@
+<?php
+$fields = ['addressLine1', 'addressLine2', 'addressLine3', 'addressLine4', 'town', 'postcode'];
+$values = [];
+foreach ($fields as $field) {
+    if (!empty($address[$field])) {
+        $values[] = $address[$field];
+    }
+}
+$count = count($values);
+$i = 0;
+?>
+<?php for ($i = 0; $i < $count; $i++): ?>
+    <span class="nowrap">
+        <?php
+        echo $this->escapeHtml($values[$i]);
+        if ($i < ($count - 1)) {
+            echo ', ';
+        }
+        ?>
+    </span>
+<?php endfor;

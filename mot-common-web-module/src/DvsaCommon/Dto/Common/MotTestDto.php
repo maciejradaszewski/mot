@@ -1,0 +1,954 @@
+<?php
+
+namespace DvsaCommon\Dto\Common;
+
+use DvsaCommon\Dto\AbstractDataTransferObject;
+use DvsaCommon\Dto\Person\PersonDto;
+use DvsaCommon\Dto\Vehicle\CountryDto;
+use DvsaCommon\Dto\Vehicle\FuelTypeDto;
+use DvsaCommon\Dto\Vehicle\MakeDto;
+use DvsaCommon\Dto\Vehicle\ModelDto;
+use DvsaCommon\Dto\Vehicle\VehicleDto;
+use DvsaCommon\Dto\VehicleClassification\VehicleClassDto;
+use DvsaCommon\Utility\ArrayUtils;
+
+class MotTestDto extends AbstractDataTransferObject
+{
+    /** @var int */
+    private $brakeTestCount;
+    /** @var array */
+    private $brakeTestResult;
+    /** @var string */
+    private $complaintRef;
+    /** @var string */
+    private $completedDate;
+    /** @var CountryDto */
+    private $countryOfRegistration;
+    /** @var int */
+    private $document;
+    /** @var array */
+    private $emergencyLog;
+    /** @var array */
+    private $emergencyReasonComment;
+    /** @var array */
+    private $emergencyReasonLookup;
+    /** @var string */
+    private $expiryDate;
+    /** @var FuelTypeDto */
+    private $fuelType;
+    /** @var array */
+    private $fullPartialRetest;
+    /** @var bool */
+    private $hasRegistration;
+    /** @var int */
+    private $id;
+    /** @var int */
+    private $isPrivate;
+    /** @var string */
+    private $issuedDate;
+    /** @var array */
+    private $itemsNotTestedComment;
+    /** @var  string */
+    private $make;
+    /** @var  string */
+    private $model;
+    /** @var string */
+    private $motTestNumber;
+    /** @var OdometerReadingDTO */
+    private $odometerReading;
+    /** @var int */
+    private $onePersonReInspection;
+    /** @var int */
+    private $onePersonTest;
+    /** @var array */
+    private $partialReinspectionComment;
+    /** @var ColourDto */
+    private $primaryColour;
+    /** @var string */
+    private $reasonForTerminationComment;
+    /** @var array */
+    private $reasonsForRejection;
+    /** @var string */
+    private $registration;
+    /** @var int */
+    private $emptyVrmReason;
+    /** @var ColourDto */
+    private $secondaryColour;
+    /** @var string */
+    private $startedDate;
+    /** @var string */
+    private $status;
+    /** @var MotTestTypeDto */
+    private $testType;
+    /** @var PersonDto */
+    private $tester;
+    /** @var bool */
+    private $testerBrakePerformanceNotTested;
+    /** @var VehicleDto */
+    private $vehicle;
+    /** @var VehicleClassDto */
+    private $vehicleClass;
+    /** @var array */
+    private $vehicleTestingStation;
+    /** @var string */
+    private $vin;
+    /** @var int */
+    private $emptyVinReason;
+    /** @var array */
+    private $pendingDetails;
+    /** @var ReasonForCancelDto */
+    private $reasonForCancel;
+    /** @var MotTestDto */
+    private $motTestOriginal;
+    /** @var string */
+    private $prsMotTestNumber;
+    /** @var array */
+    private $strangeStuff = [];
+    /** @var  string */
+    private $clientIp;
+    /**
+     * @return int
+     */
+    public function getBrakeTestCount()
+    {
+        return $this->brakeTestCount;
+    }
+
+    /**
+     * @param int $brakeTestCount
+     *
+     * @return MotTestDto
+     */
+    public function setBrakeTestCount($brakeTestCount)
+    {
+        $this->brakeTestCount = $brakeTestCount;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBrakeTestResult()
+    {
+        return $this->brakeTestResult;
+    }
+
+    /**
+     * @param array $brakeTestResult
+     *
+     * @return MotTestDto
+     */
+    public function setBrakeTestResult($brakeTestResult)
+    {
+        $this->brakeTestResult = $brakeTestResult;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getComplaintRef()
+    {
+        return $this->complaintRef;
+    }
+
+    /**
+     * @param string $complaintRef
+     *
+     * @return MotTestDto
+     */
+    public function setComplaintRef($complaintRef)
+    {
+        $this->complaintRef = $complaintRef;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCompletedDate()
+    {
+        return $this->completedDate;
+    }
+
+    /**
+     * @param string $completedDate
+     *
+     * @return MotTestDto
+     */
+    public function setCompletedDate($completedDate)
+    {
+        $this->completedDate = $completedDate;
+        return $this;
+    }
+
+    /**
+     * @return CountryDto
+     */
+    public function getCountryOfRegistration()
+    {
+        return $this->countryOfRegistration;
+    }
+
+    /**
+     * @param CountryDto $countryOfRegistration
+     *
+     * @return MotTestDto
+     */
+    public function setCountryOfRegistration($countryOfRegistration)
+    {
+        $this->countryOfRegistration = $countryOfRegistration;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDocument()
+    {
+        return $this->document;
+    }
+
+    /**
+     * @param int $document
+     *
+     * @return MotTestDto
+     */
+    public function setDocument($document)
+    {
+        $this->document = $document;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEmergencyLog()
+    {
+        return $this->emergencyLog;
+    }
+
+    /**
+     * @param array $emergencyLog
+     *
+     * @return MotTestDto
+     */
+    public function setEmergencyLog($emergencyLog)
+    {
+        $this->emergencyLog = $emergencyLog;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEmergencyReasonComment()
+    {
+        return $this->emergencyReasonComment;
+    }
+
+    /**
+     * @param array $emergencyReasonComment
+     *
+     * @return MotTestDto
+     */
+    public function setEmergencyReasonComment($emergencyReasonComment)
+    {
+        $this->emergencyReasonComment = $emergencyReasonComment;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEmergencyReasonLookup()
+    {
+        return $this->emergencyReasonLookup;
+    }
+
+    /**
+     * @param array $emergencyReasonLookup
+     *
+     * @return MotTestDto
+     */
+    public function setEmergencyReasonLookup($emergencyReasonLookup)
+    {
+        $this->emergencyReasonLookup = $emergencyReasonLookup;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExpiryDate()
+    {
+        return $this->expiryDate;
+    }
+
+    /**
+     * @param string $expiryDate
+     *
+     * @return MotTestDto
+     */
+    public function setExpiryDate($expiryDate)
+    {
+        $this->expiryDate = $expiryDate;
+        return $this;
+    }
+
+    /**
+     * @return FuelTypeDto
+     */
+    public function getFuelType()
+    {
+        return $this->fuelType;
+    }
+
+    /**
+     * @param FuelTypeDto $fuelType
+     *
+     * @return MotTestDto
+     */
+    public function setFuelType($fuelType)
+    {
+        $this->fuelType = $fuelType;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFullPartialRetest()
+    {
+        return $this->fullPartialRetest;
+    }
+
+    /**
+     * @param array $fullPartialRetest
+     *
+     * @return MotTestDto
+     */
+    public function setFullPartialRetest($fullPartialRetest)
+    {
+        $this->fullPartialRetest = $fullPartialRetest;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getHasRegistration()
+    {
+        return $this->hasRegistration;
+    }
+
+    /**
+     * @param boolean $hasRegistration
+     *
+     * @return MotTestDto
+     */
+    public function setHasRegistration($hasRegistration)
+    {
+        $this->hasRegistration = $hasRegistration;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return MotTestDto
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIsPrivate()
+    {
+        return $this->isPrivate;
+    }
+
+    /**
+     * @param int $isPrivate
+     *
+     * @return MotTestDto
+     */
+    public function setIsPrivate($isPrivate)
+    {
+        $this->isPrivate = $isPrivate;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIssuedDate()
+    {
+        return $this->issuedDate;
+    }
+
+    /**
+     * @param string $issuedDate
+     *
+     * @return MotTestDto
+     */
+    public function setIssuedDate($issuedDate)
+    {
+        $this->issuedDate = $issuedDate;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getItemsNotTestedComment()
+    {
+        return $this->itemsNotTestedComment;
+    }
+
+    /**
+     * @param array $itemsNotTestedComment
+     *
+     * @return MotTestDto
+     */
+    public function setItemsNotTestedComment($itemsNotTestedComment)
+    {
+        $this->itemsNotTestedComment = $itemsNotTestedComment;
+        return $this;
+    }
+
+    public function getMake()
+    {
+        return $this->make;
+    }
+
+    public function setMake($make)
+    {
+        $this->make = $make;
+        return $this;
+    }
+
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    public function setModel($model)
+    {
+        $this->model = $model;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMotTestNumber()
+    {
+        return $this->motTestNumber;
+    }
+
+    /**
+     * @param string $motTestNumber
+     *
+     * @return MotTestDto
+     */
+    public function setMotTestNumber($motTestNumber)
+    {
+        $this->motTestNumber = $motTestNumber;
+        return $this;
+    }
+
+    /**
+     * @return OdometerReadingDTO
+     */
+    public function getOdometerReading()
+    {
+        return $this->odometerReading;
+    }
+
+    /**
+     * @param OdometerReadingDTO $odometerReading
+     *
+     * @return MotTestDto
+     */
+    public function setOdometerReading($odometerReading)
+    {
+        $this->odometerReading = $odometerReading;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOnePersonReInspection()
+    {
+        return $this->onePersonReInspection;
+    }
+
+    /**
+     * @param int $onePersonReInspection
+     *
+     * @return MotTestDto
+     */
+    public function setOnePersonReInspection($onePersonReInspection)
+    {
+        $this->onePersonReInspection = $onePersonReInspection;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOnePersonTest()
+    {
+        return $this->onePersonTest;
+    }
+
+    /**
+     * @param int $onePersonTest
+     *
+     * @return MotTestDto
+     */
+    public function setOnePersonTest($onePersonTest)
+    {
+        $this->onePersonTest = $onePersonTest;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPartialReinspectionComment()
+    {
+        return $this->partialReinspectionComment;
+    }
+
+    /**
+     * @param array $partialReinspectionComment
+     *
+     * @return MotTestDto
+     */
+    public function setPartialReinspectionComment($partialReinspectionComment)
+    {
+        $this->partialReinspectionComment = $partialReinspectionComment;
+        return $this;
+    }
+
+    /**
+     * @return ColourDto
+     */
+    public function getPrimaryColour()
+    {
+        return $this->primaryColour;
+    }
+
+    /**
+     * @param ColourDto $primaryColour
+     *
+     * @return MotTestDto
+     */
+    public function setPrimaryColour($primaryColour)
+    {
+        $this->primaryColour = $primaryColour;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReasonForTerminationComment()
+    {
+        return $this->reasonForTerminationComment;
+    }
+
+    /**
+     * @param string $reasonForTerminationComment
+     *
+     * @return MotTestDto
+     */
+    public function setReasonForTerminationComment($reasonForTerminationComment)
+    {
+        $this->reasonForTerminationComment = $reasonForTerminationComment;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getReasonsForRejection()
+    {
+        return $this->reasonsForRejection;
+    }
+
+    /**
+     * @param array $reasonsForRejection
+     *
+     * @return MotTestDto
+     */
+    public function setReasonsForRejection($reasonsForRejection)
+    {
+        $this->reasonsForRejection = $reasonsForRejection;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRegistration()
+    {
+        return $this->registration;
+    }
+
+    /**
+     * @param string $registration
+     *
+     * @return MotTestDto
+     */
+    public function setRegistration($registration)
+    {
+        $this->registration = $registration;
+        return $this;
+    }
+
+    /**
+     * @return ColourDto
+     */
+    public function getSecondaryColour()
+    {
+        return $this->secondaryColour;
+    }
+
+    /**
+     * @param ColourDto $secondaryColour
+     *
+     * @return MotTestDto
+     */
+    public function setSecondaryColour($secondaryColour)
+    {
+        $this->secondaryColour = $secondaryColour;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStartedDate()
+    {
+        return $this->startedDate;
+    }
+
+    /**
+     * @param string $startedDate
+     *
+     * @return MotTestDto
+     */
+    public function setStartedDate($startedDate)
+    {
+        $this->startedDate = $startedDate;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     *
+     * @return MotTestDto
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    /**
+     * @return MotTestTypeDto
+     */
+    public function getTestType()
+    {
+        return $this->testType;
+    }
+
+    /**
+     * @param MotTestTypeDto $testType
+     *
+     * @return MotTestDto
+     */
+    public function setTestType($testType)
+    {
+        $this->testType = $testType;
+        return $this;
+    }
+
+    /**
+     * @return PersonDto
+     */
+    public function getTester()
+    {
+        return $this->tester;
+    }
+
+    /**
+     * @param PersonDto $tester
+     *
+     * @return MotTestDto
+     */
+    public function setTester($tester)
+    {
+        $this->tester = $tester;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getTesterBrakePerformanceNotTested()
+    {
+        return $this->testerBrakePerformanceNotTested;
+    }
+
+    /**
+     * @param boolean $testerBrakePerformanceNotTested
+     *
+     * @return MotTestDto
+     */
+    public function setTesterBrakePerformanceNotTested($testerBrakePerformanceNotTested)
+    {
+        $this->testerBrakePerformanceNotTested = $testerBrakePerformanceNotTested;
+        return $this;
+    }
+
+    /**
+     * @return VehicleDto
+     */
+    public function getVehicle()
+    {
+        return $this->vehicle;
+    }
+
+    /**
+     * @param VehicleDto $vehicle
+     *
+     * @return MotTestDto
+     */
+    public function setVehicle($vehicle)
+    {
+        $this->vehicle = $vehicle;
+        return $this;
+    }
+
+    /**
+     * @return VehicleClassDto
+     */
+    public function getVehicleClass()
+    {
+        return $this->vehicleClass;
+    }
+
+    /**
+     * @param VehicleClassDto $vehicleClass
+     *
+     * @return MotTestDto
+     */
+    public function setVehicleClass($vehicleClass)
+    {
+        $this->vehicleClass = $vehicleClass;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getVehicleTestingStation()
+    {
+        return $this->vehicleTestingStation;
+    }
+
+    /**
+     * @param array $vehicleTestingStation
+     *
+     * @return MotTestDto
+     */
+    public function setVehicleTestingStation($vehicleTestingStation)
+    {
+        $this->vehicleTestingStation = $vehicleTestingStation;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVin()
+    {
+        return $this->vin;
+    }
+
+    /**
+     * @param string $vin
+     *
+     * @return MotTestDto
+     */
+    public function setVin($vin)
+    {
+        $this->vin = $vin;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPendingDetails()
+    {
+        return $this->pendingDetails;
+    }
+
+    /**
+     * @param array $pendingDetails
+     *
+     * @return MotTestDto
+     */
+    public function setPendingDetails($pendingDetails)
+    {
+        $this->pendingDetails = $pendingDetails;
+        return $this;
+    }
+
+    /**
+     * @return ReasonForCancelDto
+     */
+    public function getReasonForCancel()
+    {
+        return $this->reasonForCancel;
+    }
+
+    /**
+     * @param ReasonForCancelDto $reasonForCancel
+     *
+     * @return MotTestDto
+     */
+    public function setReasonForCancel($reasonForCancel)
+    {
+        $this->reasonForCancel = $reasonForCancel;
+        return $this;
+    }
+
+    /**
+     * @return MotTestDto
+     */
+    public function getMotTestOriginal()
+    {
+        return $this->motTestOriginal;
+    }
+
+    /**
+     * @param MotTestDto $motTestOriginal
+     *
+     * @return MotTestDto
+     */
+    public function setMotTestOriginal($motTestOriginal)
+    {
+        $this->motTestOriginal = $motTestOriginal;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrsMotTestNumber()
+    {
+        return $this->prsMotTestNumber;
+    }
+
+    /**
+     * @param string $prsMotTestNumber
+     *
+     * @return MotTestDto
+     */
+    public function setPrsMotTestNumber($prsMotTestNumber)
+    {
+        $this->prsMotTestNumber = $prsMotTestNumber;
+        return $this;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function getStrangeStuff($key)
+    {
+        ArrayUtils::get($this->strangeStuff, $key);
+    }
+
+    /**
+     * @param string $reasonCode
+     * @return $this
+     */
+    public function setEmptyVrmReason($reasonCode)
+    {
+        $this->emptyVrmReason = $reasonCode;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmptyVrmReason()
+    {
+        return $this->emptyVrmReason;
+    }
+
+    /**
+     * @param string $reasonCode
+     * @return $this
+     */
+    public function setEmptyVinReason($reasonCode)
+    {
+        $this->emptyVinReason = $reasonCode;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmptyVinReason()
+    {
+        return $this->emptyVinReason;
+    }
+
+    /**
+     * @param string $clientIp
+     * @return $this
+     */
+    public function setClientIp($clientIp)
+    {
+        $this->clientIp = $clientIp;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClientIp()
+    {
+        return $this->clientIp;
+    }
+}

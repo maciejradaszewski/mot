@@ -1,0 +1,102 @@
+<?php
+use DvsaMotTest\Model\BrakeTestConfigurationClass3AndAboveHelper;
+use DvsaMotTest\Model\BrakeTestResultClass1And2ViewModel;
+
+/**
+ * @var \DvsaMotTest\Model\BrakeTestConfigurationClass1And2Helper $brakeTestConfiguration
+ * @var \DvsaMotTest\Model\BrakeTestResultClass1And2ViewModel $brakeTestResult
+ */
+?>
+
+<tr>
+    <th scope="row">Control <?php echo $this->escapeHtml(
+            BrakeTestConfigurationClass3AndAboveHelper::COUNT_ONE
+        ); ?></th>
+    <td>
+        <?php echo $this->partial(
+            'brakeTestInput',
+            [
+                'id' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_1_EFFORT_FRONT,
+                'label' => 'Front control ' . BrakeTestConfigurationClass3AndAboveHelper::COUNT_ONE,
+                'value' => $brakeTestResult->getEffortFront1(),
+                'lockId' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_1_LOCK_FRONT,
+                'lockValue' => $brakeTestResult->getLockFront1(),
+                'hideLock' => !$brakeTestConfiguration->locksApplicableToTestType(),
+                'required' => false,
+            ]
+        ); ?>
+    </td>
+    <td>
+        <?php echo $this->partial(
+            'brakeTestInput',
+            [
+                'id' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_1_EFFORT_REAR,
+                'label' => 'Rear control ' . BrakeTestConfigurationClass3AndAboveHelper::COUNT_ONE,
+                'value' => $brakeTestResult->getEffortRear1(),
+                'lockId' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_1_LOCK_REAR,
+                'lockValue' => $brakeTestResult->getLockRear1(),
+                'hideLock' => !$brakeTestConfiguration->locksApplicableToTestType(),
+                'required' => false,
+            ]
+        ); ?>
+    </td>
+    <?php if ($isSidecarAttached): ?>
+        <td>
+            <?php echo $this->partial(
+                'brakeTestInput',
+                [
+                    'id' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_1_EFFORT_SIDECAR,
+                    'label' => 'Sidecar control ' . BrakeTestConfigurationClass3AndAboveHelper::COUNT_ONE,
+                    'value' => $brakeTestResult->getEffortSidecar1(),
+                    'required' => false,
+                ]
+            ); ?>
+        </td>
+    <?php endif; ?>
+</tr>
+<tr>
+    <th scope="row">Control <?php echo $this->escapeHtml(
+            BrakeTestConfigurationClass3AndAboveHelper::COUNT_TWO
+        ); ?></th>
+    <td>
+        <?php echo $this->partial(
+            'brakeTestInput',
+            [
+                'id' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_2_EFFORT_FRONT,
+                'label' => 'Front control ' . BrakeTestConfigurationClass3AndAboveHelper::COUNT_TWO,
+                'value' => $brakeTestResult->getEffortFront2(),
+                'lockId' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_2_LOCK_FRONT,
+                'lockValue' => $brakeTestResult->getLockFront2(),
+                'hideLock' => !$brakeTestConfiguration->locksApplicableToTestType(),
+                'required' => false,
+            ]
+        ); ?>
+    </td>
+    <td>
+        <?php echo $this->partial(
+            'brakeTestInput',
+            [
+                'id' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_2_EFFORT_REAR,
+                'label' => 'Rear control ' . BrakeTestConfigurationClass3AndAboveHelper::COUNT_TWO,
+                'value' => $brakeTestResult->getEffortRear2(),
+                'lockId' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_2_LOCK_REAR,
+                'lockValue' => $brakeTestResult->getLockRear2(),
+                'hideLock' => !$brakeTestConfiguration->locksApplicableToTestType(),
+                'required' => false,
+            ]
+        ); ?>
+    </td>
+    <?php if ($isSidecarAttached): ?>
+        <td>
+            <?php echo $this->partial(
+                'brakeTestInput',
+                [
+                    'id' => BrakeTestResultClass1And2ViewModel::ID_CONTROL_2_EFFORT_SIDECAR,
+                    'label' => 'Sidecar control ' . BrakeTestConfigurationClass3AndAboveHelper::COUNT_TWO,
+                    'value' => $brakeTestResult->getEffortSidecar2(),
+                    'required' => false,
+                ]
+            ); ?>
+        </td>
+    <?php endif; ?>
+</tr>

@@ -1,0 +1,63 @@
+<?php
+use DvsaMotTest\Model\BrakeTestResultClass3AndAboveViewModel;
+
+/**
+ * @var \DvsaMotTest\Model\BrakeTestConfigurationClass3AndAboveHelper $brakeTestConfiguration
+ * @var \DvsaMotTest\Model\BrakeTestResultClass3AndAboveViewModel $brakeTestResult
+ */
+?>
+<table class="table table-bordered table-col-3">
+    <thead>
+    <tr>
+        <th scope="col">Parking brake effort for</th>
+        <?php if ($brakeTestConfiguration->isParkingBrakeOnTwoWheels()) : ?>
+            <th scope="col">Nearside</th>
+            <th scope="col">Offside</th>
+        <?php else: ?>
+            <th scope="col">Single</th>
+        <?php endif; ?>
+    </tr>
+    </thead>
+    <tbody>
+    <?php if ($brakeTestConfiguration->isParkingBrakeOnTwoWheels()) : ?>
+        <?php echo $this->partial(
+            'brake-test-results-class-3-and-above/parking-brake-effort-row-double-input',
+            [
+                'brakeTestResult' => $brakeTestResult,
+                'brakeTestConfiguration' => $brakeTestConfiguration,
+                'rowHeader' => ($brakeTestConfiguration->isParkingBrakeOnTwoAxles()) ? 'Parking 1' : 'Primary axle',
+                'parkingBrakeNumber' => 1,
+            ]
+        ); ?>
+    <?php else : ?>
+        <tr>
+            <th scope="row">Single</th>
+            <td>
+                <?php echo $this->partial(
+                    'brakeTestInput',
+                    [
+                        'id' => BrakeTestResultClass3AndAboveViewModel::ID_PARKING_EFFORT_SINGLE,
+                        'label' => 'Single',
+                        'value' => $brakeTestResult->getParkingBrakeEffortSingle(),
+                        'lockId' => BrakeTestResultClass3AndAboveViewModel::ID_PARKING_LOCK_SINGLE,
+                        'hideLock' => !$brakeTestConfiguration->locksApplicableToParkingBrake(),
+                        'lockValue' => $brakeTestResult->getParkingBrakeLockSingle(),
+                    ]
+                ); ?>
+            </td>
+            <td>
+        </tr>
+    <?php endif; ?>
+    <?php if ($brakeTestConfiguration->isParkingBrakeOnTwoAxles()) : ?>
+        <?php echo $this->partial(
+            'brake-test-results-class-3-and-above/parking-brake-effort-row-double-input',
+            [
+                'brakeTestResult' => $brakeTestResult,
+                'brakeTestConfiguration' => $brakeTestConfiguration,
+                'rowHeader' => 'Parking 2',
+                'parkingBrakeNumber' => 2,
+            ]
+        ); ?>
+    <?php endif; ?>
+    </tbody>
+</table>

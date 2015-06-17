@@ -1,0 +1,37 @@
+<?php
+
+/** @var $col \Application\Service\TableBuilder\Column */
+
+?>
+<div class="table-responsive">
+    <table class="table table-striped nowrap">
+        <thead>
+            <tr>
+                <?php foreach ($this->columns as $col): ?>
+                <th scope="col"<?php if ($col->isSortable()): ?> class="sortable <?php echo $col->getSortClass(); ?>"<?php endif; ?>>
+                    <?php if ($col->isSortable()): ?>
+                        <a href="<?php echo $col->getUrl($this); ?>">
+                    <?php endif; ?>
+                    <?php echo $col->getTitle(); ?>
+                    <?php if ($col->isSortable()): ?>
+                        </a>
+                    <?php endif; ?>
+
+                </th>
+                <?php endforeach; ?>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($this->rows as $row): ?>
+            <tr>
+            <?php foreach ($this->table->getColumns() as $col): ?>
+                <td><?php echo $col->renderCellContent($row, $this); ?></td>
+            <?php endforeach; ?>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?php if ($this->pagination): ?>
+        <?php echo $this->pagination->render($this); ?>
+    <?php endif; ?>
+</div>

@@ -1,0 +1,37 @@
+<?php
+/** @var \UserAdmin\ViewModel\UserSearchViewModel $viewModel */
+/** @var string $userProfileRoute */
+/** @var array $resultsQueryArray */
+?>
+
+<div class="row module-user-management">
+    <div class="col-sm-8 module-user-management">
+        <p>
+            <strong><?php echo $viewModel->getTotalResultNumber(); ?></strong> result(s) found for <strong>
+                <?php echo $this->escapeHTML($viewModel->displaySearchCriteria()); ?></strong>
+        </p>
+        <?php if ($viewModel->isAnythingFound()) : ?>
+            <?php echo $this->partial(
+                'user-admin/user-search/_list',
+                [
+                    'users' => $viewModel->getSearchResult(),
+                    'viewModel' => $viewModel,
+                    'helper' => $helper,
+                    'resultsQueryArray' => $resultsQueryArray,
+                    'userSearchExtended' => $userSearchExtended
+                ]
+            ); ?>
+        <?php endif; ?>
+    </div>
+</div>
+
+<nav class="content-navigation">
+    <ul class="content-navigation__secondary">
+        <li>
+            <a href="<?php echo $this->escUserSearchRoute; ?>" id="return_to_user_search">
+                Back to user search
+            </a>
+        </li>
+    </ul>
+</nav>
+

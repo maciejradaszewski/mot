@@ -1,0 +1,9 @@
+<?php
+$id = isset($id) ? $id : '';
+$name = isset($name) ? $name : $id;
+$value = isset($value) ? $value : '0';
+
+?>
+<input type="hidden" id="<?php echo $this->escapeHtmlAttr($id); ?>"
+       name="<?php echo $this->escapeHtmlAttr($name); ?>"
+       value="<?php echo $this->escapeHtmlAttr($value); ?>">

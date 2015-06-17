@@ -1,0 +1,48 @@
+<?php
+
+use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
+
+$title = 'Test Results Updated Successfully';
+
+$this->headTitle($title);
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+?>
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1><?php echo $this->escapeHtml($title); ?></h1>
+    </div>
+</div>
+
+<div class="row" id="reprintDialog">
+
+        <!-- Tester -->
+        <div class="col-lg-8">
+            <p>
+                MOT Test for vehicle
+                <strong>
+                    <?php echo $this->escapeHtml(strtoupper($this->vehicleRegistration)); ?>
+                </strong>
+                has been updated and the following documents have been issued:
+            </p>
+            <p>
+                <ul>
+                    <?php if ($this->passedMotTestId) : ?>
+                    <li>Certificate - VT20</li>
+                    <?php endif; ?>
+                    <?php if ($this->failedMotTestId) : ?>
+                    <li>Certificate - VT30</li>
+                    <?php endif; ?>
+                </ul>
+            </p>
+        </div>
+
+        <div class="col-lg-8">
+            <a id="quit" class="btn btn-primary"
+               href="<?php echo $this->url(\Dashboard\Controller\UserHomeController::ROUTE); ?>">Done</a>
+            <a id="print" target="_blank" class="btn btn-primary"
+               href="<?php echo MotTestUrlBuilderWeb::printCertificate($this->motTestNumber); ?>">Print</a>
+            <button id="reprint-certificate" class="btn">Re-print receipt</button>
+        </div>
+</div>

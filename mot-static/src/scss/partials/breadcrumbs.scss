@@ -1,0 +1,44 @@
+/*
+    @name breadcrumb
+
+    @status production
+
+    @comments
+    Used on the top of every page (> 1 level deep) to indicate a user's position within site hierarchy.
+
+    Bootstrap dependency: None
+
+    @example
+    <ol class="module-breadcrumb" role="breadcrumbs">
+        <li><a href="/">Home</a></li>
+        <li><a href="/authorised-examiner/2">City and Guilds</a></li>
+        <li>Assign a role</li>
+    </ol>
+*/
+
+.module-breadcrumb {
+    display: inline-block;
+    list-style: none outside none;
+    margin: 0;
+    padding: .5em 0;
+    width: 100%;
+    @include light-grey-bot-border;
+
+    li {
+        background: {
+            image: url('../static/img/separator.png');
+            position: 100% 50%;
+            repeat: no-repeat;
+        };
+        display: inline-block;
+        float: left;
+        margin: .25em .5em .25em 0;
+        padding-right: 1em;
+    }
+
+    li:last-child {
+        background: none;
+        margin-right: 0;
+        padding-right: 0;
+    }
+}

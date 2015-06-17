@@ -1,0 +1,108 @@
+<?php
+
+namespace VehicleApi\Service\Mapper;
+
+use DataCatalogApi\Service\VehicleCatalogService;
+use DvsaCommon\Date\DateTimeApiFormat;
+use DvsaCommon\Dto\Vehicle\DvlaVehicleDto;
+use DvsaCommon\Dto\Vehicle\MakeDto;
+use DvsaCommon\Dto\Vehicle\ModelDetailDto;
+use DvsaCommon\Dto\Vehicle\ModelDto;
+use DvsaCommon\Utility\TypeCheck;
+use DvsaCommonApi\Service\Mapper\ColourMapper;
+use DvsaEntities\Entity\DvlaVehicle;
+use DvsaCommon\Dto\Vehicle\VehicleParamDto;
+
+/**
+ * Class DvlaVehicleMapper
+ *
+ * @package VehicleApi\Service\Mapper
+ */
+class DvlaVehicleMapper extends AbstractVehicleMapper
+{
+    /**
+     * @var VehicleCatalogService
+     */
+    private $vehicleCatalog;
+
+    public function __construct($vehicleCatalog)
+    {
+        $this->vehicleCatalog = $vehicleCatalog;
+    }
+
+    /**
+     * @param DvlaVehicle $vehicle
+     *
+     * @throws \Exception
+     * @return DvlaVehicleDto
+     */
+    public function toDto($vehicle)
+    {
+        TypeCheck::assertInstance($vehicle, DvlaVehicle::class);
+
+        $dto = new DvlaVehicleDto();
+
+        parent::mapCommonFieldsToDto($dto, $vehicle);
+
+        // Full make name
+        $dto->setMakeInFull($vehicle->getMakeInFull());
+
+        //  ----  entity specific ----
+        $dto->setDesignedGrossWeight($vehicle->getDesignedGrossWeight());
+        $dto->setUnladenWeight($vehicle->getUnladenWeight());
+
+        //  --  Colours --
+        $dto->setColour($this->mapColourCodeToDto($vehicle->getPrimaryColour()));
+        $dto->setColourSecondary($this->mapColourCodeToDto($vehicle->getSecondaryColour()));
+
+        //  Make and Model details
+        $makeCode       = $vehicle->getMakeCode();
+        $modelCode      = $vehicle->getModelCode();
+        // Search in DVSA make and model tables if no mapping is found
+        $fallbackToDvsa = true;
+        $map            = $this->vehicleCatalog->getMakeModelMapByDvlaCode($makeCode, $modelCode, $fallbackToDvsa);
+        $makeEntity     = $map ? $map->getMake() : null;
+        $modelEntity    = $map ? $map->getModel() : null;
+
+        $makeDto = new MakeDto();
+        if ($makeEntity) {
+            $makeDto
+                ->setId($makeEntity->getId())
+                ->setCode($makeEntity->getCode())
+                ->setName($makeEntity->getName());
+        }
+
+        $modelDto = new ModelDto();
+        if ($modelEntity) {
+            $modelDto
+                ->setId($modelEntity->getId())
+                ->setCode($modelEntity->getCode())
+                ->setName($modelEntity->getName());
+        }
+
+        $dto->setModelName($modelDto->getName());
+        $dto->setMakeName($makeDto->getName());
+
+        $fuelTypeDto = new VehicleParamDto();
+        $fuelTypeCode = $vehicle->getFuelType();
+        $fuelType = $this->vehicleCatalog->findFuelTypeByPropulsionCode($fuelTypeCode);
+        if ($fuelType) {
+            $fuelTypeDto
+                ->setId($fuelType->getId())
+                ->setCode($fuelType->getCode())
+                ->setName($fuelType->getName());
+        }
+
+        $dto->setFuelType($fuelTypeDto);
+
+        $bodyType = $this->vehicleCatalog->findBodyTypeByCode($vehicle->getBodyType());
+        $dto->setBodyType($this->getBodyTypeDto($bodyType));
+
+        return $dto;
+    }
+
+    private function mapColourCodeToDto($code)
+    {
+        return (new ColourMapper())->toDto($this->vehicleCatalog->findColourByCode($code));
+    }
+}

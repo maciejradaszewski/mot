@@ -1,0 +1,42 @@
+<?php if (count($navigator) > 0) : ?>
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            <nav class="pagination" role="navigation" aria-label="Pagination">
+                <ul class="group">
+                    <?php if (isset($navigator['next'])) : ?>
+                        <li class="next">
+                            <a href="<?php echo $this->url(
+                                $navigator['route'],
+                                array(
+                                     'action' => $navigator['next']['action'],
+                                     'uuid'   => $navigator['uuid']
+                                )
+                            ); ?>" class="btn btn-link" id="nextActionButton">
+                                <span class="pagination-label">Next</span>
+                                <span class="pagination-part-title"><?php echo $this->escapeHtml(
+                                        $navigator['next']['label']
+                                    ); ?></span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                    <?php if (isset($navigator['prev'])) : ?>
+                        <li class="previous">
+                            <a href="<?php echo $this->url(
+                                $navigator['route'],
+                                array(
+                                     'action' => $navigator['prev']['action'],
+                                     'uuid'   => $navigator['uuid']
+                                )
+                            ); ?>" class="btn btn-link" id="prevActionButton">
+                                <span class="pagination-label">Previous</span>
+                                <span class="pagination-part-title"><?php echo $this->escapeHtml(
+                                        $navigator['prev']['label']
+                                    ); ?></span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
+        </div>
+    </div>
+<?php endif; ?>

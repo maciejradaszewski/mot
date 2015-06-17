@@ -1,0 +1,106 @@
+<?php use DvsaCommon\Exception\UnauthorisedException;
+
+if ($this->showErrorsInFrontEnd): ?>
+
+    <h1>An error occurred</h1>
+    <h2><?php echo $this->escapeHtml($this->message) ?></h2>
+
+    <?php if (isset($this->display_exceptions) && $this->display_exceptions): ?>
+
+        <?php if (isset($this->exception) && $this->exception instanceof Exception):
+
+            $file = $this->exception->getFile();
+            $line = $this->exception->getLine();
+            $message = $this->exception->getMessage();
+            $trace = $this->exception->getTraceAsString();
+
+            if ($this->exception instanceof UnauthorisedException) {
+                $trace = $this->exception->getDebugInfo()['trace'] . "\n...\n" . $trace;
+                $file = $this->exception->getDebugInfo()['file'];
+                $line = $this->exception->getDebugInfo()['line'];
+            }
+            ?>
+            <hr/>
+            <h2>Additional information:</h2>
+            <h3><?php echo $this->escapeHtml(get_class($this->exception)); ?></h3>
+            <dl>
+                <dt>File:</dt>
+                <dd>
+                    <pre class="prettyprint linenums"><?php echo $this->escapeHtml($file) ?>
+                        :<?php echo $this->escapeHtml($line) ?></pre>
+                </dd>
+                <dt>Message:</dt>
+                <dd>
+                    <pre class="prettyprint linenums"><?php echo $this->escapeHtml($message) ?></pre>
+                </dd>
+                <dt>Stack trace:</dt>
+                <dd>
+                    <pre class="prettyprint linenums"><?php echo $this->escapeHtml($trace) ?></pre>
+                </dd>
+            </dl>
+            <?php
+            $e = $this->exception->getPrevious();
+            if ($e) :
+                ?>
+                <hr/>
+                <h2>Previous exceptions:</h2>
+                <ul class="unstyled">
+                    <?php while ($e) : ?>
+                        <li>
+                            <h3><?php echo $this->escapeHtml(get_class($e)); ?></h3>
+                            <dl>
+                                <dt>File:</dt>
+                                <dd>
+                                    <pre class="prettyprint linenums"><?php echo $this->escapeHtml($e->getFile()) ?>
+                                        :<?php echo $this->escapeHtml($e->getLine()) ?></pre>
+                                </dd>
+                                <dt>Message:</dt>
+                                <dd>
+                                    <pre
+                                        class="prettyprint linenums"><?php echo $this->escapeHtml($e->getMessage()) ?></pre>
+                                </dd>
+                                <dt>Stack trace:</dt>
+                                <dd>
+                                    <pre
+                                        class="prettyprint linenums"><?php echo $this->escapeHtml($e->getTraceAsString()) ?></pre>
+                                </dd>
+                            </dl>
+                        </li>
+                        <?php
+                        $e = $e->getPrevious();
+                    endwhile;
+                    ?>
+                </ul>
+            <?php endif; ?>
+
+        <?php else: ?>
+
+            <h3>No Exception available</h3>
+
+        <?php endif ?>
+
+    <?php endif ?>
+
+<?php else: ?>
+
+    <div id="global-error" class="row">
+        <p><a href="/">Home</a></p>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Something went wrong!</h1>
+
+            <div class="info-notice">
+                <br/>
+
+                <p>A log of this error has been sent to <a href="/">DVSA MOT</a></p>
+                <?php if ($this->errorId): ?>
+                    <p>Error ID &nbsp;<b><?php echo $this->escapeHtml($this->errorId); ?></b></p>
+                <?php endif; ?>
+                <br/>
+            </div>
+        </div>
+    </div>
+
+<?php endif; ?>

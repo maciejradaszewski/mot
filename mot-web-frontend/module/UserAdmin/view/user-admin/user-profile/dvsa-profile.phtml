@@ -1,0 +1,94 @@
+<?php
+use Dashboard\Controller\UserHomeController;
+use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
+
+/** @var \UserAdmin\Presenter\UserProfilePresenter $presenter */
+/** @var string $searchResultsUrl */
+/** @var string $passwordResetUrl */
+/** @var string $usernameRecoverUrl */
+
+?>
+
+<h3 class="heading-medium">Personal details</h3>
+<table class="key-value-list">
+    <tbody>
+    <tr>
+        <th class="key-value-list__key">
+            Name
+        </th>
+        <td id="person-name" class="key-value-list__value">
+            <?php echo $presenter->displayTitleAndFullName() ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Username
+        </th>
+        <td id="person-username" class="key-value-list__value--numeric">
+            <?php echo $presenter->displayUsername(); ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Date of birth
+        </th>
+        <td id="person-dob" class="key-value-list__value">
+            <?php echo $presenter->displayDateOfBirth(); ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Driving licence number
+        </th>
+        <td id="person-driving-licence" class="key-value-list__value--numeric">
+            <?php echo $presenter->displayDrivingLicenceNumber(); ?>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h3 class="heading-medium">Contact details</h3>
+<table class="key-value-list">
+    <tbody>
+    <tr>
+        <th class="key-value-list__key">
+            Address
+        </th>
+        <td id="person-address" class="key-value-list__value">
+            <?php echo $presenter->displayFullAddress(); ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Email
+        </th>
+        <td id="person-email" class="key-value-list__value">
+            <?php echo $this->escapeHtml($presenter->displayEmail()); ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Telephone
+        </th>
+        <td id="person-telephone" class="key-value-list__value--numeric">
+            <?php echo $presenter->displayTelephone(); ?>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<?php echo $this->partial('user-admin/partials/roles-and-associations.phtml', ['presenter' => $presenter]) ?>
+<?php echo $this->partial('user-admin/partials/event-history.phtml', ['presenter' => $presenter]) ?>
+
+<nav class="content-navigation">
+    <?php echo $this->partial(
+        'partial/gds/form/control-navigation-secondary',
+        [
+            'navigation'    => [
+                'Cancel and return to search results'   => $searchResultsUrl,
+                'Return to home'                        => $this->url(UserHomeController::ROUTE),
+            ]
+        ]
+    ); ?>
+</nav>
+

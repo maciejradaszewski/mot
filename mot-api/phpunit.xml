@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        colors                      = "true"
+        convertErrorsToExceptions   = "true"
+        convertNoticesToExceptions  = "true"
+        convertWarningsToExceptions = "true"
+        processIsolation            = "false"
+        stopOnFailure               = "true"
+        syntaxCheck                 = "false"
+        bootstrap="test/init.php">
+    <testsuites>
+        <testsuite name="WebApi">
+            <directory>module/*/test/*</directory>
+            <directory>test/*</directory>
+        </testsuite>
+    </testsuites>
+    <logging>
+        <log type="junit" target="logs/WebApi.xml" logIncompleteSkipped="false" />
+        <!--<log type="coverage-clover" target="/workspace/coverage/coverage.xml"/>-->
+    </logging>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true" >
+            <directory suffix=".php">module/*/src/*</directory>
+        </whitelist>
+        <blacklist>
+            <directory suffix=".php">vendor/*</directory>
+        </blacklist>
+    </filter>
+</phpunit>
+

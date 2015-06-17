@@ -1,0 +1,585 @@
+.js-enabled .toggle-content {
+    display: none;
+}
+
+.module-present-data{
+  >h1,>h2,>h3,>h4,>h5,>h6{ /* DIRECTLY INSIDE MODULE */
+    padding-right: 190px;
+  }
+  h1,h2,h3,h4,h5,h6{  /* LEFT HAND HEADERS */
+    position:relative;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    span{
+      position: absolute; 
+      right: 0; 
+      top: 0;
+      a{
+        font-size: 16px; 
+        font-weight: normal;
+        &:first-child{
+          margin-right:15px;
+        }
+      }
+    }
+
+  }
+  .present-data-list-header{
+    margin-top: 14px;
+  }
+  .head-space{  // used in performance dashboard
+    margin-top: 40px;
+  }
+  //  DEFINITION LISTS 
+  dl dt {
+    font-weight:300;
+  }
+  dl dd {
+    font-weight:600;
+  }
+  //  HORIZONTAL
+  dl.horizontal{
+    dd,dt{
+      line-height: 1.75em;
+    }
+    dt{
+      width: 200px;
+      clear: left;
+      float: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    dd {
+      margin-left: 220px;
+      &:before{
+        content: " ";
+        display: table;
+      }
+      &:after{
+        content: " ";
+        display: table;
+        clear: both;
+      }
+    }
+    &.large dt:after {
+      content: " ";
+      font-size: 1.5em;
+      font-weight: 600;
+      line-height: 1.75em;
+      width: 1px; overflow: hidden;
+    }
+  }
+  //  VERTICAL
+  dl.vertical {
+      dd {
+        line-height: 1em;
+        margin-bottom: 15px;
+    }
+    &.large dd{
+      margin-bottom: 20px;
+    }
+  }
+  //  LARGE 
+  dl.large dd {
+    font-size: 1.5em;
+  }
+  
+  .present-data_subtitle {
+    color: $secondary-text-colour;
+  }
+
+
+.visual-block {
+  background-color: $grey-4;
+  margin: 15px 0;
+  padding: 15px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  dl {
+    padding: 0; 
+    margin: 0;
+    dd:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+  // USED ON VTS SUMMARY FOR ENFORCEMENT
+  .score-band-red,
+  .score-band-amber,
+  .score-band-green {
+    padding:15px;
+    strong{
+      @include font-bold36();
+      line-height: 1em;
+      display: block;
+    }
+  }
+}
+
+.stat{
+  .stat-number{
+    @include font-bold48();
+    margin: 0;
+    padding: 0;
+    display: block;
+    clear: both;
+  }
+  .stat-period{
+    margin: 0;
+    padding: 0;
+    display: block;
+    clear: both;
+  }
+  .stat-number + .stat-period{
+    margin-top: -10px;
+  }
+}
+/*---------------------------
+ERRORS
+---------------------------*/
+.validation-block {
+  @include validation-block();
+}
+.validation-summary {
+    @include validation-block();
+    margin: 0 -1em  1em;
+    padding: 0.75em 1em 1em 1em;
+    border-width: 3px;
+    h2 {
+      @include font-bold19();
+      margin-top: 0;
+    }
+    p {
+      margin-left: 22px;
+    }
+    p:last-child {
+      margin-bottom: 0;
+    }
+    a {
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    a, ol {
+      color: $fail-text;
+    }
+    ol {
+      padding-left: 1em;
+    }
+  }
+
+fieldset {
+  margin-bottom: 30px;
+  .form-group fieldset{
+    float: none;
+    display: inline-block;
+  }
+  fieldset {
+  margin-bottom: -5px;
+}
+}
+
+legend {
+    color:inherit;
+    @include font-bold24();
+    border: 0;
+    margin-bottom: 15px;
+    margin-top: 30px;
+
+    &.form-label{
+      @include font-core16();
+      border:none;
+      padding:0;
+      margin:0;
+    }
+}
+
+.form-group{
+  margin-bottom:15px;
+
+  &.form-group-related{
+    float: left;
+    width: 100%;
+  }
+
+  .panel-indent {
+    border-left: 5px solid $grey-2;
+    clear: both;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-top: 10px;
+  }
+  
+  
+  .label-sm .block-label.label-clear{
+    min-width: 200px;
+  }
+  .label-reg .block-label.label-clear{
+    min-width: 300px;
+  }
+  .label-lg .block-label.label-clear{
+    min-width: 400px;
+  }
+  .label-xl .block-label.label-clear{
+    min-width: 500px;
+  }
+
+
+// INPUTS
+  .form-control { 
+    @include font-core16();
+    @include border-radius(0, 0, 0, 0);
+    border-color: $border-colour;
+    box-shadow: none;
+    height: 30px;
+    max-width: 300px;
+    
+    &.form-control-xxs{
+      max-width: 50px;
+    }
+    &.form-control-xs{
+      max-width: 100px;
+    }
+    &.form-control-sm{
+      max-width: 200px;
+    }
+    &.form-control-lg{
+      max-width: 400px;
+    }
+    &.form-control-xl{
+      max-width: 500px;
+    }
+    &.form-control-max{
+      width: 100%;
+      max-width: none;
+    }
+    &.form-control-score-heavy{
+      @include font-bold36();
+      width: 150px;
+      padding-right: 4px;
+      padding-left: 6px; 
+      height: 60px;
+      max-width: 300px;
+    }
+
+    &:focus{
+      box-shadow:none;
+      outline: 3px solid $focus-colour;
+     }
+  }
+
+
+  //textareas
+  textarea.form-control {
+    height:auto;
+    resize: none;
+    &.flexible-vert {
+        resize: vertical;  
+    }
+  }
+
+  fieldset label + p.alternative{
+    // 
+    float:left;
+    width: 100%;
+    margin:5px 0 20px;
+  }
+  select.form-control{
+    padding: 3px 3px 3px 9px;
+  }
+  input[type="file"]:focus, 
+  input[type="radio"]:focus, 
+  input[type="checkbox"]:focus {
+      outline: none;
+  }
+  //  http://stackoverflow.com/questions/3773430/remove-outline-from-select-box-in-ff 
+  select:-moz-focusring { 
+      color: transparent;
+      text-shadow: 0 0 0 black;
+  }
+//  INLINE ADDITIONAL INPUTS
+  .form-control + .checkbox-inline, .form-control + .radio-inline  {
+    padding-top:10px;
+  }
+// DATES
+  .date-group{
+    .form-group {
+      clear: none;
+      float: left;
+      margin-right: 20px;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      width: 50px;
+    }
+    .form-group-year{
+      width:70px;
+    }
+  }
+// RADIOS
+  .block-label{
+    clear: none;
+    /*height: 50px;*/
+    min-height: 50px;
+    margin: 5px 15px 5px 0;
+    float: left;
+    background: none repeat scroll 0 0 $grey-3;
+    border: 1px solid $grey-3; 
+    cursor: pointer;
+    display: block; 
+    padding: 14px 30px 14px 45px;
+    position: relative;
+
+    input {
+      cursor: pointer;
+      left: 15px;
+      position: absolute;
+      top: 15px;
+    }
+    dfn {
+
+      display:block;
+      font-style: normal;
+      font-weight: bold;
+    }
+    &.label-clear{
+      clear: left;
+    }
+    &:hover{
+      border-color: $black;
+    }
+    &.selected {
+      background: none repeat scroll 0 0 $white;
+      border-color: $black;
+    }
+    &.add-focus {
+      outline: 3px solid $focus-colour; 
+    }
+  }
+//  LABELS
+  label{
+    @include font-core16();
+  }
+  label + p.help-block{
+    margin-top:-2px;
+    margin-bottom:5px;
+  }
+// ERRORS
+  &.has-error {
+    background-color: $error-background;
+    border-left: 3px solid $fail-text;
+    margin-left: -15px;
+    margin-right: -15px;
+    padding: 15px;
+
+    .form-control{
+      border-color:$panel-colour ;
+      box-shadow: none;
+    }
+    .help-block{
+      color:$secondary-text-colour;
+    }
+    .validation-message{
+      color:$fail-text;
+      display:block;
+    }
+  }
+}
+    
+.form-group-flowing{
+  margin-top: -9px;
+}
+
+//  **********************************
+//  ORIGINAL HOZ FORM WRAPPED IN A 
+//  LESS PARENT SELECTOR
+//  **********************************
+
+form.form-horizontal{
+  .form-control { 
+    @include font-core16();
+  }
+  .form-control:focus {
+    outline: 3px solid $focus-colour;
+  }
+  .validation-block {
+    background-color: $error-background;
+    border-color: $fail-text;
+    border-style: solid;
+    box-sizing: border-box;
+  }
+  label, 
+  .radio-inline, 
+  .checkbox-inline  {
+    @include font-core16();
+  }
+
+  legend {
+    border: 0;
+    padding-bottom: 10px;
+    @include light-grey-bot-border();
+    @include font-bold24();
+
+  }
+  legend.legend-label {
+    @include font-bold16();
+    border: 0;
+    padding-bottom: 10px;
+    margin: 0;
+  }
+  fieldset /*.radio*/ {
+    margin-bottom: 30px;
+  }
+  .validation-summary {
+    @include validation-block();
+    margin: 0 -1em  1em;
+    padding: 0.75em 1em 1em 1em;
+    border-width: 3px;
+    h2 {
+      @include font-bold19();
+      margin-top: 0;
+    }
+    p {
+      margin-left: 22px;
+    }
+    p:last-child {
+      margin-bottom: 0;
+    }
+    a {
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    a, ol {
+      color: $fail-text;
+    }
+    ol {
+      padding-left: 1em;
+    }
+  }
+  .validation-message {
+    color: $fail-text;
+    display: block;
+    padding-bottom: 0.5em;
+    padding-left: 15px;  
+    @include font-core14();
+  }
+  .has-error {
+    @include validation-block();
+    border-width: 0 0 0 3px;
+    padding: 0.75em 0;
+    .control-label,
+    .radio-inline,
+    .checkbox-inline {
+      color: $text-colour;
+    }
+  }
+  .form-vertical {
+    .has-error {
+      margin-left: -15px;
+      margin-right: -15px;
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+  }
+  .form-control,
+  .has-error .form-control{
+    background: $white;
+    @include border-radius(0, 0, 0, 0);
+    border: 1px inset $border-colour;
+  }
+  .sub-group {
+    margin-top: 3em;
+  }
+  form button[type="submit"],
+  form a.btn {
+    margin: 10px 0;
+  }
+  .help-block {
+    @include font-core14();
+    margin-top: -5px;
+    margin-bottom: 5px;
+  }
+  .inline {
+    .form-control {
+      display: inline-block;
+    }
+  }
+  .date-month {
+    width: 10em;
+  }
+  .date-year {
+    width: 5em;
+  }
+  .datePickerInput {
+      padding-left: 0;
+  }
+  /***************************
+  BOOTSTRAP OVERRIDES
+  ***************************/
+  .help-block {
+    @include font-core14();
+    margin-top: -5px;
+    margin-bottom: 5px;
+  }
+  div.checkbox {
+    margin-bottom: 15px;
+  }
+  .radio-inline+.radio-inline, .radio-inline,
+  .checkbox-inline+.checkbox-inline, .checkbox-inline {
+    margin-left: 0;
+    margin-right: 10px;
+  }
+
+  /***************************
+  FIELDSET INLINE
+  ***************************/
+  .fs-inline {
+    margin-bottom: 0;
+    legend{
+      @include font-core16();
+      text-align: right;
+      color: $text-colour;
+      @include no-border();
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    .date-day, 
+    .date-month,
+    .date-year {
+      display: inline-block;
+    }
+  }
+  .form-vertical {
+    legend {
+      text-align: left;
+    }
+  }
+  @media (max-width: 767px) {
+    .fs-inline {
+      margin-bottom: 0;
+      legend{
+        text-align: left;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+    }
+    .radio-input-combo-label {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-top: 7px;
+    }
+    .radio-inline {
+      display: block;
+    }
+  }
+  @media (min-width: 768px) {
+    .mobile-view {
+      @include visually-hidden();
+    }
+
+  }
+}

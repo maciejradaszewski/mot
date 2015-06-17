@@ -1,0 +1,111 @@
+@mixin rounded($radius: 2px) {
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    border-radius: $radius;
+}
+
+@mixin border-radius($topright: 0, $bottomright: 0, $bottomleft: 0, $topleft: 0) {
+    -webkit-border-top-right-radius: $topright;
+    -webkit-border-bottom-right-radius: $bottomright;
+    -webkit-border-bottom-left-radius: $bottomleft;
+    -webkit-border-top-left-radius: $topleft;
+    -moz-border-radius-topright: $topright;
+    -moz-border-radius-bottomright: $bottomright;
+    -moz-border-radius-bottomleft: $bottomleft;
+    -moz-border-radius-topleft: $topleft;
+    border-top-right-radius: $topright;
+    border-bottom-right-radius: $bottomright;
+    border-bottom-left-radius: $bottomleft;
+    border-top-left-radius: $topleft;
+    //.background-clip(padding-box);
+}
+
+@mixin box-shadow($arguments) {
+    -webkit-box-shadow: $arguments;
+    -moz-box-shadow: $arguments;
+    box-shadow: $arguments;
+}
+
+@mixin box-sizing($sizing: border-box) {
+    -ms-box-sizing: $sizing;
+    -moz-box-sizing: $sizing;
+    -webkit-box-sizing: $sizing;
+    box-sizing: $sizing;
+}
+
+// From MOT: forms.scss
+
+@mixin validation-block {
+    background-color: $error-background;
+    border-color: $fail-text;
+    border-style: solid;
+    box-sizing: border-box;
+}
+
+@mixin input-sm {
+    width: 25%;
+}
+
+@mixin input-md {
+    width: 50%;
+}
+
+@mixin input-lg {
+    width: 75%;
+}
+
+// From MOT: general.scss
+
+@mixin link {
+    color: $link-colour;
+    text-decoration: underline;
+    background-color: inherit;
+    display: inline-block;
+}
+
+@mixin visually-hidden {
+    position: absolute;
+    left: -9999em;
+}
+
+@mixin no-border {
+    border: 0;
+    padding: 0;
+}
+
+@mixin light-grey-top-border {
+    border-top: 1px solid $border-colour;
+}
+
+@mixin light-grey-bot-border {
+    border-bottom: 1px solid $border-colour;
+}
+
+@mixin thick-top-border {
+    border-top: 5px solid $black;
+}
+
+@mixin thick-bot-border {
+    border-bottom: 5px solid $black;
+}
+
+@mixin list-unstyled {
+    padding-left: 0;
+    list-style: none;
+}
+
+@mixin no-wrap {
+    white-space: nowrap;
+}
+
+@mixin btn-active {
+    top: 2px;
+    color: $white;
+    @include box-shadow(0 0 0 0 $white);
+}
+
+@mixin btn-default {
+    color: $black !important;
+    background-color: $grey-4;
+    @include box-shadow(0 2px 0 0 $grey-3);
+}

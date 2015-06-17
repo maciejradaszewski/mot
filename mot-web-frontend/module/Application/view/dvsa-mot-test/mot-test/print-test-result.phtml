@@ -1,0 +1,123 @@
+<?php
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+
+$this->headTitle($this->title);
+
+$canPrint = !($this->isDemoMotTest);
+
+$escUrlPrint = $this->printRoute;   //  generated using UrlBuilder, no need escaping
+
+$escVrn = $this->escapeHtml($this->vehicleRegistration);
+?>
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1><?php echo $this->escapeHtml($this->title); ?></h1>
+    </div>
+</div>
+
+<?php
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+?>
+
+<div class="row" id="reprintDialog">
+    <?php if ($this->isNonMotTest) : ?>
+        <!-- Vehicle Examiner::notMotTest -->
+        <div class="col-lg-6">
+            <p>Test results submitted successfully.</p>
+            <p>
+                MOT Test for vehicle <strong><?php echo $escVrn ?></strong> has been
+                submitted and the following documents have been issued
+            </p>
+            <p>
+                <ul>
+                    <li>Certificate – VT32</li>
+                </ul>
+                <a id="reprint-certificate" target="_blank" class="btn btn-primary"
+                   href="<?php echo $escUrlPrint; ?>">Print documents</a>
+            </p>
+        </div>
+        <div class="col-lg-8">
+            <a href="<?php echo PersonUrlBuilderWeb::home(); ?>" style="margin-left: 10px;">Return to Homepage</a>
+        </div>
+
+    <?php elseif ($this->isReinspection) : ?>
+        <!-- Vehicle Examiner::reinspection -->
+        <div class="col-lg-6">
+            <p>Certificate generated successfully.</p>
+            <ul>
+                <?php if ($this->isAppeal): ?>
+                    <?php if ($this->passedMotTestId) : ?>
+                    <li>The VT20 has been generated</li>
+                    <?php endif; ?>
+                    <?php if ($this->failedMotTestId) : ?>
+                    <li>The VT30 has been generated</li>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <li>The VT32 has been generated</li>
+                <?php endif; ?>
+            </ul>
+            <div class="col-lg-8">
+                <a id="reprint-certificate" target="_blank" class="btn btn-primary"
+                   href="<?php echo $escUrlPrint; ?>">Print documents</a>
+                <a href="<?php echo $this->url('enforcement-differences-found-between-tests', ['motTestNumber' => $this->motTestNumber]); ?>"
+                   class="btn btn-primary" id="compareTestResults">Compare test results</a>
+            </div>
+        </div>
+
+    <?php else: ?>
+        <!-- Tester -->
+        <div class="col-lg-6">
+            <?php if (!$this->isDuplicate) : ?>
+                <p>
+                    MOT test for vehicle registration
+                    <strong><?php echo $escVrn ?></strong>
+                    is complete.
+                </p>
+                <br>
+            <?php endif; ?>
+
+            <?php if ($canPrint): ?>
+                <p>
+                    <b>What you need to do now</b>
+                </p>
+                <p>
+                    Print the following documents and give them to the customer.
+                </p>
+                <p>
+                    <ul>
+                        <?php if ($this->passedMotTestId) : ?>
+                            <li>
+                                <div id="pass-certificate-item">Test certificate for <?php echo $escVrn ?></div>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php if ($this->failedMotTestId) : ?>
+                            <li>
+                                <div id="refusal-certificate-item">Refusal certificate for <?php echo $escVrn ?></div>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php if ($this->abandonedMotTestNumber) : ?>
+                            <li>
+                                <div id="refusal-certificate-item">VT30 for <?php echo $escVrn ?></div>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                    <a id="reprint-certificate" target="_blank" class="btn btn-primary"
+                        href="<?php echo $escUrlPrint; ?>">Print documents</a>
+                </p>
+            <?php endif; ?>
+        </div>
+
+        <div class="col-lg-8">
+            <a id="quit" href="<?php echo PersonUrlBuilderWeb::home(); ?>" class="btn btn-link">Back to user home</a>
+            <?php if ($this->isMotContingency): ?>
+                <a id="quit" href="<?php echo $this->url('contingency'); ?>"
+                   class="btn btn-link">Enter another contingency test</a>
+            <?php endif; ?>
+        </div>
+
+    <?php endif; ?>
+</div>

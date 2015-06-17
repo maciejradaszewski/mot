@@ -1,0 +1,30 @@
+<?php
+use DvsaCommon\Enum\MotTestStatusName;
+
+$status = $this->status ? $this->status : null;
+?>
+
+<div class="col-sm-4">
+    <h2>Test information <span class="visually-hidden">: result</span>
+        <?php
+        $css = 'fail';
+        $text = 'Undefined';
+
+        if ($status == MotTestStatusName::PASSED) {
+            $css = 'pass';
+            $text = 'Pass';
+        } elseif ($status == MotTestStatusName::FAILED) {
+            $text = 'Fail';
+        } elseif ($status === MotTestStatusName::ABANDONED) {
+            $text = 'Abandoned';
+        } elseif ($status === MotTestStatusName::ABORTED) {
+            $text = 'Aborted';
+        } elseif ($status === MotTestStatusName::ABORTED_VE) {
+            $text = 'Aborted by VE';
+        } elseif ($status == MotTestStatusName::ACTIVE) {
+            $text = 'Incomplete';
+        }?>
+        <span class="<?php echo $this->escapeHtmlAttr($css); ?>"
+              id="testStatus"><?php echo $this->escapeHtml($text); ?></span>
+    </h2>
+</div>

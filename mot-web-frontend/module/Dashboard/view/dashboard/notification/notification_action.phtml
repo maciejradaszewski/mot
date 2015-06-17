@@ -1,0 +1,96 @@
+<?php
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use Dashboard\Controller\NotificationController;
+use Dashboard\Controller\UserHomeController;
+
+/* SINGLE NOTIFICATION VIEW */
+
+/** @var $notification \Dashboard\Model\Notification */
+
+$fields = $notification->getFields();
+
+?>
+
+<div class="text"></div>
+
+<?php if ($notification->isActionRequired()) : ?>
+    <?php if ($notification->isDone()) : ?>
+        <div class="text">
+            <p class="lede" id="notification-decision">
+                <?php if ($notification->isConfirmedAction()): ?>
+                    You have been assigned the role of '<?php echo $this->escapeHtml($fields['positionName']); ?>' at '<?php echo $this->escapeHtml($notification->getName()); ?> <?php echo $this->escapeHtml($fields['siteOrOrganisationId']); ?>'.
+                <?php else: ?>
+                    You have rejected the role of '<?php echo $this->escapeHtml($fields['positionName']); ?>' at '<?php echo $this->escapeHtml($notification->getName()); ?> <?php echo $this->escapeHtml($fields['siteOrOrganisationId']); ?>'.
+                <?php endif; ?>
+            </p>
+            <p id="notification-decision-datetime">
+                You <?php echo $this->escapeHtml($notification->getFriendlyAction()); ?> this association on  <?php echo DateTimeDisplayFormat::textDateTime($notification->getUpdatedOn()); ?>
+            </p>
+        </div>
+        <div class="text">
+            <p>Nomination sent <?php echo DateTimeDisplayFormat::textDateTime($notification->getCreatedOn()); ?></p>
+        </div>
+
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo $this->url(UserHomeController::ROUTE) ?>" id="link-back-to-home">Back to Home</a>
+            </li>
+        </ul>
+    <?php else: ?>
+        <div class="message">
+            <p id="notification-content">
+                <?php echo $this->escapeHtml($notification->getContent()); ?>
+            </p>
+        </div>
+
+        <div class="text">
+            <p>Nomination sent <?php echo DateTimeDisplayFormat::textDateTime($notification->getCreatedOn()); ?></p>
+        </div>
+
+        <form class="form-horizontal"
+              action="<?php echo $this->url(NotificationController::ROUTE_NOTIFICATION_ACTION); ?>"
+              method="POST">
+            <nav class="content-navigation">
+                <?php echo $this->csrfToken() ?>
+                <?php $notificationId = intval($notification->getId()); ?>
+                <?php echo $this->partial(
+                    'hiddenElement',
+                    [
+                        'name'  => 'notificationId',
+                        'value' => $notificationId
+                    ]
+                ); ?>
+                <?php echo $this->partial(
+                    'hiddenElement',
+                    [
+                        'name'  => 'url',
+                        'value' => $this->url(
+                                NotificationController::ROUTE_NOTIFICATION, ['notificationId' => $notificationId]
+                            )
+                    ]
+                ); ?>
+                <?php foreach ($notification->getActions() as $action => $label) : ?>
+                    <?php
+                    $params = [
+                        'value' => $action,
+                        'label' => $label,
+                        'name'  => 'action',
+                        'id'    => 'action-' . strtolower($action)
+                    ];
+                    if (strrpos($action, 'REJECT') > 0) {
+                        $params['cssClass'] = 'button-warning ';
+                    } else {
+                        $params['cssClass'] = 'button';
+                    }
+                    echo $this->partial('submitElement', $params); ?>
+                <?php endforeach; ?>
+            </nav>
+        </form>
+
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo $this->url(UserHomeController::ROUTE) ?>" id="link-back-to-home">Cancel and return to Home</a>
+            </li>
+        </ul>
+    <?php endif; ?>
+<?php endif; ?>

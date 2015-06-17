@@ -1,0 +1,71 @@
+{
+    "name": "dvsa/mot-api",
+    "description": "API for DVSA MOT modernisation",
+    "require": {
+        "zendframework/zendframework": "2.2.7",
+        "doctrine/doctrine-module": "0.8.0",
+        "doctrine/doctrine-orm-module": "0.8.0",
+        "dvsa/dvsa-document-module": "1.0.0",
+        "dvsa/feature-toggle": "1.0",
+        "dvsa/dvsa-openam-client" : "v1.5.0",
+        "dvsa/scripts": "dev-master",
+        "dvsa/dvsa-logger": "v1.0.2",
+        "dvsa/dvsa-application-logger": "v1.0.0",
+        "soflomo/purifier": "0.1.1",
+        "slot-purchase/backend-api": "2.3.*"
+    },
+    "autoload" : {
+        "psr-0" : {
+            "DvsaCommon" : "../mot-common-web-module/src",
+            "DvsaCommonTest" : "../mot-common-web-module/test"
+        },
+        "psr-4" : {
+            "Api\\": "src",
+            "Api\\Test\\": "test/src"
+        },
+        "classmap" : [
+            "../mot-common-web-module/Module.php"
+        ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.3.*",
+        "phpunit/phpunit-mock-objects": "2.3.*",
+        "phpunit/phpcov": "2.0.*"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "cd .. && ln -fs mot-api/vendor/dvsa/scripts/jenkins Jenkins_Scripts"
+        ]
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://artifacts.mot.npm"
+        },
+        {
+            "url": "git@gitlab.clb.npm:cpms/cpms-forms.git",
+            "type": "git"
+        },
+        {
+            "url": "git@gitlab.clb.npm:cpms/shared-reports.git",
+            "type": "git"
+        },
+        {
+            "url": "git@gitlab.clb.npm:cpms/cpms-client.git",
+            "type": "git"
+        },
+        {
+            "type": "git",
+            "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git"
+        },
+        {
+            "type": "git",
+            "url": "http://gitlab.clb.npm/mot/dvsa-application-logger.git"
+        }
+    ],
+    "config" : {
+      "github-oauth" : {
+        "github.com" : "c413da7d946413edba2adadd44beb7a5075a52aa"
+      }
+    }
+}

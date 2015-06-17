@@ -1,0 +1,75 @@
+.module-hero {
+    position: relative;
+    background-color: $hero-colour;
+    margin-top: -1px;
+    z-index: 3;
+    color: $white;
+    margin-bottom: 15px;
+
+    h1 {
+
+        small {
+            @include font-normal-weight;
+            color: $white;
+            font-size: 19px;
+        }
+
+    }
+    
+    a {
+        color: $white;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+    
+    .hero-content {
+        
+        p {
+            @include font-core19;
+        }
+    }
+    
+    .hero-actions {
+        padding-top: 15px;
+        overflow: auto;
+        background-color: #000000;
+        min-height: 230px;
+        margin-top: 30px;
+        border-left: 15px solid $hero-colour;
+        border-right: 15px solid $hero-colour;
+        
+        h2 {
+            @include font-core19;
+            margin-bottom: 1.5em;
+            margin-top: 0;
+        }
+        
+        li {
+            margin-bottom: 15px;
+        }
+       
+        .large-text {
+            @include font-bold80;
+            margin-bottom: 0;
+            margin-top: -20px;
+            line-height: 1;
+        }
+    }
+    
+    a.btn,
+    button {
+        display: block;
+        width: 100%;
+        max-width: 430px;
+        margin-bottom: 30px;
+        text-align: left;
+        
+        span {
+            position: absolute;
+            right: 1em;
+            top: .5em;
+        }
+    }
+}

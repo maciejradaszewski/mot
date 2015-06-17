@@ -1,0 +1,77 @@
+/*---------------------------
+type ahead stuff
+----------------------------*/
+
+.tt-dropdown-menu,
+.gist {
+    text-align: left;
+}
+.title {
+    margin: 20px 0 0 0;
+    font-size: 64px;
+}
+.example {
+    padding: 30px 0;
+}
+.example-name {
+    margin: 20px 0;
+    font-size: 32px;
+}
+.demo {
+    position: relative;
+    z-index: 1;
+    margin: 50px 0;
+}
+.twitter-typeahead,
+.typeahead,
+.tt-query,
+.tt-hint {
+    width: 100%;
+    @include font-core16();
+    outline: none;
+}
+.typeahead {
+    background-color: $white;
+}
+.tt-query {
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+.tt-hint {
+    color: #999;
+    padding-left: 11px;
+    padding-top: 4px;
+}
+.tt-dropdown-menu {
+    width: 100%;
+    margin-top: 0;
+    padding: 0;
+    background-color: $white;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 3px 5px rgba(0,0,0,.2);
+    -moz-box-shadow: 0 3px 5px rgba(0,0,0,.2);
+    box-shadow: 0 3px 5px rgba(0,0,0,.2);
+}
+.tt-suggestion {
+    padding: 3px 20px;
+    font-size: 16px;
+    line-height: 30px;
+}
+.tt-dropdown-menu .section-title {
+    font-weight: bold;
+    margin: 0;
+    padding: 2px 20px;
+    background: #eee;
+}
+.tt-suggestion.tt-is-under-cursor {
+    color: $white;
+    background-color: #007162;
+}
+.tt-suggestion p {
+    margin: 0;
+}

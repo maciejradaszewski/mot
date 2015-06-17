@@ -1,0 +1,140 @@
+/*
+    @name global-header
+
+    @status production
+    
+    @comments
+    Used to create primary header and navigation
+
+    Bootstrap dependency: None
+
+    @example
+    <header class="module-global-header">
+      <div class="container">
+        <a href="/" class="global-header_home-link"><img src="img/logo_mot2.gif"></a>
+        <p class="global-header_name">
+          Anthony Wright
+          <span class="global-header_user-id"> - WRI1975</span>
+          <span class="global-header_status is-active"><strong class="visually-hidden">Tester status: </strong>Active</span>
+        </p>
+        <p class="global-header_address">
+          Quickfit - Bristol South BR2 11GH
+          <a href="{example-link}">Change Site</a>
+        </p>
+        <nav class="global-header_navigation">
+          <ul>
+            <li><a href="{example-link}">Home</a></li>
+            <li><a href="{example-link}">Your Profile</a></li>
+            <li><a href="{example-link}">Sign out</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+*/
+
+.module-global-header {
+    $logo-offset: 90px;
+    padding: 15px 0;
+    border: 0;
+    background-color: $black;
+    color: $white;
+    z-index: 1;
+
+    > .container {
+        min-height: 65px;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+        font-weight: 300;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    p {
+        margin: 0;
+    }
+
+    .global-header_home-link {
+        position: absolute;
+    }
+
+    .global-header_name {
+        @include font-bold24;
+        letter-spacing: 1px;
+        padding-left: $logo-offset;
+    }
+
+    .global-header_status {
+        @include font-normal-weight;
+        @include border-radius(.25em, .25em, .25em, .25em);
+        font-size: 14px;
+        line-height: 1;
+        margin-left: 30px;
+        position: relative;
+        top: -5px;
+        color: $white;
+        padding: .2em .6em .3em;
+
+        &.is-active {
+            background-color: $pass-text;
+        }
+
+        &.is-inactive {
+            background-color: $fail-text;
+        }
+    }
+
+    .global-header_address {
+        padding-left: $logo-offset;
+        letter-spacing: 1px;
+        font-weight: 600;
+        
+        a {
+            font-size: 14px;
+            margin-left: 15px;
+        }
+    }
+
+    .global-header_navigation {
+        padding-left: $logo-offset;
+        overflow: auto;
+        
+        > ul {
+            list-style: none outside none;
+            padding: 0;
+        }
+
+        li {
+            margin: .25em 0;
+            float: left;
+        }
+
+        a {
+            display: inline-block;
+            margin-right: 30px;
+        }
+    }
+}
+
+/*
+    @name colour-flash
+    
+    @status production
+
+    @comments
+    DFT colour strip under header
+
+    Bootstrap dependency: None
+
+    @example
+    <div class="module-colour-flash"></div>
+*/
+
+.module-colour-flash {
+    background-color: $colour-flash-colour;
+    min-height: 10px;
+}

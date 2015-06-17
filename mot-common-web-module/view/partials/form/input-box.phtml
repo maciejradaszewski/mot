@@ -1,0 +1,55 @@
+<?php
+$id = isset($id) ? $id : '';
+$name = isset($name) ? $name : $id;
+$defaultValue = isset($defaultValue) ? $defaultValue : '';
+
+$label = isset($label) ? $label : '';
+$labelId = isset($labelId) ? $labelId : '';
+$labelCssClass = isset($this->labelLayout) ? $this->labelLayout : 'col-sm-4';
+
+$type = isset($type) ? $type : 'text';
+$cssClass = isset($cssClass) ? $cssClass : '';
+$value = isset($value) ? $value : '';
+$disabled = isset($disabled) ? $disabled : '';
+$pattern = isset($pattern) ? $pattern : '';
+$min = isset($min) ? $min : '';
+$maxLength = isset($maxLength) ? $maxLength : '';
+$max = isset($max) ? $max : '';
+$title = isset($title) ? $title : '';
+$elementId = isset($elementId) ? $elementId : '';
+
+$isRequired = (isset($required) && true === $this->$required);
+$isOptional = (isset($optional) && true === $this->$optional && !$isRequired && $label);
+?>
+
+<div class="form-group"
+    <?php echo $elementId ? 'id="'. $elementId .'"' : ''; ?>>
+    <label for="<?php echo $this->escapeHtmlAttr($id); ?>"
+           <?php echo ($labelId ? 'id="' . $this->escapeHtmlAttr($labelId) .'"' : ''); ?>
+           class="<?php echo $this->escapeHtml($labelCssClass); ?> control-label"><?php
+        echo $this->escapeHtml(
+            $label . ($isOptional ? $this->translate('(optional)') : '')
+        );
+        ?>
+    </label>
+
+    <div class="col-sm-6">
+        <?php echo $this->partial(
+            'inputElement',
+            [
+                'id'        => $id,
+                'type'      => $type,
+                'name'      => $name,
+                'cssClass'  => $cssClass,
+                'value'     => $value,
+                'disabled'  => $disabled,
+                'required'  => $isRequired,
+                'pattern'   => $pattern,
+                'min'       => $min,
+                'maxLength' => $maxLength,
+                'max'       => $max,
+                'title'     => $title
+            ]
+        ); ?>
+    </div>
+</div>

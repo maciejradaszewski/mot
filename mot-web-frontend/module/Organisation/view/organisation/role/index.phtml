@@ -1,0 +1,78 @@
+<?php
+use Organisation\Controller\RoleController;
+use Organisation\Controller\ViewController;
+
+?>
+<header class="content-header">
+    <h1>
+        <span class="content-header__type">
+           Authorised Examiner
+        </span>
+
+        <span class="content-header__title">
+            Search for a user
+        </span>
+    </h1>
+</header>
+
+<?php if ($userNotFound) : ?>
+    <div id="invalid-user-message" class="message--failure">
+        <p>We could not find the user <strong><?php echo $this->escapeHtml($personId); ?></strong>.</p>
+    </div>
+<?php endif; ?>
+
+<?php echo $this->partial('errorMessages', array('getFromFlash' => true, 'isShowHidden' => true)); ?>
+
+<div class="text">
+    <p class="lede">This process allows you to assign a role to an existing user.</p>
+</div>
+<form action="<?php echo $this->url(
+    RoleController::ROUTE_ROLES,
+    [
+        'id' => $id,
+    ]
+); ?>" method="POST">
+    <fieldset>
+        <legend class="form-title heading-large" id="">Username</legend>
+        <?php echo $this->csrfToken() ?>
+        <?php echo $this->partial(
+            'inputBox',
+            [
+                'id' => 'userSearchBox',
+                'required' => true,
+                'label' => 'What is the username of the person you would like to assign a role?',
+                'labelLayout' => 'form-label',
+                'name' => 'userSearchBox',
+                'class' => 'form-control',
+                'maxLength' => 100,
+            ]
+        );
+        ?>
+    </fieldset>
+
+    <nav class="content-navigation">
+        <?php
+        echo $this->partial(
+            'submitElement',
+            [
+                'label' => 'Search',
+                'id' => 'search-button',
+                'name' => 'action',
+                'value' => 'search',
+                'cssClass' => 'button'
+            ]
+        );
+        ?>
+
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo $this->url(
+                    ViewController::ROUTE_INDEX,
+                    [
+                        'id' => $id,
+                    ]
+                ); ?>">Cancel and return to <?php echo $this->escapeHtml($organisation->getName()); ?></a>
+            </li>
+        </ul>
+    </nav>
+</form>

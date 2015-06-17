@@ -1,0 +1,24 @@
+<?php
+
+$label = (string)$this->label;
+if (empty($label)) {
+    return;
+}
+
+$forId = (string)$this->forId;
+$id = (string)$this->id;
+$cssClass = (string)$this->cssClass;
+$isRequire = (true === $this->isRequire);
+$isOptional = (true === $this->isOptional && !$isRequire && $label);
+?>
+
+<label <?php echo
+    ($forId ? ' for="' . $this->escapeHtmlAttr($forId) . '"' : '') .
+    ($id ? ' id="' . $this->escapeHtmlAttr($id) . '"' : '') .
+    ($cssClass ? ' class="' . $this->escapeHtmlAttr($cssClass) . '"' : '');
+    ?>><?php
+    echo $this->escapeHtml(
+        $label . ($isOptional ? '(optional)' : '')
+    );
+    ?>
+</label>

@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @var $vin
+ */
+?>
+
+<?php $this->placeholder('dashboard-section-header-caption')->captureStart('SET') ?>
+<h3>VIN</h3>
+<?php $this->placeholder('dashboard-section-header-caption')->captureEnd() ?>
+
+<?php $this->placeholder('dashboard-section-header-value')->captureStart('SET') ?>
+    <h3><strong><?php echo $vin ?></strong></h3>
+<?php $this->placeholder('dashboard-section-header-value')->captureEnd() ?>
+
+<?php $this->placeholder('dashboard-section-body')->captureStart('SET') ?>
+<div class="clearfix">
+    <div class="form-group">
+        <?php echo $this->partial(
+            "inputElement", [
+                "id"        => "input-vin",
+                "name"      => "vin",
+                "value"     => $vin,
+                "maxLength" => 17
+            ]
+        ); ?>
+    </div>
+</div>
+<?php $this->placeholder('dashboard-section-body')->captureEnd() ?>
+<?php echo $this->partial(
+    'dvsa-mot-test/dashboard/generic-section',
+    [
+        'sectionId'    => 'vin',
+        'actionName'   => 'updateVin',
+    ]
+);

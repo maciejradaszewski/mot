@@ -1,0 +1,74 @@
+<h3>Business address</h3>
+
+<h4>Registered office details</h4>
+
+<?php echo $this->partial(
+    'authorisedExaminerAddressAndContactDetailsFragment',
+    [
+        'form' => $form
+    ]
+);
+?>
+
+<h4>Correspondence details</h4>
+
+<div class="col-lg-offset-4 col-lg-8">
+    <div class="checkbox">
+        <?php echo $this->partial(
+            'hiddenElement',
+            [
+                'name'  => 'isCorrespondenceAddressSame',
+                'id'    => 'correspondenceAddressSameNo',
+                'value' => 'No',
+            ]
+        );
+
+        echo $this->partial(
+            'checkboxElement',
+            [
+                'id'        => 'correspondenceAddressSameYes',
+                'value'     => 'Yes',
+                'name'      => 'isCorrespondenceAddressSame',
+                'label'     => 'Same as registered office',
+                'isChecked' => 'Yes' === $form->getIsCorrespondenceAddressSame(),
+            ]
+        );
+        ?>
+    </div>
+</div>
+
+<fieldset id="correspondence-details">
+    <?php echo $this->partial(
+        'authorisedExaminerAddressAndContactDetailsFragment',
+        [
+            'form'   => $form,
+            'idPrefix' => 'correspondence'
+        ]
+    ); ?>
+</fieldset>
+<script type="text/javascript">
+    $(document).ready(function () {
+        function checkCorrespondence() {
+            var details = $('#correspondence-details');
+            if ($('#correspondenceAddressSameYes').prop('checked')) {
+                var detailsInputs = $('#correspondence-details :input');
+                detailsInputs.attr('disabled', true);
+                detailsInputs.val('');
+                details.fadeOut();
+            } else {
+                $('#correspondence-details :input').removeAttr("disabled");
+                details.fadeIn();
+            }
+        };
+        checkCorrespondence();
+        $('#correspondenceAddressSameYes').change(checkCorrespondence);
+
+        $('#postcode, #correspondencePostcode').change(function () {
+            var result = validator.checkPostCode(this.value);
+
+            if (result) {
+                $(this).val(result);
+            }
+        });
+    });
+</script>

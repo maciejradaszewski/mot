@@ -1,0 +1,33 @@
+<?php
+    $messages = array();
+    if (isset($errorMessages) && count($errorMessages)) {
+        $messages = $errorMessages;
+    }
+    $flashMessages = $this->layout()->flashMessenger->getErrorMessages();
+    if (isset($getFromFlash) && $getFromFlash && count($flashMessages)) {
+        $messages = array_merge($messages, $flashMessages);
+    }
+    $messages = array_unique(array_filter($messages));
+?>
+<?php if (count($messages)) : ?>
+<div id="validation-summary-id" class="validation-summary">
+    <?php if (isset($errorTitle) && $errorTitle) : ?>
+        <h2><span class="glyphicon glyphicon-exclamation-sign"></span> <?php echo $this->escapeHtml($errorTitle) ?></h2>
+    <?php endif ?>
+    <?php if (count($messages) > 0) : ?>
+        <ol>
+            <?php foreach ($messages as $message): ?>
+                <li>
+                    <?php echo $this->escapeHtml($message) ?>
+                </li>
+            <?php endforeach; ?>
+        </ol>
+    <?php endif ?>
+</div>
+<?php endif ; ?>
+
+<div id="validationBox" style="display: none;">
+    <div id="validationErrors" class="validation-summary">
+        <ol></ol>
+    </div>
+</div>

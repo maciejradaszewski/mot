@@ -1,0 +1,11 @@
+<ul class="content-navigation__secondary">
+    <?php foreach ($navigation as $name => $link): ?>
+        <li>
+            <?php if (!empty($link)): ?>
+                <a id="navigation-link-<?php md5($link) ?>" href="<?php echo $this->escapeHtmlAttr($link); ?>"><?php echo $this->escapeHtml($name); ?></a>
+            <?php else: ?>
+                <?php echo $this->escapeHtml($name); ?>
+            <?php endif; ?>
+        </li>
+    <?php endforeach; ?>
+</ul>

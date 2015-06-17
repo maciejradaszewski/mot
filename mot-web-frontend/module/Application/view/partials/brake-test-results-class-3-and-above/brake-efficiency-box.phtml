@@ -1,0 +1,23 @@
+<?php
+/**
+ * @var string $id
+ * @var int $value
+ * @var string $label
+ */
+?>
+<fieldset>
+    <legend>Efficiency %</legend>
+    <?php echo $this->partial(
+        'partial/forms/inputBox.phtml', [
+            'id'        => $id,
+            'label'     => $label,
+            'value'     => ($this->value ?: ''),
+            'pattern'   => '\d{1,4}',
+            'type'      => 'number',
+            'min'       => 0,
+            'max'       => 9999,
+            'maxLength' => 4,
+            'required'  => true,
+        ]
+    ); ?>
+</fieldset>

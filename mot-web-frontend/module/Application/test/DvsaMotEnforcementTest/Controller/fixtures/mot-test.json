@@ -1,0 +1,252 @@
+{
+    "data": {
+        "number": "1234567892001",
+        "registration": "FT04CDE",
+        "vin": "1FT1DVLAEXAMPLEC001",
+        "hasRegistration": true,
+        "startedDate": "2014-07-21T09:00:00Z",
+        "completedDate": "2014-07-21T09:00:00Z",
+        "issuedDate": "2014-07-21T09:00:00Z",
+        "expiryDate": null,
+        "status": "FAILED",
+        "reasonForTerminationComment": null,
+        "complaintRef": null,
+        "isPrivate": 0,
+        "document": null,
+        "onePersonTest": null,
+        "onePersonReInspection": null,
+        "createdBy": null,
+        "createdOn": null,
+        "lastUpdatedBy": null,
+        "lastUpdatedOn": null,
+        "version": 1,
+        "motTestNumber": 2001,
+        "tester": {
+            "username": "tester1",
+            "userId": 5,
+            "displayName": "Bob Thomas Arctor"
+        },
+        "vehicle": {
+            "id": 2001,
+            "registration": "FT04CDE",
+            "firstRegistrationDate": null,
+            "manufactureDate": null,
+            "vin": "1FT1DVLAEXAMPLEC001",
+            "year": 2004,
+            "firstUsedDate": "2004-01-02",
+            "cylinderCapacity": 1700,
+            "seatingCapacity": null,
+            "weight": null,
+            "weightSource": null,
+            "chassisNumber": null,
+            "noOfSeatBelts":  0,
+            "seatBeltsLastChecked": null,
+            "amendedOn": "2014-10-21",
+            "modelDetail": {
+                "id":  1,
+                "name":  "Standard",
+                "code":  null,
+                "make":  {
+                    "id":  "Renault",
+                    "code":  "Renault",
+                    "name":  "Renault",
+                    "_class":  "DvsaCommon\\Dto\\Vehicle\\MakeDto"
+                },
+                "model":  {
+                    "id":  "Clio",
+                    "code": null,
+                    "name":  "Clio",
+                    "make": null,
+                    "_class":  "DvsaCommon\\Dto\\Vehicle\\ModelDto"
+                },
+                "_class": "DvsaCommon\\Dto\\Vehicle\\ModelDetailDto"
+            },
+            "countryOfRegistration": null,
+            "vehicleClass": {
+                "id": 4,
+                "name": "4",
+                "code": 4,
+                "group": null,
+                "_class": "DvsaCommon\\Dto\\VehicleClassification\\VehicleClassDto"
+            },
+            "colour": {
+                "id": "L",
+                "name": "Blue",
+                "_class": "DvsaCommon\\Dto\\Common\\ColourDto"
+            },
+            "colourSecondary": {
+                "id": "W",
+                "name": "White",
+                "_class": "DvsaCommon\\Dto\\Common\\ColourDto"
+            },
+            "fuelType": {
+                "id": "PE",
+                "code": "PE",
+                "name": "Petrol",
+                "_class": "DvsaCommon\\Dto\\Vehicle\\VehicleParamDto"
+            },
+            "bodyType": {
+                "id": 1,
+                "code": 1,
+                "name": "Hatchback",
+                "_class": "DvsaCommon\\Dto\\Vehicle\\VehicleParamDto"
+            },
+            "transmissionType": {
+                "id": 1,
+                "code": 1,
+                "name": "Automatic",
+                "_class": "DvsaCommon\\Dto\\Vehicle\\VehicleParamDto"
+            },
+            "isDvla": false,
+            "isNewAtFirstReg": false,
+            "_class": "DvsaCommon\\Dto\\Vehicle\\VehicleDto"
+        },
+        "vehicleTestingStation": {
+            "name": "FT Garage 1",
+            "siteNumber": "V1261",
+            "dualLanguage": false,
+            "scottishBankHoliday": false,
+            "latitude": null,
+            "longitude": null,
+            "status": {},
+            "type": 1,
+            "createdBy": 0,
+            "createdOn": {
+                "date": "-0001-11-30 00:00:00.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            },
+            "lastUpdatedBy": null,
+            "lastUpdatedOn": null,
+            "version": 1,
+            "id": 2001,
+            "address": "11 Somewhere St, BS8 2NT, Bristol",
+            "contacts": {
+                "0": {}
+            },
+            "lastSiteAssessment": null,
+            "organisation": {
+                "__initializer__": {},
+                "__cloner__": {},
+                "__isInitialized__": true
+            },
+            "positions": {},
+            "facilities": {},
+            "comments": {},
+            "tester": {},
+            "authorisedExaminer": {
+                "id": 2001
+            }
+        },
+        "primaryColour": {
+            "id": "L",
+            "name": "Blue"
+        },
+        "secondaryColour": null,
+        "fuelType": {
+            "id": "PE",
+            "name": "Petrol"
+        },
+        "vehicleClass": {
+            "name": "4",
+            "code": "4",
+            "id": 4
+        },
+        "make": "Renault",
+        "model": "Clio",
+        "countryOfRegistration": "Not Known",
+        "testType": "NT",
+        "motTestReasonForCancel": null,
+        "fullPartialRetest": {
+            "id": 1,
+            "description": "Full",
+            "position": 1
+        },
+        "partialReinspectionComment": null,
+        "itemsNotTestedComment": null,
+        "odometerReading": {
+            "value": 20000,
+            "unit": "mi",
+            "resultType": "OK"
+        },
+        "reasonsForRejection": {
+            "FAIL": [
+                {
+                    "id": 2001,
+                    "motTestId": 2001,
+                    "rfrId": 754,
+                    "name": "Rear Stop lamp",
+                    "failureText": "adversely affected by the operation of another lamp",
+                    "inspectionManualReference": "1.2.1f",
+                    "type": "FAIL",
+                    "locationLateral": "centre",
+                    "locationLongitudinal": "front",
+                    "locationVertical": "top",
+                    "comment": "n/f+o/f",
+                    "failureDangerous": false,
+                    "generated": false,
+                    "customDescription": null,
+                    "onOriginalTest": false
+                }
+            ]
+        },
+        "testerBrakePerformanceNotTested": false,
+        "brakeTestResult": {
+            "id": 2001,
+            "serviceBrake1TestType": "roller",
+            "serviceBrake2TestType": null,
+            "parkingBrakeTestType": "roller",
+            "parkingBrakeEffortNearside": 400,
+            "parkingBrakeEffortOffside": 500,
+            "parkingBrakeEffortSecondaryNearside": null,
+            "parkingBrakeEffortSecondaryOffside": null,
+            "parkingBrakeEffortSingle": null,
+            "parkingBrakeLockNearside": false,
+            "parkingBrakeLockOffside": false,
+            "parkingBrakeLockSecondaryNearside": null,
+            "parkingBrakeLockSecondaryOffside": null,
+            "isSingleInFront": null,
+            "parkingBrakeLockSingle": null,
+            "serviceBrakeIsSingleLine": false,
+            "isCommercialVehicle": null,
+            "parkingBrakeImbalance": null,
+            "parkingBrakeSecondaryImbalance": null,
+            "parkingBrakeImbalancePass": true,
+            "vehicleWeight": 2000,
+            "weightType": null,
+            "weightIsUnladen": null,
+            "serviceBrake1Efficiency": 55,
+            "serviceBrake2Efficiency": null,
+            "parkingBrakeEfficiency": 45,
+            "serviceBrake1EfficiencyPass": true,
+            "serviceBrake2EfficiencyPass": null,
+            "parkingBrakeEfficiencyPass": true,
+            "generalPass": true,
+            "serviceBrake1Data": {
+                "id": 2001,
+                "effortNearsideAxle1": 200,
+                "effortOffsideAxle1": 250,
+                "effortNearsideAxle2": 300,
+                "effortOffsideAxle2": 350,
+                "effortNearsideAxle3": null,
+                "effortOffsideAxle3": null,
+                "effortSingle": null,
+                "lockNearsideAxle1": false,
+                "lockOffsideAxle1": false,
+                "lockNearsideAxle2": true,
+                "lockOffsideAxle2": false,
+                "lockNearsideAxle3": null,
+                "lockOffsideAxle3": null,
+                "lockSingle": null,
+                "imbalanceAxle1": 20,
+                "imbalanceAxle2": 18,
+                "imbalanceAxle3": null,
+                "imbalancePass": true,
+                "lockPercent": 25
+            },
+            "serviceBrake2Data": null,
+            "parkingBrakeLockPercent": 0
+        },
+        "brakeTestCount": 1
+    }
+}

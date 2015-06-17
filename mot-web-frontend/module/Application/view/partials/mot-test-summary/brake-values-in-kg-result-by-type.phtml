@@ -1,0 +1,125 @@
+<?php
+
+use DvsaCommon\Utility\ArrayUtils;
+
+$brakeResult = $this->brakeResult ? $this->brakeResult : false;
+if (!$brakeResult) {
+    return;
+}
+
+$brakeData = ArrayUtils::tryGet($brakeResult, $this->dataKey . 'Data');
+if (!$brakeData) {
+    return;
+}
+
+//  --  define type of brakes (service or parking)     --
+$brakeType = $this->brakeType;
+$isServiceBrake = ($brakeType == BRAKE_TYPE_SERVICE);
+$isParkingBrake = ($brakeType == BRAKE_TYPE_PARKING);
+
+//  --  define brake test type (roller, place or other)     --
+$brakeTestType = ArrayUtils::tryGet($brakeResult, $this->dataKey.'TestType');
+$canLock = ($brakeTestType == \DvsaCommon\Enum\BrakeTestTypeCode::ROLLER);
+
+//  --
+$body = [];
+$isCol2 = false;
+
+
+//  --  define data of single wheel --
+$isSingleInFront = ArrayUtils::tryGet($brakeResult, 'isSingleInFront') === true;
+$effortSingle = ArrayUtils::tryGet($brakeData, 'effortSingle');
+
+$rowSingle = null;
+if ($effortSingle) {
+    $rowSingle = $this->partial(
+        'partials/mot-test-summary/brake-values-in-kg-result-by-type-row',
+        [
+            'label1'  => 'Single',
+            'val1'    => $effortSingle,
+            'isLock1' => ArrayUtils::tryGet($brakeData, 'lockSingle'),
+            'canLock' => $canLock,
+        ]
+    );
+}
+
+//  --  draw data of single wheel at front    --
+if ($isSingleInFront && $rowSingle) {
+    $body[] = $rowSingle;
+}
+
+//  --  draw data of other axles    --
+for ($i = 1; $i <= 3; $i++) {
+    $var1 = ArrayUtils::tryGet($brakeData, 'effortNearsideAxle' . $i);
+    $val2 = ArrayUtils::tryGet($brakeData, 'effortOffsideAxle' . $i);
+
+    if (!$var1) {
+        continue;
+    }
+
+    $isCol2 = $isCol2 || isset($val2);
+
+    $body[] = $this->partial(
+        'partials/mot-test-summary/brake-values-in-kg-result-by-type-row',
+        [
+            'index'     => $i,
+            'val1'      => $var1,
+            'isLock1'   => ArrayUtils::tryGet($brakeData, 'lockNearsideAxle' . $i),
+            'val2'      => $val2,
+            'isLock2'   => ArrayUtils::tryGet($brakeData, 'lockOffsideAxle' . $i),
+            'imbalance' => $isParkingBrake ? null : intval(ArrayUtils::tryGet($brakeData, 'imbalanceAxle' . $i)),
+            'canLock'   => $canLock,
+        ]
+    );
+}
+
+//  --  draw data of single weel at rear    --
+if (!$isSingleInFront  && $rowSingle) {
+    $body[] = $rowSingle;
+}
+?>
+
+<?php if (!empty($body)) : ?>
+    <div class="row">
+        <span class="divider"> </span>
+
+        <div class="col-sm-3">
+            <p class="primary-item">
+                <?php echo $this->escapeHtml($this->label); ?>
+            </p>
+        </div>
+
+        <div class="col-sm-9">
+            <table style="margin-top: 10px; width: 100%">
+                <thead>
+                    <tr>
+                        <th style="width:20%;">&nbsp;</th>
+                        <th style="width:10%;">&nbsp;</th>
+                        <th style="width:10%" scope="col">
+                            <?php echo ($canLock ? 'Lock' : ''); ?>
+                        </th>
+
+                        <?php if ($isCol2) : ?>
+                            <th style="width:20%;">&nbsp;</th>
+                            <th style="width:10%;">&nbsp;</th>
+                            <th style="width:10%;" scope="col">
+                                <?php echo ($canLock ? 'Lock' : ''); ?>
+                            </th>
+
+                            <th style="width:20%;" scope="col" style="width: 100px">
+                                <?php
+                                echo ($isServiceBrake ? 'Imbalance' : '&nbsp;');
+                                ?>
+                            </th>
+                        <?php else : ?>
+                            <th colspan="4" style="width:60%;"></th>
+                        <?php endif; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php echo join('', $body); ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<?php endif; ?>

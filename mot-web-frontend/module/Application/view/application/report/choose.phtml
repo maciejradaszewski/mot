@@ -1,0 +1,31 @@
+<div class="page-header">
+    <h1>Download this report</h1>
+</div>
+<div class="full-width">
+    <form action="" method="post">
+        <fieldset>
+            <fieldset>
+                <legend class="legend">Select format</legend>
+                <div class="field inline">
+                    <label>
+                        <input type="radio" name="format" value="pdf" id="pdfRadio"/> PDF
+                    </label>
+                </div>
+                <div class="field inline">
+                    <label>
+                        <input type="radio" name="format" value="csv" id="csvRadio"/> CSV
+                    </label>
+                </div>
+            </<fieldset>
+        </fieldset>
+        <div class="actions-container">
+            <input type="hidden" name="route" value="<?php echo $this->escapeHtmlAttr($route); ?>" />
+            <?php foreach ($routeParameters AS $name => $value) : ?>
+            <input type="hidden" name="routeParameters[<?php echo $this->escapeHtmlAttr($name); ?>]" value="<?php echo $this->escapeHtmlAttr($value); ?>" />
+            <?php endforeach; ?>
+            <?php echo $this->csrfToken(); ?>
+            <input class="btn btn-primary btn-large" type="submit" value="Download" id="download"/>
+            <a href="<?php echo $this->url($route, $routeParameters); ?>" class="btn btn-link" id="backToSlotUsage">Return to <?php echo $this->escapeHtml($returnTo); ?></a>
+        </div>
+    </form>
+</div>

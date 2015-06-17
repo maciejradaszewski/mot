@@ -1,0 +1,1 @@
+See the BaseValidatorTest class for a howto on how the fixtures and validators work.

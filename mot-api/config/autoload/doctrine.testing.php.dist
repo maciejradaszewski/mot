@@ -1,0 +1,34 @@
+<?php
+
+return array(
+  'doctrine' => array(
+    'connection' => array(
+      'orm_default' => array(
+        'driverClass' =>'Doctrine\DBAL\Driver\PDOMySql\Driver',
+        'params' => array(
+          'host'     => 'localhost',
+          'port'     => '3306',
+          'user'     => 'motdbuser',
+          'password' => 'password',
+          'dbname'   => 'mot',
+          'charset' => 'utf8',
+          'driverOptions' => array(
+            'PDO::ATTR_PERSISTENT' => true,
+          ),
+        ),
+      ),
+    ),
+    'configuration' => array(
+      'orm_default' => array(
+        'result_cache'     => 'apc',
+        'metadata_cache'   => 'apc',
+        'query_cache'      => 'apc',
+        'hydration_cache'  => 'apc',
+//        'sql_logger'       => 'Application\SqlLogger',
+        'generate_proxies' => false,
+        'proxy_dir' => 'data/DoctrineORMModule/Proxy',
+        'proxy_namespace' => 'DoctrineORMModule\Proxy'
+      ),        
+    ),
+  ),
+);

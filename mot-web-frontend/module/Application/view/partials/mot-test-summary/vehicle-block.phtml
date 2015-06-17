@@ -1,0 +1,89 @@
+<?php
+
+use DvsaCommon\Enum\ColourCode;
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaMotTest\Model\VehicleClass;
+
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motTest */
+$motTest = $this->motTest;
+/** @var \DvsaCommon\Dto\Vehicle\VehicleDto $vehicle */
+$vehicle = $this->vehicle;
+
+$hasRegistration = $motTest->getHasRegistration();
+
+$motTestVehicleClass = new VehicleClass($motTest->getVehicleClass());
+
+?>
+
+<div class="row vehicle-summary" id="vehicleSummary">
+    <div class="col-sm-4">
+        <h2>Vehicle summary</h2>
+    </div>
+
+    <div class="col-sm-4">
+        <?php echo $this->partial(
+            'dldtdd', [
+                'cssClass' => 'dl-standard',
+                'items'    => [
+                    [
+                        'label' => 'Registration number',
+                        'value' => $hasRegistration
+                                ? strtoupper($motTest->getRegistration())
+                                : 'Not Displayed',
+                        'id'    => 'registrationNumber',
+                    ],
+                    ['VIN/Chassis number', strtoupper($motTest->getVin()), 'id' => 'vinChassisNumber'],
+                    ['Test Class', $motTestVehicleClass->getCode(), 'id' => 'testClass'],
+                    [
+                        'label' => 'Approx. First Use',
+                        'value' => !empty($vehicle->getFirstUsedDate())
+                                ? DateTimeDisplayFormat::textDate($vehicle->getFirstUsedDate())
+                                : null,
+                        'id'    => 'aproxFirstUse',
+                    ],
+                ],
+            ]
+        );
+        ?>
+    </div>
+
+    <div class="col-sm-4">
+        <?php
+        /** @var \DvsaCommon\Dto\Common\ColourDto $primaryColour */
+        $primaryColour = $motTest->getPrimaryColour();
+        $colour = $primaryColour->getName();
+
+        /** @var \DvsaCommon\Dto\Common\ColourDto $secondaryColour */
+        $secondaryColour = $motTest->getSecondaryColour();
+        $secondaryColourName = $secondaryColour->getName();
+
+        if ($secondaryColour->getCode() !== ColourCode::NOT_STATED && !empty($secondaryColourName)) {
+            $colour .= ' and ' . $secondaryColourName;
+        }
+
+        $make = $motTest->getMake();
+        $model = $motTest->getModel();
+        /** @var \DvsaCommon\Dto\Vehicle\FuelTypeDto $fuelType */
+        $fuelType = $motTest->getFuelType();
+
+        echo $this->partial(
+            'dldtdd', [
+                'cssClass' => 'dl-standard',
+                'items'    => [
+                    ['Make', $make ? $make : '', 'id' => 'make'],
+                    ['Model', $model, 'id' => 'model'],
+                    ['Colour', $colour, 'id' => 'colour'],
+                    [
+                        'label' => 'Fuel type',
+                        'value' => !empty($fuelType)
+                                ? $fuelType->getName()
+                                : null,
+                        'id'    => 'fuel-type',
+                    ],
+                ],
+            ]
+        );
+        ?>
+    </div>
+    <span class="divider"></span>
+</div>

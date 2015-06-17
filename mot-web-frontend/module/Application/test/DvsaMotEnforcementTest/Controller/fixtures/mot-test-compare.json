@@ -1,0 +1,30 @@
+{
+    "data": {
+        "6.1.C.1": [
+            {
+                "id": 2097,
+                "motTestId": 2037,
+                "rfrId": 8455,
+                "name": "Body condition",
+                "failureText": "has a sharp edge caused by corrosion",
+                "inspectionManualReference": "6.1.C.1",
+                "type": "FAIL",
+                "locationLateral": "nearside",
+                "locationLongitudinal": "front",
+                "locationVertical": "lower",
+                "comment": "why has this happened",
+                "failureDangerous": true,
+                "generated": false,
+                "customDescription": null,
+                "onOriginalTest": false,
+                "testType": {
+                    "motTestType": "ER",
+                    "description": "Targeted Reinspection",
+                    "position": 4,
+                    "roles": {}
+                }
+            }
+        ],
+        "error": false
+    }
+}

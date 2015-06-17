@@ -1,0 +1,14 @@
+services:
+    dvsa.test_support_helper:
+        class: Dvsa\Mot\Behat\Support\Helper\TestSupportHelper
+        arguments:
+            - @dvsa.test_support_service_manager
+
+    dvsa.test_support_service_manager:
+        class: Zend\ServiceManager\ServiceManager
+        public: false
+        factory: ["@dvsa.test_support_service_manager.factory", getServiceManager]
+
+    dvsa.test_support_service_manager.factory:
+        class: Dvsa\Mot\Behat\Support\Service\ServiceManager
+        public: false

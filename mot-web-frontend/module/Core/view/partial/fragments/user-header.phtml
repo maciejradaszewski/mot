@@ -1,0 +1,24 @@
+<?php
+use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\Role;
+use DvsaMotTest\Controller\LocationSelectController;
+?>
+<?php if ($this->authorisationHelper()->hasRole(Role::USER)): ?>
+    <span class="header-user__name">
+    <?php echo $this->identityHelper()->getDisplayName(); ?>
+    </span>
+<?php endif; ?>
+
+<?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::MOT_TEST_READ)): ?>
+    <?php
+    /** @var $vts \DvsaAuthentication\Model\VehicleTestingStation */
+    $vts = $this->identityHelper()->getCurrentVts(); ?>
+    <?php if (null !== $vts): ?>
+    <span id="current-site" class="header-user__address">
+        <?php echo $this->escapeHtml($vts->getName()); ?> -
+        <?php echo $this->escapeHtml($vts->getAddress()); ?>
+        <?php echo $this->locationSelector() ?>
+    </span>
+    <?php endif; ?>
+<?php endif;
+

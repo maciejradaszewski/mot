@@ -1,0 +1,5 @@
+# Special Notices Broadcast job will execute every day at 1 am.
+# Tester expiry job will execute every day at 2 am.
+# TODO: Implement OpenAM authentication.
+0 01 * * * curl --header 'Content-Type:application/json' --data '{ }' -X POST -D /tmp/sn_cron_job_header_replies.txt --stderr - --output /tmp/sn_cron_job_output.txt --header "Authorization: Bearer sn-cron-job-token" http://mot-api/special-notice-broadcast?
+0 02 * * * curl --header 'Content-Type:application/json' --data '{ }' -X POST -D /tmp/te_cron_job_header_replies.txt --stderr - --output /tmp/te_cron_job_output.txt --header "Authorization: Bearer tester-expiry-job-token" http://mot-api/tester-expiry?

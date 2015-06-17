@@ -1,0 +1,185 @@
+<?php
+
+use DvsaCommon\Enum\VehicleClassCode;
+use DvsaCommon\Utility\ArrayUtils;
+
+/** @var \DvsaCommon\Dto\Vehicle\VehicleDto $vehicle */
+$vehicle = $this->vehicle;
+$brakeResult = $this->brakeResult;
+
+if (empty($brakeResult)) {
+    return;
+}
+
+$vehicleClasses3plus = [VehicleClassCode::CLASS_3, VehicleClassCode::CLASS_4, VehicleClassCode::CLASS_5, VehicleClassCode::CLASS_7];
+
+$hasTwoServiceBrakes = ArrayUtils::tryGet($brakeResult, 'serviceBrake2Efficiency', false);
+
+$isSingleInFront = ArrayUtils::tryGet($brakeResult, 'isSingleInFront');
+?>
+
+<div class="row">
+
+<?php
+$vehicleClass = $vehicle->getClassCode();
+
+if (in_array($vehicleClass, [VehicleClassCode::CLASS_1, VehicleClassCode::CLASS_2])) :
+    for ($brakeNr = 1; $brakeNr <= 2; $brakeNr++) {
+        $key = 'control' . $brakeNr;
+
+        echo $this->partial(
+            'brakeTestResult',
+            [
+                'title'       => 'Service brake control ' . $brakeNr,
+                'idPrefix'    => 'control-' . $brakeNr,
+                'columnTitle' => 'Service brake item',
+                'rows'        => [
+                    [
+                        'name'  => 'Brake efficiency',
+                        'value' => ArrayUtils::tryGet($brakeResult, $key . 'BrakeEfficiency'),
+                    ],
+                    [
+                        'name'  => 'Brake lock',
+                        'value' => ArrayUtils::tryGet($brakeResult, $key . 'LockPercent'),
+                    ],
+                ],
+                'testPass'    => ArrayUtils::tryGet($brakeResult, $key . 'EfficiencyPass'),
+                'resultText'  => 'Service brake control ' . $brakeNr . ' test',
+            ]
+        );
+    }
+
+elseif (in_array($vehicleClass, $vehicleClasses3plus)) :
+    $imbalanceData = [];
+
+    for ($brakeNr = 1; $brakeNr <= 2; $brakeNr++) {
+        //  --  draw service brake result   --
+        $key = 'serviceBrake' . $brakeNr;
+
+        $efficiency = ArrayUtils::tryGet($brakeResult, $key . 'Efficiency');
+        $brakeData = ArrayUtils::tryGet($brakeResult, $key. 'Data');
+
+        if ($efficiency !== null) {
+            $title = 'Service brake' . ($brakeNr > 1 ? ' ' . $brakeNr : '');
+
+            echo $this->partial(
+                'brakeTestResult',
+                [
+                    'title'       => $title,
+                    'idPrefix'    => strtolower(str_replace(' ', '-', $title)),
+                    'columnTitle' => $title . ' item',
+                    'rows'        => [
+                        [
+                            'name'  => 'Brake efficiency',
+                            'value' => $efficiency,
+                        ],
+                        [
+                            'name'  => 'Brake lock',
+                            'value' => ArrayUtils::tryGet($brakeData, 'lockPercent'),
+                        ],
+                    ],
+                    'testPass'    => ArrayUtils::tryGet($brakeResult, $key . 'EfficiencyPass'),
+                    'resultText'  => 'Service brake test',
+                ]
+            );
+        }
+
+        if ($brakeData !== null) {
+            //  --  collect imbalance data  --
+            $brakeName = ($hasTwoServiceBrakes ? 'Brake' . ' ' . $brakeNr : '');
+
+            for ($axleNr = 1; $axleNr <= 3; $axleNr++) {
+                $isData = ArrayUtils::tryGet($brakeData, 'effortNearsideAxle' . $axleNr) !== null;
+
+                $isOneWheelAxle = ($isSingleInFront === true && $axleNr === 1)
+                    || ($isSingleInFront === false && $axleNr === 2);
+
+                if ($isData && !$isOneWheelAxle) {
+                    $imbalanceData[] = [
+                        'name'  => trim($brakeName . ' ' . 'Axle') . ' ' . $axleNr,
+                        'value' => ArrayUtils::tryGet($brakeData, 'imbalanceAxle' . $axleNr),
+                    ];
+                }
+            }
+        }
+    }
+
+    //  --  imbalance:parking   --
+    $showParkingBrakeImbalance = ArrayUtils::tryGet($brakeResult, 'serviceBrakeIsSingleLine', false);
+
+    $showAxleTwoParkingBrakeImbalance = $showParkingBrakeImbalance
+        && !empty($brakeResult['parkingBrakeSecondaryImbalance']);
+
+    if ($showParkingBrakeImbalance) {
+        $imbalanceData [] = [
+            'name'  => $showAxleTwoParkingBrakeImbalance ? 'Parking brake axle 1' : 'Parking brake',
+            'value' => ArrayUtils::tryGet($brakeResult, 'parkingBrakeImbalance'),
+        ];
+    }
+
+    if ($showAxleTwoParkingBrakeImbalance) {
+        $imbalanceData [] = [
+            'name'  => 'Parking brake axle 2',
+            'value' => ArrayUtils::tryGet($brakeResult, 'parkingBrakeSecondaryImbalance'),
+        ];
+    }
+
+    //  --  imbalance:status   --
+    $serviceBrake1Data = ArrayUtils::tryGet($brakeResult, 'serviceBrake1Data');
+    $serviceBrake2Data = ArrayUtils::tryGet($brakeResult, 'serviceBrake2Data');
+
+    $serviceBrake1ImbalancePass = ArrayUtils::tryGet($serviceBrake1Data, 'imbalancePass');
+    $serviceBrake2ImbalancePass = ArrayUtils::tryGet($serviceBrake2Data, 'imbalancePass');
+    $parkingBrakeImbalancePass = ArrayUtils::tryGet($brakeResult, 'parkingBrakeImbalancePass');
+
+    $isTestPass = (
+        $serviceBrake1ImbalancePass === null
+        && $serviceBrake2ImbalancePass === null
+        && $parkingBrakeImbalancePass === null
+    ) ? null
+      : (
+            (isset($serviceBrake1ImbalancePass) ? $serviceBrake1ImbalancePass : true)
+            && (isset($serviceBrake2ImbalancePass ) ? $serviceBrake2ImbalancePass : true)
+            && (isset($parkingBrakeImbalancePass) ? $parkingBrakeImbalancePass : true)
+        );
+
+    echo $this->partial(
+        'brakeTestResult', [
+            'title'       => 'Imbalance',
+            'idPrefix'    => 'brake-imbalance',
+            'columnTitle' => 'Brake imbalance',
+            'rows'        => $imbalanceData,
+            'testPass'    => $isTestPass,
+            'resultText'  => 'Brake imbalance test'
+        ]
+    );
+
+    if ($hasTwoServiceBrakes) :
+        ?>
+</div>
+
+<div class="row">
+        <?php
+    endif;
+
+    echo $this->partial(
+        'brakeTestResult', [
+            'title'       => 'Parking brake',
+            'idPrefix'    => 'parking-brake',
+            'columnTitle' => 'Parking brake item',
+            'rows'        => [
+                [
+                    'name'  => 'Brake efficiency',
+                    'value' => ArrayUtils::tryGet($this->brakeResult, 'parkingBrakeEfficiency'),
+                ],
+                [
+                    'name'  => 'Brake lock',
+                    'value' => ArrayUtils::tryGet($this->brakeResult, 'parkingBrakeLockPercent'),
+                ]
+            ],
+            'testPass'    => $this->brakeResult['parkingBrakeEfficiencyPass'],
+            'resultText'  => 'Parking brake test',
+        ]
+    );
+endif; ?>
+</div>

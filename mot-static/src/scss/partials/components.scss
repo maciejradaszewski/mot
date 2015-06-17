@@ -1,0 +1,19 @@
+.list-msg-history {
+    padding-top: 2px;
+    @include light-grey-top-border;
+    
+    li {
+        background: $grey-4;
+        margin-bottom: 2px;
+        padding: 10px 15px 5px;
+    }
+    
+    .msg-poster {
+        @include font-bold-weight;
+        margin-right: 2em;
+    }
+    
+    p {
+        margin-top: 5px;
+    }
+}

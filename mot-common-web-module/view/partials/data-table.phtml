@@ -1,0 +1,48 @@
+<?php if (isset($table)) : ?>
+    <div class="table-responsive">
+        <table class="table">
+            <?php
+            $columns = $table['columns'];
+            $rows = $table['rows'];
+            $columnKeys = array_keys($columns);
+            ?>
+            <thead <?php if (!empty($hideHeader)) : ?>class="hidden"<?php endif; ?>>
+            <tr>
+                <?php for ($i = 0; $i < count($columnKeys); $i++) : ?>
+                    <th scope="col"><?php echo $this->escapeHtml($columns[$columnKeys[$i]]); ?></th>
+                <?php endfor; ?>
+                <?php if (!empty($enableEdit)) : ?>
+                    <th scope="col"></th>
+                <?php endif; ?>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($rows as $row) : ?>
+                <tr>
+                    <?php for ($i = 0; $i < count($columnKeys); $i++) : ?>
+                        <td<?php if ($i === 0) : ?> scope="row"<?php endif; ?>>
+                            <?php echo $this->escapeHtml($row[$columnKeys[$i]]); ?></td>
+                    <?php endfor; ?>
+                    <?php if (!empty($enableEdit)) : ?>
+                        <td<?php if ($i === 0) : ?> scope="row"<?php endif; ?> class="cell-actions">
+                            <form class="form-inline no-wrap" action="<?php echo $this->escapeHtml($deleteUrl); ?>" method="POST">
+                                <a href="<?php echo $this->escapeHtml(sprintf($editUrl, $row[$idColumn])); ?>"
+                                   type="button" name="edit"
+                                   id="edit<?php echo $this->escapeHtml($entityName); ?>-<?php echo $this->escapeHtml($row[$idColumn]); ?>"
+                                   title="Edit <?php echo $this->escapeHtml($entityName); ?>">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                <button name="delete" type="submit" value="<?php echo $this->escapeHtml($row[$idColumn]); ?>"
+                                        id="delete<?php echo $this->escapeHtml($entityName); ?>-<?php echo $this->escapeHtml($row[$idColumn]); ?>"
+                                        class="btn btn-link" title="Remove <?php echo $this->escapeHtml($entityName); ?>">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </form>
+                        </td>
+                    <?php endif; ?>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php endif; ?>

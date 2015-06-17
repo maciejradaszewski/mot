@@ -1,0 +1,229 @@
+<?php
+$title = 'Vehicle Testing Station Search Results';
+$this->headTitle($title);
+$this->headLink()->appendStylesheet('/css/jquery.dataTables.css');
+?>
+
+<?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
+<?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
+
+<div class="row">
+    <div class="col-sm-12">
+        <?php if (!empty($vehicleTestStation)): ?>
+        <h1>VTS <?php echo $this->escapeHtml($vehicleTestStation['siteNumber']); ?> - MOT Tests Found<span class="visually-hidden">[VTS site <?php echo $this->escapeHtml($vehicleTestStation['siteNumber']); ?> MOT results]</span></h1>
+        <h2><?php echo $this->escapeHtml($vehicleTestStation['name']); ?>
+        <span class="small"><?php echo $this->escapeHtml($vehicleTestStation['address']); ?></span></h2>
+        <?php endif; ?>
+        <div class="info-notice">
+		<p>If this is <strong>not the right VTS</strong> you can <a href="/enforcement/mot-test-search">search <span class="visually-hidden">for a VTS</span> again</a></p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="table-responsive">
+            <table class="table table-striped nowrap" id="listMOTs" style="width: 100%">
+                <thead>
+                <tr>
+                    <th>Test&nbsp;date/time</th>
+                    <th>Result</th>
+                    <th>Link</th>
+                    <th>Registration</th>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Type</th>
+                    <th>User ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <?php $i = 0; ?>
+                    <?php foreach ($motTestData as $motTest): ?>
+                        <?php $escClass = ($i++ % 2 == 0 ? 'even' : 'odd'); ?>
+                        <tr class="<?php echo $escClass; ?>">
+                            <td>
+                                <?php echo $this->escapeHtml($motTest['display_date']); ?>
+                            </td>
+                            <td>
+                                <a href="javascript:void(0)"
+                                   class="info-popup"
+                                   data-toggle="popover"
+                                   data-content="<?php echo $this->escapeHtmlAttr($motTest['popover']); ?>"
+                                   data-placement="auto"
+                                   role="button">
+                                <?php echo $this->escapeHtml($motTest['display_status']); ?>
+                                </a>
+                            </td>
+                            <td>
+                                <?php if ($motTest['status'] == 'FAILED' || $motTest['status'] == 'PASSED'): ?>
+                                <a href="<?php echo $this->url('enforcement-view-mot-test', ['motTestNumber' => $motTest['motTestNumber']]); ?>">
+                                    Summary
+                                </a>
+                                <?php else: ?>
+                                    &nbsp;
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php echo $this->escapeHtml($motTest['vehicle']['registration']); ?>
+                            </td>
+                            <td>
+                                <?php echo $this->escapeHtml($motTest['vehicle']['make']); ?>
+                            </td>
+                            <td title="<?php echo $this->escapeHtmlAttr($motTest['vehicle']['model']); ?>" class="truncate">
+                                <?php echo $this->escapeHtml($motTest['vehicle']['model']); ?>
+                            </td>
+                            <td title="<?php echo $this->escapeHtmlAttr($motTest['testType']['description']); ?>" class="truncate">
+                                <?php echo $this->escapeHtml($motTest['testType']['description']); ?>
+                            </td>
+                            <td>
+                                <?php echo $this->escapeHtml($motTest['tester']['username']); ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    /**
+     * Helper function for dataTables reload.
+     * todo - move to better place.
+     *
+     */
+
+    $.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnCallback, bStandingRedraw )
+    {
+        // DataTables 1.10 compatibility - if 1.10 then versionCheck exists.
+        // 1.10s API has ajax reloading built in, so we use those abilities
+        // directly.
+        if ( $.fn.dataTable.versionCheck ) {
+            var api = new $.fn.dataTable.Api( oSettings );
+
+            if ( sNewSource ) {
+                api.ajax.url( sNewSource ).load( fnCallback, !bStandingRedraw );
+            }
+            else {
+                api.ajax.reload( fnCallback, !bStandingRedraw );
+            }
+            return;
+        }
+
+        if ( sNewSource !== undefined && sNewSource !== null ) {
+            oSettings.sAjaxSource = sNewSource;
+        }
+
+        // Server-side processing should just call fnDraw
+        if ( oSettings.oFeatures.bServerSide ) {
+            this.fnDraw();
+            return;
+        }
+
+        this.oApi._fnProcessingDisplay( oSettings, true );
+        var that = this;
+        var iStart = oSettings._iDisplayStart;
+        var aData = [];
+
+        this.oApi._fnServerParams( oSettings, aData );
+
+        oSettings.fnServerData.call( oSettings.oInstance, oSettings.sAjaxSource, aData, function(json) {
+            /* Clear the old information from the table */
+            that.oApi._fnClearTable( oSettings );
+
+            /* Got the data - add it to the table */
+            var aData =  (oSettings.sAjaxDataProp !== "") ?
+                that.oApi._fnGetObjectDataFn( oSettings.sAjaxDataProp )( json ) : json;
+
+            for ( var i=0 ; i<aData.length ; i++ )
+            {
+                that.oApi._fnAddData( oSettings, aData[i] );
+            }
+
+            oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+
+            that.fnDraw();
+
+            if ( bStandingRedraw === true )
+            {
+                oSettings._iDisplayStart = iStart;
+                that.oApi._fnCalculateEnd( oSettings );
+                that.fnDraw( false );
+            }
+
+            that.oApi._fnProcessingDisplay( oSettings, false );
+
+            /* Callback user function - for event handlers etc */
+            if ( typeof fnCallback == 'function' && fnCallback !== null )
+            {
+                fnCallback( oSettings );
+            }
+        }, oSettings );
+    };
+
+
+    $(document).ready(function() {
+        var oTable = $('#listMOTs').dataTable({				// Usage info here: http://datatables.net/release-datatables/examples/basic_init/filter_only.html
+            "bPaginate": false,					            // Disable pagination
+            "bLengthChange": false,			                // Disable ability to change the number of rows
+            "bFilter": true,						        // Enable filtering
+            "sDom": "<'row'<'col-lg-12'f><'col-lg-12'l>r>t<'row'<'col-lg-12'i><'col-lg-12'p>>",
+            "bSort": true,							        // Enable sorting
+            "aaSorting": [[ 0, "desc" ]],                   // Sort descending by the 1st column (date/time)
+            "bInfo": false,							        // Suppress the "Showing x to N of N entries" info-footer
+            "bAutoWidth": true,
+            "oLanguage": {"sSearch":"Filter:"},                    // Rename the Search label
+            "bProcessing": false,
+            "bServerSide": false,
+            "bDeferRender": true,
+            "sAjaxSource": "<?php echo $this->url('enforcement-list-recent-mot-tests-api', ['siteNumber' => $siteCount]); ?>",
+            "aoColumnDefs": [
+                {
+                    "sClass": "truncate",
+                    "aTargets": [5,6]
+                }
+            ],
+            "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                $('td:eq(5)', nRow).attr('title', aData[5]);
+                $('td:eq(6)', nRow).attr('title', aData[6]);
+            },
+            "fnDrawCallback": function( oSettings ) {
+                $('.info-popup').popover({
+                    "placement":"top",
+                    "html":true,
+                    "trigger":"hover"})
+            },
+            fnServerParams: function ( data ) {
+                data.push({ name : CSRF.paramName, value : CSRF.token });
+            }
+        });
+
+        $('#listMOTs_filter').find("input").addClass( "form-control" );
+
+
+        // Trigger datatables refresh
+        var timer = setInterval(function(){
+            oTable.fnReloadAjax();
+        }, 60000);
+
+        // The plan is to set up all popovers as clicks for touchscreens / hovers for laptops...
+        var is_touch_device = 'ontouchstart' in document.documentElement;
+        if (!is_touch_device) {  // If its not a touch-device - then use hovers...
+            $("[data-toggle=popover]").popover({ // More info here http://getbootstrap.com/javascript/#popovers-examples
+                "placement":"top",					 	        // Stick it where there's room
+                "html":true,					 			    // Enable html in popovers
+                "trigger":"hover"							    // Set up all popovers as hovers...
+            });
+        } else { 	// Else - If it IS a touch-device use clicks (rather than hovers)...
+            $("[data-toggle=popover]").popover({ // More info here http://getbootstrap.com/javascript/#popovers-examples
+                "placement":"top",					 	        // Stick it where there's room
+                "html":true,					 			    // Enable html in popovers
+                "trigger":"click"							    // If a touchscreen device -  set up all popovers as clicks...
+            });
+        }
+    });
+</script>
+

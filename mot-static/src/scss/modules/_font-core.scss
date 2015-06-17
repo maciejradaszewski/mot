@@ -1,0 +1,224 @@
+body {
+    font-size: 16px;
+}
+
+@mixin font-stack {
+    font-family: 'nta', arial, 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+@mixin font-bold-weight {
+    font-weight: 600;
+}
+
+@mixin font-normal-weight {
+    font-weight: 300;
+}
+
+@mixin font-core80 {
+    font-size: 5em;
+    @include font-stack;
+    -webkit-font-smoothing: antialiased;
+    @include font-normal-weight;
+}
+
+@mixin font-core48 {
+    font-size: 3em;
+    @include font-stack;
+    -webkit-font-smoothing: antialiased;
+    @include font-normal-weight;
+}
+
+@mixin font-core36 {
+    font-size: 2.25em;
+    @include font-stack;
+    -webkit-font-smoothing: antialiased;
+    @include font-normal-weight;
+}
+
+@mixin font-core27 {
+    font-size: 1.6875em;
+    @include font-stack;
+    -webkit-font-smoothing: antialiased;
+    @include font-normal-weight;
+}
+
+@mixin font-core24 {
+    font-size: 1.5em;
+    @include font-stack;
+    -webkit-font-smoothing: antialiased;
+    @include font-normal-weight;
+}
+
+@mixin font-core19 {
+    font-size: 1.1875em;
+    @include font-stack;
+    -webkit-font-smoothing: antialiased;
+    @include font-normal-weight;
+}
+
+@mixin font-core16 {
+    font-size: 1em;
+    @include font-stack;
+    -webkit-font-smoothing: antialiased;
+    @include font-normal-weight;
+}
+
+@mixin font-core14 {
+    font-size: .875em;
+    @include font-stack;
+    -webkit-font-smoothing: antialiased;
+    @include font-normal-weight;
+}
+
+@mixin margins-30 {
+    margin: 30px 0;
+}
+
+@mixin margins-1em {
+    margin: 1em 0;
+}
+
+@mixin font-bold80 {
+    @include font-core80;
+    @include font-bold-weight;
+}
+
+@mixin font-bold48 {
+    @include font-core48;
+    @include font-bold-weight;
+}
+
+@mixin font-bold36 {
+    @include font-core36;
+    @include font-bold-weight;
+}
+
+@mixin font-bold27 {
+    @include font-core27;
+    @include font-bold-weight;
+}
+
+@mixin font-bold24 {
+    @include font-core24;
+    @include font-bold-weight;
+}
+
+@mixin font-bold19 {
+    @include font-core19;
+    @include font-bold-weight;
+}
+
+@mixin font-bold16 {
+    @include font-core16;
+    @include font-bold-weight;
+}
+
+@mixin font-bold14 {
+    @include font-core14;
+    @include font-bold-weight;
+}
+
+// HEADERS 
+h1 {
+    @include font-bold36;
+    @include margins-30;
+}
+
+h2 {
+    @include font-bold27;
+    @include margins-1em;
+}
+
+h3 {
+    @include font-bold24;
+    @include margins-1em;
+}
+
+h4 {
+    @include font-bold19;
+    @include margins-1em;
+}
+
+h5 {
+    @include font-bold16;
+    @include margins-1em;
+}
+
+h6 {
+    @include font-bold14;
+    @include margins-1em;
+}
+
+// LIST STYLES
+dl {
+    dt {
+        @include font-normal-weight;
+    }
+    
+    dd {
+        @include font-bold-weight;
+    }
+}
+
+.dl-standard {
+    dd {
+        line-height: 1em;
+        margin-bottom: 15px;
+        margin-left: 0;
+    }
+}
+
+.dl-large {
+    dd {
+        @include font-bold24;
+        line-height: 1em;
+        margin-bottom: 20px;
+        margin-left: 0;
+    }
+}
+
+.dl-horizontal {
+    dt {
+        text-align: left !important;
+        margin-left: 0;
+        line-height: 1.75em;
+        width: 200px;
+    }
+    
+    dd {
+        line-height: 1.75em;
+        margin-left: 220px;
+    }
+
+    .dl-header {
+        margin-left: 0;
+        padding-bottom: 7px;
+        @include font-bold19;
+    }
+}
+
+// HEADERS WITH SMALL
+@mixin small {
+    @include font-normal-weight;
+    font-size: .75em;
+    line-height: .75em;
+    color: $secondary-text-colour;
+    display: block;
+}
+
+h1 small,
+h2 small,
+h3 small,
+h4 small {
+    @include small;
+}
+
+p {
+    @include font-core16;
+    margin: 0 0 1em;
+}
+
+strong,
+b {
+    @include font-bold-weight;
+}

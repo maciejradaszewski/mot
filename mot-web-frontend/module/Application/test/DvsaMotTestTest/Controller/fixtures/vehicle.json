@@ -1,0 +1,77 @@
+{
+    "data": {
+        "id": 2001,
+        "registration": "FT04CDE",
+        "firstRegistrationDate": null,
+        "manufactureDate": null,
+        "vin": "1FT1DVLAEXAMPLEC001",
+        "year": 2004,
+        "firstUsedDate": "2004-01-02",
+        "cylinderCapacity": 1700,
+        "seatingCapacity": null,
+        "weight": null,
+        "weightSource": null,
+        "chassisNumber": null,
+        "noOfSeatBelts":  0,
+        "seatBeltsLastChecked": null,
+        "amendedOn": "2014-10-21",
+        "modelDetail": {
+            "id":  1,
+            "name":  "Standard",
+            "code":  null,
+            "make":  {
+                "id":  "Renault",
+                "code":  "Renault",
+                "name":  "Renault",
+                "_class":  "DvsaCommon\\Dto\\Vehicle\\MakeDto"
+            },
+            "model":  {
+                "id":  "Clio",
+                "code": null,
+                "name":  "Clio",
+                "make": null,
+                "_class":  "DvsaCommon\\Dto\\Vehicle\\ModelDto"
+            },
+            "_class": "DvsaCommon\\Dto\\Vehicle\\ModelDetailDto"
+        },
+        "countryOfRegistration": null,
+        "vehicleClass": {
+            "id": 4,
+            "name": "4",
+            "code": 4,
+            "group": null,
+            "_class": "DvsaCommon\\Dto\\VehicleClassification\\VehicleClassDto"
+        },
+        "colour": {
+            "id": "L",
+            "name": "Blue",
+            "_class": "DvsaCommon\\Dto\\Common\\ColourDto"
+        },
+        "colourSecondary": {
+            "id": "W",
+            "name": "White",
+            "_class": "DvsaCommon\\Dto\\Common\\ColourDto"
+        },
+        "fuelType": {
+            "id": "PE",
+            "code": "PE",
+            "name": "Petrol",
+            "_class": "DvsaCommon\\Dto\\Vehicle\\VehicleParamDto"
+        },
+        "bodyType": {
+            "id": 1,
+            "code": 1,
+            "name": "Hatchback",
+            "_class": "DvsaCommon\\Dto\\Vehicle\\VehicleParamDto"
+        },
+        "transmissionType": {
+            "id": 1,
+            "code": 1,
+            "name": "Automatic",
+            "_class": "DvsaCommon\\Dto\\Vehicle\\VehicleParamDto"
+        },
+        "isDvla": false,
+        "isNewAtFirstReg": false,
+        "_class": "DvsaCommon\\Dto\\Vehicle\\VehicleDto"
+    }
+}

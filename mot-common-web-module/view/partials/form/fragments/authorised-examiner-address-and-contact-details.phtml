@@ -1,0 +1,101 @@
+<?php
+use AuthorisedExaminer\Service\Dto\AuthorisedExaminerForm;
+
+$form = (isset($form) && is_object($form)) ? $form : new AuthorisedExaminerForm();
+$idPrefix = $this->withDefault('')->getValue($idPrefix);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id'        => '' !== $idPrefix ? $idPrefix . 'AddressLine1' : 'addressLine1',
+        'label'     => 'Address',
+        'required'  => true,
+        'title'     => 'Enter the address',
+        'maxLength' => 80,
+        'value'     => '' === $idPrefix ? $form->getAddressLine1() : $form->getCorrespondenceAddressLine1(),
+    ]
+);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id'        => '' !== $idPrefix ? $idPrefix . 'AddressLine2' : 'addressLine2',
+        'title'     => 'Enter the address',
+        'maxLength' => 80,
+        'value'     => '' === $idPrefix ? $form->getAddressLine2() : $form->getCorrespondenceAddressLine2(),
+    ]
+);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id'        => '' !== $idPrefix ? $idPrefix . 'AddressLine3' : 'addressLine3',
+        'title'     => 'Enter the address',
+        'maxLength' => 80,
+        'value'     => '' === $idPrefix ? $form->getAddressLine3() : $form->getCorrespondenceAddressLine3(),
+    ]
+);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id'        => '' !== $idPrefix ? $idPrefix . 'Town' : 'town',
+        'label'     => 'Town',
+        'required'  => true,
+        'title'     => 'Enter the town name',
+        'maxLength' => 50,
+        'value'     => '' === $idPrefix ? $form->getTown() : $form->getCorrespondenceTown(),
+    ]
+);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id'        => '' !== $idPrefix ? $idPrefix . 'Postcode' : 'postcode',
+        'label'     => 'Postcode',
+        'required'  => true,
+        'title'     => 'Enter the postcode',
+        'maxLength' => 10,
+        'value'     => '' === $idPrefix ? $form->getPostcode() : $form->getCorrespondencePostcode(),
+    ]
+);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id'        => '' !== $idPrefix ? $idPrefix . 'Email' : 'email',
+        'label'     => 'Email address',
+        'required'  => true,
+        'type'      => 'email',
+        'title'     => 'Enter the e-mail',
+        'maxLength' => 50,
+        'value'     => '' === $idPrefix ? $form->getEmail() : $form->getCorrespondenceEmail(),
+    ]
+);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id'        => '' !== $idPrefix ? $idPrefix . 'EmailConfirmation' : 'emailConfirmation',
+        'label'     => 'Confirm email address',
+        'required'  => true,
+        'type'      => 'email',
+        'title'     => 'Enter the e-mail confirmation',
+        'maxLength' => 50,
+        'value'     => '' === $idPrefix ? $form->getEmailConfirmation() : $form->getCorrespondenceEmailConfirmation(),
+    ]
+);
+
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id'        => '' !== $idPrefix ? $idPrefix . 'PhoneNumber' : 'phoneNumber',
+        'label'     => 'Telephone number',
+        'pattern'   => "^\+?[\d -]{6,25}$",
+        'required'  => true,
+        'title'     => 'Enter the phone number',
+        'maxLength' => 25,
+        'value'     => '' === $idPrefix ? $form->getPhoneNumber() : $form->getCorrespondencePhoneNumber(),
+    ]
+);

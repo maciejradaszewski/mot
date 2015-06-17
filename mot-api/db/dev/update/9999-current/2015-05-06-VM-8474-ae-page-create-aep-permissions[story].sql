@@ -1,0 +1,2 @@
+SET @created_by = (SELECT `id` FROM `person` WHERE `username` = 'static data' );
+INSERT INTO `permission` (`code`, `name`, `created_by`) VALUES ('AUTHORISED-EXAMINER-PRINCIPAL-CREATE', 'Creating AEP', @created_by);

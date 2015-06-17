@@ -1,0 +1,65 @@
+/*
+    @name mailbox-status
+    
+    @status production
+
+    @comments
+    Used for notifications and special notices on dashboard to create big number, animated links.
+
+    Bootstrap dependency: None
+    Other dependencies: .mega-number element
+
+    @example
+    <a class="mailbox-status" href="/special-notices">
+        <span class="mega-number">
+            <strong class="number">1</strong>
+            <span class="super-text">
+                unread
+                <span class="meta">99 days left to view</span>
+            </span>
+        </span>
+    </a>
+*/
+
+.mailbox-status {
+    display: block;
+    text-decoration: none;
+    position: relative;
+    @include light-grey-bot-border;
+    @include light-grey-top-border;
+    
+    &.is-overdue {
+        color: $fail-text;
+    }
+
+    &:after {
+        content: '\f054';
+        font-family: 'FontAwesome';
+        font-size: 2em;
+        font-weight: normal;
+        line-height: 1.4em;
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: $white;
+        -webkit-transition: right .2s, color .1s;
+        transition: right .2s, color .1s;
+    }
+
+    &:hover:after {
+        color: $grey-3;
+        right: 0;
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+        background-color: transparent;
+        outline: none;
+        text-decoration: none;
+    }
+
+    & + & {
+        border-top: 0;
+    }
+}

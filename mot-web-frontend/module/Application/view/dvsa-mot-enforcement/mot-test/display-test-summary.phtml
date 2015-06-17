@@ -1,0 +1,293 @@
+<?php
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Date\DateUtils;
+use DvsaCommon\Domain\MotTestType;
+use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\Enum\MotTestTypeCode;
+use DvsaCommon\Utility\ArrayUtils;
+use DvsaMotTest\Controller\AbstractDvsaMotTestController;
+use DvsaCommon\Auth\PermissionInSystem;
+
+/** @var $dashboard \Dashboard\Model\Dashboard */
+$dashboard = $this->dashboardDataProvider();
+
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motTest */
+$motTest = !empty($this->motDetails) ? $this->motDetails : new \DvsaCommon\Dto\Common\MotTestDto();
+
+$motTestNumber = $motTest->getMotTestNumber();
+
+/** @var \DvsaCommon\Dto\Person\PersonDto $tester */
+$tester = $motTest->getTester();
+/** @var \DvsaCommon\Dto\Vehicle\VehicleDto $vehicle */
+$vehicle = $motTest->getVehicle();
+$site = $motTest->getVehicleTestingStation();
+
+$reasonsForRejection = $motTest->getReasonsForRejection();
+$fails = @$reasonsForRejection['FAIL'];
+$prses = @$reasonsForRejection['PRS'];
+$advisories = @$reasonsForRejection['ADVISORY'];
+
+$pendingDetails = $motTest->getPendingDetails();
+
+$pendingStatus = ArrayUtils::tryGet($pendingDetails, 'currentSubmissionStatus');
+$isTestReadyToFail = ($pendingStatus == MotTestStatusName::FAILED);
+$isTestReadyToPass = ($pendingStatus == MotTestStatusName::PASSED);
+
+$testStatus = $motTest->getStatus();
+$isTestPass = ($testStatus == MotTestStatusName::PASSED);
+$isTestFail = ($testStatus == MotTestStatusName::FAILED);
+$isTestActive = ($testStatus == MotTestStatusName::ACTIVE);
+
+/** @var \DvsaCommon\Dto\Common\MotTestTypeDto $motTestType */
+$motTestType = $motTest->getTestType();
+$isReinspection = MotTestType::isReinspection($motTestType->getCode());
+
+//  --  prepare back url   --
+if (!empty($this->vehicleId)) {
+    $escapedBackUrl = $this->url('vehicle/detail/history', ['id' => $this->vehicleId], ['query' => $this->summaryParams]);
+} else {
+    $escapedBackUrl = $this->url('mot-test-search/' . $this->searchType, [], ['query' => $this->summaryParams]);
+}
+
+//  --  title and header    --
+$testName = AbstractDvsaMotTestController::getTestName($motTestType->getCode());
+
+$title = $testName . ' Summary';
+$header = $testName . ' summary';
+
+$this->headTitle($title);
+$this->headScript()->appendFile('/js/dvsa-mot-enforcement/mot-test/display-test-summary.js');
+
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+
+if (empty($motTest)) {
+    return;
+}
+
+?>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <h1><?php echo $this->escapeHtml($header); ?></h1>
+
+            <div class="info-notice">
+                <p>If this is <strong>not the right MOT test</strong> you can <a
+                        href="<?php echo $escapedBackUrl; ?>">go back</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" id="testStationDetails">
+        <div class="col-sm-4">
+            <h2>Test station details</h2>
+        </div>
+
+        <?php echo $this->partial('partials/mot-test-summary/site-address', ['siteData' => $site]); ?>
+
+        <?php
+        $testerName = $tester->getDisplayName();
+        if (!empty($testerName)): ?>
+            <dl class="col-sm-4">
+                <dt>Tester</dt>
+                <dd><?php echo $this->escapeHtml($testerName); ?></dd>
+            </dl>
+        <?php endif; ?>
+    </div>
+    <span class="divider"></span>
+
+    <div class="row" id="testInformation">
+        <?php echo $this->partial('partials/mot-test-summary/test-status', ['status' => $testStatus]);?>
+
+        <div class="col-sm-8">
+            <div class="row">
+                <?php
+                echo $this->partial(
+                    'partials/mot-test-summary/field-mot-test-number',
+                    [
+                        'isReinspection' => $isReinspection,
+                        'motTestNumber'   => $motTestNumber,
+                    ]
+                );
+                ?>
+            </div>
+
+            <?php if (!$isTestActive) : ?>
+                <div class="row nowrap">
+                    <?php
+                    echo $this->partial(
+                        'partials/mot-test-summary/field-issued-date.phtml',
+                        [
+                            'cssDlClass' => 'col-sm-6',
+                            'motTest'    => $motTest,
+                        ]
+                    );
+
+                    echo $this->partial(
+                        'partials/mot-test-summary/field-expiry-date.phtml',
+                        [
+                            'cssDlClass' => 'col-sm-6',
+                            'motTest' => $motTest,
+                        ]
+                    );
+                    ?>
+                </div>
+            <?php endif; ?>
+
+            <?php
+
+            //  --  test duration   --
+            $startDate = $motTest->getStartedDate() !== null ? DateUtils::toDateTime($motTest->getStartedDate()) : null;
+
+            if ($isTestActive) {
+                $completedDate = new \DateTime;
+            } else {
+                $completedDate = $motTest->getCompletedDate() !== null ? DateUtils::toDateTime($motTest->getCompletedDate()): null;
+            }
+
+            if ($completedDate) :
+                $durationMins = round(DateUtils::getDatesTimestampDelta($completedDate, $startDate) / 60);
+                $escapedTestDuration =
+                    $this->escapeHtml($durationMins) . ' mins &nbsp;&nbsp;&nbsp;' .
+                    'From&nbsp;' . $this->escapeHtml(DateTimeDisplayFormat::dateTime($startDate)) .
+                    '&nbsp;&nbsp;To&nbsp;' . $this->escapeHtml(DateTimeDisplayFormat::dateTime($completedDate));
+                ?>
+                <div class="row">
+                    <dl class="col-sm-12 no-bot-marg">
+                        <dt>Test duration</dt>
+                        <dd id="motTestDuration"><?php echo $escapedTestDuration; ?></dd>
+                    </dl>
+                </div>
+            <?php endif; ?>
+        </div>
+        <span class="divider"></span>
+    </div>
+
+
+
+<?php
+echo $this->partial(
+    'partials/mot-test-summary/vehicle-block', [
+        'motTest' => $motTest,
+        'vehicle' => $vehicle,
+    ]
+);
+
+echo $this->partial(
+    'partials/mot-test-summary/odometer-reading-row', [
+        'reading' => $odometerReading,
+    ]
+);
+
+//  --  brake   --
+echo $this->partial(
+    'partials/mot-test-summary/brake-result-overall-block', [
+        'motTest' => $motTest,
+    ]
+);
+
+
+echo $this->partial(
+    'partials/mot-test-summary/brake-values-in-kg-block', [
+        'vehicle'           => $vehicle,
+        'brakeResult'       => $motTest->getBrakeTestResult(),
+        'brakeTestTypeCode2Name' => $brakeTestTypeCode2Name,
+        'isEnforcementUser' => true,
+    ]
+);
+
+//  --  failures    --
+echo $this->partial(
+    'partials/mot-test-summary/rfr-block', [
+        'id'    => 'fails',
+        'title' => 'Fails',
+        'items' => $fails,
+    ]
+);
+
+echo $this->partial(
+    'partials/mot-test-summary/rfr-block', [
+        'id'    => 'prses',
+        'title' => 'PRS',
+        'items' => $prses,
+    ]
+);
+
+echo $this->partial(
+    'partials/mot-test-summary/rfr-block', [
+        'id'    => 'advisoryText',
+        'title' => 'Advisory text',
+        'items' => $advisories,
+    ]
+);
+?>
+
+    <?php if ($isTestActive && $this->authorisationHelper()->isGranted(PermissionInSystem::VE_MOT_TEST_ABORT)): ?>
+        <div class="form-group">
+            <a href="<?php echo $this->url('enforcement-abort-mot-test', ['motTestNumber' => $motTestNumber]); ?>"
+               class="btn btn-danger" id="abort_test_button">Abort Test</a>
+        </div>
+        <div class="form-group">
+            <a href="<?php echo $escapedBackUrl; ?>" class="">Return to results page</a>
+        </div>
+    <?php else: ?>
+
+    <?php if ($isDemoMotTest === false && $this->authorisationHelper()->isGranted(PermissionInSystem::MOT_TEST_REINSPECTION_PERFORM)): ?>
+
+        <div class="row">
+
+            <div class="col-sm-4">
+                <h2>Confirm test type</h2>
+            </div>
+
+            <div class="col-sm-8">
+                <div style="margin-top: 27px;">
+                    <form class="form-inline" role="form" method="post"
+                          action="<?php echo $this->url('enforcement-start-inspection', ['motTestNumber' => $motTestNumber]); ?>">
+                        <?php echo $this->csrfToken() ?>
+                        <div class="form-group col-sm-4" style="padding: 0">
+                            <select class="form-control" name="motTestType" id="motTestType">
+                                <?php if (count($motTestTypes)) : ?>
+                                    <?php /** TODO: VM-3232: defect: Reinstate 'Other' once the appropriate post-action Url handler has been storied! */ ?>
+                                    <?php
+                                    /** @var MotTestType[] $prunedTypes */
+                                    $prunedTypes = array_filter(
+                                        $motTestTypes, function ($testType) {
+                                            return $testType['code'] !== MotTestTypeCode::OTHER;
+                                        }
+                                    ); ?>
+                                    <?php foreach ($prunedTypes as $testType): ?>
+                                        <?php $escSelected = (MotTestTypeCode::TARGETED_REINSPECTION === $testType['code'] ? 'selected' : ''); ?>
+                                        <option <?php echo $escSelected; ?>  value="<?php echo $this->escapeHtmlAttr($testType['code']); ?>"><?php echo $this->escapeHtml($testType['description']); ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+                        <div class="col-sm-4" id="complaintRefLine">
+                            <input type="text" value="" class="form-control primary-item" maxlength="10" width="10" name="complaintRef" id="complaintRef" placeholder="Complaint Reference">
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="submit" value="Start inspection" class="btn btn-primary" id="start_inspection_button">
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row col-sm-8" style="margin-top: 20px;">
+                <a href="<?php echo $escapedBackUrl; ?>">Return to results page</a>
+            </div>
+
+            <span class="divider"></span>
+        </div>
+
+    <?php endif; ?>
+
+    <?php if($this->authorisationHelper()->isGranted(PermissionInSystem::CERTIFICATE_PRINT)): ?>
+        <div class="row">
+            <div class="col-sm-12">
+                <p>&nbsp;</p>
+                <a href="<?php echo $this->url('mot-test/print-duplicate-certificate', ['motTestNumber' => $motTestNumber]) ?>" class="btn btn-primary">Print certificate</a>
+            </div>
+        </div>
+    <?php endif; ?>
+<?php endif; ?>

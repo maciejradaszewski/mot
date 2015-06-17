@@ -1,0 +1,45 @@
+<?php
+/**
+ * @var string $durationTime
+ */
+
+$durationTime = $this->durationTime;
+?>
+
+<div class='MOTs-popup'>Reg:  <span><?php echo $this->escapeHtml($motTest['registration']) ?></span>
+Colour: <span><?php echo $this->escapeHtml($motTest['primaryColour']) ?></span>
+Odometer: <span><?php echo $this->escapeHtml($motTest['odometer']); ?></span>
+Tester: <span><?php echo $this->escapeHtml($motTest['testerUsername']) ?></span>
+Duration: <span><?php echo $this->escapeHtml($durationTime) ?></span>
+Result: <span><?php echo $this->escapeHtml($motTest['display_status']) ?></span>
+<?php
+
+$rfrs = isset($motTest['reasonsForRejection']) ? $motTest['reasonsForRejection'] : null;
+
+if (isset($rfrs) && count($rfrs)) {
+    $keys = [
+        'FAIL'     => ['title' => 'Fails'],
+        'PRS'      => ['title' => 'PRS'],
+        'ADVISORY' => ['title' => 'Advisories'],
+    ];
+
+    $result = [];
+    foreach ($keys as $key => $params) {
+        $rfrsByKey = [];
+        if (isset($rfrs[$key])) {
+            $rfrsByKey = $rfrs[$key];
+        }
+
+        if ($rfrsByKey && count($rfrsByKey) != 0) {
+            $result[] = $params['title'] . ': ';
+
+            foreach ($rfrsByKey as $motRfr) {
+                $result[] = "<span>" . $this->truncate($motRfr['name'], 50) . "</span><br />";
+            }
+        }
+    }
+
+    echo join('', $result);
+}
+?>
+</div>

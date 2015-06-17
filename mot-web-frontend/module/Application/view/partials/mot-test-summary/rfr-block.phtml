@@ -1,0 +1,15 @@
+<?php
+//  --  init vars   --
+$id = !empty($this->id) ? $this->id : '';
+$title = !empty($this->title) ? $this->title : '';
+?>
+
+<div class="row" id="<?php echo $this->escapeHtmlAttr($id); ?>">
+    <div class="col-sm-4">
+        <h2><?php echo $this->escapeHtml($title); ?></h2>
+    </div>
+    <div class="col-sm-8">
+        <?php echo $this->partial('partials/mot-test-summary/rfr-list', ['items' => $this->items]); ?>
+    </div>
+    <span class="divider"></span>
+</div>

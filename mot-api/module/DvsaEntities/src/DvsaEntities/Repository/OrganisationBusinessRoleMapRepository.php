@@ -1,0 +1,61 @@
+<?php
+
+namespace DvsaEntities\Repository;
+
+use Doctrine\ORM\EntityRepository;
+use DvsaCommon\Enum\BusinessRoleStatusCode;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use DvsaCommonApi\Service\Exception\NotFoundException;
+use DvsaEntities\Entity\OrganisationBusinessRoleMap;
+
+/**
+ * OrganisationBusinessRoleMapRepository
+ *
+ * Custom Doctrine Repository for reusable DQL queries
+ * @codeCoverageIgnore
+ */
+class OrganisationBusinessRoleMapRepository extends EntityRepository
+{
+    public function getActiveUserRoles($personId)
+    {
+        $qb = $this
+            ->createQueryBuilder("orbm")
+            ->innerJoin("orbm.person", "p")
+            ->innerJoin("orbm.businessRoleStatus", "st")
+            ->innerJoin("orbm.organisationBusinessRole", "br")
+            ->innerJoin("orbm.businessRoleStatus", "rs")
+            ->innerJoin("orbm.organisation", "org")
+            ->leftJoin("org.contacts", "o_cnt")
+            ->leftJoin("o_cnt.contactDetails", "cnt_detail")
+            ->leftJoin("cnt_detail.address", "addr")
+            ->where("p.id = :personId")
+            ->andWhere("st.code in (:statusCode)")
+            ->setParameter("personId", $personId)
+            ->setParameter("statusCode", BusinessRoleStatusCode::ACTIVE);
+
+        $roles = $qb->getQuery()->getResult();
+
+        return $roles;
+    }
+
+    /**
+     * @param $id
+     *
+     * @return OrganisationBusinessRoleMap
+     * @throws NotFoundException
+     */
+    public function get($id)
+    {
+        $position = $this->find($id);
+
+        if ($position === null) {
+            throw new NotFoundException("Organisation business position");
+        }
+
+        return $position;
+    }
+}

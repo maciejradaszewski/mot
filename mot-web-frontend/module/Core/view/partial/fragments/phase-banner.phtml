@@ -1,0 +1,17 @@
+<?php
+
+use Core\Presenter\MastheadPresenter;
+$mastheadPresenter = new MastheadPresenter;
+
+?>
+
+<div class="phase-banner">
+    <p>
+      <strong class="phase-tag">BETA</strong>
+      <span>
+          This is a new service – your
+          <a id="feedback-link" href="<?php echo $this->escapeHtmlAttr($mastheadPresenter->getFeedbackMailtoUri()) ?>">feedback</a>
+          will help us to improve it.
+      </span>
+    </p>
+</div>

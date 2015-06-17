@@ -1,0 +1,68 @@
+<?php
+
+use DvsaCommon\Enum\ColourCode;
+
+/**
+ * @var string $primaryColourId
+ * @var $primaryColourList
+ * @var $secondaryColourId
+ * @var $secondaryColourList
+ */
+$headerValue = $primaryColourList[$primaryColourId];
+
+if ($secondaryColourId !== null && $secondaryColourId !== ColourCode::NOT_STATED && !empty($secondaryColourList[$secondaryColourId])) {
+    $headerValue .= ' and ' . $secondaryColourList[$secondaryColourId];
+}
+
+?>
+
+<?php $this->placeholder('dashboard-section-header-caption')->captureStart('SET') ?>
+    <h3>Vehicle colour</h3>
+<?php $this->placeholder('dashboard-section-header-caption')->captureEnd() ?>
+
+<?php $this->placeholder('dashboard-section-header-value')->captureStart('SET') ?>
+    <h3><strong><?php echo $headerValue ?></strong></h3>
+<?php $this->placeholder('dashboard-section-header-value')->captureEnd() ?>
+
+<?php $this->placeholder('dashboard-section-body')->captureStart('SET') ?>
+
+    <div class="clearfix">
+        <div >
+            <div class="row">
+                <div class="form-group col-sm-5">
+                    <?php echo $this->partial(
+                        "selectElement", [
+                            "id"      => "select-primary-colour",
+                            "name"    => "primaryColour",
+                            "value"   => $primaryColourId,
+                            "options" => $primaryColourList
+                        ]
+                    ); ?>
+                </div>
+                <div class="form-group col-sm-2 ">
+                    and
+                </div>
+                <div class="form-group col-sm-5">
+
+                    <?php echo $this->partial(
+                        "selectElement", [
+                            "id"      => "select-secondary-colour",
+                            "name"    => "secondaryColour",
+                            "value"   => $secondaryColourId,
+                            "options" => $secondaryColourList
+                        ]
+                    ) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<?php $this->placeholder('dashboard-section-body')->captureEnd() ?>
+
+<?php echo $this->partial(
+    'dvsa-mot-test/dashboard/generic-section',
+    [
+        'sectionId'  => 'vehicle-colour',
+        'actionName' => 'updateColours'
+    ]
+);

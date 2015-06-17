@@ -1,0 +1,13 @@
+{
+    "name": "dvsa/mot-static",
+    "description": "Static resources for DVSA MOT modernisation applications",
+    "require": {
+        "dvsa/gds-toolkit": "dev-develop"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "http://gitlab.clb.npm/mot/gds-toolkit.git"
+        }
+    ]
+}

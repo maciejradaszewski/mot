@@ -1,0 +1,30 @@
+{
+    "name": "dvsa/mot-testsupport",
+    "description": "Test Support API for DVSA MOT modernisation",
+    "require": {
+        "zendframework/zendframework": "2.2.7",
+        "doctrine/doctrine-module": "0.8.0",
+        "doctrine/doctrine-orm-module": "0.8.0",
+        "dvsa/feature-toggle": "dev-develop"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@gitlab.clb.npm:mot/featuretoggle.git"
+        }
+    ],
+    "autoload" : {
+        "psr-0" : {
+            "DvsaCommon" : "../mot-common-web-module/src",
+            "DvsaCommonTest" : "../mot-common-web-module/test"
+        },
+        "classmap" : [
+            "../mot-common-web-module/Module.php"
+        ]
+    },
+    "config" : {
+      "github-oauth" : {
+        "github.com" : "c413da7d946413edba2adadd44beb7a5075a52aa"
+      }
+    }
+}

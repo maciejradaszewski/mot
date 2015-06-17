@@ -1,0 +1,113 @@
+<?php
+
+$title = 'Special Notices';
+$this->headTitle($title);
+$overdueNotices = $specialNotices['overdue'];
+$unreadNotices = $specialNotices['unread'];
+$currentNotices = $specialNotices['currentNotices'];
+?>
+
+<div class="row" id="content">
+    <div class="col-lg-12 header-container">
+        <h1><?php echo $this->escapeHtml($title); ?></h1>
+
+        <div>
+            <a href="<?php echo $this->url(\Dashboard\Controller\UserHomeController::ROUTE); ?>"
+               class="btn btn-primary" id="returnDashboard">Back</a>
+        </div>
+    </div>
+</div>
+
+<?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
+<?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
+
+<div id="special-notices">
+    <div class="row">
+        <div class="col-sm-5">
+            <img src="/img/dvsa-org-logo@2x.png" width="154" alt="Driver and Vehicle Standards Agency">
+        </div>
+    </div>
+
+    <?php if ($overdueNotices && $canAcknowledge) : ?>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="status-danger">
+                    <div class="row">
+                        <div class="col-sm-1">
+                            <span class="count"><?php echo count($overdueNotices) ?><sup>overdue</sup></span>
+                        </div>
+                        <div class="col-sm-11">
+                            <h3>Test status will become active when unacknowledged notices have been read and
+                                confirmed</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php echo $this->partial('specialNotice', ['specialNotices' => $overdueNotices, 'canAcknowledge' => $canAcknowledge, 'canRemove' => $canRemove, 'canUpdate' => $canUpdate]);
+    endif; ?>
+
+    <?php if ($unreadNotices) : ?>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="status-neutral">
+                    <div class="row">
+                        <div class="col-sm-1">
+                            <span class="count"><?php echo count($unreadNotices) ?><sup>unread</sup></span>
+                        </div>
+                        <?php if ($canAcknowledge): ?>
+                            <div class="col-sm-11">
+                                <h3><?php echo $this->escapeHtml($daysLeftToViewUnread);
+                                    echo $daysLeftToViewUnread > 1 ? ' days' : ' day'; ?>
+                                    left to read and acknowledge
+                                </h3>
+                            </div>
+                        <?php endif ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php echo $this->partial('specialNotice', ['specialNotices' => $unreadNotices, 'canAcknowledge' => $canAcknowledge, 'canRemove' => $canRemove, 'canUpdate' => $canUpdate]); ?>
+    <?php endif; ?>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="status-neutral">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4>Current notices</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php if ($currentNotices) : ?>
+        <?php echo $this->partial('specialNotice', ['specialNotices' => $currentNotices, 'canAcknowledge' => $canAcknowledge, 'canRemove' => $canRemove, 'canUpdate' => $canUpdate]); ?>
+    <?php else : ?>
+        <p id="no-unread-special-notice-message">There are currently no notices in the back log.</p>
+    <?php endif; ?>
+
+</div>
+
+<div>
+    <span class="divider full"></span>
+</div>
+
+<p>If you have any queries regarding this Special Notice or other testing matters,
+<?php echo lcfirst(trim($this->partial('partial/gds/general/contactHelpdesk', ['config' => $this->config['helpdesk']]))); ?></p>
+
+<script>
+    var converter = new Showdown.converter();
+
+    $("[id^=special-notice-content] > p").each(function () {
+        $(this).html(converter.makeHtml($(this).text().trim()));
+    });
+
+    $("[id^=special-notice-content]").addClass("collapse");
+
+    $("[id^=special-notice-content]").on('shown.bs.collapse hidden.bs.collapse', function (e) {
+        e.stopPropagation();
+        $(this).parent().find("span").eq(2).toggleClass("fa-chevron-down fa-chevron-up");
+    });
+
+</script>

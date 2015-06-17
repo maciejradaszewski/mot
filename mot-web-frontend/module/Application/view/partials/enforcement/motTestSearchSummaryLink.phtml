@@ -1,0 +1,9 @@
+<?php
+
+use DvsaCommon\Enum\MotTestStatusName;
+
+if (MotTestStatusName::ACTIVE === $status) {
+    echo "<a href=\"$url\">In progress</a>";
+} else {
+    echo "<a id=\"mot-$motTestNumber\" href=\"$url\">View</a>";
+}

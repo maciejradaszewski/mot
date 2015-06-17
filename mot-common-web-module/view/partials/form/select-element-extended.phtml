@@ -1,0 +1,27 @@
+<?php
+$id = isset($id) ? $id : '';
+$name = isset($name) ? $name : $id;
+$value = isset($value) ? $value : '';
+$label = isset($label) ? $label : '';
+$cssClass = isset($cssClass) ? $cssClass : '';
+$required = isset($required) ? $required : false;
+$options = (isset($options) && is_array($options)) ? $options : [];
+$inputErrorClass = isset($inputErrorClass) ? $inputErrorClass : '';
+?>
+
+<select name="<?php echo $this->escapeHtml($name); ?>"
+        id="<?php echo $this->escapeHtml($id); ?>"
+        class="form-control input-small <?php echo $this->escapeHtml($cssClass); ?><?php echo $inputErrorClass ? ' ' . $inputErrorClass : ''; ?>">
+    <?php foreach ($options as $option): ?>
+        <option <?php if (strval($option['id']) === strval($value)) : ?>selected<?php endif; ?>
+                value="<?php echo $this->escapeHTML($option['id']); ?>"
+                data-value="<?php echo $this->escapeHtml($option['value']); ?>"
+                id="<?php echo $this->escapeHtml($id) . '_' . $this->escapeHTML($option['id']); ?>">
+            <?php if (is_null($option['value'])): ?>
+                <?php echo $this->escapeHtml($option['label']); ?>
+            <?php else: ?>
+                <?php echo $this->escapeHtml($option['value']); ?> - <?php echo $this->escapeHtml($option['label']); ?>
+            <?php endif; ?>
+        </option>
+    <?php endforeach; ?>
+</select>

@@ -1,0 +1,143 @@
+<?php
+
+$this->headTitle('Add an AEP');
+
+
+$sectionName = "Authorised Examiner";
+$taskName = "Add an AEP";
+
+$this->headTitle($sectionName . ' - ' . $taskName);
+$this->layout()->setVariable('pageSubTitle', $this->translate($sectionName));
+$this->layout()->setVariable('pageTitle', $this->translate($taskName));
+
+$form = (isset($values) && is_array($values)) ? $values : [];
+
+$form['firstName'] = $this->withDefault('')->getValue($values['firstName']);
+$form['middleName'] = $this->withDefault('')->getValue($values['middleName']);
+$form['surname'] = $this->withDefault('')->getValue($values['surname']);
+$form['phoneNumber'] = $this->withDefault('')->getValue($values['phoneNumber']);
+$form['email'] = $this->withDefault('')->getValue($values['email']);
+$form['convictions'] = $this->withDefault('')->getValue($values['convictions']);
+?>
+
+<?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
+
+<form method="POST">
+    <?php echo $this->csrfToken() ?>
+    <div class="row">
+        <div class="col-sm-8">
+            <fieldset>
+                <legend>Name</legend>
+                <?php
+                echo $this->partial(
+                    'partial/forms/inputBox.phtml',
+                    [
+                        'id'        => 'firstName',
+                        'label'     => 'First name',
+                        'required'  => true,
+                        'title'     => 'Enter the first name',
+                        'maxLength' => 50,
+                        'value'     => $form['firstName'],
+                    ],
+                    'Core'
+                );
+
+                echo $this->partial(
+                    'partial/forms/inputBox.phtml',
+                    [
+                        'id'        => 'middleName',
+                        'label'     => 'Middle name',
+                        'title'     => 'Enter the middle name',
+                        'maxLength' => 50,
+                        'value'     => $form['middleName'],
+                    ],
+                    'Core'
+                );
+
+                echo $this->partial(
+                    'partial/forms/inputBox.phtml',
+                    [
+                        'id'        => 'surname',
+                        'label'     => 'Surname',
+                        'required'  => true,
+                        'title'     => 'Enter the surname',
+                        'maxLength' => 50,
+                        'value'     => $form['surname'],
+                    ],
+                    'Core'
+                );
+                ?>
+            </fieldset>
+
+            <fieldset>
+                <legend>Contact Details</legend>
+
+                <?php echo $this->partial(
+                    'partial/fragments/address-details.phtml',
+                    [
+                        'values' => $values,
+                    ],
+                    'Core'
+                );
+
+                echo $this->partial(
+                    'partial/forms/inputBox.phtml',
+                    [
+                        'id'        => 'email',
+                        'label'     => 'Email address',
+                        'required'  => true,
+                        'type'      => 'email',
+                        'title'     => 'Enter the e-mail',
+                        'maxLength' => 50,
+                        'value'     => $form['email'],
+                    ],
+                    'Core'
+                );
+
+                echo $this->partial(
+                    'partial/forms/inputBox.phtml',
+                    [
+                        'id'        => 'phoneNumber',
+                        'label'     => 'Telephone number',
+                        'pattern'   => "^\+?[\d -]{6,25}$",
+                        'required'  => true,
+                        'title'     => 'Enter the phone number',
+                        'maxLength' => 25,
+                        'value'     => $form['phoneNumber'],
+                    ],
+                    'Core'
+                );
+
+                ?>
+            </fieldset>
+
+            <fieldset>
+                <legend>Convictions</legend>
+                <?php echo $this->partial(
+                    'partial/forms/radioBoxDouble.phtml',
+                    [
+                        'label'        => 'Do they have any relevant convictions?',
+                        'required'     => true,
+                        'name'         => 'convictions',
+                        'option1'      => 'Yes',
+                        'option1Value' => 'true',
+                        'option2'      => 'No',
+                        'option2Value' => 'false',
+                    ],
+                    'Core'
+                );
+                ?>
+            </fieldset>
+
+            <div class="form-group">
+                <?php echo $this->partial(
+                    'submitElement',
+                    ['label' => 'Add AEP', 'value' => 'save', 'id' => 'save']
+                ); ?>
+            </div>
+            <div class="form-group">
+                <a id="cancel" href="<?php echo $this->escapeHtml($cancelRoute); ?>">Back to AE overview</a>
+            </div>
+        </div>
+    </div>
+</form>

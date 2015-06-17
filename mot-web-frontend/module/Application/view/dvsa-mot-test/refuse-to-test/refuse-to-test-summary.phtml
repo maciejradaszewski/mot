@@ -1,0 +1,36 @@
+<?php
+
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+
+$this->headTitle($title);
+
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+
+?>
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1><?php echo $this->escapeHtml($title); ?></h1>
+    </div>
+</div>
+
+<div class="row" id="reprintDialog">
+    <div class="col-lg-6">
+        <p>Certificate generated successfully.</p>
+        <ul>
+            <li>The VT30 has been generated</li>
+        </ul>
+        <div class="col-lg-8">
+            <a id="reprint-certificate" target="_blank" class="btn btn-primary"
+               href="<?php echo $this->url('refuse-to-test/print', [], [], true); ?>">Print documents</a>
+        </div>
+    </div>
+</div>
+<nav class="module-content-navigation">
+    <ul class="content-navigation_secondary">
+        <li>
+            <a id="quit" href="<?php echo PersonUrlBuilderWeb::home(); ?>" class="btn btn-link">Back to user home</a>
+        </li>
+    </ul>
+</nav>

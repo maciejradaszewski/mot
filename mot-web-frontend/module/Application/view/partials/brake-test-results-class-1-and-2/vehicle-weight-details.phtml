@@ -1,0 +1,27 @@
+<?php
+/**
+ * @var \DvsaMotTest\Model\BrakeTestConfigurationClass1And2Helper $brakeTestConfiguration
+ */
+?>
+<?php if ($brakeTestConfiguration->requiresWeight()): ?>
+    <div class="row">
+        <div class="col-lg-8">
+            <dl class="tight clearfix dl-horizontal">
+                <dt>Machine weight front</dt>
+                <dd><?php echo $this->escapeHtml($brakeTestConfiguration->getVehicleWeightFront()); ?> kg</dd>
+                <dt>Machine weight rear</dt>
+                <dd><?php echo $this->escapeHtml($brakeTestConfiguration->getVehicleWeightRear()); ?> kg</dd>
+                <dt>Rider weight</dt>
+                <?php if ($brakeTestConfiguration->getRiderWeight()): ?>
+                    <dd><?php echo $this->escapeHtml($brakeTestConfiguration->getRiderWeight()); ?> kg</dd>
+                <?php else : ?>
+                    <dd>Individual rider weight not provided</dd>
+                <?php endif; ?>
+                <?php if ($isSidecarAttached): ?>
+                    <dt>Sidecar Weight</dt>
+                    <dd><?php echo $this->escapeHtml($brakeTestConfiguration->getSidecarWeight()); ?> kg</dd>
+                <?php endif; ?>
+            </dl>
+        </div>
+    </div>
+<?php endif; ?>

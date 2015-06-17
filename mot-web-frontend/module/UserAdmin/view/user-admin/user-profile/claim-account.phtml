@@ -1,0 +1,55 @@
+
+<?php
+
+/** @var \UserAdmin\Presenter\UserProfilePresenter $presenter */
+/** @var string $userProfileUrl */
+/** @var string $claimAccountUrl */
+/** @var \Application\Helper\PrgHelper $prgHelper */
+
+?>
+
+<div id="reclaim-account-notification" class="text">
+    <p class="lede">
+        You are about to reset an account for user <strong><?php echo $this->escapeHtml($presenter->displayUserName()) ?></strong> which will need to be reclaimed.
+    </p>
+
+    <p>You should only start this process if <strong><?php echo $this->escapeHtml($presenter->displayTitleAndFullName()); ?></strong> has forgotten their security questions and password.
+        Instructions will be sent via email to <strong><?php echo $this->escapeHtml($presenter->displayEmail()); ?></strong>
+    </p>
+
+    <?php echo $this->partial('partial/gds/general/system-message',
+        [
+            'messages' => [
+                'This will reset the user\'s password and require them to set up their security questions and PIN when they next sign in.'
+            ],
+            'type' => 'important'
+        ]
+    ); ?>
+
+</div>
+
+<form id="resetClaimAccountForm" method="POST" role="form" novalidate>
+    <?php echo $this->csrfToken() ?>
+    <?php echo $prgHelper->getHtml(); ?>
+    <nav class="content-navigation">
+        <?php echo $this->partial(
+            'partial/gds/form/control-navigation',
+            [
+                'id'            => 'reclaim-account-submit',
+                'class'         => 'button-warning',
+                'value'         => 'Reclaim account by email',
+                'navigation'    => [
+                    'Cancel and return to user profile' => $userProfileUrl,
+                ]
+            ]
+        ); ?>
+    </nav>
+</form>
+
+<script>
+    document.onreadystatechange = function () {
+        $('#resetClaimAccountForm').submit(function() {
+            $('#reclaim-account-submit').attr('disabled','disabled');
+        });
+    };
+</script>

@@ -1,0 +1,29 @@
+{
+  "name": "dvsa/mot-api-testing-behat",
+  "require": {
+    "php": ">=5.5",
+    "behat/behat": "~3.0@dev",
+    "guzzle/guzzle": "~3.9",
+    "phpunit/phpunit": "~4.3",
+    "smalot/pdfparser": "*",
+    "fzaninotto/faker": "~1.4",
+    "zalas/behat-no-extension": "~1.1",
+    "fabpot/php-cs-fixer": "~1.6",
+    "zendframework/zendframework": "2.2.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "Spidey\\": "src/Spidey",
+      "Dvsa\\Mot\\Behat\\": "src"
+    },
+    "files": [
+      "../mot-testsupport/vendor/autoload.php"
+    ]
+  },
+  "config": {
+    "bin-dir": "bin",
+    "github-oauth" : {
+      "github.com" : "c413da7d946413edba2adadd44beb7a5075a52aa"
+    }
+  }
+}

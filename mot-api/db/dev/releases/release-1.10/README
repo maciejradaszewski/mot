@@ -1,0 +1,5 @@
+This folder containts SQL scripts that should be run to bring the database from
+1.9.5-hotfix-3 to 1.9.10.
+
+Each script should be ran in sequence, as per the output ls `ls -1`
+

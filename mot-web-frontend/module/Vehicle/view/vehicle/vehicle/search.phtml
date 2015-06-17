@@ -1,0 +1,89 @@
+<?php
+use DvsaCommon\UrlBuilder\VehicleUrlBuilderWeb;
+
+echo $this->partial('errorMessages', array('getFromFlash' => true, 'isShowHidden' => true));
+echo $this->partial('infoMessages', array('getFromFlash' => true));
+?>
+
+<form id="vehicle-search-form" method="POST" action="<?php echo VehicleUrlBuilderWeb::searchResult(); ?>">
+    <?php echo $this->csrfToken() ?>
+    <div class="row" >
+        <div class="col-sm-12">
+            <h1>Search for vehicle information by...</h1>
+        </div>
+    </div>
+    <div class="row form-group" >
+        <div class="col-sm-6">
+            <?php
+            echo $this->partial(
+                'selectElement', [
+                    'id'      => 'type',
+                    'options' => [
+                        'registration' => 'Registration (VRM)',
+                        'vin'          => 'VIN/Chassis',
+                    ],
+                    'value' => $this->searchParams->get('type'),
+                ]
+            );
+            ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 col-lg-8 vts-search-panel">
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <?php
+                    echo $this->partial(
+                        'inputElement', [
+                            'id'          => 'vehicle-search',
+                            'name'        => 'search',
+                            'size'        => 92,
+                            'maxlength'   => 60,
+                            'placeholder' => 'eg. BD51 SMR',
+                            'value' => $this->searchParams->get('search'),
+                        ]
+                    );
+                    ?>
+                    <button type="submit" class="btn-search" id="item-selector-btn-search">
+                        <i class="fa fa-search"> </i>
+                        <span class="visually-hidden">
+                            Search
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<br />
+<div class="row">
+    <div class="col-sm-12">
+        <p title="...if JavaScript is enabled">
+            View hints on using Vehicle  Information Search...
+            <i class='fa fa-lg fa-info-circle info-popup' id='info-popup' data-toggle='popover' data-content='
+<b>Vehicle search examples:</b><br /><br />
+When searching by Registration (VRM), entering &quot;BD51 SMR&quot; for example, finds all vehicles that have ever used this registration mark
+<br /><br />
+When searching by VIN/Chassis No., entering &quot;WV1ZVB8ZH6H091598&quot; finds the vehicle with this VIN/Chassis number. Note that any errant multiple VIN/Chassis numbers in the vehicle data records will result in more than one unique vehicle being found.
+<br /><br />
+Note that predictive search (autocomplete) is disabled in both cases.
+<br />'></i>
+        </p>
+    </div>
+</div>
+
+<script type="text/javascript">
+    const REGISTRATION = 0;
+    const VIN = 0;
+    const REGISTRATION_PLACEHOLDER = 'eg. BD51 SMR';
+    const VIN_PLACEHOLDER = 'eg. WV1ZVB8ZH6H091598';
+
+    $(document).ready(function () {
+        $('form #type').focus();
+
+        new VehicleSearchHelper();
+    });
+</script>

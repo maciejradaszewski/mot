@@ -1,0 +1,146 @@
+<?php
+
+use Site\Controller\SiteTestingDailyScheduleController;
+
+$days = [
+    1 => 'Monday',
+    2 => 'Tuesday',
+    3 => 'Wednesday',
+    4 => 'Thursday',
+    5 => 'Friday',
+    6 => 'Saturday',
+    7 => 'Sunday'
+];
+
+$errorData = isset($errorData) ? $errorData : '';
+?>
+<h1>
+    <small>VTS Details</small>
+    <span>Manage opening hours</span>
+</h1>
+
+<hr class="hr-thick">
+
+<?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
+
+<div class="row" id="opening-hours">
+    <div class="col-sm-8">
+        <form method="POST" role="form">
+            <?php echo $this->csrfToken() ?>
+
+            <?php for($i = 0; $i < 7; $i++) :
+
+                $dayLowerCase = strtolower($days[$i+1]);
+
+                $isOpenTimeAm = $siteOpeningHours[$dayLowerCase.'OpenTimePeriod'] === 'am' ? true : false;
+                $isOpenTimePm = $siteOpeningHours[$dayLowerCase.'OpenTimePeriod'] === 'pm' ? true : false;
+                $isCloseTimeAm = $siteOpeningHours[$dayLowerCase.'CloseTimePeriod'] === 'am' ? true : false;
+                $isCloseTimePm = $siteOpeningHours[$dayLowerCase.'CloseTimePeriod'] === 'pm' ? true : false;
+                $isClosed = $siteOpeningHours[$dayLowerCase . 'IsClosed'] === 'true' ? true
+                    : $siteOpeningHours[$dayLowerCase . 'IsClosed'];
+            ?>
+                <fieldset>
+            <legend><?php echo $this->escapeHtml($days[$i+1]);?></legend>
+        <div class="row">
+            <div class="col-sm-2">
+                <!--<div class="form-group has-error">-->
+                <div class="form-group <?php if(array_key_exists($dayLowerCase."OpenTime", $errorData)) echo 'has-error" id="error-'. $errorData[$dayLowerCase."OpenTime"]['ref']?>">
+                    <label class="control-label" for="<?php echo $this->escapeHtml($dayLowerCase);?>-time-text-open">Opening Time</label>
+                    <input type="text"
+                       class="form-control form-control-xs"
+                       id="<?php echo $this->escapeHtml($dayLowerCase);?>-time-text-open"
+                       name="<?php echo $this->escapeHtml($dayLowerCase);?>OpenTime"
+                       value="<?php echo $this->escapeHtml($siteOpeningHours[$dayLowerCase.'OpenTime']);?>">
+			   </div>
+		    </div>
+
+		    <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="block-label" for="<?php echo $this->escapeHtml($dayLowerCase);?>-am-radio-open">
+                        <input type="radio" value="am"
+                           name="<?php echo $this->escapeHtml($dayLowerCase);?>OpenTimePeriod"
+                           id="<?php echo $this->escapeHtml($dayLowerCase);?>-am-radio-open"
+                           <?php echo $isOpenTimeAm ? 'checked' : '' ?>>
+                        am
+                    </label>
+                    <label class="block-label" for="<?php echo $this->escapeHtml($dayLowerCase);?>-pm-radio-open">
+                        <input type="radio" value="pm"
+                           name="<?php echo $this->escapeHtml($dayLowerCase);?>OpenTimePeriod"
+                           id="<?php echo $this->escapeHtml($dayLowerCase);?>-pm-radio-open"
+                           <?php echo $isOpenTimePm ? 'checked' : '' ?>>
+                        pm
+                    </label>
+                </div>
+            </div>
+		</div>
+
+		<div class="row">
+		    <div class="col-sm-2">
+			    <!--<div class="form-group has-error">-->
+			    <div class="form-group <?php if(array_key_exists($dayLowerCase."CloseTime", $errorData)) echo 'has-error" id="error-'. $errorData[$dayLowerCase."CloseTime"]['ref']?>">
+				<label class="control-label" for="<?php echo $this->escapeHtml($dayLowerCase);?>-time-text-close">Closing time</label>
+				    <input type="text"
+					   class="form-control form-control-xs"
+					   id="<?php echo $this->escapeHtml($dayLowerCase);?>-time-text-close"
+					   name="<?php echo $this->escapeHtml($dayLowerCase);?>CloseTime"
+					   value="<?php echo $this->escapeHtml($siteOpeningHours[$dayLowerCase.'CloseTime'])?>">
+			    </div>
+		    </div>
+		    <div class="col-sm-4">
+			<div class="form-group">
+				<label class="block-label" for="<?php echo $this->escapeHtml($dayLowerCase);?>-am-radio-close">
+				    <input type="radio" value="am"
+					   name="<?php echo $this->escapeHtml($dayLowerCase);?>CloseTimePeriod"
+					   id="<?php echo $this->escapeHtml($dayLowerCase);?>-am-radio-close"
+					   <?php echo $isCloseTimeAm ? 'checked' : '' ?>>
+				    am
+				</label>
+				<label class="block-label" for="<?php echo $this->escapeHtml($dayLowerCase);?>-pm-radio-close">
+				    <input type="radio" value="pm"
+					   name="<?php echo $this->escapeHtml($dayLowerCase);?>CloseTimePeriod"
+					   id="<?php echo $this->escapeHtml($dayLowerCase);?>-pm-radio-close"
+					    <?php echo $isCloseTimePm ? 'checked' : '' ?>>
+				    pm
+				</label>
+		        </div>
+                    </div>
+	        </div>
+            <?php if(array_key_exists($dayLowerCase."OpenTime", $errorData)) : ?>
+            <div class="row">
+                <div class="col-sm-12"><?php echo $this->escapeHtml($errorData[$dayLowerCase."OpenTime"]['error']['displayMessage']) ?></div>
+            </div>
+            <?php endif; ?>
+            <?php if(array_key_exists($dayLowerCase."CloseTime", $errorData)) : ?>
+                <div class="row">
+                    <div class="col-sm-12"><?php echo $this->escapeHtml($errorData[$dayLowerCase."CloseTime"]['error']['displayMessage']) ?></div>
+                </div>
+            <?php endif; ?>
+		<div class="row">
+		    <div class="col-sm-6">
+			<div class="info-notice">
+			    <div class="form-group">
+			    <p>
+			    <?php echo $this->partial(
+				'checkboxElement',
+				[
+				    'id'        => $dayLowerCase . 'isClosed',
+				    'labelId'   => $dayLowerCase . 'isClosedLabel',
+				    'value'     => 'true',
+				    'name'      => $this->escapeHtml($dayLowerCase).'IsClosed',
+                    'isChecked' => $isClosed,
+				    'label'     => 'Closed all day ' . $dayLowerCase,
+				]
+				); ?> 
+			    </p>
+			    </div>
+			</div>
+	           </div>
+		</div>
+
+                </fieldset>
+            <?php endfor; ?>
+            <button id="update-opening-hours" type="submit" class="btn btn-primary">Update</button>
+        </form>
+    </div>
+</div>
+

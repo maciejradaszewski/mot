@@ -1,0 +1,14 @@
+<header class="content-header">
+    <h1>
+        <span class="content-header__type"><?php echo $this->escapeHtml($type); ?></span>
+        <span class="content-header__title"><?php echo $this->escapeHtml($title); ?></span>
+        <?php if (isset($progress)): ?>
+            <span class="content-header__progress"><?php echo $this->escapeHtml($progress); ?></span>
+        <?php endif; ?>
+    </h1>
+    <?php if (isset($tertiary)): ?>
+        <h2>
+            <span class="content-header__tertiary"><?php echo $this->escapeHtml($tertiary); ?></span>
+        </h2>
+    <?php endif; ?>
+</header>

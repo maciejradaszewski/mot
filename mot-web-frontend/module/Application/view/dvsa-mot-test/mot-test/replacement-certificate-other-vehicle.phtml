@@ -1,0 +1,89 @@
+<?php
+
+$title = 'Duplicate and replacement certificates';
+
+$this->headTitle($title);
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+
+$this->layout()->setVariable('pageSubTitle', $title);
+
+if ($vehicle->displayMakeInputBox()) {
+    $buttonAndPageTitle = 'Change make and model';
+} else {
+    $buttonAndPageTitle = 'Change model';
+}
+
+$this->layout()->setVariable('pageTitle', $buttonAndPageTitle);
+?>
+
+<div class="text">
+    <p class="lede">
+        We don't have details to match the make and model you need for the vehicle on this certificate.
+    </p>
+</div>
+
+<form action="" method="post">
+
+    <?php echo $this->csrfToken(); ?>
+
+    <legend class="form-title heading-small">
+        What is the correct
+        <?php if ($vehicle->displayMakeInputBox()): ?>
+            make and
+        <?php else: ?>
+            <?php echo $vehicle->getMake()->getName(); ?>
+        <?php endif; ?>
+        model?
+    </legend>
+
+    <?php if ($vehicle->displayMakeInputBox()): ?>
+        <div class="form-group">
+            <label for="otherMake" class="form-label">Make</label>
+
+            <?php echo $this->partial(
+            "inputElement", [
+            "id"        => "input-make",
+            "name"      => "make",
+            "value"     => '',
+            "maxLength" => 25,
+            "cssClass"  => "form-control-1-4"
+            ]
+            ); ?>
+            <input type="hidden" name="action" value="updateCustomMakeModel" />
+        </div>
+    <?php else: ?>
+        <?php if ($vehicle->isOtherMake()): ?>
+            <input type="hidden" name="action" value="updateCustomMakeModel" />
+            <input type="hidden" name="make" value="<?php echo $vehicle->getMake()->getName(); ?>" />
+        <?php else: ?>
+            <input type="hidden" name="make" value="<?php echo $vehicle->getMake()->getCode(); ?>" />
+            <input type="hidden" name="action" value="updateMakeCustomModel" />
+        <?php endif; ?>
+    <?php endif; ?>
+
+    <div class="form-group">
+        <label for="otherModel" class="form-label">Model</label>
+        <?php
+        $vehicleModel = $vehicle->getModel();
+        echo $this->partial(
+            "inputElement", [
+                "id"        => "input-model",
+                "name"      => "model",
+                "value"     => '',
+                "maxLength" => 25,
+                "cssClass"  => "form-control-1-4"
+            ]
+        ); ?>
+    </div>
+
+    <nav class="content-navigation">
+        <button class="button" name="submit"><?php echo $buttonAndPageTitle; ?></button>
+        <ul class="content-navigation__secondary">
+            <li>
+                <a id="cancel-link" href="<?php echo $this->url('replacement-certificate', ['id' => $id]) ?> ">Cancel and return to certificate</a>
+            </li>
+        </ul>
+    </nav>
+
+</form>

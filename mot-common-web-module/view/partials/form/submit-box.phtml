@@ -1,0 +1,30 @@
+<?php
+$id = isset($id) ? $id : '';
+$name = isset($name) ? $name : $id;
+$label = isset($label) ? $label : 'Submit form';
+$offset = isset($offset) ? $offset : 4;
+$cssClass = isset($cssClass) ? $cssClass : 'btn btn-primary btn-large';
+$value = isset($value) ? $value : '';
+$cancelUrl = isset($cancelUrl) ? $cancelUrl : '';
+$cancelId = isset($cancelId) ? $cancelId : 'cancel';
+?>
+
+<div class="form-group">
+    <div class="col-md-offset-<?php echo $this->escapeHtml($offset); ?> col-sm-6">
+        <?php
+        echo $this->partial(
+            'submitElement',
+            [
+                 'id'       => $id,
+                 'name'     => $name,
+                 'label'    => $label,
+                 'cssClass' => $cssClass,
+                 'value'    => $value,
+            ]
+        );
+
+        if ($cancelUrl) : ?>
+            <a id="<?php echo $this->escapeHtml($cancelId); ?>" href="<?php echo $this->escapeHtml($cancelUrl); ?>" class="btn btn-link">Cancel</a>
+        <?php  endif; ?>
+    </div>
+</div>

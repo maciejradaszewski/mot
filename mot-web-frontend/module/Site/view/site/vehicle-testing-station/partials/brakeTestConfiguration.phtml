@@ -1,0 +1,74 @@
+<?php
+
+use Site\Controller\VehicleTestingStationController;
+use DvsaCommon\Enum\BrakeTestTypeCode;
+
+/**
+ * @var \Site\ViewModel\VTSDecorator                   $siteDetails
+ * @var \Site\Authorization\VtsOverviewPagePermissions $permissions
+ */
+
+$siteDetails = $this->siteDetails;
+$permissions = $siteDetails->getPermissions();
+
+$brakeTestTypeCodeToNameMap = [
+    BrakeTestTypeCode::ROLLER        => 'Roller',
+    BrakeTestTypeCode::PLATE         => 'Plate',
+    BrakeTestTypeCode::DECELEROMETER => 'Decelerometer',
+    BrakeTestTypeCode::GRADIENT      => 'Gradient',
+    BrakeTestTypeCode::FLOOR         => 'Floor',
+];
+
+?>
+<section id="brake-test-defaults-configuration" class="row module-present-data">
+    <header class="col-sm-4">
+        <h3>Default Settings</h3>
+        <a id="configure-brake-test-defaults-link" href="<?php echo $this->url(
+            VehicleTestingStationController::ROUTE_CONFIGURE_BRAKE_TEST_DEFAULTS,
+            ['id' => $siteDetails['id']]
+        ); ?>">
+            Change defaults
+        </a>
+    </header>
+    <div class="col-sm-8">
+        <div class="row">
+            <?php if ($permissions->canTestClass1And2()) : ?>
+                <div class="col-sm-6">
+                    <h4 class="present-data-list-header">Class 1 and 2</h4>
+                    <dl class="horizontal">
+                        <dt>Brake test</dt>
+                        <dd class="font-bold19" id="default-brake-test-class-1-and-2"><?php echo ucfirst(
+                                $this->escapeHtml(
+                                    $brakeTestTypeCodeToNameMap[$siteDetails['defaultBrakeTestClass1And2']]
+                                )
+                            ); ?></dd>
+                    </dl>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($permissions->canTestAnyOfClass3AndAbove()) : ?>
+                <div class="col-sm-6">
+                    <h4 class="present-data-list-header">Class 3, 4, 5 and 7</h4>
+                    <dl class="horizontal">
+                        <dt>Service brake test</dt>
+                        <dd class="font-bold19"
+                            id="default-service-brake-test-class-3-and-above"><?php echo ucfirst(
+                                $this->escapeHtml(
+                                    $brakeTestTypeCodeToNameMap[$siteDetails['defaultServiceBrakeTestClass3AndAbove']]
+                                )
+                            ); ?></dd>
+
+                        <dt>Parking brake test</dt>
+                        <dd class="font-bold19"
+                            id="default-parking-brake-test-class-3-and-above"><?php echo ucfirst(
+                                $this->escapeHtml(
+                                    $brakeTestTypeCodeToNameMap[$siteDetails['defaultParkingBrakeTestClass3AndAbove']]
+                                )
+                            ); ?></dd>
+
+                    </dl>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>

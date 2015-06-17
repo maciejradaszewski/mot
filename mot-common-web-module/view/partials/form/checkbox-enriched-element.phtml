@@ -1,0 +1,31 @@
+<?php
+$id = isset($id) ? $id : '';
+$name = isset($name) ? $name : $id;
+$value = isset($value) ? $value : '';
+$defaultValue = isset($defaultValue) ? $defaultValue : '';
+$label = isset($label) ? $label : '';
+$description = isset($description) ? $description : '';
+$isChecked = (isset($isChecked) && true === $isChecked) ? true : false;
+$descriptionCssClass = isset($descriptionCssClass) ? $descriptionCssClass : '';
+?>
+
+<div class="checkbox">
+    <label for="<?php echo $this->escapeHtml($id); ?>">
+        <?php echo $this->partial(
+            'checkboxElement', [
+                'id'           => $id,
+                'name'         => $name,
+                'value'        => $value,
+                'defaultValue' => $defaultValue,
+                'isChecked'    => $isChecked,
+            ]
+        ); ?>
+        <?php if ($label) : ?>
+            <strong><?php echo $this->escapeHtml($label); ?></strong>
+        <?php endif; ?>
+
+        <?php if ($description) : ?>
+            <p class="<?php echo $this->escapeHtml($descriptionCssClass); ?>"><?php echo $this->escapeHtml($description); ?></p>
+        <?php endif; ?>
+    </label>
+</div>

@@ -1,0 +1,15 @@
+<label
+    class="block-label"
+    for="<?php echo $this->escapeHtmlAttr($inputName . $value); ?>"
+    <?php if (!empty($dataTarget)): ?>
+        data-target="<?php echo $this->escapeHtmlAttr($dataTarget); ?>"
+    <?php endif; ?>
+>
+    <input type="radio"
+           value="<?php echo $this->escapeHtmlAttr($value); ?>"
+           name="<?php echo $this->escapeHtmlAttr($inputName); ?>"
+           id="<?php echo $this->escapeHtmlAttr($inputName . $value); ?>"
+            <?php echo ($this->checked === true) ? ' checked="checked"' : '' ?>
+        />
+    <?php echo $this->escapeHtml($key); ?>
+</label>

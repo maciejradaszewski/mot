@@ -1,0 +1,56 @@
+<?php
+use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
+use Site\Controller\RoleController;
+
+/**
+ * @var $viewModel \Site\ViewModel\Role\RemoveRoleConfirmationViewModel
+ */
+?>
+
+<?php if ($viewModel->canRoleBeRemoved()): ?>
+    <div class="text">
+        <p class="lede">
+            Are you sure you want to remove the role of
+            <?php echo $this->escapeHtml($viewModel->getRoleName()); ?>
+            at <?php echo $this->escapeHtml($viewModel->getSiteName()); ?>
+            from <?php echo $this->escapeHtml($viewModel->getEmployeeName()); ?>
+        </p>
+    </div>
+<?php endif; ?>
+
+<?php if (!empty($viewModel->hasActiveMotTest())): ?>
+    <div class="message--important">
+        <p>
+            <?php echo $this->escapeHtml($viewModel->getEmployeeName()); ?> currently has a vehicle registered for test or retest. This must be completed or aborted before their role can be removed.
+        </p>
+    </div>
+<?php endif; ?>
+
+<?php if ($viewModel->canRoleBeRemoved()): ?>
+    <div class="message" id="notification-sent">
+        <p>A notification will be sent to the user.</p>
+    </div>
+<?php endif; ?>
+
+<form action="<?php
+echo $this->url(
+    RoleController::ROUTE_REMOVE_ROLE,
+    ['siteId' => $viewModel->getSiteId(), 'positionId' => $viewModel->getPositionId()]
+);
+?>" method="post">
+    <?php echo $this->csrfToken(); ?>
+    <nav class="content-navigation">
+
+        <?php if ($viewModel->canRoleBeRemoved()): ?>
+            <input type="submit" name="submit" id="confirm" class="button" value="Confirm">
+        <?php endif; ?>
+
+        <ul class="content-navigation__secondary">
+            <li>
+                <a id="cancel-and-return-to-garage" href="<?php echo $this->url('vehicle-testing-station', [ 'id' => $viewModel->getSiteId()]); ?>">
+                    Cancel and return to <?php echo $viewModel->getSiteName(); ?>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</form>

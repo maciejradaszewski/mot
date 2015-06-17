@@ -1,0 +1,16 @@
+<?php
+use Core\Presenter\AddressPresenterInterface;
+
+/** @var AddressPresenterInterface $presenter */
+?>
+<section class="module-present-data">
+    <dl>
+        <dt>Address</dt>
+        <dd><?php echo $this->escapeHtml($presenter->displayAddressLine1()); ?></dd>
+        <dd><?php echo $this->escapeHtml($presenter->displayAddressLine2()); ?></dd>
+        <dd><?php echo $this->escapeHtml($presenter->displayAddressLine3()); ?></dd>
+        <dd><?php echo $this->escapeHtml($presenter->displayAddressLine4()); ?></dd>
+        <dd><?php echo $this->escapeHtml($presenter->displayTown()); ?></dd>
+        <dd><?php echo $this->escapeHtml($presenter->displayPostcode()); ?></dd>
+    </dl>
+</section>

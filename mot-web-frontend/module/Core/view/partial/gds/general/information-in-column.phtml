@@ -1,0 +1,11 @@
+<?php
+$nbCol = isset($nbCol) ? $nbCol : 'one';
+?>
+<dl class="column-<?php echo $this->escapeCss($nbCol); ?>">
+    <?php foreach ($elements as $element): ?>
+        <?php echo $this->partial(
+            'partial/gds/general/label-name',
+            $element
+        ); ?>
+    <?php endforeach; ?>
+</dl>

@@ -1,0 +1,16 @@
+{
+	"id": "724871bf-323c-cc73-6a94-a7153fac02c2",
+	"name": "Test",
+	"values": [
+		{
+			"key": "tester",
+			"value": "ft-Enf-tester",
+			"type": "text",
+			"name": "tester",
+			"enabled": true
+		}
+	],
+	"timestamp": 1402927384506,
+	"synced": false,
+	"syncedFilename": ""
+}

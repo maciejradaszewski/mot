@@ -1,0 +1,94 @@
+<?php
+
+use DvsaCommon\Enum\MotTestTypeCode;
+use DvsaMotTest\Controller\AbstractDvsaMotTestController;
+
+/**
+ * @var \DvsaCommon\Dto\Common\ReasonForCancelDto $cancelReason
+ */
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motTest */
+$motTest = $this->motTest;
+
+$motTestType = null;
+$status = null;
+$vehicle = null;
+$cancelReason = null;
+$cancelReasonComment = null;
+
+if ($motTest !== null) {
+    $status = strtolower($motTest->getStatus());
+    $cancelReason = $motTest->getReasonForCancel();
+    $cancelReasonComment = $motTest->getReasonForTerminationComment();
+    $vehicle = $motTest->getVehicle();
+    $motTestType = $motTest->getTestType()->getCode();
+}
+
+//  --  title and header    --
+$testName = AbstractDvsaMotTestController::getTestName($motTestType);
+$title = $testName . ' Cancelled';
+$header = $testName . ' ' . $status;
+
+$this->headTitle($title);
+?>
+
+<div class="row" id="content">
+    <div class="col-lg-12 header-container">
+        <h1><?php echo $this->escapeHtml($header); ?></h1>
+    </div>
+</div>
+
+<?php
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+
+if ($vehicle !== null)  {
+    echo $this->partial('vehicleSummary', ['vehicle' => $vehicle]);
+}
+?>
+
+<div class="row">
+    <div class="col-lg-12 ">
+        <p>The test has been <?php echo $this->escapeHtml($status); ?> with the following reason: </p>
+        <?php if ($cancelReason !== null): ?>
+        <p><strong><?php echo $this->escapeHtml($cancelReason->getReasonInLang()); ?></strong></p>
+        <?php endif; ?>
+        <?php if ($cancelReasonComment !== null) : ?>
+            <p><?php echo $this->escapeHtml($cancelReasonComment); ?> </p>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <p>Certificate generated successfully</p>
+        <?php
+        $canPrint = ($motTestType != MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING);
+
+        if ($canPrint):
+            $reportNr = '30';
+            if ($motTestType == MotTestTypeCode::NON_MOT_TEST
+                || $motTestType == MotTestTypeCode::TARGETED_REINSPECTION
+                || $motTestType == MotTestTypeCode::MOT_COMPLIANCE_SURVEY
+            ) {
+                $reportNr = '32';
+            }
+            ?>
+            <ul>
+                <li>
+                    <?php echo $this->escapeHtml('The VT' . $reportNr. '  has been generated'); ?>
+                </li>
+            </ul>
+        <?php endif; ?>
+        <div class="col-lg-8">
+            <a href="<?php echo $this->url(\Dashboard\Controller\UserHomeController::ROUTE); ?>"
+               class="btn btn-primary" id="cancel_test_result">Finish</a>
+
+            <?php if ($canPrint && $motTest !== null): ?>
+                <a id="reprint-certificate" target="_blank" class="btn btn-primary"
+                   href="<?php 
+                   echo $this->url('mot-test/print-certificate', ['motTestNumber' => $motTest->getMotTestNumber()]); ?>"
+                    >Print documents</a>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>

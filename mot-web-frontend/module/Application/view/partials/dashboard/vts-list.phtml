@@ -1,0 +1,65 @@
+<?php
+
+use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
+
+/** @var $dashboard \Dashboard\Model\Dashboard */
+$dashboard = $this->dashboardDataProvider();
+
+if (!$dashboard->getOverallAuthoriseExaminerCount()) {
+    return;
+}
+
+/** @var $authorisedExaminer \Dashboard\Model\AuthorisedExaminer */
+$currentIndex = 0;
+
+foreach ($dashboard->getAuthorisedExaminers() as $authorisedExaminer) :
+    $escUrlAEView = AuthorisedExaminerUrlBuilderWeb::of($authorisedExaminer->getId());
+    $vtsCount = $authorisedExaminer->getSiteCount();
+
+    $currentIndex++;
+    ?>
+    <section class="module-pivot-panel" id="ae-vts-list_<?php echo $this->escapeHtmlAttr($currentIndex); ?>">
+        <header class="pivot-panel_header">
+            <h2 class="pivot-panel_title">
+                <a href="<?php echo $escUrlAEView ?>"><?php echo $this->escapeHtml($authorisedExaminer->getName()); ?></a>
+            </h2>
+            <p class="pivot-panel_subtitle">
+                AE number: <?php echo $this->escapeHtml($authorisedExaminer->getReference()); ?>
+            </p>
+        </header>
+
+        <?php if ($vtsCount === 0) : ?>
+            <p>You are not currently assigned to any Vehicle Testing Stations</p>
+        <?php elseif ($vtsCount <= 5) : ?>
+            <p>Your vehicle testing stations</p>
+            <ul class="pivot-panel_meta-list">
+                <?php /** @var $site \Dashboard\Model\Site */ ?>
+                <?php foreach ($authorisedExaminer->getSites() as $site) : ?>
+                    <li>
+                        <a href="<?php echo VehicleTestingStationUrlBuilderWeb::byId($site->getId()); ?>"
+                           class="site-link" title="">
+                            <?php echo $this->escapeHtml('(' . $site->getSiteNumber() . ') ' . $site->getName()); ?>
+                        </a>
+                        <span class="pivot-panel_subtitle">
+                            <?php echo $this->escapeHtml(implode(', ', $site->getPositions())); ?>
+                        </span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else : ?>
+            <p>
+                <a class="mega-number" href="<?php echo $escUrlAEView; ?>">
+                    <strong class="number"><?php echo intval($vtsCount); ?></strong>
+                    <span class="sub-text">VTS</span>
+                </a>
+
+            </p>
+        <?php endif; ?>
+        <p class="pivot-panel_slot-count">
+            <strong>
+                <?php echo $this->escapeHtml($authorisedExaminer->getSlots()); ?>
+            </strong> Slots available.
+        </p>
+    </section>
+<?php endforeach; ?>

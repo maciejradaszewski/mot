@@ -1,0 +1,32 @@
+<?php
+use \DvsaCommon\Constants\ApplicationStatus;
+
+?>
+
+<h1 class="step">My applications</h1>
+
+<table class='table table-bordered table-striped table-compact'>
+    <thead>
+    <tr>
+        <th>Type</th>
+        <th>Reference Number</th>
+        <th>Date submitted</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($this->applications as $application): ?>
+        <tr>
+            <td>Tester</td>
+            <td><?php echo $this->escapeHtml($application['uuid']); ?></td>
+            <td><?php echo $this->escapeHtml($application['submitDate']); ?></td>
+            <td>
+                <?php echo $this->escapeHtml(ApplicationStatus::getStatusFriendlyName($application['status'])); ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+<?php if (count($this->applications) === 0): ?>
+    No records present
+<?php endif; ?>

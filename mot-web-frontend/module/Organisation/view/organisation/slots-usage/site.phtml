@@ -1,0 +1,78 @@
+<?php
+use Organisation\Controller\SlotsUsageController;
+
+$subTitle = implode(
+        ', ', 
+        [
+            $this->escapeHtml($this->site['address']->getAddressLine1()),
+            $this->escapeHtml($this->site['address']->getTown()),
+            $this->escapeHtml($this->site['address']->getPostCode()),
+        ]
+);
+        
+$this->layout()->setVariable('pageTitle', 'Slot usage');
+$this->layout()->setVariable('pageSubTitle', $this->escapeHtml($subTitle));
+?>
+<div class="row">
+    <?php echo $this->partial(
+        'errorMessages', array('errorTitle' => 'Please check the form', 'getFromFlash' => true)
+    ); ?>
+</div>
+<div class="row slot-usage-totals">
+    <div class="col-md-3">
+        <h4>Total usage</h4>
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-3">
+                <h3><?php echo $this->escapeHtml($periodUsage[0]); ?></h3>
+                <span>Today</span>
+            </div>
+            <div class="col-md-3">
+                <h3><?php echo $this->escapeHtml($periodUsage[1]); ?></h3>
+                <span>Last 7 days</span>
+            </div>
+            <div class="col-md-3">
+                <h3><?php echo $this->escapeHtml($periodUsage[2]); ?></h3>
+                <span>Last 30 days</span>
+            </div>
+            <div class="col-md-3">
+                <h3><?php echo $this->escapeHtml($periodUsage[3]); ?></h3>
+                <span>Last year</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3 module-filters">
+    <h3 class="module-filters__header">Filter by</h3>
+        <?php
+        echo $this->partial(
+            'dateFilter',
+            array(
+                'form' => $form,
+                'currentDateRange' => $currentDateRange,
+                'currentParams' => $params,
+                'legendFrom' => 'Start date',
+                'legendTo' => 'End date',
+                'dateRanges' => $dateRanges
+            )
+        );
+        ?>
+
+    </div>
+    <div class="col-md-9 slot-usage-table">
+        <span><strong><?php echo $this->escapeHtml($slotUsageForCurrentQuery); ?></strong> slots used <strong><?php echo $this->escapeHtml($dateRangeLabel); ?></strong></span>
+        <?php echo $this->table->render($this); ?>
+    </div>
+</div>
+
+<div class="row">
+    <nav class="module-content-navigation col-sm-12">
+        <ul class="content-navigation_secondary">
+            <li>
+                <a id="returnToAeSlotUsage" href="<?php echo $this->url(SlotsUsageController::ROUTE_SLOTS_USAGE, ['id' => $organisation->getId()]); ?>">Return to Authorised Examiner slot usage</a>
+            </li>
+        </ul>
+    </nav>
+</div>

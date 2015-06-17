@@ -1,0 +1,51 @@
+<?php
+
+$id = (string)$this->id;
+if (empty($id)) {
+    return;
+}
+
+$name = (string)$this->name;
+$label = (string)$this->label;
+$hint = (string)$this->hint;
+$value = (string)$this->value;
+$isRequire = (true === $this->isRequire);
+
+$pattern = (string)$this->pattern;
+$min = (int)$this->min;
+$max = (int)$this->max;
+$maxLength = (int)$this->maxLength;
+
+$cntrCssClass = (string)$this->cntrCssClass;
+$cssClass = (string)$this->cssClass;
+?>
+
+<div class="form-group <?php echo $this->escapeCss($cntrCssClass); ?>">
+    <?php
+    echo $this->partial(
+        'partials/form/label-element.phtml',
+        [
+            'forId'    => $id,
+            'label'    => $label,
+            'required' => $isRequire,
+
+        ]
+    );
+
+    echo $this->partial(
+        'inputElement',
+        [
+            'id'        => $id,
+            'name'      => $name,
+            'value'     => $value,
+            'required'  => $isRequire,
+            'cssClass'  => $cssClass,
+            'pattern'   => $pattern,
+            'min'       => $min,
+            'max'       => $max,
+            'maxLength' => $maxLength,
+            'title'     => $hint,
+        ]
+    );
+    ?>
+</div>

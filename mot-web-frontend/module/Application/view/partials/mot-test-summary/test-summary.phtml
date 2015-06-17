@@ -1,0 +1,137 @@
+<?php
+use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\Utility\ArrayUtils;
+
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motTest */
+$motTest = !empty($this->motTest) ? $this->motTest : new \DvsaCommon\Dto\Common\MotTestDto();
+
+$vehicle = $motTest->getVehicle();
+$site = $motTest->getVehicleTestingStation();
+
+/** @var string $motTestType */
+$motTestType = $motTest->getTestType()->getCode();
+$reasonsForRejection = $motTest->getReasonsForRejection();
+$fails = @$reasonsForRejection['FAIL'];
+$prses = @$reasonsForRejection['PRS'];
+$advisories = @$reasonsForRejection['ADVISORY'];
+
+$pendingDetails = $motTest->getPendingDetails();
+$pendingStatus = ArrayUtils::tryGet($pendingDetails, 'currentSubmissionStatus');
+$isTestReady = ($pendingStatus != 'INCOMPLETE');
+$isTestReadyToPass = ($pendingStatus == MotTestStatusName::PASSED);
+$isTestReadyToFail = ($pendingStatus == MotTestStatusName::FAILED);
+
+$testStatus = $motTest->getStatus();
+$isTestPass = ($testStatus == MotTestStatusName::PASSED);
+$isTestFail = ($testStatus == MotTestStatusName::FAILED);
+
+$isReinspection = \DvsaCommon\Domain\MotTestType::isReinspection($motTestType);
+?>
+
+<div class="row" id="testInformation">
+    <?php
+    echo $this->partial(
+        'partials/mot-test-summary/test-status',
+        ['status' => $pendingStatus ? $pendingStatus : $testStatus]
+    );
+    ?>
+
+    <div class="col-sm-8">
+        <div class="row">
+            <?php
+            echo $this->partial(
+                'partials/mot-test-summary/field-mot-test-number',
+                [
+                    'cssDlClass'      => 'col-sm-6 no-bot-marg',
+                    'isReinspection'  => $isReinspection,
+                    'motTestNumber'   => $motTest->getMotTestNumber(),
+                ]
+            );
+
+            echo $this->partial(
+                'partials/mot-test-summary/site-address',
+                [
+                    'cssDlClass' => 'col-sm-6 no-bot-marg',
+                    'siteData'   => $site,
+                ]
+            );
+            ?>
+        </div>
+
+        <div class="row">
+            <?php
+            echo $this->partial(
+                'partials/mot-test-summary/field-issued-date.phtml',
+                [
+                    'cssDlClass' => 'col-sm-6',
+                    'motTest'    => $motTest,
+                ]
+            );
+
+            echo $this->partial(
+                'partials/mot-test-summary/field-expiry-date.phtml',
+                [
+                    'cssDlClass' => 'col-sm-6',
+                    'motTest'    => $motTest,
+                ]
+            );
+            ?>
+        </div>
+    </div>
+    <span class="divider"></span>
+</div>
+
+
+<?php
+echo $this->partial(
+    'partials/mot-test-summary/vehicle-block', [
+        'motTest' => $motTest,
+        'vehicle' => $vehicle,
+    ]
+);
+
+echo $this->partial('partials/mot-test-summary/odometer-reading-row', ['reading' => $this->odometerReading]);
+
+//  --  brakes  --
+echo $this->partial(
+    'partials/mot-test-summary/brake-result-overall-block', [
+        'motTest' => $motTest,
+    ]
+);
+
+if (isset($isReinspection) && $isReinspection && $motTest->getBrakeTestResult() !== null) {
+    echo $this->partial(
+        'partials/mot-test-summary/brake-values-in-kg-block', [
+            'vehicle'           => $vehicle,
+            'brakeResult'       => $motTest->getBrakeTestResult(),
+            'isEnforcementUser' => false,
+            'brakeTestTypeCode2Name' => $brakeTestTypeCode2Name,
+        ]
+    );
+}
+
+//  --  failures    --
+echo $this->partial(
+    'partials/mot-test-summary/rfr-block', [
+        'id'    => 'fails',
+        'title' => 'Fails',
+        'items' => $fails,
+    ]
+);
+
+echo $this->partial(
+    'partials/mot-test-summary/rfr-block', [
+        'id'    => 'prses',
+        'title' => 'PRS',
+        'items' => $prses,
+    ]
+);
+
+echo $this->partial(
+    'partials/mot-test-summary/rfr-block', [
+        'id'    => 'advisoryText',
+        'title' => 'Advisory text',
+        'items' => $advisories,
+    ]
+);
+?>

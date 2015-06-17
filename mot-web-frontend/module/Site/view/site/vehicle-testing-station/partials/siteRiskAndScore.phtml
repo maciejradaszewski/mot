@@ -1,0 +1,30 @@
+<?php
+use DvsaCommon\Utility\ArrayUtils;
+
+$score = ArrayUtils::tryGet($this->values, 'siteAssessmentScore', null);
+$color = ArrayUtils::tryGet($this->values, 'siteAssessmentColour', null);
+
+if ($score !== null && ((float)$score) >= 0): ?>
+    <div class="row module-present-data">
+        <div class="col-sm-4">
+            <h3>Site Risk and Score</h3>
+        </div>
+        <div class="col-sm-8">
+            <div id="risk-status" class="score-band-<?php echo $this->escapeHtmlAttr($color); ?>">
+                <strong id="risk-status-score"><?php echo $this->escapeHtml(number_format($score, 1)); ?></strong>
+                <span id="risk-status-colour">Risk Status: <?php echo $this->escapeHtml(ucfirst($color)); ?></span>
+            </div>
+        </div>
+    </div>
+    <hr class="hr-thin"/>
+<?php else : ?>
+     <div class="row module-present-data">
+        <div class="col-sm-4">
+            <h3>Site Risk and Score</h3>
+        </div>
+        <dl class="vertical col-sm-8">
+            <dt>Not scored</dt>
+        </dl>
+    </div>
+    <hr class="hr-thin"/>
+<?php endif; ?>

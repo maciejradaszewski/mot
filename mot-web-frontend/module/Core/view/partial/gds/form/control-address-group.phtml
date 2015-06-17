@@ -1,0 +1,59 @@
+<div class="panel-indent" id="<?php echo $this->escapeHtmlAttr($id); ?>">
+    <?php echo $this->partial(
+        'partial/gds/form/control-text-group',
+        [
+            'id'            => $type . 'AddressLine1',
+            'name'          => $type . 'AddressLine1',
+            'errorMessage'  => $form->getError('addressLine1'),
+            'divModifier'   => 'form-group-compound',
+            'label'         => 'Address line 1',
+            'value'         => $this->escapeHtml($address[$type . 'AddressLine1']),
+        ]
+    );
+    echo $this->partial(
+        'partial/gds/form/control-text-group',
+        [
+            'id'            => $type .  'AddressLine2',
+            'name'          => $type .  'AddressLine2',
+            'errorMessage'  => $form->getError('addressLine2'),
+            'divModifier'   => 'form-group-compound',
+            'label'         => '',
+            'value'         => $this->escapeHtml($address[$type . 'AddressLine2']),
+        ]
+    );
+    echo $this->partial(
+        'partial/gds/form/control-text-group',
+        [
+            'id'            => $type .  'AddressLine3',
+            'name'          => $type .  'AddressLine3',
+            'errorMessage'  => $form->getError('addressLine3'),
+            'divModifier'   => 'form-group-compound',
+            'label'         => '',
+            'value'         => $this->escapeHtml($address[$type . 'AddressLine3']),
+        ]
+    );
+    echo $this->partial(
+        'partial/gds/form/control-text-group',
+        [
+            'id'            => $type .  'Town',
+            'name'          => $type .  'Town',
+            'errorMessage'  => $form->getError('town'),
+            'divModifier'   => 'form-group-compound',
+            'label'         => 'Town or city',
+            'value'         => $this->escapeHtml($address[$type . 'Town']),
+        ]
+    );
+
+    echo $this->partial(
+        'partial/gds/form/control-text-group',
+        [
+            'id'            => $type .  'Postcode',
+            'name'          => $type .  'Postcode',
+            'errorMessage'  => $form->getError('postcode'),
+            'divModifier'   => 'form-group-compound',
+            'label'         => 'Postcode',
+            'inputModifier' => '1-8',
+            'value'         => $this->escapeHtml($address[$type . 'Postcode']),
+        ]
+    ); ?>
+</div>

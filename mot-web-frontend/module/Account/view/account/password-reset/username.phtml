@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * @var PasswordResetFormModel   $viewModel
+ */
+
+use Account\ViewModel\PasswordResetFormModel;
+
+?>
+
+<div class="lede">
+    <p>First we need your user account so that we may retrieve your security questions...</p>
+</div>
+
+<?php
+$errorMessages = $this->layout()->flashMessenger->getErrorMessages();
+$successMessages = $this->layout()->flashMessenger->getSuccessMessages();
+
+echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
+echo $this->partial('partial/gds/general/system-message', ['messages' => $errorMessages, 'type' => 'failure']);
+?>
+
+<form id="usernameValidationForm" method="POST" action="<?php echo $viewModel->getCurrentPage() ?>">
+    <?php echo $this->csrfToken(); ?>
+    <fieldset>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-legend', ['id' => 'userAccount', 'text' => 'User account required']
+        );
+
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id'            => PasswordResetFormModel::FIELD_USERNAME,
+                'errorMessage'  => $viewModel->getError(PasswordResetFormModel::FIELD_USERNAME),
+                'label'         => 'User ID',
+                'value'         => $viewModel->getUsername(),
+            ]
+        );
+        ?>
+    </fieldset>
+
+    <?php echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id'            => 'submitUserId',
+            'value'         => 'Submit user ID',
+            'navigation'    => [
+                'Sign in' => '/',
+            ]
+        ]
+    ); ?>
+</form>
+
+<script>
+    document.onreadystatechange = function () {
+        $('#usernameValidationForm').submit(function() {
+            $('#submitUserId').attr('disabled','disabled');
+        });
+    };
+</script>

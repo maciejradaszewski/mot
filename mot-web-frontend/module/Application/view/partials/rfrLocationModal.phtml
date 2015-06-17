@@ -1,0 +1,178 @@
+<?php
+use DvsaCommon\Constants\ReasonForRejection;
+
+$showRfrName = true;
+$descriptionValidation = "";
+if (!isset($title)) {
+    $title = '';
+}
+
+if (!isset($rfr)) {
+    $rfr = [
+        'testItemSelectorId' => 0,
+        'rfrId' => 0,
+        'canBeDangerous' => true,
+    ];
+    $showRfrName = false;
+    $descriptionValidation = "required";
+}
+?>
+
+<div class="modal fade" id="rfr-dialog-<?php echo $escRfrId; ?>" tabindex="-1" role="dialog"
+     aria-labelledby="Enter location for fault - <?php echo $escRfrId; ?>" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title" id="modal-rfr-title-<?php echo $escRfrId; ?>">
+                    <?php echo $this->escapeHtml($title); ?>
+                </h3>
+            </div>
+            <div class="modal-body">
+
+                <form data-dialog-form
+                      action="<?php echo $this->url('mot-test/rfr-add', array('motTestNumber' => $motTestNumber, 'tis-id' => $rfr['testItemSelectorId'], 'rfr-id' => $rfr['rfrId'])); ?>"
+                      method="POST">
+                    <?php echo $this->csrfToken() ?>
+                    <?php if ($showRfrName): ?>
+                        <h4>
+                            <?php echo !empty($rfr['testItemSelectorName']) ? $this->escapeHtml($rfr['testItemSelectorName']) . ' - ': null; ?>
+                               <span id="modal-rfr-description-<?php echo $escRfrId; ?>"><?php echo $this->escapeHtml($rfr['description']); ?></span>
+                               <span id="modal-rfr-advisory-<?php echo $escRfrId; ?>"><?php echo $this->escapeHtml($rfr['advisoryText']); ?></span>
+                        </h4>
+                    <?php endif; ?>
+                    <div data-dialog-message-pane>
+                    </div>
+                    <input name='searchString' type='hidden'
+                           value='<?php echo isset($searchString) ? $this->escapeHtml($searchString) : null; ?>'/>
+
+                    <input id='type-<?php echo $escRfrId; ?>' name='type' type='hidden'
+                           value='<?php echo isset($rfrType) ? $this->escapeHtmlAttr($rfrType) : 'FAILURE' ?>'/>
+
+                    <div class="failure-group">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="lateral" class="control-label">Lateral</label>
+                                <select id="lateral-dd-<?php echo $escRfrId; ?>" name="locationLateral"
+                                        class="form-control">
+                                    <option value="">n/a</option>
+                                    <option value="nearside">nearside</option>
+                                    <option value="centre">centre</option>
+                                    <option value="offside">offside</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="longitudinal" class=" control-label">Longitudinal</label>
+                                <select id="longitudinal-dd-<?php echo $escRfrId; ?>" name="locationLongitudinal"
+                                        class="form-control">
+                                    <option value="">n/a</option>
+                                    <option value="front">front</option>
+                                    <option value="rear">rear</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="vertical" class="control-label">Vertical</label>
+                                <select id="vertical-dd-<?php echo $escRfrId; ?>" name="locationVertical"
+                                        class="form-control">
+                                    <option value="">n/a</option>
+                                    <option value="upper">upper</option>
+                                    <option value="lower">lower</option>
+                                    <option value="inner">inner</option>
+                                    <option value="outer">outer</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-9">
+                                <label for="description" class="control-label">Description</label>
+                                <textarea name="comment" class="form-control" rows="2"
+                                          maxlength="<?php echo $this->escapeHtmlAttr(ReasonForRejection::MAX_DESCRIPTION_LENGTH); ?>"
+                                          id="description-<?php echo $escRfrId; ?>" <?php echo $this->escapeHtml($descriptionValidation); ?>></textarea>
+                            </div>
+                        </div>
+                        <?php if($rfr['canBeDangerous']): ?>
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <label for="dangerous">
+                                    <input type="checkbox" name="failureDangerous" id="dangerous" value="true">
+                                    Failure is dangerous
+                                </label>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" id="rfr-submit-<?php echo $escRfrId; ?>" name="submit" value="Add"
+                               class="btn btn-primary"/>
+                        <button type="button" class="btn btn-link" id="rfr-cancel-<?php echo $escRfrId; ?>"
+                                data-dismiss="modal">Close
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+
+   <?php echo $this->partial("modalMessages"); ?>
+</div><!-- /.modal -->
+
+
+<script type="text/javascript">
+    $(function () {
+       var $modal = $("#rfr-dialog-<?php echo $escRfrId; ?>");
+       var $submitBtn = $modal.find('#rfr-submit-<?php echo $escRfrId; ?>');
+       var $closeBtn = $modal.find('#rfr-cancel-<?php echo $escRfrId; ?>');
+       var $messageContainer = $modal.find('[data-dialog-message-pane]');
+       var actionButtons = [$submitBtn, $closeBtn];
+
+       var updateMessagesPane = $.proxy(function($modal, $actionButtons, $messageContainer, data) {
+            var source = $modal.find('[data-message-pane-tpl]').html();
+            var template = Handlebars.compile(source);
+            var html = template(data);
+            $messageContainer.html(html);
+
+            $.each(actionButtons, function(i, $val) {
+                $val.removeProp('disabled');
+            })
+
+        }, null, $modal, actionButtons, $messageContainer);
+
+        var $form = $modal.find('[data-dialog-form]');
+        $modal
+            .on('show.bs.modal', function (evt) {
+                $form.get(0).reset();
+                $messageContainer.empty();
+            })
+            .on('shown.bs.modal', function () {
+                $form.find('select:first').focus();
+            });
+
+        $form.on('submit', function (evt) {
+            evt.preventDefault();
+
+            $.each(actionButtons, function(i, $val) {
+                $val.prop('disabled', 'disabled');
+            });
+
+            $callPromise = $.post($form.attr('action') , $form.serializeArray())
+            $callPromise.done(function (data, textStatus, jqXHR) {
+
+                if (data.redirectUrl) {
+                    location.href = data.redirectUrl;
+                } else {
+                    updateMessagesPane(data.data);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+
+                var errorCtx = { messages : ["Error occurred. Please try to resubmit the form"]};
+                updateMessagesPane(errorCtx);
+            });
+        });
+    });
+</script>

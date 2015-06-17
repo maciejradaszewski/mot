@@ -1,0 +1,7 @@
+!|SetUp|
+|init? |
+|      |
+
+!include .FrontPage.SuiteAcceptanceTests.SetUp.VehicleClassCodes
+
+

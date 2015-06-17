@@ -1,0 +1,47 @@
+default:
+    gherkin:
+        filters:
+            tags: "~@wip&&~@disabled"
+    autoload:
+        '': %paths.base%/features/StepDefinitions
+        'DVSA': %paths.base%/features
+    extensions:
+        Zalas\Behat\NoExtension:
+            imports:
+                - config/api.yml
+                - config/arguments.yml
+                - config/test_support.yml
+    suites:
+        default:
+            contexts:
+                - CherishedTransferContext
+                - FeatureContext
+                - SessionContext
+                - MotTestContext
+                - MotTestSearchContext
+                - ContingencyTestContext
+                - OdometerReadingContext
+                - BrakeTestResultContext
+                - CertificateContext
+                - VehicleContext
+                - PersonContext
+                - SpecialNoticeContext
+                - SecurityPinContext
+                - AuthorisedExaminerContext
+                - VtsContext
+                - AccountClaimContext
+                - InitiateRefundContext
+                - TempPasswordChangeContext
+            filters:
+                tags: "~@functional"
+        functional:
+            contexts:
+                - RestContext
+            filters:
+                tags: "@functional"
+
+ci:
+    formatters:
+        junit:
+            output_path: junit
+        progress: true

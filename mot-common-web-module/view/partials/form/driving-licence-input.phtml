@@ -1,0 +1,61 @@
+<?php
+$label = isset($label) ? $label : '';
+$id = isset($id) ? $id : '';
+$name = isset($name) ? $name : $id;
+$type = isset($type) ? $type : 'text';
+$value = isset($value) ? $this->escapeHtml($value) : '';
+$required = isset($required) ? $required : false;
+$maxLength = isset($maxLength) ? $maxLength : '';
+$title = isset($title) ? $title : '';
+$hiddenInputId = isset($hiddenInputId) ? $hiddenInputId : '';
+$isChecked = isset($isChecked) ? $isChecked : '';
+$checkBoxType = isset($checkBoxType) ? $checkBoxType : '';
+$checkBoxId = isset($checkBoxId) ? $checkBoxId : '';
+$checkBoxText = isset($checkBoxText) ? $checkBoxText : '';
+$countriesDropBoxId = isset($countriesDropBoxId) ? $countriesDropBoxId : 'slc-countries';
+$countriesDropBoxName = isset($countriesDropBoxId) ? $countriesDropBoxId : 'countries';
+$drivingLicenceRegions = $this->withDefault([])->getValue($drivingLicenceRegions);
+$drivingLicenceRegion = $this->withDefault('')->getValue($drivingLicenceRegion);
+?>
+
+<div class="form-group">
+    <label for="<?php echo $this->escapeHtml($id); ?>" class="col-sm-4 control-label"><?php echo $this->escapeHtml(
+            $label
+        ); ?></label>
+
+    <div class="col-sm-6">
+        <?php echo $this->partial(
+            'inputElement',
+            array(
+                'id'        => $id,
+                'type'      => $type,
+                'name'      => $name,
+                'value'     => $value,
+                'required'  => $required,
+                'maxLength' => $maxLength,
+                'title'     => $title
+            )
+        );
+        ?>
+
+    </div>
+</div>
+
+<div class="form-group">
+        <label for="<?php echo $this->escapeHtml($id); ?>" class="col-sm-4 control-label">Driving licence region</label>
+
+        <div class="col-sm-6">
+
+        <?php echo $this->partial(
+            'selectElement',
+            [
+                'id' => $countriesDropBoxId,
+                'name' => 'drivingLicenceRegion',
+                'label' => 'Driving licence region',
+                'value' => $drivingLicenceRegion,
+                'options' => $drivingLicenceRegions
+            ]
+        ); ?>
+
+    </div>
+</div>

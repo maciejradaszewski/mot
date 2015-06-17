@@ -1,0 +1,23 @@
+<?php
+/**
+ * @var OdometerReadingViewObject $reading
+ */
+use DvsaMotTest\Model\OdometerReadingViewObject;
+
+?>
+
+<div class="row" id="odometerReadingResults">
+    <div class="col-sm-4">
+        <h2>Odometer reading</h2>
+    </div>
+    <div class="col-sm-8">
+        <ul class="list-unstyled list-separator">
+            <li id="odometerReading">
+                <p class="primary-item">
+                    <?php echo $this->escapeHtml($reading->getDisplayValue()); ?>
+                </p>
+            </li>
+        </ul>
+    </div>
+    <span class="divider"></span>
+</div>

@@ -1,0 +1,14 @@
+<?php
+$value = isset($value) ? $value : '';
+
+echo $this->partial(
+    'doubleRadioBox',
+    [
+        'label'    => 'Gender',
+        'value'    => $value,
+        'required' => true,
+        'name'     => 'gender',
+        'option1'  => 'Male',
+        'option2'  => 'Female',
+    ]
+);

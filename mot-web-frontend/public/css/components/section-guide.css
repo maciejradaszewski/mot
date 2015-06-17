@@ -1,0 +1,32 @@
+/**********************
+Section guide
+**********************/
+.page-nav ol {
+  margin: 0 2% 30px 0;
+  width: 48%;
+  float: left;
+}
+.page-nav li {
+  list-style: decimal;
+  list-style-position: outside;
+  line-height: 1.5em;
+  margin-left: -1em;
+}
+.page-nav li.selected {
+  font-weight: bold;
+}
+.page-nav .divider {
+  margin: 0;
+}
+@media (max-width: 639px) {
+  .page-nav ol {
+    width: 100%;
+    float: none;
+  }
+  .page-nav .col1 {
+    margin-bottom: 0;
+  }
+  .page-nav .col2 {
+    margin: 0 0 30px 0;
+  }
+}

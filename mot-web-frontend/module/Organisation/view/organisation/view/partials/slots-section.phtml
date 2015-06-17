@@ -1,0 +1,24 @@
+<?php
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
+?>
+    <h3 class="key-value-list__header">Slots &amp; Test Logs</h3>
+
+    <table class="key-value-list">
+        <tbody>
+        <tr>
+            <th class="key-value-list__key">
+                <?php if ($viewModel->getViewAuthorisation()->canViewTestLogs()): ?>
+                    <a class="data-list__content" id="test-log"
+                       href="<?php echo AuthorisedExaminerUrlBuilderWeb::motTestLog($organisationId); ?>"
+                        >Test logs</a>
+                <?php endif; ?>
+            </th>
+            <?php if ($viewModel->getViewAuthorisation()->canViewSlotBalance()): ?>
+                <td class="key-value-list__value">
+                    Slot count
+                    <span id="slot-count" class="data-list__content bold-xlarge"><?php echo $this->escapeHtml($viewModel->getOrganisation()->getSlotBalance()); ?></span>
+                </td>
+            <?php endif; ?>
+        </tr>
+        </tbody>
+    </table>

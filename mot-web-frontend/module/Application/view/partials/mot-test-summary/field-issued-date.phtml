@@ -1,0 +1,45 @@
+<?php
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\Utility\ArrayUtils;
+
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motTest */
+$motTest = $this->motTest;
+if (empty($motTest)) {
+    return;
+}
+
+$pendingDetails = [];
+
+$testStatus = $motTest->getStatus();
+$isTestPassOrFail = ($testStatus == MotTestStatusName::PASSED || $testStatus == MotTestStatusName::FAILED);
+
+if (!$isTestPassOrFail) {
+    $pendingDetails = $motTest->getPendingDetails();
+    $pendingStatus = ArrayUtils::tryGet($pendingDetails, 'currentSubmissionStatus');
+    $isTestReady = ($pendingStatus == MotTestStatusName::PASSED || $pendingStatus == MotTestStatusName::FAILED);
+}
+
+$cssDlClass = !empty(trim($this->cssDlClass)) ? $this->cssDlClass : 'col-sm-4';
+?>
+
+<dl class="<?php echo $this->escapeHtmlAttr($cssDlClass); ?>">
+    <dt>Issue Date</dt>
+    <dd id="issueDate">
+        <?php
+        $issuedDate = null;
+
+        if ($isTestPassOrFail && $val = $motTest->getIssuedDate()) {
+            $issuedDate = $val;
+        } elseif ($isTestReady && $val = ArrayUtils::tryGet($pendingDetails, 'issuedDate')) {
+            $issuedDate = $val;
+        }
+
+        echo $this->escapeHtml(
+            $issuedDate
+            ? DateTimeDisplayFormat::textDate($issuedDate)
+            : 'N/A'
+        );
+        ?>
+    </dd>
+</dl>

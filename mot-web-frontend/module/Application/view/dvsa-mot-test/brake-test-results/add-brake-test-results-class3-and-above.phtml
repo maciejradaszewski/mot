@@ -1,0 +1,142 @@
+<?php
+
+use DvsaMotTest\Model\BrakeTestResultClass3AndAboveViewModel;
+
+/**
+ * @var int $motTestNumber
+ * @var \DvsaMotTest\Model\BrakeTestResultClass3AndAboveViewModel $brakeTestResult
+ * @var \DvsaMotTest\Model\BrakeTestConfigurationClass3AndAboveHelper $brakeTestConfiguration
+ * @var \DvsaCommon\Dto\Vehicle\VehicleDto $vehicle
+ */
+
+$title = 'Add Brake Test Results';
+$this->headTitle($title);
+$this->layout()->setVariable('pageSubTitle', 'MOT testing');
+$this->layout()->setVariable('pageTitle', "Brake test results");
+
+$this->placeholder('progressBar')->captureStart();
+echo $this->partial(
+    'motTestProgress',
+    ['currentStep' => 2, 'isMotContingency' => $this->isMotContingency]
+);
+$this->placeholder('progressBar')->captureEnd();
+
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+
+if ($vehicle) {
+    echo $this->partial('vehicleSummary', ['vehicle' => $vehicle]);
+}
+?>
+
+<form method="POST">
+    <?php echo $this->csrfToken() ?>
+    <div class="row">
+        <div class="col-md-8">
+            <fieldset>
+                <!--    SERVICE BRAKES    -->
+                <?php if ($brakeTestConfiguration->effortsApplicableToFirstServiceBrake()): ?>
+                    <legend>Brake effort</legend>
+                    <p>Brake effort is recorded in kilograms</p>
+                    <?php echo $this->partial(
+                        'brake-test-results-class-3-and-above/service-brake-effort-table',
+                        [
+                            'brakeTestResult' => $brakeTestResult,
+                            'brakeTestConfiguration' => $brakeTestConfiguration,
+                            'serviceBrakeNumber' => 1,
+                        ]
+                    ); ?>
+                <?php else : ?>
+                    <?php echo $this->partial(
+                        'brake-test-results-class-3-and-above/brake-efficiency-box',
+                        [
+                            'id' => BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_1_EFFICIENCY,
+                            'value' => $brakeTestResult->getServiceBrake1Efficiency(),
+                            'label' => 'Service brake' . ($brakeTestConfiguration->hasTwoServiceBrakes(
+                                ) ? ' control 1' : ''),
+                        ]
+                    ); ?>
+                    <br/>
+                <?php endif; ?>
+
+                <!--    SERVICE BRAKES 2 !   -->
+                <?php if ($brakeTestConfiguration->hasTwoServiceBrakes()) : ?>
+                    <?php if ($brakeTestConfiguration->effortsApplicableToFirstServiceBrake()): ?>
+                        <?php echo $this->partial(
+                            'brake-test-results-class-3-and-above/service-brake-effort-table',
+                            [
+                                'brakeTestResult' => $brakeTestResult,
+                                'brakeTestConfiguration' => $brakeTestConfiguration,
+                                'serviceBrakeNumber' => 2,
+                            ]
+                        ); ?>
+                    <?php else : ?>
+                        <?php echo $this->partial(
+                            'brake-test-results-class-3-and-above/brake-efficiency-box',
+                            [
+                                'id' => BrakeTestResultClass3AndAboveViewModel::ID_SERVICE_2_EFFICIENCY,
+                                'value' => $brakeTestResult->getServiceBrake2Efficiency(),
+                                'label' => 'Service brake control 2',
+                            ]
+                        ); ?>
+                        <br/>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <!--    PARKING BRAKES    -->
+                <?php if ($brakeTestConfiguration->isParkingBrakeGradientType()) : ?>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <?php echo $this->partial(
+                                'partial/forms/radioBoxDouble.phtml',
+                                [
+                                    'label' => 'Efficiency for parking brake: ',
+                                    'required' => true,
+                                    'name' => BrakeTestResultClass3AndAboveViewModel::NAME_PARKING_EFFICIENCY_PASS,
+                                    'option1' => 'Pass',
+                                    'option2' => 'Fail',
+                                    'option1Value' => '1',
+                                    'option2Value' => '0',
+                                ]
+                            ); ?>
+                        </div>
+                    </div>
+                <?php elseif ($brakeTestConfiguration->isParkingBrakeTypeRollerOrPlate()) : ?>
+                    <?php echo $this->partial(
+                        'brake-test-results-class-3-and-above/parking-brake-effort-table',
+                        [
+                            'brakeTestResult' => $brakeTestResult,
+                            'brakeTestConfiguration' => $brakeTestConfiguration,
+                        ]
+                    ); ?>
+                <?php
+                else : ?>
+                    <?php echo $this->partial(
+                        'brake-test-results-class-3-and-above/brake-efficiency-box',
+                        [
+                            'id' => BrakeTestResultClass3AndAboveViewModel::ID_PARKING_EFFICIENCY,
+                            'value' => $brakeTestResult->getParkingBrakeEfficiency(),
+                            'label' => 'Parking brake',
+                        ]
+                    ); ?>
+                <?php endif; ?>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 btn-bar">
+            <nav class="module-content-navigation">
+                <ul class="content-navigation_secondary">
+                    <li>
+                        <input type="submit" id="brake_test_results_submit" name="submit" value="Submit" class="btn btn-primary"/>
+                    </li>
+                    <li>
+                        <a id="brake_test_results_cancel" href="<?php echo $this->url('mot-test', ['motTestNumber' => $motTestNumber]); ?>"
+                           >Cancel</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</form>

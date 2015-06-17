@@ -1,0 +1,277 @@
+<?php
+
+namespace Event\Controller;
+
+use Core\Controller\AbstractAuthActionController;
+use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Date\DateUtils;
+use DvsaCommon\Dto\Common\DateDto;
+use DvsaCommon\Dto\Event\EventFormDto;
+use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+use DvsaCommon\Utility\DtoHydrator;
+use Event\ViewModel\Event\EventDetailViewModel;
+use Event\ViewModel\Event\EventViewModel;
+use Organisation\Traits\OrganisationServicesTrait;
+use Zend\Http\Request;
+use Zend\Http\Response;
+use Zend\View\Model\ViewModel;
+
+/**
+ * Class EventController
+ *
+ * @package Event\Controller
+ */
+class EventController extends AbstractAuthActionController
+{
+    use OrganisationServicesTrait;
+
+    const DATE_FROM_BEFORE_TO = 'Date From can\'t be after Date To';
+    const DATE_INVALID = 'Date %s: Given date does not exist ("%s")';
+    const DATE_RANGE_INVALID = 'Date %s must be between 01 January 1900 and today';
+    const DATE_MISSING = 'Date %s: Enter a date in the format dd mm yyyy';
+    const DATE_BEFORE = '01-01-1900';
+    const DATE_FORMAT = 'd-m-Y';
+
+    /**
+     * This is the common action who allow us to get the information needed
+     * and build the view
+     *
+     * @return Response|ViewModel
+     * @throws \DvsaCommon\Auth\NotLoggedInException
+     */
+    public function listAction()
+    {
+        $this->layout('layout/layout_enforcement');
+
+        $id = $this->params()->fromRoute('id');
+        $type = $this->params()->fromRoute('type');
+
+        //  --  check permissions
+        if ($this->getAuthorizationService()->isGranted(PermissionInSystem::LIST_EVENT_HISTORY) === false) {
+            return $this->redirect()->toUrl(PersonUrlBuilderWeb::home());
+        }
+
+        /* @var Request $request */
+        $request = $this->getRequest();
+
+        //  --  prepare models for view --
+        $formData = $request->getQuery()->toArray();
+
+        $viewModel = new EventViewModel(
+            $this->getOrganisation($id, $type),
+            $this->getSite($id, $type),
+            $this->getPerson((int) $id, $type),
+            new EventFormDto($formData),
+            $type,
+            $id
+        );
+
+        $viewModel->setEventList(
+            $this->getEvents($id, $type, $this->validateForm($viewModel->getFormModel(), $request->isXmlHttpRequest()))
+        );
+
+        return $viewModel->getViewOrJson($request->isXmlHttpRequest());
+    }
+
+    /**
+     * This function is responsible to validate that the form is valid
+     *
+     * @param EventFormDto $formModel
+     * @param Boolean $isAjax
+     * @return EventFormDto|null
+     */
+    protected function validateForm(EventFormDto $formModel, $isAjax)
+    {
+        if ($formModel->isShowDate() === true && $isAjax === false) {
+            return $this->validateDatesAndRange($formModel);
+        }
+        return $formModel;
+    }
+
+    /**
+     * This function prepare the two date form to be validated
+     *
+     * @param EventFormDto $formModel
+     * @return EventFormDto|null
+     */
+    protected function validateDatesAndRange(EventFormDto $formModel)
+    {
+        $dateFrom = $formModel->getDateFrom();
+        $dateTo = $formModel->getDateTo();
+
+        $this->validateDate($dateFrom, 'From');
+        $this->validateDate($dateTo, 'To');
+
+        if (count($this->flashMessenger()->getCurrentErrorMessages()) === 0
+            && $dateFrom->getDate() > $dateTo->getDate()) {
+            $this->addErrorMessages(self::DATE_FROM_BEFORE_TO);
+        }
+
+        return $formModel;
+    }
+
+    /**
+     * This function check the date by the following requirement:
+     * - Day/Month/Year is present
+     * - Day/Month/Year is a valid date
+     * - Day/Month/Year is not in the future
+     * - Day/Month/Year is not before 01-01-1900
+     *
+     * @param DateDto $date
+     * @param string $fieldSfx
+     */
+    protected function validateDate(DateDto $date, $fieldSfx)
+    {
+        if ($date === null || empty($date->getDay()) || empty($date->getMonth()) || empty($date->getYear())) {
+            $this->addErrorMessages(sprintf(self::DATE_MISSING, $fieldSfx));
+        } elseif ($date->getDate() === null) {
+            $this->addErrorMessages(
+                sprintf(
+                    self::DATE_INVALID,
+                    $fieldSfx, $date->getDay() . '-' . $date->getMonth() . '-' . $date->getYear()
+                )
+            );
+        } elseif (DateUtils::isDateInFuture($date->getDate()) === true) {
+            $this->addErrorMessages(
+                sprintf(self::DATE_RANGE_INVALID, $fieldSfx, $date->getDate()->format(self::DATE_FORMAT))
+            );
+        } elseif ($date->getDate() < new \DateTime(self::DATE_BEFORE)) {
+            $this->addErrorMessages(
+                sprintf(self::DATE_RANGE_INVALID, $fieldSfx, $date->getDate()->format(self::DATE_FORMAT))
+            );
+        }
+    }
+
+    /**
+     * This function return the organisation Dto
+     *
+     * @param int       $organisationId
+     * @param string    $type
+     * @return \DvsaCommon\Dto\Organisation\OrganisationDto|null
+     */
+    protected function getOrganisation($organisationId, $type)
+    {
+        if ($type !== 'ae') {
+            return null;
+        }
+        try {
+            return $this->getMapperFactory()->Organisation->getAuthorisedExaminer($organisationId);
+        } catch (RestApplicationException $e) {
+            $this->addErrorMessages($e->getDisplayMessages());
+        }
+        return null;
+    }
+
+    /**
+     * This function return an array of the site information
+     *
+     * @param int       $siteId
+     * @param string    $type
+     * @return array|null
+     */
+    protected function getSite($siteId, $type)
+    {
+        if ($type != 'site') {
+            return null;
+        }
+        try {
+            return $this->getMapperFactory()->VehicleTestingStation->getById($siteId);
+        } catch (RestApplicationException $e) {
+            $this->addErrorMessages($e->getDisplayMessages());
+        }
+        return null;
+    }
+
+    /**
+     * This function return the information about a person
+     *
+     * @param  int    $personId
+     * @param  string    $type
+     *
+     * @return \DvsaClient\Entity\Person|null
+     */
+    protected function getPerson($personId, $type)
+    {
+        if ($type != 'person') {
+            return null;
+        }
+        try {
+            return $this->getMapperFactory()->Person->getById($personId);
+        } catch (RestApplicationException $e) {
+            $this->addErrorMessages($e->getDisplayMessages());
+        }
+        return null;
+    }
+
+    /**
+     * This function return the list of the events linked to an entity
+     *
+     * @param int               $id
+     * @param string            $type
+     * @param EventFormDto      $formDto
+     * @return \DvsaCommon\Dto\Event\EventListDto
+     */
+    protected function getEvents($id, $type, $formDto)
+    {
+        $dtoHydrator = new DtoHydrator();
+        $form = $dtoHydrator->extract($formDto);
+
+        try {
+            return $this->getMapperFactory()->Event->getEventList($id, $type, $form);
+        } catch (RestApplicationException $e) {
+            $this->addErrorMessages($e->getDisplayMessages());
+        }
+        return null;
+    }
+
+    /**
+     * This is the common action who allow us to get the information about an event
+     *
+     * @return Response|ViewModel
+     * @throws \DvsaCommon\Auth\NotLoggedInException
+     */
+    public function detailAction()
+    {
+        $this->layout('layout/layout_enforcement');
+
+        $id = $this->params()->fromRoute('id');
+        $eventId = $this->params()->fromRoute('event-id');
+        $type = $this->params()->fromRoute('type');
+
+        //  --  check permissions
+        if ($this->getAuthorizationService()->isGranted(PermissionInSystem::EVENT_READ) === false) {
+            return $this->redirect()->toUrl(PersonUrlBuilderWeb::home());
+        }
+
+        /* @var Request $request */
+        $request = $this->getRequest();
+        //  --  prepare models for view --
+        $formData = $request->getQuery()->toArray();
+
+        $viewModel = new EventDetailViewModel(
+            $this->getOrganisation($id, $type),
+            $this->getSite($id, $type),
+            $this->getPerson($id, $type),
+            $this->getEventDetails($eventId),
+            $type,
+            new EventFormDto($formData)
+        );
+
+        return (new ViewModel(
+            [
+                'viewModel' => $viewModel
+            ]
+        ))->setTemplate('event/event/details.phtml');
+    }
+
+    protected function getEventDetails($id)
+    {
+        try {
+            return $this->getMapperFactory()->Event->getEvent($id);
+        } catch (RestApplicationException $e) {
+            $this->addErrorMessages($e->getDisplayMessages());
+        }
+        return null;
+    }
+}

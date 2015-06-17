@@ -1,0 +1,23 @@
+<?php
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motTestDetails */
+use DvsaCommon\Utility\ArrayUtils;
+
+if ($motTestDetails) {
+    $vehicle = $motTestDetails->getVehicle();
+    $rfrFail = ArrayUtils::tryGet($motTestDetails->getReasonsForRejection(), 'FAIL');
+    $rfrPRS = ArrayUtils::tryGet($motTestDetails->getReasonsForRejection(), 'PRS');
+    $rfrAdvisory = ArrayUtils::tryGet($motTestDetails->getReasonsForRejection(), 'ADVISORY');
+
+    $rfrCount = (count($rfrFail) + count($rfrPRS) + count($rfrAdvisory));
+
+    echo $this->partial(
+        'motTestProgress',
+        [
+            'currentStep' => 2,
+            'title' => 'Reasons for rejection',
+            'motTestNumber' => $motTestNumber,
+            'isMotContingency' => $this->isMotContingency
+        ]
+    );
+    echo $this->partial('vehicleSummary', ['vehicle' => $vehicle, 'rfrCount' => $rfrCount]);
+}

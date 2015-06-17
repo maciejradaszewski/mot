@@ -1,0 +1,123 @@
+<?php
+$this->headScript()->appendFile('/js/dvsa-mot-enforcement/search/mot-search.js');
+?>
+<div id="validationBox" style="display: none;">
+    <div id="validationErrors" class="validation-summary">
+        <ol></ol>
+    </div>
+</div>
+<?php echo $this->partial('errorMessages', array('getFromFlash' => true)); ?>
+<?php echo $this->partial('infoMessages', array('getFromFlash' => true)); ?>
+
+<script>
+    var postUrls = {
+        'vts': '<?php echo $this->url('mot-test-search/vts'); ?>',
+        'vtsDate': '<?php echo $this->url('mot-test-search/vtsDate'); ?>',
+        'tester': '<?php echo $this->url('mot-test-search/tester'); ?>',
+        'vrm': '<?php echo $this->url('mot-test-search/vrm'); ?>',
+        'vin': '<?php echo $this->url('mot-test-search/vin'); ?>'
+    };
+</script>
+
+<form id="vts-search-form" method="get" action="<?php echo $this->url('mot-test-search/' . $this->searchType); ?>">
+    <div class="row" >
+        <div class="col-sm-12">
+            <h1>
+                Search for MOT tests by...
+            </h1>
+        </div>
+    </div>
+    <div class="row form-group" >
+        <div class="col-sm-6">
+            <?php
+            echo $this->partial(
+                'selectElement', [
+                    'id' => 'type',
+                    'name' => 'type',
+                    'value' => $this->searchType,
+                    'options' => [
+                        'vts' => 'Site (recent tests)',
+                        'vtsDate' => 'Site (by date range)',
+                        'tester' => 'Tester (by date range)',
+                        'vrm' => 'Registration (comparison available)',
+                        'vin' => 'VIN/Chassis (comparison available)'
+                    ]
+                ]
+            );
+            ?>
+        </div>
+
+    </div>
+    <div class="row form-group" id="dateRangeFields">
+        <div class="col-sm-4 date-group">
+            <fieldset class="calendar-date"  id="formDate">
+                <legend>From the start of...</legend>
+                <div class="form-group form-group-month">
+                    <label for="month1">Month</label>
+                    <input type="text" id="month1"
+                           value="<?php echo $this->escapeHtmlAttr($this->dateRange['month1']); ?>" placeholder="MM"
+                           maxlength="2" name="month1" class="form-control" />
+                </div>
+                <div class="form-group form-group-year">
+                    <label for="year1">Year</label>
+                    <input type="text" id="year1"
+                           value="<?php echo $this->escapeHtmlAttr($this->dateRange['year1']); ?>" name="year1" placeholder="YYYY"
+                           maxlength="4" width="4" class="form-control" />
+                </div>
+            </fieldset>
+        </div>
+        <div class="col-sm-4 date-group">
+            <fieldset class="calendar-date"  id="formDate">
+                <legend>To the end of...</legend>
+                <div class="form-group form-group-month">
+                    <label for="month2">Month</label>
+                    <input type="text" id="month2"
+                           value="<?php echo $this->escapeHtmlAttr($this->dateRange['month2']); ?>" placeholder="MM" name="month2"
+                           maxlength="2" class="form-control" />
+                </div>
+                <div class="form-group form-group-year">
+                    <label for="year2">Year</label>
+                    <input type="text" id="year2"
+                           value="<?php echo $this->escapeHtmlAttr($this->dateRange['year2']); ?>" name="year2" placeholder="YYYY"
+                           maxlength="4" width="4" class="form-control" />
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 col-lg-8 vts-search-panel">
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <?php
+                    echo $this->partial(
+                        'hiddenElement', [
+                            'id' => 'search-result',
+                            'value' => 'not-search',
+                            'name' => 'search-result'
+                        ]
+                    );
+                    ?>
+                    <?php
+                    echo $this->partial(
+                        'inputElement', [
+                            'id' => 'vts-search',
+                            'name' => 'search',
+                            'size' => 92,
+                            'value' => $this->searchTerm,
+                            'maxlength' => 60,
+                            'placeholder' => 'eg. V12345'
+                        ]
+                    );
+                    ?>
+
+                    <button type="submit" class="btn-search" id="item-selector-btn-search">
+                        <i class="fa fa-search"> </i>
+                        <span class="visually-hidden"> Search</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

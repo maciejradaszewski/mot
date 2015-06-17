@@ -1,0 +1,407 @@
+<?php
+
+use DvsaCommon\Dto\Vehicle\VehicleDto;
+use DvsaCommon\Enum\BrakeTestTypeCode;
+use DvsaCommon\Enum\WeightSourceCode;
+use DvsaCommon\Enum\VehicleClassCode;
+use DvsaMotTest\Model\BrakeTestConfigurationClass3AndAboveHelper as ConfigHelper;
+
+/**
+ * @var \DvsaCommon\Dto\Common\MotTestDto      $motTest
+ * @var boolean    $showVehicleType
+ * @var VehicleDto $vehicle
+ * @var ConfigHelper $configHelper
+ */
+
+$title = 'Brake test configuration';
+$this->headTitle($title);
+
+$this->layout()->setVariable('pageSubTitle', 'MOT testing');
+$this->layout()->setVariable('pageTitle', $title);
+
+$this->placeholder('progressBar')->captureStart();
+echo $this->partial(
+    'motTestProgress',
+    ['currentStep' => 2, 'isMotContingency' => $this->isMotContingency]
+);
+$this->placeholder('progressBar')->captureEnd();
+
+$vehicle = $motTest->getVehicle();
+$vehicleClass = $vehicle->getClassCode();
+
+function getWeightTypes($vehicleClass)
+{
+    switch ($vehicleClass) {
+        case VehicleClassCode::CLASS_3:
+        case VehicleClassCode::CLASS_4:
+            return [
+                WeightSourceCode::VSI            => 'Brake test weight',
+                WeightSourceCode::PRESENTED      => 'Presented weight',
+                WeightSourceCode::NOT_APPLICABLE => 'Not known',
+            ];
+        case VehicleClassCode::CLASS_5:
+            return [
+                WeightSourceCode::DGW_MAM    => 'DGW/MAM',
+                WeightSourceCode::CALCULATED => 'Calculated weight'
+            ];
+        case VehicleClassCode::CLASS_7:
+            return [
+                WeightSourceCode::DGW       => 'DGW',
+                WeightSourceCode::PRESENTED => 'Presented weight',
+            ];
+    }
+}
+
+$brakeTestTypes = [
+    BrakeTestTypeCode::ROLLER        => 'Roller',
+    BrakeTestTypeCode::PLATE         => 'Plate',
+    BrakeTestTypeCode::DECELEROMETER => 'Decelerometer',
+    BrakeTestTypeCode::GRADIENT      => 'Gradient'
+];
+
+$weightTypes = getWeightTypes($vehicleClass);
+
+?>
+<?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
+<?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
+
+<?php echo $this->partial('vehicleSummary', ['vehicle' => $vehicle]); ?>
+
+<form method="POST" role="form">
+<?php echo $this->csrfToken() ?>
+<div class="row">
+    <div class="col-sm-8">
+        <fieldset>
+            <?php echo $this->partial(
+                'partial/forms/selectBox.phtml',
+                [
+                    'id'       => 'serviceBrake1TestType',
+                    'label'    => 'Service brake test type',
+                    'options'  => $brakeTestTypes,
+                    'value'    => $configHelper->getServiceBrakeTestType(),
+                    'required' => true,
+                ]
+            );
+            echo $this->partial(
+                'partial/forms/selectBox.phtml',
+                [
+                    'id'       => 'parkingBrakeTestType',
+                    'label'    => 'Parking brake test type',
+                    'options'  => $brakeTestTypes,
+                    'value'    => $configHelper->getParkingBrakeTestType(),
+                    'required' => true,
+                ]
+            ); ?>
+
+            <div class="form-group" id="vehicleWeightFields">
+                <fieldset>
+                    <legend class="form-label">Vehicle weight type</legend>
+
+                    <div class="form-group form-group-related label-reg">
+                        <?php foreach ($weightTypes as $weightType => $weightTypeName): ?>
+                            <label class="block-label label-clear" for="weightType-<?php echo $this->escapeHtml($weightType); ?>">
+                                <input type="radio"
+                                       id="weightType-<?php echo $this->escapeHtml($weightType); ?>"
+                                       name="weightType"
+                                       value="<?php echo $this->escapeHtml($weightType); ?>"
+                                       onchange="weightTypeChange(this.value)"
+                                    <?php if ($configHelper->getWeightType() === $weightType) {
+                                        echo 'checked';
+                                    } ?>
+                                 />
+                                <?php echo $this->escapeHtml($weightTypeName); ?>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                    <div id="weightInputPanel" class="panel-indent">
+                        <!-- need pattern attribute for FF27 -->
+                        <label for="vehicleWeight">Vehicle Weight in kilograms</label>
+                        <?php echo $this->partial(
+                            'inputElement',
+                            [
+                                'id'          => 'vehicleWeight',
+                                'name'        => 'vehicleWeight',
+                                'value'       => $configHelper->getVehicleWeight(),
+                            ]
+                        ); ?>
+                        <?php if ($vehicleClass === VehicleClassCode::CLASS_7) : ?>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" id="weightIsUnladen" name="weightIsUnladen" value="1"
+                                    <?php if ($configHelper->getWeightIsUnladen()) : ?>
+                                        checked
+                                    <?php endif; ?>
+                                />
+                                Unladen
+                            </label>
+                        <?php endif; ?>
+                    </div>
+                </fieldset>
+            </div>
+            <?php echo $this->partial(
+                'partial/forms/radioBoxDouble.phtml',
+                [
+                    'label'            => 'Brake line type',
+                    'name'             => 'brakeLineType',
+                    'value'            => $configHelper->getServiceBrakeLineType(),
+                    'option1'          => 'Dual',
+                    'option2'          => 'Single',
+                    'option1Value'     => ConfigHelper::BRAKE_LINE_TYPE_DUAL,
+                    'option2Value'     => ConfigHelper::BRAKE_LINE_TYPE_SINGLE,
+                    'fieldsetCssClass' => 'label-reg',
+                ]
+            ); ?>
+            <?php if ($showVehicleType) : ?>
+                <?php echo $this->partial(
+                    'partial/forms/radioBoxDouble.phtml',
+                    [
+                        'label'            => 'Vehicle type',
+                        'name'             => 'vehiclePurposeType',
+                        'value'            => $configHelper->getVehiclePurposeType(),
+                        'option1'          => 'Passenger',
+                        'option2'          => 'Goods',
+                        'option1Value'     => ConfigHelper::PURPOSE_PERSONAL,
+                        'option2Value'     => ConfigHelper::PURPOSE_COMMERCIAL,
+                        'fieldsetCssClass' => 'label-lg',
+                    ]
+                ); ?>
+            <?php endif; ?>
+            <?php switch ($vehicleClass) :
+                case VehicleClassCode::CLASS_3:
+                    echo $this->partial(
+                        'partial/forms/radioBoxDouble.phtml',
+                        [
+                            'label'            => 'Position of single wheel',
+                            'name'             => 'positionOfSingleWheel',
+                            'value'            => $configHelper->getPositionOfSingleWheel(),
+                            'option1'          => 'Front',
+                            'option2'          => 'Rear',
+                            'option1Value'     => ConfigHelper::LOCATION_FRONT,
+                            'option2Value'     => ConfigHelper::LOCATION_REAR,
+                            'fieldsetCssClass' => 'label-reg',
+                        ]
+                    );
+                    echo $this->partial(
+                        'partial/forms/radioBoxDouble.phtml',
+                        [
+                            'label'            => 'Parking brake operated on',
+                            'name'             => 'parkingBrakeWheelsCount',
+                            'value'            => $configHelper->getParkingBrakeWheelsCount(),
+                            'option1'          => 'One wheel',
+                            'option2'          => 'Two wheels',
+                            'option1Value'     => 1,
+                            'option2Value'     => 2,
+                            'id1'              => 'parkingBrakeOperatedOnOne',
+                            'id2'              => 'parkingBrakeOperatedOnTwo',
+                            'fieldsetCssClass' => 'label-lg',
+                        ]
+                    );
+                    echo $this->partial(
+                        'partial/forms/radioBoxDouble.phtml',
+                        [
+                            'label'            => 'Service brake controls',
+                            'name'             => 'serviceBrakeControlsCount',
+                            'value'            => $configHelper->getServiceBrakeControlsCount(),
+                            'option1'          => 'One control',
+                            'option2'          => 'Two controls',
+                            'option1Value'     => 1,
+                            'option2Value'     => 2,
+                            'id1'              => 'numberOfServiceBrakeControlsOne',
+                            'id2'              => 'numberOfServiceBrakeControlsTwo',
+                        ]
+                    );
+                    break;
+                case VehicleClassCode::CLASS_4:
+                case VehicleClassCode::CLASS_5:
+                case VehicleClassCode::CLASS_7:
+                    ?>
+                    <div id="numberOfAxlesContainer">
+                        <?php echo $this->partial(
+                            'partial/forms/selectBox.phtml',
+                            [
+                                'id'       => 'numberOfAxles',
+                                'label'    => 'Number of axles',
+                                'options'  => [2 => '2 axles', 3 => '3 axles'],
+                                'value'    => $configHelper->getNumberOfAxles(),
+                                'required' => true,
+                            ]
+                        ); ?>
+                    </div>
+
+                    <div id="parkingBrakeNumberOfAxlesContainer">
+                        <?php echo $this->partial(
+                            'partial/forms/selectBox.phtml',
+                            [
+                                'id'       => 'parkingBrakeNumberOfAxles',
+                                'label'    => 'Parking brake number of axles',
+                                'options'  => [1 => '1 axles', 2 => '2 axles'],
+                                'value'    => $configHelper->getParkingBrakeNumberOfAxles(),
+                                'required' => true,
+                            ]
+                        ); ?>
+                    </div>
+                <?php endswitch; ?>
+        </fieldset>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 btn-bar">
+        <nav class="module-content-navigation">
+            <ul class="content-navigation_secondary">
+                <li>
+                    <input type="submit" id="brake_test_results_submit" name="submit" value="Next" class="btn btn-primary"/>
+                </li>
+                <li>
+                    <a id="brake_test_results_cancel"
+                       href="<?php echo $this->url('mot-test', ['motTestNumber' => $motTest->getMotTestNumber()]); ?>"
+                       >Cancel</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</form>
+<script type="text/javascript">
+
+    var vehicleClass = '<?php echo (new Zend\Escaper\Escaper('UTF-8'))->escapeJs(($vehicleClass)); ?>';
+
+    function refreshVisibleItems() {
+        var serviceBrakeTestType = $('#serviceBrake1TestType').val();
+        var parkingBrakeTestType = $('#parkingBrakeTestType').val();
+        var numberOfAxles = $('#numberOfAxles').val();
+        var weightAndAxlesVisible =
+            (serviceBrakeTestType != 'DECEL' && serviceBrakeTestType != 'GRADT') ||
+                (parkingBrakeTestType != 'DECEL' && parkingBrakeTestType != 'GRADT');
+        var parkingAxlesVisible =
+            (numberOfAxles == 3) &&
+                (parkingBrakeTestType != 'DECEL' && parkingBrakeTestType != 'GRADT');
+
+        var weightType = $('[name=weightType]:checked').val();
+        var weightVisible = weightAndAxlesVisible && weightType != 'NA';
+
+        $('#vehicleWeightFields, #numberOfAxlesContainer')
+            .toggle(weightAndAxlesVisible)
+            .find('input').prop('disabled', !weightAndAxlesVisible);
+
+        $('#weightInputPanel')
+            .toggle(weightVisible)
+            .find('input').prop('disabled', !weightVisible);
+
+        $('#parkingBrakeNumberOfAxlesContainer')
+            .toggle(parkingAxlesVisible);
+
+        // Allow no weight to be entered - option must be disabled for all other cases.
+        var enableNotApplicableRadioButton =
+            (serviceBrakeTestType == 'ROLLR' && parkingBrakeTestType == 'ROLLR')
+                && (vehicleClass == '3' || vehicleClass == '4' || vehicleClass == '4A');
+
+        $('#weightType-not-applicable').attr('disabled', !enableNotApplicableRadioButton);
+
+    }
+
+    // Vehicle Class -> Valid Service Brake Test Types -> Valid Parking Brake Test Types
+    var brakeTestTypes = {
+        '3': {
+            'ROLLR': ['ROLLR', 'DECEL', 'GRADT'],
+            'PLATE': ['PLATE'],
+            'DECEL': ['ROLLR', 'DECEL', 'GRADT']
+        },
+
+        '4': {
+            'ROLLR': ['ROLLR', 'DECEL', 'GRADT'],
+            'PLATE': ['PLATE', 'DECEL', 'GRADT'],
+            'DECEL': ['ROLLR', 'DECEL', 'GRADT']
+        },
+
+        '5': {
+            'ROLLR': ['ROLLR', 'DECEL', 'GRADT'],
+            'DECEL': ['ROLLR', 'DECEL', 'GRADT']
+        },
+
+        '7': {
+            'ROLLR': ['ROLLR', 'DECEL', 'GRADT'],
+            'PLATE': ['PLATE', 'DECEL', 'GRADT'],
+            'DECEL': ['ROLLR', 'PLATE', 'DECEL', 'GRADT']
+        }
+    };
+
+    brakeTestTypes['4A'] = brakeTestTypes['4'];
+    brakeTestTypes['5A'] = brakeTestTypes['5'];
+
+    function updateServiceBrakeTestTypes() {
+        updateSelect('#serviceBrake1TestType', brakeTestTypes[vehicleClass]);
+        updateParkingBrakeTestTypes();
+    }
+
+    function updateParkingBrakeTestTypes() {
+        var validServiceBrakeTestTypes = brakeTestTypes[vehicleClass];
+        var selectedServiceBrakeTypeText = $('#serviceBrake1TestType > option').filter(":selected").val();
+        var validParkingBrakeTestTypes = validServiceBrakeTestTypes[selectedServiceBrakeTypeText];
+        updateSelect('#parkingBrakeTestType', validParkingBrakeTestTypes);
+    }
+
+    /**
+     * @param needle String
+     * @param haystack either an Object whose properties will be searched, or an Array
+     */
+    function isIn(needle, haystack) {
+        if (Object.prototype.toString.call(haystack) === '[object Array]') {
+            return $.inArray(needle, haystack) != -1;
+        } else {
+            return needle in haystack;
+        }
+    }
+
+    /**
+     * Disables/enables the chosen HTML select's options according to the supplied list of valid options.
+     *
+     * If the this results in the existing selected option becoming invalid, the selection is reset
+     * to the first valid option.
+     *
+     * @param selectSelector JQuery selector of a given HTML select
+     * @param validOptionValues an array or Object containing the valid option values
+     */
+    function updateSelect(selectSelector, validOptionValues) {
+        optionsSelector = selectSelector + "> option";
+        var firstValid = '';
+        $(optionsSelector).each(function () {
+            if (isIn(this.value, validOptionValues)) {
+                $(this).attr('disabled', false);
+                $(this).attr('hidden', false);
+                if (firstValid === '') {
+                    firstValid = this.value;
+                }
+            } else {
+                $(this).attr('disabled', true);
+                $(this).attr('hidden', true);
+            }
+        });
+        var selected = $(optionsSelector + ":selected")[0];
+
+        if (selected.disabled) {
+            $(selectSelector).val(firstValid);
+        }
+    }
+
+    $('#serviceBrake1TestType').change(updateParkingBrakeTestTypes);
+    $('#serviceBrake1TestType, #parkingBrakeTestType, #numberOfAxles').change(refreshVisibleItems);
+
+    function weightTypeChange(weightType) {
+        var vehicleWeightField = $('#vehicleWeight');
+        var previousValue = vehicleWeightField.data('weightType');
+        if (this.value == 'VSI') {
+            vehicleWeightField.val(vehicleWeightField.data('vsi-weight'));
+        } else if (previousValue == 'VSI') {
+            vehicleWeightField.val('');
+        }
+        vehicleWeightField.data('weightType', this.value);
+
+        $("#weightInputPanel").toggle(weightType != 'NA');
+        $("#vehicleWeight").prop('disabled', weightType === 'NA')
+    }
+
+    $(document).ready(function () {
+        updateServiceBrakeTestTypes();
+        refreshVisibleItems();
+    });
+
+</script>

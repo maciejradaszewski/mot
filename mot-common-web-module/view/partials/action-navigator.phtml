@@ -1,0 +1,29 @@
+<?php if (count($navigator) > 0) : ?>
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            <nav class="pagination" role="navigation" aria-label="Pagination">
+                <ul class="group">
+
+                    <?php if (isset($navigator['next'])) : ?>
+                    <li class="next">
+                        <button name="nextAction" tabindex="100" id="nextActionButton" type="submit" value="<?php echo $this->escapeHtml($navigator['next']['action']); ?>"
+                                class="btn btn-link">
+                            <span class="pagination-label">Next</span>
+                            <span class="pagination-part-title"><?php echo $this->escapeHtml($navigator['next']['label']); ?></span>
+                        </button>
+                    </li>
+                    <?php endif; ?>
+                    <?php if (isset($navigator['prev'])) : ?>
+                    <li class="previous">
+                        <button name="nextAction" tabindex="101" id="prevActionButton" type="submit" value="<?php echo $this->escapeHtml($navigator['prev']['action']); ?>"
+                                class="btn btn-link">
+                            <span class="pagination-label">Previous</span>
+                            <span class="pagination-part-title"><?php echo $this->escapeHtml($navigator['prev']['label']); ?></span>
+                        </button>
+                    </li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
+        </div>
+    </div>
+<?php endif; ?>

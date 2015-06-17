@@ -1,0 +1,20 @@
+<?php
+$value = isset($value) ? $value : '';
+
+$id = isset($id) ? $id : 'title';
+$name = isset($name) ? $name : $id;
+?>
+
+<div class="form-group">
+    <label for="<?php echo $this->escapeHtml($id); ?>" class="col-sm-4 control-label">Title</label>
+
+    <div class="col-sm-2">
+        <select name="<?php echo $this->escapeHtml($name); ?>" id="<?php echo $this->escapeHtml($id); ?>"
+                class="form-control input-small">
+            <option value="Mr" <?php if ($value === 'Mr') : ?>selected<?php endif; ?>>Mr</option>
+            <option value="Mrs" <?php if ($value === 'Mrs') : ?>selected<?php endif; ?>>Mrs</option>
+            <option value="Miss" <?php if ($value === 'Miss') : ?>selected<?php endif; ?>>Miss</option>
+        </select>
+    </div>
+
+</div>

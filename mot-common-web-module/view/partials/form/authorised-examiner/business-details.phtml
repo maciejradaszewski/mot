@@ -1,0 +1,168 @@
+<?php
+use \DvsaCommon\Constants\OrganisationType;
+use AuthorisedExaminerApplication\Section\BusinessDetailsSection;
+
+?>
+
+<div class="form-group">
+    <label for="company" class="col-md-offset-4 col-lg-4 control-label">What type of business are you?</label>
+
+    <div class="col-md-offset-4 col-lg-8" id="businessTypeRadioButtons">
+        <div>
+            <?php echo $this->partial(
+                'radioElement',
+                [
+                    'id'          => 'company',
+                    'label'       => OrganisationType::COMPANY,
+                    'value'       => OrganisationType::COMPANY,
+                    'required'    => true,
+                    'name'        => 'organisationType',
+                    'optionValue' => $form->getOrganisationType(),
+                ]
+            );
+            ?>
+        </div>
+        <div>
+            <?php echo $this->partial(
+                'radioElement',
+                [
+                    'id'          => 'partnership',
+                    'label'       => OrganisationType::PARTNERSHIP,
+                    'value'       => OrganisationType::PARTNERSHIP,
+                    'required'    => true,
+                    'name'        => 'organisationType',
+                    'optionValue' => $form->getOrganisationType(),
+                ]
+            );
+            ?>
+        </div>
+        <div>
+            <?php echo $this->partial(
+                'radioElement',
+                [
+                    'id'          => 'soleTrader',
+                    'label'       => OrganisationType::SOLE_TRADER,
+                    'value'       => OrganisationType::SOLE_TRADER,
+                    'required'    => true,
+                    'name'        => 'organisationType',
+                    'optionValue' => $form->getOrganisationType(),
+                ]
+            );
+            ?>
+        </div>
+        <div>
+            <?php echo $this->partial(
+                'radioElement',
+                [
+                    'id'          => 'limitedLiabilityPartnership',
+                    'label'       => OrganisationType::LIMITED_LIABILITY_PARTNERSHIP,
+                    'value'       => OrganisationType::LIMITED_LIABILITY_PARTNERSHIP,
+                    'required'    => true,
+                    'name'        => 'organisationType',
+                    'optionValue' => $form->getOrganisationType(),
+                ]
+            );
+            ?>
+        </div>
+    </div>
+</div>
+
+<div id="organisationDetails">
+    <?php echo $this->partial(
+        'inputBox',
+        [
+            'id'       => 'nameOfBusiness',
+            'label'    => 'The name of the business is',
+            'labelId'  => 'nameOfBusinessLabel',
+            'value'    => $form->getOrganisationName(),
+            'name'     => 'organisationName',
+            'required' => true,
+        ]
+    );
+
+    echo $this->partial(
+        'inputBox',
+        [
+            'id'       => 'tradingAs',
+            'label'    => 'Trading as',
+            'value'    => $form->getTradingAs(),
+            'name'     => 'tradingAs',
+            'required' => true,
+        ]
+    );
+    ?>
+
+    <?php echo $this->partial(
+        'inputBox',
+        [
+            'id'        => 'registeredNumberOfBusiness',
+            'elementId' => 'registeredNumberElement',
+            'label'     => 'Registered company number',
+            'value'     => $form->getRegisteredNumberOfBusiness(),
+            'name'      => 'registeredNumberOfBusiness',
+            'optional'  => true,
+            'maxLength' => 50,
+            'title'     => 'Please enter the Registered Company Number of your business',
+        ]
+    );
+    ?>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var labels = {
+                company: {
+                    name: 'The name of the Company is',
+                    aedmIsAep: 'Are you as AEDM also a Company Director?',
+                    isCompanyNumberRequired: <?php echo BusinessDetailsSection::requiresRegistrationType(OrganisationType::COMPANY) ? 'true': 'false'; ?>
+                },
+                partnership: {
+                    name: 'The name of the Partnership is',
+                    aedmIsAep: 'Are you as AEDM also a named Partner?',
+                    isCompanyNumberRequired: <?php echo BusinessDetailsSection::requiresRegistrationType(OrganisationType::PARTNERSHIP) ? 'true': 'false'; ?>
+                },
+                limitedLiabilityPartnership: {
+                    name: 'The name of the LLP is',
+                    aedmIsAep: 'Are you as AEDM also a named Partner?',
+                    isCompanyNumberRequired: <?php echo BusinessDetailsSection::requiresRegistrationType(OrganisationType::LIMITED_LIABILITY_PARTNERSHIP) ? 'true': 'false'; ?>
+                },
+                soleTrader: {
+                    name: 'The name of the Sole Trader is',
+                    aedmIsAep: 'Are you as AEDM also the named Sole Trader?',
+                    isCompanyNumberRequired: <?php echo BusinessDetailsSection::requiresRegistrationType(OrganisationType::SOLE_TRADER) ? 'true': 'false'; ?>
+                }
+            }
+            , organisationDetails = $('#organisationDetails');
+
+        function changeLabels(id) {
+            var texts = labels[id];
+            $('#nameOfBusinessLabel').html(texts.name);
+            $('#aedmIsAepLabel').html(texts.aedmIsAep);
+            if (texts.isCompanyNumberRequired) {
+                $('#registeredNumberElement').slideDown();
+            } else {
+                $('#registeredNumberElement').slideUp();
+            }
+        }
+
+        function addOnClickHandler(id) {
+            $('#' + id).click(function () {
+                changeLabels(id);
+                organisationDetails.fadeIn();
+            });
+        }
+
+        if (!$('input[type=radio]').is(':checked')) {
+            organisationDetails.hide();
+        }
+
+        addOnClickHandler('company');
+        addOnClickHandler('partnership');
+        addOnClickHandler('limitedLiabilityPartnership');
+        addOnClickHandler('soleTrader');
+
+        $('input[name=organisationType]:checked').each(function () {
+            changeLabels(this.id);
+        });
+    });
+</script>

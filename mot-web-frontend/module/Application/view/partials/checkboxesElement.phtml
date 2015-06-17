@@ -1,0 +1,70 @@
+<?php
+if (empty($elements = $this->elements)) {
+    return;
+}
+
+$this->disabled = !empty($this->disabled);
+$this->require = !empty($this->require);
+
+$isElementsHasKey = (array_keys($elements) !== range(0, count($elements) - 1));
+
+foreach ($elements as $key => $title) {
+    $key = ($isElementsHasKey ? $key : $title);
+
+    if (!empty($this->keyFormat)) {
+        $key = sprintf($this->keyFormat, $key);
+    }
+
+    if (!empty($this->titleFormat)) {
+        $title = sprintf($this->titleFormat, $title);
+    }
+
+
+    //  --  define field id and name    --
+    $fldId = !empty($this->id) ? $this->id : '';
+    $fldName = !empty($this->name) ? $this->name : $fldId;
+
+    if (empty($fldId) && empty($fldName)) {
+
+        $fldId = $fldName = $key;
+    } else {
+        $fldId = (!empty($fldId) ? $fldId : $fldName) . '[' . $key . ']';
+        $fldName = (!empty($fldName) ? $fldName : $fldId) . '[]';
+    }
+
+
+    //  ----  set attributes and css  ----
+    $isDisabled = ($this->disabled
+        || (is_array($this->elementsDisabled)
+            && in_array($key, $this->elementsDisabled)));
+
+    $isSelected = (is_array($this->elementsSelected)
+        && in_array($key, $this->elementsSelected));
+
+    $css
+        = (!empty($this->cssClass) ? $this->cssClass : 'block-label label-clear')
+        . ($isDisabled ? ' disabled' : '')
+        . ($isSelected ? ' selected' : '');
+
+    $isTitleAtLeftPos = !empty($this->titleAtLeftPos);
+
+
+    //  --  assemble    --
+    $t = [
+        '<label class="', $css, '" for="', $fldId, '"',
+            (!empty($this->cssStyle) ? 'style="' . $this->cssStyle . '"' : ''),
+        '>',
+        '<input type="checkbox"',
+            ' value="', $key, '"',
+            ' id="', $fldId, '"',
+            ' name="', $fldName, '"',
+            ($isDisabled ? ' disabled="disabled"' : '' ),
+            ($isSelected ? ' checked="checked"' : '' ),
+            ($this->required ? ' required' : ''),
+        '>',
+        $title,
+        '</label>'
+    ];
+
+    echo implode('', $t);
+}

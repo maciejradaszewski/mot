@@ -1,0 +1,48 @@
+<?php
+
+$title = 'Please select your current VTS';
+$this->headTitle($title);
+?>
+
+<h1><?php echo $this->escapeHtml($title); ?> </h1>
+
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('vts-select', array('action' => 'index')));
+$form->prepare(); 
+$vtsNameElement = $form->get('vtsName');
+$submitElement = $form->get('submit');
+?>
+
+
+
+<?php echo $this->form()->openTag($form); ?>
+<div class="row">
+    <div class="col-lg-8">
+        <form>
+            <?php echo $this->csrfToken() ?>
+            <fieldset>
+                <div class="form-group ">
+                    <?php
+                        $vtsNameElement->setAttribute('class','form-control');
+                        echo $this->formLabel($vtsNameElement);
+                        echo $this->formSelect($vtsNameElement);
+                    ?>
+                </div>
+
+
+                <?php
+                    $submitElement->setAttribute('class','btn btn-default');
+                    echo $this->formSubmit($submitElement);
+                    echo $this->form()->closeTag();
+                ?>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+

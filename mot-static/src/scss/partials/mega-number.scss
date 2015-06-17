@@ -1,0 +1,86 @@
+/*
+    @name mega-number
+
+    @status production
+    
+    @category Molecule
+
+    @comments
+    Used heavily on dashboard to display large numbers.
+    .sub-text, .super-text to make label subscript/superscript
+    .meta pushes text to the right of the super-text
+    Can be given a lesser priority using the modifier class .is-secondary
+    Can also be applied to a link to give a GDS style link
+
+    Bootstrap dependency: None
+
+    @example
+    <span class="mega-number is-secondary">
+        <strong class="number">1</strong>
+        <span class="super-text">
+            unread
+            <span class="meta">99 days left to view</span>
+        </span>
+    </span>
+
+    @example-with-link
+    <a class="mega-number" href="{example-link}">
+        <strong class="number">1</strong>
+        <span class="sub-text">
+            overdue
+        </span>
+    </a>
+*/
+
+.mega-number {
+    display: block;
+    overflow: auto;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    text-decoration: none;
+
+    .number {
+        font-size: 3em;
+        line-height: 1em;
+        display: inline-block;
+    }
+
+    .sub-text {
+        display: block;
+        line-height: 1em;
+    }
+
+    .super-text {
+        padding-left: .5em;
+        position: relative;
+        top: -1em;
+        vertical-align: super;
+    }
+
+    .meta {
+        margin-left: 60px;
+        color: $text-colour;
+    }
+
+    &.is-secondary {
+        background-color: $grey-4;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+a.mega-number {
+    @extend .mega-number;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: $link-colour;
+    color: $white;
+    
+    &:hover {
+        background-color: $link-hover-colour;
+    }
+    
+    &:focus {
+        outline: none;
+    }
+}

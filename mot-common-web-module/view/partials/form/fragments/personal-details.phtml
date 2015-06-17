@@ -1,0 +1,104 @@
+<?php
+
+use DvsaCommon\Enum\CountryOfRegistrationCode;
+
+if (false === isset($values) || true === is_array($values)) {
+
+    $form = (isset($values) && is_array($values)) ? $values : [];
+
+    $form['title'] = $this->withDefault('')->getValue($values['title']);
+    $form['firstName'] = $this->withDefault('')->getValue($values['firstName']);
+    $form['middleName'] = $this->withDefault('')->getValue($values['middleName']);
+    $form['surname'] = $this->withDefault('')->getValue($values['surname']);
+    $form['dateOfBirth'] = $this->withDefault('')->getValue($values['dateOfBirth']);
+    $form['gender'] = $this->withDefault('')->getValue($values['gender']);
+    $form['drivingLicenceNumber'] = $this->withDefault('')->getValue($values['drivingLicenceNumber']);
+    $drivingLicenceRegion = $this->withDefault(CountryOfRegistrationCode::NOT_KNOWN)
+        ->getValue($values['drivingLicenceRegion']);
+
+} else {
+
+    /** @var $values \Dashboard\Model\PersonalDetails */
+
+    $form['title'] = $values->getTitle();
+    $form['firstName'] = $values->getFirstName();
+    $form['middleName'] = $values->getMiddleName();
+    $form['surname'] = $values->getSurname();
+    $form['dateOfBirth'] = $values->getDateOfBirth();
+    $form['gender'] = $values->getGender();
+    $form['drivingLicenceNumber'] = $values->getDrivingLicenceNumber();
+    $drivingLicenceRegion = $values->getDrivingLicenceRegion();
+}
+
+$showDrivingLicence = $this->withDefault(false)->getValue($showDrivingLicence);
+$isDrivingLicenceOptional = $this->withDefault(false)->getValue($isDrivingLicenceOptional);
+$drivingLicenceRegions = $this->withDefault([])->getValue($drivingLicenceRegions);
+$form['drivingLicenceRegion'] = $drivingLicenceRegion;
+
+echo $this->partial('titleBox', ['value' => $form['title']]);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id'        => 'firstName',
+        'label'     => 'First name',
+        'required'  => true,
+        'title'     => 'Enter the first name',
+        'maxLength' => 50,
+        'value'     => $form['firstName'],
+    ]
+);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id'        => 'middleName',
+        'label'     => 'Middle name',
+        'title'     => 'Enter the middle name',
+        'maxLength' => 50,
+        'value'     => $form['middleName'],
+    ]
+);
+
+echo $this->partial(
+    'inputBox',
+    [
+        'id'        => 'surname',
+        'label'     => 'Surname',
+        'required'  => true,
+        'title'     => 'Enter the surname',
+        'maxLength' => 50,
+        'value'     => $form['surname'],
+    ]
+);
+
+echo $this->partial(
+    'datePickerBox',
+    [
+        'postfix' => 'OfBirth',
+        'label'   => 'Date of birth',
+        'value'   => $form['dateOfBirth'],
+    ]
+);
+
+echo $this->partial('genderBox', ['value' => $form['gender']]);
+
+if ($showDrivingLicence) {
+    echo $this->partial(
+        'drivingLicenceInput',
+        [
+            'id'                    => 'drivingLicenceNumber',
+            'label'                 => 'Driving licence number' . ($isDrivingLicenceOptional ? '(optional)' : ''),
+            'required'              => !$isDrivingLicenceOptional,
+            'title'                 => 'Please enter your driving licence number',
+            'maxLength'             => 25,
+            'value'                 => $form['drivingLicenceNumber'],
+            'isChecked'             => 'other' === $form['drivingLicenceRegion'],
+            'hiddenInputId'         => 'uk',
+            'checkBoxId'            => 'non-uk',
+            'checkBoxText'          => 'Non UK Driving Licence',
+            'drivingLicenceRegions' => $drivingLicenceRegions,
+            'drivingLicenceRegion'  => $drivingLicenceRegion
+        ]
+    );
+}

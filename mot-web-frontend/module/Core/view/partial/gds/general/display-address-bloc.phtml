@@ -1,0 +1,10 @@
+<?php if (isset($isAddress) && $isAddress === true): ?>
+    <?php echo !empty($address['addressLine1']) ? $this->escapeHtml($address['addressLine1']) . '<br/>' : ''; ?>
+    <?php echo !empty($address['addressLine2']) ? $this->escapeHtml($address['addressLine2']) . '<br/>' : ''; ?>
+    <?php echo !empty($address['addressLine3']) ? $this->escapeHtml($address['addressLine3']) . '<br/>' : ''; ?>
+    <?php echo !empty($address['town']) ? $this->escapeHtml($address['town']) . '<br/>' : ''; ?>
+    <?php echo !empty($address['postcode']) ? $this->escapeHtml($address['postcode']) . '<br/>' : ''; ?>
+    <?php echo !empty($address['country']) ? $this->escapeHtml($address['country']) . '<br/>' : ''; ?>
+<?php else: ?>
+    Not found<br/>
+<?php endif; ?>

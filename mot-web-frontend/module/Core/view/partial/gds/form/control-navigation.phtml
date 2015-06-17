@@ -1,0 +1,28 @@
+<?php
+$id = isset($id) ? $this->id : '';
+$class  = isset($class) ? $this->class : 'button';
+?>
+
+<nav class="content-navigation">
+    <?php
+    echo $this->partial(
+        'partial/gds/form/control-submit',
+        [
+            'id'    => $id,
+            'class' => $class,
+            'value' => $this->value,
+        ]
+    );
+
+    if (isset($message) && isset($linkMessage)) {
+        echo $this->partial('partial/gds/general/message', ['link' => $linkMessage, 'message' => $message]);
+    }
+
+    if (isset($navigation)) {
+        echo $this->partial(
+            'partial/gds/form/control-navigation-secondary',
+            ['navigation' => $navigation]
+        );
+    }
+    ?>
+</nav>

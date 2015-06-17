@@ -1,0 +1,78 @@
+<?php
+
+use \DvsaAuthentication\Controller\AuthenticationController;
+
+$sectionName = $this->identityHelper()->getDisplayName();
+$taskName = "Performance dashboard";
+
+$this->headTitle($taskName);
+$this->layout()->setVariable('pageSubTitle', $sectionName);
+$this->layout()->setVariable('pageTitle', $taskName);
+?>
+<div class="row">
+    <div class="col-sm-12">
+        <p>
+            This dashboard shows information on all the MOT tests you have carried out across the garages you are currently working for.
+        </p>
+    </div>
+</div>
+<hr class="hr-thin">
+<div class="row module-present-data">
+    <div class="col-sm-4">
+        <h3>Today's summary</h3>
+    </div>
+    <div class="col-sm-8">
+        <div class="row">
+            <div class="col-sm-3 stat head-space">
+                <span class="stat-number" id="today-total-vehicles-tested"><?php echo $this->escapeHtml($today['total']); ?></span>
+                <time class="stat-period">Tests Conducted</time>
+            </div>
+            <div class="col-sm-3 stat head-space">
+                <span class="stat-number" id="today-number-passed"><?php echo $this->escapeHtml($today['passed']); ?></span>
+                <time class="stat-period">Passed</time>
+            </div>
+            <div class="col-sm-3 stat head-space">
+                <span class="stat-number" id="today-number-failed"><?php echo $this->escapeHtml($today['failed']); ?></span>
+                <time class="stat-period">Failed</time>
+            </div>
+            <div class="col-sm-3 stat head-space">
+                <span class="stat-number" id="today-number-retests"><?php echo $this->escapeHtml($today['retests']); ?></span>
+                <time class="stat-period">Re-test</time>
+                <!-- <span class="stat-delta [is-increase|is-decrease]"></span> -->
+            </div>
+        </div>
+    </div>
+</div>
+<hr class="hr-thin">
+
+<div class="row module-present-data">
+    <div class="col-sm-4">
+        <h3>Average test time</h3>
+        <p>The average time it takes you to complete an MOT test</p>
+    </div>
+    <div class="col-sm-8 stat head-space">
+        <span class="stat-number" id="current-month-average-time"><?php echo $this->escapeHtml($currentMonth['averageTime']); ?></span>
+        <time class="stat-period">1 to <?php echo $this->escapeHtml($currentDate); ?></time>
+        <!--
+        First of the month?
+        <time class="stat-period">1 July 2014</time>
+        -->
+    </div>
+</div>
+<hr class="hr-thin">
+<div class="row module-present-data">
+    <div class="col-sm-4">
+        <h3>Fail rate</h3>
+        <p>The percentage rate of MOT tests you have failed</p>
+    </div>
+    <div class="col-sm-8 stat head-space">
+        <span class="stat-number" id="current-month-fail-rate"><?php echo $this->escapeHtml($currentMonth['failRate']); ?>%</span>
+        <time class="stat-period">1 to <?php echo $this->escapeHtml($currentDate); ?></time>
+        <!--
+        First of the month?
+        <time class="stat-period">1 July 2014</time>
+        -->
+    </div>
+</div>
+<hr class="hr-thin">
+<a id="back-to-home-link" href="<?php echo $this->url(AuthenticationController::ROUTE_USER_HOME); ?>">Back to home</a>

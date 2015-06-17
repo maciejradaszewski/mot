@@ -1,0 +1,67 @@
+<?php
+use DvsaCommon\UrlBuilder\MotTestUrlBuilder;
+use DvsaCommon\UrlBuilder\UrlBuilder;
+use DvsaCommon\Utility\ArrayUtils;
+
+$outcome = '';
+$comment = '';
+$score = '';
+
+$enforcementResult = ArrayUtils::tryGet($this->reinspectionResult['data'], 'enforcementResult', false);
+if ($enforcementResult) {
+    $outcome = ArrayUtils::tryGet($enforcementResult['decisionOutcome'], 'outcome');
+    $comment = ArrayUtils::tryGet($enforcementResult['comment'], 'comment');
+    $score = ArrayUtils::tryGet($enforcementResult, 'totalScore');
+}
+
+echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
+echo $this->partial('partial/gds/general/system-message', ['messages' => $errorMessages, 'type' => 'failure']);
+?>
+
+<?php if (empty($errorMessages) && !empty($reinspectionResult['data']['enforcementResult'])): ?>
+<h3 class="key-value-list__header">Summary</h3>
+<table class="key-value-list">
+    <tbody>
+    <tr>
+        <th class="key-value-list__key">
+            Indicative case outcome
+        </th>
+        <td class="key-value-list__value">
+            <?php echo $this->escapeHtml($score); ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Outcome
+        </th>
+        <td class="key-value-list__value">
+            <?php echo $this->escapeHtml($outcome); ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Outcome comments (if any)
+        </th>
+        <td class="key-value-list__value">
+            <?php echo $this->escapeHtml($comment); ?>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<?php endif; ?>
+
+
+<nav class="content-navigation">
+    <a href="/<?php echo UrlBuilder::of()->home(); ?>" class="button">Return to homepage</a>
+    <?php echo $this->partial(
+        'partial/gds/form/control-navigation-secondary',
+        [
+            'navigation' => [
+                'Perform another test comparison or reinspection' => '/' . MotTestUrlBuilder::of()->search()
+            ]
+        ]
+    ); ?>
+</nav>
+
+
+

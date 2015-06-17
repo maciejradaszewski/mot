@@ -1,0 +1,288 @@
+<?php
+
+use DvsaMotTest\Controller\VehicleSearchController;
+
+$registrationElement = $data['registrationElement'];
+$vinTypeElement = $data['vinTypeElement'];
+$vinElement = $data['vinElement'];
+$submitElement = $data['submitElement'];
+$testNumberElement = $data['testNumberElement'];
+$searchType = $data['searchType'];
+$previousRegistrationElement = $data['previousRegistrationElement'];
+$previousVinElement = $data['previousVinElement'];
+
+$noMatches = isset($noMatches) ? $noMatches : false;
+$showCreateButton = isset($showCreateButton) ? $showCreateButton : false;
+$results = isset($results) ? $results : null;
+$tooManyMatches = isset($tooManyMatches) ? $tooManyMatches : null;
+//FIXME : Update the callers for this partial to pass in the variable
+$registrationNumberMaxLength = isset($registrationNumberMaxLength) ? $registrationNumberMaxLength : 10;
+
+//  --  html form begin --
+echo $this->form()->openTag($this->form);
+echo $this->csrfToken();
+
+if ($this->form->has('contingency')) {
+    echo $this->formInput($this->form->get('contingency'));
+}
+?>
+<fieldset>
+    <div class="row">
+        <div class="col-sm-8">
+            <?php echo $this->partial(
+                'errorMessages',
+                ['errorTitle' => 'Please check the form', 'getFromFlash' => true]
+            ); ?>
+        </div>
+    </div>
+
+    <?php if ($tooManyMatches): ?>
+        <div class="row">
+            <div class="col-sm-8">
+                <h2>Too many matches returned</h2>
+
+                <p>Please try refining your search and try again.</p>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($noMatches): ?>
+        <div class="row">
+            <div class="col-sm-8">
+                <h2>No matches found</h2>
+
+                <p>
+                    <?php $escPrompt = "No matches were found for ";
+                    if ($previousVinElement->getValue()):
+                        $escPrompt .= "VIN <strong>" . $this->escapeHtml($previousVinElement->getValue()) . "</strong>";
+                    endif;
+
+                    if ($previousVinElement->getValue() && $previousRegistrationElement->getValue()):
+                        $escPrompt .= " and ";
+                    endif;
+
+                    if ($previousRegistrationElement->getValue()):
+                        $escPrompt .= "registration number " .
+                            "<strong>" . $this->escapeHtml($previousRegistrationElement->getValue()) . "</strong>";
+                    endif;
+
+                    $escPrompt .= ".";
+
+                    echo $escPrompt; ?>
+                    Please check and try again.
+                </p>
+            </div>
+        </div>
+        <div class='row'>
+            <div id="info-message" class="col-sm-8">
+                <div class="info-notice">
+                    <p>Search using the VIN from the VIN plate not the one found in the windscreen.</p>
+                    <?php if ($showCreateButton): ?>
+                        <p>
+                            If you are sure the VIN and/or VRM entered are correct please
+                            <a href="<?php echo $this->url('vehicle-step'); ?>">create a new vehicle record</a>.
+                        </p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
+
+    <div class="row">
+        <div class="col-sm-6 col-md-5 col-lg-4">
+            <?php if ($searchType === VehicleSearchController::SEARCH_TYPE_RETEST) : ?>
+                <div class="form-group">
+                    <?php
+                    $testNumberElement->setAttribute('class', 'form-control')
+                        ->setAttribute('id', 'test-number-input')
+                        ->setAttribute('maxLength', '30');
+                    echo $this->formLabel($testNumberElement);
+                    echo $this->formInput($testNumberElement);
+                    ?>
+                </div>
+                <p><strong>Or</strong></p>
+            <?php endif; ?>
+
+
+            <div class="form-group <?php echo ((isset($regError) && $regError) ? 'has-error' : ''); ?>"
+                 id="registration-field" style="display:inherit">
+            <?php
+            $registrationElement->setAttribute('class', 'form-control');
+            $registrationElement->setAttribute('id', 'reg-input');
+            $registrationElement->setAttribute('maxLength', $registrationNumberMaxLength);
+            echo $this->formLabel($registrationElement);
+            echo $this->formInput($registrationElement);
+
+            echo $this->formInput($previousRegistrationElement)
+            ?>
+
+        </div>
+
+        <div class="form-group">
+            <?php
+            $vinTypeElement->setAttribute('id', 'vin-type-select');
+            $vinTypeElement->setAttribute('class', 'form-control');
+            echo $this->formSelect($vinTypeElement);
+            ?>
+        </div>
+
+        <div class="form-group <?php echo ($vinElement->getMessages() ? 'has-error' :''); ?>">
+
+        <?php
+        $vinElement->setAttribute('id', 'vin-input');
+        $vinElement->setAttribute('class', 'form-control');
+        $vinElement->setAttribute('maxLength', '30');
+        ?>
+
+        <span id="vin-label">
+                <?php echo $this->formLabel($vinElement); ?>
+        </span>
+
+        <span id="vin-info" class="help-block" style="display:inherit">
+        </span>
+
+        <?php
+        echo $this->formInput($vinElement);
+        echo $this->formInput($previousVinElement);
+        ?>
+    </div>
+
+    <?php
+    $submitElement->setAttribute('id', 'vehicle-search');
+    $submitElement->setAttribute('class', 'btn btn-primary');
+    echo $this->formSubmit($submitElement);
+    ?>
+
+    <a href="<?php echo $this->url(\Dashboard\Controller\UserHomeController::ROUTE); ?>"
+       class="btn btn-link" id="cancel_vehicle_search">Cancel</a>
+
+</fieldset>
+<?php echo $this->form()->closeTag(); ?>
+
+<?php if ($results): ?>
+    <h2>Results returned</h2>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Vehicle</th>
+                <th scope="col">Registration</th>
+                <th scope="col">Vin</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($results as $vehicle) : ?>
+                <tr>
+                    <td>
+                        <?php
+                        $route = $searchType === 'demo' ? 'start-demo-confirmation' : 'start-retest-confirmation';
+                        $url = $this->url($route, ['id' => $vehicle['id'], 'source' => $vehicle['source']]);
+                        ?>
+                        <strong>
+                            <a href="<?php echo $url ?>">
+                                <?php echo $this->escapeHtml($vehicle['make'] . ' ' . $vehicle['model']) ?>
+                            </a>
+                        </strong>
+                        <br/>
+                        <?php echo $this->escapeHtml($vehicle['modelDetail']); ?><br>
+                        <small><?php echo $this->escapeHtml($vehicle['fuelType']['name']); ?></small>
+                    </td>
+                    <td><?php echo $this->escapeHtml($vehicle['registration']); ?></td>
+                    <td><?php echo $this->escapeHtml($vehicle['vin']); ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php endif; ?>
+
+<script>
+    $(document).ready(function () {
+        var testNumberInput = $('#test-number-input');
+        var regInput = $('#reg-input');
+        var vinInput = $('#vin-input');
+        var vinLabel = $('#vin-label');
+        var vinInfo = $('#vin-info');
+        var vinTypeSelect = $('#vin-type-select');
+
+        // decide if we are retesting or not
+        var retest = false;
+        if (testNumberInput.length > 0) {
+            retest = true;
+        }
+
+        function vinTypeSelected() {
+            switch (vinTypeSelect.val()) {
+                case 'partialVin' :
+                    vinInfo.show();
+                    vinInput.attr('disabled', false);
+                    vinInput.show();
+                    vinLabel.show();
+                    vinInfo.text('A minimum of 6 digits is required for a partial VIN search');
+                    break;
+                case 'fullVin' :
+                    vinInfo.show();
+                    vinInput.attr('disabled', false);
+                    vinInput.show();
+                    vinLabel.show();
+                    vinInfo.text('You must enter the full VIN');
+                    break;
+                case 'noVin' :
+                    vinInfo.hide();
+                    vinInput.hide();
+                    vinLabel.hide();
+                    vinInput.attr('disabled', true).val(null);
+                    break;
+            }
+
+        }
+
+        function checkFieldsRetest() {
+            if (testNumberInput.val().length > 0) {
+                regInput.attr('disabled', true).val(null);
+                vinInput.attr('disabled', true).val(null);
+                vinTypeSelect.attr('disabled', true);
+            } else if (vinInput.val().length == 0) {
+                regInput.attr('disabled', false);
+                vinInput.attr('disabled', false);
+                vinTypeSelect.attr('disabled', false);
+            }
+
+            if ((regInput.val().length > 0) || (vinInput.val().length > 0)) {
+                testNumberInput.attr('disabled', true).val(null);
+            } else {
+                testNumberInput.attr('disabled', false);
+            }
+        }
+
+        if (retest) {
+            vinTypeSelected();
+            checkFieldsRetest();
+        } else {
+            vinTypeSelected();
+        }
+
+        vinTypeSelect.change(function () {
+            vinTypeSelected();
+        });
+
+
+        testNumberInput.blur(function () {
+            checkFieldsRetest();
+        });
+
+        regInput.blur(function () {
+            if (retest) {
+                checkFieldsRetest();
+            }
+        });
+
+        vinInput.blur(function () {
+            if (retest) {
+                checkFieldsRetest();
+            }
+        });
+    });
+</script>

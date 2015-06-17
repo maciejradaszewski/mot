@@ -1,0 +1,538 @@
+body {
+  color: $text-colour;
+  @include font-stack();
+}
+body.not-fixed {
+  padding-top: 0px;
+}
+
+
+a { @include link(); }
+a:hover { color: $link-hover-colour;}
+a:visited { color: $link-visited-colour;}
+a:active { color: $link-active-colour;}
+a:focus {
+  background-color: $focus-colour;
+  outline: 3px solid $focus-colour;
+  outline-offset: 0;
+}
+a, button {
+  i {
+    color: $black;
+    padding-right: 7px;
+  }
+}
+.rfr-search-panel {
+  a, button {
+    i {
+      color: $white;
+    }
+  }
+}
+/************************* 
+MISCELLANEOUS STYLES 
+*************************/
+.header-container {
+  position: relative;
+  a.btn,
+  button.btn {
+    position: absolute;
+    right: 15px;
+    top: 0;
+  }
+  a.btn:active,
+  button.btn:active {
+    position: absolute;
+    right: 15px;
+    top: 2px;
+  }
+}
+.no-border {
+  @include no-border();
+}
+span.divider {
+  clear: both;
+  height: 1px;
+  background: $border-colour;
+  display: block;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+span.divider.full {
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 30px;
+}
+/************************* 
+Link styles
+*************************/
+a[rel="external"]:after {  /* Produces the little external link symbol (square containing a diagonal arrow) */
+  content: "\A0\A0\A0\A0";
+  background-position: right 0px bottom 4px;
+  background-image: url('../static/img/external-link.png');
+  background-repeat: no-repeat;
+}
+
+/************************* 
+Status and notices 
+*************************/
+.info-notice {
+  margin: 30px 0 ;
+  padding-top: 10px;
+  padding-bottom: 1px;
+  border-left: 10px solid $border-colour;
+  .info-title {
+    @include font-bold-weight();
+    margin-bottom: 0.5em;
+  }
+  ul,
+  ol,
+  p{
+    padding-left: 15px;
+  }
+  ul,
+  ol{
+    margin-left: 15px;
+  }
+}
+.info-alert {
+  margin: 30px 0 ;
+  background: url(../img/icon-important.png) 0 0 no-repeat;
+  padding: 7px 1em 7px 50px;
+  p {
+    @include font-bold-weight();
+  }
+}
+.info-notice.null-top-margin,
+.info-alert.null-top-margin {
+  margin-top: 0;
+}
+.status {
+  text-align: center;
+  padding: 15px 15px 0 15px;
+  margin-bottom: 30px;
+  .status-message-lrg {
+    @include font-bold24();
+  }
+  .status-message-xlrg {
+    @include font-bold27();
+  }
+  .count {
+    @include font-bold80();
+  }
+  /* this will be old */
+  .icon-approve:before {
+    font-family: 'FontAwesome';
+    font-weight: normal;
+    content: "\f00c  ";
+  }
+  .icon-reject:before {
+    font-family: 'FontAwesome';
+    font-weight: normal;
+    content: "\f00d  ";
+  }
+  .icon-warning:before {
+    font-family: 'FontAwesome';
+    font-weight: normal;
+    content: "\f071  ";
+  }
+
+  .message-check,
+  .message-exclamation-triangle {
+    @include font-bold24();
+  }
+  .message-check:before {
+    font-family: FontAwesome;
+    font-weight: normal;
+    content: "\f00c";
+  }
+  .message-large {
+    display: block;
+    @include font-bold27();
+  }
+  .message-exclamation-triangle:before {
+    font-family: FontAwesome;
+    font-weight: normal;
+    content: "\f071";
+  }/* end of oldness */
+}
+.status:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.status-neutral {
+  background-color: $grey-1;
+  color: $white;
+}
+.status-approve, .status-success {
+  background-color: $green;
+  color: $white;
+}
+.status-warning {
+  background-color: $orange;
+  color: $white;
+}
+.status-danger {
+  background-color: $fail-text;
+  color: $white;
+}
+
+.pass { color: $pass-text; }
+.warning { color: $warning-text; }
+.fail { color: $fail-text; }
+/************************* 
+Icon sizes 
+*************************/
+.fa-16 {
+  font-size: 1em;
+}
+.fa-24 {
+  font-size: 1.5em;
+}
+.fa-36 {
+  font-size: 2.25em;
+}
+/* BORDER STYLES */
+
+hr.hr-thick {height: 5px; background: $black;}
+hr.hr-thin {height: 1px; background: $border-colour;}
+/************************* 
+LIST STYLES 
+**************************/
+ul, ol {
+  padding-left: 1em;
+  margin-bottom: 30px;
+  
+  li {
+    margin: 0.25em 0;
+  }
+}
+
+/* list navigation */
+.contents {
+  nav {
+    h2 {
+      @include font-bold19();
+      margin-top: 30px;
+    }
+  }
+}
+.list-navigation {
+  li {
+    @include light-grey-bot-border();
+    a {
+      text-decoration: none;
+      padding: 5px 0;
+      display: block;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  }
+}
+/************************** 
+TABLE STYLES
+**************************/
+.table {
+  border-top: solid 1px $border-colour;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.table-responsive table {
+  margin: 0;
+}
+.table thead tr th {
+  line-height: 1.25em;
+  text-align: left;
+  color: $text-colour;
+  font-weight: 700;
+  background-color: $grey-4;
+  border: solid 1px $border-colour;
+}
+.table tbody tr td,
+.table tfoot tr td {
+  line-height: 1.25em;
+  text-align: left;
+  border: dotted 1px $grey-2;
+}
+.table tfoot tr td
+.table-striped tbody tr:nth-child(odd) td {
+  background-color: $grey-4;
+}
+.table-striped tbody tr:hover:nth-child(odd) td,
+.table-striped tbody tr:hover:nth-child(even) td {
+  background-color: darken($grey-4, 10%);
+}
+.table-unstyled,
+.table-unstyled th, 
+.table-unstyled tbody>tr>td  {
+  border: 0;
+}
+.table-unstyled thead tr th,
+.table-unstyled tbody tr td,
+.table-unstyled tfoot tr td {
+  border: none;
+  background: $white;
+  padding-left: 0
+}
+.table-responsive { 
+  margin-top: 30px;
+  margin-bottom: 30px;
+  .table-form {
+    margin: 0 -15px;
+    thead {
+    th:first-child {
+      padding-left: 15px;
+      }
+    }
+    tbody, tfoot {
+      tr.has-error { // Highlight the whole row with a has-error class
+        td {
+            background: $error-background;
+        }
+      }
+      td:first-child {
+          padding-left: 15px;
+      }  
+    }
+  }
+}
+.no-wrap {
+  @include no-wrap();
+}
+.cell-actions {
+  width: 50px;
+  a, button {
+    @include no-wrap();
+    display: inline-block;
+    margin: 0 7px;
+  }
+  button[type="submit"] {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Sortable styles */
+th.sortable {
+  padding: 0 !important;
+
+}
+.sortable a {
+  display: block;
+  padding: 8px;
+  color: $black;
+  text-decoration: none;
+  background: url("../img/down-arrow.png") no-repeat 95% 15px;
+  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+      background-image: url("../img/down-arrow-2x.png");
+      background-size: 10px 130px;
+  }
+}
+
+.sortable a:active {
+  color: $grey-1;
+}
+
+.sortable.ascending a {
+  background: #cccccc url("../img/down-arrow.png") no-repeat 95% -108px;
+  @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+      background-image: url("../img/down-arrow-2x.png");
+      background-size: 10px 130px;
+  }
+}
+
+.sortable:hover, 
+.sortable.descending {
+  background-color: #cccccc;
+}
+
+/*-------------------------------------------------*/
+/* DataTables dynamic row & column shadings - NMS  */
+/*-------------------------------------------------*/
+table.dataTable tr.even {
+  td.sorting_1 { background-color: darken($grey-4, 5%);}
+  td.sorting_2 { background-color: darken($grey-4, 4%);}
+  td.sorting_3 { background-color: darken($grey-4, 3%);}
+} 
+table.dataTable tr.even:hover {
+  td.sorting_1 { background-color: darken($grey-4, 20%); }
+  td.sorting_2 { background-color: darken($grey-4, 18%); }
+  td.sorting_3 { background-color: darken($grey-4, 16%); }
+} 
+table.dataTable tr.odd {
+  td.sorting_1 { background-color: darken($grey-4, 8%);}
+  td.sorting_2 { background-color: darken($grey-4, 7%);}
+  td.sorting_3 { background-color: darken($grey-4, 6%);}
+}
+table.dataTable tr.odd:hover {
+  td.sorting_1 { background-color: darken($grey-4, 20%);}
+  td.sorting_2 { background-color: darken($grey-4, 18%);}
+  td.sorting_3 { background-color: darken($grey-4, 16%);}
+} 
+
+/**************************
+BUTTON STYLES 
+**************************/
+
+.btn-active {
+  @include btn-active();
+}
+.btn {
+  @include border-radius(0, 0, 0, 0);
+  @include font-core16();
+  color: $white;
+  border: none;
+  cursor: pointer;
+  display: -moz-inline-stack;
+  display: inline-block;
+  padding: 0.35em 0.5em;
+  position: relative;
+  -webkit-appearance: none;
+}
+.btn:hover {
+  color: $white;
+}
+.btn.btn-sm {
+  font-size: 0.875em;
+}.btn.btn-lg {
+  font-size: 1.5em;
+}
+/*DEFAULT BTN*/
+
+
+.btn-default,
+.btn-default:focus  {
+  @include btn-default();
+}
+.btn-default:hover,
+.btn-default:focus  {
+  background-color: darken($grey-4, 5%);
+}
+.btn-default:active {
+  background-color: darken($grey-4, 5%);
+ @include btn-active();
+}
+/*PRIMARY BTN*/
+.btn-primary,
+.btn-primary[disabled],
+.btn-primary:focus  {
+  background-color: $button-colour;
+  @include box-shadow(0 2px 0 0 $button-colour);
+}
+.btn-primary:hover,
+.btn-primary:focus  {
+  background-color: darken($button-colour, 5%);
+}
+.btn-primary:active {
+  background-color: darken($button-colour, 5%);
+ @include btn-active();
+}
+/*DANGER/Fail BTN*/
+.btn-danger, 
+.btn-danger:focus {
+  background-color: $fail-text;
+  @include box-shadow(0 2px 0 0 darken($red, 10%));
+}
+.btn-danger:hover,
+.btn-danger:focus  {
+  background-color: darken($fail-text, 5%);
+}
+.btn-danger:active  {
+  background-color: darken($fail-text, 5%);
+  @include btn-active();
+}
+/*Warning/Advisory BTN*/
+.btn-warning, 
+.btn-warning:focus {
+  background-color: $orange;
+  @include box-shadow(0 2px 0 0 darken($orange, 20%));
+}
+.btn-warning:hover,
+.btn-warning:focus  {
+  background-color: darken($orange, 5%);
+}
+.btn-warning:active  {
+  background-color: darken($orange, 5%);
+  @include btn-active();
+}
+/*Info/PRS BTN*/
+.btn-info, 
+.btn-info:focus {
+  background-color: $light-blue;
+  @include box-shadow(0 2px 0 0 darken($light-blue, 20%));
+}
+.btn-info:hover,
+.btn-info:focus  {
+  background-color: darken($light-blue, 5%);
+}
+.btn-info:active  {
+  background-color: darken($light-blue, 5%);
+  @include btn-active();
+}
+.btn:focus {
+  outline: 3px solid $focus-colour;
+  @include box-shadow(0 0 0 0 $white);
+  color: $white;
+}
+/* button link */
+a.btn {
+  text-decoration: none;
+}
+a.btn:visited {
+  color: $white; 
+}
+a.btn-link,
+.btn-link {
+  @include link();
+}
+a.btn-link:hover,
+.btn-link:hover {
+  color: $link-hover-colour;
+}
+a.btn-link:visited,
+.btn-link:visited {
+  color: $link-visited-colour;
+}
+/********************************
+ Progress tracker
+*********************************/
+.progress-tracker {
+  position: relative;
+  h1 {
+    margin-top: 0;
+    clear: left;
+  }
+  ul {
+    margin-top: 30px;
+    margin-bottom: 0;
+    li { 
+      float: left;
+      color: $grey-2;
+      padding-right: 10px;
+    }
+    li.active {
+      color: $black;
+      @include font-bold-weight();
+      i {
+        @include font-normal-weight();
+        color: $button-colour;
+      }
+    }
+    li.done {
+      color: $secondary-text-colour;
+    }
+  }
+  a.btn{
+    position: absolute;
+    right: 15px;
+    bottom: 60px;
+  }
+  a.btn:active{
+    position: absolute;
+    top: auto;
+    right: 15px;
+    bottom: 58px;
+  }
+}

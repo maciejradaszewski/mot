@@ -1,0 +1,1 @@
+ALTER TABLE `mot_test` ADD INDEX `ix_mot_test_completed_date` (`completed_date`);

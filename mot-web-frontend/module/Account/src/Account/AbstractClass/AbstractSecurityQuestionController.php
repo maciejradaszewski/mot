@@ -1,0 +1,91 @@
+<?php
+
+namespace Account\AbstractClass;
+
+use Account\Service\SecurityQuestionService;
+use Application\Helper\PrgHelper;
+use DvsaCommon\HttpRestJson\Exception\NotFoundException;
+use DvsaCommon\UrlBuilder\AccountUrlBuilderWeb;
+use DvsaMotTest\Controller\AbstractDvsaMotTestController;
+use MotFitnesse\Util\UrlBuilder;
+use Zend\Http\Response;
+use Zend\View\Model\ViewModel;
+use Zend\Http\Request;
+use Zend\Escaper;
+
+/**
+ * Class AbstractSecurityQuestionController
+ * @package Account\AbstractClass
+ */
+abstract class AbstractSecurityQuestionController extends AbstractDvsaMotTestController
+{
+    /** @var SecurityQuestionService */
+    protected $service;
+    /** @var AbstractSecurityQuestionViewModel */
+    protected $viewModel;
+
+    public function __construct(SecurityQuestionService $securityQuestionService)
+    {
+        $this->service = $securityQuestionService;
+    }
+
+    /**
+     * This action is the end point to enter the question answer for the help desk
+     *
+     * @param int $personId
+     * @param int $questionNumber
+     * @return Response|ViewModel
+     */
+    public function index($personId, $questionNumber, $viewModel)
+    {
+        /* @var Request $request */
+        $request = $this->getRequest();
+
+        $prgHelper = new PrgHelper($request);
+        if ($prgHelper->isRepeatPost()) {
+            return $this->redirect()->toUrl($prgHelper->getRedirectUrl());
+        };
+
+        $this->service->setUserAndQuestion($personId, $questionNumber);
+
+        $this->viewModel = $viewModel;
+
+        if ($this->service->manageSessionQuestion($request, $this->flashMessenger()) === true) {
+            $urlNext = $this->viewModel->getNextPageLink($this->flashMessenger());
+            $prgHelper->setRedirectUrl($urlNext instanceof UrlBuilder ? $urlNext->toString() : $urlNext);
+            return $this->redirect()->toUrl($urlNext);
+        } elseif ($request->isPost()) {
+            $urlCurrent = $this->viewModel->getCurrentLink();
+            $prgHelper->setRedirectUrl($urlCurrent->toString());
+            return $this->redirect()->toUrl($urlCurrent);
+        }
+        return $this->initViewModelInformation($prgHelper);
+    }
+
+    /**
+     * This function initialise the view model
+     *
+     * @param PrgHelper $prgHelper
+     *
+     * @return ViewModel
+     */
+    private function initViewModelInformation($prgHelper)
+    {
+        $this->layout('layout/layout-govuk.phtml');
+
+        try {
+            $question = $this->viewModel->getQuestion();
+        } catch (NotFoundException $e) {
+            return $this->redirect()->toUrl(AccountUrlBuilderWeb::forgottenPasswordNotAuthenticated());
+        }
+
+        return new ViewModel(
+            [
+                'viewModel' => $this->viewModel,
+                'question' => $question,
+                'numberOfAttemptMessage' => $this->service->getNumberOfAttemptMessage(),
+                'prgHelper' => $prgHelper,
+            ]
+        );
+    }
+}

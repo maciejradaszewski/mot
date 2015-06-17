@@ -1,0 +1,36 @@
+<!-- details dialogue -->
+<?php
+// This should not be in the view.
+// Todo refactor
+if (strstr($this->inspectionManualReference, '.')) {
+    $manualSplitReference = preg_split("/[.]+/", $this->inspectionManualReference);
+    $refOne = $manualSplitReference[0];
+    $refTwo = $manualSplitReference[1];
+} else {
+    $refOne = $this->inspectionManualReference;
+    $refTwo = '';
+}
+?>
+<div class="modal fade" id="rfr-details-dialog-<?php echo $this->escapeHtmlAttr(str_replace(".","-",$this->inspectionManualReference)); ?>" tabindex="-1" role="dialog"
+     aria-labelledby="Reason for Rejection details - <?php echo $this->escapeHtmlAttr($this->inspectionManualReference); ?>" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title">Manual reference <?php echo $this->escapeHtml($this->inspectionManualReference); ?></h3>
+            </div>
+            <div class="modal-body">
+                <h4>Reason for Rejection</h4>
+                <p><?php echo $this->escapeHtml($this->inspectionManualDescription); ?></p>
+                <a href="<?php echo "http://www.motinfo.gov.uk/htdocs/m4s0" . $this->escapeHtml($refOne) . "000" . $this->escapeHtml($refTwo) . "01.htm";?>"
+                   target="manual" id="manual-btn-<?php echo $this->escapeHtmlAttr($this->rfrId); ?>">View manual reference for
+                    <?php echo $this->escapeHtml($this->inspectionManualReference); ?>
+                </a>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- /details dialogue -->

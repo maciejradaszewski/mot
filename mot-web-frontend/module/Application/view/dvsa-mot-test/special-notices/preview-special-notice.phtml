@@ -1,0 +1,54 @@
+<?php
+
+use DvsaCommon\Date\DateTimeDisplayFormat;
+
+$title = 'Special Notice Preview';
+$this->headTitle($title);
+
+$specialNoticeId = $specialNotice['id'];
+
+?>
+
+<?php echo $this->partial('errorMessages', array('getFromFlash' => true)); ?>
+<?php echo $this->partial('infoMessages', array('getFromFlash' => true)); ?>
+
+<form action="<?php echo $this->url('special-notices/preview', ['id' => $specialNoticeId]); ?>" method="POST">
+<?php echo $this->csrfToken() ?>
+<ul class="list-unstyled">
+    <li class="row">
+        <div class="col-sm-12">
+            <h2 id="special-notice-content-title">
+                <?php echo $this->escapeHtml($specialNotice['title']); ?>
+            </h2>
+            <ul class="list-inline">
+                <li class="message-details">
+                    <?php echo $this->escapeHtml(DateTimeDisplayFormat::textDate($specialNotice['issueDate'])); ?>
+                </li>
+                <li class="message-details">
+                    Issue number: <?php echo $this->escapeHtml($specialNotice['issueNumber']); ?>
+                </li>
+                <li class="message-details">
+                    Classes: <?php echo $this->escapeHtml($specialNotice['targetRoles']); ?>
+                </li>
+            </ul>
+
+            <div id="special-notice-content"
+                 class="show-hide-container markdown-display">
+                <p id="markdown-preview">
+                    <?php echo $this->escapeHtml($specialNotice['noticeText']); ?>
+                </p>
+            </div>
+        </div>
+    </li>
+</ul>
+
+<input type="submit" name="submit" id="publish-special-notice" class="btn btn-primary" value="Publish special notice">
+<a href="<?php echo $this->url('special-notices/edit', ['id' => $specialNoticeId]) ?>"
+   class="btn btn-link" id="back_create_special_notice" onClick="goBack()">Edit
+</a>
+</form>
+
+<script>
+    var converter = new Showdown.converter();
+    $("#markdown-preview").html(converter.makeHtml($("#markdown-preview").text().trim()));
+</script>

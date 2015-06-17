@@ -1,0 +1,33 @@
+<?php
+/** @var \Core\ViewModel\Equipment\EquipmentModelViewModel[] $equipmentModels */
+?>
+
+<table class="table" id="masterEquipmentList">
+    <thead>
+    <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Make</th>
+        <th scope="col">Model</th>
+        <th scope="col">Equipment Identification Number</th>
+        <th scope="col">Software Version</th>
+        <th scope="col">Approved Classes</th>
+        <th scope="col">Approval date</th>
+        <th scope="col">Status</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <?php foreach ($equipmentModels as $equipment) : ?>
+        <tr>
+            <td><?php echo $this->escapeHtml($equipment->getTypeName()); ?></td>
+            <td><?php echo $this->escapeHtml($equipment->getMakeName()); ?></td>
+            <td><?php echo $this->escapeHtml($equipment->getName()); ?></td>
+            <td><?php echo $this->escapeHtml($equipment->getEquipmentIdentificationNumber()); ?></td>
+            <td><?php echo $this->escapeHtml($equipment->getSoftwareVersion()); ?></td>
+            <td><?php echo $this->escapeHtml($equipment->getVehicleClassDisplay()); ?></td>
+            <td><?php echo $this->escapeHtml($equipment->getApprovalDate()); ?></td>
+            <td><?php echo $this->escapeHtml($equipment->getStatus()); ?></td>
+        </tr>
+    <?php endforeach ?>
+    </tbody>
+</table>

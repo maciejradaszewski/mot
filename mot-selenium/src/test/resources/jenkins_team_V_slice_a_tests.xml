@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Team V Slice A Tests" parallel="classes" thread-count="1">
+    <test name="Slice A test suite">
+        <groups>
+            <run>
+                <include name="slice_A"/>
+            </run>
+        </groups>
+        <packages>
+            <package name=".*"/>
+        </packages>
+    </test>
+</suite>

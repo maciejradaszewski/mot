@@ -1,0 +1,135 @@
+<?php
+
+use DvsaMotTest\Controller\VehicleSearchController;
+
+/** @var \DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultUrlTemplateInterface $urlTemplate */
+/** @var \DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultMessage $searchResultMessage */
+
+$this->layout('layout/layout-govuk.phtml');
+$breadcrumbs = [
+    $this->layout()->getVariable('pageSubTitle') => ''
+];
+$this->layout()->setVariable('progressBar', ['breadcrumbs' => $breadcrumbs]);
+
+$registrationElement = $data['registrationElement'];
+$vinElement = $data['vinElement'];
+$submitElement = $data['submitElement'];
+$searchType = $data['searchType'];
+
+$userSearchParams = ['searchVrm' => $registrationElement->getValue(), 'searchVin' => $vinElement->getValue()];
+
+$noMatches = isset($noMatches) ? $noMatches : false;
+$showCreateButton = isset($showCreateButton) ? $showCreateButton : false;
+$results = isset($results) ? $results : null;
+$tooManyMatches = isset($tooManyMatches) ? $tooManyMatches : null;
+//FIXME : Update the callers for this partial to pass in the variable
+$registrationNumberMaxLength = isset($registrationNumberMaxLength) ? $registrationNumberMaxLength : 13;
+
+//  --  html form begin --
+$this->form->setAttribute("method", "get");
+echo $this->form()->openTag($this->form);
+
+if ($this->form->has('contingency')) {
+    echo $this->formInput($this->form->get('contingency'));
+}
+?>
+
+<fieldset>
+    <div class="search-group">
+        <div class="form-group" id="registration-field">
+            <label id="reg-label" for="reg-input" class="form-label">
+                Registration mark
+            </label>
+            <?php
+            $registrationElement->setAttribute('class', 'form-control is-reg');
+            $registrationElement->setAttribute('id', 'reg-input');
+            $registrationElement->setAttribute('maxLength', $registrationNumberMaxLength);
+            echo $this->formInput($registrationElement);
+            ?>
+        </div>
+
+        <div class="form-group <?php echo ($vinElement->getMessages() ? 'has-error' :''); ?>">
+            <label id="vin-label" for="vin-input" class="form-label">
+                Full VIN
+                <span class="form-hint">or the last 6 digits</span>
+            </label>
+            <?php
+            $vinElement->setAttribute('id', 'vin-input');
+            $vinElement->setAttribute('class', 'form-control is-vin');
+            $vinElement->setAttribute('maxLength', VehicleSearchController::SEARCH_VIN_NUMBER_MAX_LENGTH);
+            echo $this->formInput($vinElement);
+            ?>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Search" class="button" id="vehicle-search">
+        </div>
+    </div>
+</fieldset>
+<?php echo $this->form()->closeTag(); ?>
+
+    <?php if ($searchResultMessage): ?>
+        <h2 id="main-message" class="result__group-heading"><?php echo $searchResultMessage->getMainMessage(); ?></h2>
+        <?php if ($noMatches): ?>
+            <div id="additional-message" class="message">
+                <?php echo $searchResultMessage->getAdditionalMessage(); ?>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+
+
+<?php if ($results): ?>
+    <table id="results-table" class="result-table" >
+        <thead>
+            <tr>
+                <th scope="col">Vehicle</th>
+                <th scope="col">Registration mark</th>
+                <th scope="col">Full VIN</th>
+                <th scope="col">Number of tests</th>
+                <th scope="col">Last tested</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($results as $vehicle): ?>
+            <tr>
+                <td>
+                    <?php
+                      $url = $urlTemplate->getStartMotTestUrl($vehicle, $userSearchParams);
+                    ?>
+                    <strong>
+                        <a href="<?php echo $url ?>">
+                            <?php
+                                echo ($vehicle->getMake() || $vehicle->getModel()) ?
+                                     $this->escapeHtml($vehicle->getMakeAndModel()) : 'Unknown';
+                            ?>
+                        </a>
+                    </strong>
+                    <br/>
+                    <?php echo $this->escapeHtml($vehicle->getModelDetail()); ?>
+                </td>
+                <td class="tabular"><?php echo $this->escapeHtml($vehicle->getRegistrationNumber()); ?></td>
+                <td class="tabular"><?php echo $this->escapeHtml($vehicle->getVin()); ?></td>
+                <td class="tabular"><?php echo $this->escapeHtml($vehicle->getMotTestCount()); ?></td>
+                <td class="tabular"><?php echo $this->escapeHtml($vehicle->getReadableLastMotTestDate()); ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>
+
+<nav class="content-navigation">
+    <ul class="content-navigation__secondary">
+        <li>
+            <a id="cancel_vehicle_search" href="<?php echo $this->url(\Dashboard\Controller\UserHomeController::ROUTE); ?>">Cancel and return Home</a> 
+        </li>
+    </ul>
+</nav>
+
+<?php if ($showCreateButton): ?>
+    <div class="message--important">
+        <p id="new-vehicle-record-info">
+            If you're unable to find a vehicle you can 
+            <a id="new-vehicle-record-link" href="<?php echo $this->url('vehicle-step',[], ['query' => ['reg'=> $registrationElement->getValue(), 'vin'=>$vinElement->getValue()]]); ?>">create a new vehicle record</a>.
+        </p>
+    </div>
+<?php endif; ?>

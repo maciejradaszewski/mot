@@ -1,0 +1,20 @@
+<?php
+if (!empty($error)) {
+    if (isset($cssOnly)) {
+        $cssClass = $cssOnly;
+    } else {
+        $cssClass = 'validation-message ' . (isset($cssClass) ? $cssClass : '');
+    }
+
+    $t = [
+        '<SPAN ',
+        ' id="error-', $this->escapeHtml($error['ref']), '"',
+        ($cssClass ? ' class="' . $this->escapeHtml($cssClass) . '"' : ''),
+        (!empty($cssStyle) ? ' style="' . $this->escapeHtml($cssStyle) . '"' : ''),
+        '>',
+        $error['error']['displayMessage'],
+        '</SPAN>'
+    ];
+
+    echo implode('', $t);
+}

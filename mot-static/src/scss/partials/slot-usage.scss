@@ -1,0 +1,109 @@
+// Slot usage totals
+.slot-usage-totals {
+    margin: 0 0 1.5em;
+    padding: .75em 0 1em;
+    @include light-grey-bot-border;
+
+    h3 {
+        font-size: 2.5em;
+        margin: 0;
+    }
+    
+    h4 {
+        margin: .25em 0 0 -.75em;
+    }
+    
+    @media screen and (max-width: 991px) {
+    
+        .col-md-3 {
+            width: 20% !important;
+            float: left;
+        }
+    }
+}
+
+// Slot usage table
+
+.slot-usage-table {
+    
+    span {
+        font-size: 1.2em;
+    }
+    
+    .table-responsive {
+        margin-top: .5em;
+    }
+
+    h3 {
+      font-size: 1.2em;
+      font-weight: normal;
+      margin: 0 0 .75em;
+  }
+}
+
+// Filters
+
+.module-filters {
+    margin-bottom: 2em;
+    
+    input[value="Download this report"] {
+        margin-top: 1em;
+    }
+}
+
+.module-filters__header {
+    margin: .25em 0 !important;
+    font-size: 1em;
+    font-size: 1.2em;
+}
+
+.module-filter-nav__header {
+    font-size: 1em;
+    background: $grey-4;
+    padding: .6em 1em;
+    margin: .25em 0;
+}
+
+.module-filter-nav__list {
+    list-style: none;
+    margin: 0;
+    padding: .25em 1em;
+}
+
+// Custom date range element
+
+.custom-date-range {
+    margin-bottom: 0;
+    padding: .8em 1em;
+    background: $grey-4;
+    
+    legend {
+        margin-bottom: -.5em !important;
+    }
+    
+    fieldset {
+        margin-bottom: .5em;
+    }
+}
+
+// Results search
+
+.module-results-search {
+    margin-bottom: 1.5em;
+    
+    label {
+        font-size: 1.2em;
+        width: 100%;
+    }
+    
+    input {
+        @include border-radius(0, 0, 0, 0);
+        margin-top: .5em;
+        width: 100%;
+    }
+}
+
+.module-results-search___hint {
+    font-size: 1em;
+    color: $secondary-text-colour;
+}

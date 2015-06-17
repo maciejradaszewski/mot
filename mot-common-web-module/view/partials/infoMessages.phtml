@@ -1,0 +1,28 @@
+<?php
+    $messages = array();
+    if (isset($infoMessages) && count($infoMessages)) {
+        $messages = $infoMessages;
+    }
+    $flashMessages = $this->layout()->flashMessenger->getInfoMessages();
+    if (isset($getFromFlash) && $getFromFlash && count($flashMessages)) {
+        $messages = array_merge($messages, $flashMessages);
+    }
+    $messages = array_filter($messages);
+?>
+<?php if (count($messages)) : ?>
+<div class='row'>
+    <div id="info-message" class="col-lg-8 info-notice">
+        <?php if (count($messages) > 1) : ?>
+            <ol>
+                <?php foreach ($messages as $message): ?>
+                    <li>
+                        <?php echo $this->escapeHtml($message) ?>
+                    </li>
+                <?php endforeach; ?>
+            </ol>
+        <?php else : ?>
+                    <?php echo $this->escapeHtml($messages[0]) ?>
+        <?php endif ?>
+    </div>
+</div>
+<?php endif ; ?>

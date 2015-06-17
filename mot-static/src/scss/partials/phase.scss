@@ -1,0 +1,39 @@
+/*
+    @name phase
+
+    @status production
+
+    @comments
+    Renders ALPHA/BETA banner under colourFlash
+
+    Bootstrap dependency: None
+
+    @example
+    <p class="module-phase">
+        <strong class="phase-name is-alpha">ALPHA</strong> This is a new service - your <a href="{example-link}">feedback</a> will help us to improve it.
+    </p>
+*/
+
+.module-phase {
+    padding: 10px 0;
+    margin: 0;
+    @include light-grey-bot-border;
+
+    .phase-name {
+        color: $white;
+        display: inline-block;
+        letter-spacing: 2px;
+        line-height: 1em;
+        padding: 5px;
+        margin-right: 15px;
+        @include font-normal-weight;
+
+        &.is-alpha {
+            background-color: $alpha-colour;
+        }
+    
+        &.is-beta {
+            background-color: $beta-colour;
+        }
+    }
+}

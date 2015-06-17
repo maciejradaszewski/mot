@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Enforcement" parallel="classes" thread-count="10">
+    <test name="Enforcement">
+        <packages>
+            <package name="com.dvsa.mot.selenium.priv.frontend.enforcement.tests"/>
+        </packages>
+    </test>
+</suite>

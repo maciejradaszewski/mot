@@ -1,0 +1,18 @@
+<?php
+
+use Dashboard\Controller\UserStatsController;
+
+?>
+<div class="module-pivot-panel">
+    <header class="pivot-panel_header">
+        <h2 class="pivot-panel_title">Your performance</h2>
+    </header>
+    <ul>
+        <li>
+            <a id="action-view-performance-dashboard"
+               href="<?php echo $this->url(UserStatsController::ROUTE_USER_STATS); ?>">
+                Performance dashboard
+            </a>
+        </li>
+    </ul>
+</div>

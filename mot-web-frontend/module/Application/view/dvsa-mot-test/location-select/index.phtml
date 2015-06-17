@@ -1,0 +1,58 @@
+<?php
+
+$title = 'Please select your current VTS';
+$this->headTitle($title);
+?>
+
+<h1><?php echo $this->escapeHtml($title); ?> </h1>
+
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('location-select'));
+$form->prepare();
+$submitElement = $form->get('submit');
+?>
+<div class="row">
+    <div class="col-lg-8">
+        <?php if ($vtsSites) :?>
+        <?php echo $this->form()->openTag($form); ?>
+            <?php echo $this->csrfToken() ?>
+            <p>Unable to determine your precise location. Please select the VTS that you are testing at.</p>
+            <?php if (!empty($errorMessage)): ?>
+                <div id="location-select-validation-summary" class="validation-summary">
+                    <?php echo $this->escapeHtml($errorMessage); ?>
+                </div>
+            <?php endif;?>
+            <?php echo $this->partial('errorMessages', array('getFromFlash' => true)); ?>
+            <fieldset class="vts-list">
+                <div id="change-vts-list">
+                <?php foreach ($vtsSites as $vts):?>
+                <div class="radio">
+                    <label id="vts-radio-option-<?php echo $this->escapeHtml($vts['id']); ?>">
+                        <input type="radio" required="" value="<?php echo $this->escapeHtml($vts['id']); ?>" name="vtsId">
+                        <strong><?php echo $this->escapeHtml($vts['name']); ?></strong><br>
+                        <?php echo $this->escapeHtml($vts['address']); ?>
+                    </label>
+                </div>
+                <?php endforeach;?>
+                </div>
+
+
+                <?php
+                    $submitElement->setAttribute('class','btn btn-primary');
+                    echo $this->formSubmit($submitElement);
+                    echo $this->form()->closeTag();
+                ?>
+            </fieldset>
+            <?php echo $this->form()->closeTag() ?>
+        <?php else : ?>
+        Hi <?php echo $this->escapeHtml($userDetails['user']->getDisplayName()); ?>, you don't have any VTS assigned to you at the moment.
+        <?php endif;?>
+    </div>
+</div>
+
+
+
+
+
+

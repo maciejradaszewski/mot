@@ -1,0 +1,100 @@
+<?php
+/**
+ * @author Sean.Charles@valtech.co.uk (Enforcement)
+ * @file   inspection-location.phtml
+ *
+ * DESCRIPTION:
+ *
+ * This file provides the means to create the tuple of (typeahead-site-id, free-text-location) that is used
+ * on many pages to capture EITHER an existing Site OR enter a free-text location description.
+ *
+ * HOW TO USE:
+ *
+ * The onus is on the caller to echo out the relevant parts where required.
+ * This decision was arrived at at is is more flexible than hard-coding a ri
+ *
+ * OUTPUT:
+ *       This partial makes use of *PLACEHOLDER* slots in the ViewModel.
+ *
+ *       In order to prevent name clashes, it uses the ID fields of the source data and creates a
+ *       placeholder called "inspectionLocation", so for example, if you have given your inputs the
+ *       values "siteid" and "location" then in your layout code you should do this to get the
+ *       generated HTML for the typeahead box:
+ *
+ *           echo $this->placeholder('inspectionLocation')->siteid;
+ *
+ *       and to get the location HTML you should do this:
+ *
+ *           echo $this->placeholder('inspectionLocation')->location);
+ *
+ *       The onus is on you to spell them correctly for it to work and they should also be valid PHP!
+ *
+ * CAVEATS:
+ *
+ *   Your template code MUST ensure it calls "headScript()" framework function to ensure that any
+ *   Javascript support files are correctly rendered during page composition.
+ *
+ *         <?php echo $this->headScript() ?>
+ *
+ * @see    http://framework.zend.com/manual/1.12/en/zend.view.helpers.html#zend.view.helpers.initial.headscript
+ *
+ *      in particular, section 24, "HeadScript Helper Basic Usage"
+ */
+
+// Root for all generated placeholder names.
+const INSLOC_ROOT = 'inspectionLocation';
+
+/* Defaults for the SITE ID entry field:
+ *
+ * These can be overridden by user supplied data; refer to the 'inputElement' partial
+ * for a complete description of what keys are available.
+ */
+$siteIdDefaults = [
+    'maxLength'   => 200,
+    'placeholder' => 'eg. V1234'
+];
+
+
+/*
+ * Defaults for the AD-HOC LOCATION entry field:
+ *
+ * These can be overridden by user supplied data; refer to the 'inputElement' partial
+ * for a complete description of what keys are available.
+ */
+$locationDefaults = [
+    'maxLength'   => 500,
+    'placeholder' => ''
+];
+
+
+// Register the typeahead HTML code...
+$this->placeholder(INSLOC_ROOT)->{$this->site['id']} = $this->partial(
+    'inputElement',
+    $this->site += $siteIdDefaults
+);
+
+// Register the location entry HTML code...
+$this->placeholder(INSLOC_ROOT)->{$this->location['id']} = $this->partial(
+    'inputElement',
+    $this->location += $locationDefaults
+);
+
+?>
+<script TYPE="text/javascript">
+    /* <![CDATA[ */
+    $(document).ready(function () {
+        var $eSiteIdEntry = $("#<?php echo $this->escapeHtml($this->site['id']); ?>"),
+            $eLoc = $("#<?php echo $this->escapeHtml($this->location['id']); ?>");
+
+        if ($eSiteIdEntry.val().trim() !='' ) {
+            $eLoc.prop('disabled', 'disabled');
+        }
+
+        if ($eLoc.val().trim() !='') {
+            $eSiteIdEntry.prop('disabled', 'disabled');
+        }
+
+        GF.uiEitherOr($eSiteIdEntry, $eLoc);
+    });
+    /* ]]> */
+</script>

@@ -1,0 +1,59 @@
+.DS_Store
+.sublime-grunt.cache
+.idea
+.project
+.php_cs.cache
+/coverage
+/node_modules
+/.sass-cache
+/vendor
+Gemfile.lock
+/poc-log/
+/.settings
+vendor
+mot-behat-tests/vendor
+
+tests/postman/collection.json
+tests/postman/results.json
+tests/postman/*/*/response.txt
+npm-debug.log
+
+/poc-log
+/poc-api/module/*/test/log/
+/poc-web/module/*/test/log/
+
+# Eclipse files
+.metadata/
+RemoteSystemsTempFiles/
+/nbproject/private/
+/mot-api/data/jasper/Scriptlets/OverflowScriptlet/build/
+/mot-api/data/jasper/Scriptlets/OverflowScriptlet/dist/
+/mot-api/data/DoctrineORMModule/
+
+# Generated CSS and Javascript files from build tools
+mot-static/public/css/dist/*.css
+mot-web-frontend/public/css/dist/*.css
+*.css.map
+
+# Generated casper test JavaScript files & XML Output
+mot-static/tests/js/casper/public/js/libraries.js
+mot-static/tests/js/casper/public/js/classes.js
+mot-static/tests/js/casper/public/js/enforcement.js
+/mot-static/tests/js/casper/casper-results.xml
+
+# Ignore the generated ux mock files, copied from real directories when bringing the server up.
+mot-static/src/html/mocks/js
+mot-static/src/html/mocks/css
+mot-static/src/html/mocks/img
+mot-static/src/html/mocks/mocks.json
+
+# Ignore the compiled files during compilation
+mot-static/compiled/*
+
+# Ignore the Devtools folder
+mot-devtools
+infrastructure
+Jenkins_Scripts
+
+coverage
+*dist.bak

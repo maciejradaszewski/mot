@@ -1,0 +1,166 @@
+/*
+    @name global-footer
+
+    @status production
+
+    @comments
+    Used to create the global page footer
+
+    Bootstrap dependency: col-sm-9, col-sm-3
+
+    @example
+    <footer role="contentinfo" id="footer" class="module-global-footer">
+      <div class="container">
+        <div class="row">
+          <div class="global-footer_meta col-sm-9">
+            <nav class="global-footer_navigation">
+              <ul>
+                <li>Built by the Driving &amp; Vehicle Standards Agency</li>
+              </ul>
+            </nav>
+            <p class="global-footer_licence"><a class="licence-logo" href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2">Open Government Licence</a> All content is available under the <a href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2">Open Government Licence v2.0</a>, except where otherwise stated</p>
+          </div>
+          <div class="global-footer_copyright col-sm-3">
+            <a href="http://www.nationalarchives.gov.uk/information-management/our-services/crown-copyright.htm">&copy; Crown copyright</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+*/
+
+/*
+    @name global-footer-resources
+
+    @status development
+
+    @comments
+    Used to create the global page footer with resource links
+
+    Bootstrap dependency: col-sm-12, col-sm-9, col-sm-3
+
+    @example
+    <footer role="contentinfo" id="footer" class="module-global-footer">
+      <div class="container">
+        <div class="row">
+          <div class="global-footer_meta col-sm-12">
+            <div class="global-footer_resources">
+                <h3>Resources</h3>
+                <nav class="global-footer_navigation-resources">
+                    <ul>
+                        <li><a href="#resource-1"
+                               title="Manuals, guides and standards">
+                               Manuals, guides and standards
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="global-footer_meta col-sm-9">
+            <nav class="global-footer_navigation">
+              <ul>
+                <li>Built by the Driving &amp; Vehicle Standards Agency</li>
+              </ul>
+            </nav>
+            <p class="global-footer_licence"><a class="licence-logo" href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2">Open Government Licence</a> All content is available under the <a href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2">Open Government Licence v2.0</a>, except where otherwise stated</p>
+          </div>
+          <div class="global-footer_copyright col-sm-3">
+            <a href="http://www.nationalarchives.gov.uk/information-management/our-services/crown-copyright.htm">&copy; Crown copyright</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+*/
+.module-global-footer {
+    background-color: $grey-4;
+    border-top: 1px solid $footer-border-colour;
+    margin-top: 60px;
+    padding-top: 60px;
+    padding-bottom: 60px;
+
+    a {
+        color: inherit;
+    }
+
+    .global-footer_meta {
+        vertical-align: bottom;
+        display: inline-block;
+        float: none;
+    }
+
+    .global-footer_navigation {
+        padding-bottom: 15px;
+        overflow: auto;
+        
+        > ul {
+            list-style: none outside none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        li {
+            float: left;
+        }
+
+        a {
+            display: inline-block;
+            margin-right: 30px;
+        }
+    }
+
+    .global-footer_resources {
+        a {
+            color: $grey-1;
+        }
+    }
+
+    .global-footer_navigation-resources {
+        @extend .global-footer_navigation;
+        border-top: 1px solid $grey-3;
+        border-bottom: 1px solid $grey-3;
+        padding-top: 15px;
+        padding-bottom: 30px;
+        margin-bottom: 60px;
+    }
+    
+    .global-footer_licence {
+        margin-bottom: 0;
+        
+        .licence-logo {
+            background: {
+                image: url('../assets/stylesheets/images/open-government-licence.png');
+                position: 100% 0;
+                repeat: no-repeat;
+            };
+            display: inline-block;
+            height: 17px;
+            width: 41px;
+            overflow: hidden;
+            text-indent: -999em;
+            margin-right: 5px;
+        }
+    }
+
+    .global-footer_copyright {
+        display: inline-block;
+        float: none;
+        margin-left: -5px;
+        
+        a {
+            background: {
+                image: url("../assets/stylesheets/images/govuk-crest.png");
+                position: 100% 0;
+                repeat: no-repeat;
+            };
+            display: block;
+            padding: 115px 0 0;
+            text-align: right;
+            text-decoration: none;
+        }
+    }
+}
+
+
+

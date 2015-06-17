@@ -1,0 +1,102 @@
+<?php
+/**
+ * @var MotTestDto $motTest
+ * @var integer    $draftId
+ * @var boolean    $isOriginalTester
+ * @var boolean    $isAdmin
+ * @var boolean    $canTestWithoutOpt
+ * @var array      $differentTesterReasons
+ */
+
+use DvsaCommon\Dto\Common\MotTestDto;
+use DvsaCommon\UrlBuilder\UrlBuilderWeb;
+
+$motTest = $this->motTest;
+$draftId = $this->draftId;
+$isOriginalTester = (boolean)$this->isOriginalTester;
+$isAdmin = (boolean)$this->isAdmin;
+$differentTesterReasons = $this->differentTesterReasons ?: [];
+$canTestWithoutOpt = (boolean)$this->$canTestWithoutOpt;
+
+$title = 'Replacement certificate review';
+$this->headTitle($title);
+
+$this->headScript()->appendFile('/js/dvsa-mot-test/display-test-summary.js');
+
+?>
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1><?php echo $this->escapeHtml($title); ?></h1>
+    </div>
+</div>
+
+<div class="row" id="content">
+    <div class="col-lg-12 progress-tracker">
+        <div>
+            <a href="<?php echo $this->url('replacement-certificate-vehicle-search'); ?>" class="btn btn-primary"
+               id="cancelMotTest">Cancel and return to vehicle</a>
+        </div>
+    </div>
+</div>
+
+<?php
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+
+if ($motTest instanceof MotTestDto) :
+    echo $this->partial(
+        'partials/mot-test-summary/test-summary',
+        [
+            'motTest'         => $motTest,
+            'odometerReading' => $odometerReading
+        ]
+    );
+    ?>
+
+    <form action="<?php echo UrlBuilderWeb::replacementCertificateSummary($draftId); ?>" method="POST">
+        <?php
+        echo $this->csrfToken();
+        echo $this->prgHelper->getHtml();
+
+        if (!$isOriginalTester && !$isAdmin): ?>
+            <div class="row">
+                <div class="col-sm-12">
+                    <p>Why was the original tester unable to update this document?</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <?php
+                    echo $this->partial(
+                        'selectElement',
+                        [
+                            'id'       => 'reasonForDifferentTester',
+                            'options'  => $differentTesterReasons,
+                            'required' => true,
+                        ]
+                    );
+                    ?>
+                </div>
+            </div>
+        <?php endif; ?>
+        <div class="row">
+            <div class="col-sm-8">
+                <?php
+                echo $this->partial(
+                    'otpInput',
+                    [
+                        'canTestWithoutOpt' => $canTestWithoutOpt,
+                        'errorMessage' => $this->otpErrorMessage,
+                        'shortErrorMessage' => $this->otpErrorShortMessage
+                    ]
+                );
+                ?>
+                <nav class="module-content-navigation">
+                    <input type="submit" class="button" value="Finish changes and print certificate"
+                           id="confirm_and_print">
+                </nav>
+            </div>
+        </div>
+    </form>
+<?php endif; ?>

@@ -1,0 +1,42 @@
+<?php
+$id = $this->id;
+$name = (!empty($this->name) ? $this->name : $id);
+$label = $this->label;
+$value = $this->value;
+
+$cssClass = join(
+    ' ', array_filter(
+        [
+            (!empty($this->errorMessage) ? 'has-error' : null),
+            (!empty($this->divModifier) ? $this->divModifier : null),
+        ]
+    )
+);
+
+$legendCssClass = (!empty($this->labelModifier) ? '-' . $this->labelModifier : '');
+?>
+
+<div class="form-group <?php echo $this->escapeHtmlAttr($cssClass); ?>">
+    <fieldset class="<?php echo (!empty($inputModifier) ? $this->escapeHtmlAttr($inputModifier) : ''); ?>">
+        <legend class="form-label<?php echo $this->escapeHtmlAttr($legendCssClass); ?>">
+
+            <?php echo $this->escapeHtml($label); ?>
+
+            <?php if (!empty($formHint)): ?>
+                <span class="form-hint"><?php echo $this->escapeHtml($formHint); ?></span>
+            <?php endif; ?>
+
+            <?php if (!empty($validationMessage)): ?>
+                <span class="validation-message"><?php echo $this->escapeHtml($validationMessage); ?></span>
+            <?php endif; ?>
+        </legend>
+
+        <?php foreach ($options as $option): ?>
+            <?php echo $this->partial(
+                'partial/gds/form/control-checkbox',
+                $option
+            ); ?>
+        <?php endforeach; ?>
+
+    </fieldset>
+</div>

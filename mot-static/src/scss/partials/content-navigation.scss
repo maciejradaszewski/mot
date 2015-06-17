@@ -1,0 +1,50 @@
+/*
+    @name content-navigation
+
+    @status production
+    
+    @comments
+    Holder for page navigation (form actions and links)
+
+    Bootstrap dependency: none
+
+    @example
+    <nav class="module-content-navigation">
+        <a href="#" class="button-warning">Abort MOT Test</a>
+        <ul class="content-navigation_secondary">
+            <li>
+                <a href="#">Return to Vehicle Testing Station</a>
+            </li>
+        </ul>
+    </nav>
+*/
+
+.module-content-navigation {
+    margin-top: 30px;
+    padding-top: 30px;
+
+    .content-navigation_secondary {
+        list-style: none;
+        margin-bottom: 20px;
+        margin-top: 5px;
+        padding: 0;
+
+        li {
+            margin-bottom: 5px;
+        }
+    }
+    
+    [class*='button'] {
+        margin: 0 15px 15px 0;
+    }
+    
+    .btn {
+        margin: 0 15px 15px 0;
+    }
+
+    .btn.btn-link {
+        padding: 0;
+        margin: 0;
+    }
+
+}

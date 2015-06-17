@@ -1,0 +1,103 @@
+<?php
+
+use Site\ViewModel\SiteSearchViewModel;
+
+/**
+ * @var SiteSearchViewModel $viewModel
+ */
+
+$errorMessages      = $this->layout()->flashMessenger->getErrorMessages();
+$successMessages    = $this->layout()->flashMessenger->getSuccessMessages();
+
+echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
+echo $this->partial('partial/gds/general/system-message', ['messages' => $errorMessages, 'type' => 'failure']);
+
+?>
+<details>
+    <summary><span class="summary">Help with Site Search</span></summary>
+    <div class="panel-indent">
+        <p>
+            You can narrow the number of Site matches found by adding more of these optional search filters. You may enter part or all of a search term, wildcards are not needed. Suggestions may appear as you type. <br />Note that you cannot search by Classes alone.
+        </p>
+    </div>
+</details>
+
+<form id="siteSearchForm" method="POST" action="<?php echo $this->escapeHtmlAttr($viewModel->getResultPage()); ?>">
+    <?php echo $this->csrfToken(); ?>
+
+    <fieldset>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-legend', ['id' => 'searchSiteLegend', 'text' => '']
+        );
+
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id'            => SiteSearchViewModel::FIELD_SITE_NUMBER,
+                'help'          => 'For example, V12345',
+                'errorMessage'  => $viewModel->getError(SiteSearchViewModel::FIELD_SITE_NUMBER),
+                'label'         => 'Site ID',
+                'value'         => $viewModel->getSiteNumber(),
+                'inputModifier' => '1-4',
+            ]
+        );
+
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id'            => SiteSearchViewModel::FIELD_SITE_NAME,
+                'help'          => 'For example, MOT Centre',
+                'errorMessage'  => $viewModel->getError(SiteSearchViewModel::FIELD_SITE_NAME),
+                'label'         => 'Trading name (or part name)',
+                'value'         => $viewModel->getSiteName(),
+                'inputModifier' => '1-2',
+            ]
+        );
+
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id'            => SiteSearchViewModel::FIELD_SITE_TOWN,
+                'help'          => 'For example, Bristol',
+                'errorMessage'  => $viewModel->getError(SiteSearchViewModel::FIELD_SITE_TOWN),
+                'label'         => 'City or town',
+                'value'         => $viewModel->getSiteTown(),
+                'inputModifier' => '1-2',
+            ]
+        );
+
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id'            => SiteSearchViewModel::FIELD_SITE_POSTCODE,
+                'help'          => 'For example, BS1',
+                'errorMessage'  => $viewModel->getError(SiteSearchViewModel::FIELD_SITE_POSTCODE),
+                'label'         => 'Postcode (full or part)',
+                'value'         => $viewModel->getSitePostcode(),
+                'inputModifier' => '1-4',
+            ]
+        );
+
+        echo $this->partial(
+            'partial/gds/form/control-checkbox-group',
+            [
+                'label'         => 'Classes of vehicles tested',
+                'options'       => $viewModel->getSiteVehicleClassParameters(),
+            ]
+        );
+
+        ?>
+    </fieldset>
+
+    <?php echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id'            => 'submitSiteSearch',
+            'value'         => 'Search',
+            'navigation'    => [
+                'Back' => '/',
+            ]
+        ]
+    ); ?>
+</form>

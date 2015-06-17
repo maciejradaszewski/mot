@@ -1,0 +1,1 @@
+UPDATE `permission` SET `is_restricted` = 1 WHERE `code` = 'PROFILE-EDIT-OWN-CONTACT-DETAILS';

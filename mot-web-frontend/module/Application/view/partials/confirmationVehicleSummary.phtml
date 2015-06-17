@@ -1,0 +1,212 @@
+<?php
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Enum\ColourCode;
+use DvsaCommon\Dto\Common\ColourDto;
+use DvsaCommon\Utility\ArrayUtils;
+use DvsaMotTest\Model\VehicleClass;
+
+/** @var \Vehicle\Helper\ColoursContainer $colours */
+$colours = ArrayUtils::tryGet($this->staticData, 'colours', []);
+$fuelTypes = ArrayUtils::tryGet($this->staticData, 'fuelTypes', []);
+
+/** @var \DvsaCommon\Dto\Vehicle\AbstractVehicleDto $vehicle */
+$vehicle = $this->vehicle;
+
+
+$vrm = $vehicle->getRegistration();
+$vin = $vehicle->getVin();
+
+if (empty($vehicle->getMakeAndModel())) {
+    $makeAndModel = $vehicle->getMakeInFull();
+} else {
+    $makeAndModel = $vehicle->getMakeAndModel();
+}
+
+// The DL DT partial will only show an alternative string on a null value, not emtpy
+if (empty($makeAndModel)) {
+    $makeAndModel = null;
+}
+
+if ((is_null($vrm) || empty($vrm)) && $vehicle->getEmptyVrmReason()) {
+    $vrm = $staticData['emptyVrmReasons'][$vehicle->getEmptyVrmReason()];
+}
+
+if ((is_null($vin) || empty($vin)) && $vehicle->getEmptyVinReason()) {
+    $vin = $staticData['emptyVinReasons'][$vehicle->getEmptyVinReason()];
+}
+
+$transmissionType = $vehicle->getTransmissionType()->getName();
+
+$expiryDate = DateTimeDisplayFormat::textDate($this->expiryDate);
+?>
+<div class="row">
+    <div class="col-md-6">
+        <?php
+        echo $this->partial(
+            'dldtdd', [
+                'dlCssClass' => 'dl-large',
+                'items'      => [
+                    ['Registration number', $vrm, 'id' => 'vehicleRegistrationNumber'],
+                    ['VIN/Chassis number', $vin, 'id' => 'vehicleVINnumber'],
+                    ['Make', $makeAndModel, 'id' => 'vehicleMake'],
+                ]
+            ]
+        );
+        ?>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-6">
+                <?php
+                echo $this->partial(
+                    'dldtdd', [
+                        'dlCssClass' => 'dl-standard',
+                        'items'      => [
+                            ['Cylinder capacity', $vehicle->getCylinderCapacity(), 'id' => 'vehicleCylinderCapacity'],
+                            (
+                                $transmissionType
+                                ? ['Transmission', $transmissionType, 'id' => 'vehicleTransmission']
+                                : null
+                            ),
+                            ($expiryDate ? ['MOT expiry date', $expiryDate, 'id' => 'motExpiryDate'] : null)
+                        ]
+                    ]
+                );
+                ?>
+            </div>
+            <div class="col-md-6">
+                <?php
+                echo $this->partial(
+                    'dldtdd', [
+                        'dlCssClass' => 'dl-standard',
+                        'items'      => [
+                            ['Body type', $vehicle->getBodyType()->getName(), 'id' => 'vehicleBodyType'],
+                            [
+                                'Date of first use',
+                                DateTimeDisplayFormat::textDate($vehicle->getFirstUsedDate()) ?: null,
+                                'id' => 'vehicleFirstUse'
+                            ],
+                        ]
+                    ]
+                );
+                ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="dl-standard">
+                    <dt>Vehicle class</dt>
+                    <dd>
+                        <div class="form-group">
+                            <?php
+                            $vehicleClasses = VehicleClass::getVehicleClassesCodes();
+
+                            if (!$this->doNotShowDropDowns) {
+                                echo $this->partial(
+                                    'selectElement',
+                                    [
+                                        'id'       => 'vehicle-class-select',
+                                        'name'     => 'vehicleClass',
+                                        'options'  => $vehicleClasses,
+                                        'value'    => $vehicle->getClassCode(),
+                                        'required' => true,
+                                    ]
+                                );
+                            } else {
+                                echo $vehicle->getVehicleClass()->getName();
+                            }
+
+                            ?>
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="dl-standard">
+                    <dt>Fuel type</dt>
+                    <dd>
+                        <div class="form-group">
+                            <?php
+                            if (!$this->doNotShowDropDowns) {
+                                echo $this->partial(
+                                    'selectElement',
+                                    [
+                                        'id'      => 'fuel-type-select',
+                                        'name'    => 'fuelType',
+                                        'options' => $fuelTypes,
+                                        'value'   => $vehicle->getFuelType()->getCode(),
+                                    ]
+                                );
+                            } else {
+                                echo $vehicle->getFuelType()->getName();
+                            }
+                            ?>
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="dl-standard">
+                    <dt>Primary colour</dt>
+                    <dd>
+                        <div class="form-group">
+                            <?php
+                            if (!$this->doNotShowDropDowns) {
+                                echo $this->partial(
+                                    'selectElement',
+                                    [
+                                        'id'      => 'primary-colour',
+                                        'name'    => 'primaryColour',
+                                        'options' => $colours->getPrimaryColours(),
+                                        'value'   => $vehicle->getColour()->getCode()
+                                    ]
+                                );
+                            } else {
+                                echo $vehicle->getColour()->getName();
+                            }
+                            ?>
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="dl-standard">
+                    <dt>Secondary colour</dt>
+                    <dd>
+                        <div class="form-group">
+                            <?php
+                            $colourSec = $vehicle->getColourSecondary();
+                            if (!$this->doNotShowDropDowns) {
+                                if ($colourSec instanceof ColourDto) {
+                                    $secondaryColourId = $colourSec->getCode();
+                                } else {
+                                    $secondaryColourId = ColourCode::NOT_STATED;
+                                }
+
+                                echo $this->partial(
+                                    'selectElement',
+                                    [
+                                        'id'      => 'secondary-colour',
+                                        'name'    => 'secondaryColour',
+                                        'options' => $colours->getSecondaryColours(),
+                                        'value'   => $secondaryColourId
+                                    ]
+                                );
+                            } else {
+                                echo (
+                                    $colourSec instanceof ColourDto
+                                    ? $colourSec->getName()
+                                    : $colours->getSecondaryColours()[ColourCode::NOT_STATED]
+                                );
+                            }
+                            ?>
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+

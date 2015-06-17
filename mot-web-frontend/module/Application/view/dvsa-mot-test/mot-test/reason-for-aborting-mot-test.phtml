@@ -1,0 +1,113 @@
+<?php
+
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Utility\ArrayUtils;
+use DvsaMotTest\Controller\MotTestController;
+
+/**
+ * @var \DvsaCommon\Dto\Common\ReasonForCancelDto[] $reasons
+ * @var \DvsaCommon\Dto\Common\ReasonForCancelDto   $reason
+ * @var int                                         $selectedReasonId
+ */
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motTest */
+$motTest = $this->motTest;
+$reasons = $this->reasonsForCancel;
+$selectedReasonId = $this->selectedReasonId;
+
+$vts = $motTest->getVehicleTestingStation();
+/** @var \DvsaCommon\Dto\Person\PersonDto $tester */
+$tester = $motTest->getTester();
+
+$vtsName = ArrayUtils::tryGet($vts, 'name');
+
+$testStatus = $motTest->getStatus();
+$motTestNumber = $motTest->getMotTestNumber();
+$testStarted = DateTimeDisplayFormat::textDateTime($motTest->getStartedDate());
+$testerName = $tester->getDisplayName();
+
+$testStatusName = MotTestController::getTestStatusName($testStatus);
+
+/** @var \DvsaCommon\Dto\Common\MotTestTypeDto $testType */
+$testType = $motTest->getTestType();
+$title = 'Abort' . MotTestController::getTestName($testType->getCode());
+$this->headTitle($title);
+
+$title = 'Vehicle Testing Station';
+$this->headTitle($title);
+
+$this->layout()->setVariable('pageSubTitle', $title);
+$this->layout()->setVariable('pageTitle', 'MOT Test');
+
+?>
+<form action="<?php echo $this->url('mot-test/reason-for-aborting', ['motTestNumber' => $motTestNumber]); ?>" method="POST">
+    <input type="hidden" name="motTestNumber" value="<?php echo $this->escapeHtml($motTestNumber); ?>">
+    <?php
+    echo $this->csrfToken();
+    echo $this->partial('errorMessages', ['getFromFlash' => true]);
+    echo $this->partial('infoMessages', ['getFromFlash' => true]);
+    ?>
+
+    <div class="row">
+        <div class="col-sm-6 col-sm-push-6 module-present-data">
+            <?php
+            echo $this->partial(
+                'dldtdd', [
+                    'dlCssClass' => 'vertical is-secondary',
+                    'items'      => [
+                        [
+                            'Mot Test Status',
+                            'Test <span id="sln-test-status">' . $this->escapeHtml($testStatusName) . '</span>',
+                            'dtCssClass' => 'visually-hidden',
+                            'cssClass'   => 'font-bold24',
+                            'escape'     => false,
+                        ],
+                        ['MOT Test Number', $motTestNumber],
+                        ['Test started', $testStarted],
+                        ['Tester', $testerName],
+                    ]
+                ]
+            );
+            ?>
+        </div>
+
+        <div class="col-sm-6 col-sm-pull-6">
+            <fieldset>
+                <legend>Abort MOT Test</legend>
+                <div class="form-group">
+                    <fieldset class="label-reg">
+                        <legend class="form-label">Reason for aborting</legend>
+
+                        <?php
+                        foreach ($reasons as $reason) :
+                            $rfcId = $this->escapeHtmlAttr($reason->getId());
+                            $id = 'reasonForCancel-' . $rfcId;
+                            $selected = ($id === $selectedReasonId ? ' checked="checked"' : '');
+                            ?>
+                            <label for="<?php echo $this->escapeHtmlAttr($id); ?>" class="block-label label-clear">
+                                <input type="radio" name="reasonForCancelId"
+                                       id="<?php echo $this->escapeHtmlAttr($id); ?>"
+                                       value="<?php echo $this->escapeHtml($rfcId); ?>"
+                                       data-abandoned="<?php echo $this->escapeHtmlAttr($reason->getAbandoned()) ?>"
+                                    <?php echo $selected ?>
+                                    >
+                                <?php echo $this->escapeHtml(($reason->getReasonInLang())); ?>
+                            </label>
+                        <?php
+                        endforeach;
+                        ?>
+
+                    </fieldset>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <nav class="module-content-navigation">
+        <input type="submit" id="sln-action-abort" value="Abort MOT Test" class="button-warning"/>
+        <ul class="content-navigation_secondary">
+            <li>
+                <a id="sln-action-return" href="<?php echo $this->url('mot-test/short-summary', ['motTestNumber' => $motTestNumber]) ?>">Back</a>
+            </li>
+        </ul>
+    </nav>
+</form>

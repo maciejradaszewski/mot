@@ -1,0 +1,38 @@
+<?php
+use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
+
+/** @var \UserAdmin\Presenter\PersonPresenter[] $users */
+/** @var string $userProfileRoute */
+/** @var array $resultsQueryArray */
+?>
+
+<table id="results" class="table">
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <?php if ($userSearchExtended): ?>
+            <th scope="col">Username</th>
+        <?php endif; ?>
+        <th scope="col">Date of birth</th>
+        <th scope="col">Address</th>
+        <th scope="col">Postcode</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($users as $user): ?>
+        <tr data-element="result-details">
+            <td data-element="result-username">
+                <a href="<?php echo $helper->getProfileUrl($user->getPersonId()) ?>?<?php echo http_build_query($resultsQueryArray); ?>">
+                    <?php echo $this->escapeHtml($user->displayFullName()); ?>
+                </a>
+            </td>
+            <?php if ($userSearchExtended): ?>
+                <td data-element="result-user-username"><?php echo $this->escapeHtml($user->displayUsername()); ?></td>
+            <?php endif; ?>
+            <td data-element="result-user-dob"><?php echo $this->escapeHtml($user->displayUserDateOfBirth()); ?></td>
+            <td data-element="result-user-address"><?php echo $this->escapeHtml($user->displayUserAddress()); ?></td>
+            <td data-element="result-user-postcode"><?php echo $this->escapeHtml($user->displayPostcode()); ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

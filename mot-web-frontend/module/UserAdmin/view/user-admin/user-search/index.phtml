@@ -1,0 +1,51 @@
+<?php
+/** @var \UserAdmin\ViewModel\UserSearchViewModel $viewModel */
+?>
+
+<?php
+echo $this->partial('partial/gds/general/system-message.phtml', [
+        'messages' => $systemMessage,
+        'type' => 'failure'
+    ]
+);
+?>
+
+<?php
+if (empty($systemMessage)) {
+    echo $this->partial('partial/gds/general/message.phtml', [
+            'message' => (isset($infoMessage) && !empty($infoMessage))? $infoMessage : $message
+        ]
+    );
+}
+?>
+
+<div class="grid-row module-user-management">
+    <div class="column-two-thirds module-user-management">
+        <?php echo $this->partial(
+            'user-admin/user-search/_form',
+            [
+                'searchResultsRoute' => $searchResultsRoute,
+                'userSearchExtended' => $userSearchExtended,
+                'username'  => $viewModel->displayUsernameSearchCriteria(),
+                'firstName' => $viewModel->displayFirstNameSearchCriteria(),
+                'lastName'  => $viewModel->displayLastNameSearchCriteria(),
+                'town'      => $viewModel->displayTownSearchCriteria(),
+                'postcode'  => $viewModel->displayPostcodeSearchCriteria(),
+                'dob'       => $viewModel->displayDobSearchCriteria(),
+                'dobDay'    => $viewModel->displayDobDaySearchCriteria(),
+                'dobMonth'  => $viewModel->displayDobMonthSearchCriteria(),
+                'dobYear'   => $viewModel->displayDobYearSearchCriteria(),
+            ]
+        ); ?>
+    </div>
+</div>
+
+<nav class="content-navigation">
+    <ul class="content-navigation__secondary">
+        <li>
+            <a href="<?php echo $this->url($this->userHomeRoute); ?>" id="return_to_user_home">
+                Return to user home
+            </a>
+        </li>
+    </ul>
+</nav>

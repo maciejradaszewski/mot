@@ -1,0 +1,51 @@
+/*
+    @name second-auth
+
+    @status production
+    
+    @category Molecule
+
+    @comments
+    Used to display the PIN number on claim account and soon to be used for 2FA authentication.
+
+    Bootstrap dependency: None
+
+    @example
+    <p class="module-second-auth">
+        <img src="img/logo_mot2.gif" alt="MOT" class="second-auth__logo">
+        Your [Service Name] PIN 
+        <strong class="second-auth__pin">142554</strong>.
+    </p>
+*/
+
+.module-second-auth {
+    background-color: $govuk-blue;
+    color: #ffffff;
+    font-size: 19px;
+    margin: 2em 0 0;
+    padding: .75em;
+}
+
+.second-auth__logo {
+    margin-right: 1em;
+}
+
+.second-auth__pin {
+    letter-spacing: 5px;
+    margin-left: 1em;
+}
+
+.second-auth__input {
+    //background-color: $grey-4;
+    border: 1px solid $grey-2;
+    border-top: none;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 15px;
+
+    &.has-error {
+        background-color: $error-background;
+        border-left-color: $mellow-red;
+        border-left-width: 3px;
+    }
+}

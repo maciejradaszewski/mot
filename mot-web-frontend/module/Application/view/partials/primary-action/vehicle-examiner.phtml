@@ -1,0 +1,30 @@
+<?php
+$hasInProgressTest = $this->dashboardDataProvider()->hasTestInProgress();
+?>
+
+<section class="module-hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 hero-content">
+                <h1>
+                    <small>MOT modernisation</small>
+                    Your home
+                </h1>
+                <p>Vehicle Examiner view</p>
+            </div>
+            <div class="col-md-4 hero-actions hero-actions-ve">
+                <?php if ($hasInProgressTest): ?>
+                    <a href="<?php echo $this->url(
+                        'mot-test',
+                        ['motTestNumber' => $this->dashboardDataProvider()->getInProgressTestNumber()]
+                    ); ?>"
+                       class="btn btn-primary btn-lg"
+                       id="action-resume-mot-test">Resume Reinspection
+                        <span class="fa fa-chevron-right"> </span>
+                    </a>
+                <?php endif; ?>
+                <?php echo $this->partial('primaryAction/links'); ?>
+            </div>
+        </div>
+    </div>
+</section>

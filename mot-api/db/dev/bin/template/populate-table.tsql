@@ -1,0 +1,7 @@
+LOCK TABLES `%table%` WRITE;
+/*!40000 ALTER TABLE `%table%` DISABLE KEYS */;
+
+%insert%
+
+/*!40000 ALTER TABLE `%table%` ENABLE KEYS */;
+UNLOCK TABLES;

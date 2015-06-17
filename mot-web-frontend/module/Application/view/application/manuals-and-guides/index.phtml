@@ -1,0 +1,15 @@
+<div class="row">
+    <section class="module-resources col-sm-6">
+        <ul>
+            <?php foreach ($resourceLinks as $resource) :
+                $escUrl = $resource['url']; // VM-8519 not dynamic no escaping required
+                ?>
+            <li>
+                <a href="<?php echo $escUrl ?>" rel="external"><?php echo $this->escapeHtml($resource['name']); ?></a>
+                <span class="resources_additional-information"><?php echo $this->escapeHtml($resource['help_text']); ?></span>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+    </section>
+</div>
+

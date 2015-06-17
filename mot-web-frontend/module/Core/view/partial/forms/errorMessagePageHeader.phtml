@@ -1,0 +1,27 @@
+<?php
+if (!empty($messages)) :
+    $listAll = isset($listAll);
+    ?>
+    <div class="row">
+        <div class="col-sm-10">
+            <div id="validation-summary-id" class="validation-summary">
+
+                <ol>
+                    <?php foreach ($messages as $messageGroup) : ?>
+
+                        <?php if ($listAll): ?>
+                            <?php foreach ($messageGroup as $escMessage) : ?>
+                                <li><?php echo $escMessage; // should be escaped in controller  ?></li>
+                            <?php endforeach; ?>
+                        <?php
+                        else:
+                            echo '<li>' . array_shift($messageGroup) . '</li>';
+                        endif; ?>
+                    <?php endforeach; ?>
+
+                </ol>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+

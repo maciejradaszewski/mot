@@ -1,0 +1,89 @@
+<?php
+
+use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\Utility\ArrayUtils;
+use DvsaMotTest\Controller\AbstractDvsaMotTestController;
+
+/**
+ * @var \DvsaCommon\Dto\Common\ReasonForCancelDto $reasonForCancel
+ */
+/** @var \DvsaCommon\Dto\Common\MotTestDto $motTest */
+$motTest = $this->motTest;
+$success = $this->success;
+
+$reasonForCancel = $motTest->getReasonForCancel();
+$vts = $motTest->getVehicleTestingStation();
+/** @var \DvsaCommon\Dto\Person\PersonDto $tester */
+$tester = $motTest->getTester();
+$vtsName = ArrayUtils::tryGet($vts, 'name');
+/** @var \DvsaCommon\Dto\Common\MotTestTypeDto $testType */
+$testType = $motTest->getTestType();
+$testName = AbstractDvsaMotTestController::getTestName($testType->getCode());
+$testStatus = $motTest->getStatus();
+$motTestNumber = $motTest->getMotTestNumber();
+$testerName = $tester->getDisplayName();
+
+$escUrlToPrint = $success ? $this->url('mot-test/print-certificate', ['motTestNumber' => $motTestNumber]) : '#';
+$escUrlToReturnToVts = $this->url('vehicle-testing-station', ['id' => $vts['id']]);
+
+if ($testStatus === MotTestStatusName::PASSED || $testStatus === MotTestStatusName::FAILED) {
+    $testStatus = 'completed';
+} else {
+    $testStatus = AbstractDvsaMotTestController::getTestStatusName($testStatus);
+}
+
+$title = 'Abort' . $testName;
+
+$this->headTitle($title);
+
+$title = 'Vehicle Testing Station';
+$this->headTitle($title);
+
+$this->layout()->setVariable('pageSubTitle', $title);
+$this->layout()->setVariable('pageTitle', 'MOT Test');
+
+?>
+<dl>
+
+    <?php if ($success): ?>
+
+        <h2 id="confirmationTitle"><?php echo $this->escapeHtml($testName); ?> successfully aborted</h2>
+        <p>
+            You have successfully aborted <?php echo $this->escapeHtml($testName); ?>
+            <strong id="mot-test-number"><?php echo $this->escapeHtml($motTestNumber); ?></strong>
+            with a reason of
+            <strong id="reason-for-aborting-test"><?php
+                echo $this->escapeHtml($reasonForCancel->getReasonInLang());
+            ?></strong>.
+        </p>
+        <p>
+            A notification has been sent to <strong><?php echo $this->escapeHtml($testerName); ?></strong>.
+        </p>
+
+    <?php else: ?>
+
+        <h2><?php echo $this->escapeHtml($testName); ?> can not be aborted</h2>
+        <p>
+            <?php echo $this->escapeHtml($testName); ?>
+           <strong  id="mot-test-number"><?php echo $this->escapeHtml($motTestNumber); ?></strong>
+            can not be aborted as
+            <strong  id="mot-test-tester-name"><?php echo $this->escapeHtml($testerName); ?></strong>
+            has
+            <?php echo $this->escapeHtml($testStatus); ?>
+            the <?php echo $this->escapeHtml($testName); ?>.
+        </p>
+
+    <?php endif; ?>
+
+</dl>
+
+<nav class="module-content-navigation">
+    <?php if ($success): ?>
+        <a href="<?php echo $escUrlToPrint ?>" class="button" id="print-abort-certificate">Print VT30</a>
+    <?php endif; ?>
+    <ul class="content-navigation_secondary">
+        <li>
+            <a id="sln-action-return" href="<?php echo $escUrlToReturnToVts ?>">Return to Vehicle Testing Station</a>
+        </li>
+    </ul>
+</nav>

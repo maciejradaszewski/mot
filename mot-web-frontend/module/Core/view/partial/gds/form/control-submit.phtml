@@ -1,0 +1,12 @@
+<?php
+$id     = isset($id) ? $id : '';
+$name   = isset($name) ? $name : '';
+$class  = isset($class) ? $class : 'button';
+?>
+<input
+    type="submit"
+    id="<?php echo $this->escapeHtmlAttr($id); ?>"
+    name="<?php echo $this->escapeHtmlAttr($name); ?>"
+    value="<?php echo $this->escapeHtmlAttr($value); ?>"
+    class="<?php echo $this->escapeHtmlAttr($class) ?>"
+    />

@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @var $countryOfRegistration
+ * @var $countryOfRegistrationList
+ */
+?>
+
+
+<?php $this->placeholder('dashboard-section-header-caption')->captureStart('SET') ?>
+    <h3>Country of registration</h3>
+    <h6 class="help-block">EU only</h6>
+<?php $this->placeholder('dashboard-section-header-caption')->captureEnd() ?>
+
+<?php $this->placeholder('dashboard-section-header-value')->captureStart('SET') ?>
+    <h3><strong><?php echo $countryOfRegistrationList[$countryOfRegistration['id']] ?></strong></h3>
+<?php $this->placeholder('dashboard-section-header-value')->captureEnd() ?>
+
+<?php $this->placeholder('dashboard-section-body')->captureStart('SET') ?>
+    <div class="clearfix">
+        <div class="form-group">
+            <?php echo $this->partial(
+                "selectElement", [
+                    "id"      => "input-cor",
+                    "name"    => "cor",
+                    "value"   => $countryOfRegistration['id'],
+                    "options" => $countryOfRegistrationList
+                ]
+            ); ?>
+        </div>
+    </div>
+<?php $this->placeholder('dashboard-section-body')->captureEnd() ?>
+<?php echo $this->partial(
+    'dvsa-mot-test/dashboard/generic-section',
+    [
+        'sectionId'  => 'cor',
+        'actionName' => 'updateCor',
+    ]
+);

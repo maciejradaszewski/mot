@@ -1,0 +1,63 @@
+<?php
+use DvsaCommon\Enum\OrganisationContactTypeCode;
+use DvsaCommon\Utility\AddressUtils;
+
+/** @var DvsaCommon\Dto\Organisation\OrganisationContactDto $contact */
+$contact = $this->contact;
+
+if (empty($contact)) {
+    return;
+}
+
+//  --  define title   --
+$type = $contact->getType();
+$title = '';
+if ($type == OrganisationContactTypeCode::REGISTERED_COMPANY) {
+    $title = 'Registered Office Address';
+} elseif ($type == OrganisationContactTypeCode::CORRESPONDENCE) {
+    $title = 'Correspondence Address';
+}
+
+//  --  get phone  --
+$phone = $contact->getPrimaryPhoneNumber();
+
+//  --  get email --
+$email = $contact->getPrimaryEmailAddress();
+if (!empty($email)) {
+    $escEmail = '<a href="'. $this->escapeHtmlAttr('mailto:' . $email) . '">' . $this->escapeHtml($email) . '</a>';
+} else {
+    $escEmail = null;
+}
+
+$address = AddressUtils::stringify($contact->getAddress());
+if (empty($address)) {
+    $address = null;
+}
+
+$typeForId = strtolower(substr($type, 0, 3));
+?>
+
+<div class="row">
+    <?php
+    //  --  col 1   --
+    echo $this->partial(
+        'dldtdd', [
+            'dlCssClass' => 'vertical col-sm-6',
+            'items' => [
+                [$title, $address, 'id' => $typeForId . '_address'],
+                ['Telephone', $phone, 'id' => $typeForId . '_phone'],
+            ],
+        ]
+    );
+
+    //  --  col 2   --
+    echo $this->partial(
+        'dldtdd', [
+            'dlCssClass' => 'vertical col-sm-6',
+            'items' => [
+                ['aaaEmail', $escEmail, 'escape' => false, 'id' => $typeForId . '_email'],
+            ],
+        ]
+    );
+    ?>
+</div>

@@ -1,0 +1,143 @@
+<?php
+
+use DvsaCommon\Enum\MotTestTypeCode;
+
+$this->headTitle('Mot Test Results');
+?>
+
+<?php echo $this->partial('errorMessages', array('getFromFlash' => true)); ?>
+<?php echo $this->partial('infoMessages', array('getFromFlash' => true)); ?>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1>Differences found between tests</h1>
+    </div>
+</div>
+
+<br/>
+<div class="row form-group" id="testInformation">
+    <div class="col-sm-12">
+        <div class="table-responsive">
+            <form id="differences-form"  role="form" action="" method="POST">
+                <?php echo $this->csrfToken() ?>
+                <table class="table table-unstyled table-form">
+                    <thead>
+                    <tr>
+                        <th scope="col" width="25%">Tester &amp; Item</th>
+                        <th scope="col" width="20%"> Score <i class="fa fa-lg fa-info-circle info-popup" id="info-popup"
+                                                              data-toggle="popover" data-content="
+<u>Score Explanations</u><br />
+0 - Judgement overruled but only marginally wrong<br />
+5 - Judgement obviously wrong<br />
+10 - Judgement obviously significantly wrong<br />
+20 - Item failed has no defect (i.e. not an error of judgement).<br />
+20 - Other failable defect missed on a testable item.<br />
+20 - Item failed is not testable.<br />
+30 - Other excessive corrosion, wear or damage on a testable item missed<br />
+40 - Any defect missed that would, in DVSA's opinion, carry a risk of injury if driven further"> </i></th>
+                        <th scope="col" width="15%">Defects/Decisions</th>
+                        <th scope="col" width="15%">Category</th>
+                        <th scope="col" width="25%">Justification</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tr>
+                    <?php
+                    $escSeleniumIndex=0;
+                    foreach ($this->compareResult as $inspectionManualReference => $rfrs) {
+                        $divider = "dividerThick";
+                        foreach ($rfrs as $rfr) {
+                            $rfr['tester'] = ($rfr['testType'] === MotTestTypeCode::NORMAL_TEST ? "Tester" : "Vehicle Examiner");
+                            $rfr['divider'] = $divider;
+                            $rfr['description'] = $rfr['name'] . ' ' . $rfr['failureText'];
+                            $rfr['inspectionManualDescription'] = $rfr['name'];
+                            $rfr['scores'] = $this->scores;
+                            $rfr['pointScores'] = $this->pointScores;
+
+                            $rfr['notTested'] = $this->configCatalog->isItemNotTested($rfr['rfrId']);
+                            $rfr['formError'] = array();
+                            if (!empty($formErrors['mappedRfrs'][$rfr['id']])) {
+                                $rfr['formError'] = $formErrors['mappedRfrs'][$rfr['id']];
+                            }
+                            $rfr['defaultValue'] = array();
+                            if (!empty($defaultValues) && isset($defaultValues['mappedRfrs'][$rfr['id']])) {
+                                $rfr['defaultValue'] = $defaultValues['mappedRfrs'][$rfr['id']];
+                            }
+                            // AOC: Can't see where this is used, so commented out
+                            // $rfr['catalog'] = $this->configCatalog;
+                            $rfr['dataCatalog'] = $this->dataCatalog;
+
+                            $rfr['escSeleniumIndex'] =$escSeleniumIndex++;
+
+                            echo $this->partial(
+                                "dvsa-mot-enforcement/mot-test/differences-found-between-tests/partials/differences-row",
+                                $rfr
+                            );
+
+                            $divider = "divider";
+                        }
+                    }
+                    ?>
+                    <tr>
+                        <td colspan="5"><span class="dividerBold"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="showOnPageLoad hidden"><h2>Indicative case outcome</h2></td>
+                        <td class="showOnPageLoad hidden"><h3><span id="totalScore" class="font-core36">0</span></h3>
+                        <td colspan="2">
+                            <div style="margin-top: 25px;">
+
+                                <?php echo $this->partial(
+                                    'selectElement',
+                                    array(
+                                        'cssClass' => 'form-control',
+                                        'name' => 'caseOutcome',
+                                        'id' => 'caseOutcome',
+                                        'value' => isset($defaultValues['caseOutcome']) ? $defaultValues['caseOutcome'] : 1,
+                                        'inputErrorClass' => (isset($formErrors['caseOutcome']) ? 'inputError' : ''),
+                                        'options' => $this->dataCatalog->getCaseOutcomeActions())
+                                ); ?>
+                                <?php if (isset($this->saveButton) && true === $this->saveButton): ?>
+                                <br/>
+                                <br/>
+                                <?php echo $this->partial(
+                                    'submitElement',
+                                    array(
+                                        'type' => 'submit',
+                                        'label' => 'Record Assessment',
+                                        'class' => 'btn btn-primary',
+                                        'id' => 'record_assessment_button'
+                                    )
+                                ); ?>
+                                <?php endif; ?>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="margin-top: 25px;" class="form-group">
+                                <?php
+                                // Add an internal anchor for the link from the top of the page error message.
+                                // This allows users to click straight to the invalid input for longer forms.
+                                if (isset($formErrors['finalJustification']['ref'])) {
+                                    echo '<span id="error-' . $this->escapeHtmlAttr($formErrors['finalJustification']['ref']) . '"></span>' . PHP_EOL;
+                                }
+                                ?>
+                                <textarea name="finalJustification" id="finalJustification" class="form-control flexible-vert<?php if (isset($formErrors['finalJustification'])) { echo ' inputError'; } ?>" cols="33" rows="10"><?php
+                                    if (isset($defaultValues['finalJustification'])) {
+                                        echo $this->escapeHtml($defaultValues['finalJustification']);
+                                    }
+                                ?></textarea>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var formRepost = <?php echo empty($defaultValues)? 0 : 1; ?>;
+</script>
+<script src="/js/dvsa-mot-enforcement/mot-test/differences-found-between-tests.js"></script>

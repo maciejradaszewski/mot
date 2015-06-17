@@ -1,0 +1,224 @@
+    <?php
+
+    use DvsaCommon\Utility\ArrayUtils;
+
+    $title = 'Create Special Notice';
+$this->headTitle($title);
+
+$form->setAttribute('class', 'form-vertical');
+$form->prepare();
+
+$noticeTitleElement           = $form->get('noticeTitle');
+$acknowledgementPeriodElement = $form->get('acknowledgementPeriod');
+$internalPublishDateElement   = $form->get("internalPublishDate");
+$externalPublishDateElement   = $form->get("externalPublishDate");
+
+$targetRolesElement = $form->get('targetRoles');
+
+$noticeTextElement = $form->get('noticeText');
+$submitElement     = $form->get('submit');
+
+?>
+
+<div class="row" id="content">
+    <div class="col-lg-12 header-container">
+        <h1><?php echo $this->escapeHtml($title); ?></h1>
+        <h2>Special notice summary details</h2>
+    </div>
+</div>
+
+
+<?php echo $this->form()->openTag($form); ?>
+    <?php echo $this->csrfToken() ?>
+    <div class="row">
+        <div class="col-sm-8">
+            <?php echo $this->partial(
+                'errorMessages', ['errorTitle' => 'Please check the form', 'getFromFlash' => true]
+            ); ?>
+        </div>
+    </div>
+
+    <?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
+
+
+<fieldset>
+<div class="row">
+    <div class="col-sm-8">
+            <div class="form-group">
+                <?php
+                $noticeTitleElement->setAttribute('class', 'form-control')
+                    ->setAttribute('id', 'notice-title-input')
+                    ->setAttribute('maxLength', '80');
+                ?>
+                <label for="notice-title-input"><?php echo $this->formLabel($noticeTitleElement); ?></label>
+
+                <p class="help-block">This appears as the title in list of special notices</p>
+                <?php echo $this->formInput($noticeTitleElement); ?>
+            </div>
+            <div class="form-group <?php if ($internalPublishDateElement->getMessages()): ?> has-error<?php endif; ?>">
+                <fieldset>
+                    <?php echo $this->formLabel($internalPublishDateElement); ?>
+                    <p class="help-block">Date the special notice is published to DVSA staff</p>
+                    <?php if ($internalPublishDateElement->getMessages()): ?>
+                        <span class="validation-message"><?php echo ArrayUtils::lastOrNull($internalPublishDateElement->getMessages()); ?></span>
+                    <?php endif; ?>
+                    <div class="date-group">
+                        <div class="form-group form-group-day">
+                            <label for="day">Day</label>
+                            <?php echo $this->formText($internalPublishDateElement->getDayElement()->setAttributes(['class' => 'form-control', 'id' => 'day'])); ?>
+                        </div>
+                        <div class="form-group form-group-month">
+                            <label for="month">Month</label>
+                            <?php echo $this->formText($internalPublishDateElement->getMonthElement()->setAttributes(['class' => 'form-control', 'id' => 'month'])); ?>
+                        </div>
+                        <div class="form-group form-group-year">
+                            <label for="year">Year</label>
+                            <?php echo $this->formText($internalPublishDateElement->getYearElement()->setAttributes(['class' => 'form-control', 'id' => 'year'])); ?>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="form-group <?php if ($externalPublishDateElement->getMessages()): ?> has-error<?php endif; ?>">
+                <fieldset>
+                    <?php echo $this->formLabel($externalPublishDateElement); ?>
+                    <p class="help-block">Date the special notice is published to trade members</p>
+                    <?php if ($externalPublishDateElement->getMessages()): ?>
+                        <span class="validation-message"><?php echo ArrayUtils::lastOrNull($externalPublishDateElement->getMessages()); ?></span>
+                    <?php endif; ?>
+                    <div class="date-group">
+                        <div class="form-group form-group-day">
+                            <label for="day">Day</label>
+                            <?php echo $this->formText($externalPublishDateElement->getDayElement()->setAttributes(['class' => 'form-control', 'id' => 'day'])); ?>
+                        </div>
+                        <div class="form-group form-group-month">
+                            <label for="month">Month</label>
+                            <?php echo $this->formText($externalPublishDateElement->getMonthElement()->setAttributes(['class' => 'form-control', 'id' => 'month'])); ?>
+                        </div>
+                        <div class="form-group form-group-year">
+                            <label for="year">Year</label>
+                            <?php echo $this->formText($externalPublishDateElement->getYearElement()->setAttributes(['class' => 'form-control', 'id' => 'year'])); ?>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="form-group">
+                <?php
+                $acknowledgementPeriodElement->setAttribute('class', 'form-control')
+                    ->setAttribute('id', 'acknowledgement-input');
+                echo $this->formLabel($acknowledgementPeriodElement);
+                echo $this->formNumber($acknowledgementPeriodElement); ?>
+            </div>
+
+            <div class="form-group">
+                <fieldset>
+                    <legend class="form-label">Who is the message for?</legend>
+                    <p class="help-block">Select recipients from the target groups</p>
+                    <?php
+                    $targetRolesElement->setAttribute('id', 'target-roles-chk')
+                        ->setAttribute('name', 'targetRoles');
+                    echo $this->formMultiCheckbox($targetRolesElement);
+
+                    ?>
+                </fieldset>
+            </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label for="notice-title-input"><?php echo $this->formLabel($noticeTextElement); ?></label>
+            <?php
+            $noticeTextElement->setAttribute('class', 'form-control form-control-max')
+                ->setAttribute('id', 'notice-text-input')
+            ?>
+
+            <?php echo $this->formTextArea($noticeTextElement); ?>
+        </div>
+
+        <?php
+        $submitElement->setAttribute('id', 'preview-special-notice');
+        $submitElement->setAttribute('class', 'btn btn-primary');
+        echo $this->formSubmit($submitElement);
+        ?>
+        <a href="<?php echo $this->url('special-notices/all'); ?>" class="btn btn-link" id="returnDashboard">Cancel</a>
+    </div>
+    <div class="col-sm-6">
+        <div class="table-responsive">
+            <table class="table" style="font-size: 0.8em">
+                <thead>
+                <tr>
+                    <th scope="col">Use this</th>
+                    <th scope="col">To get this effect</th>
+                </tr>
+                </thead>
+                <tbody id="markdown-guide">
+                    <tr><td><kbd>*italic*</kbd></td><td><em>Italic</em></td></tr>
+                    <tr><td><kbd>**bold**</kbd></td><td><strong>bold</strong></td></tr>
+                    <tr><td><kbd>***bold-italic***</kbd></td><td><strong><em>bold-italic</em></strong></td></tr>
+                    <tr><td><kbd>#Large header</kbd></td><td><h1>Large header</h1></td></tr>
+                    <tr><td><kbd>##Medium header</kbd></td><td><h2>Medium header</h2></td></tr>
+                    <tr><td><kbd>###Small header</kbd></td><td><h3>small header</h3></td></tr>
+                    <tr><td>Press the space bar twice, then press enter</td><td>Start a new line</td></tr>
+                    <tr><td>Press enter twice</td><td>Start a new paragraph</td></tr>
+                    <tr><td><kbd>[google](http://google.co.uk)</kbd></td><td><a href="http://google.co.uk">google</a></td></tr>
+                <tr>
+                    <td>
+                        <kbd>
+                        - car <br>
+                        - HGV <br>
+                        - motorcycle
+                        </kbd>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>car</li>
+                            <li>HGV</li>
+                            <li>motorcycle</li>
+                        </ul>
+                    </td>
+                </tr>
+                    <tr>
+                        <td>
+                            <kbd>
+                                1. Odometer reading <br>
+                                2. Brake test results <br>
+                                3. Reasons for rejection
+                            </kbd>
+                        </td>
+                        <td>
+                            <ol>
+                                <li>Odometer reading</li>
+                                <li>Brake test results</li>
+                                <li>Reasons for rejection</li>
+                            </ol>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Press the space bar four times before a bullet/list item <br>
+                            <kbd>
+                                1. Odometer reading <br>
+                                &nbsp; 1. There is no odometer<br>
+                                2. Brake test results
+                            </kbd>
+                        </td>
+                        <td>
+                            Indented bullets<br>
+                            <ol>
+                                <li>Odometer reading</li>
+                                <ol><li>There is no odometer</li></ol>
+                                <li>Brake test results</li>
+                            </ol>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</fieldset>
+
+
+<?php echo $this->form()->closeTag(); ?>

@@ -1,0 +1,233 @@
+<?php
+
+use DvsaCommon\Utility\ArrayUtils;
+
+/**
+ * @var array $searchResults   List of Mot Tests data
+ */
+
+$searchResults = $this->searchResults;
+
+$title = 'Vehicle Testing Station Search Results';
+$this->headTitle($title);
+$this->headLink()->appendStylesheet('/css/jquery.dataTables.css');
+?>
+
+<?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
+<?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
+
+<h1>MOT Test History</h1>
+<hr class="hr-thick">
+<h2><?php echo $this->escapeHtml($this->searchTitle); ?></h2>
+
+<div class="info-notice">
+    <p>
+        If these are <strong>not the right results</strong> you can
+        <a href="<?php echo $this->url('mot-test-search', [], ['query' => ['type' => $this->searchType]]); ?>">search again</a>
+    </p>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="table-responsive">
+            <table class="table table-striped nowrap" id="listMOTs" style="width: 100%">
+                <thead>
+                <tr>
+                    <th>Test date/time utc</th>
+                    <th id="testDate">Test date/time</th>
+                    <th id="result">Result</th>
+                    <th id="summary">Summary</th>
+                    <th id="reg">Registration</th>
+                    <th id="make">Make</th>
+                    <th id="model">Model</th>
+                    <th id="type">Type</th>
+                    <th id="userId">User ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php $i = 0; ?>
+                <?php foreach ($searchResults as $motTest): ?>
+                    <?php
+                        $testSummaryUrl = $motTest['link'];
+                    ?>
+                    <?php $escClass = ($i++ % 2 == 0 ? 'even' : 'odd'); ?>
+                    <tr class="<?php echo $escClass; ?>">
+                        <td><?php echo $this->escapeHtml($motTest['test_date']); ?></td>
+                        <td><?php echo $this->escapeHtml($motTest['display_date']); ?></td>
+                        <td>
+                            <a href="javascript:void(0)"
+                               class="info-popup"
+                               data-sorting="<?php echo $this->escapeHtmlAttr($motTest['display_status']); ?>"
+                               data-toggle="popover"
+                               data-content="<?php echo $this->escapeHtmlAttr($motTest['popover']); ?>"
+                               data-placement="auto"
+                               role="button">
+                                <?php echo $this->escapeHtml($motTest['display_status']); ?>
+                            </a>
+                        </td>
+                        <td>
+                            <?php
+                            echo $this->partial(
+                                'motTestSearchSummaryLink',
+                                [
+                                    'status' => $motTest['status'],
+                                    'url' => $motTest['link'],
+                                    'motTestNumber' => $motTest['motTestNumber']
+                                ]
+                            );
+                            ?>
+                        </td>
+                        <?php
+                        // See VM-7612/7614 for details.
+                        $formDetails = [
+                            'registration'      => '', 'make' => '', 'model' => '',
+                            'displayType'       => '',
+                            'username' => '',
+                            'display_test_type' => ArrayUtils::tryGet($motTest, 'display_test_type', '')
+                        ];
+
+                        if (isset($motTest['vehicle'])) {
+                            $formDetails['registration'] = ArrayUtils::tryGet($motTest['vehicle'], 'registration', '');
+                            $formDetails['make'] = ArrayUtils::tryGet($motTest['vehicle'], 'make', '');
+                            $formDetails['model'] = ArrayUtils::tryGet($motTest['vehicle'], 'model', '');
+                        }
+
+                        if (isset($motTest['tester'])) {
+                            $formDetails['username'] = ArrayUtils::tryGet($motTest['tester'], 'username', '');
+                        }
+                        ?>
+                        <td>
+                            <?php echo $this->escapeHtml($formDetails['registration']); ?>
+                        </td>
+                        <td>
+                            <?php echo $this->escapeHtml($formDetails['make']); ?>
+                        </td>
+                        <td title="<?php echo $this->escapeHtml($formDetails['model']); ?>" class="truncate">
+                            <?php echo $this->escapeHtml($formDetails['model']); ?>
+                        </td>
+
+                        <td title="<?php echo $this->escapeHtml($formDetails['display_test_type']); ?>" class="truncate">
+                            <?php echo $this->escapeHtml($formDetails['display_test_type']); ?>
+                        </td>
+                        <td>
+                            <?php echo $this->escapeHtml($formDetails['username']); ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<script type="text/javascript">
+
+    /**
+     * Helper function for dataTables reload.
+     * todo - move to better place.
+     *
+     */
+    <?php
+          $ajaxUrl = "{}";
+          if (!is_null($this->siteNumber) && strlen($this->siteNumber)) {
+              $ajaxUrl = $this->url('enforcement-list-recent-mot-tests-api', ['siteNumber' => $this->siteNumber]);
+          }
+      ?>
+
+
+
+    $(document).ready(function() {
+        var paramUrlSummaryPage = '<?php echo '?type=', $this->htmlPurifier($this->searchType), '&search=', $this->searchTerm; ?>';
+        var url =' <?php echo $this->url('enforcement-list-recent-mot-tests-api', ['siteNumber' => $this->siteNumber]) ?>';
+        var oTable = $('#listMOTs').dataTable({				// Usage info here: http://datatables.net/release-datatables/examples/basic_init/filter_only.html
+            "paging": true,					            // Disable pagination
+            "lengthChange": true,			                // Disable ability to change the number of rows
+            "searching" : true,						        // Enable filtering
+            "ordering" : true,							        // Enable sorting
+            "dom" : "<'row'<'col-lg-12'f><'col-lg-12'l>r>t<'row'<'col-lg-12'i><'col-lg-12'p>>",
+            "language" : { search : 'Filter:'},
+            "order" : [[1, "desc"]],                  // Sort descending by the 1st column (date/time)
+            "autoWidth" : true,
+            "info" : false,
+            "ajax" : '<?php echo $ajaxUrl ?>' ,
+            "columns" : [
+                { data : 'test_date'},
+                { data : 'display_date'},
+                { data : 'popover'},
+                { data : 'link'},
+                { data : 'registration'},
+                { data : 'make'},
+                { data : 'model'},
+                { data : 'display_test_type'},
+                { data : 'username'}
+            ],
+            "columnDefs": [
+                {
+                    "targets": [2],
+                    "render": function (data, type, row) {
+                        return '<a href="javascript:void(0)" class="info-popup" ' +
+                            'data-sorting="' + data.display_status + '" data-toggle="popover" ' +
+                            'data-placement="auto" role="button" data-content="' + data.popover +
+                            '">' + data.display_status + '</a>';
+                    }
+                },
+                {
+                    "targets": [3],
+                    "render": function (data, type, row) {
+                        return '<a ' + data.id + '" href="' + data.url + '">' + data.text + '</a>'
+                    }
+                },
+                {
+                    "className": "truncate",
+                    "targets": [6, 7]
+                },
+                {
+                    "visible": false, "targets": [0]
+                },
+                {
+                    "orderData": [0], "targets": [1]
+                }
+            ],
+            "rowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                $('td:eq(5)', nRow).attr('title', aData['model']);
+                $('td:eq(6)', nRow).attr('title', aData['display_test_type']);
+                $('td:eq(2) a', nRow).attr('href', $('td:eq(2) a', nRow).attr('href') + paramUrlSummaryPage);
+            },
+            "drawCallback": function (oSettings) {
+                $('.info-popup').popover({
+                    "placement": "right",
+                    "html": true,
+                    "trigger": "hover"
+                })
+            },
+            "fnServerParams": function (data) {
+                data.push({name: CSRF.paramName, value: CSRF.token});
+            }
+        });
+
+        $('#listMOTs_filter').find("input").addClass( "form-control" );
+
+        setInterval( function () {
+            oTable.api().ajax.reload();
+        }, 60000 );
+
+        // The plan is to set up all popovers as clicks for touchscreens / hovers for laptops...
+        var is_touch_device = 'ontouchstart' in document.documentElement;
+        if (!is_touch_device) {  // If its not a touch-device - then use hovers...
+            $("[data-toggle=popover]").popover({ // More info here http://getbootstrap.com/javascript/#popovers-examples
+                "placement":"top",					 	        // Stick it where there's room
+                "html":true,					 			    // Enable html in popovers
+                "trigger":"hover"							    // Set up all popovers as hovers...
+            });
+        } else { 	// Else - If it IS a touch-device use clicks (rather than hovers)...
+            $("[data-toggle=popover]").popover({ // More info here http://getbootstrap.com/javascript/#popovers-examples
+                "placement":"top",					 	        // Stick it where there's room
+                "html":true,					 			    // Enable html in popovers
+                "trigger":"click"							    // If a touchscreen device -  set up all popovers as clicks...
+            });
+        }
+
+    });
+</script>
+

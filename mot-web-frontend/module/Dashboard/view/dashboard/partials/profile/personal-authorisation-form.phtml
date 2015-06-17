@@ -1,0 +1,52 @@
+<?php
+
+//  @TODO can't find any usage of this. Possible must be removed.
+
+use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+
+/** @var $personId int */
+/** @var $form array */
+
+$statuses = [
+    0 => AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED,
+    1 => AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED,
+];
+?>
+
+<form class="form-horizontal"
+      action="<?php echo PersonUrlBuilderWeb::updateAuthMotTesting($personId); ?>">
+    <?php echo $this->csrfToken() ?>
+    <?php
+    foreach ($form as $name => $value) {
+        echo $this->partial(
+            'hiddenElement',
+            [
+                'name'  => $name,
+                'value' => $value
+            ]
+        );
+    }
+
+    echo $this->partial(
+        'submitElement',
+        [
+            'id'    => 'initial-training-successful',
+            'name'  => 'initialTraining',
+            'label' => 'Successful',
+            'value' => '1',
+
+        ]
+    ); ?>
+    <?php echo $this->partial(
+        'submitElement',
+        [
+            'id'       => 'initial-training-fail',
+            'name'     => 'initialTraining',
+            'label'    => 'Unsuccessful',
+            'cssClass' => 'btn btn-danger btn-large',
+            'value'    => '',
+
+        ]
+    ); ?>
+</form>

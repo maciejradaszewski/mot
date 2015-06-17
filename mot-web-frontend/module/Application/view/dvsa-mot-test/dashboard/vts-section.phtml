@@ -1,0 +1,43 @@
+<?php
+use DvsaMotTest\View\ReplacementSiteViewModel;
+
+/**
+ * @var ReplacementSiteViewModel $vts
+ */
+
+?>
+
+<?php $this->placeholder('dashboard-section-header-caption')->captureStart('SET') ?>
+    <h3>Testing Location</h3>
+<?php $this->placeholder('dashboard-section-header-caption')->captureEnd() ?>
+
+<?php $this->placeholder('dashboard-section-header-value')->captureStart('SET') ?>
+    <h3><strong><?php echo $vts->getName() ?></strong></h3>
+    <span><?php echo $vts->getPostcode()?></span>
+<?php $this->placeholder('dashboard-section-header-value')->captureEnd() ?>
+
+<?php $this->placeholder('dashboard-section-body')->captureStart('SET') ?>
+    <div class="clearfix">
+        <div >
+            <div class="row">
+                <div class="form-group col-sm-12">
+                    <input id="input-vts" name="vts" class="select2" style="width:100%"
+                           data-id="<?php echo $vts->getSiteNumber() ?>"
+                           data-label="<?php echo $vts->getLabel() ?>"
+                           value="<?php echo $vts->getSiteNumber() ?>">
+                    </input>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<?php $this->placeholder('dashboard-section-body')->captureEnd() ?>
+<?php echo $this->partial(
+    'dvsa-mot-test/dashboard/generic-section',
+    [
+        'sectionId'    => 'vts',
+        'actionName'   => 'updateVts',
+    ])
+?>
+

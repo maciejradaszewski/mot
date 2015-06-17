@@ -1,0 +1,12 @@
+{
+    "errors": [
+        {
+            "code": "MISSING-VRM",
+            "message": "Missing required parameter: 'vrm'."
+        },
+        {
+            "code": "MISSING-TEST-NUMBER-OR-V5-NUMBER",
+            "message": "Missing required parameter: 'test_no' or 'v5c_ref'."
+        }
+    ]
+}

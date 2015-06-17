@@ -1,0 +1,84 @@
+<?php
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Date\DateUtils;
+use DvsaCommon\Utility\ArrayUtils;
+
+/** @var  \DvsaCommon\Dto\Vehicle\VehicleDto $vehicle */
+$vehicle = $this->vehicle;
+
+$registration = $vehicle->getRegistration();
+$vin = $vehicle->getVin();
+$makeAndModel = $vehicle->getMakeAndModel();
+$transmissionType = $vehicle->getTransmissionType()->getName();
+$fuelType = $vehicle->getFuelType()->getName();
+$bodyType = $vehicle->getBodyType()->getName();
+$cylinderCapacity = $vehicle->getCylinderCapacity();
+$firstUsedDate = $vehicle->getFirstUsedDate();
+
+?>
+
+<div class="row vehicle-summary">
+    <div class="col-md-8">
+        <ul class="list-unstyled ">
+            <li>
+                <?php
+                if ($registration != '') : ?>
+                    <span>Registration number</span>
+                    <span><?php echo $this->escapeHtml($registration); ?></span>
+                <?php else: ?>
+                    <span>VIN/Chassis number</span>
+                    <span><?php echo $this->escapeHtml($vin); ?></span>
+                <?php endif; ?>
+            </li>
+            <li>
+                <span>Make</span>
+                <span><?php echo $this->escapeHtml($makeAndModel); ?></span>
+                <a href="#" id="toggle-details" data-toggle="collapse" data-target="#vehicle-summary-more"
+                   class="up">more <i class="fa fa-caret-down"></i></a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="row collapse" id="vehicle-summary-more">
+    <div class="col-md-12">
+        <?php
+        echo $this->partial(
+            'dldtdd', [
+                'dlCssClass' => 'dl-horizontal',
+                'items'      => [
+                    ['VIN/Chassis', $vin],
+                    ['Transmission', $transmissionType],
+                    ['Fuel type', $fuelType],
+                ],
+            ]
+        );
+
+        echo $this->partial(
+            'dldtdd', [
+                'dlCssClass' => 'dl-horizontal',
+                'items'      => [
+                    ['Body type', $bodyType],
+                    ['Cylinder capacity', $cylinderCapacity],
+                    ['First used', DateTimeDisplayFormat::textDate($firstUsedDate)],
+                ],
+            ]
+        );
+        ?>
+    </div>
+</div>
+<hr class="hr-thin">
+
+<script type="text/javascript">
+    var collapse = $('#vehicle-summary-more');
+
+    collapse.on('shown.bs.collapse', function (e) {
+        e.stopPropagation();
+        $('#toggle-details').html('less <i class="fa fa-caret-up">');
+    });
+
+    collapse.on('hidden.bs.collapse', function (e) {
+        e.stopPropagation();
+        $('#toggle-details').html('more <i class="fa fa-caret-down">');
+    });
+</script>
+

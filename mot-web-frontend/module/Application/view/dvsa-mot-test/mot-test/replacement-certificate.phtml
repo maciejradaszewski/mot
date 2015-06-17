@@ -1,0 +1,124 @@
+<?php
+
+use DvsaMotTest\Model\OdometerReadingViewObject;
+use DvsaMotTest\View\ReplacementSiteViewModel;
+use DvsaMotTest\View\ReplacementVehicleViewModel;
+
+/**
+ * @var ReplacementVehicleViewModel $vehicle
+ * @var OdometerReadingViewObject $odometerReading
+ * @var ReplacementSiteViewModel $vts
+ *
+ * @var \DvsaCommon\Dto\Common\MotTestDto $motTest
+ *
+ * @var $colours \Vehicle\Helper\ColoursContainer
+ * @var $countryOfRegistrationList
+ * @var $isAdmin
+ * @var $isTester
+ */
+
+$title = 'Replacement certificate update';
+$this->headTitle($title);
+
+$this->headLink()->appendStylesheet('/css/select2/select2.css');
+$this->headLink()->appendStylesheet('/css/select2/select2-bootstrap.css');
+
+$sectionRenderer = function ($name, $args = []) {
+    return function ($canRender, $divider = true) use (&$name, &$args) {
+        if ($canRender) {
+            echo call_user_func_array([$this, 'partial'], ['dvsa-mot-test/dashboard/' . $name, $args]);
+            if ($divider) {
+                echo $this->partial('dvsa-mot-test/dashboard/section-divider');
+            }
+        }
+    };
+};
+
+$makeRenderer = $sectionRenderer(
+    'make-section',
+    [
+        'make' => $vehicle->getMake(),
+        'makeList' => $makeList
+    ]
+);
+$modelRenderer = $sectionRenderer(
+    'model-section',
+    [
+        'make' => $vehicle->getMake(),
+        'model' => $vehicle->getModel(),
+        'modelList' => $modelList,
+        'displayModelBody' => $vehicle->displayModelBody()
+    ]
+);
+$odometerReadingRenderer = $sectionRenderer('odometer-reading-section', ['odometerReading' => $odometerReading]);
+$vtsRenderer = $sectionRenderer('vts-section', ['vts' => $vts]);
+$vinRenderer = $sectionRenderer('vin-section', ['vin' => strtoupper($vehicle->getVin())]);
+$vrmRenderer = $sectionRenderer('vrm-section', ['vrm' => strtoupper($vehicle->getVrm())]);
+$reasonForReplacementRenderer = $sectionRenderer('reason-for-replacement-section');
+$coloursRenderer = $sectionRenderer(
+    'vehicle-colours-section',
+    [
+        'primaryColourId' => $vehicle->getPrimaryColourId(),
+        'primaryColourList' => $colours->getPrimaryColours(),
+        'secondaryColourId' => $vehicle->getSecondaryColourId(),
+        'secondaryColourList' => $colours->getSecondaryColours()
+    ]
+);
+$corRenderer = $sectionRenderer(
+    'country-of-registration-section',
+    [
+        'countryOfRegistration' => $vehicle->getCountryOfRegistration(),
+        'countryOfRegistrationList' => $countryOfRegistrationList
+    ]
+);
+
+?>
+
+<div class="row" id="content">
+    <div class="col-lg-12 progress-tracker">
+        <ul class="list-unstyled">
+            <li>&nbsp;</li>
+        </ul>
+        <h1><?php echo $this->escapeHtml($title); ?></h1>
+
+        <div>
+            <a href="<?php echo $this->url('replacement-certificate-vehicle-search'); ?>"
+               class="btn btn-primary" id="cancelMotTest">Cancel edit</a>
+        </div>
+    </div>
+</div>
+
+<?php
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+
+if (!$isAdmin) {
+    echo $this->partial('vehicleSummary', ['vehicle' => $motTest->getVehicle()]);
+}
+?>
+
+<div class="results-entry">
+    <?php
+    $makeRenderer($isAdmin);
+    $modelRenderer($isAdmin);
+    $odometerReadingRenderer($isAdmin || $isTester);
+    $coloursRenderer($isAdmin || $isTester);
+    $vtsRenderer($isAdmin);
+    $vinRenderer($isAdmin);
+    $vrmRenderer($isAdmin);
+    $corRenderer($isAdmin, false);
+    ?>
+    <div class="row">
+        <div class="col-lg-12 btn-bar">
+            <form method="POST">
+                <?php echo $this->csrfToken() ?>
+                <?php $reasonForReplacementRenderer($isAdmin); ?>
+                <input type="hidden" name="action" value="updateCertificate"/>
+                <input type="submit" id="updateCertificate" class="btn btn-primary" value="Review changes">
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    <?php echo $this->placeholder('dashboard-section-js'); ?>
+</script>

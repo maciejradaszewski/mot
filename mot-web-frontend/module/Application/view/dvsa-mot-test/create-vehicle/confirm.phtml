@@ -1,0 +1,73 @@
+<div class="row">
+    <div class="col-lg-12">
+        <!-- PROGRESS TRACKER: OPTIONAL -->
+        <div class="progress-tracker">
+            <ul class="list-unstyled">
+                <li class="done"><i class="fa fa-arrow-circle-right"></i>Vehicle identification</li>
+                <li class="done"><i class="fa fa-arrow-circle-right"></i>Vehicle specification</li>
+                <li class="active"><i class="fa fa-arrow-circle-right"></i>Summary</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <h1>Summary of new vehicle record</h1>
+    </div>
+</div>
+
+<?php
+echo $this->partial('errorMessages', array('getFromFlash' => true));
+echo $this->partial('infoMessages', array('getFromFlash' => true));
+?>
+
+<div class="row">
+    <div class="col-sm-8">
+
+        <?php
+        echo $this->partial(
+            'dvsa-mot-test/create-vehicle/_saved_data',
+            [
+                'title'          => 'Vehicle identification',
+                'url'            => 'add-step-one',
+                'sectionData' => $sectionOneData,
+            ]
+        );
+
+        echo $this->partial(
+            'dvsa-mot-test/create-vehicle/_saved_data',
+            [
+                'title'          => 'Vehicle specification',
+                'url'            => 'add-step-two',
+                'sectionData' => $sectionTwoData,
+            ]
+        );
+
+        ?>
+
+        <form method="post" action="">
+            <?php echo $this->csrfToken() ?>
+            <?php
+                echo $this->partial(
+                    'otpInput',
+                    [
+                        'canTestWithoutOpt' => $canTestWithoutOtp,
+                        'errorMessage' => $this->otpErrorMessage,
+                        'shortErrorMessage' => $this->otpErrorShortMessage
+                    ]
+                );
+            ?>
+
+            <nav class="module-content-navigation">
+                <input type="submit" class="button" value="Save vehicle record" id="confirm_test_result">
+                <ul class="content-navigation_secondary">
+                    <li>
+                        <input id="back-link" type="submit" class="btn btn-link" value="Back" name="back">
+                    </li>
+                </ul>
+            </nav>
+        </form>
+
+    </div>
+</div>

@@ -1,0 +1,35 @@
+.progress-indicator {
+    ol,
+    ul {
+        @include list-unstyled;
+        @include light-grey-top-border;
+        @include light-grey-bot-border;
+        padding-left: 0;
+        margin-top: 30px;
+    }
+    
+    li {
+        color: $secondary-text-colour;
+        padding: 12px 0 5px;
+        margin: 0;
+        
+        span {
+            @include font-core14;
+            color: $text-colour;
+            line-height: 2.5em;
+        }
+    }
+    
+    a {
+        text-decoration: none;
+    }
+    
+    .active {
+        border-bottom: 5px solid $text-colour;
+        color: $text-colour;
+
+        a {
+            color: $text-colour;
+      }
+    }
+}

@@ -1,0 +1,51 @@
+/*
+    @name buttons
+    
+    @status production
+    
+    @comments
+    Inherits from GOV styles and adds padding and semantic class names
+
+    Bootstrap dependency: none
+
+    @example-link-default
+    <a href="#" class="button">Start MOT Test</a>
+
+    @example-button-default
+    <button class="button">Start MOT Test</button>
+
+    @example-button-default-disabled
+    <button class="button" disabled>Start MOT Test</button>
+
+    @example-link-secondary
+    <a href="#" class="button-secondary">cancel MOT Test</a>
+
+    @example-link-warning
+    <a href="#" class="button-warning">Abort MOT Test</a>
+    
+*/
+
+@mixin button-mot {
+    
+    padding: .52632em .78947em .26316em;
+
+    &:hover, 
+    &:focus {
+        text-decoration: none;
+    }
+}
+
+.button {
+    @include button;
+    @include button-mot;
+}
+
+.button-secondary {
+    @include button($grey-3);
+    @include button-mot;
+}
+
+.button-warning {
+    @include button($red);
+    @include button-mot;
+}

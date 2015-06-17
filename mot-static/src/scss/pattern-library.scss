@@ -1,0 +1,24 @@
+// Vendor Dependencies - SHOULD NOT RENDER CSS
+//
+@import '../../vendor/dvsa/gds-toolkit/src/stylesheets/_colours.scss';
+// @import '../../vendor/dvsa/gds-toolkit/src/stylesheets/_css3.scss';
+// @import '../../vendor/dvsa/gds-toolkit/src/stylesheets/_font_stack.scss';
+// @import '../../vendor/dvsa/gds-toolkit/src/stylesheets/_measurements.scss';
+// @import '../../vendor/dvsa/gds-toolkit/src/stylesheets/_typography.scss';
+// @import '../../vendor/dvsa/gds-toolkit/src/stylesheets/design-patterns/_alpha-beta.scss';
+// @import '../../vendor/dvsa/gds-toolkit/src/stylesheets/design-patterns/_buttons.scss';
+// @import '../../vendor/dvsa/gds-toolkit/src/stylesheets/design-patterns/_media-player.scss';
+// @import '../../vendor/dvsa/gds-toolkit/src/stylesheets/_conditionals.scss';
+// @import '../../vendor/dvsa/gds-toolkit/src/stylesheets/_device-pixels.scss';
+// @import '../../vendor/dvsa/gds-toolkit/src/stylesheets/_grid_layout.scss';
+// @import '../../vendor/dvsa/gds-toolkit/src/stylesheets/_shims.scss';
+// @import '../../vendor/dvsa/gds-toolkit/src/stylesheets/_url-helpers.scss';
+//
+@import 'modules/_colours';
+@import 'modules/_typography';
+@import 'modules/_font-core';
+@import 'modules/_mixins';
+//
+// Authored Partials 
+//
+@import 'partials/pattern-library';		// Display styles for pattern library

@@ -1,0 +1,83 @@
+<?php
+$values = (isset($values)) ? $values : [];
+
+$idPrefix = $this->withDefault('')->getValue($idPrefix);
+$showEmail = $this->withDefault(true)->getValue($showEmail);
+$showFax = $this->withDefault(false)->getValue($showFax);
+
+$getValueOrEmptyString = function ($key) use ($values, $idPrefix) {
+    if ('' !== $idPrefix) {
+        $key = $idPrefix . ucfirst($key);
+    }
+
+    if (is_array($values)) {
+        return (isset($values[$key])) ? $values[$key] : '';
+    }
+
+    if (is_object($values)) {
+        return $values->{'get'. ucfirst($key)}();
+    }
+
+    return '';
+};
+
+// VM-7496 Removed HTML5 Validation from form elements
+
+echo $this->partial(
+    'partial/fragments/address-details.phtml',
+    [
+        'values'   => $values,
+        'idPrefix' => $idPrefix,
+    ]
+);
+
+if ($showEmail) {
+    echo $this->partial(
+        'partial/forms/inputBox.phtml',
+        [
+            'id'        => ('' !== $idPrefix ? $idPrefix . 'Email' : 'email'),
+            'label'     => 'Email address',
+            'type'      => 'text',
+            'title'     => 'Enter the e-mail',
+            'value'     => $getValueOrEmptyString('email'),
+        ]
+    );
+
+    echo $this->partial(
+        'partial/forms/inputBox.phtml',
+        [
+            'id'        => '' !== $idPrefix ? $idPrefix . 'EmailConfirmation' : 'emailConfirmation',
+            'label'     => 'Confirm email address',
+            'type'      => 'text',
+            'title'     => 'Enter the e-mail confirmation',
+            'value'     => $getValueOrEmptyString('emailConfirmation'),
+        ]
+    );
+}
+
+echo $this->partial(
+    'partial/forms/inputBox.phtml',
+    [
+        'id'        => '' !== $idPrefix ? $idPrefix . 'PhoneNumber' : 'phoneNumber',
+        'label'     => 'Telephone number',
+        'pattern'   => "^\+?[\d -]{6,25}$",
+        'required'  => true,
+        'title'     => 'Enter the phone number',
+        'maxLength' => 25,
+        'value'     => $getValueOrEmptyString('phoneNumber'),
+    ]
+);
+
+if($showFax) {
+    echo $this->partial(
+        'partial/forms/inputBox.phtml',
+        [
+            'id'        => '' !== $idPrefix ? $idPrefix . 'FaxNumber' : 'faxNumber',
+            'label'     => 'Fax number',
+            'title'     => 'Enter the fax number',
+            'maxLength' => 25,
+            'value'     => $getValueOrEmptyString('faxNumber'),
+        ]
+    );
+}
+?>

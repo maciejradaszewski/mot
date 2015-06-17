@@ -1,0 +1,66 @@
+version: 1
+
+#!RESULT OK
+#!CONNECTION ldap://192.168.149.9:1389
+#!DATE 2014-09-12T10:03:15.295
+dn: ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: organizationalUnit
+ou: Roles
+
+#!RESULT OK
+#!CONNECTION ldap://192.168.149.9:1389
+#!DATE 2014-09-12T10:03:15.316
+dn: cn=AO1,ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: groupOfNames
+cn: AO1
+
+#!RESULT OK
+#!CONNECTION ldap://192.168.149.9:1389
+#!DATE 2014-09-12T10:03:15.328
+dn: cn=AO2,ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: groupOfNames
+cn: AO2
+
+#!RESULT OK
+#!CONNECTION ldap://192.168.149.9:1389
+#!DATE 2014-09-12T10:03:15.338
+dn: cn=VE,ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: groupOfNames
+cn: VE
+
+#!RESULT OK
+#!CONNECTION ldap://192.168.149.9:1389
+#!DATE 2014-09-12T10:03:15.351
+dn: cn=CRTAdmin,ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: groupOfNames
+cn: CRTAdmin
+
+#!RESULT OK
+#!CONNECTION ldap://192.168.149.9:1389
+#!DATE 2014-09-12T10:03:15.375
+dn: cn=CRTCO,ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: groupOfNames
+cn: CRTCO
+
+#!RESULT OK
+#!CONNECTION ldap://192.168.149.9:1389
+#!DATE 2014-09-12T10:03:15.391
+dn: cn=Tester,ou=Roles,dc=mot,dc=gov,dc=uk
+objectClass: top
+objectClass: groupOfNames
+cn: Tester
+
+
+
+#dn: cn=Tester,ou=Roles,dc=mot,dc=gov,dc=uk
+#objectClass: groupOfURLs
+#objectClass: top
+#cn: Tester
+#memberURL: ldap:///ou=External,cd=mot,dc=gov,dc=uk??sub=?TestingClasses=tester
+

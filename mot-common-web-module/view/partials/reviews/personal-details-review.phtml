@@ -1,0 +1,41 @@
+<?php
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Date\DateUtils;
+
+$addressLine1 = $this->withDefault('')->getValue($addressLine1);
+$addressLine2 = $this->withDefault('')->getValue($addressLine2);
+$addressLine3 = $this->withDefault('')->getValue($addressLine3);
+$town = $this->withDefault('')->getValue($town);
+$postcode = $this->withDefault('')->getValue($postcode);
+$telephoneNumber = $this->withDefault('')->getValue($telephoneNumber);
+$dateOfBirth = $this->withDefault('')->getValue($dateOfBirth);
+$email = $this->withDefault('')->getValue($email);
+
+$drivingLicenceNumber = $this->withDefault('')->getValue($drivingLicenceNumber);
+$drivingLicenceRegion = $this->withDefault('')->getValue($drivingLicenceRegion);
+
+$drivingLicence = $drivingLicenceNumber . ' (' . $drivingLicenceRegion . ')';
+?>
+
+<dt>Address</dt>
+<dd id="addressLine1"><?php echo $this->escapeHtml($addressLine1); ?></dd>
+<dt></dt>
+<dd id="addressLine2"><?php echo $this->escapeHtml($addressLine2); ?></dd>
+<dt></dt>
+<dd id="addressLine3"><?php echo $this->escapeHtml($addressLine3); ?></dd>
+<dt>Town</dt>
+<dd id="town"><?php echo $this->escapeHtml($town); ?></dd>
+<dt>Postcode</dt>
+<dd id="postcode"><?php echo $this->escapeHtml($postcode); ?></dd>
+
+<dt>Telephone number</dt>
+<dd id="telephoneNumber"><?php echo $this->escapeHtml($telephoneNumber); ?></dd>
+<dt>Date of birth</dt>
+<dd id="dateOfBirth"><?php echo DateTimeDisplayFormat::textDate($dateOfBirth) ?></dd>
+<dt>Email address</dt>
+<dd id="email"><?php echo $this->escapeHtml($email); ?></dd>
+
+<?php if (!empty ($drivingLicenceNumber) && !empty($drivingLicenceRegion)) : ?>
+<dt>Driving licence</dt>
+<dd id="drivingLicence"><?php echo $this->escapeHtml($drivingLicence); ?></dd>
+<?php endif ; ?>

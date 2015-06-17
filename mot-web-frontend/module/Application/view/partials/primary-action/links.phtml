@@ -1,0 +1,54 @@
+<?php
+/** @var $dashboard \Dashboard\Model\Dashboard */
+use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
+use DvsaMotTest\Controller\VehicleSearchController;
+use UserAdmin\Controller\UserSearchController;
+
+?>
+<ul class="list-unstyled">
+    <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::AUTHORISED_EXAMINER_LIST)): ?>
+        <li>
+            <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::of()->aeSearch(); ?>">
+                AE information
+            </a>
+        </li>
+    <?php endif; ?>
+    <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::DVSA_SITE_SEARCH)): ?>
+        <li>
+            <a href="<?php echo $this->url('vehicle-testing-station-search'); ?>">
+                site information
+            </a>
+        </li>
+    <?php endif; ?>
+    <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::USER_SEARCH)): ?>
+        <li>
+            <a href="<?php echo $this->url(UserSearchController::ROUTE_USER_SEARCH); ?>"
+               id="action-start-user-search">
+                user search
+            </a>
+        </li>
+    <?php endif; ?>
+    <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::CERTIFICATE_PRINT)): ?>
+        <li>
+            <a href="<?php echo $this->url(VehicleSearchController::ROUTE_REPLACEMENT_CERTIFICATE_VEHICLE_SEARCH); ?>"
+               id="action-start-certificate-reissue">
+                replacement/duplicate certificate
+            </a>
+        </li>
+    <?php endif; ?>
+    <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::FULL_VEHICLE_MOT_TEST_HISTORY_VIEW)): ?>
+        <li>
+            <a href="<?php echo $this->url('vehicle/search'); ?>">
+                vehicle information
+            </a>
+        </li>
+    <?php endif; ?>
+    <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::MOT_TEST_LIST)): ?>
+        <li>
+            <a href="<?php echo $this->url('mot-test-search'); ?>">
+                MOT tests
+            </a> (comparison of tests available)
+        </li>
+    <?php endif; ?>
+</ul>

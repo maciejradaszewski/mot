@@ -1,0 +1,46 @@
+<?php
+/**
+ * @var \DvsaClient\Entity\Person $nominee
+ * @var int                       $vehicleTestingStationId
+ * @var string                    $roleName
+ */
+?>
+
+<header class="content-header">
+    <h1>
+        <span class="content-header__type">
+           Vehicle Testing Station
+        </span>
+
+        <span class="content-header__title">
+            Summary and confirmation
+        </span>
+    </h1>
+</header>
+
+<?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
+
+<div class="text">
+    <p class="lede">
+        You are assigning the role of '<?php echo $roleName ?>' to '<?php echo $this->escapeHtml($nominee->getUsername()); ?>'.
+    </p>
+</div>
+
+<div class="message">
+    <p>A notification will be sent to the user. To make the role active they must accept the role nomination.</p>
+</div>
+
+<form method="POST">
+    <nav class="content-navigation">
+        <?php echo $this->csrfToken() ?>
+        <?php echo $this->partial('submitElement', ['cssClass' => 'button', 'id' => 'confirm-role', 'label' => 'Confirm']); ?>
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo $this->url('vehicle-testing-station-list-user-roles', [
+                        'vehicleTestingStationId' => $vehicleTestingStationId,
+                        'personId' => $nominee->getId()
+                    ]); ?>">Back to choose a role</a>
+            </li>
+        </ul>
+    </nav>
+</form>

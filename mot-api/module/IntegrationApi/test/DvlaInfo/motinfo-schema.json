@@ -1,0 +1,161 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema",
+    "type": "object",
+    "properties": {
+        "data": {
+            "type": "object",
+            "properties": {
+                "vehicle": {
+                    "type": "object",
+                    "properties": {
+                        "registrationMark": {
+                            "type": "string"
+                        },
+                        "vin": {
+                            "type": "string"
+                        },
+                        "make": {
+                            "type": "string"
+                        },
+                        "model": {
+                            "type": "string"
+                        },
+                        "colour": {
+                            "type": "string"
+                        },
+                        "secondColour": {
+                            "type": "string"
+                        },
+                        "fuelType": {
+                            "type": "string"
+                        },
+                        "dateFirstUse": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "testHistory": {
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "testStation",
+                            "result",
+                            "number",
+                            "advisories",
+                            "vehicle",
+                            "date",
+                            "class"
+                        ],
+                        "properties": {
+                            "latest": {
+                                "type": "boolean"
+                            },
+                            "testStation": {
+                                "type": "object",
+                                "required": [
+                                    "name",
+                                    "number"
+                                ],
+                                "properties": {
+                                    "phone": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "number": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "result": {
+                                "type": "string"
+                            },
+                            "number": {
+                                "type": "string"
+                            },
+                            "odometer": {
+                                "type": "object",
+                                "properties": {
+                                    "value": {
+                                        "type": "number"
+                                    },
+                                    "unit": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "advisories": {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            "reasonsForRefusal": {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            "vehicle": {
+                                "type": "object",
+                                "id": "vehicle",
+                                "properties": {
+                                    "registrationMark": {
+                                        "type": "string"
+                                    },
+                                    "vin": {
+                                        "type": "string"
+                                    },
+                                    "make": {
+                                        "type": "string"
+                                    },
+                                    "model": {
+                                        "type": "string"
+                                    },
+                                    "colour": {
+                                        "type": "string"
+                                    },
+                                    "secondColour": {
+                                        "type": "string"
+                                    },
+                                    "fuelType": {
+                                        "type": "string"
+                                    }
+
+                                }
+                            },
+                            "date": {
+                                "type": "string"
+                            },
+                            "expiryDate": {
+                                "type": "string"
+                            },
+                            "class": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "type": "array"
+                }
+            }
+        },
+        "errors": {
+            "type": "array",
+            "items": {
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

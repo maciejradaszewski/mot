@@ -1,0 +1,211 @@
+<?php
+
+namespace DvsaEntities\Repository;
+
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\Expr\Join;
+use DvsaCommon\Constants\PersonContactType;
+use DvsaCommon\Model\SearchPersonModel;
+use DvsaCommonApi\Service\Exception\NotFoundException;
+use DvsaEntities\DqlBuilder\TesterSearchParamDqlBuilder;
+use DvsaEntities\Entity\Person;
+use DvsaEntities\Entity\Site;
+use DvsaEntities\Entity\SiteBusinessRole;
+use DvsaEntities\Entity\SiteBusinessRoleMap;
+use DvsaEntities\SqlBuilder\SearchPersonSqlBuilder;
+
+/**
+ * Repository for {@link \DvsaEntities\Entity\Person}.
+ */
+class PersonRepository extends AbstractMutableRepository
+{
+    use SearchRepositoryTrait;
+
+    /**
+     * Gets person by id.
+     *
+     * @param int $id
+     *
+     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     *
+     * @return Person
+     */
+    public function get($id)
+    {
+        $person = $this->find($id);
+        if (null === $person) {
+            throw new NotFoundException('Person ' . $id . ' not found');
+        }
+
+        return $person;
+    }
+
+    /**
+     * Gets a person by id or username, in that order
+     *
+     * @param mixed $userId or $username
+     *
+     * @return Person
+     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     */
+    public function getByIdOrUsername($idOrUsername)
+    {
+        $person = $this->find($idOrUsername);
+        if (!$person) {
+            $person = $this->findOneBy(['username' => $idOrUsername]);
+        }
+
+        if (!$person) {
+            throw new NotFoundException('Person ' . $idOrUsername . ' not found');
+        }
+        return $person;
+    }
+
+    /**
+     * Gets person by username.
+     *
+     * @param string $login
+     *
+     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     *
+     * @return Person
+     */
+    public function getByIdentifier($login)
+    {
+        $person = $this->findOneBy(['username' => $login]);
+        if (null === $person) {
+            throw new NotFoundException('Person ' . $login . ' not found');
+        }
+
+        return $person;
+    }
+
+    /**
+     * Gets person by the user_reference field value.
+     *
+     * @param string $user_reference
+     *
+     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     *
+     * @return Person
+     */
+    public function getByUserReference($user_reference)
+    {
+        $person = $this->findOneBy(['userReference' => $user_reference]);
+
+        if (null === $person) {
+            throw new NotFoundException('Person/user_ref: ' . $user_reference . ' not found');
+        }
+
+        return $person;
+    }
+
+    /**
+     * Returns array of associative array. Can be an empty array either.
+     * [
+     *  [
+     *     id => int,
+     *     firstName => string,
+     *     lastName => string,
+     *     dateOfBirth => string,
+     *     postcode => string,
+     *     town => string,
+     *     addressLine1 => string,
+     *     addressLine2 => string,
+     *     addressLine3 => string,
+     *     addressLine4 => string,
+     *  ], ...
+     * ].
+     *
+     * @param SearchPersonModel $searchPerson
+     *
+     * @throws BadRequestException
+     *
+     * @return array
+     */
+    public function searchAll(SearchPersonModel $searchPerson)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sqlBuilder = new SearchPersonSqlBuilder($this->getEntityManager(), $searchPerson);
+
+        $sql = $sqlBuilder->getSql();
+        $params = $sqlBuilder->getParams();
+
+        $stmt = $conn->executeQuery($sql, $params);
+        $result = $stmt->fetchAll();
+
+        $stmt->closeCursor();
+        $conn->close();
+
+        return $result;
+    }
+
+    /**
+     * Gets the site Count for sites associated with supplied person and for the specified role.
+     *
+     * @param int    $personId
+     * @param string $roleCode
+     *
+     * @return array
+     */
+    public function getSiteCount($personId, $roleCode)
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $queryBuilder
+            ->select('count(s.id)')
+            ->from(SiteBusinessRoleMap::class, 'sbrm')
+            ->join(Site::class, 's', Join::INNER_JOIN, 'sbrm.site = s.id')
+            ->join(SiteBusinessRole::class, 'sbr', Join::INNER_JOIN, 'sbrm.siteBusinessRole = sbr.id')
+            ->join(Person::class, 'p', Join::INNER_JOIN, 'sbrm.person = p.id')
+            ->where('p.id = :personId')
+            ->andWhere('sbr.code = :roleCode')
+            ->setParameter('personId', $personId)
+            ->setParameter('roleCode', $roleCode);
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param $params
+     *
+     * @return TesterSearchParamDqlBuilder
+     */
+    protected function getSqlBuilder($params)
+    {
+        // default search handler -> tester
+        return new TesterSearchParamDqlBuilder(
+            $this->getEntityManager(),
+            $params
+        );
+    }
+
+    /**
+     * @param int               $personId
+     * @param PersonContactType $contactType
+     *
+     * @return string|null
+     */
+    public function findPersonEmail($personId, $contactType)
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $queryBuilder
+            ->select('_emails.email')
+            ->from(Person::class, '_person')
+            ->join('_person.contacts', '_contacts')
+            ->join('_contacts.contactDetail', '_contactDetail')
+            ->join('_contactDetail.emails', '_emails')
+            ->where('_person.id = :personId')
+            ->andWhere('_contacts.typeId = :contactTypeId')
+            ->setParameter('personId', $personId)
+            ->setParameter('contactTypeId', $contactType->getId())
+            ->setMaxResults(1); // db allows to have multiple personal addresses
+
+        try {
+            $result = $queryBuilder->getQuery()->getSingleScalarResult();
+        } catch (NoResultException $e) {
+            $result = null;
+        }
+
+        return $result;
+    }
+}

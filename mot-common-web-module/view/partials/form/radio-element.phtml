@@ -1,0 +1,28 @@
+<?php
+$id = isset($id) ? $id : '';
+$labelId = isset($labelId) ? $labelId : '';
+$name = isset($name) ? $name : '';
+$option = isset($option) ? $option : '';
+$required = isset($required) ? $required : '';
+$optionValue = isset($optionValue) ? $optionValue : $option;
+$labelCssClass = isset($labelCssClass) ? $labelCssClass : '';
+
+// vars added to make interface more consistent across partials
+$value = isset($value) ? $value : $optionValue;
+$isChecked = isset($isChecked) ? $isChecked : $value === $optionValue;
+$label = isset($label) ? $label : $option;
+?>
+
+<label for="<?php echo $this->escapeHtmlAttr($id); ?>"
+       class="radio-inline <?php echo $this->escapeHtmlAttr($labelCssClass); ?>"
+       id="<?php echo $this->escapeHtmlAttr($labelId); ?>">
+    <input
+        type="radio"
+        id="<?php echo $this->escapeHtmlAttr($id); ?>"
+        name="<?php echo $this->escapeHtmlAttr($name); ?>"
+        value="<?php echo $this->escapeHtmlAttr($value); ?>"
+        <?php echo ($isChecked ? ' checked="checked" ' : ''); ?>
+        <?php echo ($required ? ' required ' : ''); ?>
+    />
+    <?php echo $this->escapeHtml($label); ?>
+</label>

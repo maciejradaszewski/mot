@@ -1,0 +1,17 @@
+<?php
+if ($urlBack['type'] === 'home' ) {
+    $escLabel = 'Return Home';
+    $escId = 'return-home';
+} else {
+    $escLabel = 'Search Again';
+    $escId = 'search-again';
+}
+?>
+
+<nav class="content-navigation">
+    <ul class="content-navigation__secondary">
+        <li>
+            <a id="<?php echo $escId ?>" href="<?php echo $this->escapeHtmlAttr($urlBack['uri']); ?>"><?php echo $escLabel ?></a>
+        </li>
+    </ul>
+</nav>

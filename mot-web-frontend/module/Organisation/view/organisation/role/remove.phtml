@@ -1,0 +1,40 @@
+<?php
+use Organisation\Controller\RoleController;
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
+
+$aeId = $viewModel->getOrganisationId();
+/**
+ * @var $viewModel \Organisation\ViewModel\View\Role\RemoveRoleConfirmationViewModel
+ */
+?>
+
+<div class="text">
+    <p class="lede">
+        Are you sure you want to remove the role of
+        <?php echo $this->escapeHtml($viewModel->getRoleName()); ?>
+        in <?php echo $this->escapeHtml($viewModel->getOrganisationName()); ?>
+        from <?php echo $this->escapeHtml($viewModel->getEmployeeName()); ?>
+    </p>
+</div>
+
+<div class="message">
+    <p>A notification will be sent to the user.</p>
+</div>
+
+<form action="<?php
+    echo $this->url(
+        RoleController::ROUTE_REMOVE_ROLE,
+        ['id' => $viewModel->getOrganisationId(), 'roleId' => $viewModel->getRoleId()]
+    ); ?>" method="post">
+    <?php echo $this->csrfToken(); ?>
+    <nav class="content-navigation">
+        <input type="submit" name="submit" class="button" id="confirm" value="Confirm">
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo $this->url('authorised-examiner', [ 'id' => $this->escapeHtml($viewModel->getOrganisationId())]); ?>">
+                    Cancel and return to <?php echo $this->escapeHtml($viewModel->getOrganisationName()); ?>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</form>

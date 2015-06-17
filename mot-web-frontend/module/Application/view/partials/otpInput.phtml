@@ -1,0 +1,23 @@
+<?php
+$canTestWithoutOpt = isset($canTestWithoutOpt) ? $canTestWithoutOpt : false;
+$errorMessage = isset($errorMessage) ? $errorMessage : false;
+$shortMessage = !empty($shortErrorMessage) ? $shortErrorMessage : $errorMessage;
+
+?>
+
+<?php if (!$canTestWithoutOpt): ?>
+
+    <div class="module-second-auth">
+        <img class="second-auth__logo" src="/img/mot-2.svg"
+             onerror="this.src='/img/mot-2.png'; this.onerror=null;" width="55" height="52"/>
+        Your MOT Testing Service PIN
+    </div>
+    <div class="form-group second-auth__input<?php if ($errorMessage): ?> has-error<?php endif; ?>">
+        <label for="oneTimePassword">Please enter your PIN</label>
+        <?php if ($shortMessage): ?>
+            <span class="validation-message"><?php echo $shortMessage; //this is HTML content ?></span>
+        <?php endif; ?>
+        <input type="password" name="oneTimePassword" id="oneTimePassword" class="form-control" />
+    </div>
+
+<?php endif; ?>

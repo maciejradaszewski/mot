@@ -1,0 +1,57 @@
+/*---------------------------
+@import "colours.less";
+
+
+form
+---------------------------*/
+h1.step small {
+  display: block;
+}
+label {
+  font-weight: normal;
+}
+legend {
+  border: 0;
+  margin-bottom: 0.5em;
+}
+fieldset .radio {
+  margin-bottom: 1em;
+}
+.validation-summary {
+  background-color: #fcf2f2;
+  border-left: 3px solid #b94a48;
+  box-sizing: border-box;
+  margin: 0 -1em 0.5em -1em;
+  padding: 0.75em 1em 1em 1em;
+}
+.validation-summary h2 {
+  font-size: 18px;
+  margin-top: 0;
+}
+.validation-summary p {
+  margin-left: 22px;
+}
+.validation-summary p:last-child {
+  margin-bottom: 0;
+}
+.validation-summary a,
+.validation-summary ol,
+.validation-message {
+  color: #b94a48;
+}
+.validation-message {
+  display: block;
+}
+.has-error {
+  background-color: #fcf2f2;
+  border-left: 3px solid #b94a48;
+  margin: 0 -1em 0.5em -1em;
+  padding: 0.75em 1em 1em 1em;
+}
+.form-control {
+  background: #f9f9f9;
+}
+form button[type="submit"],
+form a.btn {
+  margin: 10px 0;
+}

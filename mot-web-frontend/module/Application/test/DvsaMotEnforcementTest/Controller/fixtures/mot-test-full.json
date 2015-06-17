@@ -1,0 +1,197 @@
+{
+    "data": {
+        "resultCount": "10",
+        "totalResultCount": "37",
+        "data": {
+            "2007": {
+                "status": "PASSED",
+                "primaryColour": "Silver",
+                "hasRegistration": true,
+                "odometerReading": {
+                    "value": 11111,
+                    "unit": "mi"
+                },
+                "vin": "1M5GDM9AXFT042755",
+                "registration": "F123ABC",
+                "make": "Vauxhall",
+                "model": "Astra",
+                "testType": "NT",
+                "siteNumber": "V1264",
+                "completedDate": "2014-02-18T11:47:21Z",
+                "testerUsername": "ft-catb"
+            },
+            "2008": {
+                "status": "FAILED",
+                "primaryColour": "Silver",
+                "hasRegistration": true,
+                "odometerReading": {
+                    "value": 22222,
+                    "unit": "mi"
+                },
+                "vin": "1M5GDM9AXFT042755",
+                "registration": "F123ABC",
+                "make": "Vauxhall",
+                "model": "Astra",
+                "testType": "NT",
+                "siteNumber": "V1264",
+                "completedDate": "2014-02-18T12:02:54Z",
+                "testerUsername": "ft-catb"
+            },
+            "2009": {
+                "status": "ABORTED",
+                "primaryColour": "Green",
+                "hasRegistration": true,
+                "odometerReading": {
+                    "value": 65432,
+                    "unit": "mi"
+                },
+                "vin": "1M3GDM9AXFT042733",
+                "registration": "AB52FTB",
+                "make": "Ford",
+                "model": "Mondeo",
+                "testType": "NT",
+                "siteNumber": "V1264",
+                "completedDate": "2014-02-18T12:07:32Z",
+                "testerUsername": "ft-catb"
+            },
+            "2010": {
+                "status": "PASSED",
+                "primaryColour": "Black",
+                "hasRegistration": true,
+                "odometerReading": {
+                    "value": 664455,
+                    "unit": "mi"
+                },
+                "vin": "1M1GDM9AXFT042711",
+                "registration": "AFT8845",
+                "make": "Ford",
+                "model": "Focus",
+                "testType": "NT",
+                "siteNumber": "V1264",
+                "completedDate": "2014-02-18T12:14:09Z",
+                "testerUsername": "ft-catb"
+            },
+            "2011": {
+                "status": "PASSED",
+                "primaryColour": "Green",
+                "hasRegistration": true,
+                "odometerReading": {
+                    "value": null,
+                    "unit": null
+                },
+                "vin": "JKL00017FTAR0VIN0",
+                "registration": "LOL999",
+                "make": "Ford",
+                "model": "Fiesta",
+                "testType": "NT",
+                "siteNumber": "V1264",
+                "completedDate": "2014-02-18T13:34:21Z",
+                "testerUsername": "ft-catb"
+            },
+            "2209": {
+                "status": "ACTIVE",
+                "primaryColour": "Red",
+                "hasRegistration": true,
+                "odometerReading": {
+                    "value": 20035,
+                    "unit": "mi"
+                },
+                "vin": "1FT1DVLAEXAMPLEC001",
+                "registration": "FT04CDE",
+                "make": "Renault",
+                "model": "Clio",
+                "testType": "NT",
+                "siteNumber": "V1261",
+                "completedDate": "2014-02-18T00:00:00Z",
+                "testerUsername": "inactivetester_demo_not_req"
+            },
+            "2210": {
+                "status": "ACTIVE",
+                "primaryColour": "Red",
+                "hasRegistration": true,
+                "odometerReading": {
+                    "value": 20035,
+                    "unit": "mi"
+                },
+                "vin": "1UT1DVLAEXAMPLEB001",
+                "registration": "UT61CDH",
+                "make": "Kawasaki",
+                "model": "ZX1400",
+                "testType": "NT",
+                "siteNumber": "V1261",
+                "completedDate": "2014-02-18T00:00:00Z",
+                "testerUsername": "inactivetester_demo_not_req"
+            },
+            "2211": {
+                "status": "ACTIVE",
+                "primaryColour": "Red",
+                "hasRegistration": true,
+                "odometerReading": {
+                    "value": 20035,
+                    "unit": "mi"
+                },
+                "vin": "1FT1DVLAEXAMPLEC001",
+                "registration": "FT04CDE",
+                "make": "Renault",
+                "model": "Clio",
+                "testType": "NT",
+                "siteNumber": "V1261",
+                "completedDate": "2014-01-18T00:00:00Z",
+                "testerUsername": "inactivetester_demo_req"
+            },
+            "2212": {
+                "status": "ACTIVE",
+                "primaryColour": "Red",
+                "hasRegistration": true,
+                "odometerReading": {
+                    "value": 20035,
+                    "unit": "mi"
+                },
+                "vin": "1UT1DVLAEXAMPLEB001",
+                "registration": "UT61CDH",
+                "make": "Kawasaki",
+                "model": "ZX1400",
+                "testType": "NT",
+                "siteNumber": "V1261",
+                "completedDate": "2014-01-18T00:00:00Z",
+                "testerUsername": "inactivetester_demo_req"
+            },
+            "2219": {
+                "status": "ACTIVE",
+                "primaryColour": "Red",
+                "hasRegistration": true,
+                "odometerReading": {
+                    "value": 20035,
+                    "unit": "mi"
+                },
+                "vin": "1FTCR15X0TTA01050",
+                "registration": "MA74IX",
+                "make": "Ford",
+                "model": "Super Duty",
+                "testType": "NT",
+                "siteNumber": "V1261",
+                "completedDate": "2014-02-18T00:00:00Z",
+                "testerUsername": "inactivetester_demo_not_req2"
+            }
+        },
+        "searched": {
+            "siteNumber": "",
+            "testerId": 0,
+            "dateFrom": {
+                "date": "2014-01-01 00:00:00.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            },
+            "dateTo": {
+                "date": "2014-07-01 00:00:00.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            },
+            "sortColumnId": 0,
+            "sortColumnName": "startedDate",
+            "sortDirection": "ASC",
+            "rowCount": 10,
+            "start": 0
+        }
+    }
+}

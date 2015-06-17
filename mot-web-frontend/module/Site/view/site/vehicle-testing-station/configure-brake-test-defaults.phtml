@@ -1,0 +1,137 @@
+<?php
+
+use DvsaCommon\Enum\BrakeTestTypeCode;
+
+/**
+ * @var string $cancelRoute
+ * @var string $defaultBrakeTestClass1And2
+ * @var string $defaultParkingBrakeTestClass3AndAbove
+ * @var string $defaultServiceBrakeTestClass3AndAbove
+ * @var array  $brakeTestTypes
+ * @var bool   $canTestClass1Or2
+ * @var bool   $canTestAnyOfClass3AndAbove
+ */
+
+$sectionName = "Vehicle Testing Station Default Settings";
+$taskName = "Change defaults";
+
+$this->headTitle($sectionName . ' - ' . $taskName);
+$this->layout()->setVariable('pageSubTitle', $sectionName);
+$this->layout()->setVariable('pageTitle', $taskName);
+
+$defaultBrakeTestClass1And2Options = [
+    BrakeTestTypeCode::ROLLER,
+    BrakeTestTypeCode::DECELEROMETER,
+    BrakeTestTypeCode::FLOOR,
+    BrakeTestTypeCode::GRADIENT,
+];
+
+$defaultParkingBrakeTestClass3AndAboveOptions = [
+    BrakeTestTypeCode::ROLLER,
+    BrakeTestTypeCode::PLATE,
+    BrakeTestTypeCode::DECELEROMETER,
+    BrakeTestTypeCode::GRADIENT,
+];
+
+$defaultServiceBrakeTestClass3AndAboveOptions = [
+    BrakeTestTypeCode::ROLLER,
+    BrakeTestTypeCode::PLATE,
+    BrakeTestTypeCode::DECELEROMETER,
+];
+
+?>
+
+<form method="POST">
+    <?php echo $this->csrfToken() ?>
+    <div class="row">
+        <div class="col-sm-8">
+            <p>This page allows you to set defaults for anyone performing an MOT test.</p>
+            <?php if ($canTestClass1Or2) : ?>
+                <fieldset>
+                    <legend>Options for Class 1 and 2</legend>
+                    <div class="form-group">
+                        <fieldset class="label-sm">
+                            <legend class="form-label">Default Brake Test Type</legend>
+                            <?php foreach ($defaultBrakeTestClass1And2Options as $option):
+                                echo $this->partial(
+                                    'partial/forms/radioElement.phtml',
+                                    [
+                                        'id'            => $option . '-default-brake-test-class-1-and-2',
+                                        'name'          => 'defaultBrakeTestClass1And2',
+                                        'value'         => $option,
+                                        'isChecked'     => $option === $defaultBrakeTestClass1And2,
+                                        'label'         => $brakeTestTypes[$option],
+                                        'labelId'       => $option . '-default-brake-test-class-1-and-2-label',
+                                        'labelCssClass' => 'block-label label-clear',
+                                    ]
+                                );
+                            endforeach; ?>
+                        </fieldset>
+                    </div>
+                </fieldset>
+            <?php endif; ?>
+
+            <?php if ($canTestAnyOfClass3AndAbove) : ?>
+                <fieldset>
+                    <legend>Options for Class 3, 4, 5 and 7</legend>
+                    <div class="form-group">
+                        <fieldset class="label-sm">
+                            <legend class="form-label">Default Service Brake Test Type</legend>
+                            <?php foreach ($defaultServiceBrakeTestClass3AndAboveOptions as $option):
+                                echo $this->partial(
+                                    'partial/forms/radioElement.phtml',
+                                    [
+                                        'id'            => $option . '-default-service-brake-test-class-3-and-above',
+                                        'name'          => 'defaultServiceBrakeTestClass3AndAbove',
+                                        'value'         => $option,
+                                        'isChecked'     => $option === $defaultServiceBrakeTestClass3AndAbove,
+                                        'label'         => $brakeTestTypes[$option],
+                                        'labelId'       =>
+                                            $option . '-default-service-brake-test-class-3-and-above-label',
+                                        'labelCssClass' => 'block-label label-clear',
+                                    ]
+                                );
+                            endforeach; ?>
+                        </fieldset>
+                    </div>
+                    <div class="form-group">
+                        <fieldset class="label-sm">
+                            <legend class="form-label">Default Parking Brake Test Type</legend>
+                            <?php foreach ($defaultParkingBrakeTestClass3AndAboveOptions as $option):
+                                echo $this->partial(
+                                    'partial/forms/radioElement.phtml',
+                                    [
+                                        'id'            => $option . '-default-parking-brake-test-class-3-and-above',
+                                        'name'          => 'defaultParkingBrakeTestClass3AndAbove',
+                                        'value'         => $option,
+                                        'isChecked'     => $option === $defaultParkingBrakeTestClass3AndAbove,
+                                        'label'         => $brakeTestTypes[$option],
+                                        'labelId'       =>
+                                            $option . '-default-parking-brake-test-class-3-and-above-label',
+                                        'labelCssClass' => 'block-label label-clear',
+                                    ]
+                                );
+                            endforeach; ?>
+                        </fieldset>
+                    </div>
+                </fieldset>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="form-group">
+                <?php echo $this->partial(
+                    'submitElement',
+                    ['label' => 'Save defaults', 'value' => 'save', 'id' => 'save']
+                ); ?>
+            </div>
+            <div class="form-group">
+                <a id="cancel" href="<?php echo $this->escapeHtmlAttr($cancelRoute); ?>">Back to VTS overview</a>
+            </div>
+            <div class="info-notice">
+                <p>MOT testers can override defaults and choose other options during an MOT test.</p>
+            </div>
+        </div>
+    </div>
+</form>

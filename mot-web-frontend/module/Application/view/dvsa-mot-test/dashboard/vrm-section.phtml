@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @var $vrm
+ */
+?>
+
+<?php $this->placeholder('dashboard-section-header-caption')->captureStart('SET') ?>
+    <h3>Registration</h3>
+<?php $this->placeholder('dashboard-section-header-caption')->captureEnd() ?>
+
+<?php $this->placeholder('dashboard-section-header-value')->captureStart('SET') ?>
+    <h3><strong><?php echo $vrm ?></strong></h3>
+<?php $this->placeholder('dashboard-section-header-value')->captureEnd() ?>
+
+<?php $this->placeholder('dashboard-section-body')->captureStart('SET') ?>
+    <div class="clearfix">
+        <div class="form-group">
+            <?php echo $this->partial(
+                "inputElement", [
+                    "id"        => "input-vrm",
+                    "name"      => "vrm",
+                    "value"     => $vrm,
+                ]
+            ); ?>
+        </div>
+    </div>
+<?php $this->placeholder('dashboard-section-body')->captureEnd() ?>
+<?php echo $this->partial(
+    'dvsa-mot-test/dashboard/generic-section',
+    [
+        'sectionId'    => 'vrm',
+        'actionName'   => 'updateVrm',
+    ]
+);

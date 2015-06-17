@@ -1,0 +1,61 @@
+<?php
+
+if (!$this->val1) {
+    return;
+}
+
+$canLock = ($this->canLock === true);
+$index = $this->index ? $this->index : '';
+
+$label1 = $this->label1 ? $this->label1 : 'NS Axle' . $index;
+$label2 = $this->label2 ? $this->label2 : 'OS Axle' . $index;
+
+?>
+
+<tr>
+    <td><?php echo $this->escapeHtml($label1); ?></td>
+    <td><strong><?php echo $this->escapeHtml($this->val1); ?></strong></td>
+    <?php if ($canLock): ?>
+        <td>
+            <i class="fa <?php echo $this->escapeHtmlAttr($this->isLock1 ? 'fa-check-square-o' : 'fa-square-o'); ?>">&nbsp;</i>
+            <span class="visually-hidden">
+                <?php echo $this->escapeHtml($this->isLock1 ? 'Yes' : 'No'); ?>
+            </span>
+        </td>
+    <?php else: ?>
+        <td ></td>
+    <?php endif; ?>
+
+    <?php if (isset($this->val2)) : ?>
+        <td><?php echo $this->escapeHtml($label2); ?></td>
+        <td><strong><?php echo $this->escapeHtml($this->val2); ?></strong></td>
+        <?php if ($canLock): ?>
+            <td>
+                <i class="fa <?php echo $this->escapeHtmlAttr($this->isLock2 ? 'fa-check-square-o' : 'fa-square-o'); ?>">&nbsp;</i>
+                <span class="visually-hidden">
+                    <?php echo $this->escapeHtml($this->isLock2 ? 'Yes' : 'No'); ?>
+                </span>
+            </td>
+        <?php else: ?>
+            <td ></td>
+        <?php endif; ?>
+    <?php else: ?>
+        <td colspan="3"></td>
+    <?php endif; ?>
+
+    <?php if (isset($this->imbalance)) : ?>
+        <td>
+            <strong>
+                <?php
+                echo $this->escapeHtml(
+                    !isset($this->imbalance)
+                    ? '&nbsp;'
+                    : number_format($this->imbalance) . '%'
+                );
+                ?>
+            </strong>
+        </td>
+    <?php else: ?>
+        <td></td>
+    <?php endif; ?>
+</tr>

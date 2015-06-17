@@ -1,0 +1,74 @@
+<?php
+$label = isset($label) ? $label : '';
+$labelId = isset($labelId) ? $labelId : '';
+$value = isset($value) ? $value : '';
+$name = isset($name) ? $name : '';
+$required = isset($required) ? $required : false;
+$option1 = isset($option1) ? $option1 : '';
+$option2 = isset($option2) ? $option2 : '';
+$option3 = isset($option3) ? $option3 : '';
+$labelId1 = 'radioOption' . ucfirst($name) . $option1;
+$labelId2 = 'radioOption' . ucfirst($name) . $option2;
+$labelId3 = 'radioOption' . ucfirst($name) . $option3;
+$id1 = $name . $option1;
+$id2 = $name . $option2;
+$id3 = $name . $option3;
+$option1Value = $option1 ?: $option1Value;
+$option2Value = $option2 ?: $option2Value;
+$option3Value = $option3 ?: $option3Value;
+
+?>
+
+<div class="form-group">
+    <fieldset class="fs-inline">
+        <div class="col-sm-4 control-label">
+            <legend id="<?php echo $this->escapeHtml($labelId); ?>"><?php echo $this->escapeHtml($label); ?></legend>
+        </div>
+        <div class="col-sm-6">
+            <div class="row">
+                <?php echo $this->partial(
+                    'radioElement',
+                    [
+                        'id'       => $id1,
+                        'labelId'  => $labelId1,
+                        'value'    => $option1Value,
+                        'required' => $required,
+                        'name'     => $name,
+                        'option'   => $option1,
+                        'optionValue' => $option1Value
+                    ]
+                );
+                ?>
+            </div>
+            <div class="row">
+                <?php echo $this->partial(
+                    'radioElement',
+                    array(
+                        'id'       => $id2,
+                        'labelId'  => $labelId2,
+                        'required' => $required,
+                        'name'     => $name,
+                        'option'   => $option2,
+                        'value'    => $option2Value,
+                    )
+                );
+                ?>
+            </div>
+            <div class="row">
+                <?php echo $this->partial(
+                    'radioElement',
+                    array(
+                        'id'       => $id3,
+                        'labelId'  => $labelId3,
+                        'value'    => $value,
+                        'required' => $required,
+                        'name'     => $name,
+                        'option'   => $option3,
+                        'value'    => $option3Value,
+                    )
+                );
+                ?>
+            </div>
+        </div>
+    </fieldset>
+</div>
