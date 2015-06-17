@@ -4,6 +4,7 @@ import com.dvsa.mot.selenium.datasource.Login;
 import com.dvsa.mot.selenium.datasource.ReasonToCancel;
 import com.dvsa.mot.selenium.datasource.Vehicle;
 import com.dvsa.mot.selenium.framework.BaseTest;
+import com.dvsa.mot.selenium.priv.frontend.login.pages.LoginPage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.MotTestPage;
 import org.testng.Assert;
@@ -113,4 +114,9 @@ public class UserDashboardTest extends BaseTest {
         userDashboard.clickLogout();
     }
 
+    @Test(groups = {"VM-4791", "slice_A"})
+    public void testVerifyCookieLinkClickableInTheFooter() {
+        UserDashboardPage userDashboardPage = LoginPage.loginAs(driver, login);
+        assertThat(userDashboardPage.isCookieLinkClickable(), is(true));
+    }
 }

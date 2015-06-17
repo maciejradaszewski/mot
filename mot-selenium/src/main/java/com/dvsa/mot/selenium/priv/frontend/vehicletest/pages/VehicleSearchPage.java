@@ -6,6 +6,7 @@ import com.dvsa.mot.selenium.datasource.Vehicle;
 import com.dvsa.mot.selenium.datasource.enums.PageTitles;
 import com.dvsa.mot.selenium.framework.BasePage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -198,4 +199,9 @@ public class VehicleSearchPage extends BasePage {
 
         return isElementDisplayed(searchForm);
     }
+    public boolean isCookieElementPresentInDOM() {
+        String cookieLink =  "id('global-cookie-message')//a";
+        return isElementPresent(By.xpath(cookieLink));
+    }
+
 }

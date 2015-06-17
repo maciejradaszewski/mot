@@ -44,6 +44,8 @@ public abstract class BasePage extends PageInteractionHelper {
 
     @FindBy(id = "footerManuals") private WebElement footerManuals;
 
+    @FindBy(xpath = "id('footer')//a[@href='https://www.gov.uk/help/cookies']") private WebElement cookies;
+
     public BasePage(WebDriver driver) {
         super(driver);
         PageFactory.initElements(driver, this);
@@ -178,5 +180,9 @@ public abstract class BasePage extends PageInteractionHelper {
         String url = driver.getCurrentUrl();
         String id = url.substring(url.lastIndexOf("/") + 1);
         return id;
+    }
+
+    public boolean isCookieLinkClickable() {
+        return isElementClickable(cookies, 5);
     }
 }
