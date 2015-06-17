@@ -34,7 +34,7 @@ public enum PageTitles {
     PERSONAL_PROFILE_TITLE("YOUR PROFILE"),
     RESET_PIN("MOT Testing Service\n" + "Reset PIN"),
     SITE_INFORMATION("Site search\n" + "Search for site information by..."),
-    SITE_SEARCH_RESULTS("Site search\n" + "Search Results");
+    SITE_SEARCH_RESULTS("Site search\n" + "Results with ");
 
     private final String pageTitle;
 

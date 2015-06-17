@@ -363,7 +363,7 @@ class SiteRepository extends AbstractMutableRepository
     public function findSitesCount(SiteSearchParam $searchParam)
     {
         try {
-            return $this->buildFindSites($searchParam, true)->getSingleScalarResult();
+            return count($this->buildFindSites($searchParam, true)->getResult(AbstractQuery::HYDRATE_SCALAR));
         } catch (\Doctrine\ORM\NoResultException $e) {
             return 0;
         }
@@ -407,9 +407,19 @@ class SiteRepository extends AbstractMutableRepository
         if ($isSiteVehicleClass === true) {
             $sql .= " HAVING COUNT(DISTINCT vc.code) = :NUMBER_SITE_VEHICLE_CLASS";
         }
-
-        // Temporary limit for 1.10
-        $sql .= " LIMIT 100";
+        if ($isCount === false) {
+            if (is_array($searchParam->getSortColumnNameDatabase())) {
+                $orderBy = '';
+                foreach ($searchParam->getSortColumnNameDatabase() as $col) {
+                    $orderBy .= $orderBy  . " " . $col . " " . $searchParam->getSortDirection() . ",";
+                }
+                $orderBy = substr($orderBy, 0, strlen($orderBy) - 1);
+            } else {
+                $orderBy = $searchParam->getSortColumnNameDatabase() . " " . $searchParam->getSortDirection();
+            }
+            $sql .= " ORDER BY " . $orderBy;
+            $sql .= " LIMIT " . (int)$searchParam->getRowCount() . " OFFSET " . (int)$searchParam->getStart();
+        }
 
         $query = $this->_em
             ->createNativeQuery($sql, $this->getResultSetMappingFindSites($isCount))
@@ -450,25 +460,22 @@ class SiteRepository extends AbstractMutableRepository
         $isFullTextSiteTownPostcode,
         $isSiteVehicleClass
     ) {
-        $select = ($isCount === true ? 'COUNT(DISTINCT site.id) AS matchSite'
+        $select = ($isCount === true ? 'site.id'
             : '
             site.id,
             site.id as siteId,
             site.site_number,
             site.name,
+            p.number as phone,
             a.town,
             a.postcode,
+            st.name as type,
+            site_status.name as status,
             (SELECT GROUP_CONCAT(DISTINCT vc.code ORDER BY vc.code ASC SEPARATOR \',\')
             FROM site
                 LEFT JOIN auth_for_testing_mot_at_site site_auth ON (site.id = site_auth.site_id)
                 LEFT JOIN vehicle_class vc ON site_auth.vehicle_class_id = vc.id
             WHERE site.id = siteId
-            GROUP BY
-                site.id,
-                site.site_number,
-                site.name,
-                a.town,
-                a.postcode
             LIMIT 1) AS roles'
         );
 
@@ -477,9 +484,13 @@ class SiteRepository extends AbstractMutableRepository
                 LEFT JOIN site_contact_detail_map scdm ON (site.id = scdm.site_id)
                 LEFT JOIN contact_detail cd ON (scdm.contact_detail_id = cd.id)
                 LEFT JOIN address a ON (cd.address_id = a.id)
-                JOIN site_contact_type sct ON (scdm.site_contact_type_id = sct.id)
+                LEFT JOIN site_contact_type sct ON (scdm.site_contact_type_id = sct.id)
+                LEFT JOIN phone p ON (p.contact_detail_id = cd.id)
+                LEFT JOIN phone_contact_type pct ON (p.phone_contact_type_id = pct.id)
                 LEFT JOIN auth_for_testing_mot_at_site site_auth ON (site.id = site_auth.site_id)
+                LEFT JOIN auth_for_testing_mot_at_site_status site_status ON site_auth.status_id = site_status.id
                 LEFT JOIN vehicle_class vc ON site_auth.vehicle_class_id = vc.id
+                LEFT JOIN site_type st ON site.type_id = st.id
             WHERE sct.code = :BUSINESS";
 
         if ($isFullTextSiteNameNumber === true) {
@@ -493,15 +504,16 @@ class SiteRepository extends AbstractMutableRepository
             $sql .= " AND vc.code IN (:SITE_VEHICLE_CLASS)";
         }
 
-        if ($isCount !== true) {
-            $sql .= '
-                GROUP BY
+        $sql .= '
+            GROUP BY
                 site.id,
                 site.site_number,
                 site.name,
+                p.number,
                 a.town,
-                a.postcode';
-        }
+                a.postcode,
+                st.name,
+                site_status.name';
 
         return $sql;
     }
@@ -516,7 +528,7 @@ class SiteRepository extends AbstractMutableRepository
     {
         $rsm = new Query\ResultSetMapping();
         if ($isCount) {
-            $rsm->addScalarResult('matchSite', 'matchSite');
+            $rsm->addScalarResult('id', 'id');
             return $rsm;
         }
         $rsm->addScalarResult('id', 'id');
@@ -525,6 +537,9 @@ class SiteRepository extends AbstractMutableRepository
         $rsm->addScalarResult('town', 'town');
         $rsm->addScalarResult('postcode', 'postcode');
         $rsm->addScalarResult('roles', 'roles');
+        $rsm->addScalarResult('phone', 'phone');
+        $rsm->addScalarResult('type', 'type');
+        $rsm->addScalarResult('status', 'status');
 
         return $rsm;
     }
@@ -538,7 +553,10 @@ class SiteRepository extends AbstractMutableRepository
      */
     private function buildFullTextSearchSites($param1, $param2)
     {
-        $words = array_merge(explode(' ', mb_strtolower($param1)), explode(' ', mb_strtolower($param2)));
+        $words = array_merge(
+            explode(' ', $this->deleteUnwantedChar($param1)),
+            explode(' ', $this->deleteUnwantedChar($param2))
+        );
 
         $finalClause = '';
         foreach ($words as $word) {
@@ -548,5 +566,20 @@ class SiteRepository extends AbstractMutableRepository
         }
 
         return $finalClause;
+    }
+
+    /**
+     * Delete the special char use by the full text search to avoid unwanted search
+     *
+     * @param string $string
+     * @return string
+     */
+    private function deleteUnwantedChar($string)
+    {
+        $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+        $string = preg_replace('/[^A-Za-z0-9\-]/', ' ', $string); // Removes special chars.
+
+        $string = preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
+        return str_replace('-', ' ', $string); // Replaces multiple hyphens with single one.
     }
 }

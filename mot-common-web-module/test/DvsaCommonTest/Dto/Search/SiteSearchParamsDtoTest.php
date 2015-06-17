@@ -13,5 +13,17 @@ use DvsaCommonTest\Dto\AbstractDtoTester;
 class SiteSearchParamsDtoTest extends AbstractDtoTester
 {
     protected $dtoClassName = SiteSearchParamsDto::class;
+
+    public function testToQueryParams()
+    {
+        $dto = new SiteSearchParamsDto();
+
+        $this->assertEquals(
+            [
+                'rowCount' => 10,
+                'pageNumber' => 1,
+            ],
+            $dto->toQueryParams()->toArray()
+        );
+    }
 }
- 

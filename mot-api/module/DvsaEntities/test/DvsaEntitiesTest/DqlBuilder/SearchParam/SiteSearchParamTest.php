@@ -31,6 +31,10 @@ class SiteSearchParamTest extends AbstractServiceTestCase
         $this->assertSame(self::SITE_TOWN, $searchParam->getSiteTown());
         $this->assertSame(self::SITE_POSTCODE, $searchParam->getSitePostcode());
         $this->assertSame(self::SITE_VEHICLE_CLASS, $searchParam->getSiteVehicleClass());
+        $this->assertSame('site.name', $searchParam->getSortColumnNameDatabase());
+
+        $searchParam->setSortColumnId('siteNumber');
+        $this->assertSame('site.site_number', $searchParam->getSortColumnNameDatabase());
     }
 
     public function getDto()

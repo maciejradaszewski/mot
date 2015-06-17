@@ -2,6 +2,9 @@
 
 namespace DvsaCommon\Dto\Search;
 
+use Zend\Stdlib\Parameters;
+use DvsaCommon\Constants\SearchParamConst;
+
 /**
  * Class SiteSearchParamsDto
  *
@@ -9,6 +12,12 @@ namespace DvsaCommon\Dto\Search;
  */
 class SiteSearchParamsDto extends SearchParamsDto
 {
+    const SITE_NUMBER = 'site_number';
+    const SITE_NAME = 'site_name';
+    const SITE_TOWN = 'site_town';
+    const SITE_POSTCODE = 'site_postcode';
+    const SITE_VEHICLE_CLASS = 'site_vehicle_class';
+
     /** @var string */
     private $siteNumber;
     /** @var string */
@@ -108,5 +117,24 @@ class SiteSearchParamsDto extends SearchParamsDto
     {
         $this->siteVehicleClass = $siteVehicleClass;
         return $this;
+    }
+
+    public function toQueryParams()
+    {
+        return new Parameters(
+            array_filter(
+                [
+                    SearchParamConst::ROW_COUNT => $this->getRowsCount(),
+                    SearchParamConst::PAGE_NR => $this->getPageNr(),
+                    SearchParamConst::SORT_BY => $this->getSortBy(),
+                    SearchParamConst::SORT_DIRECTION => $this->getSortDirection(),
+                    self::SITE_NUMBER => $this->getSiteNumber(),
+                    self::SITE_NAME => $this->getSiteName(),
+                    self::SITE_TOWN => $this->getSiteTown(),
+                    self::SITE_POSTCODE => $this->getSitePostcode(),
+                    self::SITE_VEHICLE_CLASS => $this->getSiteVehicleClass(),
+                ]
+            )
+        );
     }
 }

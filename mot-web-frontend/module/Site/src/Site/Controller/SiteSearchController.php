@@ -7,10 +7,12 @@ use DvsaCommon\Dto\Site\SiteListDto;
 use DvsaCommon\UrlBuilder\SiteUrlBuilderWeb;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaMotTest\Controller\AbstractDvsaMotTestController;
+use Site\Service\SiteSearchService;
 use Site\ViewModel\SiteSearchViewModel;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 use Zend\Http\Request;
+use Report\Table\Table;
 
 /**
  * Class SiteSearchController
@@ -24,21 +26,45 @@ class SiteSearchController extends AbstractDvsaMotTestController
     const NO_RESULT_FOUND = 'Unable to find any matches. Try expanding your search criteria ';
 
     const PAGE_TITLE_SEARCH = 'Search for site information by...';
-    const PAGE_TITLE_RESULT = 'Search Results';
+    const PAGE_TITLE_RESULT = 'Results with "%s"';
 
     const SITE_SEARCH_TEMPLATE = 'site/site-search/search';
 
-    /** @var SiteSearchViewModel */
+    /**
+     * @var SiteSearchViewModel
+     */
     private $viewModel;
-    /** @var MapperFactory */
+
+    /**
+     * @var MapperFactory
+     */
     protected $mapper;
 
     /**
-     * @param MapperFactory $mapper
+     * @var SiteSearchService
      */
-    public function __construct(MapperFactory $mapper)
+    protected $service;
+
+    protected $breadcrumbSearch;
+    protected $breadcrumbResult;
+
+    /**
+     * @param MapperFactory $mapper
+     * @param SiteSearchService $service
+     */
+    public function __construct(MapperFactory $mapper, SiteSearchService $service)
     {
         $this->mapper = $mapper;
+        $this->service = $service;
+        $this->viewModel = new SiteSearchViewModel();
+
+        $this->breadcrumbSearch = [
+            'Search site information' => '',
+        ];
+        $this->breadcrumbResult = [
+            'Search site information' => SiteUrlBuilderWeb::search(),
+            'Site search results' => '',
+        ];
     }
 
     /**
@@ -48,9 +74,11 @@ class SiteSearchController extends AbstractDvsaMotTestController
      */
     public function searchAction()
     {
-        $this->viewModel = new SiteSearchViewModel();
+        /** @var Request $request */
+        $request = $this->getRequest();
+        $this->viewModel->populateFromQuery($request->getQuery()->toArray());
 
-        return $this->initViewModelInformation(self::PAGE_TITLE_SEARCH);
+        return $this->initViewModelInformation(self::PAGE_TITLE_SEARCH, $this->breadcrumbSearch);
     }
 
     /**
@@ -64,63 +92,70 @@ class SiteSearchController extends AbstractDvsaMotTestController
     {
         /** @var Request $request */
         $request = $this->getRequest();
+        $this->viewModel->populateFromQuery($request->getQuery()->toArray());
 
-        if ($request->isPost() === false) {
-            return $this->redirect()->toUrl(SiteUrlBuilderWeb::search());
-        }
-
-        $this->viewModel = (new SiteSearchViewModel())
-            ->populateFromPost($request->getPost()->toArray());
-
-        if ($this->viewModel->isValid()) {
+        if ($this->viewModel->isFormEmpty($this->flashMessenger()) === false && $this->viewModel->isValid()) {
             return $this->getResultFromApi();
         }
 
-        return $this->initViewModelInformation(self::PAGE_TITLE_SEARCH)
+        return $this->initViewModelInformation(self::PAGE_TITLE_SEARCH, $this->breadcrumbSearch)
             ->setTemplate(self::SITE_SEARCH_TEMPLATE);
     }
 
+    /**
+     * Get the result of the search from the API
+     *
+     * @return ViewModel
+     */
     private function getResultFromApi()
     {
         try {
+            $searchParams = $this->viewModel->prepareSearchParams();
+
             /** @var SiteListDto $result */
-            $result = $this->mapper->VehicleTestingStation->search(
-                DtoHydrator::dtoToJson($this->viewModel->prepareSearchParams())
-            );
+            $result = $this->mapper->VehicleTestingStation->search(DtoHydrator::dtoToJson($searchParams));
+            $result->setSearched($searchParams);
+
+            /** @var Table $table */
+            $table = $this->service->initTable($result);
+
         } catch (\Exception $e) {
             $this->addErrorMessage(self::NO_RESULT_FOUND);
-            return $this->initViewModelInformation(self::PAGE_TITLE_SEARCH)
+            return $this->initViewModelInformation(self::PAGE_TITLE_SEARCH, $this->breadcrumbSearch)
                 ->setTemplate(self::SITE_SEARCH_TEMPLATE);
         }
 
-        if (self::NO_RESULT === (int)$result->getTotalResult()) {
+        /** Show the search page if no result */
+        if (self::NO_RESULT === (int)$result->getTotalResultCount()) {
             $this->addErrorMessage(self::NO_RESULT_FOUND);
-            return $this->initViewModelInformation(self::PAGE_TITLE_SEARCH)
+            return $this->initViewModelInformation(self::PAGE_TITLE_SEARCH, $this->breadcrumbSearch)
                 ->setTemplate(self::SITE_SEARCH_TEMPLATE);
         }
-        if (self::ONE_RESULT === (int)$result->getTotalResult()) {
-            return $this->redirect()->toUrl(SiteUrlBuilderWeb::of($result->getSites()[0]->getId()));
+        /** Redirect to the detail page if only one result */
+        if (self::ONE_RESULT === (int)$result->getTotalResultCount()) {
+            return $this->redirect()->toUrl(SiteUrlBuilderWeb::of($result->getData()[0]['id']));
         }
-        $this->viewModel->setSiteList($result);
-        return $this->initViewModelInformation(self::PAGE_TITLE_RESULT);
+
+        $this->viewModel->setTable($table);
+        return $this->initViewModelInformation(
+            sprintf(self::PAGE_TITLE_RESULT, $this->viewModel->displaySearchCriteria()),
+            $this->breadcrumbResult
+        );
     }
 
     /**
      * This function initialise the view model
      *
      * @param string $title
+     * @param array $breadcrumbs
      * @return ViewModel
      */
-    private function initViewModelInformation($title)
+    private function initViewModelInformation($title, $breadcrumbs)
     {
         $this->layout('layout/layout-govuk.phtml');
 
         $this->layout()->setVariable('pageTitle', $title);
         $this->layout()->setVariable('pageSubTitle', 'Site search');
-
-        $breadcrumbs = [
-            'Site Information' => '',
-        ];
         $this->layout()->setVariable('progressBar', ['breadcrumbs' => $breadcrumbs]);
 
         return new ViewModel(

@@ -2,22 +2,18 @@
 
 namespace SiteTest\Controller;
 
-use Account\Controller\SecurityQuestionController;
-use Account\Service\SecurityQuestionService;
 use Account\ViewModel\PasswordResetFormModel;
-use Application\Helper\PrgHelper;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaClient\Mapper\VehicleTestingStationMapper;
 use DvsaClient\MapperFactory;
+use DvsaCommon\Dto\Search\SiteSearchParamsDto;
 use DvsaCommon\Dto\Site\SiteListDto;
-use DvsaCommon\Dto\Site\SiteSearchDto;
-use DvsaCommon\UrlBuilder\AccountUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\SiteUrlBuilderWeb;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
+use Report\Table\Table;
 use Site\Controller\SiteSearchController;
-use Site\ViewModel\SiteSearchViewModel;
 use Zend\View\Model\ViewModel;
 use Zend\Http\Request;
 use Zend\Http\Response;
@@ -26,7 +22,7 @@ use Zend\Mvc\Router\Http\TreeRouteStack as HttpRouter;
 use Zend\Mvc\Router\RouteMatch;
 use Zend\Session\Container;
 use Zend\Stdlib\Parameters;
-use DvsaCommon\HttpRestJson\Exception\NotFoundException;
+use Site\Service\SiteSearchService;
 
 /**
  * Class SiteSearchControllerTest
@@ -43,6 +39,7 @@ class SiteSearchControllerTest extends AbstractFrontendControllerTestCase
 
     protected $mapper;
     protected $siteMapper;
+    protected $service;
 
     protected function setUp()
     {
@@ -51,9 +48,10 @@ class SiteSearchControllerTest extends AbstractFrontendControllerTestCase
         $this->setServiceManager($serviceManager);
 
         $this->mapper = $this->getMapperFactory();
+        $this->service = XMock::of(SiteSearchService::class);
 
         $this->setController(
-            new SiteSearchController($this->mapper)
+            new SiteSearchController($this->mapper, $this->service)
         );
 
         $this->getController()->setServiceLocator($serviceManager);
@@ -64,7 +62,7 @@ class SiteSearchControllerTest extends AbstractFrontendControllerTestCase
     /**
      * @dataProvider dataProviderTestActionsResultAndAccess
      */
-    public function testActionsResultAndAccess($method, $action, $postData, $mocks, $expect)
+    public function testActionsResultAndAccess($method, $action, $query, $mocks, $expect)
     {
         $result = null;
 
@@ -82,7 +80,7 @@ class SiteSearchControllerTest extends AbstractFrontendControllerTestCase
             $this->setExpectedException($exception['class'], $exception['message']);
         }
 
-        $result = $this->getResultForAction2($method, $action, null, null, $postData);
+        $result = $this->getResultForAction2($method, $action, null, $query);
 
         //  --  check   --
         if (!empty($expect['viewModel'])) {
@@ -120,77 +118,76 @@ class SiteSearchControllerTest extends AbstractFrontendControllerTestCase
                     'viewModel' => true,
                 ],
             ],
-            //  --  result: no post   --
+            //  --  result: get with invalid data   --
             [
                 'method'   => 'get',
                 'action'   => 'result',
-                'postData' => [],
-                'mocks'    => [],
-                'expect'   => [
-                    'url' => SiteUrlBuilderWeb::search(),
-                ],
-            ],
-            //  --  result: post with invalid data   --
-            [
-                'method'   => 'post',
-                'action'   => 'result',
-                'postData' => [],
+                'query' => [],
                 'mocks'    => [],
                 'expect'   => [
                     'viewModel' => true,
                 ],
             ],
-            //  --  result: post with valid data Exact match   --
+            //  --  result: get with valid data Exact match   --
             [
-                'method'   => 'post',
+                'method'   => 'get',
                 'action'   => 'result',
-                'postData' => [
-                    SiteSearchViewModel::FIELD_SITE_NUMBER => 'v1234'
+                'query' => [
+                    SiteSearchParamsDto::SITE_NUMBER => 'v1234'
                 ],
                 'mocks'    => [
                     [
                         'class'  => 'siteMapper',
                         'method' => 'search',
                         'params' => [],
-                        'result' => (new SiteListDto())->setTotalResult(1)->setSites([(new SiteSearchDto())->setId(1)]),
+                        'result' => (
+                            new SiteListDto())
+                            ->setTotalResultCount(1)
+                            ->setData([['id' => 1]]),
                     ]
                 ],
                 'expect'   => [
                     'url' => SiteUrlBuilderWeb::of(1),
                 ],
             ],
-            //  --  result: post with valid data No result   --
+            //  --  result: get with valid data No result   --
             [
-                'method'   => 'post',
+                'method'   => 'get',
                 'action'   => 'result',
-                'postData' => [
-                    SiteSearchViewModel::FIELD_SITE_NUMBER => 'v1234'
+                'query' => [
+                    SiteSearchParamsDto::SITE_NUMBER => 'v1234'
                 ],
                 'mocks'    => [
                     [
                         'class'  => 'siteMapper',
                         'method' => 'search',
                         'params' => [],
-                        'result' => (new SiteListDto())->setTotalResult(0),
+                        'result' => (new SiteListDto())->setTotalResultCount(0),
                     ]
                 ],
                 'expect'   => [
                     'viewModel' => true,
                 ],
             ],
-            //  --  result: post with valid data Multiple result   --
+            //  --  result: get with valid data Multiple result   --
             [
-                'method'   => 'post',
+                'method'   => 'get',
                 'action'   => 'result',
-                'postData' => [
-                    SiteSearchViewModel::FIELD_SITE_NUMBER => 'v1234'
+                'query' => [
+                    SiteSearchParamsDto::SITE_NUMBER => 'v1234'
                 ],
                 'mocks'    => [
                     [
                         'class'  => 'siteMapper',
                         'method' => 'search',
                         'params' => [],
-                        'result' => (new SiteListDto())->setTotalResult(2),
+                        'result' => (new SiteListDto())->setTotalResultCount(2),
+                    ],
+                    [
+                        'class'  => 'service',
+                        'method' => 'initTable',
+                        'params' => [],
+                        'result' => new Table(),
                     ]
                 ],
                 'expect'   => [

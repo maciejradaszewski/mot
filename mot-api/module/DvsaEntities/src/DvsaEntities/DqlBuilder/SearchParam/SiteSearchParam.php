@@ -13,11 +13,16 @@ class SiteSearchParam extends SearchParam
 {
     const SEARCH_REQUIRED_DISPLAY_MESSAGE = 'You must search at least on one field to perform a search';
 
-    const FIELD_SITE_NUMBER = 'site_number';
-    const FIELD_SITE_NAME = 'site_name';
-    const FIELD_SITE_TOWN = 'site_town';
-    const FIELD_SITE_POSTCODE = 'site_postcode';
-    const FIELD_SITE_VEHICLE_CLASS = 'site_vehicle_class';
+    const DEFAULT_SORT_COLUMN = 'site.name';
+
+    private static $sortCriteria
+        = [
+            'siteNumber' => 'site.site_number',
+            'siteName' => 'site.name',
+            'siteTownPostcode' => ['a.town', 'a.postcode'],
+            'siteClasses' => 'roles',
+            'siteTypeStatus' => ['st.name', 'site_status.name'],
+        ];
 
     /** @var string $siteNumber */
     private $siteNumber;
@@ -29,6 +34,20 @@ class SiteSearchParam extends SearchParam
     private $sitePostcode;
     /** @var array $siteVehicleClass */
     private $siteVehicleClass;
+
+    /**
+     * @return array
+     */
+    public function getSortColumnNameDatabase()
+    {
+        $sortBy = $this->getSortColumnId();
+
+        if (isset(self::$sortCriteria[$sortBy])) {
+            return self::$sortCriteria[$sortBy];
+        }
+
+        return self::DEFAULT_SORT_COLUMN;
+    }
 
     /**
      * @param SiteSearchParamsDto $dto

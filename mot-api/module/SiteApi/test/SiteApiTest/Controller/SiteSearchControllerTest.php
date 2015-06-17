@@ -80,15 +80,16 @@ class SiteSearchControllerTest extends AbstractRestfulControllerTestCase
                         'method' => 'findSites',
                         'params' => (new SiteSearchParamsDto())->setSiteName(self::SITE_NAME),
                         'result' => (new SiteListDto())
-                            ->setTotalResult(0),
+                            ->setTotalResultCount(0),
                     ],
                 ],
                 'expect' => [
                     'result' => [
                         'data' => [
                             '_class' => SiteListDto::class,
-                            'totalResult' => 0,
-                            'sites' => null,
+                            'totalResultCount' => 0,
+                            'data' => null,
+                            'searched' => null,
                         ],
                     ],
                 ],

@@ -3,6 +3,7 @@
 namespace DvsaCommon\Dto\Site;
 
 use DvsaCommon\Dto\AbstractDataTransferObject;
+use DvsaCommon\Dto\Search\SiteSearchParamsDto;
 
 /**
  * Class SiteListDto
@@ -12,43 +13,61 @@ use DvsaCommon\Dto\AbstractDataTransferObject;
 class SiteListDto extends AbstractDataTransferObject
 {
     /** @var  int */
-    private $totalResult;
-    /** @var  SiteSearchDto[] */
-    private $sites;
+    private $totalResultCount;
+    /** @var  array */
+    private $data;
+    /** @var  SiteSearchParamsDto */
+    private $searched;
 
     /**
      * @return int
      */
-    public function getTotalResult()
+    public function getTotalResultCount()
     {
-        return $this->totalResult;
+        return $this->totalResultCount;
     }
 
     /**
-     * @param int $totalResult
+     * @param int $totalResultCount
      * @return $this
      */
-    public function setTotalResult($totalResult)
+    public function setTotalResultCount($totalResultCount)
     {
-        $this->totalResult = $totalResult;
+        $this->totalResultCount = $totalResultCount;
         return $this;
     }
 
     /**
-     * @return SiteSearchDto[]
+     * @return array
      */
-    public function getSites()
+    public function getData()
     {
-        return $this->sites;
+        return $this->data;
     }
 
     /**
-     * @param SiteSearchDto[] $sites
+     * @param array $data
      * @return $this
      */
-    public function setSites($sites)
+    public function setData($data)
     {
-        $this->sites = $sites;
+        $this->data = $data;
         return $this;
     }
+
+    public function getSearched()
+    {
+        return $this->searched;
+    }
+
+    /**
+     * @param SiteSearchParamsDto $searched
+     * @return $this
+     */
+    public function setSearched($searched)
+    {
+        $this->searched = $searched;
+        return $this;
+    }
+
 }
