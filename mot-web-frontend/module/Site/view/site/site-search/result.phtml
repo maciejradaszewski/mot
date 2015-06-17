@@ -1,63 +1,33 @@
 <?php
 
-use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use Site\ViewModel\SiteSearchViewModel;
 
 /**
  * @var SiteSearchViewModel $viewModel
  */
 
-$sites = $viewModel->getSites();
-
 ?>
 
-<div class="row module-user-management">
-    <div class="col-sm-8 module-user-management">
-        <p>
-            <strong><?php echo $this->escapehtml($viewModel->getTotalResults()); ?></strong>
-            result(s) found for <strong><?php echo $this->escapeHtml($viewModel->displaySearchCriteria()); ?></strong>
-        </p>
+<?php if ($viewModel->getTable()->getRowsTotalCount() !== 0): ?>
 
-        <table class="table">
-            <thead>
-            <tr>
-                <th class="">Site number</th>
-                <th class="">Trading name</th>
-                <th class="">Town</th>
-                <th class="">Postcode</th>
-                <th class="">Class</th>
-                <th class="">Type</th>
-            </tr>
-            </thead>
+    <?php echo $this->partial('report/top-line', [
+        'text'          => 'Showing <strong>%s</strong> sites found <strong>%s</strong>',
+        'itemsNumber'   => $viewModel->getTable()->getRowsTotalCount(),
+        'label'         => ''
+    ]); ?>
 
-            <tbody>
-            <?php foreach ($sites as $site): ?>
-                <tr>
-                    <td>
-                        <a href="<?php echo $this->escapeHtmlAttr(VehicleTestingStationUrlBuilderWeb::byId($site->getId())); ?>">
-                            <?php echo $this->escapeHtml($site->getSiteNumber()); ?>
-                        </a>
-                    </td>
-                    <td><?php echo $this->escapeHtml($site->getSiteName()); ?></td>
-                    <td><?php echo $this->escapeHtml($site->getSiteTown()); ?></td>
-                    <td><?php echo $this->escapeHtml($site->getSitePostcode()); ?></td>
-                    <td><?php echo $this->escapeHtml($site->getSiteVehicleClass()); ?></td>
-                    <td><?php echo $this->escapeHtml($site->getSiteType()); ?></td>
-                </tr>
-            <?php endforeach; ?>
+    <?php echo $viewModel->getTable()->renderTable($this); ?>
+    <?php echo $viewModel->getTable()->renderFooter($this); ?>
 
-            </tbody>
-        </table>
-    </div>
-</div>
+<?php endif; ?>
 
-    <nav class="content-navigation">
-<?php echo $this->partial(
-    'partial/gds/form/control-navigation-secondary',
-    [
-        'navigation'    => [
-            'Back to site search' => $viewModel->getSearchPage(),
+<nav class="content-navigation">
+    <?php echo $this->partial(
+        'partial/gds/form/control-navigation-secondary',
+        [
+            'navigation'    => [
+                'Return to search' => $viewModel->getSearchPage(),
+            ]
         ]
-    ]
-); ?>
-    </nav>
+    ); ?>
+</nav>

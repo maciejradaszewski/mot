@@ -4,6 +4,7 @@ namespace Site\Factory\Controller;
 
 use DvsaClient\MapperFactory;
 use Site\Controller\SiteSearchController;
+use Site\Service\SiteSearchService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -21,9 +22,14 @@ class SiteSearchControllerFactory implements FactoryInterface
     {
         $appServiceLocator = $controllerManager->getServiceLocator();
 
-        /** @var MapperFactory */
+        /**
+         * @var MapperFactory
+         */
         $mapper = $appServiceLocator->get(MapperFactory::class);
-
-        return new SiteSearchController($mapper);
+        /**
+         * @var SiteSearchService
+         */
+        $service = $appServiceLocator->get(SiteSearchService::class);
+        return new SiteSearchController($mapper, $service);
     }
 }

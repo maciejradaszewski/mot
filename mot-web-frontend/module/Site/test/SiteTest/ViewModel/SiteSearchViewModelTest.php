@@ -3,10 +3,10 @@
 namespace SiteTest\ViewModel;
 
 use DvsaCommon\Dto\Search\SiteSearchParamsDto;
-use DvsaCommon\Dto\Site\SiteListDto;
-use DvsaCommon\Dto\Site\SiteSearchDto;
 use DvsaCommon\UrlBuilder\SiteUrlBuilderWeb;
+use Report\Table\Table;
 use Site\ViewModel\SiteSearchViewModel;
+use Zend\Mvc\Controller\Plugin\FlashMessenger;
 
 /**
  * Class SiteSearchViewModelTest
@@ -23,27 +23,21 @@ class SiteSearchViewModelTest extends \PHPUnit_Framework_TestCase
     {
         $model = new SiteSearchViewModel();
 
-        $model->populateFromPost(
+        $model->populateFromQuery(
             [
-                SiteSearchViewModel::FIELD_SITE_NUMBER => self::SITE_NUMBER,
-                SiteSearchViewModel::FIELD_SITE_NAME => self::SITE_NAME,
-                SiteSearchViewModel::FIELD_SITE_TOWN => self::SITE_TOWN,
-                SiteSearchViewModel::FIELD_SITE_POSTCODE => self::SITE_POSTCODE,
-                SiteSearchViewModel::FIELD_SITE_VEHICLE_CLASS => []
+                SiteSearchParamsDto::SITE_NUMBER => self::SITE_NUMBER,
+                SiteSearchParamsDto::SITE_NAME => self::SITE_NAME,
+                SiteSearchParamsDto::SITE_TOWN => self::SITE_TOWN,
+                SiteSearchParamsDto::SITE_POSTCODE => self::SITE_POSTCODE,
+                SiteSearchParamsDto::SITE_VEHICLE_CLASS => []
             ]
         );
 
-        $this->assertInstanceOf(
-            SiteSearchViewModel::class,
-            $model->setSiteList(
-                (new SiteListDto())
-                    ->setSites([new SiteSearchDto()])
-                    ->setTotalResult(2)
-            )
-        );
-        $this->assertInstanceOf(SiteSearchDto::class, $model->getSites()[0]);
-        $this->assertEquals(2, $model->getTotalResults());
-
+        $table = (new Table())
+            ->setRowsTotalCount(1);
+        $this->assertInstanceOf(SiteSearchViewModel::class, $model->setTable($table));
+        $this->assertInstanceOf(Table::class, $model->getTable());
+        $this->assertEquals(1, $model->getTotalResults());
         $this->assertEquals(self::SITE_NUMBER, $model->getSiteNumber());
         $this->assertEquals(self::SITE_NAME, $model->getSiteName());
         $this->assertEquals(self::SITE_TOWN, $model->getSiteTown());
@@ -55,7 +49,10 @@ class SiteSearchViewModelTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(SiteSearchParamsDto::class, $model->prepareSearchParams());
 
-        $this->assertEquals(SiteUrlBuilderWeb::search(), $model->getSearchPage());
+        $this->assertEquals(
+            SiteUrlBuilderWeb::search() . '?' . http_build_query($model->toArray()),
+            $model->getSearchPage()
+        );
         $this->assertEquals(SiteUrlBuilderWeb::result(), $model->getResultPage());
 
         $this->assertTrue($model->isValid());
@@ -63,12 +60,42 @@ class SiteSearchViewModelTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidForm()
     {
-        $model = new SiteSearchViewModel();
+        $model = (new SiteSearchViewModel())
+            ->setSiteNumber('S')
+            ->setSiteName('N')
+            ->setSiteTown('T')
+            ->setSitePostcode('P');
 
         $this->assertFalse($model->isValid());
+        $this->assertEquals(SiteSearchViewModel::NOT_ENOUGH_CHAR, $model->getError(SiteSearchParamsDto::SITE_NUMBER));
+        $this->assertEquals(SiteSearchViewModel::NOT_ENOUGH_CHAR, $model->getError(SiteSearchParamsDto::SITE_NAME));
+        $this->assertEquals(SiteSearchViewModel::NOT_ENOUGH_CHAR, $model->getError(SiteSearchParamsDto::SITE_TOWN));
+        $this->assertEquals(SiteSearchViewModel::NOT_ENOUGH_CHAR, $model->getError(SiteSearchParamsDto::SITE_POSTCODE));
+    }
+
+    public function testInvalidFormClass()
+    {
+        $flash = new FlashMessenger();
+        $model = new SiteSearchViewModel();
+
+        $model->setSiteVehicleClass([1]);
+        $this->assertTrue($model->isSiteVehicleClassChecked(1));
+        $this->assertTrue($model->isFormEmpty($flash));
         $this->assertEquals(
-            SiteSearchViewModel::ONE_FIELD_REQUIRED,
-            $model->getError(SiteSearchViewModel::FIELD_SITE_NUMBER)
+            [SiteSearchViewModel::ONLY_VEHICLE_CLASS],
+            $flash->getCurrentErrorMessages()
+        );
+    }
+
+    public function testEmptyForm()
+    {
+        $flash = new FlashMessenger();
+        $model = new SiteSearchViewModel();
+
+        $this->assertTrue($model->isFormEmpty($flash));
+        $this->assertEquals(
+            [SiteSearchViewModel::ONE_FIELD_REQUIRED],
+            $flash->getCurrentErrorMessages()
         );
     }
 
@@ -77,37 +104,37 @@ class SiteSearchViewModelTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'value'     => '1',
-                'inputName' => SiteSearchViewModel::FIELD_SITE_VEHICLE_CLASS . '[]',
+                'inputName' => SiteSearchParamsDto::SITE_VEHICLE_CLASS . '[]',
                 'key'       => 'Class 1',
                 'checked'   => false,
             ],
             [
                 'value'     => '2',
-                'inputName' => SiteSearchViewModel::FIELD_SITE_VEHICLE_CLASS . '[]',
+                'inputName' => SiteSearchParamsDto::SITE_VEHICLE_CLASS . '[]',
                 'key'       => 'Class 2',
                 'checked'   => false,
             ],
             [
                 'value'     => '3',
-                'inputName' => SiteSearchViewModel::FIELD_SITE_VEHICLE_CLASS . '[]',
+                'inputName' => SiteSearchParamsDto::SITE_VEHICLE_CLASS . '[]',
                 'key'       => 'Class 3',
                 'checked'   => false,
             ],
             [
                 'value'     => '4',
-                'inputName' => SiteSearchViewModel::FIELD_SITE_VEHICLE_CLASS . '[]',
+                'inputName' => SiteSearchParamsDto::SITE_VEHICLE_CLASS . '[]',
                 'key'       => 'Class 4',
                 'checked'   => false,
             ],
             [
                 'value'     => '5',
-                'inputName' => SiteSearchViewModel::FIELD_SITE_VEHICLE_CLASS . '[]',
+                'inputName' => SiteSearchParamsDto::SITE_VEHICLE_CLASS . '[]',
                 'key'       => 'Class 5',
                 'checked'   => false,
             ],
             [
                 'value'     => '7',
-                'inputName' => SiteSearchViewModel::FIELD_SITE_VEHICLE_CLASS . '[]',
+                'inputName' => SiteSearchParamsDto::SITE_VEHICLE_CLASS . '[]',
                 'key'       => 'Class 7',
                 'checked'   => false,
             ],

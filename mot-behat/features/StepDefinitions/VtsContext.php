@@ -6,7 +6,6 @@ use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Api\Vts;
 use PHPUnit_Framework_Assert as PHPUnit;
 use DvsaCommon\Dto\Site\SiteListDto;
-use DvsaCommon\Dto\Site\SiteSearchDto;
 use DvsaCommon\Utility\DtoHydrator;
 
 class VtsContext implements Context
@@ -107,11 +106,7 @@ class VtsContext implements Context
      */
     public function iSearchForAnExistingVehicleTestingStationByItsName()
     {
-        $params = [
-            'siteName' => self::SITE_NAME,
-            '_class' => '\\DvsaCommon\\Dto\\Search\\SiteSearchParamsDto'
-        ];
-        $this->iSearchForAnExistingVehicleTestingStationByParam($params);
+        $this->iSearchForAnExistingVehicleTestingStationByParam(['siteName' => self::SITE_NAME]);
     }
 
     /**
@@ -119,11 +114,7 @@ class VtsContext implements Context
      */
     public function iSearchForAnExistingVehicleTestingStationByItsNumber()
     {
-        $params = [
-            'siteNumber' => $this->siteCreate['siteNumber'],
-            '_class' => '\\DvsaCommon\\Dto\\Search\\SiteSearchParamsDto'
-        ];
-        $this->iSearchForAnExistingVehicleTestingStationByParam($params);
+        $this->iSearchForAnExistingVehicleTestingStationByParam(['siteNumber' => $this->siteCreate['siteNumber']]);
     }
 
     /**
@@ -131,11 +122,7 @@ class VtsContext implements Context
      */
     public function iSearchForAnExistingVehicleTestingStationByItsTown()
     {
-        $params = [
-            'siteTown' => self::SITE_TOWN,
-            '_class' => '\\DvsaCommon\\Dto\\Search\\SiteSearchParamsDto'
-        ];
-        $this->iSearchForAnExistingVehicleTestingStationByParam($params);
+        $this->iSearchForAnExistingVehicleTestingStationByParam(['siteTown' => self::SITE_TOWN]);
     }
 
     /**
@@ -143,15 +130,23 @@ class VtsContext implements Context
      */
     public function iSearchForAnExistingVehicleTestingStationByItsPostcode()
     {
-        $params = [
-            'sitePostcode' => self::SITE_POSTCODE,
-            '_class' => '\\DvsaCommon\\Dto\\Search\\SiteSearchParamsDto'
-        ];
-        $this->iSearchForAnExistingVehicleTestingStationByParam($params);
+        $this->iSearchForAnExistingVehicleTestingStationByParam(['sitePostcode' => self::SITE_POSTCODE]);
     }
+
+
 
     private function iSearchForAnExistingVehicleTestingStationByParam($params)
     {
+        $params = array_merge(
+            $params,
+            [
+                "pageNr" => 1,
+                "rowsCount" => 10,
+                "sortBy" => "site.name",
+                "sortDirection" => "ASC",
+                '_class' => '\\DvsaCommon\\Dto\\Search\\SiteSearchParamsDto',
+            ]
+        );
         $response = $this->vehicleTestingStation->searchVts($params, $this->sessionContext->getCurrentAccessToken());
         $this->resultContext = $response->getBody()->toArray()['data'];
     }
@@ -163,14 +158,12 @@ class VtsContext implements Context
     {
         /** @var SiteListDto $result */
         $result = DtoHydrator::jsonToDto($this->resultContext);
-        /** @var SiteSearchDto $site */
-        $site = $result->getSites()[0];
+        $site = $result->getData()[0];
 
         PHPUnit::assertInstanceOf(SiteListDto::class, $result);
-        PHPUnit::assertInstanceOf(\DvsaCommon\Dto\Site\SiteSearchDto::class, $site);
-        PHPUnit::assertEquals(self::SITE_NAME, $site->getSiteName());
-        PHPUnit::assertEquals(self::SITE_TOWN, $site->getSiteTown());
-        PHPUnit::assertEquals(self::SITE_POSTCODE, $site->getSitePostcode());
+        PHPUnit::assertEquals(self::SITE_NAME, $site['name']);
+        PHPUnit::assertEquals(self::SITE_TOWN, $site['town']);
+        PHPUnit::assertEquals(self::SITE_POSTCODE, $site['postcode']);
     }
 
     /**
@@ -203,7 +196,7 @@ class VtsContext implements Context
         $result = DtoHydrator::jsonToDto($this->resultContext);
 
         PHPUnit::assertInstanceOf(SiteListDto::class, $result);
-        PHPUnit::assertEquals(0, $result->getTotalResult());
+        PHPUnit::assertEquals(0, $result->getTotalResultCount());
     }
 
     /**

@@ -5,6 +5,7 @@ use DvsaClient\MapperFactory;
 use DvsaCommonTest\TestUtils\XMock;
 use Site\Controller\SiteSearchController;
 use Site\Factory\Controller\SiteSearchControllerFactory;
+use Site\Service\SiteSearchService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 
@@ -20,6 +21,8 @@ class SiteSearchControllerFactoryTest extends \PHPUnit_Framework_TestCase
 
         $service = XMock::of(MapperFactory::class);
         $serviceManager->setService(MapperFactory::class, $service);
+        $service = XMock::of(SiteSearchService::class);
+        $serviceManager->setService(SiteSearchService::class, $service);
 
         $plugins = $this->getMock('Zend\Mvc\Controller\ControllerManager');
         $plugins->expects($this->any())

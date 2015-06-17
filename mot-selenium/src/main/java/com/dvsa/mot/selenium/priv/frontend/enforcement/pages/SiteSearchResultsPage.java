@@ -13,7 +13,7 @@ public class SiteSearchResultsPage extends BasePage {
     //Page elements
     @FindBy(id = "navigation-link-") private WebElement backToSiteSearch;
 
-    @FindBy(className = "table") private WebElement ResultsTable;
+    @FindBy(id = "dataTable") private WebElement ResultsTable;
 
     public SiteSearchResultsPage(WebDriver driver) {
         super(driver);
@@ -30,8 +30,18 @@ public class SiteSearchResultsPage extends BasePage {
         return new SiteDetailsPage(driver);
     }
 
+    public SiteInformationSearchPage clickReturnToSiteSearchInformation(){
+        backToSiteSearch.click();
+        return new SiteInformationSearchPage(driver);
+    }
+
     public boolean isTablePresent() {
         return ResultsTable.isDisplayed();
+    }
+
+    public SiteSearchResultsPage verifyFullTitle(String searchTerm){
+        checkTitle(PageTitles.SITE_SEARCH_RESULTS.getPageTitle() + "\"" + searchTerm.toUpperCase() + "\"");
+        return new SiteSearchResultsPage(driver);
     }
 
 }

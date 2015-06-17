@@ -10,7 +10,6 @@ use DvsaCommon\Dto\Site\SiteListDto;
 use DvsaCommonApi\Service\AbstractService;
 use DvsaEntities\DqlBuilder\SearchParam\SiteSearchParam;
 use DvsaEntities\Repository\SiteRepository;
-use SiteApi\Service\Mapper\SiteSearchMapper;
 use Zend\Http\Request;
 
 /**
@@ -22,8 +21,6 @@ class SiteSearchService extends AbstractService
     protected $authService;
     /** @var SiteRepository */
     private $siteRepository;
-    /** @var SiteSearchMapper */
-    private $mapper;
 
     public function __construct(
         EntityManager $entityManager,
@@ -33,8 +30,6 @@ class SiteSearchService extends AbstractService
         parent::__construct($entityManager);
         $this->siteRepository = $siteRepository;
         $this->authService = $authService;
-
-        $this->mapper = new SiteSearchMapper();
     }
 
     /**
@@ -58,7 +53,7 @@ class SiteSearchService extends AbstractService
         }
 
         return (new SiteListDto())
-            ->setTotalResult($sitesCount)
-            ->setSites($this->mapper->manyToDto($sites));
+            ->setTotalResultCount($sitesCount)
+            ->setData($sites);
     }
 }

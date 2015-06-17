@@ -47,10 +47,14 @@ public class SearchForSiteInformationTests extends BaseTest {
                         vtsOneName);
 
         SiteSearchResultsPage siteSearchResultsPage = siteDetailsPage.clickSearchAgain()
-                .enterSiteTown(siteTwo.getContactDetails().getContactAddress().getTown())
+                .enterSiteName(siteOne.getName()).
+        enterSiteTown(siteTwo.getContactDetails().getContactAddress().getTown())
                 .submitSearchExpectingResultsPage();
 
-        Assert.assertTrue(siteSearchResultsPage.isTablePresent());
+        Assert.assertTrue(siteSearchResultsPage.verifyFullTitle(siteTwo.getName() + ", " +siteTwo.getContactDetails().getContactAddress().getTown()).isTablePresent());
+
+        siteSearchResultsPage.clickReturnToSiteSearchInformation()
+                .submitSearchExpectingResultsPage();
 
         siteDetailsPage = siteSearchResultsPage.selectSiteLinkFromTable(siteTwo.getNumber());
 
@@ -64,7 +68,7 @@ public class SearchForSiteInformationTests extends BaseTest {
                 .submitSearchExpectingSiteSearchPage();
 
         assertThat("Search criteria message is not displayed",
-                siteInformationSearchPage.getValidationMessage(),
+                siteInformationSearchPage.getValidationMessageFailure(),
                 containsString(Assertion.ASSERTION_SITE_SEARCH.assertion));
 
         siteInformationSearchPage.enterSiteId(RandomStringUtils.randomAlphabetic(6))
