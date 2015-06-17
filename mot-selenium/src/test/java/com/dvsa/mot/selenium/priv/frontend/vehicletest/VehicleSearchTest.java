@@ -5,10 +5,14 @@ import com.dvsa.mot.selenium.datasource.Person;
 import com.dvsa.mot.selenium.datasource.Text;
 import com.dvsa.mot.selenium.datasource.Vehicle;
 import com.dvsa.mot.selenium.framework.BaseTest;
+import com.dvsa.mot.selenium.framework.api.TesterCreationApi;
+import com.dvsa.mot.selenium.priv.frontend.login.pages.LoginPage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.StartTestConfirmation1Page;
 import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.VehicleSearchPage;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -32,9 +36,9 @@ public class VehicleSearchTest extends BaseTest {
                 VehicleSearchPage.navigateHereFromLoginPage(driver, login);
 
         assertThat("Status not correct!", vehicleSearch.getGlobalHeaderInfo().contains(
-                        Person.TESTER_2_PERSON.forename + " " + Person.TESTER_2_PERSON.middleName
-                                + " " + Text.TEXT_TESTER_2_NAME + " "
-                                + Text.TEXT_TESTER_2_GARAGE_ADDRESS), is(false));
+                Person.TESTER_2_PERSON.forename + " " + Person.TESTER_2_PERSON.middleName
+                        + " " + Text.TEXT_TESTER_2_NAME + " "
+                        + Text.TEXT_TESTER_2_GARAGE_ADDRESS), is(false));
 
         //Header info on Start test confirmation page
         StartTestConfirmation1Page confPage =
@@ -191,7 +195,7 @@ public class VehicleSearchTest extends BaseTest {
         assertThat("Create new vehicle record link", vehicleSearch.getCreateNewVehicleInfoText(),
                 is(Assertion.ASSERTION_SEARCH_CREATE_NEW_VEHICLE.assertion));
 
-        //Create new vehicle record link 
+        //Create new vehicle record link
         assertThat(vehicleSearch.isCreateNewVehicleRecordLinkPresent(),is(true));
 
     }
@@ -244,5 +248,12 @@ public class VehicleSearchTest extends BaseTest {
         assertThat("Check that user is on the Start test confirmation page",
                 confirmationPage.isStartMotTestButtonDisplayed(), is(true));
 
+    }
+    @Test(groups = {"slice_A", "VM-4791"})
+    public void testTheCookieElementIsPresentInTheDOMOfAVehicleSearchPage() {
+        TesterCreationApi testerCreationApi = new TesterCreationApi();
+        Person tester = testerCreationApi.createTesterAsPerson(Arrays.asList(1));
+        VehicleSearchPage vehicleSearchPage = LoginPage.loginAs(driver, tester.login).startMotTest();
+        assertThat(vehicleSearchPage.isCookieElementPresentInDOM(),is(true));
     }
 }
