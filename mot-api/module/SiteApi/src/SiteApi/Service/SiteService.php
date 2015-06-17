@@ -142,7 +142,7 @@ class SiteService extends AbstractService
         /** @var BrakeTestType $brakeTestType */
         $brakeTestType = $this->brakeTestTypeRepository->getByCode(BrakeTestTypeCode::ROLLER);
 
-        $nonWorkingDayCountry = $this->getNonWorkingDayCountry(ArrayUtils::tryGet($data, 'nonWorkingDayCountry'));
+        $nonWorkingDayCountry = ArrayUtils::tryGet($data, 'nonWorkingDayCountry');
 
         $site = new Site();
         $site = $this->hydrateSite($site, $data);
@@ -151,7 +151,11 @@ class SiteService extends AbstractService
         $site->setDefaultBrakeTestClass1And2($brakeTestType);
         $site->setDefaultServiceBrakeTestClass3AndAbove($brakeTestType);
         $site->setDefaultParkingBrakeTestClass3AndAbove($brakeTestType);
-        $site->setNonWorkingDayCountry($nonWorkingDayCountry);
+
+        if (empty($nonWorkingDayCountry) === false) {
+            $nonWorkingDayCountry = $this->getNonWorkingDayCountry($nonWorkingDayCountry);
+            $site->setNonWorkingDayCountry($nonWorkingDayCountry);
+        }
 
         $this->setBusinessContact($site, $data);
         $this->setCorrespondenceContact($site, $data);
@@ -308,7 +312,9 @@ class SiteService extends AbstractService
      */
     private function hydrateSite(Site $site, $data)
     {
-        $site->setName($data['name']);
+        if (isset($data['name'])) {
+            $site->setName($data['name']);
+        }
 
         return $site;
     }

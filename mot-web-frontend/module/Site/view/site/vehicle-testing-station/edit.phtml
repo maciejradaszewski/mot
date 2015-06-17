@@ -24,29 +24,21 @@
 <form action="<?php echo $formAction ?>" method="post">
     <?php echo $this->csrfToken() ?>
 
-    <?php if ($form->canEditVtsName()): ?>
-        <fieldset>
-            <?php
-            echo $this->partial(
-                'partial/forms/inputBox.phtml',
-                [
-                    'id'        => 'name',
-                    'name'      => 'name',
-                    'label'     => 'VTS name',
-                    'required'  => true,
-                    'title'     => 'Enter the name of the vehicle testing station',
-                    'maxLength' => 255,
-                    'value'     => $form->getName(),
-                ]
-            );
-            ?>
-        </fieldset>
-    <?php else: ?>
-        <dl class="vertical col-sm-12">
-            <dt><?php echo $this->translate('VTS Name'); ?></dt>
-            <dd><?php echo $this->escapeHtml($form->getName()); ?></dd>
-        </dl>
-    <?php endif ?>
+    <fieldset>
+        <?php
+        echo $this->partial(
+            'partial/forms/inputBox.phtml',
+            [
+                'id'        => 'name',
+                'name'      => 'name',
+                'label'     => 'VTS name',
+                'title'     => 'Enter the name of the vehicle testing station',
+                'maxLength' => 255,
+                'value'     => $form->getName(),
+            ]
+        );
+        ?>
+    </fieldset>
     <fieldset>
         <legend>Business contact details</legend>
         <?php if ($form->canEditBusinessContact()): ?>
