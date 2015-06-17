@@ -1,3 +1,7 @@
+--
+-- ALREADY IN PRODUCTION
+--
+
 ALTER TABLE `person`
   ADD COLUMN `is_password_change_required` TINYINT UNSIGNED DEFAULT '0' AFTER `is_account_claim_required`;
 

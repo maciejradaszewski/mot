@@ -2,6 +2,10 @@
 -- repopulating a list of transition statuses.
 -- list defined by Helen Jacquest, James Body and Paul Bryant
 
+--
+-- ALREADY IN PRODUCTION
+--
+
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
