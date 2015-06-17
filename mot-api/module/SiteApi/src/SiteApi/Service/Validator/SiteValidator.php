@@ -12,10 +12,7 @@ use DvsaEntities\Entity\Vehicle;
  */
 class SiteValidator extends AbstractValidator implements ValidatorInterface
 {
-    private $requiredFields
-        = [
-            'name'
-        ];
+    private $requiredFields = [];
 
     /** todo wk: this should be extracted to site facilities validator */
     public function validateFacilities($data)

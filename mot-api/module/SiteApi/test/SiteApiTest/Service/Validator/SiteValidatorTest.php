@@ -26,15 +26,6 @@ class SiteValidatorTest extends AbstractServiceTestCase
         $this->siteValidator->validate($data);
     }
 
-    /**
-     * @expectedException \DvsaCommonApi\Service\Exception\RequiredFieldException
-     */
-    public function testValidateSiteThrowsRequiredFieldException()
-    {
-        $data = ['name' => ''];
-        $this->siteValidator->validate($data);
-    }
-
     public function testValidateFacilitiesWithValidData()
     {
         $data = $this->getValidTestData();

@@ -75,9 +75,7 @@ class VehicleTestingStationForm
 
     public function populateFromInput(array $input)
     {
-        if ($this->canEditVtsName()) {
-            $this->name = $input['name'];
-        }
+        $this->name = $input['name'];
 
         if ($this->canEditBusinessContact()) {
             $this->addressLine1 = $input['addressLine1'];
@@ -120,9 +118,8 @@ class VehicleTestingStationForm
     public function toApiData()
     {
         $data = [];
-        if ($this->canEditVtsName()) {
-            $data['name'] = $this->name;
-        }
+
+        $data['name'] = $this->name;
 
         if ($this->canEditBusinessContact()) {
             $businessContactData = $this->getBusinessContactData();

@@ -11,6 +11,7 @@ use DvsaCommon\Utility\Hydrator;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\AddressService;
 use DvsaCommonApi\Service\ContactDetailsService;
+use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApi\Service\Exception\BadRequestExceptionWithMultipleErrors;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\Validator\AddressValidator;
@@ -326,7 +327,7 @@ class SiteServiceTest extends AbstractServiceTestCase
                 ],
             ],
 
-            //  --  create  --
+            //  --  update Failed --
             [
                 'method'      => 'update',
                 'params' => [
@@ -339,6 +340,51 @@ class SiteServiceTest extends AbstractServiceTestCase
                     'exception' => [
                         'class'   => UnauthorisedException::class,
                         'message' => 'Update vts assertion failed',
+                    ],
+                ],
+            ],
+
+            //  --  update   --
+            [
+                'method'      => 'update',
+                'params' => [
+                    'siteId' => self::SITE_ID,
+                    'data'   => [],
+                ],
+                'repo'        => null,
+                'permissions' => [
+                    PermissionAtSite::VTS_UPDATE_NAME,
+                    PermissionAtSite::VTS_UPDATE_CORRESPONDENCE_DETAILS,
+                    PermissionAtSite::VTS_UPDATE_BUSINESS_DETAILS,
+                ],
+                'expect'      => [
+                    'exception' => [
+                        'class'   => BadRequestException::class,
+                        'message' => 'Validation errors encountered',
+                    ],
+                ],
+            ],
+
+            //  --  update   --
+            [
+                'method'      => 'update',
+                'params' => [
+                    self::SITE_ID,
+                    $this->getSitePostData()
+                ],
+                'repo'        => [
+                    'method' => 'get',
+                    'result' => $this->getSiteEntity(),
+                    'params' => [self::SITE_ID],
+                ],
+                'permissions' => [
+                    PermissionAtSite::VTS_UPDATE_NAME,
+                    PermissionAtSite::VTS_UPDATE_CORRESPONDENCE_DETAILS,
+                    PermissionAtSite::VTS_UPDATE_BUSINESS_DETAILS,
+                ],
+                'expect'      => [
+                    'result' => [
+                        'id' => self::SITE_ID
                     ],
                 ],
             ],
