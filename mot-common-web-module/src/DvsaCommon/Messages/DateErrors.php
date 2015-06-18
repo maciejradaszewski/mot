@@ -7,8 +7,9 @@ namespace DvsaCommon\Messages;
  */
 class DateErrors
 {
-    const ERR_DATE_RANGE = 'A date range of more than 31 days has been entered. Please reduce the range';
-    const ERR_DATE_MISSING = 'Enter a date in the format dd mm yyyy';
-    const ERR_DATE_INVALID = 'Given date does not exist';
-    const ERR_DATE_AFTER = 'Date From can\'t be after Date To';
+    const RANGE_31D = 'A date range of more than 31 days has been entered. Please reduce the range';
+    const INVALID_FORMAT = 'Enter a date in the format dd mm yyyy';
+    const NOT_EXIST = 'Given date does not exist';
+    const AFTER_TO = 'Date From can\'t be after Date To';
+    const IN_FUTURE = "Date cannot be in the future.";
 }

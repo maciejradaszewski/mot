@@ -122,38 +122,38 @@ class MotTestLogFormViewModel extends AbstractFormModel
 
     public function isValid()
     {
+        $this->validateDate($this->getDateFrom(), MotTestLogFormViewModel::FLD_DATE_FROM);
+        $this->validateDate($this->getDateTo(), MotTestLogFormViewModel::FLD_DATE_TO);
+
         $dateFrom = $this->getDateFrom()->getDate();
         $dateTo = $this->getDateTo()->getDate();
 
-        $this->validateDate($dateFrom, MotTestLogFormViewModel::FLD_DATE_FROM);
-        $this->validateDate($dateTo, MotTestLogFormViewModel::FLD_DATE_TO);
-
-        if ($dateFrom && $dateTo && $dateFrom > $dateTo) {
-            $this->addError(MotTestLogFormViewModel::FLD_DATE_FROM, DateErrors::ERR_DATE_AFTER);
-        }
-
         if ($dateFrom && $dateTo) {
-            $this->checkCustomDateRangeNotMoreThan31Days($dateFrom, $dateTo);
+            if ($dateFrom > $dateTo) {
+                $this->addError(MotTestLogFormViewModel::FLD_DATE_FROM, DateErrors::AFTER_TO);
+            }
+
+            if ($dateFrom->diff($dateTo)->days > self::VALIDATION_MAX_DAYS) {
+                $this->addError(MotTestLogFormViewModel::FLD_DATE_FROM, DateErrors::RANGE_31D);
+            }
         }
 
         return !$this->hasErrors();
     }
 
-    private function validateDate($date, $field)
+    private function validateDate(DateTimeViewModel $model, $field)
     {
-        if ($date === null) {
-            $this->addError($field, DateErrors::ERR_DATE_MISSING);
-        } elseif ($date < (new \DateTime)->setDate(1900, 1, 1)) {
-            $this->addError($field, DateErrors::ERR_DATE_INVALID);
-        } elseif (DateUtils::isDateInFuture($date)) {
-            $this->addError($field, DateErrors::ERR_DATE_INVALID);
-        }
-    }
+        $date = $model->getDate();
 
-    private function checkCustomDateRangeNotMoreThan31Days(\DateTime $dateFrom, \DateTime $dateTo)
-    {
-        if ($dateFrom->diff($dateTo)->days > self::VALIDATION_MAX_DAYS ) {
-            $this->addError(MotTestLogFormViewModel::FLD_DATE_FROM, DateErrors::ERR_DATE_RANGE);
+        if (trim($model->getYear()) === '' || trim($model->getMonth())  === '' || trim($model->getDay()) === '') {
+            $this->addError($field, DateErrors::INVALID_FORMAT);
+        } elseif (
+            $date === null
+            || $date < new \DateTime('1900-01-01')
+        ) {
+            $this->addError($field, DateErrors::NOT_EXIST);
+        } elseif (DateUtils::isDateInFuture($date)) {
+            $this->addError($field, DateErrors::IN_FUTURE);
         }
     }
 }

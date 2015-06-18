@@ -166,8 +166,8 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                 'expect'   => [
                     'isValid' => false,
                     'errors'  => [
-                        MotTestLogFormViewModel::FLD_DATE_FROM => DateErrors::ERR_DATE_MISSING,
-                        MotTestLogFormViewModel::FLD_DATE_TO   => DateErrors::ERR_DATE_INVALID,
+                        MotTestLogFormViewModel::FLD_DATE_FROM => DateErrors::NOT_EXIST,
+                        MotTestLogFormViewModel::FLD_DATE_TO   => DateErrors::IN_FUTURE,
                     ],
                 ],
             ],
@@ -178,8 +178,8 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                 'expect'   => [
                     'isValid' => false,
                     'errors'  => [
-                        MotTestLogFormViewModel::FLD_DATE_FROM => DateErrors::ERR_DATE_INVALID,
-                        MotTestLogFormViewModel::FLD_DATE_TO   => DateErrors::ERR_DATE_MISSING,
+                        MotTestLogFormViewModel::FLD_DATE_FROM => DateErrors::IN_FUTURE,
+                        MotTestLogFormViewModel::FLD_DATE_TO   => DateErrors::NOT_EXIST,
                     ],
                 ],
             ],
@@ -190,7 +190,7 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                 'expect'   => [
                     'isValid' => false,
                     'errors'  => [
-                        MotTestLogFormViewModel::FLD_DATE_FROM => DateErrors::ERR_DATE_AFTER,
+                        MotTestLogFormViewModel::FLD_DATE_FROM => DateErrors::AFTER_TO,
                     ],
                 ],
             ],
@@ -201,7 +201,7 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                 'expect'   => [
                     'isValid' => false,
                     'errors'  => [
-                        MotTestLogFormViewModel::FLD_DATE_FROM => DateErrors::ERR_DATE_RANGE,
+                        MotTestLogFormViewModel::FLD_DATE_FROM => DateErrors::RANGE_31D,
                     ]
                 ],
             ],
@@ -212,7 +212,19 @@ class MotTestLogFormViewModelTest extends \PHPUnit_Framework_TestCase
                 'expect'   => [
                     'isValid' => false,
                     'errors'  => [
-                        MotTestLogFormViewModel::FLD_DATE_FROM => DateErrors::ERR_DATE_INVALID,
+                        MotTestLogFormViewModel::FLD_DATE_FROM => DateErrors::NOT_EXIST,
+                    ]
+                ],
+            ],
+            //  date before 1900
+            [
+                'dateFrom' => new DateTimeViewModel('', 7, 4), // interesting date ...
+                'dateTo'   => new DateTimeViewModel(2014, '', 7),
+                'expect'   => [
+                    'isValid' => false,
+                    'errors'  => [
+                        MotTestLogFormViewModel::FLD_DATE_FROM => DateErrors::INVALID_FORMAT,
+                        MotTestLogFormViewModel::FLD_DATE_TO   => DateErrors::INVALID_FORMAT,
                     ]
                 ],
             ],
