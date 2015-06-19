@@ -312,6 +312,10 @@ class VehicleSearchService
             $makeName        = $this->vehicleCatalog->getMakeNameByDvlaCode($v->getMakeCode());
             $modelName       = $this->vehicleCatalog->getModelNameByDvlaCode($v->getMakeCode(), $v->getModelCode());
             $modelDetailName = '';
+
+            if (!$makeName && !$modelName && $v->getMakeInFull()) {
+                $makeName = $v->getMakeInFull();
+            }
         }
 
         $result = [
