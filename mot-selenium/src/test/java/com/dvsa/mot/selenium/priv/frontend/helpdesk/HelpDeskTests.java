@@ -195,7 +195,8 @@ public class HelpDeskTests extends BaseTest {
         OpenAMClaimAccountSignInPage openAMClaimAccountSignInPage =
                 new LoginPage(driver).navigateToClaimAccountPage(driver, user);
         openAMClaimAccountSignInPage.submitEmailSuccessfully(
-                Person.getUnique(Person.PERSON_1, "loginIntoOpenAMClaimAccount")).enterNewPassword(Text.TEXT_RESET_PASSWORD)
+                Person.getUnique(Person.PERSON_1, "loginIntoOpenAMClaimAccount"))
+                .enterNewPassword(Text.TEXT_RESET_PASSWORD)
                 .enterNewConfirmPassword(Text.TEXT_RESET_PASSWORD).clickOnSubmitButton()
                 .setSecurityQuestionAndAnswersSuccessfully().clickOnSubmitButton()
                 .clickSaveAndContinue().clickLogout();
@@ -214,7 +215,8 @@ public class HelpDeskTests extends BaseTest {
         OpenAMClaimAccountSignInPage openAMClaimAccountSignInPage =
                 new LoginPage(driver).navigateToClaimAccountPage(driver, user);
         openAMClaimAccountSignInPage.submitEmailSuccessfully(
-                Person.getUnique(Person.PERSON_1, "loginIntoOpenAMClaimAccount")).enterNewPassword(Text.TEXT_RESET_PASSWORD)
+                Person.getUnique(Person.PERSON_1, "loginIntoOpenAMClaimAccount"))
+                .enterNewPassword(Text.TEXT_RESET_PASSWORD)
                 .enterNewConfirmPassword(Text.TEXT_RESET_PASSWORD).clickOnSubmitButton()
                 .setSecurityQuestionAndAnswersSuccessfully().clickOnSubmitButton()
                 .clickSaveAndContinue().clickLogout();
@@ -302,12 +304,11 @@ public class HelpDeskTests extends BaseTest {
 
     @Test(groups = {"VM-8049", "slice_A"}, dataProvider = "dvsaUserCanSearchForAUser")
     public void testDvsaUserCanViewAeAssociationSuccessfully(Login login) {
-        UserDashboardPage userDashboardPage =
-                UserDashboardPage.navigateHereFromLoginPage(driver, login);
-        userDashboardPage.clickUserSearch().enterUsername("ae").search().clickUserName(0)
-                .getAuthorisedExaminerPage();
-        AuthorisedExaminerFullDetailsPage
-                authorisedExaminerFullDetailsPage = new AuthorisedExaminerFullDetailsPage(driver);
+
+        AuthorisedExaminerFullDetailsPage authorisedExaminerFullDetailsPage =
+                UserDashboardPage.navigateHereFromLoginPage(driver, login).clickUserSearch()
+                        .enterUsername("aedm").search().clickUserName(0)
+                        .getAuthorisedExaminerPage();
 
         assertThat("Full Details of Authorised Examiner page is displayed",
                 authorisedExaminerFullDetailsPage.checkSearchAgainLinkExists(), is(true));

@@ -2,7 +2,6 @@ package com.dvsa.mot.selenium.priv.frontend.enforcement.pages;
 
 import com.dvsa.mot.selenium.framework.BasePage;
 import com.dvsa.mot.selenium.framework.util.ElementDisplayUtils;
-import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -101,13 +100,4 @@ public class AuthorisedExaminerFullDetailsPage extends BasePage {
         return new SearchForAePage(driver);
     }
 
-    public UserDashboardPage returnHomeButton() {
-        returnHomeButton.click();
-        return new UserDashboardPage(driver);
-    }
-
-    public EventHistoryPage clickAeEventsHistoryLink() {
-        aeEventsHistoryLink.click();
-        return new EventHistoryPage(driver);
-    }
 }

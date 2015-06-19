@@ -29,6 +29,7 @@ use DvsaEntities\Repository\ConfigurationRepository;
 use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\MotTestTypeRepository;
 use DvsaMotApi\Service\CertificateCreationService;
+use DvsaMotApi\Service\CreateMotTestService;
 use DvsaMotApi\Service\Mapper\MotTestMapper;
 use DvsaMotApi\Service\MotTestService;
 use DvsaMotApi\Service\OtpService;
@@ -80,6 +81,8 @@ abstract class AbstractMotTestServiceTest extends AbstractServiceTestCase
     protected $mockMotTestTypeRepository;
     /** @var  TestDateTimeHolder */
     protected $dateTimeHolder;
+    /** @var CreateMotTestService  */
+    protected $mockCreateMotTestService;
 
     public function setUp()
     {
@@ -96,7 +99,8 @@ abstract class AbstractMotTestServiceTest extends AbstractServiceTestCase
             $this->mockOtpService,
             $this->mockOrganisationService,
             $this->mockVehicleService,
-            $this->mockMotTestTypeRepository
+            $this->mockMotTestTypeRepository,
+            $this->mockCreateMotTestService
         );
 
         parent::setUp();
@@ -177,16 +181,13 @@ abstract class AbstractMotTestServiceTest extends AbstractServiceTestCase
 
         $motIdentity = new Identity(new Person());
         $this->mockEntityManager = $this->getMockEntityManager();
-        $this->mockEntityManager->expects($this->at(0))
-            ->method('getRepository')
-            ->with(MotTest::class)
-            ->will($this->returnValue($this->mockMotTestRepository));
 
         $this->mockMotTestValidator = $this->getMockTestValidator();
         $this->mockAuthService = $this->getMockAuthorizationService($isAuthorised);
         $this->mockMotTestMapper = $this->getMockMotTestMapper();
 
         $this->mockReadMotTestAssertion = XMock::of(ReadMotTestAssertion::Class);
+        $this->mockCreateMotTestService = XMock::of(CreateMotTestService::class);
 
         return [
             'mockMotTestRepository'        => $this->mockMotTestRepository,
@@ -205,6 +206,7 @@ abstract class AbstractMotTestServiceTest extends AbstractServiceTestCase
             'mockIdentity'                 => $motIdentity,
             'mockMotTestTypeRepository'    => $this->mockMotTestTypeRepository,
             'mockReadMotTestAssertion'     => $this->mockReadMotTestAssertion,
+            'mockCreateMotTestService'     => $this->mockCreateMotTestService
         ];
     }
 
@@ -219,14 +221,11 @@ abstract class AbstractMotTestServiceTest extends AbstractServiceTestCase
             $this->mockEntityManager,
             $this->mockMotTestValidator,
             $this->mockAuthService,
-            $this->mockTesterService,
-            $this->mockRetestEligibilityValidator,
             $this->mockConfigurationRepository,
             $this->mockMotTestMapper,
-            $this->mockOtpService,
-            $this->mockOrganisationService,
-            $this->mockVehicleService,
-            $this->mockReadMotTestAssertion
+            $this->mockReadMotTestAssertion,
+            $this->mockCreateMotTestService,
+            $this->mockMotTestRepository
         );
 
         $this->mockClassField($motTestService, 'dateTimeHolder', $this->dateTimeHolder);

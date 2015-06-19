@@ -29,6 +29,7 @@ class BrakeTestResultValidator extends AbstractValidator
     const MESSAGE_ONE_CONTROL_REAR = 'At least one of the controls has to have a value on the rear';
     const MESSAGE_ONE_CONTROL_FRONT = 'At least one of the controls has to have a value on the front';
     const MESSAGE_EFFICIENCY_REQUIRED_POSITIVE_NUMBER = 'Efficiency must be supplied for this type of test';
+    const MESSAGE_EFFICIENCY_OUTSIDE_OF_RANGE = 'Efficiency must be in a range of 1 - 100%';
     const MESSAGE_SERVICE_BRAKE_DATA_NOT_ALLOWED = 'Service brake data does not apply for this type of test';
     const MESSAGE_EFFICIENCY_NOT_ALLOWED = 'Efficiency does not apply for this type of test';
     const MESSAGE_EFFICIENCY_PASS_NOT_ALLOWED = 'Efficiency pass does not apply for this type of test';
@@ -279,13 +280,20 @@ class BrakeTestResultValidator extends AbstractValidator
 
     private function validateBrakeEfficiency(ServiceException $validationException, $brakeTestType, $efficiency)
     {
-        $isEfficiencyValidNumber = $this->isPositiveNumberOrZero($efficiency);
+        $isEfficiencyValidNumber = $this->isPositiveNumber($efficiency);
+        $isEfficiencyValidInRange = $this->isValueBetween($efficiency, 1, 100);
         switch ($brakeTestType) {
             case BrakeTestTypeCode::DECELEROMETER:
                 if (!$isEfficiencyValidNumber) {
                     $this->addMessageToException(
                         $validationException,
                         self::MESSAGE_EFFICIENCY_REQUIRED_POSITIVE_NUMBER
+                    );
+                }
+                if (!$isEfficiencyValidInRange) {
+                    $this->addMessageToException(
+                        $validationException,
+                        self::MESSAGE_EFFICIENCY_OUTSIDE_OF_RANGE
                     );
                 }
                 break;

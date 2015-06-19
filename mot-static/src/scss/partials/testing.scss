@@ -590,3 +590,11 @@ span.dividerThick {
 .nowrap {
   white-space: nowrap;
 }
+
+h3[data-toggle="collapse"] {
+  cursor: pointer;
+}
+
+.h3[data-toggle="collapse"] {
+  cursor: pointer;
+}

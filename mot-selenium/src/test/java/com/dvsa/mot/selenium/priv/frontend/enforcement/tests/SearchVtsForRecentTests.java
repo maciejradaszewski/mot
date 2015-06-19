@@ -282,15 +282,15 @@ public class SearchVtsForRecentTests extends BaseTest {
 
         createMotTest(login, Site.POPULAR_GARAGES, createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010),
                 50000, MotTestApi.TestOutcome.PASSED);
-        EnforcementHomePage homePage =
-                EnforcementHomePage.navigateHereFromLoginPage(driver, Login.LOGIN_ENFTESTER);
-        homePage.goToVtsNumberEntryPage();
-        VtsNumberEntryPage lpVtsSearch = new VtsNumberEntryPage(driver);
-        lpVtsSearch.enterVTSNumber(Site.POPULAR_GARAGES.getNumber());
-        lpVtsSearch.clickSearchButtonExpectingError();
+
+        EnforcementHomePage.navigateHereFromLoginPage(driver, Login.LOGIN_ENFTESTER)
+                .goToVtsNumberEntryPage().enterVTSNumber(Site.POPULAR_GARAGES.getNumber())
+                .clickSearchButtonExpectingError();
+
         VtsRecentResultsPage resultsScreen = new VtsRecentResultsPage(driver);
         resultsScreen.selectSummaryLinkFromTable();
         EnforcementMotTestSummaryPage enfSummaryPage = new EnforcementMotTestSummaryPage(driver);
+
         assertThat("The dropdown selection is correct", enfSummaryPage.checkTextOfTestType(),
                 is(Text.TEXT_ENF_TARGETED_RE_INSPECTION.text));
         enfSummaryPage.clickLogout();
