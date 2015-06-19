@@ -1,7 +1,7 @@
 {
     "name": "dvsa/mot-web-frontend",
     "require": {
-        "zendframework/zendframework": "2.2.7",
+        "zendframework/zendframework": "~2.3.9",
         "doctrine/common": "v2.4.1",
         "dvsa/transition-group": "dev-master",
         "dvsa/feature-toggle": "1.0",
@@ -9,12 +9,12 @@
         "dvsa/dvsa-logger": "v1.0.0",
         "dvsa/scripts": "dev-master",
         "dvsa/dvsa-logger": "v1.0.2",
-        "dvsa/dvsa-openam-client" : "v1.5.0",
+        "dvsa/dvsa-openam-client" : "~1.6",
         "maglnet/magl-markdown": "1.3.0",
         "soflomo/purifier": "0.1.1",
         "slot-purchase/web-frontend": "2.3.*",
         "dvsa/web-frontend-assets": "0.2.10",
-        "dvsa/dvsa-application-logger": "v1.0.0"
+        "dvsa/dvsa-application-logger": "~1.1"
     },
     "autoload" : {
         "psr-0" : {

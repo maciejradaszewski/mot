@@ -152,7 +152,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
         );
 
         $viewHelperManager = Bootstrap::getServiceManager()->get('ViewHelperManager');
-        $viewHelperManager->setInvokableClass('url', XMock::of(Url::class));
+        $viewHelperManager->setService('url', XMock::of(Url::class));
 
         $renderer->setHelperPluginManager($viewHelperManager);
 
