@@ -2,17 +2,12 @@
 namespace DvsaMotApi\Controller;
 
 use DvsaCommon\Dto\Common\MotTestDto;
-use DvsaCommon\Enum\MotTestTypeCode;
-use DvsaCommon\Utility\ArrayUtils;
-use DvsaCommon\Utility\DtoHydrator;
-use DvsaCommon\Constants\Network;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApi\Model\ApiResponse;
 use DvsaCommonApi\Transaction\TransactionAwareInterface;
 use DvsaCommonApi\Transaction\TransactionAwareTrait;
 use DvsaDocument\Service\Document\DocumentService;
 use DvsaEntities\Entity\MotTest;
-use DvsaMotApi\Controller\Validator\CreateMotTestRequestValidator;
 use DvsaMotApi\Service\MotTestService;
 use SiteApi\Service\SiteService;
 use Zend\View\Model\JsonModel;
@@ -26,29 +21,10 @@ class MotTestController extends AbstractDvsaRestfulController implements Transac
 {
     use TransactionAwareTrait;
 
-    const FIELD_VEHICLE_ID = 'vehicleId';
-    const FIELD_DVLA_VEHICLE_ID = 'dvlaVehicleId';
-    const FIELD_VTS_ID = 'vehicleTestingStationId';
-    const FIELD_HAS_REGISTRATION = 'hasRegistration';
-    const FIELD_MOT_TEST_TYPE = 'motTestType';
-    const FIELD_MOT_TEST_NUMBER_ORIGINAL = 'motTestNumberOriginal';
-    const FIELD_ODOMETER_READING = 'odometerReading';
-    const FIELD_MOT_TEST_COMPLAINT_REF = 'complaintRef';
-    const FIELD_COLOURS = 'colours';
-    const FIELD_COLOURS_PRIMARY = 'primaryColour';
-    const FIELD_COLOURS_SECONDARY = 'secondaryColour';
-    const FIELD_FUEL_TYPE_ID = 'fuelTypeId';
-    const FIELD_VEHICLE_CLASS_CODE = "vehicleClassCode";
-    const FIELD_REASON_DIFFERENT_TESTER_CODE = 'differentTesterReasonCode';
     const FIELD_SITEID = 'siteid';
     const FIELD_LOCATION = 'location';
-    const FIELD_FLAG_PRIVATE = 'flagPrivate';
     const FIELD_ONE_PERSON_TEST = 'onePersonTest';
     const FIELD_ONE_PERSON_RE_INSPECTION = 'onePersonReInspection';
-    const FIELD_ONE_TIME_PASSWORD = 'oneTimePassword';
-    const FIELD_CONTINGENCY = 'contingencyId';
-    const FIELD_CONTINGENCY_DTO = 'contingencyDto';
-    const FIELD_CLIENT_IP = 'clientIp';
 
     const SITE_NUMBER_QUERY_PARAMETER = 'siteNumber';
     const VEHICLE_ID_QUERY_PARAMETER = 'vehicleId';
@@ -119,53 +95,8 @@ class MotTestController extends AbstractDvsaRestfulController implements Transac
 
     public function create($data)
     {
-        CreateMotTestRequestValidator::validate($data);
-
-        $person = $this->getIdentity()->getPerson();
-
-        $dvlaVehicleId = array_key_exists(self::FIELD_DVLA_VEHICLE_ID, $data)
-            ? (string)$data[self::FIELD_DVLA_VEHICLE_ID] : null;
-        $vehicleId = array_key_exists(self::FIELD_VEHICLE_ID, $data)
-            ? (string)$data[self::FIELD_VEHICLE_ID] : null;
-
-        // Unless a new siteid has been specified (for a reinspection) we want to maintain the old value...
-        $vehicleTestingStationId = (int)$data[self::FIELD_VTS_ID];
-        $primaryColour = $data[self::FIELD_COLOURS_PRIMARY];
-        $secondaryColour = ArrayUtils::tryGet($data, self::FIELD_COLOURS_SECONDARY);
-        $fuelTypeCode = $data[self::FIELD_FUEL_TYPE_ID];
-        $vehicleClassCode = ArrayUtils::tryGet($data, self::FIELD_VEHICLE_CLASS_CODE);
-        $hasRegistration = ArrayUtils::tryGet($data, self::FIELD_HAS_REGISTRATION, false);
-        $motTestNumberOriginal = ArrayUtils::tryGet($data, self::FIELD_MOT_TEST_NUMBER_ORIGINAL);
-        $complaintRef = ArrayUtils::tryGet($data, self::FIELD_MOT_TEST_COMPLAINT_REF);
-        $motTestTypeCode = ArrayUtils::tryGet($data, self::FIELD_MOT_TEST_TYPE, MotTestTypeCode::NORMAL_TEST);
-        $flagPrivate = ArrayUtils::tryGet($data, self::FIELD_FLAG_PRIVATE, false);
-        $oneTimePassword = ArrayUtils::tryGet($data, self::FIELD_ONE_TIME_PASSWORD);
-        $contingencyId = ArrayUtils::tryGet($data, self::FIELD_CONTINGENCY);
-        $contingencyDto = ArrayUtils::tryGet($data, self::FIELD_CONTINGENCY_DTO);
-
-        if (!is_null($contingencyDto)) {
-            $contingencyDto = DtoHydrator::jsonToDto($contingencyDto);
-        }
-
         /** @var MotTest $motTest */
-        $motTest = $this->getMotTestService()->createMotTest(
-            $person,
-            $vehicleId,
-            $vehicleTestingStationId,
-            $primaryColour,
-            $secondaryColour,
-            $fuelTypeCode,
-            $vehicleClassCode,
-            $hasRegistration,
-            $dvlaVehicleId,
-            $motTestTypeCode,
-            $motTestNumberOriginal,
-            $complaintRef,
-            $flagPrivate,
-            $oneTimePassword,
-            $contingencyId,
-            $contingencyDto
-        );
+        $motTest = $this->getMotTestService()->createMotTest($data);
 
         return ApiResponse::jsonOk(["motTestNumber" => $motTest->getNumber()]);
     }

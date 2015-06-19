@@ -4,8 +4,8 @@ namespace DvsaMotApiTest\Controller\Validator;
 
 use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommonApi\Service\Exception\BadRequestException;
-use DvsaMotApi\Controller\DemoTestController;
 use DvsaMotApi\Controller\Validator\CreateMotTestRequestValidator;
+use DvsaMotApi\Service\CreateMotTestService;
 
 /**
  * Class CreateMotTestRequestValidatorTest
@@ -93,30 +93,30 @@ class CreateMotTestRequestValidatorTest extends \PHPUnit_Framework_TestCase
         return [
             [ // data OK
                 [
-                    DemoTestController::FIELD_PRIMARY_COLOUR   => 1,
-                    DemoTestController::FIELD_VEHICLE_ID       => 1,
-                    DemoTestController::FIELD_HAS_REGISTRATION => 1
+                    CreateMotTestService::FIELD_COLOURS_PRIMARY => 1,
+                    CreateMotTestService::FIELD_VEHICLE_ID => 1,
+                    CreateMotTestService::FIELD_HAS_REGISTRATION => 1,
                 ],
                 false
             ],
             [ // primary colour missing
                 [
-                    DemoTestController::FIELD_VEHICLE_ID       => 1,
-                    DemoTestController::FIELD_HAS_REGISTRATION => 1
+                    CreateMotTestService::FIELD_VEHICLE_ID       => 1,
+                    CreateMotTestService::FIELD_HAS_REGISTRATION => 1
                 ],
                 true
             ],
             [ // vehicle Id missing
                 [
-                    DemoTestController::FIELD_PRIMARY_COLOUR   => 1,
-                    DemoTestController::FIELD_HAS_REGISTRATION => 1
+                    CreateMotTestService::FIELD_COLOURS_PRIMARY   => 1,
+                    CreateMotTestService::FIELD_HAS_REGISTRATION => 1
                 ],
                 true
             ],
             [ // has registration missing
                 [
-                    DemoTestController::FIELD_PRIMARY_COLOUR => 1,
-                    DemoTestController::FIELD_VEHICLE_ID     => 1,
+                    CreateMotTestService::FIELD_COLOURS_PRIMARY => 1,
+                    CreateMotTestService::FIELD_VEHICLE_ID     => 1,
                 ],
                 true
             ],

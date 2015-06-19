@@ -38,6 +38,7 @@ use Zend\ServiceManager\ServiceManager;
 use DvsaMotApi\Factory\Validator\UsernameValidatorFactory;
 use DvsaMotApi\Service\Validator\ReplacementCertificateDraftChangeValidator;
 use DvsaMotApi\Factory\Service\Validator\ReplacementCertificateDraftChangeValidatorFactory;
+use DvsaMotApi\Service\CreateMotTestService;
 
 /**
  * Zend module containing the main factory for MOT API services
@@ -87,6 +88,7 @@ class Module implements
                 'BrakeTestResultService' => \DvsaMotApi\Factory\Service\BrakeTestResultServiceFactory::class,
                 'MotTestSecurityService' => \DvsaMotApi\Factory\Service\MotTestSecurityServiceFactory::class,
                 'MotTestService' => \DvsaMotApi\Factory\Service\MotTestServiceFactory::class,
+                CreateMotTestService::class => \DvsaMotApi\Factory\Service\CreateMotTestServiceFactory::class,
                 'MotTestShortSummaryService' => \DvsaMotApi\Factory\Service\MotTestShortSummaryServiceFactory::class,
                 'MotTestStatusService' => \DvsaMotApi\Factory\Service\MotTestStatusServiceFactory::class,
                 'MotTestStatusChangeService' => \DvsaMotApi\Factory\Service\MotTestStatusChangeServiceFactory::class,

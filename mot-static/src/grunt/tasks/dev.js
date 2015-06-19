@@ -53,5 +53,15 @@ module.exports = function (grunt, config) {
         grunt.registerTask('env:mot:hotfix', 'Disables the DVSA Logger', [
             'shell:env_dvsa_hotfix'
         ]);
+        grunt.registerTask('switch:branch', 'Runs common tasks after switching branches',
+        [
+            'sshexec:apache_restart', // reset DB requires a clean class cache, hence reset happens twice
+            'shell:composer',
+            'shell:config_reload',
+            'sshexec:reset_database',
+            'sshexec:server_mod_dev',
+            'sshexec:doctrine_default_develop_dist',
+            'sshexec:apache_restart'
+        ]);
     }
 };

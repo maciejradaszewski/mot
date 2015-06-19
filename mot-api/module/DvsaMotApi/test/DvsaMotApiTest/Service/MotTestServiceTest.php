@@ -47,6 +47,7 @@ use DvsaMotApi\Service\MotTestService;
 use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityCheckCode;
 use DvsaMotApiTest\Factory\PersonObjectsFactory;
 use PHPUnit_Framework_MockObject_MockObject;
+use DvsaEntities\Entity\CertificateReplacement;
 
 /**
  * Unit test for MotTestService
@@ -615,10 +616,14 @@ class MotTestServiceTest extends AbstractMotTestServiceTest
         $maxResults = 5;
         $motTestCollection = $this->getMotTestEntityCollection(3);
 
-        $this->mockConstructorRepositoryCall($mocks);
-        $vehicle = $this->mockVehicleLookup($mocks, 'registration', $vrm);
+        $vehicle = (new Vehicle())->setId(1);
+        $repositories = [
+            MotTest::class => $this->mockMotTestRepository,
+            Vehicle::class => $this->mockVehicleLookup($vehicle, 'registration', $vrm)
+        ];
 
-        // Mock the call to the repo - this is the actual search
+        $this->mockEntityManager($repositories);
+
         $this->mockMotTestRepository
             ->expects($this->once())
             ->method('getLatestMotTestsByVehicleId')
@@ -738,32 +743,22 @@ class MotTestServiceTest extends AbstractMotTestServiceTest
     {
         // Get the MotTestRepository in the constructor
         $this->mockEntityManager
-            ->expects($this->at(0))
+            ->expects($this->any())
             ->method('getRepository')
             ->with(MotTest::class)
             ->willReturn($this->mockMotTestRepository);
     }
 
-    private function mockVehicleLookup($mocks, $vehicleKey, $vehicleValue)
+    private function mockVehicleLookup($vehicle, $vehicleKey, $vehicleValue)
     {
         $mockVehicleRepository = $this->getMockRepository();
-        $vehicle = new Vehicle;
-        $vehicle->setId(1);
-
-        // Mock the initial Vehicle look-up
-        $this->mockEntityManager
-            ->expects($this->at(1))
-            ->method('getRepository')
-            ->with(Vehicle::class)
-            ->willReturn($mockVehicleRepository);
-
         $mockVehicleRepository
             ->expects($this->once())
             ->method('findOneBy')
             ->with([$vehicleKey => $vehicleValue])
             ->willReturn($vehicle);
 
-        return $vehicle;
+        return $mockVehicleRepository;
     }
 
     /**
@@ -890,7 +885,7 @@ class MotTestServiceTest extends AbstractMotTestServiceTest
         $mockRepository = $this->getMockRepository();
 
         $this->mockEntityManager
-            ->expects($this->at(0))
+            ->expects($this->any())
             ->method('getRepository')
             ->with(\DvsaEntities\Entity\CertificateReplacement::class)
             ->willReturn($mockRepository);
@@ -901,6 +896,7 @@ class MotTestServiceTest extends AbstractMotTestServiceTest
             ->with(['motTest' => 1])
             ->willReturn('fake result');
 
+        $this->mockEntityManager();
         $this->assertEquals('fake result', $service->getReplacementCertificate(1));
     }
 
@@ -913,9 +909,9 @@ class MotTestServiceTest extends AbstractMotTestServiceTest
         $mockRepository = $this->getMockRepository();
 
         $this->mockEntityManager
-            ->expects($this->at(0))
+            ->expects($this->any())
             ->method('getRepository')
-            ->with(\DvsaEntities\Entity\CertificateReplacement::class)
+            ->with(CertificateReplacement::class)
             ->willReturn($mockRepository);
 
         $mockRepository
@@ -1110,5 +1106,22 @@ class MotTestServiceTest extends AbstractMotTestServiceTest
         $this->mockMethod($status, 'getName', null, MotTestStatusName::ACTIVE);
 
         return $status;
+    }
+
+    private function mockEntityManager(array $repositories = [])
+    {
+        $callback = function ($entityName) use($repositories) {
+            if (isset($repositories[$entityName])) {
+                return $repositories[$entityName];
+            }
+
+            return null;
+        };
+
+        $this
+            ->mockEntityManager
+            ->expects($this->any())
+            ->method("getRepository")
+            ->willReturnCallback($callback);
     }
 }

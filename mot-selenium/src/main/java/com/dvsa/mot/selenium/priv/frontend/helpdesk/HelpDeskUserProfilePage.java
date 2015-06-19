@@ -1,9 +1,9 @@
 package com.dvsa.mot.selenium.priv.frontend.helpdesk;
 
 import com.dvsa.mot.selenium.framework.BasePage;
+import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.AuthorisedExaminerFullDetailsPage;
 import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.EventHistoryPage;
 import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.SiteDetailsPage;
-import com.dvsa.mot.selenium.priv.frontend.organisation.management.authorisedexamineroverview.pages.AuthorisedExaminerOverviewPage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -123,9 +123,9 @@ public class HelpDeskUserProfilePage extends BasePage {
         return new SiteDetailsPage(driver);
     }
 
-    public AuthorisedExaminerOverviewPage getAuthorisedExaminerPage() {
+    public AuthorisedExaminerFullDetailsPage getAuthorisedExaminerPage() {
         roleAssociation.click();
-        return new AuthorisedExaminerOverviewPage(driver);
+        return new AuthorisedExaminerFullDetailsPage(driver);
     }
 
     public EventHistoryPage clickEventHistoryLink() {

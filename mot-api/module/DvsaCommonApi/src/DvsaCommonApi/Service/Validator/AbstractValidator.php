@@ -4,6 +4,7 @@ namespace DvsaCommonApi\Service\Validator;
 
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApi\Service\Exception\RequiredFieldException;
+use Zend\Validator\Between as ValidateBetween;
 
 /**
  * Class AbstractValidator
@@ -141,5 +142,11 @@ abstract class AbstractValidator
     protected function isRequiredValueMissing($fieldName, $data)
     {
         return (!array_key_exists($fieldName, $data) || empty($data[$fieldName]));
+    }
+
+    protected function isValueBetween($value, $min, $max)
+    {
+        $validator = new ValidateBetween(['min' => $min, 'max' => $max]);
+        return $validator->isValid($value);
     }
 }

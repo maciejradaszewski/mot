@@ -89,6 +89,7 @@ class MotTestCreationHelper
      * @param $flagPrivate
      * @param $oneTimePassword
      * @param $contingencyId
+     * @param $clientIp
      * @param \DvsaCommon\Dto\MotTesting\ContingencyMotTestDto $contingencyDto
      *
      * @throws \DvsaCommonApi\Service\Exception\BadRequestException
@@ -115,6 +116,7 @@ class MotTestCreationHelper
         $flagPrivate,
         $oneTimePassword,
         $contingencyId,
+        $clientIp,
         ContingencyMotTestDto $contingencyDto = null
     ) {
         $isVehicleExaminer = $this->authService->personHasRole($tester, Role::VEHICLE_EXAMINER);
@@ -195,7 +197,8 @@ class MotTestCreationHelper
             ->setIsPrivate($flagPrivate)
             ->setMotTestType($motTestType)
             ->setEmptyVinReason($vehicle->getEmptyVinReason())
-            ->setEmptyVrmReason($vehicle->getEmptyVrmReason());
+            ->setEmptyVrmReason($vehicle->getEmptyVrmReason())
+            ->setClientIp($clientIp);
 
         if ($vehicle->getModel()) {
             $motTest->setModel($vehicle->getModel());

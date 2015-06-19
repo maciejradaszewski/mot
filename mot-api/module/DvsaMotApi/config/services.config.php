@@ -20,6 +20,7 @@ use DvsaMotApi\Service\Validator\BrakeTestResultValidator;
 use DvsaMotApi\Service\Validator\MotTestStatusChangeValidator;
 use DvsaMotApi\Service\VehicleHistoryService;
 use DvsaMotApi\Validator\UsernameValidator;
+use DvsaMotApi\Service\CreateMotTestService;
 
 return [
     'invokables' => [
@@ -41,6 +42,7 @@ return [
         'TesterExpiryService'                                => \DvsaMotApi\Factory\Service\TesterExpiryServiceFactory::class,
         'BrakeTestResultService'                             => \DvsaMotApi\Factory\Service\BrakeTestResultServiceFactory::class,
         'MotTestSecurityService'                             => \DvsaMotApi\Factory\Service\MotTestSecurityServiceFactory::class,
+        CreateMotTestService::class                          => \DvsaMotApi\Factory\Service\CreateMotTestServiceFactory::class,
         'MotTestService'                                     => \DvsaMotApi\Factory\Service\MotTestServiceFactory::class,
         'MotTestShortSummaryService'                         => \DvsaMotApi\Factory\Service\MotTestShortSummaryServiceFactory::class,
         'MotTestStatusService'                               => \DvsaMotApi\Factory\Service\MotTestStatusServiceFactory::class,

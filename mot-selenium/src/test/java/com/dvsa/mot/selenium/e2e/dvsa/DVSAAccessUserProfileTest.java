@@ -7,7 +7,6 @@ import com.dvsa.mot.selenium.framework.BaseTest;
 import com.dvsa.mot.selenium.priv.frontend.helpdesk.HelpDeskUserProfilePage;
 import com.dvsa.mot.selenium.priv.frontend.helpdesk.HelpdeskUserResultsPage;
 import com.dvsa.mot.selenium.priv.frontend.helpdesk.HelpdeskUserSearchPage;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -15,21 +14,17 @@ import static org.testng.Assert.assertFalse;
 
 public class DVSAAccessUserProfileTest extends BaseTest {
 
-    @DataProvider(name = "dvsaUser") public Object[][] createDVSAUser() {
-        return new Object[][] {{createVE()}, {Login.LOGIN_AREA_OFFICE1}};
-
-    }
-
 
     @Test(groups = {"slice_A",
-            "VM-7647"}, dataProvider = "dvsaUser", description = "Test that validates the DVSA user roles can access user profiles")
-    public void testProfileDetailsDisplayed(Login dvsaUser) {
+            "VM-7647"}, description = "Test that validates the DVSA user roles can access user profiles")
+    public void testProfileDetailsDisplayed() {
 
         Person user = Person.BOB_THOMAS;
         HelpdeskUserResultsPage helpdeskUserResultsPage =
-                HelpdeskUserSearchPage.navigateHereFromLoginPage(driver, dvsaUser)
+                HelpdeskUserSearchPage.navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1)
                         .enterLastName(user.getSurname()).search();
         HelpDeskUserProfilePage helpDeskUserProfilePage = helpdeskUserResultsPage.clickUserName(0);
+
         assertEquals(helpDeskUserProfilePage.getDateOfBirth(), user.getDateOfBirth(),
                 "Check that the date of birth is displayed");
         assertEquals(helpDeskUserProfilePage.getEmail(), user.getEmail(),

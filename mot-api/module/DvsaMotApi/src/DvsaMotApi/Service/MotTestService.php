@@ -13,7 +13,6 @@ use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Domain\MotTestType;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Dto\Common\MotTestTypeDto;
-use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
 use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Authorisation\Assertion\ReadMotTestAssertion;
@@ -22,7 +21,6 @@ use DvsaCommonApi\Model\SearchParam;
 use DvsaCommonApi\Service\AbstractSearchService;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApi\Service\Exception\ForbiddenException;
-use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\Mapper\OdometerReadingMapper;
 use DvsaCommonApi\Transaction\TransactionAwareInterface;
 use DvsaCommonApi\Transaction\TransactionAwareTrait;
@@ -39,9 +37,6 @@ use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\SiteTypeRepository;
 use DvsaMotApi\Service\Mapper\MotTestMapper;
 use DvsaMotApi\Service\Validator\MotTestValidator;
-use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
-use OrganisationApi\Service\OrganisationService;
-use VehicleApi\Service\VehicleService as VehicleApiVehicleService;
 
 /**
  * Service with logic for MOT test
@@ -64,69 +59,48 @@ class MotTestService extends AbstractSearchService implements TransactionAwareIn
     private $motTestValidator;
     /** @var AuthorisationServiceInterface */
     private $authService;
-    /** @var \DvsaMotApi\Service\TesterService */
-    private $testerService;
-    /** @var RetestEligibilityValidator */
-    private $retestEligibilityValidator;
     /** @var ConfigurationRepository */
     private $configurationRepository;
     /** @var \DvsaCommon\Date\DateTimeHolder */
     private $dateTimeHolder;
     /** @var MotTestMapper */
     private $motTestMapper;
-    /** @var OtpService */
-    private $otpService;
-    /** @var OrganisationService $organisationService */
-    private $organisationService;
-    /** @var VehicleApiVehicleService */
-    private $vehicleService;
     /** @var ReadMotTestAssertion */
     private $readMotTestAssertion;
     /** @var MotTest */
     private $motTest;
-    /** @var CertificateCreationService  */
-    private $certificateCreationService;
+    /** @var CreateMotTestService  */
+    private $createMotTestService;
 
     /**
      * @param EntityManager                 $entityManager
      * @param MotTestValidator              $motTestValidator
      * @param AuthorisationServiceInterface $authService
-     * @param TesterService                 $testerService
-     * @param RetestEligibilityValidator    $retestEligibilityValidator
      * @param ConfigurationRepository       $configurationRepository
      * @param MotTestMapper                 $motTestMapper
-     * @param OtpService                    $otpService
-     * @param OrganisationService           $organisationService
-     * @param VehicleApiVehicleService      $vehicleService
      * @param ReadMotTestAssertion          $readMotTestAssertion
+     * @param CreateMotTestService          $createMotTestService
      */
     public function __construct(
         EntityManager $entityManager,
         MotTestValidator $motTestValidator,
         AuthorisationServiceInterface $authService,
-        TesterService $testerService,
-        RetestEligibilityValidator $retestEligibilityValidator,
         ConfigurationRepository $configurationRepository,
         MotTestMapper $motTestMapper,
-        OtpService $otpService,
-        OrganisationService $organisationService,
-        VehicleApiVehicleService $vehicleService,
-        ReadMotTestAssertion $readMotTestAssertion
+        ReadMotTestAssertion $readMotTestAssertion,
+        CreateMotTestService $createMotTestService,
+        MotTestRepository $motTestRepository
     ) {
         parent::__construct($entityManager);
 
-        $this->motTestRepository          = $this->entityManager->getRepository(MotTest::class);
+        $this->motTestRepository          = $motTestRepository;
         $this->motTestValidator           = $motTestValidator;
         $this->authService                = $authService;
-        $this->testerService              = $testerService;
-        $this->retestEligibilityValidator = $retestEligibilityValidator;
         $this->dateTimeHolder             = new DateTimeHolder();
         $this->configurationRepository    = $configurationRepository;
         $this->motTestMapper              = $motTestMapper;
-        $this->otpService                 = $otpService;
-        $this->organisationService        = $organisationService;
-        $this->vehicleService             = $vehicleService;
         $this->readMotTestAssertion       = $readMotTestAssertion;
+        $this->createMotTestService       = $createMotTestService;
     }
 
     /**
@@ -217,122 +191,12 @@ class MotTestService extends AbstractSearchService implements TransactionAwareIn
     }
 
     /**
-     * @param Person                     $person
-     * @param int|null                   $vehicleId               if not given, $dvlaVehicleId required
-     * @param int                        $vehicleTestingStationId
-     * @param string                     $primaryColourCode
-     * @param string                     $secondaryColourCode
-     * @param string                     $fuelTypeCode
-     * @param int                        $vehicleClassCode
-     * @param bool                       $hasRegistration
-     * @param int|null                   $dvlaVehicleId           if given, vehicle is created from DVLA data
-     * @param string                     $motTestTypeCode
-     * @param string|null                $motTestNumberOriginal
-     * @param int|null                   $complaintRef
-     * @param bool                       $flagPrivate
-     * @param string|null                $oneTimePassword
-     * @param int|null                   $contingencyId
-     * @param ContingencyMotTestDto|null $contingencyDto
-     *
+     * @param array $data
      * @return MotTest
      */
-    public function createMotTest(
-        Person $person,
-        $vehicleId,
-        $vehicleTestingStationId,
-        $primaryColourCode,
-        $secondaryColourCode,
-        $fuelTypeCode,
-        $vehicleClassCode,
-        $hasRegistration,
-        $dvlaVehicleId,
-        $motTestTypeCode,
-        $motTestNumberOriginal = null,
-        $complaintRef = null,
-        $flagPrivate = false,
-        $oneTimePassword = null,
-        $contingencyId = null,
-        ContingencyMotTestDto $contingencyDto = null
-    ) {
-        /** @var \DvsaEntities\Entity\MotTest $motTest */
-        $motTest = $this->inTransaction(
-            function () use (
-                $person,
-                $vehicleId,
-                $vehicleTestingStationId,
-                $primaryColourCode,
-                $secondaryColourCode,
-                $fuelTypeCode,
-                $vehicleClassCode,
-                $hasRegistration,
-                $dvlaVehicleId,
-                $motTestTypeCode,
-                $motTestNumberOriginal,
-                $complaintRef,
-                $flagPrivate,
-                $oneTimePassword,
-                $contingencyId,
-                $contingencyDto
-            ) {
-                $motTestCreationHelper = (new MotTestCreationHelper(
-                    $this->entityManager,
-                    $this->authService,
-                    $this->testerService,
-                    $this->motTestRepository,
-                    $this->motTestValidator,
-                    $this->retestEligibilityValidator,
-                    $this->otpService
-                ));
-
-                if ((int) $dvlaVehicleId > 0) {
-                    $vehicle = $this->vehicleService->createVtrAndV5CFromDvlaVehicle($dvlaVehicleId, $vehicleClassCode);
-
-                    $vehicleId = $vehicle->getId();
-
-                    $this->vehicleService->logDvlaVehicleImportChanges(
-                        $person,
-                        $vehicle,
-                        $vehicleClassCode,
-                        $primaryColourCode,
-                        $secondaryColourCode,
-                        $fuelTypeCode
-                    );
-                }
-
-                return $motTestCreationHelper->createMotTest(
-                    $person,
-                    $vehicleId,
-                    $vehicleTestingStationId,
-                    $primaryColourCode,
-                    $secondaryColourCode,
-                    $fuelTypeCode,
-                    $vehicleClassCode,
-                    $hasRegistration,
-                    $motTestTypeCode,
-                    $motTestNumberOriginal,
-                    $complaintRef,
-                    $flagPrivate,
-                    $oneTimePassword,
-                    $contingencyId,
-                    $contingencyDto
-                );
-            }
-        );
-
-        /*
-         * Update the slot count in a separate transaction to fix VM-3254
-         */
-        if ($motTest->getMotTestType()->getIsSlotConsuming()) {
-            $this->inTransaction(
-                function () use ($motTest) {
-                    $this->organisationService->decrementSlotBalance(
-                        $motTest->getVehicleTestingStation()->getOrganisation()
-                    );
-                }
-            );
-        }
-
-        return $motTest;
+    public function createMotTest(array $data)
+    {
+        return $this->createMotTestService->create($data);
     }
 
     /**

@@ -24,13 +24,12 @@ use DvsaEntities\Repository\DvlaVehicleRepository;
 use DvsaEntities\Repository\PersonRepository;
 use DvsaEntities\Repository\VehicleRepository;
 use DvsaEntities\Repository\VehicleV5CRepository;
+use DvsaMotApi\Service\CreateMotTestService;
 use DvsaMotApi\Service\MotTestServiceProvider;
 use DvsaMotApi\Service\OtpService;
 use DvsaMotApi\Service\Validator\VehicleValidator;
 use VehicleApi\Service\Mapper\DvlaVehicleMapper;
 use VehicleApi\Service\Mapper\VehicleMapper;
-use DvsaMotApi\Controller\MotTestController;
-use DvsaCommon\Constants\Network;
 
 /**
  * Class VehicleService.
@@ -121,8 +120,7 @@ class VehicleService
         try {
             $this->vehicleRepository->save($vehicle);
 
-            $clientIp = ArrayUtils::tryGet($data, MotTestController::FIELD_CLIENT_IP, Network::DEFAULT_CLIENT_IP);
-            $motTest = $this->startMotTest($vehicle, $data['vtsId'], $clientIp);
+            $motTest = $this->startMotTest($data, $vehicle->getId());
 
             $this->transaction->commit();
             $dto = new VehicleCreatedDto();
@@ -144,26 +142,25 @@ class VehicleService
     }
 
     /**
-     * @param Vehicle $vehicle
-     * @param int     $vtsId    The VTS where the test is being conducted
-     * @param string  $clientIp
+     * @param array $data
+     * @param int $vehicleId
      * @return \DvsaEntities\Entity\MotTest
      */
-    private function startMotTest(Vehicle $vehicle, $vtsId, $clientIp)
+    private function startMotTest(array $data, $vehicleId)
     {
-        return $this->motTestServiceProvider->getService()->createMotTest(
-            $this->personRepository->get($this->identityProvider->getIdentity()->getUserId()),
-            $vehicle->getId(),
-            $vtsId,
-            $vehicle->getColour()->getCode(),
-            $vehicle->getSecondaryColour()->getCode(),
-            $vehicle->getFuelType()->getCode(),
-            $vehicle->getVehicleClass()->getCode(),
-            true,
-            null,
-            MotTestTypeCode::NORMAL_TEST,
-            $clientIp
-        );
+        $motTestData = [];
+        $motTestData[CreateMotTestService::FIELD_VEHICLE_ID] = $vehicleId;
+        $motTestData[CreateMotTestService::FIELD_VTS_ID] = ArrayUtils::tryGet($data, 'vtsId');
+        $motTestData[CreateMotTestService::FIELD_HAS_REGISTRATION] = true;
+        $motTestData[CreateMotTestService::FIELD_COLOURS_PRIMARY] = ArrayUtils::tryGet($data, 'colour');
+        $motTestData[CreateMotTestService::FIELD_COLOURS_SECONDARY] = ArrayUtils::tryGet($data, 'secondaryColour');
+        $motTestData[CreateMotTestService::FIELD_VEHICLE_CLASS_CODE] = ArrayUtils::tryGet($data, 'testClass');
+        $motTestData[CreateMotTestService::FIELD_MOT_TEST_TYPE] = MotTestTypeCode::NORMAL_TEST;
+        $motTestData[CreateMotTestService::FIELD_FUEL_TYPE_ID] = ArrayUtils::tryGet($data, 'fuelType');
+        $motTestData[CreateMotTestService::FIELD_ONE_TIME_PASSWORD] = ArrayUtils::tryGet($data, 'oneTimePassword');
+        $motTestData[CreateMotTestService::FIELD_CLIENT_IP] = ArrayUtils::tryGet($data, 'clientIp');
+
+        return $this->motTestServiceProvider->getService()->createMotTest($motTestData);
     }
 
     public function getVehicle($id)

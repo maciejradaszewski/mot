@@ -89,7 +89,6 @@ class MotTestControllerTest extends AbstractMotApiControllerTestCase
         $mockMotTestService = $this->getMockMotTestService();
         $mockMotTestService->expects($this->once())
             ->method('createMotTest')
-            ->with($person, 1, 1, 'Blue', 'Red', 4, 5, true)
             ->will($this->returnValue($motTest));
 
         $result = $this->controller->dispatch($this->request);
@@ -548,7 +547,6 @@ class MotTestControllerTest extends AbstractMotApiControllerTestCase
         $mockMotTestService = $this->getMockMotTestService();
         $mockMotTestService->expects($this->once())
             ->method('createMotTest')
-            ->with($person, 1, 1, 'Blue', 'Red', 4, 5, true)
             ->will($this->returnValue($motTest));
 
         //  --  call & check    --

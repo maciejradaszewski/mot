@@ -82,7 +82,7 @@ class UserRoleService
             if (!array_key_exists($organisation->getId(), $organisationRoles)) {
                 $organisationRoles[$organisation->getId()] = [
                     'name' => $organisation->getName(),
-                    'number' => $organisation->getRegisteredCompanyNumber(),
+                    'number' => $organisation->getAuthorisedExaminer()->getNumber(),
                     'address' => $this->mapOrganisationContactsToAddress($organisation->getContacts()),
                     'roles' => [],
                 ];
