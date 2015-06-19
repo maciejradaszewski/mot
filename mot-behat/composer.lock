@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "583ad3130eb0d194143a5f89cdc81354",
+    "hash": "54569df09600f98422eb9cde69edb769",
     "packages": [
         {
             "name": "behat/behat",
@@ -16,7 +16,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behat/Behat/zipball/d4c821ca70c600ddeb75fcd365e3bd30eaba7194",
+                "url": "https://api.github.com/repos/Behat/Behat/zipball/941d766817bccc4f9f4901f34fffdda8b21de186",
                 "reference": "d4c821ca70c600ddeb75fcd365e3bd30eaba7194",
                 "shasum": ""
             },
@@ -2042,20 +2042,20 @@
         },
         {
             "name": "zendframework/zendframework",
-            "version": "2.2.7",
+            "version": "2.3.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zf2.git",
-                "reference": "ffca3e3eefd7fbe0f316ed0224edff368949223d"
+                "reference": "32858f883fffb5eef9f610b538ed026f6033b6de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/ffca3e3eefd7fbe0f316ed0224edff368949223d",
-                "reference": "ffca3e3eefd7fbe0f316ed0224edff368949223d",
+                "url": "https://api.github.com/repos/zendframework/zf2/zipball/32858f883fffb5eef9f610b538ed026f6033b6de",
+                "reference": "32858f883fffb5eef9f610b538ed026f6033b6de",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
+                "php": ">=5.3.23",
                 "zendframework/zendxml": "~1.0-dev"
             },
             "replace": {
@@ -2113,17 +2113,19 @@
             },
             "require-dev": {
                 "doctrine/annotations": ">=1.0",
-                "fabpot/php-cs-fixer": "*@dev",
+                "fabpot/php-cs-fixer": "1.*",
                 "ircmaxell/random-lib": "dev-master",
                 "ircmaxell/security-lib": "dev-master",
-                "ocramius/proxy-manager": "0.4.*",
-                "phpunit/phpunit": "3.7.*"
+                "mikey179/vfsstream": "1.2.*",
+                "phpunit/phpunit": "3.7.*",
+                "satooshi/php-coveralls": "dev-master",
+                "sebastianbergmann/phpcov": "1.1.0"
             },
             "suggest": {
                 "doctrine/annotations": "Doctrine Annotations >=1.0 for annotation features",
                 "ext-intl": "ext/intl for i18n features (included in default builds of PHP)",
                 "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable",
-                "ocramius/proxy-manager": "ProxyManager to handle lazy initialization of services",
+                "ocramius/proxy-manager": "ProxyManager 0.5.* to handle lazy initialization of services",
                 "zendframework/zendpdf": "ZendPdf for creating PDF representations of barcodes",
                 "zendframework/zendservice-recaptcha": "ZendService\\ReCaptcha for rendering ReCaptchas in Zend\\Captcha and/or Zend\\Form"
             },
@@ -2135,8 +2137,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.2-dev",
-                    "dev-develop": "2.3-dev"
+                    "dev-master": "2.3-dev",
+                    "dev-develop": "2.4-dev"
                 }
             },
             "autoload": {
@@ -2154,7 +2156,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2014-04-15 14:31:59"
+            "time": "2015-05-11 16:03:51"
         },
         {
             "name": "zendframework/zendxml",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "203cde72c81666bfcabb967b80047364",
+    "hash": "f8741e51372aa8697517eec93d362514",
     "packages": [
         {
             "name": "cpms/client",
@@ -803,15 +803,15 @@
         },
         {
             "name": "dvsa/dvsa-application-logger",
-            "version": "v1.0.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/dvsa-application-logger.git",
-                "reference": "e23711aa04b0176ffd1c9afb8fc7d7582e7fcf5c"
+                "reference": "ee389402fa7a8a4bb89d282d24b3f1240c08dca0"
             },
             "require": {
                 "php": ">=5.5",
-                "zendframework/zendframework": "2.2.7"
+                "zendframework/zendframework": "~2.3"
             },
             "require-dev": {
                 "phpunit/phpunit": "4.3.*",
@@ -843,7 +843,7 @@
                 "logging",
                 "zf2"
             ],
-            "time": "2015-03-06 15:57:38"
+            "time": "2015-06-17 16:09:25"
         },
         {
             "name": "dvsa/dvsa-document-module",
@@ -851,13 +851,13 @@
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/sc/dvsa-document-module.git",
-                "reference": "90d3ce9e93f6d8af665d70a32501e62589415ce9"
+                "reference": "ca919e741d602c546d24b3c42ae7554ea7e833f6"
             },
             "require": {
                 "doctrine/doctrine-module": "0.8.0",
                 "doctrine/doctrine-orm-module": "0.8.0",
                 "php": ">=5.3.3",
-                "zendframework/zendframework": "2.2.7",
+                "zendframework/zendframework": "~2.3",
                 "zendframework/zendpdf": "2.0.2"
             },
             "require-dev": {
@@ -872,7 +872,7 @@
                 }
             },
             "description": "Shared Document and Report Generation Module",
-            "time": "2015-02-11 12:00:57"
+            "time": "2015-06-17 16:10:57"
         },
         {
             "name": "dvsa/dvsa-logger",
@@ -921,18 +921,18 @@
         },
         {
             "name": "dvsa/dvsa-openam-client",
-            "version": "v1.5.0",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/dvsa-openam-client.git",
-                "reference": "1328b9c21980c1d7d08d0a774fbbf2ae19d594ae"
+                "reference": "049b1a067c9b15ed42d203861b60cd7b3048df88"
             },
             "require": {
                 "php": ">=5.5",
-                "zendframework/zend-http": "~2.2.6",
-                "zendframework/zend-modulemanager": "~2.2.6",
-                "zendframework/zend-servicemanager": "~2.2.6",
-                "zendframework/zend-stdlib": "~2.2.6"
+                "zendframework/zend-http": "~2.3",
+                "zendframework/zend-modulemanager": "~2.3",
+                "zendframework/zend-servicemanager": "~2.3",
+                "zendframework/zend-stdlib": "~2.3"
             },
             "require-dev": {
                 "fabpot/php-cs-fixer": "~1.5",
@@ -951,7 +951,7 @@
                 }
             },
             "description": "JSON mapper used to map objects to/from JSON compatible arrays",
-            "time": "2015-06-10 07:59:42"
+            "time": "2015-06-17 16:08:39"
         },
         {
             "name": "dvsa/feature-toggle",
@@ -1483,20 +1483,20 @@
         },
         {
             "name": "zendframework/zendframework",
-            "version": "2.2.7",
+            "version": "2.3.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zf2.git",
-                "reference": "ffca3e3eefd7fbe0f316ed0224edff368949223d"
+                "reference": "32858f883fffb5eef9f610b538ed026f6033b6de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/ffca3e3eefd7fbe0f316ed0224edff368949223d",
-                "reference": "ffca3e3eefd7fbe0f316ed0224edff368949223d",
+                "url": "https://api.github.com/repos/zendframework/zf2/zipball/32858f883fffb5eef9f610b538ed026f6033b6de",
+                "reference": "32858f883fffb5eef9f610b538ed026f6033b6de",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
+                "php": ">=5.3.23",
                 "zendframework/zendxml": "~1.0-dev"
             },
             "replace": {
@@ -1554,17 +1554,19 @@
             },
             "require-dev": {
                 "doctrine/annotations": ">=1.0",
-                "fabpot/php-cs-fixer": "*@dev",
+                "fabpot/php-cs-fixer": "1.*",
                 "ircmaxell/random-lib": "dev-master",
                 "ircmaxell/security-lib": "dev-master",
-                "ocramius/proxy-manager": "0.4.*",
-                "phpunit/phpunit": "3.7.*"
+                "mikey179/vfsstream": "1.2.*",
+                "phpunit/phpunit": "3.7.*",
+                "satooshi/php-coveralls": "dev-master",
+                "sebastianbergmann/phpcov": "1.1.0"
             },
             "suggest": {
                 "doctrine/annotations": "Doctrine Annotations >=1.0 for annotation features",
                 "ext-intl": "ext/intl for i18n features (included in default builds of PHP)",
                 "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable",
-                "ocramius/proxy-manager": "ProxyManager to handle lazy initialization of services",
+                "ocramius/proxy-manager": "ProxyManager 0.5.* to handle lazy initialization of services",
                 "zendframework/zendpdf": "ZendPdf for creating PDF representations of barcodes",
                 "zendframework/zendservice-recaptcha": "ZendService\\ReCaptcha for rendering ReCaptchas in Zend\\Captcha and/or Zend\\Form"
             },
@@ -1576,8 +1578,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.2-dev",
-                    "dev-develop": "2.3-dev"
+                    "dev-master": "2.3-dev",
+                    "dev-develop": "2.4-dev"
                 }
             },
             "autoload": {
@@ -1595,19 +1597,19 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2014-04-15 14:31:59"
+            "time": "2015-05-11 16:03:51"
         },
         {
             "name": "zendframework/zendpdf",
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/ZendPdf.git",
+                "url": "git@github.com:zendframework/ZendPdf.git",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },

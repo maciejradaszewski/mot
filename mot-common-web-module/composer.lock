@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8f7147066b8b7a423d9a6e61c7c6e0c4",
+    "hash": "749ae2d52e5843d5c19bad03fe0d8f08",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -710,17 +710,17 @@
         },
         {
             "name": "dvsa/dvsa-document-module",
-            "version": "dev-develop",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/sc/dvsa-document-module.git",
-                "reference": "593ffd1145660489b60782606eeed9107a952a52"
+                "reference": "ca919e741d602c546d24b3c42ae7554ea7e833f6"
             },
             "require": {
                 "doctrine/doctrine-module": "0.8.0",
                 "doctrine/doctrine-orm-module": "0.8.0",
                 "php": ">=5.3.3",
-                "zendframework/zendframework": "2.2.7",
+                "zendframework/zendframework": "~2.3",
                 "zendframework/zendpdf": "2.0.2"
             },
             "require-dev": {
@@ -735,7 +735,7 @@
                 }
             },
             "description": "Shared Document and Report Generation Module",
-            "time": "2015-05-30 16:30:18"
+            "time": "2015-06-17 16:10:57"
         },
         {
             "name": "dvsa/feature-toggle",
@@ -821,20 +821,20 @@
         },
         {
             "name": "zendframework/zendframework",
-            "version": "2.2.7",
+            "version": "2.3.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zf2.git",
-                "reference": "ffca3e3eefd7fbe0f316ed0224edff368949223d"
+                "reference": "32858f883fffb5eef9f610b538ed026f6033b6de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/ffca3e3eefd7fbe0f316ed0224edff368949223d",
-                "reference": "ffca3e3eefd7fbe0f316ed0224edff368949223d",
+                "url": "https://api.github.com/repos/zendframework/zf2/zipball/32858f883fffb5eef9f610b538ed026f6033b6de",
+                "reference": "32858f883fffb5eef9f610b538ed026f6033b6de",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
+                "php": ">=5.3.23",
                 "zendframework/zendxml": "~1.0-dev"
             },
             "replace": {
@@ -892,17 +892,19 @@
             },
             "require-dev": {
                 "doctrine/annotations": ">=1.0",
-                "fabpot/php-cs-fixer": "*@dev",
+                "fabpot/php-cs-fixer": "1.*",
                 "ircmaxell/random-lib": "dev-master",
                 "ircmaxell/security-lib": "dev-master",
-                "ocramius/proxy-manager": "0.4.*",
-                "phpunit/phpunit": "3.7.*"
+                "mikey179/vfsstream": "1.2.*",
+                "phpunit/phpunit": "3.7.*",
+                "satooshi/php-coveralls": "dev-master",
+                "sebastianbergmann/phpcov": "1.1.0"
             },
             "suggest": {
                 "doctrine/annotations": "Doctrine Annotations >=1.0 for annotation features",
                 "ext-intl": "ext/intl for i18n features (included in default builds of PHP)",
                 "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable",
-                "ocramius/proxy-manager": "ProxyManager to handle lazy initialization of services",
+                "ocramius/proxy-manager": "ProxyManager 0.5.* to handle lazy initialization of services",
                 "zendframework/zendpdf": "ZendPdf for creating PDF representations of barcodes",
                 "zendframework/zendservice-recaptcha": "ZendService\\ReCaptcha for rendering ReCaptchas in Zend\\Captcha and/or Zend\\Form"
             },
@@ -914,8 +916,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.2-dev",
-                    "dev-develop": "2.3-dev"
+                    "dev-master": "2.3-dev",
+                    "dev-develop": "2.4-dev"
                 }
             },
             "autoload": {
@@ -933,7 +935,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2014-04-15 14:31:59"
+            "time": "2015-05-11 16:03:51"
         },
         {
             "name": "zendframework/zendpdf",
@@ -1939,9 +1941,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "dvsa/dvsa-document-module": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

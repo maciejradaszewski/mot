@@ -9,7 +9,7 @@
     "fzaninotto/faker": "~1.4",
     "zalas/behat-no-extension": "~1.1",
     "fabpot/php-cs-fixer": "~1.6",
-    "zendframework/zendframework": "2.2.7"
+    "zendframework/zendframework": "~2.3.9"
   },
   "autoload": {
     "psr-4": {
