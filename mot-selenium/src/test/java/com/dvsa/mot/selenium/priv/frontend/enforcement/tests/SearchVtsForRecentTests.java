@@ -5,10 +5,15 @@ import com.dvsa.mot.selenium.datasource.Class4MOTData.MotResultState;
 import com.dvsa.mot.selenium.framework.BaseTest;
 import com.dvsa.mot.selenium.framework.RandomDataGenerator;
 import com.dvsa.mot.selenium.framework.api.MotTestApi;
+import com.dvsa.mot.selenium.framework.api.TestGroup;
+import com.dvsa.mot.selenium.framework.api.VtsCreationApi;
 import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.*;
 import com.dvsa.mot.selenium.priv.frontend.login.pages.LoginPage;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.Collections;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -280,17 +285,22 @@ public class SearchVtsForRecentTests extends BaseTest {
     @Test(groups = {"VM-1019", "Sprint12", "Enf", "slice_A"})
     public void selectTargetedReInspectionType() {
 
-        createMotTest(login, Site.POPULAR_GARAGES, createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010),
+        Site site  = new VtsCreationApi().createVtsSite(createAE("selectReinspectionType"),
+            TestGroup.ALL, Login.LOGIN_AREA_OFFICE1,
+            RandomDataGenerator.generateRandomAlphaNumeric(20, UUID.randomUUID().hashCode()));
+
+        createMotTest(createTester(Collections.singleton(site.getId())),
+            site, createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010),
                 50000, MotTestApi.TestOutcome.PASSED);
-
-        EnforcementHomePage.navigateHereFromLoginPage(driver, Login.LOGIN_ENFTESTER)
-                .goToVtsNumberEntryPage().enterVTSNumber(Site.POPULAR_GARAGES.getNumber())
-                .clickSearchButtonExpectingError();
-
+        EnforcementHomePage homePage =
+                EnforcementHomePage.navigateHereFromLoginPage(driver, Login.LOGIN_ENFTESTER);
+        homePage.goToVtsNumberEntryPage();
+        VtsNumberEntryPage lpVtsSearch = new VtsNumberEntryPage(driver);
+        lpVtsSearch.enterVTSNumber(site.getNumber());
+        lpVtsSearch.clickSearchButtonExpectingError();
         VtsRecentResultsPage resultsScreen = new VtsRecentResultsPage(driver);
         resultsScreen.selectSummaryLinkFromTable();
         EnforcementMotTestSummaryPage enfSummaryPage = new EnforcementMotTestSummaryPage(driver);
-
         assertThat("The dropdown selection is correct", enfSummaryPage.checkTextOfTestType(),
                 is(Text.TEXT_ENF_TARGETED_RE_INSPECTION.text));
         enfSummaryPage.clickLogout();
