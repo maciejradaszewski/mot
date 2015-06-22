@@ -7,7 +7,7 @@ namespace TestSupport\Helper;
  */
 class DataGeneratorHelper
 {
-    const NUMBER_FORMAT = 'AE%010d';
+    const NUMBER_FORMAT = 'AE%05d';
 
     /**
      * A number to help distinguish generated entities
@@ -37,7 +37,7 @@ class DataGeneratorHelper
     }
 
     public function generateAeRef(){
-        return sprintf(self::NUMBER_FORMAT, rand(10, 100000000));
+        return sprintf(self::NUMBER_FORMAT, rand(10, 10000));
     }
 
     public function addressLine1()
