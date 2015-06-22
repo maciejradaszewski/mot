@@ -76,7 +76,6 @@ class DashboardService extends AbstractService
         /** @var $person Person */
         $person = $this->findOrThrowException(Person::class, $personId, Person::ENTITY_NAME);
 
-        $roles = $this->authorisationService->getRolesAsArray();
         $dtoAeList = $this->getAuthorisedExaminersByPerson($person);
         $specialNotice = $this->specialNoticeService->specialNoticeSummaryForUser($person->getUsername());
         $notifications = $this->notificationService->getAllByPersonId($personId);
@@ -86,14 +85,15 @@ class DashboardService extends AbstractService
         $isTesterActive = $this->testerService->isTesterActiveByUser($person);
 
         $dashboard = new DashboardData(
-            $roles,
+            [],
             $dtoAeList,
             $specialNotice,
             $notifications,
             $vtcAuthorisations->toArray(),
             $inProgressTestId,
             $isTesterQualified,
-            $isTesterActive
+            $isTesterActive,
+            $this->authorisationService
         );
 
         return $dashboard;

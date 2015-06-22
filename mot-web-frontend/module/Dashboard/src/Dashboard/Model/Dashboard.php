@@ -25,9 +25,6 @@ class Dashboard
     /** @var $specialNotice SpecialNotice */
     private $specialNotice;
 
-    /** @var $permissions array */
-    private $permissions;
-
     /** @var $notifications array */
     private $notifications;
 
@@ -38,7 +35,6 @@ class Dashboard
     {
         $this->setHero(ArrayUtils::get($data, 'hero'));
         $this->setAuthorisedExaminers(AuthorisedExaminer::getList(ArrayUtils::get($data, 'authorisedExaminers')));
-        $this->setPermissions(ArrayUtils::get($data, 'permissions'));
         $this->setSpecialNotice(new SpecialNotice(ArrayUtils::get($data, 'specialNotice')));
         $this->setNotifications(Notification::createList(ArrayUtils::get($data, 'notifications')));
         $this->setInProgressTestNumber(ArrayUtils::get($data, 'inProgressTestNumber'));
@@ -119,11 +115,12 @@ class Dashboard
      *
      * @return bool
      *
+     * @deprecated
      * @throws \LogicException
      */
     public function canDisplay($piece)
     {
-        if (in_array($piece, array_keys($this->getPermissions()))) {
+        if ($this->getPermissions() && in_array($piece, array_keys($this->getPermissions()))) {
             return (bool)$this->getPermissions()[$piece];
         }
         throw new \LogicException('Display permission ' . $piece . ' does not exist');
@@ -183,7 +180,7 @@ class Dashboard
      */
     public function getPermissions()
     {
-        return $this->permissions;
+        return isset($this->permissions) ? $this->permissions : [];
     }
 
     /**

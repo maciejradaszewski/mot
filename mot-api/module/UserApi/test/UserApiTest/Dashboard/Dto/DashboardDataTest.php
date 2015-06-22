@@ -1,17 +1,21 @@
 <?php
 namespace UserApiTest\Dashboard\Dto;
 
+use DvsaCommonApiTest\Service\AbstractServiceTestCase;
+use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;
+use DvsaCommonTest\TestUtils\XMock;
 use UserApi\Dashboard\Dto\DashboardData;
 
 /**
  * Unit tests for Special notice dto
  */
-class DashboardDataTest extends \PHPUnit_Framework_TestCase
+class DashboardDataTest extends AbstractServiceTestCase
 {
     public function test_toArray_basicData_shouldBeOk()
     {
         $specialNotice = SpecialNoticeTest::getInputUnreadOverdueDeadline();
-        $dashboard = new DashboardData([], [], $specialNotice, [], [], 3, true, true);
+        $authorisationMock = AuthorisationServiceMock::grantedAll();
+        $dashboard = new DashboardData([], [], $specialNotice, [], [], 3, true, true, $authorisationMock);
         $this->assertWellFormedData($dashboard->toArray());
     }
 
@@ -22,8 +26,6 @@ class DashboardDataTest extends \PHPUnit_Framework_TestCase
             && isset($data['hero'])
             && isset($data['authorisedExaminers'])
             && is_array($data['authorisedExaminers'])
-            && isset($data['permissions'])
-            && is_array($data['permissions'])
             && isset($data['specialNotice'])
             && is_array($data['specialNotice'])
             && isset($data['notifications'])
