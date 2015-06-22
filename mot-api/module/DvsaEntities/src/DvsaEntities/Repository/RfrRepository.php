@@ -109,6 +109,13 @@ class RfrRepository
         $end
     ) {
         $rsm = $this->getSearchResultSetMapping();
+
+        $booleanSearch = str_replace(
+            ['+', '<', '>', '&', '-', '@', '(', ')', '~', '*', '"'],
+            ' ',
+            $searchString
+        );
+
         $likeSearchParam = "$searchString%";
 
         return $this->em
@@ -153,7 +160,7 @@ class RfrRepository
                 ',
                 $rsm
             )
-            ->setParameter('searchString', $searchString)
+            ->setParameter('searchString', $booleanSearch)
             ->setParameter('vehicleClass', $vehicleClass)
             ->setParameter('role', $role)
             ->setParameter('likeSearchParam', $likeSearchParam)
