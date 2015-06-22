@@ -80,4 +80,12 @@ public class ManageOpeningHoursPage extends BasePage {
     public boolean isErrorMessageDisplayed() {
         return ValidationSummary.isValidationSummaryDisplayed(driver);
     }
+
+    public SiteDetailsPage cancelAndReturnToVTS(String site) {
+
+        WebElement cancelAndGoBackToVTS = driver.findElement(
+                By.xpath("//a[contains(.,'Cancel and return to " + site + "')]"));
+        cancelAndGoBackToVTS.click();
+        return new SiteDetailsPage(driver);
+    }
 }

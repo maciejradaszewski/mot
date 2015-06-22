@@ -38,7 +38,7 @@ $errorData = isset($errorData) ? $errorData : '';
                 $isCloseTimePm = $siteOpeningHours[$dayLowerCase.'CloseTimePeriod'] === 'pm' ? true : false;
                 $isClosed = $siteOpeningHours[$dayLowerCase . 'IsClosed'] === 'true' ? true
                     : $siteOpeningHours[$dayLowerCase . 'IsClosed'];
-            ?>
+                ?>
                 <fieldset>
             <legend><?php echo $this->escapeHtml($days[$i+1]);?></legend>
         <div class="row">
@@ -130,7 +130,7 @@ $errorData = isset($errorData) ? $errorData : '';
                     'isChecked' => $isClosed,
 				    'label'     => 'Closed all day ' . $dayLowerCase,
 				]
-				); ?> 
+				); ?>
 			    </p>
 			    </div>
 			</div>
@@ -139,8 +139,14 @@ $errorData = isset($errorData) ? $errorData : '';
 
                 </fieldset>
             <?php endfor; ?>
-            <button id="update-opening-hours" type="submit" class="btn btn-primary">Update</button>
+            <p>
+                <button id="update-opening-hours" type="submit" class="btn btn-primary">Update</button>
+            </p>
+            <p>
+                <a href="<?php echo $this->url('vehicle-testing-station', array('action' => 'index', 'id' => $this->siteId)); ?> ">
+                    Cancel and return to <?php echo $this->escapeHtml($this->vtsName); ?>
+                </a>
+            </p>
         </form>
     </div>
 </div>
-

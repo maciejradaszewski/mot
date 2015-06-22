@@ -33,6 +33,7 @@ class SiteTestingDailyScheduleController extends AbstractAuthActionController
 
         $mapperFactory = $this->getMapperFactory();
         $vtsData = $mapperFactory->VehicleTestingStation->getById($siteId);
+        $vtsName = isset($vtsData['name'])? $vtsData['name'] : 'unknown';
 
         $data = $vtsData['siteOpeningHours'];
         $data = $this->extractOpeningHours($data);
@@ -55,6 +56,7 @@ class SiteTestingDailyScheduleController extends AbstractAuthActionController
             'siteId'           => $siteId,
             'siteOpeningHours' => $data,
             'errorData'        => $errorData,
+            'vtsName'          => $vtsName
         ];
     }
 
