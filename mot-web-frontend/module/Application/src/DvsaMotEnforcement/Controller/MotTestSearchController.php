@@ -346,7 +346,7 @@ class MotTestSearchController extends AbstractAuthActionController
             unset($searchData['backTo']);
         }
 
-        $searchData = ($searchData && $searchData->count() ? '?' . rawurlencode(http_build_query($searchData)) : '');
+        $searchData = ($searchData && $searchData->count() ? '?' . http_build_query($searchData) : '');
 
         switch ($backTo) {
             case VehicleController::BACK_TO_DETAIL:
