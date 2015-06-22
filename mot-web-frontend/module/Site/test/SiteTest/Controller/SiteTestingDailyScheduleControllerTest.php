@@ -148,6 +148,7 @@ class SiteTestingDailyScheduleControllerTest extends AbstractFrontendControllerT
             'sundayIsClosed' => ''
         ];
         $weeklySchedule['errorData'] = [];
+        $weeklySchedule['vtsName'] = 'unknown';
         return $weeklySchedule;
     }
 }

@@ -138,6 +138,18 @@ public class VehicleTestingStationOverviewTest extends BaseTest {
                     siteDetailsPage.isHoursCorrectForDay(days, testDataForOpeningHoursTest(days)),
                     is(true));
         }
+
+        siteDetailsPage.clickChangeOpeningHours()
+                .cancelAndReturnToVTS(Site.JOHNS_MOTORCYCLE_GARAGE.getName());
+
+        for (Days days : Days.values()) {
+            assertThat("Day is present", siteDetailsPage.isDayPresentInOpeningHours(days),
+                    is(true));
+            assertThat("Opening hours is correct",
+                    siteDetailsPage.isHoursCorrectForDay(days, testDataForOpeningHoursTest(days)),
+                    is(true));
+        }
+
     }
 
     @Test(groups = {"VM_3426", "slice_A"}) public void testOpeningHoursValidation() {
