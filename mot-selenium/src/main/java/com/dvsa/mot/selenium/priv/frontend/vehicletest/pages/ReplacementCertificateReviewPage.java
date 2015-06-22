@@ -55,6 +55,8 @@ public class ReplacementCertificateReviewPage extends BasePage {
 
     @FindBy(id = "reasonForDifferentTester") private WebElement reasonForDifferentTester;
 
+    @FindBy(id = "confirm_and_print") private WebElement confirmAndPrint;
+
     public ReplacementCertificateReviewPage(WebDriver driver) {
         super(driver);
         PageFactory.initElements(driver, this);
@@ -141,5 +143,9 @@ public class ReplacementCertificateReviewPage extends BasePage {
 
     public String generateNewVT30FileName() {
         return "VT30" + Utilities.getSystemDateAndTime();
+    }
+
+    public void clickPrintButton() {
+        confirmAndPrint.click();
     }
 }

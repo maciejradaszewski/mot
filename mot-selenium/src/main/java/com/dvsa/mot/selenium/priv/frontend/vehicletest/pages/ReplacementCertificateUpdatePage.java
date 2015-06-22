@@ -12,7 +12,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ReplacementCertificateUpdatePage extends BasePage {
 
@@ -84,8 +86,6 @@ public class ReplacementCertificateUpdatePage extends BasePage {
 
     @FindBy(id = "input-cor") private WebElement countryOfRegistrationList;
 
-    @FindBy(id = "section-cor-submit") private WebElement submitCountryOfRegistration;
-
     //INSERT REASON FOR REPLACEMENT
     @FindBy(id = "input-reason-for-replacement") private WebElement enterReasonForReplacement;
 
@@ -151,6 +151,9 @@ public class ReplacementCertificateUpdatePage extends BasePage {
     public ReplacementCertificateUpdatePage editCountryOfRegistrationAndSubmit() {
         editCountryOfRegistration.click();
         countryOfRegistrationList.findElement(By.id("input-cor_2"));
+        WebElement submitCountryOfRegistration = new WebDriverWait(driver, 10)
+                .until(ExpectedConditions
+                        .visibilityOf(driver.findElement(By.id("section-cor-submit"))));
         submitCountryOfRegistration.click();
         return this;
     }
@@ -210,7 +213,8 @@ public class ReplacementCertificateUpdatePage extends BasePage {
         return new ChangeMakeAndModelPage(driver);
     }
 
-    public ReplacementCertificateUpdatePage editMakeAndModelAndSubmit(VehicleMake vehicleMake, VehicleModel vehicleModel) {
+    public ReplacementCertificateUpdatePage editMakeAndModelAndSubmit(VehicleMake vehicleMake,
+            VehicleModel vehicleModel) {
         changeVehicleMake(vehicleMake);
         changeVehicleModel(vehicleModel);
         return this;
