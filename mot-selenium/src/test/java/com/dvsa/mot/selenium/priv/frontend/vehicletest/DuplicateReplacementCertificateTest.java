@@ -3,7 +3,6 @@ package com.dvsa.mot.selenium.priv.frontend.vehicletest;
 import com.dvsa.mot.selenium.datasource.*;
 import com.dvsa.mot.selenium.datasource.enums.Colour;
 import com.dvsa.mot.selenium.datasource.enums.VehicleMake;
-import com.dvsa.mot.selenium.datasource.enums.VehicleModel;
 import com.dvsa.mot.selenium.framework.BaseTest;
 import com.dvsa.mot.selenium.framework.Utilities;
 import com.dvsa.mot.selenium.framework.api.GoToTheUrl;
@@ -306,10 +305,10 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                         .isReplacementCertificateEditButtonDisplayed(abandonedMotNumber),
                 "Abandoned tests must not display 'Edit' button");
         Assert.assertTrue(duplicateReplacementCertificatePage
-                .isReplacementCertificateEditButtonDisplayed(failedMotNumber),
+                        .isReplacementCertificateEditButtonDisplayed(failedMotNumber),
                 "First not abandoned test must display 'Edit' button");
         Assert.assertFalse(duplicateReplacementCertificatePage
-                .isReplacementCertificateEditButtonDisplayed(passedMotNumber),
+                        .isReplacementCertificateEditButtonDisplayed(passedMotNumber),
                 "Only first not abandoned test should display 'Edit' button");
     }
 
@@ -341,10 +340,10 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                         .submitSearchWithVinAndReg(vehicle.fullVIN, vehicle.carReg);
         //Assertions
         Assert.assertTrue(duplicateReplacementCertificatePage
-                .isReplacementCertificateEditButtonDisplayed(failedMotNumber),
+                        .isReplacementCertificateEditButtonDisplayed(failedMotNumber),
                 "First not abandoned test must display 'Edit' button");
         Assert.assertFalse(duplicateReplacementCertificatePage
-                .isReplacementCertificateEditButtonDisplayed(passedMotNumber),
+                        .isReplacementCertificateEditButtonDisplayed(passedMotNumber),
                 "Only first not abandoned test should display 'Edit' button");
     }
 
@@ -428,39 +427,49 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 .finishAndPrintCertificate(Text.TEXT_PASSCODE).clickDoneButton();
     }
 
-    @Test(groups = {"VM-7785", "VM-10120", "slice_A"})
-    public void testManuallyEnterMakeAndModel() throws IOException {
+    @Test(groups = {"VM-7785", "VM-10120", "slice_A"}) public void testManuallyEnterMakeAndModel()
+            throws IOException {
+
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
         String testNumber = createMotTest(login, defaultSite, vehicle, 872033, TestOutcome.FAILED);
         Login dvsaUser = Login.LOGIN_AREA_OFFICE1;
         ReplacementCertificateUpdatePage replacementCertificateUpdatePage =
                 ReplacementCertificateUpdatePage
                         .navigateHereFromLoginPage(driver, dvsaUser, vehicle, testNumber)
-                .enterVehicleMakeManually(VehicleMake.Other).submitOtherMakeAndModel("Kia", "C'eed");
+                        .enterVehicleMakeManually(VehicleMake.Other)
+                        .submitOtherMakeAndModel("Kia", "C'eed");
 
         assertThat(replacementCertificateUpdatePage.getMakeText(), is("Kia"));
         assertThat(replacementCertificateUpdatePage.getModelText(), is("C'eed"));
+
         replacementCertificateUpdatePage.enterReasonForReplacement("None").reviewChangesButton();
-        ReplacementCertificateReviewPage replacementCertificateReviewPage = new ReplacementCertificateReviewPage(driver);
+        ReplacementCertificateReviewPage replacementCertificateReviewPage =
+                new ReplacementCertificateReviewPage(driver);
+
         String customModel = replacementCertificateReviewPage.vehicleModel();
         String customMake = replacementCertificateReviewPage.vehicleMake();
 
         String motTestNumber = replacementCertificateReviewPage.getMotTestNumber();
-                replacementCertificateReviewPage .finishAndPrintCertificate(Text.TEXT_PASSCODE).clickPrintButton();
 
         String fileName = replacementCertificateReviewPage.generateNewVT30FileName();
+        replacementCertificateReviewPage.clickPrintButton();
         String pathNFileName = getErrorScreenshotPath() + "/" + fileName;
-        ReplacementCertificateCompletePage replacementCertificateCompletePage = new ReplacementCertificateCompletePage(driver);
-        Utilities.copyUrlBytesToFile(replacementCertificateCompletePage.getPrintCertificateUrl(), driver, pathNFileName);
+        ReplacementCertificateCompletePage replacementCertificateCompletePage =
+                new ReplacementCertificateCompletePage(driver);
+        Utilities.copyUrlBytesToFile(replacementCertificateCompletePage.getPrintCertificateUrl(),
+                driver, pathNFileName);
         String parsedText = Utilities.pdfToText(pathNFileName);
         VerifyCertificateDetails ver = new VerifyCertificateDetails();
+
         Assert.assertEquals(ver.getTitle(parsedText), Text.TEXT_VT30_TITLE, "Verify VT30 title");
         Assert.assertTrue(ver.getVT20TestNumberMakeModel(parsedText).contains(motTestNumber),
                 "Verify motTestNumber");
-        Assert.assertTrue(ver.getVehicleMakeAndModelDetailsFromCertificate(parsedText)
-                .contains(customMake), "Verify Custom Make of Vehicle on Certificate");
-        Assert.assertTrue(ver.getVehicleMakeAndModelDetailsFromCertificate(parsedText)
-                .contains(customModel), "Verify Custom Model of Vehicle on Certificate");
+        Assert.assertTrue(
+                ver.getVehicleMakeAndModelDetailsFromCertificate(parsedText).contains(customMake),
+                "Verify Custom Make of Vehicle on Certificate");
+        Assert.assertTrue(
+                ver.getVehicleMakeAndModelDetailsFromCertificate(parsedText).contains(customModel),
+                "Verify Custom Model of Vehicle on Certificate");
 
     }
 }

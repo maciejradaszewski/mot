@@ -1,7 +1,6 @@
 package com.dvsa.mot.selenium.priv.frontend.vehicletest.pages;
 
 import com.dvsa.mot.selenium.framework.BasePage;
-import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.EnforcementTestComparisonPage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -44,10 +43,6 @@ public class ReplacementCertificateCompletePage extends BasePage {
     }
     public String getPrintCertificateUrl() {
         return print.getAttribute("href");
-    }
-
-    public void clickPrintButton() {
-      print.click();
     }
 
 }
