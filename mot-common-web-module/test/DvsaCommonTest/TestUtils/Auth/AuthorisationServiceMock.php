@@ -113,4 +113,9 @@ final class AuthorisationServiceMock implements MotAuthorisationServiceInterface
     {
         return $this->roles;
     }
+
+    public function getHero($personId = null)
+    {
+        return 'tester';
+    }
 }

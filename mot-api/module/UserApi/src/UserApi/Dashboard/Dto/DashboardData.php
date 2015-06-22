@@ -2,10 +2,12 @@
 
 namespace UserApi\Dashboard\Dto;
 
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaEntities\Entity\Notification;
 use NotificationApi\Mapper\NotificationMapper;
-use UserApi\Dashboard\BusinessLogic\RoleAndPermissionDetector;
 use UserFacade\Role;
+
+use \DvsaCommon\Auth\AbstractMotAuthorisationService as AuthorisationService;
 
 /**
  * All data for dashboard
@@ -28,8 +30,9 @@ class DashboardData
     /** @var  $inProgressTestNumber integer */
     private $inProgressTestNumber;
 
-    /** @var $roleAndPermissionsDetector RoleAndPermissionDetector */
-    private $roleAndPermissionsDetector;
+    /** @var $authorisationService MotAuthorisationServiceInterface */
+    private $authorisationService;
+
 
     /**
      * @param Role[]                               $roles
@@ -49,20 +52,15 @@ class DashboardData
         $vtcAuthorisations,
         $inProgressTestNumber,
         $isTesterQualified,
-        $isTesterActive
+        $isTesterActive,
+        MotAuthorisationServiceInterface $authorisationService
     ) {
         $this->setAuthorisedExaminers($authorisedExaminers);
         $this->setSpecialNotice(new SpecialNotice($specialNotice));
         $this->setNotifications($notifications);
         $this->setInProgressTestNumber($inProgressTestNumber);
-
-        $this->roleAndPermissionsDetector = new RoleAndPermissionDetector(
-            $roles,
-            $vtcAuthorisations,
-            $isTesterQualified,
-            $isTesterActive
-        );
-        $this->setHero($this->roleAndPermissionsDetector->getHero());
+        $this->authorisationService = $authorisationService;
+        $this->setHero($this->authorisationService->getHero());
     }
 
     /**
@@ -86,7 +84,6 @@ class DashboardData
         return [
             'hero'                 => $this->getHero(),
             'authorisedExaminers'  => $authorisedExaminers,
-            'permissions'          => $this->roleAndPermissionsDetector->getPermissions(),
             'specialNotice'        => $this->getSpecialNotice()->toArray(),
             'notifications'        => $notificationExtractedList,
             'inProgressTestNumber' => $this->inProgressTestNumber

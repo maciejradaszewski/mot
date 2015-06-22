@@ -2,7 +2,10 @@
 
 namespace DvsaCommon\Model;
 
+use DvsaCommon\Constants\Role;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\Enum\OrganisationBusinessRoleCode;
+use DvsaCommon\Enum\SiteBusinessRoleCode;
 
 /**
  * Internal class for use in RBAC implementation only - should not be used by business code.
@@ -201,6 +204,57 @@ class PersonAuthorization
         }
         return $isGrantedAtOrganisation || $isGrantedGlobally || $isGrantedAtSiteForOrganisation;
     }
+
+
+    /**
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return ($this->normalRoles->includesRole(Role::DVSA_AREA_OFFICE_1)
+            || $this->normalRoles->includesRole(Role::DVSA_SCHEME_MANAGEMENT)
+            || $this->normalRoles->includesRole(Role::DVSA_SCHEME_USER)
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVe()
+    {
+        return ($this->normalRoles->includesRole(Role::VEHICLE_EXAMINER));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFinance()
+    {
+        return ($this->normalRoles->includesRole(Role::FINANCE));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAedm()
+    {
+        foreach ($this->organisationRoles as $aListOfRolesAndPermissions) {
+            if ($aListOfRolesAndPermissions->includesRole(OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER)
+                || $aListOfRolesAndPermissions->includesRole(OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE)
+            ) {
+                return true;
+            }
+        }
+        foreach ($this->siteRoles as $aListOfRolesAndPermissions) {
+            if ($aListOfRolesAndPermissions->includesRole(SiteBusinessRoleCode::SITE_MANAGER)
+                || $aListOfRolesAndPermissions->includesRole(SiteBusinessRoleCode::SITE_ADMIN)
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private function isGrantedForOrganisationAssociatedWithSite($permissionName, $siteId)
     {

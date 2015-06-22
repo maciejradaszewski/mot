@@ -3,6 +3,7 @@
 namespace DvsaAuthorisation\Service;
 
 use DvsaCommon\Auth\AbstractMotAuthorisationService;
+use DvsaCommon\Constants\Role;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\Model\PersonAuthorization;
 use DvsaEntities\Entity\Person;
@@ -14,6 +15,14 @@ use Zend\Authentication\AuthenticationService;
  */
 class AuthorisationService extends AbstractMotAuthorisationService implements AuthorisationServiceInterface
 {
+    const HERO_USER = 'user';
+    const HERO_VE = 'vehicle-examiner';
+    const HERO_AEDM = 'aedm';
+    const HERO_TESTER_APPLICANT = 'testerApplicant';
+    const HERO_TESTER = 'tester';
+    const HERO_DVSA_ADMIN = 'admin';
+    const HERO_FINANCE = 'finance';
+
     /**
      * @var AuthenticationService $authenticationService
      */
@@ -118,5 +127,47 @@ class AuthorisationService extends AbstractMotAuthorisationService implements Au
     private function personIdHasRole($personId, $roleName)
     {
         return $this->rbacRepository->personIdHasRole($personId, $roleName);
+    }
+
+    /**
+     * @param null|int $personId The ID of the user to retrieve the hero status for
+     * @return mixed
+     */
+    public function getHero($personId = null)
+    {
+        if (is_null($personId)) {
+            // If no $personId is supplied, get the authenticated user ID
+            $personId = $this->authenticationService->getIdentity()->getUserId();
+        }
+
+        $personAuthorisation = $this->getPersonAuthorization($personId);
+
+        if ($personAuthorisation->isAdmin()) {
+            return self::HERO_DVSA_ADMIN;
+        }
+
+        if ($this->personIdHasRole($personId, Role::TESTER_APPLICANT_INITIAL_TRAINING_REQUIRED)
+            || $this->personIdHasRole($personId, Role::TESTER_APPLICANT_DEMO_TEST_REQUIRED)
+        ) {
+            return self::HERO_TESTER_APPLICANT;
+        }
+
+        if ($this->personIdHasRole($personId, Role::TESTER_ACTIVE)) {
+            return self::HERO_TESTER;
+        }
+
+        if ($personAuthorisation->isVe()) {
+            return self::HERO_VE;
+        }
+
+        if ($personAuthorisation->isFinance()) {
+            return self::HERO_FINANCE;
+        }
+
+        if ($personAuthorisation->isAedm()) {
+            return self::HERO_AEDM;
+        }
+
+        return self::HERO_USER;
     }
 }

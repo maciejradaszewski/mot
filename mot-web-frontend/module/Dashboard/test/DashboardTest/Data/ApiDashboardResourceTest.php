@@ -88,8 +88,6 @@ class ApiDashboardResourceTest extends \PHPUnit_Framework_TestCase
         return [
             'hero'                => 'user',
             'authorisedExaminers' => [],
-            'permissions'         => [
-            ],
             'specialNotice'       => [
                 'unreadCount'    => isset($data['unreadCount']) ? $data['unreadCount'] : 1,
                 'daysLeftToView' => isset($data['daysLeftToView']) ? $data['daysLeftToView'] : 3,
