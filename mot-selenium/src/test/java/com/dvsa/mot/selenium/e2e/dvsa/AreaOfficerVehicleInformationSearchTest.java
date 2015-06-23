@@ -22,7 +22,7 @@ public class AreaOfficerVehicleInformationSearchTest extends BaseTest {
 
 
     /* the tests are disabled for now & there is a ticket VM-7866 been raised for the permission issue */
-    @Test(groups = {"VM-4184", "VM-4186", "VM-7866", "Sprint2b-V", "E2E", "VM-7274", "slice_A"},
+    @Test(groups = {"VM-4184", "VM-4186", "VM-7866", "Sprint2b-V", "E2E", "VM-7274", "Regression"},
             description = "Verify vehicle details for a single VRM or VIN search")
     public void verifyVehicleDetailsForSingleVehicleSearch() {
 
@@ -51,7 +51,7 @@ public class AreaOfficerVehicleInformationSearchTest extends BaseTest {
     }
 
     /* the tests are disabled for now & there is a ticket VM-7866 been raised for the permission issue */
-    @Test(groups = {"VM-4186", "Sprint2b-V", "E2E", "VM-7866", "VM-7274", "slice_A"},
+    @Test(groups = {"VM-4186", "Sprint2b-V", "E2E", "VM-7866", "VM-7274", "Regression"},
             dataProvider = "MultipleVehicleMOTTests",
             description = "Verify MOT test history for multiple vehicle search")
     public void verifyMOTTestHistoryForMultipleVehicleSearch(Login login2, String type,

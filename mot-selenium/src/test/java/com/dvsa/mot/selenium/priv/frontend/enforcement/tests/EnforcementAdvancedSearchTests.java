@@ -27,7 +27,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
     AeDetails aeDetails = aeService.createAe("NEWAeCREATED");
 
     @Test(groups = {"VM-1800", "VM-1801", "VM-1802", "VM-1803", "Sprint17", "Sprint18", "Sprint19",
-            "Enf", "slice_A"}) public void searchForMOTTestsBy() {
+            "Enf", "Regression"}) public void searchForMOTTestsBy() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BOXSTER_2001);
         createMotTest(login, Site.POPULAR_GARAGES, vehicle, 12000, MotTestApi.TestOutcome.FAILED);
 
@@ -145,7 +145,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
                 Text.TEXT_ENF_MOT_SEARCH_INVALID_FOR_TWO_MONTHS_AND_TWO_YEARS);
     }
 
-    @Test(groups = {"VM-1803", "Sprint19", "Enf", "Test08", "slice_A"})
+    @Test(groups = {"VM-1803", "Sprint19", "Enf", "Test08", "Regression"})
     public void openSummaryLink() {
         //given
         MOTSearchDetails historySearchDetails = prepareTestHistory(getTestClassName());
@@ -184,7 +184,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
 
     }
 
-    @Test(groups = {"VM-2799", "VM-3154", "Sprint24", "Enf", "slice_A"})
+    @Test(groups = {"VM-2799", "VM-3154", "Sprint24", "Enf", "Regression"})
     public void verifyUserRoles() {
         EnforcementHomePage homePage =
                 EnforcementHomePage.navigateHereFromLoginPage(driver, Login.LOGIN_ENFTESTER);
@@ -210,7 +210,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
                 " Verify AE Details ");
     }
 
-    @Test(groups = {"VM-2378", "Sprint27", "Enf", "slice_A"}) public void verifyAEDetailsForVE() {
+    @Test(groups = {"VM-2378", "Sprint27", "Enf", "Regression"}) public void verifyAEDetailsForVE() {
 
         EnforcementHomePage homePage =
                 EnforcementHomePage.navigateHereFromLoginPage(driver, Login.LOGIN_ENFTESTER);
@@ -222,7 +222,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
         authorisedExaminerFullDetailsPage.clickSearchAgain();
     }
 
-    @Test(groups = {"VM-3734", "Sprint26", "Enf", "slice_A"})
+    @Test(groups = {"VM-3734", "Sprint26", "Enf", "Regression"})
     public void verifyAESearchResultsForDVSAAdmin() {
 
         EnforcementHomePage homePage =
@@ -232,7 +232,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
 
     }
 
-    @Test(groups = {"VM-1798", "Sprint1-V", "VM-4384", "Sprint2a-V", "slice_A"},
+    @Test(groups = {"VM-1798", "Sprint1-V", "VM-4384", "Sprint2a-V", "Regression"},
             description = "Verify error message is displayed when user has entered any invalid search criteria")
     public void verifyInvalidVehicleSearch() {
         SearchVehicleInformationPage searchPage = SearchVehicleInformationPage
@@ -274,7 +274,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
         };
     }
 
-    @Test(groups = {"VM-4183", "Sprint2a-V", "slice_A"}, dataProvider = "MultipleVRMSearch",
+    @Test(groups = {"VM-4183", "Sprint2a-V", "Regression"}, dataProvider = "MultipleVRMSearch",
             description = "Verify list of vehicles page was displayed when multiple possible matches found for VRM")
     public void verifyMultipleVRMs(Login login, String type, String searchTerm,
             Vehicle searchVehicle, VehicleDetails vehicleDetails) {
@@ -299,7 +299,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
                         Vehicle.VEHICLE_MULTIPLE_VALID_VIN, VehicleDetails.Mercedes_C300}};
     }
 
-    @Test(groups = {"VM-4183", "Sprint2a-V", "slice_A"}, dataProvider = "MultipleVINSearch",
+    @Test(groups = {"VM-4183", "Sprint2a-V", "Regression"}, dataProvider = "MultipleVINSearch",
             description = "Verify list of vehicles page was displayed when multiple possible matches found for VIN")
     public void verifyMultipleVINs(Login login, String type, String searchTerm,
             Vehicle searchVehicle, VehicleDetails vehicleDetails) {
@@ -324,7 +324,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
         };
     }
 
-    @Test(groups = {"VM-4184", "Sprint2b-V", "slice_A"}, dataProvider = "SingleVehicleSearch",
+    @Test(groups = {"VM-4184", "Sprint2b-V", "Regression"}, dataProvider = "SingleVehicleSearch",
             description = "Verify vehicle details for a single VRM search")
     public void verifySingleSearchDetailsPage(Login login, String type, String searchTerm,
             Vehicle searchVehicle, VehicleDetails vehicleDetails) {
@@ -364,7 +364,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
                         Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT.fullVIN}};
     }
 
-    @Test(groups = {"VM-4186", "Sprint2b-V", "slice_A"},
+    @Test(groups = {"VM-4186", "Sprint2b-V", "Regression"},
             description = "Verify vehicle details for a single vehicle search")
     public void verifyMOTTestsForSingleVehicleSearch() {
         Site vts = Site.POPULAR_GARAGES;
@@ -386,7 +386,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
                 {vehicle, Text.TEXT_VIN_TYPE, vehicle.fullVIN}};
     }
 
-    @Test(groups = {"VM-4186", "Sprint2b-V", "slice_A"}, dataProvider = "MOTMultipleVehicles",
+    @Test(groups = {"VM-4186", "Sprint2b-V", "Regression"}, dataProvider = "MOTMultipleVehicles",
             description = "Verify vehicle details for multiple vehicle search")
 
     public void verifyMOTTestsForMultipleVehicleSearch(Vehicle vehicle, String vehicleType,

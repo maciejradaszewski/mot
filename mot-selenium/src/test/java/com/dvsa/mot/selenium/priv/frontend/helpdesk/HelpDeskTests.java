@@ -29,7 +29,7 @@ public class HelpDeskTests extends BaseTest {
 
     private AeService aeService = new AeService();
 
-    @Test(groups = {"VM-4741", "slice_A",
+    @Test(groups = {"VM-4741", "Regression",
             "W-Sprint5"}, description = "Verify error message was displayed when search for blank field values in the helpdesk user search page")
     public void testHelpdeskUserSearchPageValidations() {
         HelpdeskUserSearchPage helpdeskUserSearchPage = HelpdeskUserSearchPage
@@ -40,7 +40,7 @@ public class HelpDeskTests extends BaseTest {
                 Assertion.ASSERTION_HELPDESK_ERROR_INPUT_REQUIRED.assertion);
     }
 
-    @Test(groups = {"VM-4741", "slice_A",
+    @Test(groups = {"VM-4741", "Regression",
             "W-Sprint5"}, description = "Verify error message was displayed when search for invalid date of birth in the helpdesk user search page")
     public void testHelpdeskUserSearchPageInvalidDateOfBirth() {
         HelpdeskUserSearchPage helpdeskUserSearchPage = HelpdeskUserSearchPage
@@ -52,7 +52,7 @@ public class HelpDeskTests extends BaseTest {
                 Assertion.ASSERTION_HELPDESK_ERROR_INVALID_DATE.assertion);
     }
 
-    @Test(groups = {"VM-4741", "slice_A",
+    @Test(groups = {"VM-4741", "Regression",
             "W-Sprint5"}, description = "Verify error message was displayed when search for invalid format date of birth in the helpdesk user search page")
     public void testHelpdeskUserSearchPageInvalidFormatDateOfBirth() {
         HelpdeskUserSearchPage helpdeskUserSearchPage = HelpdeskUserSearchPage
@@ -64,7 +64,7 @@ public class HelpDeskTests extends BaseTest {
                 Assertion.ASSERTION_HELPDESK_ERROR_INCORRECT_DATE_FORMAT.assertion);
     }
 
-    @Test(groups = {"VM-4741", "slice_A",
+    @Test(groups = {"VM-4741", "Regression",
             "W-Sprint5"}, description = "Verify proper message was displayed when helpdesk user search page return too many results")
     public void testHelpdeskUserSearchTooManyResults() {
         Person tester = Person.BOB_THOMAS;
@@ -77,7 +77,7 @@ public class HelpDeskTests extends BaseTest {
         assertEquals(helpdeskUserSearchPage.getFirstName(), tester.getName());
     }
 
-    @Test(groups = {"VM-4741", "slice_A",
+    @Test(groups = {"VM-4741", "Regression",
             "W-Sprint5"}, description = "Verify proper message was displayed when helpdesk user search page return no results")
     public void testHelpdeskUserSearchNoResults() {
         String username = "qpljkjhjhjk";
@@ -100,7 +100,7 @@ public class HelpDeskTests extends BaseTest {
         assertEquals(helpdeskUserSearchPage.getPostcode(), tester.address.getPostcode());
     }
 
-    @Test(groups = {"VM-4698", "VM-4842", "VM-7724", "V-Sprint10", "slice_A",
+    @Test(groups = {"VM-4698", "VM-4842", "VM-7724", "V-Sprint10", "Regression",
             "W-Sprint4"}, description = "Verify profile page data and go back to search results")
     public void testHelpdeskSearchUserByUsernameCheckProfileAndGoBack() {
         Person tester = Person.BOB_THOMAS;
@@ -126,7 +126,7 @@ public class HelpDeskTests extends BaseTest {
 
     }
 
-    @Test(groups = {"VM-4698", "VM-4842", "VM-7724", "V-Sprint10", "slice_A", "slice_D",
+    @Test(groups = {"VM-4698", "VM-4842", "VM-7724", "V-Sprint10", "Regression", "slice_D",
             "W-Sprint4"}, description = "Verify user profile field values")
     public void testHelpdeskSearchUserByAllFieldsAndCheckProfile() {
         Person tester = Person.BOB_THOMAS;
@@ -144,7 +144,7 @@ public class HelpDeskTests extends BaseTest {
     }
 
     @Test(groups = {"VM-4880", "VM-4881", "VM-4842", "VM-7724", "V-Sprint10", "W-Sprint5",
-            "slice_A", "slice_D"}, description = "Verify ResetPassword functionality")
+            "Regression", "slice_D"}, description = "Verify ResetPassword functionality")
     public void testHelpdeskResetPasswordSuccessfully() {
 
         ArrayList vts = new ArrayList();
@@ -166,7 +166,7 @@ public class HelpDeskTests extends BaseTest {
 
 
     @Test(groups = {"VM-4880", "VM-4881", "VM-4842", "VM-7724", "V-Sprint10", "W-Sprint5",
-            "slice_A", "slice_D"}, description = "Verify RecoverUserName functionality")
+            "Regression", "slice_D"}, description = "Verify RecoverUserName functionality")
     public void testHelpdeskResetUsernameSuccessfully() {
 
         ArrayList vts = new ArrayList();
@@ -188,7 +188,7 @@ public class HelpDeskTests extends BaseTest {
                 "Check the correct message is displayed when username recovery is triggered by post");
     }
 
-    @Test(groups = {"VM-4880", "VM-4842", "VM-7724", "V-Sprint10", "W-Sprint5", "slice_A",
+    @Test(groups = {"VM-4880", "VM-4842", "VM-7724", "V-Sprint10", "W-Sprint5", "Regression",
             "slice_D"}, description = "Verify ReturnToHome functionality in the user profile page")
     public void testGoToUserProfilePageAndGoToHome() {
         Login user = createTester(true);
@@ -208,7 +208,7 @@ public class HelpDeskTests extends BaseTest {
                 "Check to ensure CSCO is navigated back to home page");
     }
 
-    @Test(groups = {"VM-4880", "W-Sprint5", "VM-4842", "VM-7724", "V-Sprint10", "slice_A",
+    @Test(groups = {"VM-4880", "W-Sprint5", "VM-4842", "VM-7724", "V-Sprint10", "Regression",
             "slice_D"}, description = "Verify BackToSearchResults functionality in the user profile page")
     public void testGoToUserProfilePageAndBackToSearchResults() {
         Login user = createTester(true);
@@ -240,7 +240,7 @@ public class HelpDeskTests extends BaseTest {
                 {Login.LOGIN_ENFTESTER4}};
     }
 
-    @Test(groups = {"VM-7646", "slice_A"}, dataProvider = "dvsaUserCanSearchForAUser")
+    @Test(groups = {"VM-7646", "Regression"}, dataProvider = "dvsaUserCanSearchForAUser")
     public void testCanDvsaUserConductUserSearch(Login login) {
         UserDashboardPage userDashboardPage =
                 UserDashboardPage.navigateHereFromLoginPage(driver, login);
@@ -249,7 +249,7 @@ public class HelpDeskTests extends BaseTest {
                 "user search link is present and clickable");
     }
 
-    @Test(groups = {"VM-7646", "slice_A"}, dataProvider = "dvsaUserCanSearchForAUser")
+    @Test(groups = {"VM-7646", "Regression"}, dataProvider = "dvsaUserCanSearchForAUser")
     public void testDvsaUserCanViewSearchResults(Login login) {
         UserDashboardPage userDashboardPage =
                 UserDashboardPage.navigateHereFromLoginPage(driver, login);
@@ -268,7 +268,7 @@ public class HelpDeskTests extends BaseTest {
                 "Postcode column is present");
     }
 
-    @Test(groups = {"VM-7646", "slice_A"}, dataProvider = "dvsaUserCanSearchForAUser")
+    @Test(groups = {"VM-7646", "Regression"}, dataProvider = "dvsaUserCanSearchForAUser")
     public void testDvsaUserCanSearchOnTown(Login login) {
         UserDashboardPage userDashboardPage =
                 UserDashboardPage.navigateHereFromLoginPage(driver, login);
@@ -279,7 +279,7 @@ public class HelpDeskTests extends BaseTest {
                 .checkSearchResultsTable(Assertion.ASSERTION_USER_ADDRESS.assertion));
     }
 
-    @Test(groups = {"VM-7295", "slice_A"}, dataProvider = "dvsaUserCanSearchForAUser")
+    @Test(groups = {"VM-7295", "Regression"}, dataProvider = "dvsaUserCanSearchForAUser")
     public void testUserCanClickOnEventsHistoryLink(Login login) {
         EventHistoryPage eventHistoryPage =
                 UserDashboardPage.navigateHereFromLoginPage(driver, login).clickUserSearch()
@@ -290,7 +290,7 @@ public class HelpDeskTests extends BaseTest {
     }
 
 
-    @Test(groups = {"VM-8049", "slice_A"}, dataProvider = "dvsaUserCanSearchForAUser")
+    @Test(groups = {"VM-8049", "Regression"}, dataProvider = "dvsaUserCanSearchForAUser")
     public void testDvsaUserCanViewVtsAssociationSuccessfully(Login login) {
         UserDashboardPage userDashboardPage =
                 UserDashboardPage.navigateHereFromLoginPage(driver, login);
@@ -302,7 +302,7 @@ public class HelpDeskTests extends BaseTest {
                 siteDetailsPage.checkChangeOpeningHoursLinkExists(), is(true));
     }
 
-    @Test(groups = {"VM-8049", "slice_A"}, dataProvider = "dvsaUserCanSearchForAUser")
+    @Test(groups = {"VM-8049", "Regression"}, dataProvider = "dvsaUserCanSearchForAUser")
     public void testDvsaUserCanViewAeAssociationSuccessfully(Login login) {
 
         AuthorisedExaminerFullDetailsPage authorisedExaminerFullDetailsPage =
@@ -314,7 +314,7 @@ public class HelpDeskTests extends BaseTest {
                 authorisedExaminerFullDetailsPage.checkSearchAgainLinkExists(), is(true));
     }
 
-    @Test(groups = {"VM-8049", "slice_A"})
+    @Test(groups = {"VM-8049", "Regression"})
     public void testCscoUserCanViewVtsAssociationSuccessfully() {
         UserDashboardPage userDashboardPage =
                 UserDashboardPage.navigateHereFromLoginPage(driver, Login.LOGIN_CUSTOMER_SERVICE);
@@ -326,7 +326,7 @@ public class HelpDeskTests extends BaseTest {
                 siteDetailsPage.checkChangeOpeningHoursLinkExists(), is(false));
     }
 
-    @Test(groups = {"VM-9084", "slice_A"})
+    @Test(groups = {"VM-9084", "Regression"})
     public void testCSCOCanSearchForUsersWithUnclaimedAccounts() {
         Login unclaimedAccountUser = createTester(true);
         HelpDeskUserProfilePage helpDeskUserProfilePage =
@@ -338,7 +338,7 @@ public class HelpDeskTests extends BaseTest {
                 "Check that username searched is displayed on profile page");
     }
 
-    @Test(groups = {"VM-9085", "slice_A"}) public void testCSCOCanReclaimAccountByPost() {
+    @Test(groups = {"VM-9085", "Regression"}) public void testCSCOCanReclaimAccountByPost() {
 
         ArrayList vts = new ArrayList();
         String aeName = RandomStringUtils.randomAlphabetic(6);
@@ -374,7 +374,7 @@ public class HelpDeskTests extends BaseTest {
                 "Check message displayed when account reclaim is a success");
     }
 
-    @Test(groups = {"VM-9085", "slice_A"})
+    @Test(groups = {"VM-9085", "Regression"})
     public void testCSCOCanCancelAccountReclaimAndReturnToUserProfile() {
 
         HelpDeskUserProfilePage helpDeskUserProfilePage = HelpdeskUserSearchPage
@@ -386,7 +386,7 @@ public class HelpDeskTests extends BaseTest {
                 "Check to ensure account wasn't reclaimed");
     }
 
-    @Test(groups = {"VM-9085", "slice_A"}) public void testAccountCantBeReclaimedMoreThanOnce() {
+    @Test(groups = {"VM-9085", "Regression"}) public void testAccountCantBeReclaimedMoreThanOnce() {
 
         HelpDeskUserProfilePage helpDeskUserProfilePage = HelpdeskUserSearchPage
                 .navigateHereFromLoginPage(driver, Login.LOGIN_CUSTOMER_SERVICE)

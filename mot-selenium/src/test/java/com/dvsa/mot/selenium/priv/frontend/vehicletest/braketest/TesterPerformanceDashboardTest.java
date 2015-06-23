@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 
 public class TesterPerformanceDashboardTest extends BaseTest {
 
-    @Test(groups = {"slice_A", "Sprint 24A", "VM-2266", "MOT Testing"},
+    @Test(groups = {"Regression", "Sprint 24A", "VM-2266", "MOT Testing"},
             description = "A tester that conducts a MOT test can able to see the passed tests on his performance dashboard")
     public void testTesterUserStatsForTestPassed() {
         Login tester = createTester();
@@ -23,7 +23,7 @@ public class TesterPerformanceDashboardTest extends BaseTest {
         Assert.assertTrue(performanceDashboardPage.getNumberOfTestsPassed() == 1);
     }
 
-    @Test(groups = {"slice_A", "Sprint 24A", "VM-2266", "MOT Testing"},
+    @Test(groups = {"Regression", "Sprint 24A", "VM-2266", "MOT Testing"},
             description = "A tester that conducts a MOT test can able to see the failed tests on his performance dashboard")
     public void testTesterUserStatsForTestFailed() {
         Login tester = createTester();

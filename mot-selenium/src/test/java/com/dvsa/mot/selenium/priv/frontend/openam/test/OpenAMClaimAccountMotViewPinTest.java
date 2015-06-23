@@ -17,7 +17,7 @@ import org.testng.annotations.Test;
  */
 public class OpenAMClaimAccountMotViewPinTest extends BaseTest {
 
-    @Test(groups = {"slice_A", "VM-4716"}) public void testTesterViewPinPageWording() {
+    @Test(groups = {"Regression", "VM-4716"}) public void testTesterViewPinPageWording() {
 
         Login login = createTester(true);
         OpenAMClaimAccountSignInPage openAMClaimAccountSignInPage =
@@ -37,7 +37,7 @@ public class OpenAMClaimAccountMotViewPinTest extends BaseTest {
         openAMClaimAccountMotTestPinPage.clickSaveAndContinue();
     }
 
-    @Test(groups = {"slice_A", "VM-4716"}) public void testNonTesterViewPinPageWording() {
+    @Test(groups = {"Regression", "VM-4716"}) public void testNonTesterViewPinPageWording() {
 
         int aeId = EntityManager.createAe(1000);
 

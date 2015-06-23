@@ -31,7 +31,7 @@ public class AssociateTradeRolesTest extends BaseTest {
     /**
      * As a AEDM user I am assigning AED role to a tester on an AE level.
      */
-    @Test(groups = {"VM-8593", "slice_A"}) public void assignAEDRoleOnAELevel() {
+    @Test(groups = {"VM-8593", "Regression"}) public void assignAEDRoleOnAELevel() {
 
         AeService aeService = new AeService();
         AeDetails aeDetails = aeService.createAe("ATRWheels");
@@ -67,7 +67,7 @@ public class AssociateTradeRolesTest extends BaseTest {
     /**
      * As a AEDM user I am assigning Site Mgr role to a tester on VTS level.
      */
-    @Test(groups = {"VM-8593", "slice_A"}) public void testAssignSiteMgrRoleOnVTSLevel() {
+    @Test(groups = {"VM-8593", "Regression"}) public void testAssignSiteMgrRoleOnVTSLevel() {
 
         int aeId = createAE("ATRWheels1");
         String vtsName = "ATRGarage1";
@@ -96,7 +96,7 @@ public class AssociateTradeRolesTest extends BaseTest {
     /**
      * As a AEDM user I am assigning Site Admin role to a tester on VTS level.
      */
-    @Test(groups = {"VM-8593", "slice_A"}) public void testAssignSiteAdminRoleOnVTSLevel() {
+    @Test(groups = {"VM-8593", "Regression"}) public void testAssignSiteAdminRoleOnVTSLevel() {
         int aeId = createAE("ATRWheels2");
         String vtsName = "ATRGarage2";
         int vtsId = createVTS(aeId, TestGroup.ALL, Login.LOGIN_AREA_OFFICE1, vtsName);
@@ -124,7 +124,7 @@ public class AssociateTradeRolesTest extends BaseTest {
     /**
      * As a Site Mgr user I am assigning Site Admin role to a tester on VTS level.
      */
-    @Test(groups = {"VM-8593", "slice_A"})
+    @Test(groups = {"VM-8593", "Regression"})
     public void testAssignSiteAdminRoleOnVTSLevelAsSiteMgr() {
 
         int aeId = createAE("ATRWheels3");
@@ -151,7 +151,7 @@ public class AssociateTradeRolesTest extends BaseTest {
                 "Acceptance of the nomination letter was not successful");
     }
 
-    @Test(groups = {"VM-9042", "slice_A"}) public void testVtsAssociationDisplayOnHomePage() {
+    @Test(groups = {"VM-9042", "Regression"}) public void testVtsAssociationDisplayOnHomePage() {
 
         String siteManagerNotification = "Site manager nomination";
         AeService aeService = new AeService();

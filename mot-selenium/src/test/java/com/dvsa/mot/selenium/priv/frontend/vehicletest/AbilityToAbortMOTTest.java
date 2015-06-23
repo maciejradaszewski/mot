@@ -28,7 +28,7 @@ import static org.hamcrest.core.Is.is;
 
 public class AbilityToAbortMOTTest extends BaseTest {
 
-    @Test(groups = {"slice_A", "VM-2948", "Sprint 22", "MOT Testing", "VM-4408"},
+    @Test(groups = {"Regression", "VM-2948", "Sprint 22", "MOT Testing", "VM-4408"},
             description = "In order to prevent fraudulent test being carried out as a VE I require the ability to abort a test.")
     public void testVECanAbortTest() {
 

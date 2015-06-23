@@ -17,7 +17,7 @@ import static org.hamcrest.core.Is.is;
 public class OpenAMClaimAccountSecurityQuestionsTest extends BaseTest {
 
 
-    @Test(groups = {"slice_A", "VM-4705"})
+    @Test(groups = {"Regression", "VM-4705"})
     public void testOpenAMClaimAccountWithSecurityQuestionsWithNoMemorableAnswers() {
         loginIntoOpenAMClaimAccount();
         OpenAMClaimAccountSecurityQuestionsPage openAMClaimAccountSecurityQuestionsPage =

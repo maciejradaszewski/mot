@@ -17,7 +17,7 @@ public class TesterAndVTSCategoriesTest extends BaseTest {
 
     private static ReasonToCancel reasonToCancel = ReasonToCancel.REASON_VEHICLE_REGISTERED_ERROR;
 
-    @Test(groups = {"slice_A", "short"})
+    @Test(groups = {"Regression", "short"})
     public void TesterCat4CanTestVehicleCat4_singleVTSAuthorised() {
 
         MotTestPage motTestPage = MotTestPage.navigateHereFromLoginPage(driver, login,
@@ -29,7 +29,7 @@ public class TesterAndVTSCategoriesTest extends BaseTest {
                 userDashboardPage.isStartMotTestDisplayed(), is(true));
     }
 
-    @Test(groups = "slice_A") public void TesterCat1CanTestVehicleCat1_singleVTSAuthorised() {
+    @Test(groups = "Regression") public void TesterCat1CanTestVehicleCat1_singleVTSAuthorised() {
 
         MotTestPage motTestPage = MotTestPage
                 .navigateHereFromLoginPage(driver, Login.LOGIN_CATATESTER,
@@ -41,7 +41,7 @@ public class TesterAndVTSCategoriesTest extends BaseTest {
                 userDashboardPage.isStartMotTestDisplayed(), is(true));
     }
 
-    @Test(groups = {"slice_A", "short"})
+    @Test(groups = {"Regression", "short"})
     public void TesterCat1CanNotTestVehicleCat1_singleVTSAuthorised() {
 
         StartTestConfirmation1Page
@@ -53,7 +53,7 @@ public class TesterAndVTSCategoriesTest extends BaseTest {
                 ValidationSummary.isValidationSummaryDisplayed(driver), is(true));
     }
 
-    @Test(groups = "slice_A") public void TesterCat4CanNotTestVehicleCat1_manyVTSAuthorised() {
+    @Test(groups = "Regression") public void TesterCat4CanNotTestVehicleCat1_manyVTSAuthorised() {
 
         StartTestConfirmation1Page
                 .navigateHereFromLoginPageAsMotTest(driver, Login.LOGIN_CATBTESTER,

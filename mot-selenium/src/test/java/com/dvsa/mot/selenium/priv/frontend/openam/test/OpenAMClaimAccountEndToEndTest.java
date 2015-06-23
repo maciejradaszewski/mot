@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 
 public class OpenAMClaimAccountEndToEndTest extends BaseTest {
 
-    @Test(groups = {"slice_A", "VM-2901"}) public void testMot2LogInWithNewPassword() {
+    @Test(groups = {"Regression", "VM-2901"}) public void testMot2LogInWithNewPassword() {
 
         Login login = createTester(true);
         OpenAMClaimAccountSignInPage openAMClaimAccountSignInPage =

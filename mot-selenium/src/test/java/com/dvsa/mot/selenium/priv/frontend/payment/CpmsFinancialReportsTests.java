@@ -18,7 +18,7 @@ public class CpmsFinancialReportsTests extends BaseTest {
         return financialReportDownloadPage;
     }
 
-    @Test(groups = {"slice_A", "SPMS-137"})
+    @Test(groups = {"Regression", "SPMS-137"})
     public void generateFinancialReportForAllPaymentsTest() {
 
         FinancialReportDownloadPage financialReportDownloadPage =
@@ -29,7 +29,7 @@ public class CpmsFinancialReportsTests extends BaseTest {
                 "Verifying Back to generate report link displayed");
     }
 
-    @Test(groups = {"slice_A", "SPMS-138"})
+    @Test(groups = {"Regression", "SPMS-138"})
     public void generateFinancialReportForTransactionBreakdown() {
 
         FinancialReportDownloadPage financialReportDownloadPage =

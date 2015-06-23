@@ -4,7 +4,7 @@
     <test name="Slice A test suite">
         <groups>
             <run>
-                <include name="slice_A"/>
+                <include name="Regression"/>
             </run>
         </groups>
         <packages>

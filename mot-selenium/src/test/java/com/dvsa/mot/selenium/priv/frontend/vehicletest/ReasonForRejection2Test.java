@@ -49,7 +49,7 @@ public class ReasonForRejection2Test extends BaseTest {
     }
 
 
-    @Test(groups = {"slice_A", "VM-1581", "VM-1578", "VM-1579", "short-vehicle", "VM-1741"})
+    @Test(groups = {"Regression", "VM-1581", "VM-1578", "VM-1579", "short-vehicle", "VM-1741"})
     public void addManualAdvisoryWithProfanityDescriptionAndPressCancelAndAddSuccessfully() {
 
         AeDetails aeDetails = aeService.createAe(
@@ -96,7 +96,7 @@ public class ReasonForRejection2Test extends BaseTest {
 
     @Test(enabled = true,
             description = "Fail MOT on multiple RFR's and tests add/remove of RFR items,creates PRS and creates MOT certificate.",
-            groups = {"VM-1666", "VM-315", "VM-1661", "slice_A", "VM-1128", "VM-1861", "VM-1579"},
+            groups = {"VM-1666", "VM-315", "VM-1661", "Regression", "VM-1128", "VM-1861", "VM-1579"},
             dataProvider = "DP-MultipleRFRs")
     public void testClass4MOTFailOnBrakeTestAndPRSAndMultipleRFRs(Login login,
             Map<BrakeTestResultsPageField, Object> inputsBrakeFailure,
@@ -178,7 +178,7 @@ public class ReasonForRejection2Test extends BaseTest {
                 .clickLogout();
     }
 
-    @Test(groups = "slice_A")
+    @Test(groups = "Regression")
     public void testClickFailureIsDangerousOnFailSuccessfully_ManualAdvisory() {
 
         AeDetails aeDetails = aeService.createAe(
@@ -198,7 +198,7 @@ public class ReasonForRejection2Test extends BaseTest {
         assertThat("Check number of advisories", motTestPage.getNumberOfAdvisories(), is(1));
     }
 
-    @Test(groups = {"slice_A", "VM-1661", "VM-1861"})
+    @Test(groups = {"Regression", "VM-1661", "VM-1861"})
     public void testClickFailureIsDangerousOnFailSuccessfully() {
 
         AeDetails aeDetails = aeService.createAe(
@@ -215,7 +215,7 @@ public class ReasonForRejection2Test extends BaseTest {
         assertThat("Check number of advisories", motTestPage.getNumberOfFailures(), is(1));
     }
 
-    @Test(groups = {"slice_A", "VM-1661", "VM-1861", "short-vehicle"})
+    @Test(groups = {"Regression", "VM-1661", "VM-1861", "short-vehicle"})
     public void testClickFailureIsDangerousOnPRSSuccessfully() {
 
         AeDetails aeDetails = aeService.createAe(
@@ -232,7 +232,7 @@ public class ReasonForRejection2Test extends BaseTest {
         assertThat("Check number of advisories", motTestPage.getNumberOfPRS(), is(1));
     }
 
-    @Test(groups = {"slice_A", "VM-1661", "VM-1861"})
+    @Test(groups = {"Regression", "VM-1661", "VM-1861"})
     public void testClickFailureIsDangerousOnAdvisorySuccessfully() {
 
         AeDetails aeDetails = aeService.createAe(
@@ -266,7 +266,7 @@ public class ReasonForRejection2Test extends BaseTest {
                         AdvisoryRejection.ELECTRICAL_WIRING_DAMAGED_CAUSE_SHORT}}};
     }
 
-    @Test(groups = {"slice_A", "VM-1665", "short-vehicle"},
+    @Test(groups = {"Regression", "VM-1665", "short-vehicle"},
             dataProvider = "DP-NonComponentRelatedDefectsSuccessfully")
     public void testAddNonComponentRelatedDefectsSuccessfully(AdvisoryRejection[] advisories) {
 
@@ -284,7 +284,7 @@ public class ReasonForRejection2Test extends BaseTest {
         assertThat("Check number of advisories", numberOfAdvisories, is(advisories.length));
     }
 
-    @Test(groups = {"slice_A", "VM-1951"})
+    @Test(groups = {"Regression", "VM-1951"})
     public void testVehicleBreadcrumbAfterSelectingGeneralCategory() {
 
         AeDetails aeDetails = aeService.createAe(
@@ -309,7 +309,7 @@ public class ReasonForRejection2Test extends BaseTest {
                 is(false));
     }
 
-    @Test(groups = {"slice_A", "VM-1951"})
+    @Test(groups = {"Regression", "VM-1951"})
     public void testDoorsBreadcrumbAndGoBackToGeneralCategory() {
 
         AeDetails aeDetails = aeService.createAe(
@@ -339,7 +339,7 @@ public class ReasonForRejection2Test extends BaseTest {
                 is(false));
     }
 
-    @Test(groups = {"slice_A", "VM-1584", "VM-1589"}) public void testCanAddManualRFRInMotRetest() {
+    @Test(groups = {"Regression", "VM-1584", "VM-1589"}) public void testCanAddManualRFRInMotRetest() {
 
         AeDetails aeDetails = aeService.createAe(
                 RandomDataGenerator.generateRandomAlphaNumeric(12, UUID.randomUUID().hashCode()));
@@ -367,7 +367,7 @@ public class ReasonForRejection2Test extends BaseTest {
                 motRetestPage.getNumberOfFailures(), is(previousNumberOfFailures + 1));
     }
 
-    @Test(groups = {"slice_A", "VM-1584", "VM-1589"})
+    @Test(groups = {"Regression", "VM-1584", "VM-1589"})
     public void testCanRectifyFailureInMotRetest() {
 
         AeDetails aeDetails = aeService.createAe(
@@ -397,7 +397,7 @@ public class ReasonForRejection2Test extends BaseTest {
                 motRetestPage.getNumberOfFailures(), is(previousNumberOfFailures - 1));
     }
 
-    @Test(groups = {"slice_A", "VM-1584", "VM-1589"}) public void testCanRectifyPRSInMotRetest() {
+    @Test(groups = {"Regression", "VM-1584", "VM-1589"}) public void testCanRectifyPRSInMotRetest() {
 
         AeDetails aeDetails = aeService.createAe(
                 RandomDataGenerator.generateRandomAlphaNumeric(12, UUID.randomUUID().hashCode()));
@@ -422,7 +422,7 @@ public class ReasonForRejection2Test extends BaseTest {
         assertThat("Check the number of PRS", motRetestPage.getNumberOfPRS(), is(0));
     }
 
-    @Test(groups = {"slice_A", "VM-1584", "VM-1589"}) public void testCanAddPRSInMotRetest() {
+    @Test(groups = {"Regression", "VM-1584", "VM-1589"}) public void testCanAddPRSInMotRetest() {
 
         AeDetails aeDetails = aeService.createAe(
                 RandomDataGenerator.generateRandomAlphaNumeric(12, UUID.randomUUID().hashCode()));
@@ -449,7 +449,7 @@ public class ReasonForRejection2Test extends BaseTest {
                 is(previousNumberOfPRS + 1));
     }
 
-    @Test(groups = {"slice_A", "VM-1584", "VM-1589"})
+    @Test(groups = {"Regression", "VM-1584", "VM-1589"})
     public void testCanRectifyAdvisoryInMotRetest() {
 
         AeDetails aeDetails = aeService.createAe(
@@ -478,7 +478,7 @@ public class ReasonForRejection2Test extends BaseTest {
                 motRetestPage.getNumberOfAdvisories(), is(previousNumberOfAdvisories - 1));
     }
 
-    @Test(groups = {"slice_A", "VM-1581", "VM-1584", "VM-1589"})
+    @Test(groups = {"Regression", "VM-1581", "VM-1584", "VM-1589"})
     public void testCanAddAdvisoryInMotRetest() {
 
         AeDetails aeDetails = aeService.createAe(
@@ -506,7 +506,7 @@ public class ReasonForRejection2Test extends BaseTest {
                 is(previousNumberOfAdvisories + 1));
     }
 
-    @Test(groups = {"slice_A", "VM-5137", "VM-4901"})
+    @Test(groups = {"Regression", "VM-5137", "VM-4901"})
     public void endDatedRfrIsVisibleOnDuplicateCertificatePage() {
 
         AeDetails aeDetails = aeService.createAe(
@@ -530,7 +530,7 @@ public class ReasonForRejection2Test extends BaseTest {
                 is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-5139", "VM-4901"})
+    @Test(groups = {"Regression", "VM-5139", "VM-4901"})
     public void endDatedRfrCanNotBeUsedDuringNewTestCreation() {
 
         AeDetails aeDetails = aeService.createAe(
@@ -549,7 +549,7 @@ public class ReasonForRejection2Test extends BaseTest {
                 ValidationSummary.isValidationSummaryDisplayed(driver), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-5136", "VM-4901"})
+    @Test(groups = {"Regression", "VM-5136", "VM-4901"})
     public void testEndDatedRFRIsVisibleOnOldMOTest() {
 
         AeDetails aeDetails = aeService.createAe(

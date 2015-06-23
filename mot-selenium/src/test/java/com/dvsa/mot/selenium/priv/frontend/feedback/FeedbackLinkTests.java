@@ -15,7 +15,7 @@ public class FeedbackLinkTests extends BaseTest {
 
     private String feedbackLink = "mailto:mot.modernisation@vosa.gsi.gov.uk?subject=MOT%20testing%20service%20feedback";
 
-    @Test(groups = {"VM-7201", "slice_A", "W-Sprint14"},
+    @Test(groups = {"VM-7201", "Regression", "W-Sprint14"},
             description = "As a AEDM user I verify if the Dashboard site feedback link contains correct link, then I navigate to Site Details page and verify the feedback link there")
     public void testDashboardAndVTSFeedbackLink() {
 
@@ -30,7 +30,7 @@ public class FeedbackLinkTests extends BaseTest {
         Assert.assertEquals(feedbackLink, siteDetailsPage.getFeedbackLink());
     }
 
-    @Test(groups = {"VM-7201", "slice_A", "W-Sprint14"},
+    @Test(groups = {"VM-7201", "Regression", "W-Sprint14"},
             description = "As a ENFTESTER user I verify if the MOT Search site feedback link contains correct link")
     public void testMOTSearchFeedbackLink() {
         //EnforcementHomePage.navigateHereFromLoginPage(driver, createVE()).clickMOTLink()

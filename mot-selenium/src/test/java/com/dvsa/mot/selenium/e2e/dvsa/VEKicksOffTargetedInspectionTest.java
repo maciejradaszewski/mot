@@ -29,7 +29,7 @@ public class VEKicksOffTargetedInspectionTest extends BaseTest {
     private Login ve;
     private Vehicle vehicle;
 
-    @Test(groups = {"E2E", "slice_A"}) public void testThatVECanKickOffTargetedInspection() {
+    @Test(groups = {"E2E", "Regression"}) public void testThatVECanKickOffTargetedInspection() {
         // create VE and Vehicle
         ve = createVE();
         vehicle = createVehicle(VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);

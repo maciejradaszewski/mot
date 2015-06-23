@@ -36,7 +36,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
         return chequePaymentOrderConfirmedPage;
     }
 
-    @Test(groups = {"slice_A", "SPMS-37"})
+    @Test(groups = {"Regression", "SPMS-37"})
     public void purchaseSlotsAuthorizedExaminerPageVerification() {
         AuthorisedExaminerOverviewPage authorisedExaminerOverviewPage =
                 AuthorisedExaminerOverviewPage.navigateHereFromLoginPage(driver, login.LOGIN_AEDM,
@@ -52,7 +52,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 "Verifying Setup DirectDebit Link present");
     }
 
-    @Test(groups = {"slice_A", "SPMS-37"}) public void purchaseSlotsByCardSuccessfulJourney() {
+    @Test(groups = {"Regression", "SPMS-37"}) public void purchaseSlotsByCardSuccessfulJourney() {
         PaymentConfirmationPage paymentConfirmationPage = loginAsAedmAndPurchaseSlotsByCard();
 
         Assert.assertTrue(paymentConfirmationPage.getStatusMessage().contains(
@@ -65,7 +65,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 "Verifying Total Cost")));
     }
 
-    @Test(groups = {"slice_A", "SPMS-37"})
+    @Test(groups = {"Regression", "SPMS-37"})
     public void purchaseSlotsExceedingMaximumBalanceErrorTest() {
         BuySlotsPage buySlotsPage = AuthorisedExaminerOverviewPage
                 .navigateHereFromLoginPage(driver, login.LOGIN_AEDM, Business.EXAMPLE_AE_INC)
@@ -76,7 +76,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 "Verifying Maximum Slot Balance Exceeds Message displayed");
     }
 
-    @Test(groups = {"slice_A", "SPMS-88"}) public void purchaseSlotsUserCancelsPaymentTest() {
+    @Test(groups = {"Regression", "SPMS-88"}) public void purchaseSlotsUserCancelsPaymentTest() {
         BuySlotsPage buySlotsPage = AuthorisedExaminerOverviewPage
                 .navigateHereFromLoginPage(driver, login.LOGIN_AEDM, Business.EXAMPLE_AE_INC)
                 .clickBuySlotsLink().enterSlotsRequired(Payments.VALID_PAYMENTS.slots)
@@ -88,7 +88,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 "Verifying CalculateCost button present");
     }
 
-    @Test(groups = {"slice_A", "SPMS-47"}) public void transactionHistoryVerificationTest() {
+    @Test(groups = {"Regression", "SPMS-47"}) public void transactionHistoryVerificationTest() {
         PaymentConfirmationPage paymentConfirmationPage = loginAsAedmAndPurchaseSlotsByCard();
 
         TransactionHistoryPage transactionHistoryPage =
@@ -149,7 +149,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 "Verifying CSV Link");
     }
 
-    @Test(groups = {"slice_A", "SPMS-47"}) public void paymentInvoiceDetailsVerificationTest() {
+    @Test(groups = {"Regression", "SPMS-47"}) public void paymentInvoiceDetailsVerificationTest() {
         PaymentConfirmationPage paymentConfirmationPage = loginAsAedmAndPurchaseSlotsByCard();
         PaymentDetailsPage paymentDetailsPage =
                 paymentConfirmationPage.clickViewPurchaseDetailsLink();
@@ -166,7 +166,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 "Verifying Print button present");
     }
 
-    @Test(groups = {"slice_A", "SPMS-120"})
+    @Test(groups = {"Regression", "SPMS-120"})
     public void financeUserPurchaseSlotsByChequeSuccessfulJourney() {
         ChequePaymentOrderConfirmedPage chequePaymentOrderConfirmedPage =
                 loginAsFinanceUserAndPurchaseSlotsByCheque();
@@ -181,7 +181,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 ("£" + ChequePayment.VALID_CHEQUE_PAYMENTS.cost), "Verifying Total Cost");
     }
 
-    @Test(groups = {"slice_A", "SPMS-120"})
+    @Test(groups = {"Regression", "SPMS-120"})
     public void financeUserPurchaseSlotsByExcessAmountCheque() {
         AeService aeService = new AeService();
         AeDetails aeDetails = aeService.createAe("ChequePayment");
@@ -198,7 +198,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 "Verifying validation error displayed");
     }
 
-    @Test(groups = {"slice_A", "SPMS-199"})
+    @Test(groups = {"Regression", "SPMS-199"})
     public void financeUserSearchForPaymentByPaymentReference() {
 
         PaymentConfirmationPage paymentConfirmationPage = loginAsAedmAndPurchaseSlotsByCard();
@@ -222,7 +222,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 "Verifying OrderDetails present");
     }
 
-    @Test(groups = {"slice_A", "SPMS-77"})
+    @Test(groups = {"Regression", "SPMS-77"})
     public void financeUserSearchForPaymentByInvoiceReference() {
 
         PaymentConfirmationPage paymentConfirmationPage = loginAsAedmAndPurchaseSlotsByCard();

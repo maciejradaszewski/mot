@@ -20,7 +20,7 @@ public class CreateNewVehicleRecordTest extends BaseTest {
     private final String WRONG_VIN = "wrongvin";
 
 
-    @Test(groups = {"slice_A", "VM-2333", "Sprint 22", "VM-2588", "MOT Testing"},
+    @Test(groups = {"Regression", "VM-2333", "Sprint 22", "VM-2588", "MOT Testing"},
             description = "Create a new vehicle and validate that it has been successfully created")
     public void testCreateNewVehicleRecordSuccessfully() {
 
@@ -81,7 +81,7 @@ public class CreateNewVehicleRecordTest extends BaseTest {
                 userDashboardPage.existResumeMotTestButton(), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-2333", "VM-2588", "VM-8824", "Sprint 22", "MOT Testing"},
+    @Test(groups = {"Regression", "VM-2333", "VM-2588", "VM-8824", "Sprint 22", "MOT Testing"},
             description = "Create a new vehicle record, edit fields within the application process and submitButton to database")
     public void testEditVehicleRecordSuccessfully() {
 
@@ -138,7 +138,7 @@ public class CreateNewVehicleRecordTest extends BaseTest {
                 is(Colour.Purple.getColourName()));
     }
 
-    @Test(groups = {"slice_A", "VM-2333", "VM-2588", "VM-8320", "VM-8824", "VM-9272", "Sprint 22",
+    @Test(groups = {"Regression", "VM-2333", "VM-2588", "VM-8320", "VM-8824", "VM-9272", "Sprint 22",
             "MOT Testing"},
             description = "Create a new vehicle record with validation check of all the fields")
     public void testAllValidationMessagesForCreateNewVehicleRecord() {
@@ -198,7 +198,7 @@ public class CreateNewVehicleRecordTest extends BaseTest {
                 is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-2333", "VM-2588", "Sprint 22", "MOT Testing"},
+    @Test(groups = {"Regression", "VM-2333", "VM-2588", "Sprint 22", "MOT Testing"},
             description = "When a tester attempts three incorrect PINs when creating a new vehicle record, he is blocked and need to reset the PIN.")
     public void testTesterIsBlockedWhenInsertThreeInvalidPIN() {
         Login loginToBlock = createTester();
@@ -221,7 +221,7 @@ public class CreateNewVehicleRecordTest extends BaseTest {
 
 
 
-    @Test(groups = {"slice_A", "VM-8322", "VM-9272", "VM-8331"})
+    @Test(groups = {"Regression", "VM-8322", "VM-9272", "VM-8331"})
     public void testANewVehicleRecordIsCreatedWithNoVinAndAbleToStartAnMotTest() {
 
         Vehicle vehicle = Vehicle.VEHICLE_CLASS4_NON_EXISTENT_12;

@@ -15,7 +15,7 @@ public class EventHistoryTests extends BaseTest {
         return new Object[][]{{Login.LOGIN_AREA_OFFICE1}, {Login.LOGIN_ENFTESTER}};
     }
 
-    @Test(groups = {"VM-5153", "VM-5154", "Sprint09", "V", "Test 01", "current", "slice_A"},
+    @Test(groups = {"VM-5153", "VM-5154", "Sprint09", "V", "Test 01", "current", "Regression"},
             dataProvider = "EventHistoryLoginProvider")
 
     public void viewEventHistory(Login login) {

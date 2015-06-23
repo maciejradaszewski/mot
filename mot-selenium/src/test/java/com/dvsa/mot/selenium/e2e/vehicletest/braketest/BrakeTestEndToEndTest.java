@@ -55,7 +55,7 @@ public class BrakeTestEndToEndTest extends BaseTest {
      * Create new MOT record for pre 2010 vehicle with various brake test results
      */
     @Test(description = "Brake pass scenarios for pre 2010 Class 4 vehicle.", groups = {"VM-60",
-            "short-brakes", "short-vehicle", "slice_A"},
+            "short-brakes", "short-vehicle", "Regression"},
             dataProvider = "DP-BrakeTestDataE2E") public void brakeTestClass4(
             Map<BrakeTestResultsPageField, Object> inputs, Map<String, String> expResult,
             Vehicle vehicle, String expPassFailStatus, String odometerReading) {

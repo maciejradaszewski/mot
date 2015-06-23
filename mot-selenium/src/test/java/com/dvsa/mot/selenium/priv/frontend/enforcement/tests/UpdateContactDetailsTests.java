@@ -29,7 +29,7 @@ public class UpdateContactDetailsTests extends BaseTest {
     //UPDATE AE/VTS CONTACT DETAILS- invalid data
 
     @Test(groups = {"VM-7284", "VM-7285", "Sprint12", "V", "Test 01", "Test 03", "Test 04",
-            "Test 05", "Test 06", "current", "slice_A", "VM-2394", "Sprint 25",})
+            "Test 05", "Test 06", "current", "Regression", "VM-2394", "Sprint 25",})
 
     public void updateAeAndVTSContactDetailsAsExternalUserwithInvalidData() {
 
@@ -86,7 +86,7 @@ public class UpdateContactDetailsTests extends BaseTest {
     //UPDATE AE/VTS CONTACT DETAILS- valid data
 
     @Test(groups = {"VM-7284", "VM-7285", "Sprint12", "V", "Test 01", "Test 03", "Test 04",
-            "Test 05", "Test 06", "current", "slice_A", "VM-2394", "Sprint 25",})
+            "Test 05", "Test 06", "current", "Regression", "VM-2394", "Sprint 25",})
 
     public void updateAeAndVTSContactDetailsAsExternalUserwithValidData() {
 
@@ -179,7 +179,7 @@ public class UpdateContactDetailsTests extends BaseTest {
     // Update AE/VTS contact details - DVSA user
 
     @Test(groups = {"VM-7284", "VM-7285", "Sprint12", "V", "Test 07", "Test 08", "Test 02",
-            "current", "slice_A", "VM-3734", "VM-2378", "Sprint26", "Enf", "E2E", "VM-7275",
+            "current", "Regression", "VM-3734", "VM-2378", "Sprint26", "Enf", "E2E", "VM-7275",
             "VM-2394", "Sprint 25",}) public void updateAeAndVTSContactDetailsAsInternalUser() {
 
         AeService aeService = new AeService();

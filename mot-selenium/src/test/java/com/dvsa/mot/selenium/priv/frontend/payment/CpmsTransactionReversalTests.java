@@ -16,7 +16,7 @@ import org.testng.annotations.Test;
 
 public class CpmsTransactionReversalTests extends BaseTest {
 
-    @Test(groups = {"slice_A", "SPMS-42"}) public void transactionReversalCardPayment() {
+    @Test(groups = {"Regression", "SPMS-42"}) public void transactionReversalCardPayment() {
         AeService aeService = new AeService();
         AeDetails aeDetails = aeService.createAe("paymentReversal");
         String aeRef = aeDetails.getAeRef();
@@ -43,7 +43,7 @@ public class CpmsTransactionReversalTests extends BaseTest {
 
     }
 
-    @Test(groups = {"slice_A", "SPMS-42"}) public void transactionReversalChequePayment() {
+    @Test(groups = {"Regression", "SPMS-42"}) public void transactionReversalChequePayment() {
         AeService aeService = new AeService();
         AeDetails aeDetails = aeService.createAe("paymentReversal");
         String aeRef = aeDetails.getAeRef();

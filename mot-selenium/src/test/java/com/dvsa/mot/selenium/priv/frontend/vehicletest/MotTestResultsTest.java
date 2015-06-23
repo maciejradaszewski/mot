@@ -16,7 +16,7 @@ public class MotTestResultsTest extends BaseTest {
 
     private static ReasonToCancel reasonToCancel = ReasonToCancel.REASON_VEHICLE_REGISTERED_ERROR;
 
-    @Test(groups = {"slice_A", "short-vehicle"}) public void testDisplayedVehicleInfo() {
+    @Test(groups = {"Regression", "short-vehicle"}) public void testDisplayedVehicleInfo() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
 
@@ -34,7 +34,7 @@ public class MotTestResultsTest extends BaseTest {
         motTestPage.cancelMotTest(reasonToCancel);
     }
 
-    @Test(groups = {"slice_A", "VM-2830", "Sprint 21", "MOT Testing"},
+    @Test(groups = {"Regression", "VM-2830", "Sprint 21", "MOT Testing"},
             description = "If a tester or a Vehicle examiner selects brake test not tested then the system should not make the user enter brake test results.")
     public void testAddBrakeTestIsNotMandatoryWhenSelectBrakeTestNotTested() {
 
@@ -56,7 +56,7 @@ public class MotTestResultsTest extends BaseTest {
         motTestPage.cancelMotTest(reasonToCancel);
     }
 
-    @Test(groups = {"slice_A", "VM-2830", "Sprint 21", "MOT Testing"},
+    @Test(groups = {"Regression", "VM-2830", "Sprint 21", "MOT Testing"},
             description = "To enter brake test figures the user must first remove the RFR for brake test not tested before they can edit or add any brake test results.")
     public void testRFRMustFirstRemovedToAddBrakeTestResults() {
 
@@ -81,7 +81,7 @@ public class MotTestResultsTest extends BaseTest {
         motTestPage.cancelMotTest(reasonToCancel);
     }
 
-    @Test(groups = {"slice_A", "VM-2586", "Sprint 22", "MOT Testing"},
+    @Test(groups = {"Regression", "VM-2586", "Sprint 22", "MOT Testing"},
             description = "When a tester provide 3 invalid passcodes on Mot Test Summary page, he is locked and a link to report a faulty card is displayed")
     public void testTesterIsLockedWhenInsertThreeInvalidPassCode() {
 

@@ -19,7 +19,7 @@ import static org.hamcrest.core.Is.is;
 
 public class VehicleSearchTest extends BaseTest {
 
-    @Test(groups = "slice_A") public void testDisplayedMotTestingCrumbTrail() {
+    @Test(groups = "Regression") public void testDisplayedMotTestingCrumbTrail() {
 
         VehicleSearchPage vehicleSearch =
                 VehicleSearchPage.navigateHereFromLoginPage(driver, login);
@@ -28,7 +28,7 @@ public class VehicleSearchTest extends BaseTest {
                 vehicleSearch.getVehicleSearchStepNumber().contains("MOT testing"), is(true));
     }
 
-    @Test(groups = "slice_A") public void testDisplayedHeaderInfo() {
+    @Test(groups = "Regression") public void testDisplayedHeaderInfo() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
 
         //Header info on Vehicle Search page
@@ -50,7 +50,7 @@ public class VehicleSearchTest extends BaseTest {
                 is(false));
     }
 
-    @Test(groups = {"slice_A", "VM-8752"}) public void testCancelButton() {
+    @Test(groups = {"Regression", "VM-8752"}) public void testCancelButton() {
 
         UserDashboardPage vehicleSearchPage =
                 VehicleSearchPage.navigateHereFromLoginPage(driver, login).clickCancel();
@@ -59,7 +59,7 @@ public class VehicleSearchTest extends BaseTest {
                 vehicleSearchPage.isStartMotTestDisplayed(), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-18", "VM-8752"}) public void testSubmitFull20Vin_NoReg() {
+    @Test(groups = {"Regression", "VM-18", "VM-8752"}) public void testSubmitFull20Vin_NoReg() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_NO_REG);
 
@@ -72,7 +72,7 @@ public class VehicleSearchTest extends BaseTest {
 
     }
 
-    @Test(groups = {"slice_A", "VM-18", "VM-8752", "short"})
+    @Test(groups = {"Regression", "VM-18", "VM-8752", "short"})
     public void testDiffSearchTypesWithNoReg() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_NO_REG_6VIN);
@@ -123,7 +123,7 @@ public class VehicleSearchTest extends BaseTest {
         vehicleSearch.clickVehicleCTA();
     }
 
-    @Test(groups = {"slice_A", "VM-18", "VM-1498", "VM-8752"})
+    @Test(groups = {"Regression", "VM-18", "VM-1498", "VM-8752"})
     public void testSubmitFullVinAbortData() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BOXSTER_2001);
@@ -150,7 +150,7 @@ public class VehicleSearchTest extends BaseTest {
                 confPage.isStartMotTestDisplayed(), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-18"}) public void testLast6VinAndReg_BackToSearch() {
+    @Test(groups = {"Regression", "VM-18"}) public void testLast6VinAndReg_BackToSearch() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         String lastSixCharInVin = vehicle.fullVIN.substring(vehicle.fullVIN.length() - 6);
@@ -174,7 +174,7 @@ public class VehicleSearchTest extends BaseTest {
 
     }
 
-    @Test(groups = {"slice_A", "VM-18", "VM-8752"})
+    @Test(groups = {"Regression", "VM-18", "VM-8752"})
     public void testMid6VinAndFullRegNoResultsAndCreateNewVehicleLink() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -200,7 +200,7 @@ public class VehicleSearchTest extends BaseTest {
 
     }
 
-    @Test(groups = {"slice_A", "VM-18", "short", "VM-8752"}) public void testSubmitMaxVinAndReg() {
+    @Test(groups = {"Regression", "VM-18", "short", "VM-8752"}) public void testSubmitMaxVinAndReg() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_21CHARVIN_14REG);
         Vehicle vehicle1 = createVehicle(Vehicle.VEHICLE_20CHARVIN_13REG);
@@ -224,7 +224,7 @@ public class VehicleSearchTest extends BaseTest {
                 is(vehicle1.getCarMakeAndModel()));
     }
 
-    @Test(groups = {"slice_A", "VM-1498", "VM-8752"}) public void testSearchWithNoVin() {
+    @Test(groups = {"Regression", "VM-1498", "VM-8752"}) public void testSearchWithNoVin() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_NO_VIN);
 
@@ -249,7 +249,7 @@ public class VehicleSearchTest extends BaseTest {
                 confirmationPage.isStartMotTestButtonDisplayed(), is(true));
 
     }
-    @Test(groups = {"slice_A", "VM-4791"})
+    @Test(groups = {"Regression", "VM-4791"})
     public void testTheCookieElementIsPresentInTheDOMOfAVehicleSearchPage() {
         TesterCreationApi testerCreationApi = new TesterCreationApi();
         Person tester = testerCreationApi.createTesterAsPerson(Arrays.asList(1));

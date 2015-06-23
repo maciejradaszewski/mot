@@ -36,7 +36,7 @@ public class EndToEndTestForATesterRoleTest extends BaseTest {
 
 
     @Test(dataProvider = "motTestDataForPassAndFailVehicles",
-            groups = {"slice_A", "VM-1030", "VM-1029", "E2E", "VM-7254", "short-vehicle", "VM-2268",
+            groups = {"Regression", "VM-1030", "VM-1029", "E2E", "VM-7254", "short-vehicle", "VM-2268",
                     "VM-2269"})
 
     public void testTesterPerformingEndToEndMotTestForPassAndFailConditions(Vehicle vehicle,

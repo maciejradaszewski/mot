@@ -13,14 +13,14 @@ public class OpenAMAccountLockoutTests extends BaseTest {
 
     AuthService authService = new AuthService();
     
-    @Test (groups = {"slice_A"})
+    @Test (groups = {"Regression"})
     public void testOpenAMLockoutAfterInvalidLoginAttempts() {
         Login login = createTester();
         authService.forceUserLockout(login, 5);
         new LoginPage(driver).loginExpectingToBeLockedOut(driver, login);
     }
 
-    @Test (groups = {"slice_A"})
+    @Test (groups = {"Regression"})
     public void testOpenAmAccountCanBeUnlocked() {
         Login login = createTester();
         authService.forceUserLockout(login, 5);

@@ -29,7 +29,7 @@ public class TargetedReInspectionTests extends BaseTest {
         LoginPage.loginAs(driver, enfTester);
     }
 
-    @Test(groups = "slice_A") public void verifyVT20WelshCertificate() throws IOException {
+    @Test(groups = "Regression") public void verifyVT20WelshCertificate() throws IOException {
 
         RunAClass4Mot runMotTest = new RunAClass4Mot(driver);
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -66,7 +66,7 @@ public class TargetedReInspectionTests extends BaseTest {
         Assert.assertTrue(ver.getVinModelColour(parsedText).contains(Colour), "Verify car colour");
     }
 
-    @Test(groups = "slice_A") public void verifyVT30Certificate() throws IOException {
+    @Test(groups = "Regression") public void verifyVT30Certificate() throws IOException {
         RunAClass4Mot runMotTest = new RunAClass4Mot(driver);
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -98,7 +98,7 @@ public class TargetedReInspectionTests extends BaseTest {
                 "Verify fullVIN");
     }
 
-    @Test(groups = "slice_A") public void verifyVT30WelshCertificate() throws IOException {
+    @Test(groups = "Regression") public void verifyVT30WelshCertificate() throws IOException {
         RunAClass4Mot runMotTest = new RunAClass4Mot(driver);
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         runMotTest.runWelshMotTestFailPrint(Login.LOGIN_MANYVTSTESTER, vehicle, Site.WELSH_GARAGE);
@@ -133,7 +133,7 @@ public class TargetedReInspectionTests extends BaseTest {
         Assert.assertTrue(ver.getVinModelColour(parsedText).contains(Colour), "Verify Car Colour");
     }
 
-    @Test(groups = "slice_A") public void verifyVT32Certificate() throws IOException {
+    @Test(groups = "Regression") public void verifyVT32Certificate() throws IOException {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         RunAClass4MotWithRfrs runMotTest = new RunAClass4MotWithRfrs(driver);
@@ -165,7 +165,7 @@ public class TargetedReInspectionTests extends BaseTest {
                 "Verify Car Model");
     }
 
-    @Test(groups = "slice_A") public void verifyWelshVT32Certificate() throws IOException {
+    @Test(groups = "Regression") public void verifyWelshVT32Certificate() throws IOException {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         RunAClass4MotWithRfrs runMotTest = new RunAClass4MotWithRfrs(driver);
         runMotTest.runWelshMotClass4TestWithAdvisoryRfrs(Login.LOGIN_MANYVTSTESTER, vehicle,
@@ -200,7 +200,7 @@ public class TargetedReInspectionTests extends BaseTest {
     }
 
     @Test(groups = {"VM-1327", "Sprint14", "Enf", "VM-2952", "Sprint25", "Enf", "VM-3125",
-            "Sprint24", "slice_A"}) public void noDocumentationIfReInspectionHasNoDifferences()
+            "Sprint24", "Regression"}) public void noDocumentationIfReInspectionHasNoDifferences()
             throws IOException {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -259,7 +259,7 @@ public class TargetedReInspectionTests extends BaseTest {
         testCompletePage.clickLogout();
     }
 
-    @Test(groups = {"VM-136", "Sprint14", "Enf", "slice_A"})
+    @Test(groups = {"VM-136", "Sprint14", "Enf", "Regression"})
     public void selectTheCompareResultsOption() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -286,7 +286,7 @@ public class TargetedReInspectionTests extends BaseTest {
     }
 
 
-    @Test(groups = {"VM-681", "Sprint15", "Enf", "slice_A"})
+    @Test(groups = {"VM-681", "Sprint15", "Enf", "Regression"})
     public void assignAScoreToASelectedTestResult() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -321,7 +321,7 @@ public class TargetedReInspectionTests extends BaseTest {
     }
 
 
-    @Test(groups = {"VM-1560", "Sprint15", "Enf", "slice_A"})
+    @Test(groups = {"VM-1560", "Sprint15", "Enf", "Regression"})
     public void hoverOverScoreInformationIcon() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -349,7 +349,7 @@ public class TargetedReInspectionTests extends BaseTest {
         comparison.clickLogout();
     }
 
-    @Test(groups = {"VM-1599", "Sprint15", "Enf", "slice_A"})
+    @Test(groups = {"VM-1599", "Sprint15", "Enf", "Regression"})
     public void veSelectsScoreOfTesterTestedItem() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -387,7 +387,7 @@ public class TargetedReInspectionTests extends BaseTest {
     }
 
 
-    @Test(groups = {"VM-995", "Sprint15", "Enf", "slice_A"}) public void veSelectsCaseOutcome() {
+    @Test(groups = {"VM-995", "Sprint15", "Enf", "Regression"}) public void veSelectsCaseOutcome() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         loginAsTesterAndDoMOTLogoutAndLoginAsEnfUser(login, vehicle);
@@ -437,7 +437,7 @@ public class TargetedReInspectionTests extends BaseTest {
 
     }
 
-    @Test(groups = {"VM-1612", "Sprint15", "Enf", "slice_A"})
+    @Test(groups = {"VM-1612", "Sprint15", "Enf", "Regression"})
     public void recordVeTargetedReInspectionOutcomeSaveValues() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -483,7 +483,7 @@ public class TargetedReInspectionTests extends BaseTest {
 
     }
 
-    @Test(groups = {"VM-1755", "Sprint22", "Enf", "Test1", "slice_A"}, enabled = false)
+    @Test(groups = {"VM-1755", "Sprint22", "Enf", "Test1", "Regression"}, enabled = false)
     public void verifyDefectCategory() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -521,7 +521,7 @@ public class TargetedReInspectionTests extends BaseTest {
         comparisonPage.clickLogout();
     }
 
-    @Test(groups = {"VM-1890", "Sprint25", "Enf", "slice_A"})
+    @Test(groups = {"VM-1890", "Sprint25", "Enf", "Regression"})
     public void verifyResumeReInspectionAfterLogout() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -565,7 +565,7 @@ public class TargetedReInspectionTests extends BaseTest {
         comparisonPage.clickLogout();
     }
 
-    @Test(groups = {"VM-1890", "Sprint25", "Enf", "slice_A"})
+    @Test(groups = {"VM-1890", "Sprint25", "Enf", "Regression"})
     public void verifyResumeReInspectionAfterNavigatedAway() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -603,7 +603,7 @@ public class TargetedReInspectionTests extends BaseTest {
                 Text.TEXT_ENF_CUTDOWN_SCORE_FIVE.text);
     }
 
-    @Test(groups = {"VM-2952", "Sprint25", "Enf", "slice_A"})
+    @Test(groups = {"VM-2952", "Sprint25", "Enf", "Regression"})
     public void verifyExpiryDateSingleRfr() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);

@@ -27,7 +27,7 @@ public class ContingencyTests extends BaseTest {
     private int year = new DateTime().getYear();
     Vehicle myVehicle;
 
-    @Test(groups = {"VM-4825", "Sprint05", "V", "Test 01", "slice_A",
+    @Test(groups = {"VM-4825", "Sprint05", "V", "Test 01", "Regression",
             "A"}, description = "End to end test scenario for contingency test normal test failure user journey")
     public void normalMOTFromContingencyTestFail() {
 
@@ -55,7 +55,7 @@ public class ContingencyTests extends BaseTest {
     }
 
     @Test(groups = {"VM-4825", "Sprint05", "V", "Test 02",
-            "slice_A"}, description = "End to end test scenario for contingency test retest user journey", dependsOnGroups = "A")
+            "Regression"}, description = "End to end test scenario for contingency test retest user journey", dependsOnGroups = "A")
     public void retestFromContingencyTest() {
 
         ArrayList myManyVTS = new ArrayList();

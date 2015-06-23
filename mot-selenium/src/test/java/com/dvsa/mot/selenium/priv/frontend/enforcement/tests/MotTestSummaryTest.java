@@ -13,7 +13,7 @@ import static com.dvsa.mot.selenium.framework.api.MotTestApi.MotTestData;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-@Test(groups = {"slice_A"}) public class MotTestSummaryTest extends BaseTest {
+@Test(groups = {"Regression"}) public class MotTestSummaryTest extends BaseTest {
 
     private static final int VTS_ID = 1;
     private static final String VTS_NUMBER = "V1234";

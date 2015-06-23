@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 
 public class EnforcementHomePageTests extends BaseTest {
     @Test(description = "Verify all MOT links on UserDashboard page.", groups = {"VM-2191",
-            "Sprint20", "Enf", "Test 01", "short", "slice_A"}) public void testMOTlinks() {
+            "Sprint20", "Enf", "Test 01", "short", "Regression"}) public void testMOTlinks() {
         VtsNumberEntryPage enforcementAdvanceSearchPage =
                 new LoginPage(driver).loginAsEnforcementUser(Login.LOGIN_ENFTESTER)
                         .goToVtsNumberEntryPage();
@@ -39,7 +39,7 @@ public class EnforcementHomePageTests extends BaseTest {
     }
 
     @Test(description = "Verify  MOT links on UserDashboard page.", groups = {"VM-4825", "Sprint05",
-            "V", "Test 01", "short", "slice_A"}) public void testcontingencylink() {
+            "V", "Test 01", "short", "Regression"}) public void testcontingencylink() {
 
         EnforcementHomePage homePage =
                 EnforcementHomePage.navigateHereFromLoginPage(driver, Login.LOGIN_TESTER1);

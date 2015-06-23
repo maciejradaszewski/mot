@@ -66,7 +66,7 @@ public class NominationsAndNotificationsTest extends BaseTest {
         return unreadNotificationsAssignedUser + 1;
     }
 
-    @Test(groups = {"Sprint-22", "slice_A", "VM-5022", "VM-5024"})
+    @Test(groups = {"Sprint-22", "Regression", "VM-5022", "VM-5024"})
 
     public void testListOfNominationsAtSiteLevel() {
 
@@ -155,7 +155,7 @@ public class NominationsAndNotificationsTest extends BaseTest {
                 "Check the time difference of the event created is less than 5 minutes");
     }
 
-    @Test(groups = {"Sprint-22", "slice_A", "VM-5022", "VM-5024"})
+    @Test(groups = {"Sprint-22", "Regression", "VM-5022", "VM-5024"})
     public void testListOfNominationsAtOrgLevel() {
 
         AeDetails aeDetails = aeService.createAe("AE_");
@@ -231,7 +231,7 @@ public class NominationsAndNotificationsTest extends BaseTest {
 
     }
 
-    @Test(groups = {"slice_A", "VM-5039", "VM-2231", "Sprint 24"})
+    @Test(groups = {"Regression", "VM-5039", "VM-2231", "Sprint 24"})
     public void testRemoveTradeRoleAtSiteLevel() {
         AeDetails aeDetails = aeService.createAe("AE_");
         String siteName = "VTS_";
@@ -269,7 +269,7 @@ public class NominationsAndNotificationsTest extends BaseTest {
                 .contains("Notification sent"), "Notification of role removal is displayed");
     }
 
-    @Test(groups = {"slice_A", "VM-5039"}) public void testRemoveTradeRoleAtOrganisationLevel() {
+    @Test(groups = {"Regression", "VM-5039"}) public void testRemoveTradeRoleAtOrganisationLevel() {
         AeDetails aeDetails = aeService.createAe("AE_");
         Login aedmLogin = createAEDM(aeDetails.getId(), Login.LOGIN_SCHEME_MANAGEMENT, false);
         Login aedLogin = Login.LOGIN_AED1;
@@ -299,7 +299,7 @@ public class NominationsAndNotificationsTest extends BaseTest {
     }
 
     @Test(description = "buggy logic, raised as VM-9702",
-            groups = {"VM-3489", "VM3426", "Sprint 25", "slice_A"})
+            groups = {"VM-3489", "VM3426", "Sprint 25", "Regression"})
     public void testOutsideOpeningHoursNotification() {
 
         Days currentDay = Days.getCurrentDay();

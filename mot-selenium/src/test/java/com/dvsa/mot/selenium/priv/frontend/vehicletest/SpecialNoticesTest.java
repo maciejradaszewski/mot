@@ -21,7 +21,7 @@ import static org.testng.Assert.assertTrue;
 
 public class SpecialNoticesTest extends BaseTest {
 
-    @Test(groups = {"slice_A", "VM-1965", "VM-1966", "VM-1967"})
+    @Test(groups = {"Regression", "VM-1965", "VM-1966", "VM-1967"})
     public void testUserHasNoUnreadSpecialNotices() {
 
         SpecialNoticesPage specialNoticesPage =
@@ -38,7 +38,7 @@ public class SpecialNoticesTest extends BaseTest {
                 is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-2309"}, enabled = true)
+    @Test(groups = {"Regression", "VM-2309"}, enabled = true)
     public void testSNMandateFieldsForCreationAndUser2AccessSNCreatedByUser1() {
 
         final String TEXT_LINE = "Mark down test line";
@@ -74,7 +74,7 @@ public class SpecialNoticesTest extends BaseTest {
     }
 
 
-    @Test(groups = {"slice_A", "VM-1965", "VM-1966", "VM-1967", "VM-1991", "VM-1992", "VM-2312"})
+    @Test(groups = {"Regression", "VM-1965", "VM-1966", "VM-1967", "VM-1991", "VM-1992", "VM-2312"})
     public void testTesterHasOverdueSNAcknowledgeItPrintAndStartMotTestLinkPresent() {
         Login testerWithOverdueSpecialNotices = createTester();
 
@@ -127,7 +127,7 @@ public class SpecialNoticesTest extends BaseTest {
                 specialNoticesPage.removeButtonNotPresent(specialNoticeRemoved), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-2309", "VM-2997"})
+    @Test(groups = {"Regression", "VM-2309", "VM-2997"})
     public void testVerifyDraftCreateNewSpecialNotice() {
 
         int specialNoticeDraft =
@@ -141,7 +141,7 @@ public class SpecialNoticesTest extends BaseTest {
                 is(Assertion.ASSERTION_NOTICE_STATUS.assertion));
     }
 
-    @Test(groups = {"slice_A", "VM-2313", "Sprint 21", "MOT Testing"},
+    @Test(groups = {"Regression", "VM-2313", "Sprint 21", "MOT Testing"},
             description = "Test the different 'mark downs' used when we edit a new special notice are formatted correctly.")
     public void testSpecialNoticesMarkDown() {
 
@@ -174,7 +174,7 @@ public class SpecialNoticesTest extends BaseTest {
                 MarkDown.existTextAsSmallHeader(PREVIEW_PAGE_SOURCE, TEXT_LINE), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-7844"})
+    @Test(groups = {"Regression", "VM-7844"})
     public void testSpecialNoticesMarkdownCannotContainJavascript() {
 
         CreateSpecialNoticePage.navigateHereFromLoginPage(driver, Login.LOGIN_SCHEME_USER)
@@ -184,7 +184,7 @@ public class SpecialNoticesTest extends BaseTest {
                 ValidationSummary.isValidationSummaryDisplayed(driver), is(true));
     }
 
-    @Test(groups = {"VM-3547", "Sprint 24B", "MOT Testing", "slice_A"},
+    @Test(groups = {"VM-3547", "Sprint 24B", "MOT Testing", "Regression"},
             description = "DVSA Area Admin User can search for and is presented with a list of current special notices, can also edit the notices")
     public void testDVSASchemeUserCanEditNotices() {
 
@@ -208,7 +208,7 @@ public class SpecialNoticesTest extends BaseTest {
 
     }
 
-    @Test(groups = {"slice_A", "VM-4517"}, description = "user who cannot create special notices")
+    @Test(groups = {"Regression", "VM-4517"}, description = "user who cannot create special notices")
     public void testUserWhoCannotCreateSpecialNotices() {
 
         SpecialNoticesPage specialNoticesPage =

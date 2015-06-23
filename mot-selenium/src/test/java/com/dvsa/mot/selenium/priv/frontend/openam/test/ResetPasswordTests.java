@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.is;
 
 public class ResetPasswordTests extends BaseTest{
 
-    @Test (groups = {"slice_A"})
+    @Test (groups = {"Regression"})
     public void passwordResetOnLogin() {
 
         Login login = createTester(Collections.singleton(Site.POPULAR_GARAGES.getId()), TestGroup.ALL,
@@ -36,7 +36,7 @@ public class ResetPasswordTests extends BaseTest{
             userDashboardPage.isViewAllForSpecialNoticesLinkClickable(), is(true));
     }
 
-    @Test(groups = {"slice_A"})
+    @Test(groups = {"Regression"})
     public void passwordResetAfterClaimingAccount() {
         Login login = createTester(Collections.singleton(Site.POPULAR_GARAGES.getId()), TestGroup.ALL,
             true, true);
@@ -51,7 +51,7 @@ public class ResetPasswordTests extends BaseTest{
         changePasswordPage.enterNewPasswordAndSubmitChangesSuccessfully();
     }
 
-    @Test(groups = {"slice_A"})
+    @Test(groups = {"Regression"})
     public void changePasswordValidationChecks(){
         Login login = createTester(Collections.singleton(Site.POPULAR_GARAGES.getId()), TestGroup.ALL,
             false, true);

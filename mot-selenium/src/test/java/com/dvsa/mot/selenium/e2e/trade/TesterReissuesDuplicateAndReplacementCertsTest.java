@@ -42,7 +42,7 @@ public class TesterReissuesDuplicateAndReplacementCertsTest extends BaseTest {
         return new Object[][] {{PASSED, ASSERTION_PASS}, {FAILED, ASSERTION_FAIL},};
     }
 
-    @Test(groups = {"slice_A", "VM-2151", "VM-2152", "E2E", "short-vehicle", "VM-2268", "VM-2269"},
+    @Test(groups = {"Regression", "VM-2151", "VM-2152", "E2E", "short-vehicle", "VM-2268", "VM-2269"},
             description = "Reissue Fail and Pass Duplicate Certificate on the Current VTS, and view the Duplicate certificate",
             dataProvider = "reissueCertificateOnCurrentVTSProvider")
     public void testReissueCertificateOnCurrentVTS_View(TestOutcome testOutcome,
@@ -81,7 +81,7 @@ public class TesterReissuesDuplicateAndReplacementCertsTest extends BaseTest {
         duplicateReplacementCertificatePrintPage.clickBackToUserHome();
     }
 
-    @Test(groups = {"slice_A", "VM-2153", "VM-2591", "VM-4511", "VM-4512", "Sprint 22", "E2E"},
+    @Test(groups = {"Regression", "VM-2153", "VM-2591", "VM-4511", "VM-4512", "Sprint 22", "E2E"},
             description = "Reissue fail Replacement certificate on the current VTS, editing the odometer and colour of vehicle, and then resubmitting")
     public void testReissueFailCertificateOnCurrentVTS_Edit() {
         Vehicle vehicle = createVehicle(VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);
@@ -96,7 +96,7 @@ public class TesterReissuesDuplicateAndReplacementCertsTest extends BaseTest {
                 .enterOneTimePassword(TEXT_PASSCODE).finishAndPrintCertificate();
     }
 
-    @Test(groups = {"VM-4512", "slice_A", "W-Sprint4", "E2E"},
+    @Test(groups = {"VM-4512", "Regression", "W-Sprint4", "E2E"},
             description = "Tester can only issue a replacement on the latest certificate and only with 7 days of issue, and only from their VTS.")
     public void testTesterCanNotIssueReplacementOnLatestCertificateWithMoreThan7DaysOfIssue() {
         Login tester = createTester();

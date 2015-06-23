@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.startsWith;
 
 public class ResultsOdometerTest extends BaseTest {
 
-    @Test(groups = "slice_A", description = "Ensure that default units set for odometer reading are miles")
+    @Test(groups = "Regression", description = "Ensure that default units set for odometer reading are miles")
     public void testOdometerDefaultUnit() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -33,7 +33,7 @@ public class ResultsOdometerTest extends BaseTest {
         motTestPage.cancelMotTest(ReasonToCancel.REASON_ACCIDENT_OR_ILLNESS);
     }
 
-    @Test(groups = {"slice_A",
+    @Test(groups = {"Regression",
             "short",}, description = "Ensure that the proper value is displayed with miles and the 'odometer reading updated' info is displayed")
     public void testSubmitProperValueMilesCheckDisplayed() {
 
@@ -49,7 +49,7 @@ public class ResultsOdometerTest extends BaseTest {
         motTestPage.cancelMotTest(ReasonToCancel.REASON_VEHICLE_REGISTERED_ERROR);
     }
 
-    @Test(groups = "slice_A", description = "Ensure that when proper values are entered, they are displayed as 'km' rather than 'miles'")
+    @Test(groups = "Regression", description = "Ensure that when proper values are entered, they are displayed as 'km' rather than 'miles'")
     public void testSubmitProperValueKmCheckDisplayed() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -64,7 +64,7 @@ public class ResultsOdometerTest extends BaseTest {
         motTestPage.cancelMotTest(ReasonToCancel.REASON_ABORTED_BY_VE);
     }
 
-    @Test(groups = "slice_A", description = "Ensure that an error message is returned when an empty odometer reading is submitted")
+    @Test(groups = "Regression", description = "Ensure that an error message is returned when an empty odometer reading is submitted")
     public void testEmptyOdometerAtFirstTime() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -80,7 +80,7 @@ public class ResultsOdometerTest extends BaseTest {
         motTestPage.cancelMotTest(ReasonToCancel.REASON_INCORRECT_LOCATION);
     }
 
-    @Test(groups = "slice_A", description = "Enter '0' miles and submit")
+    @Test(groups = "Regression", description = "Enter '0' miles and submit")
     public void testSubmit0Miles() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -101,7 +101,7 @@ public class ResultsOdometerTest extends BaseTest {
         motTestPage.cancelMotTest(ReasonToCancel.REASON_VTS_INCIDENT);
     }
 
-    @Test(groups = "slice_A", description = "Ensure that no more than 7 digits can be entered into the odometer field")
+    @Test(groups = "Regression", description = "Ensure that no more than 7 digits can be entered into the odometer field")
     public void testSubmitMoreThanLimitChars() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_MONDEO_2002);
@@ -120,7 +120,7 @@ public class ResultsOdometerTest extends BaseTest {
         motTestPage.cancelMotTest(ReasonToCancel.REASON_ACCIDENT_OR_ILLNESS);
     }
 
-    @Test(groups = "slice_A", description = "Ensure that no more than 999999 miles can be entered into the odometer field")
+    @Test(groups = "Regression", description = "Ensure that no more than 999999 miles can be entered into the odometer field")
     public void testSubmitMaxValueMiles() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -140,7 +140,7 @@ public class ResultsOdometerTest extends BaseTest {
     }
 
     @Test(enabled = true, description = "MOT test cannot be completed with blank Odometer value",
-            groups = {"slice_A"}) public void testMOTCannotCompleteTestWithBlankOdometer() {
+            groups = {"Regression"}) public void testMOTCannotCompleteTestWithBlankOdometer() {
 
         MotTestPage motTest = BrakeTestSummaryPage.navigateHereFromLoginPage(driver, createTester(),
                 createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004),

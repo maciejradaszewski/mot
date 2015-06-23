@@ -15,7 +15,7 @@ import static org.hamcrest.core.Is.is;
 
 public class TesterUserJourneyForClaimAccountTest extends BaseTest {
 
-    @Test(groups = {"slice_A", "VM-2335", "E2E"})
+    @Test(groups = {"Regression", "VM-2335", "E2E"})
     public void testConfirmOpenAMClaimAccountSuccessfully() {
 
         Person claimsTester = createTesterAsPerson(Collections.singletonList(1), true);

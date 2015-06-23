@@ -34,7 +34,7 @@ public class BrakeTestConfigurationTest extends BaseTest {
                         BrakeTestConfiguration7.brakeTestConfigClass7_Roller()}};
     }
 
-    @Test(groups = {"slice_A", "VM-1029"}, dataProvider = "cancelConfigurationDetailsProvider")
+    @Test(groups = {"Regression", "VM-1029"}, dataProvider = "cancelConfigurationDetailsProvider")
     public void testCancelConfigurationDetails(Vehicle vehicle,
             Map<BrakeTestConfigurationPageField, Object> configurationDetails) {
         BrakeTestConfigurationPage.navigateHereFromLoginPageAsMotTest(driver, login, vehicle)
@@ -42,7 +42,7 @@ public class BrakeTestConfigurationTest extends BaseTest {
                 .cancelMotTest(reasonToCancel).clickLogout();
     }
 
-    @Test(groups = {"slice_A", "VM-4447", "VM-4225"})
+    @Test(groups = {"Regression", "VM-4447", "VM-4225"})
     public void testEnterNoDetailsForClass1And2Vehicle() {
         BrakeTestConfigurationPage brakeTestConfigurationPage = BrakeTestConfigurationPage
                 .navigateHereFromLoginPageAsMotTest(driver, login,
@@ -54,7 +54,7 @@ public class BrakeTestConfigurationTest extends BaseTest {
         brakeTestConfigurationPage.cancel().cancelMotTest(reasonToCancel).clickLogout();
     }
 
-    @Test(groups = {"slice_A", "VM-4447", "VM-4225"})
+    @Test(groups = {"Regression", "VM-4447", "VM-4225"})
     public void testEnterNoDetailsForClass3Vehicle() {
         BrakeTestConfigurationPage brakeTestConfigurationPage = BrakeTestConfigurationPage
                 .navigateHereFromLoginPageAsMotTest(driver, login,
@@ -67,7 +67,7 @@ public class BrakeTestConfigurationTest extends BaseTest {
         brakeTestConfigurationPage.cancel().cancelMotTest(reasonToCancel).clickLogout();
     }
 
-    @Test(groups = {"slice_A", "VM-4447", "VM-4225"})
+    @Test(groups = {"Regression", "VM-4447", "VM-4225"})
     public void testEnterNoDetailsForClass4Vehicle() {
         BrakeTestConfigurationPage brakeTestConfigurationPage = BrakeTestConfigurationPage
                 .navigateHereFromLoginPageAsMotTest(driver, login,
@@ -80,7 +80,7 @@ public class BrakeTestConfigurationTest extends BaseTest {
         brakeTestConfigurationPage.cancel().cancelMotTest(reasonToCancel).clickLogout();
     }
 
-    @Test(groups = {"slice_A", "VM-1029", "VM-988", "VM-987"})
+    @Test(groups = {"Regression", "VM-1029", "VM-988", "VM-987"})
     public void testEnterNoDetailsAndClickNext() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS5_STREETKA_1924);
         BrakeTestConfigurationPage.navigateHereFromLoginPageAsMotTest(driver, login, vehicle)
@@ -185,7 +185,7 @@ public class BrakeTestConfigurationTest extends BaseTest {
                         BrakeTestConfigurationPageField.VEHICLE_WEIGHT},};
     }
 
-    @Test(groups = {"slice_A", "VM-1029", "VM-1343", "VM-986",
+    @Test(groups = {"Regression", "VM-1029", "VM-1343", "VM-986",
             "VM-987"}, dataProvider = "notApplicableWeightNoValueProvider")
     public void testInvalidCalculatedWeight(Vehicle vehicle,
             Map<BrakeTestConfigurationPageField, Object> configurationDetails,
@@ -307,7 +307,7 @@ public class BrakeTestConfigurationTest extends BaseTest {
         brakeTestConfigurationPage.cancel().cancelMotTest(reasonToCancel).clickLogout();
     }
 
-    @Test(groups = {"VM-8767", "Mot Testing", "slice_A"})
+    @Test(groups = {"VM-8767", "Mot Testing", "Regression"})
     public void testClass4VehicleWithWeightNotApplicable() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
         TestSummary testSummary = TestSummary

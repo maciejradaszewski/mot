@@ -42,7 +42,7 @@ public class ReasonsForTestRefusalTest extends BaseTest {
                         ReasonForRefusal.VTS_NOT_AUTHORISED_TO_TEST_VEHICLE_CLASS}};
     }
 
-    @Test(dataProvider = "ReasonsForRefusal", groups = {"VM-5017", "slice_A", "short"})
+    @Test(dataProvider = "ReasonsForRefusal", groups = {"VM-5017", "Regression", "short"})
     public void testAllReasonsForRefusal(Vehicle vehicle, ReasonForRefusal reasonForRefusal) {
 
         MotTestRefusedPage motTestRefusedPage = MotTestRefusedPage
@@ -54,7 +54,7 @@ public class ReasonsForTestRefusalTest extends BaseTest {
         motTestRefusedPage.clickLogout();
     }
 
-    @Test(groups = {"VM-5017", "slice_A", "W-Sprint6"})
+    @Test(groups = {"VM-5017", "Regression", "W-Sprint6"})
     public void testErrorMessageWhenNoReasonForRefusalIsSelected() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
@@ -67,7 +67,7 @@ public class ReasonsForTestRefusalTest extends BaseTest {
                 ValidationSummary.isValidationSummaryDisplayed(driver), is(true));
     }
 
-    @Test(groups = {"VM-5017", "slice_A", "W-Sprint6"})
+    @Test(groups = {"VM-5017", "Regression", "W-Sprint6"})
     public void testCheckVehicleDetailsAndBackToSearchFromRefuseToTestPage() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);

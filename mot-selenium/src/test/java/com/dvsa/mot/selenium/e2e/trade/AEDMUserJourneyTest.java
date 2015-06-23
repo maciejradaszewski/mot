@@ -13,7 +13,7 @@ import static org.hamcrest.core.Is.is;
 
 public class AEDMUserJourneyTest extends BaseTest {
 
-    @Test(groups = {"E2E", "slice_A"}) public void testAedmEntersInvalidDateRange() {
+    @Test(groups = {"E2E", "Regression"}) public void testAedmEntersInvalidDateRange() {
         Login aedmLogin =
                 createAEDM(createAE("testAedmEntersInvalidDateRange"), Login.LOGIN_AREA_OFFICE2,
                         false);
