@@ -3,9 +3,11 @@
 return array(
   'DvsaAuthentication\Authentication\Adapter\AuthenticationAdapterTrait'                             => __DIR__ . '/src/DvsaAuthentication/Authentication/Adapter/AuthenticationAdapterTrait.php',
   'DvsaAuthentication\Authentication\Adapter\OpenAM\Factory\OpenAMApiCredentialsBasedAdapterFactory' => __DIR__ . '/src/DvsaAuthentication/Authentication/Adapter/OpenAM/Factory/OpenAMApiCredentialsBasedAdapterFactory.php',
+  // REMOVED INVALID MAP: 'getRealm'                                                                                         => __DIR__ . '/src/DvsaAuthentication/Authentication/Adapter/OpenAM/Factory/OpenAMApiCredentialsBasedAdapterFactory.php',
   // REMOVED INVALID MAP: 'get'                                                                                              => __DIR__ . '/src/DvsaAuthentication/Authentication/Adapter/OpenAM/Factory/OpenAMApiTokenBasedAdapterFactory.php',
   // REMOVED INVALID MAP: 'getRepository'                                                                                    => __DIR__ . '/src/DvsaAuthentication/Authentication/Adapter/OpenAM/Factory/OpenAMApiTokenBasedAdapterFactory.php',
   'DvsaAuthentication\Authentication\Adapter\OpenAM\Factory\OpenAMApiTokenBasedAdapterFactory'       => __DIR__ . '/src/DvsaAuthentication/Authentication/Adapter/OpenAM/Factory/OpenAMApiTokenBasedAdapterFactory.php',
+  // REMOVED INVALID MAP: 'getIdentityAttributeUsername'                                                                     => __DIR__ . '/src/DvsaAuthentication/Authentication/Adapter/OpenAM/Factory/OpenAMApiTokenBasedAdapterFactory.php',
   'DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMApiCredentialsBasedAdapter'                => __DIR__ . '/src/DvsaAuthentication/Authentication/Adapter/OpenAM/OpenAMApiCredentialsBasedAdapter.php',
   'DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMApiTokenBasedAdapter'                      => __DIR__ . '/src/DvsaAuthentication/Authentication/Adapter/OpenAM/OpenAMApiTokenBasedAdapter.php',
   'DvsaAuthentication\Authentication\Listener\ApiAuthenticationListener'                             => __DIR__ . '/src/DvsaAuthentication/Authentication/Listener/ApiAuthenticationListener.php',

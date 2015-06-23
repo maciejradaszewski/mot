@@ -2,6 +2,7 @@
 namespace DvsaMotApi\Controller;
 
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApi\Model\ApiResponse;
@@ -12,6 +13,7 @@ use DvsaMotApi\Dto\ReplacementCertificateDraftChangeDTO;
 use DvsaMotApi\Helper\ReplacementCertificate\ReplacementCertificateDraftDiffHelper;
 use DvsaMotApi\Helper\ReplacementCertificate\ReplacementCertificateDraftMappingHelper;
 use DvsaMotApi\Service\CertificateCreationService;
+use DvsaMotApi\Service\MotTestService;
 use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateService;
 
 /**
@@ -22,6 +24,36 @@ use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateService;
 class ReplacementCertificateDraftController extends AbstractDvsaRestfulController implements TransactionAwareInterface
 {
     use TransactionAwareTrait;
+
+    /** @var ReplacementCertificateService $replacementCertificateService */
+    private $replacementCertificateService;
+
+    /** @var MotAuthorisationServiceInterface */
+    private $authorisationService;
+
+    /** @var CertificateCreationService $certificateCreationService */
+    private $certificateCreationService;
+
+    /** @var MotTestService $motTestService */
+    private $motTestService;
+
+    /**
+     * @param ReplacementCertificateService $replacementCertificateService
+     * @param MotAuthorisationServiceInterface $authorisationService
+     * @param CertificateCreationService $certificateCreationService
+     * @param MotTestService $motTestService
+     */
+    public function __construct(
+        ReplacementCertificateService $replacementCertificateService,
+        MotAuthorisationServiceInterface $authorisationService,
+        CertificateCreationService $certificateCreationService,
+        MotTestService $motTestService
+    ) {
+        $this->replacementCertificateService = $replacementCertificateService;
+        $this->authorisationService = $authorisationService;
+        $this->certificateCreationService = $certificateCreationService;
+        $this->motTestService = $motTestService;
+    }
 
     /**
      * @param array $data
@@ -35,7 +67,7 @@ class ReplacementCertificateDraftController extends AbstractDvsaRestfulControlle
 
         $draftId = $this->inTransaction(
             function () use (&$motTestNumber) {
-                return $this->getReplacementCertificateService()->createDraft($motTestNumber)->getId();
+                return $this->replacementCertificateService->createDraft($motTestNumber)->getId();
             }
         );
 
@@ -51,7 +83,7 @@ class ReplacementCertificateDraftController extends AbstractDvsaRestfulControlle
     public function update($draftId, $data)
     {
         $draftDTO = ReplacementCertificateDraftChangeDTO::fromDataArray($data);
-        $this->getReplacementCertificateService()->updateDraft($draftId, $draftDTO);
+        $this->replacementCertificateService->updateDraft($draftId, $draftDTO);
         return ApiResponse::jsonOk();
     }
 
@@ -62,7 +94,7 @@ class ReplacementCertificateDraftController extends AbstractDvsaRestfulControlle
      */
     public function get($id)
     {
-        $draft = $this->getReplacementCertificateService()->getDraft($id);
+        $draft = $this->replacementCertificateService->getDraft($id);
         $data = ReplacementCertificateDraftMappingHelper::toJsonArray($draft, $this->hasFullRights());
 
         return ApiResponse::jsonOk($data);
@@ -78,16 +110,16 @@ class ReplacementCertificateDraftController extends AbstractDvsaRestfulControlle
             $draftId = $this->params()->fromRoute("id");
             $data = $this->processBodyContent($this->getRequest());
 
-            $motEntity = $this->getReplacementCertificateService()->applyDraft($draftId, $data);
+            $motEntity = $this->replacementCertificateService->applyDraft($draftId, $data);
 
             $motTestNumber = $motEntity->getNumber();
 
             // I know it looks a bit heavy handed asking for the MOT data again when we've got
             // a perfectly good mot entity; but internally the MOT Test Service uses a private mapper
             // to return the expected array, so it's safer to pump it back through that
-            $this->getCertificateService()->create(
+            $this->certificateCreationService->create(
                 $motTestNumber,
-                $this->getMotTestService()->getMotTestData($motTestNumber),
+                $this->motTestService->getMotTestData($motTestNumber),
                 $this->getUserId()
             );
 
@@ -102,7 +134,7 @@ class ReplacementCertificateDraftController extends AbstractDvsaRestfulControlle
     public function diffAction()
     {
         $draftId = $this->params()->fromRoute("id");
-        $draft = $this->getReplacementCertificateService()->getDraft($draftId);
+        $draft = $this->replacementCertificateService->getDraft($draftId);
         return ApiResponse::jsonOk(ReplacementCertificateDraftDiffHelper::getDiff($draft));
     }
 
@@ -111,38 +143,7 @@ class ReplacementCertificateDraftController extends AbstractDvsaRestfulControlle
      */
     private function hasFullRights()
     {
-        return $this->getAuthorizationService()->isGranted(PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS);
+        return $this->authorisationService->isGranted(PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS);
     }
 
-    /**
-     * @return ReplacementCertificateService
-     */
-    private function getReplacementCertificateService()
-    {
-        return $this->serviceLocator->get("ReplacementCertificateService");
-    }
-
-    /**
-     * @return AuthorisationServiceInterface
-     */
-    private function getAuthorizationService()
-    {
-        return $this->serviceLocator->get("DvsaAuthorisationService");
-    }
-
-    /**
-     * @return \DvsaMotApi\Service\CertificateCreationService
-     */
-    private function getCertificateService()
-    {
-        return $this->serviceLocator->get(CertificateCreationService::class);
-    }
-
-    /**
-     * @return \DvsaMotApi\Service\MotTestService
-     */
-    private function getMotTestService()
-    {
-        return $this->serviceLocator->get('MotTestService');
-    }
 }

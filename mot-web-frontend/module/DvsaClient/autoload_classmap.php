@@ -28,6 +28,7 @@ return array(
   'DvsaClient\Mapper\EventMapper'                             => __DIR__ . '/src/DvsaClient/Mapper/EventMapper.php',
   'DvsaClient\Mapper\Mapper'                                  => __DIR__ . '/src/DvsaClient/Mapper/Mapper.php',
   'DvsaClient\Mapper\MotTestInProgressMapper'                 => __DIR__ . '/src/DvsaClient/Mapper/MotTestInProgressMapper.php',
+  'DvsaClient\Mapper\MotTestLogMapper'                        => __DIR__ . '/src/DvsaClient/Mapper/MotTestLogMapper.php',
   'DvsaClient\Mapper\OrganisationMapper'                      => __DIR__ . '/src/DvsaClient/Mapper/OrganisationMapper.php',
   'DvsaClient\Mapper\OrganisationPositionMapper'              => __DIR__ . '/src/DvsaClient/Mapper/OrganisationPositionMapper.php',
   'DvsaClient\Mapper\OrganisationRoleMapper'                  => __DIR__ . '/src/DvsaClient/Mapper/OrganisationRoleMapper.php',
@@ -51,6 +52,6 @@ return array(
   // REMOVED INVALID MAP: 'update'                                                    => __DIR__ . '/src/DvsaClient/Mapper/VehicleTestingStationOpeningHoursMapper.php',
   'DvsaClient\MapperFactory'                                  => __DIR__ . '/src/DvsaClient/MapperFactory.php',
   'DvsaClient\ViewModel\AbstractFormModel'                    => __DIR__ . '/src/DvsaClient/ViewModel/AbstractFormModel.php',
-  'DvsaClient\ViewModel\DateViewModel'                        => __DIR__ . '/src/DvsaClient/ViewModel/DateViewModel.php',
+  'DvsaClient\ViewModel\DateTimeViewModel'                    => __DIR__ . '/src/DvsaClient/ViewModel/DateTimeViewModel.php',
   'DvsaClient\ViewModel\EmailFormModel'                       => __DIR__ . '/src/DvsaClient/ViewModel/EmailFormModel.php',
 );

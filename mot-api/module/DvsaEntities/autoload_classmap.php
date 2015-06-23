@@ -7,6 +7,7 @@ return array(
   'DvsaEntities\CustomDql\Functions\Regexp'                            => __DIR__ . '/src/DvsaEntities/CustomDql/Functions/Regexp.php',
   'DvsaEntities\CustomDql\Functions\Year'                              => __DIR__ . '/src/DvsaEntities/CustomDql/Functions/Year.php',
   'DvsaEntities\DqlBuilder\NativeQueryBuilder'                         => __DIR__ . '/src/DvsaEntities/DqlBuilder/NativeQueryBuilder.php',
+  'DvsaEntities\DqlBuilder\SearchParam\MotTestLogSearchParam'          => __DIR__ . '/src/DvsaEntities/DqlBuilder/SearchParam/MotTestLogSearchParam.php',
   'DvsaEntities\DqlBuilder\SearchParam\MotTestSearchParam'             => __DIR__ . '/src/DvsaEntities/DqlBuilder/SearchParam/MotTestSearchParam.php',
   'DvsaEntities\DqlBuilder\SearchParam\OrgSlotUsageParam'              => __DIR__ . '/src/DvsaEntities/DqlBuilder/SearchParam/OrgSlotUsageParam.php',
   'DvsaEntities\DqlBuilder\SearchParam\SiteSearchParam'                => __DIR__ . '/src/DvsaEntities/DqlBuilder/SearchParam/SiteSearchParam.php',
