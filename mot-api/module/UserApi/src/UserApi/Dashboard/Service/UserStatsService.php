@@ -38,7 +38,7 @@ class UserStatsService extends AbstractService
         //TODO: OPENAM - confirm the current user is allowed to access these stats
         $person = $this->findOrThrowException(Person::class, $personId, Person::ENTITY_NAME);
 
-        $motTests = $this->getTestsCompletedByTesterFromStartDate($person, DateUtils::today());
+        $motTests = $this->getTestsCompletedByTesterFromCompletedDate($person, DateUtils::today());
 
         $dayStats = $this->calculateDayStats($motTests);
 
@@ -55,7 +55,7 @@ class UserStatsService extends AbstractService
         //TODO: OPENAM - confirm the current user is allowed to access these stats
         $person = $this->findOrThrowException(Person::class, $personId, Person::ENTITY_NAME);
 
-        $motTests = $this->getTestsCompletedByTesterFromStartDate($person, DateUtils::firstOfThisMonth(), true);
+        $motTests = $this->getTestsCompletedByTesterFromCompletedDate($person, DateUtils::firstOfThisMonth(), true);
 
         $monthStats = $this->calculateMonthStats($motTests);
 
@@ -69,7 +69,7 @@ class UserStatsService extends AbstractService
      *
      * @return MotTest[]
      */
-    private function getTestsCompletedByTesterFromStartDate($person, $startDate, $onlyNormalTests = false)
+    private function getTestsCompletedByTesterFromCompletedDate($person, $startDate, $onlyNormalTests = false)
     {
         /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->getRepository(\DvsaEntities\Entity\MotTest::class)->createQueryBuilder('t');
@@ -80,7 +80,7 @@ class UserStatsService extends AbstractService
             't.motTestType = tt.id'
         );
         $queryBuilder->where('t.tester = :person');
-        $queryBuilder->andWhere('t.startedDate >= :startDate');
+        $queryBuilder->andWhere('t.completedDate >= :startDate');
         $queryBuilder->andWhere('t.completedDate IS NOT NULL');
         $queryBuilder->setParameter('person', $person);
         $queryBuilder->setParameter('startDate', $startDate);
