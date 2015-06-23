@@ -6,22 +6,25 @@ use CoreTest\Service\StubCatalogService;
 use CoreTest\Service\StubRestForCatalog;
 use DvsaAuthentication\Model\Identity;
 use DvsaAuthentication\Model\VehicleTestingStation;
+use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
 use DvsaCommon\Auth\PermissionInSystem;
-use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\HttpRestJson\Client;
-use DvsaCommon\UrlBuilder\UrlBuilder;
-use DvsaCommon\UrlBuilder\VehicleUrlBuilder;
-use DvsaCommonTest\TestUtils\MultiCallStubBuilder;
+use DvsaMotTest\NewVehicle\Form\VehicleWizard\AbstractStep;
+use DvsaMotTest\NewVehicle\Form\VehicleWizard\CreateVehicleFormWizard;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTest\NewVehicle\Controller\CreateVehicleController;
 use DvsaMotTest\NewVehicle\Form\CreateVehicleStepOneForm;
 use DvsaMotTest\NewVehicle\Form\CreateVehicleStepTwoForm;
 use DvsaMotTest\Service\AuthorisedClassesService;
 use DvsaMotTest\NewVehicle\Container\NewVehicleContainer;
+use DvsaMotTest\NewVehicle\Form\VehicleWizard\SummaryStep;
+use DvsaMotTest\NewVehicle\Form\VehicleWizard\VehicleIdentificationStep;
+use DvsaMotTest\NewVehicle\Form\VehicleWizard\VehicleSpecificationStep;
 use UserAdminTest\Controller\AbstractLightWebControllerTest;
 use Zend\Http\Request;
 use Zend\Http\Response;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Form\Form;
+use Zend\InputFilter\InputFilter;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayObject;
 use Zend\Stdlib\Parameters;
@@ -45,37 +48,28 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
     /** @var MotFrontendIdentityProviderInterface */
     private $identityProvider;
 
+    /** @var CreateVehicleFormWizard */
+    private $wizard;
+
     protected function setUp()
     {
         parent::setUp();
         $this->client = XMock::of(Client::class);
-        $authorisedClassesService = $this->getMock(AuthorisedClassesService::class, [], [$this->client]);
-
-
         $this->request = new Request();
         $this->container = new NewVehicleContainer(new ArrayObject());
         $this->identityProvider = XMock::of(MotFrontendIdentityProviderInterface::class);
 
-        $catalogService = new StubCatalogService();
+        $this->expectIdentitySet();
 
+        $this->wizard = $this->createWizard();
         $ctrl = new CreateVehicleController(
-            $authorisedClassesService,
-            $catalogService,
-            $this->identityProvider,
+            $this->wizard,
             $this->authorisationMock,
-            $this->container,
-            $this->request,
-            $this->client
+            $this->request
         );
         $this->setController($ctrl);
 
         $this->authorisationMock->granted([PermissionInSystem::VEHICLE_CREATE]);
-        $authorisedClassesService->expects($this->any())
-            ->method('getCombinedAuthorisedClassesForPersonAndVts')
-            ->willReturn($this->getCombinedAuthorisedClasses());
-
-
-        $this->expectIdentitySet();
     }
 
     private function expectIdentitySet()
@@ -87,9 +81,32 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
         );
     }
 
+    private function createWizard()
+    {
+        $authorisedClassesService = $this->getMock(AuthorisedClassesService::class, [], [$this->client]);
+        $authorisedClassesService->expects($this->any())
+            ->method('getCombinedAuthorisedClassesForPersonAndVts')
+            ->willReturn($this->getCombinedAuthorisedClasses());
+
+        $catalogService = new StubCatalogService();
+        $wizard = new CreateVehicleFormWizard();
+
+        $step1 = new VehicleIdentificationStep($this->container,$this->client,$catalogService);
+        $wizard->addStep($step1);
+
+        $step2 = new VehicleSpecificationStep($this->container,$this->client,$catalogService,$authorisedClassesService,$this->identityProvider);
+        $step2->setPrevStep($step1);
+        $wizard->addStep($step2);
+
+        $step3 = new SummaryStep($this->container,$this->client,$catalogService, $this->identityProvider);
+        $step3->setPrevStep($step2);
+        $wizard->addStep($step3);
+
+        return $wizard;
+    }
+
     public function testIndex_givenEnteredIndex_shouldRedirect()
     {
-
         $query = ['reg' => 'RERG123', 'vin' => 'VIN1244'];
         $this->request->setQuery(new Parameters($query));
         $this->expectRedirect(
@@ -122,18 +139,12 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
     public function testConfirm_givenEnteredConfirmation_shouldReturnCorrectViewModel()
     {
         $this->request->setMethod('get');
-        $this->container->setStepOneFormData($this->createStepOneForm());
-        $this->container->setStepTwoFormData($this->createStepTwoForm());
-        $this->container->setApiData($this->dataCatalog());
+        $this->setDefaultDataToWizard();
 
-        $this->client->expects($this->any())->method('get')->will(
-            MultiCallStubBuilder::of()
-                ->add(
-                    UrlBuilder::person(self::PERSON_ID)->getMotTesting()->toString(),
-                    $this->getMockAuthorisedClasses()
-                )->add(UrlBuilder::vehicleDictionary()->make()->toString(), $this->makes())
-                ->build()
-        );
+        $this->client
+            ->expects($this->any())
+            ->method("get")
+            ->willReturn($this->models());
 
         $vm = $this->sut()->confirmAction();
 
@@ -143,40 +154,39 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
 
     public function testConfirm_givenSubmittedConfirmation_shouldRedirect()
     {
+        $motTestNumber = '121212';
         $expectedData = [
-            'colour' => 'B',
-            'countryOfRegistration' => '2',
-            'cylinderCapacity' => '232',
-            'fuelType' => 'PE',
-            'make' => 'BMW',
-            'model' => 'Mini',
-            'modelType' => '',
-            'registrationNumber' => 'reg1234',
-            'secondaryColour' => 'W',
-            'testClass' => '1',
-            'transmissionType' => '2',
-            'vin' => '1234567',
-            'dateOfFirstUse' => '1999-12-12',
-            'makeOther' => '',
-            'modelOther' => '',
-            'emptyVrmReason' => '',
-            'emptyVinReason' => '',
-            'vtsId' => 1,
-            'clientIp' => RemoteAddress::getIp()
+            'data'=> [
+                'startedMotTestNumber' => $motTestNumber,
+                'colour' => 'B',
+                'countryOfRegistration' => '2',
+                'cylinderCapacity' => '232',
+                'fuelType' => 'PE',
+                'make' => 'BMW',
+                'model' => 'Mini',
+                'modelType' => '',
+                'registrationNumber' => 'reg1234',
+                'secondaryColour' => 'W',
+                'testClass' => '1',
+                'transmissionType' => '2',
+                'vin' => '1234567',
+                'dateOfFirstUse' => '1999-12-12',
+                'makeOther' => '',
+                'modelOther' => '',
+                'emptyVrmReason' => '',
+                'emptyVinReason' => '',
+                'vtsId' => 1,
+                'clientIp' => RemoteAddress::getIp(),
+            ]
         ];
 
         $this->request->setMethod('post');
-
-        $this->container->setStepOneFormData($this->createStepOneForm());
-        $this->container->setStepTwoFormData($this->createStepTwoForm());
-        $this->container->setApiData($this->dataCatalog());
+        $this->setDefaultDataToWizard();
 
         $this->client->expects($this->any())->method('postJson')
-            ->with(VehicleUrlBuilder::vehicle(), $expectedData);
+            ->willReturn($expectedData);
 
-        $this->redirectPluginMock
-            ->expects(\PHPUnit_Framework_TestCase::once())
-            ->method('toUrl');
+        $this->expectRedirectToUrl(MotTestUrlBuilderWeb::options($motTestNumber)->toString());
 
         $this->sut()->confirmAction();
 
@@ -185,21 +195,10 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
     public function testAddStepTwo_givenEnteredTheStep_shouldReturnForm()
     {
         $this->request->setMethod('get');
-        $this->container->setStepOneFormData($this->createStepOneForm());
-        $this->container->setApiData($this->dataCatalog());
+        $this->setStepOneData();
+        $this->setApiData();
 
-        $this->client->expects($this->any())->method('get')->will(
-            MultiCallStubBuilder::of()
-                ->add(
-                    UrlBuilder::vehicleDictionary()->make(self::MAKE_ID)->model()->toString(),
-                    $this->models()
-                )
-                ->add(
-                    UrlBuilder::person(self::PERSON_ID)->getMotTesting()->toString(),
-                    $this->getMockAuthorisedClasses()
-                )
-                ->build()
-        );
+        $this->client->expects($this->any())->method('get')->willReturn($this->models());
 
         $vm = $this->sut()->addStepTwoAction();
         $this->assertInstanceOf(CreateVehicleStepTwoForm::class, $vm->getVariables()['form']);
@@ -212,49 +211,18 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
         $postData = [];
         $postData += $this->secondStepVehicleForm();
         $this->request->setPost(new Parameters($postData));
-        $this->container->setStepOneFormData($this->createStepOneForm());
-        $this->container->setApiData($this->dataCatalog());
+        $this->setStepOneData();
+        $this->setApiData();
 
-        $this->client->expects($this->any())->method("get")->will(
-            MultiCallStubBuilder::of()
-                ->add(
-                    UrlBuilder::vehicleDictionary()->make(self::MAKE_ID)->model()->toString(),
-                    $this->models()
-                )
-                ->add(
-                    UrlBuilder::person(self::PERSON_ID)->getMotTesting()->toString(),
-                    $this->getMockAuthorisedClasses()
-                )
-                ->build()
-        );
+        $this->client->expects($this->any())->method("get")->willReturn($this->models());
 
         $this->expectRedirect(CreateVehicleController::ROUTE, ['action' => 'confirm']);
         $this->sut()->addStepTwoAction();
     }
 
-    private function makes()
-    {
-        return ['data' => [['id' => 1, 'code' => 'BMW', 'name' => 'BMW']]];
-    }
-
     private function models()
     {
         return ['data' => [['id' => 1, 'code' => 'Mini', 'name' => self::MODEL_ID]]];
-    }
-
-    private function getMockAuthorisedClasses()
-    {
-        return [
-            'data' => [
-                'class1' => AuthorisationForTestingMotStatusCode::QUALIFIED,
-                'class2' => AuthorisationForTestingMotStatusCode::QUALIFIED,
-                'class3' => AuthorisationForTestingMotStatusCode::QUALIFIED,
-                'class4' => AuthorisationForTestingMotStatusCode::QUALIFIED,
-                'class5' => AuthorisationForTestingMotStatusCode::QUALIFIED,
-                'class6' => AuthorisationForTestingMotStatusCode::QUALIFIED,
-                'class7' => AuthorisationForTestingMotStatusCode::QUALIFIED,
-            ]
-        ];
     }
 
     private function getCombinedAuthorisedClasses()
@@ -357,5 +325,35 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
             ->willReturn(true);
 
         return $form;
+    }
+
+    private function setDefaultDataToWizard()
+    {
+        $this->setStepOneData();
+        $this->setStepTwoData();
+        $this->setApiData();
+    }
+
+    private function setStepOneData()
+    {
+        $this->wizard->getStep(VehicleIdentificationStep::getName())->saveForm($this->createStepOneForm());
+    }
+
+    private function setStepTwoData()
+    {
+        $this->wizard->getStep(VehicleSpecificationStep::getName())->saveForm($this->createStepTwoForm());
+    }
+
+    private function setApiData()
+    {
+        $this->container->set(AbstractStep::API_DATA, $this->dataCatalog());
+    }
+
+    private function expectRedirectToUrl($route)
+    {
+        $this->redirectPluginMock
+            ->expects(\PHPUnit_Framework_TestCase::once())
+            ->method('toUrl')
+            ->with($route);
     }
 }
