@@ -2,6 +2,7 @@
 
 namespace TestSupport\Service;
 
+use TestSupport\Helper\NotificationsHelper;
 use TestSupport\Helper\TestSupportAccessTokenManager;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
 use Zend\View\Model\JsonModel;
@@ -13,14 +14,12 @@ use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Utility\ArrayUtils;
 use TestSupport\Helper\TestDataResponseHelper;
 use Doctrine\ORM\EntityManager;
-use DvsaCommon\UrlBuilder\SiteUrlBuilder;
-use DvsaCommon\UrlBuilder\NotificationUrlBuilder;
 use TestSupport\Helper\DataGeneratorHelper;
+use TestSupport\Helper\SitePermissionsHelper;
 use TestSupport\Model\AccountPerson;
 
 class TesterService
 {
-    const TESTER_ROLE_ACCEPTED = 'SITE-NOMINATION-ACCEPTED';
     const QLFD_STATUS_ID = 9;
     const SITE_POSITION_NOTIFICATION_ID = 5;
 
@@ -33,6 +32,16 @@ class TesterService
      * @var AccountService
      */
     protected $accountService;
+
+    /**
+     * @var NotificationsHelper
+     */
+    protected $notificationsHelper;
+
+    /**
+     * @var SitePermissionsHelper
+     */
+    protected $sitePermissionsHelper;
 
     /**
      * @var AEService
@@ -61,17 +70,23 @@ class TesterService
 
     /**
      * @param TestSupportRestClientHelper $testSupportRestClientHelper
+     * @param NotificationsHelper $notificationsHelper
+     * @param SitePermissionsHelper $sitePermissionsHelper
      * @param AccountService $accountService
      * @param EntityManager $entityManager
      */
     public function __construct(
         TestSupportRestClientHelper $testSupportRestClientHelper,
+        NotificationsHelper $notificationsHelper,
+        SitePermissionsHelper $sitePermissionsHelper,
         AccountService $accountService,
         EntityManager $entityManager
     ) {
         $this->testSupportRestClientHelper = $testSupportRestClientHelper;
         $this->accountService = $accountService;
         $this->entityManager = $entityManager;
+        $this->notificationsHelper = $notificationsHelper;
+        $this->sitePermissionsHelper = $sitePermissionsHelper;
     }
 
     /**
@@ -128,10 +143,6 @@ class TesterService
 
     private function sendNominationsForTesterAndAcceptThem(Account $account, $data)
     {
-        TestSupportAccessTokenManager::addSchemeManagerAsRequestorIfNecessary($data);
-
-        $restClient = $this->testSupportRestClientHelper->getJsonClient($data);
-
         $testGroups = [1, 2];
         if (isset($data['testGroup'])) {
             $testGroups = [$data['testGroup']];
@@ -139,40 +150,14 @@ class TesterService
 
         $this->finishCreatingTesterWithHacking($account->getPersonId(), $testGroups);
 
-        foreach ($data['siteIds'] as $siteId) {
-            $positionPath = SiteUrlBuilder::site($siteId)->position()->toString();
-            $restClient->post($positionPath, [
-                'nomineeId' => $account->getPersonId(),
-                'roleCode'  => SiteBusinessRoleCode::TESTER,
-            ]);
-        }
+        $this->sitePermissionsHelper->addPermissionToSites($account, SiteBusinessRoleCode::TESTER, $data['siteIds']);
 
-        $result = $restClient->get(
-            NotificationUrlBuilder::of()
-                ->notificationForPerson()
-                ->routeParam('personId', $account->getPersonId())
-                ->toString()
+        $notifications = $this->notificationsHelper->getNotifications($account);
+        $this->notificationsHelper->acceptUnreadNotification(
+            $account,
+            $notifications,
+            self::SITE_POSITION_NOTIFICATION_ID
         );
-
-        $notifications = $result['data'];
-
-        $this->testSupportRestClientHelper->prepare([
-            'requestor' => [
-                'username' => $account->getUsername(),
-                'password' => $account->getPassword(),
-            ]
-        ]);
-
-        $restClient = $this->testSupportRestClientHelper->getJsonClient([]);
-
-        foreach ($notifications as $notification) {
-            $readPath = NotificationUrlBuilder::of()->notification($notification['id'])->read()->toString();
-            $restClient->putJson($readPath, []);
-            if ($notification['templateId'] == self::SITE_POSITION_NOTIFICATION_ID && empty($notification['readOn'])) {
-                $actionPath = NotificationUrlBuilder::of()->notification($notification['id'])->action()->toString();
-                $restClient->putJson($actionPath, ['action' => self::TESTER_ROLE_ACCEPTED]);
-            }
-        }
     }
 
     /**
