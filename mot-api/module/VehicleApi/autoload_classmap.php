@@ -17,6 +17,8 @@ return array(
   // REMOVED INVALID MAP: 'Exception'                                                    => __DIR__ . '/src/VehicleApi/Factory/Service/VehicleSearchServiceFactory.php',
   'VehicleApi\Factory\Service\VehicleServiceFactory'             => __DIR__ . '/src/VehicleApi/Factory/Service/VehicleServiceFactory.php',
   // REMOVED INVALID MAP: 'VehicleService'                                               => __DIR__ . '/src/VehicleApi/Factory/Service/VehicleServiceFactory.php',
+  // REMOVED INVALID MAP: 'MotTestServiceProvider'                                       => __DIR__ . '/src/VehicleApi/Factory/Service/VehicleServiceFactory.php',
+  // REMOVED INVALID MAP: 'Transaction'                                                  => __DIR__ . '/src/VehicleApi/Factory/Service/VehicleServiceFactory.php',
   'VehicleApi\Helper\VehicleSearchParams'                        => __DIR__ . '/src/VehicleApi/Helper/VehicleSearchParams.php',
   'VehicleApi\Service\Mapper\AbstractVehicleMapper'              => __DIR__ . '/src/VehicleApi/Service/Mapper/AbstractVehicleMapper.php',
   'VehicleApi\Service\Mapper\CountryOfRegistrationMapper'        => __DIR__ . '/src/VehicleApi/Service/Mapper/CountryOfRegistrationMapper.php',
@@ -25,8 +27,5 @@ return array(
   'VehicleApi\Service\Mapper\VehicleMapper'                      => __DIR__ . '/src/VehicleApi/Service/Mapper/VehicleMapper.php',
   // REMOVED INVALID MAP: 'VehicleDto'                                                   => __DIR__ . '/src/VehicleApi/Service/Mapper/VehicleMapper.php',
   'VehicleApi\Service\VehicleSearchService'                      => __DIR__ . '/src/VehicleApi/Service/VehicleSearchService.php',
-  // REMOVED INVALID MAP: 'array_merge'                                                  => __DIR__ . '/src/VehicleApi/Service/VehicleSearchService.php',
-  // REMOVED INVALID MAP: 'extractVehicle'                                               => __DIR__ . '/src/VehicleApi/Service/VehicleSearchService.php',
-  // REMOVED INVALID MAP: 'extractDvlaVehicle'                                           => __DIR__ . '/src/VehicleApi/Service/VehicleSearchService.php',
   'VehicleApi\Service\VehicleService'                            => __DIR__ . '/src/VehicleApi/Service/VehicleService.php',
 );

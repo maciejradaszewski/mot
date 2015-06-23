@@ -48,6 +48,17 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
     const MAKE_MODEL_OTHER_VALUE = 'other';
     const MODEL_VALUE_EMPTY = 'Model not found';
 
+    /** @var VehicleCatalogService */
+    private $vehicleCatalogService;
+
+    /**
+     * @param VehicleCatalogService $vehicleCatalogService
+     */
+    public function __construct(VehicleCatalogService $vehicleCatalogService)
+    {
+        $this->vehicleCatalogService = $vehicleCatalogService;
+    }
+
     /**
      * @return null|\Zend\Http\Response|ViewModel
      */
@@ -180,22 +191,22 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
             }
         }
 
-        $vm = new ViewModel(
+        $viewModel = new ViewModel(
             [
-                'motTest'                => $motTest,
-                'odometerReading'        => $odometerReadingVO,
-                'isOriginalTester'       => $isOriginalTester,
+                'motTest' => $motTest,
+                'odometerReading' => $odometerReadingVO,
+                'isOriginalTester' => $isOriginalTester,
                 'differentTesterReasons' => $differentTesterReasons,
-                'draftId'                => $id,
-                'isAdmin'                => $this->hasAdminRights(),
-                'canTestWithoutOpt'      => $this->canTestWithoutOtp(),
-                'otpErrorData'           => $otpErrorData,
-                'prgHelper'              => $prgHelper,
+                'draftId' => $id,
+                'isAdmin' => $this->hasAdminRights(),
+                'canTestWithoutOpt' => $this->canTestWithoutOtp(),
+                'otpErrorData' => $otpErrorData,
+                'prgHelper' => $prgHelper,
             ]
         );
-        $vm->setTemplate(self::TEMPLATE_REPLACEMENT_CERTIFICATE_SUMMARY);
+        $viewModel->setTemplate(self::TEMPLATE_REPLACEMENT_CERTIFICATE_SUMMARY);
 
-        return $vm;
+        return $viewModel;
     }
 
     /**
@@ -208,16 +219,16 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
         $motTestNumber = $this->params("motTestNumber");
         $motTest = $this->tryGetMotTestOrAddErrorMessages($motTestNumber);
 
-        $vm = new MotPrintModel(
+        $modelPrintViewModel = new MotPrintModel(
             [
-                'motDetails'    => $motTest,
+                'motDetails' => $motTest,
                 'motTestNumber' => $motTestNumber,
             ]
         );
 
-        $vm->setTemplate(self::TEMPLATE_REPLACEMENT_CERTIFICATE_FINISH);
+        $modelPrintViewModel->setTemplate(self::TEMPLATE_REPLACEMENT_CERTIFICATE_FINISH);
 
-        return $vm;
+        return $modelPrintViewModel;
     }
 
     public function otherVehicleAction()
@@ -242,7 +253,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
         $viewData = array_merge(
             $viewData,
             [
-                'isAdmin'  => $this->hasAdminRights(),
+                'isAdmin' => $this->hasAdminRights(),
                 'isTester' => $this->hasTesterRights(),
                 'id' => $id
             ]
@@ -283,9 +294,12 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
             if ($action == 'updateMake') {
                 $make = $result['make'];
                 if ($make == self::MAKE_MODEL_OTHER_VALUE) {
-                    return $this->redirect()->toRoute('replacement-certificate/other-vehicle', [ 'id' => $id ]);
+                    return $this->redirect()->toRoute('replacement-certificate/other-vehicle', ['id' => $id]);
                 } else {
-                    return $this->redirect()->toRoute('replacement-certificate/select-model', [ 'id' => $id, 'makeCode' => $result['make']]);
+                    return $this->redirect()->toRoute(
+                        'replacement-certificate/select-model',
+                        ['id' => $id, 'makeCode' => $result['make']]
+                    );
                 }
             }
 
@@ -300,7 +314,10 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
                 }
 
                 if ($model == self::MAKE_MODEL_OTHER_VALUE) {
-                    return $this->redirect()->toRoute('replacement-certificate/other-vehicle', [ 'id' => $id, 'makeCode' => $make ]);
+                    return $this->redirect()->toRoute(
+                        'replacement-certificate/other-vehicle',
+                        ['id' => $id, 'makeCode' => $make]
+                    );
                 }
             }
 
@@ -364,8 +381,8 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
                 return ['vrm' => $post['vrm']];
             case 'updateColours':
                 return [
-                    'primaryColour'   => $post['primaryColour'],
-                    'secondaryColour' => $post['secondaryColour'] ? : null
+                    'primaryColour' => $post['primaryColour'],
+                    'secondaryColour' => $post['secondaryColour'] ?: null
                 ];
             case 'updateMake':
                 return [
@@ -374,17 +391,17 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
             case 'updateModel':
                 return [
                     'make' => $post['make'],
-                    'model'  => $post['model']
+                    'model' => $post['model']
                 ];
             case 'updateCustomMakeModel':
                 return [
                     'customMake' => $post['make'],
-                    'customModel'  => $post['model']
+                    'customModel' => $post['model']
                 ];
             case 'updateMakeCustomModel':
                 return [
                     'make' => $post['make'],
-                    'customModel'  => $post['model']
+                    'customModel' => $post['model']
                 ];
             case self::ACTION_UPDATE_ODOMETER:
                 list($value, $unit, $resultType)
@@ -396,8 +413,8 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
 
                 return [
                     'odometerReading' => [
-                        'value'      => $value,
-                        'unit'       => $unit,
+                        'value' => $value,
+                        'unit' => $unit,
                         'resultType' => $resultType
                     ]
                 ];
@@ -433,7 +450,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
         $viewData = array_merge(
             $viewData,
             [
-                'isAdmin'  => $this->hasAdminRights(),
+                'isAdmin' => $this->hasAdminRights(),
                 'isTester' => $this->hasTesterRights()
             ]
         );
@@ -454,10 +471,10 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
         asort($colourMap);
 
         return [
-            'colours'                   => new ColoursContainer($catalogService->getColours()),
+            'colours' => new ColoursContainer($catalogService->getColours()),
             'countryOfRegistrationList' => $catalogService->getCountriesOfRegistration(),
-            'makeList'                  => $this->getVehicleCatalogService()->findMake(),
-            'modelList'                  => $this->getVehicleCatalogService()->findModel(false, $model)
+            'makeList' => $this->vehicleCatalogService->findMake(),
+            'modelList' => $this->vehicleCatalogService->findModel(false, $model)
         ];
     }
 
@@ -529,10 +546,10 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
         $viewData = array_merge(
             [
                 'odometerReading' => $readingVO,
-                'motTestNumber'   => $motTestNumber,
-                'motTest'         => $this->tryGetMotTestOrAddErrorMessages($motTestNumber),
-                'vts'             => new ReplacementSiteViewModel($draftData),
-                'vehicle'         => $vehicleViewModel
+                'motTestNumber' => $motTestNumber,
+                'motTest' => $this->tryGetMotTestOrAddErrorMessages($motTestNumber),
+                'vts' => new ReplacementSiteViewModel($draftData),
+                'vehicle' => $vehicleViewModel
             ],
             $staticData
         );
@@ -593,14 +610,6 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
         unset($data['value']);
 
         return $data;
-    }
-
-    /**
-     * @return VehicleCatalogService
-     */
-    private function getVehicleCatalogService()
-    {
-        return $this->getServiceLocator()->get(VehicleCatalogService::class);
     }
 
 }

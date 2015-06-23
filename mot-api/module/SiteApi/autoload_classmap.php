@@ -51,7 +51,6 @@ return array(
   'SiteApi\Service\Mapper\SiteBusinessRoleMapMapper'                    => __DIR__ . '/src/SiteApi/Service/Mapper/SiteBusinessRoleMapMapper.php',
   'SiteApi\Service\Mapper\SiteBusinessRoleMapper'                       => __DIR__ . '/src/SiteApi/Service/Mapper/SiteBusinessRoleMapper.php',
   'SiteApi\Service\Mapper\SiteMapper'                                   => __DIR__ . '/src/SiteApi/Service/Mapper/SiteMapper.php',
-  'SiteApi\Service\Mapper\SiteSearchMapper'                             => __DIR__ . '/src/SiteApi/Service/Mapper/SiteSearchMapper.php',
   'SiteApi\Service\Mapper\VtsMapper'                                    => __DIR__ . '/src/SiteApi/Service/Mapper/VtsMapper.php',
   'SiteApi\Service\MotTestInProgressService'                            => __DIR__ . '/src/SiteApi/Service/MotTestInProgressService.php',
   'SiteApi\Service\NominateRoleService'                                 => __DIR__ . '/src/SiteApi/Service/NominateRoleService.php',

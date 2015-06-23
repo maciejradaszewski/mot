@@ -20,6 +20,8 @@ return array(
   'Core\Service\MotAuthorizationRefresherInterface'                   => __DIR__ . '/src/Core/Service/MotAuthorizationRefresherInterface.php',
   'Core\Service\MotFrontendAuthorisationServiceInterface'             => __DIR__ . '/src/Core/Service/MotFrontendAuthorisationServiceInterface.php',
   'Core\Service\MotFrontendIdentityProvider'                          => __DIR__ . '/src/Core/Service/MotFrontendIdentityProvider.php',
+  'Core\Service\MotFrontendIdentityProviderInterface'                 => __DIR__ . '/src/Core/Service/MotFrontendIdentityProviderInterface.php',
+  'Core\Service\RemoteAddress'                                        => __DIR__ . '/src/Core/Service/RemoteAddress.php',
   'Core\View\Helper\Factory\GetReleaseTagFactory'                     => __DIR__ . '/src/Core/View/Helper/Factory/GetReleaseTagFactory.php',
   'Core\View\Helper\GetReleaseTag'                                    => __DIR__ . '/src/Core/View/Helper/GetReleaseTag.php',
   'Core\ViewModel\Equipment\EquipmentModelViewModel'                  => __DIR__ . '/src/Core/ViewModel/Equipment/EquipmentModelViewModel.php',

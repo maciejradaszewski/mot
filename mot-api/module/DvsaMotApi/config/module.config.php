@@ -16,11 +16,11 @@ use DvsaMotApi\Factory\Controller\TesterControllerFactory;
 use DvsaMotApi\Factory\Controller\UserControllerFactory;
 use DvsaEntities\Entity\Person;
 use DvsaCommon\Validator\UsernameValidator;
+use DvsaMotApi\Factory\Controller\ReplacementCertificateDraftControllerFactory;
 
 return [
     'controllers'     => [
         'invokables' => [
-            ReplacementCertificateDraftController::class => ReplacementCertificateDraftController::class,
             'DvsaMotApi\Controller\Session' => \DvsaMotApi\Controller\SessionController::class,
             'DvsaMotApi\Controller\Index' => \DvsaMotApi\Controller\IndexController::class,
             RetestController::class => RetestController::class,
@@ -58,6 +58,7 @@ return [
             'DvsaMotApi\Controller\Tester' => TesterControllerFactory::class,
             'DvsaMotApi\Controller\User'   => UserControllerFactory::class,
             MotTestStatusController::class => MotTestStatusControllerFactory::class,
+            ReplacementCertificateDraftController::class => ReplacementCertificateDraftControllerFactory::class,
         ]
     ],
 

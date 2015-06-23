@@ -2,6 +2,7 @@
 namespace DvsaMotTestTest\Controller;
 
 use Application\Helper\PrgHelper;
+use Core\Service\MotFrontendAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\OdometerReadingResultType;
 use DvsaCommon\Constants\OdometerUnit;
@@ -15,12 +16,13 @@ use DvsaCommon\HttpRestJson\Exception\NotFoundException;
 use DvsaCommon\UrlBuilder\MotTestUrlBuilder;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaCommon\UrlBuilder\UrlBuilderWeb;
-use DvsaMotTest\Controller\MotTestController;
+use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTest\Controller\ReplacementCertificateController;
+use PHPUnit_Framework_MockObject_MockObject as MockObj;
+use Vehicle\Service\VehicleCatalogService;
 use Zend\Http\Response;
 use Zend\Session\Container;
 use Zend\Stdlib\Parameters;
-use PHPUnit_Framework_MockObject_MockObject as MockObj;
 
 /**
  * Class ReplacementCertificateControllerTest
@@ -29,6 +31,29 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
 {
     const EXAMPLE_MOT_TEST_NUMBER = 4;
     const EXAMPLE_DRAFT_ID = 5;
+
+    /** @var VehicleCatalogService */
+    private $vehicleCatalogService;
+
+    /** @var MotFrontendAuthorisationServiceInterface */
+    private $authorisationService;
+
+    protected function setUp()
+    {
+        $this->vehicleCatalogService = XMock::of(VehicleCatalogService::class);
+        $this->vehicleCatalogService->expects($this->any())
+            ->method('findMake')
+            ->willReturn([]);
+
+        $this->controller = new ReplacementCertificateController(
+            $this->vehicleCatalogService
+        );
+
+        parent::setUp();
+
+        $this->givenIsAdmin(false);
+        $this->routeMatch->setParam('id', self::EXAMPLE_DRAFT_ID);
+    }
 
     public static function dataProviderUpdateDraftActionToUpdateDataMapping()
     {
@@ -44,8 +69,8 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
                 'updateOdometer',
                 [
                     'odometerReading' => [
-                        'value'      => 444,
-                        'unit'       => OdometerUnit::KILOMETERS,
+                        'value' => 444,
+                        'unit' => OdometerUnit::KILOMETERS,
                         'resultType' => OdometerReadingResultType::OK
                     ]
                 ]
@@ -99,16 +124,12 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
             [
                 $this->pathMotTest() =>
                     function () {
-                        return self::restResponseMotTestWithUserId(1);
+                        return self::restResponseMotTestWithUserIdDto(1);
                     },
             ]
         );
 
         $this->givenPostAction("review");
-
-        $this->assertTrue(true);
-        // TODO: repair this, probably it should not redirect any more
-        //$this->assertRedirectLocation($this->controller->getResponse(), "/");
     }
 
     public function testReviewActionGivenDifferentTesterShouldReturnViewModelContainingRequiredProperties()
@@ -172,7 +193,9 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
 
         $restClient = $this->getRestClientMockForServiceManager();
         $this->mockMethod(
-            $restClient, 'get', null,
+            $restClient,
+            'get',
+            null,
             new NotFoundException('/', 'get', [], 10, 'Draft not found'),
             $this->pathReplacementCertificateDraft()
         );
@@ -241,7 +264,7 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
         $this->givenRestClientReturningOnGet(
             $restClient,
             [
-                $this->pathMotTest()         =>
+                $this->pathMotTest() =>
                     function () {
                         return self::restResponseMotTestWithUserId(1);
                     },
@@ -294,45 +317,36 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
     }
 
 
-    protected function setUp()
-    {
-        $this->controller = new ReplacementCertificateController();
-        parent::setUp();
-
-        $this->givenIsAdmin(false);
-        $this->routeMatch->setParam('id', self::EXAMPLE_DRAFT_ID);
-    }
-
     private static function restResponseDraft()
     {
         return self::asResponse(
             [
-                'primaryColour'         => ['id' => 4, 'name' => 'Yellow'],
-                'secondaryColour'       => null,
-                'odometerReading'       => [
-                    'value'      => 1234,
-                    'unit'       => OdometerUnit::KILOMETERS,
+                'primaryColour' => ['id' => 4, 'name' => 'Yellow'],
+                'secondaryColour' => null,
+                'odometerReading' => [
+                    'value' => 1234,
+                    'unit' => OdometerUnit::KILOMETERS,
                     'resultType' => OdometerReadingResultType::OK
                 ],
-                'vin'                   => '12345678901234567',
-                'vrm'                   => 'ABD3523',
+                'vin' => '12345678901234567',
+                'vrm' => 'ABD3523',
                 'countryOfRegistration' => ['id' => 4, 'name' => 'France'],
-                'model'                 => ['id' => 5, 'code' => 'C100', 'name' => 'C4'],
-                'make'                  => ['id' => 1, 'code' => 'C200', 'name' => 'Citroen'],
-                'expiryDate'            => '2015-02-02',
-                'motTestNumber'         => self::EXAMPLE_MOT_TEST_NUMBER,
-                'vts'                   => [
+                'model' => ['id' => 5, 'code' => 'C100', 'name' => 'C4'],
+                'make' => ['id' => 1, 'code' => 'C200', 'name' => 'Citroen'],
+                'expiryDate' => '2015-02-02',
+                'motTestNumber' => self::EXAMPLE_MOT_TEST_NUMBER,
+                'vts' => [
                     'siteNumber' => '32323',
-                    'address'    => [
-                        'line1'    => '',
-                        'line2'    => '',
-                        'line3'    => '',
-                        'line4'    => '',
-                        'town'     => '',
+                    'address' => [
+                        'line1' => '',
+                        'line2' => '',
+                        'line3' => '',
+                        'line4' => '',
+                        'town' => '',
                         'postcode' => '',
-                        'country'  => ''
+                        'country' => ''
                     ],
-                    'name'       => 'vts'
+                    'name' => 'vts'
                 ]
             ]
         );
@@ -342,12 +356,12 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
     {
         return self::asResponse(
             [
-                'tester'                => (new PersonDto())->setId($testerUserId),
-                'motTestNumber'         => self::EXAMPLE_MOT_TEST_NUMBER,
-                'primaryColour'         => new ColourDto(),
-                'secondaryColour'       => new ColourDto(),
-                'make'                  => new MakeDto(),
-                'model'                 => new ModelDto(),
+                'tester' => (new PersonDto())->setId($testerUserId),
+                'motTestNumber' => self::EXAMPLE_MOT_TEST_NUMBER,
+                'primaryColour' => new ColourDto(),
+                'secondaryColour' => new ColourDto(),
+                'make' => new MakeDto(),
+                'model' => new ModelDto(),
                 'countryOfRegistration' => new CountryDto(),
             ]
         );
@@ -379,21 +393,21 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
     private static function postDataUpdateDraft()
     {
         return [
-            'vts'                  => 'SITE_NUMBER',
+            'vts' => 'SITE_NUMBER',
             'reasonForReplacement' => 'REASON',
-            'vin'                  => "THE_VIN",
-            'vrm'                  => "THE_VRM",
-            'primaryColour'        => 3,
-            'secondaryColour'      => 4,
-            'make'                 => 5,
-            'model'                => 6,
-            'odometerValue'        => 444,
-            'odometerUnit'         => OdometerUnit::KILOMETERS,
-            'odometerResultType'   => OdometerReadingResultType::OK,
-            'cor'                  => 10,
-            'expiryDate-day'       => "4",
-            "expiryDate-month"     => "12",
-            "expiryDate-year"      => "2014"
+            'vin' => "THE_VIN",
+            'vrm' => "THE_VRM",
+            'primaryColour' => 3,
+            'secondaryColour' => 4,
+            'make' => 5,
+            'model' => 6,
+            'odometerValue' => 444,
+            'odometerUnit' => OdometerUnit::KILOMETERS,
+            'odometerResultType' => OdometerReadingResultType::OK,
+            'cor' => 10,
+            'expiryDate-day' => "4",
+            "expiryDate-month" => "12",
+            "expiryDate-year" => "2014"
         ];
     }
 
@@ -429,7 +443,7 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
 
     /**
      * @param MockObj $restClient
-     * @param array   $extensionUrl2CallbackMap
+     * @param array $extensionUrl2CallbackMap
      */
     private function givenRestClientReturningOnGet($restClient, $extensionUrl2CallbackMap = [])
     {
@@ -438,11 +452,11 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
                 function () {
                     return self::restResponseDraft();
                 },
-            $this->pathDifferentTesterReasons()      =>
+            $this->pathDifferentTesterReasons() =>
                 function () {
                     return self::differentTesterReasons();
                 },
-            $this->pathOdometerCheck()               =>
+            $this->pathOdometerCheck() =>
                 function () {
                     return self::asResponse(['modifiable' => true]);
                 },

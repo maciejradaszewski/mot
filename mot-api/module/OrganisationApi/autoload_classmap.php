@@ -13,7 +13,6 @@ return array(
   'OrganisationApi\Controller\SiteController'                                 => __DIR__ . '/src/OrganisationApi/Controller/SiteController.php',
   'OrganisationApi\Factory\Controller\MotTestLogControllerFactory'            => __DIR__ . '/src/OrganisationApi/Factory/Controller/MotTestLogControllerFactory.php',
   // REMOVED INVALID MAP: 'get'                                                                       => __DIR__ . '/src/OrganisationApi/Factory/Service/OrganisationSlotUsageServiceFactory.php',
-  // REMOVED INVALID MAP: 'MotTestLogController'                                                      => __DIR__ . '/src/OrganisationApi/Factory/Controller/MotTestLogControllerFactory.php',
   'OrganisationApi\Factory\HydratorFactory'                                   => __DIR__ . '/src/OrganisationApi/Factory/HydratorFactory.php',
   'OrganisationApi\Factory\Model\RoleAvailabilityFactory'                     => __DIR__ . '/src/OrganisationApi/Factory/Model/RoleAvailabilityFactory.php',
   // REMOVED INVALID MAP: 'getRepository'                                                             => __DIR__ . '/src/OrganisationApi/Factory/Service/SiteServiceFactory.php',
