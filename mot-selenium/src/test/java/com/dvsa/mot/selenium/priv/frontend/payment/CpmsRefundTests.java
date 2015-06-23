@@ -16,7 +16,7 @@ import org.testng.annotations.Test;
 
 public class CpmsRefundTests extends BaseTest {
 
-    @Test(groups = {"slice_A", "SPMS-255"}) public void financeUserRefundsChequePayment() {
+    @Test(groups = {"Regression", "SPMS-255"}) public void financeUserRefundsChequePayment() {
         AeService aeService = new AeService();
         AeDetails aeDetails = aeService.createAe("ChequePayment");
         String aeRef = aeDetails.getAeRef();
@@ -34,7 +34,7 @@ public class CpmsRefundTests extends BaseTest {
                 "The slot refund has been successful", "Verifying successful refund message");
     }
 
-    @Test(groups = {"slice_A", "SPMS-255"}) public void financeUserRefundsCardPayment() {
+    @Test(groups = {"Regression", "SPMS-255"}) public void financeUserRefundsCardPayment() {
         AeService aeService = new AeService();
         AeDetails aeDetails = aeService.createAe("ChequePayment");
         Login aedmLogin = createAEDM(aeDetails.getId(), Login.LOGIN_AREA_OFFICE2, false);

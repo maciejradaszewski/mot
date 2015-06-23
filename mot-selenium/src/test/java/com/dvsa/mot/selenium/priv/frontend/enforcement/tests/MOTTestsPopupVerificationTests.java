@@ -48,7 +48,7 @@ public class MOTTestsPopupVerificationTests extends BaseTest {
 
     //Verify popup for "Site (recent tests)" type
     @Test(groups = {"VM-2677", "Sprint21", "Enf", "VM-2900", "Sprint21", "Enf", "VM-3118",
-            "Sprint23", "Enf", "test1", "slice_A"}) public void verifyPopupRecentTests() {
+            "Sprint23", "Enf", "test1", "Regression"}) public void verifyPopupRecentTests() {
         setUpTestHistory();
         LoginAsEnfUserMOT();
 
@@ -72,7 +72,7 @@ public class MOTTestsPopupVerificationTests extends BaseTest {
 
     //Verify popup for "Site(by date range)" type
     @Test(groups = {"VM-2677", "Sprint21", "Enf", "VM-2900", "Sprint21", "Enf", "VM-3118",
-            "Sprint23", "Enf", "test2", "slice_A"}) public void verifyPopupSiteDateRange() {
+            "Sprint23", "Enf", "test2", "Regression"}) public void verifyPopupSiteDateRange() {
         setUpTestHistory();
         LoginAsEnfUserMOT();
 
@@ -97,7 +97,7 @@ public class MOTTestsPopupVerificationTests extends BaseTest {
 
     //Verify popup for "Tester (by date range)" type
     @Test(groups = {"VM-2677", "Sprint21", "Enf", "VM-2900", "Sprint21", "Enf", "VM-3118",
-            "Sprint23", "Enf", "test3", "VM-2932", "Sprint24", "Enf", "slice_A"})
+            "Sprint23", "Enf", "test3", "VM-2932", "Sprint24", "Enf", "Regression"})
     public void verifyPopupTesterDateRange() {
         setUpTestHistory();
         LoginAsEnfUserMOT();
@@ -122,7 +122,7 @@ public class MOTTestsPopupVerificationTests extends BaseTest {
 
     //Verify popup for "Registration" type
     @Test(groups = {"VM-2677", "Sprint21", "Enf", "VM-2900", "Sprint21", "Enf", "VM-3118",
-            "Sprint23", "Enf", "test4", "slice_A"}) public void verifyPopupRegistrationType() {
+            "Sprint23", "Enf", "test4", "Regression"}) public void verifyPopupRegistrationType() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         createMotTest(login, Site.POPULAR_GARAGES, vehicle, 13000, MotTestApi.TestOutcome.PASSED);
         LoginAsEnfUserMOT();
@@ -147,7 +147,7 @@ public class MOTTestsPopupVerificationTests extends BaseTest {
         motPopUpVerification.logout();
     }
 
-    @Test(groups = {"VM-3342", "Sprint24", "Enf", "slice_A"})
+    @Test(groups = {"VM-3342", "Sprint24", "Enf", "Regression"})
     public void verifyReturnToResultsPage() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BOXSTER_2001);
         createMotTest(login, Site.POPULAR_GARAGES, vehicle, 14000, MotTestApi.TestOutcome.PASSED);
@@ -175,7 +175,7 @@ public class MOTTestsPopupVerificationTests extends BaseTest {
 
     //Verify popup for "VIN/Chasis" type
     @Test(groups = {"VM-2677", "Sprint21", "Enf", "VM-2900", "Sprint21", "Enf", "VM-3118",
-            "Sprint23", "Enf", "test5", "slice_A"}) public void verifyPopupVINChasisType() {
+            "Sprint23", "Enf", "test5", "Regression"}) public void verifyPopupVINChasisType() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BOXSTER_2001);
         createMotTest(login, Site.POPULAR_GARAGES, vehicle, 14000, MotTestApi.TestOutcome.PASSED);
         LoginAsEnfUserMOT();
@@ -200,7 +200,7 @@ public class MOTTestsPopupVerificationTests extends BaseTest {
     }
 
     //Verify title for MOT tests for type "Tester"
-    @Test(groups = {"VM-2748", "Sprint21", "Enf", "VM-2900", "Sprint21", "Enf", "test1", "slice_A"})
+    @Test(groups = {"VM-2748", "Sprint21", "Enf", "VM-2900", "Sprint21", "Enf", "test1", "Regression"})
     public void verifyMOTTestsTesterTitle() {
         setUpTestHistory();
         LoginAsEnfUserMOT();
@@ -229,7 +229,7 @@ public class MOTTestsPopupVerificationTests extends BaseTest {
     }
 
     //Verify filter for MOT tests for type "Tester"
-    @Test(groups = {"VM-2748", "Sprint21", "Enf", "VM-2900", "Sprint21", "Enf", "test2", "slice_A"})
+    @Test(groups = {"VM-2748", "Sprint21", "Enf", "VM-2900", "Sprint21", "Enf", "test2", "Regression"})
     public void verifyMOTTestsTesterFilter() {
         setUpTestHistory();
         LoginAsEnfUserMOT();

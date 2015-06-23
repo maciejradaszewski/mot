@@ -33,7 +33,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 {TestOutcome.FAILED, Assertion.ASSERTION_FAIL},};
     }
 
-    @Test(priority = 1, groups = {"slice_A", "VM-2153", "VM-2591", "VM-3029", "Sprint 22"},
+    @Test(priority = 1, groups = {"Regression", "VM-2153", "VM-2591", "VM-3029", "Sprint 22"},
             description = "Reissue fail certificate on the current VTS, editing the odometer and colour of vehicle, and resubmitting introducing three consecutive invalid OTP")
     public void testReissueFailCertificateOnCurrentVTS_Edit_ProvideThreeInvalidOTP() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);
@@ -62,7 +62,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
         assertThat(replacementCertPage.isErrorMessageDisplayed(), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-2151", "VM-2152", "VM-4516"},
+    @Test(groups = {"Regression", "VM-2151", "VM-2152", "VM-4516"},
             description = "Reissue Fail Certificate on a different VTS, and confirm")
     public void testReissueFailCertificateOnAnotherVTS_View() {
         Site site = Site.JOHNS_GARAGE;
@@ -75,7 +75,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 .clickFinishButton();
     }
 
-    @Test(groups = {"slice_A", "VM-2268", "VM-2269", "VM-4515"})
+    @Test(groups = {"Regression", "VM-2268", "VM-2269", "VM-4515"})
     public void testPrintDocumentDuplicateAsDVSAdminUser() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         String motNumber = createMotTest(login, defaultSite, vehicle, 12345, TestOutcome.PASSED);
@@ -84,7 +84,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 .clickViewByMOTNumber(motNumber);
     }
 
-    @Test(groups = {"slice_A", "VM-2570, VM-2571", "VM-2597", "VM-4511"},
+    @Test(groups = {"Regression", "VM-2570, VM-2571", "VM-2597", "VM-4511"},
             description = "To issue replacement test documents, DVSA Scheme Management need to be able to select a document to edit and print")
     public void testDVSAUserIssueAndEditReplacementCertificatePass() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);
@@ -100,7 +100,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 (Text.TEXT_UPDATED_ODOMETER));
     }
 
-    @Test(groups = {"slice_A", "VM-2570, VM-2571", "VM-2597", "VM-4648"},
+    @Test(groups = {"Regression", "VM-2570, VM-2571", "VM-2597", "VM-4648"},
             description = "To issue replacement test documents, DVSA Scheme Management need to be able to select a document to edit and print")
     public void testDVSAUserIssueAndEditReplacementCertificateFail() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);
@@ -119,7 +119,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 (Text.TEXT_UPDATED_ODOMETER));
     }
 
-    @Test(enabled = true, groups = {"slice_A", "VM-4346"},
+    @Test(enabled = true, groups = {"Regression", "VM-4346"},
             description = "As a DVSA Area Officer when I update a test location and vehicle colour on a certificate I want the update to be reflected on the review screen.")
     public void testWhenDVSAUserEditVTSAndVehicleColourOnACertificate() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);
@@ -143,7 +143,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
     }
 
 
-    @Test(groups = {"VM-4355", "slice_A", "W-Sprint1"},
+    @Test(groups = {"VM-4355", "Regression", "W-Sprint1"},
             description = "When issuing a duplicate or replacement certificate, if the vehicle results which are returned are not the ones I need I want to be able to select to search for another vehicle")
     public void testGoToReplacementCertificatePageAndCancel() {
         DuplicateReplacementCertificatePage
@@ -151,7 +151,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                         Vehicle.VEHICLE_CLASS4_ASTRA_2010).returnToReplacementSearch();
     }
 
-    @Test(groups = {"VM-4478", "slice_A", "W-Sprint2"},
+    @Test(groups = {"VM-4478", "Regression", "W-Sprint2"},
             description = "As a site or DVSA user viewing test records as part of issuing a duplicate or replacement certificate I want the tests to be displayed chronologically")
     public void testTesterUserViewTestRecordsChronologicallyInDuplicateReplacementPage() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -202,7 +202,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 {"6252840482", "281937362", TestOutcome.FAILED}};
     }
 
-    @Test(groups = {"VM-4435", "VM-4416", "slice_A", "W-Sprint2"},
+    @Test(groups = {"VM-4435", "VM-4416", "Regression", "W-Sprint2"},
             description = "Reissue a certificate using the V5C reference number.",
             dataProvider = "reissueCertificateOnAnotherVTSByV5C")
     public void testReissueCertificateOnAnotherVTSByV5C(String previousV5c, String v5c,
@@ -239,7 +239,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
         }
     }
 
-    @Test(groups = {"VM-4435", "slice_A", "W-Sprint2"},
+    @Test(groups = {"VM-4435", "Regression", "W-Sprint2"},
             description = "Check validation messages in Duplicate or replacement certificate page")
     public void testValidationMessagesWhenReissueCertificateOnAnotherVTS() {
         Site anotherSite = Site.JOHNS_GARAGE;
@@ -280,7 +280,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 is(false));
     }
 
-    @Test(groups = {"VM-4450", "slice_A", "W-Sprint3"})
+    @Test(groups = {"VM-4450", "Regression", "W-Sprint3"})
     public void testIsAllowToDuplicateAbandonedCertificates() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
         Login tester = createTester();
@@ -312,7 +312,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 "Only first not abandoned test should display 'Edit' button");
     }
 
-    @Test(groups = {"VM-4450", "slice_A", "W-Sprint3"})
+    @Test(groups = {"VM-4450", "Regression", "W-Sprint3"})
     public void testIsAllowToDuplicateAbandonedCertificatesIssuedOnAnotherSite() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
         Site anotherSite = Site.JOHNS_GARAGE;
@@ -353,7 +353,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 {Login.LOGIN_DVLA_CENTRAL_OPERATIVE, false}, {Login.LOGIN_AREA_OFFICE1, true}};
     }
 
-    @Test(groups = {"VM-4515", "slice_A", "W-Sprint3"},
+    @Test(groups = {"VM-4515", "Regression", "W-Sprint3"},
             dataProvider = "usersAllowedDuplicatesIssuedMoreThan18MonthsAgo")
     public void testUsersAllowedDuplicatesIssuedMoreThan18MonthsAgo(Login user,
             boolean shouldDuplicateMoreThan18Months) {
@@ -383,7 +383,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
         return new Object[][] {{Login.LOGIN_SCHEME_USER}};
     }
 
-    @Test(groups = {"VM-4515", "VM-4511", "VM-4512", "VM-4516", "slice_A", "W-Sprint3"},
+    @Test(groups = {"VM-4515", "VM-4511", "VM-4512", "VM-4516", "Regression", "W-Sprint3"},
             dataProvider = "usersNotAllowedIssueDuplicatesAndNotAllowedIssueReplacements",
             expectedExceptions = UnauthorisedError.class)
     public void testUsersNotAllowedIssueDuplicated(Login login) {
@@ -400,7 +400,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 {Login.LOGIN_DVLA_CENTRAL_OPERATIVE}};
     }
 
-    @Test(groups = {"VM-4511", "slice_A", "W-Sprint4"},
+    @Test(groups = {"VM-4511", "Regression", "W-Sprint4"},
             dataProvider = "usersAllowedIssueDuplicatesAndNotAllowedIssueReplacements",
             description = "Test roles that can't issue replacement Test Documents")
     public void testUsersNotAllowedIssueReplacement(Login user) {
@@ -413,7 +413,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 .isReplacementCertificateEditButtonDisplayed(testNumber));
     }
 
-    @Test(groups = {"VM-4512", "slice_A", "W-Sprint4"},
+    @Test(groups = {"VM-4512", "Regression", "W-Sprint4"},
             description = "If the Tester generating the replacement was not the tester who carried out the test an explanation reason is to be supplied.")
     public void testMustProvideReasonWhenDifferentTesterReplaceCertificate() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
@@ -427,9 +427,8 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 .finishAndPrintCertificate(Text.TEXT_PASSCODE).clickDoneButton();
     }
 
-    @Test(groups = {"VM-7785", "VM-10120", "slice_A"}) public void testManuallyEnterMakeAndModel()
-            throws IOException {
-
+    @Test(groups = {"VM-7785", "VM-10120", "Regression"})
+    public void testManuallyEnterMakeAndModel() throws IOException {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
         String testNumber = createMotTest(login, defaultSite, vehicle, 872033, TestOutcome.FAILED);
         Login dvsaUser = Login.LOGIN_AREA_OFFICE1;

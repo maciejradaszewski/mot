@@ -58,7 +58,7 @@ public class VehicleTestingStationOverviewTest extends BaseTest {
                 {Login.LOGIN_SITE_MANAGER_AT_V123539}};
     }
 
-    @Test(groups = {"VM-3270", "Sprint 25", "slice_A"},
+    @Test(groups = {"VM-3270", "Sprint 25", "Regression"},
             dataProvider = "rolesWhoCanMaintainTheBrakeTestPreferences",
             description = "Test that the brake test configuration appear in the VTS details page, and ensure the info displayed is correct")
     public void testRolesWhoCanViewAndChangeSiteDefaultBrakeConfiguration(Login login) {
@@ -77,7 +77,7 @@ public class VehicleTestingStationOverviewTest extends BaseTest {
         Assert.assertTrue(siteDetailsPage.isBrakeTestDefaultsDisplayedCorrectly(BrakeTestType));
     }
 
-    @Test(groups = {"VM-3558", "Sprint 25", "slice_A"},
+    @Test(groups = {"VM-3558", "Sprint 25", "Regression"},
             description = "Test that the default brake test configuration appears for a tester doing an mot test,and ensure the info displayed is correct")
     public void testSiteHasNoPreferenceAndAssignTheDefaultBrakingConfiguration() {
         String serviceBrakeTestType = SiteDetailsPage
@@ -122,7 +122,7 @@ public class VehicleTestingStationOverviewTest extends BaseTest {
         return openingHours.get(day);
     }
 
-    @Test(groups = {"VM-3426", "VM-2865", "Sprint 25", "slice_A"})
+    @Test(groups = {"VM-3426", "VM-2865", "Sprint 25", "Regression"})
     public void testChangingOpeningHours() {
         ManageOpeningHoursPage manageOpeningHoursPage = ManageOpeningHoursPage
                 .navigateHereFromLoginPage(driver, Login.LOGIN_AEDM, Site.JOHNS_MOTORCYCLE_GARAGE);
@@ -152,7 +152,7 @@ public class VehicleTestingStationOverviewTest extends BaseTest {
 
     }
 
-    @Test(groups = {"VM_3426", "slice_A"}) public void testOpeningHoursValidation() {
+    @Test(groups = {"VM_3426", "Regression"}) public void testOpeningHoursValidation() {
 
         int aeId = createAE("AE_");
         String siteName = "VTS_";
@@ -175,7 +175,7 @@ public class VehicleTestingStationOverviewTest extends BaseTest {
         return new Object[][] {{Login.LOGIN_AEDM_2}, {Login.LOGIN_AED_3},};
     }
 
-    @Test(groups = {"VM-4343", "slice_A", "Team-X"},
+    @Test(groups = {"VM-4343", "Regression", "Team-X"},
             dataProvider = "rolesWhoCanViewInProgressTestsButCannotAbortItAtAnUsersVts")
     public void testRolesWhoCanViewInProgressTestsButCannotAbortItAtAnUsersVts(Login login) {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -193,7 +193,7 @@ public class VehicleTestingStationOverviewTest extends BaseTest {
         }
     }
 
-    @Test(groups = {"VM-4503", "slice_A"})
+    @Test(groups = {"VM-4503", "Regression"})
     public void testAnotherTesterWhoCantViewAbortMotTestPageOfAnActiveTester() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         String testNumber =
@@ -209,7 +209,7 @@ public class VehicleTestingStationOverviewTest extends BaseTest {
         }
     }
 
-    @Test(groups = {"VM-4503", "slice_A"})
+    @Test(groups = {"VM-4503", "Regression"})
     public void testAEDMCannotAbortMotTestPageOfAnActiveTester() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         String testNumber =

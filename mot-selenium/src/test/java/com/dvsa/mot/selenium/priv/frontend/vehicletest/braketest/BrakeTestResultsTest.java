@@ -67,7 +67,7 @@ public class BrakeTestResultsTest extends BaseTest {
     }
 
     @Test(dataProvider = "brakeTestResultsProvider",
-            groups = {"slice_A", "VM-990", "VM-1030", "VM-1339", "VM-1337", "VM-1338", "VM-1029",
+            groups = {"Regression", "VM-990", "VM-1030", "VM-1339", "VM-1337", "VM-1338", "VM-1029",
                     "VM-1028"}) public void testBrakeTestResults(boolean runTest, Vehicle vehicle,
             Map<BrakeTestConfigurationPageField, Object> configurationDetails,
             Map<BrakeTestResultsPageField, Object> resultsDetails, Map<String, String> expResult) {
@@ -109,7 +109,7 @@ public class BrakeTestResultsTest extends BaseTest {
     }
 
     @Test(dataProvider = "brakeTestResultsShortGroupProvider",
-            groups = {"slice_A", "short-brakes", "short", "VM-860"})
+            groups = {"Regression", "short-brakes", "short", "VM-860"})
     public void testBrakeTestResultsShortGroup(Vehicle vehicle,
             Map<BrakeTestConfigurationPageField, Object> configurationDetails,
             Map<BrakeTestResultsPageField, Object> resultsDetails, Map<String, String> expResult) {
@@ -128,7 +128,7 @@ public class BrakeTestResultsTest extends BaseTest {
     }
 
     @Test(dataProvider = "brakeTestFinishAndPrintShortProvider",
-            groups = {"slice_A", "VM-1030", "VM-1029", "short"})
+            groups = {"Regression", "VM-1030", "VM-1029", "short"})
     public void testBrakeTestFinishAndPrintShort(Vehicle vehicle,
             Map<BrakeTestConfigurationPageField, Object> configurationDetails,
             Map<BrakeTestResultsPageField, Object> resultsDetails, Map<String, String> expResult) {
@@ -156,7 +156,7 @@ public class BrakeTestResultsTest extends BaseTest {
                         BrakeTestSummary5.serviceAndParkingBrakePassAResults_3Axles},};
     }
 
-    @Test(dataProvider = "editBrakeTestResultsProvider", groups = {"slice_A", "VM-1030"})
+    @Test(dataProvider = "editBrakeTestResultsProvider", groups = {"Regression", "VM-1030"})
     public void testEditBrakeResultsSuccessfully(Vehicle vehicle,
             Map<BrakeTestConfigurationPageField, Object> configurationDetails,
             Map<BrakeTestResultsPageField, Object> resultDetails,
@@ -189,7 +189,7 @@ public class BrakeTestResultsTest extends BaseTest {
                 BrakeTestResults4.imbalanceOnly(), 2}};
     }
 
-    @Test(groups = {"slice_A", "VM-1842", "short-brakes"},
+    @Test(groups = {"Regression", "VM-1842", "short-brakes"},
             dataProvider = "DP-testWhenFailBrakeImbalanceAddSeparateRFRAddedForEachAxle")
     public void testWhenFailBrakeImbalanceAddSeparateRFRAddedForEachAxle(Vehicle vehicle,
             Map<BrakeTestConfigurationPageField, Object> configurationDetails,
@@ -211,7 +211,7 @@ public class BrakeTestResultsTest extends BaseTest {
     }
 
     @Test(dataProvider = "DP-testVehicleUsedAfter1stSeptember2010NotAllowSingleLineBraking",
-            groups = {"slice_A", "VM-1667"})
+            groups = {"Regression", "VM-1667"})
     public void testVehicleUsedAfter1stSeptember2010NotAllowSingleLineBraking(
             Map<BrakeTestConfigurationPageField, Object> brakeTestConfig,
             Map<BrakeTestResultsPageField, Object> brakeTestEntry) {

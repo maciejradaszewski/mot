@@ -16,7 +16,7 @@ import static org.hamcrest.core.Is.is;
 public class OpenAMClaimAccountSignInTest extends BaseTest {
 
 
-    @Test(groups = {"slice_A", "VM-4868"}) public void testOpenAMClaimAccountWithMissMatchEmails() {
+    @Test(groups = {"Regression", "VM-4868"}) public void testOpenAMClaimAccountWithMissMatchEmails() {
 
         Login login = createTester(true);
         OpenAMClaimAccountSignInPage openAMClaimAccountSignInPage =
@@ -29,7 +29,7 @@ public class OpenAMClaimAccountSignInTest extends BaseTest {
                 ValidationSummary.isValidationSummaryDisplayed(driver), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-4868"}) public void testEmailOptOutValidation() {
+    @Test(groups = {"Regression", "VM-4868"}) public void testEmailOptOutValidation() {
 
         Login login = createTester(true);
         OpenAMClaimAccountSignInPage openAMClaimAccountSignInPage =
@@ -43,7 +43,7 @@ public class OpenAMClaimAccountSignInTest extends BaseTest {
 
     }
 
-    @Test(groups = {"slice_A", "VM-2115"}) public void testValidAndInvalidPassword() {
+    @Test(groups = {"Regression", "VM-2115"}) public void testValidAndInvalidPassword() {
 
         Login login = createTester(true);
         OpenAMClaimAccountSignInPage openAMClaimAccountSignInPage =

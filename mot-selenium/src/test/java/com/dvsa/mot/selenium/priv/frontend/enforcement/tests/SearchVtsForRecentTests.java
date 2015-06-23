@@ -29,7 +29,7 @@ public class SearchVtsForRecentTests extends BaseTest {
     /**
      * Valid test with valid VTS number
      */
-    @Test(groups = {"VM-896", "Sprint11", "Enf", "slice_A"})
+    @Test(groups = {"VM-896", "Sprint11", "Enf", "Regression"})
     public void enterValidVtsNumberWithNoResults() {
         EnforcementHomePage homePage =
                 EnforcementHomePage.navigateHereFromLoginPage(driver, Login.LOGIN_ENFTESTER);
@@ -45,7 +45,7 @@ public class SearchVtsForRecentTests extends BaseTest {
     /**
      * Valid test with valid VTS number that returns results
      */
-    @Test(groups = {"VM-896", "Sprint11", "Enf", "slice_A"})
+    @Test(groups = {"VM-896", "Sprint11", "Enf", "Regression"})
     public void enterValidWholeVTSNumberAndReturnResults() {
 
         createMotTest(login, Site.POPULAR_GARAGES, createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010),
@@ -65,7 +65,7 @@ public class SearchVtsForRecentTests extends BaseTest {
     /**
      * Test to show an MOT test is in progress
      */
-    @Test(groups = {"VM-896", "Sprint11", "Enf", "VM-3116", "Sprint24", "Enf", "slice_A"})
+    @Test(groups = {"VM-896", "Sprint11", "Enf", "VM-3116", "Sprint24", "Enf", "Regression"})
     public void showTestAsInProgress() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -89,7 +89,7 @@ public class SearchVtsForRecentTests extends BaseTest {
         lpVtsSearch.clickLogout();
     }
 
-    @Test(groups = {"VM-3116", "Sprint11", "Enf", "slice_A"}) public void verifyTestInProgress() {
+    @Test(groups = {"VM-3116", "Sprint11", "Enf", "Regression"}) public void verifyTestInProgress() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         RunAClass4Mot runMotTest = new RunAClass4Mot(driver);
@@ -113,7 +113,7 @@ public class SearchVtsForRecentTests extends BaseTest {
     /**
      * Test to show an MOT test has passed
      */
-    @Test(groups = {"VM-896", "Sprint11", "Enf", "slice_A"}) public void showTestAsPassed() {
+    @Test(groups = {"VM-896", "Sprint11", "Enf", "Regression"}) public void showTestAsPassed() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         createMotTest(login, Site.POPULAR_GARAGES, vehicle, 12345, MotTestApi.TestOutcome.PASSED);
@@ -135,7 +135,7 @@ public class SearchVtsForRecentTests extends BaseTest {
     /**
      * Test to show an MOT test has failed
      */
-    @Test(groups = {"VM-896", "Sprint11", "Enf", "slice_A"}) public void showTestAsFailed() {
+    @Test(groups = {"VM-896", "Sprint11", "Enf", "Regression"}) public void showTestAsFailed() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         createMotTest(login, Site.POPULAR_GARAGES, vehicle, 12345, MotTestApi.TestOutcome.FAILED);
@@ -154,7 +154,7 @@ public class SearchVtsForRecentTests extends BaseTest {
         resultsScreen.clickLogout();
     }
 
-    @Test(groups = {"VM-896", "Sprint11", "Enf", "slice_A"}) public void vtsSearchAgain() {
+    @Test(groups = {"VM-896", "Sprint11", "Enf", "Regression"}) public void vtsSearchAgain() {
         EnforcementHomePage homePage =
                 EnforcementHomePage.navigateHereFromLoginPage(driver, Login.LOGIN_ENFTESTER);
         homePage.goToVtsNumberEntryPage();
@@ -172,7 +172,7 @@ public class SearchVtsForRecentTests extends BaseTest {
     /**
      * Test to check that the short summary pop up is present
      */
-    @Test(groups = {"VM-1015", "Sprint12", "Enf", "slice_A"})
+    @Test(groups = {"VM-1015", "Sprint12", "Enf", "Regression"})
     public void shortSummaryTestForPass() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -197,7 +197,7 @@ public class SearchVtsForRecentTests extends BaseTest {
     /**
      * Test to check that the short summary pop up is present
      */
-    @Test(groups = {"VM-1015", "Sprint12", "Enf", "slice_A"})
+    @Test(groups = {"VM-1015", "Sprint12", "Enf", "Regression"})
     public void shortSummaryTestForFail() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_MERCEDES_C300);
         createMotTest(createTester(), Site.POPULAR_GARAGES, vehicle, 12000,
@@ -220,7 +220,7 @@ public class SearchVtsForRecentTests extends BaseTest {
     /**
      * Test to check that the short summary pop up is present
      */
-    @Test(groups = {"VM-1015", "Sprint12", "Enf", "slice_A"})
+    @Test(groups = {"VM-1015", "Sprint12", "Enf", "Regression"})
     public void shortSummaryTestForInProgress() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -244,7 +244,7 @@ public class SearchVtsForRecentTests extends BaseTest {
     /**
      * Test to check that the short summary pop up is present
      */
-    @Test(groups = {"VM-897", "Sprint12", "Enf", "slice_A"}) public void showFullPassSummary() {
+    @Test(groups = {"VM-897", "Sprint12", "Enf", "Regression"}) public void showFullPassSummary() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         createMotTest(login, Site.POPULAR_GARAGES, vehicle, 12345, MotTestApi.TestOutcome.PASSED);
@@ -264,7 +264,7 @@ public class SearchVtsForRecentTests extends BaseTest {
     /**
      * Test to check that the short summary pop up is present
      */
-    @Test(groups = {"VM-897", "Sprint12", "Enf", "slice_A"}) public void showFullFailSummary() {
+    @Test(groups = {"VM-897", "Sprint12", "Enf", "Regression"}) public void showFullFailSummary() {
 
         //Login to application
         EnforcementHomePage homePage =
@@ -282,7 +282,7 @@ public class SearchVtsForRecentTests extends BaseTest {
     /**
      * Test to check that the short summary pop up is present
      */
-    @Test(groups = {"VM-1019", "Sprint12", "Enf", "slice_A"})
+    @Test(groups = {"VM-1019", "Sprint12", "Enf", "Regression"})
     public void selectTargetedReInspectionType() {
 
         Site site  = new VtsCreationApi().createVtsSite(createAE("selectReinspectionType"),

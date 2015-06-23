@@ -96,7 +96,7 @@ public class UserDashboardTest extends BaseTest {
         Assert.assertTrue(userDashboardPage.existReissueCertificateLink());
     }
 
-    @Test(groups = {"VM-4564", "slice_A", "W-Sprint3"})
+    @Test(groups = {"VM-4564", "Regression", "W-Sprint3"})
     public void testLoginAsCustomerServiceAndVerifyLinks() {
         UserDashboardPage userDashboard =
                 UserDashboardPage.navigateHereFromLoginPage(driver, Login.LOGIN_CUSTOMER_SERVICE);
@@ -105,7 +105,7 @@ public class UserDashboardTest extends BaseTest {
         userDashboard.clickLogout();
     }
 
-    @Test(groups = {"VM-4565", "slice_A", "W-Sprint3"})
+    @Test(groups = {"VM-4565", "Regression", "W-Sprint3"})
     public void testLoginAsDVLACentralOperativeAndVerifyLinks() {
         UserDashboardPage userDashboard = UserDashboardPage
                 .navigateHereFromLoginPage(driver, Login.LOGIN_DVLA_CENTRAL_OPERATIVE);
@@ -114,7 +114,7 @@ public class UserDashboardTest extends BaseTest {
         userDashboard.clickLogout();
     }
 
-    @Test(groups = {"VM-4791", "slice_A"})
+    @Test(groups = {"VM-4791", "Regression"})
     public void testVerifyCookieLinkClickableInTheFooter() {
         UserDashboardPage userDashboardPage = LoginPage.loginAs(driver, login);
         assertThat(userDashboardPage.isCookieLinkClickable(), is(true));

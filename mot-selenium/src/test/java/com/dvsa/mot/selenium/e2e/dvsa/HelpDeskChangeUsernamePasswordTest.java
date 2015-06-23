@@ -16,7 +16,7 @@ import com.dvsa.mot.selenium.framework.BaseTest;
 public class HelpDeskChangeUsernamePasswordTest extends BaseTest {
 
     /*Disabling this test as there is change in functionality. Will revert back once 7724 resolved*/
-    /*@Test(enabled = false, groups = {"VM-4880", "VM-4881", "W-Sprint5", "E2E", "VM-7266","slice_A"})
+    /*@Test(enabled = false, groups = {"VM-4880", "VM-4881", "W-Sprint5", "E2E", "VM-7266","Regression"})
     public void testHelpDeskResetPasswordAndRecoverUsernameSuccessfully() {
         Login user = createTester(Login.LOGIN_TESTER1);
         Person aed = Person.PAM_POOVEY;

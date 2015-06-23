@@ -15,7 +15,7 @@ import static org.hamcrest.core.Is.is;
 
 public class MotTestCompleteTest extends BaseTest {
 
-    @Test(groups = {"Sprint 22", "MOT Testing", "VM-2940", "VM-3336", "slice_A"},
+    @Test(groups = {"Sprint 22", "MOT Testing", "VM-2940", "VM-3336", "Regression"},
             description = "When a PRS is added to a test, it should be possible to print out a fail and then a pass document at the same time for this test.")
     public void testPrintFailAndPassCertificateWithPRSPresent() {
 

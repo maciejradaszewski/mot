@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 public class RecordAndRetestTest extends BaseTest {
 
 
-    @Test(groups = {"slice_A","VM-1586", "VM-1949",
+    @Test(groups = {"Regression","VM-1586", "VM-1949",
             "VM-1950"}, description = "Original test - Mileage entered is lower same and higher than previous")
     public void testPassedMotTestAgainForOdometerReadingWithDifferentValues() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA);

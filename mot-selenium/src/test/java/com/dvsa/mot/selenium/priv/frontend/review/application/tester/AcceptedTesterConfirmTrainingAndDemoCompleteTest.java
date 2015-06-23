@@ -25,7 +25,7 @@ import java.util.Collections;
 public class AcceptedTesterConfirmTrainingAndDemoCompleteTest extends BaseTest {
 
 
-    @Test(groups = {"VM-3654", "Sprint 25", "MOT Testing","slice_A"},
+    @Test(groups = {"VM-3654", "Sprint 25", "MOT Testing","Regression"},
             description = "Start a demo test and verify is the demo test is available when searched for the replacement or duplicate certificate")
     public void testStartADemoTestAndVerifyItIsNotAppearingInReplacementOrDuplicateDocumentationSearch() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA_2);
@@ -60,7 +60,7 @@ public class AcceptedTesterConfirmTrainingAndDemoCompleteTest extends BaseTest {
                 clickDoneButton();
     }
 
-    @Test(groups = {"VM-3654", "VM-3653", "Sprint 25", "MOT Testing","slice_A"},
+    @Test(groups = {"VM-3654", "VM-3653", "Sprint 25", "MOT Testing","Regression"},
             description = "A user can start a demo test for classes where he is not trained on and verify the same test is not available on the tester's performance dashboard")
     public void testIsTheDemoTestNotDisplayedOnActiveTestersPerformanceDashboard() {
         PerformanceDashboardPage performanceDashboardPage =
@@ -68,7 +68,7 @@ public class AcceptedTesterConfirmTrainingAndDemoCompleteTest extends BaseTest {
         Assert.assertTrue(performanceDashboardPage.isDemoTestResultRecorded());
     }
 
-    @Test(groups = {"VM-3648", "Sprint 25", "MOT Testing", "slice_A"},
+    @Test(groups = {"VM-3648", "Sprint 25", "MOT Testing", "Regression"},
             description = "Start a demo test and verify is the slots associated to an ae is decremented after it")
     public void testIsSlotsAssociatedToAnAeDecrementedAfterADemoTest() {
 

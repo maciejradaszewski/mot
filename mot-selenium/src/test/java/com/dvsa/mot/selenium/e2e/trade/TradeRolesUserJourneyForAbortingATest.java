@@ -25,7 +25,7 @@ public class TradeRolesUserJourneyForAbortingATest extends BaseTest {
                 {Login.LOGIN_ANOTHER_TESTER_AT_VTS1},};
     }
 
-    @Test(groups = {"VM-4343", "VM-4407", "slice_A", "Sprint 29,Team-X", "E2E"},
+    @Test(groups = {"VM-4343", "VM-4407", "Regression", "Sprint 29,Team-X", "E2E"},
             dataProvider = "rolesWhoCanViewAndAbortAnActiveMotTestAtAnUsersVts",
             description = "roles Who Can View And Abort An Mot Test")
     public void testWhoCanViewAndAbortAnActiveMotTestAtAnUsersVts(Login login) {

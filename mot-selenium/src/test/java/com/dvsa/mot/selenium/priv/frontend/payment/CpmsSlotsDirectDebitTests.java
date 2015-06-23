@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 
 public class CpmsSlotsDirectDebitTests extends BaseTest {
 
-    @Test(groups = {"slice_A", "SPMS-147"}) public void setUpDirectDebitTest() {
+    @Test(groups = {"Regression", "SPMS-147"}) public void setUpDirectDebitTest() {
 
         AeService aeService = new AeService();
         AeDetails aeDetails = aeService.createAe("DirectDebitSetup");

@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.is;
 
 public class SearchForSiteInformationTests extends BaseTest {
 
-    @Test(groups = {"VM-7269", "slice_A"}) public void siteInformationTests() {
+    @Test(groups = {"VM-7269", "Regression"}) public void siteInformationTests() {
         AeService aeService = new AeService();
         String aeName = RandomStringUtils.randomAlphabetic(6);
         String vtsOneName = RandomStringUtils.randomAlphabetic(6);
@@ -62,7 +62,7 @@ public class SearchForSiteInformationTests extends BaseTest {
 
     }
 
-    @Test(groups = {"VM-7269", "slice_A"}) public void verifyInvalidSiteSearch() {
+    @Test(groups = {"VM-7269", "Regression"}) public void verifyInvalidSiteSearch() {
         SiteInformationSearchPage siteInformationSearchPage = SiteInformationSearchPage
                 .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1)
                 .submitSearchExpectingSiteSearchPage();

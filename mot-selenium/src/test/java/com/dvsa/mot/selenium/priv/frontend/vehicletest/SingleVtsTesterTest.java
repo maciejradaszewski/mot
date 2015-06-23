@@ -10,7 +10,7 @@ import static org.hamcrest.core.Is.is;
 
 public class SingleVtsTesterTest extends BaseTest {
 
-    @Test(groups = {"slice_A", "VM-2950"})
+    @Test(groups = {"Regression", "VM-2950"})
     public void testSingleVtsTesterShouldNotHaveToSelectLocationAtTestStart() {
 
         UserDashboardPage dashboardPage =
@@ -22,7 +22,7 @@ public class SingleVtsTesterTest extends BaseTest {
                 is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-2950"})
+    @Test(groups = {"Regression", "VM-2950"})
     public void testSingleVtsTesterShouldNotSeeChangeSiteLink() {
 
         UserDashboardPage dashboardPage =

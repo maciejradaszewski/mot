@@ -34,7 +34,7 @@ public class VehicleSearchRetestTest extends BaseTest {
     AeService aeService = new AeService();
 
 
-    @Test(groups = {"slice_A", "VM-769", "VM-1862", "short-vehicle"})
+    @Test(groups = {"Regression", "VM-769", "VM-1862", "short-vehicle"})
     public void testSearchRetestByPreviousNumber() {
 
         Login login = createTester();
@@ -54,7 +54,7 @@ public class VehicleSearchRetestTest extends BaseTest {
                 is(vehicle.fullVIN));
     }
 
-    @Test(groups = {"slice_A", "VM-769", "short-vehicle"})
+    @Test(groups = {"Regression", "VM-769", "short-vehicle"})
     public void testEnterInvalidRetestNumber() {
 
         Login login = createTester();
@@ -67,7 +67,7 @@ public class VehicleSearchRetestTest extends BaseTest {
                 ValidationSummary.isValidationSummaryDisplayed(driver), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-769", "VM-1862"})
+    @Test(groups = {"Regression", "VM-769", "VM-1862"})
     public void testSearchRetestByPreviousNumberAndVinExpectingError() {
 
         Login login = createTester();
@@ -79,7 +79,7 @@ public class VehicleSearchRetestTest extends BaseTest {
                 ValidationSummary.isValidationSummaryDisplayed(driver), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-1862", "short-vehicle"})
+    @Test(groups = {"Regression", "VM-1862", "short-vehicle"})
     public void testSearchRetestByRegistrationNumberAndVin() {
 
         AeDetails aeDetails = aeService.createAe(RandomStringUtils.randomAlphabetic(5));
@@ -101,7 +101,7 @@ public class VehicleSearchRetestTest extends BaseTest {
     }
 
 
-    @Test(groups = {"slice_A", "VM-1862", "short-vehicle"})
+    @Test(groups = {"Regression", "VM-1862", "short-vehicle"})
     public void testStartRetestAndClickConfirmVehicle() {
 
         AeDetails aeDetails = aeService.createAe(RandomStringUtils.randomAlphabetic(5));
@@ -118,7 +118,7 @@ public class VehicleSearchRetestTest extends BaseTest {
                 is(Assertion.ASSERTION_ORIGINAL_TEST_NOT_PERFORMED.assertion));
     }
 
-    @Test(groups = {"slice_A", "VM-1862"}) public void testStartRetestAndClickSearchAgain() {
+    @Test(groups = {"Regression", "VM-1862"}) public void testStartRetestAndClickSearchAgain() {
 
         AeDetails aeDetails = aeService.createAe(RandomStringUtils.randomAlphabetic(5));
         Site site = new VtsCreationApi()
@@ -147,7 +147,7 @@ public class VehicleSearchRetestTest extends BaseTest {
     }
 
     @Test(description = "Test fail MOT with RFR and retest with Pass result.",
-            groups = {"VM-1666", "VM-315", "VM-1661", "slice_A"}, dataProvider = "DP-MultipleRFRs")
+            groups = {"VM-1666", "VM-315", "VM-1661", "Regression"}, dataProvider = "DP-MultipleRFRs")
     public void testClass4FailWithRFRAndRetestWithPassResult(Login login,
             Map<BrakeTestResultsPageField, Object> inputsBrakeFailure,
             Map<String, String> expResultBrakeFailure,

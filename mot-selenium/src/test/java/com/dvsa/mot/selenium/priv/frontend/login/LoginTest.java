@@ -12,7 +12,7 @@ import static org.hamcrest.core.Is.is;
 
 public class LoginTest extends BaseTest {
 
-    @Test(groups = {"slice_A", "VM-14",
+    @Test(groups = {"Regression", "VM-14",
             "short-login"}, description = "Registered user in Tester role logs in by pressing Enter key in Password field on Login screen.")
     public void testLoginSubmitWithEnterKeyFromPasswordField() {
 
@@ -26,7 +26,7 @@ public class LoginTest extends BaseTest {
         assertThat("Assert user is logged out", loginPage.isUserLoggedIn(), is(false));
     }
 
-    @Test(groups = "slice_A", description = "Registered user in Tester role logs in by pressing Enter key in Username field on Login screen.")
+    @Test(groups = "Regression", description = "Registered user in Tester role logs in by pressing Enter key in Username field on Login screen.")
     public void testLoginSubmitWithEnterKeyFromUsernameField() {
 
         Login login = createTester();
@@ -39,7 +39,7 @@ public class LoginTest extends BaseTest {
         assertThat("Assert user is logged out", loginPage.isUserLoggedIn(), is(false));
     }
 
-    @Test(groups = {"VM-3893", "slice_A", "W-Sprint3"},
+    @Test(groups = {"VM-3893", "Regression", "W-Sprint3"},
             description = "Check the links to manuals displayed on the page footer.")
     public void testFootManualsAndGuidesLinks() {
 

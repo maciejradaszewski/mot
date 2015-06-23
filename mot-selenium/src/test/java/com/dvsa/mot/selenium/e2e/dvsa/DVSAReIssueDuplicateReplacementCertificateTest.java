@@ -32,7 +32,7 @@ public class DVSAReIssueDuplicateReplacementCertificateTest extends BaseTest {
     }
 
     @Test(groups = {"VM-2269", "VM-4515", "VM-2268", "E2E", "VM-7269", "VM-7276", "VM-2268",
-            "W-Sprint1", "VM-4355", "slice_A"},
+            "W-Sprint1", "VM-4355", "Regression"},
             dataProvider = "dvsaLoginsRePrintCertificate",
             description = "Dvsa Logins can RePrint certificates)")
     public void testRePrintCertificateAsDVSAdminUser(Login adminLogin) {
@@ -52,7 +52,7 @@ public class DVSAReIssueDuplicateReplacementCertificateTest extends BaseTest {
     }
 
     @Test(enabled = true, groups = {"VM-2570", "VM-2571", "VM-2597", "VM-4648", "VM-7785", "E2E",
-            "VM-7269", "VM-4346", "slice_A"},
+            "VM-7269", "VM-4346", "Regression"},
             description = "Edit fail replacement certificate")
     public void testDVSAUserIssueAndEditReplacementCertificate() {
         Site vts = Site.JOHNS_MOTORCYCLE_GARAGE;

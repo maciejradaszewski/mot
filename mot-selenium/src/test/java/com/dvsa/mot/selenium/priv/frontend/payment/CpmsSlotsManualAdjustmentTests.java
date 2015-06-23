@@ -25,7 +25,7 @@ public class CpmsSlotsManualAdjustmentTests extends BaseTest {
         return detailsOfAuthorisedExaminerPage;
     }
 
-    @Test(groups = {"slice_A", "SPMS-143"})
+    @Test(groups = {"Regression", "SPMS-143"})
     public void manualPositiveAdjustmentOfSlotsBalanceByFinanceUser() {
         DetailsOfAuthorisedExaminerPage detailsOfAuthorisedExaminerPage =
                 loginAsFinanceUserAndSearchForAe();
@@ -47,7 +47,7 @@ public class CpmsSlotsManualAdjustmentTests extends BaseTest {
                 "Verifying adjusted slots balance message");
     }
 
-    @Test(groups = {"slice_A", "SPMS-143"})
+    @Test(groups = {"Regression", "SPMS-143"})
     public void manualNegativeAdjustmentOfSlotsBalanceByFinanceUser() {
         DetailsOfAuthorisedExaminerPage detailsOfAuthorisedExaminerPage =
                 loginAsFinanceUserAndSearchForAe();
@@ -70,7 +70,7 @@ public class CpmsSlotsManualAdjustmentTests extends BaseTest {
                 "Verifying adjusted slots balance message");
     }
 
-    @Test(groups = {"slice_A", "SPMS-143"})
+    @Test(groups = {"Regression", "SPMS-143"})
     public void verifyingSlotsAdjustmentLinkUnavailableForAedm() {
 
         AuthorisedExaminerOverviewPage authorisedExaminerOverviewPage =

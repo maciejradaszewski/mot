@@ -38,7 +38,7 @@ public class CpmsSlotUsageTests extends BaseTest {
         return aedmLogin;
     }
 
-    @Test(groups = {"slice_A", "SPMS-119"}) public void slotUsageReportTest() {
+    @Test(groups = {"Regression", "SPMS-119"}) public void slotUsageReportTest() {
 
         Login aedmLogin = createMotTestsAndReturnAedmLogin();
         OrganisationSlotsUsagePage organisationSlotsUsagePage =
@@ -103,7 +103,7 @@ public class CpmsSlotUsageTests extends BaseTest {
                 "Verifying CSV Link");
     }
 
-    @Test(groups = {"slice_A", "SPMS-119"}) public void vtsSlotUsageReportTest() {
+    @Test(groups = {"Regression", "SPMS-119"}) public void vtsSlotUsageReportTest() {
 
         Login aedmLogin = createMotTestsAndReturnAedmLogin();
         VehicleTestStationSlotUsagePage vehicleTestStationSlotUsagePage =

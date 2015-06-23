@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.is;
 
 public class AuthorisedExaminerOverviewTest extends BaseTest {
 
-    @Test(groups = {"VM-2218", "VM-2226", "VM-2368", "slice_A", "VM-2223", "VM-2296"})
+    @Test(groups = {"VM-2218", "VM-2226", "VM-2368", "Regression", "VM-2223", "VM-2296"})
     public void testAllAEDetailsDisplayedOnThePage() {
 
         AeService aeService = new AeService();

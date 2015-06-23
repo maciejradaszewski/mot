@@ -33,7 +33,7 @@ public class ReasonsToCancelTest extends BaseTest {
                         createVehicle(Vehicle.VEHICLE_CLASS4_BOXSTER_2001)}};
     }
 
-    @Test(dataProvider = "DP-MotTestReasonsToCancel", groups = {"slice_A", "VM-1557",
+    @Test(dataProvider = "DP-MotTestReasonsToCancel", groups = {"Regression", "VM-1557",
             "short-vehicle"})
     public void testAbortMotTestAndClickCancelAndClickReturn(ReasonToCancel reasonToCancel,
             Vehicle vehicle) {
@@ -64,7 +64,7 @@ public class ReasonsToCancelTest extends BaseTest {
                 userDashboardPage.isStartMotTestDisplayed(), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-4502"})
+    @Test(groups = {"Regression", "VM-4502"})
     public void testTesterCannotAbandonAnMotTestOfAnotherTester() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);

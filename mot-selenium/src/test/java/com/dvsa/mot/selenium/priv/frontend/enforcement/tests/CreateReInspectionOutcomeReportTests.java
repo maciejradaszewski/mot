@@ -32,7 +32,7 @@ public class CreateReInspectionOutcomeReportTests extends BaseTest {
         runMotTest.runMotClass4TestWithSingleRfr(login, vehicle).clickLogout();
     }
 
-    @Test(groups = {"VM-1845", "Sprint17", "Enf", "slice_A"})
+    @Test(groups = {"VM-1845", "Sprint17", "Enf", "Regression"})
     public void complaintNumberBoxDisplayed() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -55,7 +55,7 @@ public class CreateReInspectionOutcomeReportTests extends BaseTest {
         summaryPage.clickLogout();
     }
 
-    @Test(groups = {"VM-1845", "Sprint17", "Enf", "slice_A"})
+    @Test(groups = {"VM-1845", "Sprint17", "Enf", "Regression"})
     public void complaintNumberNotEntered() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -76,7 +76,7 @@ public class CreateReInspectionOutcomeReportTests extends BaseTest {
         summaryPage.clickLogout();
     }
 
-    @Test(groups = {"VM-2079", "Sprint17", "Enf", "slice_A"})
+    @Test(groups = {"VM-2079", "Sprint17", "Enf", "Regression"})
     public void verifyRfrComparisonLabels() {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -115,7 +115,7 @@ public class CreateReInspectionOutcomeReportTests extends BaseTest {
         assessmentDetailsConfirmationPage.clickLogout();
     }
 
-    @Test(groups = {"VM-1407", "Sprint17", "Enf", "VM-2952", "Sprint25", "Enf", "slice_A"})
+    @Test(groups = {"VM-1407", "Sprint17", "Enf", "VM-2952", "Sprint25", "Enf", "Regression"})
     public void invertedAppealReportWithRfr() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         Login login = createTester();
@@ -159,7 +159,7 @@ public class CreateReInspectionOutcomeReportTests extends BaseTest {
         assessmentDetailsConfirmationPage.clickLogout();
     }
 
-    @Test(groups = {"VM-1407", "Sprint17", "Enf", "VM-2952", "Sprint25", "Enf","slice_A"})
+    @Test(groups = {"VM-1407", "Sprint17", "Enf", "VM-2952", "Sprint25", "Enf","Regression"})
     public void invertedAppealReportWithNoRfr() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         Login login = createTester();
@@ -200,7 +200,7 @@ public class CreateReInspectionOutcomeReportTests extends BaseTest {
         assessmentDetailsConfirmationPage.clickLogout();
     }
 
-    @Test(groups = {"VM-2952", "Sprint25", "Enf", "slice_A"})
+    @Test(groups = {"VM-2952", "Sprint25", "Enf", "Regression"})
     public void statutoryAppealReportWithSingleRfr() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         Login login = createTester();
@@ -245,7 +245,7 @@ public class CreateReInspectionOutcomeReportTests extends BaseTest {
         assessmentDetailsConfirmationPage.clickLogout();
     }
 
-    @Test(groups = {"VM-2952", "Sprint25", "Enf","slice_A"}) public void statutoryAppealReportWithNoRfr() {
+    @Test(groups = {"VM-2952", "Sprint25", "Enf","Regression"}) public void statutoryAppealReportWithNoRfr() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         Login login = createTester();
         loginAsTesterActAndLogout(vehicle, login);
@@ -285,7 +285,7 @@ public class CreateReInspectionOutcomeReportTests extends BaseTest {
         assessmentDetailsConfirmationPage.clickLogout();
     }
 
-    @Test(groups = {"VM-2556", "Sprint 21", "Enf", "slice_A"})
+    @Test(groups = {"VM-2556", "Sprint 21", "Enf", "Regression"})
     public void enterSiteIdAndLocationDisable() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         int vtsId =
@@ -316,7 +316,7 @@ public class CreateReInspectionOutcomeReportTests extends BaseTest {
         motTestSummaryPage.clickFinishTest().clickLogout();
     }
 
-    @Test(groups = {"VM-2556", "Sprint 21", "Enf", "Test 02", "slice_A"},
+    @Test(groups = {"VM-2556", "Sprint 21", "Enf", "Test 02", "Regression"},
             description = "Enter the valid VTS number and assure Location is disabled")
     public void enterLocationSiteIdAndOnePersonTest() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
@@ -339,7 +339,7 @@ public class CreateReInspectionOutcomeReportTests extends BaseTest {
         motTestSummaryPage.clickLogout();
     }
 
-    @Test(groups = {"VM-1755", "Sprint22", "Enf","slice_A"})
+    @Test(groups = {"VM-1755", "Sprint22", "Enf","Regression"})
     public void verifyDefectCategory() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         Login login = createTester();
@@ -374,7 +374,7 @@ public class CreateReInspectionOutcomeReportTests extends BaseTest {
                 "Verify category text");
     }
 
-    @Test(groups = {"VM-2556", "Sprint 21", "VM-1825", "VM-2938", "Sprint 22", "Enf", "Test 03","slice_A"})
+    @Test(groups = {"VM-2556", "Sprint 21", "VM-1825", "VM-2938", "Sprint 22", "Enf", "Test 03","Regression"})
     public void enterLocationSiteDetailsSummaryReport() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         Login login = createTester();

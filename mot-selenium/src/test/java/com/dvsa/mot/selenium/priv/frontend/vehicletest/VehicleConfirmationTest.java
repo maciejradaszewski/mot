@@ -29,7 +29,7 @@ import static org.testng.Assert.assertTrue;
 
 public class VehicleConfirmationTest extends BaseTest {
 
-    @Test(groups = {"slice_A", "VM-1854"})
+    @Test(groups = {"Regression", "VM-1854"})
     public void testTryRetestVehicleWithOriginalTestMoreThan10Days() {
 
         DateTime twentyDaysAgo = DateTime.now().minusDays(20);
@@ -48,7 +48,7 @@ public class VehicleConfirmationTest extends BaseTest {
                 is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-1854"})
+    @Test(groups = {"Regression", "VM-1854"})
     public void testTryRetestVehicleWithOriginalTestCarriedOutInDifferentVTS() {
 
         Site site = new VtsCreationApi()
@@ -72,7 +72,7 @@ public class VehicleConfirmationTest extends BaseTest {
                 is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-1854"})
+    @Test(groups = {"Regression", "VM-1854"})
     public void testTryRetestVehicleWithOriginalTestCancelled() {
 
         // create new Mot test and cancel
@@ -93,7 +93,7 @@ public class VehicleConfirmationTest extends BaseTest {
 
     }
 
-    @Test(groups = {"slice_A", "VM-2073"})
+    @Test(groups = {"Regression", "VM-2073"})
     public void testDisplayExpiryMotDateMessageMoreThanOneMonthPreviousPassedTestExpirationDateInTest() {
 
         Login tester = createTester();
@@ -107,7 +107,7 @@ public class VehicleConfirmationTest extends BaseTest {
                 .contains(Assertion.ASSERTION_PRESERVE_MOT_EXPIRY_DATE_ADVICE.assertion), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-2073"})
+    @Test(groups = {"Regression", "VM-2073"})
     public void testNoExpiryMotDateMessageDisplayedOverOneMonthPreviousPassedTestExpirationDateInRetest() {
 
         Site site = Site.POPULAR_GARAGES;
@@ -128,7 +128,7 @@ public class VehicleConfirmationTest extends BaseTest {
                 .contains(Assertion.ASSERTION_ORIGINAL_TEST_NOT_FAILED.assertion), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-2531", "VM-2384", "VM-5018"},
+    @Test(groups = {"Regression", "VM-2531", "VM-2384", "VM-5018"},
             description = "Edit the fuel type presented to the confirmation page and ensure the new fuel type is updated successfully")
     public void testEditFuelTypeInVehicleConfirmationTest() {
 
@@ -148,7 +148,7 @@ public class VehicleConfirmationTest extends BaseTest {
         motTestPage.cancelMotTest(ReasonToCancel.REASON_VEHICLE_REGISTERED_ERROR).clickLogout();
     }
 
-    @Test(groups = {"VM-5018", "slice_A", "W-Sprint6", "VM-769", "VM-2082"})
+    @Test(groups = {"VM-5018", "Regression", "W-Sprint6", "VM-769", "VM-2082"})
     public void testConfirmationPageSearchAgain() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
@@ -189,7 +189,7 @@ public class VehicleConfirmationTest extends BaseTest {
 
     }
 
-    @Test(groups = {"VM-5018", "slice_A", "W-Sprint6"})
+    @Test(groups = {"VM-5018", "Regression", "W-Sprint6"})
     public void testConfirmationPageCancelAndReturnToHomepage() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
 
@@ -202,7 +202,7 @@ public class VehicleConfirmationTest extends BaseTest {
                 userDashboardPage.isStartMotTestDisplayed(), is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-767"},
+    @Test(groups = {"Regression", "VM-767"},
             description = "To view and edit vehicle test class so that the vehicle record match matches the vehicle presented for test")
     public void testEditVehicleClass() {
 
@@ -229,7 +229,7 @@ public class VehicleConfirmationTest extends BaseTest {
                 .clickLogout();
     }
 
-    @Test(groups = {"slice_A", "VM-2719", "Sprint 21", "MOT Testing"},
+    @Test(groups = {"Regression", "VM-2719", "Sprint 21", "MOT Testing"},
             description = "User selects to test a vehicle class that he is not authorised to test. A warning message is displayed.")
     public void testTesterTryTestUnauthorisedVehicleClass() {
 
@@ -243,7 +243,7 @@ public class VehicleConfirmationTest extends BaseTest {
                 is(true));
     }
 
-    @Test(groups = {"slice_A", "VM-2197", "Sprint 21", "MOT Testing"},
+    @Test(groups = {"Regression", "VM-2197", "Sprint 21", "MOT Testing"},
             description = "User search a vehicle which is not in the VTR table.All DVLA V5 info is imported in the confirmation page in order to create a new register in VTR table with all DVSA V5 data")
     public void testDVLAdataIsImportedWhenSearchVehicleWithoutVTRRecord() {
 
@@ -266,7 +266,7 @@ public class VehicleConfirmationTest extends BaseTest {
                 is(vehicle.secondaryColour.getColourName()));
     }
 
-    @Test(groups = {"slice_A", "Sprint 23", "MOT Testing", "VM-2728", "VM-2726", "VM-2725"},
+    @Test(groups = {"Regression", "Sprint 23", "MOT Testing", "VM-2728", "VM-2726", "VM-2725"},
             description = "A vehicle can only be registered for test at one VTS, when a vehicle is registered for test at a site it must be blocked form being registered for test at another site.")
     public void testOnlyOneActiveTestOnAVehicleAtATime() {
 

@@ -26,7 +26,7 @@ import static org.hamcrest.core.Is.is;
 
 public class ManyVTSTest extends BaseTest {
 
-    @Test(groups = {"slice_A", "short", "VM-2950"})
+    @Test(groups = {"Regression", "short", "VM-2950"})
     public void testVTSOptionsPresentedToTesterWithManyVTS() {
 
         AeService aeService = new AeService();
@@ -59,7 +59,7 @@ public class ManyVTSTest extends BaseTest {
                 ValidationSummary.isValidationSummaryDisplayed(driver), is(true));
     }
 
-    @Test(groups = {"VM-3665", "slice_A"})
+    @Test(groups = {"VM-3665", "Regression"})
     public void testVtsSelectionNotNeededAfterResumingTest() {
 
         AeService aeService = new AeService();

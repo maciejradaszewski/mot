@@ -15,7 +15,7 @@ import static org.testng.Assert.assertFalse;
 public class DVSAAccessUserProfileTest extends BaseTest {
 
 
-    @Test(groups = {"slice_A",
+    @Test(groups = {"Regression",
             "VM-7647"}, description = "Test that validates the DVSA user roles can access user profiles")
     public void testProfileDetailsDisplayed() {
 

@@ -17,7 +17,7 @@ public class AccountFunctionalityTest extends BaseTest {
     AuthService authService = new AuthService();
 
 
-    @Test(groups = {"VM-2111", "slice_A"}, description =
+    @Test(groups = {"VM-2111", "Regression"}, description =
             "Verify reset password functionality by answering "
                     + "two security questions correctly")
 
@@ -76,7 +76,7 @@ public class AccountFunctionalityTest extends BaseTest {
                 "Assert the email validation message is displayed");
     }
 
-    @Test(groups = {"VM-8717", "slice_A"}, description = "Verify Invalid userId")
+    @Test(groups = {"VM-8717", "Regression"}, description = "Verify Invalid userId")
     public void verifyInvalidUserId() {
 
         UserNamePage userNamePage = LoginPage.forgottenPassWord(driver);
@@ -87,7 +87,7 @@ public class AccountFunctionalityTest extends BaseTest {
                 "Assert the invalid user id message displayed");
     }
 
-    @Test(groups = {"VM-8717", "slice_A"}, description = "Verify Invalid security question 1")
+    @Test(groups = {"VM-8717", "Regression"}, description = "Verify Invalid security question 1")
     public void verifyInvalidSecurityQuestionOne() {
         UserDashboardPage.navigateHereFromLoginPage(driver, Login.LOGIN_TESTER1);
         UserNamePage userNamePage = LoginPage.forgottenPassWord(driver);
@@ -118,7 +118,7 @@ public class AccountFunctionalityTest extends BaseTest {
                 "Assert that the DVSA contact message displayed after 3 incorrect attempts");
     }
 
-    @Test(groups = {"VM-8717", "slice_A"}, description = "Verify Invalid security question 2")
+    @Test(groups = {"VM-8717", "Regression"}, description = "Verify Invalid security question 2")
     public void verifyInvalidSecurityQuestionTwo() {
         Person tester = Person.BOB_THOMAS;
         UserNamePage userNamePage = LoginPage.forgottenPassWord(driver);
@@ -151,7 +151,7 @@ public class AccountFunctionalityTest extends BaseTest {
     }
 
 
-    @Test(groups = {"VM-8713", "VM-8718", "VM-8775", "slice_A"}, description = "Reset Password")
+    @Test(groups = {"VM-8713", "VM-8718", "VM-8775", "Regression"}, description = "Reset Password")
 
     public void resetPasswordAndLoginWithNewPassword() {
         Person tester = Person.testNameCertif4;
@@ -181,7 +181,7 @@ public class AccountFunctionalityTest extends BaseTest {
     }
 
     @Test(groups = {"VM-8713", "VM-8718", "VM-8775",
-            "slice_A"}, description = "Verify Invalid Password Validation Messages")
+            "Regression"}, description = "Verify Invalid Password Validation Messages")
 
     public void testResetPasswordInvalidPasswordAndValidationMessages() {
 

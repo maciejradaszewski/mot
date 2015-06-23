@@ -21,7 +21,7 @@ import static org.testng.Assert.assertTrue;
 
 public class SlotsTest extends BaseTest {
 
-    @Test(groups = {"slice_A", "VM-12"})
+    @Test(groups = {"Regression", "VM-12"})
     public void testInactiveUserCanNotStartMOTTest_SingleTester() {
 
         UserDashboardPage dashboardPage =
@@ -31,7 +31,7 @@ public class SlotsTest extends BaseTest {
                 dashboardPage.isStartMotTestDisplayed(), is(false));
     }
 
-    @Test(groups = {"slice_A", "VM-16", "VM-2729"})
+    @Test(groups = {"Regression", "VM-16", "VM-2729"})
     public void testUserStatusAndSlots_Active_SingleTester_NoSlots() {
 
         UserDashboardPage dashboardPage =
@@ -43,7 +43,7 @@ public class SlotsTest extends BaseTest {
         assertThat("Active slots", dashboardPage.getAvailableSlotsInAe(1), is(0));
     }
 
-    @Test(groups = {"slice_A", "VM-5173"}, description = "added this test to cover a bug fix")
+    @Test(groups = {"Regression", "VM-5173"}, description = "added this test to cover a bug fix")
     public void testAnActiveTesterHavingOnly_SingleSlotAtVts_CanResumeAnMotTest() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS1_KAWASAKI_2013);

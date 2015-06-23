@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="Slice A Tests" parallel="classes" thread-count="10">
-    <test name="Slice A test suite">
+<suite name="Regression Tests" parallel="classes" thread-count="10">
+    <test name="Regression test suite">
         <groups>
             <run>
-                <include name="slice_A"/>
+                <include name="Regression"/>
             </run>
         </groups>
         <packages>
