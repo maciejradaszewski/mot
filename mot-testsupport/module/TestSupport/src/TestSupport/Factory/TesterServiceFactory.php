@@ -7,6 +7,8 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use TestSupport\Service\TesterService;
 use TestSupport\Service\AccountService;
 use TestSupport\Helper\TestSupportRestClientHelper;
+use TestSupport\Helper\NotificationsHelper;
+use TestSupport\Helper\SitePermissionsHelper;
 use Doctrine\ORM\EntityManager;
 
 class TesterServiceFactory implements FactoryInterface
@@ -15,6 +17,8 @@ class TesterServiceFactory implements FactoryInterface
     {
         return new TesterService(
             $serviceLocator->get(TestSupportRestClientHelper::class),
+            $serviceLocator->get(NotificationsHelper::class),
+            $serviceLocator->get(SitePermissionsHelper::class),
             $serviceLocator->get(AccountService::class),
             $serviceLocator->get(EntityManager::class)
         );

@@ -7,7 +7,9 @@ use DvsaCommon\UrlBuilder\NotificationUrlBuilder;
 use DvsaCommon\UrlBuilder\SiteUrlBuilder;
 use TestSupport\FieldValidation;
 use TestSupport\Helper\DataGeneratorHelper;
+use TestSupport\Helper\NotificationsHelper;
 use TestSupport\Helper\RestClientGetterTrait;
+use TestSupport\Helper\SitePermissionsHelper;
 use TestSupport\Helper\TestDataResponseHelper;
 use TestSupport\Model\Account;
 use TestSupport\Model\AccountPerson;
@@ -28,12 +30,29 @@ class SiteUserDataService implements ServiceLocatorAwareInterface
     use RestClientGetterTrait;
 
     const STATUS_ID_ACCEPTED = 2;
-    const SITE_NOMINATION_ACCEPTED = 'SITE-NOMINATION-ACCEPTED';
     const SITE_POSITION_NOTIFICATION_ID = 5;
 
     /**
+     * @var NotificationsHelper
+     */
+    private $notificationsHelper;
+
+    /**
+     * @var SitePermissionsHelper
+     */
+    private $sitePermissionsHelper;
+
+    public function __construct(
+        NotificationsHelper $notificationsHelper,
+        SitePermissionsHelper $sitePermissionsHelper
+    ) {
+        $this->notificationsHelper = $notificationsHelper;
+        $this->sitePermissionsHelper = $sitePermissionsHelper;
+    }
+
+    /**
      * @param array  $data optional data with differentiator,
-     *                     requestor=> username and password of AEDM/AED with whom to assign site manager role
+     *                     requestor => username and password of AEDM/AED with whom to assign site manager role
      *                     siteIds -> list of VTSs for site manager
      * @param string $role
      *
@@ -75,46 +94,14 @@ class SiteUserDataService implements ServiceLocatorAwareInterface
      */
     private function nominateAndAcceptRoleAtSites(Account $account, $role, array $data)
     {
-        $restClient = $this->getRestClientService($data);
+        $this->sitePermissionsHelper->addPermissionToSites($account, $role, $data['siteIds']);
 
-        foreach ($data['siteIds'] as $siteId) {
-            $restClient->post(
-                SiteUrlBuilder::of()->site($siteId)->position()->toString(),
-                [
-                    'nomineeId' => $account->getPersonId(),
-                    'roleCode'  => $role
-                ]
-            );
-        }
+        $notifications = $this->notificationsHelper->getNotifications($account);
 
-        $result = $restClient->get(
-            NotificationUrlBuilder::of()->notificationForPerson()
-                ->routeParam('personId', $account->getPersonId())->toString()
+        $this->notificationsHelper->acceptUnreadNotification(
+            $account,
+            $notifications,
+            self::SITE_POSITION_NOTIFICATION_ID
         );
-        $notifications = $result['data'];
-
-        $restClient = $this->getRestClientService(
-            [
-                'requestor' => [
-                    'username' => $account->getUsername(),
-                    'password' => $account->getPassword(),
-                ]
-            ]
-        );
-        foreach ($notifications as $notification) {
-            $restClient->putJson(
-                NotificationUrlBuilder::of()->notification($notification['id'])->read()->toString(),
-                []
-            );
-            if ($notification['templateId'] == self::SITE_POSITION_NOTIFICATION_ID
-            && empty($notification['readOn'])) {
-                $restClient->putJson(
-                    NotificationUrlBuilder::of()->notification($notification['id'])->action()->toString(),
-                    [
-                        'action' => self::SITE_NOMINATION_ACCEPTED
-                    ]
-                );
-            }
-        }
     }
 }

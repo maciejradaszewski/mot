@@ -1,29 +1,34 @@
 <?php
 
-use TestSupport\Service\SiteUserDataService;
-use TestSupport\Service\VehicleService;
-use TestSupport\Service\SlotTransactionService;
+
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\Obfuscate\ParamEncrypter;
 use DvsaCommon\Obfuscate\ParamObfuscator;
-use TestSupport\Helper\TestSupportAccessTokenManager;
+
+use Zend\ServiceManager\ServiceLocatorInterface;
+
+use Doctrine\ORM\EntityManager;
 use TestSupport\Service\AccountDataService;
 use TestSupport\Service\AccountService;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use TestSupport\Service\SiteUserDataService;
+use TestSupport\Service\VehicleService;
+use TestSupport\Service\SlotTransactionService;
 use TestSupport\Service\JsonErrorHandlingListener;
 use TestSupport\Service\CSCOService;
 use TestSupport\Service\AreaOffice1Service;
 use TestSupport\Service\AreaOffice2Service;
 use TestSupport\Service\FinanceUserService;
 use TestSupport\Service\VtsService;
-use Doctrine\ORM\EntityManager;
-use TestSupport\Helper\TestSupportRestClientHelper;
 use TestSupport\Service\AEService;
 use TestSupport\Service\TesterService;
 use TestSupport\Service\PasswordResetService;
 use TestSupport\Service\VehicleExaminerService;
 use TestSupport\Service\DvlaVehicleService;
-use \TestSupport\Service\InactiveTesterService;
+use TestSupport\Helper\TestSupportAccessTokenManager;
+use TestSupport\Helper\TestSupportRestClientHelper;
+use TestSupport\Helper\NotificationsHelper;
+use TestSupport\Helper\SitePermissionsHelper;
+use TestSupport\Service\InactiveTesterService;
 
 return [
     'factories' => [
@@ -42,7 +47,10 @@ return [
             },
         SiteUserDataService::class             =>
             function (ServiceLocatorInterface $sm) {
-                return new SiteUserDataService();
+                return new SiteUserDataService(
+                    $sm->get(NotificationsHelper::class),
+                    $sm->get(SitePermissionsHelper::class)
+                );
             },
         AccountDataService::class              => \TestSupport\Factory\AccountDataServiceFactory::class,
         AccountService::class                  =>
@@ -78,6 +86,8 @@ return [
         FinanceUserService::class          => \TestSupport\Factory\FinanceUserServiceFactory::class,
         VtsService::class                  => \TestSupport\Factory\VtsServiceFactory::class,
         TestSupportRestClientHelper::class => \TestSupport\Factory\TestSupportRestClientFactory::class,
+        NotificationsHelper::class         => \TestSupport\Factory\NotificationsHelperFactory::class,
+        SitePermissionsHelper::class       => \TestSupport\Factory\SitePermissionsHelperFactory::class,
         AEService::class                   => \TestSupport\Factory\AEServiceFactory::class,
         TesterService::class               => \TestSupport\Factory\TesterServiceFactory::class,
         InactiveTesterService::class      =>  \TestSupport\Factory\InactiveTesterServiceFactory::class,
