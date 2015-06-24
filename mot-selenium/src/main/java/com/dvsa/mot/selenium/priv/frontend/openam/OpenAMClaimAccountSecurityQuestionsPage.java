@@ -21,7 +21,6 @@ public class OpenAMClaimAccountSecurityQuestionsPage extends BasePage {
 
     public OpenAMClaimAccountSecurityQuestionsPage(WebDriver driver) {
         super(driver);
-
     }
 
     public void selectSecurityQuestionA() {
@@ -42,9 +41,14 @@ public class OpenAMClaimAccountSecurityQuestionsPage extends BasePage {
         securityAnswerForTextFieldB.sendKeys("");
     }
 
-    public OpenAMClaimAccountMotTestPinPage clickOnSubmitButton() {
+    public OpenAMClaimAccountSecurityQuestionsPage clickOnSubmitExpectingSecurityQuestionsPage() {
         submitFormButton.click();
-        return new OpenAMClaimAccountMotTestPinPage(driver);
+        return this;
+    }
+
+    public ChangePasswordPage clickSubmitButtonExpectingChangePasswordPage() {
+        submitFormButton.click();
+        return new ChangePasswordPage(driver);
     }
 
     public OpenAMClaimAccountSecurityQuestionsPage setFirstSecurityQuestionAndAnswer() {
@@ -67,18 +71,10 @@ public class OpenAMClaimAccountSecurityQuestionsPage extends BasePage {
         return this;
     }
 
-    public OpenAMClaimAccountMotTestPinPage submitSecurityQuestionAndAnswersSuccessfully() {
+    public OpenAMClaimAccountMotTestReviewPage submitSecurityQuestionAndAnswersSuccessfully() {
         setSecurityQuestionAndAnswersSuccessfully();
         submitFormButton.click();
-        return new OpenAMClaimAccountMotTestPinPage(driver);
-    }
-
-    public OpenAMClaimAccountSecurityQuestionsPage changeSecurityQuestionAndAnswers() {
-        securityAnswerForTextFieldA.clear();
-        securityAnswerForTextFieldA.sendKeys("Morocco");
-        selectSecurityQuestionB();
-        securityAnswerForTextFieldB.sendKeys("Doctor");
-        return this;
+        return new OpenAMClaimAccountMotTestReviewPage(driver);
     }
 
     public boolean isErrorMessageDisplayed() {

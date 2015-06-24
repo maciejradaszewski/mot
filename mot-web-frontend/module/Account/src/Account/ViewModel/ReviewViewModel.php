@@ -1,0 +1,248 @@
+<?php
+
+namespace Account\ViewModel;
+
+use DvsaCommon\Dto\Security\SecurityQuestionDto;
+use DvsaCommon\Utility\ArrayUtils;
+
+/**
+ * ViewModel for the Claim Account Review screen
+ * @package Account\ViewModel
+ */
+class ReviewViewModel
+{
+    const FIELD_EMAIL = 'email';
+    const FIELD_PASSWORD = 'password';
+    const FIELD_SECURITY_QUESTIONS = 'securityQuestions';
+    const FIELD_SECURITY_QUESTION_A = 'question_a';
+    const FIELD_SECURITY_QUESTION_B = 'question_b';
+    const FIELD_SECURITY_ANSWER_A = 'answer_a';
+    const FIELD_SECURITY_ANSWER_B = 'answer_b';
+    const FIELD_CONFIRM_EMAIL_PASSWORD = 'confirmEmailAndPassword';
+    const FIELD_SET_SECURITY_QUESTIONS = 'setSecurityQuestion';
+    const FIELD_SECURITY_QUESTION_GROUP_A = 'groupA';
+    const FIELD_SECURITY_QUESTION_GROUP_B = 'groupB';
+
+    const DEFAULT_EMAIL = 'Not provided';
+
+    /** @var string  */
+    private $email;
+
+    /** @var string */
+    private $password;
+
+    /** @var array */
+    private $securityQuestions;
+
+    /** @var string */
+    private $securityQuestionA;
+
+    /** @var string */
+    private $securityQuestionB;
+
+    /** @var string */
+    private $answerA;
+
+    /** @var string */
+    private $answerB;
+
+    public function setData(array $data) {
+        $this->setSecurityQuestions(ArrayUtils::tryGet($data, self::FIELD_SECURITY_QUESTIONS));
+
+        if (isset($data[self::FIELD_CONFIRM_EMAIL_PASSWORD])) {
+            $confirmEmailPassword = $data[self::FIELD_CONFIRM_EMAIL_PASSWORD];
+            $this->setPassword(ArrayUtils::tryGet($confirmEmailPassword, self::FIELD_PASSWORD));
+            $this->setEmail(ArrayUtils::tryGet($confirmEmailPassword, self::FIELD_EMAIL));
+        }
+
+        if (isset($data[self::FIELD_SET_SECURITY_QUESTIONS])) {
+            $securityQuestions = $data[self::FIELD_SET_SECURITY_QUESTIONS];
+            $this->setAnswerA(ArrayUtils::tryGet($securityQuestions, self::FIELD_SECURITY_ANSWER_A));
+            $this->setAnswerB(ArrayUtils::tryGet($securityQuestions, self::FIELD_SECURITY_ANSWER_B));
+            $this->setSecurityQuestionA(ArrayUtils::tryGet($securityQuestions, self::FIELD_SECURITY_QUESTION_A));
+            $this->setSecurityQuestionB(ArrayUtils::tryGet($securityQuestions, self::FIELD_SECURITY_QUESTION_B));
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHiddenPassword()
+    {
+        return str_repeat('•', strlen($this->getPassword()));
+    }
+
+    /**
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        if (empty($this->email)) {
+            return self::DEFAULT_EMAIL;
+        }
+
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSecurityQuestions()
+    {
+        return $this->securityQuestions;
+    }
+
+    public function getSecurityQuestionGroupAText()
+    {
+        if (empty($this->securityQuestions)) {
+            return '';
+        }
+
+        if (isset($this->securityQuestions[self::FIELD_SECURITY_QUESTION_GROUP_A])) {
+            $securityQuestionGroupA = $this->securityQuestions[self::FIELD_SECURITY_QUESTION_GROUP_A];
+
+            if (is_array($securityQuestionGroupA)) {
+                return $securityQuestionGroupA[$this->getSecurityQuestionA()];
+            }
+        }
+
+        return '';
+    }
+
+    public function getSecurityQuestionGroupBText()
+    {
+        if (empty($this->securityQuestions)) {
+            return '';
+        }
+
+        if (isset($this->securityQuestions[self::FIELD_SECURITY_QUESTION_GROUP_B])) {
+            $securityQuestionGroupB = $this->securityQuestions[self::FIELD_SECURITY_QUESTION_GROUP_B];
+
+            if (is_array($securityQuestionGroupB)) {
+                return $securityQuestionGroupB[$this->getSecurityQuestionB()];
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * @param array $securityQuestions
+     */
+    public function setSecurityQuestions($securityQuestions)
+    {
+        $this->securityQuestions = $securityQuestions;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAnswerA()
+    {
+        return $this->answerA;
+    }
+
+    /**
+     * @param string $answerA
+     */
+    public function setAnswerA($answerA)
+    {
+        $this->answerA = $answerA;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHiddenAnswerA()
+    {
+        return str_repeat('•', strlen($this->getAnswerA()));
+    }
+
+    /**
+     * @return string
+     */
+    public function getAnswerB()
+    {
+        return $this->answerB;
+    }
+
+    /**
+     * @param string $answerB
+     */
+    public function setAnswerB($answerB)
+    {
+        $this->answerB = $answerB;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHiddenAnswerB()
+    {
+        return str_repeat('•', strlen($this->getAnswerB()));
+    }
+
+    /**
+     * @return string
+     */
+    public function getSecurityQuestionA()
+    {
+        return $this->securityQuestionA;
+    }
+
+    /**
+     * @param string $securityQuestionA
+     */
+    public function setSecurityQuestionA($securityQuestionA)
+    {
+        $this->securityQuestionA = $securityQuestionA;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSecurityQuestionB()
+    {
+        return $this->securityQuestionB;
+    }
+
+    /**
+     * @param string $securityQuestionB
+     */
+    public function setSecurityQuestionB($securityQuestionB)
+    {
+        $this->securityQuestionB = $securityQuestionB;
+    }
+
+}

@@ -57,8 +57,11 @@ public class PersonalProfileTest extends BaseTest {
                 new LoginPage(driver).navigateToClaimAccountPage(driver, claimsTester.login);
 
         openAMClaimAccountSignInPage.submitEmailSuccessfully(claimsTester)
-                .submitPasswordSuccessfully(Text.TEXT_PASSWORD_2).clickOnSubmitButton()
-                .submitSecurityQuestionAndAnswersSuccessfully().clickSaveAndContinue()
+                .submitPasswordSuccessfully(Text.TEXT_PASSWORD_2)
+                .clickOnSubmitButton()
+                .submitSecurityQuestionAndAnswersSuccessfully()
+                .clickClaimYourAccoutButton()
+                .clickContinueToTheMotTestingService()
                 .clickLogout();
 
         Login newLogin = new Login(claimsTester.login.username, Text.TEXT_PASSWORD_2);

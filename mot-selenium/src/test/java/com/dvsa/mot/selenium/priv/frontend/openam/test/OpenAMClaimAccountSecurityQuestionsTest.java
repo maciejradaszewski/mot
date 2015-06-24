@@ -23,7 +23,7 @@ public class OpenAMClaimAccountSecurityQuestionsTest extends BaseTest {
         OpenAMClaimAccountSecurityQuestionsPage openAMClaimAccountSecurityQuestionsPage =
                 new OpenAMClaimAccountSecurityQuestionsPage(driver);
         openAMClaimAccountSecurityQuestionsPage.setFirstSecurityQuestionAndAnswer()
-                .setSecondSecurityQuestionAndAnswer().clickOnSubmitButton();
+                .setSecondSecurityQuestionAndAnswer().clickOnSubmitExpectingSecurityQuestionsPage();
 
         assertThat(ValidationSummary.isValidationSummaryDisplayed(driver), is(true));
     }

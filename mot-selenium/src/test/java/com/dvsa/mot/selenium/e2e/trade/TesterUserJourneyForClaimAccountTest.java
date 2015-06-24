@@ -26,8 +26,10 @@ public class TesterUserJourneyForClaimAccountTest extends BaseTest {
         UserDashboardPage userDashboardPage =
                 openAMClaimAccountSignInPage.submitEmailSuccessfully(claimsTester)
                         .submitPasswordSuccessfully(Text.TEXT_PASSWORD_2)
-                        .clickOnSubmitButton().submitSecurityQuestionAndAnswersSuccessfully()
-                        .clickSaveAndContinue();
+                        .clickOnSubmitButton()
+                        .submitSecurityQuestionAndAnswersSuccessfully()
+                        .clickClaimYourAccoutButton()
+                        .clickContinueToTheMotTestingService();
 
         assertThat("Check that the start MOT test button is displayed",
                 userDashboardPage.isStartMotTestDisplayed(), is(true));

@@ -34,7 +34,7 @@ class AccountUrlBuilderWebTest extends \PHPUnit_Framework_TestCase
         $base = '/account/claim';
         $this->checkUrl(AccountUrlBuilderWeb::claimEmailAndPassword(), $base .'/confirm-email-and-password');
         $this->checkUrl(AccountUrlBuilderWeb::claimSecurityQuestions(), $base .'/set-security-question');
-        $this->checkUrl(AccountUrlBuilderWeb::claimGeneratePin(), $base .'/generate-pin');
+        $this->checkUrl(AccountUrlBuilderWeb::claimDisplayPin(), $base .'/display-pin');
         $this->checkUrl(AccountUrlBuilderWeb::claimReset(), $base .'/reset');
     }
 

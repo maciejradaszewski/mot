@@ -57,12 +57,18 @@ public class Assertion {
     public static final Assertion ASSERTION_VEHICLE_CURRENTLY_UNDER_TEST =
             new Assertion("This vehicle is currently under test.");
 
-    public static final Assertion ASSERTION_COMMON_VIEW_PIN_WORDING = new Assertion(
-            "Your PIN will be used to confirm your identity once you are signed into the MOT Testing Service and when calling the DVSA Helpdesk.");
-    public static final Assertion ASSERTION_TESTER_VIEW_PIN_WORDING = new Assertion(
-            "Your PIN replaces your smart card and will be required during MOT testing.");
-    public static final Assertion ASSERTION_WORN_PIN_WORDING =
-            new Assertion("Don't tell anyone your PIN.");
+    public static final Assertion ASSERTION_PIN_HEADING_MSG = new Assertion(
+            "Your MOT testing service PIN is");
+    public static final Assertion ASSERTION_MESSAGE_HEADING_WHAT_NEXT = new Assertion(
+            "What happens next?");
+    public static final Assertion ASSERTION_MESSAGE_PROVIDED_DETAILS= new Assertion(
+            "When you sign in again you should use the details you have just provided.");
+    public static final Assertion ASSERTION_MESSAGE_MEMORISE_YOUR_PIN = new Assertion(
+            "Memorise your PIN, you will need it to perform key actions like performing an MOT test.");
+    public static final Assertion ASSERTION_MESSAGE_RESET_PIN = new Assertion(
+            "You can reset this at any time in the 'Your account' page.");
+    public static final Assertion ASSERTION_CLAIM_CONFIRMATION_MSG =
+            new Assertion("Your MOT testing service account has been claimed.");
     public static final Assertion ASSERTION_ACCOUNT_CLAIMED_BY =
             new Assertion("Account claimed by user ");
     public static final Assertion ASSERTION_USER_CLAIMS_ACCOUNT =

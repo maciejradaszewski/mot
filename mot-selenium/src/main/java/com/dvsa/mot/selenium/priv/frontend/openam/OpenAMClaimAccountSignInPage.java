@@ -9,7 +9,6 @@ import org.openqa.selenium.support.FindBy;
 
 public class OpenAMClaimAccountSignInPage extends BasePage {
 
-
     @FindBy(id = "email") private WebElement email;
 
     @FindBy(id = "confirm_email") private WebElement confirmEmail;
@@ -25,7 +24,6 @@ public class OpenAMClaimAccountSignInPage extends BasePage {
 
     public OpenAMClaimAccountSignInPage(WebDriver driver) {
         super(driver);
-
     }
 
     public OpenAMClaimAccountSignInPage enterEmail(String emailAddress) {
@@ -53,6 +51,11 @@ public class OpenAMClaimAccountSignInPage extends BasePage {
     public OpenAMClaimAccountSecurityQuestionsPage clickOnSubmitButton() {
         submitFormButton.click();
         return new OpenAMClaimAccountSecurityQuestionsPage(driver);
+    }
+
+    public OpenAMClaimAccountSignInPage clickOnSubmitButtonExpectingToStayOnThisPage() {
+        submitFormButton.click();
+        return this;
     }
 
     public OpenAMClaimAccountSignInPage submitEmailSuccessfully(Person person) {
