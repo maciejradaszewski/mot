@@ -98,7 +98,9 @@ class CertificateExpiryService
 
             $firstUsedDate = $vehicle->getFirstUsedDate();
 
-            $expiryDate = $this->getNotionalPreviousExpiryDateForFirstCertificate($firstUsedDate);
+            if ($firstUsedDate) {
+                $expiryDate = $this->getNotionalPreviousExpiryDateForFirstCertificate($firstUsedDate);
+            }
             $checkExpiryResults['previousCertificateExists'] = false;
         } else {
             $checkExpiryResults['previousCertificateExists'] = true;
