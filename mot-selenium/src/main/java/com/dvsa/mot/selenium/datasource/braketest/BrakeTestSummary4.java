@@ -11,13 +11,13 @@ public class BrakeTestSummary4 {
     public static final Map<String, String> allPassResults =
             fillMap("170", "0", PASS, "20", "0", null, "0", PASS, "80", "0", PASS);
     public static final Map<String, String> allPassResultsPlatePlate =
-            fillMap("55", "-", PASS, "20", "0", null, null, PASS, "26", "-", PASS);
+            fillMap("55", "0", PASS, "20", "0", null, null, PASS, "26", "0", PASS);
     public static final Map<String, String> allPassResults_3Axles =
             fillMap("85", "0", PASS, "20", "0", "20", null, PASS, "52", "0", PASS);
     public static final Map<String, String> allFailResults =
             fillMap("28", "0", FAIL, "60", "60", null, "60", FAIL, "14", "0", FAIL);
     public static final Map<String, String> allFailResultsPlatePlate =
-            fillMap("9", "-", FAIL, "60", "60", null, null, FAIL, "4", "-", FAIL);
+            fillMap("9", "0", FAIL, "60", "60", null, null, FAIL, "4", "0", FAIL);
     public static final Map<String, String> sBFailOnlyResults =
             fillMap("16", "0", FAIL, "0", "0", null, "0", PASS, "80", "0", PASS);
     public static final Map<String, String> pBFailOnlyResults =

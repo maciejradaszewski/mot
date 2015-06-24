@@ -112,16 +112,6 @@ class BrakeTestResultValidatorTest extends AbstractServiceTestCase
                     1,
                     "Single line service brake type is not applicable to vehicles past 1 Sep 2010",
                 ],
-                //PLATE
-                [
-                    'Test valid locks throw exception on plate type test',
-                    self::getValidBrakeTestResultRoller()
-                        ->setServiceBrake1TestType(BrakeTestTypeFactory::plate())
-                        ->setParkingBrakeTestType(BrakeTestTypeFactory::plate()),
-                    self::getTestVehicle(),
-                    6,
-                    BrakeTestResultValidator::VALUE_LOCK_NOT_APPLICABLE,
-                ],
                 //DECELEROMETER
                 [
                     'Test valid decelerometer class 4',
@@ -340,17 +330,6 @@ class BrakeTestResultValidatorTest extends AbstractServiceTestCase
                 [
                     'Test values in locks throw exception in floor type test',
                     self::getValidBrakeTestResultClass1And2TypeFloor()
-                        ->setControl1LockFront(true)
-                        ->setControl1LockRear(false)
-                        ->setControl2LockFront(true)
-                        ->setControl2LockRear(false),
-                    4,
-                    BrakeTestResultValidator::VALUE_LOCK_NOT_APPLICABLE,
-                ],
-                [
-                    'Test values in locks throw exception in plate type test',
-                    self::getValidBrakeTestResultClass1And2()
-                        ->setBrakeTestType(BrakeTestTypeFactory::plate())
                         ->setControl1LockFront(true)
                         ->setControl1LockRear(false)
                         ->setControl2LockFront(true)

@@ -58,7 +58,10 @@ class BrakeTestConfigurationClass3AndAboveHelper implements BrakeTestConfigurati
      */
     public function locksApplicableToFirstServiceBrake()
     {
-        return $this->configDto->getServiceBrake1TestType() === BrakeTestTypeCode::ROLLER;
+        return in_array(
+            $this->configDto->getParkingBrakeTestType(),
+            [BrakeTestTypeCode::ROLLER, BrakeTestTypeCode::PLATE]
+        );
     }
 
     /**
@@ -66,7 +69,10 @@ class BrakeTestConfigurationClass3AndAboveHelper implements BrakeTestConfigurati
      */
     public function locksApplicableToParkingBrake()
     {
-        return $this->configDto->getParkingBrakeTestType() === BrakeTestTypeCode::ROLLER;
+        return in_array(
+            $this->configDto->getParkingBrakeTestType(),
+            [BrakeTestTypeCode::ROLLER, BrakeTestTypeCode::PLATE]
+        );
     }
 
     /**

@@ -128,7 +128,7 @@ class BrakeTestResultClass3AndAboveCalculator extends BrakeTestResultClass3AndAb
 
     private function lockCheckApplicable($serviceBrakeType)
     {
-        return in_array($serviceBrakeType, [BrakeTestTypeCode::ROLLER]);
+        return in_array($serviceBrakeType, [BrakeTestTypeCode::ROLLER, BrakeTestTypeCode::PLATE]);
     }
 
     private function isPassingOnLocks(

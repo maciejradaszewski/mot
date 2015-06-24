@@ -40,13 +40,13 @@ public class BrakeTestSummary7 {
             fillMap("35", "25", FAIL, "30", "0", null, "0", PASS, "20", "0", FAIL);
 
     public static final Map<String, String> class7PlateServiceAndParkingBrakeFailAResults =
-            fillMap("22", "-", FAIL, "53", "0", null, "89", FAIL, "5", "-", FAIL);
+            fillMap("22", "0", FAIL, "53", "0", null, "89", FAIL, "5", "0", FAIL);
     public static final Map<String, String> class7PlateServiceAndParkingBrakeFailBResults =
             fillMap("42", "-", FAIL, "0", "0", null, "20", PASS, "22", "-", FAIL);
     public static final Map<String, String> class7PlateServiceAndParkingBrakeFailCResults =
             fillMap("25", "-", FAIL, "55", "10", null, "54", FAIL, "12", "-", FAIL);
     public static final Map<String, String> class7PlateServiceAndParkingBrakePassAResults =
-            fillMap("66", "-", PASS, "8", "0", null, "0", PASS, "30", "-", PASS);
+            fillMap("66", "0", PASS, "8", "0", null, "0", PASS, "30", "0", PASS);
     public static final Map<String, String> class7PlateServiceAndParkingBrakePassBResults =
             fillMap("62", "-", PASS, "0", "0", null, "15", PASS, "32", "-", PASS);
     public static final Map<String, String> class7PlateServiceAndParkingBrakePassCResults =
