@@ -20,7 +20,8 @@ class AccountUrlBuilderWeb extends AbstractUrlBuilder
     const CLAIM = '/claim';
     const CLAIM_EMAIL_AND_PASSWORD = '/confirm-email-and-password';
     const CLAIM_SECURITY_QUESTIONS = '/set-security-question';
-    const CLAIM_GENERATE_PIN = '/generate-pin';
+    const CLAIM_REVIEW = '/review';
+    const CLAIM_DISPLAY_PIN = '/display-pin';
     const CLAIM_RESET = '/reset';
 
     protected $routesStructure
@@ -37,8 +38,9 @@ class AccountUrlBuilderWeb extends AbstractUrlBuilder
                 self::CLAIM => [
                     self::CLAIM_EMAIL_AND_PASSWORD => '',
                     self::CLAIM_SECURITY_QUESTIONS => '',
-                    self::CLAIM_GENERATE_PIN       => '',
-                    self::CLAIM_RESET              => '',
+                    self::CLAIM_DISPLAY_PIN => '',
+                    self::CLAIM_REVIEW => '',
+                    self::CLAIM_RESET => '',
                 ],
             ],
         ];
@@ -117,9 +119,14 @@ class AccountUrlBuilderWeb extends AbstractUrlBuilder
         return self::claim()->appendRoutesAndParams(self::CLAIM_SECURITY_QUESTIONS);
     }
 
-    public static function claimGeneratePin()
+    public static function claimReview()
     {
-        return self::claim()->appendRoutesAndParams(self::CLAIM_GENERATE_PIN);
+        return self::claim()->appendRoutesAndParams(self::CLAIM_REVIEW);
+    }
+
+    public static function claimDisplayPin()
+    {
+        return self::claim()->appendRoutesAndParams(self::CLAIM_DISPLAY_PIN);
     }
 
     public static function claimReset()

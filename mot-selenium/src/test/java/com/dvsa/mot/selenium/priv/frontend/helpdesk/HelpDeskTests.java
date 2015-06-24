@@ -198,8 +198,9 @@ public class HelpDeskTests extends BaseTest {
                 Person.getUnique(Person.PERSON_1, "loginIntoOpenAMClaimAccount"))
                 .enterNewPassword(Text.TEXT_RESET_PASSWORD)
                 .enterNewConfirmPassword(Text.TEXT_RESET_PASSWORD).clickOnSubmitButton()
-                .setSecurityQuestionAndAnswersSuccessfully().clickOnSubmitButton()
-                .clickSaveAndContinue().clickLogout();
+                .submitSecurityQuestionAndAnswersSuccessfully()
+                .clickClaimYourAccoutButton()
+                .clickContinueToTheMotTestingService().clickLogout();
         UserDashboardPage userDashboardPage = HelpdeskUserSearchPage
                 .navigateHereFromLoginPage(driver, Login.LOGIN_CUSTOMER_SERVICE)
                 .enterUsername(user.username).search().clickUserName(0).returnToHome();
@@ -218,8 +219,9 @@ public class HelpDeskTests extends BaseTest {
                 Person.getUnique(Person.PERSON_1, "loginIntoOpenAMClaimAccount"))
                 .enterNewPassword(Text.TEXT_RESET_PASSWORD)
                 .enterNewConfirmPassword(Text.TEXT_RESET_PASSWORD).clickOnSubmitButton()
-                .setSecurityQuestionAndAnswersSuccessfully().clickOnSubmitButton()
-                .clickSaveAndContinue().clickLogout();
+                .submitSecurityQuestionAndAnswersSuccessfully()
+                .clickClaimYourAccoutButton()
+                .clickContinueToTheMotTestingService().clickLogout();
         HelpdeskUserResultsPage helpdeskUserResultsPage = HelpdeskUserSearchPage
                 .navigateHereFromLoginPage(driver, Login.LOGIN_CUSTOMER_SERVICE)
                 .enterUsername(user.username).search().clickUserName(0).backToSearchResults();

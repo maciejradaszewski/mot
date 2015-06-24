@@ -51,13 +51,24 @@ return [
                                 ],
                                 'may_terminate' => true
                             ],
-                            'generatePin' => [
+                            'displayPin' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/generate-pin',
+                                    'route'    => '/display-pin',
                                     'defaults' => [
                                         'controller' => ClaimAccountControllerFactory::class,
-                                        'action'     => 'generatePin',
+                                        'action'     => 'displayPin',
+                                    ],
+                                ],
+                                'may_terminate' => true
+                            ],
+                            'review' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/review',
+                                    'defaults' => [
+                                        'controller' => ClaimAccountControllerFactory::class,
+                                        'action'     => 'review',
                                     ],
                                 ],
                                 'may_terminate' => true

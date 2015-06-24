@@ -7,7 +7,6 @@ use Account\Service\ClaimAccountService;
 use Account\Validator\ClaimValidator;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaCommon\UrlBuilder\AccountUrlBuilderWeb;
-use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\Controller\StubIdentityAdapter;
@@ -27,7 +26,7 @@ use Zend\View\Model\ViewModel;
  */
 class ClaimControllerTest extends AbstractFrontendControllerTestCase
 {
-//    protected $session;
+
     /** @var  ClaimAccountService|MockObj */
     private $mockClaimAccountSrv;
     /** @var  ClaimValidator|MockObj */
@@ -75,8 +74,6 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
         $this->assertResponseStatus(self::HTTP_OK_CODE);
     }
 
-
-
     /**
      * @dataProvider dataProviderTestActionsResultAndAccess
      */
@@ -96,7 +93,7 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
             }
         }
 
-        //  --  set expected exception  --
+        // set expected exception
         if (!empty($expect['exception'])) {
             $exception = $expect['exception'];
             $this->setExpectedException($exception['class'], $exception['message']);
@@ -106,7 +103,7 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
             $method, $action, ArrayUtils::tryGet($params, 'route'), null, ArrayUtils::tryGet($params, 'post')
         );
 
-        //  --  check   --
+        // check
         if (!empty($expect['viewModel'])) {
             $this->assertInstanceOf(ViewModel::class, $result);
             $this->assertResponseStatus(self::HTTP_OK_CODE);
@@ -149,7 +146,7 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
         ];
 
         return [
-            //  --  reset: access action  --
+            // reset: access action
             [
                 'method' => 'get',
                 'action' => 'reset',
@@ -165,7 +162,7 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                 ],
             ],
 
-            //  --  confirmEmailAndPassword: get: access action  --
+            // confirmEmailAndPassword: get: access action
             [
                 'method' => 'get',
                 'action' => 'confirmEmailAndPassword',
@@ -176,7 +173,7 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                 ],
             ],
 
-            //  --  confirmEmailAndPassword: post: validation failed  --
+            // confirmEmailAndPassword: post: validation failed
             [
                 'method' => 'post',
                 'action' => 'confirmEmailAndPassword',
@@ -196,7 +193,7 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                 ],
             ],
 
-            //  --  confirmEmailAndPassword: post: validation success --
+            // confirmEmailAndPassword: post: validation success
             [
                 'method' => 'post',
                 'action' => 'confirmEmailAndPassword',
@@ -216,7 +213,7 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                 ],
             ],
 
-            //  --  setSecurityQuestion: get: come back to STEP1 because not stored --
+            // setSecurityQuestion: get: come back to STEP1 because not stored
             [
                 'method' => 'get',
                 'action' => 'setSecurityQuestion',
@@ -234,7 +231,7 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                 ],
             ],
 
-            //  --  setSecurityQuestion: get: access action  --
+            // setSecurityQuestion: get: access action
             [
                 'method' => 'get',
                 'action' => 'setSecurityQuestion',
@@ -252,7 +249,7 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                 ],
             ],
 
-            //  --  setSecurityQuestion: post: validation failed  --
+            // setSecurityQuestion: post: validation failed
             [
                 'method' => 'post',
                 'action' => 'setSecurityQuestion',
@@ -278,7 +275,7 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                 ],
             ],
 
-            //  --  setSecurityQuestion: post: validation success --
+            // setSecurityQuestion: post: validation success
             [
                 'method' => 'post',
                 'action' => 'setSecurityQuestion',
@@ -294,15 +291,15 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                     ],
                 ],
                 'expect' => [
-                    'url' => AccountUrlBuilderWeb::claimGeneratePin(),
+                    'url' => AccountUrlBuilderWeb::claimReview(),
                 ],
             ],
 
 
-            //  --  generatePin: get: come back to STEP1 because not stored --
+            // review: get: come back to STEP1 because not stored
             [
                 'method' => 'get',
-                'action' => 'generatePin',
+                'action' => 'review',
                 'params' => [],
                 'mocks'  => [
                     [
@@ -317,17 +314,28 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                 ],
             ],
 
-            //  --  generatePin: get: access action  --
+            // review: get: access action
             [
                 'method' => 'get',
-                'action' => 'generatePin',
+                'action' => 'review',
                 'params' => [],
                 'mocks' => [
                     [
-                        'class'      => 'mockClaimAccountSrv',
-                        'method'     => 'isStepRecorded',
+                        'class'  => 'mockClaimValidator',
+                        'method' => 'validateStep',
                         'invocation' => $this->any(),
-                        'result'     => true,
+                        'result' => $this->returnValueMap(
+                            [
+                                [ClaimController::STEP_1_NAME, $sessionData[ClaimController::STEP_1_NAME], true, true],
+                                [ClaimController::STEP_2_NAME, $sessionData[ClaimController::STEP_2_NAME], true, false],
+                            ]
+                        ),
+                    ],
+                    [
+                        'class'  => 'mockClaimAccountSrv',
+                        'method' => 'isStepRecorded',
+                        'invocation' => $this->any(),
+                        'result' => true,
                     ],
                 ],
                 'expect' => [
@@ -335,10 +343,10 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                 ],
             ],
 
-            //  --  generatePin: post: validation failed  --
+            // review: post: validation failed
             [
                 'method' => 'post',
-                'action' => 'generatePin',
+                'action' => 'review',
                 'params' => [],
                 'mocks'  => [
                     [
@@ -376,10 +384,10 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                 ],
             ],
 
-            //  --  generatePin: post: both step validation success, send to api and goto home  --
+            // review: post: both step validation success, send to api and goto home
             [
                 'method' => 'post',
-                'action' => 'generatePin',
+                'action' => 'review',
                 'params' => [
                     'post' => $postData,
                 ],
@@ -401,7 +409,6 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                         'invocation' => $this->any(),
                         'result' => [],
                     ],
-
                     [
                         'class'  => 'mockClaimAccountSrv',
                         'method' => 'isStepRecorded',
@@ -410,7 +417,26 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                     ],
                 ],
                 'expect' => [
-                    'url' => PersonUrlBuilderWeb::home(),
+                    'url' => AccountUrlBuilderWeb::claimDisplayPin(),
+                ],
+            ],
+
+
+            // generatePin: get: access action
+            [
+                'method' => 'get',
+                'action' => 'displayPin',
+                'params' => [],
+                'mocks'  => [
+                    [
+                        'class'  => 'mockClaimAccountSrv',
+                        'method' => 'isStepRecorded',
+                        'invocation' => $this->any(),
+                        'result' => true,
+                    ],
+                ],
+                'expect' => [
+                    'viewModel' => true,
                 ],
             ],
         ];

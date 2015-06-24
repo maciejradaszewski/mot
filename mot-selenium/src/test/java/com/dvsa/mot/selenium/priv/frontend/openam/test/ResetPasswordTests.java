@@ -7,8 +7,6 @@ import com.dvsa.mot.selenium.framework.RandomDataGenerator;
 import com.dvsa.mot.selenium.framework.api.TestGroup;
 import com.dvsa.mot.selenium.priv.frontend.login.pages.LoginPage;
 import com.dvsa.mot.selenium.priv.frontend.openam.ChangePasswordPage;
-
-import com.dvsa.mot.selenium.priv.frontend.openam.OpenAMClaimAccountMotTestPinPage;
 import com.dvsa.mot.selenium.priv.frontend.openam.OpenAMClaimAccountSignInPage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import org.testng.annotations.Test;
@@ -46,7 +44,7 @@ public class ResetPasswordTests extends BaseTest{
         ChangePasswordPage changePasswordPage = openAMClaimAccountSignInPage
             .submitPasswordSuccessfully(RandomDataGenerator.generatePassword(8))
             .clickOnSubmitButton().setSecurityQuestionAndAnswersSuccessfully()
-            .clickOnSubmitButton().clickSaveAndContinueExpectingChangePasswordPage();
+            .clickSubmitButtonExpectingChangePasswordPage();
 
         changePasswordPage.enterNewPasswordAndSubmitChangesSuccessfully();
     }

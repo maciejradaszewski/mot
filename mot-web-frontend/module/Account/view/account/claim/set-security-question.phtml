@@ -9,8 +9,8 @@ $helpdeskName = (isset($this->helpdeskCfg['name']) ? $this->helpdeskCfg['name'] 
     <div class="col-lg-12">
         <header class="module-content-header">
             <h1>
-                <span class="content-header_type">Sign in</span>
-                <span class="content-header_title">Claim account</span>
+                <span class="content-header_type">Claim your account</span>
+                <span class="content-header_title">Security questions</span>
                 <span class="content-header_progress">Step 2 of 3</span>
             </h1>
         </header>
@@ -21,15 +21,13 @@ $helpdeskName = (isset($this->helpdeskCfg['name']) ? $this->helpdeskCfg['name'] 
 
 <div class="row">
     <div class="col-md-8">
-        <h2>Your two security questions</h2>
-
         <p class="font-core19z lead">Your security questions will be used to recover your account if you forget
             your password and when calling the <?php echo $this->escapeHtml($helpdeskName);?>.</p>
 
         <p>Please complete this section carefully as you'll be asked to remember the answers exactly as answered.</p>
         <form role="form" novalidate method="post" autocomplete="off">
             <fieldset>
-                <legend>Question one</legend>
+                <legend>Security question one</legend>
                 <div class="form-group<?php if (array_key_exists('question_a',$messages)) echo ' has-error' ?>">
                     <label for="question_a">Choose a question
                         <?php if (array_key_exists('question_a',$messages)) : ?>
@@ -58,7 +56,7 @@ $helpdeskName = (isset($this->helpdeskCfg['name']) ? $this->helpdeskCfg['name'] 
                 </div>
             </fieldset>
             <fieldset>
-                <legend>Question two</legend>
+                <legend>Security question two</legend>
                 <div class="form-group<?php if (array_key_exists('question_b',$messages)) echo ' has-error' ?>">
                     <label for="question_b">Choose a question
                         <?php if (array_key_exists('question_b',$messages)) : ?>
@@ -89,7 +87,7 @@ $helpdeskName = (isset($this->helpdeskCfg['name']) ? $this->helpdeskCfg['name'] 
 
 
             <nav class="module-content-navigation col-sm-12-broken">
-                <?php echo $this->partial('submitElement', ['id'=>'btSubmitForm','label'=>'Continue to PIN number', 'cssClass'=>'button']); ?>
+                <?php echo $this->partial('submitElement', ['id'=>'btSubmitForm','label'=>'Continue', 'cssClass'=>'button']); ?>
                 <ul class="content-navigation_secondary">
                     <li>
                         <a href="<?php echo $this->url('account/claim/confirmEmailAndPassword'); ?>" id="go-to-previous-page" >Back</a>

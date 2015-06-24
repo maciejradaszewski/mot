@@ -8,60 +8,38 @@ import org.openqa.selenium.support.FindBy;
 
 public class OpenAMClaimAccountMotTestPinPage extends BasePage {
 
-    @FindBy(id = "btSubmitForm") private WebElement submitFormButton;
-
-    @FindBy(id = "lead-paragraph") private WebElement leadParagraph;
-
-    @FindBy(id = "tester-paragraph") private WebElement testerParagraph;
-
-    @FindBy(id = "worn-paragraph") private WebElement wornParagraph;
+    @FindBy(id = "go-to-home") private WebElement continueToMotTestingServiceButton;
 
     @FindBy(id = "claim-account-pin") private WebElement claimAccountPin;
 
-    @FindBy(id = "go-to-previous-page") private WebElement goBack;
+    @FindBy(className = "banner__heading") private WebElement pinHeading;
+
+    @FindBy(className = "lead") private WebElement leadHeading;
+
+    @FindBy(className = "text") private WebElement pageContentText;
 
     public OpenAMClaimAccountMotTestPinPage(WebDriver driver) {
         super(driver);
-
     }
 
-    public UserDashboardPage clickSaveAndContinue() {
-        submitFormButton.click();
+    public UserDashboardPage clickContinueToTheMotTestingService() {
+        continueToMotTestingServiceButton.click();
         return new UserDashboardPage(driver);
     }
 
-    public String getTestersOnlyPinText() {
-        return testerParagraph.getText();
+    public String getPinHeadingText() {
+        return pinHeading.getText();
     }
 
-    public String getCommonPinLeadText() {
-        return leadParagraph.getText();
+    public String getLeadHeadingText() {
+        return leadHeading.getText();
     }
 
-    public String getWornPinText() {
-        return wornParagraph.getText();
+    public String getPageContentText() {
+        return pageContentText.getText();
     }
 
-    public String getClaimAccountPinNumber() {
-        return claimAccountPin.getText();
+    public boolean isPinNumberDisplayed() {
+        return claimAccountPin.isDisplayed();
     }
-
-    public boolean isTesterMessageDisplayed() {
-        return isElementDisplayed(testerParagraph);
-    }
-
-    public OpenAMClaimAccountSecurityQuestionsPage goToSecurityQuestionsPage() {
-        goBack.click();
-        return new OpenAMClaimAccountSecurityQuestionsPage(driver);
-    }
-
-    public boolean isSamePinNumberDisplayed(String pin) {
-        return getClaimAccountPinNumber().equalsIgnoreCase(pin);
-    }
-
-    public ChangePasswordPage clickSaveAndContinueExpectingChangePasswordPage() {
-        submitFormButton.click();
-        return new ChangePasswordPage(driver);
-    }
-
 }

@@ -36,7 +36,7 @@ public class OpenAMClaimAccountSignInTest extends BaseTest {
                 new LoginPage(driver).navigateToClaimAccountPage(driver, login);
         openAMClaimAccountSignInPage.submitEmailSuccessfully(
                 Person.getUnique(Person.PERSON_1, "testCorrect EmailEntered")).optOutEmailAddress()
-                .submitPasswordSuccessfully(Text.TEXT_PASSWORD_2).clickOnSubmitButton();
+                .submitPasswordSuccessfully(Text.TEXT_PASSWORD_2).clickOnSubmitButtonExpectingToStayOnThisPage();
 
         assertThat("No Email Addresses required",
                 ValidationSummary.isValidationSummaryDisplayed(driver), is(true));

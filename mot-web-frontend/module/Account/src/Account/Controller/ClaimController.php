@@ -6,12 +6,11 @@ use Account\Service\ClaimAccountService;
 use Account\Validator\ClaimValidator;
 use Core\Controller\AbstractAuthActionController;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
-use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\AccountUrlBuilderWeb;
-use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
+use Account\ViewModel\ReviewViewModel;
 
 /**
  * Class ClaimController
@@ -19,11 +18,14 @@ use Zend\Session\Container;
  */
 class ClaimController extends AbstractAuthActionController
 {
-    const SERVICE_NAME = 'MOT Testing Service';
+    const SERVICE_NAME = 'MOT testing service';
 
     const STEP_1_NAME = 'confirmEmailAndPassword';
     const STEP_2_NAME = 'setSecurityQuestion';
-    const STEP_3_NAME = 'generatePin';
+    const STEP_3_NAME = 'review';
+    const STEP_4_NAME = 'displayPin';
+
+    const PIN_ARRAY_KEY = 'pin';
 
     /** @var ClaimAccountService  */
     private $claimAccountService;
@@ -99,7 +101,7 @@ class ClaimController extends AbstractAuthActionController
         return new ViewModel($stepData);
     }
 
-    public function generatePinAction()
+    public function reviewAction()
     {
         $messages = [];
 
@@ -146,7 +148,7 @@ class ClaimController extends AbstractAuthActionController
 
                 $this->claimAccountService->markClaimedSuccessfully();
 
-                return $this->redirect()->toUrl(PersonUrlBuilderWeb::home());
+                return $this->redirectToStep(self::STEP_4_NAME);
             }
         }
 
@@ -158,6 +160,20 @@ class ClaimController extends AbstractAuthActionController
         $stepData['isStepTwoInvalid'] = isset($isStepTwoValid) && !$isStepTwoValid;
         $stepData['helpdeskCfg'] = $this->config['helpdesk'];
 
+        $reviewViewModel = new ReviewViewModel();
+        $reviewViewModel->setData($stepData);
+        $reviewViewModel->setSecurityQuestions($this->claimAccountService->getSecurityQuestions());
+
+        $stepData['reviewViewModel'] = $reviewViewModel;
+
+        return new ViewModel($stepData);
+    }
+
+
+    public function displayPinAction()
+    {
+        $sessionAsArray = $this->claimAccountService->sessionToArray() ?: [];
+        $stepData = $this->getStepData(self::STEP_3_NAME) + $sessionAsArray;
         return new ViewModel($stepData);
     }
 
@@ -186,6 +202,7 @@ class ClaimController extends AbstractAuthActionController
             self::STEP_1_NAME,
             self::STEP_2_NAME,
             self::STEP_3_NAME,
+            self::STEP_4_NAME
         ];
 
         $step = null;
@@ -215,7 +232,9 @@ class ClaimController extends AbstractAuthActionController
         if ($stepName == self::STEP_2_NAME) {
             $url = AccountUrlBuilderWeb::claimSecurityQuestions();
         } elseif ($stepName == self::STEP_3_NAME) {
-            $url = AccountUrlBuilderWeb::claimGeneratePin();
+            $url = AccountUrlBuilderWeb::claimReview();
+        } elseif ($stepName == self::STEP_4_NAME) {
+            $url = AccountUrlBuilderWeb::claimDisplayPin();
         } else {
             $url = AccountUrlBuilderWeb::claimEmailAndPassword();
         }
