@@ -156,7 +156,10 @@ class BrakeTestResultValidator extends AbstractValidator
                             $isSingleInFront
                         ),
                         $brakeTestType,
-                        BrakeTestTypeCode::ROLLER
+                        [
+                            BrakeTestTypeCode::ROLLER,
+                            BrakeTestTypeCode::PLATE
+                        ]
                     );
                     $this->validateValuesAreNull(
                         $validationException,
@@ -400,7 +403,10 @@ class BrakeTestResultValidator extends AbstractValidator
                 $brakeTestResult->getParkingBrakeLockSingle(),
             ],
             $parkingBrakeTestType,
-            BrakeTestTypeCode::ROLLER
+            [
+                BrakeTestTypeCode::ROLLER,
+                BrakeTestTypeCode::PLATE
+            ]
         );
 
         $this->validateBrakeEfficiency(
@@ -453,7 +459,10 @@ class BrakeTestResultValidator extends AbstractValidator
             $validationException,
             $lockValues,
             $brakeTestResult->getBrakeTestType()->getCode(),
-            BrakeTestTypeCode::ROLLER
+            [
+                BrakeTestTypeCode::ROLLER,
+                BrakeTestTypeCode::PLATE
+            ]
         );
 
         $this->validateClass1And2Rules($validationException, $brakeTestResult, $firstUsedDate);
@@ -563,10 +572,10 @@ class BrakeTestResultValidator extends AbstractValidator
         }
     }
 
-    protected function validateLocks($exception, $lockValues, $brakeTestType, $typeLocksApplicable)
+    protected function validateLocks($exception, $lockValues, $brakeTestType, array $typeLocksApplicable)
     {
         switch ($brakeTestType) {
-            case $typeLocksApplicable:
+            case in_array($brakeTestType, $typeLocksApplicable):
                 foreach ($lockValues as $value) {
                     if (!$this->isBoolOrNull($value)) {
                         $this->addMessageToException(

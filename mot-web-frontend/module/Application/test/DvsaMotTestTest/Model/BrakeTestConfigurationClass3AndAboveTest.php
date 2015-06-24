@@ -70,7 +70,7 @@ class BrakeTestConfigurationClass3AndAboveTest extends \PHPUnit_Framework_TestCa
              ],
              [ //output #0
                'locksApplicableService'   => true,
-               'locksApplicableParking'   => false,
+               'locksApplicableParking'   => true,
                'effortsApplicableService' => true,
                'parkingGradient'          => false,
                'parkingRollerPlate'       => true,
@@ -102,7 +102,7 @@ class BrakeTestConfigurationClass3AndAboveTest extends \PHPUnit_Framework_TestCa
                'isCommercialVehicle'       => false,
              ],
              [ //output #1
-               'locksApplicableService'   => false,
+               'locksApplicableService'   => true,
                'locksApplicableParking'   => true,
                'effortsApplicableService' => true,
                'parkingGradient'          => false,

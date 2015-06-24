@@ -78,7 +78,6 @@ public class BrakeTestConfiguration3 {
         map.put(BrakeTestConfigurationPageField.SERVICE_BRAKE_TEST_TYPE, BrakeTestType.Roller);
         map.put(BrakeTestConfigurationPageField.PARKING_BRAKE_TEST_TYPE, BrakeTestType.Roller);
         map.put(BrakeTestConfigurationPageField.VEHICLE_WEIGHT_NOT_APLICABLE, Boolean.TRUE);
-        //map.put(BrakeTestConfigurationPageField.VEHICLE_WEIGHT,"");
         map.put(BrakeTestConfigurationPageField.BREAK_LINE_TYPE_DUAL, Boolean.TRUE);
         map.put(BrakeTestConfigurationPageField.POSITION_SINGLE_WHEEL_FRONT, Boolean.TRUE);
         map.put(BrakeTestConfigurationPageField.PARKING_BRAKE_OPERATED_ON_ONE_WHEEL, Boolean.TRUE);
@@ -148,8 +147,8 @@ public class BrakeTestConfiguration3 {
                 new LinkedHashMap<BrakeTestConfigurationPageField, Object>();
         map.put(BrakeTestConfigurationPageField.SERVICE_BRAKE_TEST_TYPE, BrakeTestType.Plate);
         map.put(BrakeTestConfigurationPageField.PARKING_BRAKE_TEST_TYPE, BrakeTestType.Plate);
-        map.put(BrakeTestConfigurationPageField.VEHICLE_WEIGHT_VSI, Boolean.TRUE);
-        map.put(BrakeTestConfigurationPageField.VEHICLE_WEIGHT, "500");
+        map.put(BrakeTestConfigurationPageField.VEHICLE_WEIGHT_NOT_APLICABLE, Boolean.TRUE);
+        //map.put(BrakeTestConfigurationPageField.VEHICLE_WEIGHT, "500");
         map.put(BrakeTestConfigurationPageField.BREAK_LINE_TYPE_DUAL, Boolean.TRUE);
         map.put(BrakeTestConfigurationPageField.POSITION_SINGLE_WHEEL_FRONT, Boolean.TRUE);
         map.put(BrakeTestConfigurationPageField.PARKING_BRAKE_OPERATED_ON_ONE_WHEEL, Boolean.TRUE);

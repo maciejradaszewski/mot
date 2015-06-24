@@ -78,6 +78,11 @@ class BrakeTestResultService extends AbstractService
     /** @var MotTestReasonForRejectionService */
     private $motTestReasonForRejectionService;
     private $performMotTestAssertion;
+    private $brakesWithLockApplicable =
+        [
+            BrakeTestTypeCode::ROLLER,
+            BrakeTestTypeCode::PLATE
+        ];
 
     public function __construct(
         EntityManager $entityManager,
@@ -297,7 +302,10 @@ class BrakeTestResultService extends AbstractService
 
         if ($brakeTestResult instanceof BrakeTestResultClass3AndAbove) {
             $brakeTestResultData = $this->objectHydrator->extract($brakeTestResult);
-            if ($brakeTestResult->getParkingBrakeTestType()->getCode() === BrakeTestTypeCode::ROLLER) {
+            if (in_array(
+                $brakeTestResult->getParkingBrakeTestType()->getCode(),
+                $this->brakesWithLockApplicable)
+            ) {
                 $brakeTestResultData['parkingBrakeLockPercent']
                     = $this->brakeTestResultCalculator->calculateParkingBrakePercentLocked($brakeTestResult);
             }
@@ -305,7 +313,10 @@ class BrakeTestResultService extends AbstractService
             if ($serviceBrake1Data) {
                 $brakeTestResultData['serviceBrake1Data'] = $this->objectHydrator->extract($serviceBrake1Data);
                 ExtractionHelper::unsetAuditColumns($brakeTestResultData['serviceBrake1Data']);
-                if ($brakeTestResult->getServiceBrake1TestType()->getCode() === BrakeTestTypeCode::ROLLER) {
+                if (in_array(
+                    $brakeTestResult->getParkingBrakeTestType()->getCode(),
+                    $this->brakesWithLockApplicable)
+                ) {
                     $this->populateServiceBrakeLockPercent(
                         $brakeTestResultData['serviceBrake1Data'],
                         $serviceBrake1Data,
@@ -329,7 +340,10 @@ class BrakeTestResultService extends AbstractService
                 $brakeTestResultData['serviceBrake2Data']
                     = $this->objectHydrator->extract($serviceBrake2Data);
                 ExtractionHelper::unsetAuditColumns($brakeTestResultData['serviceBrake2Data']);
-                if ($brakeTestResult->getServiceBrake2TestType()->getCode() === BrakeTestTypeCode::ROLLER) {
+                if (in_array(
+                    $brakeTestResult->getParkingBrakeTestType()->getCode(),
+                    $this->brakesWithLockApplicable)
+                ) {
                     $this->populateServiceBrakeLockPercent(
                         $brakeTestResultData['serviceBrake2Data'],
                         $serviceBrake2Data,
@@ -342,7 +356,10 @@ class BrakeTestResultService extends AbstractService
                 $brakeTestResultData = $this->objectHydrator->extract($brakeTestResult);
                 ExtractionHelper::unsetAuditColumns($brakeTestResultData);
 
-                if ($brakeTestResult->getBrakeTestType()->getCode() === BrakeTestTypeCode::ROLLER) {
+                if (in_array(
+                    $brakeTestResult->getBrakeTestType()->getCode(),
+                    $this->brakesWithLockApplicable)
+                ) {
                     $brakeTestResultData['control1LockPercent']
                         = $this->brakeTestResultCalculatorClass1And2->calculateControl1PercentLocked($brakeTestResult);
                     $brakeTestResultData['control2LockPercent']
