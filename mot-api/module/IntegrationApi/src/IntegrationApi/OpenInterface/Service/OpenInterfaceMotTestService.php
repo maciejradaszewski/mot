@@ -107,6 +107,7 @@ class OpenInterfaceMotTestService
         $validator = new OpenInterfaceMotTestRequestValidator();
         $validator->validateDate($dateString);
 
-        return \DateTime::createFromFormat('Ymd', $dateString);
+        $toDayEnd = $dateString . " 235959";
+        return \DateTime::createFromFormat('Ymd His', $toDayEnd);
     }
 }
