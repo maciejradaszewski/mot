@@ -143,6 +143,36 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
         $this->assertEquals(true, $checkExpiryResults['isEarlierThanTestDateLimit']);
     }
 
+    public function testCheckVehicleWithNoFirstUsedDate()
+    {
+        //given
+        $dateInvalid = DateUtils::toDate('2012-05-29');
+        $date        = DateUtils::toDate('2012-05-30');
+
+        $this->setupMotTestRepositoryMockReturnsLastCertificateExpiryDate(null);
+
+        // not not set firstUsedDate on vehicle
+        $vehicle = new Vehicle();
+        $this->setupVehicleRepositoryMockReturnsVehicle($vehicle);
+
+        $certificateExpiryService = new CertificateExpiryService(
+            new TestDateTimeHolder($dateInvalid),
+            $this->motTestRepository,
+            $this->vehicleRepository,
+            $this->dvlaVehicleRepository,
+            $this->configurationRepository,
+            $this->authorisationService,
+            $this->paramObfuscator
+        );
+
+        // when
+        // vehicleId = 3
+        $obfuscatedVehicleId = 'MGI2OTgzMGI5MjFiMWJhMDViN2Y1M2EzYWQzMzc2ZWVhZmUwYTVkOTczZGQxNjU2OGQ5MzQyNWNhOWU3ZjY2N3lRMFNnQjhVZDV6TExyS0RtODR2R1lSNG4wZDZGazI3NHh0ZS96WGs4K009';
+        $checkExpiryResults  = $certificateExpiryService->getExpiryDetailsForVehicle($obfuscatedVehicleId, $date);
+
+        $this->assertFalse($checkExpiryResults['previousCertificateExists']);
+    }
+
     public function testCheckVehicleWithTodayAfterEarliestDateAllowed()
     {
         //given

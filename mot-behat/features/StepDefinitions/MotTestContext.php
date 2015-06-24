@@ -530,6 +530,68 @@ class MotTestContext implements Context
     }
 
     /**
+     * @When /^I search for a vehicle without a manufactured date and first used date$/
+     *
+     */
+    public function ISearchForAVehicleWithoutAManufacturerAndFirstUsedDate()
+    {
+        $vehicleData =  [
+            'dateOfFirstUse' => null,
+            'manufactureDate' => null,
+            'vin' => 'WF0BXXGAJB1R41234',
+            'registrationNumber' => 'F50GGP'
+        ];
+
+        $this->vehicleId = $this->vehicleContext->createVehicle($vehicleData);
+
+        // throws exception if not found
+        PHPUnit::assertNotNull($this->vehicleContext->getCurrentVehicleData());
+    }
+
+    /**
+     * @Then /^manufactured date and first used date should be displayed as unknown$/
+     *
+     */
+    public function manufacturerAndFirstUsedDateShouldBeDisplayedAsNotKnown()
+    {
+        $data = $this->vehicleContext->getCurrentVehicleData();
+
+        PHPUnit::assertNull($data['data']['firstUsedDate']);
+        PHPUnit::assertNull($data['data']['manufactureDate']);
+    }
+
+    /**
+     * @Given /^I attempt to create a MOT Test on a vehicle without a manufactured date and first used date$/
+     *
+     */
+    public function IAttemptToCreateAnMOTTestOnAVehicleWithoutAManufacturerAndFirstUsedDate()
+    {
+        $vehicleData =  [
+            'dateOfFirstUse' => null,
+            'manufactureDate' => null,
+            'vin' => 'WF0BXXGAJB1R41234',
+            'registrationNumber' => 'F50GGP'
+        ];
+
+        $this->vehicleId = $this->vehicleContext->createVehicle($vehicleData);
+
+        $this->motTestData = $this->motTest->startNewMotTestWithVehicleId(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->sessionContext->getCurrentUserId(),
+            $this->vehicleId
+        );
+    }
+
+    /**
+     * @Then /^MOT test should be created successfully$/
+     *
+     */
+    public function MOTTestShouldBeCreatedSuccessfully()
+    {
+        PHPUnit::assertNotNull($this->motTestData);
+    }
+
+    /**
      * @param string $test
      * @return DemoTest|MotTest
      * @throws Exception

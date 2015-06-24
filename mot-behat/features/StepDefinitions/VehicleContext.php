@@ -272,6 +272,14 @@ class VehicleContext implements Context
     }
 
     /**
+     * @return Array|null
+     */
+    public function getCurrentVehicleData()
+    {
+        return $this->getCurrentVehicleDetails()->getBody();
+    }
+
+    /**
      * @return string
      */
     public function getCurrentVehicleId()
