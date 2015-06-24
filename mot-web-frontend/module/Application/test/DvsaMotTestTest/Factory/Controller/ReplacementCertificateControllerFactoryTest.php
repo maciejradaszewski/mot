@@ -12,7 +12,6 @@ use Core\Service\MotFrontendAuthorisationServiceInterface;
 /**
  * Class ReplacementCertificateControllerFactoryTest.
  *
- * @covers \DvsaMotTest\Controller\ReplacementCertificateControllerFactory
  */
 class ReplacementCertificateControllerFactoryTest extends \PHPUnit_Framework_TestCase
 {
