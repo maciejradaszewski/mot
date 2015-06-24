@@ -16,7 +16,7 @@ use Zend\Mvc\Controller\Plugin\FlashMessenger;
  */
 class SiteSearchViewModel extends AbstractFormModel
 {
-    const NOT_ENOUGH_CHAR = 'Less than 3 Characters Entered';
+    const NOT_ENOUGH_CHAR = 'Less than 3 Characters Entered (special characters are removed from the search)';
     const NO_RESULT_FOUND = 'No results found';
     const ONE_FIELD_REQUIRED = 'You need to enter some search criteria';
     const ONLY_VEHICLE_CLASS = 'You cannot search by vehicle test classes alone - try expanding your search criteria';
@@ -306,12 +306,17 @@ class SiteSearchViewModel extends AbstractFormModel
         return $this->isOneFieldValid();
     }
 
+    /**
+     * Check if at least one field is valid
+     *
+     * @return bool
+     */
     public function isOneFieldValid()
     {
-        return strlen($this->getSiteNumber()) > 2
-            || strlen($this->getSiteName()) > 2
-            || strlen($this->getSiteTown()) > 2
-            || strlen($this->getSitePostcode()) > 2;
+        return (empty($this->getSiteNumber()) === false && $this->checkValue($this->getSiteNumber()) === true)
+        || (empty($this->getSiteName()) === false && $this->checkValue($this->getSiteName()) === true)
+        || (empty($this->getSiteTown()) === false && $this->checkValue($this->getSiteTown()) === true)
+        || (empty($this->getSitePostcode()) === false && $this->checkValue($this->getSitePostcode()) === true);
     }
 
     /**
@@ -322,7 +327,31 @@ class SiteSearchViewModel extends AbstractFormModel
      */
     private function checkValue($value)
     {
-        return empty(trim($value)) || (!empty(trim($value)) && strlen(trim($value)) > 2);
+        $value = $this->deleteUnwantedChar($value);
+        $values = explode('-', $value);
+
+        foreach ($values as $val) {
+            if (strlen($val) > 2) {
+                return true;
+            }
+        }
+
+        return empty($value) === true ? true : false;
+    }
+
+    /**
+     * Delete the special char use by the full text search to avoid unwanted search
+     *
+     * @param string $string
+     * @return string
+     */
+    private function deleteUnwantedChar($string)
+    {
+        $string = str_replace(' ', '-', $string);
+        $string = preg_replace('/[^A-Za-z0-9\-]/', '-', $string);
+
+        $string = preg_replace('/-+/', '-', $string);
+        return $string;
     }
 
     /**

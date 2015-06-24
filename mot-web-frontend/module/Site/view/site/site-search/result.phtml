@@ -11,7 +11,7 @@ use Site\ViewModel\SiteSearchViewModel;
 <?php if ($viewModel->getTable()->getRowsTotalCount() !== 0): ?>
 
     <?php echo $this->partial('report/top-line', [
-        'text'          => 'Showing <strong>%s</strong> sites found <strong>%s</strong>',
+        'text'          => '<strong>%s</strong> sites found <strong>%s</strong>',
         'itemsNumber'   => $viewModel->getTable()->getRowsTotalCount(),
         'label'         => ''
     ]); ?>
