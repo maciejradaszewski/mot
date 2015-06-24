@@ -55,12 +55,10 @@ $motTestVehicleClass = new VehicleClass($motTest->getVehicleClass());
 
         /** @var \DvsaCommon\Dto\Common\ColourDto $secondaryColour */
         $secondaryColour = $motTest->getSecondaryColour();
-        $secondaryColourName = $secondaryColour->getName();
 
-        if ($secondaryColour->getCode() !== ColourCode::NOT_STATED && !empty($secondaryColourName)) {
-            $colour .= ' and ' . $secondaryColourName;
+        if (!empty($secondaryColour) && $secondaryColour->getCode() !== ColourCode::NOT_STATED) {
+            $colour .= ' and ' . $secondaryColour->getName();
         }
-
         $make = $motTest->getMake();
         $model = $motTest->getModel();
         /** @var \DvsaCommon\Dto\Vehicle\FuelTypeDto $fuelType */
