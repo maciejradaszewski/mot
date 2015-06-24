@@ -34,7 +34,6 @@ class PersonalDetailsValidator extends AbstractValidator
      */
     private $requiredAddressFields = [
         'addressLine1',
-        'addressLine2',
         'town',
         'postcode',
     ];
