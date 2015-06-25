@@ -31,21 +31,25 @@ class ReplacementCertificateDraftMappingHelper
                 "name" => $draft->getPrimaryColour()->getName()
             ],
             'motTestNumber'       => $draft->getMotTest()->getNumber(),
-            'odometerReading' => [
+        ];
+
+
+        $json['odometerReading'] = $draft->getOdometerReading()
+            ? [
                 'value'      => $draft->getOdometerReading()->getValue(),
                 'unit'       => $draft->getOdometerReading()->getUnit(),
                 'resultType' => $draft->getOdometerReading()->getResultType()
-            ],
-        ];
+            ]
+            : NULL;
 
-        if ($draft->getSecondaryColour() !== null) {
-            $json['secondaryColour'] = [
-                "code"   => $draft->getSecondaryColour()->getCode(),
+
+        $json['secondaryColour'] = $draft->getSecondaryColour()
+            ? [
+                "code" => $draft->getSecondaryColour()->getCode(),
                 "name" => $draft->getSecondaryColour()->getName(),
-            ];
-        } else {
-            $json['secondaryColour'] = null;
-        }
+            ]
+            : NULL;
+
 
         if ($isFullRights) {
             $hydrator = new Hydrator();
