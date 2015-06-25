@@ -20,8 +20,20 @@ class ReplacementCertificateDraftDiffHelper
      *
      * @return bool
      */
-    private static function areOdometerReadingsEqual(OdometerReading $x, OdometerReading $y)
+    private static function areOdometerReadingsEqual(OdometerReading $x = NULL, OdometerReading $y = NULL)
     {
+        if (!$x && $y) {
+            return FALSE;
+        }
+
+        if ($x && !$y) {
+            return FALSE;
+        }
+
+        if (!$x && !$y) {
+            return TRUE;
+        }
+
         return $x->getValue() === $y->getValue()
         && $x->getUnit() === $y->getUnit()
         && $x->getResultType() === $y->getResultType();

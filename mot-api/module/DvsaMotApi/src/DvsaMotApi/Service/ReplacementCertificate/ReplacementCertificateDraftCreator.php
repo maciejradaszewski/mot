@@ -64,7 +64,7 @@ class ReplacementCertificateDraftCreator
         $draft = ReplacementCertificateDraft::create()
             ->setMotTest($motTest)
             ->setMotTestVersion($motTest->getVersion())
-            ->setOdometerReading($motTest->getOdometerReading()->newCopy())
+            ->setOdometerReading($motTest->getOdometerReading() ? $motTest->getOdometerReading()->newCopy() : NULL)
             ->setPrimaryColour($motTest->getPrimaryColour())
             ->setSecondaryColour($motTest->getSecondaryColour())
             ->setExpiryDate($motTest->getExpiryDate())
