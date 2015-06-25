@@ -11,9 +11,11 @@ use DvsaMotApi\Controller\ReasonForRejectionController;
 use DvsaMotApi\Controller\ReplacementCertificateDraftController;
 use DvsaMotApi\Controller\RetestController;
 use DvsaMotApi\Controller\TestItemCategoryNameController;
+use DvsaMotApi\Controller\TesterMotTestLogController;
 use DvsaMotApi\Factory\Controller\MotTestStatusControllerFactory;
 use DvsaMotApi\Factory\Controller\TesterControllerFactory;
 use DvsaMotApi\Factory\Controller\UserControllerFactory;
+use DvsaMotApi\Factory\Controller\TesterMotTestLogControllerFactory;
 use DvsaEntities\Entity\Person;
 use DvsaCommon\Validator\UsernameValidator;
 use DvsaMotApi\Factory\Controller\ReplacementCertificateDraftControllerFactory;
@@ -58,6 +60,7 @@ return [
             'DvsaMotApi\Controller\Tester' => TesterControllerFactory::class,
             'DvsaMotApi\Controller\User'   => UserControllerFactory::class,
             MotTestStatusController::class => MotTestStatusControllerFactory::class,
+            TesterMotTestLogController::class => TesterMotTestLogControllerFactory::class,
             ReplacementCertificateDraftController::class => ReplacementCertificateDraftControllerFactory::class,
         ]
     ],
@@ -517,7 +520,27 @@ return [
                                 'action'     => 'getVtsWithSlotBalance'
                             ]
                         ]
-                    ]
+                    ],
+                    'tester-mot-test-log' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/mot-test-log',
+                            'defaults' => [
+                                'controller' => TesterMotTestLogController::class,
+                                'action'     => 'logData'
+                            ]
+                        ]
+                    ],
+                    'tester-mot-test-log-summary' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/mot-test-log/summary',
+                            'defaults' => [
+                                'controller' => TesterMotTestLogController::class,
+                                'action'     => 'summary'
+                            ]
+                        ]
+                    ],
                 ],
             ],
             'vehicle'                        => [

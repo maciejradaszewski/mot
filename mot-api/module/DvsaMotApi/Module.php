@@ -11,6 +11,7 @@ use DvsaEntities\Repository\TestItemCategoryRepository;
 use DvsaMotApi\Factory\Repository\DvlaVehicleRepositoryFactory;
 use DvsaMotApi\Factory\Service\MotTestOptionsServiceFactory;
 use DvsaMotApi\Factory\Service\VehicleHistoryServiceFactory;
+use DvsaMotApi\Factory\Service\TesterMotTestLogServiceFactory;
 use DvsaMotApi\Factory\TestItemCategoryRepositoryFactory;
 use DvsaMotApi\Service\CertificateCreationService;
 use DvsaMotApi\Service\MotTestDateHelper;
@@ -25,6 +26,7 @@ use DvsaMotApi\Service\Validator\MotTestStatusChangeValidator;
 use DvsaMotApi\Service\VehicleHistoryService;
 use DvsaMotApi\Service\EmergencyServiceFactory;
 use DvsaMotApi\Service\EmergencyService;
+use DvsaMotApi\Service\TesterMotTestLogService;
 use DvsaMotApi\Validator\UsernameValidator;
 use Zend\EventManager\EventInterface;
 use Zend\Http\Client as HttpClient;
@@ -131,6 +133,7 @@ class Module implements
                 MotTestOptionsService::class => MotTestOptionsServiceFactory::class,
                 UsernameValidator::class => UsernameValidatorFactory::class,
                 ReplacementCertificateDraftChangeValidator::class   => ReplacementCertificateDraftChangeValidatorFactory::class,
+                TesterMotTestLogService::class => TesterMotTestLogServiceFactory::class,
             ],
             'invokables' => [
                 'BrakeTestConfigurationValidator' => BrakeTestConfigurationValidator::class,

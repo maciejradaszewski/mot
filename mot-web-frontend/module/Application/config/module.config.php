@@ -255,6 +255,29 @@ return [
                     ],
                 ],
             ],
+            'tester-mot-test-log' => [
+                'type'    => 'segment',
+                'options' => [
+                    'route'    => '/mot-test-log',
+                    'defaults' => [
+                        'controller' => MotTest\TesterMotTestLogController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'download'    => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'       => '/csv',
+                            'defaults'    => [
+                                'controller' => MotTest\TesterMotTestLogController::class,
+                                'action'     => 'downloadCsv',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             'replacement-certificate-vehicle-search'      => [
                 'type'    => 'segment',
                 'options' => [

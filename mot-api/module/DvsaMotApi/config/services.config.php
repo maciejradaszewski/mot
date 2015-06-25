@@ -4,6 +4,7 @@ use DvsaCommonApi\Transaction\ServiceTransactionAwareInitializer;
 use DvsaEntities\Repository\TestItemCategoryRepository;
 use DvsaMotApi\Factory\Service\MotTestOptionsServiceFactory;
 use DvsaMotApi\Factory\Service\VehicleHistoryServiceFactory;
+use DvsaMotApi\Factory\Service\TesterMotTestLogServiceFactory;
 use DvsaMotApi\Factory\TestItemCategoryRepositoryFactory;
 use DvsaMotApi\Factory\Validator\UsernameValidatorFactory;
 use DvsaMotApi\Service\CertificateCreationService;
@@ -19,6 +20,7 @@ use DvsaMotApi\Service\Validator\BrakeTestConfigurationValidator;
 use DvsaMotApi\Service\Validator\BrakeTestResultValidator;
 use DvsaMotApi\Service\Validator\MotTestStatusChangeValidator;
 use DvsaMotApi\Service\VehicleHistoryService;
+use DvsaMotApi\Service\TesterMotTestLogService;
 use DvsaMotApi\Validator\UsernameValidator;
 use DvsaMotApi\Service\CreateMotTestService;
 
@@ -83,5 +85,6 @@ return [
         VehicleHistoryService::class                        => VehicleHistoryServiceFactory::class,
         MotTestOptionsService::class                        => MotTestOptionsServiceFactory::class,
         UsernameValidator::class                            => UsernameValidatorFactory::class,
+        TesterMotTestLogService::class                      => TesterMotTestLogServiceFactory::class,
     ],
 ];

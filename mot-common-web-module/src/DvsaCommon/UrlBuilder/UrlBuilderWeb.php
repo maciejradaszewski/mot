@@ -10,6 +10,8 @@ class UrlBuilderWeb extends AbstractUrlBuilder
     const REPLACE_CERT = '/replacement-certificate[/:id]';
     const REPLACE_CERT_SUMMARY = '/summary';
     const REPLACE_CERT_FINISH = '/finish/:motTestNumber';
+    const MOT_TEST_LOG = '/mot-test-log';
+    const MOT_TEST_LOG_CSV = '/csv';
 
     protected $routesStructure
         = [
@@ -17,7 +19,20 @@ class UrlBuilderWeb extends AbstractUrlBuilder
                 self::REPLACE_CERT_SUMMARY => '',
                 self::REPLACE_CERT_FINISH  => '',
             ],
+            self::MOT_TEST_LOG => [
+                self::MOT_TEST_LOG_CSV => '',
+            ],
         ];
+
+    public static function motTestLogs()
+    {
+        return self::of()->appendRoutesAndParams(self::MOT_TEST_LOG);
+    }
+
+    public static function motTestLogDownloadCsv()
+    {
+        return self::motTestLogs()->appendRoutesAndParams(self::MOT_TEST_LOG_CSV);
+    }
 
     public static function replacementCertificate($id = null)
     {

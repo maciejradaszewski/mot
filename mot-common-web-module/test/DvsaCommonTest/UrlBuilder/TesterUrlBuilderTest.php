@@ -10,10 +10,21 @@ use PHPUnit_Framework_TestCase;
  */
 class TesterUrlBuilderTest extends PHPUnit_Framework_TestCase
 {
-    public function test_testerInProgressTestId()
+    public function testTesterUrlBuilder()
     {
-        $testerInProgressTestBuilder = TesterUrlBuilder::create()->testerInProgressTestNumber(13);
+        $urlBuilder = new TesterUrlBuilder();
 
-        $this->assertSame('tester/13/in-progress-test-id', $testerInProgressTestBuilder->toString());
+        $this->assertInstanceOf(TesterUrlBuilder::class, $urlBuilder);
+
+        $this->assertEquals('tester', $urlBuilder->create()->toString());
+        $this->assertEquals('tester/full', $urlBuilder->create()->testerFull()->toString());
+        $this->assertEquals('tester/2/mot-test-log', $urlBuilder->create()->motTestLog(2)->toString());
+        $this->assertEquals('tester/2/mot-test-log/summary', $urlBuilder->create()->motTestLogSummary(2)->toString());
+        $this->assertEquals('tester/2/in-progress-test-id', $urlBuilder->create()->testerInProgressTestNumber(2));
+        $this->assertEquals('tester/2/vehicle-testing-stations', $urlBuilder->create()->vehicleTestingStations(2));
+        $this->assertEquals(
+            'tester/2/vts-slot-balance',
+            $urlBuilder->create()->vehicleTestingStationWithSlotBalance(2)
+        );
     }
 }

@@ -190,7 +190,7 @@ class MotTestLogController extends AbstractAuthActionController
         return $response;
     }
 
-    private function prepareCsvBody($testsData)
+    protected function prepareCsvBody($testsData)
     {
         $csvBuffer = fopen('php://memory', 'w');
 
@@ -271,7 +271,7 @@ class MotTestLogController extends AbstractAuthActionController
         return null;
     }
 
-    private function prepareSearchParams(MotTestLogFormViewModel $formModel = null)
+    protected function prepareSearchParams(MotTestLogFormViewModel $formModel = null)
     {
         $queryParams = $this->request->getQuery();
 

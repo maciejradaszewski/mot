@@ -849,6 +849,116 @@ class MotTestRepository extends AbstractMutableRepository
         return $sql->fetch();
     }
 
+
+    /**
+     * This function is responsible to get the number of mot test realised for
+     * last 365 days, previous month, previous week and today by Tester
+     *
+     * @param int $testerId
+     *
+     * @return array eg. ['year' => 1234, 'month' => 9999, 'week' => 8888, 'today' => 777]
+     */
+    public function getCountOfTesterMotTestsSummary($testerId)
+    {
+        $testTypes = [
+            'TT_NORMAL'                  => MotTestTypeCode::NORMAL_TEST,
+            'TT_PARTIAL_RETEST_LEFT'     => MotTestTypeCode::PARTIAL_RETEST_LEFT_VTS,
+            'TT_PARTIAL_RETEST_REPAIRED' => MotTestTypeCode::PARTIAL_RETEST_REPAIRED_AT_VTS,
+            'TT_RETEST'                  => MotTestTypeCode::RE_TEST,
+        ];
+
+        $statuses = [
+            'TS_ABANDONED'  => MotTestStatusName::ABANDONED,
+            'TS_ABORTED'    => MotTestStatusName::ABORTED,
+            'TS_ABORTED_VE' => MotTestStatusName::ABORTED_VE,
+            'TS_FAILED'     => MotTestStatusName::FAILED,
+            'TS_PASSED'     => MotTestStatusName::PASSED,
+            'TS_REFUSED'    => MotTestStatusName::REFUSED,
+        ];
+
+        $sql = '
+            SELECT
+                COUNT(t.id) AS `year`,
+                SUM(
+                    CASE WHEN coalesce(t.completed_date, t.started_date) BETWEEN
+                             LAST_DAY(CURRENT_DATE() - INTERVAL 2 MONTH) + INTERVAL 1 DAY
+                             AND LAST_DAY(CURRENT_DATE()) - INTERVAL 1 MONTH + INTERVAL 1 DAY
+					THEN 1
+                    ELSE 0
+                    END
+                ) AS `month`,
+                SUM(
+					CASE WHEN coalesce(t.completed_date, t.started_date) BETWEEN
+							CURRENT_DATE() - INTERVAL WEEKDAY(CURRENT_DATE()) + 7 DAY
+							AND CURRENT_DATE() - INTERVAL WEEKDAY(CURRENT_DATE()) DAY
+					THEN 1
+                    ELSE 0
+                    END
+                ) AS `week`,
+                SUM(
+                    CASE WHEN coalesce(t.completed_date, t.started_date) >= CURRENT_DATE()
+                    THEN 1
+                    ELSE 0
+                    END
+                ) AS `today`
+
+            FROM
+                mot_test AS t
+
+                INNER JOIN mot_test_type AS tt ON
+                    tt.id = t.mot_test_type_id
+
+                INNER JOIN mot_test_status AS ts ON
+                    ts.id = t.status_id
+
+            WHERE
+                t.person_id = :person_id
+                AND (
+                    (
+                      t.completed_date IS NULL
+                      AND t.started_date >= (CURRENT_DATE() - INTERVAL 1 YEAR + INTERVAL 1 DAY)
+                    )
+                    OR (
+                        t.completed_date IS NOT NULL
+                        AND t.completed_date >= (CURRENT_DATE() - INTERVAL 1 YEAR + INTERVAL 1 DAY)
+                    )
+                )';
+
+        //  --  add test type where clause --
+        $whereParams = [];
+        foreach ($testTypes as $key => $val) {
+            $whereParams[] = ':' . $key;
+        }
+        $sql .= ' AND tt.code IN (' . join(', ', $whereParams) . ')';
+
+        //  --  add test type where clause --
+        $whereParams = [];
+        foreach ($statuses as $key => $val) {
+            $whereParams[] = ':' . $key;
+        }
+        $sql .= ' AND ts.name IN (' . join(', ', $whereParams) . ')';
+
+        //  ----  prepare statement and bind params   ----
+        $em = $this->getEntityManager();
+        $sql = $em->getConnection()->prepare($sql);
+
+        $sql->bindValue('person_id', $testerId);
+
+        //  --  bind test types --
+        foreach ($testTypes as $key => $val) {
+            $sql->bindValue($key, $val);
+        }
+
+        //  --  bind statuses --
+        foreach ($statuses as $key => $val) {
+            $sql->bindValue($key, $val);
+        }
+
+        $sql->execute();
+
+        return $sql->fetch();
+    }
+
     /**
      * This function is responsible to get the number of mot test realise the
      * current day
