@@ -9,11 +9,13 @@ use DvsaMotTest\Controller\ReplacementCertificateController;
 use DvsaMotTest\Controller\SpecialNoticesController;
 use DvsaMotTest\Controller\StartTestConfirmationController;
 use DvsaMotTest\Controller\VehicleSearchController;
+use DvsaMotTest\Controller\TesterMotTestLogController;
 use DvsaMotTest\Factory\Controller\RefuseToTestControllerFactory;
 use DvsaMotTest\Factory\Controller\ReplacementCertificateControllerFactory;
 use DvsaMotTest\Factory\Controller\SpecialNoticesControllerFactory;
 use DvsaMotTest\Factory\Controller\StartTestConfirmationControllerFactory;
 use DvsaMotTest\Factory\Controller\VehicleSearchControllerFactory;
+use DvsaMotTest\Factory\Controller\TesterMotTestLogControllerFactory;
 use DvsaMotTest\NewVehicle\Controller\CreateVehicleController;
 use DvsaMotTest\NewVehicle\Controller\Factory\CreateVehicleControllerFactory;
 
@@ -41,8 +43,9 @@ return [
         VehicleSearchController::class => VehicleSearchControllerFactory::class,
         StartTestConfirmationController::class => StartTestConfirmationControllerFactory::class,
         EnforcementMotTestSearchController::class => EnforcementMotTestSearchControllerFactory::class,
-        CreateVehicleController::class => CreateVehicleControllerFactory::class,
-        EnforcementMotTestController::class => EnforcementMotTestControllerFactory::class,
+        CreateVehicleController::class            => CreateVehicleControllerFactory::class,
+        EnforcementMotTestController::class       => EnforcementMotTestControllerFactory::class,
+        TesterMotTestLogController::class         => TesterMotTestLogControllerFactory::class,
         ReplacementCertificateController::class => ReplacementCertificateControllerFactory::class
     ],
 ];

@@ -25,6 +25,16 @@ class PersonContext implements Context
     private $userId;
 
     /**
+     * @var Response
+     */
+    private $userTestLogsSummary;
+
+    /**
+     * @var Response
+     */
+    private $userTestLogs;
+
+    /**
      * @var CustomerService
      */
     private $customerService;
@@ -352,5 +362,39 @@ class PersonContext implements Context
         }
 
         PHPUnit::assertEquals($role, $roles[$x], 'Role not returned in response object: '.$role);
+    }
+
+    /**
+     * @When I review my test logs
+     */
+    public function getTestLogs()
+    {
+        $this->userTestLogs = $this->person->getTesterTestLogs(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->sessionContext->getCurrentUserId()
+        );
+        $this->userTestLogsSummary = $this->person->getTesterTestLogsSummary(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->sessionContext->getCurrentUserId()
+        );
+    }
+
+    /**
+     * @Then /^([1-9]*) test logs should show today in summary section$/
+     */
+    public function TestLogsShouldShowTodayInSummarySection($number)
+    {
+        $summaryArray = $this->userTestLogsSummary->getBody()->toArray();
+
+        PHPUnit::assertEquals($number, $summaryArray['data']['today']);
+    }
+
+    /**
+     * @Then /^My test logs should return ([1-9]*) detailed records$/
+     */
+    public function MyTestLogsShouldReturnDetailedRecords($number)
+    {
+        $testLogsDataArray = $this->userTestLogs->getBody()->toArray();
+        PHPUnit::assertEquals($number, $testLogsDataArray['data']['resultCount']);
     }
 }

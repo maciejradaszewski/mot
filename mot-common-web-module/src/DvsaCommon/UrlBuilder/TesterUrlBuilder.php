@@ -11,7 +11,9 @@ class TesterUrlBuilder extends UrlBuilder
     const TESTER_FULL                = '/full';
     const TESTER_IN_PROGRESS_TEST_ID = '/in-progress-test-id';
     const VEHICLE_TESTING_STATIONS   = '/vehicle-testing-stations';
-    const VTS_SLOT_BALANCE   = '/vts-slot-balance';
+    const VTS_SLOT_BALANCE           = '/vts-slot-balance';
+    const TESTER_TEST_LOG            = '/mot-test-log';
+    const TESTER_TEST_LOG_SUMMARY    = '/summary';
 
     /**
      * @var array
@@ -23,6 +25,9 @@ class TesterUrlBuilder extends UrlBuilder
                 self::TESTER_IN_PROGRESS_TEST_ID => '',
                 self::VEHICLE_TESTING_STATIONS   => '',
                 self::VTS_SLOT_BALANCE           => '',
+                self::TESTER_TEST_LOG            => [
+                    self::TESTER_TEST_LOG_SUMMARY => '',
+                ],
             ],
         ];
 
@@ -74,5 +79,24 @@ class TesterUrlBuilder extends UrlBuilder
     {
         return (new TesterUrlBuilder())
             ->appendRoutesAndParams(self::TESTER);
+    }
+
+    /**
+     * @return $this
+     */
+    public static function motTestLog($testerId)
+    {
+        return self::create()
+            ->routeParam('id', $testerId)
+            ->appendRoutesAndParams(self::TESTER_TEST_LOG);
+    }
+
+    /**
+     * @return $this
+     */
+    public static function motTestLogSummary($testerId)
+    {
+        return self::motTestLog($testerId)
+            ->appendRoutesAndParams(self::TESTER_TEST_LOG_SUMMARY);
     }
 }

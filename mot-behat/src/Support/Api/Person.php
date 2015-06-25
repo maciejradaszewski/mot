@@ -9,6 +9,8 @@ class Person extends MotApi
     const PATH = 'person/{user_id}';
     const PATH_PERSONAL_DETAILS = 'personal-details/{user_id}';
     const PATH_TESTER = 'tester/{user_id}';
+    const PATH_TESTER_TEST_LOGS = 'tester/{user_id}/mot-test-log';
+    const PATH_TESTER_TEST_LOGS_SUMMARY = 'tester/{user_id}/mot-test-log/summary';
 
     public function getPersonMotTestingClasses($token, $user_id)
     {
@@ -35,6 +37,30 @@ class Person extends MotApi
             str_replace('{user_id}', $user_id, self::PATH_TESTER),
             ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
         ));
+    }
+
+    public function getTesterTestLogsSummary($token, $user_id)
+    {
+        return $this->client->request(new Request(
+            'GET',
+            str_replace('{user_id}', $user_id, self::PATH_TESTER_TEST_LOGS_SUMMARY),
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
+        ));
+    }
+
+    public function getTesterTestLogs($token, $user_id)
+    {
+        return $this->client->request(
+            new Request(
+                'POST',
+                str_replace('{user_id}', $user_id, self::PATH_TESTER_TEST_LOGS),
+                [
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Bearer '.$token
+                ],
+                '{"format":"DATA_TABLES","_class":"DvsaCommon\\\\Dto\\\\Search\\\\MotTestSearchParamsDto"}'
+            )
+        );
     }
 
     public function updateUserEmail($token, $user_id, $newEmail, $emailConfirmation = null)

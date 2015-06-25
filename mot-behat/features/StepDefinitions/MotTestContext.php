@@ -530,6 +530,26 @@ class MotTestContext implements Context
     }
 
     /**
+     * @Given /^I create (.*) mot tests$/
+     * @Given /^I have created (.*) mot tests$/
+     *
+     * @param $number
+     */
+    public function ICreateMotTests($number)
+    {
+        for ($i=0; $i < $number; $i++) {
+            $this->startMotTest();
+            $this->motTest->abort(
+                $this->sessionContext->getCurrentAccessToken(),
+                $this->motTest->getInProgressTestId(
+                    $this->sessionContext->getCurrentAccessToken(),
+                    $this->sessionContext->getCurrentUserId()
+                )
+            );
+        }
+    }
+
+    /**
      * @When /^I search for a vehicle without a manufactured date and first used date$/
      *
      */

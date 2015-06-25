@@ -1,0 +1,363 @@
+<?php
+
+namespace DvsaMotTestTest\Controller;
+
+use Core\Service\MotFrontendAuthorisationServiceInterface;
+use CoreTest\Controller\AbstractFrontendControllerTestCase;
+use DvsaClient\Mapper\MotTestLogMapper;
+use DvsaClient\Mapper\OrganisationMapper;
+use DvsaClient\MapperFactory;
+use DvsaCommon\Auth\PermissionAtOrganisation;
+use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\SearchParamConst;
+use DvsaCommon\Dto\Organisation\MotTestLogSummaryDto;
+use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Dto\Search\MotTestSearchParamsDto;
+use DvsaCommon\Dto\Search\SearchParamsDto;
+use DvsaCommon\Dto\Search\SearchResultDto;
+use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
+use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\Utility\DtoHydrator;
+use DvsaCommonTest\Bootstrap;
+use DvsaCommonTest\Controller\StubIdentityAdapter;
+use DvsaCommonTest\TestUtils\TestCasePermissionTrait;
+use DvsaCommonTest\TestUtils\XMock;
+use DvsaMotTest\Controller\TesterMotTestLogController;
+use Organisation\ViewModel\MotTestLog\MotTestLogFormViewModel;
+use PHPUnit_Framework_MockObject_MockObject as MockObj;
+use Zend\Http\Response;
+use Zend\Mvc\Controller\Plugin\FlashMessenger;
+use Zend\View\Model\ViewModel;
+use Zend\View\Renderer\PhpRenderer;
+
+class TesterMotTestLogControllerTest extends AbstractFrontendControllerTestCase
+{
+    use TestCasePermissionTrait;
+
+    private static $testerId = 1;
+
+    /**
+     * @var DtoHydrator
+     */
+    private $dtoHydrator;
+
+    /**
+     * @var  MotFrontendAuthorisationServiceInterface|MockObj
+     */
+    private $mockAuthSrv;
+
+    /**
+     * @var  MapperFactory|MockObj
+     */
+    private $mockMapperFactory;
+
+    /**
+     * @var  MotTestLogMapper|MockObj
+     */
+    private $mockMotTestLogMapper;
+
+    public function setUp()
+    {
+        $this->dtoHydrator = new DtoHydrator();
+
+        $serviceManager = Bootstrap::getServiceManager();
+        $serviceManager->setAllowOverride(true);
+        $this->setServiceManager($serviceManager);
+
+        $this->mockMapperFactory = $this->getMapperFactory();
+        $this->mockAuthSrv = XMock::of(MotFrontendAuthorisationServiceInterface::class);
+
+        $this->setController(
+            new TesterMotTestLogController(
+                $this->mockAuthSrv,
+                $this->mockMapperFactory
+            )
+        );
+
+        $this->getController()->setServiceLocator($serviceManager);
+
+        $this->createHttpRequestForController('MotTestLog');
+
+        parent::setUp();
+
+        $this->setupAuthenticationServiceForIdentity(StubIdentityAdapter::asTester());
+    }
+
+
+    public function testIndexAction()
+    {
+        $motTestLogSummaryDto = new MotTestLogSummaryDto();
+
+        $this->mockMethod(
+            $this->mockMotTestLogMapper,
+            'getTesterSummary',
+            $this->any(),
+            $motTestLogSummaryDto
+        );
+
+        $searchResultDto = new SearchResultDto();
+        $searchParamsDto = new SearchParamsDto();
+        $searchResultDto->setSearched($searchParamsDto);
+
+        $this->mockMethod(
+            $this->mockMotTestLogMapper,
+            'getTesterData',
+            $this->any(),
+            $searchResultDto
+        );
+
+
+        $this->getResultForAction2('get', 'index', [], ['_csrf_token' => true]);
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
+    }
+
+
+
+    /**
+     * Test creation of CVS file
+     *
+     * @throws \Exception
+     */
+    public function testDownloadCsv()
+    {
+        $apiResult = [
+            '1' => [
+                'testDateTime'  => '2014-12-10 23:59:59.000000',
+                'emRecDateTime' => '2013-12-11 23:59:59.000000',
+                'vehicleModel'  => '100',
+                'emCode'        => null,
+                'column11'      => 'row1 col1',
+                'column12'      => 99999,
+                'column13'      => 'row1 col2',
+            ],
+            '2' => [
+                'testDateTime'  => '2014-12-10 23:59:59.000000',
+                'emRecDateTime' => '2013-12-11 23:59:59.000000',
+                'vehicleModel'  => 200,
+                'emCode'        => '1',
+                'column21'      => 'row2 col1',
+                'column22'      => 88888,
+                'column23'      => 'row2 col2',
+            ],
+            '3' => [
+                'testDateTime'  => '2014-12-10 23:59:59.000000',
+                'emRecDateTime' => null,
+                'vehicleModel'  => '9-4',
+                'emCode'        => '1',
+                'column21'      => 'row2 col1',
+                'column22'      => 88888,
+                'column23'      => 'row2 col2',
+            ],
+        ];
+
+        $expectCsvResult = array_replace_recursive(
+            $apiResult,
+            [
+                1 => [
+                    'testDateTime'  => '10/12/2014 23:59:59',
+                    'emRecDateTime' => '11/12/2013 23:59:59',
+                    'vehicleModel'  => '="100"'
+                ],
+                2 => [
+                    'testDateTime'  => '10/12/2014',
+                    'emRecDateTime' => '11/12/2013 23:59:59',
+                    'vehicleModel'  => '="200"'
+                ],
+                3 => [
+                    'testDateTime'  => '10/12/2014',
+                    'emRecDateTime' => null,
+                    'vehicleModel'  => '="9-4"'
+                ],
+            ]
+        );
+
+        $resultDto = new SearchResultDto();
+        $resultDto
+            ->setData($apiResult)
+            ->setResultCount(count($apiResult))
+            ->setTotalResultCount(9999);
+
+        $this->mockMethod($this->mockMotTestLogMapper, 'getTesterData', null, $resultDto);
+
+        $queryParams = [
+            SearchParamConst::SEARCH_DATE_FROM_QUERY_PARAM => (new \DateTime('2013-12-11'))->getTimestamp(),
+            SearchParamConst::SEARCH_DATE_TO_QUERY_PARAM   => (new \DateTime('2014-03-02'))->getTimestamp(),
+        ];
+        $this->getResultForAction2('get', 'downloadCsv', ['id' => self::$testerId], $queryParams);
+
+        /** @var Response $response */
+        $response = $this->getController()->getResponse();
+
+        $this->assertResponseStatus(self::HTTP_OK_CODE, $response);
+
+        // prepare csv content and compare
+        $csvBuffer = fopen('php://memory', 'w');
+        foreach (([TesterMotTestLogController::$CSV_COLUMNS] + $expectCsvResult) as $line) {
+            fputcsv($csvBuffer, $line);
+        }
+        rewind($csvBuffer);
+        $expectContent = stream_get_contents($csvBuffer);
+        fclose($csvBuffer);
+
+        $this->assertEquals($expectContent, $response->getContent());
+
+        // check headers
+        $fileName = 'test-log-11122013-02032014.csv';
+
+        $expectHeaders = [
+            'Content-Type'        => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            'Cache-Control'       => 'max-age=0, must-revalidate, no-cache, no-store',
+            'Pragma'              => 'no-cache',
+            'Content-Length'      => strlen($expectContent),
+        ];
+
+        $headers = $response->getHeaders();
+        foreach ($expectHeaders as $name => $value) {
+            $this->assertEquals($value, $headers->get($name)->getFieldValue());
+        }
+    }
+
+    /**
+     * Test class methods getTesterLogDataBySearchCriteria and getTesterLogSummary
+     *
+     * @dataProvider dataProviderTestGetLogX
+     */
+    public function testGetMotLogX($classMethod, $mocks, $expect)
+    {
+        if ($mocks !== null) {
+            foreach ($mocks as $mock) {
+                $this->mockMethod(
+                    $this->{$mock['class']}, $mock['method'], $this->once(), $mock['result'], $mock['params']
+                );
+            }
+        }
+
+        //  logical block: call
+        $result = XMock::invokeMethod($this->getController(), $classMethod['name'], $classMethod['params']);
+
+        //  logical block: check
+        if (!empty($expect['errorMsg'])) {
+            $this->assertSame(
+                $expect['errorMsg'],
+                $this->controller->flashMessenger()->getCurrentErrorMessages()[0]
+            );
+        }
+
+        $this->assertSame($expect['return'], $result);
+    }
+
+    public function dataProviderTestGetLogX()
+    {
+        $paramsDto = $this->getSearchParams();
+
+        return [
+            //  getTesterLogDataBySearchCriteria
+            [
+                'method' => [
+                    'name' => 'getTesterLogDataBySearchCriteria',
+                    'params' => [self::$testerId, $paramsDto],
+                ],
+                'mocks'  => [
+                    [
+                        'class'  => 'mockMotTestLogMapper',
+                        'method' => 'getTesterData',
+                        'params' => [self::$testerId, $paramsDto],
+                        'result' => ['RESULT'],
+                    ],
+                ],
+                'expect'     => [
+                    'return' => ['RESULT'],
+                ],
+            ],
+            [
+                'method' => [
+                    'name' => 'getTesterLogDataBySearchCriteria',
+                    'params' => [self::$testerId, $paramsDto],
+                ],
+                'mocks'  => [
+                    [
+                        'class'  => 'mockMotTestLogMapper',
+                        'method' => 'getTesterData',
+                        'params' => [self::$testerId, $paramsDto],
+                        'result' => new RestApplicationException(
+                            '/', 'post', [], 10, [['displayMessage' => 'ErrorText']]
+                        ),
+                    ],
+                ],
+                'expect'     => [
+                    'return'   => null,
+                    'errorMsg' => 'ErrorText',
+                ],
+            ],
+
+            //  getLogSummary
+            [
+                'method' => [
+                    'name' => 'getLogSummary',
+                    'params' => [self::$testerId],
+                ],
+                'mocks'  => [
+                    [
+                        'class'  => 'mockMotTestLogMapper',
+                        'method' => 'getTesterSummary',
+                        'params' => [self::$testerId],
+                        'result' => ['RESULT'],
+                    ],
+                ],
+                'expect'     => [
+                    'return' => ['RESULT'],
+                ],
+            ],
+            [
+                'method' => [
+                    'name' => 'getLogSummary',
+                    'params' => [self::$testerId],
+                ],
+                'mocks'  => [
+                    [
+                        'class'  => 'mockMotTestLogMapper',
+                        'method' => 'getTesterSummary',
+                        'params' => [self::$testerId],
+                        'result' => new RestApplicationException(
+                            '/', 'get', [], 10, [['displayMessage' => 'ErrorText']]
+                        ),
+                    ],
+                ],
+                'expect'     => [
+                    'return'   => null,
+                    'errorMsg' => 'ErrorText',
+                ],
+            ],
+        ];
+    }
+
+    private function getSearchParams()
+    {
+        $paramsDto = new MotTestSearchParamsDto();
+        $paramsDto
+            ->setStatus([MotTestStatusName::PASSED])
+            ->setDateFromTs((new \DateTime('2013-12-11'))->getTimestamp())
+            ->setDateToTs((new \DateTime('2014-03-02'))->getTimestamp());
+
+        return $paramsDto;
+    }
+
+    private function getMapperFactory()
+    {
+        $mockMapperFactory = XMock::of(MapperFactory::class);
+
+        $this->mockMotTestLogMapper = XMock::of(MotTestLogMapper::class);
+
+        $map = [
+            [MapperFactory::MOT_TEST_LOG, $this->mockMotTestLogMapper],
+        ];
+
+        $mockMapperFactory->expects($this->any())
+            ->method('__get')
+            ->will($this->returnValueMap($map));
+
+        return $mockMapperFactory;
+    }
+}

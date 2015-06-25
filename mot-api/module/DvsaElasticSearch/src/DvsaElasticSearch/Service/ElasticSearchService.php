@@ -84,6 +84,19 @@ class ElasticSearchService
     }
 
     /**
+     * Search for MOT tests Log for current user
+     *
+     * @param MotTestSearchParam $params
+     *
+     * @return array
+     * @throws \UnexpectedValueException
+     */
+    public function findTesterTestsLog(MotTestSearchParam $params)
+    {
+        return SuperSearchQuery::execute($params, new FbQueryMotTestLog());
+    }
+
+    /**
      * Search for Vehicles
      *
      * @param VehicleSearchParam $params
