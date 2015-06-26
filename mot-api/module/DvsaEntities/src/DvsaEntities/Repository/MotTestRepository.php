@@ -391,7 +391,7 @@ class MotTestRepository extends AbstractMutableRepository
 
         if ($startDate !== null) {
             $qb
-                ->andWhere("mt.issuedDate >= :startDate")
+                ->andWhere("mt.issuedDate >= :startDate OR mt.issuedDate IS NULL")
                 ->setParameter("startDate", $startDate);
         }
 

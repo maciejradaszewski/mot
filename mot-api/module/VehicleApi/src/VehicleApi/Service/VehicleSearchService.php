@@ -282,7 +282,7 @@ class VehicleSearchService
                 /** @var MotTest $latestMotTest */
                 $latestMotTest = current($motTestData);
                 $result['mot_id'] = $latestMotTest->getNumber();
-                $result['mot_completed_date'] = $latestMotTest->getIssuedDate()->format('Y-m-d');
+                $result['mot_completed_date'] = $latestMotTest->getIssuedDate() ? $latestMotTest->getIssuedDate()->format('Y-m-d') : NULL;
                 $result['total_mot_tests'] = count($motTestData);
             }
         }

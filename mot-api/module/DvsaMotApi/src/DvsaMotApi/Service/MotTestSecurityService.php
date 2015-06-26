@@ -156,6 +156,10 @@ class MotTestSecurityService extends AbstractService
      */
     private function isOdometerReadingModificationWindowOpen(MotTest $motTest)
     {
+        if (!$motTest->getIssuedDate()) {
+            return FALSE;
+        }
+
         $checkResult = $this->validateOdometerReadingModificationWindowOpen($motTest);
         return $checkResult->isEmpty();
     }
