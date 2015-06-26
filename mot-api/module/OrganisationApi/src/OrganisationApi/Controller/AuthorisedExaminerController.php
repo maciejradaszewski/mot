@@ -46,6 +46,8 @@ class AuthorisedExaminerController extends AbstractDvsaRestfulController
 
     public function update($id, $data)
     {
+        $data = $this->sanitize($data);
+
         $dto    = DtoHydrator::jsonToDto($data);
         $result = $this->getAuthorisedExaminerService()->update($id, $dto);
 
@@ -58,5 +60,29 @@ class AuthorisedExaminerController extends AbstractDvsaRestfulController
     private function getAuthorisedExaminerService()
     {
         return $this->getServiceLocator()->get(AuthorisedExaminerService::class);
+    }
+
+    private function sanitize($data)
+    {
+        $sanitiseKeys = [
+            'addressLine1',
+            'addressLine2',
+            'addressLine3',
+            'fullAddressString',
+        ];
+
+        foreach($data as $key=>$value) {
+            if (is_array($value)) {
+                $data[$key] = $this->sanitize($value);
+            }
+
+            if (in_array($key, $sanitiseKeys)) {
+                if (!is_array($value)) {
+                    $data[ $key ] = htmlentities($value);
+                }
+            }
+        }
+
+        return $data;
     }
 }
