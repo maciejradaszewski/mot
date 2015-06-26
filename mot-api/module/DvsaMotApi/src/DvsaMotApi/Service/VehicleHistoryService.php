@@ -108,10 +108,13 @@ class VehicleHistoryService
                 [MotTestTypeCode::NORMAL_TEST, MotTestTypeCode::RE_TEST]
             );
 
-            $numberOfDaysPassedSinceTestIssue = (int) DateUtils::getDaysDifference(
-                DateUtils::cropTime(DateUtils::toDateTime($item->getIssuedDate())),
-                $this->dateTimeHolder->getCurrentDate()
-            );
+            $numberOfDaysPassedSinceTestIssue = $item->getIssuedDate()
+                ? (int)DateUtils::getDaysDifference(
+                    DateUtils::cropTime(DateUtils::toDateTime($item->getIssuedDate())),
+                    $this->dateTimeHolder->getCurrentDate()
+                )
+                : NULL;
+
             $isMostRecentNonAbandoned = $vehicleHistoryDto->isMostRecentNonAbandoned($item);
 
             $isEligibleToIssueReplacement = $this->isPossibleToIssueReplacement(

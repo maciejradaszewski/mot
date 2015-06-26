@@ -396,7 +396,15 @@ class MotTestDto extends AbstractDataTransferObject
      */
     public function getIssuedDate()
     {
-        return $this->issuedDate;
+        if ($this->issuedDate) {
+            return $this->issuedDate;
+        }
+
+        if ($this->completedDate) {
+            return $this->completedDate;
+        }
+
+        return $this->startedDate;
     }
 
     /**
