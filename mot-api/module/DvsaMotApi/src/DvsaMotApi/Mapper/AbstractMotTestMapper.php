@@ -185,7 +185,7 @@ abstract class AbstractMotTestMapper extends AbstractMapper
 
         // If the user has not selected "No Other Colour" then we need to concat the 2nd colour
         if ($colourSec instanceof ColourDto
-            && $colourSec->getCode() != ColourCode::NOT_STATED
+            && $colourSec->getCode() != ColourCode::NOT_STATED && !is_null($colourSec->getName())
         ) {
             $colour .= ' and ' . $colourSec->getName();
         }
