@@ -28,8 +28,8 @@ $motTestVehicleClass = new VehicleClass($motTest->getVehicleClass());
                     [
                         'label' => 'Registration number',
                         'value' => $hasRegistration
-                                ? strtoupper($motTest->getRegistration())
-                                : 'Not Displayed',
+                            ? strtoupper($motTest->getRegistration())
+                            : 'Not Displayed',
                         'id'    => 'registrationNumber',
                     ],
                     ['VIN/Chassis number', strtoupper($motTest->getVin()), 'id' => 'vinChassisNumber'],
@@ -37,8 +37,8 @@ $motTestVehicleClass = new VehicleClass($motTest->getVehicleClass());
                     [
                         'label' => 'Approx. First Use',
                         'value' => !empty($vehicle->getFirstUsedDate())
-                                ? DateTimeDisplayFormat::textDate($vehicle->getFirstUsedDate())
-                                : null,
+                            ? DateTimeDisplayFormat::textDate($vehicle->getFirstUsedDate())
+                            : null,
                         'id'    => 'aproxFirstUse',
                     ],
                 ],
@@ -55,9 +55,10 @@ $motTestVehicleClass = new VehicleClass($motTest->getVehicleClass());
 
         /** @var \DvsaCommon\Dto\Common\ColourDto $secondaryColour */
         $secondaryColour = $motTest->getSecondaryColour();
+        $secondaryColourName = $secondaryColour ? $secondaryColour->getName() : NULL;
 
-        if (!empty($secondaryColour) && $secondaryColour->getCode() !== ColourCode::NOT_STATED) {
-            $colour .= ' and ' . $secondaryColour->getName();
+        if ($secondaryColour && $secondaryColour->getCode() !== ColourCode::NOT_STATED && !empty($secondaryColourName)) {
+            $colour .= ' and ' . $secondaryColourName;
         }
         $make = $motTest->getMake();
         $model = $motTest->getModel();
@@ -74,8 +75,8 @@ $motTestVehicleClass = new VehicleClass($motTest->getVehicleClass());
                     [
                         'label' => 'Fuel type',
                         'value' => !empty($fuelType)
-                                ? $fuelType->getName()
-                                : null,
+                            ? $fuelType->getName()
+                            : null,
                         'id'    => 'fuel-type',
                     ],
                 ],

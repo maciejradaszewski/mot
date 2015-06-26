@@ -157,6 +157,11 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
         $secondaryColourDraft = $draft['secondaryColour'];
         /** @var ColourDto $secondaryColour */
         $secondaryColour = $motTest->getSecondaryColour();
+
+        if (!$secondaryColour) {
+            $secondaryColour = new ColourDto();
+        }
+
         $secondaryColour
             ->setName(ArrayUtils::tryGet($secondaryColourDraft, 'name'))
             ->setCode(ArrayUtils::tryGet($secondaryColourDraft, 'code'));
