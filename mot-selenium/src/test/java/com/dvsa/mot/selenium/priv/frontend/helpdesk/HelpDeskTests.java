@@ -158,8 +158,10 @@ public class HelpDeskTests extends BaseTest {
                 .navigateHereFromLoginPage(driver, Login.LOGIN_CUSTOMER_SERVICE)
                 .enterUsername(user.username).search().clickUserName(0).clickResetPassword();
 
+        System.out.println(person.getNamesAndSurname());
+
         assertEquals(helpdeskResetPasswordSuccessPage.getFirstTimeResetPasswordConfirmationText(),
-                "A letter will be sent to " + person.getNamesAndSurname()
+                "A letter will be sent to " + person.getFirstAndSurname()
                         + " giving instructions on how to reset the password for their account.",
                 "Check the correct message is displayed when reset password is triggered by post");
     }
@@ -183,7 +185,7 @@ public class HelpDeskTests extends BaseTest {
                         .clickRecoverUsername();
 
         assertEquals(helpdeskRecoverUsernameSuccessPage.getSuccessfulResetUsernameMessage(),
-                "A letter will be sent to " + person.getNamesAndSurname()
+                "A letter will be sent to " + person.getFirstAndSurname()
                         + " containing the username for their MOT account.",
                 "Check the correct message is displayed when username recovery is triggered by post");
     }

@@ -9,6 +9,7 @@ use TestSupport\Helper\RequestorParserHelper;
 
 class AccountPerson {
     private $firstName;
+    private $middleName;
     private $surname;
     private $username;
     private $emailAddress;
@@ -32,6 +33,7 @@ class AccountPerson {
         $this->username = ArrayUtils::tryGet($data, 'username', $dataGeneratorHelper->username());
         $this->emailAddress = ArrayUtils::tryGet($data, 'emailAddress', $dataGeneratorHelper->emailAddress());
         $this->firstName = ArrayUtils::tryGet($data, 'firstName', $dataGeneratorHelper->firstName());
+        $this->middleName= ArrayUtils::tryGet($data, 'middleName', $dataGeneratorHelper->middleName());
         $this->phoneNumber = ArrayUtils::tryGet($data, 'phoneNumber', $dataGeneratorHelper->phoneNumber());
         $this->surname = ArrayUtils::tryGet($data, 'surname', $dataGeneratorHelper->surname());
         $this->postcode = ArrayUtils::tryGet($data, 'postcode', 'BA1 5LR');
@@ -60,6 +62,11 @@ class AccountPerson {
     public function getFirstName()
     {
         return $this->firstName;
+    }
+
+    public function getMiddleName()
+    {
+        return $this->middleName;
     }
 
     public function getPhoneNumber()

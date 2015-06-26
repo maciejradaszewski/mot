@@ -58,6 +58,8 @@ class TesterService
      */
     protected $entityManager;
 
+    private $accountPerson;
+
     /**
      * @var array
      */
@@ -106,11 +108,10 @@ class TesterService
                 $data['emailAddress'] = $data['contactEmail'];
             }
 
+            $this->accountPerson = new AccountPerson($data, $dataGeneratorHelper);
             $account = $this->accountService->createAccount(
                 SiteBusinessRoleCode::TESTER,
-                $dataGeneratorHelper,
-                new AccountPerson($data, $dataGeneratorHelper)
-            );
+                $dataGeneratorHelper, $this->accountPerson);
         } else {
             $account = new Account($data);
         }
@@ -122,11 +123,20 @@ class TesterService
 
         return TestDataResponseHelper::jsonOk([
             "message"  => "Tester created",
+            "title"    => "Mr",
             "username" => $account->getUsername(),
             "password" => $account->getPassword(),
             "personId" => $account->getPersonId(),
             "firstName"=> $account->getFirstName(),
-            "surname"  => $account->getSurname()
+            "middleName" => $this->accountPerson->getMiddleName(),
+            "surname"  => $account->getSurname(),
+            "addressLine1" => $this->accountPerson->getAddressLine1(),
+            "addressLine2" => $this->accountPerson->getAddressLine2(),
+            "postcode" => $this->accountPerson->getPostcode(),
+            "phoneNumber" => $this->accountPerson->getPhoneNumber(),
+            "emailAddress" => $this->accountPerson->getEmailAddress(),
+            "multiSiteUser" => (isset($data['siteIds']) && count($data['siteIds']) > 1) ? true : false,
+            "dateOfBirth" => $this->accountPerson->getDateOfBirth()
         ]);
     }
 

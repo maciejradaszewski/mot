@@ -169,6 +169,10 @@ public class Person {
                 + getSurname();
     }
 
+    public String getFirstAndSurname() {
+        return getName() + " " + getSurname();
+    }
+
     public String getNamesAndSurname() {
         return getName() + (hasMiddleName() ? " " + getMiddleName() : "") + " " + getSurname();
     }

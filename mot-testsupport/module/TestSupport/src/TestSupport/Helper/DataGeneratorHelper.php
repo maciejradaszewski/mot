@@ -75,6 +75,11 @@ class DataGeneratorHelper
         return substr('Surname-Mc' . $this->differentiator, 0, 45);
     }
 
+    public function middleName()
+    {
+        return substr('Middle-Mc' . $this->differentiator, 0, 7);
+    }
+
     public function drivingLicenceNumber()
     {
         return 'D' . $this->differentiator;
@@ -87,11 +92,15 @@ class DataGeneratorHelper
 
     public function username()
     {
-        return preg_replace('/[^A-Z-a-z0-9]/', '', $this->emailAddress());
+        return preg_replace('/[^A-Z-a-z0-9]/', $this->generateRandomString() , $this->emailAddress());
     }
 
     public function prefix($role)
     {
         return (is_null($role)) ? 'user-' : strtolower($role) . '-';
+    }
+
+    private function generateRandomString($length = 2) {
+        return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
     }
 }
