@@ -8,7 +8,9 @@ use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Exception\UnauthorisedException;
+use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Transaction\TransactionAwareInterface;
 use DvsaCommonApi\Transaction\TransactionAwareTrait;
@@ -74,7 +76,14 @@ class OrganisationPositionService implements TransactionAwareInterface
 
         $organisation = $this->organisationRepository->get($organisationId);
 
-        return $this->positionMapper->manyToDto($organisation->getPositions());
+        $positions = ArrayUtils::filter($organisation->getPositions(),
+            function (OrganisationBusinessRoleMap $position) {
+                return $position->getBusinessRoleStatus()->getCode() == BusinessRoleStatusCode::ACTIVE
+                    || $position->getBusinessRoleStatus()->getCode() == BusinessRoleStatusCode::PENDING;
+            }
+        );
+
+        return $this->positionMapper->manyToDto($positions);
     }
 
     /**

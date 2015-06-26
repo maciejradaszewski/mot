@@ -2,9 +2,12 @@
 
 namespace SiteApi\Service;
 
+use DvsaCommon\Enum\BusinessRoleStatusCode;
+use DvsaCommon\Utility\ArrayUtils;
 use DvsaEntities\Entity;
 use OrganisationApi\Service\Mapper\ContactMapper;
 use SiteApi\Service\Mapper\SiteBusinessRoleMapMapper;
+use DvsaEntities\Entity\SiteBusinessRoleMap;
 
 /**
  * @deprecated we are aiming to remove this trait
@@ -79,7 +82,14 @@ trait ExtractSiteTrait
         $vehicleTestingData['facilities'] = $this->extractFacilitiesGroupedByType($vehicleTestingStation);
 
         //  --  positions  --
-        $positions = $this->positionMapper->manyToArray($vehicleTestingStation->getPositions());
+
+        $positions = ArrayUtils::filter($vehicleTestingStation->getPositions(),
+            function (SiteBusinessRoleMap $position) {
+                return $position->getBusinessRoleStatus()->getCode() == BusinessRoleStatusCode::ACTIVE
+                    || $position->getBusinessRoleStatus()->getCode() == BusinessRoleStatusCode::PENDING;
+            });
+
+        $positions = $this->positionMapper->manyToArray($positions);
         $vehicleTestingData['positions'] = $positions;
 
         // -- comments (temporary, awaiting stable new world order)
