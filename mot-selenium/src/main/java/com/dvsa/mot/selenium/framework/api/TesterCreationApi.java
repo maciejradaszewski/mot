@@ -76,7 +76,8 @@ public class TesterCreationApi extends BaseApi {
         JsonObject responseData = response.getJsonObject("data");
 
         return new Person(Integer.toString(responseData.getInt("personId")), "Mr",
-                responseData.getString("firstName"), "", responseData.getString("surname"), 0, 0,
+                responseData.getString("firstName"), responseData.getString("middleName"),
+                responseData.getString("surname"), 0, 0,
                 null, null, "test@email.com", null, null, Address.ADDRESS_ADDRESS1, null,
                 new Login(responseData.getString("username"), responseData.getString("password")),
                 null, null);

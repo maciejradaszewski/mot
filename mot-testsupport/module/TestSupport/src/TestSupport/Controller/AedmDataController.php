@@ -28,6 +28,8 @@ class AedmDataController extends BaseTestSupportRestfulController
     use RestClientGetterTrait;
     use NominatorTrait;
 
+    protected $accountPerson;
+
     /**
      *
      * @param mixed $data optional data with differentiator,
@@ -47,10 +49,11 @@ class AedmDataController extends BaseTestSupportRestfulController
 
         if (!isset($data['personId'])) {
             $dataGeneratorHelper = DataGeneratorHelper::buildForDifferentiator($data);
+
+            $this->accountPerson = new AccountPerson($data, $dataGeneratorHelper);
             $account = $accountService->createAccount(
                 OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
-                $dataGeneratorHelper,
-                new AccountPerson($data, $dataGeneratorHelper)
+                $dataGeneratorHelper, $this->accountPerson
             );
         } else {
             $account = new Account($data);
@@ -72,6 +75,7 @@ class AedmDataController extends BaseTestSupportRestfulController
                 "password" => $account->getPassword(),
                 "personId" => $account->getPersonId(),
                 "firstName" => $account->getFirstName(),
+                "middleName" => $this->accountPerson->getMiddleName(),
                 "surname"  => $account->getSurname()
             ]
         );

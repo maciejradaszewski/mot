@@ -27,6 +27,11 @@ class AccountDataService
     private $entityManager;
 
     /**
+     * @var Account Person
+     */
+    private $accountPerson;
+
+    /**
      * Set the service manager object
      * @param ServiceManager $serviceManager
      */
@@ -45,11 +50,11 @@ class AccountDataService
     public function create($data, $role = null)
     {
         $dataGenerator = DataGeneratorHelper::buildForDifferentiator($data);
+        $this->accountPerson = new AccountPerson($data, $dataGenerator);
 
         $account = $this->accountService->createAccount(
             $role,
-            $dataGenerator,
-            new AccountPerson($data, $dataGenerator)
+            $dataGenerator, $this->accountPerson
         );
 
         return TestDataResponseHelper::jsonOk([
@@ -57,6 +62,15 @@ class AccountDataService
             "username" => $account->getUsername(),
             "password" => $account->getPassword(),
             "personId" => $account->getPersonId(),
+            "firstName"=> $this->accountPerson->getFirstName(),
+            "middleName" => $this->accountPerson->getMiddleName(),
+            "surname"  => $this->accountPerson->getSurname(),
+            "addressLine1" => $this->accountPerson->getAddressLine1(),
+            "addressLine2" => $this->accountPerson->getAddressLine2(),
+            "postcode" => $this->accountPerson->getPostcode(),
+            "phoneNumber" => $this->accountPerson->getPhoneNumber(),
+            "emailAddress" => $this->accountPerson->getEmailAddress(),
+            "dateOfBirth" => $this->accountPerson->getDateOfBirth()
         ]);
     }
 

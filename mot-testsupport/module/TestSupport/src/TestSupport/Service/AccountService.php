@@ -63,6 +63,7 @@ class AccountService
             'username' => $username,
             'title' => 'Mr',
             'firstName' => $accountPerson->getFirstName(),
+            'middleName'=> $accountPerson->getMiddleName(),
             'surname' => $accountPerson->getSurname(),
             'gender' => 'Male',
             'drivingLicenceNumber' => $dataGeneratorHelper->drivingLicenceNumber(),

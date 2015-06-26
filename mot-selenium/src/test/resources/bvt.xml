@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Build Verification Test" parallel="classes" thread-count="7">
+    <test name="Build Verification Test">
+        <groups>
+            <run>
+                <include name="BVT"/>
+            </run>
+        </groups>
+        <packages>
+            <package name=".*"/>
+        </packages>
+    </test>
+</suite> 
