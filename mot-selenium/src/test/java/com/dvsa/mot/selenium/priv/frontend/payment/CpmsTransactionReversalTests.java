@@ -11,8 +11,10 @@ import com.dvsa.mot.selenium.priv.frontend.payment.pages.ChequePaymentOrderConfi
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.PaymentConfirmationPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.PaymentDetailsPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.TransactionReversalConfirmationPage;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class CpmsTransactionReversalTests extends BaseTest {
 
@@ -24,22 +26,23 @@ public class CpmsTransactionReversalTests extends BaseTest {
 
         PaymentConfirmationPage paymentCompletePage = PaymentConfirmationPage
                 .purchaseSlotsByCardSuccessfully(driver, aedmLogin, Payments.VALID_PAYMENTS);
-        Assert.assertTrue(paymentCompletePage.getStatusMessage().contains(
-                        Assertion.ASSERTION_PURCHASE_SLOTS_BY_CARD_SUCCESS_MESSAGE.assertion),
-                "Verifying Purchase Success Message");
+        assertThat("Verifying Purchase Success Message", paymentCompletePage.getStatusMessage()
+                        .contains(Assertion.ASSERTION_PURCHASE_SLOTS_BY_CARD_SUCCESS_MESSAGE.assertion),
+                is(true));
         paymentCompletePage.clickLogout();
 
         TransactionReversalConfirmationPage transactionReversalConfirmationPage = PaymentDetailsPage
                 .navigateHereFromTransactionHistoryPage(driver, login.LOGIN_FINANCE_USER, aeRef)
                 .clickReverseThisPaymentButton().clickConfirmReverseButton();
-        Assert.assertEquals(transactionReversalConfirmationPage.getReversalSuccessfulMessage(),
-                "The transaction has been successfully reversed",
-                "Verifying Successful reversal message");
+        assertThat("Verifying Successful reversal message",
+                transactionReversalConfirmationPage.getReversalSuccessfulMessage(),
+                is("The transaction has been successfully reversed"));
 
         PaymentDetailsPage paymentDetailsPageAfterReversal =
                 transactionReversalConfirmationPage.clickReturnToTransactionDetailsLink();
-        Assert.assertEquals(paymentDetailsPageAfterReversal.getTransactionStatusMessage(),
-                "This payment has been reversed", "Verifying status confirmation message");
+        assertThat("Verifying status confirmation message",
+                paymentDetailsPageAfterReversal.getTransactionStatusMessage(),
+                is("This payment has been reversed"));
 
     }
 
@@ -52,21 +55,22 @@ public class CpmsTransactionReversalTests extends BaseTest {
                 ChequePaymentOrderConfirmedPage
                         .purchaseSlotsByChequeSuccessfully(driver, login.LOGIN_FINANCE_USER, aeRef,
                                 ChequePayment.VALID_CHEQUE_PAYMENTS);
-        Assert.assertEquals(chequePaymentOrderConfirmedPage.getStatusMessage(),
-                Assertion.ASSERTION_FINANCE_USER_PURCHASE_SLOTS_BY_CHEQUE_SUCCESS_MESSAGE.assertion,
-                "Verifying Finance User Purchase slots by Cheque Success Message");
+        assertThat("Verifying Finance User Purchase slots by Cheque Success Message",
+                chequePaymentOrderConfirmedPage.getStatusMessage(),
+                is(Assertion.ASSERTION_FINANCE_USER_PURCHASE_SLOTS_BY_CHEQUE_SUCCESS_MESSAGE.assertion));
 
         TransactionReversalConfirmationPage transactionReversalConfirmationPage =
                 chequePaymentOrderConfirmedPage.clickViewPurchaseDetailsLink()
                         .clickReverseThisPaymentButton().clickConfirmReverseButton();
-        Assert.assertEquals(transactionReversalConfirmationPage.getReversalSuccessfulMessage(),
-                "The transaction has been successfully reversed",
-                "Verifying Successful reversal message");
+        assertThat("Verifying Successful reversal message",
+                transactionReversalConfirmationPage.getReversalSuccessfulMessage(),
+                is("The transaction has been successfully reversed"));
 
         PaymentDetailsPage paymentDetailsPageAfterReversal =
                 transactionReversalConfirmationPage.clickReturnToTransactionDetailsLink();
-        Assert.assertEquals(paymentDetailsPageAfterReversal.getTransactionStatusMessage(),
-                "This payment has been reversed", "Verifying status confirmation message");
+        assertThat("Verifying status confirmation message",
+                paymentDetailsPageAfterReversal.getTransactionStatusMessage(),
+                is("This payment has been reversed"));
     }
 
 }

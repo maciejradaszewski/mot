@@ -20,9 +20,7 @@ public class OrganisationSlotsUsagePage extends BasePage {
 
     @FindBy(id = "transactionHistoryTable") private WebElement slotUsageTable;
 
-    @FindBy(id = "pdf") private WebElement downloadPdfReportLink;
-
-    @FindBy(id = "csv") private WebElement downloadCsvReportLink;
+    @FindBy(id = "downloadFile") private WebElement downloadFiles;
 
     @FindBy(id = "today") private WebElement slotsUsedToday;
 
@@ -39,7 +37,7 @@ public class OrganisationSlotsUsagePage extends BasePage {
         checkTitle(PAGE_TITLE);
     }
 
-    public boolean isNumberOfSlotsUsedPresent() {
+    public boolean isNumberOfSlotsUsedDisplayed() {
         return numberOfSlotsUsed.isDisplayed();
     }
 
@@ -47,29 +45,15 @@ public class OrganisationSlotsUsagePage extends BasePage {
         return numberOfSlotsUsed.getText();
     }
 
-    public boolean isSlotUsageTablePresent() {
+    public boolean isSlotUsageTableDisplayed() {
         PageInteractionHelper interactionHelper = new PageInteractionHelper(driver);
         List<WebElement> table =
                 interactionHelper.findElementWithoutImplicitWaits(By.id("transactionHistoryTable"));
         return (table.size() > 0);
     }
 
-    public boolean isDownloadPdfReportLinkPresent() {
-        return downloadPdfReportLink.isDisplayed();
-    }
-
-    public boolean isDownloadCsvReportLinkPresent() {
-        return downloadCsvReportLink.isDisplayed();
-    }
-
-    public OrganisationSlotsUsagePage downloadPdfReport() {
-        downloadPdfReportLink.click();
-        return new OrganisationSlotsUsagePage(driver);
-    }
-
-    public OrganisationSlotsUsagePage downloadCsvReport() {
-        downloadCsvReportLink.click();
-        return new OrganisationSlotsUsagePage(driver);
+    public boolean isDownloadFileOptionsDisplayed() {
+        return downloadFiles.isDisplayed();
     }
 
     public OrganisationSlotsUsagePage filterSlotsUsedToday() {
@@ -96,6 +80,5 @@ public class OrganisationSlotsUsagePage extends BasePage {
         vtsNumber.click();
         return new VehicleTestStationSlotUsagePage(driver);
     }
-
 
 }

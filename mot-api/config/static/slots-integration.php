@@ -19,6 +19,7 @@ return [
             'slot-api\entity\mot-test'                          => DvsaEntities\Entity\MotTest::class,
             'slot-api\entity\direct-debit'                      => DvsaEntities\Entity\DirectDebit::class,
             'slot-api\entity\direct-debit-status'               => DvsaEntities\Entity\DirectDebitStatus::class,
+            'slot-api\entity\vehicle'                           => DvsaEntities\Entity\Vehicle::class,
         ]
     ]
 ];

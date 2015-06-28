@@ -100,3 +100,7 @@ services:
     dvsa.slot_purchase:
         class: Dvsa\Mot\Behat\Support\Api\SlotPurchase
         parent: dvsa.rest
+
+    dvsa.direct_debit:
+        class: Dvsa\Mot\Behat\Support\Api\DirectDebit
+        parent: dvsa.rest

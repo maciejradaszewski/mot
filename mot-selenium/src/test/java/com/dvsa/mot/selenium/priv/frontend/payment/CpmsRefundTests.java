@@ -11,8 +11,10 @@ import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.SearchForAePage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.ChequePaymentOrderConfirmedPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.PaymentConfirmationPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.SlotRefundConfirmationPage;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class CpmsRefundTests extends BaseTest {
 
@@ -30,8 +32,9 @@ public class CpmsRefundTests extends BaseTest {
                 detailsOfAuthorisedExaminerPage.clickRefundsLink().enterSlotsToBeRefunded("10")
                         .clickContinueToStartRefund().clickRefundSlotsButton();
 
-        Assert.assertEquals(slotRefundConfirmationPage.getRefundSuccessMessage(),
-                "The slot refund has been successful", "Verifying successful refund message");
+        assertThat("Verifying successful refund message",
+                slotRefundConfirmationPage.getRefundSuccessMessage(),
+                is("The slot refund has been successful"));
     }
 
     @Test(groups = {"Regression", "SPMS-255"}) public void financeUserRefundsCardPayment() {
@@ -49,8 +52,9 @@ public class CpmsRefundTests extends BaseTest {
                         .searchForAeAndSubmit(aeRef).clickRefundsLink().enterSlotsToBeRefunded("10")
                         .clickContinueToStartRefund().clickRefundSlotsButton();
 
-        Assert.assertEquals(slotRefundConfirmationPage.getRefundSuccessMessage(),
-                "The slot refund has been successful", "Verifying successful refund message");
+        assertThat("Verifying successful refund message",
+                slotRefundConfirmationPage.getRefundSuccessMessage(),
+                is("The slot refund has been successful"));
     }
 
 }

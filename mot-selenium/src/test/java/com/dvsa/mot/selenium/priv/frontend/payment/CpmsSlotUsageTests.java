@@ -13,10 +13,13 @@ import com.dvsa.mot.selenium.priv.frontend.organisation.management.authorisedexa
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.OrganisationSlotsUsagePage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.VehicleTestStationSlotUsagePage;
 import org.joda.time.DateTime;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 
 public class CpmsSlotUsageTests extends BaseTest {
 
@@ -45,62 +48,52 @@ public class CpmsSlotUsageTests extends BaseTest {
                 AuthorisedExaminerOverviewPage.navigateHereFromLoginPage(driver, aedmLogin)
                         .clickSlotUsageLink();
 
-        Assert.assertTrue(organisationSlotsUsagePage.isNumberOfSlotsUsedPresent(),
-                "Verifying Number of slots used displayed");
-        Assert.assertTrue(organisationSlotsUsagePage.isSlotUsageTablePresent(),
-                "Verifying Slot usage table present");
-        Assert.assertTrue(organisationSlotsUsagePage.isDownloadPdfReportLinkPresent(),
-                "Verifying PDF Link");
-        Assert.assertTrue(organisationSlotsUsagePage.isDownloadCsvReportLinkPresent(),
-                "Verifying CSV Link");
+        assertThat("Verifying Number of slots used",
+                organisationSlotsUsagePage.getNumberOfSlotsUsed(),
+                containsString(" used in the last 7 days"));
+        assertThat("Verifying Slot usage table displayed",
+                organisationSlotsUsagePage.isSlotUsageTableDisplayed(), is(true));
+        assertThat("Verifying Download file options displayed",
+                organisationSlotsUsagePage.isDownloadFileOptionsDisplayed(), is(true));
 
         OrganisationSlotsUsagePage slotsUsedTodayPage =
                 organisationSlotsUsagePage.filterSlotsUsedToday();
-
-        Assert.assertTrue(slotsUsedTodayPage.isNumberOfSlotsUsedPresent(),
-                "Verifying Number of slots used Today displayed");
-        Assert.assertTrue(slotsUsedTodayPage.isSlotUsageTablePresent(),
-                "Verifying Slot usage table present");
-        Assert.assertTrue(slotsUsedTodayPage.isDownloadPdfReportLinkPresent(),
-                "Verifying PDF Link");
-        Assert.assertTrue(slotsUsedTodayPage.isDownloadCsvReportLinkPresent(),
-                "Verifying CSV Link");
+        assertThat("Verifying Number of slots used - Today",
+                slotsUsedTodayPage.getNumberOfSlotsUsed(), is("1 slot used today"));
+        assertThat("Verifying Slot usage table displayed",
+                slotsUsedTodayPage.isSlotUsageTableDisplayed(), is(true));
+        assertThat("Verifying Download file options displayed",
+                slotsUsedTodayPage.isDownloadFileOptionsDisplayed(), is(true));
 
         OrganisationSlotsUsagePage slotsUsedLast7DaysPage =
                 organisationSlotsUsagePage.filterSlotsUsedLast7days();
-
-        Assert.assertTrue(slotsUsedLast7DaysPage.isNumberOfSlotsUsedPresent(),
-                "Verifying Number of slots used Last 7 days displayed");
-        Assert.assertTrue(slotsUsedLast7DaysPage.isSlotUsageTablePresent(),
-                "Verifying Slot usage table present");
-        Assert.assertTrue(slotsUsedLast7DaysPage.isDownloadPdfReportLinkPresent(),
-                "Verifying PDF Link");
-        Assert.assertTrue(slotsUsedLast7DaysPage.isDownloadCsvReportLinkPresent(),
-                "Verifying CSV Link");
+        assertThat("Verifying Number of slots used - 7days",
+                slotsUsedLast7DaysPage.getNumberOfSlotsUsed(),
+                containsString(" used in the last 7 days"));
+        assertThat("Verifying Slot usage table displayed",
+                slotsUsedLast7DaysPage.isSlotUsageTableDisplayed(), is(true));
+        assertThat("Verifying Download file options displayed",
+                slotsUsedLast7DaysPage.isDownloadFileOptionsDisplayed(), is(true));
 
         OrganisationSlotsUsagePage slotsUsedLast30DaysPage =
                 organisationSlotsUsagePage.filterSlotsUsedLast30days();
-
-        Assert.assertTrue(slotsUsedLast30DaysPage.isNumberOfSlotsUsedPresent(),
-                "Verifying Number of slots used Last 30 days displayed");
-        Assert.assertTrue(slotsUsedLast30DaysPage.isSlotUsageTablePresent(),
-                "Verifying Slot usage table present");
-        Assert.assertTrue(slotsUsedLast30DaysPage.isDownloadPdfReportLinkPresent(),
-                "Verifying PDF Link");
-        Assert.assertTrue(slotsUsedLast30DaysPage.isDownloadCsvReportLinkPresent(),
-                "Verifying CSV Link");
+        assertThat("Verifying Number of slots used - 30days",
+                slotsUsedLast30DaysPage.getNumberOfSlotsUsed(),
+                containsString(" used in the last 30 days"));
+        assertThat("Verifying Slot usage table displayed",
+                slotsUsedLast30DaysPage.isSlotUsageTableDisplayed(), is(true));
+        assertThat("Verifying Download file options displayed",
+                slotsUsedLast30DaysPage.isDownloadFileOptionsDisplayed(), is(true));
 
         OrganisationSlotsUsagePage slotsUsedLastYearPage =
                 organisationSlotsUsagePage.filterSlotsUsedLastYear();
-
-        Assert.assertTrue(slotsUsedLastYearPage.isNumberOfSlotsUsedPresent(),
-                "Verifying Number of slots used Last year displayed");
-        Assert.assertTrue(slotsUsedLastYearPage.isSlotUsageTablePresent(),
-                "Verifying Slot usage table present");
-        Assert.assertTrue(slotsUsedLastYearPage.isDownloadPdfReportLinkPresent(),
-                "Verifying PDF Link");
-        Assert.assertTrue(slotsUsedLastYearPage.isDownloadCsvReportLinkPresent(),
-                "Verifying CSV Link");
+        assertThat("Verifying Number of slots used - Lastyear",
+                slotsUsedLastYearPage.getNumberOfSlotsUsed(),
+                containsString(" used in the last year"));
+        assertThat("Verifying Slot usage table displayed",
+                slotsUsedLastYearPage.isSlotUsageTableDisplayed(), is(true));
+        assertThat("Verifying Download file options displayed",
+                slotsUsedLastYearPage.isDownloadFileOptionsDisplayed(), is(true));
     }
 
     @Test(groups = {"Regression", "SPMS-119"}) public void vtsSlotUsageReportTest() {
@@ -110,12 +103,10 @@ public class CpmsSlotUsageTests extends BaseTest {
                 AuthorisedExaminerOverviewPage.navigateHereFromLoginPage(driver, aedmLogin)
                         .clickSlotUsageLink().clickVtsNumber();
 
-        Assert.assertTrue(vehicleTestStationSlotUsagePage.isSlotUsageTableDisplayed(),
-                "Verifying Slot Usage Table");
-        Assert.assertTrue(vehicleTestStationSlotUsagePage.isDownloadPdfReportLinkDisplayed(),
-                "Verifying PDF Link");
-        Assert.assertTrue(vehicleTestStationSlotUsagePage.isDownloadCsvReportLinkDisplayed(),
-                "Verifying CSV Link");
+        assertThat("Verifying Slot Usage Table displayed",
+                vehicleTestStationSlotUsagePage.isSlotUsageTableDisplayed(), is(true));
+        assertThat("Verifying Download File options displayed",
+                vehicleTestStationSlotUsagePage.isDownloadFileOptionsDisplayed(), is(true));
     }
 
 }

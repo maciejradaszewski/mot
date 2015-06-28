@@ -11,9 +11,7 @@ public class VehicleTestStationSlotUsagePage extends BasePage {
 
     @FindBy(id = "transactionHistoryTable") private WebElement slotUsageTable;
 
-    @FindBy(id = "pdf") private WebElement downloadPdfReportLink;
-
-    @FindBy(id = "csv") private WebElement downloadCsvReportLink;
+    @FindBy(id = "downloadFile") private WebElement downloadFiles;
 
     public VehicleTestStationSlotUsagePage(WebDriver driver) {
         super(driver);
@@ -24,12 +22,8 @@ public class VehicleTestStationSlotUsagePage extends BasePage {
         return slotUsageTable.isDisplayed();
     }
 
-    public boolean isDownloadPdfReportLinkDisplayed() {
-        return downloadPdfReportLink.isDisplayed();
-    }
-
-    public boolean isDownloadCsvReportLinkDisplayed() {
-        return downloadCsvReportLink.isDisplayed();
+    public boolean isDownloadFileOptionsDisplayed() {
+        return downloadFiles.isDisplayed();
     }
 
 }
