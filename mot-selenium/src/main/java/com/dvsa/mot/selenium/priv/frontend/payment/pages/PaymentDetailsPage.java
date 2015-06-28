@@ -34,6 +34,8 @@ public class PaymentDetailsPage extends BasePage {
     @FindBy(id = "startChargeback") private WebElement reverseThisPaymentButton;
 
     @FindBy(id = "statusMessage") private WebElement transactionStatusMessage;
+    
+    @FindBy(id = "startAdjustment") private WebElement adjustThePaymentButton;
 
     public PaymentDetailsPage(WebDriver driver) {
         super(driver);
@@ -64,8 +66,13 @@ public class PaymentDetailsPage extends BasePage {
         return invoiceNumber.getText();
     }
 
-    public boolean isPrintButtonPresent() {
+    public boolean isPrintButtonDisplayed() {
         return printButton.isDisplayed();
+    }
+    
+    public ReasonForAdjustmentPage clickAdjustThePaymentButton() {
+        adjustThePaymentButton.click();
+        return new ReasonForAdjustmentPage(driver);
     }
 
     public boolean isReverseThisPaymentButtonDisplayed() {

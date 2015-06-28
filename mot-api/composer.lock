@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b3dca292005a87ac58eaf3bc91d02573",
+    "hash": "eea833ed617dbd943512385b522c7d14",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -48,7 +48,7 @@
         },
         {
             "name": "cpms/client",
-            "version": "v1.19",
+            "version": "v1.20",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:cpms/cpms-client.git",
@@ -84,20 +84,20 @@
         },
         {
             "name": "cpms/shared-reports",
-            "version": "v1.19.1",
+            "version": "v1.20",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:cpms/shared-reports.git",
-                "reference": "f97f74f6270de1efe9c453b73f653b1ebfb43e1e"
+                "reference": "8b12f0ea0227378997dbcc8af7451663a885db00"
             },
             "require": {
-                "cpms/client": "1.19.*",
+                "cpms/client": "1.20.*",
                 "php": ">=5.5",
                 "zendframework/zendframework": "<2.4.0"
             },
             "require-dev": {
-                "cpms/common": "1.19.*",
-                "cpms/payment-test": "1.19.*",
+                "cpms/common": "1.20.*",
+                "cpms/payment-test": "1.20.*",
                 "phpunit/phpunit": "4.0.*"
             },
             "type": "library",
@@ -120,7 +120,7 @@
                 "proprietary"
             ],
             "description": "Shared module for displaying reports",
-            "time": "2015-06-08 11:24:02"
+            "time": "2015-06-17 11:28:49"
         },
         {
             "name": "doctrine/annotations",
@@ -1204,15 +1204,15 @@
         },
         {
             "name": "slot-purchase/backend-api",
-            "version": "v2.3.1",
+            "version": "v2.4.4",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git",
-                "reference": "44073abd25128cb86d5c064a87f3c84ad5e3cd2c"
+                "reference": "8d737b94dcf5f5f63dcb3f9e7a2f7dc8d78dd748"
             },
             "require": {
-                "cpms/client": "1.19.*",
-                "cpms/shared-reports": "1.19.*",
+                "cpms/client": "1.20.*",
+                "cpms/shared-reports": "1.20.*",
                 "doctrine/doctrine-module": "0.8.0",
                 "doctrine/doctrine-orm-module": "~0.8.0-beta3",
                 "gedmo/doctrine-extensions": "2.3.*",
@@ -1240,7 +1240,7 @@
                 "proprietary"
             ],
             "description": "API for slot purchasing and related features",
-            "time": "2015-06-10 14:10:56"
+            "time": "2015-06-25 12:24:28"
         },
         {
             "name": "soflomo/purifier",
@@ -1475,12 +1475,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:zendframework/ZendPdf.git",
+                "url": "https://github.com/zendframework/ZendPdf.git",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },
@@ -1500,7 +1500,6 @@
                     "ZendPdf\\": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1510,6 +1509,10 @@
                 "pdf",
                 "zf2"
             ],
+            "support": {
+                "source": "https://github.com/zendframework/ZendPdf/tree/release-2.0.2",
+                "issues": "https://github.com/zendframework/ZendPdf/issues"
+            },
             "time": "2012-11-16 11:16:01"
         },
         {

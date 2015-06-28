@@ -32,6 +32,7 @@ default:
                 - AccountClaimContext
                 - InitiateRefundContext
                 - TempPasswordChangeContext
+                - DirectDebitContext
             filters:
                 tags: "~@functional"
         functional:

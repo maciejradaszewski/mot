@@ -16,6 +16,7 @@ parameters:
           Dvsa\Mot\Behat\Support\Api\Rest: dvsa.rest
           Dvsa\Mot\Behat\Support\Api\Session: dvsa.session
           Dvsa\Mot\Behat\Support\Api\SlotPurchase: dvsa.slot_purchase
+          Dvsa\Mot\Behat\Support\Api\DirectDebit: dvsa.direct_debit
           Dvsa\Mot\Behat\Support\Api\SpecialNotice: dvsa.special_notice
           Dvsa\Mot\Behat\Support\Api\Vehicle: dvsa.vehicle
           Dvsa\Mot\Behat\Support\Api\Vts: dvsa.vts

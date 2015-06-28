@@ -6,8 +6,8 @@ use Dvsa\Mot\Behat\Datasource\Authentication;
 use Dvsa\Mot\Behat\Support\Api\AccountClaim;
 use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Api\Session\AuthenticatedUser;
-use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use Dvsa\Mot\Behat\Support\Api\TempPasswordChange;
+use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 
 class SessionContext implements Context
 {
@@ -44,8 +44,8 @@ class SessionContext implements Context
      */
     public function __construct(AccountClaim $accountClaim, Session $session, TestSupportHelper $testSupportHelper)
     {
-        $this->accountClaim = $accountClaim;
-        $this->session = $session;
+        $this->accountClaim      = $accountClaim;
+        $this->session           = $session;
         $this->testSupportHelper = $testSupportHelper;
     }
 
@@ -191,9 +191,9 @@ class SessionContext implements Context
     public function iAmLoggedInAsATesterWithATempPassword()
     {
         $testerService = $this->testSupportHelper->getTesterService();
-        $tester = $testerService->create([
+        $tester        = $testerService->create([
             'passwordChangeRequired' => true,
-            'siteIds' => [1],
+            'siteIds'                => [1],
         ]);
 
         $this->currentUser = $this->session->startSession($tester->data['username'], $tester->data['password']);
@@ -259,5 +259,21 @@ class SessionContext implements Context
     public function iAmAuthenticatedAs($username)
     {
         $this->iMAuthenticatedWithMyUsernameAndPassword($username, Authentication::PASSWORD_DEFAULT);
+    }
+
+    /**
+     * @Given I am logged in as :role
+     */
+    public function iAmLoggedInAs($role)
+    {
+        $this->iMAuthenticatedWithMyUsernameAndPassword($role, Authentication::PASSWORD_DEFAULT);
+    }
+
+    /**
+     * @Given I am logged in as an Authorised Examiner
+     */
+    public function iAmLoggedInAsAnAuthorisedExaminer()
+    {
+        $this->iMAuthenticatedWithMyUsernameAndPassword('aedm', Authentication::PASSWORD_DEFAULT);
     }
 }

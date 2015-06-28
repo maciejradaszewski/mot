@@ -11,6 +11,7 @@ import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.SiteDetailsPage;
 import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.UpdateAeContactDetailsPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.AedmTestLogs;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.BuySlotsPage;
+import com.dvsa.mot.selenium.priv.frontend.payment.pages.ManageDirectDebitPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.OrganisationSlotsUsagePage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.SetUpDirectDebitPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.TransactionHistoryPage;
@@ -45,7 +46,9 @@ public class AuthorisedExaminerOverviewPage extends BasePage {
 
     @FindBy(id = "add-slots") private WebElement buySlotsLink;
     
-    @FindBy(id = "setup-direct-debit") private WebElement setupDirectDebitLink;
+    @FindBy(id = "setupDirectDebit") private WebElement setupDirectDebitLink;
+    
+    @FindBy(id = "manageDirectDebit") private WebElement manageDirectDebitLink;
     
     @FindBy(id = "slots-adjustment") private WebElement slotsAdjustmentLink;
     
@@ -220,6 +223,11 @@ public class AuthorisedExaminerOverviewPage extends BasePage {
         return new SetUpDirectDebitPage(driver);
     }
     
+    public ManageDirectDebitPage clickManageDirectDebitLink(){
+        manageDirectDebitLink.click();
+        return new ManageDirectDebitPage(driver);
+    }
+    
     public TransactionHistoryPage clickTransactionHistoryLink() {
     	transactionHistoryLink.click();
         return new TransactionHistoryPage(driver);
@@ -266,6 +274,10 @@ public class AuthorisedExaminerOverviewPage extends BasePage {
     
     public boolean isSetupDirectDebitLinkVisible() {
         return isElementDisplayed(setupDirectDebitLink);
+    }
+    
+    public boolean isManageDirectDebitLinkVisible() {
+        return isElementDisplayed(manageDirectDebitLink);
     }
     
     public boolean isSlotsAdjustmentLinkVisible() {

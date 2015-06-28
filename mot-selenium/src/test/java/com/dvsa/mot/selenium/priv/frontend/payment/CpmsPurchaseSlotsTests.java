@@ -7,10 +7,13 @@ import com.dvsa.mot.selenium.framework.api.authorisedexaminer.AeService;
 import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.SearchForAePage;
 import com.dvsa.mot.selenium.priv.frontend.organisation.management.authorisedexamineroverview.pages.AuthorisedExaminerOverviewPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.*;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 
 public class CpmsPurchaseSlotsTests extends BaseTest {
 
@@ -42,27 +45,29 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 AuthorisedExaminerOverviewPage.navigateHereFromLoginPage(driver, login.LOGIN_AEDM,
                         Business.EXAMPLE_AE_INC);
 
-        Assert.assertTrue(authorisedExaminerOverviewPage.isBuySlotsLinkVisible(),
-                "Verifying BuySlots link present");
-        Assert.assertTrue(authorisedExaminerOverviewPage.isTransactionHistoryLinkVisible(),
-                "Verifying TransactionHistory link present");
-        Assert.assertTrue(authorisedExaminerOverviewPage.isSlotsUsageLinkVisible(),
-                "Verifying SlotUsage link present");
-        Assert.assertTrue(authorisedExaminerOverviewPage.isSetupDirectDebitLinkVisible(),
-                "Verifying Setup DirectDebit Link present");
+        assertThat("Verifying BuySlots link present",
+                authorisedExaminerOverviewPage.isBuySlotsLinkVisible(), is(true));
+        assertThat("Verifying TransactionHistory link present",
+                authorisedExaminerOverviewPage.isTransactionHistoryLinkVisible(), is(true));
+        assertThat("Verifying SlotUsage link present",
+                authorisedExaminerOverviewPage.isSlotsUsageLinkVisible(), is(true));
+        assertThat("Verifying Setup DirectDebit Link present",
+                authorisedExaminerOverviewPage.isSetupDirectDebitLinkVisible(), is(true));
+        assertThat("Verifying Slots Adjustment link is not present for AEDM",
+                authorisedExaminerOverviewPage.isSlotsAdjustmentLinkVisible(), is(false));
     }
 
     @Test(groups = {"Regression", "SPMS-37"}) public void purchaseSlotsByCardSuccessfulJourney() {
         PaymentConfirmationPage paymentConfirmationPage = loginAsAedmAndPurchaseSlotsByCard();
 
-        Assert.assertTrue(paymentConfirmationPage.getStatusMessage().contains(
-                        Assertion.ASSERTION_PURCHASE_SLOTS_BY_CARD_SUCCESS_MESSAGE.assertion),
-                "Verifying Purchase Success Message");
-        Assert.assertEquals(paymentConfirmationPage.getSlotsOrdered(),
-                (Payments.VALID_PAYMENTS.slots + " slots"), "Verifying Slots Ordered");
-        Assert.assertEquals(paymentConfirmationPage.getTotalCost(), ("£" + String.format("%.2f",
-                (new BigDecimal(Payments.VALID_PAYMENTS.slots).multiply(Payments.COST_PER_SLOT)),
-                "Verifying Total Cost")));
+        assertThat("Verifying Purchase Success Message", paymentConfirmationPage.getStatusMessage(),
+                containsString(
+                        Assertion.ASSERTION_PURCHASE_SLOTS_BY_CARD_SUCCESS_MESSAGE.assertion));
+        assertThat("Verifying Slots Ordered", paymentConfirmationPage.getSlotsOrdered(),
+                is(Payments.VALID_PAYMENTS.slots + " slots"));
+        assertThat("Verifying Total Cost displayed", paymentConfirmationPage.getTotalCost(),
+                is("£" + String.format("%.2f", (new BigDecimal(Payments.VALID_PAYMENTS.slots)
+                        .multiply(Payments.COST_PER_SLOT)))));
     }
 
     @Test(groups = {"Regression", "SPMS-37"})
@@ -72,8 +77,8 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 .clickBuySlotsLink().enterSlotsRequired(Payments.MAXIMUM_SLOTS.slots)
                 .clickCalculateCostButtonInvalidSlots();
 
-        Assert.assertTrue(buySlotsPage.isExceedsMaximumSlotBalanceMessageDisplayed(),
-                "Verifying Maximum Slot Balance Exceeds Message displayed");
+        assertThat("Verifying Maximum Slot Balance Exceeds Message displayed",
+                buySlotsPage.isExceedsMaximumSlotBalanceMessageDisplayed(), is(true));
     }
 
     @Test(groups = {"Regression", "SPMS-88"}) public void purchaseSlotsUserCancelsPaymentTest() {
@@ -82,10 +87,10 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 .clickBuySlotsLink().enterSlotsRequired(Payments.VALID_PAYMENTS.slots)
                 .clickCalculateCostButton().clickPayByCardButton().clickCancelButton();
 
-        Assert.assertTrue(buySlotsPage.isSlotsRequiredVisible(),
-                "Verifying RequiredSlots field present");
-        Assert.assertTrue(buySlotsPage.isCalculateCostButtonVisible(),
-                "Verifying CalculateCost button present");
+        assertThat("Verifying RequiredSlots field present", buySlotsPage.isSlotsRequiredVisible(),
+                is(true));
+        assertThat("Verifying CalculateCost button present",
+                buySlotsPage.isCalculateCostButtonVisible(), is(true));
     }
 
     @Test(groups = {"Regression", "SPMS-47"}) public void transactionHistoryVerificationTest() {
@@ -95,58 +100,52 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 paymentConfirmationPage.clickBackToAuthorisedExaminerLink()
                         .clickTransactionHistoryLink();
 
-        Assert.assertTrue(transactionHistoryPage.isNumberOfTransactionsDisplayed(),
-                "Verifying NumberOfTransactions displayed");
-        Assert.assertTrue(transactionHistoryPage.isTransactionsTableDisplayed(),
-                "Verifying Transaction table is displayed");
-        Assert.assertTrue(transactionHistoryPage.isDownloadPdfLinkDisplayed(),
-                "Verifying PDF Link");
-        Assert.assertTrue(transactionHistoryPage.isDownloadCsvLinkDisplayed(),
-                "Verifying CSV Link");
+        assertThat("Verifying Number of purchases",
+                transactionHistoryPage.getNumberOfTransactionsText(),
+                is("1 purchase in the last 7 days"));
+        assertThat("Verifying Transaction table is displayed",
+                transactionHistoryPage.isTransactionsTableDisplayed(), is(true));
+        assertThat("Verifying download file options displayed",
+                transactionHistoryPage.isDownloadFileOptionsDisplayed(), is(true));
 
         TransactionHistoryPage todayTransactionsHistory =
                 transactionHistoryPage.clickTodayTransactionsLink();
-        Assert.assertTrue(todayTransactionsHistory.isNumberOfTransactionsDisplayed(),
-                "Verifying NumberOfTransactions displayed");
-        Assert.assertTrue(todayTransactionsHistory.isTransactionsTableDisplayed(),
-                "Verifying Transaction table is displayed");
-        Assert.assertTrue(todayTransactionsHistory.isDownloadPdfLinkDisplayed(),
-                "Verifying PDF Link");
-        Assert.assertTrue(todayTransactionsHistory.isDownloadCsvLinkDisplayed(),
-                "Verifying CSV Link");
+        assertThat("Verifying Number of purchases - Today",
+                todayTransactionsHistory.getNumberOfTransactionsText(), is("1 purchase today"));
+        assertThat("Verifying Transaction table is displayed",
+                todayTransactionsHistory.isTransactionsTableDisplayed(), is(true));
+        assertThat("Verifying download file options displayed",
+                todayTransactionsHistory.isDownloadFileOptionsDisplayed(), is(true));
 
         TransactionHistoryPage last7DaysTransactionsHistory =
                 transactionHistoryPage.clickLast7DaysTransactionsLink();
-        Assert.assertTrue(last7DaysTransactionsHistory.isNumberOfTransactionsDisplayed(),
-                "Verifying NumberOfTransactions displayed");
-        Assert.assertTrue(last7DaysTransactionsHistory.isTransactionsTableDisplayed(),
-                "Verifying Transaction table is displayed");
-        Assert.assertTrue(last7DaysTransactionsHistory.isDownloadPdfLinkDisplayed(),
-                "Verifying PDF Link");
-        Assert.assertTrue(last7DaysTransactionsHistory.isDownloadCsvLinkDisplayed(),
-                "Verifying CSV Link");
+        assertThat("Verifying Number of purchases - 7days",
+                last7DaysTransactionsHistory.getNumberOfTransactionsText(),
+                is("1 purchase in the last 7 days"));
+        assertThat("Verifying Transaction table is displayed",
+                last7DaysTransactionsHistory.isTransactionsTableDisplayed(), is(true));
+        assertThat("Verifying download file options displayed",
+                last7DaysTransactionsHistory.isDownloadFileOptionsDisplayed(), is(true));
 
         TransactionHistoryPage last30DaysTransactionsHistory =
                 transactionHistoryPage.clickLast30DaysTransactionsLink();
-        Assert.assertTrue(last30DaysTransactionsHistory.isNumberOfTransactionsDisplayed(),
-                "Verifying NumberOfTransactions displayed");
-        Assert.assertTrue(last30DaysTransactionsHistory.isTransactionsTableDisplayed(),
-                "Verifying Transaction table is displayed");
-        Assert.assertTrue(last30DaysTransactionsHistory.isDownloadPdfLinkDisplayed(),
-                "Verifying PDF Link");
-        Assert.assertTrue(last30DaysTransactionsHistory.isDownloadCsvLinkDisplayed(),
-                "Verifying CSV Link");
+        assertThat("Verifying Number of purchases - 30days",
+                last30DaysTransactionsHistory.getNumberOfTransactionsText(),
+                is("1 purchase in the last 30 days"));
+        assertThat("Verifying Transaction table is displayed",
+                last30DaysTransactionsHistory.isTransactionsTableDisplayed(), is(true));
+        assertThat("Verifying download file options displayed",
+                last30DaysTransactionsHistory.isDownloadFileOptionsDisplayed(), is(true));
 
         TransactionHistoryPage lastYearTransactionsHistory =
                 transactionHistoryPage.clickLastYearTransactionsLink();
-        Assert.assertTrue(lastYearTransactionsHistory.isNumberOfTransactionsDisplayed(),
-                "Verifying NumberOfTransactions displayed");
-        Assert.assertTrue(lastYearTransactionsHistory.isTransactionsTableDisplayed(),
-                "Verifying Transaction table is displayed");
-        Assert.assertTrue(lastYearTransactionsHistory.isDownloadPdfLinkDisplayed(),
-                "Verifying PDF Link");
-        Assert.assertTrue(lastYearTransactionsHistory.isDownloadCsvLinkDisplayed(),
-                "Verifying CSV Link");
+        assertThat("Verifying Number of purchases - Lastyear",
+                lastYearTransactionsHistory.getNumberOfTransactionsText(),
+                is("1 purchase in the last year"));
+        assertThat("Verifying Transaction table is displayed",
+                lastYearTransactionsHistory.isTransactionsTableDisplayed(), is(true));
+        assertThat("Verifying download file options displayed",
+                lastYearTransactionsHistory.isDownloadFileOptionsDisplayed(), is(true));
     }
 
     @Test(groups = {"Regression", "SPMS-47"}) public void paymentInvoiceDetailsVerificationTest() {
@@ -154,16 +153,16 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
         PaymentDetailsPage paymentDetailsPage =
                 paymentConfirmationPage.clickViewPurchaseDetailsLink();
 
-        Assert.assertEquals(paymentDetailsPage.getSupplierDetailsText(), "Supplier details",
-                "Verifying SupplierDetails present");
-        Assert.assertEquals(paymentDetailsPage.getPurchaserDetailsText(), "Purchaser details",
-                "Verifying PurchaserDetails present");
-        Assert.assertEquals(paymentDetailsPage.getPaymentDetailsText(), "Payment details",
-                "Verifying PaymentDetails present");
-        Assert.assertEquals(paymentDetailsPage.getOrderDetailsText(), "Order details",
-                "Verifying OrderDetails present");
-        Assert.assertTrue(paymentDetailsPage.isPrintButtonPresent(),
-                "Verifying Print button present");
+        assertThat("Verifying SupplierDetails displayed",
+                paymentDetailsPage.getSupplierDetailsText(), is("Supplier details"));
+        assertThat("Verifying PurchaserDetails displayed",
+                paymentDetailsPage.getPurchaserDetailsText(), is("Purchaser details"));
+        assertThat("Verifying PaymentDetails displayed", paymentDetailsPage.getPaymentDetailsText(),
+                is("Payment details"));
+        assertThat("Verifying OrderDetails displayed", paymentDetailsPage.getOrderDetailsText(),
+                is("Order details"));
+        assertThat("Verifying Print button present", paymentDetailsPage.isPrintButtonDisplayed(),
+                is(true));
     }
 
     @Test(groups = {"Regression", "SPMS-120"})
@@ -171,14 +170,14 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
         ChequePaymentOrderConfirmedPage chequePaymentOrderConfirmedPage =
                 loginAsFinanceUserAndPurchaseSlotsByCheque();
 
-        Assert.assertEquals(chequePaymentOrderConfirmedPage.getStatusMessage(),
-                Assertion.ASSERTION_FINANCE_USER_PURCHASE_SLOTS_BY_CHEQUE_SUCCESS_MESSAGE.assertion,
-                "Verifying Finance User Purchase slots by Cheque Success Message");
-        Assert.assertEquals(chequePaymentOrderConfirmedPage.getTotalSlotsOrdered(),
-                (ChequePayment.VALID_CHEQUE_PAYMENTS.slots + " test slots"),
-                "Verifying Total Slots Ordered");
-        Assert.assertEquals(chequePaymentOrderConfirmedPage.getTotalCost(),
-                ("£" + ChequePayment.VALID_CHEQUE_PAYMENTS.cost), "Verifying Total Cost");
+        assertThat("Verifying Purchase Success Message",
+                chequePaymentOrderConfirmedPage.getStatusMessage(),
+                is(Assertion.ASSERTION_FINANCE_USER_PURCHASE_SLOTS_BY_CHEQUE_SUCCESS_MESSAGE.assertion));
+        assertThat("Verifying Total Slots Ordered",
+                chequePaymentOrderConfirmedPage.getTotalSlotsOrdered(),
+                is(ChequePayment.VALID_CHEQUE_PAYMENTS.slots + " test slots"));
+        assertThat("Verifying Total Cost", chequePaymentOrderConfirmedPage.getTotalCost(),
+                is("£" + ChequePayment.VALID_CHEQUE_PAYMENTS.cost));
     }
 
     @Test(groups = {"Regression", "SPMS-120"})
@@ -194,8 +193,8 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                         .enterChequeDetails(ChequePayment.EXCESS_CHEQUE_PAYMENTS)
                         .clickCreateOrderButtonWithExcessAmount();
 
-        Assert.assertTrue(enterChequeDetailsPage.isValidationErrorMessageDisplayed(),
-                "Verifying validation error displayed");
+        assertThat("Verifying validation error displayed",
+                enterChequeDetailsPage.isValidationErrorMessageDisplayed(), is(true));
     }
 
     @Test(groups = {"Regression", "SPMS-199"})
@@ -212,14 +211,14 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                         .selectPaymentReference().enterReferenceAndSubmitSearch(paymentReference)
                         .clickReferenceLink(paymentReference);
 
-        Assert.assertEquals(searchedPaymentDetailsPage.getSupplierDetailsText(), "Supplier details",
-                "Verifying SupplierDetails present");
-        Assert.assertEquals(searchedPaymentDetailsPage.getPurchaserDetailsText(),
-                "Purchaser details", "Verifying PurchaserDetails present");
-        Assert.assertEquals(searchedPaymentDetailsPage.getPaymentDetailsText(), "Payment details",
-                "Verifying PaymentDetails present");
-        Assert.assertEquals(searchedPaymentDetailsPage.getOrderDetailsText(), "Order details",
-                "Verifying OrderDetails present");
+        assertThat("Verifying SupplierDetails displayed",
+                searchedPaymentDetailsPage.getSupplierDetailsText(), is("Supplier details"));
+        assertThat("Verifying PurchaserDetails displayed",
+                searchedPaymentDetailsPage.getPurchaserDetailsText(), is("Purchaser details"));
+        assertThat("Verifying PaymentDetails displayed",
+                searchedPaymentDetailsPage.getPaymentDetailsText(), is("Payment details"));
+        assertThat("Verifying OrderDetails displayed",
+                searchedPaymentDetailsPage.getOrderDetailsText(), is("Order details"));
     }
 
     @Test(groups = {"Regression", "SPMS-77"})
@@ -236,14 +235,14 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                         .selectInvoiceReference().enterReferenceAndSubmitSearch(invoiceReference)
                         .clickReferenceLink(invoiceReference);
 
-        Assert.assertEquals(searchedPaymentDetailsPage.getSupplierDetailsText(), "Supplier details",
-                "Verifying SupplierDetails present");
-        Assert.assertEquals(searchedPaymentDetailsPage.getPurchaserDetailsText(),
-                "Purchaser details", "Verifying PurchaserDetails present");
-        Assert.assertEquals(searchedPaymentDetailsPage.getPaymentDetailsText(), "Payment details",
-                "Verifying PaymentDetails present");
-        Assert.assertEquals(searchedPaymentDetailsPage.getOrderDetailsText(), "Order details",
-                "Verifying OrderDetails present");
+        assertThat("Verifying SupplierDetails displayed",
+                searchedPaymentDetailsPage.getSupplierDetailsText(), is("Supplier details"));
+        assertThat("Verifying PurchaserDetails displayed",
+                searchedPaymentDetailsPage.getPurchaserDetailsText(), is("Purchaser details"));
+        assertThat("Verifying PaymentDetails displayed",
+                searchedPaymentDetailsPage.getPaymentDetailsText(), is("Payment details"));
+        assertThat("Verifying OrderDetails displayed",
+                searchedPaymentDetailsPage.getOrderDetailsText(), is("Order details"));
     }
 
 }

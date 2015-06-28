@@ -25,9 +25,7 @@ public class TransactionHistoryPage extends BasePage {
 
     @FindBy(id = "transactionHistoryTable") private WebElement transactionsTable;
 
-    @FindBy(id = "PDF") private WebElement downloadPdfLink;
-
-    @FindBy(id = "CSV") private WebElement downloadCsvLink;
+    @FindBy(id = "downloadFile") private WebElement downloadFiles;
 
     @FindBy(xpath = "id('transactionHistoryTable')/tbody/tr/td[1]/a") private WebElement
             firstTransactionNumber;
@@ -52,12 +50,8 @@ public class TransactionHistoryPage extends BasePage {
         return (table.size() > 0);
     }
 
-    public boolean isDownloadPdfLinkDisplayed() {
-        return downloadPdfLink.isDisplayed();
-    }
-
-    public boolean isDownloadCsvLinkDisplayed() {
-        return downloadCsvLink.isDisplayed();
+    public boolean isDownloadFileOptionsDisplayed() {
+        return downloadFiles.isDisplayed();
     }
 
     public TransactionHistoryPage clickTodayTransactionsLink() {
