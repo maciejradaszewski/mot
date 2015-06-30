@@ -13,7 +13,7 @@
         "maglnet/magl-markdown": "1.3.0",
         "soflomo/purifier": "0.1.1",
         "slot-purchase/web-frontend": "2.4.*",
-        "dvsa/web-frontend-assets": "0.2.10",
+        "dvsa/web-frontend-assets": "0.4.1",
         "dvsa/dvsa-application-logger": "~1.1"
     },
     "autoload" : {
