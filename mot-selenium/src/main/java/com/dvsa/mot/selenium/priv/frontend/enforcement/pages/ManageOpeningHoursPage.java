@@ -84,7 +84,7 @@ public class ManageOpeningHoursPage extends BasePage {
     public SiteDetailsPage cancelAndReturnToVTS(String site) {
 
         WebElement cancelAndGoBackToVTS = driver.findElement(
-                By.xpath("//a[contains(.,'Cancel and return to " + site + "')]"));
+                By.xpath("//a[contains(.,'Cancel and return to " + site + " details')]"));
         cancelAndGoBackToVTS.click();
         return new SiteDetailsPage(driver);
     }
