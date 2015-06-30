@@ -106,6 +106,7 @@ final class PermissionInSystem
     const PROFILE_EDIT_OWN_CONTACT_DETAILS = 'PROFILE-EDIT-OWN-CONTACT-DETAILS';
     const PROFILE_EDIT_OTHERS_EMAIL_ADDRESS = 'PROFILE-EDIT-OTHERS-EMAIL-ADDRESS';
     const CERTIFICATE_PRINT = 'CERTIFICATE-PRINT';
+    const CERTIFICATE_SEARCH = 'CERTIFICATE-SEARCH';
 
     /**
      * @return array
@@ -204,6 +205,7 @@ final class PermissionInSystem
             self::PROFILE_EDIT_OTHERS_PERSONAL_DETAILS,
             self::PROFILE_EDIT_OTHERS_EMAIL_ADDRESS,
             self::PROFILE_EDIT_OWN_CONTACT_DETAILS,
+            self::CERTIFICATE_SEARCH
         ];
     }
 }

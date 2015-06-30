@@ -25,10 +25,10 @@ import static org.hamcrest.Matchers.is;
 public class DVSAReIssueDuplicateReplacementCertificateTest extends BaseTest {
 
     Site defaultSite = Site.POPULAR_GARAGES;
-    
+
     @DataProvider public Object[][] dvsaLoginsRePrintCertificate() {
         return new Object[][] {{Login.LOGIN_AREA_OFFICE1}, {Login.LOGIN_DVLA_CENTRAL_OPERATIVE},
-                {Login.LOGIN_CUSTOMER_SERVICE},};
+                {Login.LOGIN_CUSTOMER_SERVICE}, {Login.LOGIN_AREA_OFFICE2}};
     }
 
     @Test(groups = {"VM-2269", "VM-4515", "VM-2268", "E2E", "VM-7269", "VM-7276", "VM-2268",
@@ -51,10 +51,14 @@ public class DVSAReIssueDuplicateReplacementCertificateTest extends BaseTest {
                 duplicateReplacementCertificatePrintPage.isPrintDocumentButtonDisplayed());
     }
 
+    @DataProvider public Object[][] dvsaLoginReIssuesAndEditCertificate() {
+        return new Object[][] {{Login.LOGIN_AREA_OFFICE1}, {Login.LOGIN_AREA_OFFICE2}};
+    }
+
     @Test(enabled = true, groups = {"VM-2570", "VM-2571", "VM-2597", "VM-4648", "VM-7785", "E2E",
             "VM-7269", "VM-4346", "Regression"},
-            description = "Edit fail replacement certificate")
-    public void testDVSAUserIssueAndEditReplacementCertificate() {
+            description = "Edit fail replacement certificate", dataProvider = "dvsaLoginReIssuesAndEditCertificate")
+    public void testDVSAUserIssueAndEditReplacementCertificate(Login dvsaUserLogin) {
         Site vts = Site.JOHNS_MOTORCYCLE_GARAGE;
         Colour primaryColour = Colour.Bronze;
         Colour secondaryColour = Colour.Maroon;
@@ -63,7 +67,7 @@ public class DVSAReIssueDuplicateReplacementCertificateTest extends BaseTest {
 
         ReplacementCertificateReviewPage replacementCertificateReviewPage =
                 DuplicateReplacementCertificatePage
-                        .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1, vehicle)
+                        .navigateHereFromLoginPage(driver, dvsaUserLogin, vehicle)
 
                         .clickEditButtonPass()
                         .editMakeAndModelAndSubmit(VehicleMake.Ford, VehicleModel.Ford_MONDEO)
@@ -77,9 +81,10 @@ public class DVSAReIssueDuplicateReplacementCertificateTest extends BaseTest {
         Assert.assertEquals(replacementCertificateReviewPage.testStatus(), (Text.TEXT_STATUS_PASS));
         Assert.assertEquals(replacementCertificateReviewPage.odometerReading(),
                 (Text.TEXT_UPDATED_ODOMETER));
-        Assert.assertEquals(replacementCertificateReviewPage.vehicleMake(), VehicleMake.Ford.getVehicleMake());
+        Assert.assertEquals(replacementCertificateReviewPage.vehicleMake(),
+                VehicleMake.Ford.getVehicleMake());
         Assert.assertEquals(replacementCertificateReviewPage.vehicleModel(),
-               VehicleModel.Ford_MONDEO.getModelName());
+                VehicleModel.Ford_MONDEO.getModelName());
 
         assertThat("Updated VTS is not displayed in Replacement Certificate Review page",
                 replacementCertificateReviewPage.getVtsName(),

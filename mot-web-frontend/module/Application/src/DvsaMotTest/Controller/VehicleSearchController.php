@@ -165,7 +165,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
      */
     public function replacementCertificateVehicleSearchAction()
     {
-        $this->assertGranted(PermissionInSystem::CERTIFICATE_READ);
+        $this->assertGranted(PermissionInSystem::CERTIFICATE_SEARCH);
 
         if (!$this->getAuthorizationService()->isGranted(PermissionInSystem::CERTIFICATE_READ_FROM_ANY_SITE)
             && !$this->getIdentity()->getCurrentVts()

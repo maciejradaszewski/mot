@@ -12,7 +12,7 @@ public class ReplacementCertificateCompletePage extends BasePage {
 
     private static String PAGE_TITLE = "TEST RESULTS UPDATED SUCCESSFULLY";
 
-    @FindBy(id = "quit") private WebElement doneButton;
+    @FindBy(id = "done") private WebElement doneButton;
 
     @FindBy(id = "reprint-certificate") private WebElement reprintReceiptButton;
 
@@ -32,7 +32,6 @@ public class ReplacementCertificateCompletePage extends BasePage {
 
     public UserDashboardPage clickDoneButton() {
         doneButton.click();
-        //return LoginPage;
         return new UserDashboardPage(driver);
     }
 

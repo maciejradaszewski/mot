@@ -29,7 +29,7 @@ use UserAdmin\Controller\UserSearchController;
             </a>
         </li>
     <?php endif; ?>
-    <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::CERTIFICATE_PRINT)): ?>
+    <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::CERTIFICATE_SEARCH)): ?>
         <li>
             <a href="<?php echo $this->url(VehicleSearchController::ROUTE_REPLACEMENT_CERTIFICATE_VEHICLE_SEARCH); ?>"
                id="action-start-certificate-reissue">

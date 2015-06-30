@@ -39,7 +39,7 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
         </div>
 
         <div class="col-lg-8">
-            <a id="quit" class="btn btn-primary"
+            <a id="done" class="btn btn-primary"
                href="<?php echo $this->url(\Dashboard\Controller\UserHomeController::ROUTE); ?>">Done</a>
             <a id="print" target="_blank" class="btn btn-primary"
                href="<?php echo MotTestUrlBuilderWeb::printCertificate($this->motTestNumber); ?>">Print</a>
