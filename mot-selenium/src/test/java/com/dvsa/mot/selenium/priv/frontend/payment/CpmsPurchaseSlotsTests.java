@@ -70,7 +70,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                         .multiply(Payments.COST_PER_SLOT)))));
     }
 
-    @Test(groups = {"Regression", "SPMS-37"})
+    @Test(enabled=false, groups = {"Regression", "SPMS-37"})
     public void purchaseSlotsExceedingMaximumBalanceErrorTest() {
         BuySlotsPage buySlotsPage = AuthorisedExaminerOverviewPage
                 .navigateHereFromLoginPage(driver, login.LOGIN_AEDM, Business.EXAMPLE_AE_INC)
@@ -81,7 +81,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 buySlotsPage.isExceedsMaximumSlotBalanceMessageDisplayed(), is(true));
     }
 
-    @Test(groups = {"Regression", "SPMS-88"}) public void purchaseSlotsUserCancelsPaymentTest() {
+    @Test(enabled=false, groups = {"Regression", "SPMS-88"}) public void purchaseSlotsUserCancelsPaymentTest() {
         BuySlotsPage buySlotsPage = AuthorisedExaminerOverviewPage
                 .navigateHereFromLoginPage(driver, login.LOGIN_AEDM, Business.EXAMPLE_AE_INC)
                 .clickBuySlotsLink().enterSlotsRequired(Payments.VALID_PAYMENTS.slots)
