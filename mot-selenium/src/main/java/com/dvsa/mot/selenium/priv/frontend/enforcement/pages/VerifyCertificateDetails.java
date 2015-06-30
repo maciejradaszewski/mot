@@ -29,12 +29,6 @@ public class VerifyCertificateDetails {
                 .trim();
     }
 
-    public String getVT30Make(String parsedText) {
-        int startIndex = parsedText.indexOf(Text.TEXT_MAKE);
-        int lastIndex = parsedText.indexOf(Text.TEXT_MODEL);
-        return parsedText.substring(startIndex + Text.TEXT_MAKE.length() + 1, lastIndex).trim();
-    }
-
     public String getVT30VRM(String parsedText) {
         int startIndex = parsedText.indexOf(Text.TEXT_VEHICLE_REGISTRATION_MARK);
         int lastIndex = parsedText.indexOf(Text.TEXT_VEHICLE_IDENTIFICATION_NUMBER);

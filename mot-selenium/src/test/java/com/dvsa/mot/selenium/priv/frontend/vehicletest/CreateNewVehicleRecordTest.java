@@ -35,14 +35,11 @@ public class CreateNewVehicleRecordTest extends BaseTest {
         assertThat("Search form not displayed", searchVehicle.isVehicleSearchFormDisplayed(),
                 is(true));
 
-        searchVehicle.typeReg(vehicle.carReg).typeVIN(vehicle.fullVIN).submitSearchExpectingError()
+        CreateNewVehicleRecordVehicleSpecificationPage
+        createNewVehicleRecordVehicleSpecificationPage = searchVehicle.typeReg(vehicle.carReg).typeVIN(vehicle.fullVIN).submitSearchExpectingError()
                 .createNewVehicle().enterVehicleDetails(vehicle)
                 .submit().
                 enterVehicleDetailsWithOutCylinderCapacity(vehicle).submitDetailsExpectingError();
-
-        CreateNewVehicleRecordVehicleSpecificationPage
-                createNewVehicleRecordVehicleSpecificationPage =
-                new CreateNewVehicleRecordVehicleSpecificationPage(driver);
 
         assertThat(createNewVehicleRecordVehicleSpecificationPage.isErrorMessageDisplayed(),
                 is(true));

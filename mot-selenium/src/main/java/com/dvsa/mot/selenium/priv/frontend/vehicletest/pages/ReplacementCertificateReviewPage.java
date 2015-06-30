@@ -6,7 +6,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.Select;
 
 public class ReplacementCertificateReviewPage extends BasePage {
 
@@ -68,11 +67,6 @@ public class ReplacementCertificateReviewPage extends BasePage {
         }
     }
 
-    public DuplicateReplacementCertificateSearchPage cancelAndReturnToVehicleButton() {
-        cancelAndReturnToVehicle.click();
-        return new DuplicateReplacementCertificateSearchPage(driver);
-    }
-
     public String testStatus() {
         return testStatus.getText();
     }
@@ -121,22 +115,12 @@ public class ReplacementCertificateReviewPage extends BasePage {
         return new ReplacementCertificateCompletePage(driver);
     }
 
-    public ReplacementCertificateCompletePage finishAndPrintCertificate(String oneTimePassword) {
-        enterOneTimePassword(oneTimePassword);
-        return finishAndPrintCertificate();
-    }
-
     public ReplacementCertificateReviewPage finishAndPrintCertificateExpectingError() {
         disablePrintingOnCurrentPage();
         printReplacementCertificate.click();
         return new ReplacementCertificateReviewPage(driver);
     }
 
-    public ReplacementCertificateReviewPage selectReasonForDifferentTesterByIndex(int position) {
-        Select s = new Select(reasonForDifferentTester);
-        s.selectByIndex(position);
-        return this;
-    }
     public String getMotTestNumber() {
         return motTestNumber.getText();
     }
@@ -145,7 +129,8 @@ public class ReplacementCertificateReviewPage extends BasePage {
         return "VT30" + Utilities.getSystemDateAndTime();
     }
 
-    public void clickPrintButton() {
+    public ReplacementCertificateCompletePage clickPrintButton() {
         confirmAndPrint.click();
+        return new ReplacementCertificateCompletePage(driver);
     }
 }

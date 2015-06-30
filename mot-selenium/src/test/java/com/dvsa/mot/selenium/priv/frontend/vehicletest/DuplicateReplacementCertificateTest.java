@@ -5,9 +5,7 @@ import com.dvsa.mot.selenium.datasource.enums.Colour;
 import com.dvsa.mot.selenium.datasource.enums.VehicleMake;
 import com.dvsa.mot.selenium.framework.BaseTest;
 import com.dvsa.mot.selenium.framework.Utilities;
-import com.dvsa.mot.selenium.framework.api.GoToTheUrl;
 import com.dvsa.mot.selenium.framework.api.MotTestApi.TestOutcome;
-import com.dvsa.mot.selenium.framework.errors.UnauthorisedError;
 import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.VerifyCertificateDetails;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.*;
@@ -21,21 +19,16 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class DuplicateReplacementCertificateTest extends BaseTest {
-    Site defaultSite = Site.POPULAR_GARAGES;
 
-    @DataProvider(name = "reissueCertificateOnCurrentVTSProvider")
-    public Object[][] reissueCertificateOnCurrentVTSProvider() {
-        return new Object[][] {{TestOutcome.PASSED, Assertion.ASSERTION_PASS},
-                {TestOutcome.FAILED, Assertion.ASSERTION_FAIL},};
-    }
+    Site defaultSite = Site.POPULAR_GARAGES;
 
     @Test(priority = 1, groups = {"Regression", "VM-2153", "VM-2591", "VM-3029", "Sprint 22"},
             description = "Reissue fail certificate on the current VTS, editing the odometer and colour of vehicle, and resubmitting introducing three consecutive invalid OTP")
     public void testReissueFailCertificateOnCurrentVTS_Edit_ProvideThreeInvalidOTP() {
+
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);
         createMotTest(login, defaultSite, vehicle, 13345, TestOutcome.FAILED);
 
@@ -54,106 +47,21 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
 
 
         assertThat(replacementCertPage.isErrorMessageDisplayed(), is(true));
+
+        replacementCertificateReviewPage.enterOneTimePassword(Text.TEXT_PASSCODE_INVALID)
+                .finishAndPrintCertificateExpectingError();
+
+        assertThat(replacementCertPage.isErrorMessageDisplayed(), is(true));
+
         replacementCertificateReviewPage.enterOneTimePassword(Text.TEXT_PASSCODE_INVALID)
                 .finishAndPrintCertificateExpectingError();
         assertThat(replacementCertPage.isErrorMessageDisplayed(), is(true));
-        replacementCertificateReviewPage.enterOneTimePassword(Text.TEXT_PASSCODE_INVALID)
-                .finishAndPrintCertificateExpectingError();
-        assertThat(replacementCertPage.isErrorMessageDisplayed(), is(true));
-    }
-
-    @Test(groups = {"Regression", "VM-2151", "VM-2152", "VM-4516"},
-            description = "Reissue Fail Certificate on a different VTS, and confirm")
-    public void testReissueFailCertificateOnAnotherVTS_View() {
-        Site site = Site.JOHNS_GARAGE;
-        Login newLogin = createTester(Arrays.asList(defaultSite.getId(), site.getId()));
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
-        //Perform new MOT test in that VTS
-        String testNumber = createMotTest(newLogin, site, vehicle, 123423, TestOutcome.FAILED);
-        DuplicateReplacementCertificatePage.navigateHereFromLoginPage(driver, login, vehicle)
-                .enterFieldsOnFirstFailTestIssuedAtOtherVTSAndSubmit(testNumber, null)
-                .clickFinishButton();
-    }
-
-    @Test(groups = {"Regression", "VM-2268", "VM-2269", "VM-4515"})
-    public void testPrintDocumentDuplicateAsDVSAdminUser() {
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
-        String motNumber = createMotTest(login, defaultSite, vehicle, 12345, TestOutcome.PASSED);
-        DuplicateReplacementCertificatePage
-                .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1, vehicle)
-                .clickViewByMOTNumber(motNumber);
-    }
-
-    @Test(groups = {"Regression", "VM-2570, VM-2571", "VM-2597", "VM-4511"},
-            description = "To issue replacement test documents, DVSA Scheme Management need to be able to select a document to edit and print")
-    public void testDVSAUserIssueAndEditReplacementCertificatePass() {
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);
-        createMotTest(login, defaultSite, vehicle, 12345, TestOutcome.PASSED);
-        ReplacementCertificateReviewPage replacementCertificateReviewPage =
-                DuplicateReplacementCertificatePage
-                        .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1, vehicle)
-                        .clickEditButtonPass().submitEditedOdometerInfo("12345")
-                        .editColoursAndSubmit(Colour.Black, Colour.Silver)
-                        .enterReasonForReplacement("None").reviewChangesButton();
-        Assert.assertEquals(replacementCertificateReviewPage.testStatus(), (Text.TEXT_STATUS_PASS));
-        Assert.assertEquals(replacementCertificateReviewPage.odometerReading(),
-                (Text.TEXT_UPDATED_ODOMETER));
-    }
-
-    @Test(groups = {"Regression", "VM-2570, VM-2571", "VM-2597", "VM-4648"},
-            description = "To issue replacement test documents, DVSA Scheme Management need to be able to select a document to edit and print")
-    public void testDVSAUserIssueAndEditReplacementCertificateFail() {
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);
-        createMotTest(login, defaultSite, vehicle, 13345, TestOutcome.FAILED);
-        Colour PrimaryColour = Colour.Brown;
-        ReplacementCertificateReviewPage replacementCertificateReviewPage =
-                DuplicateReplacementCertificatePage
-                        .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1, vehicle)
-                        .clickEditButtonFail().submitEditedOdometerInfo("12345")
-                        .editColoursAndSubmit(Colour.Brown, Colour.NoOtherColour)
-                        .enterReasonForReplacement("None").reviewChangesButton();
-        Assert.assertEquals(replacementCertificateReviewPage.vehicleColours(),
-                PrimaryColour.getColourName());
-        Assert.assertEquals(replacementCertificateReviewPage.testStatus(), (Text.TEXT_STATUS_FAIL));
-        Assert.assertEquals(replacementCertificateReviewPage.odometerReading(),
-                (Text.TEXT_UPDATED_ODOMETER));
-    }
-
-    @Test(enabled = true, groups = {"Regression", "VM-4346"},
-            description = "As a DVSA Area Officer when I update a test location and vehicle colour on a certificate I want the update to be reflected on the review screen.")
-    public void testWhenDVSAUserEditVTSAndVehicleColourOnACertificate() {
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);
-        Site vts = Site.JOHNS_MOTORCYCLE_GARAGE;
-        Colour primaryColour = Colour.Bronze;
-        Colour secondaryColour = Colour.Maroon;
-        createMotTest(login, defaultSite, vehicle, 13345, TestOutcome.FAILED);
-        ReplacementCertificateReviewPage replacementCertificateReviewPage =
-                DuplicateReplacementCertificatePage
-                        .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1, vehicle)
-                        .clickEditButtonFail().editColoursAndSubmit(Colour.Bronze, Colour.Maroon)
-                        .editVTSLocationAndSubmit(vts.getNumber())
-                        .enterReasonForReplacement("Review").reviewChangesButton();
-        assertThat("Updated VTS is not displayed in Replacement Certificate Review page",
-                replacementCertificateReviewPage.getVtsName(),
-                containsString(vts.getNumberAndName()));
-        assertThat(
-                "Updated vehicle colours are not displayed in Replacement Certificate Review page",
-                replacementCertificateReviewPage.vehicleColours(),
-                is(primaryColour + " and " + secondaryColour));
-    }
-
-
-    @Test(groups = {"VM-4355", "Regression", "W-Sprint1"},
-            description = "When issuing a duplicate or replacement certificate, if the vehicle results which are returned are not the ones I need I want to be able to select to search for another vehicle")
-    public void testGoToReplacementCertificatePageAndCancel() {
-        DuplicateReplacementCertificatePage
-                .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1,
-                        Vehicle.VEHICLE_CLASS4_ASTRA_2010).returnToReplacementSearch();
     }
 
     @Test(groups = {"VM-4478", "Regression", "W-Sprint2"},
             description = "As a site or DVSA user viewing test records as part of issuing a duplicate or replacement certificate I want the tests to be displayed chronologically")
     public void testTesterUserViewTestRecordsChronologicallyInDuplicateReplacementPage() {
+
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         Login tester1 = createTester();
         Site anotherSite = Site.JOHNS_GARAGE;
@@ -180,20 +88,21 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
         DuplicateReplacementCertificatePage duplicateReplacementCertificatePage =
                 DuplicateReplacementCertificatePage
                         .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1, vehicle);
-        Assert.assertEquals(duplicateReplacementCertificatePage.getTestNumber(1), testNumber3);
-        Assert.assertEquals(duplicateReplacementCertificatePage.getTestNumber(2),
-                testNumberOtherVTS2);
-        Assert.assertEquals(duplicateReplacementCertificatePage.getTestNumber(3), testNumber2);
-        Assert.assertEquals(duplicateReplacementCertificatePage.getTestNumber(4),
-                testNumberOtherVTS1);
-        Assert.assertEquals(duplicateReplacementCertificatePage.getTestNumber(5), testNumber1);
+
+        assertThat(duplicateReplacementCertificatePage.getTestNumber(1), is(testNumber3));
+        assertThat(duplicateReplacementCertificatePage.getTestNumber(2), is(testNumberOtherVTS2));
+        assertThat(duplicateReplacementCertificatePage.getTestNumber(3), is(testNumber2));
+        assertThat(duplicateReplacementCertificatePage.getTestNumber(4), is(testNumberOtherVTS1));
+        assertThat(duplicateReplacementCertificatePage.getTestNumber(5), is(testNumber1));
+
         //Login as Tester and check order
         duplicateReplacementCertificatePage.clickLogout();
         duplicateReplacementCertificatePage = DuplicateReplacementCertificatePage
                 .navigateHereFromLoginPage(driver, tester1, vehicle);
-        Assert.assertEquals(duplicateReplacementCertificatePage.getTestNumber(1), testNumber3);
-        Assert.assertEquals(duplicateReplacementCertificatePage.getTestNumber(2), testNumber2);
-        Assert.assertEquals(duplicateReplacementCertificatePage.getTestNumber(3), testNumber1);
+
+        assertThat(duplicateReplacementCertificatePage.getTestNumber(1), is(testNumber3));
+        assertThat(duplicateReplacementCertificatePage.getTestNumber(2), is(testNumber2));
+        assertThat(duplicateReplacementCertificatePage.getTestNumber(3), is(testNumber1));
     }
 
     @DataProvider(name = "reissueCertificateOnAnotherVTSByV5C")
@@ -207,6 +116,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
             dataProvider = "reissueCertificateOnAnotherVTSByV5C")
     public void testReissueCertificateOnAnotherVTSByV5C(String previousV5c, String v5c,
             TestOutcome testOutcome) {
+
         Site anotherSite = Site.JOHNS_GARAGE;
         Login tester = createTester(Arrays.asList(defaultSite.getId(), anotherSite.getId()));
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BOXSTER_2001);
@@ -224,16 +134,20 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
             duplicateReplacementCertificatePage = duplicateReplacementCertificatePage
                     .enterFieldsOnFirstPassTestIssuedAtOtherVTSAndSubmitExpectingError(null,
                             previousV5c);
-            Assert.assertEquals(duplicateReplacementCertificatePage.getValidationMessage(),
-                    Assertion.ASSERTION_DUPLICATES_TEST_NOT_FOUND.assertion);
+
+            assertThat(duplicateReplacementCertificatePage.getValidationMessage(),
+                    is(Assertion.ASSERTION_DUPLICATES_TEST_NOT_FOUND.assertion));
+
             duplicateReplacementCertificatePage
                     .enterFieldsOnFirstPassTestIssuedAtOtherVTSAndSubmit(null, v5c);
         } else {
             duplicateReplacementCertificatePage = duplicateReplacementCertificatePage
                     .enterFieldsOnFirstFailTestIssuedAtOtherVTSAndSubmitExpectingError(null,
                             previousV5c);
-            Assert.assertEquals(duplicateReplacementCertificatePage.getValidationMessage(),
-                    Assertion.ASSERTION_DUPLICATES_TEST_NOT_FOUND.assertion);
+
+            assertThat(duplicateReplacementCertificatePage.getValidationMessage(),
+                    is(Assertion.ASSERTION_DUPLICATES_TEST_NOT_FOUND.assertion));
+
             duplicateReplacementCertificatePage
                     .enterFieldsOnFirstFailTestIssuedAtOtherVTSAndSubmit(null, v5c);
         }
@@ -242,6 +156,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
     @Test(groups = {"VM-4435", "Regression", "W-Sprint2"},
             description = "Check validation messages in Duplicate or replacement certificate page")
     public void testValidationMessagesWhenReissueCertificateOnAnotherVTS() {
+
         Site anotherSite = Site.JOHNS_GARAGE;
         Login tester = createTester(Arrays.asList(defaultSite.getId(), anotherSite.getId()));
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BOXSTER_2001);
@@ -282,6 +197,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
 
     @Test(groups = {"VM-4450", "Regression", "W-Sprint3"})
     public void testIsAllowToDuplicateAbandonedCertificates() {
+
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
         Login tester = createTester();
         //Create one passed and one failed mot test
@@ -293,27 +209,29 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
         //Create Abandoned mot test
         MotTestPage motTestPage = MotTestPage.navigateHereFromLoginPage(driver, tester, vehicle);
         String abandonedMotNumber = motTestPage.getMotTestId();
+
         motTestPage.clickCancelMotTest().enterAndSubmitReasonsToCancelPageExpectingAbandonedPage(
                 ReasonToCancel.REASON_DANGEROUS_OR_CAUSE_DAMAGE, Text.TEXT_PASSCODE).clickLogout();
         DuplicateReplacementCertificatePage duplicateReplacementCertificatePage =
                 DuplicateReplacementCertificatePage
                         .navigateHereFromLoginPage(driver, tester, vehicle);
         //Assertions
-        Assert.assertEquals(duplicateReplacementCertificatePage.getTestStatus(1),
-                Text.TEXT_STATUS_ABANDONED, "First listed test should have 'Abandoned' status");
-        Assert.assertFalse(duplicateReplacementCertificatePage
-                        .isReplacementCertificateEditButtonDisplayed(abandonedMotNumber),
-                "Abandoned tests must not display 'Edit' button");
-        Assert.assertTrue(duplicateReplacementCertificatePage
-                        .isReplacementCertificateEditButtonDisplayed(failedMotNumber),
-                "First not abandoned test must display 'Edit' button");
-        Assert.assertFalse(duplicateReplacementCertificatePage
-                        .isReplacementCertificateEditButtonDisplayed(passedMotNumber),
-                "Only first not abandoned test should display 'Edit' button");
+        assertThat("First listed test should have 'Abandoned' status",
+                duplicateReplacementCertificatePage.getTestStatus(1), is(Text.TEXT_STATUS_ABANDONED));
+        assertThat("Abandoned tests must not display 'Edit' button",
+                duplicateReplacementCertificatePage
+                        .isReplacementCertificateEditButtonDisplayed(abandonedMotNumber), is(false));
+        assertThat("First not abandoned test must display 'Edit' button",
+                duplicateReplacementCertificatePage
+                        .isReplacementCertificateEditButtonDisplayed(failedMotNumber), is(true));
+        assertThat("Only first not abandoned test should display 'Edit' button",
+                duplicateReplacementCertificatePage
+                        .isReplacementCertificateEditButtonDisplayed(passedMotNumber), is(false));
     }
 
     @Test(groups = {"VM-4450", "Regression", "W-Sprint3"})
     public void testIsAllowToDuplicateAbandonedCertificatesIssuedOnAnotherSite() {
+
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
         Site anotherSite = Site.JOHNS_GARAGE;
         Login tester = createTester(Arrays.asList(defaultSite.getId(), anotherSite.getId()));
@@ -324,11 +242,11 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
         String failedMotNumber =
                 createMotTest(tester, defaultSite, vehicle, 1358, TestOutcome.FAILED,
                         DateTime.now().minusDays(1));
+
         //Create Abandoned mot test on another site
         MotTestPage motTestPage = UserDashboardPage.navigateHereFromLoginPage(driver, tester)
                 .startMotTestAsManyVtsTesterWithoutVtsChosen().selectAndConfirmVTS(anotherSite)
                 .submitSearch(vehicle).startTest();
-        String abandonedMotNumber = motTestPage.getMotTestId();
         motTestPage.clickCancelMotTest().enterAndSubmitReasonsToCancelPageExpectingAbandonedPage(
                 ReasonToCancel.REASON_DANGEROUS_OR_CAUSE_DAMAGE, Text.TEXT_PASSCODE).clickLogout();
 
@@ -339,12 +257,12 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                                 defaultSite)
                         .submitSearchWithVinAndReg(vehicle.fullVIN, vehicle.carReg);
         //Assertions
-        Assert.assertTrue(duplicateReplacementCertificatePage
-                        .isReplacementCertificateEditButtonDisplayed(failedMotNumber),
-                "First not abandoned test must display 'Edit' button");
-        Assert.assertFalse(duplicateReplacementCertificatePage
-                        .isReplacementCertificateEditButtonDisplayed(passedMotNumber),
-                "Only first not abandoned test should display 'Edit' button");
+        assertThat("First not abandoned test must display 'Edit' button",
+                duplicateReplacementCertificatePage
+                        .isReplacementCertificateEditButtonDisplayed(failedMotNumber), is(true));
+        assertThat("Only first not abandoned test should display 'Edit' button",
+                duplicateReplacementCertificatePage
+                        .isReplacementCertificateEditButtonDisplayed(passedMotNumber), is(false));
     }
 
     @DataProvider(name = "usersAllowedDuplicatesIssuedMoreThan18MonthsAgo")
@@ -357,6 +275,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
             dataProvider = "usersAllowedDuplicatesIssuedMoreThan18MonthsAgo")
     public void testUsersAllowedDuplicatesIssuedMoreThan18MonthsAgo(Login user,
             boolean shouldDuplicateMoreThan18Months) {
+
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
         String less18TestNumber =
@@ -365,33 +284,21 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
         String more18TestNumber =
                 createMotTest(login, defaultSite, vehicle, 27870, TestOutcome.FAILED,
                         new DateTime().minus(Period.months(19)));
+
         DuplicateReplacementCertificatePage duplicateReplacementCertificatePage =
                 DuplicateReplacementCertificatePage
                         .navigateHereFromLoginPage(driver, user, vehicle);
-        Assert.assertTrue(duplicateReplacementCertificatePage
-                .isReplacementCertificateViewDisplayed(less18TestNumber));
+
+        assertThat(duplicateReplacementCertificatePage
+                .isReplacementCertificateViewDisplayed(less18TestNumber), is(true));
+
         if (shouldDuplicateMoreThan18Months)
-            Assert.assertTrue(duplicateReplacementCertificatePage
-                    .isReplacementCertificateViewDisplayed(more18TestNumber));
+
+            assertThat(duplicateReplacementCertificatePage
+                    .isReplacementCertificateViewDisplayed(more18TestNumber), is(true));
         else
-            Assert.assertFalse(duplicateReplacementCertificatePage
-                    .isReplacementCertificateViewDisplayed(more18TestNumber));
-    }
-
-    @DataProvider(name = "usersNotAllowedIssueDuplicatesAndNotAllowedIssueReplacements")
-    public Object[][] usersNotAllowedIssueDuplicatesAndNotAllowedIssueReplacements() {
-        return new Object[][] {{Login.LOGIN_SCHEME_USER}};
-    }
-
-    @Test(groups = {"VM-4515", "VM-4511", "VM-4512", "VM-4516", "Regression", "W-Sprint3"},
-            dataProvider = "usersNotAllowedIssueDuplicatesAndNotAllowedIssueReplacements",
-            expectedExceptions = UnauthorisedError.class)
-    public void testUsersNotAllowedIssueDuplicated(Login login) {
-        UserDashboardPage userDashboardPage =
-                UserDashboardPage.navigateHereFromLoginPage(driver, login);
-        //Check replacement certificate link
-        Assert.assertFalse(userDashboardPage.existReissueCertificateLink());
-        GoToTheUrl.goToDuplicateReplacementCertificateSearchPage(driver);
+            assertThat(duplicateReplacementCertificatePage
+                    .isReplacementCertificateViewDisplayed(more18TestNumber), is(false));
     }
 
     @DataProvider(name = "usersAllowedIssueDuplicatesAndNotAllowedIssueReplacements")
@@ -404,27 +311,15 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
             dataProvider = "usersAllowedIssueDuplicatesAndNotAllowedIssueReplacements",
             description = "Test roles that can't issue replacement Test Documents")
     public void testUsersNotAllowedIssueReplacement(Login user) {
+
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
         String testNumber = createMotTest(login, defaultSite, vehicle, 23486, TestOutcome.FAILED);
         DuplicateReplacementCertificatePage duplicateReplacementCertificatePage =
                 DuplicateReplacementCertificatePage
                         .navigateHereFromLoginPage(driver, user, vehicle);
-        Assert.assertFalse(duplicateReplacementCertificatePage
-                .isReplacementCertificateEditButtonDisplayed(testNumber));
-    }
 
-    @Test(groups = {"VM-4512", "Regression", "W-Sprint4"},
-            description = "If the Tester generating the replacement was not the tester who carried out the test an explanation reason is to be supplied.")
-    public void testMustProvideReasonWhenDifferentTesterReplaceCertificate() {
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
-        String testNumber = createMotTest(login, defaultSite, vehicle, 872033, TestOutcome.FAILED);
-        Login anotherTester = createTester();
-        ReplacementCertificateUpdatePage replacementCertificateUpdatePage =
-                ReplacementCertificateUpdatePage
-                        .navigateHereFromLoginPage(driver, anotherTester, vehicle, testNumber);
-        replacementCertificateUpdatePage.editColoursAndSubmit(Colour.Gold, Colour.Blue)
-                .reviewChangesButton().selectReasonForDifferentTesterByIndex(2)
-                .finishAndPrintCertificate(Text.TEXT_PASSCODE).clickDoneButton();
+        assertThat(duplicateReplacementCertificatePage
+                .isReplacementCertificateEditButtonDisplayed(testNumber), is(false));
     }
 
     @Test(groups = {"VM-7785", "VM-10120", "Regression"})
@@ -444,31 +339,45 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
         replacementCertificateUpdatePage.enterReasonForReplacement("None").reviewChangesButton();
         ReplacementCertificateReviewPage replacementCertificateReviewPage =
                 new ReplacementCertificateReviewPage(driver);
-
         String customModel = replacementCertificateReviewPage.vehicleModel();
         String customMake = replacementCertificateReviewPage.vehicleMake();
 
         String motTestNumber = replacementCertificateReviewPage.getMotTestNumber();
+        ReplacementCertificateCompletePage replacementCertificateCompletePage =
+                replacementCertificateReviewPage.clickPrintButton();
 
         String fileName = replacementCertificateReviewPage.generateNewVT30FileName();
-        replacementCertificateReviewPage.clickPrintButton();
         String pathNFileName = getErrorScreenshotPath() + "/" + fileName;
-        ReplacementCertificateCompletePage replacementCertificateCompletePage =
-                new ReplacementCertificateCompletePage(driver);
         Utilities.copyUrlBytesToFile(replacementCertificateCompletePage.getPrintCertificateUrl(),
                 driver, pathNFileName);
+        replacementCertificateCompletePage.clickDoneButton();
         String parsedText = Utilities.pdfToText(pathNFileName);
         VerifyCertificateDetails ver = new VerifyCertificateDetails();
 
-        Assert.assertEquals(ver.getTitle(parsedText), Text.TEXT_VT30_TITLE, "Verify VT30 title");
-        Assert.assertTrue(ver.getVT20TestNumberMakeModel(parsedText).contains(motTestNumber),
-                "Verify motTestNumber");
-        Assert.assertTrue(
+        assertThat("Verify VT30 title", ver.getTitle(parsedText), is(Text.TEXT_VT30_TITLE));
+        assertThat("Verify motTestNumber",
+                ver.getVT20TestNumberMakeModel(parsedText).contains(motTestNumber), is(true));
+        assertThat("Verify Custom Make of Vehicle on Certificate",
                 ver.getVehicleMakeAndModelDetailsFromCertificate(parsedText).contains(customMake),
-                "Verify Custom Make of Vehicle on Certificate");
-        Assert.assertTrue(
+                is(true));
+        assertThat("Verify Custom Model of Vehicle on Certificate",
                 ver.getVehicleMakeAndModelDetailsFromCertificate(parsedText).contains(customModel),
-                "Verify Custom Model of Vehicle on Certificate");
+                is(true));
 
+    }
+
+    @DataProvider(name = "usersNotAllowedToSearch") public Object[][] usersNotAllowedToSearch() {
+
+        return new Object[][] {{createVE()}, {Login.LOGIN_AED1}, {Login.LOGIN_AEDM},
+                {Login.LOGIN_SITE_MANAGER}, {Login.LOGIN_SITE_ADMIN_AT_VTS1}};
+    }
+
+    @Test(groups = "Regression", dataProvider = "usersNotAllowedToSearch")
+    public void testReplacementDuplicateSearchLinkNotDisplayed(Login login) {
+
+        UserDashboardPage userDashboardPage =
+                UserDashboardPage.navigateHereFromLoginPage(driver, login);
+        assertThat("validate that replacement/duplicate link is not displayed",
+                userDashboardPage.isCertificateReissueLinkDisplayed(), is(false));
     }
 }

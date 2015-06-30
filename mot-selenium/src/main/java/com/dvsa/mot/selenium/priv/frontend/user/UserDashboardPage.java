@@ -70,9 +70,9 @@ public class UserDashboardPage extends BasePage {
     @FindBy(id = "action-edit-ae") private WebElement editAE;
 
     @FindBy(linkText = "AE information") private WebElement aeInformationLink;
-    
+
     @FindBy(id = "transactions") private WebElement paymentsLink;
-    
+
     @FindBy(id = "financialReportLink") private WebElement generalFinancialReportsLink;
 
     @FindBy(id = "action-search-site") private WebElement searchSiteLink;
@@ -177,11 +177,6 @@ public class UserDashboardPage extends BasePage {
         startMotTestButton.click();
     }
 
-    public MotTestPage resumeMotTestButton() {
-        resumeMotTestButton.click();
-        return new MotTestPage(driver);
-    }
-
     public LocationSelectPage startMotTestAsManyVtsTesterWithoutVtsChosen() {
         startMotTestButton.click();
         return new LocationSelectPage(driver);
@@ -256,6 +251,11 @@ public class UserDashboardPage extends BasePage {
 
     public boolean isCertificateReIssueLinkClickable() {
         return waitForElementToBeClickable(certificateReIssueLink) != null;
+    }
+
+    public boolean isCertificateReissueLinkDisplayed() {
+
+        return isElementDisplayed(certificateReIssueLink);
     }
 
     public boolean isStartMotTrainingModeLinkClickable() {
@@ -402,13 +402,13 @@ public class UserDashboardPage extends BasePage {
         aeInformationLink.click();
         return new SearchForAePage(driver);
     }
-    
+
     public PaymentSearchPage clickPaymentsLink() {
         paymentsLink.click();
         return new PaymentSearchPage(driver);
     }
-    
-    public FinancialReportsPage  clickGeneralFinancialReportsLink() {
+
+    public FinancialReportsPage clickGeneralFinancialReportsLink() {
         generalFinancialReportsLink.click();
         return new FinancialReportsPage(driver);
     }
@@ -417,6 +417,7 @@ public class UserDashboardPage extends BasePage {
         driver.findElement(By.xpath("(//*[contains(@id, 'ae-vts-list_1')])//h2/a")).click();
         return new AuthorisedExaminerOverviewPage(driver);
     }
+
     public AuthorisedExaminerOverviewPage clickAeNameLink(AeDetails aeDetails) {
         driver.findElement(By.partialLinkText(aeDetails.getAeName())).click();
         return new AuthorisedExaminerOverviewPage(driver);
