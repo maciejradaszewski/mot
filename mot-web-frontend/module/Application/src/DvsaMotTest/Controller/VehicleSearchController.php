@@ -5,9 +5,10 @@ namespace DvsaMotTest\Controller;
 use Application\Service\CatalogService;
 use Application\Service\ContingencySessionManager;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Dto\Vehicle\VehicleDto;
 use DvsaCommon\Dto\Vehicle\History\VehicleHistoryDto;
 use DvsaCommon\Dto\Vehicle\History\VehicleHistoryMapper;
-use DvsaCommon\Dto\Vehicle\VehicleDto;
+use DvsaCommon\HttpRestJson\Exception\NotFoundException;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\UrlBuilder\MotTestUrlBuilder;
@@ -16,6 +17,7 @@ use DvsaCommon\UrlBuilder\VehicleUrlBuilder;
 use DvsaCommon\UrlBuilder\VehicleUrlBuilderWeb;
 use DvsaCommon\Utility\AddressUtils;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\HttpRestJson\Exception\ForbiddenApplicationException;
 use DvsaMotTest\Constants\VehicleSearchSource;
 use DvsaMotTest\Form\VehicleRetestSearch;
 use DvsaMotTest\Form\VehicleSearch;
@@ -466,23 +468,26 @@ class VehicleSearchController extends AbstractDvsaMotTestController
                 $noRegistration = ($data['reg'] || $data['testNumber']) ? 0 : 1;
 
                 if (isset($data['testNumber'])) {
+
                     $motTestNumber = $data['testNumber'];
-                    $vehicle = $this->getVehicleSearchService()->getVehicleFromMotTestCertificate($motTestNumber);
 
-                    if (!$vehicle) {
-                        $errMsg = "MOT test $motTestNumber not found";
-                        $this->addErrorMessages($errMsg);
-                    }
+                    try {
+                        $vehicle = $this->getVehicleSearchService()
+                            ->getVehicleFromMotTestCertificateForRetest($motTestNumber);
 
-                    if ($vehicle instanceof VehicleDto) {
-                        $vehicle->setId(
-                            $this->paramObfuscator->obfuscateEntry(
-                                ParamObfuscator::ENTRY_VEHICLE_ID,
-                                $vehicle->getId()
-                            )
-                        );
-
-                        return $this->returnRedirectStartRetestConfirmation($vehicle->getId(), $noRegistration);
+                        if ($vehicle instanceof VehicleDto) {
+                            $vehicle->setId(
+                                $this->paramObfuscator->obfuscateEntry(
+                                    ParamObfuscator::ENTRY_VEHICLE_ID,
+                                    $vehicle->getId()
+                                )
+                            );
+                            return $this->returnRedirectStartRetestConfirmation($vehicle->getId(), $noRegistration);
+                        }
+                    } catch (ForbiddenApplicationException $e) {
+                        $this->addErrorMessages($e->getDisplayMessages());
+                    } catch (NotFoundException $e) {
+                        $this->addErrorMessage("MOT test $motTestNumber not found");
                     }
 
                     return $this->returnViewModel($form, $searchType, false, false);

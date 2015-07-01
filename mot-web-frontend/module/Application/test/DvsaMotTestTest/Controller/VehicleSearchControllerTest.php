@@ -315,9 +315,8 @@ class VehicleSearchControllerTest extends AbstractVehicleSearchControllerTest
         $motTestData = $this->getTestMotTestDataDto();
         /** @var MotTestDto $motTestDto */
         $motTestDto = $motTestData['data'];
-        $vehicleId = $motTestDto->getVehicle()->getId();
 
-        $this->setResultForVehicleSearchService('getVehicleFromMotTestCertificate', $motTestDto->getVehicle());
+        $this->setResultForVehicleSearchService('getVehicleFromMotTestCertificateForRetest', $motTestDto->getVehicle());
 
         $this->requestSearch(
             [
@@ -341,7 +340,7 @@ class VehicleSearchControllerTest extends AbstractVehicleSearchControllerTest
         $this->setupAuthorizationService([PermissionInSystem::MOT_TEST_START]);
         $error = 'error';
 
-        $this->setResultForVehicleSearchService('getVehicleFromMotTestCertificate', $error);
+        $this->setResultForVehicleSearchService('getVehicleFromMotTestCertificateForRetest', $error);
 
         $this->requestSearch(
             [

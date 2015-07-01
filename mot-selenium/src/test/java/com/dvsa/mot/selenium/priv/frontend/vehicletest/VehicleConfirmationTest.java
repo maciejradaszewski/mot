@@ -108,8 +108,7 @@ public class VehicleConfirmationTest extends BaseTest {
     }
 
     @Test(groups = {"Regression", "VM-2073"})
-    public void testNoExpiryMotDateMessageDisplayedOverOneMonthPreviousPassedTestExpirationDateInRetest() {
-
+    public void testRetestCannotBeCarriedOutUsingPassedMotTestNumber() {
         Site site = Site.POPULAR_GARAGES;
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
@@ -117,15 +116,11 @@ public class VehicleConfirmationTest extends BaseTest {
         String motPassedTestId =
                 createMotTest(login, site, vehicle, 78924, MotTestApi.TestOutcome.PASSED,
                         new DateTime().minus(Period.years(1)));
-        VehicleConfirmationRetestPage confirmationRetestPage = VehicleConfirmationRetestPage
-                .navigateHereFromLoginPage_PreviousNo(driver, login, motPassedTestId);
-
-        assertThat("Expiration date displayed", confirmationRetestPage.isPresentExpiryInfoAlert(),
-                is(false));
-        assertThat("Check reject title", confirmationRetestPage.getRejectTitle(),
-                is(Assertion.ASSERTION_NOT_QUALIFIED_FOR_RETEST.assertion));
-        assertThat("Check content of rejection message", confirmationRetestPage.getRejectMessage()
-                .contains(Assertion.ASSERTION_ORIGINAL_TEST_NOT_FAILED.assertion), is(true));
+        VehicleSearchRetestPage vehicleSearchRetestPage = VehicleSearchRetestPage
+                .navigateHereFromLoginPage(driver, login)
+                .submitSearchWithPreviousTestNumberExpectingError(motPassedTestId);
+        assertThat("Test number is invalid", vehicleSearchRetestPage.isVehicleSearchFormDisplayed(),
+                is(true));
     }
 
     @Test(groups = {"Regression", "VM-2531", "VM-2384", "VM-5018"},

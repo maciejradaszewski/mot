@@ -13,6 +13,8 @@ use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Domain\MotTestType;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Dto\Common\MotTestTypeDto;
+use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
+use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Authorisation\Assertion\ReadMotTestAssertion;
@@ -104,15 +106,12 @@ class MotTestService extends AbstractSearchService implements TransactionAwareIn
     }
 
     /**
-     * @param string $motTestNumber
-     * @oaram bool $minimal optional returns minimal MOT
-     *
+     * @param $motTestNumber
+     * @return MotTest
      * @throws ForbiddenException
-     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
-     *
-     * @return MotTestDto
+     * @throws NotFoundException
      */
-    public function getMotTestData($motTestNumber, $minimal = false)
+    private function findMotTest($motTestNumber)
     {
         $motTest = $this->getMotTest($motTestNumber);
 
@@ -132,6 +131,46 @@ class MotTestService extends AbstractSearchService implements TransactionAwareIn
                 'The issue date of this MOT Test is before ' .
                 DateTimeDisplayFormat::date(DateUtils::toUserTz($startDate))
             );
+        }
+
+        return $motTest;
+    }
+
+    /**
+     * @param string $motTestNumber
+     * @oaram bool $minimal optional returns minimal MOT
+     *
+     * @throws ForbiddenException
+     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     *
+     * @return MotTestDto
+     */
+    public function getMotTestData($motTestNumber, $minimal = false)
+    {
+        $motTest = $this->findMotTest($motTestNumber);
+
+        return $this->extractMotTest($motTest, $minimal);
+    }
+
+    /**
+     * @param string $motTestNumber
+     * @param bool $minimal optional returns minimal MOT
+     *
+     * @throws ForbiddenException
+     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     *
+     * @return MotTestDto
+     */
+    public function getMotTestDataForRetest($motTestNumber, $minimal = false)
+    {
+        $motTest = $this->findMotTest($motTestNumber);
+
+        if ($motTest->isCancelled() || $motTest->getStatus() !== MotTestStatusName::FAILED) {
+            throw new ForbiddenException('Test number invalid');
+        }
+
+        if (!$motTest->getVehicle()) {
+            throw new ForbiddenException('No vehicle was found for the MOT test');
         }
 
         return $this->extractMotTest($motTest, $minimal);

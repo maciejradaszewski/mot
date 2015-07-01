@@ -15,6 +15,7 @@ class MotTestUrlBuilder extends AbstractUrlBuilder
     const DEMO_TEST = 'mot-demo-test';
     const MINIMAL = '/minimal';
 
+    const MOT_VALIDATE_RETEST = 'mot-retest-validate[/:motTestNumber]';
     const SEARCH = 'mot-test-search';
     const REASONS_FOR_REJECTION = '/reasons-for-rejection[/:motTestRfrId]';
 
@@ -36,6 +37,7 @@ class MotTestUrlBuilder extends AbstractUrlBuilder
                 ],
                 self::MINIMAL               => '',
             ],
+            self::MOT_VALIDATE_RETEST => '',
             self::SEARCH    => '',
             self::RETEST    => '',
             self::DEMO_TEST => '',
@@ -53,6 +55,19 @@ class MotTestUrlBuilder extends AbstractUrlBuilder
         if ($motTestNr !== null) {
             $url->routeParam('motTestNumber', (int)$motTestNr);
         }
+
+        return $url;
+    }
+
+    /**
+     * @return $this
+     */
+    public static function motValidateRetest($motTestNr)
+    {
+        $url = self::of()
+            ->appendRoutesAndParams(self::MOT_VALIDATE_RETEST);
+
+            $url->routeParam('motTestNumber', (int)$motTestNr);
 
         return $url;
     }
