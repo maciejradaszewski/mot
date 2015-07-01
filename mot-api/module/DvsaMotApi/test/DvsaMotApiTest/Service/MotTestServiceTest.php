@@ -120,6 +120,130 @@ class MotTestServiceTest extends AbstractMotTestServiceTest
         $motTestService->getMotTestData(self::MOT_TEST_NUMBER);
     }
 
+    /**
+     * @expectedException \DvsaCommonApi\Service\Exception\ForbiddenException
+     */
+    public function testMOTRestValidateNoVehicleThrowsForbiddenException()
+    {
+        $motTest = new MotTest();
+        $motTest->setEmergencyLog(true);
+        $motTest->setStartedDate(new \DateTime('now'));
+        $motTest->setIssuedDate((new \DateTime('now'))->add(new \DateInterval('P1D')));
+        $testStatus = $this->getMock('\DvsaEntities\Entity\MotTestStatus');
+
+        $testStatus->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue(MotTestStatusName::ACTIVE));
+
+        $vehicle = new Vehicle();
+
+        $motTest->setStatus($testStatus);
+
+        $mocks = $this->getMocksForMotTestService(null, false);
+
+        $this->mockMethod($this->mockAuthService, 'isGranted', null, false);
+        $this->mockGetMotTestByTestNumber($this->mockMotTestRepository, $motTest);
+
+        $motTestService = $this->constructMotTestServiceWithMocks($mocks);
+
+        $motTestService->getMotTestDataForRetest(self::MOT_TEST_NUMBER);
+    }
+
+    /**
+     * @expectedException \DvsaCommonApi\Service\Exception\ForbiddenException
+     */
+    public function testMOTRestValidateNotFailedThrowsForbiddenException()
+    {
+        $motTest = new MotTest();
+        $motTest->setEmergencyLog(true);
+        $motTest->setStartedDate(new \DateTime('now'));
+        $motTest->setIssuedDate((new \DateTime('now'))->add(new \DateInterval('P1D')));
+        $testStatus = $this->getMock('\DvsaEntities\Entity\MotTestStatus');
+
+        $testStatus->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue(MotTestStatusName::ACTIVE));
+
+        $vehicle = new Vehicle();
+
+        $motTest->setStatus($testStatus);
+        $motTest->setVehicle($vehicle);
+
+        $mocks = $this->getMocksForMotTestService(null, false);
+
+        $this->mockMethod($this->mockAuthService, 'isGranted', null, false);
+        $this->mockGetMotTestByTestNumber($this->mockMotTestRepository, $motTest);
+
+        $motTestService = $this->constructMotTestServiceWithMocks($mocks);
+
+        $motTestService->getMotTestDataForRetest(self::MOT_TEST_NUMBER);
+    }
+
+    /**
+     * @expectedException \DvsaCommonApi\Service\Exception\ForbiddenException
+     */
+    public function testMOTRestValidateIsCancelledThrowsForbiddenException()
+    {
+        $motTest = new MotTest();
+        $motTest->setEmergencyLog(true);
+        $motTest->setStartedDate(new \DateTime('now'));
+        $motTest->setIssuedDate((new \DateTime('now'))->add(new \DateInterval('P1D')));
+
+        $testStatus = $this->getMock('\DvsaEntities\Entity\MotTestStatus');
+
+        /*
+         *  isCancelled checks for:
+         *  MotTestStatusName::ABANDONED,
+         *  MotTestStatusName::ABORTED,
+         *  MotTestStatusName::ABORTED_VE
+        */
+
+        $testStatus->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue(MotTestStatusName::ABANDONED));
+
+        $vehicle = new Vehicle();
+
+        $motTest->setStatus($testStatus);
+        $motTest->setVehicle($vehicle);
+
+        $mocks = $this->getMocksForMotTestService(null, false);
+
+        $this->mockMethod($this->mockAuthService, 'isGranted', null, false);
+        $this->mockGetMotTestByTestNumber($this->mockMotTestRepository, $motTest);
+
+        $motTestService = $this->constructMotTestServiceWithMocks($mocks);
+
+        $motTestService->getMotTestDataForRetest(self::MOT_TEST_NUMBER);
+    }
+
+    public function testMOTRestValidateNoException()
+    {
+        $motTest = new MotTest();
+        $motTest->setEmergencyLog(true);
+        $motTest->setStartedDate(new \DateTime('now'));
+        $motTest->setIssuedDate((new \DateTime('now'))->add(new \DateInterval('P1D')));
+        $testStatus = $this->getMock('\DvsaEntities\Entity\MotTestStatus');
+
+        $testStatus->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue(MotTestStatusName::FAILED));
+
+        $vehicle = new Vehicle();
+
+        $motTest->setStatus($testStatus);
+        $motTest->setVehicle($vehicle);
+
+        $mocks = $this->getMocksForMotTestService(null, false);
+
+        $this->mockMethod($this->mockAuthService, 'isGranted', null, false);
+        $this->mockGetMotTestByTestNumber($this->mockMotTestRepository, $motTest);
+
+        $motTestService = $this->constructMotTestServiceWithMocks($mocks);
+
+        $motTestService->getMotTestDataForRetest(self::MOT_TEST_NUMBER);
+    }
+
     public function testCreateMotTest()
     {
         $this->markTestSkipped();

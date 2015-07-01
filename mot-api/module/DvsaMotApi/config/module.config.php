@@ -393,6 +393,16 @@ return [
                     ],
                 ],
             ],
+            'mot-test-validate-retest' => [
+                'type'    => 'segment',
+                'options' => [
+                    'route'    => '/mot-retest-validate/:motTestNumber',
+                    'defaults' => [
+                        'controller' => MotTestController::class,
+                        'action'     => 'validateMOTRetest'
+                    ],
+                ],
+            ],
             'mot-test-compare'           => [
                 'type'    => 'Segment',
                 'options' => [

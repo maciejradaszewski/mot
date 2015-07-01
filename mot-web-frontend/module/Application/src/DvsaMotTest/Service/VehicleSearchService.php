@@ -15,7 +15,7 @@ use DvsaCommon\UrlBuilder\VehicleUrlBuilder;
 use DvsaMotTest\Constants\VehicleSearchSource;
 use DvsaMotTest\Model\VehicleSearchResult;
 use DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultMessage;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use Zend\Di\Exception\ClassNotFoundException;
 
 /**
  * Class VehicleSearchService
@@ -238,6 +238,24 @@ class VehicleSearchService
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Get Vehicle Data by MotTest Number When Trying a Re-test
+     *
+     * @param string $motTestNumber
+     *
+     * @return VehicleDto
+     */
+    public function getVehicleFromMotTestCertificateForRetest($motTestNumber)
+    {
+        $apiUrl = MotTestUrlBuilder::motValidateRetest($motTestNumber);
+
+        $result = $this->restClient->get($apiUrl->toString());
+        /** @var MotTestDto $motDetails */
+        $motDetails = $result['data'];
+
+        return $motDetails->getVehicle();
     }
 
     /**

@@ -19,6 +19,7 @@ class VehicleRetestEligibilityController extends AbstractDvsaRestfulController
     {
         $vehicleId      = $this->params()->fromRoute('id', null);
         $siteId         = $this->params()->fromRoute('siteId', null);
+        $motTestNumber  = $this->params()->fromRoute('motTestNumber', null);
         $contingencyDto = ArrayUtils::tryGet($data, self::FIELD_CONTINGENCY_DTO);
 
         if (!is_null($contingencyDto)) {
@@ -30,7 +31,7 @@ class VehicleRetestEligibilityController extends AbstractDvsaRestfulController
 
         // TODO: validation of fields
 
-        $isEligible = $retestEligibilityValidator->checkEligibilityForRetest($vehicleId, $siteId, $contingencyDto);
+        $isEligible = $retestEligibilityValidator->checkEligibilityForRetest($vehicleId, $siteId, $contingencyDto, $motTestNumber);
 
         return ApiResponse::jsonOk(['isEligible' => $isEligible]);
     }
