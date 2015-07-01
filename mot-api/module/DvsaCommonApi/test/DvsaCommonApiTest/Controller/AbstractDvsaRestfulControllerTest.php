@@ -1,19 +1,65 @@
 <?php
+
 namespace DvsaCommonApiTest\Controller;
 
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
-use DvsaCommonApiTest\Controller\AbstractRestfulControllerTestCase;
+use DvsaFeature\FeatureToggleAwareInterface;
+use DvsaFeature\FeatureToggles;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class AbstractDvsaRestfulControllerTest
  */
 class AbstractDvsaRestfulControllerTest extends AbstractRestfulControllerTestCase
 {
+    const ENABLED_FEATURE  = 'enabledFeature';
+    const DISABLED_FEATURE = 'disabledFeature';
+
     protected function setUp()
     {
         $this->controller = new AbstractDvsaRestfulController();
         parent::setUp();
         $this->mockLogger();
+
+        $featureToggles = $this
+            ->getMockBuilder(FeatureToggles::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isEnabled'])
+            ->getMock();
+        $featureToggles
+            ->expects($this->any())
+            ->method('isEnabled')
+            ->will($this->returnValueMap([
+                [self::ENABLED_FEATURE, true],
+                [self::DISABLED_FEATURE, false],
+            ]));
+
+        $this->serviceManager
+            ->setService('Feature\FeatureToggles', $featureToggles);
+    }
+
+    public function testImplementsFeatureToggleAwareInterface()
+    {
+        $this->assertInstanceOf(FeatureToggleAwareInterface::class, $this->controller);
+    }
+
+    public function testIsFeatureEnabled()
+    {
+        $this->assertTrue($this->controller->isFeatureEnabled(self::ENABLED_FEATURE));
+        $this->assertFalse($this->controller->isFeatureEnabled(self::DISABLED_FEATURE));
+    }
+
+    /**
+     * @expectedException \DvsaFeature\Exception\FeatureNotAvailableException
+     */
+    public function testAssertDisabledFeatureThrowsException()
+    {
+        $this->controller->assertFeatureEnabled(self::DISABLED_FEATURE);
+    }
+
+    public function testAssertEnabledFeatureDoesNotThrowException()
+    {
+        $this->controller->assertFeatureEnabled(self::ENABLED_FEATURE);
     }
 
     public function testCreateReturns405()

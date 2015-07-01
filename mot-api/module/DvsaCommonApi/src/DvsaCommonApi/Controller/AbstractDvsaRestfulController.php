@@ -4,6 +4,8 @@ namespace DvsaCommonApi\Controller;
 
 use DataCatalogApi\Service\DataCatalogService;
 use DvsaCommon\Http\HttpStatus;
+use DvsaFeature\Exception\FeatureNotAvailableException;
+use DvsaFeature\FeatureToggleAwareInterface;
 use UserFacade\Exception\UnauthenticatedException;
 use Zend\Http\Response;
 use Zend\Json\Json;
@@ -15,7 +17,9 @@ use Zend\View\Model\JsonModel;
 /**
  * AbstractDvsaRestfulController.
  */
-class AbstractDvsaRestfulController extends AbstractRestfulController
+class AbstractDvsaRestfulController
+    extends AbstractRestfulController
+    implements FeatureToggleAwareInterface
 {
     const ERROR_CODE_NOT_ALLOWED             = 10;
     const ERROR_CODE_REQUIRED                = 20;
@@ -35,6 +39,27 @@ class AbstractDvsaRestfulController extends AbstractRestfulController
      * @var \DvsaAuthentication\Identity
      */
     private $identity;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isFeatureEnabled($name)
+    {
+        return $this
+            ->getServiceLocator()
+            ->get('Feature\FeatureToggles')
+            ->isEnabled($name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function assertFeatureEnabled($name)
+    {
+        if (!$this->isFeatureEnabled($name)) {
+            throw new FeatureNotAvailableException($name);
+        }
+    }
 
     // Override default actions as they do not return valid JsonModels
 

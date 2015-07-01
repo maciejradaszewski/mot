@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "eea833ed617dbd943512385b522c7d14",
+    "hash": "f6382086159fdd5187668af0488c051a",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1043,30 +1043,32 @@
         },
         {
             "name": "dvsa/feature-toggle",
-            "version": "v1.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/featuretoggle.git",
-                "reference": "636213e97a7680dba2e4cc6137d21d39b77a9c17"
+                "reference": "d1dba246840050570cf770e5bf5950c592d60922"
             },
             "require": {
                 "php": ">=5.3.3",
-                "zendframework/zendframework": ">2.1.0"
+                "zendframework/zendframework": "~2.3.9"
             },
             "require-dev": {
+                "fabpot/php-cs-fixer": "~1.5",
                 "phpunit/phpunit": "~4.0"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "DvsaFeature\\": "src/"
+                "psr-4": {
+                    "DvsaFeature\\": "src/",
+                    "DvsaFeatureTest\\": "test/"
                 },
                 "classmap": [
                     "./Module.php"
                 ]
             },
             "description": "Shared facility to toggle functionality within the codebase",
-            "time": "2014-11-09 10:18:21"
+            "time": "2015-06-30 22:08:07"
         },
         {
             "name": "dvsa/scripts",
@@ -1500,6 +1502,7 @@
                     "ZendPdf\\": "library/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1509,10 +1512,6 @@
                 "pdf",
                 "zf2"
             ],
-            "support": {
-                "source": "https://github.com/zendframework/ZendPdf/tree/release-2.0.2",
-                "issues": "https://github.com/zendframework/ZendPdf/issues"
-            },
             "time": "2012-11-16 11:16:01"
         },
         {

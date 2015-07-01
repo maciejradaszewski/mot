@@ -1,10 +1,11 @@
 <?php
+
 namespace Core;
 
+use Zend\ModuleManager\Feature\ViewHelperProviderInterface;
+
 /**
- * Class Module
- *
- * @package Core
+ * Class Module.
  */
 class Module
 {
@@ -21,15 +22,6 @@ class Module
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ],
             ],
-        ];
-    }
-
-    public function getViewHelperConfig()
-    {
-        return [
-            \Zend\Loader\ClassMapAutoloader::class => array(
-                __DIR__ . '/autoload_classmap.php',
-            ),
         ];
     }
 
