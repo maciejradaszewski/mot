@@ -2,6 +2,8 @@
 
 namespace Core\Controller;
 
+use DvsaFeature\Exception\FeatureNotAvailableException;
+use DvsaFeature\FeatureToggleAwareInterface;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use Zend\Form\Annotation\AnnotationBuilder;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -11,18 +13,41 @@ use Zend\View\Model\ViewModel;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\Utility\ArrayUtils;
 
-abstract class AbstractDvsaActionController extends AbstractActionController
+abstract class AbstractDvsaActionController
+    extends AbstractActionController
+    implements FeatureToggleAwareInterface
 {
+    const FORM_ERROR_CONTAINER_NAMESPACE = 'formErrorMessages';
+    const FORM_ERROR_CONTAINER_KEY       = 'errorData';
+    const TEMPLATE_FLASH_ERROR           = 'error/flash-error';
+
     protected $form;
     protected $restClient;
     /**
      * @var OpenAMClientInterface
      */
     protected $openAMClient;
-    const FORM_ERROR_CONTAINER_NAMESPACE = 'formErrorMessages';
-    const FORM_ERROR_CONTAINER_KEY = 'errorData';
 
-    const TEMPLATE_FLASH_ERROR = 'error/flash-error';
+    /**
+     * {@inheritdoc}
+     */
+    public function isFeatureEnabled($name)
+    {
+        return $this
+            ->getServiceLocator()
+            ->get('Feature\FeatureToggles')
+            ->isEnabled($name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function assertFeatureEnabled($name)
+    {
+        if (!$this->isFeatureEnabled($name)) {
+            throw new FeatureNotAvailableException($name);
+        }
+    }
 
     protected function getLogger()
     {
