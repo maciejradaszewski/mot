@@ -11,6 +11,7 @@ class Vehicle extends MotApi
     const PATH = 'vehicle';
     const PATH_ID = 'vehicle/{vehicle_id}';
     const PATH_SEARCH = 'vehicle?reg={vehicle_reg}&vinType=noVin&excludeDvla=true';
+    const PATH_SEARCH_WITH_VIN = 'vehicle?reg={vehicle_reg}&vinType=fullVin&vin={vin}&excludeDvla=true';
 
     private $makeMap = [
         'BMW' => '18807',
@@ -66,11 +67,17 @@ class Vehicle extends MotApi
         ));
     }
 
-    public function vehicleSearch($token, $reg)
+    public function vehicleSearch($token, $reg, $vin = null)
     {
+        if(empty($vin)) {
+            $url = str_replace('{vehicle_reg}', $reg, self::PATH_SEARCH);
+        } else {
+            $url = str_replace(['{vehicle_reg}', '{vin}'], [$reg, $vin], self::PATH_SEARCH_WITH_VIN);
+        }
+
         return $this->client->request(new Request(
             'GET',
-            str_replace('{vehicle_reg}', $reg, self::PATH_SEARCH),
+            $url,
             ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
         ));
     }

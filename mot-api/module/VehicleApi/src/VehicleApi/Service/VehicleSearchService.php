@@ -107,9 +107,50 @@ class VehicleSearchService
      */
     public function search($vin = null, $reg = null, $isFullVin = null, $searchDvla = null, $limit = null)
     {
+        $exactMatch = false;
         $this->authService->assertGranted(PermissionInSystem::VEHICLE_READ);
 
-        $vehicles = $this->vehicleRepository->search($vin, $reg, $isFullVin, $limit);
+        $vehicles = $this->searchAndExtractVehicle($vin, $reg, $isFullVin, $searchDvla, $limit);
+
+        if(empty($vehicles)) {
+            if($this->paramsNeedStripping($vin, $reg)) {
+                list($vin, $reg) = $this->stripParams($vin, $reg);
+                $vehicles = $this->searchAndExtractVehicle($vin, $reg, $isFullVin, $searchDvla, $limit);
+            }
+        } else {
+            $exactMatch = true;
+        }
+
+        if(empty($vehicles)) {
+            $vehicles = [];
+        }
+
+
+        return [$vehicles, $exactMatch];
+    }
+
+    public function searchVehicleWithMotData($vin = null, $reg = null, $isFullVin = null, $searchDvla = null, $limit = null)
+    {
+        $this->authService->assertGranted(PermissionInSystem::VEHICLE_READ);
+
+        $vehicles = $this->searchAndExtractVehicle($vin, $reg, $isFullVin, $searchDvla, $limit);
+
+        if(empty($vehicles) && $this->paramsNeedStripping($vin, $reg)) {
+            list($vin, $reg) = $this->stripParams($vin, $reg);
+            $vehicles = $this->searchAndExtractVehicle($vin, $reg, $isFullVin, $searchDvla, $limit);
+        }
+
+        if(!empty($vehicles)) {
+            $vehicles = $this->mergeMotDataToVehicles($vehicles);
+        }
+
+        return !empty($vehicles) ? $vehicles : [];
+    }
+
+    private function searchAndExtractVehicle($vin = null, $reg = null, $isFullVin = null, $searchDvla = null, $limit = null)
+    {
+        $vehicles = $this->vehicleRepository->searchVehicle($vin, $reg, $isFullVin, $limit);
+
         if (!empty($vehicles)) {
             return $this->extractVehicles($vehicles);
         }
@@ -120,47 +161,6 @@ class VehicleSearchService
                 return $this->extractDvlaVehicles($vehicles);
             }
         }
-
-        if ($this->allowFuzzySearch) {
-            $simpleCharMapping = FuzzySearchRegexHelper::charGroupsToMapping(
-                FuzzySearchRegexHelper::uppercaseCharGroups(self::$simpleCharGroups)
-            );
-
-            $vehicles = $this->vehicleRepository->fuzzySearch($vin, $reg, $simpleCharMapping, $limit);
-
-            if (!empty($vehicles)) {
-                return $this->extractVehicles($vehicles);
-            }
-
-            if ($searchDvla) {
-                $vehicles = $this->dvlaVehicleRepository->fuzzySearch($vin, $reg, $simpleCharMapping, $limit);
-                if (!empty($vehicles)) {
-                    return $this->extractDvlaVehicles($vehicles);
-                }
-            }
-        }
-
-        return [];
-    }
-
-    public function searchVehicleWithMotData($vin = null, $reg = null, $isFullVin = null, $searchDvla = null, $limit = null)
-    {
-        $this->authService->assertGranted(PermissionInSystem::VEHICLE_READ);
-
-        $vehicles = $this->vehicleRepository->searchVehicle($vin, $reg, $isFullVin, $limit);
-
-        if (!empty($vehicles)) {
-            return $this->extractVehiclesWithMotData($vehicles);
-        }
-
-        if ($searchDvla) {
-            $vehicles = $this->dvlaVehicleRepository->searchVehicle($vin, $reg, $isFullVin, $limit);
-            if (!empty($vehicles)) {
-                return $this->extractDvlaVehicles($vehicles);
-            }
-        }
-
-        return [];
     }
 
     /**
@@ -191,12 +191,12 @@ class VehicleSearchService
         return [];
     }
 
-    private function extractVehiclesWithMotData($vehicles)
+    private function mergeMotDataToVehicles($vehicles)
     {
         $vehicleData = array_map(
             function ($vehicle) {
-                if ($vehicle instanceof Vehicle) {
-                    return $this->extractVehicle($vehicle, true);
+                if (is_array($vehicle)) {
+                    return $this->mergeMotDataToVehicle($vehicle);
                 }
             },
             $vehicles
@@ -238,7 +238,7 @@ class VehicleSearchService
      *
      * @return array
      */
-    public function extractVehicle(Vehicle $v, $getMotTestData = false)
+    public function extractVehicle(Vehicle $v)
     {
         $emptyVrmReason = $v->getEmptyVrmReason() ? $v->getEmptyVrmReason()->getCode() : null;
         $emptyVinReason = $v->getEmptyVinReason() ? $v->getEmptyVinReason()->getCode() : null;
@@ -266,28 +266,35 @@ class VehicleSearchService
             'creationDate'            => DateTimeApiFormat::date($v->getCreatedOn()),
         ];
 
-        if ($getMotTestData) {
-            $motTestData = $this->motTestRepository->findHistoricalTestsForVehicle($v->getId(), null);
+        return $result;
+    }
 
-            $result = array_merge(
-                $result,
-                [
-                    'mot_id'              => '',
-                    'mot_completion_date' => '',
-                    'total_mot_tests'     => '0',
-                ]
-            );
+    /**
+     * @param array $vehicle
+     * @return array
+     */
+    private function mergeMotDataToVehicle(array $vehicle)
+    {
+        $motTestData = $this->motTestRepository->findHistoricalTestsForVehicle($vehicle['id'], null);
 
-            if ($motTestData) {
-                /** @var MotTest $latestMotTest */
-                $latestMotTest = current($motTestData);
-                $result['mot_id'] = $latestMotTest->getNumber();
-                $result['mot_completed_date'] = $latestMotTest->getIssuedDate() ? $latestMotTest->getIssuedDate()->format('Y-m-d') : NULL;
-                $result['total_mot_tests'] = count($motTestData);
-            }
+        $vehicle = array_merge(
+            $vehicle,
+            [
+                'mot_id'              => '',
+                'mot_completion_date' => '',
+                'total_mot_tests'     => '0',
+            ]
+        );
+
+        if ($motTestData) {
+            /** @var MotTest $latestMotTest */
+            $latestMotTest = current($motTestData);
+            $vehicle['mot_id'] = $latestMotTest->getNumber();
+            $vehicle['mot_completed_date'] = $latestMotTest->getIssuedDate()->format('Y-m-d');
+            $vehicle['total_mot_tests'] = count($motTestData);
         }
 
-        return $result;
+        return $vehicle;
     }
 
     /**
@@ -418,5 +425,39 @@ class VehicleSearchService
         $colour = $this->vehicleCatalog->findColourByCode($code);
 
         return self::extractColour($colour);
+    }
+
+    /**
+     * @param string $vin
+     * @param string $reg
+     * @return bool
+     */
+    private function paramsNeedStripping($vin, $reg)
+    {
+        if(strpos($vin, " ") !== FALSE) {
+            return true;
+        }
+
+        if(strpos($reg, " ") !== FALSE) {
+            return true;
+        }
+    }
+
+    /**
+     * @param string $vin
+     * @param string $reg
+     * @return array
+     */
+    private function stripParams($vin, $reg)
+    {
+        if(strpos($vin, " ") !== FALSE) {
+            $vin = preg_replace('/\s+/', '', $vin);
+        }
+
+        if(strpos($reg, " ") !== FALSE) {
+            $reg = preg_replace('/\s+/', '', $reg);
+        }
+
+        return array($vin, $reg);
     }
 }

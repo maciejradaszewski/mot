@@ -16,6 +16,7 @@ use DvsaElasticSearch\Query\SuperSearchQuery;
 use DvsaEntities\DqlBuilder\SearchParam\MotTestSearchParam;
 use DvsaEntities\DqlBuilder\SearchParam\VehicleTestingStationSearchParam;
 use DvsaEntities\DqlBuilder\SearchParam\VehicleSearchParam;
+use DvsaCommonApi\Model\SearchParam;
 use Zend\Di\ServiceLocatorInterface;
 use Zend\Http\Request;
 
@@ -62,7 +63,12 @@ class ElasticSearchService
     {
         $this->checkPermissions(PermissionInSystem::MOT_TEST_LIST);
 
-        return SuperSearchQuery::execute($params, new FbQueryMotTest());
+        $result = SuperSearchQuery::execute($params, new FbQueryMotTest());
+
+        if($result->getResultCount() == 0 && $this->checkIfParamsNeedStripping($params)) {
+            $result = SuperSearchQuery::execute($this->stripParams($params), new FbQueryMotTest());
+        }
+        return $result;
     }
 
 
@@ -107,7 +113,12 @@ class ElasticSearchService
     public function findVehicles(VehicleSearchParam $params)
     {
         $this->authService->assertGranted(PermissionInSystem::VEHICLE_READ);
-        return SuperSearchQuery::execute($params, new FbQueryVehicle());
+
+        $result = SuperSearchQuery::execute($params, new FbQueryVehicle());
+        if($result['resultCount'] == 0 && $this->checkIfParamsNeedStripping($params)) {
+            $result = SuperSearchQuery::execute($this->stripParams($params), new FbQueryVehicle());
+        }
+        return $result;
     }
 
     /**
@@ -118,5 +129,40 @@ class ElasticSearchService
     protected function checkPermissions($permission)
     {
         $this->authService->assertGranted($permission);
+    }
+
+    /**
+     * Strip vin and/or registration number if set to perform extra search
+     * @param SearchParam $params
+     *
+     * @return VehicleSearchParam
+     */
+    protected function stripParams(SearchParam $params)
+    {
+        $strippedParams = clone($params);
+
+        if($params->getVin() != NULL && strpos($params->getVin(), " ") !== FALSE) {
+            $strippedParams->setVin(preg_replace('/\s+/', '', $params->getVin()));
+        }
+
+        if($params->getRegistration() != NULL && strpos($params->getRegistration(), " ") !== FALSE) {
+            $strippedParams->setRegistration(preg_replace('/\s+/', '', $params->getRegistration()));
+        }
+
+        return $strippedParams;
+    }
+
+    /**
+     * @param SearchParam $params
+     * @return bool
+     */
+    protected function checkIfParamsNeedStripping(SearchParam $params)
+    {
+        if($params->getVin() != NULL && strpos($params->getVin(), " ") !== FALSE) {
+            return true;
+        }
+        if($params->getRegistration() != NULL && strpos($params->getRegistration(), " ") !== FALSE) {
+            return true;
+        }
     }
 }

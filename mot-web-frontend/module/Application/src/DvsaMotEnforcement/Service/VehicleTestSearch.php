@@ -418,13 +418,13 @@ class VehicleTestSearch
                 $apiUrl,
                 (VehicleSearchType::SEARCH_TYPE_VRM === $this->searchType
                     ? [
-                        'vrm' => preg_replace('/\s+/', '', $this->searchTerm),
+                        'vrm' => $this->searchTerm,
                         'format' => SearchParamConst::FORMAT_DATA_TABLES,
                         'sortDirection' => SearchParamConst::SORT_DIRECTION_DESC,
                         'rowCount' => 25000
                     ]
                     : [
-                        'vin' => preg_replace('/\s+/', '', $this->searchTerm),
+                        'vin' => $this->searchTerm,
                         'format' => SearchParamConst::FORMAT_DATA_TABLES,
                         'sortDirection' => SearchParamConst::SORT_DIRECTION_DESC,
                         'rowCount' => 25000
@@ -463,7 +463,6 @@ class VehicleTestSearch
     public function getMotTestByVehicleId(MotTestSearchParamsDto $params)
     {
         $motTestModel = new MotTestModel;
-
         $apiUrl = MotTestUrlBuilder::search()->toString();
         $apiResult = $this->restClient->post($apiUrl, DtoHydrator::dtoToJson($params));
 

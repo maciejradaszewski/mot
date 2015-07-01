@@ -6,7 +6,7 @@
 |FNZ6110     |1M8GDM9AXKP042788             |           |Normal   |Full info about Clio                          |                |RENAULT CLIO 1M8GDM9AXKP042788 FNZ6110                                 |
 |            |1M8GDM9AXKP042788             |           |Normal   |Full VIN for Clio                             |                |NOT FOUND                                                              |
 |FNZ 6110    |                              |           |Normal   |Full Reg for Clio                             |                |NOT FOUND                                                              |
-|FNZ 6110    |042788                        |           |Normal   |Full Reg, 6 last VIN digits for Clio          |                |NOT FOUND                                                              |
+|FNZ 6110    |042788                        |           |Normal   |Full Reg, 6 last VIN digits for Clio          |                |RENAULT CLIO 1M8GDM9AXKP042788 FNZ6110                                                              |
 |FNZ 6110    |P042788                       |           |Normal   |Full Reg, 7 last VIN digits for Clio          |                |NOT FOUND                                                              |
 |            |042788                        |           |Normal   |No Reg, 6 last VIN digits for Clio            |                |NOT FOUND                                                              |
 |            |P042788                       |           |Normal   |No Reg, 7 last VIN digits for Clio            |                |NOT FOUND                                                              |
