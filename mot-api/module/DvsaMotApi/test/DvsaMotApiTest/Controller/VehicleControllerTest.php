@@ -33,8 +33,8 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
     {
         $this->mockValidAuthorization([SiteBusinessRoleCode::TESTER]);
 
-        $expectedVehicleData = ['id' => 1];
-        $expectedVehiclesData = [$expectedVehicleData];
+        $expectedVehiclesData = ['id' => 1];
+        $expectedSearchReturn = [[$expectedVehiclesData], true];
 
         $mockVehicleService = $this->getMockServiceManagerClass(
             VehicleSearchService::class, VehicleSearchService::class
@@ -42,7 +42,7 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
         $mockVehicleService->expects($this->once())
             ->method('search')
             ->with(self::TEST_SHORT_VIN, self::TEST_REG_MARK_SANITIZED, self::TEST_VIN_IS_PARTIAL)
-            ->will($this->returnValue($expectedVehiclesData));
+            ->will($this->returnValue($expectedSearchReturn));
 
         $this->request->setQuery(
             new Parameters(
@@ -57,7 +57,7 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
 
         $this->assertResponseStatusAndResult(
             self::HTTP_OK_CODE,
-            $this->getQueryTestResponse($expectedVehicleData),
+            $this->getQueryTestResponse($expectedVehiclesData),
             $result
         );
     }
@@ -66,8 +66,8 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
     {
         $this->mockValidAuthorization([SiteBusinessRoleCode::TESTER]);
 
-        $expectedVehicleData = ['id' => 1];
-        $expectedVehiclesData = [$expectedVehicleData];
+        $expectedVehiclesData = ['id' => 1];
+        $expectedSearchReturn = [[$expectedVehiclesData], true];
 
         $mockVehicleService = $this->getMockServiceManagerClass(
             VehicleSearchService::class, VehicleSearchService::class
@@ -75,7 +75,7 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
         $mockVehicleService->expects($this->once())
             ->method('search')
             ->with(self::TEST_SHORT_VIN, self::TEST_REG_MARK_SANITIZED, self::TEST_VIN_IS_PARTIAL)
-            ->will($this->returnValue($expectedVehiclesData));
+            ->will($this->returnValue($expectedSearchReturn));
 
         $this->request->setQuery(
             new Parameters(
@@ -90,7 +90,7 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
 
         $this->assertResponseStatusAndResult(
             self::HTTP_OK_CODE,
-            $this->getQueryTestResponse($expectedVehicleData),
+            $this->getQueryTestResponse($expectedVehiclesData),
             $result
         );
     }
@@ -100,6 +100,7 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
         $this->mockValidAuthorization([SiteBusinessRoleCode::TESTER]);
 
         $twoVehiclesData = $this->getTwoVehiclesData();
+        $expectedSearchReturn = [$twoVehiclesData, true];
 
         $mockVehicleService = $this->getMockServiceManagerClass(
             VehicleSearchService::class, VehicleSearchService::class
@@ -107,7 +108,7 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
         $mockVehicleService->expects($this->once())
             ->method('search')
             ->with(self::TEST_SHORT_VIN, self::TEST_REG_MARK_SANITIZED, self::TEST_VIN_IS_PARTIAL)
-            ->will($this->returnValue($twoVehiclesData));
+            ->will($this->returnValue($expectedSearchReturn));
 
         $this->request->setQuery(
             new Parameters(
@@ -131,8 +132,8 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
     {
         $this->mockValidAuthorization([SiteBusinessRoleCode::TESTER]);
 
-        $expectedVehicleData = ['id' => 1];
-        $expectedVehiclesData = [$expectedVehicleData];
+        $expectedVehiclesData = ['id' => 1];
+        $expectedSearchReturn = [[$expectedVehiclesData], true];
 
         $mockVehicleService = $this->getMockServiceManagerClass(
             VehicleSearchService::class, VehicleSearchService::class
@@ -140,7 +141,7 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
         $mockVehicleService->expects($this->once())
             ->method('search')
             ->with(self::TEST_FULL_VIN, self::TEST_REG_MARK_SANITIZED, self::TEST_VIN_IS_FULL)
-            ->will($this->returnValue($expectedVehiclesData));
+            ->will($this->returnValue($expectedSearchReturn));
 
         $this->request->setQuery(
             new Parameters(
@@ -155,7 +156,7 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
 
         $this->assertResponseStatusAndResult(
             self::HTTP_OK_CODE,
-            $this->getQueryTestResponse($expectedVehicleData),
+            $this->getQueryTestResponse($expectedVehiclesData),
             $result
         );
     }
@@ -164,8 +165,8 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
     {
         $this->mockValidAuthorization([SiteBusinessRoleCode::TESTER]);
 
-        $expectedVehicleData = ['id' => 1];
-        $expectedVehiclesData = [$expectedVehicleData];
+        $expectedVehiclesData = ['id' => 1];
+        $expectedSearchReturn = [[$expectedVehiclesData], true];
 
         $mockVehicleService = $this->getMockServiceManagerClass(
             VehicleSearchService::class, VehicleSearchService::class
@@ -173,7 +174,7 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
         $mockVehicleService->expects($this->once())
             ->method('search')
             ->with(self::TEST_FULL_VIN, self::TEST_NO_REG, self::TEST_VIN_IS_FULL)
-            ->will($this->returnValue($expectedVehiclesData));
+            ->will($this->returnValue($expectedSearchReturn));
 
         $this->request->setQuery(
             new Parameters(
@@ -187,7 +188,7 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
 
         $this->assertResponseStatusAndResult(
             self::HTTP_OK_CODE,
-            $this->getQueryTestResponse($expectedVehicleData),
+            $this->getQueryTestResponse($expectedVehiclesData),
             $result
         );
     }
@@ -211,8 +212,8 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
     {
         $this->mockValidAuthorization([SiteBusinessRoleCode::TESTER]);
 
-        $expectedVehicleData = ['id' => 1];
-        $expectedVehiclesData = [$expectedVehicleData];
+        $expectedVehiclesData = ['id' => 1];
+        $expectedSearchReturn = [[$expectedVehiclesData], true];
 
         $mockVehicleService = $this->getMockServiceManagerClass(
             VehicleSearchService::class, VehicleSearchService::class
@@ -220,7 +221,7 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
         $mockVehicleService->expects($this->once())
             ->method('search')
             ->with(self::TEST_NO_VIN, self::TEST_REG_MARK_SANITIZED, self::TEST_VIN_IS_PARTIAL)
-            ->will($this->returnValue($expectedVehiclesData));
+            ->will($this->returnValue($expectedSearchReturn));
 
         $this->request->setQuery(
             new Parameters(
@@ -234,7 +235,7 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
 
         $this->assertResponseStatusAndResult(
             self::HTTP_OK_CODE,
-            $this->getQueryTestResponse($expectedVehicleData),
+            $this->getQueryTestResponse($expectedVehiclesData),
             $result
         );
     }
@@ -243,7 +244,8 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
     {
         $this->mockValidAuthorization([SiteBusinessRoleCode::TESTER]);
 
-        $twoVehiclesData = [['id' => 1], ['id' => 2]];
+        $twoVehiclesData      = [['id' => 1], ['id' => 2]];
+        $expectedSearchReturn = [$twoVehiclesData, true];
 
         $mockVehicleService = $this->getMockServiceManagerClass(
             VehicleSearchService::class, VehicleSearchService::class
@@ -251,7 +253,7 @@ class VehicleControllerTest extends AbstractMotApiControllerTestCase
         $mockVehicleService->expects($this->once())
             ->method('search')
             ->with(self::TEST_NO_VIN, self::TEST_REG_MARK_SANITIZED, self::TEST_VIN_IS_PARTIAL)
-            ->will($this->returnValue($twoVehiclesData));
+            ->will($this->returnValue($expectedSearchReturn));
 
         $this->request->setQuery(
             new Parameters(

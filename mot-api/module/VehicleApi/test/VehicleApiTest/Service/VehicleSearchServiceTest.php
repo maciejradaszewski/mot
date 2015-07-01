@@ -71,26 +71,28 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
     public function testSearchAllParametersNullReturnsEmptyArray()
     {
         $service = $this->getMockService();
-        $this->assertEquals([], $service->search());
+        $this->assertEquals([[], false], $service->search());
     }
 
     public function testSearchReturnsMoreThanOneResultWillReturnSameAsArray()
     {
-        $this->getMockVehicleRepositoryWithResult('search', $this->getVehicleMockObjects());
+        $this->getMockVehicleRepositoryWithResult('searchVehicle', $this->getVehicleMockObjects());
 
         $service = $this->getMockService();
-        $result =  $service->search('DUMMY', null, true, true, 10);
+        $result  = $service->search('DUMMY', null, true, true, 10);
+        $result  = current($result);
 
         $this->assertEquals(count($this->getVehicleMockObjects()), count($result));
     }
 
     public function testSearchNoResultsInVehicleRepoButReturnResultFromDvlaRepo()
     {
-        $this->getMockVehicleRepositoryWithResult('search', false);
+        $this->getMockVehicleRepositoryWithResult('searchVehicle', false);
         $this->getMockDvlaVehicleRepositoryWithResult('search', $this->getDvlaVehicleMockObjects());
 
         $service = $this->getMockService();
-        $result =  $service->search('DUMMY', null, true, true, 10);
+        $result  = $service->search('DUMMY', null, true, true, 10);
+        $result  = current($result);
 
         $this->assertEquals(count($this->getDvlaVehicleMockObjects()), count($result));
     }
@@ -99,13 +101,13 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
     {
         $vehicleObject = VOF::vehicle(1);
 
-        $this->getMockVehicleRepositoryWithResult('search', [ $vehicleObject ]);
+        $this->getMockVehicleRepositoryWithResult('searchVehicle', [ $vehicleObject ]);
 
         $service = $this->getMockService();
-        $result =  $service->search('DUMMY', null, true, true, 10);
+        $result  = $service->search('DUMMY', null, true, true, 10);
 
+        $result = current($result);
         $this->assertEquals(1, count($result));
-
         $result = current($result);
 
         $this->assertionBetweenVehicleObjectAndVehicleResultArray($vehicleObject, $result);
@@ -115,10 +117,11 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
     {
         $vehicleObjects = $this->getVehicleMockObjects();
 
-        $this->getMockVehicleRepositoryWithResult('search', $vehicleObjects);
+        $this->getMockVehicleRepositoryWithResult('searchVehicle', $vehicleObjects);
 
         $service = $this->getMockService();
-        $result =  $service->search('DUMMY', null, true, true, 10);
+        $result  = $service->search('DUMMY', null, true, true, 10);
+        $result  = current($result);
 
         $this->assertEquals(count($vehicleObjects), count($result));
 
@@ -138,7 +141,7 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
         $this->getMockVehicleRepositoryWithResult('searchVehicle', $this->getVehicleMockObjects());
 
         $service = $this->getMockService();
-        $result =  $service->searchVehicleWithMotData('DUMMY', null, true, true, 10);
+        $result  = $service->searchVehicleWithMotData('DUMMY', null, true, true, 10);
 
         $this->assertEquals(count($this->getVehicleMockObjects()), count($result));
     }
@@ -146,10 +149,10 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
     public function testSearchVehicleDataWithMotDataNoResultsInVehicleRepoButReturnResultFromDvlaRepo()
     {
         $this->getMockVehicleRepositoryWithResult('searchVehicle', false);
-        $this->getMockDvlaVehicleRepositoryWithResult('searchVehicle', $this->getDvlaVehicleMockObjects());
+        $this->getMockDvlaVehicleRepositoryWithResult('search', $this->getDvlaVehicleMockObjects());
 
         $service = $this->getMockService();
-        $result =  $service->searchVehicleWithMotData('DUMMY', null, true, true, 10);
+        $result  =  $service->searchVehicleWithMotData('DUMMY', null, true, true, 10);
 
         $this->assertEquals(count($this->getDvlaVehicleMockObjects()), count($result));
     }
@@ -246,11 +249,13 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
     {
         $vehicleObject = VOF::dvlavehicle(1);
 
-        $this->getMockVehicleRepositoryWithResult('search', false);
+        $this->getMockVehicleRepositoryWithResult('searchVehicle', false);
         $this->getMockDvlaVehicleRepositoryWithResult('search', [ $vehicleObject ]);
 
         $service = $this->getMockService();
         $result =  $service->search('DUMMY', null, true, true, 10);
+
+        $result = current($result);
 
         $this->assertEquals(1, count($result));
 
@@ -263,11 +268,12 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
     {
         $vehicleObjects = $this->getDvlaVehicleMockObjects();
 
-        $this->getMockVehicleRepositoryWithResult('search', false);
+        $this->getMockVehicleRepositoryWithResult('searchVehicle', false);
         $this->getMockDvlaVehicleRepositoryWithResult('search', $vehicleObjects);
 
         $service = $this->getMockService();
-        $result =  $service->search('DUMMY', null, true, true, 10);
+        $result  = $service->search('DUMMY', null, true, true, 10);
+        $result  = current($result);
         $this->assertEquals(count($vehicleObjects), count($result));
 
         foreach ($result as $key => $vehicleArray) {

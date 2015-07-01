@@ -41,7 +41,7 @@ class VehicleSearchService
         $this->paramObfuscator = $paramObfuscator;
 
         $this->postData = [
-            self::VEHICLE_SEARCH_TERM => preg_replace('/\s+/', '', $data[self::VEHICLE_SEARCH_TERM]),
+            self::VEHICLE_SEARCH_TERM => $data[self::VEHICLE_SEARCH_TERM],
             self::VEHICLE_TYPE_TERM   => $data[self::VEHICLE_TYPE_TERM],
             'format'                  => 'DATA_TABLES',
             'rowCount'                => 500,

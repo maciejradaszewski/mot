@@ -93,9 +93,8 @@ class VehicleController extends AbstractDvsaRestfulController
 
         $service = $this->getVehicleSearchService();
 
-        $vehiclesData = $service->search($vin, $reg, $vinType == self::FULL_VIN, $searchDvla, 6);
+        list($vehiclesData, $exactMatch) = $service->search($vin, $reg, $vinType == self::FULL_VIN, $searchDvla, 6);
         $numberOfVehicles = count($vehiclesData);
-        $exactMatch = true;
 
         if ($numberOfVehicles == 0) {
             $vehiclesData = $service->fuzzySearch($vin, $reg, $searchDvla, 6);

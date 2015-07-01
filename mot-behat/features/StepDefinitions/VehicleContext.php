@@ -230,13 +230,31 @@ class VehicleContext implements Context
     }
 
     /**
+     * @When /^I search for a vehicle by registration number "([^"]*)" and VIN "([^"]*)"$/
+     *
+     * @param $regNumber
+     * @param $vin
+     */
+    public function iSearchForAVehicleByRegistrationNumberAndVin($regNumber, $vin)
+    {
+        $this->searchedVehicleResponse = $this->vehicle->vehicleSearch($this->sessionContext->getCurrentAccessToken(), $regNumber, $vin);
+    }
+
+    /**
      * @Then /^the vehicle registration number "([^"]*)" is returned$/
+     * @Then /^the vehicle with registration "([^"]*)" is returned$/
      *
      * @param $reg
      */
     public function theVehicleRegistrationNumberIsReturned($reg)
     {
-        PHPUnit::assertThat($this->searchedVehicleResponse->getBody()['data']['vehicle']['registration'], PHPUnit::identicalTo(($reg)));
+        $data = $this->searchedVehicleResponse->getBody()['data'];
+        if(array_key_exists('vehicle', $data)) {
+            PHPUnit::assertThat($data['vehicle']['registration'], PHPUnit::identicalTo(($reg)));
+        }
+        if(array_key_exists('vehicles', $data)) {
+            PHPUnit::assertThat($data['vehicles'][0]['registration'], PHPUnit::identicalTo(($reg)));
+        }
     }
 
     /**
