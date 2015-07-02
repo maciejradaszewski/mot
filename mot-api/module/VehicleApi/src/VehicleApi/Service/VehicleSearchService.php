@@ -129,15 +129,34 @@ class VehicleSearchService
         return [$vehicles, $exactMatch];
     }
 
-    public function searchVehicleWithMotData($vin = null, $reg = null, $isFullVin = null, $searchDvla = null, $limit = null)
+    public function searchVehicleWithMotData($vin = null, $reg = null, $searchDvla = null, $limit = null)
     {
+        $isFullVin = false;
+        $vinHasSpaces = false;
+        $regHasSpaces = false;
+
+        if($vin) {
+            $filteredVin = preg_replace('/\s+/', '', $vin);
+            $isFullVin = strlen($filteredVin) !== 6;
+            $vinHasSpaces = $filteredVin !== $vin;
+        }
+
+        if($reg) {
+            $filteredReg = preg_replace('/\s+/', '', $reg);
+            $regHasSpaces = $filteredReg !== $reg;
+        }
+
         $this->authService->assertGranted(PermissionInSystem::VEHICLE_READ);
 
         $vehicles = $this->searchAndExtractVehicle($vin, $reg, $isFullVin, $searchDvla, $limit);
 
-        if(empty($vehicles) && $this->paramsNeedStripping($vin, $reg)) {
-            list($vin, $reg) = $this->stripParams($vin, $reg);
-            $vehicles = $this->searchAndExtractVehicle($vin, $reg, $isFullVin, $searchDvla, $limit);
+        if(empty($vehicles) && ($vinHasSpaces || $regHasSpaces)) {
+            $vehicles = $this->searchAndExtractVehicle(
+                $vinHasSpaces ? $filteredVin : $vin,
+                $regHasSpaces ? $filteredReg : $reg,
+                $isFullVin,
+                $searchDvla,
+                $limit);
         }
 
         if(!empty($vehicles)) {
