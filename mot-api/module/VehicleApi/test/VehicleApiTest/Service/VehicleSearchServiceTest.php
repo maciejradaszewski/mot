@@ -141,7 +141,7 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
         $this->getMockVehicleRepositoryWithResult('searchVehicle', $this->getVehicleMockObjects());
 
         $service = $this->getMockService();
-        $result  = $service->searchVehicleWithMotData('DUMMY', null, true, true, 10);
+        $result  = $service->searchVehicleWithMotData('DUMMY', null, true, 10);
 
         $this->assertEquals(count($this->getVehicleMockObjects()), count($result));
     }
@@ -152,7 +152,7 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
         $this->getMockDvlaVehicleRepositoryWithResult('search', $this->getDvlaVehicleMockObjects());
 
         $service = $this->getMockService();
-        $result  =  $service->searchVehicleWithMotData('DUMMY', null, true, true, 10);
+        $result  =  $service->searchVehicleWithMotData('DUMMY', null, true, 10);
 
         $this->assertEquals(count($this->getDvlaVehicleMockObjects()), count($result));
     }
@@ -164,7 +164,7 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
         $this->getMockVehicleRepositoryWithResult('searchVehicle', [ $vehicleObject ]);
 
         $service = $this->getMockService();
-        $result =  $service->searchVehicleWithMotData('DUMMY', null, true, true, 10);
+        $result =  $service->searchVehicleWithMotData('DUMMY', null, true, 10);
 
         $this->assertEquals(1, count($result));
 
@@ -183,7 +183,7 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
         $this->getMockMotTestRepositoryWithResult('findHistoricalTestsForVehicle', $motTestMock);
 
         $service = $this->getMockService();
-        $result =  $service->searchVehicleWithMotData('DUMMY', null, true, true, 10);
+        $result =  $service->searchVehicleWithMotData('DUMMY', null, true, 10);
 
         $this->assertEquals(count($vehicleObjects), count($result));
     }

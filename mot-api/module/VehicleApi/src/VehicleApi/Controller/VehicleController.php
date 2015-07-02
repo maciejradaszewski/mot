@@ -57,13 +57,7 @@ class VehicleController extends AbstractDvsaRestfulController
         $reg = $this->sanitize((string)$request->getQuery(self::REG_QUERY_PARAMETER, ''));
         $searchDvla = $request->getQuery(self::EXCLUDE_DVLA_PARAMETER) != "true";
 
-        if (strlen($vin) === 6) {
-            $isFullVin = false;
-        } else {
-            $isFullVin = true;
-        }
-
-        $vehiclesData = $this->vehicleSearchService->searchVehicleWithMotData($vin, $reg, $isFullVin, $searchDvla, 10);
+        $vehiclesData = $this->vehicleSearchService->searchVehicleWithMotData($vin, $reg, $searchDvla, 10);
 
         return ApiResponse::jsonOk(
             [
