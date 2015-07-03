@@ -224,31 +224,6 @@ public class VehicleSearchTest extends BaseTest {
                 is(vehicle1.getCarMakeAndModel()));
     }
 
-    @Test(groups = {"Regression", "VM-1498", "VM-8752"}) public void testSearchWithNoVin() {
-
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_NO_VIN);
-
-        VehicleSearchPage vehicleSearchPage =
-                VehicleSearchPage.navigateHereFromLoginPage(driver, login)
-                        .submitSearchWithRegOnlyExpectingVehicleSearchPage(
-                                vehicle.carReg.substring(1));
-
-        assertThat("Check additional message information text",
-                vehicleSearchPage.getMainMessageInfoText(),
-                is(Assertion.ASSERTION_VEHICLE_SEARCH_MESSAGE_REG.assertion + vehicle.carReg
-                        .substring(1) + Assertion.ASSERTION_VEHICLE_SEARCH_WITHOUT_VIN.assertion));
-        assertThat("Check additional message information text",
-                vehicleSearchPage.getAdditionalMessageInfo(),
-                is(Assertion.ASSERTION_ADDITIONAL_MESSAGE_FOR_0_RESULTS_WITHOUT_VIN.assertion));
-
-
-        StartTestConfirmation1Page confirmationPage =
-                vehicleSearchPage.typeReg(vehicle.carReg).clickSearch().clickVehicleCTA();
-
-        assertThat("Check that user is on the Start test confirmation page",
-                confirmationPage.isStartMotTestButtonDisplayed(), is(true));
-
-    }
     @Test(groups = {"Regression", "VM-4791"})
     public void testTheCookieElementIsPresentInTheDOMOfAVehicleSearchPage() {
         TesterCreationApi testerCreationApi = new TesterCreationApi();
