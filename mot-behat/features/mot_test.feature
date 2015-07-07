@@ -132,12 +132,7 @@ Feature: MOT Test
     When I search for a vehicle by registration number "LOL999"
     Then the vehicle registration number "LOL999" is returned
 
-  Scenario: Tester performs search on a VRM which includes spaces
-    Given I am logged in as a Tester
-    When I search for a vehicle by registration number "FNZ 6110" and VIN "1M8GDM9AXKP042788"
-    Then the vehicle with registration "FNZ6110" is returned
-
-  Scenario: Tester performs search on a short VRM which includes spaces
+  Scenario: Tester performs search on a VRM and partial VIN which includes spaces
     Given I am logged in as a Tester
     When I search for a vehicle by registration number "FNZ 6110" and VIN "04 2788"
     Then the vehicle with registration "FNZ6110" is returned
