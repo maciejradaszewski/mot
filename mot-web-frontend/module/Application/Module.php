@@ -22,6 +22,7 @@ use Application\Listener\WebListenerEventsPriorities;
 use Application\Service\ContingencySessionManager;
 use Application\Service\ReportBuilder\Service as ReportBuilderService;
 use DvsaCommon\Exception\UnauthorisedException;
+use DvsaFeature\Exception\FeatureNotAvailableException;
 use DvsaMotEnforcement\Service\Event;
 use DvsaMotEnforcement\Service\ReInspection;
 use DvsaMotTest\Data\BrakeTestResultsResource;
@@ -241,6 +242,11 @@ class Module implements
 
         $viewModel = $e->getResult();
         $viewModel->setVariables(['showErrorsInFrontEnd' => $config['showErrorsInFrontEnd'], 'errorId'=>$eid ]);
+
+        if ($exception instanceof FeatureNotAvailableException) {
+            $e->getResponse()->setStatusCode(404);
+            $viewManager->getRouteNotFoundStrategy()->prepareNotFoundViewModel($e);
+        }
 
         if ($exception instanceof \DvsaCommon\HttpRestJson\Exception\GeneralRestException) {
             $e->getResponse()->setStatusCode($exception->getCode());

@@ -17,7 +17,6 @@ use DvsaEntities\Repository\DvlaVehicleImportChangesRepository;
 use DvsaEntities\Repository\DvlaVehicleRepository;
 use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\VehicleRepository;
-use DvsaMotApi\Helper\FuzzySearchRegexHelper;
 use DvsaMotApi\Service\TesterService;
 
 /**
@@ -25,24 +24,6 @@ use DvsaMotApi\Service\TesterService;
  */
 class VehicleSearchService
 {
-    private static $simpleCharGroups
-        = [
-            ['0', 'O'],
-            ['1', 'I'],
-        ];
-
-    private static $fullCharGroups
-        = [
-            ['0', 'O'],
-            ['1', 'I', 'l'],
-            ['3', 'E'],
-            ['4', 'h', 'A'],
-            ['5', 'S'],
-            ['6', 'b', 'G'],
-            ['7', 'L', 'T'],
-            ['8', 'B'],
-            ['9', 'g', 'q'],
-        ];
 
     /** @var  VehicleRepository */
     protected $vehicleRepository;
@@ -60,19 +41,16 @@ class VehicleSearchService
     private $vehicleCatalog;
     /** @var  ParamObfuscator */
     private $paramObfuscator;
-    /** @var bool */
-    private $allowFuzzySearch;
 
     /**
-     * @param AuthorisationServiceInterface      $authService
-     * @param VehicleRepository                  $vehicleRepository
-     * @param DvlaVehicleRepository              $dvlaVehicleRepository
+     * @param AuthorisationServiceInterface $authService
+     * @param VehicleRepository $vehicleRepository
+     * @param DvlaVehicleRepository $dvlaVehicleRepository
      * @param DvlaVehicleImportChangesRepository $dvlaVehicleImportChangesRepository
-     * @param MotTestRepository                  $motTestRepository
-     * @param TesterService                      $testerService
-     * @param VehicleCatalogService              $vehicleCatalog
-     * @param ParamObfuscator                    $paramObfuscator
-     * @param $vehicleSearchFuzzyEnabled
+     * @param MotTestRepository $motTestRepository
+     * @param TesterService $testerService
+     * @param VehicleCatalogService $vehicleCatalog
+     * @param ParamObfuscator $paramObfuscator
      */
     public function __construct(
         AuthorisationServiceInterface $authService,
@@ -82,8 +60,7 @@ class VehicleSearchService
         MotTestRepository $motTestRepository,
         TesterService $testerService,
         VehicleCatalogService $vehicleCatalog,
-        ParamObfuscator $paramObfuscator,
-        $vehicleSearchFuzzyEnabled
+        ParamObfuscator $paramObfuscator
     ) {
         $this->vehicleRepository = $vehicleRepository;
         $this->dvlaVehicleRepository = $dvlaVehicleRepository;
@@ -92,7 +69,6 @@ class VehicleSearchService
         $this->dvlaVehicleImportChangesRepository = $dvlaVehicleImportChangesRepository;
         $this->testerService = $testerService;
         $this->paramObfuscator = $paramObfuscator;
-        $this->allowFuzzySearch = $vehicleSearchFuzzyEnabled;
         $this->motTestRepository = $motTestRepository;
     }
 
@@ -112,8 +88,8 @@ class VehicleSearchService
 
         $vehicles = $this->searchAndExtractVehicle($vin, $reg, $isFullVin, $searchDvla, $limit);
 
-        if(empty($vehicles)) {
-            if($this->paramsNeedStripping($vin, $reg)) {
+        if (empty($vehicles)) {
+            if ($this->paramsNeedStripping($vin, $reg)) {
                 list($vin, $reg) = $this->stripParams($vin, $reg);
                 $vehicles = $this->searchAndExtractVehicle($vin, $reg, $isFullVin, $searchDvla, $limit);
             }
@@ -121,7 +97,7 @@ class VehicleSearchService
             $exactMatch = true;
         }
 
-        if(empty($vehicles)) {
+        if (empty($vehicles)) {
             $vehicles = [];
         }
 
@@ -159,15 +135,20 @@ class VehicleSearchService
                 $limit);
         }
 
-        if(!empty($vehicles)) {
+        if (!empty($vehicles)) {
             $vehicles = $this->mergeMotDataToVehicles($vehicles);
         }
 
         return !empty($vehicles) ? $vehicles : [];
     }
 
-    private function searchAndExtractVehicle($vin = null, $reg = null, $isFullVin = null, $searchDvla = null, $limit = null)
-    {
+    private function searchAndExtractVehicle(
+        $vin = null,
+        $reg = null,
+        $isFullVin = null,
+        $searchDvla = null,
+        $limit = null
+    ) {
         $vehicles = $this->vehicleRepository->searchVehicle($vin, $reg, $isFullVin, $limit);
 
         if (!empty($vehicles)) {
@@ -180,34 +161,6 @@ class VehicleSearchService
                 return $this->extractDvlaVehicles($vehicles);
             }
         }
-    }
-
-    /**
-     * @param string  $vin        VIN number
-     * @param string  $reg        Registration number
-     * @param bool    $searchDvla True to search DVLA data source as well
-     * @param integer $limit      Max records to search for in the query
-     *
-     * @return array
-     */
-    public function fuzzySearch($vin, $reg, $searchDvla, $limit)
-    {
-        $fullCharMapping = FuzzySearchRegexHelper::charGroupsToMapping(
-            FuzzySearchRegexHelper::uppercaseCharGroups(self::$fullCharGroups)
-        );
-        $vehicles = $this->vehicleRepository->fuzzySearch($vin, $reg, $fullCharMapping, $limit);
-        if (!empty($vehicles)) {
-            return $this->extractVehicles($vehicles);
-        }
-
-        if ($searchDvla) {
-            $vehicles = $this->dvlaVehicleRepository->fuzzySearch($vin, $reg, $fullCharMapping, $limit);
-            if (!empty($vehicles)) {
-                return $this->extractDvlaVehicles($vehicles);
-            }
-        }
-
-        return [];
     }
 
     private function mergeMotDataToVehicles($vehicles)
@@ -263,26 +216,26 @@ class VehicleSearchService
         $emptyVinReason = $v->getEmptyVinReason() ? $v->getEmptyVinReason()->getCode() : null;
 
         $result = [
-            'id'                      => $v->getId(),
-            'registration'            => $v->getRegistration(),
+            'id' => $v->getId(),
+            'registration' => $v->getRegistration(),
             'emptyRegistrationReason' => $emptyVrmReason,
-            'vin'                     => $v->getVin(),
-            'emptyVinReason'          => $emptyVinReason,
-            'year'                    => $v->getYear(),
-            'firstUsedDate'           => DateTimeApiFormat::date($v->getFirstUsedDate()),
-            'cylinderCapacity'        => $v->getCylinderCapacity(),
-            'make'                    => $v->getMakeName(),
-            'model'                   => $v->getModelName(),
-            'modelDetail'             => $v->getModelDetail() ? $v->getModelDetail()->getName() : null,
-            'vehicleClass'            => $v->getVehicleClass() ? $v->getVehicleClass()->getCode() : null,
-            'primaryColour'           => self::extractColour($v->getColour()),
-            'secondaryColour'         => self::extractColour($v->getSecondaryColour()),
-            'fuelType'                => self::extractFuelType($v->getFuelType()),
-            'bodyType'                => $v->getBodyType() ? $v->getBodyType()->getName() : null,
-            'transmissionType'        => $v->getTransmissionType() ? $v->getTransmissionType()->getName() : null,
-            'weight'                  => $v->getWeight(),
-            'isDvla'                  => false,
-            'creationDate'            => DateTimeApiFormat::date($v->getCreatedOn()),
+            'vin' => $v->getVin(),
+            'emptyVinReason' => $emptyVinReason,
+            'year' => $v->getYear(),
+            'firstUsedDate' => DateTimeApiFormat::date($v->getFirstUsedDate()),
+            'cylinderCapacity' => $v->getCylinderCapacity(),
+            'make' => $v->getMakeName(),
+            'model' => $v->getModelName(),
+            'modelDetail' => $v->getModelDetail() ? $v->getModelDetail()->getName() : null,
+            'vehicleClass' => $v->getVehicleClass() ? $v->getVehicleClass()->getCode() : null,
+            'primaryColour' => self::extractColour($v->getColour()),
+            'secondaryColour' => self::extractColour($v->getSecondaryColour()),
+            'fuelType' => self::extractFuelType($v->getFuelType()),
+            'bodyType' => $v->getBodyType() ? $v->getBodyType()->getName() : null,
+            'transmissionType' => $v->getTransmissionType() ? $v->getTransmissionType()->getName() : null,
+            'weight' => $v->getWeight(),
+            'isDvla' => false,
+            'creationDate' => DateTimeApiFormat::date($v->getCreatedOn()),
         ];
 
         return $result;
@@ -299,9 +252,9 @@ class VehicleSearchService
         $vehicle = array_merge(
             $vehicle,
             [
-                'mot_id'              => '',
+                'mot_id' => '',
                 'mot_completion_date' => '',
-                'total_mot_tests'     => '0',
+                'total_mot_tests' => '0',
             ]
         );
 
@@ -331,12 +284,12 @@ class VehicleSearchService
         );
 
         if ($map) {
-            $makeName        = $map->getMake() ? $map->getMake()->getName() : $v->getMakeInFull();
-            $modelName       = $map->getModel() ? $map->getModel()->getName() : '';
+            $makeName = $map->getMake() ? $map->getMake()->getName() : $v->getMakeInFull();
+            $modelName = $map->getModel() ? $map->getModel()->getName() : '';
             $modelDetailName = $map->getModelDetail() ? $map->getModelDetail()->getName() : '';
         } else {
-            $makeName        = $this->vehicleCatalog->getMakeNameByDvlaCode($v->getMakeCode());
-            $modelName       = $this->vehicleCatalog->getModelNameByDvlaCode($v->getMakeCode(), $v->getModelCode());
+            $makeName = $this->vehicleCatalog->getMakeNameByDvlaCode($v->getMakeCode());
+            $modelName = $this->vehicleCatalog->getModelNameByDvlaCode($v->getMakeCode(), $v->getModelCode());
             $modelDetailName = '';
 
             if (!$makeName && !$modelName && $v->getMakeInFull()) {
@@ -345,21 +298,21 @@ class VehicleSearchService
         }
 
         $result = [
-            'id'                => $v->getId(),
-            'registration'      => $v->getRegistration(),
-            'vin'               => $v->getVin(),
-            'cylinderCapacity'  => $v->getCylinderCapacity(),
-            'make'              => $makeName,
-            'model'             => $modelName,
-            'modelDetail'       => $modelDetailName,
-            'primaryColour'     => $this->extractColourForCode($v->getPrimaryColour()),
-            'secondaryColour'   => $this->extractOptionalColourForCode($v->getSecondaryColour()),
-            'fuelType'          => self::extractFuelType($fuelTypeEntity),
-            'bodyType'          => $this->extractBodyTypeName($v->getBodyType()),
-            'firstUsedDate'     => DateTimeApiFormat::date($v->getFirstUsedDate()),
-            'transmissionType'  => '', // FIXME: Implemente migration
-            'weight'            => $v->getDesignedGrossWeight(),
-            'isDvla'            => true,
+            'id' => $v->getId(),
+            'registration' => $v->getRegistration(),
+            'vin' => $v->getVin(),
+            'cylinderCapacity' => $v->getCylinderCapacity(),
+            'make' => $makeName,
+            'model' => $modelName,
+            'modelDetail' => $modelDetailName,
+            'primaryColour' => $this->extractColourForCode($v->getPrimaryColour()),
+            'secondaryColour' => $this->extractOptionalColourForCode($v->getSecondaryColour()),
+            'fuelType' => self::extractFuelType($fuelTypeEntity),
+            'bodyType' => $this->extractBodyTypeName($v->getBodyType()),
+            'firstUsedDate' => DateTimeApiFormat::date($v->getFirstUsedDate()),
+            'transmissionType' => '', // FIXME: Implemente migration
+            'weight' => $v->getDesignedGrossWeight(),
+            'isDvla' => true,
         ];
 
         return $result;
@@ -400,7 +353,7 @@ class VehicleSearchService
     private static function extractColour(Colour $c = null)
     {
         return $c ? [
-            'id'   => $c->getId(),
+            'id' => $c->getId(),
             'name' => $c->getName(),
         ] : null;
     }
@@ -415,7 +368,7 @@ class VehicleSearchService
     private static function extractFuelType(FuelType $f = null)
     {
         return $f ? [
-            'id'   => $f->getId(),
+            'id' => $f->getId(),
             'name' => $f->getName(),
         ] : null;
     }
@@ -453,11 +406,11 @@ class VehicleSearchService
      */
     private function paramsNeedStripping($vin, $reg)
     {
-        if(strpos($vin, " ") !== FALSE) {
+        if (strpos($vin, " ") !== false) {
             return true;
         }
 
-        if(strpos($reg, " ") !== FALSE) {
+        if (strpos($reg, " ") !== false) {
             return true;
         }
     }
@@ -469,11 +422,11 @@ class VehicleSearchService
      */
     private function stripParams($vin, $reg)
     {
-        if(strpos($vin, " ") !== FALSE) {
+        if (strpos($vin, " ") !== false) {
             $vin = preg_replace('/\s+/', '', $vin);
         }
 
-        if(strpos($reg, " ") !== FALSE) {
+        if (strpos($reg, " ") !== false) {
             $reg = preg_replace('/\s+/', '', $reg);
         }
 

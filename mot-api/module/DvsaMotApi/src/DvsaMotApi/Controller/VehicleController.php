@@ -97,12 +97,6 @@ class VehicleController extends AbstractDvsaRestfulController
         $numberOfVehicles = count($vehiclesData);
 
         if ($numberOfVehicles == 0) {
-            $vehiclesData = $service->fuzzySearch($vin, $reg, $searchDvla, 6);
-            $numberOfVehicles = count($vehiclesData);
-            $exactMatch = false;
-        }
-
-        if ($numberOfVehicles == 0) {
             return ApiResponse::jsonOk(
                 [
                     'resultType' => self::SEARCH_RESULT_NO_MATCH

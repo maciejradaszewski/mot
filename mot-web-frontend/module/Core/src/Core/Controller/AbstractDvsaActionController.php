@@ -3,7 +3,6 @@
 namespace Core\Controller;
 
 use DvsaFeature\Exception\FeatureNotAvailableException;
-use DvsaFeature\FeatureToggleAwareInterface;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use Zend\Form\Annotation\AnnotationBuilder;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -15,7 +14,6 @@ use DvsaCommon\Utility\ArrayUtils;
 
 abstract class AbstractDvsaActionController
     extends AbstractActionController
-    implements FeatureToggleAwareInterface
 {
     const FORM_ERROR_CONTAINER_NAMESPACE = 'formErrorMessages';
     const FORM_ERROR_CONTAINER_KEY       = 'errorData';
@@ -28,9 +26,6 @@ abstract class AbstractDvsaActionController
      */
     protected $openAMClient;
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFeatureEnabled($name)
     {
         return $this
@@ -39,9 +34,6 @@ abstract class AbstractDvsaActionController
             ->isEnabled($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function assertFeatureEnabled($name)
     {
         if (!$this->isFeatureEnabled($name)) {

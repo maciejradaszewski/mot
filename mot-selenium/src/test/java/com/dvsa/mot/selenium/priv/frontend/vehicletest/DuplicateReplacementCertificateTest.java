@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class DuplicateReplacementCertificateTest extends BaseTest {
@@ -56,6 +57,95 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
         replacementCertificateReviewPage.enterOneTimePassword(Text.TEXT_PASSCODE_INVALID)
                 .finishAndPrintCertificateExpectingError();
         assertThat(replacementCertPage.isErrorMessageDisplayed(), is(true));
+    }
+
+    @Test(groups = {"Regression", "VM-2151", "VM-2152", "VM-4516"},
+            description = "Reissue Fail Certificate on a different VTS, and confirm")
+    public void testReissueFailCertificateOnAnotherVTS_View() {
+        Site site = Site.JOHNS_GARAGE;
+        Login newLogin = createTester(Arrays.asList(defaultSite.getId(), site.getId()));
+        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
+        //Perform new MOT test in that VTS
+        String testNumber = createMotTest(newLogin, site, vehicle, 123423, TestOutcome.FAILED);
+        DuplicateReplacementCertificatePage.navigateHereFromLoginPage(driver, login, vehicle)
+                .enterFieldsOnFirstFailTestIssuedAtOtherVTSAndSubmit(testNumber, null)
+                .clickFinishButton();
+    }
+
+    @Test(groups = {"Regression", "VM-2268", "VM-2269", "VM-4515"})
+    public void testPrintDocumentDuplicateAsDVSAdminUser() {
+        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
+        String motNumber = createMotTest(login, defaultSite, vehicle, 12345, TestOutcome.PASSED);
+        DuplicateReplacementCertificatePage
+                .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1, vehicle)
+                .clickViewByMOTNumber(motNumber);
+    }
+
+    @Test(groups = {"Regression", "VM-2570, VM-2571", "VM-2597", "VM-4511"},
+            description = "To issue replacement test documents, DVSA Scheme Management need to be able to select a document to edit and print")
+    public void testDVSAUserIssueAndEditReplacementCertificatePass() {
+        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);
+        createMotTest(login, defaultSite, vehicle, 12345, TestOutcome.PASSED);
+        ReplacementCertificateReviewPage replacementCertificateReviewPage =
+                DuplicateReplacementCertificatePage
+                        .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1, vehicle)
+                        .clickEditButtonPass().submitNoOdometerOption()
+                        .editColoursAndSubmit(Colour.Black, Colour.Silver)
+                        .enterReasonForReplacement("None").reviewChangesButton();
+        Assert.assertEquals(replacementCertificateReviewPage.testStatus(), (Text.TEXT_STATUS_PASS));
+        Assert.assertEquals(replacementCertificateReviewPage.odometerReading(),
+                (Text.TEXT_NO_ODOMETER));
+    }
+
+    @Test(groups = {"Regression", "VM-2570, VM-2571", "VM-2597", "VM-4648"},
+            description = "To issue replacement test documents, DVSA Scheme Management need to be able to select a document to edit and print")
+    public void testDVSAUserIssueAndEditReplacementCertificateFail() {
+        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);
+        createMotTest(login, defaultSite, vehicle, 13345, TestOutcome.FAILED);
+        Colour PrimaryColour = Colour.Brown;
+        ReplacementCertificateReviewPage replacementCertificateReviewPage =
+                DuplicateReplacementCertificatePage
+                        .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1, vehicle)
+                        .clickEditButtonFail().submitOdometerNotReadableOption()
+                        .editColoursAndSubmit(Colour.Brown, Colour.NoOtherColour)
+                        .enterReasonForReplacement("None").reviewChangesButton();
+        Assert.assertEquals(replacementCertificateReviewPage.vehicleColours(),
+                PrimaryColour.getColourName());
+        Assert.assertEquals(replacementCertificateReviewPage.testStatus(), (Text.TEXT_STATUS_FAIL));
+        Assert.assertEquals(replacementCertificateReviewPage.odometerReading(),
+                (Text.TEXT_NOT_READABLE));
+    }
+
+    @Test(enabled = true, groups = {"Regression", "VM-4346"},
+            description = "As a DVSA Area Officer when I update a test location and vehicle colour on a certificate I want the update to be reflected on the review screen.")
+    public void testWhenDVSAUserEditVTSAndVehicleColourOnACertificate() {
+        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);
+        Site vts = Site.JOHNS_MOTORCYCLE_GARAGE;
+        Colour primaryColour = Colour.Bronze;
+        Colour secondaryColour = Colour.Maroon;
+        createMotTest(login, defaultSite, vehicle, 13345, TestOutcome.FAILED);
+        ReplacementCertificateReviewPage replacementCertificateReviewPage =
+                DuplicateReplacementCertificatePage
+                        .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1, vehicle)
+                        .clickEditButtonFail().editColoursAndSubmit(Colour.Bronze, Colour.Maroon)
+                        .editVTSLocationAndSubmit(vts.getNumber())
+                        .enterReasonForReplacement("Review").reviewChangesButton();
+        assertThat("Updated VTS is not displayed in Replacement Certificate Review page",
+                replacementCertificateReviewPage.getVtsName(),
+                containsString(vts.getNumberAndName()));
+        assertThat(
+                "Updated vehicle colours are not displayed in Replacement Certificate Review page",
+                replacementCertificateReviewPage.vehicleColours(),
+                is(primaryColour + " and " + secondaryColour));
+    }
+
+
+    @Test(groups = {"VM-4355", "Regression", "W-Sprint1"},
+            description = "When issuing a duplicate or replacement certificate, if the vehicle results which are returned are not the ones I need I want to be able to select to search for another vehicle")
+    public void testGoToReplacementCertificatePageAndCancel() {
+        DuplicateReplacementCertificatePage
+                .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1,
+                        Vehicle.VEHICLE_CLASS4_ASTRA_2010).returnToReplacementSearch();
     }
 
     @Test(groups = {"VM-4478", "Regression", "W-Sprint2"},

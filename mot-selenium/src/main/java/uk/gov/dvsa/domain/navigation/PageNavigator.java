@@ -88,10 +88,16 @@ public class PageNavigator {
         return new AuthorisedExaminerPage(driver);
     }
 
-    public AuthorisedExaminerPageTestLogPage gotoAETestLogPage(User user, String aeId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(AuthorisedExaminerPageTestLogPage.PATH, aeId));
+    public AuthorisedExaminerTestLogPage gotoAETestLogPage(User user, String aeId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(AuthorisedExaminerTestLogPage.PATH, aeId));
 
-        return new AuthorisedExaminerPageTestLogPage(driver);
+        return new AuthorisedExaminerTestLogPage(driver);
+    }
+
+    public TesterTestLogPage gotoTesterTestLogPage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user,String.format(TesterTestLogPage.PATH));
+
+        return new TesterTestLogPage(driver);
     }
 
     public AeSlotsUsagePage gotoAeSlotsUsagePage(User user, String aeId) throws IOException {

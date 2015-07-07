@@ -2,7 +2,7 @@
 <properties>
 	<Edit>true</Edit>
 	<Files>true</Files>
-	<Help>In order to capture the vehicle's ID, as a Tester I need to add to the device the vehicle's identifiers manually. **This fitnesse test also covers Fuzzy Logic (VM-2375 and VM-2718)**</Help>
+	<Help>In order to capture the vehicle's ID, as a Tester I need to add to the device the vehicle's identifiers manually.</Help>
 	<Properties>true</Properties>
 	<RecentChanges>true</RecentChanges>
 	<Refactor>true</Refactor>

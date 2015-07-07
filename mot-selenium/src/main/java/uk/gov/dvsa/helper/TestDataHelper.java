@@ -9,10 +9,11 @@ import uk.gov.dvsa.domain.service.ServiceLocator;
 import java.io.IOException;
 
 public class TestDataHelper {
+    private static AeDetails aeDetails;
+    private static Site site;
 
     public static Vehicle getNewVehicle() throws IOException {
-        AeDetails aeDetails = ServiceLocator.getAeService().createAe("default");
-        Site site = ServiceLocator.getSiteService().createSite(aeDetails.getId(), "default-Site");
+        initSiteAndAe();
         User tester = ServiceLocator.getUserService().createUserAsTester(site.getId());
 
         return ServiceLocator.getVehicleService().createVehicle(tester);
@@ -20,6 +21,11 @@ public class TestDataHelper {
 
     public static User createTester(int siteId) throws IOException {
         return ServiceLocator.getUserService().createUserAsTester(siteId);
+    }
+
+    public static User createTester() throws IOException {
+        initSiteAndAe();
+        return ServiceLocator.getUserService().createUserAsTester(site.getId());
     }
 
     public static User createTester(int siteId, boolean claimAccount) throws IOException {
@@ -31,7 +37,7 @@ public class TestDataHelper {
     }
 
     public static User createAedm(boolean claimAccount) throws IOException {
-        AeDetails aeDetails = ServiceLocator.getAeService().createAe("default");
+        initSiteAndAe();
         return ServiceLocator.getUserService().createUserAsAedm(aeDetails.getId(), "def_ae", claimAccount);
     }
 
@@ -45,5 +51,10 @@ public class TestDataHelper {
 
     public static AeDetails createAe() throws IOException {
         return ServiceLocator.getAeService().createAe("default", 7);
+    }
+
+    private static void initSiteAndAe() throws IOException {
+        aeDetails = ServiceLocator.getAeService().createAe("default");
+        site = ServiceLocator.getSiteService().createSite(aeDetails.getId(), "default-Site");
     }
 }

@@ -142,7 +142,7 @@ class VehicleSearchService
         if ($vrmGiven && $partialVin) {
             return new VehicleSearchResultMessage(
                 sprintf(
-                    "<strong>%s</strong> %s found with the registration <strong>%s</strong> and a VIN <strong>ending</strong> in <strong>%s</strong>.",
+                    "<strong>%s</strong> %s found with registration <strong>%s</strong> and a VIN <strong>ending</strong> in <strong>%s</strong>.",
                     $numberOfFoundVehicles,
                     $vehiclesString,
                     $vrm,
@@ -155,7 +155,7 @@ class VehicleSearchService
         if ($vrmGiven && $vinGiven && !$partialVin) {
             return new VehicleSearchResultMessage(
                 sprintf(
-                    "<strong>%s</strong> %s found with the registration <strong>%s</strong> and a VIN <strong>matching %s</strong>.",
+                    "<strong>%s</strong> %s found with registration <strong>%s</strong> and a VIN <strong>matching %s</strong>.",
                     $numberOfFoundVehicles,
                     $vehiclesString,
                     $vrm,
@@ -168,7 +168,7 @@ class VehicleSearchService
         if ($vrmGiven && !$vinGiven) {
             return new VehicleSearchResultMessage(
                 sprintf(
-                    "<strong>%s</strong> %s found with the registration <strong>%s</strong> and <strong>without a VIN</strong>.",
+                    "<strong>%s</strong> %s found with registration <strong>%s</strong> and <strong>without a VIN</strong>.",
                     $numberOfFoundVehicles,
                     $vehiclesString,
                     $vrm

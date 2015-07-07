@@ -3,7 +3,6 @@
 namespace DvsaCommonApiTest\Controller;
 
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
-use DvsaFeature\FeatureToggleAwareInterface;
 use DvsaFeature\FeatureToggles;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -38,11 +37,6 @@ class AbstractDvsaRestfulControllerTest extends AbstractRestfulControllerTestCas
             ->setService('Feature\FeatureToggles', $featureToggles);
     }
 
-    public function testImplementsFeatureToggleAwareInterface()
-    {
-        $this->assertInstanceOf(FeatureToggleAwareInterface::class, $this->controller);
-    }
-
     public function testIsFeatureEnabled()
     {
         $this->assertTrue($this->controller->isFeatureEnabled(self::ENABLED_FEATURE));
@@ -50,7 +44,7 @@ class AbstractDvsaRestfulControllerTest extends AbstractRestfulControllerTestCas
     }
 
     /**
-     * @expectedException \DvsaFeature\Exception\FeatureNotAvailableException
+     * @expectedException \DvsaCommonApi\Service\Exception\NotFoundException
      */
     public function testAssertDisabledFeatureThrowsException()
     {

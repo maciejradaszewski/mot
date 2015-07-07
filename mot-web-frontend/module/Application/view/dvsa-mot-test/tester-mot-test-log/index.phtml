@@ -49,19 +49,19 @@ if ($dateLinks->findOneBy('active', true)) {
     </div>
     <div class="column-two-thirds">
         <div class="column-quarter">
-            <strong class="heading-large">
+            <strong class="heading-large" id="todayCount">
                 <?php echo $this->escapeHtml($numberFormatter->format($logSummary->getToday())); ?>
             </strong><br>
             <span class="small">Today</span>
         </div>
         <div class="column-quarter">
-            <strong class="heading-large">
+            <strong class="heading-large" id="last-week-count">
                 <?php echo $this->escapeHtml($numberFormatter->format($logSummary->getWeek())); ?>
             </strong><br>
             <span class="small">Last week<br>(Mon-Sun)</span>
         </div>
         <div class="column-quarter">
-            <strong class="heading-large">
+            <strong class="heading-large" id="last-month-count">
                 <?php echo $this->escapeHtml($numberFormatter->format($logSummary->getMonth())); ?>
             </strong><br>
             <span class="small">
@@ -70,7 +70,7 @@ if ($dateLinks->findOneBy('active', true)) {
             </span>
         </div>
         <div class="column-quarter">
-            <strong class="heading-large">
+            <strong class="heading-large" id="last-year-count">
                 <?php echo $this->escapeHtml($numberFormatter->format($logSummary->getYear())); ?>
             </strong><br>
             <span class="small">Last 365 days<br>(inc. today)</span>

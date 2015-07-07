@@ -32,11 +32,10 @@ class VehicleSearchServiceFactoryTest extends \PHPUnit_Framework_TestCase
 
         $mockServiceLocator = XMock::of(ServiceLocatorInterface::class, ['get']);
         $this->mockMethod($mockServiceLocator, 'get', $this->at(0), $entityManager);
-        $this->mockMethod($mockServiceLocator, 'get', $this->at(1), [ 'featureToggle' ] );
-        $this->mockMethod($mockServiceLocator, 'get', $this->at(2), XMock::of(AuthorisationService::class));
-        $this->mockMethod($mockServiceLocator, 'get', $this->at(3), XMock::of(TesterService::class));
-        $this->mockMethod($mockServiceLocator, 'get', $this->at(4), XMock::of(VehicleCatalogService::class));
-        $this->mockMethod($mockServiceLocator, 'get', $this->at(5), XMock::of(ParamObfuscator::class));
+        $this->mockMethod($mockServiceLocator, 'get', $this->at(1), XMock::of(AuthorisationService::class));
+        $this->mockMethod($mockServiceLocator, 'get', $this->at(2), XMock::of(TesterService::class));
+        $this->mockMethod($mockServiceLocator, 'get', $this->at(3), XMock::of(VehicleCatalogService::class));
+        $this->mockMethod($mockServiceLocator, 'get', $this->at(4), XMock::of(ParamObfuscator::class));
 
         $this->assertInstanceOf(
             VehicleSearchService::class,
@@ -44,52 +43,6 @@ class VehicleSearchServiceFactoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testNullConfigReturnFalseForFuzzySearch()
-    {
-        $config = null;
-        $this->assertEquals(false, $this->searchFuzzyEnabledConfigMethod($config));
-    }
 
-    public function testFeatureToggleArrayButNoFuzzySearchReturnFalse()
-    {
-        $config = [
-            'feature_toggle' => [
-                'none' => 'true'
-            ]
-        ];
-
-        $this->assertEquals(false, $this->searchFuzzyEnabledConfigMethod($config));
-    }
-
-    private function searchFuzzyEnabledConfigMethod($parameter)
-    {
-        $method = new \ReflectionMethod(VehicleSearchServiceFactory::class, 'getVehicleSearchFuzzyEnabled');
-        $method->setAccessible(true);
-
-        return $method->invoke(new VehicleSearchServiceFactory(), $parameter);
-    }
-
-    public function testFuzzySearchReturnTrue()
-    {
-        $config = [
-            'feature_toggle' => [
-                'vehicleSearchFuzzyEnabled' => true
-            ]
-        ];
-
-        $this->assertEquals(true, $this->searchFuzzyEnabledConfigMethod($config));
-    }
-
-
-    public function testFuzzySearchReturFalse()
-    {
-        $config = [
-            'feature_toggle' => [
-                'vehicleSearchFuzzyEnabled' => false
-            ]
-        ];
-
-        $this->assertEquals(false, $this->searchFuzzyEnabledConfigMethod($config));
-    }
 
 }

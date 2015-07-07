@@ -118,6 +118,8 @@ public class Text {
     public static final String TEXT_VALID_ODOMETER_MILES = "12345";
     public static final String TEXT_VALID_ODOMETER_KM = "22440";
     public static final String TEXT_UPDATED_ODOMETER = "12345 miles";
+    public static final String TEXT_NOT_READABLE = "Not readable";
+    public static final String TEXT_NO_ODOMETER = "Vehicle does not have an odometer";
     public static final String TEXT_UPDATED_VIN = "4S4BP67CX45487878";
     public static final String TEXT_UPDATED_REG = "H665R";
     public static final String TEXT_UPDATED_MAKE = "AUDI";

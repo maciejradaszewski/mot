@@ -58,7 +58,7 @@ $hint = (isset($this->hint) ? $this->hint : 'For example, 31 3 1980');
             <?php endif; ?>
 
             <?php if (!empty($this->errorMessage)): ?>
-                <span class="validation-message"><?php echo $this->escapeHtml($this->errorMessage); ?></span>
+                <span class="validation-message" id="<?php echo $this->escapeHtmlAttr($fieldKey); ?>-validation-message"><?php echo $this->escapeHtml($this->errorMessage); ?></span>
             <?php endif; ?>
 
 

@@ -33,9 +33,9 @@ $motTestVehicleClass = new VehicleClass($motTest->getVehicleClass());
                         'id'    => 'registrationNumber',
                     ],
                     ['VIN/Chassis number', strtoupper($motTest->getVin()), 'id' => 'vinChassisNumber'],
-                    ['Test Class', $motTestVehicleClass->getCode(), 'id' => 'testClass'],
+                    ['Test class', $motTestVehicleClass->getCode(), 'id' => 'testClass'],
                     [
-                        'label' => 'Approx. First Use',
+                        'label' => 'Approximate first use',
                         'value' => !empty($vehicle->getFirstUsedDate())
                             ? DateTimeDisplayFormat::textDate($vehicle->getFirstUsedDate())
                             : null,

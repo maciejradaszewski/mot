@@ -11,26 +11,6 @@ use DvsaEntities\Entity\DvlaVehicle;
  */
 class DvlaVehicleRepository extends AbstractVehicleRepository
 {
-    /**
-     * @param $vin
-     * @param $reg
-     * @param $similarCharacterMapping
-     * @param $limit
-     * @return DvlaVehicle[]
-     */
-    public function fuzzySearch($vin, $reg, $similarCharacterMapping, $limit)
-    {
-        $qb = $this->createQueryBuilder("v");
-
-        $this->addVinCondition($qb, $vin, $similarCharacterMapping);
-        $this->addRegCondition($qb, $reg,  $similarCharacterMapping);
-
-        return $qb
-            ->getQuery()
-            ->setMaxResults($limit)
-            ->getResult()
-            ;
-    }
 
     /**
      * @param string $vin       VIN number
