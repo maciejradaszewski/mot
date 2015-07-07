@@ -20,10 +20,4 @@
 |            |P999999                       |           |Normal   |No Reg, 7 last VIN digits for Audi            |                |NOT FOUND                                                              |
 |1010REG     |                              |           |Normal   |Reg, no VIN for Bentley                       |                |BENTLEY TURBO  1010REG                                                 |
 |1010REG     |No ViN                        |           |Normal   |Reg, Not existing VIN for Bentley             |                |NOT FOUND                                                              |
-|            |WBADT22030GZ31234             |Full Vin   |Retest   |Do not search DVLA when retesting             |NO-MATCH        |No results returned                                                    |
-|smi7hh      |                              |No Vin     |Retest   |Fuzzy logic applied to return result on retest|MULTIPLE-MATCHES|1 results found                                                        |
-|            |4r  3u7h 3d0c70riii  i        |Full Vin   |Retest   |Fuzzy logic applied to return result on retest|NO-MATCH        |No results returned                                                    |
-|            |4r3u7h3d0c70riiii             |Full Vin   |Retest   |Fuzzy logic applied to return result on retest|MULTIPLE-MATCHES|1 results found                                                        |
-|            |imbgdmqaxkp0h27i3             |Full Vin   |Retest   |Fuzzy logic applied to return result on retest|MULTIPLE-MATCHES|1 results found                                                        |
-|ni4 ltt     |                              |No Vin     |Retest   |Fuzzy logic applied to return result on retest|NO-MATCH        |No results returned                                                    |
-|ni4ltt      |                              |No Vin     |Retest   |Fuzzy logic applied to return result on retest|MULTIPLE-MATCHES|2 results found                                                        |
+|            |WBADT22030GZ31234             |Full Vin   |Retest   |Do not search DVLA when retesting             |NO-MATCH        |No results returned                                                    |                                                    |

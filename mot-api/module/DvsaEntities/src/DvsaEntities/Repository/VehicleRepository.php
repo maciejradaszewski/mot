@@ -46,38 +46,6 @@ class VehicleRepository extends AbstractVehicleRepository
     }
 
     /**
-     * @param $vin
-     * @param $reg
-     * @param $similarCharacterMapping
-     * @param $limit
-     * @return Vehicle[]
-     */
-    public function fuzzySearch($vin, $reg, $similarCharacterMapping, $limit)
-    {
-        $qb = $this->createQueryBuilder("v")
-            ->addSelect([ "vc", "md", "mk", "mdd", "sc", "ft", "pc", "bt", "tt"])
-            ->leftJoin("v.vehicleClass", "vc")
-            ->leftJoin("v.model", "md")
-            ->leftJoin("md.make", "mk")
-            ->leftJoin("v.modelDetail", "mdd")
-            ->leftJoin("v.colour", "pc")
-            ->leftJoin("v.secondaryColour", "sc")
-            ->leftJoin("v.fuelType", "ft")
-            ->leftJoin("v.bodyType", "bt")
-            ->leftJoin("v.transmissionType", "tt")
-        ;
-
-        $this->addVinCondition($qb, $vin, $similarCharacterMapping);
-        $this->addRegCondition($qb, $reg,  $similarCharacterMapping);
-
-        return $qb
-            ->getQuery()
-            ->setMaxResults($limit)
-            ->getResult()
-            ;
-    }
-
-    /**
      * @param string $vin       VIN number
      * @param string $reg       Registration number
      * @param bool   $isFullVin Indicates whether passed VIN number is full

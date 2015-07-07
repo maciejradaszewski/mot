@@ -22,34 +22,17 @@ class VehicleSearchServiceFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $entityManager = $serviceLocator->get(EntityManager::class);
-        try {
-            $config = $serviceLocator->get('config');
-            $vehicleSearchFuzzyEnabled = $this->getVehicleSearchFuzzyEnabled($config);
 
-            return new VehicleSearchService(
-                $serviceLocator->get('DvsaAuthorisationService'),
-                $entityManager->getRepository(Vehicle::class),
-                $entityManager->getRepository(DvlaVehicle::class),
-                $entityManager->getRepository(DvlaVehicleImportChangeLog::class),
-                $entityManager->getRepository(MotTest::class),
-                $serviceLocator->get('TesterService'),
-                $serviceLocator->get('VehicleCatalogService'),
-                $serviceLocator->get(ParamObfuscator::class),
-                $vehicleSearchFuzzyEnabled
-            );
-        } catch (\Exception $e) {
-        }
+        return new VehicleSearchService(
+            $serviceLocator->get('DvsaAuthorisationService'),
+            $entityManager->getRepository(Vehicle::class),
+            $entityManager->getRepository(DvlaVehicle::class),
+            $entityManager->getRepository(DvlaVehicleImportChangeLog::class),
+            $entityManager->getRepository(MotTest::class),
+            $serviceLocator->get('TesterService'),
+            $serviceLocator->get('VehicleCatalogService'),
+            $serviceLocator->get(ParamObfuscator::class)
+
+        );
     }
-
-    private function getVehicleSearchFuzzyEnabled($config)
-    {
-        if (isset($config['feature_toggle'])) {
-            if (array_key_exists('vehicleSearchFuzzyEnabled', $config['feature_toggle'])) {
-                return $config['feature_toggle']['vehicleSearchFuzzyEnabled'];
-            }
-        }
-
-        return false;
-    }
-
 }

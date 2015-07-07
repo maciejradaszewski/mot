@@ -4,8 +4,7 @@ namespace DvsaCommonApi\Controller;
 
 use DataCatalogApi\Service\DataCatalogService;
 use DvsaCommon\Http\HttpStatus;
-use DvsaFeature\Exception\FeatureNotAvailableException;
-use DvsaFeature\FeatureToggleAwareInterface;
+use DvsaCommonApi\Service\Exception\NotFoundException;
 use UserFacade\Exception\UnauthenticatedException;
 use Zend\Http\Response;
 use Zend\Json\Json;
@@ -19,7 +18,6 @@ use Zend\View\Model\JsonModel;
  */
 class AbstractDvsaRestfulController
     extends AbstractRestfulController
-    implements FeatureToggleAwareInterface
 {
     const ERROR_CODE_NOT_ALLOWED             = 10;
     const ERROR_CODE_REQUIRED                = 20;
@@ -40,9 +38,6 @@ class AbstractDvsaRestfulController
      */
     private $identity;
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFeatureEnabled($name)
     {
         return $this
@@ -51,13 +46,10 @@ class AbstractDvsaRestfulController
             ->isEnabled($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function assertFeatureEnabled($name)
     {
         if (!$this->isFeatureEnabled($name)) {
-            throw new FeatureNotAvailableException($name);
+            throw new NotFoundException("Feature '". $name . "' is turned off", null, false);
         }
     }
 

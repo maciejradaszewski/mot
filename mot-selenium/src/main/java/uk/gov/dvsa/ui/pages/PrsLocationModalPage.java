@@ -53,6 +53,7 @@ public class PrsLocationModalPage extends Page {
         FormCompletionHelper.enterText(description, "Horn Destroyed");
 
         addButton.click();
+        PageInteractionHelper.waitForAjaxToComplete();
         return new ReasonForRejectionPage(driver);
     }
 

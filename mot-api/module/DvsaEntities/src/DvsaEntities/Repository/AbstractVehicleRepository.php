@@ -15,13 +15,6 @@ use DvsaMotApi\Helper\FuzzySearchRegexHelper as FuzzyHelper;
  */
 abstract class AbstractVehicleRepository extends AbstractMutableRepository
 {
-    /**
-     * @param $vin
-     * @param $reg
-     * @param $similarCharacterMapping
-     * @param $limit
-     */
-    abstract public function fuzzySearch($vin, $reg, $similarCharacterMapping, $limit);
 
     /**
      * @param $id
@@ -130,43 +123,6 @@ abstract class AbstractVehicleRepository extends AbstractMutableRepository
         return strtoupper($string);
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param string       $vin
-     * @param $similarCharacterMapping
-     *
-     * @return QueryBuilder
-     */
-    protected function addVinCondition(QueryBuilder $qb, $vin, $similarCharacterMapping)
-    {
-        if (!empty($vin)) {
-            $preparedVinRegex = FuzzyHelper::regexForSimilarChars($this->sanitize($vin), $similarCharacterMapping);
-            $qb
-                ->andWhere("REGEXP(v.vin, :vin) = 1")
-                ->setParameter("vin", $preparedVinRegex);
-        }
-
-        return $qb;
-    }
-
-    /**
-     * @param QueryBuilder $qb
-     * @param string       $reg
-     * @param $similarCharacterMapping
-     *
-     * @return QueryBuilder
-     */
-    protected function addRegCondition(QueryBuilder $qb, $reg, $similarCharacterMapping)
-    {
-        if (!empty($reg)) {
-            $preparedRegRegex = FuzzyHelper::regexForSimilarChars($this->sanitize($reg), $similarCharacterMapping);
-            $qb
-                ->andWhere("REGEXP(v.registration, :reg) = 1")
-                ->setParameter("reg", $preparedRegRegex);
-        }
-
-        return $qb;
-    }
 
     /**
      * @param string $alias

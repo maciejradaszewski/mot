@@ -44,6 +44,10 @@ public class ReplacementCertificateUpdatePage extends BasePage {
 
     @FindBy(id = "odometer") private WebElement enterOdometerReading;
 
+    @FindBy(id = "notReadable") private WebElement odometerNotReadableOption;
+
+    @FindBy(id = "noOdometer") private WebElement noOdometerOption;
+
     @FindBy(id = "section-odometer-submit") private WebElement submitOdometerReading;
 
     //EDIT VEHICLE COLOUR
@@ -115,6 +119,16 @@ public class ReplacementCertificateUpdatePage extends BasePage {
         return this;
     }
 
+    public ReplacementCertificateUpdatePage selectOdometerNotReadableOption() {
+        odometerNotReadableOption.click();
+        return this;
+    }
+
+    public ReplacementCertificateUpdatePage selectNoOdometerOption() {
+        noOdometerOption.click();
+        return this;
+    }
+
     public ReplacementCertificateUpdatePage selectPrimaryColour(Colour colour) {
         Select primaryColour = new Select(selectPrimaryColour);
         primaryColour.selectByVisibleText(colour.getColourName());
@@ -164,6 +178,20 @@ public class ReplacementCertificateUpdatePage extends BasePage {
         enterOdometerReading.clear();
         enterOdometerReading(reading);
         waitForElementToBeVisible(submitOdometerReading, 1);
+        submitOdometerReading.click();
+        return this;
+    }
+
+    public ReplacementCertificateUpdatePage submitNoOdometerOption() {
+        updateOdometerReading.click();
+        selectNoOdometerOption();
+        submitOdometerReading.click();
+        return this;
+    }
+
+    public ReplacementCertificateUpdatePage submitOdometerNotReadableOption() {
+        updateOdometerReading.click();
+        selectOdometerNotReadableOption();
         submitOdometerReading.click();
         return this;
     }

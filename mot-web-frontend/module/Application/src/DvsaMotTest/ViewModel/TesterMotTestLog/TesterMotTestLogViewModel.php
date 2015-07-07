@@ -160,8 +160,8 @@ class TesterMotTestLogViewModel
                     ],
                     'lastMonth' => [
                         'label' => 'Last Month (' . date('M', strtotime('last month')) . ')',
-                        'from'  => strtotime('first day of last month'),
-                        'to'    => strtotime('last day of last month')
+                        'from'  => strtotime('first day of last month midnight'),
+                        'to'    => strtotime('first day of this month midnight -1 second')
                     ],
                 ]
             );

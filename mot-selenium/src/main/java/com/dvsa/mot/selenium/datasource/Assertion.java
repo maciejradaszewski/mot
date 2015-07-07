@@ -30,11 +30,11 @@ public class Assertion {
     public static final Assertion ASSERTION_VEHICLE_SEARCH_WITHOUT_VIN =
             new Assertion(" and without a VIN.");
     public static final Assertion ASSERTION_VEHICLE_SEARCH_MESSAGE_REG =
-            new Assertion("0 vehicles found with the registration ");
+            new Assertion("0 vehicles found with registration ");
     public static final Assertion ASSERTION_VEHICLE_SEARCH_RESULTS_MESSAGE =
             new Assertion("1 vehicle found without a registration");
     public static final Assertion ASSERTION_VEHICLE_SEARCH_RESULTS_RETURNED =
-            new Assertion("1 vehicle found with the registration ");
+            new Assertion("1 vehicle found with registration ");
 
 
     public static final Assertion ASSERTION_VEHICLE_SEARCH_WITHOUT_REG_NO_RESULTS =

@@ -70,11 +70,11 @@ public class AedmManagesMotAccount extends BaseTest {
                         TestDataHelper.getNewVehicle(), TestOutcome.PASSED, 14000, DateTime.now());
 
         //When I navigate to the Authorised Examiner Test Logs page
-        AuthorisedExaminerPageTestLogPage authorisedExaminerPageTestLogPage =
+        AuthorisedExaminerTestLogPage authorisedExaminerTestLogPage =
                 pageNavigator().gotoAETestLogPage(aedm, String.valueOf(aeDetails.getId()));
 
         //Then Today's Test count should be equal to number of test for that AE
-        assertThat(authorisedExaminerPageTestLogPage.getTodayCount(), equalTo("1"));
+        assertThat(authorisedExaminerTestLogPage.getTodayCount(), equalTo("1"));
     }
 
     @Test(groups = {"BVT"},
@@ -139,6 +139,7 @@ public class AedmManagesMotAccount extends BaseTest {
 
         return new Object[][]{{aedm, aeDetails}};
     }
+
 
     @DataProvider(name = "createAedmSite")
     public Object[][] createAedmSite() throws IOException {

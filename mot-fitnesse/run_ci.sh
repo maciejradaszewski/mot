@@ -1,7 +1,7 @@
 #!/bin/bash
 set -o errexit
 set -o nounset
-SUITE=${1-"FrontPage.SuiteAcceptanceTests.PdfCertificatePrinting?suite"}
+SUITE=${1-"FrontPage.SuiteAcceptanceTests?suite"}
 FORMAT=${2-"xml"}
 
 ./create_context.sh

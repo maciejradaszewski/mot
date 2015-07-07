@@ -8,7 +8,6 @@
 namespace CoreTest\Controller;
 
 use Core\Controller\AbstractDvsaActionController;
-use DvsaFeature\FeatureToggleAwareInterface;
 use DvsaFeature\FeatureToggles;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -51,11 +50,6 @@ class AbstractDvsaActionControllerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getServiceLocator')
             ->willReturn($serviceLocator);
-    }
-
-    public function testImplementsFeatureToggleAwareInterface()
-    {
-        $this->assertInstanceOf(FeatureToggleAwareInterface::class, $this->controller);
     }
 
     public function testIsFeatureEnabled()

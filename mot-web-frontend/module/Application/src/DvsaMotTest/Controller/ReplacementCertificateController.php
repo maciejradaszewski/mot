@@ -329,13 +329,18 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
             try {
 
                 if (self::ACTION_UPDATE_ODOMETER == $action) {
+                    $odometerReadingParams = $result['odometerReading'];
 
                     $odometerForm = $this->getForm(new OdometerUpdate());
-                    $odometerForm->setData($this->mapOdometerReadingForValidator($result));
+                    $odometerForm->setData($odometerReadingParams);
 
                     if (!$odometerForm->isValid()) {
                         $this->addErrorMessages(MotTestController::ODOMETER_FORM_ERROR_MESSAGE);
                         return $this->redirect()->toUrl(UrlBuilderWeb::replacementCertificate($id));
+                    }
+
+                    if ($odometerReadingParams['resultType'] !== OdometerReadingResultType::OK) {
+                        unset($result['odometerReading']['value'], $result['odometerReading']['unit']);
                     }
                 }
 
@@ -413,7 +418,11 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
                     = [(int)$post['odometerValue'], $post['odometerUnit'], $post['odometerResultType']];
 
                 if ($resultType !== OdometerReadingResultType::OK) {
-                    $value = $unit = null;
+                    $value = null;
+                }
+
+                if ($value === null) {
+                    $value = (int) 0;
                 }
 
                 return [
@@ -606,15 +615,6 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
     private function canTestWithoutOtp()
     {
         return $this->getAuthorizationService()->isGranted(PermissionInSystem::MOT_TEST_WITHOUT_OTP);
-    }
-
-    private function mapOdometerReadingForValidator($result)
-    {
-        $data = $result['odometerReading'];
-        $data['odometer'] = $data['value'];
-        unset($data['value']);
-
-        return $data;
     }
 
 }
