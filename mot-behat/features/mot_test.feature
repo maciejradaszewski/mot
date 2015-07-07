@@ -134,8 +134,9 @@ Feature: MOT Test
 
   Scenario: Tester performs search on a VRM and partial VIN which includes spaces
     Given I am logged in as a Tester
+    And a vehicle with registration "FNZ 6110" and VIN "1M8GDM9AXKP042788" exists
     When I search for a vehicle by registration number "FNZ 6110" and VIN "04 2788"
-    Then the vehicle with registration "FNZ6110" is returned
+    Then the vehicle is found
 
   @wip
   Scenario: Tester reprints MOT Test Certificate (Pass result)
