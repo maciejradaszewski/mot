@@ -127,17 +127,6 @@ Feature: MOT Test
     | 21           | ABANDONED  |
     | 25           | ABORTED    |
 
-  Scenario: Tester performs vehicle Search
-    Given I am logged in as a Tester
-    When I search for a vehicle by registration number "LOL999"
-    Then the vehicle registration number "LOL999" is returned
-
-  Scenario: Tester performs search on a VRM and partial VIN which includes spaces
-    Given I am logged in as a Tester
-    And a vehicle with registration "FNZ 6110" and VIN "1M8GDM9AXKP042788" exists
-    When I search for a vehicle by registration number "FNZ 6110" and VIN "04 2788"
-    Then the vehicle is found
-
   @wip
   Scenario: Tester reprints MOT Test Certificate (Pass result)
     Given I am logged in as a Tester
