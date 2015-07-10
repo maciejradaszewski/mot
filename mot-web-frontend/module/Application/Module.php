@@ -130,19 +130,6 @@ class Module implements
 
     public function getAutoloaderConfig()
     {
-        return [
-            \Zend\Loader\ClassMapAutoloader::class => [
-                __DIR__.'/autoload_classmap.php',
-            ],
-            \Zend\Loader\StandardAutoloader::class => [
-                'namespaces' => [
-                    'Application'           => __DIR__.'/src/Application',
-                    'DvsaMotTest'           => __DIR__.'/src/DvsaMotTest',
-                    'DvsaMotEnforcement'    => __DIR__.'/src/DvsaMotEnforcement',
-                    'DvsaMotEnforcementApi' => __DIR__.'/src/DvsaMotEnforcementApi',
-                ],
-            ],
-        ];
     }
 
     /**
@@ -254,7 +241,7 @@ class Module implements
                 $viewManager->getRouteNotFoundStrategy()->prepareNotFoundViewModel($e);
             }
         } elseif ($exception instanceof UnauthorisedException) {
-            $e->getResponse()->setStatusCode(403);
+            $viewModel->setTemplate('error/permission-error.phtml');
         }
 
         return $viewModel;

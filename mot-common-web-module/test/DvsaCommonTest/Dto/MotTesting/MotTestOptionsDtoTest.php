@@ -14,6 +14,10 @@ class MotTestOptionsDtoTest extends \PHPUnit_Framework_TestCase
                 'make'                      => 'not relevant',
                 'model'                     => 'not relevant',
                 'vehicleRegistrationNumber' => 'not relevant',
+            ],
+            'motTestType' => [
+                'id' => 'A',
+                'code' => 'TEST'
             ]
         ];
 

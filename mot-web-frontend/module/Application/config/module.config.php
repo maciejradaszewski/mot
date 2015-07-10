@@ -1040,6 +1040,8 @@ return [
                 __DIR__ . '/../view/partials/searchAgain.phtml',
             'primaryAction/tester'                                                       =>
                 __DIR__ . '/../view/partials/primary-action/tester.phtml',
+            'primaryAction/finance'                                                       =>
+                __DIR__ . '/../view/partials/primary-action/finance.phtml',
             'primaryAction/testerApplicant'                                              =>
                 __DIR__ . '/../view/partials/primary-action/tester-applicant.phtml',
             'primaryAction/user'                                                         =>

@@ -3,6 +3,7 @@
 namespace UserApi\Dashboard\Service;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Enum\OrganisationBusinessRoleCode;
 use DvsaCommon\Utility\ArrayUtils;
@@ -44,6 +45,8 @@ class DashboardService extends AbstractService
     private $testerService;
     /** @var  $authorisationService AuthorisationServiceInterface */
     protected $authorisationService;
+    /** @var  $authForAeRepository EntityRepository */
+    protected $authForAeRepository;
 
     public function __construct(
         EntityManager $entityManager,
@@ -53,7 +56,8 @@ class DashboardService extends AbstractService
         SpecialNoticeService $specialNoticeService,
         NotificationService $notificationService,
         PersonalAuthorisationForMotTestingService $personalAuthorisationService,
-        TesterService $testerService
+        TesterService $testerService,
+        EntityRepository $authForAeRepository
     ) {
         parent::__construct($entityManager);
 
@@ -64,6 +68,7 @@ class DashboardService extends AbstractService
         $this->notificationService = $notificationService;
         $this->personalAuthorisationService = $personalAuthorisationService;
         $this->testerService = $testerService;
+        $this->authForAeRepository = $authForAeRepository;
     }
 
     /**
@@ -151,13 +156,15 @@ class DashboardService extends AbstractService
         $positionAtSites = $this->getPositionAtSites($person, $status);
         $aesForDesignatedManager = $this->getAesForOrganisations($organisationsForDesignatedManager);
         $aesForDelegate = $this->getAesForOrganisations($organisationsForDelegate);
-        $aesForSitePosition = $this->getAesForSitePositions($positionAtSites);
+        $aesForSitePosition = $this->authForAeRepository->getBySitePositionForPerson($person);
 
-        $allUniqueAesById = $this->getUniqueAesById(array_merge(
-            $aesForDesignatedManager,
-            $aesForDelegate,
-            $aesForSitePosition
-        ));
+        $allUniqueAesById = $this->getUniqueAesById(
+            array_merge(
+                $aesForDesignatedManager,
+                $aesForDelegate,
+                $aesForSitePosition
+            )
+        );
         $aesPositionNames = $this->getAesPositionNames($allUniqueAesById, $aesForDesignatedManager, $aesForDelegate, $aedmRole->getFullName(), $aedRole->getFullName());
 
         $positionsBySite = $this->getPositionsBySite($positionAtSites);

@@ -4,6 +4,7 @@ namespace DvsaMotTest\Presenter;
 
 use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Dto\MotTesting\MotTestOptionsDto;
+use DvsaCommon\Enum\MotTestTypeCode;
 
 class MotTestOptionsPresenter
 {
@@ -41,5 +42,21 @@ class MotTestOptionsPresenter
     public function displayMotTestStartedDate()
     {
         return DateTimeDisplayFormat::textDateTime($this->motTestOptions->getMotTestStartedDate());
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMotTestRetest()
+    {
+        return ($this->motTestOptions->getMotTestTypeDto()->getCode() === MotTestTypeCode::RE_TEST);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMotTest()
+    {
+        return !$this->isMotTestRetest();
     }
 }

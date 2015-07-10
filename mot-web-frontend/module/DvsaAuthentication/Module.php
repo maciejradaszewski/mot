@@ -21,15 +21,5 @@ class Module
 
     public function getAutoloaderConfig()
     {
-        return [
-            \Zend\Loader\ClassMapAutoloader::class => [
-                __DIR__ . '/autoload_classmap.php',
-            ],
-            \Zend\Loader\StandardAutoloader::class => [
-                'namespaces' => [
-                    'DvsaAuthentication' => __DIR__ . '/src/DvsaAuthentication',
-                ],
-            ],
-        ];
     }
 }

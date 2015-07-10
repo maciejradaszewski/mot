@@ -7,7 +7,6 @@ import com.dvsa.mot.selenium.datasource.Vehicle;
 import com.dvsa.mot.selenium.framework.api.*;
 import com.dvsa.mot.selenium.framework.api.vehicle.DefaultVehicleDataRandomizer;
 import com.dvsa.mot.selenium.framework.api.vehicle.IVehicleDataRandomizer;
-import com.dvsa.mot.selenium.framework.errors.UnauthorisedError;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -19,7 +18,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -228,22 +226,6 @@ import java.util.concurrent.TimeUnit;
     protected void broadcastSpecialNotice(String username, int specialNoticeContentId,
             boolean isAcknowledged) {
         new SpecialNoticeCreationApi().broadcast(username, specialNoticeContentId, isAcknowledged);
-    }
-
-    protected boolean hasPermissionsToSeePage(Class<?> pageObjectClass, String url) {
-        driver.get(url);
-        try {
-            pageObjectClass.getConstructor(WebDriver.class).newInstance(driver);
-            return true;
-        } catch (InvocationTargetException e) {
-            if (e.getCause() instanceof UnauthorisedError) {
-                return false;
-            }
-
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     protected String getTestClassName() {

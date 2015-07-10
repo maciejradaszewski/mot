@@ -3,6 +3,7 @@
 namespace UserApi\Factory;
 
 use Doctrine\ORM\EntityManager;
+use DvsaEntities\Entity\AuthorisationForAuthorisedExaminer;
 use NotificationApi\Service\NotificationService;
 use SiteApi\Service\SiteService;
 use UserApi\Dashboard\Service\DashboardService;
@@ -16,6 +17,7 @@ class DashboardServiceFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
+        $entityManager = $serviceLocator->get(EntityManager::class);
         return new DashboardService(
             $serviceLocator->get(EntityManager::class),
             $serviceLocator->get('DvsaAuthorisationService'),
@@ -24,7 +26,8 @@ class DashboardServiceFactory implements FactoryInterface
             $serviceLocator->get(SpecialNoticeService::class),
             $serviceLocator->get(NotificationService::class),
             $serviceLocator->get(PersonalAuthorisationForMotTestingService::class),
-            $serviceLocator->get('TesterService')
+            $serviceLocator->get('TesterService'),
+            $entityManager->getRepository(AuthorisationForAuthorisedExaminer::class)
         );
     }
 }

@@ -42,6 +42,9 @@ public class VehicleSearchRetestPage extends VehicleSearchPage {
 
     public VehicleConfirmationRetestPage submitSearch() {
         clickSearch();
+        if(getPageTitle().matches(VEHICLE_SEARCH_RETEST_PAGE_TITLE)) {
+            clickSearch();
+        }
         return new VehicleConfirmationRetestPage(driver);
     }
 

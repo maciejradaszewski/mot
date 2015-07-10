@@ -18,7 +18,6 @@ class MotTestOptionsServiceFactory implements FactoryInterface
 
         return new MotTestOptionsService(
             $em->getRepository(MotTest::class),
-            $serviceLocator->get('DvsaAuthorisationService'),
             $serviceLocator->get(ReadMotTestAssertion::class)
         );
     }

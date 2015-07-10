@@ -22,19 +22,22 @@ public class PageNavigator {
         return CookieService.generateOpenAmLoginCookie(user);
     }
 
-    public TestResultsEntryPage gotoTestResultsEntryPage(User user, Vehicle vehicle) throws URISyntaxException, IOException {
+    public TestResultsEntryPage gotoTestResultsEntryPage(User user, Vehicle vehicle)
+            throws URISyntaxException, IOException {
         injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.path);
 
-        VehicleSearchPage vehicleSearchPage = PageLocator.getVehicleSearchPage(driver).searchVehicle(vehicle);
+        VehicleSearchPage vehicleSearchPage =
+                PageLocator.getVehicleSearchPage(driver).searchVehicle(vehicle);
         StartTestConfirmationPage testConfirmationPage = vehicleSearchPage.selectVehicleFromTable();
-        TestOptionsPage testOptionsPage =  testConfirmationPage.clickStartMotTest();
+        TestOptionsPage testOptionsPage = testConfirmationPage.clickStartMotTest();
 
         driver.navigateToPath(testOptionsPage.getMotTestPath());
 
         return new TestResultsEntryPage(driver);
     }
 
-    public ContingencyTestEntryPage gotoContingencyTestEntryPage(User user) throws URISyntaxException, IOException {
+    public ContingencyTestEntryPage gotoContingencyTestEntryPage(User user)
+            throws URISyntaxException, IOException {
         injectOpenAmCookieAndNavigateToPath(user, ContingencyTestEntryPage.path);
 
         return new ContingencyTestEntryPage(driver);
@@ -46,8 +49,10 @@ public class PageNavigator {
         return new ChangeDetailsPage(driver);
     }
 
-    public VtsChangeContactDetailsPage gotoVtsChangeContactDetailsPage(User user, String siteId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(VtsChangeContactDetailsPage.PATH,siteId));
+    public VtsChangeContactDetailsPage gotoVtsChangeContactDetailsPage(User user, String siteId)
+            throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user,
+                String.format(VtsChangeContactDetailsPage.PATH, siteId));
 
         return new VtsChangeContactDetailsPage(driver);
     }
@@ -76,13 +81,15 @@ public class PageNavigator {
         return new HomePage(driver);
     }
 
-    public AuthorisedExaminerPage goToAuthorisedExaminerPage(User user, String path, String aeId) throws IOException {
+    public AuthorisedExaminerPage goToAuthorisedExaminerPage(User user, String path, String aeId)
+            throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, String.format(path, aeId));
 
         return new AuthorisedExaminerPage(driver);
     }
 
-    public AuthorisedExaminerPage goToAuthorisedExaminerPage(User user, String aeId) throws IOException {
+    public AuthorisedExaminerPage goToAuthorisedExaminerPage(User user, String aeId)
+            throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, String.format(AuthorisedExaminerPage.PATH, aeId));
 
         return new AuthorisedExaminerPage(driver);
@@ -110,5 +117,13 @@ public class PageNavigator {
         injectOpenAmCookieAndNavigateToPath(user, AccountClaimPage.PATH);
 
         return new AccountClaimPage(driver);
+    }
+
+    public PermissionPage gotoPermissionPage(User user, String url) throws IOException {
+        driver.setUser(user);
+        driver.manage().addCookie(getCookieForUser(user));
+        driver.navigate().to(url);
+
+        return new PermissionPage(driver);
     }
 }

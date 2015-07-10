@@ -1,0 +1,22 @@
+<?php
+    use Dashboard\Controller\UserHomeController;
+    $this->layout('layout/layout-govuk.phtml');
+?>
+<header class="content-header">
+    <h1>
+        <span class="content-header__type">
+           MOT testing service
+        </span>
+
+        <span class="content-header__title">
+            You don't have permission
+        </span>
+    </h1>
+</header>
+<div class="text" id="unauthorised-error">
+    <p class="lede">Based on your role and site associations you don't have permission to view this page.</p>
+    <p>If you feel you should have permission speak to your AEDM or site manager.</p>
+</div>
+<nav class="content-navigation">
+    <a id="return-home" href="<?php echo $this->url(UserHomeController::ROUTE); ?>">Return to user home</a>
+</nav>

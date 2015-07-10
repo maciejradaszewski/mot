@@ -51,4 +51,18 @@ use UserAdmin\Controller\UserSearchController;
             </a> (comparison of tests available)
         </li>
     <?php endif; ?>
+    <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::SLOTS_TRANSACTION_READ_FULL)): ?>
+        <li>
+            <a id="transactions" href="<?php echo $this->url('transaction-search'); ?>">
+                Payments
+            </a>
+        </li>
+    <?php endif; ?>
+    <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::SLOTS_DIRECT_DEBIT_SEARCH)): ?>
+        <li>
+            <a id="transactions" href="<?php echo $this->url('direct-debit-search'); ?>">
+                Direct Debit
+            </a>
+        </li>
+    <?php endif; ?>
 </ul>

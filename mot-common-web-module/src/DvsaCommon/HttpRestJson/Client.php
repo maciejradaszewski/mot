@@ -129,6 +129,21 @@ class Client implements EventManagerAwareInterface
 
     /**
      * @param $resourcePath
+     * @param $params
+     *
+     * @throws \DvsaCommon\HttpRestJson\Exception\RestServiceUnexpectedContentTypeException
+     *
+     * @return \DvsaCommon\Dto\AbstractDataTransferObject
+     */
+    public function getWithParamsReturnDto($resourcePath, $params)
+    {
+        return DtoHydrator::jsonToDto(
+            $this->dispatchRequestAndDecodeResponse($resourcePath, "GET", self::CONTENT_TYPE_URL_ENCODING, $params)
+        );
+    }
+
+    /**
+     * @param $resourcePath
      * @param array $data
      *
      * @throws \DvsaCommon\HttpRestJson\Exception\RestServiceUnexpectedContentTypeException
@@ -262,7 +277,7 @@ class Client implements EventManagerAwareInterface
         $this->getEventManager()->trigger(
             'startOfRequest', null,
             ['resourcePath' => $resourcePath, 'method' => $method,
-             'content'      => $request->getContent(), ]
+                'content'      => $request->getContent(), ]
         );
         $startTime = microtime(true);
 

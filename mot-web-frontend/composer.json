@@ -18,7 +18,24 @@
     "autoload" : {
         "psr-0" : {
             "DvsaCommon" : "../mot-common-web-module/src",
-            "DvsaCommonTest" : "../mot-common-web-module/test"
+            "DvsaCommonTest" : "../mot-common-web-module/test",
+            "Account": "module/Account/src",
+            "Application": "module/Application/src",
+            "Core": "module/Core/src",
+            "Csrf": "module/Csrf/src",
+            "Dashboard": "module/Dashboard/src",
+            "DvsaAuthentication": "module/DvsaAuthentication/src",
+            "DvsaClient": "module/DvsaClient/src",
+            "Equipment": "module/Equipment/src",
+            "Event": "module/Event/src",
+            "Organisation": "module/Organisation/src",
+            "Session": "module/Session/src",
+            "Site": "module/Site/src",
+            "UserAdmin": "module/UserAdmin/src",
+            "Vehicle": "module/Vehicle/src",
+            "DvsaMotTest": "module/Application/src",
+            "DvsaMotEnforcement": "module/Application/src",
+            "DvsaMotEnforcementApi": "module/Application/src"
         },
         "psr-4" : {
             "Dvsa\\Mot\\Frontend\\": "src",

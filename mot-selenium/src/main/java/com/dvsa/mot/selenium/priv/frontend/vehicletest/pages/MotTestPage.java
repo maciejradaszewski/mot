@@ -128,11 +128,6 @@ public class MotTestPage extends BasePage {
 
 
 
-    public MotTestPage clickMoreButton() {
-        toggleDetails.click();
-        return this;
-    }
-
     public String getDisplayedOdometerReading() {
         return odometerReading.getText().replace("Odometer reading\n", "").replace("\nUpdate", "");
     }

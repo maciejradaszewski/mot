@@ -19,15 +19,5 @@ class Module
 
     public function getAutoloaderConfig()
     {
-        return array(
-            ClassMapAutoloader::class => array(
-                __DIR__ . '/autoload_classmap.php',
-            ),
-            StandardAutoloader::class => array(
-                'namespaces' => array(
-                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                ),
-            ),
-        );
     }
 }

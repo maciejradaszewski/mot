@@ -7,6 +7,7 @@ use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\Messages\InvalidTestStatus;
+use DvsaCommon\UrlBuilder\MotTestUrlBuilder;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaCommon\Utility\ArrayUtils;
 use Zend\View\Model\JsonModel;
@@ -20,14 +21,6 @@ class TestItemSelectorController extends AbstractDvsaMotTestController
     const NO_RFRS_FOUND_INFO_MESSAGE = 'No Reasons for Rejection under this category';
     const NO_SEARCH_STRING_ERROR_MESSAGE = "You must enter search criteria";
     const NO_SEARCH_RESULTS_FOUND_ERROR_MESSAGE = "No items found please refine search";
-
-    // TODO switch to UrlBuilder
-    const MOT_TEST_RFR_API_PATH_FORMAT = 'mot-test/%d/reasons-for-rejection';
-    // TODO switch to UrlBuilder
-    const TEST_ITEM_SELECTOR_API_PATH_FORMAT = 'mot-test/%d/test-item-selector/%s';
-    // TODO switch to UrlBuilder
-    const TEST_ITEM_SELECTOR_RFR_SEARCH_API_PATH_FORMAT
-        = 'mot-test/%d/reason-for-rejection?search=%s&start=%s&end=%s';
 
     const QUERY_PARAM_SEARCH = 'search';
     const QUERY_PARAM_SEARCH_START = 'start';
@@ -59,7 +52,13 @@ class TestItemSelectorController extends AbstractDvsaMotTestController
         $resultData = null;
         $showCategories = true;
         try {
-            $resultData = $this->getDataFromApi($this->getTestItemSelectorApiPath());
+            $resultData = $this->getDataFromApi(
+                MotTestUrlBuilder::motTestItem(
+                    $this->motTestNumber,
+                    $this->testItemSelectorId
+                )
+            );
+
             $this->getPerformMotTestAssertion()->assertGranted($resultData['motTest']);
 
             /** @var MotTestDto $motTest */
@@ -103,9 +102,16 @@ class TestItemSelectorController extends AbstractDvsaMotTestController
 
         if ($searchString) {
             try {
-                $resultData = $this->getDataFromApi(
-                    $this->getSearchApiPath($this->motTestNumber, $searchString, $start, $end)
-                );
+                $params =
+                [
+                    'search' => $searchString,
+                    'start' => $start,
+                    'end' => $end
+                ];
+
+                $endPoint =  MotTestUrlBuilder::motSearchTestItem($this->motTestNumber);
+
+                $resultData = $this->getDataFromApi($endPoint, $params);
 
                 $this->getPerformMotTestAssertion()->assertGranted($resultData['motTest']);
 
@@ -156,7 +162,7 @@ class TestItemSelectorController extends AbstractDvsaMotTestController
 
         if ($request->isPost()) {
             try {
-                $apiPath = sprintf(self::MOT_TEST_RFR_API_PATH_FORMAT, $this->motTestNumber);
+                $apiPath = MotTestUrlBuilder::motTestRfr($this->motTestNumber);
 
                 $data = [
                     'rfrId'                => $this->rfrId,
@@ -215,7 +221,7 @@ class TestItemSelectorController extends AbstractDvsaMotTestController
 
         if ($request->isPost()) {
             try {
-                $apiPath = sprintf(self::MOT_TEST_RFR_API_PATH_FORMAT, $this->motTestNumber);
+                $apiPath = MotTestUrlBuilder::motTestRfr($this->motTestNumber);
 
                 $data = [
                     'id'                   => $this->rfrId,
@@ -258,9 +264,9 @@ class TestItemSelectorController extends AbstractDvsaMotTestController
         return $this->ajaxResponse()->ok($data['data']);
     }
 
-    protected function getDataFromApi($path)
+    protected function getDataFromApi($path, $params = null)
     {
-        $result = $this->getRestClient()->get($path);
+        $result = $this->getRestClient()->getWithParamsReturnDto($path, $params);
         return $result['data'];
     }
 
@@ -307,26 +313,6 @@ class TestItemSelectorController extends AbstractDvsaMotTestController
 
         $breadcrumbItemSelectors = array_merge([$currentItemSelector], $parentItemSelectors);
         return array_reverse($breadcrumbItemSelectors);
-    }
-
-    protected function getTestItemSelectorApiPath()
-    {
-        return sprintf(
-            self::TEST_ITEM_SELECTOR_API_PATH_FORMAT,
-            $this->motTestNumber,
-            $this->testItemSelectorId
-        );
-    }
-
-    protected function getSearchApiPath($motTestNumber, $searchString, $start, $end)
-    {
-        return sprintf(
-            self::TEST_ITEM_SELECTOR_RFR_SEARCH_API_PATH_FORMAT,
-            $motTestNumber,
-            $searchString,
-            $start,
-            $end
-        );
     }
 
     /**

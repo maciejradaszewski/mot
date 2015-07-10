@@ -2,15 +2,22 @@
 
 namespace DvsaCommon\Dto\MotTesting;
 
+use DvsaCommon\Dto\Common\MotTestTypeDto;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\TypeCheck;
 
 class MotTestOptionsDto
 {
+    /** @var string */
     private $motTestStartedDate;
+    /** @var string */
     private $vehicleMake;
+    /** @var string */
     private $vehicleModel;
+    /** @var string */
     private $vehicleRegistrationNumber;
+    /** @var MotTestTypeDto */
+    private $motTestTypeDto;
 
     /**
      * @param array $data
@@ -23,11 +30,19 @@ class MotTestOptionsDto
 
         $vehicle = ArrayUtils::get($data, 'vehicle');
 
-        $dto = (new MotTestOptionsDto())
-            ->setMotTestStartedDate(ArrayUtils::get($data, 'startedDate'))
+        $dto = (new MotTestOptionsDto())->setMotTestStartedDate(ArrayUtils::get($data, 'startedDate'))
             ->setVehicleMake(ArrayUtils::get($vehicle, 'make'))
             ->setVehicleModel(ArrayUtils::get($vehicle, 'model'))
-            ->setVehicleRegistrationNumber(ArrayUtils::get($vehicle, 'vehicleRegistrationNumber'));
+            ->setVehicleRegistrationNumber(
+                ArrayUtils::get($vehicle, 'vehicleRegistrationNumber')
+            );
+
+        $motTestType = ArrayUtils::get($data, 'motTestType');
+
+        $dto->setMotTestTypeDto(
+            (new MotTestTypeDto())->setId(ArrayUtils::get($motTestType, 'id'))
+                                  ->setCode(ArrayUtils::get($motTestType, 'code'))
+        );
 
         return $dto;
     }
@@ -39,10 +54,14 @@ class MotTestOptionsDto
     {
         return [
             'startedDate' => $this->motTestStartedDate,
-            'vehicle'     => [
-                'make'                      => $this->vehicleMake,
-                'model'                     => $this->vehicleModel,
+            'vehicle' => [
+                'make' => $this->vehicleMake,
+                'model' => $this->vehicleModel,
                 'vehicleRegistrationNumber' => $this->vehicleRegistrationNumber
+            ],
+            'motTestType' => [
+                'id' => $this->getMotTestTypeDto()->getId(),
+                'code' => $this->getMotTestTypeDto()->getCode()
             ]
         ];
     }
@@ -126,4 +145,22 @@ class MotTestOptionsDto
 
         return $this;
     }
+
+    /**
+     * @return MotTestTypeDto
+     */
+    public function getMotTestTypeDto()
+    {
+        return $this->motTestTypeDto;
+    }
+
+    /**
+     * @param MotTestTypeDto $motTestTypeDto
+     */
+    public function setMotTestTypeDto($motTestTypeDto)
+    {
+        $this->motTestTypeDto = $motTestTypeDto;
+        return $this;
+    }
+
 }

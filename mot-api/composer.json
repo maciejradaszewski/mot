@@ -17,7 +17,27 @@
     "autoload" : {
         "psr-0" : {
             "DvsaCommon" : "../mot-common-web-module/src",
-            "DvsaCommonTest" : "../mot-common-web-module/test"
+            "DvsaCommonTest" : "../mot-common-web-module/test",
+            "DvsaMotApi": "module/DvsaMotApi/src",
+            "AccountApi": "module/AccountApi/src",
+            "CensorApi": "module/CensorApi/src",
+            "DataCatalogApi": "module/DataCatalogApi/src",
+            "DvsaAuthentication": "module/DvsaAuthentication/src",
+            "DvsaAuthorisation": "module/DvsaAuthorisation/src",
+            "DvsaCommonApi": "module/DvsaCommonApi/src",
+            "DvsaElasticSearch": "module/DvsaElasticSearch/src",
+            "DvsaEntities": "module/DvsaEntities/src",
+            "DvsaEventApi": "module/DvsaEventApi/src",
+            "EquipmentApi": "module/EquipmentApi/src",
+            "IntegrationApi": "module/IntegrationApi/src",
+            "MailerApi": "module/MailerApi/src",
+            "NonWorkingDaysApi": "module/NonWorkingDaysApi/src",
+            "NotificationApi": "module/NotificationApi/src",
+            "OrganisationApi": "module/OrganisationApi/src",
+            "SiteApi": "module/SiteApi/src",
+            "UserApi": "module/UserApi/src",
+            "UserFacade": "module/UserFacade/src",
+            "VehicleApi": "module/VehicleApi/src"
         },
         "psr-4" : {
             "Api\\": "src",

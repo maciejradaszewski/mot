@@ -229,6 +229,4 @@ public class VehicleSearchRetestTest extends BaseTest {
                 //Log the user out of the system
                 .clickLogout();
     }
-
-
 }

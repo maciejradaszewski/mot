@@ -13,16 +13,5 @@ class Module
 
     public function getAutoloaderConfig()
     {
-        return [
-            \Zend\Loader\ClassMapAutoloader::class => array(
-                __DIR__ . '/autoload_classmap.php',
-            ),
-            \Zend\Loader\StandardAutoloader::class => [
-                'namespaces' => [
-                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                    'Core'  => __DIR__ . '/../Core/src/Core',
-                ],
-            ],
-        ];
     }
 }

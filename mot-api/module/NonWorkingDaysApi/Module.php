@@ -13,13 +13,6 @@ class Module implements AutoloaderProviderInterface, ServiceProviderInterface
 {
     public function getAutoloaderConfig()
     {
-        return [
-            \Zend\Loader\StandardAutoloader::class => [
-                'namespaces' => [
-                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                ],
-            ],
-        ];
     }
 
     public function getServiceConfig()

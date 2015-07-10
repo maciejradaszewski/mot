@@ -2,7 +2,9 @@
 
 namespace DvsaMotTest\Presenter;
 
+use DvsaCommon\Dto\Common\MotTestTypeDto;
 use DvsaCommon\Dto\MotTesting\MotTestOptionsDto;
+use DvsaCommon\Enum\MotTestTypeCode;
 
 class MotTestOptionsPresenterTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,5 +37,29 @@ class MotTestOptionsPresenterTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals('9 December 2014, 4:50pm', $presenter->displayMotTestStartedDate());
+    }
+
+    public function testIfMotTestTypeCodeReTestReturnTrueForIsMotTestReTest()
+    {
+        $presenter = new MotTestOptionsPresenter(
+            (new MotTestOptionsDto())->setMotTestTypeDto(
+                (new MotTestTypeDto())->setCode(MotTestTypeCode::RE_TEST)
+            )
+        );
+
+        $this->assertTrue($presenter->isMotTestRetest());
+        $this->assertFalse($presenter->isMotTest());
+    }
+
+    public function testIfMotTestTypeCodeReTestReturnFalseForIsMotTestReTest()
+    {
+        $presenter = new MotTestOptionsPresenter(
+            (new MotTestOptionsDto())->setMotTestTypeDto(
+                (new MotTestTypeDto())->setCode(MotTestTypeCode::NORMAL_TEST)
+            )
+        );
+
+        $this->assertTrue($presenter->isMotTest());
+        $this->assertFalse($presenter->isMotTestRetest());
     }
 }
