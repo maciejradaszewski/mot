@@ -107,7 +107,7 @@ class VehicleSearchService
 
     public function searchVehicleWithMotData($vin = null, $reg = null, $searchDvla = null, $limit = null)
     {
-        $isFullVin = false;
+        $isFullVin = true;
         $vinHasSpaces = false;
         $regHasSpaces = false;
 
