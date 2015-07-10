@@ -241,6 +241,46 @@ class VehicleContext implements Context
     }
 
     /**
+     * @Given /^a vehicle with registration number (.*) and VIN (.*) exists$/
+     *
+     * @param $regNumber
+     * @param $vin
+     */
+    public function createVehicleForSearch($regNumber, $vin)
+    {
+        $this->createVehicle(
+            [
+                'registrationNumber' => $regNumber,
+                'vin' => $vin
+            ]
+        );
+    }
+
+    /**
+     * @Then /^the vehicle with "([^"]*)" and VIN "([^"]*)" is found$/
+     *
+     * @param $reg
+     * @param $vin
+     */
+    public function theVehicleRegistrationNumberIsFound($reg, $vin)
+    {
+        $data = $this->searchedVehicleResponse->getBody()['data'];
+        if(array_key_exists('vehicle', $data)) {
+            PHPUnit::assertThat($data['vehicle']['registration'], PHPUnit::identicalTo(($reg)));
+        }
+        if(array_key_exists('vehicles', $data)) {
+            PHPUnit::assertThat($data['vehicles'][0]['registration'], PHPUnit::identicalTo(($reg)));
+        }
+        if(array_key_exists('vehicle', $data)) {
+            PHPUnit::assertThat($data['vehicle']['vin'], PHPUnit::identicalTo(($vin)));
+        }
+        if(array_key_exists('vehicles', $data)) {
+            PHPUnit::assertThat($data['vehicles'][0]['vin'], PHPUnit::identicalTo(($vin)));
+        }
+    }
+
+
+    /**
      * @Then /^the vehicle registration number "([^"]*)" is returned$/
      * @Then /^the vehicle with registration "([^"]*)" is returned$/
      *
