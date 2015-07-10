@@ -29,16 +29,6 @@ class Module implements
      */
     public function getAutoloaderConfig()
     {
-        return [
-            ClassMapAutoloader::class => [
-                __DIR__ . '/autoload_classmap.php',
-            ],
-            StandardAutoloader::class => [
-                'namespaces' => [
-                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                ],
-            ],
-        ];
     }
 
     /**

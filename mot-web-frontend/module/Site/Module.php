@@ -28,18 +28,5 @@ class Module
 
     public function getAutoloaderConfig()
     {
-        return [
-            \Zend\Loader\ClassMapAutoloader::class => array(
-                __DIR__ . '/autoload_classmap.php',
-            ),
-            \Zend\Loader\StandardAutoloader::class => [
-                'namespaces' => [
-                    'Organisation' => __DIR__ . '/../Organisation/src/Organisation',
-                    'Site'         => __DIR__ . '/src/Site',
-                    'Application'  => __DIR__ . '/../Application/src/Application',
-                    'DvsaMotTest'  => __DIR__ . '/../Application/src/DvsaMotTest',
-                ],
-            ],
-        ];
     }
 }

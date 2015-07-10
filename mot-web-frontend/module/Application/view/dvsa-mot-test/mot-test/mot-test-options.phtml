@@ -2,10 +2,13 @@
 use Dashboard\Controller\UserHomeController;
 use DvsaAuthentication\Controller\AuthenticationController;
 /** @var \DvsaMotTest\Presenter\MotTestOptionsPresenter $presenter */
+
+$testString = ($presenter->isMotTest())? 'test' : 'retest';
+
 ?>
-<h2>MOT test successfully started</h2>
-<p>You have successfully started an MOT test for a <strong><?php echo $this->escapeHtml($presenter->displayVehicleMakeAndModel()); ?></strong>, registration mark <strong><?php echo $this->escapeHtml($presenter->displayVehicleRegistrationNumber()); ?></strong></p>
-<p>Test started <strong><?php echo $this->escapeHtml($presenter->displayMotTestStartedDate()); ?></strong></p>
+<h2>MOT <?php echo $testString; ?> successfully started</h2>
+<p>You have successfully started an MOT <?php echo $testString; ?> for a <strong><?php echo $this->escapeHtml($presenter->displayVehicleMakeAndModel()); ?></strong>, registration mark <strong><?php echo $this->escapeHtml($presenter->displayVehicleRegistrationNumber()); ?></strong></p>
+<p><?php echo ucfirst($testString); ?> started <strong><?php echo $this->escapeHtml($presenter->displayMotTestStartedDate()); ?></strong></p>
 <p>You should now sign out and inspect the vehicle</p>
 <form action="<?php echo $this->url(AuthenticationController::ROUTE_LOGOUT); ?>" method="GET" role="form" novalidate>
     <div class="form-group">

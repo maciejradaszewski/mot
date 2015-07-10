@@ -96,7 +96,8 @@ public class ReasonForRejection2Test extends BaseTest {
 
     @Test(enabled = true,
             description = "Fail MOT on multiple RFR's and tests add/remove of RFR items,creates PRS and creates MOT certificate.",
-            groups = {"VM-1666", "VM-315", "VM-1661", "Regression", "VM-1128", "VM-1861", "VM-1579"},
+            groups = {"VM-1666", "VM-315", "VM-1661", "Regression", "VM-1128", "VM-1861",
+                    "VM-1579"},
             dataProvider = "DP-MultipleRFRs")
     public void testClass4MOTFailOnBrakeTestAndPRSAndMultipleRFRs(Login login,
             Map<BrakeTestResultsPageField, Object> inputsBrakeFailure,
@@ -339,7 +340,8 @@ public class ReasonForRejection2Test extends BaseTest {
                 is(false));
     }
 
-    @Test(groups = {"Regression", "VM-1584", "VM-1589"}) public void testCanAddManualRFRInMotRetest() {
+    @Test(groups = {"Regression", "VM-1584", "VM-1589"})
+    public void testCanAddManualRFRInMotRetest() {
 
         AeDetails aeDetails = aeService.createAe(
                 RandomDataGenerator.generateRandomAlphaNumeric(12, UUID.randomUUID().hashCode()));
@@ -397,7 +399,8 @@ public class ReasonForRejection2Test extends BaseTest {
                 motRetestPage.getNumberOfFailures(), is(previousNumberOfFailures - 1));
     }
 
-    @Test(groups = {"Regression", "VM-1584", "VM-1589"}) public void testCanRectifyPRSInMotRetest() {
+    @Test(groups = {"Regression", "VM-1584", "VM-1589"})
+    public void testCanRectifyPRSInMotRetest() {
 
         AeDetails aeDetails = aeService.createAe(
                 RandomDataGenerator.generateRandomAlphaNumeric(12, UUID.randomUUID().hashCode()));
@@ -445,7 +448,7 @@ public class ReasonForRejection2Test extends BaseTest {
         int previousNumberOfPRS = motRetestPage.getNumberOfPRS();
         motRetestPage.addPRS(PRSrejection.HORN_CONTROL_INSECURE);
 
-        assertThat("Check the number of PRS", motRetestPage.getNumberOfPRS(),
+        assertThat("Cheˆck the number of PRS", motRetestPage.getNumberOfPRS(),
                 is(previousNumberOfPRS + 1));
     }
 
@@ -530,8 +533,13 @@ public class ReasonForRejection2Test extends BaseTest {
                 is(true));
     }
 
-    @Test(groups = {"Regression", "VM-5139", "VM-4901"})
-    public void endDatedRfrCanNotBeUsedDuringNewTestCreation() {
+    @DataProvider(name = "itemsNotFound") public Object[][] itemsNotFound() {
+
+        return new Object[][] {{"9151"}, {"& "}};
+    }
+
+    @Test(groups = {"Regression", "VM-5139", "VM-4901"}, dataProvider = "itemsNotFound")
+    public void testItemsThatShouldNotReturnResults(String item) {
 
         AeDetails aeDetails = aeService.createAe(
                 RandomDataGenerator.generateRandomAlphaNumeric(12, UUID.randomUUID().hashCode()));
@@ -542,10 +550,9 @@ public class ReasonForRejection2Test extends BaseTest {
 
         MotTestPage motTestPage = MotTestPage.navigateHereFromLoginPage(driver, login, vehicle);
         ReasonForRejectionPage rfrPage = motTestPage.addRFR();
-        rfrPage.searchForRfr(
-                String.valueOf(EMISSIONS_EXEMPT_FROM_EMISSIONS_TESTING_END_DATED.reasonId));
+        rfrPage.searchForRfr(String.valueOf(item));
 
-        assertThat("End dated RFR should not be accessible for new test",
+        assertThat("End dated RFR and '&' should not return results",
                 ValidationSummary.isValidationSummaryDisplayed(driver), is(true));
     }
 

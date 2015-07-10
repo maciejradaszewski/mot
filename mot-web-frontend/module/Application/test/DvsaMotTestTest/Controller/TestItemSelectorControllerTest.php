@@ -7,6 +7,7 @@ use DvsaCommon\Dto\Common\MotTestTypeDto;
 use DvsaCommon\Dto\Person\PersonDto;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
+use DvsaCommon\UrlBuilder\MotTestUrlBuilder;
 use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaMotTest\Controller\TestItemSelectorController;
@@ -33,7 +34,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $testItemSelectorId = 502;
 
         $this->getRestClientMock(
-            'get',
+            'getWithParamsReturnDto',
             $this->getTestDataItemSelectorsDto($testItemSelectorId),
             "mot-test/$motTestNumber/test-item-selector/$testItemSelectorId"
         );
@@ -62,7 +63,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $testItemSelectorId = 502;
 
         $this->getRestClientMock(
-            'get',
+            'getWithParamsReturnDto',
             $this->getSingleResultTestItemSelectorsDataDto(),
             "mot-test/$motTestNumber/test-item-selector/$testItemSelectorId"
         );
@@ -90,7 +91,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $testItemSelectorId = 502;
 
         $this->getRestClientMock(
-            'get',
+            'getWithParamsReturnDto',
             $this->getMultipleTestItemSelectorDataDto(),
             "mot-test/$motTestNumber/test-item-selector/$testItemSelectorId"
         );
@@ -114,7 +115,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $testItemSelectorId = 502;
 
         $this->getRestClientMock(
-            'get',
+            'getWithParamsReturnDto',
             $this->getEmptyTestItemsDto(),
             "mot-test/$motTestNumber/test-item-selector/$testItemSelectorId"
         );
@@ -138,7 +139,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
     {
         $testItemSelectorId = 502;
 
-        $this->getRestClientMock('get', $this->getEmptyTestItemsDto($testItemSelectorId));
+        $this->getRestClientMock('getWithParamsReturnDto', $this->getEmptyTestItemsDto($testItemSelectorId));
         $this->getFlashMessengerMockForAddInfoMessage(TestItemSelectorController::NO_RFRS_FOUND_INFO_MESSAGE);
 
         $this->routeMatch->setParam('action', 'testItemSelectors');
@@ -158,7 +159,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
     {
         $testItemSelectorId = 502;
 
-        $this->getRestClientMockThrowingException('get');
+        $this->getRestClientMockThrowingException('getWithParamsReturnDto');
         $this->getFlashMessengerMockForAddErrorMessage('REST ERROR!');
 
         $this->routeMatch->setParam('action', 'testItemSelectors');
@@ -190,9 +191,16 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         ];
 
         $this->getRestClientMock(
-            'get',
+            'getWithParamsReturnDto',
             $restData,
-            "mot-test/$motTestNumber/reason-for-rejection?search=$searchString&start=$start&end=$end"
+            MotTestUrlBuilder::motSearchTestItem(
+                $motTestNumber,
+                [
+                    'search' => $searchString,
+                    'start' => $start,
+                    'end' => $end
+                ]
+            )
         );
 
         $this->routeMatch->setParam('action', 'search');
@@ -219,6 +227,66 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $this->assertEquals($hasMore, $variables['hasMore']);
     }
 
+    public function testSearchGetDataInvalidCharacters()
+    {
+        $motTestNumber = 1;
+        $searchString = "!@£$%^&*()<>";
+        $start = "0";
+        $end = "10";
+        $hasMore = true;
+        $rfrs = [['id' => 1], ['id' => 2]];
+        $restData = [
+            'data' => [
+                'searchDetails'       => ['hasMore' => $hasMore],
+                'reasonsForRejection' => $rfrs,
+                'motTest'             => $this->getMotTest()->setMotTestNumber(1),
+            ]
+        ];
+
+        $this->getRestClientMock(
+            'getWithParamsReturnDto',
+            $restData,
+            MotTestUrlBuilder::motSearchTestItem(
+                $motTestNumber,
+                [
+                    'search' => $searchString,
+                    'start' => $start,
+                    'end' => $end
+                ]
+            )
+        );
+
+        $this->routeMatch->setParam('action', 'search');
+        $this->routeMatch->setParam('motTestNumber', $motTestNumber);
+        $this->request->setQuery(
+            new Parameters(
+                [
+                    'search' => $searchString,
+                    'start'  => $start,
+                    'end'    => $end
+                ]
+            )
+        );
+
+        $this->controller->dispatch($this->request);
+
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
+
+        $this->request->setQuery(
+            new Parameters(
+                [
+                    'search' => "&",
+                    'start'  => $start,
+                    'end'    => $end
+                ]
+            )
+        );
+
+        $this->controller->dispatch($this->request);
+
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
+    }
+
     public function testSearchWithNoResultsDisplaysError()
     {
         $motTestNumber = 1;
@@ -232,7 +300,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         ];
 
         $this->getRestClientMock(
-            'get',
+            'getWithParamsReturnDto',
             $restData
         );
         $this->getFlashMessengerMockForAddErrorMessage(
@@ -253,7 +321,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $motTestNumber = 1;
         $searchString = "something about this search is wrong";
 
-        $this->getRestClientMockThrowingException('get');
+        $this->getRestClientMockThrowingException('getWithParamsReturnDto');
         $this->getFlashMessengerMockForAddErrorMessage('REST ERROR!');
 
         $this->routeMatch->setParam('action', 'search');
@@ -287,7 +355,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $motTestNumber = 1;
 
         $this->getRestClientMock(
-            'get',
+            'getWithParamsReturnDto',
             $this->getTestDataItemRfrsDto($testItemSelectorId),
             "mot-test/$motTestNumber/test-item-selector/$testItemSelectorId"
         );
@@ -310,7 +378,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
     {
         $testItemSelectorId = 502;
 
-        $this->getRestClientMock('get', $this->getEmptyTestItemsDto($testItemSelectorId));
+        $this->getRestClientMock('getWithParamsReturnDto', $this->getEmptyTestItemsDto($testItemSelectorId));
         $this->getFlashMessengerMockForAddInfoMessage(TestItemSelectorController::NO_RFRS_FOUND_INFO_MESSAGE);
 
         $this->routeMatch->setParam('action', 'testItemSelectors');
@@ -440,7 +508,7 @@ class TestItemSelectorControllerTest extends AbstractDvsaMotTestTestCase
         $motTestNumber = 1;
 
         $this->getRestClientMock(
-            'get',
+            'getWithParamsReturnDto',
             $this->getTestDataItemRfrsDto($testItemSelectorId, 'FAILED'),
             "mot-test/$motTestNumber/test-item-selector/$testItemSelectorId"
         );

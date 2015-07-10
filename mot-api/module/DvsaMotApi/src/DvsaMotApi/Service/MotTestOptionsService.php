@@ -2,9 +2,8 @@
 
 namespace DvsaMotApi\Service;
 
-use DvsaCommon\Auth\MotAuthorisationServiceInterface;
-use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Date\DateTimeApiFormat;
+use DvsaCommon\Dto\Common\MotTestTypeDto;
 use DvsaCommon\Dto\MotTesting\MotTestOptionsDto;
 use DvsaCommonApi\Authorisation\Assertion\ReadMotTestAssertion;
 use DvsaEntities\Repository\MotTestRepository;
@@ -13,18 +12,15 @@ class MotTestOptionsService
 {
     /** @var MotTestRepository $motTestRepository */
     private $motTestRepository;
-    /** @var MotAuthorisationServiceInterface $authorisationService */
-    private $authorisationService;
 
+    /** @var ReadMotTestAssertion $readMotTestAssertion */
     private $readMotTestAssertion;
 
     public function __construct(
         MotTestRepository $motTestRepository,
-        MotAuthorisationServiceInterface $authorisationService,
         ReadMotTestAssertion $readTestAssertion
     ) {
         $this->motTestRepository = $motTestRepository;
-        $this->authorisationService = $authorisationService;
         $this->readMotTestAssertion = $readTestAssertion;
     }
 
@@ -44,9 +40,13 @@ class MotTestOptionsService
         $vehicle = $motTest->getVehicle();
 
         return (new MotTestOptionsDto())
-            ->setMotTestStartedDate(DateTimeApiFormat::dateTime($motTest->getStartedDate()))
-            ->setVehicleMake($vehicle->getMakeName())
-            ->setVehicleModel($vehicle->getModelName())
-            ->setVehicleRegistrationNumber($vehicle->getRegistration());
+                ->setMotTestStartedDate(DateTimeApiFormat::dateTime($motTest->getStartedDate()))
+                ->setVehicleMake($vehicle->getMakeName())
+                ->setVehicleModel($vehicle->getModelName())
+                ->setVehicleRegistrationNumber($vehicle->getRegistration())
+                ->setMotTestTypeDto(
+                    (new MotTestTypeDto())->setId($motTest->getMotTestType()->getId())
+                                          ->setCode($motTest->getMotTestType()->getCode())
+                );
     }
 }

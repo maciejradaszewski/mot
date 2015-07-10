@@ -9,6 +9,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class VehicleConfirmationRetestPage extends StartTestConfirmation1Page {
     public static String CONFIRMATION_RETEST_PAGE_TITLE = "START RETEST CONFIRMATION";
+    public static String MOT_RETEST_STARTED_PAGE_TITLE = "MOT RETEST STARTED";
 
     @FindBy(id = "confirm_vehicle_confirmation") private WebElement confirmButton;
 
@@ -41,7 +42,7 @@ public class VehicleConfirmationRetestPage extends StartTestConfirmation1Page {
             return vehicleDetailsChangedPage
                     .confirmVehicleChangesExpectingMottestOptionsPage(Text.TEXT_PASSCODE);
         } else {
-            return new MotTestStartedPage(driver);
+            return new MotTestStartedPage(driver, MOT_RETEST_STARTED_PAGE_TITLE);
         }
     }
 

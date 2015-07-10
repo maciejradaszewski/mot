@@ -102,6 +102,8 @@ public class UserDashboardPage extends BasePage {
 
     @FindBy(id = "feedback-link") private WebElement feedbackLink;
 
+    @FindBy(id = "slot-count") private WebElement slotCount;
+
     public UserDashboardPage(WebDriver driver) {
         super(driver);
         //TODO Provisional. Added in order to fix multithread failures
@@ -456,5 +458,10 @@ public class UserDashboardPage extends BasePage {
     public boolean isVtsAssociationDisplayed(String vts) {
 
         return isElementDisplayed(driver.findElement(By.xpath(".//a[contains(., '" + vts + "')]")));
+    }
+
+    public boolean isSlotCountDisplayed(){
+
+        return isElementDisplayed(slotCount);
     }
 }

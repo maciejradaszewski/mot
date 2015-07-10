@@ -13,7 +13,8 @@ class MotTestOptionsController extends AbstractDvsaMotTestController
 
     const TEMPLATE_MOT_TEST_OPTIONS = 'dvsa-mot-test/mot-test/mot-test-options.phtml';
 
-    const PAGE_TITLE = 'MOT test started';
+    const PAGE_TITLE_TEST = 'MOT test started';
+    const PAGE_TITLE_RETEST = 'MOT retest started';
     const PAGE_SUB_TITLE = 'MOT testing';
 
     public function motTestOptionsAction()
@@ -24,10 +25,18 @@ class MotTestOptionsController extends AbstractDvsaMotTestController
             $this->getRestClient()->get(UrlBuilder::motTestOptions($motTestNumber)->toString())['data']
         );
 
-        $this->layout()->setVariable('pageTitle', self::PAGE_TITLE);
+        $presenter = new MotTestOptionsPresenter($dto);
+
+        $pageTitle = self::PAGE_TITLE_TEST;
+
+        if ($presenter->isMotTestRetest()) {
+            $pageTitle = self::PAGE_TITLE_RETEST;
+        }
+
+        $this->layout()->setVariable('pageTitle', $pageTitle);
         $this->layout()->setVariable('pageSubTitle', self::PAGE_SUB_TITLE);
 
-        $viewModel = new ViewModel(['presenter' => new MotTestOptionsPresenter($dto)]);
+        $viewModel = new ViewModel(['presenter' => $presenter]);
         $viewModel->setTemplate(self::TEMPLATE_MOT_TEST_OPTIONS);
 
         return $viewModel;

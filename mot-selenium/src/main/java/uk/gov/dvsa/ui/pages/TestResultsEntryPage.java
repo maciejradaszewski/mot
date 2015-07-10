@@ -11,14 +11,16 @@ import uk.gov.dvsa.helper.PageInteractionHelper;
 
 public class TestResultsEntryPage extends Page {
     private static final String PAGE_TITLE = "MOT test results entry";
-    private static final String PAGE_TITLE_REINSPECTION = "MOT testing\n" +
-            "MOT reinspection results entry";
+    private static final String PAGE_TITLE_REINSPECTION =
+            "MOT testing\n" + "MOT reinspection results entry";
+
+    private String currentUrl;
 
     @FindBy(id = "odometer_submit") private WebElement odometerSubmit;
 
     @FindBy(id = "createCertificate") private WebElement reviewTestButton;
 
-    @FindBy (id = "cancelMotTest") private WebElement cancelMotTestLink;
+    @FindBy(id = "cancelMotTest") private WebElement cancelMotTestLink;
 
     @FindBy(className = "active") private WebElement stepInfo;
 
@@ -85,9 +87,9 @@ public class TestResultsEntryPage extends Page {
         selfVerify();
     }
 
-    @Override
-    protected boolean selfVerify() {
-        return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE, PAGE_TITLE_REINSPECTION);
+    @Override protected boolean selfVerify() {
+        return PageInteractionHelper
+                .verifyTitle(this.getTitle(), PAGE_TITLE, PAGE_TITLE_REINSPECTION);
     }
 
     public TestResultsEntryPage completeTestDetailsWithPassValues() {
@@ -118,21 +120,18 @@ public class TestResultsEntryPage extends Page {
         return this;
     }
 
-    public TestSummaryPage addDefaultRfrPrsAndManualAdvisory(){
+    public TestSummaryPage addDefaultRfrPrsAndManualAdvisory() {
         AddRFRButton.click();
 
         ReasonForRejectionPage rejectionPage = new ReasonForRejectionPage(driver);
-        rejectionPage
-                .addManualAdvisory()
-                .addPRS()
-                .clickDone();
+        rejectionPage.addManualAdvisory().addPRS().clickDone();
 
         reviewTestButton.click();
 
         return new TestSummaryPage(driver);
     }
 
-    public TestSummaryPage clickReviewTestButton(){
+    public TestSummaryPage clickReviewTestButton() {
         reviewTestButton.click();
 
         return new TestSummaryPage(driver);
@@ -141,10 +140,11 @@ public class TestResultsEntryPage extends Page {
     public void clickReviewTest() {
         reviewTestButton.click();
     }
-    
+
     private TestResultsEntryPage addOdometerReading(int odometerReading) {
         editOdometerButton.click();
-        PageInteractionHelper.waitForElementToBeVisible(odometerSubmit, Configurator.defaultFastWebElementTimeout);
+        PageInteractionHelper.waitForElementToBeVisible(odometerSubmit,
+                Configurator.defaultFastWebElementTimeout);
         odometerField.sendKeys(String.valueOf(odometerReading));
 
         setOdometerUnit(OdometerUnit.KILOMETRES.getValue());
@@ -165,21 +165,21 @@ public class TestResultsEntryPage extends Page {
         new Select(odometerUnit).selectByValue(unit);
     }
 
-    public boolean isFailedNoticeDisplayed(){
+    public boolean isFailedNoticeDisplayed() {
         return brakeTestResultsNotice.getText().contains("Failed");
     }
 
-    public boolean isPassNoticeDisplayed(){
+    public boolean isPassNoticeDisplayed() {
         return brakeTestResultsNotice.getText().contains("Pass");
     }
 
-    public TestAbandonedPage abandonMotTest(CancelTestReason reason){
+    public TestAbandonedPage abandonMotTest(CancelTestReason reason) {
         processTestCancellation(reason);
 
         return new TestAbandonedPage(driver);
     }
 
-    public TestAbortedPage abortMotTest(CancelTestReason reason){
+    public TestAbortedPage abortMotTest(CancelTestReason reason) {
         processTestCancellation(reason);
 
         return new TestAbortedPage(driver);
@@ -195,12 +195,19 @@ public class TestResultsEntryPage extends Page {
 
     public TestResultsEntryPage fillOdometerReadingAndSubmit(int odometerReading) {
         editOdometerButton.click();
-        PageInteractionHelper.waitForElementToBeVisible(odometerSubmit, Configurator.defaultFastWebElementTimeout);
+        PageInteractionHelper.waitForElementToBeVisible(odometerSubmit,
+                Configurator.defaultFastWebElementTimeout);
         odometerField.sendKeys(String.valueOf(odometerReading));
 
         setOdometerUnit(OdometerUnit.KILOMETRES.getValue());
         odometerSubmit.click();
 
         return this;
+    }
+
+    public String returnCurrentUrl() {
+
+        currentUrl = driver.getCurrentUrl();
+        return currentUrl;
     }
 }

@@ -1126,6 +1126,7 @@ class MotTestRepository extends AbstractMutableRepository
 
         if ($searchParam->getFormat() === SearchParamConst::FORMAT_DATA_CSV) {
             $qb
+                ->resetPart('orderBy')
                 ->select(
                     'CASE WHEN eml.id IS NOT NULL THEN emp.username ELSE NULL END AS emRecTester,
                     CASE WHEN eml.id IS NOT NULL THEN mt.created_on ELSE NULL END AS emRecDateTime,
@@ -1211,12 +1212,12 @@ class MotTestRepository extends AbstractMutableRepository
         }
 
         if ($searchParam->getRegistration()) {
-            $qb->andwhere('test.registration = :VRM')
+            $qb->andwhere('vehicle.registration = :VRM')
                 ->setParameter('VRM', $searchParam->getRegistration());
         }
 
         if ($searchParam->getVin()) {
-            $qb->andwhere('test.vin = :VIN')
+            $qb->andwhere('vehicle.vin = :VIN')
                 ->setParameter('VIN', $searchParam->getVin());
         }
 

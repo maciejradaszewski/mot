@@ -102,8 +102,6 @@ class MotTestDto extends AbstractDataTransferObject
     private $motTestOriginal;
     /** @var string */
     private $prsMotTestNumber;
-    /** @var array */
-    private $strangeStuff = [];
     /** @var  string */
     private $clientIp;
     /**
@@ -894,16 +892,6 @@ class MotTestDto extends AbstractDataTransferObject
     {
         $this->prsMotTestNumber = $prsMotTestNumber;
         return $this;
-    }
-
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getStrangeStuff($key)
-    {
-        ArrayUtils::get($this->strangeStuff, $key);
     }
 
     /**

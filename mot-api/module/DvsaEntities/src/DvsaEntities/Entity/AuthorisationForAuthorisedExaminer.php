@@ -10,7 +10,7 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * AuthorisationForAuthorisedExaminer
  *
  * @ORM\Table(name="auth_for_ae")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="\DvsaEntities\Repository\AuthorisationForAuthorisedExaminerRepository")
  */
 class AuthorisationForAuthorisedExaminer extends Entity
 {

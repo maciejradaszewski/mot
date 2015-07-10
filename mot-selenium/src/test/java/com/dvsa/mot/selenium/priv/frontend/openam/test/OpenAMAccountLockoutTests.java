@@ -19,19 +19,4 @@ public class OpenAMAccountLockoutTests extends BaseTest {
         authService.forceUserLockout(login, 5);
         new LoginPage(driver).loginExpectingToBeLockedOut(driver, login);
     }
-
-    @Test (groups = {"Regression"})
-    public void testOpenAmAccountCanBeUnlocked() {
-        Login login = createTester();
-        authService.forceUserLockout(login, 5);
-
-        HelpDeskUserProfilePage helpDeskUserProfilePage = HelpdeskUserSearchPage
-            .navigateHereFromLoginPage(driver, Login.LOGIN_CUSTOMER_SERVICE)
-            .enterUsername(login.username).search().clickUserName(0);
-        helpDeskUserProfilePage.resetAccountByPost().clickReclaimAccountButton().clickLogout();
-
-        AuthorisationFailedPage authorisationFailedPage = new LoginPage(driver)
-            .loginExpectingAuthorisationFailedPage(driver, login.username, login.password);
-        authorisationFailedPage.checkAuthFailedTitle();
-    }
 }

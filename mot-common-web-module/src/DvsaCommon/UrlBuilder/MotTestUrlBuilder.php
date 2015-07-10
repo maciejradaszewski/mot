@@ -11,6 +11,10 @@ class MotTestUrlBuilder extends AbstractUrlBuilder
     const MOT_TEST_STATUS = '/status';
     const FIND_MOT_TEST_NUMBER = '/find-mot-test-number';
 
+    const MOT_TEST_RFR_API_PATH_FORMAT = '/reasons-for-rejection';
+    const TEST_ITEM_SELECTOR_API_PATH_FORMAT = '/test-item-selector[/:selectorId]';
+    const TEST_ITEM_SELECTOR_RFR_SEARCH_API_PATH_FORMAT = '/reason-for-rejection';
+
     const RETEST = 'mot-retest[/:id]';
     const DEMO_TEST = 'mot-demo-test';
     const MINIMAL = '/minimal';
@@ -30,6 +34,9 @@ class MotTestUrlBuilder extends AbstractUrlBuilder
             self::MOTTEST   => [
                 self::MOT_TEST_STATUS       => '',
                 self::FIND_MOT_TEST_NUMBER  => '',
+                self::MOT_TEST_RFR_API_PATH_FORMAT => '',
+                self::TEST_ITEM_SELECTOR_API_PATH_FORMAT => '',
+                self::TEST_ITEM_SELECTOR_RFR_SEARCH_API_PATH_FORMAT => '',
                 self::REASONS_FOR_REJECTION => '',
                 self::ODOMETER_READING      => [
                     self::ODOMETER_READING_MODIFY_CHECK => '',
@@ -70,6 +77,24 @@ class MotTestUrlBuilder extends AbstractUrlBuilder
             $url->routeParam('motTestNumber', (int)$motTestNr);
 
         return $url;
+    }
+
+    public static function motTestRfr($motTestNumber)
+    {
+        return self::of()->motTest($motTestNumber)->appendRoutesAndParams(self::MOT_TEST_RFR_API_PATH_FORMAT);
+    }
+
+    public static function motTestItem($motTestNumber, $selectorId)
+    {
+        return self::of()->motTest($motTestNumber)
+                         ->appendRoutesAndParams(self::TEST_ITEM_SELECTOR_API_PATH_FORMAT)
+                         ->routeParam('selectorId', $selectorId);
+    }
+
+    public static function motSearchTestItem($motTestNumber)
+    {
+        return self::of()->motTest($motTestNumber)
+                          ->appendRoutesAndParams(self::TEST_ITEM_SELECTOR_RFR_SEARCH_API_PATH_FORMAT);
     }
 
     public static function minimal($motTestNumber)

@@ -14,16 +14,6 @@ class Module implements AutoloaderProviderInterface, ServiceProviderInterface, C
 {
     public function getAutoloaderConfig()
     {
-        return [
-            \Zend\Loader\ClassMapAutoloader::class => array(
-                __DIR__ . '/autoload_classmap.php',
-            ),
-            \Zend\Loader\StandardAutoloader::class => [
-                'namespaces' => [
-                    'Session' => __DIR__ . '/src/Session',
-                ],
-            ],
-        ];
     }
 
     public function getServiceConfig()

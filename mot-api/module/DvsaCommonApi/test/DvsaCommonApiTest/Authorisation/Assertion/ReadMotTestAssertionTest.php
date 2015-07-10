@@ -7,7 +7,6 @@ use DvsaCommon\Auth\MotIdentity;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Dto\Person\PersonDto;
-use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommonApi\Authorisation\Assertion\ReadMotTestAssertion;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;

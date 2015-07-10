@@ -421,13 +421,13 @@ class VehicleTestSearch
                         'vrm' => $this->searchTerm,
                         'format' => SearchParamConst::FORMAT_DATA_TABLES,
                         'sortDirection' => SearchParamConst::SORT_DIRECTION_DESC,
-                        'rowCount' => 25000
+                        'rowCount' => 100
                     ]
                     : [
                         'vin' => $this->searchTerm,
                         'format' => SearchParamConst::FORMAT_DATA_TABLES,
                         'sortDirection' => SearchParamConst::SORT_DIRECTION_DESC,
-                        'rowCount' => 25000
+                        'rowCount' => 100
                     ]
                 )
             );

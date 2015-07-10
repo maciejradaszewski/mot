@@ -18,6 +18,7 @@ use DvsaEntities\Entity\OrganisationBusinessRoleMap;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteBusinessRoleMap;
+use DvsaEntities\Repository\AuthorisationForAuthorisedExaminerRepository;
 use DvsaMotApi\Service\TesterService;
 use NotificationApi\Service\NotificationService;
 use SiteApi\Service\SiteService;
@@ -47,6 +48,7 @@ class DashboardServiceTest extends AbstractServiceTestCase
         $notificationService = $this->getMockWithDisabledConstructor(NotificationService::class);
         $personalAuthorisationService = $this->getMockWithDisabledConstructor(PersonalAuthorisationForMotTestingService::class);
         $testerService = $this->getMockWithDisabledConstructor(TesterService::class);
+        $afaRepositoryMock = $this->getMockWithDisabledConstructor(AuthorisationForAuthorisedExaminerRepository::class);
         $this->dashboardService = new DashboardService(
             $mockEntityManager,
             $authorisationService,
@@ -55,7 +57,8 @@ class DashboardServiceTest extends AbstractServiceTestCase
             $specialNoticeService,
             $notificationService,
             $personalAuthorisationService,
-            $testerService
+            $testerService,
+            $afaRepositoryMock
         );
     }
 
