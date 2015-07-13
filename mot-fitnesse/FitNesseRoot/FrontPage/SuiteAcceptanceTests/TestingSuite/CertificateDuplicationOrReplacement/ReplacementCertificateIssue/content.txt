@@ -48,4 +48,4 @@ The test checks if tester can issue replacements of tests performed within and o
 !|Replacement Certificate Issue within seven days for tester|
 |Date of Test|Can Tester Issue Replacement?|Can Apply Draft?|
 |$minusSeven |true                         |true            |
-|$minusEight |false                        |false           |
+|$minusEight |true                         |false           |

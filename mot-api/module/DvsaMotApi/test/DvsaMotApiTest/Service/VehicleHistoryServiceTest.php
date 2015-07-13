@@ -94,7 +94,8 @@ class VehicleHistoryServiceTest extends AbstractMotTestServiceTest
                     (new MotTestType())
                         ->setCode(MotTestTypeCode::NORMAL_TEST)
                 )
-                ->setIssuedDate((new \DateTime())->sub(new \DateInterval('P8D'))),
+                ->setIssuedDate((new \DateTime())->sub(new \DateInterval('P8D')))
+                ->setExpiryDate((new \DateTime())->modify('-1 year -2 days')),
         ];
 
         $this->mockIsGranted($this->mockAuthService, [PermissionInSystem::CERTIFICATE_REPLACEMENT]);

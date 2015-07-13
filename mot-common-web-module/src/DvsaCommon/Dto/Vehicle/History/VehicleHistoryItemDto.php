@@ -2,6 +2,7 @@
 
 namespace DvsaCommon\Dto\Vehicle\History;
 
+use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Enum\MotTestStatusName;
 
 class VehicleHistoryItemDto
@@ -14,18 +15,30 @@ class VehicleHistoryItemDto
 
     /** @var int $id */
     private $id;
+
     /** @var string $status */
     private $status;
+
     /** @var string $issuedDate */
     private $issuedDate;
+
+    /** @var \DateTime $expiryDate */
+    private $expiryDate;
+
     /** @var string $motTestNumber */
     private $motTestNumber;
+
     /** @var string $testType */
     private $testType;
-    /** @var $site VehicleHistoryItemSiteDto */
+
+    /** @var VehicleHistoryItemSiteDto $site */
     private $site;
+
     /** @var bool $allowEdit */
     private $allowEdit;
+
+    /** @var string $prsMotTestId */
+    private $prsMotTestId;
 
     public function __construct()
     {
@@ -45,24 +58,15 @@ class VehicleHistoryItemDto
      */
     public function getDisplayStatus()
     {
-        $displayStatus = '';
+        $displayStatuses = [
+            MotTestStatusName::PASSED => self::DISPLAY_PASS_STATUS_VALUE,
+            MotTestStatusName::FAILED => self::DISPLAY_FAIL_STATUS_VALUE,
+            MotTestStatusName::ABANDONED => self::DISPLAY_ABAN_STATUS_VALUE,
+        ];
 
-        switch ($this->status) {
-            case MotTestStatusName::PASSED:
-                $displayStatus = self::DISPLAY_PASS_STATUS_VALUE;
-
-                break;
-            case MotTestStatusName::FAILED:
-                $displayStatus = self::DISPLAY_FAIL_STATUS_VALUE;
-
-                break;
-            case MotTestStatusName::ABANDONED:
-                $displayStatus = self::DISPLAY_ABAN_STATUS_VALUE;
-
-                break;
-        }
-
-        return $displayStatus;
+        return isset($displayStatuses[$this->status])
+            ? $displayStatuses[$this->status]
+            : '';
     }
 
     /**
@@ -143,6 +147,26 @@ class VehicleHistoryItemDto
     }
 
     /**
+     * @return \DateTime
+     */
+    public function getExpiryDate()
+    {
+        return $this->expiryDate;
+    }
+
+    /**
+     * @param string $expiryDate
+     */
+    public function setExpiryDate($expiryDate)
+    {
+        if ($expiryDate && !$expiryDate instanceof \DateTime) {
+            $expiryDate = DateUtils::toDateTime($expiryDate);
+        }
+
+        $this->expiryDate = $expiryDate;
+    }
+
+    /**
      * @return string
      */
     public function getMotTestNumber()
@@ -204,5 +228,25 @@ class VehicleHistoryItemDto
     public function setTestType($testType)
     {
         $this->testType = $testType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrsMotTestId()
+    {
+        return $this->prsMotTestId;
+    }
+
+    /**
+     * @param string $prsMotTestId
+     *
+     * @return $this
+     */
+    public function setPrsMotTestId($prsMotTestId)
+    {
+        $this->prsMotTestId = $prsMotTestId;
+
+        return $this;
     }
 }

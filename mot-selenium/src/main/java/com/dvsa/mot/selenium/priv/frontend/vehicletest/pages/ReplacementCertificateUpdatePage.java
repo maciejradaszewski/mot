@@ -280,5 +280,7 @@ public class ReplacementCertificateUpdatePage extends BasePage {
 
     }
 
-
+    public boolean isEditOdometerReadingButtonDisplayed() {
+        return isElementDisplayed(updateOdometerReading);
+    }
 }

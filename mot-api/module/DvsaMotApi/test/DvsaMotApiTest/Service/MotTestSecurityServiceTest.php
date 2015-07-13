@@ -207,7 +207,7 @@ class MotTestSecurityServiceTest extends AbstractServiceTestCase
         $this->assertTrue($result, "Should allow to update but didnt!");
     }
 
-    public function testCanModifyOdometerForTest_givenTestCompletedAndHitModificationWindow_shouldNotAllowToUpdate()
+    public function testCanModifyOdometerForTest_givenTestCompletedAndHitModificationWindow_shouldAllowToUpdate()
     {
         // given
         $motTestNumber = 2;

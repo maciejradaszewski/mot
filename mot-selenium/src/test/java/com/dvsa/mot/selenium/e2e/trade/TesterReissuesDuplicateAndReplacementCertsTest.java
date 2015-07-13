@@ -12,6 +12,7 @@ import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.DuplicateReplacementCertificatePage;
 import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.DuplicateReplacementCertificatePrintPage;
 import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.MOTTestResultPage;
+import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.ReplacementCertificateUpdatePage;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.testng.Assert;
@@ -96,8 +97,8 @@ public class TesterReissuesDuplicateAndReplacementCertsTest extends BaseTest {
                 .enterOneTimePassword(TEXT_PASSCODE).finishAndPrintCertificate();
     }
 
-    @Test(groups = {"VM-4512", "Regression", "W-Sprint4", "E2E"},
-            description = "Tester can only issue a replacement on the latest certificate and only with 7 days of issue, and only from their VTS.")
+    @Test(groups = {"VM-4512", "slice_A", "W-Sprint4", "E2E"},
+            description = "Tester cannot edit the odometer reading of a certificate after 7 days")
     public void testTesterCanNotIssueReplacementOnLatestCertificateWithMoreThan7DaysOfIssue() {
         Login tester = createTester();
         Vehicle vehicle = createVehicle(VEHICLE_CLASS2_CAPPUCCINO_2012);
@@ -106,8 +107,10 @@ public class TesterReissuesDuplicateAndReplacementCertsTest extends BaseTest {
         DuplicateReplacementCertificatePage duplicateReplacementCertificatePage =
                 DuplicateReplacementCertificatePage
                         .navigateHereFromLoginPage(driver, tester, vehicle);
-        Assert.assertFalse(duplicateReplacementCertificatePage
-                .isReplacementCertificateEditButtonDisplayed(testNumberMore7DaysIssue));
+        ReplacementCertificateUpdatePage replacementCertificateUpdatePage =
+            duplicateReplacementCertificatePage.clickEditByMOTNumber(testNumberMore7DaysIssue);
+        assertThat("Testers cannot edit odometer readings for certficates after 7 days",
+            replacementCertificateUpdatePage.isEditOdometerReadingButtonDisplayed(), is(false));
     }
 
 }
