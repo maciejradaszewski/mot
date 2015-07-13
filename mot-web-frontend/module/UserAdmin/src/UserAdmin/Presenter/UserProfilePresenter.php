@@ -11,6 +11,7 @@ use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Constants\Role;
 use DvsaCommon\Utility\AddressUtils;
+use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
 
 /**
  * Decorator for PersonHelpDeskProfileDto
@@ -31,18 +32,14 @@ class UserProfilePresenter implements AddressPresenterInterface
 
     private $testerAuthorisation;
 
-    private $viewAuthorisation;
-
     public function __construct(
         PersonHelpDeskProfileDto $person,
-        TesterAuthorisation $testerAuthorisation,
-        UserProfileViewAuthorisation $viewAuthorisation,
+        TesterAuthorisationViewModel $testerAuthorisation,
         $isDvsaUser = false
     )
     {
         $this->person = $person;
         $this->testerAuthorisation = $testerAuthorisation;
-        $this->viewAuthorisation = $viewAuthorisation;
         $this->isDvsaUser = $isDvsaUser;
     }
 
@@ -247,10 +244,5 @@ class UserProfilePresenter implements AddressPresenterInterface
     public function getTesterAuthorisation()
     {
         return $this->testerAuthorisation;
-    }
-
-    public function getViewAuthorisation()
-    {
-        return $this->viewAuthorisation;
     }
 }

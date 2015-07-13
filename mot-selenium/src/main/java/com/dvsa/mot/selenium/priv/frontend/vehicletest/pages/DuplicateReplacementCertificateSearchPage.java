@@ -1,15 +1,12 @@
 package com.dvsa.mot.selenium.priv.frontend.vehicletest.pages;
 
 import com.dvsa.mot.selenium.datasource.Login;
-import com.dvsa.mot.selenium.datasource.enums.VehicleSearch;
 import com.dvsa.mot.selenium.framework.BasePage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.Select;
-import org.testng.Assert;
 
 public class DuplicateReplacementCertificateSearchPage extends BasePage {
 
@@ -27,7 +24,7 @@ public class DuplicateReplacementCertificateSearchPage extends BasePage {
 
     @FindBy(id = "vin-type-select") private WebElement selectVinType;
 
-    @FindBy(xpath = "id('results-table')//td[1]//a") private WebElement firstResultCTA;
+    @FindBy(xpath = "id('results-table')//td[4]//a") private WebElement firstResultCTA;
 
     public DuplicateReplacementCertificateSearchPage(WebDriver driver) {
         super(driver);

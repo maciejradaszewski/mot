@@ -6,7 +6,6 @@ import com.dvsa.mot.selenium.datasource.Vehicle;
 import com.dvsa.mot.selenium.datasource.enums.PageTitles;
 import com.dvsa.mot.selenium.framework.BasePage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -40,13 +39,15 @@ public class VehicleSearchPage extends BasePage {
     @FindBy(xpath = ".//p[contains(., 'No matches were found for VIN')]") private WebElement
             noVinMatchErrorBox;
 
-    @FindBy(xpath = "id('results-table')//td[1]//a") private WebElement firstResultCTA;
+    @FindBy(xpath = "id('results-table')//td[4]//a") private WebElement firstResultCTA;
 
     @FindBy(id = "results-table") private WebElement vehicleInfoTable;
 
     @FindBy(id = "new-vehicle-record-info") private WebElement createNewVehicleInfo;
 
-    @FindBy(css = ".search-group") protected WebElement searchForm;
+    @FindBy(id = "VehicleSearch") protected WebElement searchForm;
+
+    @FindBy(id = "search-again") private WebElement searchAgainLink;
 
     public VehicleSearchPage(WebDriver driver) {
         super(driver);
@@ -132,15 +133,6 @@ public class VehicleSearchPage extends BasePage {
         return new StartTestConfirmation1Page(driver);
     }
 
-    private String getVehicleInfo() {
-        return vehicleInfoTable.getText();
-    }
-
-    public boolean verifyRegistrationPresent() {
-        String vehicleInfo = getVehicleInfo();
-        return vehicleInfo.contains("Registration mark");
-    }
-
     public VehicleSearchPage submitSearchExpectingError() {
         clickSearch();
         return new VehicleSearchPage(driver);
@@ -168,34 +160,19 @@ public class VehicleSearchPage extends BasePage {
         return this;
     }
 
-    public String getMainMessageInfoText() {
-        return mainMessage.getText();
-    }
-
-    public String getAdditionalMessageInfo() {
-        return additionalMessage.getText();
-    }
-
-    public String getCreateNewVehicleInfoText() {
-        return createNewVehicleInfo.getText();
-    }
-
     public CreateNewVehicleRecordVehicleIdentificationPage createNewVehicle() {
         createNewVehicleLink.click();
         return new CreateNewVehicleRecordVehicleIdentificationPage(driver);
-    }
-
-    public boolean isCreateNewVehicleRecordLinkPresent() {
-        return isElementClickable(createNewVehicleLink, 5);
     }
 
     public Boolean isVehicleSearchFormDisplayed() {
 
         return isElementDisplayed(searchForm);
     }
-    public boolean isCookieElementPresentInDOM() {
-        String cookieLink =  "id('global-cookie-message')//a";
-        return isElementPresent(By.xpath(cookieLink));
-    }
 
+    public VehicleSearchPage clickSearchAgainLink() {
+        searchAgainLink.click();
+
+        return this;
+    }
 }

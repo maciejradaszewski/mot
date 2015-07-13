@@ -4,7 +4,6 @@ namespace DvsaCommonApi\Controller;
 
 use DataCatalogApi\Service\DataCatalogService;
 use DvsaCommon\Http\HttpStatus;
-use DvsaCommon\FeatureToggling\FeatureToggle;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use UserFacade\Exception\UnauthenticatedException;
 use Zend\Http\Response;

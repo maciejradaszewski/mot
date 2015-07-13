@@ -6,9 +6,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-/**
- * Created by annas on 26/06/2015.
- */
 public class RecordDemoPageGroupA extends BasePage {
 
     @FindBy(id = "confirm-record-demo-test") private WebElement confirmButton;

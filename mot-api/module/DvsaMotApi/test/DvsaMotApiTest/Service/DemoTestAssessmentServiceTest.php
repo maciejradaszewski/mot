@@ -20,7 +20,6 @@ use DvsaEntities\Repository\AuthorisationForTestingMotStatusRepository;
 use DvsaEntities\Repository\PersonRepository;
 use DvsaMotApi\Helper\TesterQualificationStatusChangeEventHelper;
 use DvsaMotApi\Service\DemoTestAssessmentService;
-use DvsaMotApi\Service\Validator\DemoTestAssessmentValidator;
 use NotificationApi\Dto\Notification;
 use NotificationApi\Service\NotificationService;
 use Zend\Validator\Digits;
@@ -92,8 +91,7 @@ class DemoTestAssessmentServiceTest extends \PHPUnit_Framework_TestCase
             $this->authorisationForTestingMotRepository,
             $this->authorisationForTestingMotStatusRepository,
             $this->testerQualificationStatusChangeEventHelper,
-            $this->timeHolder,
-            new DemoTestAssessmentValidator(new Digits())
+            $this->timeHolder
         );
     }
 

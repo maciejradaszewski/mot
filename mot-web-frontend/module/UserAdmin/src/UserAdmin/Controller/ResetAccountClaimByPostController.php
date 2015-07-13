@@ -4,12 +4,12 @@ namespace UserAdmin\Controller;
 
 use Core\Controller\AbstractAuthActionController;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
-use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use UserAdmin\Presenter\UserProfilePresenter;
 use UserAdmin\Service\HelpdeskAccountAdminService;
-use UserAdmin\Presenter\UserProfileViewAuthorisation;
+use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -76,7 +76,7 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
     {
         $person = $this->accountAdminService->getUserProfile($personId);
 
-        $profilePresenter = new UserProfilePresenter($person, $this->testerGroupAuthorisationMapper->getAuthorisation($personId), $this->getViewAuthorisation());
+        $profilePresenter = new UserProfilePresenter($person, $this->getTesterAuthorisationViewModel($personId));
         $profilePresenter->setPersonId($personId);
 
         $this->layout('layout/layout-govuk.phtml');
@@ -119,8 +119,12 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
         return $url . '?' . http_build_query($params);
     }
 
-    private function getViewAuthorisation()
+    private function getTesterAuthorisationViewModel($personId)
     {
-        return new UserProfileViewAuthorisation($this->authorisationService);
+        return new TesterAuthorisationViewModel(
+            $personId,
+            $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
+            $this->authorisationService
+        );
     }
 }

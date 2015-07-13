@@ -63,7 +63,7 @@ public class CreateNewVehicleRecordVehicleIdentificationPage extends BasePage {
     public static CreateNewVehicleRecordVehicleIdentificationPage navigateHereFromLoginPage(
             WebDriver driver, Login login, Vehicle vehicle) {
         return VehicleSearchPage.navigateHereFromLoginPage(driver, login).typeReg(vehicle.carReg)
-                .typeVIN(vehicle.fullVIN).submitSearchExpectingError().submitSearchExpectingError()
+                .typeVIN(vehicle.fullVIN).submitSearchExpectingError()
                 .createNewVehicle();
     }
 

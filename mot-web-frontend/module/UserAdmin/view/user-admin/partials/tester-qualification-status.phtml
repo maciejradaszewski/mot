@@ -1,6 +1,5 @@
 <?php
-/** @var \UserAdmin\Presenter\UserProfilePresenter $presenter */
-use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
+/** @var \UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel $viewModel */
 ?>
 
 <h3 class="heading-medium">Tester qualification status</h3>
@@ -12,11 +11,10 @@ use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
             <span class="key-value-list__meta">Class 1, Class 2</span>
         </th>
         <td class="key-value-list__value" id="group-a-qualification-status">
-            <?php echo $presenter->getTesterAuthorisation()->getGroupAStatus()->getName() ?>
-            <?php if ($presenter->getViewAuthorisation()->canAssessDemoTest()
-                && $presenter->getTesterAuthorisation()->getGroupAStatus()->getCode() == AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED) :?>
+            <?php echo $viewModel->getTesterAuthorisation()->getGroupAStatus()->getName() ?>
+            <?php if ($viewModel->shouldDisplayGroupARecordDemoLink()) :?>
                 <span class="key-value-list__meta">
-                    <a id="record-demo-a" href="<?php echo $this->url('user_admin/user-profile/record-demo-test', ['personId' => $presenter->getPersonId(), 'vehicleClassGroup' => 'A'], ['query' => $searchQueryParams]); ?>">Change qualification status</a>
+                    <a id="record-demo-a" href="<?php echo $this->url('user_admin/user-profile/record-demo-test', ['personId' => $viewModel->getTesterId(), 'vehicleClassGroup' => 'A'], ['query' => $searchQueryParams]); ?>">Change qualification status</a>
                 </span>
             <?php endif ?>
         </td>
@@ -27,11 +25,10 @@ use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
             <span class="key-value-list__meta">Class 3, Class 4, Class 5, Class 7</span>
         </th>
         <td class="key-value-list__value" id="group-b-qualification-status">
-            <?php echo $presenter->getTesterAuthorisation()->getGroupBStatus()->getName() ?>
-            <?php if ($presenter->getViewAuthorisation()->canAssessDemoTest()
-                && $presenter->getTesterAuthorisation()->getGroupBStatus()->getCode() == AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED) :?>
+            <?php echo $viewModel->getTesterAuthorisation()->getGroupBStatus()->getName() ?>
+            <?php if ($viewModel->shouldDisplayGroupBRecordDemoLink()) :?>
                 <span class="key-value-list__meta">
-                    <a id="record-demo-b" href="<?php echo $this->url('user_admin/user-profile/record-demo-test', ['personId' => $presenter->getPersonId(), 'vehicleClassGroup' => 'B'], ['query' => $searchQueryParams]); ?>">Change qualification status</a>
+                    <a id="record-demo-b" href="<?php echo $this->url('user_admin/user-profile/record-demo-test', ['personId' => $viewModel->getTesterId(), 'vehicleClassGroup' => 'B'], ['query' => $searchQueryParams]); ?>">Change qualification status</a>
                 </span>
             <?php endif ?>
         </td>

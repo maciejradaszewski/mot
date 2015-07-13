@@ -1,4 +1,4 @@
-SET @createdBy = (SELECT `id` FROM `person` WHERE `username` = 'etl user');
+SET @createdBy = (SELECT `id` FROM `person` WHERE `username` = 'static data');
 SET @displayOrder = (SELECT MAX(`display_order`) FROM `event_type_lookup`);
 
 INSERT INTO `event_type_lookup`

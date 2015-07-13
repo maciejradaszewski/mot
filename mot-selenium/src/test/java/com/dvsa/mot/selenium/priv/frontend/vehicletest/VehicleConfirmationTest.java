@@ -164,7 +164,7 @@ public class VehicleConfirmationTest extends BaseTest {
                 is(true));
 
         //Click Search Again link
-        startTestConfirmation1Page.clickSearchAgain().submitSearch(searchAgainVehicle);
+        startTestConfirmation1Page.clickSearchAgain().clickSearchAgainLink().submitSearch(searchAgainVehicle);
 
         assertThat("Validate that the Start MOT test button is displayed on page",
                 startTestConfirmation1Page.isStartMotTestButtonDisplayed(), is(true));
