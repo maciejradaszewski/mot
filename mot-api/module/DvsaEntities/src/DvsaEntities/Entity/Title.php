@@ -29,6 +29,11 @@ class Title extends Entity
      */
     private $code;
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     /**
      * @return string
      */

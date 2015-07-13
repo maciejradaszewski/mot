@@ -35,6 +35,7 @@ class PersonHelpDeskProfileMapperTest extends \PHPUnit_Framework_TestCase
 
         $actual = $this->personHelpDeskProfileMapper->fromPersonEntityToDto($person);
 
+
         $this->assertEquals($expected, $actual);
     }
 
@@ -91,10 +92,13 @@ class PersonHelpDeskProfileMapperTest extends \PHPUnit_Framework_TestCase
      */
     private function getMockTitle()
     {
-        $title = \DvsaCommonTest\TestUtils\XMock::of(Title::class, ['getName']);
+        $title = \DvsaCommonTest\TestUtils\XMock::of(Title::class, ['getName','getId']);
         $title->expects($this->any())
             ->method('getName')
             ->will($this->returnValue('Miss'));
+        $title->expects($this->any())
+            ->method('getId')
+            ->will($this->returnValue(2));
 
         return $title;
     }

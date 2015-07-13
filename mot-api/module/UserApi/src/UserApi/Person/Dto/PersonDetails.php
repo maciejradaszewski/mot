@@ -130,8 +130,13 @@ class PersonDetails
         EntityHelperService $helperService,
         $roles
     ) {
-        $this->id           = $person->getId();
-        $this->title        = $person->getTitle()->getName();
+        $this->id    = $person->getId();
+        $this->title = '';
+
+        if ($person->getTitle() && $person->getTitle()->getId()) {
+            $this->title = $person->getTitle()->getName();
+        }
+
         $this->gender       = $person->getGender()->getName();
         $this->firstName    = $person->getFirstName();
         $this->middleName   = $person->getMiddleName();
