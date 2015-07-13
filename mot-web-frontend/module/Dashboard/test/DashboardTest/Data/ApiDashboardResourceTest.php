@@ -95,7 +95,8 @@ class ApiDashboardResourceTest extends \PHPUnit_Framework_TestCase
             ],
             'notifications'       => [],
             'sites'               => [],
-            'inProgressTestNumber' => '123456789012'
+            'inProgressTestNumber'   => '123456789012',
+            'inProgressTestTypeCode' => 'NT'
         ];
     }
 }

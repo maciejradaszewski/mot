@@ -135,4 +135,14 @@ class MotTestType
 
         return !empty($veAdvisoryTypes[$testTypeCode]);
     }
+
+    /**
+     * @param $testTypeCode
+     *
+     * @return bool
+     */
+    public static function isRetest($testTypeCode)
+    {
+        return $testTypeCode === MotTestTypeCode::RE_TEST;
+    }
 }

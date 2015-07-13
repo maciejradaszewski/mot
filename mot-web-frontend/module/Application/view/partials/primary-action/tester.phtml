@@ -31,7 +31,8 @@ $hasInProgressTest = $this->dashboardDataProvider()->hasTestInProgress();
                                 ['motTestNumber' => $this->dashboardDataProvider()->getInProgressTestNumber()]
                             ); ?>"
                                class="btn btn-primary btn-lg"
-                               id="action-resume-mot-test">Enter test results
+                               id="action-resume-mot-test">
+                                <?php echo $this->dashboardDataProvider()->getEnterTestResultsLabel(); ?>
                                 <span class="fa fa-chevron-right"> </span>
                             </a>
                         <?php elseif (!empty($testersCurrentVts) && !$hasSlots) : ?>

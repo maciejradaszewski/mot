@@ -228,6 +228,20 @@ class TesterService extends AbstractService
     }
 
     /**
+     * Finds in progress test for a tester.
+     *
+     * @param $personId
+     *
+     * @return MotTest
+     */
+    public function findInProgressTestForTester($personId)
+    {
+        $this->assertGrantedToFindInProgress($personId);
+
+        return $this->motTestRepository->findInProgressTestForPerson($personId);
+    }
+
+    /**
      * Returns a collection of VehicleTestingStations where a tester has a role of 'TESTER'.
      *
      * @param int $testerId

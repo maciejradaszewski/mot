@@ -2,6 +2,7 @@
 
 namespace Dashboard\Model;
 
+use DvsaCommon\Domain\MotTestType;
 use DvsaCommon\Enum\OrganisationBusinessRoleCode;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaCommon\Utility\ArrayUtils;
@@ -31,6 +32,9 @@ class Dashboard
     /** @var  $inProgressTestId integer */
     private $inProgressTestNumber;
 
+    /** @var  $inProgressTestTypeCode string */
+    private $inProgressTestTypeCode;
+
     public function __construct($data)
     {
         $this->setHero(ArrayUtils::get($data, 'hero'));
@@ -38,6 +42,7 @@ class Dashboard
         $this->setSpecialNotice(new SpecialNotice(ArrayUtils::get($data, 'specialNotice')));
         $this->setNotifications(Notification::createList(ArrayUtils::get($data, 'notifications')));
         $this->setInProgressTestNumber(ArrayUtils::get($data, 'inProgressTestNumber'));
+        $this->setInProgressTestTypeCode(ArrayUtils::get($data, 'inProgressTestTypeCode'));
     }
 
     /**
@@ -241,10 +246,48 @@ class Dashboard
     }
 
     /**
+     * @return string
+     */
+    public function getInProgressTestTypeCode()
+    {
+        return $this->inProgressTestTypeCode;
+    }
+
+    /**
      * @return bool
      */
     public function hasTestInProgress()
     {
         return null !== $this->inProgressTestNumber;
+    }
+
+    /**
+     * @param string $inProgressTestTypeCode
+     * @return $this
+     */
+    public function setInProgressTestTypeCode($inProgressTestTypeCode)
+    {
+        $this->inProgressTestTypeCode = $inProgressTestTypeCode;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInProgressTestARetest()
+    {
+        return MotTestType::isRetest($this->inProgressTestTypeCode);
+    }
+
+    /**
+     * @return string
+     */
+    public function getEnterTestResultsLabel()
+    {
+        if($this->isInProgressTestARetest()) {
+            return "Enter retest results";
+        } else {
+            return "Enter test results";
+        }
     }
 }

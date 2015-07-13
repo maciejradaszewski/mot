@@ -54,4 +54,10 @@ class MotTestTypeTest extends TestCase
         $this->assertFalse(MotTestType::isVeAdvisory(MotTestTypeCode::NORMAL_TEST));
         $this->assertFalse(MotTestType::isVeAdvisory('anything'));
     }
+
+    public function testIsRetest()
+    {
+        $this->assertTrue(MotTestType::isRetest(MotTestTypeCode::RE_TEST));
+        $this->assertFalse(MotTestType::isRetest('anything'));
+    }
 }
