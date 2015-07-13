@@ -177,10 +177,24 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::EMAIL, $personDetails->getEmail());
     }
 
+    public function testPersonTitleIsEmptyWhenIdZero()
+    {
+        $personZero    = $this->createPerson(0);
+        $contactDetail = $this->createValidContactDetail();
+
+        $this->configureEntityManagerWithValidEntities($personZero, $contactDetail);
+
+        $personDetails = new PersonDetails($personZero, $contactDetail, $this->entityHelperService, $this->roles);
+
+        $this->assertEmpty($personDetails->getTitle());
+    }
+
     /**
-     * @return Person
+     * @param int $id
+     *
+     * @return \DvsaEntities\Entity\Person
      */
-    private function createPerson()
+    private function createPerson($id = 1)
     {
         return (new Person())
             ->setId(self::ID)
@@ -188,7 +202,7 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
             ->setFirstName(self::FIRST_NAME)
             ->setMiddleName(self::MIDDLE_NAME)
             ->setFamilyName(self::SURNAME)
-            ->setTitle((new Title())->setName(self::TITLE))
+            ->setTitle((new Title())->setName(self::TITLE)->setId($id))
             ->setGender((new Gender())->setName(self::GENDER));
     }
 

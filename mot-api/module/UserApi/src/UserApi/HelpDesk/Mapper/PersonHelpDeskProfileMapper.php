@@ -33,7 +33,7 @@ class PersonHelpDeskProfileMapper
     {
         $dto = new PersonHelpDeskProfileDto();
 
-        $dto->setTitle($person->getTitle()->getName());
+        $dto->setTitle($person->getTitle() && $person->getTitle()->getId() ? $person->getTitle()->getName() : '');
         $dto->setUserName($person->getUsername());
         $dto->setFirstName($person->getFirstName());
         $dto->setMiddleName($person->getMiddleName());

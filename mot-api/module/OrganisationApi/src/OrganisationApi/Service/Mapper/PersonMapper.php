@@ -41,7 +41,7 @@ class PersonMapper
         $personData['middleName'] = $person->getMiddleName();
         $personData['familyName'] = $person->getFamilyName();
         $personData['gender']     = $person->getGender() ? $person->getGender()->getName() : '';
-        $personData['title']      = $person->getTitle() ? $person->getTitle()->getName() : '';
+        $personData['title']      = $person->getTitle() && $person->getTitle()->getId() ? $person->getTitle()->getName() : '';
 
         // AEP hasn't got date of birth
         if ($person->getDateOfBirth()) {
@@ -63,7 +63,14 @@ class PersonMapper
         $personDto->setMiddleName($person->getMiddleName());
         $personDto->setFamilyName($person->getFamilyName());
         $personDto->setGender($person->getGender() ? $person->getGender()->getName() : null);
-        $personDto->setTitle($person->getTitle() ? $person->getTitle()->getName() : null);
+
+        $title = '';
+
+        if ($person->getTitle() && $person->getTitle()->getId()) {
+            $title = $person->getTitle()->getName();
+        }
+
+        $personDto->setTitle($title);
 
         if ($person->getDateOfBirth()) {
             $personDto->setDateOfBirth(DateTimeApiFormat::date($person->getDateOfBirth()));
