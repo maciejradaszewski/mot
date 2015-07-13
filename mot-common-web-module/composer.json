@@ -2,7 +2,6 @@
     "name": "dvsa/mot-common-web-module",
     "require": {
         "zendframework/zendframework": "~2.3.9",
-        "dvsa/feature-toggle": "1.0",
         "dvsa/dvsa-document-module": "~1.1"
     },
     "repositories": [

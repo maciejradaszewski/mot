@@ -18,16 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 public class VehicleSearchTest extends BaseTest {
-
-    @Test(groups = "Regression") public void testDisplayedMotTestingCrumbTrail() {
-
-        VehicleSearchPage vehicleSearch =
-                VehicleSearchPage.navigateHereFromLoginPage(driver, login);
-
-        assertThat("Vehicle search step not displayed properly",
-                vehicleSearch.getVehicleSearchStepNumber().contains("MOT testing"), is(true));
-    }
-
+    
     @Test(groups = "Regression") public void testDisplayedHeaderInfo() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
 

@@ -44,5 +44,5 @@ return array(
                 'enabled' => true
             ],
         ]
-    ]
+    ],
 );

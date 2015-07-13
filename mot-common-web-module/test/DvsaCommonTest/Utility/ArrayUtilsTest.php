@@ -357,4 +357,18 @@ class ArrayUtilsTest extends PHPUnit_Framework_TestCase
         //then
         $this->assertSame($expected, $result);
     }
+
+    public function test_mapWithKeys_returnsTransformedCollection()
+    {
+        $array = ['class1' => "QFD", 'class2' => "QFD", 'class6' => "QFD"];
+
+        $collection = ArrayUtils::mapWithKeys($array,
+            function ($key, $value) { return substr($key, 5); },
+            function ($key, $value) { return $value; }
+        );
+
+        $this->assertEquals("QFD", $collection[1]);
+        $this->assertEquals("QFD", $collection[2]);
+        $this->assertEquals("QFD", $collection[6]);
+    }
 }

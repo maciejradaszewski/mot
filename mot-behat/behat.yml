@@ -14,25 +14,27 @@ default:
     suites:
         default:
             contexts:
-                - CherishedTransferContext
-                - FeatureContext
-                - SessionContext
-                - MotTestContext
-                - MotTestSearchContext
-                - ContingencyTestContext
-                - OdometerReadingContext
+                - AccountClaimContext
+                - AuthorisedExaminerContext
                 - BrakeTestResultContext
                 - CertificateContext
-                - VehicleContext
-                - PersonContext
-                - SpecialNoticeContext
-                - SecurityPinContext
-                - AuthorisedExaminerContext
-                - VtsContext
-                - AccountClaimContext
-                - InitiateRefundContext
-                - TempPasswordChangeContext
+                - CherishedTransferContext
+                - ContingencyTestContext
                 - DirectDebitContext
+                - EventContext
+                - FeatureContext
+                - InitiateRefundContext
+                - MotTestContext
+                - MotTestSearchContext
+                - NotificationsContext
+                - OdometerReadingContext
+                - PersonContext
+                - SecurityPinContext
+                - SessionContext
+                - SpecialNoticeContext
+                - TempPasswordChangeContext
+                - VehicleContext
+                - VtsContext
             filters:
                 tags: "~@functional"
         functional:

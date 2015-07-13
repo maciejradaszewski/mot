@@ -142,7 +142,7 @@ class TestSupportHelper
         $vtsIds,
         $diff = null,
         $accountClaimRequired = false,
-        $testGroup = null,
+        $qualifications = null,
         $contactEmail = null
     ) {
         $data = [
@@ -155,8 +155,8 @@ class TestSupportHelper
         ];
         $this->pushDiffToData($data, $diff);
 
-        if (!is_null($testGroup)) {
-            $data['testGroup'] = $testGroup;
+        if (!is_null($qualifications)) {
+            $data['qualifications'] = $qualifications;
         }
 
         if ($contactEmail) {

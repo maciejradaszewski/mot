@@ -8,12 +8,14 @@ parameters:
           Dvsa\Mot\Behat\Support\Api\ContingencyTest: dvsa.contingency_test
           Dvsa\Mot\Behat\Support\Api\CustomerService: dvsa.customer_service
           Dvsa\Mot\Behat\Support\Api\DemoTest: dvsa.demo_test
+          Dvsa\Mot\Behat\Support\Api\Event: dvsa.event
           Dvsa\Mot\Behat\Support\Api\MotTest: dvsa.mot_test
           Dvsa\Mot\Behat\Support\Api\OdometerReading: dvsa.odometer_reading
           Dvsa\Mot\Behat\Support\Api\Person: dvsa.person
           Dvsa\Mot\Behat\Support\Api\ReasonForRejection: dvsa.reason_for_rejection
           Dvsa\Mot\Behat\Support\Api\SecurityPin: dvsa.security_pin
           Dvsa\Mot\Behat\Support\Api\Rest: dvsa.rest
+          Dvsa\Mot\Behat\Support\Api\Notification: dvsa.notification
           Dvsa\Mot\Behat\Support\Api\Session: dvsa.session
           Dvsa\Mot\Behat\Support\Api\SlotPurchase: dvsa.slot_purchase
           Dvsa\Mot\Behat\Support\Api\DirectDebit: dvsa.direct_debit

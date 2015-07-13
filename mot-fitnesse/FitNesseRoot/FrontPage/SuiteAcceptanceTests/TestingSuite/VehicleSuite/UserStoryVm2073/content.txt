@@ -37,5 +37,6 @@ Validate that correct vehicle expiry date data is returned by the API.
 |1                            |$vehicleId4|EN      |true    |2015-08-09        |200    |true            |Notmot test            |
 |1                            |$vehicleId5|EN      |true    |2013-03-01        |200    |true            |Notmot test            |
 |1                            |$vehicleId4|ES      |false   |2015-08-09        |200    |true            |Failed statutory appeal|
-|1                            |$vehicleId4|ES      |true    |now+1y-1d         |200    |true            |Passed statutory appeal|
-|1                            |$vehicleId4|EI      |true    |now+1y-1d         |200    |true            |Passwd inverted appeal |
+
+'''|1                            |$vehicleId4|ES      |true    |now+1y-1d         |200    |true            |Passed statutory appeal|'''
+'''|1                            |$vehicleId4|EI      |true    |now+1y-1d         |200    |true            |Passwd inverted appeal |'''

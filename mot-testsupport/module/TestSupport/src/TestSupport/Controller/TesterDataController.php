@@ -15,15 +15,21 @@ use TestSupport\Service\TesterService;
 class TesterDataController extends BaseTestSupportRestfulController
 {
     /**
-     * @param mixed $data including "siteIds" -> list of VTSs in which to create an active tester,
-     *                    "diff" string to differentiate testers
-     *                    optional "testGroup", to create a tester restricted to certain group (1 => 1,2; 2 => 3,4,5,7),
-     *                    optional "status" e.g. SPND - suspended. Default is QLFD - qualified
+     * @param array $data including following fields:
+     *      - Mandatory   'siteIds'           array   List of VTSs to be associated with the tester
+     *      - Optional    'diff'              string  A custom value to be used as the username instead of randomly
+     *                                              generated one
+     *      - Optional    'qualifications'    array   List of testing groups and tester's qualification for each
+     *                                              as its key,value pairs
+     *                                              e.g. ['A'=> 'QLFD' , 'B' => 'DMTN']
+     * @see DvsaCommon\Enum\VehicleClassGroupCode
+     * @see DvsaCommon\Enum\AuthorisationForTestingMotStatusCode
      *
      * @return JsonModel
      */
     public function create($data)
     {
+        /** @var TesterService $testerService */
         $testerService = $this->getServiceLocator()->get(TesterService::class);
         $resultJson = $testerService->create($data);
         return $resultJson;

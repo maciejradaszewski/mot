@@ -1,0 +1,53 @@
+<?php
+/** @var \UserAdmin\ViewModel\RecordDemoTestOutcome\DemoTestAssessment $viewModel */
+?>
+<div class="text">
+    <p class="lede">
+        Confirm changing <?php echo $viewModel->getTester()->getFullName() ?>'s Group <?php echo $viewModel->getVehicleClassGroup() ?> tester qualification status to <strong>Qualified</strong>.
+    </p>
+</div>
+<table class="key-value-list">
+    <tbody>
+        <tr>
+            <th class="key-value-list__key">
+                Name
+            </th>
+            <td class="key-value-list__value">
+                <?php echo $viewModel->getTester()->getFullName() ?>
+            </td>
+        </tr>
+        <tr>
+            <th class="key-value-list__key">
+                Testing group
+            </th>
+            <td class="key-value-list__value--numeric">
+                Group <?php echo $viewModel->getVehicleClassGroup() ?>
+            </td>
+        </tr>
+        <tr>
+            <th class="key-value-list__key">
+                New status
+            </th>
+            <td class="key-value-list__value">
+                Qualified
+            </td>
+        </tr>
+    </tbody>
+</table>
+<form action="<?php echo $this->url(
+    'user_admin/user-profile/record-demo-test', [
+        'personId'          => $viewModel->getTester()->getId(),
+        'vehicleClassGroup' => $viewModel->getVehicleClassGroup()
+    ]
+) ?>" method="post">
+    <?php echo $this->csrfToken() ?>
+    
+    <nav class="content-navigation">
+        <input id="confirm-record-demo-test" type="submit" class="button" value="Change status"/>
+        <ul class="content-navigation__secondary">
+            <li>
+                <a id="cancel-record-demo-test" href="<?php echo $this->url("user_admin/user-profile", ["personId" => $viewModel->getTester()->getId()], ["query" => $viewModel->getSearchQueryParams()]) ?>">Cancel and return to user profile</a>
+            </li>
+        </ul>
+    </nav>
+</form>

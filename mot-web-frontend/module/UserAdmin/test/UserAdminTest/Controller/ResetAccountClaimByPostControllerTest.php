@@ -3,16 +3,18 @@
 namespace UserAdminTest\Controller;
 
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
+use DvsaClient\Entity\TesterAuthorisation;
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
+use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use UserAdmin\Controller\ResetAccountClaimByPostController;
 use UserAdmin\Service\HelpdeskAccountAdminService;
-use UserAdmin\Service\TesterQualificationStatusService;
 use Zend\View\Model\ViewModel;
-use DvsaCommonTest\Bootstrap;
-use DvsaCommon\HttpRestJson\Exception\ValidationException;
 
 /**
  * Test for {@link ResetAccountClaimByPostController}.
@@ -28,7 +30,7 @@ class ResetAccountClaimByPostControllerTest extends AbstractFrontendControllerTe
     /** @var HelpdeskAccountAdminService|\PHPUnit_Framework_MockObject_MockObject */
     private $accountAdminServiceMock;
 
-    private $testerQualificationStatusServiceMock;
+    private $testerGroupAuthorisationMapper;
 
     public function setUp()
     {
@@ -37,12 +39,17 @@ class ResetAccountClaimByPostControllerTest extends AbstractFrontendControllerTe
         $this->setServiceManager($serviceManager);
 
         $this->accountAdminServiceMock = XMock::of(HelpdeskAccountAdminService::class);
-        $this->testerQualificationStatusServiceMock = XMock::of(TesterQualificationStatusService::class);
+        $this->testerGroupAuthorisationMapper = XMock::of(TesterGroupAuthorisationMapper::class);
+        $this->testerGroupAuthorisationMapper->expects($this->any())
+            ->method('getAuthorisation')
+            ->willReturn(new TesterAuthorisation());
 
         $this->setController(
             new ResetAccountClaimByPostController(
                 $this->accountAdminServiceMock,
-                $this->testerQualificationStatusServiceMock)
+                $this->testerGroupAuthorisationMapper,
+                XMock::of(MotAuthorisationServiceInterface::class)
+                )
         );
 
         $this->getController()->setServiceLocator($serviceManager);
@@ -89,14 +96,12 @@ class ResetAccountClaimByPostControllerTest extends AbstractFrontendControllerTe
         if (!empty($expect['viewModel'])) {
             $this->assertInstanceOf(ViewModel::class, $result);
             $this->assertResponseStatus(self::HTTP_OK_CODE);
-
         }
 
         if (!empty($expect['url'])) {
             $this->assertRedirectLocation2($expect['url']);
         }
     }
-
 
     public function dataProviderTestActionsResultAndAccess()
     {
@@ -106,7 +111,7 @@ class ResetAccountClaimByPostControllerTest extends AbstractFrontendControllerTe
                 'method' => 'get',
                 'action' => 'index',
                 'params' => [
-                    'post' => [],
+                    'post'  => [],
                     'route' => [
                         'personId' => self::PERSON_ID,
                     ],
@@ -128,11 +133,11 @@ class ResetAccountClaimByPostControllerTest extends AbstractFrontendControllerTe
                 'method' => 'get',
                 'action' => 'index',
                 'params' => [
-                    'post' => [],
+                    'post'  => [],
                     'route' => [
                         'personId' => self::PERSON_ID,
                     ],
-                    'get' => [
+                    'get'   => [
                         'personUsername' => self::PERSON_USERNAME,
                     ]
                 ],
@@ -153,7 +158,7 @@ class ResetAccountClaimByPostControllerTest extends AbstractFrontendControllerTe
                 'method' => 'post',
                 'action' => 'index',
                 'params' => [
-                    'post' => [],
+                    'post'  => [],
                     'route' => [
                         'personId' => self::PERSON_ID,
                     ],
@@ -175,7 +180,7 @@ class ResetAccountClaimByPostControllerTest extends AbstractFrontendControllerTe
                 'method' => 'post',
                 'action' => 'index',
                 'params' => [
-                    'post' => [],
+                    'post'  => [],
                     'route' => [
                         'personId' => self::PERSON_ID,
                     ],

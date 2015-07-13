@@ -165,10 +165,10 @@ public class Assertion {
     public static final Assertion ASSERTION_EMAIL_EXPIRATION_MSG = new Assertion(
             "If you haven't received the email within 15 minutes then please check your spam folder.");
     public static final Assertion ASSERTION_DVSA_HELPDESK_MSG = new Assertion(
-            "If you are still having problems -\nPlease contact the DVSA Helpdesk on 01792 454397");
+            "If you are still having problems -\nPlease contact the DVSA Helpdesk on 0330 123 5654");
     public static final Assertion ASSERTION_DVSA_CONTACT_MSG = new Assertion(
-            "Please contact the DVSA Helpdesk on 01792 454397\n"
-                    + "Monday to Friday, 8:30am to 5:30pm\n" + "Saturday, closed\n"
+            "Please contact the DVSA Helpdesk on 0330 123 5654\n"
+                    + "Monday to Friday, 8:00am to 8:00pm\n" + "Saturday, 8:00am to 2:00pm\n"
                     + "Sunday, closed");
     public static final Assertion ASSERTION_EMAIL_VALIDITY_MSG = new Assertion(
             "You will need to use the link in the email provided within 1 hour 30 minutes, after which the link will expire.");
@@ -187,8 +187,8 @@ public class Assertion {
             "We've sent you an email containing a link allowing you to change your password.\n"
                     + "If you haven't received the email within 15 minutes then please check your spam folder.\n"
                     + "If you are still having problems -\n"
-                    + "Please contact the DVSA Helpdesk on 01792 454397\n"
-                    + "Monday to Friday, 8:30am to 5:30pm\n" + "Saturday, closed\n"
+                    + "Please contact the DVSA Helpdesk on 0330 123 5654\n"
+                    + "Monday to Friday, 8:00am to 8:00pm\n" + "Saturday, 8:00am to 2:00pm\n"
                     + "Sunday, closed\n"
                     + "You will need to use the link in the email provided within 1 hour 30 minutes, after which the link will expire.\n"
                     + "Sign in");
@@ -221,7 +221,9 @@ public class Assertion {
     //DVSA User search
     public static final Assertion ASSERTION_TESTER_VTS = new Assertion("Popular Garages");
     public static final Assertion ASSERTION_USER_ADDRESS = new Assertion("Address");
-    public static final Assertion ASSERTION_QUALIFICATION_STATUS_GROUP = new Assertion("Qualified");
+    public static final Assertion ASSERTION_QUALIFICATION_STATUS_GROUP_QUALIFIED = new Assertion("Qualified");
+    public static final Assertion ASSERTION_QUALIFICATION_STATUS_GROUP_DEMO_TEST_NEEDED = new Assertion("Demo Test Needed\n" +"Change qualification status");
+    public static final Assertion ASSERTION_QUALIFICATION_STATUS_GROUP_DEMO_TEST_NEEDED_NO_PERMISSION = new Assertion("Demo Test Needed");
 
     public static final Assertion ASSERTION_EMAIL_WARNING = new Assertion(
             "The email address should be one you have easy and regular access to and will be used "

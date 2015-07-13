@@ -3,6 +3,7 @@
 namespace DvsaClient;
 
 use DvsaClient\Mapper\AccountMapper;
+use DvsaClient\Mapper\DemoTestAssessmentMapper;
 use DvsaClient\Mapper\EquipmentMapper;
 use DvsaClient\Mapper\EquipmentModelMapper;
 use DvsaClient\Mapper\EventMapper;
@@ -31,6 +32,7 @@ use Zend\Http\Client;
  * Class MapperFactory
  *
  * @property-read AccountMapper                                      $Account
+ * @property-read DemoTestAssessmentMapper                           $DemoTestAssessment
  * @property-read EquipmentMapper                                    $Equipment
  * @property-read EquipmentModelMapper                               $EquipmentModel
  * @property-read EventMapper                                        $Event

@@ -1,34 +1,40 @@
 <?php
 /** @var \UserAdmin\Presenter\UserProfilePresenter $presenter */
-
-use \DvsaCommon\Enum\VehicleClassGroupCode;
-use \DvsaCommon\Enum\VehicleClassCode;
-use \UserAdmin\Service\TesterQualificationStatusService;
+use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 ?>
 
-<?php
-if ($presenter->hasQualificationStatus()):
-    ?>
-    <h3 class="heading-medium">Tester qualification status</h3>
-    <table class="key-value-list">
-        <tbody>
-
-        <?php
-            foreach ($presenter->getQualificationStatus() as $group => $status):
-                $classes = \UserAdmin\Service\TesterQualificationStatusService::getGroupPrintableClasses($group);
-            ?>
-            <tr>
-                <th class="key-value-list__key">
-                    Group <?php echo $group ?>
-                    <span class="key-value-list__meta"><?php echo $classes ?></span>
-                </th>
-                <td class="key-value-list__value" id="<?php echo sprintf('group-%s-qualification-status', $group); ?>">
-                    <?php echo $status ?>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
-<?php
-endif;
-?>
+<h3 class="heading-medium">Tester qualification status</h3>
+<table class="key-value-list">
+    <tbody>
+    <tr>
+        <th class="key-value-list__key">
+            Group A
+            <span class="key-value-list__meta">Class 1, Class 2</span>
+        </th>
+        <td class="key-value-list__value" id="group-a-qualification-status">
+            <?php echo $presenter->getTesterAuthorisation()->getGroupAStatus()->getName() ?>
+            <?php if ($presenter->getViewAuthorisation()->canAssessDemoTest()
+                && $presenter->getTesterAuthorisation()->getGroupAStatus()->getCode() == AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED) :?>
+                <span class="key-value-list__meta">
+                    <a id="record-demo-a" href="<?php echo $this->url('user_admin/user-profile/record-demo-test', ['personId' => $presenter->getPersonId(), 'vehicleClassGroup' => 'A'], ['query' => $searchQueryParams]); ?>">Change qualification status</a>
+                </span>
+            <?php endif ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Group B
+            <span class="key-value-list__meta">Class 3, Class 4, Class 5, Class 7</span>
+        </th>
+        <td class="key-value-list__value" id="group-b-qualification-status">
+            <?php echo $presenter->getTesterAuthorisation()->getGroupBStatus()->getName() ?>
+            <?php if ($presenter->getViewAuthorisation()->canAssessDemoTest()
+                && $presenter->getTesterAuthorisation()->getGroupBStatus()->getCode() == AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED) :?>
+                <span class="key-value-list__meta">
+                    <a id="record-demo-b" href="<?php echo $this->url('user_admin/user-profile/record-demo-test', ['personId' => $presenter->getPersonId(), 'vehicleClassGroup' => 'B'], ['query' => $searchQueryParams]); ?>">Change qualification status</a>
+                </span>
+            <?php endif ?>
+        </td>
+    </tr>
+    </tbody>
+</table>

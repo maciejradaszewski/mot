@@ -18,8 +18,8 @@ class AddressUtils
     /**
      * Turn an address array or Address object into a string.
      *
-     * @param array|AddressEntity $address address data
-     * @param string              $sprtr   address parts separator
+     * @param array|AddressEntity|AddressDto $address address data
+     * @param string                         $sprtr   address parts separator
      *
      * @return string
      */

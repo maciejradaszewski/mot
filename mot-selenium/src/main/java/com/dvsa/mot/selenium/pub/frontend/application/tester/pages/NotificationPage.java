@@ -85,6 +85,10 @@ public class NotificationPage extends BasePage {
         return (notificationContentText.getText().contains(vehicleVIN));
     }
 
+    public String getNotificationContent(){
+        return notificationContentText.getText();
+    }
+
     public static NotificationPage loginAsAssociatedUserToCheckNominationLetter(LoginPage loginPage,
             Person userBeingAssociated, String nominationLetter) {
 

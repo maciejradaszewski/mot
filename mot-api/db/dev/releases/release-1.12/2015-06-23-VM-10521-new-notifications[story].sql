@@ -1,0 +1,2 @@
+INSERT INTO `notification_template` (`subject`, `content`, `created_by`)
+  VALUES ('Passed Group ${vehicle_group} demonstration test', 'You passed your demonstration test. You are now qualified to test Group ${vehicle_group} vehicles.', 2);

@@ -161,6 +161,27 @@ class ArrayUtils
     }
 
     /**
+     * Provides same functionality as ArrayUtils::map(), but allows also to select keys.
+     *
+     * @param $collection             A sequence of values to invoke a transform function on.
+     * @param callable $keySelector   A transform function to apply to each element.
+     * @param callable $valueSelector A transform function to apply to each element.
+     * @return array
+     */
+    public static function mapWithKeys($collection, callable $keySelector, callable $valueSelector)
+    {
+        $data = [];
+        foreach ($collection as $key => $element) {
+            $newKey = $keySelector ($key, $element);
+            $newValue = $valueSelector ($key, $element);
+
+            $data[$newKey] = $newValue;
+        }
+
+        return $data;
+    }
+
+    /**
      * Checks if the collection has an element that matches the predicate.
      *
      * @param $collection [] A sequence of values to search through.

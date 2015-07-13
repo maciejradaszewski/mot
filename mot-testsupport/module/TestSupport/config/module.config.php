@@ -21,6 +21,7 @@ return [
             Controller\AreaOffice2DataController::class     => Controller\AreaOffice2DataController::class,
             Controller\FinanceUserController::class         => Controller\FinanceUserController::class,
             Controller\VehicleExaminerDataController::class => Controller\VehicleExaminerDataController::class,
+            Controller\VM10519UserDataController::class     => Controller\VM10519UserDataController::class,
             Controller\AssessorDataController::class        => Controller\AssessorDataController::class,
             Controller\UserDataController::class            => Controller\UserDataController::class,
             Controller\TestSupportMotTestController::class  => Controller\TestSupportMotTestController::class,
@@ -35,7 +36,8 @@ return [
             Controller\SecurityQuestionDataController::class=> Controller\SecurityQuestionDataController::class,
             Controller\PasswordResetDataController::class   => Controller\PasswordResetDataController::class,
             Controller\SlotTransactionController::class     =>   Controller\SlotTransactionController::class,
-            Controller\DvlaVehicleDataController::class => Controller\DvlaVehicleDataController::class
+            Controller\DvlaVehicleDataController::class => Controller\DvlaVehicleDataController::class,
+            Controller\TesterAuthorisationStatusController::class => Controller\TesterAuthorisationStatusController::class,
         ],
     ],
     'router'       => [
@@ -202,6 +204,15 @@ return [
                             ],
                         ],
                     ],
+                    'superVehicleExaminerSub' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/vm10519user',
+                            'defaults' => [
+                                'controller' => Controller\VM10519UserDataController::class
+                            ],
+                        ],
+                    ],
                     'assessorSub'        => [
                         'type'    => 'Segment',
                         'options' => [
@@ -356,7 +367,16 @@ return [
                                 'controller' => Controller\SlotTransactionController::class,
                             ],
                         ],
-                    ]
+                    ],
+                    'testerAuthorisationStatus'          => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/tester-authorisation-status',
+                            'defaults' => [
+                                'controller' => Controller\TesterAuthorisationStatusController::class
+                            ],
+                        ],
+                    ],
                 ]
             ],
             'cache'       => [

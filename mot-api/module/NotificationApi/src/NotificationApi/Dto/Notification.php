@@ -20,6 +20,7 @@ class Notification
     const TEMPLATE_SITE_POSITION_REMOVED = 11;
     const TEMPLATE_TESTING_OUTSIDE_OPENING_HOURS = 12;
     const TEMPLATE_MOT_TEST_STATUS_CHANGED_BY_ANOTHER_USER = 13;
+    const TEMPLATE_TESTER_QUALIFICATION_STATUS = 14;
 
     /** @var $template int */
     private $template;

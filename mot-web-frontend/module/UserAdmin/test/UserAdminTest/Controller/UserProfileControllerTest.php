@@ -4,15 +4,15 @@ namespace UserAdminTest\Controller;
 
 use Application\Helper\PrgHelper;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
+use DvsaClient\Entity\TesterAuthorisation;
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
-use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
 use UserAdmin\Controller\UserProfileController;
 use UserAdmin\Service\HelpdeskAccountAdminService;
-use UserAdmin\Service\TesterQualificationStatusService;
 use Zend\View\Model\ViewModel;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use Zend\Session\Container;
@@ -23,7 +23,7 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
 
     private $accountAdminServiceMock;
     private $authorisationMock;
-    private $testerQualificationStatusServiceMock;
+    private $testerGroupAuthorisationMapper;
 
     public function setUp()
     {
@@ -33,13 +33,16 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
 
         $this->authorisationMock = XMock::of(MotAuthorisationServiceInterface::class);
         $this->accountAdminServiceMock = XMock::of(HelpdeskAccountAdminService::class);
-        $this->testerQualificationStatusServiceMock = XMock::of(TesterQualificationStatusService::class);
+        $this->testerGroupAuthorisationMapper = XMock::of(TesterGroupAuthorisationMapper::class);
+        $this->testerGroupAuthorisationMapper->expects($this->any())
+            ->method('getAuthorisation')
+            ->willReturn(new TesterAuthorisation());
 
         $this->setController(
             new UserProfileController(
                 $this->authorisationMock,
                 $this->accountAdminServiceMock,
-                $this->testerQualificationStatusServiceMock
+                $this->testerGroupAuthorisationMapper
             )
         );
 

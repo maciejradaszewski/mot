@@ -49,6 +49,17 @@ services:
             - @dvsa.http_client
             - @dvsa.person
 
+    dvsa.event:
+        class: Dvsa\Mot\Behat\Support\Api\Event
+        arguments:
+            - @dvsa.http_client
+            - @dvsa.person
+
+    dvsa.notification:
+        class: Dvsa\Mot\Behat\Support\Api\Notification
+        arguments:
+            - @dvsa.http_client
+
     dvsa.odometer_reading:
         class: Dvsa\Mot\Behat\Support\Api\OdometerReading
         parent: dvsa.api

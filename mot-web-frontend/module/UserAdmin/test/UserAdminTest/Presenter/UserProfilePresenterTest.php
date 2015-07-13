@@ -2,14 +2,15 @@
 
 namespace UserAdminTest\Presenter;
 
+use DvsaClient\Entity\TesterAuthorisation;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommonTest\TestUtils\XMock;
+use UserAdmin\Presenter\UserProfileViewAuthorisation;
 use UserAdmin\Presenter\UserProfilePresenter;
-use UserAdmin\Service\TesterQualificationStatusService;
-use Zend\Mvc\Controller\Plugin\Url;
 
 /**
  * Unit tests for UserProfilePresenter
@@ -19,23 +20,16 @@ class UserProfilePresenterTest extends \PHPUnit_Framework_TestCase
     /** @var UserProfilePresenter $presenter */
     private $presenter;
 
-    /** @var TesterQualificationStatusService */
-    private $testerQualificationStatusMock;
-
-    public function setUp()
-    {
-        $this->testerQualificationStatusMock = XMock::of(TesterQualificationStatusService::class);
-    }
-
     public function testDisplayInformation()
     {
         $this->presenter = new UserProfilePresenter(
             $this->buildPersonHelpDeskProfileDto(),
-            $this->testerQualificationStatusMock->getPersonGroupQualificationStatus(5),
+            new TesterAuthorisation(),
+            new UserProfileViewAuthorisation(XMock::of(MotAuthorisationServiceInterface::class)),
             true
         );
-        $this->presenter->setId(1);
-        $this->assertEquals(1, $this->presenter->getId());
+        $this->presenter->setPersonId(1);
+        $this->assertEquals(1, $this->presenter->getPersonId());
         $this->assertEquals('Username', $this->presenter->displayUserName());
         $this->assertEquals('Mrs Harriet Jones', $this->presenter->displayTitleAndFullName());
         $this->assertEquals('29 May 1992', $this->presenter->displayDateOfBirth());
@@ -79,7 +73,8 @@ class UserProfilePresenterTest extends \PHPUnit_Framework_TestCase
     {
         $this->presenter = new UserProfilePresenter(
             $this->buildPersonHelpDeskProfileDto(),
-            $this->testerQualificationStatusMock->getPersonGroupQualificationStatus(5),
+            new TesterAuthorisation(),
+            new UserProfileViewAuthorisation(XMock::of(MotAuthorisationServiceInterface::class)),
             false
         );
         $this->assertEquals('user-admin/user-profile/unrestricted-profile.phtml', $this->presenter->getTemplate());

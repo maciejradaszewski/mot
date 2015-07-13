@@ -59,6 +59,5 @@ return [
          * This is the standard DVSA Helpdesk telephone number to be used in all emails we send.
          */
         'contactNumber' => '01792 454397'
-    ]
-
+    ],
 ];

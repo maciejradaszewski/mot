@@ -11,14 +11,14 @@
 |1           |false    |$yesterday=  |
 |20          |false    |$minusTwenty=|
 
-!| GenerateTestDataForOtherFitnesseTests                                                                                                                                                       |
-|slots|siteId            |siteId?            |testClassGroupForTester          |testerUsername  |testerUsername?     |vehicleTestClass|vehicleId?           |status|DateOfTest  |motTestNumber?|
-|     |                  |$siteId1=          |ALL                              |                |$testerUsername1=   |${VehicleClass4}|$vehicleId1=         |FAILED|$yesterday  |              |
-|     |$siteId1          |                   |                                 |$testerUsername1|                    |${VehicleClass4}|$vehicleId2=         |FAILED|$yesterday  |              |
-|     |$siteId1          |                   |                                 |$testerUsername1|                    |${VehicleClass4}|$vehicleIdTooOldTest=|FAILED|$minusTwenty|              |
-|     |$siteId1          |                   |${VehicleClass1},${VehicleClass2}|                |$testerUsernameCatA=|${VehicleClass2}|                     |      |            |              |
-|1    |                  |$siteIdWithNoSlots=|ALL                              |                |$testerUsername2=   |${VehicleClass4}|$vehicleId3=         |FAILED|$yesterday  |              |
-|     |$siteIdWithNoSlots|                   |ALL                              |$testerUsername2|                    |${VehicleClass4}|                     |PASSED|$yesterday  |              |
+!| GenerateTestDataForOtherFitnesseTests                                                                                                                                                                                           |
+|slots|siteId            |siteId?            |testerAuthorisationStatusForGroupA|testerAuthorisationStatusForGroupB|testerUsername  |testerUsername?     |vehicleTestClass|vehicleId?           |status|DateOfTest  |motTestNumber?|
+|     |                  |$siteId1=          |${Qualified}                      |${Qualified}                      |                |$testerUsername1=   |${VehicleClass4}|$vehicleId1=         |FAILED|$yesterday  |              |
+|     |$siteId1          |                   |                                  |                                  |$testerUsername1|                    |${VehicleClass4}|$vehicleId2=         |FAILED|$yesterday  |              |
+|     |$siteId1          |                   |                                  |                                  |$testerUsername1|                    |${VehicleClass4}|$vehicleIdTooOldTest=|FAILED|$minusTwenty|              |
+|     |$siteId1          |                   |${Qualified}                      |${Unknown}                        |                |$testerUsernameCatA=|${VehicleClass2}|                     |      |            |              |
+|1    |                  |$siteIdWithNoSlots=|${Qualified}                      |${Qualified}                      |                |$testerUsername2=   |${VehicleClass4}|$vehicleId3=         |FAILED|$yesterday  |              |
+|     |$siteIdWithNoSlots|                   |${Qualified}                      |${Qualified}                      |$testerUsername2|                    |${VehicleClass4}|                     |PASSED|$yesterday  |              |
 
 !| GenerateTestDataForOtherFitnesseTests|
 |schememgtUsername?    |schememgtId?    |

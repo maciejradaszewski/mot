@@ -4,6 +4,8 @@ import com.dvsa.mot.selenium.framework.BasePage;
 import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.AuthorisedExaminerFullDetailsPage;
 import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.EventHistoryPage;
 import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.SiteDetailsPage;
+import com.dvsa.mot.selenium.priv.frontend.user.RecordDemoPageGroupA;
+import com.dvsa.mot.selenium.priv.frontend.user.RecordDemoPageGroupB;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -45,9 +47,13 @@ public class HelpDeskUserProfilePage extends BasePage {
 
     @FindBy(id = "validation-message--failure") private WebElement validationMessageFailure;
 
-    @FindBy(id = "group-A-qualification-status") private WebElement qualificationStatusGroupA;
+    @FindBy(id = "group-a-qualification-status") private WebElement qualificationStatusGroupA;
 
-    @FindBy(id = "group-B-qualification-status") private WebElement qualificationStatusGroupB;
+    @FindBy(id = "group-b-qualification-status") private WebElement qualificationStatusGroupB;
+
+    @FindBy(id = "record-demo-a") private WebElement recordDemoGroupA;
+
+    @FindBy(id = "record-demo-b") private WebElement recordDemoGroupB;
 
     public HelpDeskUserProfilePage(WebDriver driver) {
         super(driver);
@@ -72,6 +78,16 @@ public class HelpDeskUserProfilePage extends BasePage {
     public UserDashboardPage returnToHome() {
         returnToHome.click();
         return new UserDashboardPage(driver);
+    }
+
+    public RecordDemoPageGroupA clickRecordDemoLinkGroupA(){
+        recordDemoGroupA.click();
+        return new RecordDemoPageGroupA(driver);
+    }
+
+    public RecordDemoPageGroupB clickRecordDemoLinkGroupB(){
+        recordDemoGroupB.click();
+        return new RecordDemoPageGroupB(driver);
     }
 
     public String getName() {

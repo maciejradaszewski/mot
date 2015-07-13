@@ -9,13 +9,13 @@ namespace DvsaCommon\Enum;
  */
 class TransitionStatusCode
 {
+    const UNKNOWN = 'UNKN';
     const NOT_STARTED = 'NS';
     const SUBMITTED = 'SUB';
     const ONE_TIME_PASSWORD_ASSIGNED = 'OTPA';
     const RESTRICTED = 'REST';
     const FULL_FUNCTIONALITY = 'FULL';
     const NOT_TO_BE_TRANSITIONED = 'NOT';
-    const UNKNOWN = 'UNKN';
 
     /**
      * @return array of values for the type TransitionStatusCode
@@ -23,13 +23,13 @@ class TransitionStatusCode
     public static function getAll()
     {
         return [
+            self::UNKNOWN,
             self::NOT_STARTED,
             self::SUBMITTED,
             self::ONE_TIME_PASSWORD_ASSIGNED,
             self::RESTRICTED,
             self::FULL_FUNCTIONALITY,
             self::NOT_TO_BE_TRANSITIONED,
-            self::UNKNOWN,
         ];
     }
 

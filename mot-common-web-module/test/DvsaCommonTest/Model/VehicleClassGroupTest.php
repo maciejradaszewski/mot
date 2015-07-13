@@ -6,83 +6,43 @@ use DvsaCommon\Model\VehicleClassGroup;
 
 class VehicleClassGroupTest extends \PHPUnit_Framework_TestCase
 {
-    private $model;
-
     /**
-     * @dataProvider dataProvider
+     * @dataProvider dataProviderForClassGroupA
      */
-    public function testVehicleClassGroup($class, $method, $expectedResult)
+    public function testVehicleClassGroupA($class, $expectedResult)
     {
-        if ($expectedResult) {
-            $this->assertTrue(VehicleClassGroup::$method($class));
-        } else {
-            $this->assertFalse(VehicleClassGroup::$method($class));
-        }
+        $this->assertEquals($expectedResult, VehicleClassGroup::isGroupA($class));
     }
 
-    public function dataProvider()
+    /**
+     * @dataProvider dataProviderForClassGroupB
+     */
+    public function testVehicleClassGroupB($class, $expectedResult)
+    {
+        $this->assertEquals($expectedResult, VehicleClassGroup::isGroupB($class));
+    }
+
+    public function dataProviderForClassGroupB()
     {
         return [
-            [
-                'class1',
-                'isGroupA',
-                true,
-            ],
-            [
-                'class2',
-                'isGroupA',
-                true,
-            ],
-            [
-                'class3',
-                'isGroupA',
-                false,
-            ],
-            [
-                'class4',
-                'isGroupA',
-                false,
-            ],
-            [
-                'class5',
-                'isGroupA',
-                false,
-            ],
-            [
-                'class7',
-                'isGroupA',
-                false,
-            ],
-            [
-                'class1',
-                'isGroupB',
-                false,
-            ],
-            [
-                'class2',
-                'isGroupB',
-                false,
-            ],
-            [
-                'class3',
-                'isGroupB',
-                true,
-            ],
-            [
-                'class4',
-                'isGroupB',
-                true,
-            ],
-            [
-                'class5',
-                'isGroupB',
-                true,
-            ],
-            [
-                'class7',
-                'isGroupB',
-                true,
-            ],
+            ['1', false],
+            ['2', false],
+            ['3', true],
+            ['4', true],
+            ['5', true],
+            ['7', true],
+        ];
+    }
+
+    public function dataProviderForClassGroupA()
+    {
+        return [
+            ['1', true],
+            ['2', true],
+            ['3', false],
+            ['4', false],
+            ['5', false],
+            ['7', false],
         ];
     }
 }

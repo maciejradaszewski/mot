@@ -12,6 +12,7 @@ use TestSupport\Service\TesterService;
 use TestSupport\Service\PasswordResetService;
 use TestSupport\Service\VehicleService;
 use TestSupport\Service\VehicleExaminerService;
+use TestSupport\Service\VM10519UserService;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use Zend\ServiceManager\ServiceManager;
 
@@ -128,5 +129,13 @@ class TestSupportHelper
     public function getVehicleExaminerService()
     {
         return $this->getServiceManager()->get(VehicleExaminerService::class);
+    }
+
+    /**
+     * @return \TestSupport\Service\VM10519UserService
+     */
+    public function getSuperVehicleExaminerService()
+    {
+        return $this->getServiceManager()->get(VM10519UserService::class);
     }
 }

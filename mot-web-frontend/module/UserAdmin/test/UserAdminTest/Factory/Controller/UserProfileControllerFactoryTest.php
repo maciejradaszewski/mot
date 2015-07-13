@@ -3,10 +3,10 @@
 namespace UserAdminTest\Factory\Controller;
 
 use Core\Service\MotFrontendAuthorisationServiceInterface;
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommonTest\TestUtils\XMock;
 use UserAdmin\Controller\UserProfileController;
 use UserAdmin\Service\HelpdeskAccountAdminService;
-use UserAdmin\Service\TesterQualificationStatusService;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Mvc\Controller\ControllerManager;
 use UserAdmin\Factory\Controller\UserProfileControllerFactory;
@@ -25,8 +25,8 @@ class UserProfileControllerFactoryTest extends \PHPUnit_Framework_TestCase
         $authorisationService = XMock::of(MotFrontendAuthorisationServiceInterface::class);
         $serviceManager->setService("AuthorisationService", $authorisationService);
 
-        $testerQualificationStatus = XMock::of(TesterQualificationStatusService::class);
-        $serviceManager->setService(TesterQualificationStatusService::class, $testerQualificationStatus);
+        $testerQualificationStatus = XMock::of(TesterGroupAuthorisationMapper::class);
+        $serviceManager->setService(TesterGroupAuthorisationMapper::class, $testerQualificationStatus);
 
         $plugins = $this->getMock(ControllerManager::class);
         $plugins->expects($this->any())
