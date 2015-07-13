@@ -111,13 +111,13 @@ class VehicleSearchService
         $vinHasSpaces = false;
         $regHasSpaces = false;
 
-        if($vin) {
+        if ($vin) {
             $filteredVin = preg_replace('/\s+/', '', $vin);
             $isFullVin = strlen($filteredVin) !== 6;
             $vinHasSpaces = $filteredVin !== $vin;
         }
 
-        if($reg) {
+        if ($reg) {
             $filteredReg = preg_replace('/\s+/', '', $reg);
             $regHasSpaces = $filteredReg !== $reg;
         }
