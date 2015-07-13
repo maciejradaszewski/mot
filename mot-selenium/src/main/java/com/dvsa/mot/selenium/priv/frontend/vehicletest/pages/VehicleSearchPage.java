@@ -31,8 +31,6 @@ public class VehicleSearchPage extends BasePage {
 
     @FindBy(id = "vehicle-search") private WebElement searchButton;
 
-    @FindBy(id = "global-breadcrumb") private WebElement stepInfo;
-
     @FindBy(id = "vin-type-select") private WebElement vinTypeSelect;
 
     @FindBy(id = "VehicleSearch") private WebElement vehicleSearchForm;
@@ -69,10 +67,6 @@ public class VehicleSearchPage extends BasePage {
         super(driver);
         PageFactory.initElements(driver, this);
         checkTitle(pageTitle);
-    }
-
-    public String getVehicleSearchStepNumber() {
-        return stepInfo.getText();
     }
 
     public VehicleSearchPage submitSearchExpectingFailure() {

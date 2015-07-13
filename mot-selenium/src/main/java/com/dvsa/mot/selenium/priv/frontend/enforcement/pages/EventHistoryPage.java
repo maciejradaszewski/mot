@@ -1,6 +1,7 @@
 package com.dvsa.mot.selenium.priv.frontend.enforcement.pages;
 
 import com.dvsa.mot.selenium.framework.BasePage;
+import com.dvsa.mot.selenium.priv.frontend.helpdesk.HelpDeskUserProfilePage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -40,7 +41,7 @@ public class EventHistoryPage extends BasePage {
 
     @FindBy(partialLinkText = "User Claims Account") private WebElement userClaimsAccount;
 
-    @FindBy(className = " longer-truncate") private WebElement description;
+    @FindBy(xpath = ".//*[@class=' longer-truncate']") private WebElement description;
 
     public EventHistoryPage(WebDriver driver) {
         super(driver);
@@ -83,6 +84,11 @@ public class EventHistoryPage extends BasePage {
     public String getEventDate() {
 
         return eventDateData.getText();
+    }
+
+    public HelpDeskUserProfilePage clickGoBackLink(){
+        goBackLink.click();
+        return new HelpDeskUserProfilePage(driver);
     }
 
     public String getEventsTopHeaderText() {

@@ -1,13 +1,13 @@
 <?php
 namespace UserAdminTest\Factory\Controller;
 
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use UserAdmin\Controller\ResetAccountClaimByPostController;
 use UserAdmin\Factory\Controller\ResetAccountClaimByPostControllerFactory;
 use UserAdmin\Service\HelpdeskAccountAdminService;
-use UserAdmin\Service\TesterQualificationStatusService;
 use Zend\Mvc\Controller\ControllerManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 
 /**
@@ -28,8 +28,11 @@ class ResetAccountClaimByPostControllerFactoryTest extends \PHPUnit_Framework_Te
         $userAccountAdminService = XMock::of(HelpdeskAccountAdminService::class);
         $serviceManager->setService(HelpdeskAccountAdminService::class, $userAccountAdminService);
 
-        $testerQualificationStatus = XMock::of(TesterQualificationStatusService::class);
-        $serviceManager->setService(TesterQualificationStatusService::class, $testerQualificationStatus);
+        $testerQualificationStatus = XMock::of(TesterGroupAuthorisationMapper::class);
+        $serviceManager->setService(TesterGroupAuthorisationMapper::class, $testerQualificationStatus);
+
+        $authorisationService = XMock::of(MotAuthorisationServiceInterface::class);
+        $serviceManager->setService("AuthorisationService", $authorisationService);
 
         // Create the factory
         $factory = new ResetAccountClaimByPostControllerFactory();

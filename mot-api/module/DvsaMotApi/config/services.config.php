@@ -23,6 +23,12 @@ use DvsaMotApi\Service\VehicleHistoryService;
 use DvsaMotApi\Service\TesterMotTestLogService;
 use DvsaMotApi\Validator\UsernameValidator;
 use DvsaMotApi\Service\CreateMotTestService;
+use DvsaMotApi\Service\DemoTestAssessmentService;
+use DvsaMotApi\Factory\Service\DemoTestAssessmentServiceFactory;
+use DvsaMotApi\Helper\TesterQualificationStatusChangeEventHelper;
+use DvsaMotApi\Factory\Helper\TesterQualificationStatusChangeEventHelperFactory;
+use DvsaMotApi\Service\Validator\DemoTestAssessmentValidator;
+use DvsaMotApi\Factory\Service\Validator\DemoTestAssessmentValidatorFactory;
 
 return [
     'invokables' => [
@@ -85,6 +91,10 @@ return [
         VehicleHistoryService::class                        => VehicleHistoryServiceFactory::class,
         MotTestOptionsService::class                        => MotTestOptionsServiceFactory::class,
         UsernameValidator::class                            => UsernameValidatorFactory::class,
+        DemoTestAssessmentService::class                    => DemoTestAssessmentServiceFactory::class,
+        NotificationService::class                          => \NotificationApi\Service\NotificationService,
+        TesterQualificationStatusChangeEventHelper::class   => TesterQualificationStatusChangeEventHelperFactory::class,
         TesterMotTestLogService::class                      => TesterMotTestLogServiceFactory::class,
+        DemoTestAssessmentValidator::class                  => DemoTestAssessmentValidatorFactory::class,
     ],
 ];

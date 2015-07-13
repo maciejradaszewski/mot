@@ -10,10 +10,10 @@
 |20          |false    |$minusTwenty=|
 
 !| GenerateTestDataForOtherFitnesseTests                                                                                                                 |
-|siteId  |siteId?  |testClassGroupForTester|testerUsername  |testerUsername?  |vehicleTestClass|vehicleId  |vehicleId?  |status|DateOfTest|motTestNumber?|
-|        |$siteId1=|ALL                    |                |$testerUsername1=|${VehicleClass4}|           |$vehicleId1=|FAILED|$yesterday|$motTest1=    |
-|$siteId1|         |                       |$testerUsername1|                 |${VehicleClass4}|$vehicleId1|            |FAILED|$yesterday|$motTest2=    |
-|$siteId1|         |                       |$testerUsername1|                 |${VehicleClass4}|           |            |FAILED|$yesterday|$motTest3=    |
+|siteId  |siteId?  |testerAuthorisationStatusForGroupA|testerAuthorisationStatusForGroupB|testerUsername  |testerUsername?  |vehicleTestClass|vehicleId  |vehicleId?  |status|DateOfTest|motTestNumber?|
+|        |$siteId1=|${Qualified}                      |${Qualified}                      |                |$testerUsername1=|${VehicleClass4}|           |$vehicleId1=|FAILED|$yesterday|$motTest1=    |
+|$siteId1|         |                                  |                                  |$testerUsername1|                 |${VehicleClass4}|$vehicleId1|            |FAILED|$yesterday|$motTest2=    |
+|$siteId1|         |                                  |                                  |$testerUsername1|                 |${VehicleClass4}|           |            |FAILED|$yesterday|$motTest3=    |
 
 !| Vm 1441 Compare Mot Test                                                                                             |
 |Mot Test Number|Mot Test Number To Compare|Success?|errorMessage?                                                      |

@@ -5,3 +5,4 @@
 !define VehicleClass5 (5)
 !define VehicleClass7 (7)
 !define VehicleClassUnknown (UNKN)
+

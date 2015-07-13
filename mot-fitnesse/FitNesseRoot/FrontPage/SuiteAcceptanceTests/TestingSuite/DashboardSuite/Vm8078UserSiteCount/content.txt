@@ -4,8 +4,8 @@
 ''Set up''
 
 !| GenerateTestDataForOtherFitnesseTests                                                                 |
-|siteId|siteId?  |testClassGroupForTester|testerUsername|testerUsername?  |testerUserId?|vehicleTestClass|
-|      |$siteId1=|ALL                    |              |$testerUsername1=|$testerId1=  |${VehicleClass4}|
+|siteId|siteId?  |testerAuthorisationStatusForGroupA|testerAuthorisationStatusForGroupB|testerUsername|testerUsername?  |testerUserId?    |vehicleTestClass|
+|      |$siteId1=|${Qualified}                      |${Qualified}                      |              |$testerUsername1=|$testerId1=      |${VehicleClass4}|
 
 !| Vm 8078 User Site Count                |
 |Create User|userUsername?  |userUserId?  |

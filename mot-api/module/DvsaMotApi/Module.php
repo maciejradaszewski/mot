@@ -10,6 +10,7 @@ use DvsaCommonApi\Transaction\ServiceTransactionAwareInitializer;
 use DvsaEntities\Repository\TestItemCategoryRepository;
 use DvsaMotApi\Factory\Repository\DvlaVehicleRepositoryFactory;
 use DvsaMotApi\Factory\Service\MotTestOptionsServiceFactory;
+use DvsaMotApi\Factory\Service\DemoTestAssessmentServiceFactory;
 use DvsaMotApi\Factory\Service\VehicleHistoryServiceFactory;
 use DvsaMotApi\Factory\Service\TesterMotTestLogServiceFactory;
 use DvsaMotApi\Factory\TestItemCategoryRepositoryFactory;
@@ -18,6 +19,7 @@ use DvsaMotApi\Service\MotTestDateHelper;
 use DvsaMotApi\Service\MotTestOptionsService;
 use DvsaMotApi\Service\MotTestReasonForRejectionService;
 use DvsaMotApi\Service\MotTestStatusChangeNotificationService;
+use DvsaMotApi\Service\DemoTestAssessmentService;
 use DvsaMotApi\Service\TestingOutsideOpeningHoursNotificationService;
 use DvsaMotApi\Service\UserService;
 use DvsaMotApi\Service\Validator\BrakeTestConfigurationValidator;
@@ -41,6 +43,10 @@ use DvsaMotApi\Factory\Validator\UsernameValidatorFactory;
 use DvsaMotApi\Service\Validator\ReplacementCertificateDraftChangeValidator;
 use DvsaMotApi\Factory\Service\Validator\ReplacementCertificateDraftChangeValidatorFactory;
 use DvsaMotApi\Service\CreateMotTestService;
+use DvsaMotApi\Helper\TesterQualificationStatusChangeEventHelper;
+use DvsaMotApi\Factory\Helper\TesterQualificationStatusChangeEventHelperFactory;
+use DvsaMotApi\Service\Validator\DemoTestAssessmentValidator;
+use DvsaMotApi\Factory\Service\Validator\DemoTestAssessmentValidatorFactory;
 
 /**
  * Zend module containing the main factory for MOT API services
@@ -122,7 +128,10 @@ class Module implements
                 MotTestOptionsService::class => MotTestOptionsServiceFactory::class,
                 UsernameValidator::class => UsernameValidatorFactory::class,
                 ReplacementCertificateDraftChangeValidator::class   => ReplacementCertificateDraftChangeValidatorFactory::class,
+                DemoTestAssessmentService::class => DemoTestAssessmentServiceFactory::class,
+                TesterQualificationStatusChangeEventHelper::class => TesterQualificationStatusChangeEventHelperFactory::class,
                 TesterMotTestLogService::class => TesterMotTestLogServiceFactory::class,
+                DemoTestAssessmentValidator::class => DemoTestAssessmentValidatorFactory::class
             ],
             'invokables' => [
                 'BrakeTestConfigurationValidator' => BrakeTestConfigurationValidator::class,

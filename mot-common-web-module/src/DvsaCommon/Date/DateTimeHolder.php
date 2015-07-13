@@ -11,7 +11,7 @@ namespace DvsaCommon\Date;
  *
  * @package DvsaCommon\Date
  */
-class DateTimeHolder
+class DateTimeHolder implements DateTimeHolderInterface
 {
     /**
      * Returns current datetime

@@ -41,6 +41,18 @@ class PersonRepository extends AbstractMutableRepository
     }
 
     /**
+     * @param mixed $id
+     * @param null  $lockMode
+     * @param null  $lockVersion
+     *
+     * @return Person
+     */
+    public function find($id, $lockMode = null, $lockVersion = null)
+    {
+        return parent::find($id, $lockMode, $lockVersion);
+    }
+
+    /**
      * Gets a person by id or username, in that order
      *
      * @param mixed $userId or $username

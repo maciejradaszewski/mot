@@ -948,6 +948,9 @@ class MotTestServiceTest extends AbstractMotTestServiceTest
         $vehicleId = 1;
         $motTest   = self::getTestMotTestEntity();
         $motTest->getVehicle()->setId($vehicleId);
+        $motTestStatus = new MotTestStatus();
+        $motTestStatus->setName("PASSED");
+        $motTest->setStatus($motTestStatus);
 
         $this->mockMethod(
             $this->mockMotTestRepository, 'getMotTestByNumber', $this->once(), $motTest, self::MOT_TEST_NUMBER
@@ -955,6 +958,63 @@ class MotTestServiceTest extends AbstractMotTestServiceTest
         $this->mockMethod(
             $this->mockMotTestRepository, 'getOdometerHistoryForVehicleId', $this->once(), $readings, $vehicleId
         );
+
+        $motTestService = $this->constructMotTestServiceWithMocks($mocks);
+
+        $result = $motTestService->getAdditionalSnapshotData(self::MOT_TEST_NUMBER);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetAdditionalSnapshotData_givenMotTestStatusAsAborted_ShouldNotRetrievePreviousOdometerReading()
+    {
+        $mocks = $this->getMocksForMotTestService();
+
+        $expected = [
+            'TestStationAddress' => null,
+        ];
+
+        $vehicleId = 1;
+        $motTest   = self::getTestMotTestEntity();
+        $motTest->getVehicle()->setId($vehicleId);
+        $motTestStatus = new MotTestStatus();
+        $motTestStatus->setName("ABORTED");
+        $motTest->setStatus($motTestStatus);
+
+        $this->mockMethod(
+            $this->mockMotTestRepository, 'getMotTestByNumber', $this->once(), $motTest, self::MOT_TEST_NUMBER
+        );
+
+        $this->mockMethod($this->mockMotTestRepository, 'getOdometerHistoryForVehicleId', $this->never());
+
+        $motTestService = $this->constructMotTestServiceWithMocks($mocks);
+
+        $result = $motTestService->getAdditionalSnapshotData(self::MOT_TEST_NUMBER);
+
+        $this->assertEquals($expected, $result);
+
+    }
+
+    public function testGetAdditionalSnapshotData_givenMotTestStatusAsAbandoned_ShouldNotRetrievePreviousOdometerReading()
+    {
+        $mocks = $this->getMocksForMotTestService();
+
+        $expected = [
+            'TestStationAddress' => null,
+        ];
+
+        $vehicleId = 1;
+        $motTest   = self::getTestMotTestEntity();
+        $motTest->getVehicle()->setId($vehicleId);
+        $motTestStatus = new MotTestStatus();
+        $motTestStatus->setName("ABANDONED");
+        $motTest->setStatus($motTestStatus);
+
+        $this->mockMethod(
+            $this->mockMotTestRepository, 'getMotTestByNumber', $this->once(), $motTest, self::MOT_TEST_NUMBER
+        );
+
+        $this->mockMethod($this->mockMotTestRepository, 'getOdometerHistoryForVehicleId', $this->never());
 
         $motTestService = $this->constructMotTestServiceWithMocks($mocks);
 

@@ -40,5 +40,5 @@ return array(
         ]
     ],
     'showErrorsInFrontEnd' => (getenv('APPLICATION_ENV') === 'development'),
-    'idapUrl' => "http://mot-web-frontend/stub-idap/start"
+    'idapUrl' => "http://mot-web-frontend/stub-idap/start",
 );

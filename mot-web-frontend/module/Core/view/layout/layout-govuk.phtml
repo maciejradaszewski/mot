@@ -107,15 +107,6 @@
 
         <?php echo $this->placeholder('progressBar'); ?>
 
-        <!-- Progress Tracker -->
-        <?php if ($this->progressBar): ?>
-            <?php echo $this->partial(
-                'partial/gds/general/breadcrumb',
-                $this->progressBar
-            ); ?>
-        <?php endif; ?>
-        <!-- END -->
-
         <!-- Titles -->
         <?php if (isset($this->pageSubTitle) or (isset($this->pageTitle))): ?>
             <?php echo $this->partial(

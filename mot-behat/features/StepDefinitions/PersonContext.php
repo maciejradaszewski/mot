@@ -8,6 +8,8 @@ use Dvsa\Mot\Behat\Datasource\Random;
 use Dvsa\Mot\Behat\Support\Api\CustomerService;
 use Dvsa\Mot\Behat\Support\Api\Person;
 use Dvsa\Mot\Behat\Support\Response;
+use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
+use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use PHPUnit_Framework_Assert as PHPUnit;
 
 class PersonContext implements Context
@@ -22,7 +24,15 @@ class PersonContext implements Context
 
     private $userHelpDeskData;
 
+    /**
+     * @var int
+     */
     private $userId;
+
+    /**
+     * @var Zend\View\Model\JsonModel
+     */
+    private $personLoginData;
 
     /**
      * @var Response
@@ -70,11 +80,26 @@ class PersonContext implements Context
     private $testerDetailsResponse;
 
     /**
+     * @var TestSupportHelper
+     */
+    private $testSupportHelper;
+
+    /**
+     * @var Response
+     */
+    private $testerQualificationResponse;
+
+    /**
      * @param CustomerService $customerService
      * @param Person          $person
      */
-    public function __construct(CustomerService $customerService, Person $person)
+    public function __construct(
+        TestSupportHelper $testSupportHelper,
+        CustomerService $customerService,
+        Person $person
+    )
     {
+        $this->testSupportHelper = $testSupportHelper;
         $this->customerService = $customerService;
         $this->person = $person;
     }
@@ -106,7 +131,7 @@ class PersonContext implements Context
     {
         $classes = $this->personalMotTestingClasses->getBody()['data'];
         foreach ($classes as $class => $status) {
-            PHPUnit::assertEquals('QLFD', $status, $class . ' not QLFD');
+            PHPUnit::assertEquals(AuthorisationForTestingMotStatusCode::QUALIFIED, $status, $class . ' not QLFD');
         }
     }
 
@@ -365,6 +390,58 @@ class PersonContext implements Context
     }
 
     /**
+     * @When I change a user's group :group tester qualification status from :status to Qualified
+     */
+    public function iChangeAUserSGroupTesterQualificationStatusFromToQualified($group, $status)
+    {
+        $statusCode = $this->getAuthorisationForTestingMotStatusCode($status);
+
+        $tester = $this->testSupportHelper->getTesterService();
+        $this->personLoginData = $tester->create([
+            'siteIds' => [1],
+            "qualifications"=> [
+                "A"=> $statusCode,
+                "B"=> $statusCode
+            ]
+        ]);
+
+        $this->testerQualificationResponse = $this->person->updateTesterQualification(
+            $this->sessionContext->getCurrentAccessToken(),
+            $group,
+            $this->getPersonUserId()
+        );
+    }
+
+    private function getAuthorisationForTestingMotStatusCode($status)
+    {
+        switch ($status) {
+            case "Unknown":
+                return AuthorisationForTestingMotStatusCode::UNKNOWN;
+            case "Initial Training Needed":
+                return AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED;
+            case "Demo Test Needed":
+                return AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED;
+            case "Qualified":
+                return AuthorisationForTestingMotStatusCode::QUALIFIED;
+            case "Refresher Needed":
+                return AuthorisationForTestingMotStatusCode::REFRESHER_NEEDED;
+            case "Suspended":
+                return AuthorisationForTestingMotStatusCode::SUSPENDED;
+            default:
+                throw new \InvalidArgumentException('Status \"' . $status . '\" not found');
+        }
+    }
+
+    /**
+     * @Then an error occurs
+     */
+    public function anErrorOccurs()
+    {
+        $errors = $this->testerQualificationResponse->getBody()->toArray()['errors'];
+        PHPUnit::assertCount(1, $errors);
+    }
+
+    /**
      * @When I review my test logs
      */
     public function getTestLogs()
@@ -396,5 +473,39 @@ class PersonContext implements Context
     {
         $testLogsDataArray = $this->userTestLogs->getBody()->toArray();
         PHPUnit::assertEquals($number, $testLogsDataArray['data']['resultCount']);
+    }
+
+    /**
+     * @return int
+     */
+    public function getPersonUserId()
+    {
+        if (!isset($this->personLoginData->data['personId'])) {
+            throw new \BadMethodCallException('No person id exists');
+        }
+
+        return $this->personLoginData->data['personId'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getPersonUsername()
+    {
+        if (!isset($this->personLoginData->data['username'])) {
+            throw new \BadMethodCallException('No person username exists');
+        }
+        return $this->personLoginData->data['username'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getPersonPassword()
+    {
+        if (!isset($this->personLoginData->data['password'])) {
+            throw new \BadMethodCallException('No person password exists');
+        }
+        return $this->personLoginData->data['password'];
     }
 }

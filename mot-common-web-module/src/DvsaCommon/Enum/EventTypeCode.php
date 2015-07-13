@@ -49,6 +49,8 @@ class EventTypeCode
     const ROLE_ASSOCIATION_CHANGE = 'RAC';
     const USER_RECLAIMS_ACCOUNT = 'URA';
     const USER_ACCOUNT_RESET = 'UAR';
+    const GROUP_A_TESTER_QUALIFICATION = 'GATQ';
+    const GROUP_B_TESTER_QUALIFICATION = 'GBTQ';
 
     /**
      * @return array of values for the type EventTypeCode
@@ -93,9 +95,11 @@ class EventTypeCode
             self::DEMONSTRATION_TEST,
             self::VT7,
             self::USER_CLAIMS_ACCOUNT,
+            self::ROLE_ASSOCIATION_CHANGE,
             self::USER_RECLAIMS_ACCOUNT,
             self::USER_ACCOUNT_RESET,
-            self::ROLE_ASSOCIATION_CHANGE,
+            self::GROUP_A_TESTER_QUALIFICATION,
+            self::GROUP_B_TESTER_QUALIFICATION,
         ];
     }
 

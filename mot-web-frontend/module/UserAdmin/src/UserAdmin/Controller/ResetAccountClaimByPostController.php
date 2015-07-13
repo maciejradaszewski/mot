@@ -3,11 +3,13 @@
 namespace UserAdmin\Controller;
 
 use Core\Controller\AbstractAuthActionController;
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use UserAdmin\Presenter\UserProfilePresenter;
 use UserAdmin\Service\HelpdeskAccountAdminService;
-use UserAdmin\Service\TesterQualificationStatusService;
+use UserAdmin\Presenter\UserProfileViewAuthorisation;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -28,19 +30,19 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
      */
     private $accountAdminService;
 
-    /** @var TesterQualificationStatusService */
-    private $testerQualificationStatusService;
+    private $testerGroupAuthorisationMapper;
 
-    /**
-     * @param HelpdeskAccountAdminService $accountAdminService
-     */
+    private $authorisationService;
+
     public function __construct(
         HelpdeskAccountAdminService $accountAdminService,
-        TesterQualificationStatusService $testerQualificationStatusService
+        TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper,
+        MotAuthorisationServiceInterface $authorisationService
     )
     {
         $this->accountAdminService = $accountAdminService;
-        $this->testerQualificationStatusService = $testerQualificationStatusService;
+        $this->testerGroupAuthorisationMapper = $testerGroupAuthorisationMapper;
+        $this->authorisationService = $authorisationService;
     }
 
     public function indexAction()
@@ -74,8 +76,8 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
     {
         $person = $this->accountAdminService->getUserProfile($personId);
 
-        $profilePresenter = new UserProfilePresenter($person, $this->testerQualificationStatusService->getPersonGroupQualificationStatus($personId));
-        $profilePresenter->setId($personId);
+        $profilePresenter = new UserProfilePresenter($person, $this->testerGroupAuthorisationMapper->getAuthorisation($personId), $this->getViewAuthorisation());
+        $profilePresenter->setPersonId($personId);
 
         $this->layout('layout/layout-govuk.phtml');
         $this->layout()->setVariable('pageSubTitle', self::PAGE_SUBTITLE_INDEX);
@@ -115,5 +117,10 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
             return $url;
         }
         return $url . '?' . http_build_query($params);
+    }
+
+    private function getViewAuthorisation()
+    {
+        return new UserProfileViewAuthorisation($this->authorisationService);
     }
 }

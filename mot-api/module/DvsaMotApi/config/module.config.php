@@ -18,6 +18,8 @@ use DvsaMotApi\Factory\Controller\UserControllerFactory;
 use DvsaMotApi\Factory\Controller\TesterMotTestLogControllerFactory;
 use DvsaEntities\Entity\Person;
 use DvsaCommon\Validator\UsernameValidator;
+use DvsaMotApi\Controller\DemoTestAssessmentController;
+use DvsaMotApi\Factory\Controller\DemoTestAssessmentControllerFactory;
 use DvsaMotApi\Factory\Controller\ReplacementCertificateDraftControllerFactory;
 
 return [
@@ -54,12 +56,13 @@ return [
             MotTestShortSummaryController::class => MotTestShortSummaryController::class,
             'DvsaMotApi\Controller\EmergencyLogController' => \DvsaMotApi\Controller\EmergencyLogController::class,
             MotTestOptionsController::class => MotTestOptionsController::class,
-            IdentityDataController::class => IdentityDataController::class
+            IdentityDataController::class => IdentityDataController::class,
         ],
         'factories' => [
             'DvsaMotApi\Controller\Tester' => TesterControllerFactory::class,
             'DvsaMotApi\Controller\User'   => UserControllerFactory::class,
             MotTestStatusController::class => MotTestStatusControllerFactory::class,
+            DemoTestAssessmentController::class => DemoTestAssessmentControllerFactory::class,
             TesterMotTestLogController::class => TesterMotTestLogControllerFactory::class,
             ReplacementCertificateDraftController::class => ReplacementCertificateDraftControllerFactory::class,
         ]
@@ -210,6 +213,15 @@ return [
                     ],
                     'defaults'    => [
                         'controller' => 'DvsaMotApi\Controller\DemoTest',
+                    ],
+                ],
+            ],
+            'demo-test-assessment' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'       => '/demo-test-assessment',
+                    'defaults'    => [
+                        'controller' => DemoTestAssessmentController::class,
                     ],
                 ],
             ],

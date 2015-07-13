@@ -4,8 +4,7 @@
     "require": {
         "zendframework/zendframework": "~2.3.9",
         "doctrine/doctrine-module": "0.8.0",
-        "doctrine/doctrine-orm-module": "0.8.0",
-        "dvsa/feature-toggle": "dev-develop"
+        "doctrine/doctrine-orm-module": "0.8.0"
     },
     "repositories": [
         {

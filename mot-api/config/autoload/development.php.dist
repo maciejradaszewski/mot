@@ -62,5 +62,5 @@ return array(
          * API need to know what is the url of the app and whether we use HTTP and HTTPS!
          */
         'mot-web-frontend-url'   => 'http://mot-web-frontend.mot.gov.uk'
-    ]
+    ],
 );

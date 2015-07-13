@@ -86,11 +86,13 @@ class UrlBuilder extends AbstractUrlBuilder
     const RESET_PIN = 'person/:userId/reset-pin';
     const SITE = 'site/:id';
     const AUTHORISED_CLASSES = '/authorised-classes';
+    const DEMO_TEST_ASSESSMENT = 'demo-test-assessment';
 
     protected $routesStructure
         = [
             self::HOME                                   => '',
             self::IDENTITY_DATA                           => '',
+            self::DEMO_TEST_ASSESSMENT                   => '',
             self::ENFORCEMENT_HOME                       => '',
             self::DATA_CATALOG                           => '',
             self::APPLICATION                            => '',
@@ -372,6 +374,11 @@ class UrlBuilder extends AbstractUrlBuilder
     public function odometer()
     {
         return $this->appendRoutesAndParams(self::ODOMETER);
+    }
+
+    public function demoTestAssessment()
+    {
+        return $this->appendRoutesAndParams(self::DEMO_TEST_ASSESSMENT);
     }
 
     public function certChangeDiffTesterReason()

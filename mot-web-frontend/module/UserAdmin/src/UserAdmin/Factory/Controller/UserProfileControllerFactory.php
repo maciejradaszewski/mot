@@ -2,9 +2,9 @@
 
 namespace UserAdmin\Factory\Controller;
 
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use UserAdmin\Controller\UserProfileController;
 use UserAdmin\Service\HelpdeskAccountAdminService;
-use UserAdmin\Service\TesterQualificationStatusService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -19,12 +19,12 @@ class UserProfileControllerFactory implements FactoryInterface
 
         $authorisationService = $appServiceLocator->get("AuthorisationService");
         $accountAdminService = $appServiceLocator->get(HelpdeskAccountAdminService::class);
-        $testerQualificationStatusService = $appServiceLocator->get(TesterQualificationStatusService::class);
+        $testerGroupAuthorisationMapper = $appServiceLocator->get(TesterGroupAuthorisationMapper::class);
 
         $controller = new UserProfileController(
             $authorisationService,
             $accountAdminService,
-            $testerQualificationStatusService
+            $testerGroupAuthorisationMapper
         );
 
         return $controller;

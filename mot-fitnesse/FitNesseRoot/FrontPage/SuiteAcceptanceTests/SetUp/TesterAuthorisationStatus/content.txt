@@ -1,0 +1,6 @@
+!define Unknown (UNKN)
+!define InitialTrainingNeeded (ITRN)
+!define DemoTestNeeded (DMTN)
+!define Qualified (QLFD)
+!define RefresherNeeded (RFSHN)
+!define Suspended (SPND)

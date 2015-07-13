@@ -15,29 +15,6 @@ use DvsaEntities\Entity\Person;
  */
 class AuthorisationForTestingMotRepository extends AbstractMutableRepository
 {
-    /**
-     * @param AuthorisationForTestingMot $entity
-     * @return AuthorisationForTestingMot
-     */
-    public function persist($entity)
-    {
-        /** @var AuthorisationForTestingMot $result */
-        $result = $this->findOneBy(
-            [
-                'person'       => $entity->getPerson()->getId(),
-                'vehicleClass' => $entity->getVehicleClass()->getId()
-            ]
-        );
-
-        if ($result) {
-            $ret = $result->setStatus($entity->getStatus());
-        } else {
-            $this->getEntityManager()->persist($entity);
-            $ret = $entity;
-        }
-        return $ret;
-    }
-
     public function suspendQualifiedAuthorisationsForPerson(Person $person)
     {
         $suspendedStatus = $this->getEntityManager()->getRepository(AuthorisationForTestingMotStatus::class)

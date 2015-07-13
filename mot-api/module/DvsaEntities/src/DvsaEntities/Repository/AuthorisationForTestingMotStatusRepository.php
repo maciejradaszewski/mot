@@ -2,7 +2,7 @@
 
 namespace DvsaEntities\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use DvsaEntities\Entity\AuthorisationForTestingMotStatus;
 
 /**
  * Class AuthorisationForTestingMotStatusRepository
@@ -10,7 +10,15 @@ use Doctrine\ORM\EntityRepository;
  * @package DvsaEntities\Repository
  * @codeCoverageIgnore
  */
-class AuthorisationForTestingMotStatusRepository extends EntityRepository
+class AuthorisationForTestingMotStatusRepository extends EnumType1Repository
 {
-    use EnumType1RepositoryTrait;
+    /**
+     * @param string $code
+     *
+     * @return AuthorisationForTestingMotStatus
+     */
+    public function getByCode($code)
+    {
+        return parent::getByCode($code);
+    }
 }

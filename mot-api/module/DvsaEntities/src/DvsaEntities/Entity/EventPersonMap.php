@@ -17,7 +17,7 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  *      @ORM\Index(name="ix_event_person_map_last_updated_by", columns={"last_updated_by"})
  *  }
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\EventPersonMapRepository")
  */
 class EventPersonMap extends Entity
 {

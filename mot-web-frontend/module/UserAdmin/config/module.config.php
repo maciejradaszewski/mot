@@ -4,6 +4,8 @@ use UserAdmin\Controller;
 use UserAdmin\Factory\Controller\ResetAccountClaimByPostControllerFactory;
 use UserAdmin\Factory\Controller\SecurityQuestionControllerFactory;
 use UserAdmin\Factory\Controller\UserProfileControllerFactory;
+use UserAdmin\Factory\Controller\RecordDemoTestControllerFactory;
+use UserAdmin\Controller\RecordDemoTestController;
 
 return [
     'controllers' => [
@@ -15,6 +17,7 @@ return [
             SecurityQuestionControllerFactory::class => SecurityQuestionControllerFactory::class,
             ResetAccountClaimByPostControllerFactory::class => ResetAccountClaimByPostControllerFactory::class,
             UserProfileControllerFactory::class => UserProfileControllerFactory::class,
+            RecordDemoTestController::class => RecordDemoTestControllerFactory::class,
         ]
     ],
     'view_manager' => [
@@ -153,6 +156,16 @@ return [
                                                 'action' => 'usernameRecoverOk'
                                             ],
                                         ],
+                                    ],
+                                ],
+                            ],
+                            'record-demo-test' => [
+                                'type' => 'segment',
+                                'options' => [
+                                    'route' => '/record-demo-test/:vehicleClassGroup',
+                                    'defaults' => [
+                                        'controller' => RecordDemoTestController::class,
+                                        'action' => 'recordDemoTest',
                                     ],
                                 ],
                             ],

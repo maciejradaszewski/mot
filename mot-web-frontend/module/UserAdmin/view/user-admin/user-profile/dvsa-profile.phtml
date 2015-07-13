@@ -78,7 +78,16 @@ use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 </table>
 
 <?php echo $this->partial('user-admin/partials/roles-and-associations.phtml', ['presenter' => $presenter]) ?>
-<?php echo $this->partial('user-admin/partials/tester-qualification-status.phtml', ['presenter' => $presenter]) ?>
+<?php if ($presenter->getTesterAuthorisation()->hasAnyTestingAuthorisation()): ?>
+    <?php echo $this->partial(
+            'user-admin/partials/tester-qualification-status.phtml',
+            [
+                'presenter' => $presenter,
+                'searchQueryParams' => $searchQueryParams,
+            ]
+        )
+    ?>
+<?php endif ?>
 <?php echo $this->partial('user-admin/partials/event-history.phtml', ['presenter' => $presenter]) ?>
 
 <nav class="content-navigation">

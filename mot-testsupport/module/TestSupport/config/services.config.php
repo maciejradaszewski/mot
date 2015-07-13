@@ -23,12 +23,15 @@ use TestSupport\Service\AEService;
 use TestSupport\Service\TesterService;
 use TestSupport\Service\PasswordResetService;
 use TestSupport\Service\VehicleExaminerService;
+use TestSupport\Service\VM10519UserService;
 use TestSupport\Service\DvlaVehicleService;
 use TestSupport\Helper\TestSupportAccessTokenManager;
 use TestSupport\Helper\TestSupportRestClientHelper;
 use TestSupport\Helper\NotificationsHelper;
 use TestSupport\Helper\SitePermissionsHelper;
 use TestSupport\Service\InactiveTesterService;
+use TestSupport\Service\TesterAuthorisationStatusService;
+use TestSupport\Factory\TesterAuthorisationStatusServiceFactory;
 
 return [
     'factories' => [
@@ -93,5 +96,7 @@ return [
         InactiveTesterService::class      =>  \TestSupport\Factory\InactiveTesterServiceFactory::class,
         PasswordResetService::class        => \TestSupport\Factory\PasswordResetServiceFactory::class,
         VehicleExaminerService::class      => \TestSupport\Factory\VehicleExaminerServiceFactory::class,
+        VM10519UserService::class          => \TestSupport\Factory\VM10519UserServiceFactory::class,
+        TesterAuthorisationStatusService::class => TesterAuthorisationStatusServiceFactory::class,
     ]
 ];

@@ -2,12 +2,12 @@
 
 namespace UserAdmin\Factory\Controller;
 
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use UserAdmin\Controller\ResetAccountClaimByPostController;
 use UserAdmin\Service\HelpdeskAccountAdminService;
-use UserAdmin\Service\TesterQualificationStatusService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\ServiceManager\ServiceManager;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 
 /**
  * Factory for {@link \UserAdmin\Controller\ResetAccountClaimByPostController}.
@@ -16,15 +16,20 @@ class ResetAccountClaimByPostControllerFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $controllerManager)
     {
+        /** @var ServiceLocatorInterface $appServiceLocator */
         $appServiceLocator = $controllerManager->getServiceLocator();
 
-        /** @var HelpdeskAccountAdminService */
+        /** @var HelpdeskAccountAdminService $accountAdminService */
         $accountAdminService = $appServiceLocator->get(HelpdeskAccountAdminService::class);
-        $testerQualificationStatusService = $appServiceLocator->get(TesterQualificationStatusService::class);
+        /** @var TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper */
+        $testerGroupAuthorisationMapper = $appServiceLocator->get(TesterGroupAuthorisationMapper::class);
+        /** @var MotAuthorisationServiceInterface $authorisationService */
+        $authorisationService = $appServiceLocator->get("AuthorisationService");
 
         return new ResetAccountClaimByPostController(
             $accountAdminService,
-            $testerQualificationStatusService
+            $testerGroupAuthorisationMapper,
+            $authorisationService
         );
     }
 }

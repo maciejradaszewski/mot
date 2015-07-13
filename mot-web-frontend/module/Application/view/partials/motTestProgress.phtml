@@ -9,22 +9,6 @@ if ($isMotContingency === true) {
 }
 ?>
 <section>
-    <div class="row" id="content">
-        <div class="col-lg-12 progress-tracker">
-            <ul class="list-unstyled">
-            <?php for ($stepNumber = 0; $stepNumber < count($steps); $stepNumber++) : ?>
-                <?php
-                $class = $stepNumber === $currentStep ? "active" :
-                    ($stepNumber < $currentStep ? "done" : null);
-                ?>
-                <li <?php if (!empty($class)) { echo "class=\"$class\""; } ?>>
-                    <i class="fa fa-arrow-circle-right"></i>
-                    <?php echo $this->escapeHtml($steps[$stepNumber]); ?>
-                </li>
-            <?php endfor; ?>
-            </ul>
-        </div>
-    </div>
 
     <?php if (false !== $showTitle) : ?>
     <div class="row">

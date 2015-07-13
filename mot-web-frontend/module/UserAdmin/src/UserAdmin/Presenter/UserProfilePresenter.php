@@ -2,17 +2,15 @@
 
 namespace UserAdmin\Presenter;
 
+use DvsaClient\Entity\TesterAuthorisation;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
-use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use Core\Presenter\AddressPresenterInterface;
 use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Constants\Role;
 use DvsaCommon\Utility\AddressUtils;
-use UserAdmin\Service\TesterQualificationStatusService;
-use Zend\Mvc\Controller\Plugin\Url as UrlPlugin;
 
 /**
  * Decorator for PersonHelpDeskProfileDto
@@ -28,33 +26,33 @@ class UserProfilePresenter implements AddressPresenterInterface
     private $id;
     /* @var PersonHelpDeskProfileDto $person */
     private $person;
-    /** @var array */
-    private $testerQualificationStatusService;
     /* @var bool */
     private $isDvsaUser;
 
-    /**
-     * @param PersonHelpDeskProfileDto $person
-     * @param TesterQualificationStatusService $testerQualificationStatusService
-     * @param bool $isDvsaUser
-     */
+    private $testerAuthorisation;
+
+    private $viewAuthorisation;
+
     public function __construct(
         PersonHelpDeskProfileDto $person,
-        $testerQualificationStatus,
-        $isDvsaUser = false)
+        TesterAuthorisation $testerAuthorisation,
+        UserProfileViewAuthorisation $viewAuthorisation,
+        $isDvsaUser = false
+    )
     {
         $this->person = $person;
-        $this->testerQualificationStatus = $testerQualificationStatus;
+        $this->testerAuthorisation = $testerAuthorisation;
+        $this->viewAuthorisation = $viewAuthorisation;
         $this->isDvsaUser = $isDvsaUser;
     }
 
-    public function setId($id)
+    public function setPersonId($id)
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getId()
+    public function getPersonId()
     {
         return $this->id;
     }
@@ -190,7 +188,7 @@ class UserProfilePresenter implements AddressPresenterInterface
      */
     public function displayEventsHistoryLink()
     {
-        return EventUrlBuilderWeb::of()->eventList($this->getId(), 'person');
+        return EventUrlBuilderWeb::of()->eventList($this->getPersonId(), 'person');
     }
 
     /**
@@ -234,22 +232,6 @@ class UserProfilePresenter implements AddressPresenterInterface
     }
 
     /**
-     * @return array
-     */
-    public function getQualificationStatus()
-    {
-        return $this->testerQualificationStatus;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasQualificationStatus()
-    {
-        return !empty($this->testerQualificationStatus);
-    }
-    
-    /**
      * Get the profile template depending on the authentication status
      *
      * @return string
@@ -260,5 +242,15 @@ class UserProfilePresenter implements AddressPresenterInterface
             return self::DVSA_PROFILE_TEMPLATE;
         }
         return self::UNRESTRICTED_PROFILE_TEMPLATE;
+    }
+
+    public function getTesterAuthorisation()
+    {
+        return $this->testerAuthorisation;
+    }
+
+    public function getViewAuthorisation()
+    {
+        return $this->viewAuthorisation;
     }
 }

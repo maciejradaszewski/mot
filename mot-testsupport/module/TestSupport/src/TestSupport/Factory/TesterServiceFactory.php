@@ -2,6 +2,7 @@
 
 namespace TestSupport\Factory;
 
+use TestSupport\Service\TesterAuthorisationStatusService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use TestSupport\Service\TesterService;
@@ -20,7 +21,8 @@ class TesterServiceFactory implements FactoryInterface
             $serviceLocator->get(NotificationsHelper::class),
             $serviceLocator->get(SitePermissionsHelper::class),
             $serviceLocator->get(AccountService::class),
-            $serviceLocator->get(EntityManager::class)
+            $serviceLocator->get(EntityManager::class),
+            $serviceLocator->get(TesterAuthorisationStatusService::class)
         );
     }
 }

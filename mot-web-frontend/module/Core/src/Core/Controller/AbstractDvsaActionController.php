@@ -5,6 +5,7 @@ namespace Core\Controller;
 use DvsaFeature\Exception\FeatureNotAvailableException;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use Zend\Form\Annotation\AnnotationBuilder;
+use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\Session\Container;
@@ -160,5 +161,13 @@ abstract class AbstractDvsaActionController
     protected function getConfig()
     {
         return $this->getServiceLocator()->get('config');
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return parent::getRequest();
     }
 }

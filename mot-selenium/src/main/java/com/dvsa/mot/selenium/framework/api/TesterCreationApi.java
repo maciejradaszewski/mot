@@ -20,7 +20,8 @@ public class TesterCreationApi extends BaseApi {
 
         QLFD("Qualified"),
         ITRN("Initial training needed"),
-        SPND("Suspended");
+        SPND("Suspended"),
+        DMTN("Demo Test Needed");
 
         public final String description;
 
@@ -37,15 +38,30 @@ public class TesterCreationApi extends BaseApi {
     public Login createTester(Collection<Integer> vtsIds, TestGroup testGroup, TesterStatus status,
             Login schm, String diff, Boolean accountClaimRequired, Boolean passwordChangeRequired) {
 
-        Person person = createTesterAsPerson(vtsIds, testGroup, status, schm, diff,
-            accountClaimRequired, passwordChangeRequired);
+        Person person =
+                createTesterAsPerson(vtsIds, testGroup, status, schm, diff, accountClaimRequired,
+                        passwordChangeRequired);
         return new Login(person.login.username, person.login.password);
     }
 
     public Person createTesterAsPerson(Collection<Integer> vtsIds, TestGroup testGroup,
-            TesterStatus status, Login schm, String diff,
-        Boolean accountClaimRequired, Boolean passwordChangeRequired) {
+            TesterStatus status, Login schm, String diff, Boolean accountClaimRequired,
+            Boolean passwordChangeRequired) {
+
+        if (null == status) {
+            status = TesterStatus.QLFD;
+        }
+
+        return createTesterAsPerson(vtsIds, testGroup,
+            status, status, schm,diff, accountClaimRequired,
+            passwordChangeRequired);
+    }
+
+    public Person createTesterAsPerson(Collection<Integer> vtsIds, TestGroup testGroup,
+            TesterStatus statusA, TesterStatus statusB, Login schm, String diff,
+            Boolean accountClaimRequired, Boolean passwordChangeRequired) {
         JsonObjectBuilder testerCreationData = Json.createObjectBuilder();
+        JsonObjectBuilder testerStatusData = Json.createObjectBuilder();
 
         JsonArrayBuilder vtsIdsArrayBuilder = Json.createArrayBuilder();
 
@@ -64,9 +80,10 @@ public class TesterCreationApi extends BaseApi {
             testerCreationData.add("testGroup", String.valueOf(testGroup.group));
         }
 
-        if (null != status) {
-            testerCreationData.add("status", status.toString());
-        }
+        testerStatusData.add("A", statusA.toString());
+        testerStatusData.add("B", statusB.toString());
+        testerCreationData.add("qualifications", testerStatusData.build());
+
 
         testerCreationData.add("accountClaimRequired", accountClaimRequired);
         testerCreationData.add("passwordChangeRequired", passwordChangeRequired);
@@ -77,8 +94,8 @@ public class TesterCreationApi extends BaseApi {
 
         return new Person(Integer.toString(responseData.getInt("personId")), "Mr",
                 responseData.getString("firstName"), responseData.getString("middleName"),
-                responseData.getString("surname"), 0, 0,
-                null, null, "test@email.com", null, null, Address.ADDRESS_ADDRESS1, null,
+                responseData.getString("surname"), 0, 0, null, null, "test@email.com", null, null,
+                Address.ADDRESS_ADDRESS1, null,
                 new Login(responseData.getString("username"), responseData.getString("password")),
                 null, null);
     }
@@ -136,13 +153,13 @@ public class TesterCreationApi extends BaseApi {
     }
 
     public Person createTesterAsPerson(Collection<Integer> vtsIds) {
-        return createTesterAsPerson(vtsIds, null, null, Login.LOGIN_SCHEME_MANAGEMENT,
-            null, false, false);
+        return createTesterAsPerson(vtsIds, null, null, Login.LOGIN_SCHEME_MANAGEMENT, null, false,
+                false);
     }
 
     public Person createTesterAsPerson(Collection<Integer> vtsIds, boolean claimAccountRequired) {
-        return createTesterAsPerson(vtsIds, null, null, Login.LOGIN_SCHEME_MANAGEMENT,
-            null, claimAccountRequired, false);
+        return createTesterAsPerson(vtsIds, null, null, Login.LOGIN_SCHEME_MANAGEMENT, null,
+                claimAccountRequired, false);
     }
 
     public Login createTester(Collection<Integer> vtsIds, Boolean claimAccountRequired) {
@@ -157,9 +174,9 @@ public class TesterCreationApi extends BaseApi {
     }
 
     public Login createTester(Collection<Integer> vtsIds, TestGroup testGroup,
-        Boolean claimAccountRequired, Boolean passwordChangeRequired) {
+            Boolean claimAccountRequired, Boolean passwordChangeRequired) {
         return createTester(vtsIds, testGroup, null, Login.LOGIN_SCHEME_MANAGEMENT, null,
-            claimAccountRequired, passwordChangeRequired);
+                claimAccountRequired, passwordChangeRequired);
     }
 
     /**

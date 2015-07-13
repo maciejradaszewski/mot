@@ -488,7 +488,7 @@ class PasswordResetControllerTest extends AbstractFrontendControllerTestCase
                 'expect' => [
                     'viewModel'  => true,
                     'flashError' => sprintf(
-                        PasswordResetController::ERR_CHANGE_PASS_TOKEN_BEEN_USED, 'DVSA Helpdesk', '01792 454397'
+                        PasswordResetController::ERR_CHANGE_PASS_TOKEN_BEEN_USED, 'DVSA Helpdesk', '0330 123 5654'
                     ),
                 ],
             ],

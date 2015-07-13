@@ -8,9 +8,9 @@
 |20          |false    |$minusTwenty=|
 
 
-!| GenerateTestDataForOtherFitnesseTests                                                                              |
-|siteId|siteId?  |testClassGroupForTester|testerUsername|testerUsername?  |testerUserId?|vehicleTestClass|vehicleId?  |
-|      |$siteId1=|ALL                    |              |$testerUsername1=|$testerId1=  |${VehicleClass4}|$vehicleId1=|
+!| GenerateTestDataForOtherFitnesseTests                                                                                                                            |
+|siteId|siteId?  |testerAuthorisationStatusForGroupA|testerAuthorisationStatusForGroupB|testerUsername|testerUsername?  |testerUserId?|vehicleTestClass|vehicleId?  |
+|      |$siteId1=|${Qualified}                      |${Qualified}                      |              |$testerUsername1=|$testerId1=  |${VehicleClass4}|$vehicleId1=|
 
 
 ''Tests''

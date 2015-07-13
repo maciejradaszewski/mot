@@ -4,7 +4,8 @@ use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Enum\ReasonForCancelId;
 use DvsaCommon\Enum\MotTestStatusName;
-use DvsaCommon\Enum\VehicleClassCode;
+use DvsaCommon\Enum\VehicleClassGroupCode;
+use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode as AuthorisationStatus;
 use MotFitnesse\Util\TestShared;
 use MotFitnesse\Testing\Vehicle\VehicleHelper;
 
@@ -19,11 +20,13 @@ use MotFitnesse\Testing\Vehicle\VehicleHelper;
  * Sample table with all available columns:
  *
  * !| GenerateTestDataForOtherFitnesseTests                                                                                                                                                                                                                                                                               |
- * |schememgtUsername?|schememgtId?|slots |orgId|orgId?|aedmUsername?|siteId|siteId?|siteMngrUsername?|siteMngrId?|testClassGroupForTester|testerUsername|testerUsername?|testerUserId?|testerPassword?|testerName?|inactiveTesterUsername?|vin|vrm|manufactureDate|firstRegistrationDate|vehicleTestClass|vehicleId|vehicleId?|status  |DateOfTest|isRetest|retestStatus|motTestNumber?|
- * |                  |            |(1024)|     |      |             |      |       |                 |           |(ALL)                  |              |               |             |(Password1)    |           |                       |   |   |               |                     |(4)             |         |          |(PASSED)|(today)   |(false) |(PASSED)    |              |
+ * |schememgtUsername?|schememgtId?|slots |orgId|orgId?|aedmUsername?|siteId|siteId?|siteMngrUsername?|siteMngrId?|testerAuthorisationStatusForGroupA|testerAuthorisationStatusForGroupB|testerUsername|testerUsername?|testerUserId?|testerPassword?|testerName?|inactiveTesterUsername?|vin|vrm|manufactureDate|firstRegistrationDate|vehicleTestClass|vehicleId|vehicleId?|status  |DateOfTest|isRetest|retestStatus|motTestNumber?|
+ * |                  |            |(1024)|     |      |             |      |       |                 |           |${Qualified}                      |${DemoTestedNeeded}               |               |             |(Password1)    |           |                       |   |   |               |                     |(4)             |         |          |(PASSED)|(today)   |(false) |(PASSED)    |              |
  */
 class GenerateTestDataForOtherFitnesseTests
 {
+    const DEFAULT_GROUP_A_STATUS = AuthorisationStatus::QUALIFIED;
+    const DEFAULT_GROUP_B_STATUS = AuthorisationStatus::QUALIFIED;
     /** @var TestSupportHelper */
     private $testSupportHelper;
     private $aeRef;
@@ -37,7 +40,8 @@ class GenerateTestDataForOtherFitnesseTests
     private $sitePostcode;
     private $siteTown;
     private $siteCountry;
-    private $testClassGroupForTester;
+    private $testerAuthorisationStatusGroupA = self::DEFAULT_GROUP_A_STATUS;
+    private $testerAuthorisationStatusGroupB = self::DEFAULT_GROUP_B_STATUS;
 
     private $vehicleId;
     private $vehicleData = [];
@@ -91,7 +95,8 @@ class GenerateTestDataForOtherFitnesseTests
         $this->slots = 1024;
         $this->orgId = null;
         $this->siteId = null;
-        $this->testClassGroupForTester = null;
+        $this->testerAuthorisationStatusGroupA = self::DEFAULT_GROUP_A_STATUS;
+        $this->testerAuthorisationStatusGroupB = self::DEFAULT_GROUP_B_STATUS;
         $this->vehicleId = null;
         $this->vehicleData = [];
         $this->status = MotTestStatusName::PASSED;
@@ -209,14 +214,21 @@ class GenerateTestDataForOtherFitnesseTests
     }
 
     /**
-     * Use '1,2' or '3,4,5,7' to specify a test class group,
-     * any other input value will indicate ALL test classes are authorised
+     * @param string $status
+     * @see DvsaCommon\Enum\AuthorisationForTestingMotStatusCode fro the list of valid codes
      */
-    public function setTestClassGroupForTester($testClassGroupForTester)
+    public function setTesterAuthorisationStatusForGroupA($status)
     {
-        if ($testClassGroupForTester !== '') {
-            $this->testClassGroupForTester = $testClassGroupForTester;
-        }
+        $this->testerAuthorisationStatusGroupA = $status;
+    }
+
+    /**
+     * @param string $status
+     * @see DvsaCommon\Enum\AuthorisationForTestingMotStatusCode fro the list of valid codes
+     */
+    public function setTesterAuthorisationStatusForGroupB($status)
+    {
+        $this->testerAuthorisationStatusGroupB = $status;
     }
 
     public function setColour($colour)
@@ -428,21 +440,14 @@ class GenerateTestDataForOtherFitnesseTests
         return $motTest['motTestNumber'];
     }
 
-    private function createTesterTestClassGroupParam()
+    private function createTesterAuthorisationStatus()
     {
-        if ($this->testClassGroupForTester === implode(',', [VehicleClassCode::CLASS_1, VehicleClassCode::CLASS_2])) {
-            return 1;
-        } elseif ($this->testClassGroupForTester === implode(',', [
-                VehicleClassCode::CLASS_3,
-                VehicleClassCode::CLASS_4,
-                VehicleClassCode::CLASS_5,
-                VehicleClassCode::CLASS_7
-            ])
-        ) {
-            return 2;
-        }
+        $groupedAuthorisationStatus = [
+            VehicleClassGroupCode::BIKES => $this->testerAuthorisationStatusGroupA,
+            VehicleClassGroupCode::CARS_ETC => $this->testerAuthorisationStatusGroupB,
+        ];
 
-        return null;
+        return $groupedAuthorisationStatus;
     }
 
     public function setRetestStatus($retestStatus)
@@ -734,7 +739,7 @@ class GenerateTestDataForOtherFitnesseTests
                 [$this->siteId()],
                 null,
                 null,
-                $this->createTesterTestClassGroupParam(),
+                $this->createTesterAuthorisationStatus(),
                 $this->testerContactEmail
             );
         }
