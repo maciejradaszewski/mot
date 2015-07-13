@@ -249,6 +249,11 @@ class VehicleSearchResult
         return $this;
     }
 
+    public function hasMotTests()
+    {
+        return ($this->motTestCount == 0)? false : true;
+    }
+
     /**
      * @return string
      */
@@ -268,7 +273,7 @@ class VehicleSearchResult
 
     public function getReadableLastMotTestDate()
     {
-        if (!empty($this->getLastMotTestDate())) {
+        if (!empty($this->lastMotTestDate)) {
             return DateTimeDisplayFormat::date(new \DateTime($this->getLastMotTestDate()));
         }
 

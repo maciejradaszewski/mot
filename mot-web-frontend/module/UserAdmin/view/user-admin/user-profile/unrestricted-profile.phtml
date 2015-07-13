@@ -87,11 +87,11 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
 </table>
 
 <?php echo $this->partial('user-admin/partials/roles-and-associations.phtml', ['presenter' => $presenter]) ?>
-<?php if ($presenter->getTesterAuthorisation()->hasAnyTestingAuthorisation()): ?>
+<?php if ($presenter->getTesterAuthorisation()->shouldBeDisplayed()): ?>
     <?php echo $this->partial(
             'user-admin/partials/tester-qualification-status.phtml',
             [
-                'presenter' => $presenter,
+                'viewModel' => $presenter->getTesterAuthorisation(),
                 'searchQueryParams' => $searchQueryParams,
             ]
         )

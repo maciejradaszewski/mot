@@ -7,7 +7,6 @@ use DvsaEntities\Entity\AuthorisationForTestingMot;
 use DvsaEntities\Entity\AuthorisationForTestingMotStatus;
 use DvsaEntities\Entity\Person;
 use DvsaMotApi\Service\DemoTestAssessmentService;
-use DvsaMotApi\Service\Validator\DemoTestAssessmentValidator;
 use NotificationApi\Service\NotificationService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -27,8 +26,7 @@ class DemoTestAssessmentServiceFactory implements FactoryInterface
             $entityManager->getRepository(AuthorisationForTestingMot::class),
             $entityManager->getRepository(AuthorisationForTestingMotStatus::class),
             $serviceLocator->get(TesterQualificationStatusChangeEventHelper::class),
-            new DateTimeHolder(),
-            $serviceLocator->get(DemoTestAssessmentValidator::class)
+            new DateTimeHolder()
         );
     }
 }

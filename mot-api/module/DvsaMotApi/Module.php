@@ -45,8 +45,6 @@ use DvsaMotApi\Factory\Service\Validator\ReplacementCertificateDraftChangeValida
 use DvsaMotApi\Service\CreateMotTestService;
 use DvsaMotApi\Helper\TesterQualificationStatusChangeEventHelper;
 use DvsaMotApi\Factory\Helper\TesterQualificationStatusChangeEventHelperFactory;
-use DvsaMotApi\Service\Validator\DemoTestAssessmentValidator;
-use DvsaMotApi\Factory\Service\Validator\DemoTestAssessmentValidatorFactory;
 
 /**
  * Zend module containing the main factory for MOT API services
@@ -131,7 +129,6 @@ class Module implements
                 DemoTestAssessmentService::class => DemoTestAssessmentServiceFactory::class,
                 TesterQualificationStatusChangeEventHelper::class => TesterQualificationStatusChangeEventHelperFactory::class,
                 TesterMotTestLogService::class => TesterMotTestLogServiceFactory::class,
-                DemoTestAssessmentValidator::class => DemoTestAssessmentValidatorFactory::class
             ],
             'invokables' => [
                 'BrakeTestConfigurationValidator' => BrakeTestConfigurationValidator::class,

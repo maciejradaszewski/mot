@@ -68,6 +68,13 @@ class VehicleSearchResultTest extends PHPUnit_Framework_TestCase
             $this->assertEquals($result->getModel(), $apiVehicles[$i]['model']);
             $this->assertEquals($result->getMakeAndModel(), $apiVehicles[$i]['make'] . ' ' . $apiVehicles[$i]['model']);
             $this->assertEquals($result->getMotTestCount(), $apiVehicles[$i]['total_mot_tests']);
+
+            if ($apiVehicles[$i]['total_mot_tests'] == 0) {
+                $this->assertFalse($result->hasMotTests());
+            } else {
+                $this->assertTrue($result->hasMotTests());
+            }
+
             $this->assertEquals($result->getLastMotTestDate(), $apiVehicles[$i]['mot_completed_date']);
             $this->assertEquals($result->isDvlaVehicle(), $apiVehicles[$i]['isDvla']);
             $this->assertEquals($result->getModelDetail(), $apiVehicles[$i]['modelDetail']);

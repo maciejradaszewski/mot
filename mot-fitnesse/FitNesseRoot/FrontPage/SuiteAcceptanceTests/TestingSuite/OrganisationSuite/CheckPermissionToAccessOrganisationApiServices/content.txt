@@ -43,7 +43,7 @@ Test creates two organisation ($orgId1 and $orgId2) and 3 sites ($siteId1, $site
 |AEDM                                            |$aedm2      |Forbidden            |Forbidden               |Forbidden         |
 |VE                                              |$ve         |OK                   |OK                      |OK                |
 |AREA-OFFICE                                     |$areaOffice |OK                   |OK                      |OK                |
-|DVLA-OPER                                       |$dvlaOper   |Forbidden            |Forbidden               |Forbidden         |
+|DVLA-OPER                                       |$dvlaOper   |OK                   |OK                      |Forbidden         |
 |CSCO                                            |$csco       |OK                   |OK                      |OK                |
 |SCHEME-MANAGER                                  |$schemeMng  |OK                   |OK                      |OK                |
 |SCHEME-USER                                     |$schemeUser |OK                   |OK                      |OK                |

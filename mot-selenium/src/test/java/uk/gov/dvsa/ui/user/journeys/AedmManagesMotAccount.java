@@ -1,4 +1,4 @@
-package uk.gov.dvsa.ui;
+package uk.gov.dvsa.ui.user.journeys;
 
 import org.joda.time.DateTime;
 import org.testng.annotations.DataProvider;
@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.*;
 import uk.gov.dvsa.domain.service.ServiceLocator;
 import uk.gov.dvsa.helper.TestDataHelper;
+import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.*;
 
 import java.io.IOException;

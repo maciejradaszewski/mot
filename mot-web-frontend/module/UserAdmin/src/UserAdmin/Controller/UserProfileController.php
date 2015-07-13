@@ -8,13 +8,12 @@ use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\Role;
 use DvsaCommon\Enum\MessageTypeCode;
-use DvsaCommon\FeatureToggling\Feature;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use DvsaMotTest\Controller\AbstractDvsaMotTestController;
-use UserAdmin\Presenter\UserProfileViewAuthorisation;
 use UserAdmin\Presenter\UserProfilePresenter;
 use UserAdmin\Service\HelpdeskAccountAdminService;
+use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -58,8 +57,7 @@ class UserProfileController extends AbstractDvsaMotTestController
 
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
-            $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
-            $this->getViewAuthorisation(),
+            $this->getTesterAuthorisationViewModel($personId),
             $this->authorisationService->isGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE_DVSA_USER) &&
             !$this->authorisationService->hasRole(Role::CUSTOMER_SERVICE_CENTRE_OPERATIVE)
         );
@@ -83,8 +81,7 @@ class UserProfileController extends AbstractDvsaMotTestController
         $personId = $this->params()->fromRoute('personId');
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
-            $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
-            $this->getViewAuthorisation()
+            $this->getTesterAuthorisationViewModel($personId)
         );
         $presenter->setPersonId($personId);
         $pageTitleSuccess = 'Reset password for ' . $presenter->displayFullName();
@@ -110,8 +107,7 @@ class UserProfileController extends AbstractDvsaMotTestController
         $personId = $this->params()->fromRoute('personId');
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
-            $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
-            $this->getViewAuthorisation()
+            $this->getTesterAuthorisationViewModel($personId)
         );
         $presenter->setPersonId($personId);
         $pageTitleSuccess = 'Recover username for ' . $presenter->displayFullName();
@@ -173,8 +169,7 @@ class UserProfileController extends AbstractDvsaMotTestController
         }
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
-            $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
-            $this->getViewAuthorisation()
+            $this->getTesterAuthorisationViewModel($personId)
         );
 
         $pageTitle = 'Reclaim account';
@@ -273,8 +268,12 @@ class UserProfileController extends AbstractDvsaMotTestController
         return $url . '?' . http_build_query($params);
     }
 
-    private function getViewAuthorisation()
+    private function getTesterAuthorisationViewModel($personId)
     {
-        return new UserProfileViewAuthorisation($this->authorisationService);
+        return new TesterAuthorisationViewModel(
+            $personId,
+            $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
+            $this->authorisationService
+        );
     }
 }

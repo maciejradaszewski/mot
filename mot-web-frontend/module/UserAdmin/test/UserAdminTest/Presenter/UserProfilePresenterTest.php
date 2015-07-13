@@ -3,14 +3,14 @@
 namespace UserAdminTest\Presenter;
 
 use DvsaClient\Entity\TesterAuthorisation;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
-use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommonTest\TestUtils\XMock;
-use UserAdmin\Presenter\UserProfileViewAuthorisation;
 use UserAdmin\Presenter\UserProfilePresenter;
+use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
 
 /**
  * Unit tests for UserProfilePresenter
@@ -24,8 +24,11 @@ class UserProfilePresenterTest extends \PHPUnit_Framework_TestCase
     {
         $this->presenter = new UserProfilePresenter(
             $this->buildPersonHelpDeskProfileDto(),
-            new TesterAuthorisation(),
-            new UserProfileViewAuthorisation(XMock::of(MotAuthorisationServiceInterface::class)),
+            new TesterAuthorisationViewModel(
+                1,
+                new TesterAuthorisation(),
+                XMock::of(MotAuthorisationServiceInterface::class)
+            ),
             true
         );
         $this->presenter->setPersonId(1);
@@ -73,8 +76,10 @@ class UserProfilePresenterTest extends \PHPUnit_Framework_TestCase
     {
         $this->presenter = new UserProfilePresenter(
             $this->buildPersonHelpDeskProfileDto(),
-            new TesterAuthorisation(),
-            new UserProfileViewAuthorisation(XMock::of(MotAuthorisationServiceInterface::class)),
+            new TesterAuthorisationViewModel(1,
+                new TesterAuthorisation(),
+                XMock::of(MotAuthorisationServiceInterface::class)
+            ),
             false
         );
         $this->assertEquals('user-admin/user-profile/unrestricted-profile.phtml', $this->presenter->getTemplate());

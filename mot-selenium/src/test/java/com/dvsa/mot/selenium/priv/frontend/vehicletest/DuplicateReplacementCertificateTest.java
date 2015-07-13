@@ -358,7 +358,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
     @DataProvider(name = "usersAllowedDuplicatesIssuedMoreThan18MonthsAgo")
     public Object[][] usersAllowedDuplicatesIssuedMoreThan18MonthsAgo() {
         return new Object[][] {{Login.LOGIN_CUSTOMER_SERVICE, false},
-                {Login.LOGIN_DVLA_CENTRAL_OPERATIVE, false}, {Login.LOGIN_AREA_OFFICE1, true}};
+                {Login.LOGIN_DVLA_CENTRAL_OPERATIVE, true}, {Login.LOGIN_AREA_OFFICE1, true}};
     }
 
     @Test(groups = {"VM-4515", "Regression", "W-Sprint3"},
@@ -394,7 +394,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
     @DataProvider(name = "usersAllowedIssueDuplicatesAndNotAllowedIssueReplacements")
     public Object[][] usersAllowedIssueDuplicatesAndNotAllowedIssueReplacements() {
         return new Object[][] {{Login.LOGIN_CUSTOMER_SERVICE},
-                {Login.LOGIN_DVLA_CENTRAL_OPERATIVE}};
+                };
     }
 
     @Test(groups = {"VM-4511", "Regression", "W-Sprint4"},

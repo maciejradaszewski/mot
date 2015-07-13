@@ -16,7 +16,6 @@ use DvsaEntities\Repository\AuthorisationForTestingMotStatusRepository;
 use DvsaEntities\Repository\PersonRepository;
 use NotificationApi\Dto\Notification;
 use NotificationApi\Service\NotificationService;
-use Doctrine\ORM\EntityManager;
 use DvsaMotApi\Helper\TesterQualificationStatusChangeEventHelper;
 use DvsaMotApi\Service\Validator\DemoTestAssessmentValidator;
 
@@ -56,8 +55,7 @@ class DemoTestAssessmentService
         AuthorisationForTestingMotRepository $authorisationRepository,
         AuthorisationForTestingMotStatusRepository $authorisationForTestingMotStatusRepository,
         TesterQualificationStatusChangeEventHelper $testerQualificationStatusChangeEvent,
-        DateTimeHolderInterface $dateTimeHolder,
-        DemoTestAssessmentValidator $validator
+        DateTimeHolderInterface $dateTimeHolder
     ) {
         $this->authorisationService = $authorisationService;
         $this->notificationService = $notificationService;
@@ -67,7 +65,7 @@ class DemoTestAssessmentService
         $this->authorisationRepository = $authorisationRepository;
         $this->authorisationStatusRepository = $authorisationForTestingMotStatusRepository;
         $this->dateTimeHolder = $dateTimeHolder;
-        $this->validator = $validator;
+        $this->validator = new DemoTestAssessmentValidator();
     }
 
     public function create(array $data)

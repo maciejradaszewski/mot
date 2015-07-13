@@ -10,7 +10,7 @@ import uk.gov.dvsa.helper.PageInteractionHelper;
 public class VehicleSearchPage extends Page {
 
     public static final String path = "/vehicle-search";
-    private static final String PAGE_TITLE = "Vehicle search";
+    private static final String PAGE_TITLE = "Find a vehicle";
 
     @FindBy(id = "vin-info") private WebElement vinInfo;
 
@@ -33,6 +33,8 @@ public class VehicleSearchPage extends Page {
     @FindBy(id = "VehicleSearch") private WebElement vehicleSearchForm;
 
     @FindBy(id = "new-vehicle-record-link") private WebElement createNewVehicleLink;
+
+    @FindBy(id = "search-again") private WebElement searchAgainLink;
 
     @FindBy(xpath = ".//p[contains(., 'No matches were found for VIN')]") private WebElement
             noVinMatchErrorBox;
@@ -61,10 +63,46 @@ public class VehicleSearchPage extends Page {
         return this;
     }
 
+    public VehicleSearchPage searchVehicle(String registration, String vin) {
+        registrationField.clear();
+        vinField.clear();
+        registrationField.sendKeys(registration);
+        vinField.sendKeys(vin);
+        searchButton.click();
+
+        return this;
+    }
+
     public StartTestConfirmationPage selectVehicleFromTable(){
         WebElement vehicleLink = driver.findElement(searchResultsTable);
         vehicleLink.click();
 
         return new StartTestConfirmationPage(driver);
+    }
+
+    public String getVehicleSearchStepNumber() {
+        return stepInfo.getText();
+    }
+
+    public boolean isCreateNewVehicleRecordLinkDisplayed() {
+        return createNewVehicleLink.isDisplayed();
+    }
+
+    public boolean isCreateNewVehicleInfoDisplayed() {
+        return createNewVehicleInfo.isDisplayed();
+    }
+
+    public String getMainMessageText() {
+        return mainMessage.getText();
+    }
+
+    public boolean isResultVehicleDisplayed() {
+        return driver.findElement(searchResultsTable).isDisplayed();
+    }
+
+    public VehicleSearchPage clickSearchAgain() {
+        searchAgainLink.click();
+
+        return this;
     }
 }

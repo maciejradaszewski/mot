@@ -1,4 +1,4 @@
-package uk.gov.dvsa.ui;
+package uk.gov.dvsa.ui.user.journeys;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -6,6 +6,7 @@ import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.service.ServiceLocator;
+import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.NotificationPage;
 import uk.gov.dvsa.ui.pages.VehicleTestingStationPage;
 

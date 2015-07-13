@@ -22,22 +22,24 @@ public class PageNavigator {
         return CookieService.generateOpenAmLoginCookie(user);
     }
 
-    public TestResultsEntryPage gotoTestResultsEntryPage(User user, Vehicle vehicle)
-            throws URISyntaxException, IOException {
+    public VehicleSearchPage gotoVehicleSearchPage(User user) throws URISyntaxException, IOException {
+        injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.path);
+        return new VehicleSearchPage(driver);
+    }
+
+    public TestResultsEntryPage gotoTestResultsEntryPage(User user, Vehicle vehicle) throws URISyntaxException, IOException {
         injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.path);
 
-        VehicleSearchPage vehicleSearchPage =
-                PageLocator.getVehicleSearchPage(driver).searchVehicle(vehicle);
+        VehicleSearchPage vehicleSearchPage = PageLocator.getVehicleSearchPage(driver).searchVehicle(vehicle);
         StartTestConfirmationPage testConfirmationPage = vehicleSearchPage.selectVehicleFromTable();
-        TestOptionsPage testOptionsPage = testConfirmationPage.clickStartMotTest();
+        TestOptionsPage testOptionsPage =  testConfirmationPage.clickStartMotTest();
 
         driver.navigateToPath(testOptionsPage.getMotTestPath());
 
         return new TestResultsEntryPage(driver);
     }
 
-    public ContingencyTestEntryPage gotoContingencyTestEntryPage(User user)
-            throws URISyntaxException, IOException {
+    public ContingencyTestEntryPage gotoContingencyTestEntryPage(User user) throws URISyntaxException, IOException {
         injectOpenAmCookieAndNavigateToPath(user, ContingencyTestEntryPage.path);
 
         return new ContingencyTestEntryPage(driver);
@@ -49,10 +51,8 @@ public class PageNavigator {
         return new ChangeDetailsPage(driver);
     }
 
-    public VtsChangeContactDetailsPage gotoVtsChangeContactDetailsPage(User user, String siteId)
-            throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user,
-                String.format(VtsChangeContactDetailsPage.PATH, siteId));
+    public VtsChangeContactDetailsPage gotoVtsChangeContactDetailsPage(User user, String siteId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(VtsChangeContactDetailsPage.PATH,siteId));
 
         return new VtsChangeContactDetailsPage(driver);
     }

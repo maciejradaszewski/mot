@@ -30,7 +30,7 @@ These users can not issue replacement certificates.
 |AEDM                                         |aedm                     |false         |false            |false            |false           |
 |AED                                          |aed1                     |false         |false            |false            |false           |
 |VTS Site Manager                             |site-manager             |false         |false            |false            |false           |
-|DVLA Central Operative                       |do                       |false         |false            |false            |false           |
+|DVLA Central Operative                       |do                       |true          |true             |true             |true            |
 |Customer Service Centre Operative            |csco                     |false         |false            |false            |false           |
 |MOT Scheme Manager                           |schememgt                |false         |false            |false            |false           |
 |MOT Scheme User                              |schemeuser               |false         |false            |false            |false           |

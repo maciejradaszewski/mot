@@ -9,7 +9,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class VehicleSearchRetestPage extends VehicleSearchPage {
 
-    private static String VEHICLE_SEARCH_RETEST_PAGE_TITLE = "VEHICLE SEARCH - RETEST";
+    private static String VEHICLE_SEARCH_RETEST_PAGE_TITLE = "FIND A VEHICLE - RETEST";
 
     @FindBy(id = "test-number-input") private WebElement previousTestNumber;
 

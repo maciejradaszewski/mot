@@ -4,6 +4,7 @@ import com.dvsa.mot.selenium.datasource.Assertion;
 import com.dvsa.mot.selenium.datasource.Login;
 import com.dvsa.mot.selenium.datasource.Person;
 import com.dvsa.mot.selenium.framework.BaseTest;
+import com.dvsa.mot.selenium.framework.Utilities;
 import com.dvsa.mot.selenium.framework.api.*;
 import com.dvsa.mot.selenium.framework.api.authorisedexaminer.AeDetails;
 import com.dvsa.mot.selenium.framework.api.authorisedexaminer.AeService;
@@ -21,6 +22,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.testng.annotations.Test;
+import uk.gov.dvsa.domain.model.VehicleClassGroup;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -30,6 +32,7 @@ import java.util.Collections;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 public class DVSAAccessUserProfileTest extends BaseTest {
 
@@ -81,7 +84,6 @@ public class DVSAAccessUserProfileTest extends BaseTest {
                 Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_DEMO_TEST_NEEDED,
                 Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_DEMO_TEST_NEEDED);
 
-
         RecordDemoPageGroupA recordDemoPageGroupA =
                 helpDeskUserProfilePageDemoNeededA.clickRecordDemoLinkGroupA();
         HelpDeskUserProfilePage helpDeskUserProfilePage = recordDemoPageGroupA.clickConfirm();
@@ -89,7 +91,7 @@ public class DVSAAccessUserProfileTest extends BaseTest {
                 Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_QUALIFIED,
                 Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_DEMO_TEST_NEEDED);
         HelpDeskUserProfilePage helpDeskUserProfilePageDemoNeededB =
-                eventHistoryCheck("A", helpDeskUserProfilePage);
+                eventHistoryCheck(VehicleClassGroup.A, helpDeskUserProfilePage);
 
         RecordDemoPageGroupB recordDemoPageGroupB =
                 helpDeskUserProfilePageDemoNeededB.clickRecordDemoLinkGroupB();
@@ -99,14 +101,14 @@ public class DVSAAccessUserProfileTest extends BaseTest {
                 Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_QUALIFIED,
                 Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_QUALIFIED);
         HelpDeskUserProfilePage newHelpDeskUserProfilePageQualified =
-                eventHistoryCheck("B", helpDeskUserProfilePageQualified);
+                eventHistoryCheck(VehicleClassGroup.B, helpDeskUserProfilePageQualified);
 
         newHelpDeskUserProfilePageQualified.clickLogout();
 
         UserDashboardPage userDashboardPage =
                 UserDashboardPage.navigateHereFromLoginPage(driver, personUser.getLogin());
-        userNotificationCheck(userDashboardPage, "A");
-        userNotificationCheck(userDashboardPage, "B");
+        userNotificationCheck(userDashboardPage, VehicleClassGroup.A);
+        userNotificationCheck(userDashboardPage, VehicleClassGroup.B);
     }
 
     @Test(groups = {"Regression", "VM-10519", "VM-10520", "VM-10521"},
@@ -160,45 +162,46 @@ public class DVSAAccessUserProfileTest extends BaseTest {
     }
 
     private UserDashboardPage userNotificationCheck(UserDashboardPage userDashboardPage,
-            String group) {
+            VehicleClassGroup vehicleClassGroup) {
         NotificationPage notificationPage = userDashboardPage
-                .clickNotification(String.format("Passed Group %s demonstration test", group));
+                .clickNotification(String.format("Passed Group %s demonstration test", vehicleClassGroup));
 
         assertEquals(notificationPage.getNotificationContent(), String.format(
                 "You passed your demonstration test. You are now qualified to test Group %s vehicles.",
-                group), "Checks that notification message is correct");
+                vehicleClassGroup), "Checks that notification message is correct");
 
         return notificationPage.clickHome();
     }
 
-    private HelpDeskUserProfilePage eventHistoryCheck(String group,
+    private HelpDeskUserProfilePage eventHistoryCheck(VehicleClassGroup vehicleClassGroup,
             HelpDeskUserProfilePage helpDeskUserProfilePage) {
         EventHistoryPage eventHistoryPage = helpDeskUserProfilePage.clickEventHistoryLink();
 
+        DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("d MMM yyyy");
         DateTime currentDate = new DateTime();
-        DateTimeFormatter eventDateFormat = DateTimeFormat.forPattern("d MMM yyyy, HH:mma");
-        DateTime eventDateToParse = eventDateFormat.parseDateTime(eventHistoryPage.getEventDate());
-        String eventDate =
-                eventDateToParse.toString(DateTimeFormat.forPattern("d MMM yyyy")).toString();
+        String eventDateTime = eventHistoryPage.getEventDate();
 
-        String expectedDate = currentDate.toString(DateTimeFormat.forPattern("d MMM yyyy"));
+        String expectedDate = currentDate.toString(dateTimeFormat);
 
         assertEquals(eventHistoryPage.getEventType(),
-                String.format("Group %s Tester Qualification", group), String.format(
+                String.format("Group %s Tester Qualification", vehicleClassGroup), String.format(
                         "Check to ensure Qualification Status change event type for Group %s is displayed",
-                        group));
+                        vehicleClassGroup));
 
-        assertEquals(eventDate, expectedDate, String.format(
+        assertEquals(eventDateTime.split(",")[0], expectedDate, String.format(
                 "Check to ensure Qualification Status change event date for Group %s is displayed",
-                group));
+                vehicleClassGroup));
+
+        assertTrue((Utilities.getTimeDifference(eventDateTime.split(",")[1])) <= 5,
+                "Check the time difference of the event created is less than 5 minutes");
 
         String description = String.format(
                 "Qualified to test Group %s vehicles following a demonstration test. Recorded by",
-                group);
+                vehicleClassGroup);
 
         assertThat(String.format(
-                        "Check to ensure Qualification Status change event description for Group %s is displayed",
-                        group), eventHistoryPage.getDescription(), containsString(description));
+                "Check to ensure Qualification Status change event description for Group %s is displayed",
+                vehicleClassGroup), eventHistoryPage.getDescription(), containsString(description));
         eventHistoryPage.clickGoBackLink();
 
         return new HelpDeskUserProfilePage(driver);

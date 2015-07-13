@@ -5,12 +5,9 @@ namespace DvsaMotApi\Service\Validator;
 use DvsaCommonApi\Service\Exception\RequiredFieldException;
 use DvsaCommonApi\Service\Validator\AbstractValidator;
 use DvsaCommon\Model\VehicleClassGroup;
+use Zend\Validator\Digits;
 use Zend\Validator\ValidatorInterface;
 
-
-/**
- * Class DemoTestAssessmentValidator
- */
 class DemoTestAssessmentValidator extends AbstractValidator
 {
     const FIELD_TESTER_ID = 'testerId';
@@ -27,11 +24,11 @@ class DemoTestAssessmentValidator extends AbstractValidator
 
     private $digitValidator;
 
-    public function __construct(ValidatorInterface $digitValidator)
+    public function __construct()
     {
         parent::__construct();
 
-        $this->digitValidator = $digitValidator;
+        $this->digitValidator = new Digits();
     }
 
     /**

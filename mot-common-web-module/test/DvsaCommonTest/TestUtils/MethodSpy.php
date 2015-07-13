@@ -2,6 +2,15 @@
 
 namespace DvsaCommonTest\TestUtils;
 
+/**
+ * Class MethodSpy
+ *
+ * Uses PhpUnit to create a spy for the given method of the given mock.
+ * Allows to check parameters passed to mocks AFTER the mocked method is called.
+ * (In contradiction to classic mocking, where the checks are defined before the call)
+ *
+ * @package DvsaCommonTest\TestUtils
+ */
 class MethodSpy
 {
     private $invoker;

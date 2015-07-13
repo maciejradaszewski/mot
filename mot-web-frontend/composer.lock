@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e75c5d79b44811835e1ef2dc64428e82",
+    "hash": "fa6bc8de091f4fa9a36dee1003933206",
     "packages": [
         {
             "name": "cpms/client",
@@ -1025,11 +1025,11 @@
         },
         {
             "name": "dvsa/web-frontend-assets",
-            "version": "v0.4.1",
+            "version": "v0.4.2",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/web-frontend-assets.git",
-                "reference": "d37152739d7f84151bbc087e6cdb708213e098b6"
+                "reference": "dacd37f86ef95e2148f0ee5564859a1756aa427b"
             },
             "type": "library",
             "authors": [
@@ -1038,7 +1038,7 @@
                     "email": ""
                 }
             ],
-            "time": "2015-06-26 12:39:50"
+            "time": "2015-07-08 08:26:37"
         },
         {
             "name": "erusev/parsedown",
