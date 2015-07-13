@@ -5,7 +5,6 @@ namespace UserApi\Dashboard\Dto;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaEntities\Entity\Notification;
 use NotificationApi\Mapper\NotificationMapper;
-use UserFacade\Role;
 
 use \DvsaCommon\Auth\AbstractMotAuthorisationService as AuthorisationService;
 
@@ -30,35 +29,34 @@ class DashboardData
     /** @var  $inProgressTestNumber integer */
     private $inProgressTestNumber;
 
+    /** @var  $inProgressTestTypeCode string */
+    private $inProgressTestTypeCode;
+
     /** @var $authorisationService MotAuthorisationServiceInterface */
     private $authorisationService;
 
 
     /**
-     * @param Role[]                               $roles
      * @param AuthorisationForAuthorisedExaminer[] $authorisedExaminers
      * @param array                                $specialNotice
      * @param Notification[]                       $notifications
-     * @param array                                $vtcAuthorisations
      * @param integer                              $inProgressTestNumber
-     * @param boolean                              $isTesterQualified
-     * @param boolean                              $isTesterActive
+     * @param integer                              $inProgressTestTypeCode
+     * @param MotAuthorisationServiceInterface     $authorisationService
      */
     public function __construct(
-        $roles,
         $authorisedExaminers,
         $specialNotice,
         $notifications,
-        $vtcAuthorisations,
         $inProgressTestNumber,
-        $isTesterQualified,
-        $isTesterActive,
+        $inProgressTestTypeCode,
         MotAuthorisationServiceInterface $authorisationService
     ) {
         $this->setAuthorisedExaminers($authorisedExaminers);
         $this->setSpecialNotice(new SpecialNotice($specialNotice));
         $this->setNotifications($notifications);
         $this->setInProgressTestNumber($inProgressTestNumber);
+        $this->setInProgressTestTypeCode($inProgressTestTypeCode);
         $this->authorisationService = $authorisationService;
         $this->setHero($this->authorisationService->getHero());
     }
@@ -82,11 +80,12 @@ class DashboardData
         }
 
         return [
-            'hero'                 => $this->getHero(),
-            'authorisedExaminers'  => $authorisedExaminers,
-            'specialNotice'        => $this->getSpecialNotice()->toArray(),
-            'notifications'        => $notificationExtractedList,
-            'inProgressTestNumber' => $this->inProgressTestNumber
+            'hero'                   => $this->getHero(),
+            'authorisedExaminers'    => $authorisedExaminers,
+            'specialNotice'          => $this->getSpecialNotice()->toArray(),
+            'notifications'          => $notificationExtractedList,
+            'inProgressTestNumber'   => $this->inProgressTestNumber,
+            'inProgressTestTypeCode' => $this->inProgressTestTypeCode
         ];
     }
 
@@ -188,5 +187,21 @@ class DashboardData
     public function getInProgressTestNumber()
     {
         return $this->inProgressTestNumber;
+    }
+
+    /**
+     * @param string $inProgressTestTypeCode
+     */
+    public function setInProgressTestTypeCode($inProgressTestTypeCode)
+    {
+        $this->inProgressTestTypeCode = $inProgressTestTypeCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInProgressTestTypeCode()
+    {
+        return $this->inProgressTestTypeCode;
     }
 }

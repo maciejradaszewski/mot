@@ -446,16 +446,17 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
     private function getDashboarhData()
     {
         return [
-            'hero'                 => null,
-            'permissions'          => null,
-            'specialNotice'        => [
+            'hero'                   => null,
+            'permissions'            => null,
+            'specialNotice'          => [
                 'daysLeftToView' => null,
                 'unreadCount'    => null,
                 'overdueCount'   => null,
             ],
-            'notifications'        => [],
-            'inProgressTestNumber' => null,
-            'authorisedExaminers'  => [],
+            'notifications'          => [],
+            'inProgressTestNumber'   => null,
+            'inProgressTestTypeCode' => null,
+            'authorisedExaminers'    => [],
         ];
     }
 

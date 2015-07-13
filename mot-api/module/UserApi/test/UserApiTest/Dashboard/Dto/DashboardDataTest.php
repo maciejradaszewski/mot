@@ -15,7 +15,7 @@ class DashboardDataTest extends AbstractServiceTestCase
     {
         $specialNotice = SpecialNoticeTest::getInputUnreadOverdueDeadline();
         $authorisationMock = AuthorisationServiceMock::grantedAll();
-        $dashboard = new DashboardData([], [], $specialNotice, [], [], 3, true, true, $authorisationMock);
+        $dashboard = new DashboardData([], $specialNotice, [], 3, 'RT', $authorisationMock);
         $this->assertWellFormedData($dashboard->toArray());
     }
 

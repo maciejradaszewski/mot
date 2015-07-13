@@ -50,7 +50,8 @@ class DashboardTest extends \PHPUnit_Framework_TestCase
         $aeCount,
         $vtsCount,
         $expected
-    ) {
+    )
+    {
         $dashboard = new Dashboard(ApiDashboardResourceTest::getTestDataForAedm($aeCount, ['vtsCount' => $vtsCount]));
 
         $this->assertEquals($expected, $dashboard->getOverallSiteCount());
@@ -159,9 +160,39 @@ class DashboardTest extends \PHPUnit_Framework_TestCase
     private function getSpecialNoticeInput()
     {
         return [
-            'unreadCount'    => 1,
+            'unreadCount' => 1,
             'daysLeftToView' => 3,
-            'overdueCount'   => 0,
+            'overdueCount' => 0,
         ];
+    }
+
+    public function test_isInProgressTestARetest_trueIfTypeIsRetest()
+    {
+        $testData = ApiDashboardResourceTest::getTestDataForAedm();
+        $testData['inProgressTestTypeCode'] = 'RT';
+        $dashboard = new Dashboard($testData);
+        $this->assertTrue($dashboard->isInProgressTestARetest());
+    }
+
+    public function test_isInProgressTestARetest_falseIfTypeIsNotRetest()
+    {
+        $testData = ApiDashboardResourceTest::getTestDataForAedm();
+        $dashboard = new Dashboard($testData);
+        $this->assertFalse($dashboard->isInProgressTestARetest());
+    }
+
+    public function test_getEnterTestResultsLabel_shouldReturnExpectedIfTypeIsRetest()
+    {
+        $testData = ApiDashboardResourceTest::getTestDataForAedm();
+        $testData['inProgressTestTypeCode'] = 'RT';
+        $dashboard = new Dashboard($testData);
+        $this->assertSame("Enter retest results", $dashboard->getEnterTestResultsLabel());
+    }
+
+    public function test_getEnterTestResultsLabel_shouldReturnExpectedIfTypeIsNotRetest()
+    {
+        $testData = ApiDashboardResourceTest::getTestDataForAedm();
+        $dashboard = new Dashboard($testData);
+        $this->assertSame("Enter test results", $dashboard->getEnterTestResultsLabel());
     }
 }

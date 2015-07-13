@@ -84,20 +84,14 @@ class DashboardService extends AbstractService
         $dtoAeList = $this->getAuthorisedExaminersByPerson($person);
         $specialNotice = $this->specialNoticeService->specialNoticeSummaryForUser($person->getUsername());
         $notifications = $this->notificationService->getAllByPersonId($personId);
-        $vtcAuthorisations = $this->personalAuthorisationService->getPersonalTestingAuthorisation($personId);
-        $inProgressTestId = $this->testerService->findInProgressTestIdForTester($personId);
-        $isTesterQualified = $person->isQualifiedTester();
-        $isTesterActive = $this->testerService->isTesterActiveByUser($person);
+        $inProgressTest   = $this->testerService->findInProgressTestForTester($personId);
 
         $dashboard = new DashboardData(
-            [],
             $dtoAeList,
             $specialNotice,
             $notifications,
-            $vtcAuthorisations->toArray(),
-            $inProgressTestId,
-            $isTesterQualified,
-            $isTesterActive,
+            $inProgressTest !== null ? $inProgressTest->getNumber() : null,
+            $inProgressTest !== null ? $inProgressTest->getMotTestType()->getCode() : null,
             $this->authorisationService
         );
 
