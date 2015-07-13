@@ -375,6 +375,9 @@ class MotTestRepository extends AbstractMutableRepository
             MotTestStatusName::ABANDONED
         ];
 
+        $testTypes = $this->testTypes;
+        $testTypes[] = MotTestTypeCode::TARGETED_REINSPECTION;
+
         $qb = $this
             ->createQueryBuilder("mt")
             ->innerJoin("mt.motTestType", "t")
@@ -386,7 +389,7 @@ class MotTestRepository extends AbstractMutableRepository
             ->addOrderBy("mt.completedDate", "DESC")
             ->addOrderBy("mt.vehicleTestingStation", "ASC")
             ->setParameter("statuses", $statuses)
-            ->setParameter("testTypes", $this->testTypes)
+            ->setParameter("testTypes", $testTypes)
             ->setParameter("vehicleId", $vehicleId);
 
         if ($startDate !== null) {

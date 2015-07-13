@@ -75,14 +75,9 @@ class VehicleHistoryService
 
     /**
      * Iterates through list of VehicleHistoryItemDto and marks items as eligible to issue replacement certificate
-     *  when the item meets criteria:
-     * - status equals PASSED or FAILED
-     * - user has CERTIFICATE_REPLACEMENT_FULL permission
+     *  when the item meets criteria:.
+     *
      * - there is no more recent test
-     * or
-     * - status equals PASSED or FAILED
-     * - test type equals NORMAL or RETEST
-     * - number of days that passed since issue date is lower then 7
      * - no previous item has been marked as eligible to issue replacement certificate.
      *
      * @param VehicleHistoryDto $vehicleHistoryDto
@@ -93,77 +88,112 @@ class VehicleHistoryService
             return;
         };
 
-        $hasFullReplacementPermission = $this->authService->isGranted(PermissionInSystem::CERTIFICATE_REPLACEMENT_FULL);
-        $hasAlreadyMarkedSomePreviousItemAsEligible = false;
+        $grantedFullCertReplacement = $this->authService->isGranted(PermissionInSystem::CERTIFICATE_REPLACEMENT_FULL);
+
+        $history = $vehicleHistoryDto->getIterator();
+
+        if (!$history) {
+            return;
+        }
+
+        $history->uasort(function (VehicleHistoryItemDto $a, VehicleHistoryItemDto $b) {
+
+            if ($a->getPrsMotTestId() &&
+                $a->getPrsMotTestId() == $b->getId() &&
+                $b->getPrsMotTestId() == $a->getId()
+            ) {
+                // For PRS: Passed first
+                return $a->getStatus() == MotTestStatusName::FAILED ? 1 : -1;
+            }
+
+            if ($a->getIssuedDate() == $b->getIssuedDate()) {
+                // By id if dates the same
+                return $a->getId() < $b->getId() ? 1 : -1;
+            }
+
+            // Descending
+            return $a->getIssuedDate() < $b->getIssuedDate() ? 1 : -1;
+        });
+
+        $alreadyAssigned = FALSE;
 
         /** @var VehicleHistoryItemDto $item */
-        foreach ($vehicleHistoryDto->getIterator() as $item) {
-            $isStatusEditable = in_array(
-                $item->getStatus(),
-                [MotTestStatusName::PASSED, MotTestStatusName::FAILED]
-            );
+        foreach ($history as $index=>$item) {
+            $allowedEdit = $this->isEditAllowedForHistoryItem($item);
 
-            $isTestTypeEditable = in_array(
-                $item->getTestType(),
-                [MotTestTypeCode::NORMAL_TEST, MotTestTypeCode::RE_TEST]
-            );
+            if ($grantedFullCertReplacement) {
+                $item->setAllowEdit($allowedEdit);
+            } else {
+                $item->setAllowEdit($alreadyAssigned ? FALSE : $allowedEdit);
+                $alreadyAssigned = $alreadyAssigned ? TRUE : $allowedEdit;
+            }
 
-            $numberOfDaysPassedSinceTestIssue = $item->getIssuedDate()
-                ? (int)DateUtils::getDaysDifference(
-                    DateUtils::cropTime(DateUtils::toDateTime($item->getIssuedDate())),
-                    $this->dateTimeHolder->getCurrentDate()
-                )
-                : NULL;
+            if (in_array($item->getTestType(), [
+                MotTestTypeCode::TARGETED_REINSPECTION,
+                MotTestTypeCode::STATUTORY_APPEAL,
+                MotTestTypeCode::INVERTED_APPEAL,
+            ])) {
+                $alreadyAssigned = TRUE;
+            }
+        }
 
-            $isMostRecentNonAbandoned = $vehicleHistoryDto->isMostRecentNonAbandoned($item);
-
-            $isEligibleToIssueReplacement = $this->isPossibleToIssueReplacement(
-                $isStatusEditable,
-                $hasFullReplacementPermission,
-                $isTestTypeEditable,
-                $numberOfDaysPassedSinceTestIssue,
-                $hasAlreadyMarkedSomePreviousItemAsEligible,
-                $isMostRecentNonAbandoned
-            );
-
-            $item->setAllowEdit($isEligibleToIssueReplacement);
-
-            $hasAlreadyMarkedSomePreviousItemAsEligible = $hasAlreadyMarkedSomePreviousItemAsEligible
-                || $isEligibleToIssueReplacement;
+        foreach ($history as $index=>$item) {
+            // Remove targeted reinspection from the list
+            if ($item->getTestType() == MotTestTypeCode::TARGETED_REINSPECTION) {
+                $history->offsetUnset($index);
+            }
         }
     }
 
     /**
-     * @param bool $isStatusEditable
-     * @param bool $hasFullReplacementPermission
-     * @param bool $isTestTypeEditable
-     * @param int  $numberOfDaysPassedSinceTestIssue
-     * @param bool $hasAlreadyMarkedSomePreviousItemAsEligible
-     * @param bool $hasMoreRecentTest
+     * Edit is allowed when:.
+     *
+     * - status equals PASSED or FAILED
+     * - user has CERTIFICATE_REPLACEMENT_FULL permission
+     * - user has CERTIFICATE_REPLACEMENT permission AND...
+     * - status equals PASSED or FAILED
+     * - test type equals NORMAL or RETEST
+     * - certificate did not expired (there is a requirement that colour of the vehicle
+     *   should be editable for the lifetime of certificate)
+     *
+     * @param VehicleHistoryItemDto $item Item to be checked
+     *
+     * @throws \DvsaCommon\Date\Exception\IncorrectDateFormatException
      *
      * @return bool
      */
-    protected function isPossibleToIssueReplacement(
-        $isStatusEditable,
-        $hasFullReplacementPermission,
-        $isTestTypeEditable,
-        $numberOfDaysPassedSinceTestIssue,
-        $hasAlreadyMarkedSomePreviousItemAsEligible,
-        $isMostRecentNonAbandoned
-    ) {
-        $isAllowEdit = false;
+    protected function isEditAllowedForHistoryItem(VehicleHistoryItemDto $item)
+    {
+        $grantedFullCertReplacement = $this->authService->isGranted(PermissionInSystem::CERTIFICATE_REPLACEMENT_FULL);
 
-        if ($isStatusEditable && $isMostRecentNonAbandoned) {
-            if ($hasFullReplacementPermission) {
-                $isAllowEdit = true;
-            } elseif (
-                $isTestTypeEditable
-                && $numberOfDaysPassedSinceTestIssue <= self::MODIFICATION_WINDOW_LENGTH_IN_DAYS
-                && $hasAlreadyMarkedSomePreviousItemAsEligible === false
-            ) {
-                $isAllowEdit = true;
-            }
+        if (!$this->authService->isGranted(PermissionInSystem::CERTIFICATE_REPLACEMENT)) {
+            return FALSE;
         }
-        return $isAllowEdit;
+
+        if (!in_array($item->getStatus(), [MotTestStatusName::PASSED, MotTestStatusName::FAILED])) {
+            return FALSE;
+        }
+
+        if ($grantedFullCertReplacement) {
+            return true;
+        }
+
+        if (!in_array($item->getTestType(),
+            [
+                MotTestTypeCode::NORMAL_TEST,
+                MotTestTypeCode::RE_TEST,
+            ])
+        ) {
+            return FALSE;
+        };
+
+        $currentDate = DateUtils::today();
+        $expiryDate  = $item->getExpiryDate() ?: NULL;
+
+        if ($expiryDate && DateUtils::compareDates($expiryDate, $currentDate) <= 0) {
+            return FALSE;
+        }
+
+        return TRUE;
     }
 }

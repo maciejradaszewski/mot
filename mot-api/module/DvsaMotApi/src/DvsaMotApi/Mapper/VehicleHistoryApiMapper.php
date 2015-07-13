@@ -29,6 +29,14 @@ class VehicleHistoryApiMapper
             $itemDto->setTestType($motTest->getMotTestType()->getCode());
             $itemDto->setAllowEdit(false);
 
+            if ($motTest->getPrsMotTest()) {
+                $itemDto->setPrsMotTestId($motTest->getPrsMotTest()->getId());
+            }
+
+            if ($motTest->getExpiryDate()) {
+                $itemDto->setExpiryDate($motTest->getExpiryDate());
+            }
+
             if ($motTest->getIssuedDate()) {
                 $itemDto->setIssuedDate(DateTimeApiFormat::dateTime($motTest->getIssuedDate()));
             }

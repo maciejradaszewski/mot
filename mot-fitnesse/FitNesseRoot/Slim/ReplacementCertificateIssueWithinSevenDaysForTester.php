@@ -91,7 +91,7 @@ class ReplacementCertificateIssueWithinSevenDaysForTester
                 'startDate' => DateTimeApiFormat::dateTime(DateUtils::toDate($this->dateOfTest)),
                 'issueDate' => DateTimeApiFormat::date(DateUtils::toDate($this->dateOfTest)),
                 'completedDate' => DateTimeApiFormat::dateTime(DateUtils::toDate($this->dateOfTest)),
-                'expiryDate' => DateTimeApiFormat::date(DateUtils::toDate($this->dateOfTest))
+                'expiryDate' => DateTimeApiFormat::date(DateUtils::toDate($this->dateOfTest)->modify('+1 year'))
             ]
         );
 
