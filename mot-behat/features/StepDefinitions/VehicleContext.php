@@ -266,16 +266,16 @@ class VehicleContext implements Context
     {
         $data = $this->searchedVehicleResponse->getBody()['data'];
         if(array_key_exists('vehicle', $data)) {
-            PHPUnit::assertThat($data['vehicle']['registration'], PHPUnit::identicalTo(($reg)));
+            PHPUnit::assertSame($data['vehicle']['registration'], PHPUnit::identicalTo(($reg)));
         }
         if(array_key_exists('vehicles', $data)) {
-            PHPUnit::assertThat($data['vehicles'][0]['registration'], PHPUnit::identicalTo(($reg)));
+            PHPUnit::assertSame($data['vehicles'][0]['registration'], PHPUnit::identicalTo(($reg)));
         }
         if(array_key_exists('vehicle', $data)) {
-            PHPUnit::assertThat($data['vehicle']['vin'], PHPUnit::identicalTo(($vin)));
+            PHPUnit::assertSame($data['vehicle']['vin'], PHPUnit::identicalTo(($vin)));
         }
         if(array_key_exists('vehicles', $data)) {
-            PHPUnit::assertThat($data['vehicles'][0]['vin'], PHPUnit::identicalTo(($vin)));
+            PHPUnit::assertSame($data['vehicles'][0]['vin'], PHPUnit::identicalTo(($vin)));
         }
     }
 
@@ -290,10 +290,10 @@ class VehicleContext implements Context
     {
         $data = $this->searchedVehicleResponse->getBody()['data'];
         if(array_key_exists('vehicle', $data)) {
-            PHPUnit::assertThat($data['vehicle']['registration'], PHPUnit::identicalTo(($reg)));
+            PHPUnit::assertSame($data['vehicle']['registration'], PHPUnit::identicalTo(($reg)));
         }
         if(array_key_exists('vehicles', $data)) {
-            PHPUnit::assertThat($data['vehicles'][0]['registration'], PHPUnit::identicalTo(($reg)));
+            PHPUnit::assertSame($data['vehicles'][0]['registration'], PHPUnit::identicalTo(($reg)));
         }
     }
 
