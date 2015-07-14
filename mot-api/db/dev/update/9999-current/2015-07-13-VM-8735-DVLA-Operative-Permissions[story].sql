@@ -1,15 +1,13 @@
 -- Add permission "CERTIFICATE-REPLACEMENT-FULL" for the DVLA Operative User
 
-UPDATE `person` SET `user_reference` = 'Static Data' WHERE `username` = 'static data';
-
-SET @created_by = (SELECT `id` FROM `person` WHERE `user_reference` = 'Static Data' );
+SET @created_by = (SELECT `id` FROM `person` WHERE `user_reference` = 'Static Data' OR `username` = 'static data');
 
 INSERT INTO
   `role_permission_map` (`role_id`, `permission_id`, `created_by`)
 VALUES
   (
-    (SELECT `id` FROM role WHERE `code` = 'DVLA-OPERATIVE'),
-    (SELECT `id` FROM permission WHERE `code` = 'CERTIFICATE-REPLACEMENT-FULL'),
+    (SELECT `id` FROM `role` WHERE `code` = 'DVLA-OPERATIVE'),
+    (SELECT `id` FROM `permission` WHERE `code` = 'CERTIFICATE-REPLACEMENT-FULL'),
     @created_by
   );
 
