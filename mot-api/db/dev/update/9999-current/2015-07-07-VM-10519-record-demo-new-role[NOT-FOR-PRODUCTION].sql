@@ -1,4 +1,4 @@
-SET @created_by = (SELECT `id` FROM `person` WHERE `username` = 'static data');
+SET @created_by = (SELECT `id` FROM `person` WHERE `user_reference` = 'Static Data' OR `username` = 'static data');
 
 INSERT INTO `role` (`code`, `name`, `created_by`)
 VALUES
@@ -26,8 +26,10 @@ SET @role_user_id = (SELECT `id` FROM `person_system_role` WHERE `name` = 'User'
 SET @role_ve_id = (SELECT `id` FROM `person_system_role` WHERE `name` = 'VEHICLE-EXAMINER');
 SET @role_vm10519_id = (SELECT `id` FROM `person_system_role` WHERE `name` = 'VM-10519-USER');
 
+SET @role_status_id = (SELECT `id` FROM `business_role_status` WHERE `code` = 'AC'); # Active
+
 INSERT INTO `person_system_role_map` (`person_id`, `person_system_role_id`, `status_id`, `created_by`)
 VALUES
-	(@person_id, @role_user_id, 1, 1),
-	(@person_id, @role_ve_id, 1, 1),
-	(@person_id, @role_vm10519_id, 1, 1);
+	(@person_id, @role_user_id, @role_status_id, @created_by),
+	(@person_id, @role_ve_id, @role_status_id, @created_by),
+	(@person_id, @role_vm10519_id, @role_status_id, @created_by);
