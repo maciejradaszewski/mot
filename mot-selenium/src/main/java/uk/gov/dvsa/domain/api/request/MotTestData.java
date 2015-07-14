@@ -7,7 +7,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
-import uk.gov.dvsa.domain.model.TestOutcome;
+import uk.gov.dvsa.domain.model.mot.TestOutcome;
 
 import java.util.ArrayList;
 import java.util.List;

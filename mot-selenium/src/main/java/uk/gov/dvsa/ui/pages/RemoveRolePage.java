@@ -4,6 +4,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
+import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 public class RemoveRolePage extends Page {
     private static final String PAGE_TITLE = "Remove a role";

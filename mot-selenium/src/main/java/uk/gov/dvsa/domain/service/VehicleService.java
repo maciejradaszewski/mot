@@ -9,12 +9,10 @@ import uk.gov.dvsa.domain.model.vehicle.*;
 import uk.gov.dvsa.framework.config.webdriver.WebDriverConfigurator;
 
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
-public class VehicleService extends BaseService {
+public class VehicleService extends Service {
     private static final String CREATE_PATH = "/testsupport/vehicle/create";
     private static final String oneTimePassword = "123456";
     private AuthService authService = new AuthService();
@@ -23,19 +21,19 @@ public class VehicleService extends BaseService {
         super(WebDriverConfigurator.testSupportUrl());
     }
 
-    public Vehicle createVehicle(User user) throws IOException {
+    protected Vehicle createVehicle(User user) throws IOException {
         return createVehicle(VehicleClass.four, user);
     }
 
-    public Vehicle createVehicle(VehicleClass vehicleClass, User user) throws IOException {
+    protected Vehicle createVehicle(VehicleClass vehicleClass, User user) throws IOException {
         Map<String, String> vehicleDataMap = new HashMap<>();
-        VehicleData vehicleData = VehicleData.MercedesBenz_300D;
+        VehicleDetails vehicleDetails = VehicleDetails.MercedesBenz_300D;
 
         vehicleDataMap.put("registrationNumber", generateCarRegistration());
         vehicleDataMap.put("vin", getRandomVin());
-        vehicleDataMap.put("make", vehicleData.getId());
+        vehicleDataMap.put("make", vehicleDetails.getId());
         vehicleDataMap.put("makeOther", "");
-        vehicleDataMap.put("model", vehicleData.getModelId());
+        vehicleDataMap.put("model", vehicleDetails.getModelId());
         vehicleDataMap.put("modelOther", "");
         vehicleDataMap.put("colour", Colour.Black.getId());
         vehicleDataMap.put("secondaryColour", Colour.Yellow.getId());

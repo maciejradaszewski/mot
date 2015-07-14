@@ -3,9 +3,8 @@ package uk.gov.dvsa.ui;
 import com.dvsa.mot.selenium.framework.InfoLoggingListener;
 import com.dvsa.mot.selenium.framework.Utilities;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Listeners;
+import org.testng.annotations.*;
+import uk.gov.dvsa.data.*;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.domain.workflow.RoleAssociationWorkflow;
 import uk.gov.dvsa.domain.workflow.VehicleReInspectionWorkflow;
@@ -15,30 +14,32 @@ import uk.gov.dvsa.framework.config.webdriver.WebDriverConfigurator;
 
 import java.util.Date;
 
-@Listeners(InfoLoggingListener.class) public abstract class BaseTest {
+@Listeners(InfoLoggingListener.class)
+public abstract class BaseTest {
 
     private MotAppDriver driver = null;
+    protected AeData aeData = new AeData();
+    protected SiteData siteData = new SiteData();
+    protected UserData userData = new UserData();
+    protected VehicleData vehicleData = new VehicleData();
+    protected MotData motData = new MotData();
+
     protected static final ThreadLocal<WebDriverConfigurator> webDriverConfigurator =
             new ThreadLocal<>();
 
-    private PageNavigator pageNavigator = new PageNavigator();
+    protected PageNavigator pageNavigator = new PageNavigator();
     private RoleAssociationWorkflow roleAssociationWorkflow = new RoleAssociationWorkflow();
-    private VehicleReInspectionWorkflow vehicleReInspectionWorkflow =
-            new VehicleReInspectionWorkflow();
-
-    public PageNavigator pageNavigator() {
-        return pageNavigator;
-    }
+    private VehicleReInspectionWorkflow vehicleReInspectionWorkflow = new VehicleReInspectionWorkflow();
 
     public RoleAssociationWorkflow roleAssociationWorkflow() {
         return roleAssociationWorkflow;
     }
-
     public VehicleReInspectionWorkflow vehicleReinspectionWorkflow() {
         return vehicleReInspectionWorkflow;
     }
 
-    @BeforeMethod(alwaysRun = true) public void setupBaseTest() {
+    @BeforeMethod(alwaysRun = true)
+    public void setupBaseTest() {
         if (null == webDriverConfigurator.get()) {
             webDriverConfigurator.set(new WebDriverConfigurator());
         }
@@ -53,21 +54,19 @@ import java.util.Date;
         driver.manage().deleteAllCookies();
     }
 
-    @AfterMethod(alwaysRun = true) public void tearDown(ITestResult result) {
+    @AfterMethod(alwaysRun = true)
+    public void tearDown(ITestResult result) {
         if (result.isSuccess()) {
             if (null != driver) {
                 driver.manage().deleteAllCookies();
             }
         } else {
             // Take screenshot on test failure
-            if (result.getStatus() == ITestResult.FAILURE && Configurator
-                    .isErrorScreenshotEnabled()) {
+            if (result.getStatus() == ITestResult.FAILURE && Configurator.isErrorScreenshotEnabled()) {
                 Utilities.takeScreenShot(driver,
                         result.getTestClass().getName().replace("com.dvsa.mot.selenium.", "") + "."
-                                + result.getName() + "_" + Configurator.screenshotDateFormat
-                                .format(new Date()) + ".png",
-                        Configurator.getErrorScreenshotPath() + "/" + Configurator
-                                .getBuildNumber());
+                                + result.getName() + "_" + Configurator.screenshotDateFormat.format(new Date())
+                                + ".png", Configurator.getErrorScreenshotPath() + "/" + Configurator.getBuildNumber());
             }
 
             WebDriverConfigurator cachedDriver = webDriverConfigurator.get();

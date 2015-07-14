@@ -5,6 +5,9 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.service.CookieService;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.ui.pages.*;
+import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
+import uk.gov.dvsa.ui.pages.vts.VtsChooseARolePage;
+import uk.gov.dvsa.ui.pages.vts.VtsSearchForAUserPage;
 
 import java.io.IOException;
 

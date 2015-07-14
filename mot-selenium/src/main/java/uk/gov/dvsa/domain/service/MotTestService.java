@@ -4,16 +4,16 @@ import com.jayway.restassured.response.Response;
 import org.joda.time.DateTime;
 import uk.gov.dvsa.domain.api.request.CreateMotTestRequest;
 import uk.gov.dvsa.domain.api.request.MotTestData;
-import uk.gov.dvsa.domain.model.MotTest;
-import uk.gov.dvsa.domain.model.TestOutcome;
+import uk.gov.dvsa.domain.model.mot.MotTest;
+import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.domain.model.Vehicle;
+import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.framework.config.webdriver.WebDriverConfigurator;
 
 import java.io.IOException;
 
 
-public class MotTestService extends BaseService {
+public class MotTestService extends Service {
     private static final String CREATE_MOT_TEST_PATH = "/testsupport/mottest";
     private AuthService authService = new AuthService();
 
@@ -21,7 +21,7 @@ public class MotTestService extends BaseService {
         super(WebDriverConfigurator.testSupportUrl());
     }
 
-    public MotTest createMotTest(User requestor, int siteId,
+    protected MotTest createMotTest(User requestor, int siteId,
                                  Vehicle vehicle, TestOutcome outcome,
                                  int mileage, DateTime issuedDate) throws IOException {
 
@@ -29,7 +29,7 @@ public class MotTestService extends BaseService {
         return createMotTest(requestor, vehicle, siteId, testData);
     }
 
-    public MotTest createMotTest(User requestor, Vehicle vehicle, int vtsId, MotTestData testData) throws IOException {
+    protected MotTest createMotTest(User requestor, Vehicle vehicle, int vtsId, MotTestData testData) throws IOException {
         String request =
                 jsonHandler.convertToString(new CreateMotTestRequest(requestor, vehicle, vtsId, testData));
 
@@ -40,7 +40,7 @@ public class MotTestService extends BaseService {
                 jsonHandler.convertToString(response.body().path("data")), MotTest.class);
     }
 
-    public MotTest createMotTest(CreateMotTestRequest motTestRequest) throws IOException {
+    protected MotTest createMotTest(CreateMotTestRequest motTestRequest) throws IOException {
         String request =
                 jsonHandler.convertToString(motTestRequest);
 

@@ -2,11 +2,17 @@ package uk.gov.dvsa.domain.navigation;
 
 import org.openqa.selenium.Cookie;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.domain.model.Vehicle;
+import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.CookieService;
 import uk.gov.dvsa.framework.config.Configurator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.ui.pages.*;
+import uk.gov.dvsa.ui.pages.accountclaim.AccountClaimPage;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.AeSlotsUsagePage;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerPage;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
+import uk.gov.dvsa.ui.pages.mot.*;
+import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -117,13 +123,5 @@ public class PageNavigator {
         injectOpenAmCookieAndNavigateToPath(user, AccountClaimPage.PATH);
 
         return new AccountClaimPage(driver);
-    }
-
-    public PermissionPage gotoPermissionPage(User user, String url) throws IOException {
-        driver.setUser(user);
-        driver.manage().addCookie(getCookieForUser(user));
-        driver.navigate().to(url);
-
-        return new PermissionPage(driver);
     }
 }

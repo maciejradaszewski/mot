@@ -6,22 +6,22 @@ import uk.gov.dvsa.framework.config.webdriver.WebDriverConfigurator;
 
 import java.io.IOException;
 
-public class AuthService extends BaseService{
+public class AuthService extends Service {
     private static final String CREATE_SESSION_ENDPOINT = "/session";
 
     protected AuthService() {
         super(WebDriverConfigurator.apiUrl());
     }
 
-    public String createSessionTokenForUser(User user) throws IOException {
+    protected String createSessionTokenForUser(User user) throws IOException {
         return createSessionTokenForUser(user.getUsername(), user.getPassword());
     }
 
-    public String getDvsaTokenForAuthRequest() throws IOException {
+    protected String getDvsaTokenForAuthRequest() throws IOException {
        return createSessionTokenForUser("areaoffice1user", "Password1");
     }
 
-    public String createSessionTokenForUser(String username, String password) throws IOException {
+    protected String createSessionTokenForUser(String username, String password) throws IOException {
         String request = jsonHandler.convertToString(new User(username, password));
 
         Response response = motClient.createSession(request, CREATE_SESSION_ENDPOINT);

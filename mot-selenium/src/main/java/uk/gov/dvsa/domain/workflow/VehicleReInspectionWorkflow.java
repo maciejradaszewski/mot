@@ -2,10 +2,12 @@ package uk.gov.dvsa.domain.workflow;
 
 import org.openqa.selenium.Cookie;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.domain.model.Vehicle;
+import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.CookieService;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.ui.pages.*;
+import uk.gov.dvsa.ui.pages.mot.*;
+import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.io.IOException;
 

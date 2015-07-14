@@ -11,13 +11,10 @@ public class AssessmentDetailsConfirmationPage extends Page {
     private static final String PAGE_TITLE = "Assessment details saved";
 
     @FindBy (id = "validation-message--success") private WebElement validationMsgSuccess;
-    private MotAppDriver driver;
 
     public AssessmentDetailsConfirmationPage(MotAppDriver driver) {
         super(driver);
         selfVerify();
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
     }
 
     @Override
