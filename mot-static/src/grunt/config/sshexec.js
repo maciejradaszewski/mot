@@ -201,9 +201,6 @@ module.exports = function(grunt, config) {
             fitnesse_event: {
                 command: 'cd /workspace/mot-fitnesse;./run_ci.sh "FrontPage.SuiteAcceptanceTests.EventSuite?suite" text'
             },
-            autoload_classmaps: {
-                command: 'cd /workspace/mot-static/src/scripts && ./generate_classmaps.sh && echo "Autoload classmaps generated"'
-            },
             jasper_tomcat_restart: {
                 options: {
                     host: '<%= jasper_config.host %>',

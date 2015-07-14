@@ -23,7 +23,7 @@ module.exports = function(grunt, config) {
         },
         composer: {
             command: grunt.config.get('composerModules').dirs.map(function(dir) {
-                return 'cd ' + dir + ' && composer install -o'
+                return 'cd ' + dir + ' && composer install && composer dump-autoload -o'
             }).join('; ')
         },
         install_devtools: {

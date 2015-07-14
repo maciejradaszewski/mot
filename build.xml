@@ -62,6 +62,10 @@
 			<arg value="--prefer-dist" />
 			<arg value="-o" />
 		</exec>
+        <exec dir="${basedir}/mot-api" executable="composer" failonerror="true">
+            <arg value="dump-autoload" />
+            <arg value="-o" />
+        </exec>
 	</target>
 
 	<target name="common-composer" description="Install composer">
@@ -71,6 +75,10 @@
 			<arg value="--prefer-dist" />
 			<arg value="-o" />
 		</exec>
+        <exec dir="${basedir}/mot-common-web-module" executable="composer" failonerror="true">
+            <arg value="dump-autoload" />
+            <arg value="-o" />
+        </exec>
 	</target>
 
 	<target name="frontend-composer" description="Install composer">
@@ -80,6 +88,10 @@
 			<arg value="--prefer-dist" />
 			<arg value="-o" />
 		</exec>
+        <exec dir="${basedir}/mot-web-frontend" executable="composer" failonerror="true">
+            <arg value="dump-autoload" />
+            <arg value="-o" />
+        </exec>
 	</target>
 
   <target name="testsupport-composer" description="Install composer">
@@ -89,15 +101,23 @@
       <arg value="--prefer-dist" />
       <arg value="-o" />
     </exec>
+      <exec dir="${basedir}/mot-testsupport" executable="composer" failonerror="true">
+          <arg value="dump-autoload" />
+          <arg value="-o" />
+      </exec>
   </target>
 
   <target name="fitnesse-composer" description="Install composer">
     <exec dir="${basedir}/mot-fitnesse" executable="composer" failonerror="true">
-      <arg value="install" />
-      <arg value="--no-interaction" />
-      <arg value="--prefer-dist" />
-      <arg value="-o" />
+        <arg value="install" />
+        <arg value="--no-interaction" />
+        <arg value="--prefer-dist" />
+        <arg value="-o" />
     </exec>
+      <exec dir="${basedir}/mot-fitnesse" executable="composer" failonerror="true">
+          <arg value="dump-autoload" />
+          <arg value="-o" />
+      </exec>
   </target>
 
   <target name="fitnesse-reset-composer" description="Reset composer for fitnesse test">
@@ -106,6 +126,10 @@
       <arg value="--no-dev" />
       <arg value="-o" />
     </exec>
+      <exec dir="../mot-api_dev/mot-api" executable="composer" failonerror="true">
+          <arg value="dump-autoload" />
+          <arg value="-o" />
+      </exec>
   </target>
 
     <target name="behat-composer" description="Install composer">
@@ -113,6 +137,10 @@
             <arg value="install" />
             <arg value="--no-interaction" />
             <arg value="--prefer-dist" />
+            <arg value="-o" />
+        </exec>
+        <exec dir="${basedir}/mot-behat" executable="composer" failonerror="true">
+            <arg value="dump-autoload" />
             <arg value="-o" />
         </exec>
     </target>
