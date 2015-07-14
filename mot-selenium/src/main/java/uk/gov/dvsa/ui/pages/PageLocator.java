@@ -1,6 +1,13 @@
 package uk.gov.dvsa.ui.pages;
 
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerPage;
+import uk.gov.dvsa.ui.pages.braketest.BrakeTestConfigurationPage;
+import uk.gov.dvsa.ui.pages.mot.*;
+import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
+import uk.gov.dvsa.ui.pages.vts.VtsChooseARolePage;
+import uk.gov.dvsa.ui.pages.vts.VtsSearchForAUserPage;
+import uk.gov.dvsa.ui.pages.vts.VtsSummaryAndConfirmationPage;
 
 public abstract class PageLocator {
 

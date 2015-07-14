@@ -5,6 +5,7 @@
         <groups>
             <run>
                 <include name="Regression"/>
+                <include name="BVT"/>
             </run>
         </groups>
         <packages>

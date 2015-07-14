@@ -10,10 +10,9 @@ import java.io.IOException;
 import java.util.*;
 
 public class CookieService {
-    private static AuthService authService = new AuthService();
 
     public static Cookie generateOpenAmLoginCookie(User user) throws IOException {
-        String token = authService.createSessionTokenForUser(user);
-       return new Cookie("iPlanetDirectoryPro", token, Configurator.domain(), "/", null);
+        String token = new AuthService().createSessionTokenForUser(user);
+        return new Cookie("iPlanetDirectoryPro", token, Configurator.domain(), "/", null);
     }
 }
