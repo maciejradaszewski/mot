@@ -26,7 +26,8 @@ class PersonalDetailsServiceFactory implements FactoryInterface
             new PersonalDetailsValidator(),
             $serviceLocator->get('DvsaAuthorisationService'),
             $serviceLocator->get(MotIdentityProviderInterface::class),
-            $serviceLocator->get(XssFilter::class)
+            $serviceLocator->get(XssFilter::class),
+            $serviceLocator->get('UserRoleService')
         );
     }
 }

@@ -16,6 +16,7 @@ use Zend\Mvc\Controller\ControllerManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 use Core\Authorisation\Assertion\WebAcknowledgeSpecialNoticeAssertion;
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 
 /**
  * Class PasswordResetControllerFactoryTest
@@ -38,6 +39,7 @@ class UserHomeControllerFactoryTest extends \PHPUnit_Framework_TestCase
         );
         $serviceManager->setService(SecurityQuestionService::class, XMock::of(SecurityQuestionService::class));
         $serviceManager->setService(UserAdminSessionManager::class, XMock::of(UserAdminSessionManager::class));
+        $serviceManager->setService(TesterGroupAuthorisationMapper::class, XMock::of(TesterGroupAuthorisationMapper::class));
 
         $plugins = XMock::of(\Zend\Mvc\Controller\ControllerManager::class, ['getServiceLocator']);
         $plugins->expects($this->any())

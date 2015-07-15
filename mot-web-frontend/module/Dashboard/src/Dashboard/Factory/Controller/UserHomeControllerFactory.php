@@ -12,6 +12,7 @@ use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 use Core\Authorisation\Assertion\WebAcknowledgeSpecialNoticeAssertion;
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 
 class UserHomeControllerFactory implements FactoryInterface
 {
@@ -28,7 +29,8 @@ class UserHomeControllerFactory implements FactoryInterface
             $serviceLocator->get('CatalogService'),
             $serviceLocator->get(WebAcknowledgeSpecialNoticeAssertion::class),
             $serviceLocator->get(SecurityQuestionService::class),
-            $serviceLocator->get(UserAdminSessionManager::class)
+            $serviceLocator->get(UserAdminSessionManager::class),
+            $serviceLocator->get(TesterGroupAuthorisationMapper::class)
         );
     }
 }

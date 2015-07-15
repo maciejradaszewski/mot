@@ -31,6 +31,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use UserApi\Person\Dto\PersonDetails;
 use UserApi\Person\Service\PersonalDetailsService;
 use UserApi\Person\Service\Validator\PersonalDetailsValidator;
+use DvsaAuthorisation\Service\UserRoleService;
 
 /**
  * Unit tests for PersonDetailsService.
@@ -348,6 +349,7 @@ class PersonDetailsServiceTest extends AbstractServiceTestCase
                     $this->mockAuthSrv,
                     $this->mockIdentityProvider,
                     $this->xssFilterMock,
+                    XMock::of(UserRoleService::class)
                 ]
             )
             ->setMethods(['getUserRoles', 'findPerson', 'findOneByOrThrowException'])

@@ -4,6 +4,7 @@ namespace UserApi\Person\Service;
 
 use Doctrine\ORM\EntityManager;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
+use DvsaAuthorisation\Service\UserRoleService;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionAtSite;
@@ -55,18 +56,25 @@ class PersonalDetailsService extends AbstractService
     protected $xssFilter;
 
     /**
+     * @var UserRoleService
+     */
+    private $roleService;
+
+    /**
      * @param \Doctrine\ORM\EntityManager                                $entityManager
      * @param \UserApi\Person\Service\Validator\PersonalDetailsValidator $validator
      * @param \DvsaAuthorisation\Service\AuthorisationServiceInterface   $authorisationService
      * @param \DvsaCommon\Auth\MotIdentityProviderInterface              $identityProvider
      * @param \DvsaCommonApi\Filter\XssFilter                            $xssFilter
+     * @param \DvsaAuthorisation\Service\UserRoleService                 $roleService
      */
     public function __construct(
         EntityManager $entityManager,
         PersonalDetailsValidator $validator,
         AuthorisationServiceInterface $authorisationService,
         MotIdentityProviderInterface $identityProvider,
-        XssFilter $xssFilter
+        XssFilter $xssFilter,
+        UserRoleService $roleService
     ) {
         parent::__construct($entityManager);
 
@@ -74,6 +82,7 @@ class PersonalDetailsService extends AbstractService
         $this->authorisationService = $authorisationService;
         $this->identityProvider     = $identityProvider;
         $this->xssFilter            = $xssFilter;
+        $this->roleService          = $roleService;
     }
 
     /**
@@ -193,7 +202,7 @@ class PersonalDetailsService extends AbstractService
      */
     private function getUserRoles(Person $person)
     {
-        return $this->authorisationService->getRolesAsArray($person->getId());
+        return $this->roleService->getDetailedRolesForPerson($person);
     }
 
     /**

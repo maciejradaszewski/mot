@@ -34,6 +34,7 @@ use Zend\Session\Container;
 use Zend\Stdlib\Parameters;
 use Zend\View\Model\ViewModel;
 use Core\Authorisation\Assertion\WebAcknowledgeSpecialNoticeAssertion;
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 
 class UserHomeControllerTest extends AbstractFrontendControllerTestCase
 {
@@ -105,7 +106,8 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
                 $this->mockCatalogSrv,
                 XMock::of(WebAcknowledgeSpecialNoticeAssertion::class),
                 $this->mockSecurityQuestionSrv,
-                $this->mockUserAdminSessionSrv
+                $this->mockUserAdminSessionSrv,
+                XMock::of(TesterGroupAuthorisationMapper::class)
             )
         );
 
@@ -439,7 +441,11 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
             'drivingLicenceNumber' => 'foo',
             'drivingLicenceRegion' => 'bar',
             'positions'            => [],
-            'roles'                => [],
+            'roles'                => [
+                "system" => [ "roles" => [] ],
+                "organisations" => [],
+                "sites" => []
+            ],
         ];
     }
 
