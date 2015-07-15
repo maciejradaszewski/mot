@@ -3,6 +3,7 @@
 namespace Dashboard\Model;
 
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\Constants\Role;
 
 /**
  * Data model for personal details.
@@ -104,6 +105,11 @@ class PersonalDetails
     private $roles = [];
 
     /**
+     * @var array
+     */
+    private $rolesAndAssociations = [];
+
+    /**
      * @param array $data
      */
     public function __construct(array $data = [])
@@ -128,8 +134,13 @@ class PersonalDetails
                 ->setDrivingLicenceNumber(ArrayUtils::get($data, 'drivingLicenceNumber'))
                 ->setDrivingLicenceRegion(ArrayUtils::get($data, 'drivingLicenceRegion'))
                 ->setUsername(ArrayUtils::get($data, 'username'))
-                ->setPositions(ArrayUtils::get($data, 'positions'))
-                ->setRoles(ArrayUtils::get($data, 'roles'));
+                ->setPositions(ArrayUtils::get($data, 'positions'));
+
+            $rolesAndAssociations = ArrayUtils::get($data, 'roles');
+            $this->setRolesAndAssociations($rolesAndAssociations);
+
+            $roles = $this->extractRoleNames();
+            $this->setRoles($roles);
         }
     }
 
@@ -171,6 +182,65 @@ class PersonalDetails
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    /**
+     * @param array $rolesAndAssociations
+     *
+     * @return PersonalDetails
+     */
+    public function setrolesAndAssociations(array $rolesAndAssociations)
+    {
+        $this->rolesAndAssociations = $rolesAndAssociations;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRolesAndAssociations()
+    {
+        return $this->rolesAndAssociations;
+    }
+
+    /**
+     * Returns the persons assigned system roles. USER and CRON are filtered
+     * from roles as we don't want to display these in the user profile
+     * @return array
+     */
+    public function getSystemRoles()
+    {
+        $roles = $this->getRolesAndAssociations();
+        $rolesFiltered = [];
+
+        foreach ($roles['system']['roles'] as $role) {
+            if ($role != Role::CRON && $role != Role::USER && $role != Role::TESTER_ACTIVE) {
+                $rolesFiltered[] = $role;
+            }
+        }
+        return $rolesFiltered;
+    }
+
+    /**
+     * Returns an array of all site and organisation roles,
+     * grouped by site/organisation ID
+     * @return array
+     */
+    public function getSiteAndOrganisationRoles()
+    {
+        $roles = $this->getRolesAndAssociations();
+        $processedRoles = [];
+
+        foreach ($roles['organisations'] as $id => $organisationData) {
+            $processedRoles[$id] = $organisationData;
+        }
+
+        foreach ($roles['sites'] as $id => $siteData) {
+            $processedRoles[$id] = $siteData;
+        }
+
+        return $processedRoles;
     }
 
     /**
@@ -549,5 +619,23 @@ class PersonalDetails
     public function getPhoneNumber()
     {
         return $this->phoneNumber;
+    }
+
+    /**
+     * @return array
+     */
+    private function extractRoleNames()
+    {
+        $roles = $this->getSystemRoles();
+        $siteAndOrganisationRoles = $this->getSiteAndOrganisationRoles();
+        foreach ($siteAndOrganisationRoles as $data) {
+            foreach ($data['roles'] as $role) {
+                if (!in_array($role, $roles)) {
+                    $roles[] = $role;
+                }
+            }
+        }
+
+        return $roles;
     }
 }

@@ -27,9 +27,19 @@ class PersonalDetailsTest extends \PHPUnit_Framework_TestCase
     const PHONE = '123456765432';
     const DRIVING_LICENCE_BUMBER = '2343213';
     const REGION = 'Other';
-    const ROLE_TESTER = 'tester';
+    const ROLE_TESTER = 'TESTER';
+    const ROLE_USER = 'USER';
+    const ROLE_AEDM = 'aedm';
     const POSITIONS = 'test';
     const USERNAME = 'tester1';
+    const SITE_ID = 1;
+    const SITE_NAME = "Garage";
+    const SITE_NUMBER = "V1234";
+    const SITE_ADDRESS = "Elm Street";
+    const ORGANISATION_ID = 13;
+    const ORGANISATION_NAME = "Venture Industries AE";
+    const ORGANISATION_NUMBER = "AEVNTR";
+    const ORGANISATION_ADDRESS = "1 Providence, Nashville, 72-123";
 
     public function test_gettersSetters()
     {
@@ -53,8 +63,31 @@ class PersonalDetailsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::DRIVING_LICENCE_BUMBER, $personalDetails->getDrivingLicenceNumber());
         $this->assertEquals(self::REGION, $personalDetails->getDrivingLicenceRegion());
         $this->assertEquals([ self::POSITIONS ], $personalDetails->getPositions());
-        $this->assertCount(1, $personalDetails->getRoles());
-        $this->assertEquals(self::ROLE_TESTER, $personalDetails->getRoles()[0]);
+        $this->assertCount(2, $personalDetails->getRoles());
+        $this->assertEquals(self::ROLE_AEDM, $personalDetails->getRoles()[0]);
+        $this->assertEquals(self::ROLE_TESTER, $personalDetails->getRoles()[1]);
+
+        $systemRoles = $personalDetails->getSystemRoles();
+        $this->assertCount(0, $systemRoles);
+
+        $siteAndOrganisationRoles = $personalDetails->getSiteAndOrganisationRoles();
+        $this->assertCount(2, $siteAndOrganisationRoles);
+        $this->assertTrue(array_key_exists(self::ORGANISATION_ID, $siteAndOrganisationRoles));
+        $this->assertTrue(array_key_exists(self::SITE_ID, $siteAndOrganisationRoles));
+
+        $organisation = $siteAndOrganisationRoles[self::ORGANISATION_ID];
+        $site = $siteAndOrganisationRoles[self::SITE_ID];
+
+        $this->assertEquals(self::ORGANISATION_NAME, $organisation["name"]);
+        $this->assertEquals(self::ORGANISATION_NUMBER, $organisation["number"]);
+        $this->assertEquals(self::ORGANISATION_ADDRESS, $organisation["address"]);
+        $this->assertCount(1, $organisation["roles"]);
+        $this->assertEquals(self::ROLE_AEDM, $organisation["roles"][0]);
+        $this->assertEquals(self::SITE_NAME, $site["name"]);
+        $this->assertEquals(self::SITE_NUMBER, $site["number"]);
+        $this->assertEquals(self::SITE_ADDRESS, $site["address"]);
+        $this->assertCount(1, $site["roles"]);
+        $this->assertEquals(self::ROLE_TESTER, $site["roles"][0]);
     }
 
     public static function getData()
@@ -78,7 +111,25 @@ class PersonalDetailsTest extends \PHPUnit_Framework_TestCase
             'drivingLicenceNumber' => self::DRIVING_LICENCE_BUMBER,
             'drivingLicenceRegion' => self::REGION,
             'roles'                => [
-                self::ROLE_TESTER
+                "system" => [
+                    "roles" => [self::ROLE_USER]
+                ],
+                "organisations" => [
+                    self::ORGANISATION_ID => [
+                        "name" => self::ORGANISATION_NAME,
+                        "number" => self::ORGANISATION_NUMBER,
+                        "address" => self::ORGANISATION_ADDRESS,
+                        "roles" => [self::ROLE_AEDM]
+                    ]
+                ],
+                "sites" => [
+                    self::SITE_ID => [
+                        "name" => self::SITE_NAME,
+                        "number" => self::SITE_NUMBER,
+                        "address" => self::SITE_ADDRESS,
+                        "roles" => [self::ROLE_TESTER]
+                    ]
+                ],
             ],
             'positions'            => [
                 'test'

@@ -87,8 +87,13 @@ public class PageNavigator {
         return new HomePage(driver);
     }
 
-    public AuthorisedExaminerPage goToAuthorisedExaminerPage(User user, String path, String aeId)
-            throws IOException {
+    public ProfilePage gotoProfilePage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, ProfilePage.path);
+
+        return new ProfilePage(driver);
+    }
+
+    public AuthorisedExaminerPage goToAuthorisedExaminerPage(User user, String path, String aeId) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, String.format(path, aeId));
 
         return new AuthorisedExaminerPage(driver);
@@ -108,7 +113,7 @@ public class PageNavigator {
     }
 
     public TesterTestLogPage gotoTesterTestLogPage(User user) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user,String.format(TesterTestLogPage.PATH));
+        injectOpenAmCookieAndNavigateToPath(user, String.format(TesterTestLogPage.PATH));
 
         return new TesterTestLogPage(driver);
     }

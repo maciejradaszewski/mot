@@ -6,8 +6,9 @@ use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 
 /**
- * @var \Dashboard\Model\PersonalDetails $personalDetails
- * @var array                            $motAuthorisations
+ * @var \Dashboard\Model\PersonalDetails       $personalDetails
+ * @var array                                  $motAuthorisations
+ * @var \DvsaClient\Entity\TesterAuthorisation $authorisation
  */
 
 $isAllowEdit = $this->isAllowEdit;
@@ -21,7 +22,7 @@ $fullNameArray = array_filter([
     ],
     'strlen');
 
-$fullName = implode(" ",$fullNameArray);
+$escFullName = $this->escapeHtml(implode(" ",$fullNameArray));
 
 $fullAddressArray = array_filter([
         $personalDetails->getAddressLine1(),
@@ -31,91 +32,159 @@ $fullAddressArray = array_filter([
         $personalDetails->getPostcode(),
     ],
     'strlen');
-$fullAddress = implode(", ", $fullAddressArray) ?: null;
+$escFullAddress = $this->escapeHtml(implode(", ", $fullAddressArray)) ?: null;
 
 $this->layout()->setVariable('pageSubTitle', $isViewingOwnProfile ? 'Your profile' : 'Profile of');
-$this->layout()->setVariable('pageTitle', $this->escapeHtml($fullName));
+$this->layout()->setVariable('pageTitle', $escFullName);
 
 echo $this->partial('errorMessages', ['getFromFlash' => true]);
 ?>
 
-<div class="row module-present-data">
-    <div class="col-sm-4">
-        <h3>About<?php if ($isViewingOwnProfile): ?> you<?php endif; ?></h3>
-    </div>
-    <div class="col-sm-8">
-        <?php
-        echo $this->partial(
-            'dldtdd', [
-                'dlCssClass' => 'vertical',
-                'items'      => [
-                    ['Name', $fullName, 'id' => 'display-name'],
-                    [
-                        'Date of birth',
-                        DateTimeDisplayFormat::textDate($personalDetails->getDateOfBirth()),
-                        'id' => 'dateOfBirth',
-                    ],
-                    (
-                        !empty ($drivingLicenceNumber) && !empty($drivingLicenceRegion)
-                        ? ['Driving licence', $drivingLicence , 'id' => 'drivingLicence']
-                        : null
-                    ),
-                    ['Roles', implode(', ', $personalDetails->getRoles()), 'id' => 'display-role'],
-                ],
-            ]
-        );
-        ?>
-    </div>
-</div>
-
-<hr class="hr-thin"/>
-
-<div class="row module-present-data">
-    <div class="col-sm-4">
-        <h3>Contact details</h3>
-        <?php if ($isAllowEdit): ?>
-            <a
-                id="edit-user-profile"
-                href="<?php echo $this->escapeHtmlAttr(PersonUrlBuilderWeb::profileEdit()); ?>">
-                Change details
-            </a>
+<h3 class="heading-medium">Personal details</h3>
+<table class="key-value-list">
+    <tbody>
+        <tr>
+            <th class="key-value-list__key">
+                Name
+            </th>
+            <td class="key-value-list__value" id="display-name">
+                <?php echo $escFullName; ?>
+            </td>
+        </tr>
+        <tr>
+            <th class="key-value-list__key">
+                Date of birth
+            </th>
+            <td class="key-value-list__value" id="dateOfBirth">
+                <?php echo DateTimeDisplayFormat::textDate($personalDetails->getDateOfBirth()); ?>
+            </td>
+        </tr>
+        <?php if (!empty ($drivingLicenceNumber) && !empty($drivingLicenceRegion)): ?>
+            <tr>
+                <th class="key-value-list__key">
+                    Driving licence
+                </th>
+                <td class="key-value-list__value--numeric" id="drivingLicence">
+                    <?php echo $this->escapeHtml($drivingLicence); ?>
+                </td>
+            </tr>
         <?php endif; ?>
-    </div>
-    <div class="col-sm-8">
+        <tr>
+            <th class="key-value-list__key">
+                Roles
+            </th>
+            <td class="key-value-list__value" id="display-role">
+                <?php echo $this->escapeHtml(implode(', ', $personalDetails->getRoles())); ?>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 class="heading-medium">Contact details</h3>
+<?php if ($isAllowEdit): ?>
+    <a
+        class="key-value-list__action"
+        id="edit-user-profile"
+        href="<?php echo $this->escapeHtmlAttr(PersonUrlBuilderWeb::profileEdit()); ?>">
+        Change details
+    </a>
+<?php endif; ?>
+<table class="key-value-list">
+    <tbody>
+        <tr>
+            <th class="key-value-list__key">
+                Address
+            </th>
+            <td class="key-value-list__value" id="full-address">
+                <?php echo $escFullAddress; ?>
+            </td>
+        </tr>
+        <tr>
+            <th class="key-value-list__key">
+                Email
+            </th>
+            <td class="key-value-list__value" id="email-address">
+                <?php echo $this->escapeHtml($personalDetails->getEmail()); ?>
+            </td>
+        </tr>
+        <tr>
+            <th class="key-value-list__key">
+                Telephone
+            </th>
+            <td class="key-value-list__value--numeric" id="telephone-number">
+                <?php echo $this->escapeHtml($personalDetails->getPhoneNumber()); ?>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 id="roles-and-associations" class="heading-medium">Roles and associations</h3>
+    <table class="key-value-list">
+        <tbody>
         <?php
-        echo $this->partial(
-            'dldtdd', [
-                'dlCssClass' => 'vertical',
-                'items'      => [
-                    ['Address', $fullAddress, 'id' => 'full-address'],
-                    ['Telephone number', $personalDetails->getPhoneNumber(), 'id' => 'telephone-number'],
-                    ['Email address', $personalDetails->getEmail(), 'id' => 'email-address'],
-                ],
-            ]
-        );
-        ?>
-    </div>
-</div>
+            foreach ($rolesAndAssociations as $item):
+                $escAddress = $this->escapeHtml($item["address"]);
+                $escRole = $this->escapeHtml($item["role"]);
+                $escId = $this->escapeHtml($item['id']);
+                $escName = $this->escapeHtml($item['name']);
+                ?>
+                    <tr>
+                        <th class="key-value-list__key">
+                            <?php echo $escName; ?>
+                            <?php if ($escAddress): ?>
+                                <span class="key-value-list__meta"><?php echo $escAddress; ?></span>
+                            <?php endif ?>
+                        </th>
+                        <td class="key-value-list__value" <?php echo
+                            ( $escId ? ' id="role-' . $escRole . '-' .  $escId . '"' : 'id="role-' . $escRole .'"');
+                        ?>><?php echo $escRole; ?></td>
+                    </tr>
+                <?php 
+            endforeach; ?>
+    </tbody>
+</table>
 
+<?php if($authorisation->hasAnyTestingAuthorisation()): ?>
+    <h3 id="tester-qualification-status" class="heading-medium">Tester qualification status</h3>
+    <table class="key-value-list">
+        <tbody>
+            <tr>
+                <th class="key-value-list__key">
+                    Group A
+                    <span class="key-value-list__meta">Class 1, Class 2</span>
+                </th>
+                <td class="key-value-list__value" id="group-a-status">
+                    <?php echo $authorisation->getGroupAStatus()->getName(); ?>
+                </td>
+            </tr>
+            <tr>
+                <th class="key-value-list__key">
+                    Group B
+                    <span class="key-value-list__meta">Class 3, Class 4, Class 5, Class 7</span>
+                </th>
+                <td class="key-value-list__value" id="group-b-status">
+                    <?php echo $authorisation->getGroupBStatus()->getName(); ?>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+<?php endif; ?>
 
-    <?php if ($isAllowEdit): ?>
-        <hr class="hr-thin"/>
-        <div class="row module-present-data">
-            <div class="col-sm-4">
-                <h3>Security settings</h3>
-                <a href="<?php echo $this->escapeHtmlAttr(PersonUrlBuilderWeb::securityQuestions());?>" id="change-security-settings">Reset PIN</a>
-            </div>
-            <div class="col-sm-8">
-                <dl class="vertical">
-                    <dt>Manage your</dt>
-                    <dd>Security questions, password and PIN</dd>
-                </dl>
-            </div>
-        </div>
-    <?php endif; ?>
-
-    <hr class="hr-thin"/>
-
+<?php if ($isAllowEdit): ?>
+    <h3 class="heading-medium">Account security</h3>
+    <table class="key-value-list">
+        <tbody>
+            <tr>
+                <th class="key-value-list__key">
+                    PIN
+                </th>
+                <td class="key-value-list__value">
+                    <a href="<?php echo $this->escapeHtmlAttr(PersonUrlBuilderWeb::securityQuestions());?>" id="change-security-settings">Reset PIN</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+<?php endif; ?>
 
         <?php
 
@@ -126,9 +195,10 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
 
         if (AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED === $motAuthorisations['class1']
             && AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED === $motAuthorisations['class2']
-        ) : ?>
-
-        <p>Initial training for class 1 and 2:</p>
+        ) : 
+        ?>
+        
+        <h3 class="heading-medium">Initial training for class 1 and 2</h3>
         <form class="form-horizontal" method="post"
               action="<?php echo $this->escapeHtmlAttr(PersonUrlBuilderWeb::updateAuthMotTesting($personId)); ?>">
             <?php echo $this->csrfToken();
@@ -141,13 +211,14 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
                 ]
             );
 
-                echo $this->partial(
-                    'submitElement',
-                    [
-                        'id'    => 'initial-training-successful',
-                        'name'  => 'result',
-                        'label' => 'Successful',
-                        'value' => '1',
+            echo $this->partial(
+                'submitElement',
+                [
+                    'id'    => 'initial-training-successful',
+                    'name'  => 'result',
+                    'label' => 'Successful',
+                    'cssClass' => 'button',
+                    'value' => '1',
 
                 ]
             );
@@ -158,7 +229,7 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
                     'id'       => 'initial-training-fail',
                     'name'     => 'result',
                     'label'    => 'Unsuccessful',
-                    'cssClass' => 'btn btn-danger btn-large',
+                    'cssClass' => 'button-warning',
                     'value'    => '0',
 
                     ]
@@ -173,8 +244,8 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
             && AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED === $motAuthorisations['class5']
             && AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED === $motAuthorisations['class7']
         ) : ?>
-
-            <p>Initial training for class 3 to 7:</p>
+            
+            <h3 class="heading-medium">Initial training for class 3 to 7</h3>
             <form class="form-horizontal" method="post"
                   action="<?php echo $this->escapeHtmlAttr(PersonUrlBuilderWeb::updateAuthMotTesting($personId)); ?>">
                 <?php echo $this->csrfToken();
@@ -192,6 +263,7 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
                         'id'    => 'initial-training-successful',
                         'name'  => 'result',
                         'label' => 'Successful',
+                        'cssClass' => 'button',
                         'value' => '1',
 
                     ]
@@ -203,7 +275,7 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
                         'id'       => 'initial-training-fail',
                         'name'     => 'result',
                         'label'    => 'Unsuccessful',
-                        'cssClass' => 'btn btn-danger btn-large',
+                        'cssClass' => 'button-warning',
                         'value'    => '0',
                     ]
                 ); ?>
@@ -211,10 +283,11 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
 
     <?php endif; ?>
 
-<nav class="module-content-navigation">
-    <ul class="content-navigation_secondary">
+<nav class="content-navigation">
+    <ul class="content-navigation__secondary">
         <li>
             <a href="<?php echo $this->escapeHtmlAttr($this->url(UserHomeController::ROUTE));?>">Return Home</a>
         </li>
     </ul>
 </nav>
+

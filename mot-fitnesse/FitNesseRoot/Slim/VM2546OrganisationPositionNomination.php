@@ -122,7 +122,22 @@ class VM2546OrganisationPositionNomination
             $urlBuilder->toString(), $this->recipientUsername, TestShared::PASSWORD
         );
 
-        return in_array(OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE, $result['roles']);
+        return in_array("AED", $this->getRoles($result['roles']));
+    }
+
+    private function getRoles(array $rolesAndAssociations)
+    {
+        $roles = $rolesAndAssociations["system"]['roles'];
+
+        foreach ($rolesAndAssociations["organisations"] as $id=>$org) {
+            $roles = array_merge($roles, $org["roles"]);
+        }
+
+        foreach ($rolesAndAssociations["sites"] as $id=>$site) {
+            $roles = array_merge($roles, $site["roles"]);
+        }
+
+        return $roles;
     }
 
     private function isPersonAed($organisation, $person)

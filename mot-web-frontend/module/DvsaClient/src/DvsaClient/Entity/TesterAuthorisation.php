@@ -15,12 +15,12 @@ class TesterAuthorisation
 
     public function hasGroupAStatus()
     {
-        return $this->getGroupAStatus() != null;
+        return $this->hasGroupStatus($this->getGroupAStatus());
     }
 
     public function hasGroupBStatus()
     {
-        return $this->getGroupBStatus() != null;
+        return $this->hasGroupStatus($this->getGroupBStatus());
     }
 
     public function getGroupAStatus()
@@ -36,5 +36,10 @@ class TesterAuthorisation
     public function hasAnyTestingAuthorisation()
     {
         return $this->hasGroupAStatus() || $this->hasGroupBStatus();
+    }
+
+    private function hasGroupStatus(TesterGroupAuthorisationStatus $status = null)
+    {
+        return ($status != null && $status->getCode() != null);
     }
 }

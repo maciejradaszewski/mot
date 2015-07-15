@@ -3,7 +3,6 @@ namespace Dashboard\Controller;
 
 use Account\Service\SecurityQuestionService;
 use Application\Data\ApiPersonalDetails;
-use Application\Helper\PrgHelper;
 use Application\Service\CatalogService;
 use Application\Service\LoggedInUserManager;
 use Core\Authorisation\Assertion\WebAcknowledgeSpecialNoticeAssertion;
@@ -12,19 +11,16 @@ use Dashboard\Data\ApiDashboardResource;
 use Dashboard\Model\Dashboard;
 use Dashboard\Model\PersonalDetails;
 use Dashboard\PersonStore;
-use Dashboard\ViewModel\SecurityQuestionViewModel;
 use Dvsa\OpenAM\Exception\OpenAMClientException;
 use Dvsa\OpenAM\Exception\OpenAMUnauthorisedException;
 use Dvsa\OpenAM\Model\OpenAMLoginDetails;
 use DvsaCommon\Auth\PermissionInSystem;
-use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Enum\CountryOfRegistrationCode;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
-use DvsaCommon\HttpRestJson\Exception\NotFoundException;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
-use DvsaCommon\UrlBuilder\AccountUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use UserAdmin\Service\UserAdminSessionManager;
 use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
@@ -58,6 +54,8 @@ class UserHomeController extends AbstractAuthActionController
     protected $service;
     /** @var UserAdminSessionManager */
     protected $userAdminSessionManager;
+    /** @var TesterGroupAuthorisationMapper */
+    private $testerGroupAuthorisationMapper;
 
     public function __construct(
         LoggedInUserManager $loggedIdUserManager,
@@ -67,7 +65,8 @@ class UserHomeController extends AbstractAuthActionController
         CatalogService $catalogService,
         WebAcknowledgeSpecialNoticeAssertion $acknowledgeSpecialNoticeAssertion,
         SecurityQuestionService $securityQuestionService,
-        UserAdminSessionManager $userAdminSessionManager
+        UserAdminSessionManager $userAdminSessionManager,
+        TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper
     ) {
         $this->loggedIdUserManager = $loggedIdUserManager;
         $this->personalDetailsService = $personalDetailsService;
@@ -77,6 +76,7 @@ class UserHomeController extends AbstractAuthActionController
         $this->acknowledgeSpecialNoticeAssertion = $acknowledgeSpecialNoticeAssertion;
         $this->service = $securityQuestionService;
         $this->userAdminSessionManager = $userAdminSessionManager;
+        $this->testerGroupAuthorisationMapper = $testerGroupAuthorisationMapper;
     }
 
     public function userHomeAction()
@@ -111,7 +111,7 @@ class UserHomeController extends AbstractAuthActionController
     public function profileAction()
     {
         $this->userAdminSessionManager->deleteUserAdminSession();
-
+        $this->layout('layout/layout-govuk.phtml');
         return $this->getAuthenticatedData();
     }
 
@@ -244,13 +244,56 @@ class UserHomeController extends AbstractAuthActionController
         $authorisations = $this->personalDetailsService->getPersonalAuthorisationForMotTesting($personId);
 
         return [
-            'personalDetails'     => $personalDetails,
-            'isAllowEdit'         => $isAllowEdit,
-            'motAuthorisations'   => $authorisations,
-            'isViewingOwnProfile' => ($identity->getUserId() == $personId),
-            'countries'           => $this->getCountries(),
-            'canAcknowledge'      => $this->acknowledgeSpecialNoticeAssertion->isGranted($personId),
-            'canRead'             => $this->getAuthorizationService()->isGranted(PermissionInSystem::SPECIAL_NOTICE_READ)
+            'personalDetails'      => $personalDetails,
+            'isAllowEdit'          => $isAllowEdit,
+            'motAuthorisations'    => $authorisations,
+            'isViewingOwnProfile'  => ($identity->getUserId() == $personId),
+            'countries'            => $this->getCountries(),
+            'canAcknowledge'       => $this->acknowledgeSpecialNoticeAssertion->isGranted($personId),
+            'canRead'              => $this->getAuthorizationService()->isGranted(PermissionInSystem::SPECIAL_NOTICE_READ),
+            'authorisation'        => $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
+            'rolesAndAssociations' => $this->getRolesAndAssociations($personalDetails),
+        ];
+    }
+
+    /**
+     * @param PersonalDetails $personalDetails
+     * @return array
+     */
+    private function getRolesAndAssociations(PersonalDetails $personalDetails)
+    {
+        $rolesAndAssociations = [];
+        $systemRoles = $personalDetails->getSystemRoles();
+        $siteAndOrganisationRoles = $personalDetails->getSiteAndOrganisationRoles();
+
+        foreach ($systemRoles as $role) {
+            $rolesAndAssociations[] = $this->createRoleData($role);
+        }
+
+        foreach ($siteAndOrganisationRoles as $id=>$data) {
+            foreach ($data['roles'] as $role) {
+                $rolesAndAssociations[] = $this->createRoleData($role, $id, $data["name"], $data["address"]);
+            }
+        }
+
+        return $rolesAndAssociations;
+    }
+
+    /**
+     * @param int $role
+     * @param string $id
+     * @param string $name
+     * @param string $address
+     * @return array
+     */
+    private function createRoleData($role, $id = "",  $name = "", $address = "")
+    {
+        return [
+            "id"      => $id,
+            "role"    => $role,
+            "name"    => $name,
+            "address" => $address
         ];
     }
 }
+

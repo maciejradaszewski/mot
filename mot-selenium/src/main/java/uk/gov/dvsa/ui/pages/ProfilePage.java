@@ -5,13 +5,13 @@ import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-
 public class ProfilePage extends Page{
+
+    public static final String path = "/profile";
 
     @FindBy (id = "full-address") private WebElement addressField;
     @FindBy (id = "email-address") private WebElement emailAddressField;
+    @FindBy (id = "tester-qualification-status") private WebElement qualificationStatus;
 
     public ProfilePage(MotAppDriver driver) {
         super(driver);
@@ -29,5 +29,9 @@ public class ProfilePage extends Page{
 
     public boolean verifyEmailIsChanged(String email) {
         return emailAddressField.getText().equals(email);
+    }
+
+    public boolean isTesterQualificationStatusDisplayed() {
+        return qualificationStatus.isDisplayed();
     }
 }
