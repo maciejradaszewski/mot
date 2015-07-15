@@ -46,7 +46,7 @@ class ReinspectionReportController extends AbstractAuthActionController
             'Assessment Details Confirmation' => '',
         ];
 
-        $this->layout()->setVariable('progressBar', ['breadcrumbs' => $breadcrumbs]);
+        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
         $resultId = (int)$this->params()->fromRoute('resultId', 0);
         $apiUrl = UrlBuilder::enforcementMotTestResult($resultId)->toString();

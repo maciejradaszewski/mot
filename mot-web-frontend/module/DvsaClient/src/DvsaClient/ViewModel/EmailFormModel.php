@@ -3,47 +3,103 @@
 namespace DvsaClient\ViewModel;
 
 use DvsaCommon\Dto\Contact\EmailDto;
-use DvsaCommon\Utility\ArrayUtils;
+use Zend\Stdlib\Parameters;
 
 /**
  * Model for changing email address in web forms
  */
-class EmailFormModel
+class EmailFormModel extends AbstractFormModel
 {
-    public static $FIELD_EMAIL = 'email';
-    public static $FIELD_EMAIL_CONFIRM = 'emailConfirmation';
-    public static $FIELD_IS_SUPPLY = 'emailIsSupply';
-    public static $FIELD_IS_PRIMARY = 'emailIsPrimary';
+    const FIELD_EMAIL = 'email';
+    const FIELD_EMAIL_CONFIRM = 'emailConfirmation';
+    const FIELD_IS_NOT_SUPPLY = 'isEmailNotSupply';
+    const FIELD_IS_PRIMARY = 'isEmailPrimary';
 
-    /** @var  EmailDto */
+    const ERR_INVALID = 'The email you entered is not valid';
+    const ERR_CONF_NOT_SAME = 'The confirmation email you entered is different';
+
+    /**
+     * @var  string
+     */
     private $email;
-    /** @var  string */
+    /**
+     * @var  string
+     */
     private $emailConfirm;
-    /** @var  boolean */
-    private $isSupply = true;
+    /**
+     * @var  boolean
+     */
+    private $isPrimary;
+    /**
+     * @var  boolean
+     */
+    private $isSupplied = true;
 
-    public function __construct($fieldPrefix = null)
+
+    public function fromPost(Parameters $postData)
     {
-        $this->email = new EmailDto;
+        $this
+            ->setEmail($postData->get(self::FIELD_EMAIL))
+            ->setEmailConfirm($postData->get(self::FIELD_EMAIL_CONFIRM))
+            // there is negative question "I don't want to supply an email address", therefore
+            // there need to set opposite value (if get true, set false, and in other way)
+            ->setIsSupplied(
+                (bool) $postData->get(self::FIELD_IS_NOT_SUPPLY) === false
+            );
 
-        $this->fieldPrefix = $fieldPrefix;
-    }
-
-    public function getFieldName($field)
-    {
-        if ($this->fieldPrefix !== null) {
-            return $this->fieldPrefix . $field;
-        }
-
-        return $field;
+        return $this;
     }
 
     /**
      * @return EmailDto
      */
-    public function getDto()
+    public function toDto()
     {
-        return $this->email;
+        $dto = (new EmailDto())
+            ->setIsPrimary($this->isPrimary());
+
+        //  if user don't want provide email, but email was already exists in db,
+        // there send EmailDto object without email, and it will delete this email in db
+        if ($this->isSupplied() === true) {
+            $dto->setEmail($this->getEmail());
+        }
+
+        return $dto;
+    }
+
+    public function fromDto($dto)
+    {
+        if ($dto instanceof EmailDto) {
+            $this->setEmail($dto->getEmail())
+                ->setEmailConfirm($dto->getEmail())
+                ->setIsPrimary($dto->getIsPrimary());
+        }
+
+        return $this;
+    }
+
+    public function isValid()
+    {
+        if ($this->isSupplied()) {
+            $email = $this->getEmail();
+
+            $validator = new \Zend\Validator\EmailAddress();
+            if ($validator->isValid($email) === false) {
+                $this->addError(
+                    EmailFormModel::FIELD_EMAIL,
+                    self::ERR_INVALID
+                );
+            }
+
+            if (strtolower($email) != strtolower($this->getEmailConfirm())) {
+                $this->addError(
+                    EmailFormModel::FIELD_EMAIL_CONFIRM,
+                    self::ERR_CONF_NOT_SAME
+                );
+            }
+        }
+
+        return !$this->hasErrors();
     }
 
     /**
@@ -51,7 +107,7 @@ class EmailFormModel
      */
     public function getEmail()
     {
-        return $this->email->getEmail();
+        return $this->email;
     }
 
     /**
@@ -61,7 +117,7 @@ class EmailFormModel
      */
     public function setEmail($email)
     {
-        $this->email->setEmail($email);
+        $this->email = trim($email);
         return $this;
     }
 
@@ -80,16 +136,16 @@ class EmailFormModel
      */
     public function setEmailConfirm($emailConfirm)
     {
-        $this->emailConfirm = $emailConfirm;
+        $this->emailConfirm = trim($emailConfirm);
         return $this;
     }
 
     /**
      * @return boolean
      */
-    public function isSupply()
+    public function isSupplied()
     {
-        return $this->isSupply;
+        return $this->isSupplied;
     }
 
     /**
@@ -97,9 +153,9 @@ class EmailFormModel
      *
      * @return $this
      */
-    public function setIsSupply($isSupply)
+    public function setIsSupplied($isSupply)
     {
-        $this->isSupply = ($isSupply === null ? true : (bool)$isSupply);
+        $this->isSupplied = ($isSupply === null ? true : (bool) $isSupply);
         return $this;
     }
 
@@ -108,7 +164,7 @@ class EmailFormModel
      */
     public function isPrimary()
     {
-        return $this->email->getIsPrimary();
+        return $this->isPrimary;
     }
 
     /**
@@ -118,49 +174,7 @@ class EmailFormModel
      */
     public function setIsPrimary($isPrimary)
     {
-        $this->email->setIsPrimary((bool)$isPrimary);
+        $this->isPrimary = (bool) $isPrimary;
         return $this;
-    }
-
-
-    public function fromDto($dto)
-    {
-        if ($dto instanceof EmailDto) {
-            $this->email = $dto;
-            $this->setEmailConfirm($dto->getEmail());
-        }
-    }
-
-    public function fromPost(array $postData)
-    {
-        $dataSet = $postData;
-        if ($this->fieldPrefix !== '') {
-            //  --  looking for fields in format prefix . fieldName    --
-            $dataSet = ArrayUtils::removePrefixFromKeys($postData, $this->fieldPrefix);
-        }
-
-        $this
-            ->setEmail(ArrayUtils::tryGet($dataSet, self::$FIELD_EMAIL))
-            ->setEmailConfirm(ArrayUtils::tryGet($dataSet, self::$FIELD_EMAIL_CONFIRM))
-            ->setIsPrimary(ArrayUtils::tryGet($dataSet, self::$FIELD_IS_PRIMARY))
-            ->setIsSupply(ArrayUtils::tryGet($dataSet, self::$FIELD_IS_SUPPLY));
-
-        return $this;
-    }
-
-    public function toArray($withPrefix = true)
-    {
-        $data = [
-            'email'             => $this->getEmail(),
-            'emailConfirmation' => $this->getEmailConfirm(),
-            'isPrimary'         => $this->isPrimary(),
-            'isSupply'          => $this->isSupply(),
-        ];
-
-        if ($withPrefix === true) {
-            $data = ArrayUtils::addPrefixToKeys($data, $this->fieldPrefix);
-        }
-
-        return $data;
     }
 }

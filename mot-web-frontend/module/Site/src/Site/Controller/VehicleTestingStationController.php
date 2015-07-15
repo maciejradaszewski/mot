@@ -3,27 +3,22 @@
 namespace Site\Controller;
 
 use Core\Controller\AbstractAuthActionController;
-use DataCatalogApi\Service\DataCatalogService;
 use Dashboard\Controller\UserHomeController;
 use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
 use DvsaCommon\Auth\PermissionAtSite;
-use DvsaCommon\Auth\PermissionInSystem;
-use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Constants\Role;
-use DvsaCommon\Enum\OrganisationBusinessRoleCode;
-use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
 use Site\Authorization\VtsOverviewPagePermissions;
 use Site\Form\VehicleTestingStationForm;
 use Site\Form\VtsContactDetailsUpdateForm;
+use Site\Presenter\VtsPresenter;
 use Site\Traits\SiteServicesTrait;
 use Site\ViewModel\VTSDecorator;
 use Zend\Session\Container;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
-use Site\Presenter\VtsPresenter;
 
 /**
  * Class VehicleTestingStationController
@@ -54,11 +49,6 @@ class VehicleTestingStationController extends AbstractAuthActionController
     public function indexAction()
     {
         $isEnforcementUser = $this->getAuthorizationService()->hasRole(Role::VEHICLE_EXAMINER);
-        $isSiteManagerUser =
-            $this->getAuthorizationService()->hasRole(
-                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER
-            )
-            || $this->getAuthorizationService()->hasRole(SiteBusinessRoleCode::SITE_MANAGER);
 
         //  --  process request --
         /** @var \Zend\Http\Request $request */
@@ -247,17 +237,17 @@ class VehicleTestingStationController extends AbstractAuthActionController
 
         //  --  form model  --
         $form = new VtsContactDetailsUpdateForm();
-        $form->populateFromApi($vtsDto);
+        $form->fromDto($vtsDto);
 
         $vtsViewUrl = VehicleTestingStationUrlBuilderWeb::byId($siteId)->toString();
 
         /** @var \Zend\Http\Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $form->populateFromPost($request->getPost()->toArray());
+            $form->fromPost($request->getPost());
 
             if ($form->isValid()) {
-                $contactDto = $form->toApiData();
+                $contactDto = $form->toDto();
 
                 try {
                     $mapperFactory->VehicleTestingStationDto->updateContactDetails($siteId, $contactDto);
@@ -277,17 +267,17 @@ class VehicleTestingStationController extends AbstractAuthActionController
         );
 
         $breadcrumbs = [
-            $form->getDto()->getName() => $vtsViewUrl,
+            $form->getVtsDto()->getName() => $vtsViewUrl,
             self::EDIT_TITLE           => '',
         ];
 
         $this->layout('layout/layout-govuk.phtml');
         $this->layout()->setVariable(
             'pageSubTitle',
-            self::EDIT_SUBTITLE . ' - ' . $form->getDto()->getSiteNumber()
+            self::EDIT_SUBTITLE . ' - ' . $form->getVtsDto()->getSiteNumber()
         );
         $this->layout()->setVariable('pageTitle', self::EDIT_TITLE);
-        $this->layout()->setVariable('progressBar', ['breadcrumbs' => $breadcrumbs]);
+        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
         return $viewModel;
     }

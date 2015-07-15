@@ -2,8 +2,6 @@
 
 namespace OrganisationApiTest\Controller;
 
-use DvsaCommon\Constants\Role;
-use DvsaCommon\Dto\Organisation\AuthorisedExaminerListItemDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonApiTest\Controller\AbstractRestfulControllerTestCase;
@@ -21,115 +19,125 @@ class AuthorisedExaminerControllerTest extends AbstractRestfulControllerTestCase
 {
     const AE_ID = 9876;
 
+    private $service;
+
     public function setUp()
     {
-        $this->setController(new AuthorisedExaminerController());
+        $this->service = XMock::of(AuthorisedExaminerService::class);
+        $this->setController(new AuthorisedExaminerController($this->service));
 
         parent::setUp();
     }
 
     /**
-     * Test method is accessible for call with valid parameters
-     *
-     * @param string $method        HTTP method
-     * @param string $action        route action
-     * @param string $serviceMethod mocked service method
-     * @param array  $serviceReturn service method will return
-     * @param array  $params        route parameters
-     * @param array  $expectResult  expected method result
-     *
-     * @dataProvider dataProviderTestWithValidParam
+     * @dataProvider dataProviderTestActionsResultAndAccess
      */
-    public function testWithValidParam($method, $action, $serviceMethod, $serviceReturn, $params, $expectResult)
+    public function testActionsResultAndAccess($method, $action, $params, $mocks, $expect)
     {
-        $this->mockValidAuthorization([Role::VEHICLE_EXAMINER]);
+        $result = null;
 
-        $mockAEService = $this->getMockService();
-        $this->setupMockForCalls($mockAEService, $serviceMethod, $serviceReturn);
+        if ($mocks !== null) {
+            $this->mockMethod(
+                $this->service, $mocks['method'], $this->once(), $mocks['result'], $mocks['params']
+            );
+        }
 
-        $result = $this->getResultForAction($method, $action, $params);
+        $result = $this->getResultForAction($method, $action, $params['route'], null, $params['post']);
 
-        $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, $expectResult, $result);
+        if (!empty($expect['result'])) {
+            $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, $expect['result'], $result);
+        }
+
     }
 
-    public function dataProviderTestWithValidParam()
+    public function dataProviderTestActionsResultAndAccess()
     {
         $getServiceResult = new OrganisationDto();
         $getServiceResult->setId(self::AE_ID);
 
         $jsonOrganisationDto = DtoHydrator::dtoToJson($getServiceResult);
 
-        $getExpectResult = $this->getTestResponse(DtoHydrator::dtoToJson($getServiceResult));
-
         $postServiceResult = ['id' => self::AE_ID];
-        $postExpectResult  = $this->getTestResponse($postServiceResult);
 
         return [
             [
-                'method'        => 'get',
-                'action'        => null,
-                'serviceMethod' => 'get',
-                'serviceReturn' => $getServiceResult,
-                'params'        => ['id' => self::AE_ID],
-                'expectResult'  => $getExpectResult,
+                'method' => 'get',
+                'action' => null,
+                'params' => [
+                    'route' => ['id' => self::AE_ID],
+                    'post' => null,
+                ],
+                'mocks' => [
+                    'method' => 'get',
+                    'params' => [self::AE_ID],
+                    'result' => $getServiceResult,
+                ],
+                'expect' => [
+                    'result' => [
+                        'data' => $jsonOrganisationDto,
+                    ]
+                ]
             ],
             [
-                'method'        => 'put',
-                'action'        => null,
-                'serviceMethod' => 'update',
-                'serviceReturn' => $postServiceResult,
-                'params'        => ['id' => self::AE_ID, 'data' => $jsonOrganisationDto],
-                'expectResult'  => $postExpectResult,
+                'method' => 'get',
+                'action' => 'getAuthorisedExaminerByNumber',
+                'params' => [
+                    'route' => ['number' => self::AE_ID],
+                    'post' => null,
+                ],
+                'mocks' => [
+                    'method' => 'getByNumber',
+                    'params' => [self::AE_ID],
+                    'result' => $getServiceResult,
+                ],
+                'expect' => [
+                    'result' => [
+                        'data' => $jsonOrganisationDto,
+                    ]
+                ]
             ],
-            ['post', null, 'create', $postServiceResult, ['data' => []], $postExpectResult],
-        ];
-    }
-
-    public function testGetAuthorisedExaminerService()
-    {
-        $this->assertEquals(
-            $this->getMockService(),
-            XMock::invokeMethod($this->getController(), 'getAuthorisedExaminerService')
-        );
-    }
-
-    private function getMockService()
-    {
-        return $this->getMockServiceManagerClass(
-            AuthorisedExaminerService::class,
-            AuthorisedExaminerService::class
-        );
-    }
-
-    protected function getTestResponse($data = [])
-    {
-        return [
-            'data' => $data,
-        ];
-    }
-
-    public function testGetAeByNumberAction()
-    {
-        $this->mockValidAuthorization([Role::VEHICLE_EXAMINER]);
-
-        $serviceReturn = [
-            'data'   => [
-                (new AuthorisedExaminerListItemDto())->setId(self::AE_ID),
+            [
+                'method' => 'put',
+                'action' => null,
+                'params' => [
+                    'route' => [
+                        'id' => self::AE_ID,
+                        $jsonOrganisationDto
+                    ],
+                    'post' => null,
+                ],
+                'mocks' => [
+                    'method' => 'update',
+                    'params' => [self::AE_ID, $getServiceResult],
+                    'result' => ['id' => self::AE_ID],
+                ],
+                'expect' => [
+                    'result' => [
+                        'data' => $postServiceResult,
+                    ]
+                ]
+            ],
+            [
+                'method' => 'post',
+                'action' => null,
+                'params' => [
+                    'route' => null,
+                    'post' => [
+                        'id' => self::AE_ID,
+                        '_class' => OrganisationDto::class,
+                    ],
+                ],
+                'mocks' => [
+                    'method' => 'create',
+                    'params' => $getServiceResult,
+                    'result' => ['id' => self::AE_ID],
+                ],
+                'expect' => [
+                    'result' => [
+                        'data' => $postServiceResult,
+                    ]
+                ]
             ],
         ];
-
-        $mockAEService = XMock::of(AuthorisedExaminerService::class, ['getByNumber']);
-        $this->serviceManager->setService(AuthorisedExaminerService::class, $mockAEService);
-
-        $mockAEService->expects($this->once())
-            ->method('getByNumber')
-            ->willReturn($serviceReturn);
-
-        $result = $this->getResultForAction('get', 'getAuthorisedExaminerByNumber', ['number' => 'A-12345']);
-
-        $expectedSitesData         = $serviceReturn;
-        $expectedSitesData['data'] = (new DtoHydrator())->extract($expectedSitesData['data']);
-
-        $this->assertResponseStatusAndResult(200, $this->getTestResponse($expectedSitesData), $result);
     }
 }

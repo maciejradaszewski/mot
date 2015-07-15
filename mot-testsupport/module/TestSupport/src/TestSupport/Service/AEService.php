@@ -2,13 +2,21 @@
 
 namespace TestSupport\Service;
 
+use DvsaCommon\Dto\Contact\AddressDto;
+use DvsaCommon\Dto\Contact\EmailDto;
+use DvsaCommon\Dto\Contact\PhoneDto;
+use DvsaCommon\Dto\Organisation\OrganisationContactDto;
+use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Enum\CompanyTypeCode;
+use DvsaCommon\Enum\OrganisationContactTypeCode;
+use DvsaCommon\Enum\PhoneContactTypeCode;
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilder;
+use DvsaCommon\Utility\DtoHydrator;
 use TestSupport\Helper\TestSupportRestClientHelper;
 use TestSupport\Helper\TestDataResponseHelper;
 use TestSupport\Helper\DataGeneratorHelper;
 use DvsaCommon\Constants\OrganisationType;
 use Doctrine\ORM\Query\ResultSetMapping;
-use DvsaCommon\UrlBuilder\UrlBuilder;
-use DvsaCommon\Enum\CompanyTypeName;
 use DvsaCommon\Utility\ArrayUtils;
 use Doctrine\ORM\EntityManager;
 use Zend\View\Model\JsonModel;
@@ -43,37 +51,57 @@ class AEService
      */
     public function create($data)
     {
-        $dataGenerator = DataGeneratorHelper::buildForDifferentiator($data);
-        $emailAddress = $dataGenerator->emailAddress('org-');
-        $aeRef = $dataGenerator->generateAeRef();
-        $aeName = ArrayUtils::tryGet($data, 'organisationName', $dataGenerator->organisationName());
-
+        $organisationDto = $this->generateDto($data);
         $result = $this->restClientHelper->getJsonClient($data)->post(
-            UrlBuilder::of()->authorisedExaminer()->toString(),
-            [
-                'organisationName'                 => $aeName,
-                'authorisedExaminerReference'      => $aeRef,
-                'organisationType'                 => OrganisationType::AUTHORISED_EXAMINER,
-                'companyType'                      => CompanyTypeName::REGISTERED_COMPANY,
-                'addressLine1'                     => $dataGenerator->addressLine1(),
-                'town'                             => "Ipswich",
-                'postcode'                         => "IP1 1LL",
-                'email'                            => ArrayUtils::tryGet($data, 'emailAddress', $emailAddress),
-                'emailConfirmation'                => ArrayUtils::tryGet($data, 'emailAddress', $emailAddress),
-                'phoneNumber'                      => $dataGenerator->phoneNumber(),
-                'correspondenceContactDetailsSame' => true,
-            ]
+            AuthorisedExaminerUrlBuilder::of()->toString(),
+            DtoHydrator::dtoToJson($organisationDto)
         );
 
         $aeId = $result['data']['id'];
         $this->addSlotsToAe($aeId, ArrayUtils::tryGet($data, 'slots', 2000));
 
-        return TestDataResponseHelper::jsonOk(["message" => "Authorised Examiner created",
-            "id" => $aeId,
-            "aeRef" => $aeRef,
-            "aeName" => $aeName,
-        ]);
+        return TestDataResponseHelper::jsonOk(
+            [
+                "message" => "Authorised Examiner created",
+                "id" => $aeId,
+                "aeRef" => $result['data']['aeRef'],
+                "aeName" => $organisationDto->getName(),
+            ]
+        );
     }
+
+    private function generateDto($data)
+    {
+        $dataGenerator = DataGeneratorHelper::buildForDifferentiator($data);
+        $emailAddress = $dataGenerator->emailAddress('org-');
+        $aeName = ArrayUtils::tryGet($data, 'organisationName', $dataGenerator->organisationName());
+
+        $address = (new AddressDto())
+            ->setAddressLine1($dataGenerator->addressLine1())
+            ->setPostcode("IP1 1LL")
+            ->setTown("Ipswich");
+        $phones = (new PhoneDto())
+            ->setIsPrimary(true)
+            ->setContactType(PhoneContactTypeCode::BUSINESS)
+            ->setNumber($dataGenerator->phoneNumber());
+        $email = (new EmailDto())
+            ->setIsPrimary(true)
+            ->setEmail(ArrayUtils::tryGet($data, 'emailAddress', $emailAddress));
+
+        $contact = (new OrganisationContactDto())
+            ->setType(OrganisationContactTypeCode::REGISTERED_COMPANY)
+            ->setAddress($address)
+            ->setPhones([$phones])
+            ->setEmails([$email]);
+
+        return (new OrganisationDto())
+            ->setName($aeName)
+            ->setAreaOfficeSite(2007)
+            ->setOrganisationType(OrganisationType::AUTHORISED_EXAMINER)
+            ->setCompanyType(CompanyTypeCode::COMPANY)
+            ->setContacts([$contact]);
+    }
+
     /**
      * @param int $aeId
      * @param int $slots

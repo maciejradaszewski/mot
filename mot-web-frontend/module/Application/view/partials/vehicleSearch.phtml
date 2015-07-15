@@ -9,7 +9,7 @@ $this->layout('layout/layout-govuk.phtml');
 $breadcrumbs = [
     $this->layout()->getVariable('pageSubTitle') => ''
 ];
-$this->layout()->setVariable('progressBar', ['breadcrumbs' => $breadcrumbs]);
+$this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
 $registrationElement = $data['registrationElement'];
 $vinElement = $data['vinElement'];

@@ -2,6 +2,10 @@
 
 namespace OrganisationTest\Form;
 
+use DvsaClient\ViewModel\AddressFormModel;
+use DvsaClient\ViewModel\ContactDetailFormModel;
+use DvsaClient\ViewModel\EmailFormModel;
+use DvsaClient\ViewModel\PhoneFormModel;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Contact\EmailDto;
 use DvsaCommon\Dto\Contact\PhoneDto;
@@ -9,176 +13,392 @@ use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaCommon\Enum\PhoneContactTypeCode;
+use DvsaCommonTest\TestUtils\TestCaseTrait;
+use DvsaCommonTest\TestUtils\XMock;
 use Organisation\Form\AeCreateForm;
+use Zend\Stdlib\Parameters;
 
 /**
  * I'm building my professional career on comments
  */
 class AeCreateFormTest extends \PHPUnit_Framework_TestCase
 {
-    private $input = [
-        'organisationName' => 'Adria Velasquez',
-        'tradingAs' => 'Tempora neque distinctio Ipsum amet aut et beat',
-        'organisationType' => 'Registered Company',
-        'companyType' => null,
-        'registeredCompanyNumber' => 'Hooper Hayden Co',
-        'addressLine1' => 'Dolor magna neque proident accusantium reici',
-        'addressLine2' => 'Sed elit maxime quas id aspernatur anim dig',
-        'addressLine3' => 'Consequatur Dolore et sit animi quia ut qu',
-        'town' => 'Qui doloribus odio est aut amet est ipsam invento',
-        'postcode' => 'Omnis face',
-        'email' => 'xewyd@hotmail.com',
-        'emailConfirmation' => 'xewyd@hotmail.com',
-        'phoneNumber' => '+755-53-6994780',
-        'faxNumber' => '+225-92-7920260',
-        'correspondenceContactDetailsSame' => null,
-        'correspondenceAddressLine1' => 'Quis nostrud nulla laboris facilis quam aute ',
-        'correspondenceAddressLine2' => 'Mollitia error adipisci sed aliquid proident',
-        'correspondenceAddressLine3' => 'Nemo suscipit ut deserunt consectetur quo po',
-        'correspondenceTown' => 'Illum exercitation totam proident dolor ea quod ',
-        'correspondencePostcode' => 'Dolore nos',
-        'correspondenceEmail' => 'vujuw@gmail.com',
-        'correspondenceEmailConfirmation' => 'vujuw@gmail.com',
-        'correspondencePhoneNumber' => '+696-40-7816619',
-        'correspondenceFaxNumber' => '+444-81-4258293',
-        'country' => null,
-        'correspondenceCountry' => null,
-        'correspondenceEmailSupply' => null,
-    ];
+    use TestCaseTrait;
 
-    public function testPopulateAndToArrayAreSymmetric()
+    /**
+     * @var AeCreateForm
+     */
+    private $model;
+
+    public function setUp()
     {
-        $form = new AeCreateForm();
-        $form->populate($this->input);
-
-        $this->assertEquals($this->input, $form->toArray(), 'populate and toArray is not symmetric');
+        $this->model = new AeCreateForm();
     }
 
-    public function testGetters()
+    public function tearDown()
     {
-        $form = new AeCreateForm();
-        $form->populate($this->input);
-
-        $this->assertEquals($this->input['organisationName'], $form->getOrganisationName());
-        $this->assertEquals($this->input['organisationType'], $form->getOrganisationType());
-        $this->assertEquals($this->input['registeredCompanyNumber'], $form->getRegisteredCompanyNumber());
-        $this->assertEquals($this->input['tradingAs'], $form->getTradingAs());
-        $this->assertFalse($form->isCorrespondenceContactDetailsSame());
+        unset($this->model);
     }
 
-    public function testInitialStateOfObjectIsCorrect()
+    /**
+     * @param string $property
+     * @param mixed  $value
+     * @param mixed  $expect
+     *
+     * @dataProvider dataProviderTestGetSet
+     */
+    public function testGetSet($property, $value, $expect = null)
     {
-        $registeredCompanyContactDetails = $this->prepareContactDetails(
-            OrganisationContactTypeCode::REGISTERED_COMPANY
-        );
+        $method = ucfirst($property);
 
-        $correspondenceContactDetails = $this->prepareContactDetails(
-            OrganisationContactTypeCode::CORRESPONDENCE,
-            'correspondence'
-        );
+        //  logical block: set value and check set method
+        $result = $this->model->{'set' . $method}($value);
+        $this->assertInstanceOf(AeCreateForm::class, $result);
 
-        $org = $this->createOrganisation();
-        $org->setContacts([$registeredCompanyContactDetails, $correspondenceContactDetails]);
-
-        $form = new AeCreateForm($org);
-
-        $this->assertEquals(
-            $this->input,
-            $form->toArray(),
-            'Invalid initial state of object after populating from Organisation object'
-        );
+        //  logical block: check get method
+        $expect = ($expect === null ? $value : $expect);
+        $method = (is_bool($expect) ? 'is' : 'get') . $method;
+        $this->assertEquals($expect, $this->model->{$method}());
     }
 
-    private function createOrganisation()
+    public function dataProviderTestGetSet()
     {
-        $org = new OrganisationDto();
-        $org->setName($this->input['organisationName']);
-        $org->setTradingAs($this->input['tradingAs']);
-        $org->setOrganisationType($this->input['organisationType']);
-        $org->setRegisteredCompanyNumber($this->input['registeredCompanyNumber']);
-
-        return $org;
+        return [
+            ['areaOfficeOptions', ['test_AO1', 'test_AO2']],
+            ['companyTypes', ['test_CompanyType1', 'test_CompanyType1']],
+            ['cancelUrl', 'test_CancelUrl'],
+        ];
     }
 
-    private function createAddress($prefix)
+    /**
+     * @dataProvider dataProviderTestFromPost
+     */
+    public function testFromPost($postData, $expect)
     {
-        $address = new AddressDto();
-        $address->setAddressLine1($this->input[$this->toLowerCamelCase($prefix, 'addressLine1')]);
-        $address->setAddressLine2($this->input[$this->toLowerCamelCase($prefix, 'addressLine2')]);
-        $address->setAddressLine3($this->input[$this->toLowerCamelCase($prefix, 'addressLine3')]);
-        $address->setTown($this->input[$this->toLowerCamelCase($prefix, 'town')]);
-        $address->setPostcode($this->input[$this->toLowerCamelCase($prefix, 'postcode')]);
+        $postData = new Parameters($postData);
 
-        return $address;
+        //  logical block :: mocking
+        $mockBusContactModel = XMock::of(ContactDetailFormModel::class, ['fromPost']);
+        $this->mockMethod($mockBusContactModel, 'fromPost', $this->once(), null, [$postData]);
+
+        $mockCorrContactModel = XMock::of(ContactDetailFormModel::class);
+        $this->mockMethod($mockCorrContactModel, 'fromPost', $this->once(), null, [$postData]);
+
+        //  mock objects in form object
+        XMock::mockClassField($this->model, 'regContactModel', $mockBusContactModel);
+        XMock::mockClassField($this->model, 'corrContactModel', $mockCorrContactModel);
+
+        //  call
+        $model = $this->model->fromPost($postData);
+
+        //  logical block :: check
+        //  check type of instances
+        $this->assertInstanceOf(AeCreateForm::class, $model);
+
+        //  check main fields
+        $this->assertEquals($postData->get(AeCreateForm::FIELD_NAME), $model->getName());
+        $this->assertEquals($postData->get(AeCreateForm::FIELD_TRADING_AS), $model->getTradingAs());
+        $this->assertEquals($postData->get(AeCreateForm::FIELD_COMPANY_TYPE), $model->getCompanyType());
+        $this->assertEquals($postData->get(AeCreateForm::FIELD_REG_NR), $model->getRegisteredCompanyNumber());
+        $this->assertEquals($postData->get(AeCreateForm::FIELD_AO_NR), $model->getAreaOfficeNumber());
+
+        $this->assertEquals($expect['isCorrTheSame'], $model->isCorrDetailsTheSame());
     }
 
-    private function createEmail($prefix)
+    public function dataProviderTestFromPost()
     {
-        $email = new EmailDto();
-        $email
-            ->setEmail($this->input[$this->toLowerCamelCase($prefix, 'email')])
-            ->setIsPrimary(true);
-
-        return $email;
+        return [
+            [
+                'postData' => [
+                    AeCreateForm::FIELD_NAME                     => 'test_OrgName',
+                    AeCreateForm::FIELD_TRADING_AS               => 'test_TradingAs',
+                    AeCreateForm::FIELD_COMPANY_TYPE             => 'test_CompanyType',
+                    AeCreateForm::FIELD_REG_NR                   => 'test_RegNr',
+                    AeCreateForm::FIELD_AO_NR                    => 'test_AONr',
+                    AeCreateForm::FIELD_IS_CORR_DETAILS_THE_SAME => 1,
+                ],
+                'expect'   => [
+                    'isCorrTheSame' => true,
+                ],
+            ],
+            [
+                'postData' => [
+                    AeCreateForm::FIELD_IS_CORR_DETAILS_THE_SAME => null,
+                ],
+                'expect'   => [
+                    'isCorrTheSame' => false,
+                ],
+            ],
+        ];
     }
 
-    private function createPhone($prefix)
+
+    /**
+     * @dataProvider dataProviderTestFromDtoMainFields
+     */
+    public function testFromDtoMainFields(OrganisationDto $dto = null)
     {
-        $phone = new PhoneDto();
-        $phone
-            ->setNumber($this->input[$this->toLowerCamelCase($prefix, 'phoneNumber')])
-            ->setContactType(PhoneContactTypeCode::BUSINESS)
-            ->setIsPrimary(true);
+        $model = $this->model->fromDto($dto);
 
-        return $phone;
-    }
-
-    private function createFax($prefix)
-    {
-        $fax = new PhoneDto();
-        $fax
-            ->setNumber($this->input[$this->toLowerCamelCase($prefix, 'faxNumber')])
-            ->setContactType(PhoneContactTypeCode::FAX)
-            ->setIsPrimary(true);
-
-        return $fax;
-    }
-
-    private function createContactDetails($organisationContactTypeName, $address, $email, $phone, $fax)
-    {
-        $contactDetails = new OrganisationContactDto();
-        $contactDetails->setType($organisationContactTypeName);
-        $contactDetails->setAddress($address);
-        $contactDetails->setEmails([$email]);
-        $contactDetails->setPhones([$phone, $fax]);
-
-        return $contactDetails;
-    }
-
-    private function prepareContactDetails($organisationContactTypeName, $prefix = '')
-    {
-        $address = $this->createAddress($prefix);
-        $email = $this->createEmail($prefix);
-        $phone = $this->createPhone($prefix);
-        $fax = $this->createFax($prefix);
-
-        $contactDetails = $this->createContactDetails(
-            $organisationContactTypeName,
-            $address,
-            $email,
-            $phone,
-            $fax
-        );
-
-        return $contactDetails;
-    }
-
-    private function toLowerCamelCase($prefix, $input)
-    {
-        if (empty($prefix)) {
-            return $input;
+        if ($dto === null) {
+            $dto = new OrganisationDto();
         }
 
-        return $prefix . ucfirst($input);
+        //  --  logical block :: check main fields
+        $this->assertEquals($dto->getName(), $model->getName());
+        $this->assertEquals($dto->getTradingAs(), $model->getTradingAs());
+        $this->assertEquals($dto->getCompanyType(), $model->getCompanyType());
+        $this->assertEquals($dto->getRegisteredCompanyNumber(), $model->getRegisteredCompanyNumber());
+        $this->assertEquals($dto->getAreaOfficeSite(), $model->getAreaOfficeNumber());
+
+        //  --  logical block :: check
+        $this->assertInstanceOf(AeCreateForm::class, $model);
+    }
+
+
+    public function dataProviderTestFromDtoMainFields()
+    {
+        return [
+            [
+                'dto' => null,
+            ],
+            [
+                'dto' => (new OrganisationDto())
+                    ->setName('test_OrgName')
+                    ->setTradingAs('test_TradingAs')
+                    ->setCompanyType('test_CompanyType')
+                    ->setRegisteredCompanyNumber('test_RegNr')
+                    ->setAreaOfficeSite('test_AONr'),
+            ],
+        ];
+    }
+
+
+    /**
+     * @dataProvider dataProviderTestFromDtoIsTheSame
+     */
+    public function testFromDtoIsTheSame(
+        OrganisationContactDto $busContact = null,
+        OrganisationContactDto $corrContact = null,
+        $expectIsSame = null
+    ) {
+        $contacts = array_filter([$busContact, $corrContact]);
+        if (!empty($contacts)) {
+            $dto = new OrganisationDto();
+            $dto->setContacts($contacts);
+        } else {
+            $dto = null;
+        }
+
+        $model = $this->model->fromDto($dto);
+
+        //  --  logical block :: check
+        $this->assertEquals($expectIsSame, $model->isCorrDetailsTheSame());
+
+        //  check correspondence details model
+        $corrContact = ($expectIsSame === true ? $busContact : $corrContact);
+        $expectCorrModel = (new ContactDetailFormModel(OrganisationContactTypeCode::CORRESPONDENCE))
+            ->fromDto($corrContact);
+        $this->assertEquals($expectCorrModel, $model->getCorrContactModel());
+
+        //  check business details model
+        $expectBusModel = (new ContactDetailFormModel(OrganisationContactTypeCode::REGISTERED_COMPANY))
+            ->fromDto($busContact);
+        $this->assertEquals($expectBusModel, $model->getBusContactModel());
+    }
+
+    public function dataProviderTestFromDtoIsTheSame()
+    {
+        $busContactDto = $this->createContactDetails(
+            OrganisationContactTypeCode::REGISTERED_COMPANY, 'test_addrLine1', 'test_email', 'test_phoneNr'
+        );
+
+        $corrContactDto = clone $busContactDto;
+        $corrContactDto->setType(OrganisationContactTypeCode::CORRESPONDENCE);
+
+        return [
+            [
+                'busContact'   => null,
+                'corrContact'  => null,
+                'expectIsSame' => true,
+            ],
+            //  check when corr details is null
+            [
+                'busContact'   => $busContactDto,
+                'corrContact'  => null,
+                'expectIsSame' => true,
+            ],
+            //  check when corr and bus contacts the same
+            [
+                'busContact'   => $busContactDto,
+                'corrContact'  => $corrContactDto,
+                'expectIsSame' => true,
+            ],
+            //  check when corr details not null, but address not same
+            [
+                'busContact'   => $busContactDto,
+                'corrContact'  => $this->cloneObj($corrContactDto)->setAddress(new AddressDto()),
+                'expectIsSame' => false,
+            ],
+            //  check when corr details not null, but phones not same
+            [
+                'busContact'   => $busContactDto,
+                'corrContact'  => $this->cloneObj($corrContactDto)->setPhones([]),
+                'expectIsSame' => false,
+            ],
+            //  check when corr details not null, but email not same
+            [
+                'busContact'   => $busContactDto,
+                'corrContact'  => $this->cloneObj($corrContactDto)->setEmails([(new EmailDto())->setIsPrimary(true)]),
+                'expectIsSame' => false,
+            ],
+        ];
+    }
+
+
+    /**
+     * @dataProvider dataProviderTestToDto
+     */
+    public function testToDto($postData, $expect)
+    {
+        $actual = $this->model
+            ->fromPost(new Parameters($postData))
+            ->toDto();
+
+        $this->assertEquals($expect, $actual);
+    }
+
+    public function dataProviderTestToDto()
+    {
+        $busContactDto = $this->createContactDetails(
+            OrganisationContactTypeCode::REGISTERED_COMPANY, 'test_Addr1', 'test_Email1', 'test_Phone1'
+        );
+
+        $corrContactDto = clone $busContactDto;
+        $corrContactDto->setType(OrganisationContactTypeCode::CORRESPONDENCE);
+
+        return [
+            [
+                'postData' => [
+                    AeCreateForm::FIELD_NAME                        => 'test_OrgName',
+                    AeCreateForm::FIELD_TRADING_AS                  => 'test_TradingAs',
+                    AeCreateForm::FIELD_COMPANY_TYPE                => 'test_CompanyType',
+                    AeCreateForm::FIELD_REG_NR                      => 'test_RegNr',
+                    AeCreateForm::FIELD_AO_NR                       => 'test_AONr',
+                    AeCreateForm::FIELD_IS_CORR_DETAILS_THE_SAME    => 1,
+                    OrganisationContactTypeCode::REGISTERED_COMPANY => [
+                        AddressFormModel::FIELD_LINE1 => 'test_Addr1',
+                        PhoneFormModel::FIELD_NUMBER  => 'test_Phone1',
+                        EmailFormModel::FIELD_EMAIL   => 'test_Email1',
+                    ],
+                ],
+                'expect'   => (new OrganisationDto())
+                    ->setName('test_OrgName')
+                    ->setTradingAs('test_TradingAs')
+                    ->setCompanyType('test_CompanyType')
+                    ->setRegisteredCompanyNumber('test_RegNr')
+                    ->setAreaOfficeSite('test_AONr')
+                    ->setContacts([$busContactDto, $corrContactDto])
+            ],
+            [
+                'postData' => [
+                    AeCreateForm::FIELD_NAME                     => 'test_OrgName',
+                    AeCreateForm::FIELD_IS_CORR_DETAILS_THE_SAME => 0,
+                    OrganisationContactTypeCode::CORRESPONDENCE  => [
+                        EmailFormModel::FIELD_EMAIL => 'test_Email',
+                    ]
+                ],
+                'expect'   => (new OrganisationDto())
+                    ->setName('test_OrgName')
+                    ->setContacts(
+                        [
+                            $this->createContactDetails(OrganisationContactTypeCode::REGISTERED_COMPANY),
+                            $this->createContactDetails(
+                                OrganisationContactTypeCode::CORRESPONDENCE, null, 'test_Email'
+                            )
+                        ]
+                    )
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderTestIsValid
+     */
+    public function testIsValid($isCorrTheSame, $isValidBusContact, $isValidCorrContact, $expect)
+    {
+        //  set model parameters
+        $this->model->fromPost(
+            (new Parameters())
+                ->set(AeCreateForm::FIELD_IS_CORR_DETAILS_THE_SAME, $isCorrTheSame)
+        );
+
+        //  logical block :: mocking
+        $mockBusContactModel = XMock::of(ContactDetailFormModel::class, ['isValid']);
+        $this->mockMethod($mockBusContactModel, 'isValid', $this->once(), $isValidBusContact);
+
+        XMock::mockClassField($this->model, 'regContactModel', $mockBusContactModel);
+
+        if ($isValidCorrContact !== null) {
+            $mockCorrContactModel = XMock::of(ContactDetailFormModel::class, ['isValid']);
+            $this->mockMethod($mockCorrContactModel, 'isValid', $this->once(), $isValidCorrContact);
+
+            XMock::mockClassField($this->model, 'corrContactModel', $mockCorrContactModel);
+        }
+
+        //  check
+        $this->assertEquals($expect, $this->model->isValid());
+    }
+
+    public function dataProviderTestIsValid()
+    {
+        return [
+            [
+                'isCorrTheSame'      => 1,
+                'regContactIsValid'  => true,
+                'corrContactIsValid' => null,
+                'expect'             => true,
+            ],
+            [1, false, null, false],
+            [0, true, false, false],
+        ];
+    }
+
+
+    /**
+     * @return OrganisationDto|OrganisationContactDto
+     */
+    private function cloneObj($obj)
+    {
+        return clone $obj;
+    }
+
+    private function createContactDetails($contactType, $address = null, $email = null, $phone = null)
+    {
+        $addressDto = (new AddressDto());
+        if ($address !== null) {
+            $addressDto->setAddressLine1($address);
+        }
+
+        $phoneDto = (new PhoneDto())
+            ->setContactType(PhoneContactTypeCode::BUSINESS)
+            ->setIsPrimary(true);
+        if ($phone !== null) {
+            $phoneDto->setNumber($phone);
+        }
+
+        $emailDto = (new EmailDto())
+            ->setIsPrimary(true);
+        if ($email !== null) {
+            $emailDto->setEmail($email);
+        }
+
+        $contactDto = (new OrganisationContactDto())
+            ->setType($contactType)
+            ->setAddress($addressDto)
+            ->setPhones([$phoneDto])
+            ->setEmails([$emailDto]);
+
+        return $contactDto;
     }
 }

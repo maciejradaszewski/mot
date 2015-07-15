@@ -3,6 +3,7 @@
 namespace DvsaClient\Mapper;
 
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Dto\Organisation\OrganisationFormDto;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilder;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 use DvsaCommon\Utility\DtoHydrator;
@@ -47,10 +48,17 @@ class OrganisationMapper extends DtoMapper
         return $this->getWithParams($url, $params);
     }
 
-    public function updateAuthorisedExaminer($id, OrganisationDto $dto)
+    public function update($id, OrganisationDto $dto)
     {
         $url = AuthorisedExaminerUrlBuilder::of($id);
 
         return $this->put($url, DtoHydrator::dtoToJson($dto));
+    }
+
+    public function create(OrganisationDto $dto)
+    {
+        $url = AuthorisedExaminerUrlBuilder::of();
+
+        return $this->post($url, DtoHydrator::dtoToJson($dto));
     }
 }

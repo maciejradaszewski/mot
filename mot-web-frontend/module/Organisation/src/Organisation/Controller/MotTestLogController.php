@@ -128,7 +128,7 @@ class MotTestLogController extends AbstractAuthActionController
             $organisation->getName() => AuthorisedExaminerUrlBuilderWeb::of($organisationId),
             'Test logs' => '',
         ];
-        $this->layout()->setVariable('progressBar', ['breadcrumbs' => $breadcrumbs]);
+        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
         $this->layout()->setVariable('pageTitle', $viewModel->getOrganisation()->getName());
         $this->layout()->setVariable('pageSubTitle', 'Test logs of Authorised Examiner');

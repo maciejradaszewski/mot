@@ -63,7 +63,7 @@ class TesterMotTestLogController extends MotTestLogController
             'Performance dashboard' => PersonUrlBuilderWeb::of()->stats(),
             'Tester Test logs' => '',
         ];
-        $this->layout()->setVariable('progressBar', ['breadcrumbs' => $breadcrumbs]);
+        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
         $this->layout()->setVariable('pageTitle', $this->getIdentity()->getDisplayName());
         $this->layout()->setVariable('pageSubTitle', 'Test logs of Tester');

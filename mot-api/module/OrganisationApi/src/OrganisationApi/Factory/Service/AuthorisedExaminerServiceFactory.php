@@ -8,11 +8,13 @@ use DvsaCommonApi\Service\ContactDetailsService;
 use DvsaCommonApi\Service\Validator\AddressValidator;
 use DvsaCommonApi\Service\Validator\ContactDetailsValidator;
 use DvsaEntities\Entity\AuthForAeStatus;
+use DvsaEntities\Entity\AuthorisationForAuthorisedExaminer;
 use DvsaEntities\Entity\CompanyType;
 use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Entity\OrganisationContactType;
 use DvsaEntities\Entity\OrganisationType;
 use DvsaEntities\Entity\Person;
+use DvsaEntities\Entity\Site;
 use OrganisationApi\Service\AuthorisedExaminerService;
 use OrganisationApi\Service\Mapper\OrganisationMapper;
 use OrganisationApi\Service\OrganisationService;
@@ -32,26 +34,32 @@ class AuthorisedExaminerServiceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
+        $entityManager = $serviceLocator->get(EntityManager::class);
+        $organisationType = $entityManager->getRepository(OrganisationType::class);
+        $companyType = $entityManager->getRepository(CompanyType::class);
+
         return new AuthorisedExaminerService(
-            $serviceLocator->get(EntityManager::class),
+            $entityManager,
             $serviceLocator->get('DvsaAuthorisationService'),
             $serviceLocator->get(OrganisationService::class),
             $serviceLocator->get(ContactDetailsService::class),
-            $serviceLocator->get(EntityManager::class)->getRepository(Organisation::class),
-            $serviceLocator->get(EntityManager::class)->getRepository(Person::class),
-            $serviceLocator->get(EntityManager::class)->getRepository(OrganisationType::class),
-            $serviceLocator->get(EntityManager::class)->getRepository(CompanyType::class),
-            $serviceLocator->get(EntityManager::class)->getRepository(OrganisationContactType::class),
+            $entityManager->getRepository(Organisation::class),
+            $entityManager->getRepository(Person::class),
+            $organisationType,
+            $companyType,
+            $entityManager->getRepository(OrganisationContactType::class),
             new AuthorisedExaminerValidator(
                 new OrganisationValidator(),
                 new ContactDetailsValidator(new AddressValidator())
             ),
             new OrganisationMapper(
-                $serviceLocator->get(EntityManager::class)->getRepository(OrganisationType::class),
-                $serviceLocator->get(EntityManager::class)->getRepository(CompanyType::class)
+                $organisationType,
+                $companyType
             ),
-            $serviceLocator->get(EntityManager::class)->getRepository(AuthForAeStatus::class),
-            $serviceLocator->get(XssFilter::class)
+            $entityManager->getRepository(AuthForAeStatus::class),
+            $serviceLocator->get(XssFilter::class),
+            $entityManager->getRepository(AuthorisationForAuthorisedExaminer::class),
+            $entityManager->getRepository(Site::class)
         );
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-use DvsaClient\ViewModel\EmailFormModel;
+use DvsaClient\ViewModel\PhoneFormModel;
 use DvsaCommon\Enum\SiteContactTypeCode;
 
 /**
@@ -9,8 +9,6 @@ use DvsaCommon\Enum\SiteContactTypeCode;
  * @var string                                        $cancelUrl
  * @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto
  */
-
-$this->inlineScript()->prependFile('/js/common/email-utils.js');
 
 $flashMessenger = $this->layout()->flashMessenger;
 
@@ -23,7 +21,7 @@ echo $this->partial(
     ['messages' => $flashMessenger->getSuccessMessages(), 'type' => 'failure']
 );
 
-$dto = $form->getDto();
+$dto = $form->getVtsDto();
 $busContact = $dto->getContactByType(SiteContactTypeCode::BUSINESS);
 ?>
 
@@ -47,44 +45,15 @@ $busContact = $dto->getContactByType(SiteContactTypeCode::BUSINESS);
         </p>
 
         <?php
-        $emailFieldName = $form->getBusEmail()->getFieldName(EmailFormModel::$FIELD_EMAIL);
+        //  business contact :: email elements
         echo $this->partial(
-            'partial/gds/form/control-text-group',
+            'partial/gds/form/control-email-conf-group',
             [
-                'id'            => $emailFieldName,
-                'errorMessage'  => $form->getError($emailFieldName),
-                'inputModifier' => '1-3',
-                'label'         => 'Email address',
-                'value'         => $form->getBusEmail()->getEmail(),
-            ]
-        );
-
-        $emailConfFieldName = $form->getBusEmail()->getFieldName(EmailFormModel::$FIELD_EMAIL_CONFIRM);
-        echo $this->partial(
-            'partial/gds/form/control-text-group',
-            [
-                'id'            => $emailConfFieldName,
-                'errorMessage'  => $form->getError($emailConfFieldName),
-                'inputModifier' => '1-3',
-                'label'         => 'Confirm email address',
-                'value'         => $form->getBusEmail()->getEmailConfirm(),
-            ]
-        );
-
-        $isSupplyEmailFieldName = $form->getBusEmail()->getFieldName(EmailFormModel::$FIELD_IS_SUPPLY);
-        echo $this->partial(
-            'partial/gds/form/control-checkbox-group',
-            [
-                'label'         => '',
-                'options'       => [
-                    [
-                        'value'         => '1',
-                        'inputName'     => $isSupplyEmailFieldName,
-                        'key'           => 'I don\'t want to supply an email address',
-                        'checked'       => !$form->getBusEmail()->isSupply(),
-                    ],
-                ],
-            ]
+                'id'    => 'email',
+                'group' => SiteContactTypeCode::BUSINESS,
+                'form'  => $form->getBusEmailModel(),
+            ],
+            'Core'
         );
         ?>
     </fieldset>
@@ -92,14 +61,16 @@ $busContact = $dto->getContactByType(SiteContactTypeCode::BUSINESS);
     <fieldset>
         <?php
         echo $this->partial('partial/gds/form/control-legend', ['id' => 'legendTelephone', 'text' => 'Telephone']);
+
         echo $this->partial(
             'partial/gds/form/control-text-group',
             [
-                'id'            => SiteContactTypeCode::BUSINESS. 'PhoneNumber',
-                'errorMessage'  => $form->getError(SiteContactTypeCode::BUSINESS. 'PhoneNumber'),
+                'id'            => SiteContactTypeCode::BUSINESS . PhoneFormModel::FIELD_NUMBER,
+                'name'          => SiteContactTypeCode::BUSINESS . '[' . PhoneFormModel::FIELD_NUMBER . ']',
+                'errorMessage'  => $form->getBusPhoneModel()->getError(PhoneFormModel::FIELD_NUMBER),
                 'inputModifier' => '1-4',
                 'label'         => 'Telephone number',
-                'value'         => $form->getBusPhone()->getNumber(),
+                'value'         => $form->getBusPhoneModel()->getNumber(),
             ]
         );
         ?>
@@ -116,13 +87,3 @@ $busContact = $dto->getContactByType(SiteContactTypeCode::BUSINESS);
         ]
     ); ?>
 </form>
-
-<?php $this->inlineScript()->captureStart(); ?>
-    $(function() {
-        var $eIsEmailSupply = $('input[name="<?php echo $this->escapeJs($isSupplyEmailFieldName); ?>"]'),
-            $eCorrEmail = $('#<?php echo $this->escapeJs($emailFieldName); ?>'),
-            $eCorrEmailConf = $('#<?php echo $this->escapeJs($emailConfFieldName); ?>');
-
-        EmailUtils.cleanIfNotSupply($eCorrEmail, $eCorrEmailConf, $eIsEmailSupply);
-    });
-<?php $this->inlineScript()->captureEnd(); ?>

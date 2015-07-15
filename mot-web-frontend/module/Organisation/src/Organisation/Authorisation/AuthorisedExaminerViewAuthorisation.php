@@ -68,7 +68,7 @@ class AuthorisedExaminerViewAuthorisation
         return $this->authorisationService->isGrantedAtOrganisation($permission, $this->authorisedExaminerId);
     }
 
-    public function canUpdateAE()
+    public function canUpdateAe()
     {
         return $this->authorisationService->isGrantedAtOrganisation(
             PermissionAtOrganisation::AUTHORISED_EXAMINER_UPDATE, $this->authorisedExaminerId
@@ -110,7 +110,8 @@ class AuthorisedExaminerViewAuthorisation
         );
     }
 
-    public function canBuySlots() {
+    public function canBuySlots()
+    {
         return $this->authorisationService->isGrantedAtOrganisation(
             PermissionAtOrganisation::SLOTS_PURCHASE, $this->authorisedExaminerId
         );
@@ -186,7 +187,7 @@ class AuthorisedExaminerViewAuthorisation
         return $this->authorisationService->isGranted(PermissionInSystem::AUTHORISED_EXAMINER_READ_FULL);
     }
 
-    public function canSearchAE()
+    public function canSearchAe()
     {
         return $this->authorisationService->isGranted(PermissionInSystem::AUTHORISED_EXAMINER_LIST);
     }
@@ -212,6 +213,7 @@ class AuthorisedExaminerViewAuthorisation
             function (OrganisationPositionDto $position) use ($person) {
                 return $position->getPerson()->getId() == $person->getId()
                 && $position->isActive();
-            });
+            }
+        );
     }
 }

@@ -4,7 +4,6 @@ namespace SiteApiTest\Service\Factory;
 use Doctrine\ORM\EntityManager;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
-use DvsaCommonTest\TestUtils\TestCaseTrait;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Repository\SiteRepository;
 use SiteApi\Factory\Service\SiteSearchServiceFactory;
@@ -19,8 +18,6 @@ use Zend\ServiceManager\ServiceManager;
  */
 class SiteSearchServiceFactoryTest extends AbstractServiceTestCase
 {
-    use TestCaseTrait;
-
     public function testEventServiceGetList()
     {
         $serviceManager = new ServiceManager();

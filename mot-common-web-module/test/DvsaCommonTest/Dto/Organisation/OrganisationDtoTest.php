@@ -33,6 +33,7 @@ class OrganisationDtoTest extends AbstractDtoTester
 
         //  --  check   --
         $this->assertSame($corrContact, $dto->getContactByType(OrganisationContactTypeCode::CORRESPONDENCE));
+        $this->assertSame($corrContact, $dto->getCorrespondenceContactDetail());
         $this->assertSame($busContact, $dto->getContactByType(OrganisationContactTypeCode::REGISTERED_COMPANY));
         $this->assertSame($busContact, $dto->getRegisteredCompanyContactDetail());
     }

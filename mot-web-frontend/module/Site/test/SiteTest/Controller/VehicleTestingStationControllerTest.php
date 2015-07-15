@@ -9,6 +9,8 @@ use DvsaClient\Mapper\MotTestInProgressMapper;
 use DvsaClient\Mapper\VehicleTestingStationDtoMapper;
 use DvsaClient\Mapper\VehicleTestingStationMapper;
 use DvsaClient\MapperFactory;
+use DvsaClient\ViewModel\EmailFormModel;
+use DvsaClient\ViewModel\PhoneFormModel;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Site\SiteContactDto;
@@ -22,9 +24,9 @@ use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\Controller\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
+use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use Site\Controller\VehicleTestingStationController;
 use Site\Form\VtsContactDetailsUpdateForm;
-use PHPUnit_Framework_MockObject_MockObject as MockObj;
 
 /**
  * Class VehicleTestingStationControllerTest
@@ -131,28 +133,6 @@ class VehicleTestingStationControllerTest extends AbstractFrontendControllerTest
         ];
     }
 
-    public function testUpdatePostFormError()
-    {
-        $this->setupAuthenticationServiceForIdentity(StubIdentityAdapter::asTester());
-        $this->setupAuthorizationService([PermissionAtSite::VTS_UPDATE_BUSINESS_DETAILS]);
-
-        $postData = [];
-
-        $result = $this->getResultForAction2('post', 'contactDetails', ['id' => self::SITE_ID], null, $postData);
-
-        $expectErrors = [
-            'BUSemail' =>'The email you entered is not valid',
-            'BUSPhoneNumber' => 'A telephone number must be entered',
-        ];
-
-        /** @var  VtsContactDetailsUpdateForm $form */
-        $form = $result->getVariable('form');
-
-        foreach ($expectErrors as $field => $error) {
-            $this->assertEquals($error, $form->getError($field));
-        }
-    }
-
     /**
      * @dataProvider dataProviderTestUpdatePost
      */
@@ -185,23 +165,14 @@ class VehicleTestingStationControllerTest extends AbstractFrontendControllerTest
     public function dataProviderTestUpdatePost()
     {
         $postData = [
-            'BUSEmail'             => 'test@domain.com',
-            'BUSEmailConfirmation' => 'test@domain.com',
-            'BUSPhoneNumber'       => '12345678',
+            SiteContactTypeCode::BUSINESS => [
+                EmailFormModel::FIELD_EMAIL         => 'test@domain.com',
+                EmailFormModel::FIELD_EMAIL_CONFIRM => 'test@domain.com',
+                PhoneFormModel::FIELD_NUMBER        => '12345678',
+            ],
         ];
 
         return [
-            //  --  test errors from client  --
-            [
-                'postData' => [],
-                'apiReturn' => null,
-                'expect' => [
-                    'errors' => [
-                        'BUSemail' =>'The email you entered is not valid',
-                        'BUSPhoneNumber' => 'A telephone number must be entered',
-                    ],
-                ],
-            ],
             //  --  test errors from api    --
             [
                 'postData' => $postData,

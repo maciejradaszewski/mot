@@ -2,11 +2,10 @@ package com.dvsa.mot.selenium.datasource;
 
 
 
+import com.dvsa.mot.selenium.datasource.enums.CompanyType;
+
 public class BusinessDetails {
 
-    /**
-     * Business Details test data
-     */
     public static final BusinessDetails BUSINESS_DETAILS_1 =
             new BusinessDetails(null, "K&C", "K&C Limited", "123456", CompanyType.Partnership,
                     "01180987655", "+44 161999 8888", "business1@email.com", "");
@@ -16,11 +15,12 @@ public class BusinessDetails {
                     "");
     public static final BusinessDetails BUSINESS_DETAILS_3 =
             new BusinessDetails(null, "Halfords", "Halfords Limited", "345600",
-                    CompanyType.LimitedLiabilityPartnership, "01180987655", "+44 161229 6666",
+                    CompanyType.Partnership, "01180987655", "+44 161229 6666",
                     "business3@email.dom", "");
     public static final BusinessDetails BUSINESS_DETAILS_4 =
-            new BusinessDetails(null, "Autofix", "Autofix Limited", "006007", CompanyType.Company,
-                    "01179009878", "+44 261966 1111", "business4@email.dom", "");
+            new BusinessDetails(null, "Autofix", "Autofix Limited", "006007",
+                    CompanyType.Partnership, "01179009878", "+44 261966 1111",
+                    "business4@email.dom", "");
     public static final BusinessDetails BUSINESS_DETAILS_5 =
             new BusinessDetails(null, "Johns Motorcycle Garage", "Johns Motorcycle Garage",
                     "123456", CompanyType.Partnership, "01180987655", "+44 261966 8811",
@@ -31,46 +31,43 @@ public class BusinessDetails {
                     "v1261");
     public static final BusinessDetails BUSINESS_DETAILS_7 =
             new BusinessDetails(null, "UT Garage 1", "UT Garage 1", "345600",
-                    CompanyType.LimitedLiabilityPartnership, "01180987655", "+44 131966 2233",
+                    CompanyType.PublicBody, "01180987655", "+44 131966 2233",
                     "business3@email.dom", "V1250");
     public static final BusinessDetails BUSINESS_DETAILS_8 =
-            new BusinessDetails(null, "Johns Garage", "Johns Garage", "006007", CompanyType.Company,
-                    "01179009879", "+44 261966 6789", "business4@email.dom", "v11234");
+            new BusinessDetails(null, "Johns Garage", "Johns Garage", "006007",
+                    CompanyType.PublicBody, "01179009879", "+44 261966 6789",
+                    "business4@email.dom", "v11234");
     public static final BusinessDetails BUSINESS_DETAILS_9 =
             new BusinessDetails(null, "Popular Garages", "Popular Garages", "006007",
-                    CompanyType.Company, "01179009878", "+44 161900 1234", "business5@email.dom",
-                    "V1234");
+                    CompanyType.PublicBody, "01179009878", "+44 161900 1234",
+                    "business5@email.dom", "V1234");
     public static final BusinessDetails BUSINESS_DETAILS_10 =
-            new BusinessDetails(null, "FT Garage 4", "FT Garage 4", "006007", CompanyType.Company,
-                    "01179009879", "+44 188800 1234", "business5@email.dom", "V1264");
+            new BusinessDetails(null, "FT Garage 4", "FT Garage 4", "006007",
+                    CompanyType.PublicBody, "01179009879", "+44 188800 1234",
+                    "business5@email.dom", "V1264");
     public static final BusinessDetails BUSINESS_DETAILS_11_LAPSED =
             new BusinessDetails(null, "Bancroft Garage", "Bancroft Garage", "006007",
-                    CompanyType.Company, "01179009879", "+44 226600 1233", "business5@email.dom",
-                    "V100817");
+                    CompanyType.PublicBody, "01179009879", "+44 226600 1233",
+                    "business5@email.dom", "V100817");
     public static final BusinessDetails BUSINESS_DETAILS_12_APPROVED_1 =
             new BusinessDetails(null, "Safari Garage", "Safari Garage", "006007",
-                    CompanyType.Company, "01179009879", "+44 861911 9934", "business5@email.dom",
-                    "31009");
+                    CompanyType.PublicBody, "01179009879", "+44 861911 9934",
+                    "business5@email.dom", "31009");
     public static final BusinessDetails BUSINESS_DETAILS_12_APPROVED_2 =
             new BusinessDetails(null, "Panteg Service Station", "test-fit-no-Slots1", "006007",
-                    CompanyType.Company, "01179009879", "+44 234900 3421", "business5@email.dom",
-                    "31009");
+                    CompanyType.PublicBody, "01179009879", "+44 234900 3421",
+                    "business5@email.dom", "31009");
     public static final BusinessDetails BUSINESS_DETAILS_13_REG_COMPANY =
             new BusinessDetails(null, "FitQuick", "F&Q Limited", "777888",
-                    CompanyType.RegisteredCompany, "01180987655", "+44 231900 7766",
+                    CompanyType.Company, "01180987655", "+44 231900 7766",
                     "business77@email.com", "");
 
     public static final BusinessDetails CRAZY_WHEELS =
             new BusinessDetails("B000004", "Crazy Wheels Inc.", "Crazy Wheels", "UK9102",
-                    CompanyType.LimitedLiabilityPartnership, "0800-789-123", "", "central@isis.com",
-                    "");
+                    CompanyType.SoleTrader, "0800-789-123", "", "central@isis.com", "");
     public static final BusinessDetails EXAMPLE_AE_INC =
             new BusinessDetails("AE3412", "Example AE Inc.", "AE Example", "UK1283",
-                    CompanyType.RegisteredCompany, "0800-789-321", "", "central@isis.com", "");
-
-
-    public enum CompanyType {SoleTrader, Company, Partnership, LimitedLiabilityPartnership, RegisteredCompany}
-
+                    CompanyType.Company, "0800-789-321", "", "central@isis.com", "");
 
     public final String AEnumber;
     public final String companyName;

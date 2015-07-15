@@ -54,6 +54,7 @@ $inputArray = [
     // Enums which has values that are database names, ideally usages of these would be replaced with the 'code' column.
     enum('EventTypeName', 'event_type_lookup', 'name', 'name'),
     enum('CompanyTypeName', 'company_type', 'name', 'name'),
+    enum('CompanyTypeCode', 'company_type', 'name', 'code'),
     enum('MotTestStatusName', 'mot_test_status', 'name', 'name'),
     enum('ReasonForRejectionTypeName', 'reason_for_rejection_type', 'name', 'name'),
 

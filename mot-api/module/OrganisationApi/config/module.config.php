@@ -1,17 +1,16 @@
 <?php
 
-use OrganisationApi\Controller\AuthorisedExaminerController;
 use OrganisationApi\Controller\AuthorisedExaminerPrincipalController;
 use OrganisationApi\Controller\OrganisationPositionController;
 use OrganisationApi\Controller\OrganisationRoleController;
 use OrganisationApi\Controller\OrganisationSlotUsageController;
 use OrganisationApi\Controller\SiteController;
 use OrganisationApi\Factory\Controller\MotTestLogControllerFactory;
+use OrganisationApi\Factory\Controller\AuthorisedExaminerControllerFactory;
 
 return [
     'controllers' => [
         'invokables' => [
-            AuthorisedExaminerController::class          => AuthorisedExaminerController::class,
             OrganisationSlotUsageController::class       => OrganisationSlotUsageController::class,
             AuthorisedExaminerPrincipalController::class => AuthorisedExaminerPrincipalController::class,
             OrganisationPositionController::class        => OrganisationPositionController::class,
@@ -19,7 +18,8 @@ return [
             SiteController::class                        => SiteController::class,
         ],
         'factories' => [
-            MotTestLogControllerFactory::class => MotTestLogControllerFactory::class,
+            MotTestLogControllerFactory::class         => MotTestLogControllerFactory::class,
+            AuthorisedExaminerControllerFactory::class => AuthorisedExaminerControllerFactory::class,
         ],
     ],
     'router'      => [
@@ -58,7 +58,7 @@ return [
                         'id' => '[0-9]+',
                     ],
                     'defaults'    => [
-                        'controller' => AuthorisedExaminerController::class,
+                        'controller' => AuthorisedExaminerControllerFactory::class,
                     ],
                 ],
                 'may_terminate' => true,
@@ -68,7 +68,7 @@ return [
                         'options' => [
                             'route'       => '/number[/:number]',
                             'defaults'    => [
-                                'controller' => AuthorisedExaminerController::class,
+                                'controller' => AuthorisedExaminerControllerFactory::class,
                                 'action'     => 'getAuthorisedExaminerByNumber',
                             ],
                         ],

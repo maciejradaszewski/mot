@@ -9,13 +9,13 @@ use Site\Controller\VehicleTestingStationController;
     </header>
     <p>You can apply for</p>
     <ul>
-        <li>
-            <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::of()->aeCreate(); ?>"
-               id="createAuthorisedExaminerLink"><?php echo $this->translate('Create AE'); ?>
-            </a>
-        <li>
-            <a id="action-edit-ae" href="#">Edit AE</a>
-        </li>
+        <?php if ($this->isFeatureEnabled(\DvsaCommon\Constants\FeatureToggle::AO1_AE_CREATE)): ?>
+            <li>
+                <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::of()->aeCreate(); ?>"
+                   id="createAuthorisedExaminerLink"><?php echo $this->translate('Create AE'); ?>
+                </a>
+            </li>
+        <?php endif; ?>
         <li>
             <a id="action-create-vts" href="<?php echo $this->url(VehicleTestingStationController::ROUTE_CREATE); ?>">
                 Create VTS</a>

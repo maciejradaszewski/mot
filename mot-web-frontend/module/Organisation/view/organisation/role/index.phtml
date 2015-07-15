@@ -1,6 +1,7 @@
 <?php
+
+use Organisation\Controller\AuthorisedExaminerController;
 use Organisation\Controller\RoleController;
-use Organisation\Controller\ViewController;
 
 ?>
 <header class="content-header">
@@ -67,7 +68,7 @@ use Organisation\Controller\ViewController;
         <ul class="content-navigation__secondary">
             <li>
                 <a href="<?php echo $this->url(
-                    ViewController::ROUTE_INDEX,
+                    AuthorisedExaminerController::ROUTE_INDEX,
                     [
                         'id' => $id,
                     ]

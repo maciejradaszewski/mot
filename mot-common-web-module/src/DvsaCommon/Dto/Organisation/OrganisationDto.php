@@ -26,6 +26,7 @@ class OrganisationDto extends AbstractDataTransferObject
     private $authorisedExaminerAuthorisation;
     private $slotBalance;
     private $dataMayBeDisclosed;
+    private $areaOfficeSite;
 
 
     /**
@@ -193,15 +194,7 @@ class OrganisationDto extends AbstractDataTransferObject
      */
     public function getCorrespondenceContactDetail()
     {
-        foreach ($this->getContacts() as $contactDetail) {
-            $type = $contactDetail->getType();
-
-            if ($type === OrganisationContactTypeCode::CORRESPONDENCE) {
-                return $contactDetail;
-            }
-        }
-
-        return null;
+        return $this->getContactByType(OrganisationContactTypeCode::CORRESPONDENCE);
     }
 
     /**
@@ -237,6 +230,24 @@ class OrganisationDto extends AbstractDataTransferObject
     public function setDataMayBeDisclosed($dataMayBeDisclosed)
     {
         $this->dataMayBeDisclosed = $dataMayBeDisclosed;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAreaOfficeSite()
+    {
+        return $this->areaOfficeSite;
+    }
+
+    /**
+     * @param int $areaOfficeSite
+     * @return $this
+     */
+    public function setAreaOfficeSite($areaOfficeSite)
+    {
+        $this->areaOfficeSite = $areaOfficeSite;
         return $this;
     }
 }

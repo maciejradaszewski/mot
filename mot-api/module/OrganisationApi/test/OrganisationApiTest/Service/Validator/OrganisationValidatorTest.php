@@ -15,8 +15,8 @@ class OrganisationValidatorTest extends AbstractServiceTestCase
     {
         $input = [
             'organisationName' => 'organisationName',
-            'organisationType' => OrganisationType::EXAMINING_BODY,
-            'companyType' => CompanyTypeName::LIMITED_LIABILITY_PARTNERSHIP,
+            'companyType' => CompanyTypeName::SOLE_TRADER,
+            'areaOfficeNumber' => 9,
         ];
 
         $this->createOrganisationValidator()->validate($input);

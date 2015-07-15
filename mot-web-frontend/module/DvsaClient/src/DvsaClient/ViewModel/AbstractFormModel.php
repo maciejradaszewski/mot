@@ -17,11 +17,11 @@ abstract class AbstractFormModel
         $this->errors = $errors;
     }
 
-    public function addError($fieldName, $message)
+    public function addError($fieldName, $message = null)
     {
         $this->errors[] = [
             'field'          => $fieldName,
-            'displayMessage' => $message,
+            'displayMessage' => (string) $message,
         ];
     }
 
@@ -37,7 +37,7 @@ abstract class AbstractFormModel
                 return $error['displayMessage'];
             }
         }
-        return '';
+        return null;
     }
 
     public function hasErrors()

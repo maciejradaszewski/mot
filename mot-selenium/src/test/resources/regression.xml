@@ -6,6 +6,7 @@
             <run>
                 <include name="Regression"/>
                 <include name="BVT"/>
+                <include name="FeatureToggleCreateAe"/>
             </run>
         </groups>
         <packages>

@@ -120,12 +120,16 @@ class AuthorisedExaminerContext implements Context
      */
     public function iCreateANewAuthorisedExaminer()
     {
-        $authorisedExaminerResponse = $this->authorisedExaminer->createAE(
-            $this->sessionContext->getCurrentAccessToken(),
-            'Sole Trader'
-        );
+        $featureSrv = $this->sessionContext->testSupportHelper->getServiceManager()->get('Feature\FeatureToggles');
 
-        PHPUnit::assertEquals(200, $authorisedExaminerResponse->getStatusCode());
+        if ($featureSrv->isEnabled(\DvsaCommon\Constants\FeatureToggle::AO1_AE_CREATE)) {
+            $authorisedExaminerResponse = $this->authorisedExaminer->createAE(
+                $this->sessionContext->getCurrentAccessToken(),
+                'Sole Trader'
+            );
+
+            PHPUnit::assertEquals(200, $authorisedExaminerResponse->getStatusCode());
+        }
     }
 
     /**

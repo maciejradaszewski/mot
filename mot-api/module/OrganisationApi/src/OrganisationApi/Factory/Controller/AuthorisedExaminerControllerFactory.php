@@ -1,0 +1,20 @@
+<?php
+
+namespace OrganisationApi\Factory\Controller;
+
+use Doctrine\ORM\EntityManager;
+use OrganisationApi\Controller\AuthorisedExaminerController;
+use OrganisationApi\Service\AuthorisedExaminerService;
+use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
+
+class AuthorisedExaminerControllerFactory implements FactoryInterface
+{
+    public function createService(ServiceLocatorInterface $controllerManager)
+    {
+        /** @var ServiceLocatorInterface $serviceLocator */
+        $serviceLocator = $controllerManager->getServiceLocator();
+
+        return new AuthorisedExaminerController($serviceLocator->get(AuthorisedExaminerService::class));
+    }
+}

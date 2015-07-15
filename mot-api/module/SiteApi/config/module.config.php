@@ -5,20 +5,19 @@ use SiteApi\Controller\EquipmentController;
 use SiteApi\Controller\MotTestInProgressController;
 use SiteApi\Controller\SiteContactController;
 use SiteApi\Controller\VehicleTestingStationAuthorisedClassesController;
-use SiteApi\Controller\SiteController;
 use SiteApi\Controller\SitePositionController;
 use SiteApi\Controller\SitePositionValidateController;
 use SiteApi\Controller\SiteRoleController;
 use SiteApi\Controller\SiteSlotUsageController;
 use SiteApi\Controller\SiteTestingDailyScheduleController;
 use SiteApi\Factory\Controller\SiteSearchControllerFactory;
+use SiteApi\Factory\Controller\SiteControllerFactory;
 
 return [
     'controllers' => [
         'invokables' => [
             VehicleTestingStationAuthorisedClassesController::class =>
                 VehicleTestingStationAuthorisedClassesController::class,
-            SiteController::class                     => SiteController::class,
             SiteRoleController::class                 => SiteRoleController::class,
             SitePositionController::class             => SitePositionController::class,
             SiteSlotUsageController::class            => SiteSlotUsageController::class,
@@ -31,6 +30,7 @@ return [
         ],
         'factories' => [
             SiteSearchControllerFactory::class => SiteSearchControllerFactory::class,
+            SiteControllerFactory::class => SiteControllerFactory::class,
         ],
     ],
     'router'      => [
@@ -105,7 +105,7 @@ return [
                         'id' => '[0-9]+',
                     ],
                     'defaults'    => [
-                        'controller' => SiteController::class,
+                        'controller' => SiteControllerFactory::class,
                         'action'     => 'siteById'
                     ],
                 ],
@@ -118,7 +118,7 @@ return [
                         'id' => '[0-9]+',
                     ],
                     'defaults' => [
-                        'controller' => SiteController::class,
+                        'controller' => SiteControllerFactory::class,
                     ],
                 ],
                 'may_terminate' => true,
@@ -140,7 +140,7 @@ return [
                                 'sitenumber' => '[0-9a-zA-Z]+',
                             ],
                             'defaults'    => [
-                                'controller' => SiteController::class,
+                                'controller' => SiteControllerFactory::class,
                                 'action'     => 'findBySiteNumber'
                             ],
                         ],

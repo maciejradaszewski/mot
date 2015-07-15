@@ -1,13 +1,22 @@
 <?php
+
 $type = (empty($this->type) ? 'text' : $this->type);
+
+$id = $this->id ?: false;
+$name=  isset($this->name) ? $this->name : $id;
+$tabIdx = (int) $this->tabIndex;
 ?>
 
 <input
     type="<?php echo $this->escapeHtmlAttr($type); ?>"
-    id="<?php echo $this->escapeHtmlAttr($id); ?>"
-    name="<?php echo $this->escapeHtmlAttr($name); ?>"
-    value="<?php echo $this->escapeHtmlAttr($value); ?>"
+    <?php
+    echo $id ? ' id="'. $this->escapeHtmlAttr($id) . '"' : '';
+    echo $name ? ' name="'. $this->escapeHtmlAttr($name) .'"' : '';
+    echo $this->autofocus === true ? ' autofocus' : '';
+    echo $tabIdx > 0 ? ' tabindex="'. $this->escapeHtmlAttr($tabIdx) .'"' : '';
+    echo !empty($maxLength) ? ' maxlength="'.$this->escapeHtmlAttr($maxLength).'"' : '';
+    ?>
+    value="<?php echo $this->escapeHtmlAttr($this->value); ?>"
     class="form-control
         <?php echo !empty($inputModifier) ? 'form-control-' . $this->escapeHtmlAttr($inputModifier) : ''; ?>"
-    <?php echo !empty($maxLength) ? ' maxlength="'.$this->escapeHtmlAttr($maxLength).'"' : ''; ?>
-    />
+/>

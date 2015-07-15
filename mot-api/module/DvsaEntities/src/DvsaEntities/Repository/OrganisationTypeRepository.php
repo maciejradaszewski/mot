@@ -11,4 +11,5 @@ use DvsaEntities\Entity\OrganisationType;
  */
 class OrganisationTypeRepository extends AbstractMutableRepository
 {
+    use EnumType1RepositoryTrait;
 }

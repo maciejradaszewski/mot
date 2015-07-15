@@ -221,7 +221,7 @@ class UserProfileController extends AbstractDvsaMotTestController
                     UserAdminUrlBuilderWeb::of()->userProfile($personId)
                 ) : '',
         ];
-        $this->layout()->setVariable('progressBar', ['breadcrumbs' => $breadcrumbs]);
+        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
         $this->layout('layout/layout-govuk.phtml');
 
         $resultViewModel = new ViewModel(

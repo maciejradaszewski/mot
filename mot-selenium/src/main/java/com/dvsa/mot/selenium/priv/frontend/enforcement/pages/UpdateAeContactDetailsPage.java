@@ -22,17 +22,17 @@ public class UpdateAeContactDetailsPage extends BasePage {
     @FindBy(id = "change-details") private WebElement updateAeContactDetailsLink;
     @FindBy(xpath = ".//h1") private WebElement aeContactDetailsPageTitle;
     @FindBy(id = "textWarning") private WebElement emailWarningForAe;
-    @FindBy(id = "correspondenceEmail") private WebElement emailId;
-    @FindBy(id = "correspondenceEmailConfirmation") private WebElement confirmEmail;
+    @FindBy(id = "CORRemail") private WebElement emailId;
+    @FindBy(id = "CORRemailConfirmation") private WebElement confirmEmail;
     @FindBy(id = "correspondenceEmailSupply1") private WebElement noEmailIdForAe;
-    @FindBy(id = "correspondencePhoneNumber") private WebElement aePhoneNumber;
-    @FindBy(id = "correspondenceContactDetailsSame1") private WebElement sameAddress;
-    @FindBy(id = "correspondenceContactDetailsSame0") private WebElement notSameAddress;
-    @FindBy(id = "correspondenceAddressLine1") private WebElement addressLine1;
-    @FindBy(id = "correspondenceAddressLine2") private WebElement addressLine2;
-    @FindBy(id = "correspondenceAddressLine3") private WebElement addressLine3;
-    @FindBy(id = "correspondenceTown") private WebElement town;
-    @FindBy(id = "correspondencePostcode") private WebElement postcode;
+    @FindBy(id = "CORRphoneNumber") private WebElement aePhoneNumber;
+    @FindBy(id = "isCorrContactDetailsSame1") private WebElement sameAddress;
+    @FindBy(id = "isCorrContactDetailsSame0") private WebElement notSameAddress;
+    @FindBy(id = "CORRaddressLine1") private WebElement addressLine1;
+    @FindBy(id = "CORRaddressLine2") private WebElement addressLine2;
+    @FindBy(id = "CORRaddressLine3") private WebElement addressLine3;
+    @FindBy(id = "CORRaddressTown") private WebElement town;
+    @FindBy(id = "CORRaddressPostCode") private WebElement postcode;
     @FindBy(id = "submitAeEdit") private WebElement submitBtn;
     @FindBy(id = "cor_address") private WebElement correspondenceAddress;
 
