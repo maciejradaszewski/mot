@@ -12,8 +12,10 @@ class AddressDtoTest extends \PHPUnit_Framework_TestCase
     const LINE_1 = 'line1';
     const LINE_2 = 'line2';
     const LINE_3 = 'line3';
+    const LINE_4 = 'line4';
     const POST_CODE = 'CM1 2TQ';
     const TOWN = 'Bristol';
+    const COUNTRY = 'test_Country';
 
     public function testSettersGetters()
     {
@@ -22,25 +24,25 @@ class AddressDtoTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::LINE_1, $address->getAddressLine1());
         $this->assertEquals(self::LINE_2, $address->getAddressLine2());
         $this->assertEquals(self::LINE_3, $address->getAddressLine3());
+        $this->assertEquals(self::LINE_4, $address->getAddressLine4());
         $this->assertEquals(self::TOWN, $address->getTown());
         $this->assertEquals(self::POST_CODE, $address->getPostcode());
+        $this->assertEquals(self::COUNTRY, $address->getCountry());
     }
 
     public function testToArray()
     {
-        $address = self::getDtoObject();
-
         $this->assertSame(
-            [
-                'addressLine1' => $address->getAddressLine1(),
-                'addressLine2' => $address->getAddressLine2(),
-                'addressLine3' => $address->getAddressLine3(),
-                'addressLine4' => $address->getAddressLine4(),
-                'town'         => $address->getTown(),
-                'country'      => $address->getCountry(),
-                'postcode'     => $address->getPostcode(),
-            ],
-            $address->toArray()
+            self::getArray(),
+            self::getDtoObject()->toArray()
+        );
+    }
+
+    public function testFromArray()
+    {
+        $this->assertEquals(
+            self::getDtoObject(),
+            AddressDto::fromArray(self::getArray())
         );
     }
 
@@ -57,6 +59,19 @@ class AddressDtoTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(AddressDto::isEquals($address, $address2));
     }
 
+    public function testIsEmpty()
+    {
+        $this->assertTrue((new AddressDto())->isEmpty());
+    }
+
+    public function testGetFullAddress()
+    {
+        $this->assertEquals(
+            'line1, line2, line3, line4, Bristol, CM1 2TQ',
+            self::getDtoObject()->getFullAddressString()
+        );
+    }
+
     /**
      * @return AddressDto
      */
@@ -65,7 +80,22 @@ class AddressDtoTest extends \PHPUnit_Framework_TestCase
         return (new AddressDto())->setAddressLine1(self::LINE_1)
             ->setAddressLine2(self::LINE_2)
             ->setAddressLine3(self::LINE_3)
+            ->setAddressLine4(self::LINE_4)
             ->setPostcode(self::POST_CODE)
-            ->setTown(self::TOWN);
+            ->setTown(self::TOWN)
+            ->setCountry(self::COUNTRY);
+    }
+
+    private static function getArray()
+    {
+        return [
+            'addressLine1' => self::LINE_1,
+            'addressLine2' => self::LINE_2,
+            'addressLine3' => self::LINE_3,
+            'addressLine4' => self::LINE_4,
+            'town'         => self::TOWN,
+            'country'      => self::COUNTRY,
+            'postcode'     => self::POST_CODE,
+        ];
     }
 }

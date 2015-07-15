@@ -4,15 +4,20 @@ namespace DvsaClientTest\Mapper;
 
 use DvsaClient\Mapper\OrganisationMapper;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
-use DvsaCommon\HttpRestJson\Client;
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilder;
+use DvsaCommon\UrlBuilder\PersonUrlBuilder;
+use DvsaCommon\Utility\DtoHydrator;
+use DvsaCommonTest\TestUtils\TestCaseTrait;
 
 /**
  * Class OrganisationMapperTest
  *
  * @package DvsaClientTest\Mapper
  */
-class OrganisationMapperTest extends \PHPUnit_Framework_TestCase
+class OrganisationMapperTest extends AbstractMapperTest
 {
+    use TestCaseTrait;
+
     const AE_ID = 1;
     const AE_NUMBER = 'A-12345';
 
@@ -21,20 +26,20 @@ class OrganisationMapperTest extends \PHPUnit_Framework_TestCase
      */
     private $mapper;
 
-    /** @var $client \PHPUnit_Framework_MockObject_MockBuilder */
-    private $client;
-
     public function setUp()
     {
-        $this->client = \DvsaCommonTest\TestUtils\XMock::of(Client::class, ['get', 'getWithParams']);
+        parent::setUp();
+
         $this->mapper = new OrganisationMapper($this->client);
     }
 
     public function testFetchAllForManager()
     {
-        $this->client->expects($this->any())
-            ->method('get')
-            ->willReturn(['data' => ['_class' => 'DvsaCommon\\Dto\\Organisation\\OrganisationDto']]);
+        $this->setupClientMockGet(
+            PersonUrlBuilder::byId(self::AE_ID)->authorisedExaminer(),
+            ['data' => ['_class' => OrganisationDto::class]]
+        );
+
         $this->assertInstanceOf(
             OrganisationDto::class,
             $this->mapper->fetchAllForManager(self::AE_ID)
@@ -43,9 +48,11 @@ class OrganisationMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAuthorisedExaminer()
     {
-        $this->client->expects($this->any())
-            ->method('get')
-            ->willReturn(['data' => ['_class' => 'DvsaCommon\\Dto\\Organisation\\OrganisationDto']]);
+        $this->setupClientMockGet(
+            AuthorisedExaminerUrlBuilder::of(self::AE_ID),
+            ['data' => ['_class' => OrganisationDto::class]]
+        );
+
         $this->assertInstanceOf(
             OrganisationDto::class,
             $this->mapper->getAuthorisedExaminer(self::AE_ID)
@@ -54,12 +61,49 @@ class OrganisationMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAuthorisedExaminerByNumber()
     {
-        $this->client->expects($this->any())
-            ->method('getWithParams')
-            ->willReturn(['data' => ['_class' => 'DvsaCommon\\Dto\\Organisation\\OrganisationDto']]);
+        $this->mockMethod(
+            $this->client,
+            'getWithParams',
+            $this->any(),
+            ['data' => ['_class' => OrganisationDto::class]],
+            [AuthorisedExaminerUrlBuilder::of()->authorisedExaminerByNumber(), self::AE_NUMBER]
+        );
+
         $this->assertInstanceOf(
             OrganisationDto::class,
             $this->mapper->getAuthorisedExaminerByNumber(self::AE_NUMBER)
         );
+    }
+
+    public function testUpdateAuthorisedExaminer()
+    {
+        $expectDto = new OrganisationDto();
+        $expect = ['id' => self::AE_ID];
+
+        $this->setupClientMockPut(
+            AuthorisedExaminerUrlBuilder::of(self::AE_ID),
+            DtoHydrator::dtoToJson($expectDto),
+            ['data' => $expect]
+        );
+
+        $actualDto = $this->mapper->update(self::AE_ID, $expectDto);
+
+        $this->assertEquals($expect, $actualDto);
+    }
+
+    public function testCreateAuthorisedExaminer()
+    {
+        $expectDto = new OrganisationDto();
+        $expect = 'expect response';
+
+        $this->setupClientMockPost(
+            AuthorisedExaminerUrlBuilder::of(),
+            DtoHydrator::dtoToJson($expectDto),
+            ['data' => $expect]
+        );
+
+        $actualDto = $this->mapper->create($expectDto);
+
+        $this->assertEquals($expect, $actualDto);
     }
 }

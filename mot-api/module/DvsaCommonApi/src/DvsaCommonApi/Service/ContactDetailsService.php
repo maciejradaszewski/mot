@@ -63,7 +63,7 @@ class ContactDetailsService extends AbstractService
 
     /**
      * @param ContactDetail $contactDetails
-     * @param ContactDto    $addressDto
+     * @param ContactDto    $contactDto
      */
     private function updateAddressInContactDetails(ContactDetail $contactDetails, ContactDto $contactDto)
     {

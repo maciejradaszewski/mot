@@ -66,7 +66,7 @@ class SearchController extends AbstractAuthActionController
 
         $this->layout('layout/layout-govuk.phtml');
         $this->layout()->setVariable('pageTitle', self::PAGE_TITLE);
-        $this->layout()->setVariable('progressBar', ['breadcrumbs' => $breadcrumbs]);
+        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
         $viewModel->setMaxSearchLength(self::MAX_SEARCH_LENGTH);
         return new ViewModel(['viewModel' => $viewModel]);
     }

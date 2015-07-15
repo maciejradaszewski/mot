@@ -3,16 +3,16 @@
 namespace OrganisationApi\Service;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\ResultSetMapping;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
-use DvsaCommon\Enum\OrganisationContactTypeCode;
-use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\AbstractService;
@@ -26,11 +26,13 @@ use DvsaEntities\Entity\OrganisationContact;
 use DvsaEntities\Entity\OrganisationContactType;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\AuthForAeStatusRepository;
+use DvsaEntities\Repository\AuthorisationForAuthorisedExaminerRepository;
 use DvsaEntities\Repository\CompanyTypeRepository;
 use DvsaEntities\Repository\OrganisationContactTypeRepository;
 use DvsaEntities\Repository\OrganisationRepository;
 use DvsaEntities\Repository\OrganisationTypeRepository;
 use DvsaEntities\Repository\PersonRepository;
+use DvsaEntities\Repository\SiteRepository;
 use OrganisationApi\Service\Mapper\OrganisationMapper;
 use OrganisationApi\Service\Validator\AuthorisedExaminerValidator;
 
@@ -39,58 +41,82 @@ use OrganisationApi\Service\Validator\AuthorisedExaminerValidator;
  */
 class AuthorisedExaminerService extends AbstractService
 {
-    const FIELD_CORRESPONDENCE_CONTACT_DETAILS_SAME = 'correspondenceContactDetailsSame';
-
-    /** @var AuthorisationServiceInterface  */
-    private $authService;
-
-    /** @var OrganisationService  */
-    private $organisationService;
-
-    /** @var ContactDetailsService  */
-    private $contactDetailService;
-
-    /** @var AuthorisedExaminerValidator */
-    private $validator;
-
-    /** @var OrganisationRepository  */
-    private $organisationRepository;
-
-    /** @var PersonRepository $personRepository */
-    private $personRepository;
-
-    /** @var OrganisationTypeRepository $organisationTypeRepository */
-    private $organisationTypeRepository;
-
-    /** @var CompanyTypeRepository $companyTypeRepository */
-    private $companyTypeRepository;
-
-    /** @var OrganisationContactTypeRepository */
-    private $organisationContactTypeRepository;
-
-    /** @var OrganisationMapper $mapper */
-    private $mapper;
-
-    /**  @var \DvsaCommonApi\Filter\XssFilter */
-    protected $xssFilter;
-
-    /**  @var AuthForAeStatusRepository */
-    private $authForAeStatusRepository;
+    const FIELD_CORRESPONDENCE_CONTACT_DETAILS_SAME = 'isCorrespondenceContactDetailsSame';
+    const FIELD_AREA_OFFICE_NUMBER = 'areaOfficeNumber';
 
     /**
-     * @param \Doctrine\ORM\EntityManager                                    $entityManager
-     * @param \DvsaAuthorisation\Service\AuthorisationServiceInterface       $authService
-     * @param \OrganisationApi\Service\OrganisationService                   $organisationService
-     * @param \DvsaCommonApi\Service\ContactDetailsService                   $contactDetailService
-     * @param \DvsaEntities\Repository\OrganisationRepository                $organisationRepository
-     * @param \DvsaEntities\Repository\PersonRepository                      $personRepository
-     * @param \DvsaEntities\Repository\OrganisationTypeRepository            $organisationTypeRepository
-     * @param \DvsaEntities\Repository\CompanyTypeRepository                 $companyTypeRepository
-     * @param OrganisationContactTypeRepository                              $organisationContactTypeRepository
+     * @var AuthorisationServiceInterface
+     */
+    private $authService;
+    /**
+     * @var OrganisationService
+     */
+    private $organisationService;
+    /**
+     * @var ContactDetailsService
+     */
+    private $contactDetailService;
+    /**
+     * @var AuthorisedExaminerValidator
+     */
+    private $validator;
+    /**
+     * @var OrganisationRepository
+     */
+    private $organisationRepository;
+    /**
+     * @var PersonRepository $personRepository
+     */
+    private $personRepository;
+    /**
+     * @var OrganisationTypeRepository $organisationTypeRepository
+     */
+    private $organisationTypeRepository;
+    /**
+     * @var CompanyTypeRepository $companyTypeRepository
+     */
+    private $companyTypeRepository;
+    /**
+     * @var OrganisationContactTypeRepository
+     */
+    private $organisationContactTypeRepository;
+    /**
+     * @var SiteRepository
+     */
+    private $siteRepository;
+    /**
+     * @var OrganisationMapper $mapper
+     */
+    private $mapper;
+    /**
+     * @var \DvsaCommonApi\Filter\XssFilter
+     */
+    protected $xssFilter;
+    /**
+     * @var AuthForAeStatusRepository
+     */
+    private $authForAeStatusRepository;
+    /**
+     * @var AuthorisationForAuthorisedExaminerRepository
+     */
+    private $authForAeExaminerRepository;
+
+    /**
+     * @param \Doctrine\ORM\EntityManager $entityManager
+     * @param \DvsaAuthorisation\Service\AuthorisationServiceInterface $authService
+     * @param \OrganisationApi\Service\OrganisationService $organisationService
+     * @param \DvsaCommonApi\Service\ContactDetailsService $contactDetailService
+     * @param \DvsaEntities\Repository\OrganisationRepository $organisationRepository
+     * @param \DvsaEntities\Repository\PersonRepository $personRepository
+     * @param \DvsaEntities\Repository\OrganisationTypeRepository $organisationTypeRepository
+     * @param \DvsaEntities\Repository\CompanyTypeRepository $companyTypeRepository
+     * @param OrganisationContactTypeRepository $organisationContactTypeRepository
      * @param \OrganisationApi\Service\Validator\AuthorisedExaminerValidator $validator
-     * @param \OrganisationApi\Service\Mapper\OrganisationMapper             $mapper
-     * @param \DvsaEntities\Repository\AuthForAeStatusRepository             $authForAeStatusRepository
-     * @param \DvsaCommonApi\Filter\XssFilter                                $xssFilter
+     * @param \OrganisationApi\Service\Mapper\OrganisationMapper $mapper
+     * @param \DvsaEntities\Repository\AuthForAeStatusRepository $authForAeStatusRepository
+     * @param \DvsaCommonApi\Filter\XssFilter $xssFilter
+     * @param AuthorisationForAuthorisedExaminerRepository $authorisationForAuthorisedExaminerRepository
+     * @param SiteRepository $siteRepository
      */
     public function __construct(
         EntityManager $entityManager,
@@ -105,50 +131,56 @@ class AuthorisedExaminerService extends AbstractService
         AuthorisedExaminerValidator $validator,
         OrganisationMapper $mapper,
         AuthForAeStatusRepository $authForAeStatusRepository,
-        XssFilter $xssFilter
+        XssFilter $xssFilter,
+        AuthorisationForAuthorisedExaminerRepository $authorisationForAuthorisedExaminerRepository,
+        SiteRepository $siteRepository
     ) {
         parent::__construct($entityManager);
 
-        $this->authService                       = $authService;
-        $this->organisationService               = $organisationService;
-        $this->contactDetailService              = $contactDetailService;
-        $this->organisationRepository            = $organisationRepository;
-        $this->personRepository                  = $personRepository;
-        $this->organisationTypeRepository        = $organisationTypeRepository;
-        $this->companyTypeRepository             = $companyTypeRepository;
+        $this->authService = $authService;
+        $this->organisationService = $organisationService;
+        $this->contactDetailService = $contactDetailService;
+        $this->organisationRepository = $organisationRepository;
+        $this->personRepository = $personRepository;
+        $this->organisationTypeRepository = $organisationTypeRepository;
+        $this->companyTypeRepository = $companyTypeRepository;
         $this->organisationContactTypeRepository = $organisationContactTypeRepository;
-        $this->validator                         = $validator;
-        $this->mapper                            = $mapper;
-        $this->authForAeStatusRepository         = $authForAeStatusRepository;
-        $this->xssFilter                         = $xssFilter;
+        $this->validator = $validator;
+        $this->mapper = $mapper;
+        $this->authForAeStatusRepository = $authForAeStatusRepository;
+        $this->xssFilter = $xssFilter;
+        $this->authForAeExaminerRepository = $authorisationForAuthorisedExaminerRepository;
+        $this->siteRepository = $siteRepository;
     }
 
     /**
-     * @param $data
+     * @param OrganisationDto $organisationDto
      * @return array
      * @throws \DvsaCommonApi\Service\Exception\NotFoundException
      */
-    public function create($data)
+    public function create(OrganisationDto $organisationDto)
     {
         $this->authService->assertGranted(PermissionInSystem::AUTHORISED_EXAMINER_CREATE);
 
-        $data = $this->xssFilter->filterMultiple($data);
-        $this->validator->validate($data);
+        /** @var OrganisationDto $organisationDto */
+        $organisationDto = $this->xssFilter->filter($organisationDto);
 
         $organisation = new Organisation();
+        $organisation->setSlotsWarning(0);
 
-        $contactDetails     = $this->createContactDetailsEntity($data);
-        $businessOrgContact = new OrganisationContact($contactDetails, $this->getRegisteredCompanyContactType());
+        $this->populateOrganisationFromDto($organisationDto, $organisation);
 
-        $organisation = $this->organisationService->persist($organisation, $data, $businessOrgContact);
+        //  --  create contact   --
+        /** @var OrganisationContactDto $contactDto */
+        foreach ($organisationDto->getContacts() as $contactDto) {
+            /** @var OrganisationContactType $contactType */
+            $contactType = $this->organisationContactTypeRepository->getByCode($contactDto->getType());
 
-        if (!$this->areBothContactDetailsTheSame($data)) {
-            $correspondenceData = ArrayUtils::removePrefixFromKeys($data, 'correspondence');
-            $contactDetails     = $this->createContactDetailsEntity($correspondenceData);
+            $contactDetails = $this->contactDetailService->setContactDetailsFromDto(
+                $contactDto, new ContactDetail()
+            );
 
-            $type                              = $this->getCorrespondenceContactType();
-            $correspondenceOrganisationContact = new OrganisationContact($contactDetails, $type);
-            $organisation->addContact($correspondenceOrganisationContact);
+            $organisation->setContact($contactDetails, $contactType);
         }
 
         /** @var AuthForAeStatus $status */
@@ -160,14 +192,16 @@ class AuthorisedExaminerService extends AbstractService
             ->setStatus($status)
             ->setOrganisation($organisation);
 
-        if (isset($data['authorisedExaminerReference'])) {
-            $authorisedExaminer->setNumber($data['authorisedExaminerReference']);
-        }
+        $authorisedExaminer->setNumber($this->authForAeExaminerRepository->getNextAeRef());
 
+        $this->entityManager->persist($organisation);
         $this->entityManager->persist($authorisedExaminer);
         $this->entityManager->flush();
 
-        return ['id' => $organisation->getId()];
+        return [
+            'id'    => $organisation->getId(),
+            'aeRef' => $authorisedExaminer->getNumber(),
+        ];
     }
 
     /**
@@ -184,7 +218,7 @@ class AuthorisedExaminerService extends AbstractService
 
         $orgEntity = $this->organisationRepository->getAuthorisedExaminer($orgId);
 
-        $this->updateOrganisationFromDto($orgDto, $orgEntity);
+        $this->populateOrganisationFromDto($orgDto, $orgEntity);
 
         //  --  create/update contact   --
         /** @var \DvsaCommon\Dto\Organisation\OrganisationContactDto $contactDto */
@@ -211,7 +245,7 @@ class AuthorisedExaminerService extends AbstractService
         return ['id' => $orgEntity->getId()];
     }
 
-    private function updateOrganisationFromDto(OrganisationDto $dto, Organisation $orgEntity)
+    private function populateOrganisationFromDto(OrganisationDto $dto, Organisation $orgEntity)
     {
         $val = $dto->getName();
         if ($val !== null) {
@@ -228,24 +262,14 @@ class AuthorisedExaminerService extends AbstractService
             $orgEntity->setTradingAs($val);
         }
 
-        $orgType = $dto->getOrganisationType();
-        if ($orgType !== null) {
-            $type = $this->organisationTypeRepository->findOneByName($orgType);
+        $companyType = $dto->getCompanyType();
+        if ($companyType !== null) {
+            $typeEntity = $this->companyTypeRepository->getByCode($companyType);
 
-            $orgEntity->setOrganisationType($type);
+            $orgEntity->setCompanyType($typeEntity);
         }
 
         return $orgEntity;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return \DvsaEntities\Entity\ContactDetail
-     */
-    private function createContactDetailsEntity($data)
-    {
-        return $this->contactDetailService->create($data, PhoneContactTypeCode::BUSINESS, true);
     }
 
     /**
@@ -395,31 +419,5 @@ class AuthorisedExaminerService extends AbstractService
 
         // Don't bother hydrating, just return array for direct serialization.
         return current($authorisedExaminer);
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return bool
-     */
-    private function areBothContactDetailsTheSame($data)
-    {
-        return true === (bool) $data[self::FIELD_CORRESPONDENCE_CONTACT_DETAILS_SAME];
-    }
-
-    /**
-     * @return OrganisationContactType
-     */
-    private function getRegisteredCompanyContactType()
-    {
-        return $this->organisationContactTypeRepository->getByCode(OrganisationContactTypeCode::REGISTERED_COMPANY);
-    }
-
-    /**
-     * @return OrganisationContactType
-     */
-    private function getCorrespondenceContactType()
-    {
-        return $this->organisationContactTypeRepository->getByCode(OrganisationContactTypeCode::CORRESPONDENCE);
     }
 }

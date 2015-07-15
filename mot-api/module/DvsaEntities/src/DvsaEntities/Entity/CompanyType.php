@@ -4,6 +4,7 @@ namespace DvsaEntities\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use DvsaDocument\EntityTrait\CommonIdentityTrait;
+use DvsaEntities\EntityTrait\EnumType1EntityTrait;
 
 /**
  * CompanyType
@@ -14,35 +15,13 @@ use DvsaDocument\EntityTrait\CommonIdentityTrait;
 class CompanyType extends Entity
 {
     use CommonIdentityTrait;
+    use EnumType1EntityTrait;
 
     /**
      * @var string
      * @ORM\Column(name="name", type="string", length=50, nullable=false)
      */
     private $name;
-
-    /**
-     * @var string
-     * @ORM\Column(name="code", type="string", length=5, nullable=false)
-     */
-    private $code;
-
-    /**
-     * @return string
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
-     * @param string $code
-     */
-    public function setCode($code)
-    {
-        $this->code = $code;
-        return $this;
-    }
 
     /**
      * @return string

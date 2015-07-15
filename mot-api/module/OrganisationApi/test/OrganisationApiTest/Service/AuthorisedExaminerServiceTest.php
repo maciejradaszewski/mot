@@ -2,19 +2,17 @@
 namespace OrganisationApiTest\Service;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NoResultException;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Constants\OrganisationType as OrganisationTypeConst;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
-use DvsaCommon\Utility\Hydrator;
 use DvsaCommonApi\Filter\XssFilter;
-use DvsaCommonApi\Service\AddressService;
 use DvsaCommonApi\Service\ContactDetailsService;
-use DvsaCommonApi\Service\Validator\AddressValidator;
-use DvsaCommonApi\Service\Validator\ContactDetailsValidator;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Address;
@@ -27,15 +25,14 @@ use DvsaEntities\Entity\OrganisationContact;
 use DvsaEntities\Entity\OrganisationContactType;
 use DvsaEntities\Entity\OrganisationType;
 use DvsaEntities\Entity\Person;
-use DvsaEntities\Entity\PhoneContactType;
-use DvsaEntities\Mapper\AddressMapper;
 use DvsaEntities\Repository\AuthForAeStatusRepository;
+use DvsaEntities\Repository\AuthorisationForAuthorisedExaminerRepository;
 use DvsaEntities\Repository\CompanyTypeRepository;
 use DvsaEntities\Repository\OrganisationContactTypeRepository;
 use DvsaEntities\Repository\OrganisationRepository;
 use DvsaEntities\Repository\OrganisationTypeRepository;
 use DvsaEntities\Repository\PersonRepository;
-use DvsaEntities\Repository\PhoneContactTypeRepository;
+use DvsaEntities\Repository\SiteRepository;
 use OrganisationApi\Service\AuthorisedExaminerService;
 use OrganisationApi\Service\Mapper\OrganisationMapper;
 use OrganisationApi\Service\OrganisationService;
@@ -49,6 +46,8 @@ use PHPUnit_Framework_MockObject_MockObject as MockObj;
  */
 class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
 {
+    const SITE_ID = 9;
+
     /** @var AuthorisedExaminerService */
     private $authorisedExaminerService;
     /** @var  PersonRepository|MockObj */
@@ -57,16 +56,25 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
     private $mockOrganisationRepo;
     /** @var  OrganisationTypeRepository|MockObj */
     private $mockOrganisationTypeRepo;
+    /** @var  OrganisationContactTypeRepository|MockObj */
+    private $mockOrgContactTypeRepo;
     /** @var  CompanyTypeRepository|MockObj */
     private $mockCompanyTypeRepo;
-    /** @var  ContactDetailsService */
+    /** @var  ContactDetailsService|MockObj */
     private $contactDetailsService;
     /** @var  OrganisationService|MockObj */
     private $organisationService;
     /** @var  EntityManager|MockObj */
     private $entityManager;
-    /** @var  AuthForAeStatusRepository|MockObj */
+    /** @var  AuthorisationForAuthorisedExaminerRepository|MockObj */
     private $authForAeRepository;
+    /** @var  AuthForAeStatusRepository|MockObj */
+    private $authForAeStatusRepository;
+    /** @var  SiteRepository|MockObj */
+    private $siteRepository;
+    /** @var  XssFilter|MockObj */
+    private $xssFilterMock;
+    private $mockAuthorisedExaminerValidator;
 
     /** @var Organisation */
     private $authorisedExaminer;
@@ -75,45 +83,20 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
 
     public function setUp()
     {
-        $this->mockOrganisationTypeRepo = XMock::of(OrganisationTypeRepository::class, ['findOneByName']);
-        $this->mockMethod(
-            $this->mockOrganisationTypeRepo,
-            'findOneByName',
-            $this->any(),
-            function ($name) {
-                return (new OrganisationType())->setName($name);
-            }
-        );
-
-        $this->mockCompanyTypeRepo = XMock::of(CompanyTypeRepository::class, ['findOneByName']);
-        $this->mockMethod(
-            $this->mockCompanyTypeRepo,
-            'findOneByName',
-            $this->any(),
-            function ($name) {
-                return (new CompanyType())->setName($name);
-            }
-        );
-
-        $mockOrgContactTypeRepo = XMock::of(OrganisationContactTypeRepository::class, ['getByCode']);
-        $this->mockMethod(
-            $mockOrgContactTypeRepo,
-            'getByCode',
-            $this->any(),
-            function ($code) {
-                return (new OrganisationContactType())->setCode($code);
-            }
-        );
-
-        $this->mockPersonRepo        = $this->getMockWithDisabledConstructor(PersonRepository::class);
-        $this->mockOrganisationRepo  = $this->getMockWithDisabledConstructor(OrganisationRepository::class);
-        $this->contactDetailsService = $this->createContactDetailsService();
-        $this->organisationService   = XMock::of(OrganisationService::class);
-        $this->entityManager         = $this->getMockEntityManager();
-        $this->authForAeRepository   = XMock::of(AuthForAeStatusRepository::class);
-        $xssFilterMock               = $this->createXssFilterMock();
-
+        $this->entityManager = XMock::of(EntityManager::class);
         $this->mockAuthService = XMock::of(AuthorisationServiceInterface::class);
+        $this->organisationService = XMock::of(OrganisationService::class);
+        $this->contactDetailsService = XMock::of(ContactDetailsService::class);
+        $this->mockOrganisationRepo = XMock::of(OrganisationRepository::class);
+        $this->mockPersonRepo = XMock::of(PersonRepository::class);
+        $this->mockOrganisationTypeRepo = XMock::of(OrganisationTypeRepository::class, ['findOneByName']);
+        $this->mockCompanyTypeRepo = XMock::of(CompanyTypeRepository::class, ['findOneByName', 'getByCode']);
+        $this->mockOrgContactTypeRepo = XMock::of(OrganisationContactTypeRepository::class, ['getByCode']);
+        $this->mockAuthorisedExaminerValidator = XMock::of(AuthorisedExaminerValidator::class);
+        $this->authForAeStatusRepository = XMock::of(AuthForAeStatusRepository::class);
+        $this->xssFilterMock = XMock::of(XssFilter::class, ['filter']);
+        $this->authForAeRepository = XMock::of(AuthorisationForAuthorisedExaminerRepository::class);
+        $this->siteRepository = XMock::of(SiteRepository::class);
 
         $this->authorisedExaminerService = new AuthorisedExaminerService(
             $this->entityManager,
@@ -124,17 +107,64 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
             $this->mockPersonRepo,
             $this->mockOrganisationTypeRepo,
             $this->mockCompanyTypeRepo,
-            $mockOrgContactTypeRepo,
-            $this->getMockWithDisabledConstructor(AuthorisedExaminerValidator::class),
+            $this->mockOrgContactTypeRepo,
+            $this->mockAuthorisedExaminerValidator,
             new OrganisationMapper(
                 $this->mockOrganisationTypeRepo,
                 $this->mockCompanyTypeRepo
             ),
+            $this->authForAeStatusRepository,
+            $this->xssFilterMock,
             $this->authForAeRepository,
-            $xssFilterMock
+            $this->siteRepository
         );
 
         $this->authorisedExaminer = $this->buildAuthorisedExaminer();
+
+        $this->mockMethod(
+            $this->mockOrganisationTypeRepo,
+            'findOneByName',
+            $this->any(),
+            function ($name) {
+                return (new OrganisationType())->setName($name);
+            }
+        );
+
+        $this->mockMethod(
+            $this->mockCompanyTypeRepo,
+            'getByCode',
+            $this->any(),
+            function ($code) {
+                return (new CompanyType())->setCode($code);
+            }
+        );
+
+        $this->mockMethod(
+            $this->mockCompanyTypeRepo,
+            'findOneByName',
+            $this->any(),
+            function ($name) {
+                return (new CompanyType())->setName($name);
+            }
+        );
+
+        $this->mockMethod(
+            $this->mockOrgContactTypeRepo,
+            'getByCode',
+            $this->any(),
+            function ($code) {
+                return (new OrganisationContactType())->setCode($code);
+            }
+        );
+
+        $this->mockMethod(
+            $this->xssFilterMock,
+            'filter',
+            $this->any(),
+            function ($dto) {
+                return $dto;
+            }
+        );
     }
 
     public function testGetAuthorisedExaminer()
@@ -187,11 +217,34 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
 
     public function testCreate()
     {
-        $this->mockMethod($this->authForAeRepository, 'getByCode', null, new AuthForAeStatus());
+        $this->mockMethod($this->authForAeStatusRepository, 'getByCode', null, new AuthForAeStatus());
         $this->mockMethod($this->organisationService, 'persist', null, new Organisation());
 
+        $contactDto = (new OrganisationContactDto())
+            ->setType(OrganisationContactTypeCode::CORRESPONDENCE);
+
+        $orgDto = new OrganisationDto();
+        $orgDto
+            ->setName('unit test')
+            ->setRegisteredCompanyNumber('utest reg nr')
+            ->setTradingAs('unit trading')
+            ->setOrganisationType(OrganisationTypeConst::AUTHORISED_EXAMINER)
+            ->setAreaOfficeSite(self::SITE_ID)
+            ->setContacts([$contactDto])
+            ->setCompanyType(CompanyTypeCode::COMPANY);
+
+        $contactDetails = new ContactDetail();
+
+        $this->contactDetailsService->expects($this->once())
+            ->method('setContactDetailsFromDto')
+            ->with($contactDto, $contactDetails)
+            ->willReturn($contactDetails);
+
         // This code doesn't assert anything, it checks if code compiles.
-        $this->authorisedExaminerService->create($this->getDataWithCorrespondenceContactDetails());
+        $actual = $this->authorisedExaminerService->create($orgDto);
+
+        $this->assertArrayHasKey('id', $actual);
+        $this->assertArrayHasKey('aeRef', $actual);
     }
 
     public function testUpdate()
@@ -231,6 +284,9 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
         //  --  mock    --
         $this->mockMethod($this->mockOrganisationRepo, 'getAuthorisedExaminer', $this->once(), $orgEntity, $orgId);
         $this->mockMethod($this->mockOrganisationRepo, 'save', $this->once(), null, $orgEntity);
+        $this->contactDetailsService->expects($this->once())
+            ->method('setContactDetailsFromDto')
+            ->willReturn(new ContactDetail());
 
         //  --  call & check    --
         $actual = $this->authorisedExaminerService->update($orgId, $orgDto);
@@ -261,6 +317,7 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
             "organisationName"                 => "Name",
             "tradingAs"                        => "my name company",
             "authorisedExaminerReference"      => "AE1234556",
+            "companyType"                      => "Limited Company",
             "organisationType"                 => "Examining Body",
             "registeredCompanyNumber"          => "13123123",
             "addressLine1"                     => "qqqq",
@@ -290,7 +347,8 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
                 "correspondenceEmail"              => "wedat@yahoo.com",
                 "correspondenceEmailConfirmation"  => "wedat@yahoo.com",
                 "correspondencePhoneNumber"        => "+173-78-9018207",
-                "correspondenceFaxNumber"          => "+978-77-5435043"
+                "correspondenceFaxNumber"          => "+978-77-5435043",
+                "areaOfficeNumber"                 => 9,
             ]
         );
     }
@@ -319,54 +377,5 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
         $this->mockMethod($this->entityManager, 'getRepository', $this->once(), $aeRepository);
 
         $this->authorisedExaminerService->getByNumber('INVALID');
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function createXssFilterMock()
-    {
-        $xssFilterMock = $this
-            ->getMockBuilder(XssFilter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $xssFilterMock
-            ->method('filter')
-            ->will($this->returnArgument(0));
-        $xssFilterMock
-            ->method('filterMultiple')
-            ->will($this->returnArgument(0));
-
-        return $xssFilterMock;
-    }
-
-    /**
-     * @return ContactDetailsService
-     */
-    protected function createContactDetailsService()
-    {
-        $entityManger = $this->getMockEntityManager();
-
-        /** @var PhoneContactTypeRepository|\PHPUnit_Framework_MockObject_MockObject $phoneContactTypeRepository */
-        $phoneContactTypeRepository = $this->getMockWithDisabledConstructor(PhoneContactTypeRepository::class);
-        $phoneContactTypeRepository
-            ->expects($this->any())->method('getByCode')
-            ->will($this->returnValue(new PhoneContactType()));
-
-        $addressService = new AddressService(
-            $entityManger,
-            new Hydrator(),
-            new AddressValidator(),
-            new AddressMapper()
-        );
-
-        $contactDetailsService = new ContactDetailsService(
-            $entityManger,
-            $addressService,
-            $phoneContactTypeRepository,
-            new ContactDetailsValidator(new AddressValidator())
-        );
-
-        return $contactDetailsService;
     }
 }

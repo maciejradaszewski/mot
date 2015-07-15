@@ -64,7 +64,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             Address
         </th>
         <td id="person-address" class="key-value-list__value">
-            <?php echo $presenter->displayFullAddress(); ?>
+            <?php echo $this->escapeHtml($presenter->displayFullAddress()); ?>
         </td>
     </tr>
     <tr>
@@ -72,7 +72,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             Email
         </th>
         <td id="person-email" class="key-value-list__value">
-            <?php echo $presenter->displayEmail(); ?>
+            <?php echo $this->escapeHtml($presenter->displayEmail()); ?>
         </td>
     </tr>
     <tr>
@@ -80,7 +80,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             Telephone
         </th>
         <td id="person-telephone" class="key-value-list__value--numeric">
-            <?php echo $presenter->displayTelephone(); ?>
+            <?php echo $this->escapeHtml($presenter->displayTelephone()); ?>
         </td>
     </tr>
     </tbody>

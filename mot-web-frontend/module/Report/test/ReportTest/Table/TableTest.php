@@ -47,10 +47,10 @@ class TableTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSet($property, $value, $expect = null)
     {
-        $method = lcfirst($property);
+        $method = ucfirst($property);
 
         //  logical block: set value and check set method
-        $result = $this->table->{'set' . lcfirst($property)}($value);
+        $result = $this->table->{'set' . $method}($value);
         $this->assertInstanceOf(Table::class, $result);
 
         //  logical block: check get method

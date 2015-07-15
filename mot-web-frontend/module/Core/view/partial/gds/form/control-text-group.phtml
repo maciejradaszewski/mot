@@ -1,17 +1,19 @@
 <?php
 $id = $this->id;
 $name = (!empty($this->name) ? $this->name : $id);
-$label = $this->label;
+$label = $this->label ?: '';
 $value = $this->value;
 $type = (empty($this->type) ? 'text' : $this->type);
 
-$inputModifier  = isset($inputModifier) ? $inputModifier : '';
-$divModifier    = isset($divModifier) ? $divModifier : '';
+$tabIndex  = $this->tabIndex;
+
+$inputModifier  = isset($this->inputModifier) ? $this->inputModifier : '';
+$divModifier    = isset($this->divModifier) ? $this->divModifier : '';
 
 $cssClass = join(
     ' ', array_filter(
         [
-            (!empty($this->errorMessage) ? 'has-error' : null),
+            (isset($this->errorMessage) ? 'has-error' : null),
             (!empty($this->divModifier) ? $this->divModifier : null),
         ]
     )
@@ -21,11 +23,15 @@ $cssClass = join(
 <div class="form-group <?php echo $this->escapeHtmlAttr($cssClass); ?>">
     <label for="<?php echo $this->escapeHtmlAttr($id); ?>"
            class="form-label">
-        <?php
-        echo $this->escapeHtml($label); ?>
+
+        <?php if (!empty($label)) :
+            echo $this->escapeHtml($label);
+        endif; ?>
+
         <?php if (!empty($help)): ?>
             <span class="form-hint"><?php echo $this->escapeHtml($help); ?></span>
         <?php endif; ?>
+
         <?php if (!empty($errorMessage)): ?>
             <span class="validation-message"><?php echo $this->escapeHtml($errorMessage); ?></span>
         <?php endif; ?>
@@ -40,6 +46,8 @@ $cssClass = join(
             'inputModifier' => $inputModifier,
             'type'          => $type,
             'maxLength'     => isset($maxLength) ? $maxLength : '',
+            'tabIndex'      => $tabIndex,
+            'autofocus'     => $this->autofocus,
         ]
     ); ?>
 </div>

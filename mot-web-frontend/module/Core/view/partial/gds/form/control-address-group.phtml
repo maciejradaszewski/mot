@@ -1,59 +1,72 @@
-<div class="panel-indent" id="<?php echo $this->escapeHtmlAttr($id); ?>">
-    <?php echo $this->partial(
-        'partial/gds/form/control-text-group',
-        [
-            'id'            => $type . 'AddressLine1',
-            'name'          => $type . 'AddressLine1',
-            'errorMessage'  => $form->getError('addressLine1'),
-            'divModifier'   => 'form-group-compound',
-            'label'         => 'Address line 1',
-            'value'         => $this->escapeHtml($address[$type . 'AddressLine1']),
-        ]
-    );
+<?php
+/** @var AddressFormModel $form */
+use DvsaClient\ViewModel\AddressFormModel;
+
+$form = $this->form;
+$group = $this->group ?: '';
+
+$tmplFieldName = (!empty($group) ? '%1$s[%2$s]' : '%2$s');
+?>
+
+<div class="panel-indent" id="<?php echo $this->escapeHtmlAttr($this->id); ?>">
+    <?php
     echo $this->partial(
         'partial/gds/form/control-text-group',
         [
-            'id'            => $type .  'AddressLine2',
-            'name'          => $type .  'AddressLine2',
-            'errorMessage'  => $form->getError('addressLine2'),
-            'divModifier'   => 'form-group-compound',
-            'label'         => '',
-            'value'         => $this->escapeHtml($address[$type . 'AddressLine2']),
-        ]
-    );
-    echo $this->partial(
-        'partial/gds/form/control-text-group',
-        [
-            'id'            => $type .  'AddressLine3',
-            'name'          => $type .  'AddressLine3',
-            'errorMessage'  => $form->getError('addressLine3'),
-            'divModifier'   => 'form-group-compound',
-            'label'         => '',
-            'value'         => $this->escapeHtml($address[$type . 'AddressLine3']),
-        ]
-    );
-    echo $this->partial(
-        'partial/gds/form/control-text-group',
-        [
-            'id'            => $type .  'Town',
-            'name'          => $type .  'Town',
-            'errorMessage'  => $form->getError('town'),
-            'divModifier'   => 'form-group-compound',
-            'label'         => 'Town or city',
-            'value'         => $this->escapeHtml($address[$type . 'Town']),
+            'id'           => $group . AddressFormModel::FIELD_LINE1,
+            'name'         => sprintf($tmplFieldName, $group, AddressFormModel::FIELD_LINE1),
+            'errorMessage' => $form->getError(AddressFormModel::FIELD_LINE1),
+            'divModifier'  => 'form-group-compound',
+            'label'        => 'Address line',
+            'value'        => $form->getAddressLine1(),
         ]
     );
 
     echo $this->partial(
         'partial/gds/form/control-text-group',
         [
-            'id'            => $type .  'Postcode',
-            'name'          => $type .  'Postcode',
-            'errorMessage'  => $form->getError('postcode'),
-            'divModifier'   => 'form-group-compound',
-            'label'         => 'Postcode',
-            'inputModifier' => '1-8',
-            'value'         => $this->escapeHtml($address[$type . 'Postcode']),
+            'id'           => $group . AddressFormModel::FIELD_LINE2,
+            'name'         => sprintf($tmplFieldName, $group, AddressFormModel::FIELD_LINE2),
+            'errorMessage' => $form->getError(AddressFormModel::FIELD_LINE2),
+            'divModifier'  => 'form-group-compound',
+            'value'        => $form->getAddressLine2(),
         ]
-    ); ?>
+    );
+
+    echo $this->partial(
+        'partial/gds/form/control-text-group',
+        [
+            'id'           => $group . AddressFormModel::FIELD_LINE3,
+            'name'         => sprintf($tmplFieldName, $group, AddressFormModel::FIELD_LINE3),
+            'errorMessage' => $form->getError(AddressFormModel::FIELD_LINE3),
+            'divModifier'  => 'form-group-compound',
+            'value'        => $form->getAddressLine3(),
+        ]
+    );
+
+    echo $this->partial(
+        'partial/gds/form/control-text-group',
+        [
+            'id'           => $group . AddressFormModel::FIELD_TOWN,
+            'name'         => sprintf($tmplFieldName, $group, AddressFormModel::FIELD_TOWN),
+            'errorMessage' => $form->getError(AddressFormModel::FIELD_TOWN),
+            'divModifier'  => 'form-group-compound',
+            'label'        => 'Town or city',
+            'value'        => $form->getTown(),
+        ]
+    );
+
+    echo $this->partial(
+        'partial/gds/form/control-text-group',
+        [
+            'id'            => $group . AddressFormModel::FIELD_POSTCODE,
+            'name'          => sprintf($tmplFieldName, $group, AddressFormModel::FIELD_POSTCODE),
+            'errorMessage'  => $form->getError(AddressFormModel::FIELD_POSTCODE),
+            'divModifier'   => 'form-group-compound',
+            'inputModifier' => '1-8',
+            'label'         => 'Postcode',
+            'value'         => $form->getPostCode(),
+        ]
+    );
+    ?>
 </div>

@@ -11,4 +11,5 @@ use DvsaEntities\Entity\CompanyType;
  */
 class CompanyTypeRepository extends AbstractMutableRepository
 {
+    use EnumType1RepositoryTrait;
 }

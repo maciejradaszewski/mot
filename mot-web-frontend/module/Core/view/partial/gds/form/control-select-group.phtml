@@ -1,0 +1,49 @@
+<?php
+$id = $this->id;
+$name = (!empty($this->name) ? $this->name : $id);
+$label = $this->label;
+$value = $this->value;
+$options = $this->options;
+$optional= $this->optional;
+$type = (empty($this->type) ? 'text' : $this->type);
+
+$inputModifier  = isset($inputModifier) ? $inputModifier : '';
+$divModifier    = isset($divModifier) ? $divModifier : '';
+
+$cssClass = join(
+    ' ', array_filter(
+        [
+            (!empty($this->errorMessage) ? 'has-error' : null),
+            (!empty($this->divModifier) ? $this->divModifier : null),
+        ]
+    )
+);
+
+?>
+<div class="form-group <?php echo $this->escapeHtmlAttr($cssClass); ?>">
+    <label for="<?php echo $this->escapeHtmlAttr($id); ?>"
+           class="form-label">
+
+        <?php echo $this->escapeHtml($label); ?>
+
+        <?php if (!empty($help)): ?>
+            <span class="form-hint"><?php echo $this->escapeHtml($help); ?></span>
+        <?php endif; ?>
+
+        <?php if (!empty($errorMessage)): ?>
+            <span class="validation-message"><?php echo $this->escapeHtml($errorMessage); ?></span>
+        <?php endif; ?>
+    </label>
+
+    <?php echo $this->partial(
+        'partial/gds/form/control-select',
+        [
+            'id'            => $id,
+            'name'          => $name,
+            'value'         => $value,
+            'optional'      => $optional,
+            'options'       => $options,
+            'inputModifier' => $inputModifier,
+        ]
+    ); ?>
+</div>

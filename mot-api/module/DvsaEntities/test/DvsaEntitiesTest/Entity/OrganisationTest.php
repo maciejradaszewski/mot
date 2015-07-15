@@ -3,6 +3,7 @@ namespace DvsaEntitiesTest\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
+use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommon\Enum\OrganisationBusinessRoleCode;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\BusinessRoleStatus;
@@ -12,7 +13,6 @@ use DvsaEntities\Entity\OrganisationBusinessRole;
 use DvsaEntities\Entity\OrganisationBusinessRoleMap;
 use DvsaEntities\Entity\OrganisationType;
 use DvsaEntities\Entity\Person;
-use DvsaCommon\Enum\CompanyTypeName;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaEntities\Entity\ContactDetail;
 use DvsaEntities\Entity\OrganisationContactType;
@@ -57,7 +57,7 @@ class OrganisationTest extends PHPUnit_Framework_TestCase
         $registeredCompanyNumber = '07589628';
         $name = 'My Organisation';
         $orgTypeName = 'Authorised Examiner';
-        $companyTypeName = CompanyTypeName::REGISTERED_COMPANY;
+        $companyTypeName = CompanyTypeCode::COMPANY;
         $tradingAs = 'My garage';
 
         $organisationType = new OrganisationType();

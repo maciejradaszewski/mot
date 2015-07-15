@@ -12,14 +12,14 @@ public class AuthorisedExaminerChangeDetailsPage extends Page {
 
     private static final String PAGE_TITLE = "Change contact details";
 
-    @FindBy(id = "correspondenceEmail") private WebElement correspondenceEmail;
+    @FindBy(id = "CORRemail") private WebElement correspondenceEmail;
 
-    @FindBy(id = "correspondenceEmailConfirmation")
+    @FindBy(id = "CORRemailConfirmation")
     private WebElement correspondenceEmailConfirmation;
 
-    @FindBy(id = "correspondencePhoneNumber") private WebElement correspondencePhoneNumber;
+    @FindBy(id = "CORRphoneNumber") private WebElement correspondencePhoneNumber;
 
-    @FindBy(id = "correspondenceContactDetailsSame1")
+    @FindBy(id = "isCorrContactDetailsSame1")
     private WebElement correspondenceSameAsBusiness;
 
     @FindBy(id = "submitAeEdit")

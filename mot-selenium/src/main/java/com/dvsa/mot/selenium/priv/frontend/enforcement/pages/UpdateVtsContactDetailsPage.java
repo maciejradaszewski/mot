@@ -24,8 +24,8 @@ public class UpdateVtsContactDetailsPage extends BasePage {
     @FindBy(id = "textWarning") private WebElement emailWarningForVts;
     @FindBy(id = "BUSemail") private WebElement vtsEmailId;
     @FindBy(id = "BUSemailConfirmation") private WebElement vtsEmailIdConfirmation;
-    @FindBy(id = "BUSemailIsSupply1") private WebElement noEmailIdForVts;
-    @FindBy(id = "BUSPhoneNumber") private WebElement vtsPhoneNumber;
+    @FindBy(id = "BUS[isEmailNotSupply]1") private WebElement noEmailIdForVts;
+    @FindBy(id = "BUSphoneNumber") private WebElement vtsPhoneNumber;
     // @FindBy(id = "submitAeEdit") private WebElement submitVtsDetails;
     @FindBy(id = "email") private WebElement updatedEmail;
     @FindBy(id = "phone-number") private WebElement updatedTelephone;

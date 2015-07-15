@@ -28,9 +28,13 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
     const SITE_ID = 1;
     const SITE_NR = 'V1234';
 
+    private $mockService;
+
     protected function setUp()
     {
-        $this->setController(new SiteController());
+        $this->mockService = XMock::of(SiteService::class);
+        $this->setController(new SiteController($this->mockService));
+
         parent::setUp();
     }
 
@@ -58,8 +62,7 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
     ) {
         $this->mockValidAuthorization(array(Role::VEHICLE_EXAMINER));
 
-        $mockSiteService = $this->getMockSiteService();
-        $this->setupMockForCalls($mockSiteService, $serviceMethod, $serviceReturn);
+        $this->setupMockForCalls($this->mockService, $serviceMethod, $serviceReturn);
 
         $result = $this->getResultForAction($method, $action, $params, $queryParams);
 
@@ -140,9 +143,8 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
 
         $paramValue = 'notExists';
 
-        $mockSiteService = $this->getMockSiteService();
         $exception = new NotFoundException('Site', $paramValue);
-        $this->setupMockForCalls($mockSiteService, $serviceMethod, $exception, $paramValue);
+        $this->setupMockForCalls($this->mockService, $serviceMethod, $exception, $paramValue);
 
         $this->setExpectedException(
             NotFoundException::class,
@@ -211,14 +213,6 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
         ];
     }
 
-    public function testGetService()
-    {
-        $this->assertEquals(
-            $this->getMockSiteService(),
-            XMock::invokeMethod($this->getController(), 'getSiteService')
-        );
-    }
-
     protected function getQueryTestResponse($siteData)
     {
         $response = $this->getTestResponse($siteData);
@@ -236,8 +230,4 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
         ];
     }
 
-    private function getMockSiteService()
-    {
-        return $this->getMockServiceManagerClass(SiteService::class, SiteService::class);
-    }
 }

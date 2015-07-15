@@ -16,8 +16,6 @@ class AuthorisationForAuthorisedExaminer extends Entity
 {
     use CommonIdentityTrait;
 
-    const NUMBER_FORMAT = 'B%06d';
-
     /**
      * @var \DvsaEntities\Entity\Organisation
      *
@@ -67,6 +65,16 @@ class AuthorisationForAuthorisedExaminer extends Entity
      * )
      */
     private $authorisedExaminersPrincipalAssociations;
+
+    /**
+     * @var Site
+     *
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Site")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="ao_site_id", referencedColumnName="id")
+     * })
+     */
+    private $areaOffice;
 
     public function __construct()
     {
@@ -210,4 +218,21 @@ class AuthorisationForAuthorisedExaminer extends Entity
     {
         return $this->expiryDate;
     }
+
+    /**
+     * @return Site
+     */
+    public function getAreaOffice()
+    {
+        return $this->areaOffice;
+    }
+
+    /**
+     * @param Site $areaOffice
+     */
+    public function setAreaOffice($areaOffice)
+    {
+        $this->areaOffice = $areaOffice;
+    }
+
 }

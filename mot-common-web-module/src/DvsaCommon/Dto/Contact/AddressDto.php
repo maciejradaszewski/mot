@@ -44,7 +44,6 @@ class AddressDto extends AbstractDataTransferObject
             ->setAddressLine2(ArrayUtils::tryGet($data, 'addressLine2'))
             ->setAddressLine3(ArrayUtils::tryGet($data, 'addressLine3'))
             ->setAddressLine4(ArrayUtils::tryGet($data, 'addressLine4'))
-            ->setAddressLine4(ArrayUtils::tryGet($data, 'addressLine4'))
             ->setCountry(ArrayUtils::tryGet($data, 'country'));
 
         return $address;
@@ -191,9 +190,9 @@ class AddressDto extends AbstractDataTransferObject
         return $this;
     }
 
-    public function getFullAddressString()
+    public function getFullAddressString($sprtr = ', ')
     {
-        return AddressUtils::stringify($this->toArray());
+        return AddressUtils::stringify($this->toArray(), $sprtr);
     }
 
     public static function isEquals($dtoA, $dtoB)

@@ -156,7 +156,7 @@ class SiteSearchController extends AbstractDvsaMotTestController
 
         $this->layout()->setVariable('pageTitle', $title);
         $this->layout()->setVariable('pageSubTitle', 'Site search');
-        $this->layout()->setVariable('progressBar', ['breadcrumbs' => $breadcrumbs]);
+        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
         return new ViewModel(
             [

@@ -6,6 +6,7 @@ use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Contact\ContactDto;
 use DvsaCommon\Dto\Contact\EmailDto;
 use DvsaCommon\Dto\Contact\PhoneDto;
+use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaCommon\Enum\PhoneContactTypeCode;
 
 /**
@@ -28,6 +29,7 @@ class ContactDtoTest extends \PHPUnit_Framework_TestCase
 
     private static $phones;
     private static $emails;
+    private static $type;
 
     public function testSettersGetters()
     {
@@ -35,6 +37,7 @@ class ContactDtoTest extends \PHPUnit_Framework_TestCase
 
         $contact = self::getDtoObject();
 
+        $this->assertSame(self::$type, $contact->getType());
         $this->assertSame(self::$emailPrimaryDto->getEmail(), $contact->getPrimaryEmailAddress());
         $this->assertSame(self::$phonePrimaryDto->getNumber(), $contact->getPrimaryPhoneNumber());
         $this->assertSame(self::$faxDto->getNumber(), $contact->getPrimaryFaxNumber());
@@ -58,6 +61,7 @@ class ContactDtoTest extends \PHPUnit_Framework_TestCase
 
     private static function initStatic()
     {
+        self::$type = OrganisationContactTypeCode::REGISTERED_COMPANY;
         self::$emailPrimaryDto = EmailDtoTest::getDtoObject()->setIsPrimary(true);
         self::$emailDto = EmailDtoTest::getDtoObject();
         self::$phonePrimaryDto = PhoneDtoTest::getDtoObject()->setIsPrimary(true);
@@ -83,6 +87,7 @@ class ContactDtoTest extends \PHPUnit_Framework_TestCase
     {
         $contact = new ContactDto();
         $contact
+            ->setType(self::$type)
             ->setAddress(self::$addressDto)
             ->setEmails(self::$emails)
             ->setPhones(self::$phones);

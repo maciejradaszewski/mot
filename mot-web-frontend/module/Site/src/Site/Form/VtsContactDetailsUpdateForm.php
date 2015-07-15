@@ -3,13 +3,12 @@ namespace Site\Form;
 
 use DvsaClient\ViewModel\AbstractFormModel;
 use DvsaClient\ViewModel\EmailFormModel;
-use DvsaCommon\Dto\Contact\EmailDto;
-use DvsaCommon\Dto\Contact\PhoneDto;
+use DvsaClient\ViewModel\PhoneFormModel;
 use DvsaCommon\Dto\Site\SiteContactDto;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommon\Enum\SiteContactTypeCode;
-use DvsaCommon\Utility\ArrayUtils;
+use Zend\Stdlib\Parameters;
 
 class VtsContactDetailsUpdateForm extends AbstractFormModel
 {
@@ -18,48 +17,45 @@ class VtsContactDetailsUpdateForm extends AbstractFormModel
     /** @var  SiteContactDto */
     private $busContact;
     /** @var  EmailFormModel */
-    private $busEmail;
-    /** @var  PhoneDto */
-    private $busPhone;
+    private $busEmailModel;
+    /** @var  PhoneFormModel */
+    private $busPhoneModel;
 
     public function __construct()
     {
-        $this->busEmail = new EmailFormModel(SiteContactTypeCode::BUSINESS);
+        $this->busEmailModel = new EmailFormModel();
+        $this->busEmailModel->setIsPrimary(true);
 
-        $this->busPhone = new PhoneDto();
+        $this->busPhoneModel = new PhoneFormModel();
+        $this->busPhoneModel
+            ->setIsPrimary(true)
+            ->setType(PhoneContactTypeCode::BUSINESS);
     }
 
-    public function populateFromPost(array $input)
+    /**
+     * @return $this
+     */
+    public function fromPost(Parameters $postData)
     {
-        $this->busEmail->fromPost($input);
-        // there is negative question "I don't want to supply an email address", therefore
-        // there need to set opposite value (if get true, set false, and in other way)
-        $this->busEmail->setIsSupply(
-            (bool)ArrayUtils::tryGet($input, $this->busEmail->getFieldName(EmailFormModel::$FIELD_IS_SUPPLY))
-            === false
-        );
+        /** @var Parameters $contactData */
+        $contactData = new Parameters($postData->get(SiteContactTypeCode::BUSINESS));
 
-        $this->busPhone->setNumber(ArrayUtils::tryGet($input, SiteContactTypeCode::BUSINESS . 'PhoneNumber'));
+        $this->getBusEmailModel()->fromPost($contactData);
+        $this->getBusPhoneModel()->fromPost($contactData);
+
+        return $this;
     }
 
-    public function toApiData()
+    public function toDto()
     {
         $dto = $this->busContact;
         $dto->setAddress(null);
 
-        //  --  set email   --
-        //  if user don't want provide email, but email was already provided, there send empty object
-        $emailDto = ($this->busEmail->isSupply() ? $this->busEmail->getDto() : new EmailDto());
-        $emailDto->setIsPrimary(true);
+        //  set email
+        $dto->setEmails([$this->getBusEmailModel()->toDto()]);
 
-        $dto->setEmails([$emailDto]);
-
-        //  --  set phone   --
-        $this->busPhone
-            ->setIsPrimary(true)
-            ->setContactType(PhoneContactTypeCode::BUSINESS);
-
-        $dto->setPhones([$this->busPhone]);
+        //  set phone
+        $dto->setPhones([$this->getBusPhoneModel()->toDto()]);
 
         return $dto;
     }
@@ -67,7 +63,7 @@ class VtsContactDetailsUpdateForm extends AbstractFormModel
     /**
      * API data structure is nested, while the form uses flat structure of fields.
      */
-    public function populateFromApi(VehicleTestingStationDto $vtsDto)
+    public function fromDto(VehicleTestingStationDto $vtsDto)
     {
         $this->vtsDto = $vtsDto;
 
@@ -75,59 +71,33 @@ class VtsContactDetailsUpdateForm extends AbstractFormModel
         $this->busContact = $this->vtsDto->getContactByType(SiteContactTypeCode::BUSINESS);
 
         if ($this->busContact instanceof SiteContactDto) {
-            $this->busEmail->fromDto($this->busContact->getPrimaryEmail());
-
-            $this->busPhone = $this->busContact->getPrimaryPhone() ?: $this->busPhone;
+            $this->getBusEmailModel()->fromDto($this->busContact->getPrimaryEmail());
+            $this->getBusPhoneModel()->fromDto($this->busContact->getPrimaryPhone());
         }
+
+        return $this;
     }
 
-    public function getDto()
+    public function getVtsDto()
     {
         return $this->vtsDto;
     }
 
-    public function getBusEmail()
+    public function getBusEmailModel()
     {
-        return $this->busEmail;
+        return $this->busEmailModel;
     }
 
-    public function getBusPhone()
+    public function getBusPhoneModel()
     {
-        return $this->busPhone;
+        return $this->busPhoneModel;
     }
 
     public function isValid()
     {
-        $errors = [];
+        $isEmailValid = $this->getBusEmailModel()->isValid();
+        $isPhoneValid = $this->getBusPhoneModel()->isValid();
 
-        if ($this->busEmail->isSupply()) {
-            $email = $this->busEmail->getEmail();
-
-            $validator = new \Zend\Validator\EmailAddress();
-            if ($validator->isValid($email) === false) {
-                $errors[] = [
-                    'field'          => $this->busEmail->getFieldName(EmailFormModel::$FIELD_EMAIL),
-                    'displayMessage' => 'The email you entered is not valid'
-                ];
-            }
-
-            if ($email != $this->busEmail->getEmailConfirm()) {
-                $errors[] = [
-                    'field'          => $this->busEmail->getFieldName(EmailFormModel::$FIELD_EMAIL_CONFIRM),
-                    'displayMessage' => 'The confirmation email you entered is different'
-                ];
-            }
-        }
-
-        if (trim($this->busPhone->getNumber()) === '') {
-            $errors[] = [
-                'field'          => SiteContactTypeCode::BUSINESS . 'PhoneNumber',
-                'displayMessage' => 'A telephone number must be entered'
-            ];
-        }
-
-        $this->addErrors($errors);
-
-        return empty($errors);
+        return $isEmailValid && $isPhoneValid;
     }
 }

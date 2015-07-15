@@ -21,16 +21,37 @@ class SiteController extends AbstractDvsaRestfulController
     const SITE_NUMBER_INVALID_DATA_MESSAGE = 'siteNumber: non alphanumeric characters found';
     const SITE_NUMBER_INVALID_DATA_DISPLAY_MESSAGE = 'Site number should contain alphanumeric characters only';
 
-    public function siteByIdAction()
+    /**
+     * @var SiteService
+     */
+    private $service;
+
+    /**
+     * @param SiteService $service
+     */
+    public function __construct(SiteService $service)
     {
-        $id = $this->params()->fromRoute('id');
-        if ($id === null) {
-            return $this->getBadRequestResponseModelForId();
-        }
+        $this->service = $service;
+    }
 
-        $siteData = $this->getSiteService()->getSiteData($id);
+    public function create($data)
+    {
+        $result = $this->service->create($data);
 
-        return ApiResponse::jsonOk(["vehicleTestingStation" => $siteData]);
+        return ApiResponse::jsonOk($result);
+    }
+
+    /**
+     * @return JsonModel
+     * @deprecated VM-7285 (An update site data functionality was removed and changed to update
+     * contact details of VTS only. An update contact details use SiteContactController, so this
+     * method not used anywhere, but I left it, because it wil be need in future)
+     */
+    public function update($id, $data)
+    {
+        $result = $this->service->update($id, $data);
+
+        return ApiResponse::jsonOk($result);
     }
 
     public function get($id)
@@ -40,7 +61,7 @@ class SiteController extends AbstractDvsaRestfulController
         }
 
         $isNeedDto = (boolean)$this->params()->fromQuery('dto');
-        $data = $this->getSiteService()->getVehicleTestingStationData($id, $isNeedDto);
+        $data = $this->service->getVehicleTestingStationData($id, $isNeedDto);
 
         if ($isNeedDto) {
             return ApiResponse::jsonOk($data);
@@ -49,22 +70,16 @@ class SiteController extends AbstractDvsaRestfulController
         return ApiResponse::jsonOk(["vehicleTestingStation" => $data]);
     }
 
-    public function create($data)
+    public function siteByIdAction()
     {
-        $result = $this->getSiteService()->create($data);
+        $id = $this->params()->fromRoute('id');
+        if ($id === null) {
+            return $this->getBadRequestResponseModelForId();
+        }
 
-        return ApiResponse::jsonOk($result);
-    }
+        $siteData = $this->service->getSiteData($id);
 
-    /**
-     * @return JsonModel
-     * @deprecated VM-7285
-     */
-    public function update($id, $data)
-    {
-        $result = $this->getSiteService()->update($id, $data);
-
-        return ApiResponse::jsonOk($result);
+        return ApiResponse::jsonOk(["vehicleTestingStation" => $siteData]);
     }
 
     /**
@@ -81,21 +96,13 @@ class SiteController extends AbstractDvsaRestfulController
 
         $isNeedDto = (boolean)$this->params()->fromQuery('dto');
 
-        $data = $this->getSiteService()->getVehicleTestingStationDataBySiteNumber($siteNumber);
+        $data = $this->service->getVehicleTestingStationDataBySiteNumber($siteNumber);
 
         if ($isNeedDto) {
             return ApiResponse::jsonOk($data);
         }
 
         return ApiResponse::jsonOk(["vehicleTestingStation" => $data]);
-    }
-
-    /**
-     * @return SiteService
-     */
-    private function getSiteService()
-    {
-        return $this->getServiceLocator()->get(SiteService::class);
     }
 
     private function getBadRequestResponseModelForId()

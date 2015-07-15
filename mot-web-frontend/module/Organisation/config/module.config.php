@@ -6,8 +6,8 @@ use Organisation\Controller\MotTestLogController;
 use Organisation\Controller\RoleController;
 use Organisation\Controller\SearchController;
 use Organisation\Controller\SlotsUsageController;
-use Organisation\Controller\ViewController;
 use Site\Controller\VehicleTestingStationController;
+use Organisation\Factory\Controller\AuthorisedExaminerControllerFactory;
 
 return [
     UsernameValidator::class => [
@@ -25,7 +25,7 @@ return [
                         'id' => '[1-9]+[0-9]*',
                     ],
                     'defaults'    => [
-                        'controller' => ViewController::class,
+                        'controller' => AuthorisedExaminerControllerFactory::class,
                         'action'     => 'index',
                     ],
                 ],
@@ -45,7 +45,7 @@ return [
                         'options' => [
                             'route'    => '/create',
                             'defaults' => [
-                                'controller' => ViewController::class,
+                                'controller' => AuthorisedExaminerControllerFactory::class,
                                 'action'     => 'create',
                             ],
                         ],
@@ -55,7 +55,7 @@ return [
                         'options' => [
                             'route'       => '/edit',
                             'defaults'    => [
-                                'controller' => ViewController::class,
+                                'controller' => AuthorisedExaminerControllerFactory::class,
                                 'action'     => 'edit',
                             ],
                         ],
@@ -228,14 +228,15 @@ return [
     'controllers'    => [
         'invokables' => [
             SearchController::class                      => SearchController::class,
-            ViewController::class                        => ViewController::class,
             SlotsUsageController::class                  => SlotsUsageController::class,
             VehicleTestingStationController::class       => VehicleTestingStationController::class,
         ],
+        'factories' => [
+            AuthorisedExaminerControllerFactory::class => AuthorisedExaminerControllerFactory::class,
+        ]
     ],
     'view_manager'   => [
         'template_map'        => [
-            'organisationAddressDetails'                 => __DIR__ . '/../view/partials/address-details.phtml',
             'mot-test-log/formatter/vehicle-model-sub-row' =>
                 __DIR__ . '/../view/organisation/mot-test-log/formatter/vehicle-model-sub-row.phtml',
         ],

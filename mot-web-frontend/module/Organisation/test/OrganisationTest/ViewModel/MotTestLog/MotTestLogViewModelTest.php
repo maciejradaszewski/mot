@@ -65,10 +65,10 @@ class MotTestLogViewModelTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSet($property, $value, $expect = null)
     {
-        $method = lcfirst($property);
+        $method = ucfirst($property);
 
         //  logical block: set value and check set method
-        $result = $this->model->{'set' . lcfirst($property)}($value);
+        $result = $this->model->{'set' . $method}($value);
         $this->assertInstanceOf(MotTestLogViewModel::class, $result);
 
         //  logical block: check get method

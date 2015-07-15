@@ -1,6 +1,5 @@
 <?php
 use Dashboard\Controller\UserHomeController;
-use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 
 /** @var \UserAdmin\Presenter\UserProfilePresenter $presenter */
 /** @var string $searchResultsUrl */
@@ -55,7 +54,7 @@ use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
             Address
         </th>
         <td id="person-address" class="key-value-list__value">
-            <?php echo $presenter->displayFullAddress(); ?>
+            <?php echo $this->escapeHtml($presenter->displayFullAddress()); ?>
         </td>
     </tr>
     <tr>
@@ -71,7 +70,7 @@ use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
             Telephone
         </th>
         <td id="person-telephone" class="key-value-list__value--numeric">
-            <?php echo $presenter->displayTelephone(); ?>
+            <?php echo $this->escapeHtml($presenter->displayTelephone()); ?>
         </td>
     </tr>
     </tbody>

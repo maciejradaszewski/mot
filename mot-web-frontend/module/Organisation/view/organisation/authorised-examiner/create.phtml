@@ -1,0 +1,218 @@
+<?php
+
+/**
+ * @var AeCreateForm                               $form
+ * @var \Zend\Mvc\Controller\Plugin\FlashMessenger $flashMessenger
+ */
+
+use DvsaClient\ViewModel\PhoneFormModel;
+use DvsaCommon\Enum\OrganisationContactTypeCode;
+use Organisation\Form\AeCreateForm;
+
+//  show api errors
+$flashMessenger = $this->layout()->flashMessenger;
+echo $this->partial(
+    'partial/gds/general/system-message',
+    ['messages' => $flashMessenger->getErrorMessages(), 'type' => 'failure']
+);
+?>
+
+<form method="POST">
+    <?php echo $this->csrfToken() ?>
+    <fieldset>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-legend',
+            ['id' => 'legendBusiness', 'text' => 'Business details']
+        );
+
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id'        => AeCreateForm::FIELD_NAME,
+                'label'     => 'AE business name',
+                'title'     => 'Enter AE business name',
+                'value'     => $form->getName(),
+                'autofocus' => true,
+            ]
+        );
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id'    => AeCreateForm::FIELD_TRADING_AS,
+                'label' => 'AE trading as',
+                'title' => 'Enter AE trading as',
+                'value' => $form->getTradingAs(),
+            ]
+        );
+        echo $this->partial(
+            'partial/gds/form/control-select-group',
+            [
+                'id'      => AeCreateForm::FIELD_COMPANY_TYPE,
+                'label'   => 'AE business type',
+                'value'   => $form->getCompanyType(),
+                'options' => $form->getCompanyTypes(),
+            ]
+        );
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id'        => AeCreateForm::FIELD_REG_NR,
+                'label'     => 'Company number',
+                'title'     => 'Enter Company number',
+                'elementId' => 'registeredCompanyNumberDiv',
+                'value'     => $form->getRegisteredCompanyNumber(),
+            ]
+        );
+        ?>
+    </fieldset>
+    <fieldset>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-legend',
+            ['id' => 'legendBusinessContact', 'text' => 'Business contact details']
+        );
+
+        $busContactModel = $form->getBusContactModel();
+
+        //  business contact :: address
+        echo $this->partial(
+            'partial/gds/form/control-address-group',
+            [
+                'id'    => 'address',
+                'group' => OrganisationContactTypeCode::REGISTERED_COMPANY,
+                'form'  => $busContactModel->getAddressModel(),
+            ],
+            'Core'
+        );
+
+        //  business contact :: phone number
+        $phoneModel = $busContactModel->getPhoneModel();
+        $fieldId = OrganisationContactTypeCode::REGISTERED_COMPANY . PhoneFormModel::FIELD_NUMBER;
+        $fieldName = OrganisationContactTypeCode::REGISTERED_COMPANY . '[' . PhoneFormModel::FIELD_NUMBER . ']';
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id'            => $fieldId,
+                'name'          => $fieldName,
+                'errorMessage'  => $phoneModel->getError(PhoneFormModel::FIELD_NUMBER),
+                'inputModifier' => '1-3',
+                'label'         => 'Phone number',
+                'value'         => $phoneModel->getNumber(),
+            ]
+        );
+
+        //  business contact :: email elements
+        echo $this->partial(
+            'partial/gds/form/control-email-conf-group',
+            [
+                'id'    => 'email',
+                'key'   => 'Email address not provided',
+                'group' => OrganisationContactTypeCode::REGISTERED_COMPANY,
+                'form'  => $busContactModel->getEmailModel(),
+            ],
+            'Core'
+        );
+        ?>
+    </fieldset>
+
+    <fieldset>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-legend',
+            ['id' => 'legendCorrespondenceContact', 'text' => 'Correspondence contact details']
+        );
+
+        echo $this->partial(
+            'partial/gds/form/control-is-the-same',
+            [
+                'title'      => 'Is this the same as the business details?',
+                'name'       => AeCreateForm::FIELD_IS_CORR_DETAILS_THE_SAME,
+                'value'      => $form->isCorrDetailsTheSame(),
+                'addressElm' => 'addressDetailsFragmentDiv',
+            ],
+            'Core'
+        );
+
+        ?>
+        <div id="addressDetailsFragmentDiv">
+            <?php
+            $corrContactModel = $form->getCorrContactModel();
+
+            //  correspondence contact :: address
+            echo $this->partial(
+                'partial/gds/form/control-address-group',
+                [
+                    'id'    => 'address',
+                    'group' => OrganisationContactTypeCode::CORRESPONDENCE,
+                    'form'  => $corrContactModel->getAddressModel(),
+                ],
+                'Core'
+            );
+
+            //  correspondence contact :: phone number
+            $phoneModel = $corrContactModel->getPhoneModel();
+            $fieldId = OrganisationContactTypeCode::CORRESPONDENCE . PhoneFormModel::FIELD_NUMBER;
+            $fieldName = OrganisationContactTypeCode::CORRESPONDENCE . '[' . PhoneFormModel::FIELD_NUMBER . ']';
+            echo $this->partial(
+                'partial/gds/form/control-text-group',
+                [
+                    'id'            => $fieldId,
+                    'name'          => $fieldName,
+                    'errorMessage'  => $phoneModel->getError(PhoneFormModel::FIELD_NUMBER),
+                    'inputModifier' => '1-3',
+                    'label'         => 'Phone number',
+                    'value'         => $phoneModel->getNumber(),
+                ]
+            );
+
+            //  correspondence contact :: email elements
+            echo $this->partial(
+                'partial/gds/form/control-email-conf-group',
+                [
+                    'id'    => 'email',
+                    'key'   => 'Email address not provided',
+                    'group' => OrganisationContactTypeCode::CORRESPONDENCE,
+                    'form'  => $corrContactModel->getEmailModel(),
+                ],
+                'Core'
+            );
+            ?>
+        </div>
+    </fieldset>
+
+    <?php
+    /*
+    Create AE is already implemented in api, but because a storing AE to db was not part of VM-2166 story, it commented
+    echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id'         => 'submitAeEdit',
+            'value'      => 'Create AE',
+            'navigation' => [
+                'Cancel and return home' => $form->getCancelUrl(),
+            ],
+        ]
+    );
+    remove control-navigation-secondary when Create AE button will be shown
+    */
+    echo $this->partial(
+        'partial/gds/form/control-navigation-secondary',
+        [
+            'navigation' => [
+                'Cancel and return home' => $form->getCancelUrl(),
+            ],
+        ]
+    );
+    ?>
+</form>
+
+<?php $this->inlineScript()->captureStart(); ?>
+
+$(function() {
+    if (!!'<?php echo (bool)$form->isCorrDetailsTheSame(); ?>') {
+        $('#addressDetailsFragmentDiv').hide();
+    }
+});
+
+<?php $this->inlineScript()->captureEnd(); ?>

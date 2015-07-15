@@ -53,10 +53,10 @@ class ColumnOptionsTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSet($property, $value, $expect = null)
     {
-        $method = lcfirst($property);
+        $method = ucfirst($property);
 
         //  logical block: set value and check set method
-        $result = $this->columnOptions->{'set' . lcfirst($property)}($value);
+        $result = $this->columnOptions->{'set' . $method}($value);
         $this->assertInstanceOf(ColumnOptions::class, $result);
 
         //  logical block: check get method

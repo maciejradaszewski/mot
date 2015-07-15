@@ -25,10 +25,12 @@ class AddressUtils
      */
     public static function stringify($address, $sprtr = ', ')
     {
+        if (is_object($address)) {
+            $address = self::entityToArray($address);
+        }
+
         if (is_array($address)) {
             return self::stringifyArr($address, $sprtr);
-        } elseif (is_object($address)) {
-            return self::stringifyEntity($address, $sprtr);
         }
 
         return null;
@@ -39,7 +41,7 @@ class AddressUtils
      *
      * @return string
      */
-    private static function stringifyArr(array $address, $sprtr = null)
+    private static function stringifyArr(array $address, $sprtr)
     {
         if (empty($address)) {
             return '';
@@ -55,7 +57,10 @@ class AddressUtils
             'postcode'     => null,
         ];
 
-        return join($sprtr, array_filter(array_intersect_key(array_replace($default, $address), $default)));
+        //  remove empty and invalid parts
+        $parts = array_filter(array_intersect_key(array_replace($default, $address), $default));
+
+        return join($sprtr, $parts);
     }
 
     /**
@@ -63,7 +68,7 @@ class AddressUtils
      *
      * @return string
      */
-    private static function stringifyEntity($addressObj, $sprtr = null)
+    private static function entityToArray($addressObj, $sprtr = null)
     {
         if (!($addressObj instanceof AddressEntity)
             && !($addressObj instanceof AddressCli)
@@ -72,9 +77,6 @@ class AddressUtils
             return null;
         }
 
-        $hydrator = new Hydrator();
-        $address = $hydrator->extract($addressObj);
-
-        return self::stringifyArr($address, $sprtr);
+        return (new Hydrator())->extract($addressObj);
     }
 }

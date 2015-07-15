@@ -1,0 +1,65 @@
+<?php
+
+use DvsaClient\ViewModel\EmailFormModel;
+
+/** @var EmailFormModel $emailModel */
+$emailModel = $this->form;
+$group = $this->group ?: '';
+
+$tmplFieldName = (!empty($group) ? '%1$s[%2$s]' : '%2$s');
+$key = isset($this->key) ? $this->key : 'I don\'t want to supply an email address';
+
+$emailFldId = $group . EmailFormModel::FIELD_EMAIL;
+echo $this->partial(
+    'partial/gds/form/control-text-group',
+    [
+        'id'            => $emailFldId,
+        'name'          => sprintf($tmplFieldName, $group, EmailFormModel::FIELD_EMAIL),
+        'errorMessage'  => $emailModel->getError(EmailFormModel::FIELD_EMAIL),
+        'inputModifier' => '1-3',
+        'label'         => 'Email address',
+        'value'         => $emailModel->getEmail(),
+    ]
+);
+
+$confirmFldId = $group . EmailFormModel::FIELD_EMAIL_CONFIRM;
+echo $this->partial(
+    'partial/gds/form/control-text-group',
+    [
+        'id'            => $confirmFldId,
+        'name'          => sprintf($tmplFieldName, $group, EmailFormModel::FIELD_EMAIL_CONFIRM),
+        'errorMessage'  => $emailModel->getError(EmailFormModel::FIELD_EMAIL_CONFIRM),
+        'inputModifier' => '1-3',
+        'label'         => 'Confirm email address',
+        'value'         => $emailModel->getEmailConfirm(),
+    ]
+);
+
+$isSupplyFld = sprintf($tmplFieldName, $group, EmailFormModel::FIELD_IS_NOT_SUPPLY);
+echo $this->partial(
+    'partial/gds/form/control-checkbox-group',
+    [
+        'label'   => '',
+        'options' => [
+            [
+                'value'     => '1',
+                'inputName' => $isSupplyFld,
+                'key'       => $key,
+                'checked'   => !$emailModel->isSupplied(),
+            ],
+        ],
+    ]
+);
+
+$this->inlineScript()->prependFile('/js/common/email-utils.js');
+?>
+
+<?php $this->inlineScript()->captureStart(); ?>
+$(function() {
+    var $eIsEmailSupply = $('input[name="<?php echo $this->escapeJs($isSupplyFld); ?>"]'),
+        $eCorrEmail = $('#<?php echo $this->escapeJs($emailFldId); ?>'),
+        $eCorrEmailConf = $('#<?php echo $this->escapeJs($confirmFldId); ?>');
+
+    EmailUtils.cleanIfNotSupply($eCorrEmail, $eCorrEmailConf, $eIsEmailSupply);
+});
+<?php $this->inlineScript()->captureEnd(); ?>

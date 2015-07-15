@@ -13,7 +13,7 @@ public class VtsChangeContactDetailsPage extends Page {
 
     @FindBy (id = "BUSemail") private WebElement emailField;
     @FindBy (id = "BUSemailConfirmation") private WebElement confirmEmailField;
-    @FindBy (id = "BUSPhoneNumber") private WebElement telephoneField;
+    @FindBy (id = "BUSphoneNumber") private WebElement telephoneField;
     @FindBy (id = "submitAeEdit") private WebElement saveContactDetailsButton;
 
     public VtsChangeContactDetailsPage(MotAppDriver driver) {

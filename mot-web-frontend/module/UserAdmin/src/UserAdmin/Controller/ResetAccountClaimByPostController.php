@@ -88,7 +88,7 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
             $profilePresenter->displayTitleAndFullName() =>
                 $this->buildUrlWithCurrentSearchQuery(UserAdminUrlBuilderWeb::userProfile($personId)),
         ];
-        $this->layout()->setVariable('progressBar', ['breadcrumbs' => $breadcrumbs]);
+        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
         return new ViewModel(
             [

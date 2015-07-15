@@ -26,13 +26,16 @@ use Zend\View\Model\ViewModel;
  */
 class ClaimControllerTest extends AbstractFrontendControllerTestCase
 {
-
     /** @var  ClaimAccountService|MockObj */
     private $mockClaimAccountSrv;
     /** @var  ClaimValidator|MockObj */
     private $mockClaimValidator;
     /** @var  array */
     private $config;
+    /**
+     * @var  Container
+     */
+    private $mockSession;
 
     protected function setUp()
     {
@@ -67,7 +70,7 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
         $this->setupAuthenticationServiceForIdentity(StubIdentityAdapter::asTester());
     }
 
-    public function _testIndexActionCanBeAccessed()
+    public function testIndexActionCanBeAccessed()
     {
         $this->getResultForAction2('get', 'index');
 
@@ -109,16 +112,7 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
             $this->assertResponseStatus(self::HTTP_OK_CODE);
 
         }
-/*
-        if (!empty($expect['errors'])) {
-            / ** @var  PasswordResetFormModel $form * /
-            $form = $result->getVariable('viewModel');
 
-            foreach ($expect['errors'] as $field => $error) {
-                $this->assertEquals($error, $form->getError($field));
-            }
-        }
-*/
         if (!empty($expect['flashError'])) {
             $this->assertEquals(
                 $expect['flashError'],
@@ -294,7 +288,6 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
                     'url' => AccountUrlBuilderWeb::claimReview(),
                 ],
             ],
-
 
             // review: get: come back to STEP1 because not stored
             [

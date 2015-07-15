@@ -53,7 +53,7 @@ class SecurityQuestionController extends AbstractSecurityQuestionController
                 'User search' => UserAdminUrlBuilderWeb::of()->userSearch(),
                 'Authenticate user' => '',
             ];
-            $this->layout()->setVariable('progressBar', ['breadcrumbs' => $breadcrumbs]);
+            $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
         }
 
         return $view;

@@ -17,6 +17,7 @@ use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
  */
 $authHelper = $this->authorisationHelper();
 
+$organisationId = $this->organisationId;
 ?>
 
 <?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
@@ -32,7 +33,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
             AE name
         </th>
         <td id="ae-name" class="key-value-list__value">
-            <?php echo $presenter->getName(); ?>
+            <?php echo $this->escapeHtml($presenter->getName()); ?>
         </td>
     </tr>
     <tr>
@@ -40,7 +41,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
             AE number
         </th>
         <td id="ae-number" class="key-value-list__value--numeric">
-            <?php echo $presenter->getNumber(); ?>
+            <?php echo $this->escapeHtml($presenter->getNumber()); ?>
         </td>
     </tr>
     <tr>
@@ -48,7 +49,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
             Trading name
         </th>
         <td id="ae-tradename" class="key-value-list__value">
-            <?php echo $presenter->getTradingName(); ?>
+            <?php echo $this->escapeHtml($presenter->getTradingName()); ?>
         </td>
     </tr>
     <tr>
@@ -56,7 +57,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
             Business type
         </th>
         <td id="ae-type" class="key-value-list__value">
-            <?php echo $presenter->getCompanyType(); ?>
+            <?php echo $this->escapeHtml($presenter->getCompanyType()); ?>
         </td>
     </tr>
     <tr>
@@ -64,7 +65,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
             Company number
         </th>
         <td id="ae-company-number" class="key-value-list__value--numeric">
-            <?php echo $presenter->getCompanyNumber(); ?>
+            <?php echo $this->escapeHtml($presenter->getCompanyNumber()); ?>
         </td>
     </tr>
 <?php if ($viewModel->getViewAuthorisation()->canViewAeStatus()):
@@ -91,7 +92,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
             Status valid from
         </th>
         <td id="ae-status-valid-from" class="key-value-list__value">
-            <?php echo DateTimeDisplayFormat::textDate($aeAuth->getValidFrom()) ?: ""; ?>
+            <?php echo $this->escapeHtml(DateTimeDisplayFormat::textDate($aeAuth->getValidFrom())) ?: ""; ?>
         </td>
     </tr>
     <tr>
@@ -153,7 +154,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                 Address
             </th>
             <td id="value_AE_address" class="key-value-list__value">
-                <?php echo (AddressUtils::stringify($contactDetail->getAddress()) ?: 'N/A') ?>
+                <?php echo ($this->escapeHtml(AddressUtils::stringify($contactDetail->getAddress())) ?: 'N/A') ?>
             </td>
         </tr>
         <tr>
@@ -163,7 +164,8 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
             <td class="key-value-list__value">
                 <?php $email = $contactDetail->getPrimaryEmailAddress(); ?>
                 <?php if ($email): ?>
-                    <a href="mailto:<?php echo $this->escapeHtmlAttr($email) ?>"><?php echo $this->escapeHtml($email); ?></a>
+                    <a href="mailto:<?php echo $this->escapeHtmlAttr($email) ?>"
+                        ><?php echo $this->escapeHtml($email); ?></a>
                 <?php else: ?>
                     N/A
                 <?php endif; ?>
@@ -174,7 +176,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                 Telephone
             </th>
             <td class="key-value-list__value--numeric">
-                <?php echo ($contactDetail->getPrimaryPhoneNumber() ?: 'N/A'); ?>
+                <?php echo $this->escapeHtml(($contactDetail->getPrimaryPhoneNumber()) ?: 'N/A'); ?>
             </td>
         </tr>
         </tbody>
@@ -196,7 +198,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                 Address
             </th>
             <td id="cor_address" class="key-value-list__value">
-                <?php echo (AddressUtils::stringify($correspondenceDetail->getAddress()) ?: 'N/A') ?>
+                <?php echo ($this->escapeHtml(AddressUtils::stringify($correspondenceDetail->getAddress())) ?: 'N/A') ?>
             </td>
         </tr>
         <tr>
@@ -217,14 +219,19 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                 Telephone
             </th>
             <td id="cor_phone" class="key-value-list__value--numeric">
-                <?php echo ($correspondenceDetail->getPrimaryPhoneNumber() ?: 'N/A'); ?>
+                <?php echo ($this->escapeHtml($correspondenceDetail->getPrimaryPhoneNumber()) ?: 'N/A'); ?>
             </td>
         </tr>
         </tbody>
     </table>
 <?php endif; ?>
 <?php if ($viewModel->getViewAuthorisation()->canViewSlotsSection()): ?>
-    <?php echo $this->partial('/organisation/view/partials/slots-section', ['viewModel' => $viewModel, 'organisationId' => $organisationId]); ?>
+    <?php
+    echo $this->partial(
+        '/organisation/view/partials/slots-section',
+        ['viewModel' => $viewModel, 'organisationId' => $organisationId]
+    );
+    ?>
 <?php endif; ?>
 <?php if($viewModel->getViewAuthorisation()->canViewPersonnel()) :?>
     <h3 class="key-value-list__header">Roles</h3>
@@ -248,7 +255,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                 </th>
                 <td class="key-value-list__value">
                     <?php foreach ($employee->getPositions() as $pio): ?>
-                        <div id="role-assignment-<?php echo $employee->getPerson()->getId() . "-" . $this->escapeHtml($pio->getRole()); ?>" class="text">
+                        <div id="role-assignment-<?php echo $this->escapeHtmlAttr($employee->getPerson()->getId() . "-" . $pio->getRole()); ?>" class="text">
                             <?php echo $this->escapeHtml($pio->getRole()); ?>
                             <?php if ($pio->isPending()): ?>
                                 <br />
@@ -281,8 +288,10 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
         $totalItems = count($viewModel->getVehicleTestingStations());
 
         foreach ($viewModel->getVehicleTestingStations() as $vtsIdx => $vts):
-            $itemCount++; ?>
-            <tr id="<?php echo 'vehicle-testing-station-' . ($vtsIdx + 1); ?>">
+            $itemCount++;
+            $vtsId = 'vehicle-testing-station-' . ($vtsIdx + 1);
+            ?>
+            <tr id="<?php echo $this->escapeHtmlAttr($vtsId); ?>">
                 <th class="key-value-list__key">
                     <?php if ($viewModel->getViewAuthorisation()->canViewVts($vts->getId())): ?>
                         <a href="<?php echo VehicleTestingStationUrlBuilderWeb::byId($vts->getId()); ?>">
@@ -293,16 +302,18 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                     <?php endif; ?>
 
                     <?php if ('inactive' === $vts->getStatus()) : ?>
-                        <span id="<?php echo 'vehicle-testing-station-' . ($vtsIdx + 1) . '-status-label'; ?>"
+                        <span id="<?php echo $this->escapeHtmlAttr($vtsId . '-status-label'); ?>"
                               class="label label-danger">Inactive</span>
                     <?php endif; ?>
 
                     <?php if ($viewModel->shouldViewContactDetailsForVts() && $vts->getContacts()) : ?>
                         <span class="key-value-list__meta">
-                                <?php echo AddressUtils::stringify($vts->getContacts()[0]->getAddress()) ?>
-                            </span>
-                        <?php endif; ?>
-                    </th>
+                            <?php echo $this->escapeHtml(
+                                AddressUtils::stringify($vts->getContacts()[0]->getAddress())
+                            ); ?>
+                        </span>
+                    <?php endif; ?>
+                </th>
 
                 <td class="key-value-list__value">
                     <?php echo $this->escapeHtml($vts->getSiteNumber()); ?>
@@ -376,8 +387,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                 </table>
                 <br/>
             <?php endforeach; ?>
-        </div>
-    </div>
+
 <?php endif; ?>
 
-<?php echo $this->partial('/organisation/view/partials/index-buttons', ['urlBack' => $this->urlBack]); ?>
+<?php echo $this->partial('/organisation/authorised-examiner/partials/index-buttons', ['urlBack' => $this->urlBack]); ?>
