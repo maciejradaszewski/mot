@@ -4,6 +4,8 @@ use DvsaCommon\HttpRestJson\ZendClient;
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\Obfuscate\ParamEncrypter;
 use DvsaCommon\Obfuscate\ParamObfuscator;
+use TestSupport\Factory\FeaturesServiceFactory;
+use TestSupport\Service\FeaturesService;
 use TestSupport\Service\DVLAOperativeService;
 use TestSupport\Service\VM10619RoleManagementUpgradeService;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -85,6 +87,7 @@ return [
                 $tokenManager = $sm->get(TestSupportAccessTokenManager::class);
                 return new SlotTransactionService($sm->get(Client::class), $tokenManager);
             },
+
         // @TODO after mot-common-web-module is part of composer remove the below lines as the module will
         // already have these services registered.
         ParamEncrypter::class              => \DvsaCommon\Obfuscate\Factory\ParamEncrypterFactory::class,
@@ -105,6 +108,8 @@ return [
         SitePermissionsHelper::class       => \TestSupport\Factory\SitePermissionsHelperFactory::class,
         AEService::class                   => \TestSupport\Factory\AEServiceFactory::class,
         TesterService::class               => \TestSupport\Factory\TesterServiceFactory::class,
+        FeaturesService::class             => \TestSupport\Factory\FeaturesServiceFactory::class,
+        InactiveTesterService::class      =>  \TestSupport\Factory\InactiveTesterServiceFactory::class,
         SchemeManagerService::class        => \TestSupport\Factory\SchemeManagerServiceFactory::class,
         SchemeUserService::class           => \TestSupport\Factory\SchemeUserServiceFactory::class,
         InactiveTesterService::class       => \TestSupport\Factory\InactiveTesterServiceFactory::class,
