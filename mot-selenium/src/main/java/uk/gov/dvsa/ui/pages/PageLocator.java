@@ -35,8 +35,16 @@ public abstract class PageLocator {
         return new MotTestSearchPage(driver);
     }
 
+    public static RetestVehicleSearchPage getRetestVehicleSearchPage(MotAppDriver driver) {
+        return new RetestVehicleSearchPage(driver);
+    }
+
     public static MotTestHistoryPage getMotTestHistoryPage(MotAppDriver driver) {
         return new MotTestHistoryPage(driver);
+    }
+
+    public static StartRetestConfirmationPage getStartRetestConfirmationPage(MotAppDriver driver) {
+        return new StartRetestConfirmationPage(driver);
     }
 
     public static TestSummaryPage getTestSummaryPage(MotAppDriver driver) {

@@ -19,6 +19,7 @@ public class HomePage extends Page {
     @FindBy (css = ".pivot-panel_header p") private WebElement aeNumber;
     @FindBy (css = ".pivot-panel_meta-list span") private WebElement roleType;
     @FindBy (css = ".site-link") private WebElement siteName;
+    @FindBy (id = "action-resume-mot-test") private WebElement resumeMotTestButton;
 
     private static final By ROLE_NOMINATION_LIST = By.cssSelector(".notification_subject > a");
 
@@ -33,6 +34,8 @@ public class HomePage extends Page {
 
     @Override
     protected boolean selfVerify() {
+        String j = driver.getCurrentUser().getNamesAndSurname();
+
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE)
                 && userNameHeader.getText().equals(driver.getCurrentUser().getNamesAndSurname());
     }
@@ -52,6 +55,10 @@ public class HomePage extends Page {
 
     public String getSiteName(){
         return siteName.getText();
+    }
+
+    public String getResumeMotTestButtonText() {
+        return resumeMotTestButton.getText();
     }
 
     public String getRole(){
