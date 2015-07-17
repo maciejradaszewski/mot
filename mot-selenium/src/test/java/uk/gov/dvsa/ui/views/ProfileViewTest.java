@@ -1,4 +1,4 @@
-package uk.gov.dvsa.ui.pages.overview;
+package uk.gov.dvsa.ui.views;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class ProfilePageTest extends BaseTest {
+public class ProfileViewTest extends BaseTest {
 
     private User tester;
     private AeDetails aeDetails;

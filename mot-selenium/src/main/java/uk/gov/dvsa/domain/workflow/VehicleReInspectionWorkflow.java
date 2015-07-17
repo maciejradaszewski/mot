@@ -31,6 +31,18 @@ public class VehicleReInspectionWorkflow extends BaseWorkflow {
         return new TestSummaryPage(driver);
     }
 
+    public HomePage startRetestPreviousVehicle(User user, String testNumber) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, RetestVehicleSearchPage.path);
+        PageLocator.getRetestVehicleSearchPage(driver)
+                .fillTestNumberField(testNumber)
+                .clickSearchButton();
+        PageLocator.getStartRetestConfirmationPage(driver)
+                .clickStartMotTest()
+                .clickReturnToHome();
+
+        return new HomePage(driver);
+    }
+
     public EventsHistoryPage gotoEventsHistoryPage(User user, String siteId) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, String.format(VehicleTestingStationPage.path, siteId));
         PageLocator.getVehicleTestingStationPage(driver)
@@ -92,6 +104,7 @@ public class VehicleReInspectionWorkflow extends BaseWorkflow {
     private void injectOpenAmCookieAndNavigateToPath(User user, String path) throws IOException {
         driver.manage().addCookie(getCookieForUser(user));
         driver.navigateToPath(path);
+        driver.setUser(user);
     }
 
     private Cookie getCookieForUser(User user) throws IOException {
