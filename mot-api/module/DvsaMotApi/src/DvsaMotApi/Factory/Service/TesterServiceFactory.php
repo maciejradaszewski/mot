@@ -3,10 +3,10 @@
 namespace DvsaMotApi\Factory\Service;
 
 use Doctrine\ORM\EntityManager;
+use DvsaEntities\Entity\Site;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaMotApi\Service\TesterService;
 use UserApi\SpecialNotice\Service\SpecialNoticeService;
-use UserFacade\UserFacadeLocal;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -18,13 +18,15 @@ class TesterServiceFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
+        $entityManager = $serviceLocator->get(EntityManager::class);
         return new TesterService(
-            $serviceLocator->get(EntityManager::class),
+            $entityManager,
             $serviceLocator->get('Hydrator'),
             $serviceLocator->get('DvsaAuthorisationService'),
             $serviceLocator->get(SpecialNoticeService::class),
             $serviceLocator->get('RoleProviderService'),
-            $serviceLocator->get(MotIdentityProviderInterface::class)
+            $serviceLocator->get(MotIdentityProviderInterface::class),
+            $entityManager->getRepository(Site::class)
         );
     }
 }

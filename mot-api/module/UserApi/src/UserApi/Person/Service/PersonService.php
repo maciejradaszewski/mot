@@ -8,6 +8,7 @@ use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaAuthorisation\Service\AuthorisationService;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Crypt\Hash\BCryptHashFunction;
+use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaEntities\Repository\PersonRepository;
 use DvsaMotApi\Service\TesterService;
@@ -189,7 +190,11 @@ class PersonService
      */
     public function getPersonSiteCountAsTester($personId)
     {
-        $siteCount = $this->personRepository->getSiteCount($personId, SiteBusinessRoleCode::TESTER);
+        $siteCount = $this->personRepository->getSiteCount(
+            $personId,
+            SiteBusinessRoleCode::TESTER,
+            BusinessRoleStatusCode::ACTIVE
+        );
         return ['siteCount' => $siteCount];
     }
 

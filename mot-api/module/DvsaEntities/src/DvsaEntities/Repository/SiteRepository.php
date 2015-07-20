@@ -9,7 +9,9 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\DqlBuilder\SearchParam\SiteSearchParam;
 use DvsaEntities\DqlBuilder\SiteSlotUsageParamDqlBuilder;
@@ -351,6 +353,32 @@ class SiteRepository extends AbstractMutableRepository
                 ->setParameter('status', $status);
         }
 
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @param int    $personId
+     * @param string $roleCode
+     * @param string $statusCode
+     *
+     * @return  Site[]
+     */
+    public function findForPersonIdWithRoleCodeAndStatusCode($personId, $roleCode, $statusCode)
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $queryBuilder
+            ->select('s')
+            ->from(SiteBusinessRoleMap::class, 'sbrm')
+            ->join(Person::class, 'p', Join::INNER_JOIN, 'sbrm.person = p.id')
+            ->join(Site::class, 's', Join::INNER_JOIN, 'sbrm.site = s.id')
+            ->join(SiteBusinessRole::class, 'sbr', Join::INNER_JOIN, 'sbrm.siteBusinessRole = sbr.id')
+            ->join(BusinessRoleStatus::class, 'brs', Join::INNER_JOIN, 'sbrm.businessRoleStatus = brs.id')
+            ->where('p.id = :personId')
+            ->andWhere('sbr.code = :roleCode')
+            ->andWhere('brs.code = :statusCode')
+            ->setParameter('personId', $personId)
+            ->setParameter('roleCode', $roleCode)
+            ->setParameter('statusCode', $statusCode);
         return $queryBuilder->getQuery()->getResult();
     }
 

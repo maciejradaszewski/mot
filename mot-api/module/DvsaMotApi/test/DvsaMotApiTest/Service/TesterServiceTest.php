@@ -14,6 +14,7 @@ use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\VehicleClass;
 use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\PersonRepository;
+use DvsaEntities\Repository\SiteRepository;
 use DvsaMotApi\Service\TesterService;
 use UserApi\SpecialNotice\Service\SpecialNoticeService;
 use UserFacade\Role;
@@ -256,6 +257,7 @@ class TesterServiceTest extends AbstractServiceTestCase
             ->will($this->returnValue(true));
         $motTestRepository = $this->getMockRepository(MotTestRepository::class);
         $mockRepository = $this->getMockRepository(PersonRepository::class);
+        $mockSiteRepository = $this->getMockRepository(SiteRepository::class);
         $mockHydrator = $this->getMockHydrator();
         $mockSpecialNoticesService = $this->getMockWithDisabledConstructor(
             SpecialNoticeService::class
@@ -270,6 +272,7 @@ class TesterServiceTest extends AbstractServiceTestCase
         $mockEntityManagerHandler->next('getRepository')->will($this->returnValue($mockRepository));
         $mockEntityManagerHandler->next('getRepository')->will($this->returnValue($motTestRepository));
         $mockEntityManagerHandler->next('getRepository')->will($this->returnValue($mockAuthRepository));
+        $mockIdentityProviderService = $this->getMockWithDisabledConstructor(\DvsaCommon\Auth\MotIdentityProviderInterface::class);
         $mockRoleProviderService = $this->getMockWithDisabledConstructor(\DvsaAuthorisation\Service\RoleProviderService::class);
         return [
             'mockEntityManagerHandler' => $mockEntityManagerHandler,
@@ -279,7 +282,9 @@ class TesterServiceTest extends AbstractServiceTestCase
             'mockAuthorisationService' => $mockAuthorisationService,
             'mockSpecialNoticesService' => $mockSpecialNoticesService,
             'mockUserFacade' => $this->getMockUserFacade(),
-            'mockRoleProviderService' => $mockRoleProviderService
+            'mockRoleProviderService' => $mockRoleProviderService,
+            'mockSiteRepository' => $mockSiteRepository,
+            'mockIdentityProvicerService' => $mockIdentityProviderService,
         ];
     }
 
@@ -290,7 +295,9 @@ class TesterServiceTest extends AbstractServiceTestCase
             $mocks['mockHydrator'],
             $mocks['mockAuthorisationService'],
             $mocks['mockSpecialNoticesService'],
-            $mocks['mockRoleProviderService']
+            $mocks['mockRoleProviderService'],
+            $mocks['mockIdentityProviderService'],
+            $mocks['mockSiteRepository']
         );
     }
 }

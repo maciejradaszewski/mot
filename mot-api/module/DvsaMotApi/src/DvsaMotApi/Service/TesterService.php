@@ -22,6 +22,7 @@ use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\AuthorisationForTestingMotRepository;
 use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\PersonRepository;
+use DvsaEntities\Repository\SiteRepository;
 use DvsaMotApi\Mapper\VtsAddressMapper;
 use UserApi\SpecialNotice\Service\SpecialNoticeService;
 
@@ -34,6 +35,8 @@ class TesterService extends AbstractService
     private $personRepository;
     /** @var  MotTestRepository $motTestRepository */
     private $motTestRepository;
+    /** @var SiteRepository $siteRepository */
+    private $siteRepository;
     private $objectHydrator;
 
     /** @var AuthorisationServiceInterface $authService */
@@ -50,9 +53,11 @@ class TesterService extends AbstractService
         AuthorisationServiceInterface $authService,
         SpecialNoticeService $specialNoticeService,
         RoleProviderService $roleProviderService,
-        IdentityProvider $identityProvider
+        IdentityProvider $identityProvider,
+        SiteRepository $siteRepository
     ) {
         parent::__construct($entityManager);
+        $this->siteRepository       = $siteRepository;
         $this->personRepository     = $this->entityManager->getRepository(Person::class);
         $this->motTestRepository    = $this->entityManager->getRepository(MotTest::class);
         $this->objectHydrator       = $objectHydrator;
@@ -258,25 +263,23 @@ class TesterService extends AbstractService
             && !$this->authService->isGranted(PermissionInSystem::TESTER_READ_OTHERS)) {
             throw new UnauthorisedException("You are not authorised to access this resource");
         }
-
-        $result = $this
-            ->entityManager
-            ->createQuery(sprintf(
-                'SELECT DISTINCT s FROM %s sbrm INNER JOIN %s s WITH sbrm.site = s.id INNER JOIN %s sbr WITH ' .
-                'sbrm.siteBusinessRole = sbr.id WHERE sbrm.person = :tester AND sbr.code = :role',
-                SiteBusinessRoleMap::class, Site::class, SiteBusinessRole::class
-            ))
-            ->setParameter('tester', $testerId)
-            ->setParameter('role', SiteBusinessRoleCode::TESTER)
-            ->getArrayResult();
-
-        // These are the database fields that we want to return in our endpoint. Everything not in here is removed.
-        $whitelist = ['name', 'siteNumber', 'dualLanguage', 'scottishBankHoliday', 'latitude', 'longitude', 'id'];
-
-        foreach (array_keys($result) as $k) {
-            $result[$k] = array_intersect_key($result[$k], array_flip($whitelist));
+        $result = [];
+        $sites = $this->siteRepository->findForPersonIdWithRoleCodeAndStatusCode(
+            $testerId,
+            SiteBusinessRoleCode::TESTER,
+            BusinessRoleStatusCode::ACTIVE
+        );
+        foreach ($sites as $site) {
+            $siteArray = [];
+            $siteArray['name'] = $site->getName();
+            $siteArray['siteNumber'] = $site->getSiteNumber();
+            $siteArray['dualLanguage'] = $site->getDualLanguage();
+            $siteArray['scottishBankHoliday'] = $site->getScottishBankHoliday();
+            $siteArray['latitude'] = $site->getLatitude();
+            $siteArray['longitude'] = $site->getLongitude();
+            $siteArray['id'] = $site->getId();
+            $result[] = $siteArray;
         }
-
         return $result;
     }
 
