@@ -8,6 +8,7 @@ use DvsaCommon\Constants\PersonContactType;
 use DvsaCommon\Model\SearchPersonModel;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\DqlBuilder\TesterSearchParamDqlBuilder;
+use DvsaEntities\Entity\BusinessRoleStatus;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteBusinessRole;
@@ -157,10 +158,11 @@ class PersonRepository extends AbstractMutableRepository
      *
      * @param int    $personId
      * @param string $roleCode
+     * @param string $statusCode
      *
      * @return array
      */
-    public function getSiteCount($personId, $roleCode)
+    public function getSiteCount($personId, $roleCode, $statusCode)
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $queryBuilder
@@ -169,10 +171,13 @@ class PersonRepository extends AbstractMutableRepository
             ->join(Site::class, 's', Join::INNER_JOIN, 'sbrm.site = s.id')
             ->join(SiteBusinessRole::class, 'sbr', Join::INNER_JOIN, 'sbrm.siteBusinessRole = sbr.id')
             ->join(Person::class, 'p', Join::INNER_JOIN, 'sbrm.person = p.id')
+            ->join(BusinessRoleStatus::class, 'brs', Join::INNER_JOIN, 'sbrm.businessRoleStatus = brs.id')
             ->where('p.id = :personId')
             ->andWhere('sbr.code = :roleCode')
+            ->andWhere('brs.code = :statusCode')
             ->setParameter('personId', $personId)
-            ->setParameter('roleCode', $roleCode);
+            ->setParameter('roleCode', $roleCode)
+            ->setParameter('statusCode', $statusCode);
 
         return $queryBuilder->getQuery()->getSingleScalarResult();
     }
