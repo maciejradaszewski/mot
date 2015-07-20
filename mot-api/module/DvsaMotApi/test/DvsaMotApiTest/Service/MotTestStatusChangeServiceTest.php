@@ -304,6 +304,8 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateStatus_givenAbortRequest_setCorrectStatusWithCorrectReason()
     {
+        $testDate = new \DateTime('2012-09-30');
+        $this->dateTimeHolder->setCurrent($testDate);
         $motTestId = 1;
         $reasonForCancelId = 3;
         $data = [
@@ -320,6 +322,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(MotTestStatusName::ABORTED, $motTest->getStatus());
         $this->assertEquals($reasonForCancel, $motTest->getMotTestReasonForCancel());
+        $this->assertEquals($testDate, $motTest->getCompletedDate());
     }
 
     public function testUpdateStatus_givenAbortRequestForNormalTest_shouldReturnSlot()
@@ -361,6 +364,8 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateStatus_givenAbandonRequest_shouldSetAbandonedStatusWithCorrectCommentAndReason()
     {
+        $testDate = new \DateTime('2012-09-30');
+        $this->dateTimeHolder->setCurrent($testDate);
         $motTestId = 1;
         $reasonForCancelId = 3;
         $otp = '123456';
@@ -385,6 +390,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(MotTestStatusName::ABANDONED, $motTest->getStatus());
         $this->assertEquals($reasonForCancel, $motTest->getMotTestReasonForCancel());
         $this->assertEquals($cancelComment, $motTest->getReasonForTerminationComment());
+        $this->assertEquals($testDate, $motTest->getCompletedDate());
     }
 
     public function testUpdateStatus_givenPassRequest_shouldSetCorrectStatusAndDates()
@@ -612,13 +618,14 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         $this->motTestResolvesTo($motTest);
         $this->verifySlotReturned();
 
-        $this->dateTimeHolder->setCurrent(new \DateTime());
+        $testDate = new \DateTime();
+        $this->dateTimeHolder->setCurrent($testDate);
         $this->createService()->updateStatus($motTestId, $data, 'whatever');
 
         $this->assertEquals(MotTestStatusName::ABORTED_VE, $motTest->getStatus());
         $this->assertEquals($reasonForTerminationComment, $motTest->getReasonForTerminationComment());
 
-        $this->assertNull($motTest->getCompletedDate());
+        $this->assertEquals($testDate, $motTest->getCompletedDate());
         $this->assertEquals($this->dateTimeHolder->getCurrent(), $motTest->getIssuedDate());
 
         $this->assertNull($motTest->getExpiryDate());

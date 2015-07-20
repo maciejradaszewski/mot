@@ -351,6 +351,8 @@ class MotTestStatusChangeService implements TransactionAwareInterface
         $reasonForCancel = $this->reasonForCancelRepository->get($reasonForCancelId);
 
         $motTest->setMotTestReasonForCancel($reasonForCancel);
+
+        $this->setMotTestCompletedDate($motTest);
     }
 
     private function onAbortedByVe(MotTest $motTest, $data)
@@ -360,6 +362,7 @@ class MotTestStatusChangeService implements TransactionAwareInterface
         $reasonForAbort = $data[self::FIELD_REASON_FOR_ABORT];
         $this->motTestStatusChangeValidator->checkMotTestCanBeAbortedByVe($motTest);
         $motTest->setReasonForTerminationComment($reasonForAbort);
+        $this->setMotTestCompletedDate($motTest);
     }
 
     /**
@@ -372,9 +375,7 @@ class MotTestStatusChangeService implements TransactionAwareInterface
     {
         $isTestPassed = ($newStatus === MotTestStatusName::PASSED);
 
-        $motTest->setCompletedDate(
-            is_null($motTest->getEmergencyLog()) ? $this->dateTimeHolder->getCurrent() : $motTest->getStartedDate()
-        );
+        $this->setMotTestCompletedDate($motTest);
 
         //  --  create ReasonForRejection RRS MOT test clone    --
         if (
@@ -680,5 +681,27 @@ class MotTestStatusChangeService implements TransactionAwareInterface
     private function getMotTestStatus($name)
     {
         return $this->getMotTestStatusRepository()->findByName($name);
+    }
+
+    /**
+     * @param MotTest $motTest
+     */
+    private function setMotTestCompletedDate(MotTest $motTest)
+    {
+        $motTest->setCompletedDate($this->getCompletedDate($motTest));
+    }
+
+    /**
+     * @param MotTest $motTest
+     *
+     * @return \DateTime
+     */
+    private function getCompletedDate(MotTest $motTest)
+    {
+        if (is_null($motTest->getEmergencyLog())) {
+            return $this->dateTimeHolder->getCurrent();
+        }
+
+        return $motTest->getStartedDate();
     }
 }
