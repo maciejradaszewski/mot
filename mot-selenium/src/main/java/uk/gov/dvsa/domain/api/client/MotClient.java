@@ -42,6 +42,10 @@ public class MotClient {
         return postRequestWithoutToken(request, path);
     }
 
+    public Response broadcastSpecialNotice(String request, String path) {
+        return postRequestWithoutToken(request, path);
+    }
+
     private Response postRequestWithoutToken(String request, String path) {
         return with()
                 .header("Content-Type", "application/json")

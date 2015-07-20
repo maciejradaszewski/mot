@@ -33,4 +33,8 @@ public class UserData extends UserService{
     public User createVehicleExaminer(String namePrefix, boolean accountClaimRequired) throws IOException {
         return createUserAsVE(namePrefix, accountClaimRequired);
     }
+
+    public User createSchemeUser(boolean accountClaimRequired) throws IOException {
+        return createUserAsSchemeUser(accountClaimRequired);
+    }
 }
