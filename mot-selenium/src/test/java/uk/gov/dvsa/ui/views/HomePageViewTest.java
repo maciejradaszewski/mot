@@ -18,12 +18,9 @@ import java.net.URISyntaxException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
-public class HomeViewTest extends BaseTest {
+public class HomePageViewTest extends BaseTest {
 
     private User tester;
-    private Vehicle vehicle;
-    private Site site;
-    private AeDetails aeDetails;
     private MotTest motTest;
 
     @BeforeClass(alwaysRun = true)
@@ -31,7 +28,7 @@ public class HomeViewTest extends BaseTest {
         AeDetails aeDetails = aeData.createNewAe("Test", 7);
         Site site = siteData.createNewSite(aeDetails.getId(), "Test_Site");
         tester = userData.createTester(site.getId());
-        vehicle = vehicleData.getNewVehicle(tester);
+        Vehicle vehicle = vehicleData.getNewVehicle(tester);
         motTest = motData.createTest(tester, site.getId(), vehicle, TestOutcome.FAILED, 1234, DateTime.now());
     }
 

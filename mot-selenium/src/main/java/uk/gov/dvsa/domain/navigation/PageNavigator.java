@@ -12,7 +12,9 @@ import uk.gov.dvsa.ui.pages.authorisedexaminer.AeSlotsUsagePage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
 import uk.gov.dvsa.ui.pages.mot.*;
+import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticePage;
 import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
+import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticeCreationPage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -128,5 +130,17 @@ public class PageNavigator {
         injectOpenAmCookieAndNavigateToPath(user, AccountClaimPage.PATH);
 
         return new AccountClaimPage(driver);
+    }
+
+    public SpecialNoticeCreationPage goToSpecialNoticeCreationPage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, SpecialNoticeCreationPage.PATH);
+
+        return new SpecialNoticeCreationPage(driver);
+    }
+
+    public SpecialNoticePage goToSpecialNoticesPage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, SpecialNoticePage.PATH);
+
+        return new SpecialNoticePage(driver);
     }
 }

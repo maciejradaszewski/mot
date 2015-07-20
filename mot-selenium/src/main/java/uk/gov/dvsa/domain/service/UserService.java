@@ -6,6 +6,7 @@ import uk.gov.dvsa.domain.api.request.CreateCscoRequest;
 import uk.gov.dvsa.domain.api.request.CreateTesterRequest;
 import uk.gov.dvsa.domain.api.request.CreateVehicleExaminerRequest;
 import uk.gov.dvsa.domain.model.mot.TestGroup;
+import uk.gov.dvsa.domain.api.request.*;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.framework.config.webdriver.WebDriverConfigurator;
 
@@ -18,6 +19,7 @@ public class UserService extends Service {
     private static final String CREATE_AEDM_PATH = "/testsupport/aedm";
     private static final String CREATE_CSCO_PATH = "/testsupport/csco";
     private static final String CREATE_VEHICLE_EXAMINER_PATH = "/testsupport/vehicleexaminer";
+    private static final String CREATE_SCHEME_USER = "/testsupport/schemeuser";
     private AuthService authService = new AuthService();
 
     protected UserService() {
@@ -71,6 +73,12 @@ public class UserService extends Service {
         );
         Response response = motClient.createUser(vehicleExaminerRequest, CREATE_VEHICLE_EXAMINER_PATH, authService.getDvsaTokenForAuthRequest());
 
+        return userResponse(response);
+    }
+
+    protected User createUserAsSchemeUser(boolean accountClaimRequired) throws IOException {
+        String schemeUserRequest = jsonHandler.convertToString(new CreateSchemeUserRequest(accountClaimRequired));
+        Response response = motClient.createUser(schemeUserRequest, CREATE_SCHEME_USER);
         return userResponse(response);
     }
 

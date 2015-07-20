@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
-public class VehicleSearchViewTest extends BaseTest {
+public class VehicleSearchPageViewTest extends BaseTest {
 
     private User tester;
     private Vehicle vehicle;

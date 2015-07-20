@@ -3,6 +3,7 @@ package uk.gov.dvsa.ui.views;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
+import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.ProfilePage;
@@ -12,16 +13,14 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class ProfileViewTest extends BaseTest {
+public class ProfilePageViewTest extends BaseTest {
 
     private User tester;
-    private AeDetails aeDetails;
-    private uk.gov.dvsa.domain.model.Site site;
 
     @BeforeClass(alwaysRun = true)
     private void setup() throws IOException {
-        aeDetails = aeData.createAeWithDefaultValues();
-        site = siteData.createNewSite(aeDetails.getId(), "default-site");
+        AeDetails aeDetails = aeData.createAeWithDefaultValues();
+        Site site = siteData.createNewSite(aeDetails.getId(), "default-site");
         tester = userData.createTester(site.getId());
     }
 
