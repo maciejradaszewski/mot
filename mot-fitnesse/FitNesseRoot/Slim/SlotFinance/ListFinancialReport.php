@@ -42,8 +42,8 @@ class SlotFinance_ListFinancialReport
 
     public function errorCode()
     {
-        if (isset($this->apiResult['errors'])) {
-            return $this->apiResult['errors']['code'];
+        if (isset($this->apiResult['validationError'])) {
+            return $this->apiResult['validationError']['code'];
         }
 
         return 0;

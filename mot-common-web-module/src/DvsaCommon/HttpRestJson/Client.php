@@ -19,11 +19,14 @@ use Zend\Db\TableGateway\Exception\RuntimeException;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\Http\Client as HttpClient;
+use Zend\Http\Client\Adapter\Curl;
+use Zend\Http\Client\Adapter\Socket;
 use Zend\Http\Header\ContentType;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Log\Logger;
 use Zend\Stdlib\Parameters;
+use Zend\Http\Client\Adapter\AdapterInterface;
 
 /**
  * Handles all REST calls to the API and translates any errors received into exceptions.
@@ -38,6 +41,7 @@ class Client implements EventManagerAwareInterface
     const CONTENT_TYPE_PDF          = 'application/pdf';
     const CONTENT_TYPE              = 'Content-Type';
     const ACCEPT                    = 'Accept';
+    const DEFAULT_API_TIMEOUT       = 30;
 
     /**
      * @var \Zend\Http\Client
@@ -55,7 +59,7 @@ class Client implements EventManagerAwareInterface
 
     /**
      * @param \Zend\Http\Client $httpClient
-     * @param $apiUrl
+     * @param                   $apiUrl
      * @param null              $token
      * @param \Zend\Log\Logger  $logger
      * @param null              $requestUuid
@@ -68,6 +72,27 @@ class Client implements EventManagerAwareInterface
         $this->logger      = $logger;
         $this->token       = $token;
         $this->requestUuid = $requestUuid;
+
+        $this->setApiTimeout();
+    }
+
+    /**
+     * Increase the timeout to 30 seconds to allow the backend API talk to CPMS which also talks
+     * to 3rd parties when making payment to obtain gateway information
+     *
+     * @param int $timeout
+     */
+    private function setApiTimeout($timeout = self::DEFAULT_API_TIMEOUT)
+    {
+        /** @var Curl | Socket $adapter */
+        $adapter = $this->httpClient->getAdapter();
+        if ($adapter instanceof AdapterInterface && is_numeric($timeout)) {
+            $options = $adapter->getConfig();
+            if ($options['timeout'] < $timeout) {
+                $options['timeout'] = (int)$timeout;
+                $this->httpClient->setOptions($options);
+            }
+        }
     }
 
     /**
@@ -307,7 +332,7 @@ class Client implements EventManagerAwareInterface
             $responseBody = $response->getBody();
         }
 
-        if ($statusCode !== 200) {
+        if ($statusCode !== 200) { // Not all Non 200 status code means something went wrong
             $this->handleNon200($resourcePath, $method, $data, $response, $responseBody, $statusCode, $request);
         }
 

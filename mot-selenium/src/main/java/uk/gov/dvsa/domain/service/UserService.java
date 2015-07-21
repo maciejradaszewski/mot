@@ -19,6 +19,7 @@ public class UserService extends Service {
     private static final String CREATE_AEDM_PATH = "/testsupport/aedm";
     private static final String CREATE_CSCO_PATH = "/testsupport/csco";
     private static final String CREATE_VEHICLE_EXAMINER_PATH = "/testsupport/vehicleexaminer";
+    private static final String CREATE_FINANCE_USER_PATH = "/testsupport/financeuser";
     private static final String CREATE_SCHEME_USER = "/testsupport/schemeuser";
     private AuthService authService = new AuthService();
 
@@ -72,7 +73,12 @@ public class UserService extends Service {
                 new CreateVehicleExaminerRequest(namePrefix, accountClaimRequired)
         );
         Response response = motClient.createUser(vehicleExaminerRequest, CREATE_VEHICLE_EXAMINER_PATH, authService.getDvsaTokenForAuthRequest());
+        return userResponse(response);
+    }
 
+    public User createAFinanceUser(String namePrefix, boolean accountClaimRequired) throws IOException {
+        String createFianceUserRequest = jsonHandler.convertToString(new CreateFinanceUserRequest(namePrefix, accountClaimRequired));
+        Response response = motClient.createUser(createFianceUserRequest, CREATE_FINANCE_USER_PATH, authService.getDvsaTokenForAuthRequest());
         return userResponse(response);
     }
 

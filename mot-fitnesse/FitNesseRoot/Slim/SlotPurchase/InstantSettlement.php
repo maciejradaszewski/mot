@@ -41,7 +41,7 @@ class SlotPurchase_InstantSettlement
             'paymentType'  => $this->paymentType,
             'autoRefund'   => $this->autoRefund,
             'paymentData'  => [
-                'chequeDate'   => $this->chequeDate,
+                'chequeDate'   => (new \DateTime($this->chequeDate))->format('Y-m-d'),
                 'slipNumber'   => $this->slipNumber,
                 'chequeNumber' => $this->chequeNumber,
                 'accountName'  => $this->accountName
@@ -219,6 +219,11 @@ class SlotPurchase_InstantSettlement
         if (isset($this->apiResult['errors']['code'])) {
 
             return $this->apiResult['errors']['code'];
+        }
+
+        if (isset($this->apiResult['validationError']['code'])) {
+
+            return $this->apiResult['validationError']['code'];
         }
 
         if (isset($this->apiResult['errors'])) {

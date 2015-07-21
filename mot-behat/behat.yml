@@ -20,10 +20,8 @@ default:
                 - CertificateContext
                 - CherishedTransferContext
                 - ContingencyTestContext
-                - DirectDebitContext
                 - EventContext
                 - FeatureContext
-                - InitiateRefundContext
                 - MotTestContext
                 - MotTestSearchContext
                 - NotificationsContext
@@ -31,6 +29,9 @@ default:
                 - PersonContext
                 - SecurityPinContext
                 - SessionContext
+                - SlotsAdjustTransactionContext
+                - SlotsDirectDebitContext
+                - SlotsInitiateRefundContext
                 - SpecialNoticeContext
                 - TempPasswordChangeContext
                 - VehicleContext

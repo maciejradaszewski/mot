@@ -7,7 +7,7 @@ use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Response;
 use PHPUnit_Framework_Assert as PHPUnit;
 
-class DirectDebitContext implements Context
+class SlotsDirectDebitContext implements Context
 {
     /**
      * @var DirectDebit
@@ -24,7 +24,8 @@ class DirectDebitContext implements Context
     private $organisationMap = [
         'kwikfit'  => 10,
         'halfords' => 9,
-        'asda'     => 12
+        'asda'     => 12,
+        'tesco'    => 1
     ];
 
     private $slotPrice = 2.05;
@@ -95,6 +96,12 @@ class DirectDebitContext implements Context
         } else {
             throw new \Exception('No mandate found');
         }
+
+        if ($mandateBody['data']['status']['code'] == 'C') {
+            $this->directDebit->completeMandateSetup(
+                $token, $this->organisationMap[$organisation], $mandateBody['data']['mandate_id']
+            );
+        }
     }
 
     /**
@@ -134,11 +141,11 @@ class DirectDebitContext implements Context
     {
         $body = $this->responseReceived->getBody();
         PHPUnit::assertEquals(
-            400,
+            200,
             $this->responseReceived->getStatusCode(),
             'Direct request was not rejected'
         );
-        PHPUnit::assertArrayHasKey('errors', $body);
-        PHPUnit::assertArrayHasKey('code', $body['errors']);
+        PHPUnit::assertArrayHasKey('validationError', $body);
+        PHPUnit::assertArrayHasKey('code', $body['validationError']);
     }
 }

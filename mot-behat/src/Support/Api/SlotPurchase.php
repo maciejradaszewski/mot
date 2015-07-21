@@ -2,6 +2,7 @@
 
 namespace Dvsa\Mot\Behat\Support\Api;
 
+use DateTime;
 use Dvsa\Mot\Behat\Support\Response;
 
 class SlotPurchase extends MotApi
@@ -9,15 +10,51 @@ class SlotPurchase extends MotApi
     const END_POINT_SLOT_PAYMENT       = 'slots/add-instant-settlement';
     const END_POINT_REFUND             = 'slots/refund/%s';
     const END_POINT_TRANSACTION_SEARCH = 'slots/transaction/search/%s';
+    const END_POINT_ADJUSTMENT         = 'slots/amendment/%s/adjustment';
 
     /**
-     * @param string $token
-     * @param array  $body
+     * Adjust transaction
+     *
+     * @param       $transactionId
+     * @param       $token
+     * @param array $body
      *
      * @return Response
      */
-    public function makePaymentForSlot($token, $body = [])
+    public function adjustTransaction($token, $transactionId, $body = [])
     {
+        $url = sprintf(self::END_POINT_ADJUSTMENT, $transactionId);
+
+        return $this->sendRequest($token, 'POST', $url, $body);
+    }
+
+    /**
+     * @param       $token
+     * @param       $slots
+     * @param       $organisation
+     * @param float $price
+     *
+     * @return Response
+     */
+    public function makePaymentForSlot($token, $slots, $organisation, $price = 2.05)
+    {
+        $amount = number_format($price * $slots, 2, '.', '');
+        $body   = [
+            'organisation' => $organisation,
+            'slots'        => $slots,
+            'amount'       => $amount,
+            'paidAmount'   => $amount,
+            'paymentType'  => 'cheque',
+            'autoRefund'   => false,
+            'paymentData'  => [
+                'accountName'  => 'Tester',
+                'chequeNumber' => rand(10000, 99999),
+                'slipNumber'   => rand(20000, 99999),
+                'chequeDate'   => (new DateTime('-10 days'))->format('Y-m-d'),
+            ]
+
+        ];
+
         return $this->sendRequest($token, 'POST', self::END_POINT_SLOT_PAYMENT, $body);
     }
 

@@ -3,6 +3,7 @@ Feature: Initiate Refund
   I want to ask for a refund of slots purchase with one or more payments
   So that slots balances can be reduced if a payment fails or a garage closes down
 
+  @slots
   Scenario Outline: Initiate a refund as a finance user
     Given I am logged in as a Finance User
     And I bought <slots> slots for organisation <organisation> at <price> price
@@ -16,6 +17,7 @@ Feature: Initiate Refund
     | 90    | halfords     | 2.05  | 150           |
     | 120   | halfords     | 2.05  | 240           |
 
+  @slots
   Scenario Outline: Retrieve Refund Summary Information
     Given I am logged in as a Finance User
     And I bought <slots> slots for organisation <organisation> at <price> price
@@ -28,6 +30,7 @@ Feature: Initiate Refund
     | 45    | halfords     | 2.05  | 45            |
     | 200   | halfords     | 2.05  | 1             |
 
+  @slots
   Scenario Outline: Finance user attempts to refund slots more than the total slot balance
     Given I am logged in as a Finance User
     And I bought <slots> slots for organisation <organisation> at <price> price
@@ -38,6 +41,7 @@ Feature: Initiate Refund
     | 100   | kwikfit      | 2.05  | 15000         |
     | 89    | kwikfit      | 2.05  | 75000         |
 
+  @slots
   Scenario Outline: No other user is authorised to initiate a refund
     Given I am authenticated as <username>
     When I request a refund of <slotsToRefund> slots for organisation <organisation>
@@ -53,6 +57,7 @@ Feature: Initiate Refund
     | csco            | halfords     | 45            |
     | aed1            | halfords     | 45            |
 
+  @slots
   Scenario: Finance user attempts to refund zero slots
     Given I am logged in as a Finance User
     When I request a refund of "0" slots for organisation "halfords"

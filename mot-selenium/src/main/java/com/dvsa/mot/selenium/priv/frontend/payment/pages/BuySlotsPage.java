@@ -1,6 +1,9 @@
 package com.dvsa.mot.selenium.priv.frontend.payment.pages;
 
+import com.dvsa.mot.selenium.datasource.Login;
 import com.dvsa.mot.selenium.framework.BasePage;
+import com.dvsa.mot.selenium.priv.frontend.organisation.management.authorisedexamineroverview.pages.AuthorisedExaminerOverviewPage;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -49,6 +52,11 @@ public class BuySlotsPage extends BasePage {
 
     public boolean isExceedsMaximumSlotBalanceMessageDisplayed() {
         return exceedsMaximumBalanceErrorMessage.isDisplayed();
+    }
+    
+    public static BuySlotsPage navigateToBuySlotsPageFromLogin(WebDriver driver, Login login) {
+        return AuthorisedExaminerOverviewPage.navigateHereFromLoginPage(driver, login)
+                .clickBuySlotsLink();
     }
 
 }

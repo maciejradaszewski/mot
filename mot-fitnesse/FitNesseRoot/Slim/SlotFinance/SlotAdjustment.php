@@ -96,8 +96,8 @@ class SlotFinance_SlotAdjustment
 
     public function code()
     {
-        if (isset($this->apiResult['errors']['code'])) {
-            return $this->apiResult['errors']['code'];
+        if (isset($this->apiResult['validationError']['code'])) {
+            return $this->apiResult['validationError']['code'];
         }
 
         return 0;

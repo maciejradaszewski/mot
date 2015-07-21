@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f6382086159fdd5187668af0488c051a",
+    "hash": "f11fde286b69bbfdb582e4eb6c5d5fdb",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -48,14 +48,14 @@
         },
         {
             "name": "cpms/client",
-            "version": "v1.20",
+            "version": "v1.21.1",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:cpms/cpms-client.git",
-                "reference": "35cf709c9a08d926577e7bc4f3b2ce057d646d51"
+                "reference": "8d1e8ac63a75bdfd37d0b0a88c4244e874c32498"
             },
             "require": {
-                "zendframework/zendframework": "<2.4.0"
+                "zendframework/zendframework": "<2.5"
             },
             "require-dev": {
                 "phpunit/phpunit": "4.0.*"
@@ -80,24 +80,24 @@
                 "proprietary"
             ],
             "description": "CPMS Common Client Module",
-            "time": "2015-05-14 10:27:34"
+            "time": "2015-07-08 12:20:23"
         },
         {
             "name": "cpms/shared-reports",
-            "version": "v1.20",
+            "version": "v1.21.1",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:cpms/shared-reports.git",
-                "reference": "8b12f0ea0227378997dbcc8af7451663a885db00"
+                "reference": "ed40f0e075fd154b348a3bb05af9c773146a0df9"
             },
             "require": {
-                "cpms/client": "1.20.*",
+                "cpms/client": "1.21.*",
                 "php": ">=5.5",
-                "zendframework/zendframework": "<2.4.0"
+                "zendframework/zendframework": "<2.5"
             },
             "require-dev": {
-                "cpms/common": "1.20.*",
-                "cpms/payment-test": "1.20.*",
+                "cpms/common": "1.21.*",
+                "cpms/payment-test": "1.21.*",
                 "phpunit/phpunit": "4.0.*"
             },
             "type": "library",
@@ -120,7 +120,7 @@
                 "proprietary"
             ],
             "description": "Shared module for displaying reports",
-            "time": "2015-06-17 11:28:49"
+            "time": "2015-07-08 12:29:04"
         },
         {
             "name": "doctrine/annotations",
@@ -1206,25 +1206,24 @@
         },
         {
             "name": "slot-purchase/backend-api",
-            "version": "v2.4.4",
+            "version": "v3.1.3",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git",
-                "reference": "8d737b94dcf5f5f63dcb3f9e7a2f7dc8d78dd748"
+                "reference": "d408b8177389e927f98128cfe52674b20d77ff4c"
             },
             "require": {
-                "cpms/client": "1.20.*",
-                "cpms/shared-reports": "1.20.*",
-                "doctrine/doctrine-module": "0.8.0",
-                "doctrine/doctrine-orm-module": "~0.8.0-beta3",
+                "cpms/client": "1.21.*",
+                "cpms/shared-reports": "1.21.*",
+                "doctrine/doctrine-module": "~0.8",
+                "doctrine/doctrine-orm-module": "~0.8",
                 "gedmo/doctrine-extensions": "2.3.*",
                 "php": ">=5.5",
-                "zendframework/zendframework": "<2.4"
+                "zendframework/zendframework": "<2.5"
             },
             "require-dev": {
                 "doctrine/data-fixtures": "dev-master",
                 "phpunit/phpunit": "4.0.*",
-                "symfony/console": "2.4.*",
                 "zendframework/zend-developer-tools": "dev-master",
                 "zendframework/zftool": "dev-master"
             },
@@ -1242,7 +1241,7 @@
                 "proprietary"
             ],
             "description": "API for slot purchasing and related features",
-            "time": "2015-06-25 12:24:28"
+            "time": "2015-07-15 11:00:53"
         },
         {
             "name": "soflomo/purifier",
@@ -1502,7 +1501,6 @@
                     "ZendPdf\\": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1512,6 +1510,10 @@
                 "pdf",
                 "zf2"
             ],
+            "support": {
+                "source": "https://github.com/zendframework/ZendPdf/tree/release-2.0.2",
+                "issues": "https://github.com/zendframework/ZendPdf/issues"
+            },
             "time": "2012-11-16 11:16:01"
         },
         {

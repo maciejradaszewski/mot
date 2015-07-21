@@ -1,7 +1,6 @@
 package com.dvsa.mot.selenium.priv.frontend.payment.pages;
 
 import com.dvsa.mot.selenium.framework.BasePage;
-import com.dvsa.mot.selenium.framework.util.validation.ValidationSummary;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
