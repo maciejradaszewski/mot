@@ -42,8 +42,8 @@ class TesterMotTestLogViewModelTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->sundayLastWeek = new \DateTime('@' . strtotime('monday this week - 1 second'));
-        $this->mondayLastWeek = new \DateTime('@' . strtotime('monday this week - 7 days'));
+        $this->sundayLastWeek = new \DateTime('@' . strtotime('sunday last week 23:59:59'));
+        $this->mondayLastWeek = new \DateTime('@' . strtotime('monday last week 00:00:00'));
 
         $this->logSummaryDto = new MotTestLogSummaryDto();
 

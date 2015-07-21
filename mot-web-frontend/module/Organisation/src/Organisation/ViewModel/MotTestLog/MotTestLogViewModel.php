@@ -15,6 +15,15 @@ use Zend\Stdlib\Parameters;
 
 class MotTestLogViewModel
 {
+    /** for getDateRange, we want *today* as a timestamp range */
+    const RANGE_TODAY = 'today';
+
+    /** for getDateRange, we want *last week* as a timestamp range */
+    const RANGE_LAST_WEEK = 'lastWeek';
+
+    /** for getDateRange, we want *last month* as a timestamp range */
+    const RANGE_LAST_MONTH = 'lastMonth';
+
     /** @var MotTestLogSummaryDto */
     private $logSummary;
     /** @var OrganisationDto */
@@ -42,12 +51,13 @@ class MotTestLogViewModel
 
     private function setDefaultValues()
     {
+        $lastWeek = $this->getDateRange(self::RANGE_LAST_WEEK);
         $defValues = new Parameters(
             [
                 //  monday last week
-                SearchParamConst::SEARCH_DATE_FROM_QUERY_PARAM => strtotime('monday this week - 7 days'),
+                SearchParamConst::SEARCH_DATE_FROM_QUERY_PARAM => $lastWeek['from'],
                 //  sunday last week
-                SearchParamConst::SEARCH_DATE_TO_QUERY_PARAM   => strtotime('monday this week - 1 second'),
+                SearchParamConst::SEARCH_DATE_TO_QUERY_PARAM   => $lastWeek['to'],
             ]
         );
 
@@ -149,25 +159,46 @@ class MotTestLogViewModel
         $this->filterBuilder
             ->setOptions(
                 [
-                    'today'     => [
-                        'label' => 'Today',
-                        'from'  => strtotime('today'),
-                        'to'    => strtotime('tomorrow -1 second')
-                    ],
-                    'lastWeek'  => [
-                        'label' => 'Last week (Mon-Sun)',
-                        'from'  => strtotime('monday this week - 7 days'),
-                        'to'    => strtotime('monday this week - 1 second')
-                    ],
-                    'lastMonth' => [
-                        'label' => 'Last Month (' . date('M', strtotime('last month')) . ')',
-                        'from'  => strtotime('first day of last month midnight'),
-                        'to'    => strtotime('first day of this month midnight -1 second')
-                    ],
+                    'today'     => $this->getDateRange(self::RANGE_TODAY),
+                    'lastWeek'  => $this->getDateRange(self::RANGE_LAST_WEEK),
+                    'lastMonth' => $this->getDateRange(self::RANGE_LAST_MONTH)
                 ]
             );
 
         return $this;
+    }
+
+    /**
+     * Answers an array with a label, from and to range for the specified range.
+     *
+     * @param $rangeName
+     * @return Array
+     */
+    private function getDateRange($rangeName)
+    {
+        switch ($rangeName) {
+            case self::RANGE_LAST_WEEK:
+                return [
+                    'label' => 'Last week (Mon-Sun)',
+                    'from' => strtotime('monday last week 00:00:00'),
+                    'to' => strtotime('sunday last week 23:59:59')
+                ];
+
+            case self::RANGE_LAST_MONTH:
+                return [
+                    'label' => 'Last Month (' . date('M', strtotime('last month')) . ')',
+                    'from' => strtotime('first day of last month midnight'),
+                    'to' => strtotime('first day of this month midnight -1 second')
+                ];
+
+            case self::RANGE_TODAY:
+            default:
+                return [
+                    'label' => 'Today',
+                    'from' => strtotime('today'),
+                    'to' => strtotime('tomorrow -1 second')
+                ];
+        }
     }
 
     /**
