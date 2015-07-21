@@ -28,7 +28,7 @@ public class SetUpDirectDebitPage extends BasePage {
         return new SetUpDirectDebitPage(driver);
     }
 
-    public SetUpDirectDebitPage selectCollectionDate(String date) {
+    public SetUpDirectDebitPage selectCollectionDayOfMonth(String date) {
         List<WebElement> radios = driver.findElements(By.name("collection-day"));
         for (WebElement radio : radios) {
             if (radio.getAttribute("value").equals(date))

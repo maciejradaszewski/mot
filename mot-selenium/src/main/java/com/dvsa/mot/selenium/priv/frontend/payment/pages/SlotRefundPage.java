@@ -1,6 +1,7 @@
 package com.dvsa.mot.selenium.priv.frontend.payment.pages;
 
 import com.dvsa.mot.selenium.framework.BasePage;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -18,8 +19,8 @@ public class SlotRefundPage extends BasePage {
         checkTitle(PAGE_TITLE);
     }
 
-    public SlotRefundPage enterSlotsToBeRefunded(String slots) {
-        inputSlotsField.sendKeys(slots);
+    public SlotRefundPage enterSlotsToBeRefunded(int slots) {
+        inputSlotsField.sendKeys(Integer.toString(slots));
         return new SlotRefundPage(driver);
     }
 

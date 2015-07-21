@@ -36,7 +36,7 @@ public class DirectDebitConfirmationPage extends BasePage {
     public static DirectDebitConfirmationPage setupDirectDebitSuccessfully(WebDriver driver, Login login, Payments payments, Person person, Address address) {
         return AuthorisedExaminerOverviewPage.navigateHereFromLoginPage(driver, login)
                 .clickSetupDirectDebitLink()
-                .enterSlotsRequired(payments.slots).selectCollectionDate("5")
+                .enterSlotsRequired(payments.slots).selectCollectionDayOfMonth("5")
                 .clickContinueButton().clickContinueToGoCardlessButton()
                 .fillDirectDebitForm(person, address)
                 .clickContinueButton().clickConfirmButton();

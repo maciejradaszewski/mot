@@ -4,6 +4,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
+import com.dvsa.mot.selenium.datasource.ChequePayment;
+import com.dvsa.mot.selenium.datasource.Login;
 import com.dvsa.mot.selenium.framework.BasePage;
 
 public class ManualAdjustmentSuccessPage extends BasePage {
@@ -19,6 +21,28 @@ public class ManualAdjustmentSuccessPage extends BasePage {
     
     public String getAdjustmentStatusMessage() {
         return statusMessage.getText();
+    }
+    
+    public static ManualAdjustmentSuccessPage loginAndAdjustPaymentForWrongAe(WebDriver driver, Login login, String aeRef1, ChequePayment chequePayment, String aeRef2) {
+        return ChequePaymentOrderConfirmedPage.purchaseSlotsByChequeSuccessfully(driver, login, aeRef1, chequePayment)
+                .clickViewPurchaseDetailsLink()
+                .clickAdjustThePaymentButton()
+                .selectReasonForAdjustment("Wrong AE")
+                .clickContinueButton()
+                .enterAeNumber(aeRef2)
+                .clickCreateOrderButton()
+                .clickConfirmAdjustment();
+    }
+    
+    public static ManualAdjustmentSuccessPage loginAndAdjustPaymentForInvalidPaymentData(WebDriver driver, Login login, String aeRef1, ChequePayment chequePayment, String amount) {
+        return ChequePaymentOrderConfirmedPage.purchaseSlotsByChequeSuccessfully(driver, login, aeRef1, chequePayment)
+                .clickViewPurchaseDetailsLink()
+                .clickAdjustThePaymentButton()
+                .selectReasonForAdjustment("Invalid payment data")
+                .clickContinueButton()
+                .enterAdjustmentAmount(amount)
+                .clickCreateOrderButton()
+                .clickConfirmAdjustment();
     }
 
 }

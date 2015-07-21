@@ -2,11 +2,12 @@ package com.dvsa.mot.selenium.priv.frontend.payment;
 
 import com.dvsa.mot.selenium.datasource.*;
 import com.dvsa.mot.selenium.framework.BaseTest;
+import com.dvsa.mot.selenium.framework.api.FinanceUserCreationApi;
 import com.dvsa.mot.selenium.framework.api.authorisedexaminer.AeDetails;
 import com.dvsa.mot.selenium.framework.api.authorisedexaminer.AeService;
-import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.SearchForAePage;
 import com.dvsa.mot.selenium.priv.frontend.organisation.management.authorisedexamineroverview.pages.AuthorisedExaminerOverviewPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.*;
+
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
@@ -16,11 +17,29 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class CpmsPurchaseSlotsTests extends BaseTest {
+    
+    private Login createAedmAndReturnAedmLogin(String prefix) {
+        AeService aeService = new AeService();
+        AeDetails aeDetails = aeService.createAe(prefix);
+        Login aedmLogin = createAEDM(aeDetails.getId(), Login.LOGIN_AREA_OFFICE2, false);
+        return aedmLogin;
+    }
+    
+    private String createAeAndReturnAeReference(String prefix) {
+        AeService aeService = new AeService();
+        AeDetails aeDetails = aeService.createAe(prefix);
+        String aeRef = aeDetails.getAeRef();
+        return aeRef;
+    }
+    
+    private Login createFinanceUserReturnFinanceUserLogin() {
+        FinanceUserCreationApi financeUserCreationApi = new FinanceUserCreationApi();
+        Login financeUserLogin = financeUserCreationApi.createFinanceUser().getLogin();
+        return financeUserLogin;
+    }
 
     private PaymentConfirmationPage loginAsAedmAndPurchaseSlotsByCard() {
-        AeService aeService = new AeService();
-        AeDetails aeDetails = aeService.createAe("PurchaseSlotsByCard");
-        Login aedmLogin = createAEDM(aeDetails.getId(), Login.LOGIN_AREA_OFFICE2, false);
+        Login aedmLogin = createAedmAndReturnAedmLogin("PurchaseSlotsByCard");
 
         PaymentConfirmationPage paymentConfirmationPage = PaymentConfirmationPage
                 .purchaseSlotsByCardSuccessfully(driver, aedmLogin, Payments.VALID_PAYMENTS);
@@ -28,22 +47,21 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
     }
 
     private ChequePaymentOrderConfirmedPage loginAsFinanceUserAndPurchaseSlotsByCheque() {
-        AeService aeService = new AeService();
-        AeDetails aeDetails = aeService.createAe("ChequePayment");
-        String aeRef = aeDetails.getAeRef();
+        String aeRef = createAeAndReturnAeReference("ChequePayment");
+        Login financeUserLogin = createFinanceUserReturnFinanceUserLogin();
 
         ChequePaymentOrderConfirmedPage chequePaymentOrderConfirmedPage =
                 ChequePaymentOrderConfirmedPage
-                        .purchaseSlotsByChequeSuccessfully(driver, login.LOGIN_FINANCE_USER, aeRef,
+                        .purchaseSlotsByChequeSuccessfully(driver, financeUserLogin, aeRef,
                                 ChequePayment.VALID_CHEQUE_PAYMENTS);
         return chequePaymentOrderConfirmedPage;
     }
 
     @Test(groups = {"Regression", "SPMS-37"})
     public void purchaseSlotsAuthorizedExaminerPageVerification() {
+        Login aedmLogin = createAedmAndReturnAedmLogin("AePageVerification");
         AuthorisedExaminerOverviewPage authorisedExaminerOverviewPage =
-                AuthorisedExaminerOverviewPage.navigateHereFromLoginPage(driver, login.LOGIN_AEDM,
-                        Business.EXAMPLE_AE_INC);
+                AuthorisedExaminerOverviewPage.navigateHereFromLoginPage(driver, aedmLogin);
 
         assertThat("Verifying BuySlots link present",
                 authorisedExaminerOverviewPage.isBuySlotsLinkVisible(), is(true));
@@ -51,8 +69,6 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 authorisedExaminerOverviewPage.isTransactionHistoryLinkVisible(), is(true));
         assertThat("Verifying SlotUsage link present",
                 authorisedExaminerOverviewPage.isSlotsUsageLinkVisible(), is(true));
-        assertThat("Verifying Setup DirectDebit Link present",
-                authorisedExaminerOverviewPage.isSetupDirectDebitLinkVisible(), is(true));
         assertThat("Verifying Slots Adjustment link is not present for AEDM",
                 authorisedExaminerOverviewPage.isSlotsAdjustmentLinkVisible(), is(false));
     }
@@ -70,20 +86,21 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                         .multiply(Payments.COST_PER_SLOT)))));
     }
 
-    @Test(enabled=false, groups = {"Regression", "SPMS-37"})
+    @Test(groups = {"Regression", "SPMS-37"})
     public void purchaseSlotsExceedingMaximumBalanceErrorTest() {
-        BuySlotsPage buySlotsPage = AuthorisedExaminerOverviewPage
-                .navigateHereFromLoginPage(driver, login.LOGIN_AEDM, Business.EXAMPLE_AE_INC)
-                .clickBuySlotsLink().enterSlotsRequired(Payments.MAXIMUM_SLOTS.slots)
+        Login aedmLogin = createAedmAndReturnAedmLogin("ExceedMaximumSlotBalance");
+        BuySlotsPage buySlotsPage = BuySlotsPage.navigateToBuySlotsPageFromLogin(driver, aedmLogin)
+                .enterSlotsRequired(Payments.MAXIMUM_SLOTS.slots)
                 .clickCalculateCostButtonInvalidSlots();
 
         assertThat("Verifying Maximum Slot Balance Exceeds Message displayed",
                 buySlotsPage.isExceedsMaximumSlotBalanceMessageDisplayed(), is(true));
     }
 
-    @Test(enabled=false, groups = {"Regression", "SPMS-88"}) public void purchaseSlotsUserCancelsPaymentTest() {
+    @Test(groups = {"Regression", "SPMS-88"}) public void purchaseSlotsUserCancelsPaymentTest() {
+        Login aedmLogin = createAedmAndReturnAedmLogin("UserCancelsPayment");
         BuySlotsPage buySlotsPage = AuthorisedExaminerOverviewPage
-                .navigateHereFromLoginPage(driver, login.LOGIN_AEDM, Business.EXAMPLE_AE_INC)
+                .navigateHereFromLoginPage(driver, aedmLogin)
                 .clickBuySlotsLink().enterSlotsRequired(Payments.VALID_PAYMENTS.slots)
                 .clickCalculateCostButton().clickPayByCardButton().clickCancelButton();
 
@@ -149,16 +166,15 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
     }
 
     @Test(groups = {"Regression", "SPMS-47"}) public void paymentInvoiceDetailsVerificationTest() {
-        PaymentConfirmationPage paymentConfirmationPage = loginAsAedmAndPurchaseSlotsByCard();
-        PaymentDetailsPage paymentDetailsPage =
-                paymentConfirmationPage.clickViewPurchaseDetailsLink();
+        PaymentDetailsPage paymentDetailsPage = loginAsAedmAndPurchaseSlotsByCard()
+                .clickViewPurchaseDetailsLink();       
 
         assertThat("Verifying SupplierDetails displayed",
                 paymentDetailsPage.getSupplierDetailsText(), is("Supplier details"));
         assertThat("Verifying PurchaserDetails displayed",
                 paymentDetailsPage.getPurchaserDetailsText(), is("Purchaser details"));
         assertThat("Verifying PaymentDetails displayed", paymentDetailsPage.getPaymentDetailsText(),
-                is("Payment details"));
+                is("Payment reference"));
         assertThat("Verifying OrderDetails displayed", paymentDetailsPage.getOrderDetailsText(),
                 is("Order details"));
         assertThat("Verifying Print button present", paymentDetailsPage.isPrintButtonDisplayed(),
@@ -181,17 +197,15 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
     }
 
     @Test(groups = {"Regression", "SPMS-120"})
-    public void financeUserPurchaseSlotsByExcessAmountCheque() {
-        AeService aeService = new AeService();
-        AeDetails aeDetails = aeService.createAe("ChequePayment");
-        String aeRef = aeDetails.getAeRef();
+    public void financeUserPurchaseSlotsByInvalidDateCheque() {
+        String aeRef = createAeAndReturnAeReference("ChequePayment");
+        Login financeUserLogin = createFinanceUserReturnFinanceUserLogin();
 
-        EnterChequeDetailsPage enterChequeDetailsPage =
-                SearchForAePage.navigateHereFromLoginPage(driver, login.LOGIN_FINANCE_USER)
-                        .searchForAeAndSubmit(aeRef).clickBuySlotsLinkAsFinanceUser()
-                        .selectChequePaymentType().clickStartOrder()
-                        .enterChequeDetails(ChequePayment.EXCESS_CHEQUE_PAYMENTS)
-                        .clickCreateOrderButtonWithExcessAmount();
+        EnterChequeDetailsPage enterChequeDetailsPage = EnterChequeDetailsPage
+                .navigateToChequeDetailsPageFromLogin(driver, financeUserLogin, aeRef)
+                .enterInvalidChequeDate()
+                .enterValidChequeInformation(ChequePayment.VALID_CHEQUE_PAYMENTS)
+                .clickCreateOrderButtonWithInvalidDetails();
 
         assertThat("Verifying validation error displayed",
                 enterChequeDetailsPage.isValidationErrorMessageDisplayed(), is(true));
@@ -199,15 +213,14 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
 
     @Test(groups = {"Regression", "SPMS-199"})
     public void financeUserSearchForPaymentByPaymentReference() {
-
-        PaymentConfirmationPage paymentConfirmationPage = loginAsAedmAndPurchaseSlotsByCard();
-        PaymentDetailsPage paymentDetailsPage =
-                paymentConfirmationPage.clickViewPurchaseDetailsLink();
+        Login financeUserLogin = createFinanceUserReturnFinanceUserLogin();
+        PaymentDetailsPage paymentDetailsPage = loginAsAedmAndPurchaseSlotsByCard()
+                .clickViewPurchaseDetailsLink();
         String paymentReference = paymentDetailsPage.getReceiptReference();
         paymentDetailsPage.clickLogout();
 
         PaymentDetailsPage searchedPaymentDetailsPage =
-                PaymentSearchPage.navigateHereFromLoginPage(driver, login.LOGIN_FINANCE_USER)
+                PaymentSearchPage.navigateHereFromLoginPage(driver, financeUserLogin)
                         .selectPaymentReference().enterReferenceAndSubmitSearch(paymentReference)
                         .clickReferenceLink(paymentReference);
 
@@ -216,22 +229,21 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
         assertThat("Verifying PurchaserDetails displayed",
                 searchedPaymentDetailsPage.getPurchaserDetailsText(), is("Purchaser details"));
         assertThat("Verifying PaymentDetails displayed",
-                searchedPaymentDetailsPage.getPaymentDetailsText(), is("Payment details"));
+                searchedPaymentDetailsPage.getPaymentDetailsText(), is("Payment reference"));
         assertThat("Verifying OrderDetails displayed",
                 searchedPaymentDetailsPage.getOrderDetailsText(), is("Order details"));
     }
 
     @Test(groups = {"Regression", "SPMS-77"})
     public void financeUserSearchForPaymentByInvoiceReference() {
-
-        PaymentConfirmationPage paymentConfirmationPage = loginAsAedmAndPurchaseSlotsByCard();
-        PaymentDetailsPage paymentDetailsPage =
-                paymentConfirmationPage.clickViewPurchaseDetailsLink();
+        Login financeUserLogin = createFinanceUserReturnFinanceUserLogin();
+        PaymentDetailsPage paymentDetailsPage = loginAsAedmAndPurchaseSlotsByCard()
+                .clickViewPurchaseDetailsLink();
         String invoiceReference = paymentDetailsPage.getInvoiceReference();
         paymentDetailsPage.clickLogout();
 
         PaymentDetailsPage searchedPaymentDetailsPage =
-                PaymentSearchPage.navigateHereFromLoginPage(driver, login.LOGIN_FINANCE_USER)
+                PaymentSearchPage.navigateHereFromLoginPage(driver, financeUserLogin)
                         .selectInvoiceReference().enterReferenceAndSubmitSearch(invoiceReference)
                         .clickReferenceLink(invoiceReference);
 
@@ -240,7 +252,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
         assertThat("Verifying PurchaserDetails displayed",
                 searchedPaymentDetailsPage.getPurchaserDetailsText(), is("Purchaser details"));
         assertThat("Verifying PaymentDetails displayed",
-                searchedPaymentDetailsPage.getPaymentDetailsText(), is("Payment details"));
+                searchedPaymentDetailsPage.getPaymentDetailsText(), is("Payment reference"));
         assertThat("Verifying OrderDetails displayed",
                 searchedPaymentDetailsPage.getOrderDetailsText(), is("Order details"));
     }

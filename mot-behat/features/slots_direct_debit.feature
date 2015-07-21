@@ -4,6 +4,7 @@ Feature: Cancel a Direct Debit Mandate
   So that I can use alternative method to pay or run down the slot balance if it is too high
 
   @dd-aedm
+  @slots
   Scenario Outline: Allowing an Authorised Examiner to Cancel a Direct Debit Mandate
     Given I am logged in as an Authorised Examiner
     And I have an active direct debit mandate set up for <slots> slots in <organisation> on <dayOfMonth>
@@ -12,8 +13,10 @@ Feature: Cancel a Direct Debit Mandate
   Examples:
     | organisation | slots | dayOfMonth |
     | halfords     | 25    | 20         |
+    | asda        | 50    | 5          |
 
   @dd-no-aedm
+  @slots
   Scenario Outline: No other user is authorised to Cancel Direct Debit
     Given I am logged in as <role>
     And I have an active direct debit mandate for <organisation>
@@ -24,7 +27,9 @@ Feature: Cancel a Direct Debit Mandate
     | areaoffice1user | halfords     |
     | tester1         | halfords     |
 
+  @slots
+  @no-dd
   Scenario: Authorised Examiner attempts to cancel direct debit when no direct debit exists
     Given I am logged in as an Authorised Examiner
-    When I request to cancel the direct debit for "asda"
+    When I request to cancel the direct debit for "kwikfit"
     Then My direct debit should not be canceled

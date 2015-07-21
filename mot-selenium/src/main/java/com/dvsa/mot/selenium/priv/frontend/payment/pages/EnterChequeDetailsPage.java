@@ -1,8 +1,11 @@
 package com.dvsa.mot.selenium.priv.frontend.payment.pages;
 
 import com.dvsa.mot.selenium.datasource.ChequePayment;
+import com.dvsa.mot.selenium.datasource.Login;
 import com.dvsa.mot.selenium.framework.BasePage;
 import com.dvsa.mot.selenium.framework.RandomDataGenerator;
+import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.SearchForAePage;
+
 import org.joda.time.DateTime;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -28,27 +31,39 @@ public class EnterChequeDetailsPage extends BasePage {
 
     @FindBy(id = "createOrder") private WebElement createOrderButton;
 
-    @FindBy(id = "validation-message--failure") private WebElement validationErrorMessage;
+    @FindBy(id = "validationError") private WebElement validationErrorMessage;
 
     public EnterChequeDetailsPage(WebDriver driver) {
         super(driver);
         checkTitle(PAGE_TITLE);
     }
 
-    public EnterChequeDetailsPage enterChequeDate() {
+    public EnterChequeDetailsPage enterValidChequeDate() {
         chequeDay.sendKeys((Integer.toString(DateTime.now().getDayOfMonth())));
         chequeMonth.sendKeys((Integer.toString(DateTime.now().getMonthOfYear())));
         chequeYear.sendKeys((Integer.toString(DateTime.now().getYear())));
-        return new EnterChequeDetailsPage(driver);
+        return this;
     }
-
-    public EnterChequeDetailsPage enterChequeDetails(ChequePayment chequePayment) {
-        enterChequeDate();
+    
+    public EnterChequeDetailsPage enterInvalidChequeDate() {
+        chequeDay.sendKeys((Integer.toString(DateTime.now().getDayOfMonth())));
+        chequeMonth.sendKeys((Integer.toString(DateTime.now().minusMonths(7).getMonthOfYear())));
+        chequeYear.sendKeys((Integer.toString(DateTime.now().getYear())));
+        return this;
+    }
+    
+    public EnterChequeDetailsPage enterValidChequeInformation(ChequePayment chequePayment) {
         payingInSlipNumber.sendKeys(RandomDataGenerator.generateRandomNumber(6, this.hashCode()));
         chequeNumber.sendKeys(RandomDataGenerator.generateRandomNumber(7, this.hashCode()));
         accountName.sendKeys(RandomDataGenerator.generateRandomString(8, this.hashCode()));
         amountOnCheque.sendKeys(chequePayment.amountOnCheque);
-        return new EnterChequeDetailsPage(driver);
+        return this;
+    }
+
+    public EnterChequeDetailsPage enterChequeDetails(ChequePayment chequePayment) {
+        enterValidChequeDate();
+        enterValidChequeInformation(chequePayment);
+        return this;
     }
 
     public ChequePaymentOrderSummaryPage clickCreateOrderButton() {
@@ -56,13 +71,20 @@ public class EnterChequeDetailsPage extends BasePage {
         return new ChequePaymentOrderSummaryPage(driver);
     }
 
-    public EnterChequeDetailsPage clickCreateOrderButtonWithExcessAmount() {
+    public EnterChequeDetailsPage clickCreateOrderButtonWithInvalidDetails() {
         createOrderButton.click();
         return new EnterChequeDetailsPage(driver);
     }
 
     public boolean isValidationErrorMessageDisplayed() {
         return validationErrorMessage.isDisplayed();
+    }
+    
+    public static EnterChequeDetailsPage navigateToChequeDetailsPageFromLogin(
+            WebDriver driver, Login login, String aeRef) {
+        return SearchForAePage.navigateHereFromLoginPage(driver, login)
+                .searchForAeAndSubmit(aeRef).clickBuySlotsLinkAsFinanceUser()
+                .selectChequePaymentType().clickStartOrder();
     }
 
 }

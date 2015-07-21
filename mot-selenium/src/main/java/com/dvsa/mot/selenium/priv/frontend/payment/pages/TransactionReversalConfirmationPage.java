@@ -1,6 +1,9 @@
 package com.dvsa.mot.selenium.priv.frontend.payment.pages;
 
+import com.dvsa.mot.selenium.datasource.ChequePayment;
+import com.dvsa.mot.selenium.datasource.Login;
 import com.dvsa.mot.selenium.framework.BasePage;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -31,6 +34,20 @@ public class TransactionReversalConfirmationPage extends BasePage {
     public PaymentDetailsPage clickReturnToTransactionDetailsLink() {
         returnToTransactionDetailsLink.click();
         return new PaymentDetailsPage(driver);
+    }
+    
+    public static TransactionReversalConfirmationPage navigateHereFromLoginAndReverseCardPayment(WebDriver driver, Login login, String aeRef) {
+        return PaymentDetailsPage.navigateHereFromTransactionHistoryPage(driver, login, aeRef)
+                .clickReverseThisPaymentButton()
+                .clickConfirmReverseButton();
+    }
+    
+    public static TransactionReversalConfirmationPage navigateHereFromLoginAndReverseChequePayment(WebDriver driver, Login login, String aeRef, ChequePayment chequePayment) {
+        return ChequePaymentOrderConfirmedPage
+                .purchaseSlotsByChequeSuccessfully(driver, login, aeRef, chequePayment)
+                .clickViewPurchaseDetailsLink()
+                .clickReverseThisPaymentButton()
+                .clickConfirmReverseButton();
     }
 
 }

@@ -12,7 +12,6 @@ Gemfile.lock
 /.settings
 vendor
 mot-behat-tests/vendor
-*autoload_classmap.php
 
 tests/postman/collection.json
 tests/postman/results.json

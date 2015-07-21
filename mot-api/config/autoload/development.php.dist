@@ -9,7 +9,7 @@ return array(
    'cpms_api' => array(
          'rest_client' => array(
              'options' => array(
-                 'domain' => 'http://payment-service.psdm-ap01.ps.npm',
+                 'domain' => 'http://payment-service.psqa-ap01.ps.npm',
              ),
          ),
      ),

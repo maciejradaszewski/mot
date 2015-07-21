@@ -7,7 +7,7 @@ use Dvsa\Mot\Behat\Support\Api\SlotPurchase;
 use Dvsa\Mot\Behat\Support\Response;
 use PHPUnit_Framework_Assert as PHPUnit;
 
-class InitiateRefundContext implements Context
+class SlotsInitiateRefundContext implements Context
 {
     /**
      * @var SlotPurchase
@@ -50,24 +50,8 @@ class InitiateRefundContext implements Context
      */
     public function iBoughtSlotsForOrganisationAtPrice($slots, $organisation, $price)
     {
-        $amount                 = number_format($price * $slots, 2, '.', '');
-        $body                   = [
-            'organisation' => $this->organisationMap[$organisation],
-            'slots'        => $slots,
-            'amount'       => $amount,
-            'paidAmount'   => $amount,
-            'paymentType'  => 4,
-            'autoRefund'   => false,
-            'paymentData'  => [
-                'accountName'  => 'Tester',
-                'chequeNumber' => rand(10000, 99999),
-                'slipNumber'   => rand(20000, 99999),
-                'chequeDate'   => (new DateTime('-10 days'))->format('Y-m-d'),
-            ]
-
-        ];
         $this->responseReceived = $this->slotPurchase->makePaymentForSlot(
-            $this->sessionContext->getCurrentAccessToken(), $body
+            $this->sessionContext->getCurrentAccessToken(), $slots, $this->organisationMap[$organisation], $price
         );
     }
 
@@ -150,10 +134,13 @@ class InitiateRefundContext implements Context
     public function myRefundRequestShouldBeRejected()
     {
         PHPUnit::assertEquals(
-            400,
+            200,
             $this->responseReceived->getStatusCode(),
             'Refund was not rejected'
         );
+        $body = $this->responseReceived->getBody();
+        PHPUnit::assertArrayHasKey('validationError', $body);
+        PHPUnit::assertArrayHasKey('code', $body['validationError']);
     }
 
     /**

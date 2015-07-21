@@ -1,13 +1,10 @@
 package com.dvsa.mot.selenium.priv.frontend.payment.pages;
 
-import org.joda.time.DateTime;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import com.dvsa.mot.selenium.datasource.ChequePayment;
 import com.dvsa.mot.selenium.framework.BasePage;
-import com.dvsa.mot.selenium.framework.RandomDataGenerator;
 
 public class EnterAdjustmentDetailsPage extends BasePage {
 

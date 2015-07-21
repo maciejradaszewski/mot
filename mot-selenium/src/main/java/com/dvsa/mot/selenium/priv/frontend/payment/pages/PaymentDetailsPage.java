@@ -13,13 +13,13 @@ import java.util.List;
 
 public class PaymentDetailsPage extends BasePage {
 
-    private static final String PAGE_TITLE = "PAYMENT DETAILS";
+    private static final String PAGE_TITLE = "TRANSACTION DETAILS";
 
     @FindBy(id = "supplierDetails") private WebElement supplierDetails;
 
     @FindBy(id = "purchaserDetails") private WebElement purchaserDetails;
 
-    @FindBy(id = "paymentDetails") private WebElement paymentDetails;
+    @FindBy(id = "paymentDetails") private WebElement paymentReference;
 
     @FindBy(id = "receiptReference") private WebElement receiptNumber;
 
@@ -51,7 +51,7 @@ public class PaymentDetailsPage extends BasePage {
     }
 
     public String getPaymentDetailsText() {
-        return paymentDetails.getText();
+        return paymentReference.getText();
     }
 
     public String getReceiptReference() {

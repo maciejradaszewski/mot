@@ -6,7 +6,6 @@ import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.EnforcementHomePage
 import com.dvsa.mot.selenium.priv.frontend.openam.ChangePasswordPage;
 import com.dvsa.mot.selenium.priv.frontend.openam.OpenAMClaimAccountSignInPage;
 import com.dvsa.mot.selenium.priv.frontend.openam.OpenAMLockoutPage;
-import com.dvsa.mot.selenium.priv.frontend.user.ResetPasswordPage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserNamePage;
 import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.MotTestPage;
@@ -16,8 +15,6 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-
-import java.sql.Driver;
 
 /**
  * Page Object class which models <b>Login Page</b>
@@ -96,12 +93,6 @@ public class LoginPage extends BasePage {
     public UserDashboardPage clickSubmit() {
         submitButton.click();
         return new UserDashboardPage(driver);
-    }
-
-    public LoginPage submitLoginExpectingFailure(String username, String password) {
-        enterLoginCredentials(username, password);
-        submitButton.click();
-        return new LoginPage(driver);
     }
 
     private LoginPage enterLoginCredentials(String username, String password) {

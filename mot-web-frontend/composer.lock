@@ -1,21 +1,21 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fa6bc8de091f4fa9a36dee1003933206",
+    "hash": "d636424ba14e4421e14bb92cc4da8870",
     "packages": [
         {
             "name": "cpms/client",
-            "version": "v1.20",
+            "version": "v1.21.1",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:cpms/cpms-client.git",
-                "reference": "35cf709c9a08d926577e7bc4f3b2ce057d646d51"
+                "reference": "8d1e8ac63a75bdfd37d0b0a88c4244e874c32498"
             },
             "require": {
-                "zendframework/zendframework": "<2.4.0"
+                "zendframework/zendframework": "<2.5"
             },
             "require-dev": {
                 "phpunit/phpunit": "4.0.*"
@@ -40,24 +40,24 @@
                 "proprietary"
             ],
             "description": "CPMS Common Client Module",
-            "time": "2015-05-14 10:27:34"
+            "time": "2015-07-08 12:20:23"
         },
         {
             "name": "cpms/cpms-forms",
-            "version": "v1.20",
+            "version": "v1.21.2",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:cpms/cpms-forms.git",
-                "reference": "3ed0fb2b40a3dbf8482779e7a3f61e8c28b4c45e"
+                "reference": "776cfbb075e8896be5fe4c11677e26a9471c2e0c"
             },
             "require": {
-                "cpms/client": "1.20.*",
+                "cpms/client": "1.21.*",
                 "php": ">=5.4",
-                "zendframework/zendframework": "<2.4"
+                "zendframework/zendframework": "<2.5"
             },
             "require-dev": {
-                "cpms/common": "1.20.*",
-                "cpms/payment-test": "1.20.*",
+                "cpms/common": "1.21.*",
+                "cpms/payment-test": "1.21.*",
                 "phpunit/phpunit": "4.0.*"
             },
             "type": "library",
@@ -86,7 +86,7 @@
                 }
             ],
             "description": "Module that provides re-usable HTML Forms that can be used by scheme to process payments.",
-            "time": "2015-06-17 11:49:43"
+            "time": "2015-07-08 12:22:35"
         },
         {
             "name": "doctrine/annotations",
@@ -1337,17 +1337,17 @@
         },
         {
             "name": "slot-purchase/web-frontend",
-            "version": "v2.4.4",
+            "version": "v3.1.3",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/web-frontend.git",
-                "reference": "8a61683eeddb5bc4ca80299945df82e7488f87e9"
+                "reference": "fd7305d1a3f22f8873c45b8ab9c10595a2335339"
             },
             "require": {
-                "cpms/cpms-forms": "1.20.*",
+                "cpms/cpms-forms": "1.21.*",
                 "dvsa/dvsa-document-module": "dev-develop",
                 "php": ">=5.5",
-                "zendframework/zendframework": "<2.4"
+                "zendframework/zendframework": "<2.5"
             },
             "require-dev": {
                 "phpunit/phpunit": "4.0.*",
@@ -1370,7 +1370,7 @@
                 "proprietary"
             ],
             "description": "Slot Purchase Frontend",
-            "time": "2015-06-25 12:25:09"
+            "time": "2015-07-14 13:09:30"
         },
         {
             "name": "soflomo/purifier",
@@ -1606,12 +1606,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/ZendPdf.git",
+                "url": "git@github.com:zendframework/ZendPdf.git",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },
@@ -1631,7 +1631,6 @@
                     "ZendPdf\\": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1641,6 +1640,10 @@
                 "pdf",
                 "zf2"
             ],
+            "support": {
+                "source": "https://github.com/zendframework/ZendPdf/tree/release-2.0.2",
+                "issues": "https://github.com/zendframework/ZendPdf/issues"
+            },
             "time": "2012-11-16 11:16:01"
         },
         {

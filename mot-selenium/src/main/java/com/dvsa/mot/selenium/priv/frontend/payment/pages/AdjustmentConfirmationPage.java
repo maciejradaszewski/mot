@@ -1,6 +1,10 @@
 package com.dvsa.mot.selenium.priv.frontend.payment.pages;
 
+import com.dvsa.mot.selenium.datasource.Login;
+import com.dvsa.mot.selenium.datasource.Payments;
 import com.dvsa.mot.selenium.framework.BasePage;
+import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.SearchForAePage;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -24,6 +28,20 @@ public class AdjustmentConfirmationPage extends BasePage {
 
     public String getAdjustedBalanceMessage() {
         return balanceMessage.getText();
+    }
+    
+    public static AdjustmentConfirmationPage loginAndCompleteManualPositiveAdjustmentOfSlotBalance(WebDriver driver, Login login, String aeRef) {
+        return SearchForAePage.navigateHereFromLoginPage(driver, login)
+                .searchForAeAndSubmit(aeRef).clickSlotsAdjustmentLinkAsFinanceUser()
+                .enterSlotsToBeAdjusted(Payments.VALID_PAYMENTS.slots)
+                .selectPositiveAdjustment().selectReason("Refund").clickAdjustButton();
+    }
+    
+    public static AdjustmentConfirmationPage loginAndCompleteManualNegativeAdjustmentOfSlotBalance(WebDriver driver, Login login, String aeRef) {
+        return SearchForAePage.navigateHereFromLoginPage(driver, login)
+                .searchForAeAndSubmit(aeRef).clickSlotsAdjustmentLinkAsFinanceUser()
+                .enterSlotsToBeAdjusted(Payments.VALID_PAYMENTS.slots)
+                .selectNegativeAdjustment().selectReason("Failed payment").clickAdjustButton();
     }
 
 }
