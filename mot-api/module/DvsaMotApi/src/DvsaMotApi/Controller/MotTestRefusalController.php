@@ -60,6 +60,8 @@ class MotTestRefusalController extends AbstractDvsaRestfulController implements 
             ->setTester((new PersonMapper())->toDto($person))
             ->setReasonForCancel($reasonForRefusal)
             ->setIssuedDate(DateUtils::nowAsUserDateTime())
+            ->setMake($vehicle->getMakeName())
+            ->setModel($vehicle->getModelName())
             ->setVehicleTestingStation(
                 [
                     'name'         => ArrayUtils::tryGet($vtsData, 'name', ''),
