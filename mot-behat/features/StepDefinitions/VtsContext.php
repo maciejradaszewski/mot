@@ -56,7 +56,11 @@ class VtsContext implements Context
             ];
 
             $response = $this->vehicleTestingStation->create($this->sessionContext->getCurrentAccessToken(), $params);
-            $this->siteCreate = $response->getBody()->toArray()['data'];
+            $responseBody = $response->getBody();
+            if (! is_object($responseBody)) {
+                throw new Exception("createSite: responseBody is not an object: failed to create Vts");
+            }
+            $this->siteCreate = $responseBody->toArray()['data'];
             $this->sessionContext->testSupportHelper->getVtsService()->finishCreatingVtsWithHacking(
                 $this->siteCreate['id'],
                 [1, 2, 3, 4, 5, 7]
