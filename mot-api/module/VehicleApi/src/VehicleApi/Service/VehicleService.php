@@ -362,6 +362,11 @@ class VehicleService
         $vehDic = $this->vehicleCatalog;
         $model = $vehDic->findModel($data['make'], $data['model']);
         $make = $vehDic->getMakeByCode($data['make']);
+
+        if (!ctype_digit($data['cylinderCapacity'])) {
+            $data['cylinderCapacity'] = null;
+        }
+
         $vehicle = (new Vehicle())
             ->setVin($data['vin'])
             ->setRegistration($data['registrationNumber'])
