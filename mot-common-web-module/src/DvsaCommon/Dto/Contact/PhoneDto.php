@@ -43,11 +43,11 @@ class PhoneDto extends AbstractDataTransferObject
 
     public function setIsPrimary($isPrimary)
     {
-        $this->isPrimary = $isPrimary;
+        $this->isPrimary = (bool) $isPrimary;
         return $this;
     }
 
-    public function getIsPrimary()
+    public function isPrimary()
     {
         return $this->isPrimary;
     }
@@ -78,7 +78,7 @@ class PhoneDto extends AbstractDataTransferObject
                 && $dtoB instanceof PhoneDto
                 && $dtoA->getNumber() == $dtoB->getNumber()
                 && $dtoA->getContactType() === $dtoB->getContactType()
-                && $dtoA->getIsPrimary() === $dtoB->getIsPrimary()
+                && $dtoA->isPrimary() === $dtoB->isPrimary()
             )
         );
     }
@@ -102,7 +102,7 @@ class PhoneDto extends AbstractDataTransferObject
         return [
             'id'        => $this->getId(),
             'number'    => $this->getNumber(),
-            'isPrimary' => $this->getIsPrimary(),
+            'isPrimary' => $this->isPrimary(),
             'type'      => $this->getContactType(),
         ];
     }

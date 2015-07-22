@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * @var \Organisation\ViewModel\AuthorisedExaminer\AeFormViewModel $model
+ * @var \Organisation\Form\AeCreateForm                            $form
+ */
+
+use DvsaCommon\Utility\AddressUtils;
+
+$model = $this->model;
+$form = $model->getForm();
+
+$busContact = $form->getBusContactModel();
+$corrContact = $form->isCorrDetailsTheSame() ? $form->getBusContactModel() : $form->getCorrContactModel();
+
+?>
+<!--Display of the information enter-->
+<h3 class="key-value-list__header">AE record summary</h3>
+    <?php
+    echo $this->partial(
+        'partial/gds/table/table',
+        [
+            'head' => 'Business details',
+            'body' => [
+                ['Business name', $form->getName()],
+                ['Trading name', $form->getTradingAs()],
+                ['Business type', $form->getCompanyTypes()[$form->getCompanyType()]],
+                ['Company number (optional if not Ltd.)', $form->getRegisteredCompanyNumber()],
+            ],
+        ]
+    );
+
+    echo $this->partial(
+        'partial/gds/table/table',
+        [
+            'head' => 'Business contact details',
+            'body' => [
+                ['Address', AddressUtils::stringify($busContact->getAddressModel()->toDto())],
+                ['Email', $busContact->getEmailModel()->getEmail()],
+                ['Telephone', $busContact->getPhoneModel()->getNumber()],
+            ],
+        ]
+    );
+
+    echo $this->partial(
+        'partial/gds/table/table',
+        [
+            'head' => 'Correspondence contact details',
+            'body' => [
+                ['Address', AddressUtils::stringify($corrContact->getAddressModel()->toDto())],
+                ['Email', $corrContact->getEmailModel()->getEmail()],
+                ['Telephone', $corrContact->getPhoneModel()->getNumber()],
+            ],
+        ]
+    );
+?>
+
+<!--Hidden information of the AE for save purpose-->
+<form method="POST" action="<?php echo $form->getFormUrl(); ?>">
+<?php
+    echo $this->csrfToken();
+
+    // Navigation
+    echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id'         => 'submitAeConfirmation',
+            'value'      => 'Create new AE',
+            'navigation' => [
+                'Back to Create AE' => $model->getCancelUrl(),
+            ],
+        ]
+    );
+?>
+</form>

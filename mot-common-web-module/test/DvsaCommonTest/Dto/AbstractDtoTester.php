@@ -57,6 +57,8 @@ class AbstractDtoTester extends \PHPUnit_Framework_TestCase
 
                     if ($methodName == 'Id') {
                         $testValue = rand(10000, 200000);
+                    } elseif ($isIsMethod) {
+                        $testValue = true;
                     } elseif ($firstParam->isArray()) {
                         $testValue = [$testValue];
                     }

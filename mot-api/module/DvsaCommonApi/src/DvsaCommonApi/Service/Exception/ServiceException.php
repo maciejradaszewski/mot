@@ -75,6 +75,16 @@ class ServiceException extends \Exception
         }
     }
 
+    public function addErrorField(
+        $field,
+        $code,
+        $errorMessage
+    ) {
+        $count = count($this->_errors);
+
+        $this->_errors[$count] = self::createError($errorMessage, $code, $errorMessage, $field);
+    }
+
     public static function createError(
         $errorMessage,
         $code,

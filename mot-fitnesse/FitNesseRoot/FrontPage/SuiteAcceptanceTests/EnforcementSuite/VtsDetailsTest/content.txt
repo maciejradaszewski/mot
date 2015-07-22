@@ -1,20 +1,19 @@
 !contents -R2 -g -p -f -h
-
 '''In order to check VTS Detail, I need to create a new site'''
 
-!| GenerateTestDataForOtherFitnesseTests                                                                            |
-|siteName      |siteAddress      |sitePostcode|siteTown|siteCountry|siteId?  |siteNumber?  |orgId?  |testerUsername?|
-|Test Site Name|Test Site Address|BS34 8SR    |Bristol |England    |$siteId1=|$siteNumber1=|$orgId1=|$tester1=      |
+!| GenerateTestDataForOtherFitnesseTests |
+| siteName | siteAddress | sitePostcode | siteTown | siteCountry | siteId? | siteNumber? | orgId? | testerUsername? |
+| Test Site Name | Test Site Address | BS34 8SR | Bristol | England | $siteId1= | $siteNumber1= | $orgId1= | $tester1= |
 
 '''In order to check VTS Detail, I want to search by Id and Site Number '''
 
 !2 VTS Details
 !3 Get VTS Details by Id
-|Query:VTSDetails|$siteId1                                                                                                                                                                                                                                                                                           |
-|id              |name          |organisation.id|organisation.slots|organisation.slotsWarning|address.addressLine1|address.postcode|address.town|address.country|address.version|roles                                                                                                              |positions.1.role|
-|$siteId1        |Test Site Name|$orgId1        |1024              |0                        |Test Site Address   |BS34 8SR        |Bristol     |England        |1              |["${VehicleClass1}","${VehicleClass2}","${VehicleClass3}","${VehicleClass4}","${VehicleClass5}","${VehicleClass7}"]|TESTER          |
+| Query:VTSDetails | $siteId1 |
+| id | name | organisation.id | organisation.slots | organisation.slotsWarning | address.addressLine1 | address.postcode | address.town | address.country | address.version | roles | positions.1.role |
+| $siteId1 | Test Site Name | $orgId1 | 1024 | 15 | Test Site Address | BS34 8SR | Bristol | England | 1 | ["${VehicleClass1}","${VehicleClass2}","${VehicleClass3}","${VehicleClass4}","${VehicleClass5}","${VehicleClass7}"] | TESTER |
 
 !3 Get error by Site Number
-|Query:VTSDetailsBySite|$siteNumber1                                                                                                                                                                                                                                                                                       |
-|id                    |name          |organisation.id|organisation.slots|organisation.slotsWarning|address.addressLine1|address.postcode|address.town|address.country|address.version|roles                                                                                                              |positions.1.role|
-|$siteId1              |Test Site Name|$orgId1        |1024              |0                        |Test Site Address   |BS34 8SR        |Bristol     |England        |1              |["${VehicleClass1}","${VehicleClass2}","${VehicleClass3}","${VehicleClass4}","${VehicleClass5}","${VehicleClass7}"]|TESTER          |
+| Query:VTSDetailsBySite | $siteNumber1 |
+| id | name | organisation.id | organisation.slots | organisation.slotsWarning | address.addressLine1 | address.postcode | address.town | address.country | address.version | roles | positions.1.role |
+| $siteId1 | Test Site Name | $orgId1 | 1024 | 15 | Test Site Address | BS34 8SR | Bristol | England | 1 | ["${VehicleClass1}","${VehicleClass2}","${VehicleClass3}","${VehicleClass4}","${VehicleClass5}","${VehicleClass7}"] | TESTER |

@@ -11,7 +11,7 @@ use Site\Controller\VehicleTestingStationController;
     <ul>
         <?php if ($this->isFeatureEnabled(\DvsaCommon\Constants\FeatureToggle::AO1_AE_CREATE)): ?>
             <li>
-                <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::of()->aeCreate(); ?>"
+                <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::create(); ?>"
                    id="createAuthorisedExaminerLink"><?php echo $this->translate('Create AE'); ?>
                 </a>
             </li>

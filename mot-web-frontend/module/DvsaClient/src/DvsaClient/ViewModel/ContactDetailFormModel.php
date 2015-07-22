@@ -42,6 +42,7 @@ class ContactDetailFormModel extends AbstractFormModel
 
     /**
      * @param Parameters $postData
+     * @return $this
      */
     public function fromPost(Parameters $postData)
     {
@@ -87,6 +88,13 @@ class ContactDetailFormModel extends AbstractFormModel
             ->setPhones([$this->getPhoneModel()->toDto()]);
 
         return $dto;
+    }
+
+    public function addErrorsFromApi($errors)
+    {
+        $this->getEmailModel()->addErrors($errors);
+        $this->getAddressModel()->addErrors($errors);
+        $this->getPhoneModel()->addErrors($errors);
     }
 
     public function isValid()

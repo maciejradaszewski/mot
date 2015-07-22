@@ -41,12 +41,25 @@ return [
                         ],
                     ],
                     'create'                        => [
-                        'type'    => 'segment',
+                        'type'    => 'literal',
                         'options' => [
                             'route'    => '/create',
                             'defaults' => [
                                 'controller' => AuthorisedExaminerControllerFactory::class,
                                 'action'     => 'create',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'confirmation' => [
+                                'type'    => 'literal',
+                                'options' => [
+                                    'route'    => '/confirmation',
+                                    'defaults' => [
+                                        'controller' => AuthorisedExaminerControllerFactory::class,
+                                        'action'     => 'confirmation',
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -59,45 +72,7 @@ return [
                                 'action'     => 'edit',
                             ],
                         ],
-                    ],/*
-                    'site-slot-usage'               => [
-                        'type'    => 'segment',
-                        'options' => [
-                            'route'       => '/site/:sid/slots-usage[/page/:page]',
-                            'constraints' => [
-                                'id'   => '[1-9]+[0-9]*',
-                                'page' => '[1-9]+',
-                            ],
-                            'defaults'    => [
-                                'controller' => SlotsUsageController::class,
-                                'action'     => 'site',
-                                'page'       => 1,
-                            ],
-                        ],
                     ],
-                    'slots'                         => [
-                        'type'         => 'segment',
-                        'options'      => [
-                            'route'       => '/slots',
-                        ],
-                        'child_routes' => [
-                            'usage'    => [
-                                'type'    => 'segment',
-                                'options' => [
-                                    'route'       => '/usage[/page/:page][:extension]',
-                                    'constraints' => [
-                                        'page'      => '[1-9]+',
-                                        'extension' => '.[a-z]{3}',
-                                    ],
-                                    'defaults'    => [
-                                        'controller' => SlotsUsageController::class,
-                                        'action'     => 'index',
-                                        'page'       => 1,
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],*/
                     'mot-test-log'       => [
                         'type'    => 'segment',
                         'options' => [

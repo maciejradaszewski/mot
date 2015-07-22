@@ -7,6 +7,8 @@ use Zend\Stdlib\Parameters;
 
 class AddressFormModel extends AbstractFormModel
 {
+    const FIELD_CONTACT = '%s[%s]';
+
     const FIELD_LINE1 = 'addressLine1';
     const FIELD_LINE2 = 'addressLine2';
     const FIELD_LINE3 = 'addressLine3';
@@ -67,23 +69,27 @@ class AddressFormModel extends AbstractFormModel
         return $this;
     }
 
-    public function isValid()
+    public function isValid($type = null)
     {
+        $fieldAddress = $type ? sprintf(self::FIELD_CONTACT, $type, self::FIELD_LINE1) :  self::FIELD_LINE1;
+        $fieldTown = $type ? sprintf(self::FIELD_CONTACT, $type, self::FIELD_TOWN) :  self::FIELD_TOWN;
+        $fieldPostcode = $type ? sprintf(self::FIELD_CONTACT, $type, self::FIELD_POSTCODE) :  self::FIELD_POSTCODE;
+
         if (empty($this->getAddressLine1())
             && empty($this->getAddressLine2())
             && empty($this->getAddressLine3())
         ) {
-            $this->addError(self::FIELD_LINE1, self::ERR_ADDRESS_REQUIRE);
+            $this->addError($fieldAddress, self::ERR_ADDRESS_REQUIRE);
             $this->addError(self::FIELD_LINE2);
             $this->addError(self::FIELD_LINE3);
         }
 
         if (empty($this->getTown())) {
-            $this->addError(self::FIELD_TOWN, self::ERR_TOWN_REQUIRE);
+            $this->addError($fieldTown, self::ERR_TOWN_REQUIRE);
         }
 
         if (empty($this->getPostCode())) {
-            $this->addError(self::FIELD_POSTCODE, self::ERR_POSTCODE_REQUIRE);
+            $this->addError($fieldPostcode, self::ERR_POSTCODE_REQUIRE);
         }
 
         return !$this->hasErrors();

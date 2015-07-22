@@ -2,32 +2,35 @@
 namespace OrganisationTest\Controller;
 
 use Core\Service\MotFrontendAuthorisationServiceInterface;
+use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaClient\Mapper\OrganisationMapper;
-use DvsaClient\Mapper\VehicleTestingStationMapper;
 use DvsaClient\MapperFactory;
-use DvsaClient\ViewModel\AddressFormModel;
 use DvsaClient\ViewModel\EmailFormModel;
 use DvsaClient\ViewModel\PhoneFormModel;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
+use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
-use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\Bootstrap;
-use CoreTest\Controller\AbstractFrontendControllerTestCase;
+use DvsaCommonTest\TestUtils\TestCasePermissionTrait;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaFeature\Exception\FeatureNotAvailableException;
 use DvsaFeature\FeatureToggles;
 use Organisation\Controller\AuthorisedExaminerController;
 use Organisation\Form\AeContactDetailsForm;
 use Organisation\Form\AeCreateForm;
+use Organisation\ViewModel\AuthorisedExaminer\AeFormViewModel;
+use PHPUnit_Framework_MockObject_MockObject as MockObj;
+use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
-use \PHPUnit_Framework_MockObject_MockObject as MockObj;
 
 /**
  * Class AuthorisedExaminerControllerTest
@@ -36,50 +39,75 @@ use \PHPUnit_Framework_MockObject_MockObject as MockObj;
  */
 class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCase
 {
+    use TestCasePermissionTrait;
+
     const AE_ID = 1;
     const PERSON_ID = 1;
 
-    /** @var MotFrontendAuthorisationServiceInterface|MockObj $auth */
-    private $auth;
-    /** @var MapperFactory|MockObj $mapper */
-    private $mapperFactory;
-    /** @var MotIdentityProviderInterface|MockObj $identity */
-    private $identity;
-    private $mockOrgMapper;
-    private $mockSiteMapper;
+    const SESSION_KEY = 'test_sessKey';
 
-    protected $serviceManager;
+    /**
+     * @var MotFrontendAuthorisationServiceInterface|MockObj $mockAuth
+     */
+    private $mockAuth;
+    /**
+     * @var MapperFactory|MockObj $mapper
+     */
+    private $mockMapperFactory;
+    /**
+     * @var MotIdentityProviderInterface|MockObj $mockIdentity
+     */
+    private $mockIdentity;
+    /**
+     * @var Container
+     */
+    private $mockSession;
+    /**
+     * @var OrganisationMapper|MockObj
+     */
+    private $mockOrgMapper;
+    /**
+     * @var FeatureToggles|MockObj
+     */
+    private $mockFeatureToggle;
 
     public function setUp()
     {
-        $this->serviceManager = Bootstrap::getServiceManager();
-        $this->serviceManager->setAllowOverride(true);
-        $this->setServiceManager($this->serviceManager);
+        $serviceManager = Bootstrap::getServiceManager();
+        $serviceManager->setAllowOverride(true);
+        $this->setServiceManager($serviceManager);
 
-        $this->auth = XMock::of(MotFrontendAuthorisationServiceInterface::class);
-        $this->identity = XMock::of(MotIdentityProviderInterface::class);
-        $this->mapperFactory = $this->getMapperFactory();
+        $this->mockAuth = XMock::of(MotFrontendAuthorisationServiceInterface::class);
+        $this->mockIdentity = XMock::of(MotIdentityProviderInterface::class);
+        $this->mockMapperFactory = $this->getMapperFactory();
+        $this->mockSession = XMock::of(Container::class);
 
-        $this->setController(new AuthorisedExaminerController($this->auth, $this->mapperFactory, $this->identity));
+        $this->setController(
+            new AuthorisedExaminerController(
+                $this->mockAuth, $this->mockMapperFactory, $this->mockIdentity, $this->mockSession
+            )
+        );
 
         $this->getController()->setServiceLocator($this->serviceManager);
 
         parent::setUp();
 
-        $featureToggle = XMock::of(FeatureToggles::class);
-        $this->serviceManager->setService('Feature\FeatureToggles', $featureToggle);
-        $featureToggle->expects($this->any())
-            ->method('isEnabled')
-            ->willReturn('true');
+        $this->mockFeatureToggle = XMock::of(FeatureToggles::class, ['isEnabled']);
+        $serviceManager->setService('Feature\FeatureToggles', $this->mockFeatureToggle);
     }
 
     /**
-     * @dataProvider dataProviderTestActionsResultAndAccess
+     * @dataProvider dataProviderTestActionsResult
      */
-    public function testActionsResultAndAccess($method, $action, $params, $mocks, $expect)
+    public function testActionsResult($method, $action, $params, $mocks, $expect)
     {
         $result = null;
 
+        //  logical block :: mock
+        //  enable any feature
+        $this->mockMethod($this->mockFeatureToggle, 'isEnabled', $this->any(), true);
+
+        //  mocking methods
         if ($mocks !== null) {
             foreach ($mocks as $mock) {
                 $invocation = (isset($mock['call']) ? $mock['call'] : $this->once());
@@ -89,12 +117,13 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
             }
         }
 
-        //  --  set expected exception  --
+        //  check :: set expected exception
         if (!empty($expect['exception'])) {
             $exception = $expect['exception'];
             $this->setExpectedException($exception['class'], $exception['message']);
         }
 
+        // logical block :: call
         $result = $this->getResultForAction2(
             $method,
             $action,
@@ -103,19 +132,35 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
             ArrayUtils::tryGet($params, 'post')
         );
 
-        //  --  check   --
+        // logical block :: check
         if (!empty($expect['viewModel'])) {
             $this->assertInstanceOf(ViewModel::class, $result);
             $this->assertResponseStatus(self::HTTP_OK_CODE);
         }
 
-        if (!empty($expect['errors'])) {
-            $this->assertInstanceOf(ViewModel::class, $result);
+        if (!empty($expect['viewForm']) || !empty($expect['errors'])) {
+            /** @var AeFormViewModel $module */
+            /** @var AeCreateForm $form */
+            $model = $result->getVariable('model');
+            $form = $model->getForm();
 
-            $form = $result->getVariable('form');
+            if (!empty($expect['viewForm'])) {
+                $expectForm = $expect['viewForm'];
+                $expectFormObj = $expectForm['obj'];
 
-            foreach ($expect['errors'] as $field => $error) {
-                $this->assertEquals($error, $form->getError($field));
+                $this->assertInstanceOf(get_class($expectFormObj), $form);
+
+                if ($expectForm['isSame']) {
+                    $this->assertSame($expectFormObj, $form);
+                } else {
+                    $this->assertNotSame($expectFormObj, $form);
+                }
+            }
+
+            if (!empty($expect['errors'])) {
+                foreach ($expect['errors'] as $field => $error) {
+                    $this->assertEquals($error, $form->getError($field));
+                }
             }
         }
 
@@ -131,26 +176,14 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
         }
     }
 
-    public function dataProviderTestActionsResultAndAccess()
+    public function dataProviderTestActionsResult()
     {
-        $aeCreatePostValid = [
-            AeCreateForm::FIELD_NAME                     => 'testOrgName',
-            AeCreateForm::FIELD_TRADING_AS               => 'testTradAs',
-            AeCreateForm::FIELD_COMPANY_TYPE             => 'testCompType',
-            AeCreateForm::FIELD_REG_NR                   => 'testRegNr',
-            'REGC'                                       => [
-                AddressFormModel::FIELD_LINE1       => 'testAddressLine',
-                AddressFormModel::FIELD_TOWN        => 'testTown',
-                AddressFormModel::FIELD_POSTCODE    => 'testPostcode',
-                PhoneFormModel::FIELD_NUMBER        => 'testPhone',
-                EmailFormModel::FIELD_IS_NOT_SUPPLY => 1,
-            ],
-            AeCreateForm::FIELD_AO_NR                    => '1',
-            AeCreateForm::FIELD_IS_CORR_DETAILS_THE_SAME => 1,
-        ];
+        /** @var AeCreateForm|MockObj $formAeCreate */
+        $formAeCreate = XMock::of(AeCreateForm::class);
+        $this->mockMethod($formAeCreate, 'toDto', null, new OrganisationDto());
 
         return [
-            //  --  create: access action  --
+            // has access
             [
                 'method' => 'get',
                 'action' => 'create',
@@ -160,77 +193,174 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
                     'viewModel' => true,
                 ],
             ],
-            //  --  create: post action:: success  --
+            //  form not in session, create a new form;
             [
-                'method'   => 'post',
-                'action'   => 'create',
-                'params' => [
-                    'post' => $aeCreatePostValid,
-                ],
-                'mocks'    => [
-                    [
-                        'class'  => 'mockOrgMapper',
-                        'method' => 'create',
-                        'result' => ['id' => self::AE_ID],
+                'method' => 'get',
+                'action' => 'create',
+                'params' => [],
+                'mocks'  => [],
+                'expect' => [
+                    'viewModel' => true,
+                    'viewForm'  => [
+                        'obj'    => new AeCreateForm(),
+                        'isSame' => false,
                     ],
                 ],
-                'expect'   => [
-                    'url' => AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID),
-                ],
             ],
-
-            //  --  create: post action:: error form validation  --
-            /*
-            //  #TODO  uncomment when validation will be complete
+            //  get form from session; form is valid; redirect to confirmation
             [
                 'method' => 'post',
                 'action' => 'create',
                 'params' => [
-                    'post' => $aeCreatePostValid,
+                    'get' => [
+                        AuthorisedExaminerController::SESSION_KEY => self::SESSION_KEY,
+                    ],
+                ],
+                'mocks'  => [
+                    [
+                        'class'  => 'mockSession',
+                        'method' => 'offsetGet',
+                        'params' => [self::SESSION_KEY],
+                        'result' => $this->mockMethod($this->cloneObj($formAeCreate), 'isValid', $this->once(), true),
+                    ],
+                    [
+                        'class'  => 'mockOrgMapper',
+                        'method' => 'validate',
+                        'params' => [$formAeCreate->toDto()],
+                        'result' => [],
+                    ],
+                ],
+                'expect' => [
+                    'url' => AuthorisedExaminerUrlBuilderWeb::createConfirm()
+                        ->queryParam(AuthorisedExaminerController::SESSION_KEY, self::SESSION_KEY),
+                ],
+            ],
+
+            //  logical block :: create confirmation action
+            //  form not in session; redirect ot create form
+            [
+                'method' => 'get',
+                'action' => 'confirmation',
+                'params' => [
+                    'get' => [
+                        AuthorisedExaminerController::SESSION_KEY => self::SESSION_KEY,
+                    ],
                 ],
                 'mocks'  => [],
                 'expect' => [
-                    'url'    => AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID),
-                    'errors' => [
-                        AeCreateForm::FIELD_NAME => AeCreateForm::ERR_NAME_REQUIRE,
+                    'url' => AuthorisedExaminerUrlBuilderWeb::create(),
+                ],
+            ],
+            // form in session; show confirm page
+            [
+                'method' => 'get',
+                'action' => 'confirmation',
+                'params' => [
+                    'get' => [
+                        AuthorisedExaminerController::SESSION_KEY => self::SESSION_KEY,
+                    ],
+                ],
+                'mocks'  => [
+                    [
+                        'class'  => 'mockSession',
+                        'method' => 'offsetGet',
+                        'params' => [self::SESSION_KEY],
+                        'result' => $formAeCreate,
+                    ],
+                ],
+                'expect' => [
+                    'viewModel' => true,
+                    'viewForm'  => [
+                        'obj'    => $formAeCreate,
+                        'isSame' => true,
                     ],
                 ],
             ],
-            */
-
-            //  --  create: post action errors --
+            // form in session; post successful; redirect to AE view
             [
-                'method'   => 'post',
-                'action'   => 'create',
+                'method' => 'post',
+                'action' => 'confirmation',
                 'params' => [
-                    'post' => $aeCreatePostValid,
+                    'get' => [
+                        AuthorisedExaminerController::SESSION_KEY => self::SESSION_KEY,
+                    ],
                 ],
-                'mocks'    => [
+                'mocks'  => [
+                    [
+                        'class'  => 'mockSession',
+                        'method' => 'offsetGet',
+                        'params' => [self::SESSION_KEY],
+                        'result' => $formAeCreate,
+                    ],
+                    [
+                        'class'  => 'mockSession',
+                        'method' => 'offsetUnset',
+                        'params' => [self::SESSION_KEY],
+                        'result' => null,
+                    ],
                     [
                         'class'  => 'mockOrgMapper',
                         'method' => 'create',
-                        'params' => [],
-                        'result' => new ValidationException(
+                        'params' => [$formAeCreate->toDto()],
+                        'result' => ['id' => self::AE_ID],
+                    ],
+                ],
+                'expect' => [
+                    'url' => AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID),
+                ],
+            ],
+            // form in session; error in during post; show confirm page and flash error
+            [
+                'method' => 'post',
+                'action' => 'confirmation',
+                'params' => [
+                    'get' => [
+                        AuthorisedExaminerController::SESSION_KEY => self::SESSION_KEY,
+                    ],
+                ],
+                'mocks'  => [
+                    [
+                        'class'  => 'mockSession',
+                        'method' => 'offsetGet',
+                        'params' => [self::SESSION_KEY],
+                        'result' => $formAeCreate,
+                    ],
+                    [
+                        'class'  => 'mockSession',
+                        'method' => 'offsetUnset',
+                        'params' => [self::SESSION_KEY],
+                        'result' => null,
+                        'call'   => $this->never(),
+                    ],
+                    [
+                        'class'  => 'mockOrgMapper',
+                        'method' => 'create',
+                        'params' => [$formAeCreate->toDto()],
+                        'result' => new RestApplicationException(
                             '/', 'post', [], 10, [['displayMessage' => 'something wrong']]
                         ),
                     ],
                 ],
-                'expect'   => [
+                'expect' => [
                     'viewModel'  => true,
+                    'viewForm'   => [
+                        'obj'    => $formAeCreate,
+                        'isSame' => true,
+                    ],
                     'flashError' => 'something wrong',
                 ],
             ],
 
             //  --  edit contact details: access action  --
             [
-                'method'   => 'get',
-                'action'   => 'edit',
+                'method' => 'get',
+                'action' => 'edit',
                 'params' => [
                     'route' => [
                         'id' => self::AE_ID
                     ]
                 ],
-                'mocks'    => [
+                'mocks'  => [
                     [
                         'class'  => 'mockOrgMapper',
                         'method' => 'getAuthorisedExaminer',
@@ -238,14 +368,14 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
                         'result' => $this->getOrganisation(),
                     ],
                 ],
-                'expect'   => [
+                'expect' => [
                     'viewModel' => true,
                 ],
             ],
             //  --  edit contact details: post action --
             [
-                'method'   => 'post',
-                'action'   => 'edit',
+                'method' => 'post',
+                'action' => 'edit',
                 'params' => [
                     'post'  => [
                         OrganisationContactTypeCode::CORRESPONDENCE       => [
@@ -258,7 +388,7 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
                         'id' => self::AE_ID
                     ],
                 ],
-                'mocks'    => [
+                'mocks'  => [
                     [
                         'class'  => 'mockOrgMapper',
                         'method' => 'getAuthorisedExaminer',
@@ -272,14 +402,14 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
                         'result' => ['id' => self::AE_ID],
                     ],
                 ],
-                'expect'   => [
+                'expect' => [
                     'url' => AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID),
                 ],
             ],
             //  --  edit contact details: post action error --
             [
-                'method'   => 'post',
-                'action'   => 'edit',
+                'method' => 'post',
+                'action' => 'edit',
                 'params' => [
                     'post'  => [
                         OrganisationContactTypeCode::CORRESPONDENCE       => [
@@ -292,7 +422,7 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
                         'id' => self::AE_ID
                     ],
                 ],
-                'mocks'    => [
+                'mocks'  => [
                     [
                         'class'  => 'mockOrgMapper',
                         'method' => 'getAuthorisedExaminer',
@@ -308,22 +438,22 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
                         ),
                     ],
                 ],
-                'expect'   => [
-                    'viewModel' => true,
+                'expect' => [
+                    'viewModel'  => true,
                     'flashError' => 'something wrong',
                 ],
             ],
 
             //  --  index: access action from AE search --
             [
-                'method'   => 'get',
-                'action'   => 'index',
+                'method' => 'get',
+                'action' => 'index',
                 'params' => [
                     'route' => [
                         'id' => self::AE_ID
                     ]
                 ],
-                'mocks'    => [
+                'mocks'  => [
                     [
                         'class'  => 'mockOrgMapper',
                         'method' => 'getAuthorisedExaminer',
@@ -331,27 +461,27 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
                         'result' => $this->getOrganisation(),
                     ],
                     [
-                        'class'  => 'auth',
+                        'class'  => 'mockAuth',
                         'call'   => $this->at(4),
                         'method' => 'isGranted',
                         'params' => [PermissionInSystem::AUTHORISED_EXAMINER_LIST],
                         'result' => true,
                     ],
                 ],
-                'expect'   => [
+                'expect' => [
                     'viewModel' => true,
                 ],
             ],
             //  --  index: access action from user search --
             [
-                'method'   => 'get',
-                'action'   => 'index',
+                'method' => 'get',
+                'action' => 'index',
                 'params' => [
                     'route' => [
                         'id' => self::AE_ID
                     ]
                 ],
-                'mocks'    => [
+                'mocks'  => [
                     [
                         'class'  => 'mockOrgMapper',
                         'method' => 'getAuthorisedExaminer',
@@ -359,27 +489,27 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
                         'result' => $this->getOrganisation(),
                     ],
                     [
-                        'class'  => 'auth',
+                        'class'  => 'mockAuth',
                         'call'   => $this->at(6),
                         'method' => 'isGranted',
                         'params' => [PermissionInSystem::USER_SEARCH],
                         'result' => true,
                     ],
                 ],
-                'expect'   => [
+                'expect' => [
                     'viewModel' => true,
                 ],
             ],
             //  --  index: access action  --
             [
-                'method'   => 'get',
-                'action'   => 'index',
+                'method' => 'get',
+                'action' => 'index',
                 'params' => [
                     'route' => [
                         'id' => self::AE_ID
                     ]
                 ],
-                'mocks'    => [
+                'mocks'  => [
                     [
                         'class'  => 'mockOrgMapper',
                         'method' => 'getAuthorisedExaminer',
@@ -387,24 +517,87 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
                         'result' => $this->getOrganisation(),
                     ],
                 ],
-                'expect'   => [
+                'expect' => [
                     'viewModel' => true,
                 ],
             ],
         ];
     }
 
+    /**
+     * @dataProvider dataProviderTestNoAccessFeatureDisabled
+     */
+    public function testNoAccessFeatureDisabled($action, $feature)
+    {
+        //  logical block :: mock
+        //  turn off features
+        $this->mockMethod($this->mockFeatureToggle, 'isEnabled', $this->once(), false, [$feature]);
+
+        //  set expected exception
+        $this->setExpectedException(
+            FeatureNotAvailableException::class,
+            'Feature "' . $feature . '" is either disabled or not available in the current application configuration.'
+        );
+
+        $this->getResultForAction($action);
+    }
+
+    public function dataProviderTestNoAccessFeatureDisabled()
+    {
+        return [
+            [
+                'action'  => 'create',
+                'feature' => FeatureToggle::AO1_AE_CREATE,
+            ],
+            ['confirmation', FeatureToggle::AO1_AE_CREATE],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderTestNoAccessNoPerm
+     */
+    public function testHaveNoAccessNoPerm($action, $params)
+    {
+        $result = null;
+
+        //  logical block :: mock
+        //  turn on features
+        $this->mockMethod($this->mockFeatureToggle, 'isEnabled', $this->any(), true);
+
+        //  revoke all permissions
+        $this->mockAssertGranted($this->mockAuth, []);
+        $this->mockIsGranted($this->mockAuth, []);
+        $this->mockAssertGrantedAtOrganisation($this->mockAuth, [], self::AE_ID);
+        $this->mockIsGrantedAtOrganisation($this->mockAuth, [], self::AE_ID);
+
+        //  set expected exception
+        $this->setExpectedException(UnauthorisedException::class, 'You not have permissions');
+
+        //  logical block :: call
+        $this->getResultForAction($action, $params);
+    }
+
+    public function dataProviderTestNoAccessNoPerm()
+    {
+        return [
+            [
+                'action' => 'create',
+                'params' => [],
+            ],
+            ['confirmation', []],
+            ['edit', ['id' => self::AE_ID]],
+            ['index', ['id' => self::AE_ID]],
+        ];
+    }
+
     private function getMapperFactory()
     {
-        //  ----
         $mapperFactory = XMock::of(MapperFactory::class);
 
         $this->mockOrgMapper = XMock::of(OrganisationMapper::class);
-        $this->mockSiteMapper = XMock::of(VehicleTestingStationMapper::class);
 
         $map = [
             [MapperFactory::ORGANISATION, $this->mockOrgMapper],
-            [MapperFactory::VEHICLE_TESTING_STATION, $this->mockSiteMapper],
         ];
 
         $mapperFactory->expects($this->any())
@@ -434,9 +627,17 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
         $orgContactDtoCor = clone $orgContactDto;
         $orgContactDtoCor->setType(OrganisationContactTypeCode::CORRESPONDENCE);
 
-        $orgDto->setContacts([ $orgContactDto, $orgContactDtoCor ]);
+        $orgDto->setContacts([$orgContactDto, $orgContactDtoCor]);
         $orgDto->setAuthorisedExaminerAuthorisation(new AuthorisedExaminerAuthorisationDto());
 
         return $orgDto;
+    }
+
+    /**
+     * @return $obj
+     */
+    private function cloneObj($obj)
+    {
+        return clone $obj;
     }
 }

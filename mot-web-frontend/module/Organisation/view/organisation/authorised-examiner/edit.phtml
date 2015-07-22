@@ -20,7 +20,7 @@ echo $this->partial(
     ['messages' => $flashMessenger->getSuccessMessages(), 'type' => 'success']
 );
 
-$form = $this->form;
+$form = $this->model;
 $contactModel = $form->getCorrContactModel();
 
 ?>
@@ -63,7 +63,7 @@ $contactModel = $form->getCorrContactModel();
             [
                 'id'            => $fieldId,
                 'name'          => $fieldName,
-                'errorMessage'  => $phoneModel->getError(PhoneFormModel::FIELD_NUMBER),
+                'errorMessage'  => $phoneModel->getError($fieldName),
                 'inputModifier' => '1-4',
                 'label'         => 'Phone number',
                 'value'         => $phoneModel->getNumber(),

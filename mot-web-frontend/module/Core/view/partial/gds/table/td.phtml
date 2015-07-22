@@ -1,0 +1,17 @@
+<?php
+
+$id = $this->id ?: false;
+$class = $this->class ?: false;
+$colspan = (int) $this->colspan ?: false;
+$escape = (bool) $this->escape;
+
+$value = ($this->value === null ? 'N/A' : $this->value);
+?>
+
+<td <?php
+    echo $id ? ' id="' . $this->escapeHtmlAttr($id) .'"' : '';
+    echo $class ? ' class="' . $this->escapeHtmlAttr($class) .'"' : '';
+    echo $colspan ? ' colspan="' . $this->escapeHtmlAttr($colspan) .'"' : '';
+    ?>>
+    <?php echo $escape ? $this->escapeHtml($value) : $value; ?>
+</td>

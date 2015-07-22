@@ -21,6 +21,9 @@ abstract class AbstractDvsaActionController
     const TEMPLATE_FLASH_ERROR           = 'error/flash-error';
 
     protected $form;
+    /**
+     * @var HttpRestJsonClient
+     */
     protected $restClient;
     /**
      * @var OpenAMClientInterface

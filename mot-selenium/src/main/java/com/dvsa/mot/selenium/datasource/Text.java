@@ -202,6 +202,16 @@ public class Text {
     public static final String TEXT_PASSWORD_2 = "Password2";
     public static final String ILLEGAL_PASSWORD="P£ssword123$";
 
+    public static final String TEXT_BUSINESS_NAME_MANDATORY_MSG = "A business name must be entered";
+    public static final String TEXT_BUSINESS_TYPE_MANDATORY_MSG = "A business type must be selected";
+    public static final String TEXT_ADDRESS_LINE_MANDATORY_MSG = "An address must be entered";
+    public static final String TEXT_TOWN_MANDATORY_MSG = "A town must be entered";
+    public static final String TEXT_POSTCODE_MANDATORY_MSG = "A postcode must be entered";
+    public static final String TEXT_PHONE_MANDATORY_MSG = "A telephone number must be entered";
+    public static final String TEXT_EMAIL_MANDATORY_MSG = "The email address you entered is not valid";
+    public static final String TEXT_COMPANY_NUMBER_MANDATORY_MSG = "A company number must be entered";
+    public static final String TEXT_CONFIRMATION_EMAIL_MANDATORY_MSG = "Both email addresses need to be the same";
+
     public Text(String text) {
         super();
         this.text = text;

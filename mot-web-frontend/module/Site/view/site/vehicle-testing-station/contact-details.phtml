@@ -67,7 +67,7 @@ $busContact = $dto->getContactByType(SiteContactTypeCode::BUSINESS);
             [
                 'id'            => SiteContactTypeCode::BUSINESS . PhoneFormModel::FIELD_NUMBER,
                 'name'          => SiteContactTypeCode::BUSINESS . '[' . PhoneFormModel::FIELD_NUMBER . ']',
-                'errorMessage'  => $form->getBusPhoneModel()->getError(PhoneFormModel::FIELD_NUMBER),
+                'errorMessage'  => $form->getBusPhoneModel()->getError(SiteContactTypeCode::BUSINESS . '[' . PhoneFormModel::FIELD_NUMBER . ']'),
                 'inputModifier' => '1-4',
                 'label'         => 'Telephone number',
                 'value'         => $form->getBusPhoneModel()->getNumber(),

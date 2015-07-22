@@ -233,7 +233,7 @@ public class Assertion {
                     + "if you don't supply an email address.");
 
     public static final Assertion ASSERTION_VALIDATION_MESSAGE =
-            new Assertion("The confirmation email you entered is different");
+            new Assertion("Both email addresses need to be the same");
 
     public static final Assertion ASSERTION_SITE_SEARCH =
             new Assertion("You need to enter some search criteria");

@@ -4,20 +4,20 @@ namespace DvsaClient\Factory;
 
 use Application\Service\CatalogService;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
-use DvsaClient\MapperFactory;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use DvsaClient\MapperFactory as Factory;
 
 class TesterGroupAuthorisationMapperFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var MapperFactory $mapperFactory */
-        $mapperFactory = $serviceLocator->get(MapperFactory::class);
+        $mapperFactory = $serviceLocator->get(Factory::class);
         /** @var CatalogService $catalog */
         $catalog = $serviceLocator->get('CatalogService');
 
-        return new TesterGroupAuthorisationMapper (
+        return new TesterGroupAuthorisationMapper(
             $mapperFactory->TesterQualificationStatus,
             $catalog
         );

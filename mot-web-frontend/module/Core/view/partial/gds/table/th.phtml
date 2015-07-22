@@ -1,0 +1,11 @@
+<?php
+
+$class = $this->class ?: '';
+$colspan = $this->colspan ?: '';
+$value = $this->value ?: '';
+
+?>
+<th class="<?php echo $this->escapeHtmlAttr($class); ?>"
+    colspan="<?php echo $this->escapeHtmlAttr($colspan); ?>">
+    <?php echo $this->escapeHtml($value); ?>
+</th>

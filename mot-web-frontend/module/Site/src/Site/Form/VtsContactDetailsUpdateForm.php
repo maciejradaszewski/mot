@@ -95,8 +95,8 @@ class VtsContactDetailsUpdateForm extends AbstractFormModel
 
     public function isValid()
     {
-        $isEmailValid = $this->getBusEmailModel()->isValid();
-        $isPhoneValid = $this->getBusPhoneModel()->isValid();
+        $isEmailValid = $this->getBusEmailModel()->isValid(SiteContactTypeCode::BUSINESS);
+        $isPhoneValid = $this->getBusPhoneModel()->isValid(SiteContactTypeCode::BUSINESS);
 
         return $isEmailValid && $isPhoneValid;
     }

@@ -89,17 +89,16 @@ class AeContactDetailsForm extends AbstractFormModel
     {
         $corrModel = $this->getCorrContactModel();
 
-        $isEmailValid = $corrModel->getEmailModel()->isValid();
-        $isPhoneValid = $corrModel->getPhoneModel()->isValid();
+        $isEmailValid = $corrModel->getEmailModel()->isValid(OrganisationContactTypeCode::CORRESPONDENCE);
+        $isPhoneValid = $corrModel->getPhoneModel()->isValid(OrganisationContactTypeCode::CORRESPONDENCE);
 
         $isAddressValid = true;
         if ($this->isCorrAddressTheSame() === false) {
-            $isAddressValid = $corrModel->getAddressModel()->isValid();
+            $isAddressValid = $corrModel->getAddressModel()->isValid(OrganisationContactTypeCode::CORRESPONDENCE);
         }
 
         return $isEmailValid && $isPhoneValid && $isAddressValid;
     }
-
 
     /**
      * @return boolean

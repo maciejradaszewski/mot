@@ -2,7 +2,9 @@ package com.dvsa.mot.selenium.priv.frontend.organisation.management;
 
 import com.dvsa.mot.selenium.datasource.Business;
 import com.dvsa.mot.selenium.datasource.Login;
+import com.dvsa.mot.selenium.datasource.Text;
 import com.dvsa.mot.selenium.framework.BaseTest;
+import com.dvsa.mot.selenium.priv.frontend.organisation.management.authorisedexamineroverview.pages.AuthorisedExaminerOverviewPage;
 import com.dvsa.mot.selenium.priv.frontend.organisation.management.authorisedexamineroverview.pages.CreateAuthorisedExaminerPage;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -14,8 +16,10 @@ public class CreateAuthorisedExaminerTest extends BaseTest {
 
     private String notificationForAEDMlinkText =
             "Authorised Examiner Designated Manager role notification";
+/*
+//This test will be removed once new tests for Create Ae merged into develop
 
-    @Test(groups = {"FeatureToggleCreateAe"}) public void createAe() {
+    @Test(groups = {"FeatureToggleCreateAe"})  public void createAe() {
         //AuthorisedExaminerOverviewPage overViewOfAe =
         CreateAuthorisedExaminerPage createAuthorisedExaminerPage = CreateAuthorisedExaminerPage
                 .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1)
@@ -29,10 +33,9 @@ public class CreateAuthorisedExaminerTest extends BaseTest {
         createAuthorisedExaminerPage.fillBusinessEmail(Business.BUSINESS_6);
 
         assertThat("Assert that Email option is disabled",
-                createAuthorisedExaminerPage.isBussEmailOptionSelected(),
-                is(false));
-        createAuthorisedExaminerPage.selectBusinessDetailsDiff().fillCorresPondenceContactDetails(Business.BUSINESS_4)
-                .selectCorrNoEmailOption();
+                createAuthorisedExaminerPage.isBussEmailOptionSelected(), is(false));
+        createAuthorisedExaminerPage.selectBusinessDetailsDiff()
+                .fillCorresPondenceContactDetails(Business.BUSINESS_4).selectCorrNoEmailOption();
 
         assertThat("Assert that Correspondence Email address is null",
                 createAuthorisedExaminerPage.isCorrEmailNull());
@@ -44,8 +47,7 @@ public class CreateAuthorisedExaminerTest extends BaseTest {
         assertThat("Assert that Correspondence Email option is disabled",
                 createAuthorisedExaminerPage.isCorrEmailOptionSelected(), is(false));
 
-        createAuthorisedExaminerPage.selectBusinessDetailsSame()
-                .selectBusinessDetailsDiff();
+        createAuthorisedExaminerPage.selectBusinessDetailsSame().selectBusinessDetailsDiff();
         Assert.assertEquals(createAuthorisedExaminerPage.getCorrespondenceAddress1(),
                 Business.BUSINESS_4.busAddress.getLine1());
         Assert.assertEquals(createAuthorisedExaminerPage.getCorrespondenceAddress2(),
@@ -62,8 +64,41 @@ public class CreateAuthorisedExaminerTest extends BaseTest {
                 Business.BUSINESS_4.busDetails.emailAdd);
         Assert.assertEquals(createAuthorisedExaminerPage.getCorrespondenceConfirmEmail(),
                 Business.BUSINESS_4.busDetails.emailAdd);
-        //.fillBusinessContactDetails(Business.BUSINESS_1 )
-        //.fillCorresPondenceContactDetails(Business.BUSINESS_4).clickOnSaveButton();
+
+        AuthorisedExaminerOverviewPage authorisedExaminerOverviewPage =
+                createAuthorisedExaminerPage.clickContinueToSummaryButton();
+        assertThat("Verify Business Address",
+                authorisedExaminerOverviewPage.checkAddress(Business.BUSINESS_6.busAddress));
+    }
+
+*/
+    @Test(groups = "FeatureToggleCreateAe") public void verifyMandatoryFields() {
+        CreateAuthorisedExaminerPage createAuthorisedExaminerPage = CreateAuthorisedExaminerPage
+                .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1)
+                .clickContinueToSummaryButtonExpectingError();
+
+        Assert.assertEquals(createAuthorisedExaminerPage.getOrgNameMsg(),
+                Text.TEXT_BUSINESS_NAME_MANDATORY_MSG, "Verify Business Name mandatory field");
+        Assert.assertEquals(createAuthorisedExaminerPage.getCompanyTypeMsg(),
+                Text.TEXT_BUSINESS_TYPE_MANDATORY_MSG, "Verify Business Type mandatory field");
+        Assert.assertEquals(createAuthorisedExaminerPage.getAddressMsg(),
+                Text.TEXT_ADDRESS_LINE_MANDATORY_MSG, "Verify Address line mandatory field");
+        Assert.assertEquals(createAuthorisedExaminerPage.getTownMsg(),
+                Text.TEXT_TOWN_MANDATORY_MSG, "Verify Town mandatory field");
+        Assert.assertEquals(createAuthorisedExaminerPage.getPostCodeMsg(),
+                Text.TEXT_POSTCODE_MANDATORY_MSG, "Verify PostCode mandatory field");
+        Assert.assertEquals(createAuthorisedExaminerPage.getPhoneNumberMsg(),
+                Text.TEXT_PHONE_MANDATORY_MSG, "Verify Phone number mandatory field");
+        Assert.assertEquals(createAuthorisedExaminerPage.getEmailMsg(),
+                Text.TEXT_EMAIL_MANDATORY_MSG, "Verify Email mandatory field");
+
+        createAuthorisedExaminerPage.selectBusinessType(Business.BUSINESS_6.busDetails.companyType.getName())
+                .enterBusinessEmail(Business.BUSINESS_6.busDetails.emailAdd).clickContinueToSummaryButton();
+
+        Assert.assertEquals(createAuthorisedExaminerPage.getCompanyNumberMsg(),
+                Text.TEXT_COMPANY_NUMBER_MANDATORY_MSG, "Verify Company number mandatory field");
+        Assert.assertEquals(createAuthorisedExaminerPage.getSecondaryEmailMsg(),
+                Text.TEXT_CONFIRMATION_EMAIL_MANDATORY_MSG, "Verify both email address need to be same mandatory field");
     }
 
     /*@Test(groups = {"VM-2166", "Sprint-23", "LA-2"})

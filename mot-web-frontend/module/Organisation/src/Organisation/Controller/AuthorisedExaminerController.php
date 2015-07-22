@@ -11,16 +11,17 @@ use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommon\Enum\CompanyTypeName;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
-use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use DvsaCommon\Utility\AddressUtils;
+use DvsaCommon\Utility\ArrayUtils;
 use DvsaMotTest\Controller\AbstractDvsaMotTestController;
 use Organisation\Authorisation\AuthorisedExaminerViewAuthorisation;
 use Organisation\Form\AeContactDetailsForm;
 use Organisation\Form\AeCreateForm;
 use Organisation\Presenter\AuthorisedExaminerPresenter;
+use Organisation\ViewModel\AuthorisedExaminer\AeFormViewModel;
 use Organisation\ViewModel\View\Index\IndexViewModel;
 use Zend\Http\Request;
 use Zend\Session\Container;
@@ -33,9 +34,14 @@ use Zend\View\Model\ViewModel;
  */
 class AuthorisedExaminerController extends AbstractDvsaMotTestController
 {
+    const SESSION_CNTR_KEY = 'AE_CREATE_UPDATE';
+    const SESSION_KEY = 'data';
+
+    const AE_SUBTITLE = 'AE management';
     const INDEX_TITLE_FULL = 'Full Details of Authorised Examiner';
     const INDEX_TITLE = 'Authorised Examiner';
     const CREATE_TITLE = 'Create Authorised Examiner';
+    const CONFIRMATION_TITLE = 'Confirm new AE details';
     const EDIT_TITLE = 'Change contact details';
     const EDIT_SUBTITLE = 'Authorised examiner';
 
@@ -43,6 +49,11 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
     const ERR_MSG_INVALID_AE_ID = 'No Authorised Examiner Id provided';
 
     const ROUTE_INDEX = 'authorised-examiner';
+
+    const STEP_ONE = 'Step 1 of 2';
+    const STEP_TWO = 'Step 2 of 2';
+
+    const TEMPLATE_CREATE_AE = 'organisation/authorised-examiner/create.phtml';
 
     /**
      * @var MotFrontendAuthorisationServiceInterface
@@ -56,6 +67,10 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
      * @var MotIdentityProviderInterface
      */
     private $identity;
+    /**
+     * @var Container
+     */
+    private $session;
 
     /**
      * @param MotFrontendAuthorisationServiceInterface $auth
@@ -65,11 +80,13 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
     public function __construct(
         MotFrontendAuthorisationServiceInterface $auth,
         MapperFactory $mapper,
-        MotIdentityProviderInterface $identity
+        MotIdentityProviderInterface $identity,
+        Container $session
     ) {
         $this->auth = $auth;
         $this->mapper = $mapper;
         $this->identity = $identity;
+        $this->session = $session;
     }
 
     public function indexAction()
@@ -84,7 +101,7 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
         $vm = $this->getIndexViewModel($orgId);
         $presenter = new AuthorisedExaminerPresenter($vm->getOrganisation());
 
-        //  --  view model  --
+        //  logical block :: prepare view model
         $viewModel = new ViewModel(
             [
                 'viewModel' => $vm,
@@ -110,10 +127,8 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
             ]
         );
 
-        $addressInLine = htmlentities(
-            AddressUtils::stringify(
-                $vm->getOrganisation()->getRegisteredCompanyContactDetail()->getAddress()
-            )
+        $addressInLine = AddressUtils::stringify(
+            $vm->getOrganisation()->getRegisteredCompanyContactDetail()->getAddress()
         );
 
         if ($this->auth->isGranted(PermissionInSystem::AUTHORISED_EXAMINER_READ_FULL)) {
@@ -121,11 +136,9 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
         } else {
             $title = self::INDEX_TITLE;
         }
-        $this->layout()->setVariable('pageSubTitle', $title);
-        $this->layout()->setVariable('pageTitle', $vm->getOrganisation()->getName());
         $this->layout()->setVariable('pageTertiaryTitle', $addressInLine);
 
-        return $viewModel;
+        return $this->prepareViewModel($viewModel, $vm->getOrganisation()->getName(), $title);
     }
 
     private function getBackButton($orgId)
@@ -216,23 +229,15 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
         }
 
         //  logical block :: prepare view
-        $this->layout('layout/layout-govuk.phtml');
-        $this->layout()->setVariable(
-            'pageSubTitle',
-            self::EDIT_SUBTITLE . ' - ' .
-            $organisation->getAuthorisedExaminerAuthorisation()->getAuthorisedExaminerRef()
+        $subTitle = self::EDIT_SUBTITLE . ' - ' .
+            $organisation->getAuthorisedExaminerAuthorisation()->getAuthorisedExaminerRef();
+
+        $breadcrumbs = [$organisation->getName() => $aeViewUrl];
+
+        return $this->prepareViewModel(
+            new ViewModel(['model' => $form]), self::EDIT_TITLE, $subTitle, $breadcrumbs
         );
-        $this->layout()->setVariable('pageTitle', self::EDIT_TITLE);
-
-        $breadcrumbs = [
-            $organisation->getName() => $aeViewUrl,
-            self::EDIT_TITLE => '',
-        ];
-        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
-
-        return new ViewModel(['form' => $form]);
     }
-
 
     /**
      * @return \Zend\Http\Response|ViewModel
@@ -244,41 +249,142 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
 
         $this->auth->assertGranted(PermissionInSystem::AUTHORISED_EXAMINER_CREATE);
 
-        //  logical block :: init view form model
-        //  remove LIMITED_LIABILITY_PARTNERSHIP from available options;
-        $companyTypes = array_combine(CompanyTypeCode::getAll(), CompanyTypeName::getAll());
-        unset($companyTypes[CompanyTypeCode::LIMITED_LIABILITY_PARTNERSHIP]);
-
-        //  create a form model
-        $form = new AeCreateForm();
-        $form
-            ->setCancelUrl('/')
-            ->setCompanyTypes($companyTypes);
-
-        /* @var Request $request */
+        /** @var Request $request */
         $request = $this->getRequest();
+
+        //  create new form or get from session when come back from confirmation
+        $sessionKey = $request->getQuery(self::SESSION_KEY) ?: uniqid();
+        $form = $this->session->offsetGet($sessionKey);
+
+        if (!$form instanceof AeCreateForm) {
+            $form = new AeCreateForm();
+            $form->setCompanyTypes($this->getCompanyTypes());
+        }
+        $form->setFormUrl(AuthorisedExaminerUrlBuilderWeb::create()->queryParam(self::SESSION_KEY, $sessionKey));
+
         if ($request->isPost()) {
             $form->fromPost($request->getPost());
 
-            if ($form->isValid(true)) {
-                $aeDto = $form->toDto();
+            try {
+                $this->mapper->Organisation->validate($form->toDto());
 
-                try {
-                    $result = $this->mapper->Organisation->create($aeDto);
-                    return $this->redirect()->toUrl(AuthorisedExaminerUrlBuilderWeb::of($result['id']));
-                } catch (ValidationException $ve) {
-                    $this->addErrorMessages($ve->getDisplayMessages());
-                }
+                $this->session->offsetSet($sessionKey, $form);
+
+                $url = AuthorisedExaminerUrlBuilderWeb::createConfirm()
+                    ->queryParam(self::SESSION_KEY, $sessionKey);
+
+                return $this->redirect()->toUrl($url);
+
+            } catch (RestApplicationException $ve) {
+                $form->addErrorsFromApi($ve->getErrors());
             }
         }
 
+        //  create a model
+        $model = new AeFormViewModel();
+        $model
+            ->setForm($form)
+            ->setCancelUrl('/');
+
+        return $this->prepareViewModel(
+            new ViewModel(['model' => $model]), self::CREATE_TITLE, self::AE_SUBTITLE, null, self::STEP_ONE
+        );
+    }
+
+    /**
+     * @return \Zend\Http\Response|ViewModel
+     * @throws \DvsaCommon\Auth\NotLoggedInException
+     */
+    public function confirmationAction()
+    {
+        $this->assertFeatureEnabled(FeatureToggle::AO1_AE_CREATE);
+
+        $this->auth->assertGranted(PermissionInSystem::AUTHORISED_EXAMINER_CREATE);
+
+        $urlCreate = AuthorisedExaminerUrlBuilderWeb::create();
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+
+        //  get form from session
+        $sessionKey = $request->getQuery(self::SESSION_KEY);
+        $form = $this->session->offsetGet($sessionKey);
+
+        //  redirect to create ae page if form data not provided
+        if (!($form instanceof AeCreateForm)) {
+            return $this->redirect()->toUrl($urlCreate);
+        }
+
+        //  save ae to db and redirect to ae view page
+        if ($request->isPost()) {
+            try {
+                $result = $this->mapper->Organisation->create($form->toDto());
+
+                //  clean session after self
+                $this->session->offsetUnset($sessionKey);
+
+                return $this->redirect()->toUrl(AuthorisedExaminerUrlBuilderWeb::of($result['id']));
+            } catch (RestApplicationException $ve) {
+                $this->addErrorMessages($ve->getDisplayMessages());
+            }
+        }
+
+        //  create a model
+        $model = new AeFormViewModel();
+        $model
+            ->setForm($form)
+            ->setCancelUrl($urlCreate->queryParam(self::SESSION_KEY, $sessionKey));
+
+        $form->setFormUrl(
+            AuthorisedExaminerUrlBuilderWeb::createConfirm()
+                ->queryParam(self::SESSION_KEY, $sessionKey)
+        );
+
+        return $this->prepareViewModel(
+            new ViewModel(['model' => $model]), self::CONFIRMATION_TITLE, self::AE_SUBTITLE, null, self::STEP_TWO
+        );
+    }
+
+    private function getCompanyTypes()
+    {
+        $companyTypes = array_combine(CompanyTypeCode::getAll(), CompanyTypeName::getAll());
+        unset($companyTypes[CompanyTypeCode::LIMITED_LIABILITY_PARTNERSHIP]);
+
+        return ArrayUtils::asortBy($companyTypes);
+    }
+
+    /**
+     * Prepare the view model for all the step of the create ae
+     *
+     * @param ViewModel $view
+     * @param string $title
+     * @param string $subtitle
+     * @param null $breadcrumbs
+     * @param array $progress
+     * @param string $template
+     *
+     * @return ViewModel
+     */
+    private function prepareViewModel(
+        ViewModel $view,
+        $title,
+        $subtitle,
+        $breadcrumbs = null,
+        $progress = null,
+        $template = null
+    ) {
         //  logical block:: prepare view
         $this->layout('layout/layout-govuk.phtml');
-        $this->layout()->setVariable('pageTitle', self::CREATE_TITLE);
+        $this->layout()->setVariable('pageTitle', $title);
+        $this->layout()->setVariable('pageSubTitle', $subtitle);
 
-        $breadcrumbs = [self::CREATE_TITLE => ''];
+        if ($progress !== null) {
+            $this->layout()->setVariable('progress', $progress);
+        }
+
+        $breadcrumbs = (is_array($breadcrumbs) ? $breadcrumbs : []) + [$title => ''];
         $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
-        return new ViewModel(['form' => $form]);
+        return $template !== null ? $view->setTemplate($template) : $view;
     }
 }

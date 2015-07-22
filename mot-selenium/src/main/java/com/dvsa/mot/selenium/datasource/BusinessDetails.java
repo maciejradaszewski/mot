@@ -20,7 +20,7 @@ public class BusinessDetails {
     public static final BusinessDetails BUSINESS_DETAILS_4 =
             new BusinessDetails(null, "Autofix", "Autofix Limited", "006007",
                     CompanyType.Partnership, "01179009878", "+44 261966 1111",
-                    "business4@email.dom", "");
+                    "business4@email.com", "");
     public static final BusinessDetails BUSINESS_DETAILS_5 =
             new BusinessDetails(null, "Johns Motorcycle Garage", "Johns Motorcycle Garage",
                     "123456", CompanyType.Partnership, "01180987655", "+44 261966 8811",
@@ -58,7 +58,7 @@ public class BusinessDetails {
                     CompanyType.PublicBody, "01179009879", "+44 234900 3421",
                     "business5@email.dom", "31009");
     public static final BusinessDetails BUSINESS_DETAILS_13_REG_COMPANY =
-            new BusinessDetails(null, "FitQuick", "F&Q Limited", "777888",
+            new BusinessDetails(null, "FitQuick", "F&Q Limited", "FQ777888",
                     CompanyType.Company, "01180987655", "+44 231900 7766",
                     "business77@email.com", "");
 

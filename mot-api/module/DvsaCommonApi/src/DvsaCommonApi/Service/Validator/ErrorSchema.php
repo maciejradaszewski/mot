@@ -129,6 +129,27 @@ class ErrorSchema
         }
     }
 
+    public function getExceptionField()
+    {
+        $exceptionMassage = 'Validation errors encountered';
+        $errorCode = BadRequestException::ERROR_CODE_INVALID_DATA;
+        $exception = new BadRequestException($exceptionMassage, $errorCode);
+        $exception->clearErrors();
+
+        foreach ($this->fields as $field => $message) {
+            $exception->addErrorField($field, $errorCode, $message[0]);
+        }
+
+        return $exception;
+    }
+
+    public function throwIfAnyField()
+    {
+        if ($this->hasErrors()) {
+            throw $this->getExceptionField();
+        }
+    }
+
     /**
      * Instantly throws a validation error
      *

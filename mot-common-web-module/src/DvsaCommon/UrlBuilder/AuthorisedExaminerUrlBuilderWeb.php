@@ -10,6 +10,7 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
     const MAIN                                  = '/authorised-examiner[/:id]';
     const SEARCH                                = '/search';
     const CREATE                                = '/create';
+    const CREATE_AE_CONFIRMATION                = '/confirmation';
     const EDIT                                  = '/edit';
 
     const SLOTS                                 = '/slots';
@@ -45,7 +46,9 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
             self::MAIN =>
                 [
                     self::SEARCH         => '',
-                    self::CREATE         => '',
+                    self::CREATE         => [
+                        self::CREATE_AE_CONFIRMATION => '',
+                    ],
                     self::EDIT           => '',
                     self::SLOTS          => [
                         self::SLOTS_SETTINGS => '',
@@ -93,9 +96,15 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
         return new static($id);
     }
 
-    public function aeCreate()
+    public static function create()
     {
-        return $this->appendRoutesAndParams(self::CREATE);
+        return self::of()->appendRoutesAndParams(self::CREATE);
+    }
+
+    public static function createConfirm()
+    {
+        return self::create()
+            ->appendRoutesAndParams(self::CREATE_AE_CONFIRMATION);
     }
 
     public function aeSearch()

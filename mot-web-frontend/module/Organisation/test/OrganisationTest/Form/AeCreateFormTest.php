@@ -11,6 +11,7 @@ use DvsaCommon\Dto\Contact\EmailDto;
 use DvsaCommon\Dto\Contact\PhoneDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommonTest\TestUtils\TestCaseTrait;
@@ -28,16 +29,16 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
     /**
      * @var AeCreateForm
      */
-    private $model;
+    private $form;
 
     public function setUp()
     {
-        $this->model = new AeCreateForm();
+        $this->form = new AeCreateForm();
     }
 
     public function tearDown()
     {
-        unset($this->model);
+        unset($this->form);
     }
 
     /**
@@ -52,13 +53,13 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
         $method = ucfirst($property);
 
         //  logical block: set value and check set method
-        $result = $this->model->{'set' . $method}($value);
+        $result = $this->form->{'set' . $method}($value);
         $this->assertInstanceOf(AeCreateForm::class, $result);
 
         //  logical block: check get method
         $expect = ($expect === null ? $value : $expect);
         $method = (is_bool($expect) ? 'is' : 'get') . $method;
-        $this->assertEquals($expect, $this->model->{$method}());
+        $this->assertEquals($expect, $this->form->{$method}());
     }
 
     public function dataProviderTestGetSet()
@@ -66,7 +67,6 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
         return [
             ['areaOfficeOptions', ['test_AO1', 'test_AO2']],
             ['companyTypes', ['test_CompanyType1', 'test_CompanyType1']],
-            ['cancelUrl', 'test_CancelUrl'],
         ];
     }
 
@@ -85,11 +85,11 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
         $this->mockMethod($mockCorrContactModel, 'fromPost', $this->once(), null, [$postData]);
 
         //  mock objects in form object
-        XMock::mockClassField($this->model, 'regContactModel', $mockBusContactModel);
-        XMock::mockClassField($this->model, 'corrContactModel', $mockCorrContactModel);
+        XMock::mockClassField($this->form, 'regContactModel', $mockBusContactModel);
+        XMock::mockClassField($this->form, 'corrContactModel', $mockCorrContactModel);
 
         //  call
-        $model = $this->model->fromPost($postData);
+        $model = $this->form->fromPost($postData);
 
         //  logical block :: check
         //  check type of instances
@@ -138,7 +138,7 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
      */
     public function testFromDtoMainFields(OrganisationDto $dto = null)
     {
-        $model = $this->model->fromDto($dto);
+        $model = $this->form->fromDto($dto);
 
         if ($dto === null) {
             $dto = new OrganisationDto();
@@ -190,7 +190,7 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
             $dto = null;
         }
 
-        $model = $this->model->fromDto($dto);
+        $model = $this->form->fromDto($dto);
 
         //  --  logical block :: check
         $this->assertEquals($expectIsSame, $model->isCorrDetailsTheSame());
@@ -261,7 +261,7 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
      */
     public function testToDto($postData, $expect)
     {
-        $actual = $this->model
+        $actual = $this->form
             ->fromPost(new Parameters($postData))
             ->toDto();
 
@@ -323,49 +323,6 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider dataProviderTestIsValid
-     */
-    public function testIsValid($isCorrTheSame, $isValidBusContact, $isValidCorrContact, $expect)
-    {
-        //  set model parameters
-        $this->model->fromPost(
-            (new Parameters())
-                ->set(AeCreateForm::FIELD_IS_CORR_DETAILS_THE_SAME, $isCorrTheSame)
-        );
-
-        //  logical block :: mocking
-        $mockBusContactModel = XMock::of(ContactDetailFormModel::class, ['isValid']);
-        $this->mockMethod($mockBusContactModel, 'isValid', $this->once(), $isValidBusContact);
-
-        XMock::mockClassField($this->model, 'regContactModel', $mockBusContactModel);
-
-        if ($isValidCorrContact !== null) {
-            $mockCorrContactModel = XMock::of(ContactDetailFormModel::class, ['isValid']);
-            $this->mockMethod($mockCorrContactModel, 'isValid', $this->once(), $isValidCorrContact);
-
-            XMock::mockClassField($this->model, 'corrContactModel', $mockCorrContactModel);
-        }
-
-        //  check
-        $this->assertEquals($expect, $this->model->isValid());
-    }
-
-    public function dataProviderTestIsValid()
-    {
-        return [
-            [
-                'isCorrTheSame'      => 1,
-                'regContactIsValid'  => true,
-                'corrContactIsValid' => null,
-                'expect'             => true,
-            ],
-            [1, false, null, false],
-            [0, true, false, false],
-        ];
-    }
-
-
-    /**
      * @return OrganisationDto|OrganisationContactDto
      */
     private function cloneObj($obj)
@@ -388,6 +345,7 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
         }
 
         $emailDto = (new EmailDto())
+            ->setIsSupplied(true)
             ->setIsPrimary(true);
         if ($email !== null) {
             $emailDto->setEmail($email);

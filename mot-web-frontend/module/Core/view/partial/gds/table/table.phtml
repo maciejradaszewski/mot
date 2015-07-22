@@ -1,0 +1,25 @@
+<?php
+
+$head = $this->head ?: '';
+$body = $this->body ?: '';
+
+?>
+<table class="key-value-list">
+    <?php
+    echo $this->partial(
+        'partial/gds/table/head',
+        [
+            'head' => $head,
+        ]
+    );
+
+    if (!empty($this->body)) {
+        echo $this->partial(
+            'partial/gds/table/body',
+            [
+                'body' => $body
+            ]
+        );
+    }
+    ?>
+</table>

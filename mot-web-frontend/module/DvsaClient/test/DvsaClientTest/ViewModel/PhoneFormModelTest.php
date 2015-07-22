@@ -2,7 +2,6 @@
 
 namespace DvsaClientTest\ViewModel;
 
-
 use DvsaClient\ViewModel\PhoneFormModel;
 use DvsaCommon\Dto\Contact\PhoneDto;
 use Zend\Stdlib\Parameters;
@@ -96,7 +95,7 @@ class PhoneFormModelTest extends \PHPUnit_Framework_TestCase
         //  fill model with data
         $this->model
             ->setNumber($dto->getNumber())
-            ->setIsPrimary($dto->getIsPrimary())
+            ->setIsPrimary($dto->isPrimary())
             ->setType($dto->getContactType());
 
         $actual = $this->model->toDto();

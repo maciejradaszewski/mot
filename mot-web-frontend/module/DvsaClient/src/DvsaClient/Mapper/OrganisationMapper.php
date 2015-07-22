@@ -61,4 +61,12 @@ class OrganisationMapper extends DtoMapper
 
         return $this->post($url, DtoHydrator::dtoToJson($dto));
     }
+
+    public function validate(OrganisationDto $dto)
+    {
+        $url = AuthorisedExaminerUrlBuilder::of();
+        $dto->setIsValidateOnly(true);
+
+        return $this->post($url, DtoHydrator::dtoToJson($dto));
+    }
 }

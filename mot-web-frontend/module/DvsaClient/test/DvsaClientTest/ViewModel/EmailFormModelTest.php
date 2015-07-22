@@ -108,7 +108,7 @@ class EmailFormModelTest extends \PHPUnit_Framework_TestCase
         $this->model
             ->setEmail($dto->getEmail())
             ->setEmailConfirm($dto->getEmail())
-            ->setIsPrimary($dto->getIsPrimary())
+            ->setIsPrimary($dto->isPrimary())
             ->setIsSupplied(true);
 
         $actual = $this->model->toDto();
@@ -182,6 +182,8 @@ class EmailFormModelTest extends \PHPUnit_Framework_TestCase
     {
         return (new EmailDto())
             ->setEmail('test@email.com')
+            ->setIsSupplied(true)
+            ->setEmailConfirm('test@email.com')
             ->setIsPrimary(true);
     }
 }

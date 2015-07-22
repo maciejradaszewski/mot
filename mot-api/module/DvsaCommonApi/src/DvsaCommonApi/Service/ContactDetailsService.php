@@ -103,7 +103,7 @@ class ContactDetailsService extends AbstractService
         foreach ($phoneDtos as $phoneDto) {
             $id = $phoneDto->getId();
             $type = $phoneDto->getContactType();
-            $isPrimary = $phoneDto->getIsPrimary();
+            $isPrimary = $phoneDto->isPrimary();
             $number = $phoneDto->getNumber();
 
             //  --  find entity by id or if id is null, then if it is primary --
@@ -117,7 +117,7 @@ class ContactDetailsService extends AbstractService
                             && $phone->getContactType()->getCode() === $type
                             && $phone->getIsPrimary() === $isPrimary
                         )
-                        || ((int)$phone->getId() === $id);
+                        || ((int) $phone->getId() === $id);
                 }
             );
 
@@ -138,7 +138,7 @@ class ContactDetailsService extends AbstractService
                 //  --  set(update) data from dto --
                 $phoneEntity
                     ->setContactType($this->phoneContactTypeRepository->getByCode($phoneDto->getContactType()))
-                    ->setIsPrimary($phoneDto->getIsPrimary())
+                    ->setIsPrimary($phoneDto->isPrimary())
                     ->setNumber($number);
             }
         }
@@ -152,20 +152,15 @@ class ContactDetailsService extends AbstractService
         /** @var EmailDto $emailDto */
         foreach ($emailDtos as $emailDto) {
             $id = $emailDto->getId();
-            $isPrimary = $emailDto->getIsPrimary();
+            $isPrimary = $emailDto->isPrimary();
 
             //  --  find entity by id or if id is null, then if it is primary --
             /** @var Email $emailEntity */
             $emailEntity = ArrayUtils::firstOrNull(
                 $emailEntities,
                 function (Email $email) use ($id, $isPrimary) {
-                    return
-                        ((int)$email->getId() === $id)
-                        || (
-                            $id === null
-                            && $isPrimary === true
-                            && $email->getIsPrimary() === $isPrimary
-                        );
+                    return ((int)$email->getId() === $id)
+                    || ($id === null && $isPrimary === true && $email->getIsPrimary() === $isPrimary);
                 }
             );
 
@@ -185,7 +180,7 @@ class ContactDetailsService extends AbstractService
 
                 //  --  set(update) data from dto --
                 $emailEntity
-                    ->setIsPrimary($emailDto->getIsPrimary())
+                    ->setIsPrimary($emailDto->isPrimary())
                     ->setEmail($emailDto->getEmail());
             }
         }
@@ -283,5 +278,7 @@ class ContactDetailsService extends AbstractService
 
         $this->entityManager->persist($businessContactDetails);
         $this->entityManager->flush();
+
+        return $businessContactDetails;
     }
 }
