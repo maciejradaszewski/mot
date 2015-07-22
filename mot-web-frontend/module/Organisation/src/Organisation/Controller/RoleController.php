@@ -118,6 +118,7 @@ class RoleController extends AbstractAuthActionController
         $mapperFactory  = $this->getMapperFactory();
         $person         = $mapperFactory->Person->getById($personId);
         $personUsername = $person->getUsername();
+        $personFullName = $person->getFullName();
         $roles = $mapperFactory->OrganisationRole->fetchAllForPerson($organisationId, $personId);
 
         $form = $this->getSelectRoleForm($roles);
@@ -145,6 +146,7 @@ class RoleController extends AbstractAuthActionController
                 'id' => $organisationId,
                 'personId' => $personId,
                 'personUsername' => $personUsername,
+                'personFullName' => $personFullName,
                 'hasRoleOption' => !empty($roles)
             ]
         );
@@ -236,7 +238,13 @@ class RoleController extends AbstractAuthActionController
             try {
                 $mapperFactory->OrganisationPosition->createPosition($organisationId, $nomineeId, $roleId);
 
-                $this->addSuccessMessage('A role notification has been sent to ' . $nominee->getUsername() . '.');
+                $this->addSuccessMessage(
+                    sprintf(
+                        "A role notification has been sent to %s '%s'.",
+                        $nominee->getFullName(),
+                        $nominee->getUsername()
+                    )
+                );
 
                 return $this->redirect()->toUrl(AuthorisedExaminerUrlBuilderWeb::of($organisationId));
             } catch (RestApplicationException $e) {

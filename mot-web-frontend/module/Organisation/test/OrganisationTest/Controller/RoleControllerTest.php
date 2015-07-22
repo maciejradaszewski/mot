@@ -100,6 +100,26 @@ class RoleControllerTest extends AbstractFrontendControllerTestCase
         $this->assertEquals(self::HTTP_OK_CODE, $response->getStatusCode());
     }
 
+    /**
+     * Test the structure of the view model returned in the list-user-roles action
+     */
+    public function testListUserRolesActionReturnsViewModel()
+    {
+        $this->routeMatch->setParam('action', 'list-user-roles');
+        $this->routeMatch->setParam('id', $this->organisationId);
+        $this->routeMatch->setParam('personId', $this->personId);
+        $this->request->setMethod('get');
+
+        $viewModelArray = $this->controller->dispatch($this->request);
+
+        $this->assertEquals($viewModelArray->id, $this->organisationId);
+        $this->assertEquals($viewModelArray->personId, $this->personId);
+        $this->assertEquals($viewModelArray->personUsername, 'jonsnow');
+        $this->assertEquals($viewModelArray->personFullName, 'Jon Snow');
+        $this->assertEquals($viewModelArray->userNotFound, false);
+        $this->assertTrue($viewModelArray->hasRoleOption);
+    }
+
     public function testAssignConfirmationActionReturnsViewModel()
     {
         $response = $this->getResponseForAction(
@@ -207,6 +227,9 @@ class RoleControllerTest extends AbstractFrontendControllerTestCase
         $personMapperMock = \DvsaCommonTest\TestUtils\XMock::of(PersonMapper::class);
 
         $person = new Person();
+        $person->setFirstName('Jon');
+        $person->setFamilyName('Snow');
+        $person->setUsername('jonsnow');
 
         $personMapperMock->expects($this->any())
             ->method('getById')

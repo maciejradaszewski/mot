@@ -29,7 +29,7 @@ use Organisation\Controller\RoleController;
 
 <div class="text">
     <?php if ($hasRoleOption): ?>
-        <p class="lede">You are assigning a role to '<?php echo $this->escapeHtml($personUsername); ?>'.</p>
+        <p class="lede">You are assigning a role to <?php echo $this->escapeHtml($personFullName); ?> '<?php echo $this->escapeHtml($personUsername); ?>'.</p>
         <p>The roles that this user is permitted to have are displayed below.</p>
     <?php else: ?>
         <div class="message--failure">

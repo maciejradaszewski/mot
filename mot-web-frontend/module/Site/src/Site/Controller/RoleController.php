@@ -120,6 +120,7 @@ class RoleController extends AbstractAuthActionController
         $mapperFactory = $this->getMapperFactory();
         $person = $mapperFactory->Person->getById($personId);
         $personUsername = $person->getUsername();
+        $personFullName = $person->getFullName();
         $roleCodes = $mapperFactory->SiteRole->fetchAllForPerson($vehicleTestingStationId, $personId);
 
         $form = $this->getSelectRoleForm($roleCodes);
@@ -146,6 +147,7 @@ class RoleController extends AbstractAuthActionController
                 'vehicleTestingStationId' => $vehicleTestingStationId,
                 'personId' => $personId,
                 'personUsername' => $personUsername,
+                'personFullName' => $personFullName,
                 'hasRoleOption' => !empty($roleCodes)
             ]
         );
@@ -167,7 +169,14 @@ class RoleController extends AbstractAuthActionController
             try {
                 $mapperFactory->SitePosition->post($vehicleTestingStationId, $nomineeId, $roleCode);
 
-                $this->addSuccessMessage('A role notification has been sent to ' . $nominee->getUsername() . '.');
+                $this->addSuccessMessage(
+                    sprintf(
+                        "A role notification has been sent to %s '%s'.",
+                        $nominee->getFullName(),
+                        $nominee->getUsername()
+                    )
+                );
+
                 return $this->redirect()->toRoute('vehicle-testing-station', ['id' => $vehicleTestingStationId]);
             } catch (RestApplicationException $e) {
                 $this->addErrorMessages($e->getDisplayMessages());
