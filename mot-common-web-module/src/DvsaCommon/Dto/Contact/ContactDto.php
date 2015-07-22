@@ -98,7 +98,7 @@ class ContactDto extends AbstractDataTransferObject
         return ArrayUtils::firstOrNull(
             $this->phones,
             function (PhoneDto $phone) {
-                return $phone->getIsPrimary()
+                return $phone->isPrimary()
                     && $phone->getContactType() !== PhoneContactTypeCode::FAX;
             }
         );
@@ -119,7 +119,7 @@ class ContactDto extends AbstractDataTransferObject
         return ArrayUtils::firstOrNull(
             $this->emails,
             function (EmailDto $email) {
-                return $email->getIsPrimary();
+                return $email->isPrimary();
             }
         );
     }
@@ -139,7 +139,7 @@ class ContactDto extends AbstractDataTransferObject
         return ArrayUtils::firstOrNull(
             $this->phones,
             function (PhoneDto $fax) {
-                return $fax->getIsPrimary() && $fax->getContactType() === PhoneContactTypeCode::FAX;
+                return $fax->isPrimary() && $fax->getContactType() === PhoneContactTypeCode::FAX;
             }
         );
     }

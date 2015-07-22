@@ -17,8 +17,12 @@ class EmailDto extends AbstractDataTransferObject
     private $id;
     /** @var string */
     private $email;
+    /** @var string */
+    private $emailConfirm;
     /** @var  boolean */
     private $isPrimary;
+    /** @var  boolean */
+    private $isSupplied;
 
     public function setId($id)
     {
@@ -44,13 +48,49 @@ class EmailDto extends AbstractDataTransferObject
 
     public function setIsPrimary($isPrimary)
     {
-        $this->isPrimary = $isPrimary;
+        $this->isPrimary = (bool) $isPrimary;
         return $this;
     }
 
-    public function getIsPrimary()
+    public function isPrimary()
     {
         return $this->isPrimary;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmailConfirm()
+    {
+        return $this->emailConfirm;
+    }
+
+    /**
+     * @param string $emailConfirm
+     * @return $this
+     */
+    public function setEmailConfirm($emailConfirm)
+    {
+        $this->emailConfirm = $emailConfirm;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSupplied()
+    {
+        return $this->isSupplied;
+    }
+
+    /**
+     * @param boolean $isSupplied
+     * @return $this
+     */
+    public function setIsSupplied($isSupplied)
+    {
+        $this->isSupplied = $isSupplied;
+        return $this;
     }
 
     /**
@@ -67,7 +107,7 @@ class EmailDto extends AbstractDataTransferObject
                 $dtoA instanceof EmailDto
                 && $dtoB instanceof EmailDto
                 && $dtoA->getEmail() == $dtoB->getEmail()
-                && $dtoA->getIsPrimary() === $dtoB->getIsPrimary()
+                && $dtoA->isPrimary() === $dtoB->isPrimary()
             )
         );
     }
@@ -90,8 +130,7 @@ class EmailDto extends AbstractDataTransferObject
         return [
             'id'        => $this->getId(),
             'email'     => $this->getEmail(),
-            'isPrimary' => $this->getIsPrimary(),
+            'isPrimary' => $this->isPrimary(),
         ];
     }
-
 }

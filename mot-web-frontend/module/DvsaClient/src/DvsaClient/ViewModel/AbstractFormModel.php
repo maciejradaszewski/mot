@@ -2,6 +2,8 @@
 
 namespace DvsaClient\ViewModel;
 
+use Zend\Stdlib\Parameters;
+
 /**
  * Contains common functionality for FORM in view
  */
@@ -45,5 +47,16 @@ abstract class AbstractFormModel
         return !empty($this->errors);
     }
 
-    abstract public function isValid();
+    public function clearEmpty(Parameters $params)
+    {
+        $callback = function (&$item) use (&$callback) {
+            if (is_array($item)) {
+                $item = array_filter($item, $callback);
+            }
+
+            return !empty($item);
+        };
+
+        $params->fromArray(array_filter($params->toArray(), $callback));
+    }
 }

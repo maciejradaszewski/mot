@@ -10,13 +10,15 @@ use Zend\Stdlib\Parameters;
  */
 class EmailFormModel extends AbstractFormModel
 {
+    const FIELD_CONTACT = '%s[%s]';
+
     const FIELD_EMAIL = 'email';
     const FIELD_EMAIL_CONFIRM = 'emailConfirmation';
     const FIELD_IS_NOT_SUPPLY = 'isEmailNotSupply';
     const FIELD_IS_PRIMARY = 'isEmailPrimary';
 
-    const ERR_INVALID = 'The email you entered is not valid';
-    const ERR_CONF_NOT_SAME = 'The confirmation email you entered is different';
+    const ERR_INVALID = 'The email address you entered is not valid';
+    const ERR_CONF_NOT_SAME = 'Both email addresses need to be the same';
 
     /**
      * @var  string
@@ -56,7 +58,10 @@ class EmailFormModel extends AbstractFormModel
     public function toDto()
     {
         $dto = (new EmailDto())
-            ->setIsPrimary($this->isPrimary());
+            ->setIsSupplied($this->isSupplied())
+            ->setIsPrimary($this->isPrimary())
+            ->setEmailConfirm($this->getEmailConfirm())
+            ->setEmail(null);
 
         //  if user don't want provide email, but email was already exists in db,
         // there send EmailDto object without email, and it will delete this email in db
@@ -72,30 +77,29 @@ class EmailFormModel extends AbstractFormModel
         if ($dto instanceof EmailDto) {
             $this->setEmail($dto->getEmail())
                 ->setEmailConfirm($dto->getEmail())
-                ->setIsPrimary($dto->getIsPrimary());
+                ->setIsPrimary($dto->isPrimary());
         }
 
         return $this;
     }
 
-    public function isValid()
+    public function isValid($type = null)
     {
         if ($this->isSupplied()) {
             $email = $this->getEmail();
 
+            $field = $type ? sprintf(self::FIELD_CONTACT, $type, self::FIELD_EMAIL) :  self::FIELD_EMAIL;
+            $fieldConfirm = $type
+                ? sprintf(self::FIELD_CONTACT, $type, self::FIELD_EMAIL_CONFIRM)
+                : self::FIELD_EMAIL_CONFIRM;
+
             $validator = new \Zend\Validator\EmailAddress();
             if ($validator->isValid($email) === false) {
-                $this->addError(
-                    EmailFormModel::FIELD_EMAIL,
-                    self::ERR_INVALID
-                );
+                $this->addError($field, self::ERR_INVALID);
             }
 
             if (strtolower($email) != strtolower($this->getEmailConfirm())) {
-                $this->addError(
-                    EmailFormModel::FIELD_EMAIL_CONFIRM,
-                    self::ERR_CONF_NOT_SAME
-                );
+                $this->addError($fieldConfirm, self::ERR_CONF_NOT_SAME);
             }
         }
 
@@ -117,7 +121,8 @@ class EmailFormModel extends AbstractFormModel
      */
     public function setEmail($email)
     {
-        $this->email = trim($email);
+        isset($email) AND $this->email = trim($email);
+
         return $this;
     }
 
@@ -136,7 +141,8 @@ class EmailFormModel extends AbstractFormModel
      */
     public function setEmailConfirm($emailConfirm)
     {
-        $this->emailConfirm = trim($emailConfirm);
+        isset($emailConfirm) AND $this->emailConfirm = trim($emailConfirm);
+
         return $this;
     }
 

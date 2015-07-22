@@ -7,6 +7,7 @@ use DvsaClient\ViewModel\ContactDetailFormModel;
 use DvsaCommon\Dto\Contact\ContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
 use Zend\Stdlib\Parameters;
 
@@ -22,7 +23,9 @@ class AeCreateForm extends AbstractFormModel
     const FIELD_REG_NR = 'registeredCompanyNumber';
     const FIELD_AO_NR = 'assignedAreaOffice';
 
-    const ERR_NAME_REQUIRE = 'Organisation name require';
+    const ERR_NAME_REQUIRE = 'A business name must be entered';
+    const ERR_COMPANY_TYPE_REQUIRE = 'A business type must be selected';
+    const ERR_REG_NR_REQUIRE = 'A valid company number must be entered';
 
     private $organisationName;
     private $tradingAs;
@@ -44,7 +47,7 @@ class AeCreateForm extends AbstractFormModel
     private $companyTypes = [];
     private $areaOfficeOptions;
 
-    private $cancelUrl;
+    private $formUrl;
 
     public function __construct(OrganisationDto $org = null)
     {
@@ -56,6 +59,8 @@ class AeCreateForm extends AbstractFormModel
 
     public function fromPost(Parameters $data)
     {
+        $this->clearEmpty($data);
+
         $this
             ->setName($data->get(self::FIELD_NAME))
             ->setTradingAs($data->get(self::FIELD_TRADING_AS))
@@ -102,6 +107,9 @@ class AeCreateForm extends AbstractFormModel
         return $this;
     }
 
+    /**
+     * @return OrganisationDto
+     */
     public function toDto()
     {
         //  logical block :: fill contacts
@@ -132,23 +140,23 @@ class AeCreateForm extends AbstractFormModel
         return $aeDto;
     }
 
-    public function isValid()
+    public function addErrorsFromApi($errors)
     {
-        $isValid = $this->regContactModel->isValid();
-
-        if ($this->isCorrDetailsTheSame === false) {
-            $isValid = $this->corrContactModel->isValid() && $isValid;
-        }
-
-        return $isValid;
+        $this->addErrors($errors);
+        $this->regContactModel->addErrorsFromApi($errors);
+        $this->corrContactModel->addErrorsFromApi($errors);
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->organisationName;
     }
 
     /**
+     * @param string $organisationName
      * @return $this
      */
     private function setName($organisationName)
@@ -157,55 +165,71 @@ class AeCreateForm extends AbstractFormModel
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getTradingAs()
     {
         return $this->tradingAs;
     }
 
     /**
+     * @param string $tradingAs
      * @return $this
      */
-    private function setTradingAs($tradingAs)
+    public function setTradingAs($tradingAs)
     {
         $this->tradingAs = $tradingAs;
         return $this;
     }
 
 
+    /**
+     * @return string
+     */
     public function getCompanyType()
     {
         return $this->companyType;
     }
 
     /**
+     * @param string $companyType
      * @return $this
      */
-    private function setCompanyType($companyType)
+    public function setCompanyType($companyType)
     {
         $this->companyType = $companyType;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getRegisteredCompanyNumber()
     {
         return $this->registeredCompanyNumber;
     }
 
     /**
+     * @param string $registeredCompanyNumber
      * @return $this
      */
-    private function setRegisteredCompanyNumber($registeredCompanyNumber)
+    public function setRegisteredCompanyNumber($registeredCompanyNumber)
     {
         $this->registeredCompanyNumber = $registeredCompanyNumber;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getAreaOfficeNumber()
     {
         return $this->areaOfficeNumber;
     }
 
     /**
+     * @param string $areaOfficeNumber
      * @return $this
      */
     private function setAreaOfficeNumber($areaOfficeNumber)
@@ -224,6 +248,7 @@ class AeCreateForm extends AbstractFormModel
     }
 
     /**
+     * @param boolean $isTheSame
      * @return $this
      */
     private function setIsCorrDetailsTheSame($isTheSame)
@@ -243,6 +268,7 @@ class AeCreateForm extends AbstractFormModel
     }
 
     /**
+     * @param array $areaOfficeOptions
      * @return $this
      */
     public function setAreaOfficeOptions(array $areaOfficeOptions)
@@ -288,18 +314,21 @@ class AeCreateForm extends AbstractFormModel
     }
 
 
-    public function getCancelUrl()
+    /**
+     * @return string
+     */
+    public function getFormUrl()
     {
-        return $this->cancelUrl;
+        return $this->formUrl;
     }
 
     /**
-     * @param $url
+     * @param string $formUrl
      * @return $this
      */
-    public function setCancelUrl($url)
+    public function setFormUrl($formUrl)
     {
-        $this->cancelUrl = $url;
+        $this->formUrl = $formUrl;
         return $this;
     }
 }

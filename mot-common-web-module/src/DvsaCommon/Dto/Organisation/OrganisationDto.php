@@ -27,6 +27,7 @@ class OrganisationDto extends AbstractDataTransferObject
     private $slotBalance;
     private $dataMayBeDisclosed;
     private $areaOfficeSite;
+    private $isValidateOnly = false;
 
 
     /**
@@ -248,6 +249,24 @@ class OrganisationDto extends AbstractDataTransferObject
     public function setAreaOfficeSite($areaOfficeSite)
     {
         $this->areaOfficeSite = $areaOfficeSite;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isValidateOnly()
+    {
+        return $this->isValidateOnly;
+    }
+
+    /**
+     * @param boolean $isValidateOnly
+     * @return $this
+     */
+    public function setIsValidateOnly($isValidateOnly)
+    {
+        $this->isValidateOnly = $isValidateOnly;
         return $this;
     }
 }

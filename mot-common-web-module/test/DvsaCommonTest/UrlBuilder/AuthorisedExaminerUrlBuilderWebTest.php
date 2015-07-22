@@ -19,7 +19,9 @@ class AuthorisedExaminerUrlBuilderWebTest extends \PHPUnit_Framework_TestCase
         $base = '/authorised-examiner/' . self::AE_ID;
 
         $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID), $base);
-        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->aeCreate(), $base . '/create');
+        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::create(), '/authorised-examiner/create');
+        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::createConfirm(), '/authorised-examiner/create/confirmation');
+
         $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->aeSearch(), $base . '/search');
         $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->aeEdit(), $base . '/edit');
 

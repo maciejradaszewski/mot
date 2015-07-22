@@ -25,6 +25,8 @@ class Organisation extends Entity
     use CommonIdentityTrait;
 
     const ENTITY_NAME = 'Organisation';
+    const SLOT_BALANCE = 0;
+    const SLOT_WARNING = 15;
 
     /**
      * @var string
@@ -101,14 +103,14 @@ class Organisation extends Entity
      *
      * @ORM\Column(type="integer", name="slots_balance", nullable=false)
      */
-    private $slotBalance = 0;
+    private $slotBalance = self::SLOT_BALANCE;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="slots_warning", type="integer", length=11, nullable=false)
      */
-    private $slotsWarning;
+    private $slotsWarning = self::SLOT_WARNING;
 
     /**
      * @var integer
@@ -429,9 +431,12 @@ class Organisation extends Entity
      * Set dataMayBeDisclosed
      *
      * @param int $dataMayBeDisclosed
+     * @return $this
      */
     public function setDataMayBeDisclosed($dataMayBeDisclosed)
     {
         $this->dataMayBeDisclosed = $dataMayBeDisclosed;
+
+        return $this;
     }
 }

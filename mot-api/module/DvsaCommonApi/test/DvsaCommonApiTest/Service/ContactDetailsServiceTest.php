@@ -243,13 +243,13 @@ class ContactDetailsServiceTest extends AbstractServiceTest
     }
 
 
-
     /**
-     * @param Email    $detailsEntity
+     * @param Email $emailEntity
      * @param EmailDto $emailDto
-     * @param Email    $expect
-     * @param Email    $expectRemoveEntity
+     * @param Email $expect
+     * @param Email $expectRemoveEntity
      *
+     * @internal param Email $detailsEntity
      * @dataProvider dataProviderTestUpdateEmailsInContactDetails
      */
     public function testUpdateEmailsInContactDetails($emailEntity, $emailDto, $expect, $expectRemoveEntity)
@@ -328,6 +328,103 @@ class ContactDetailsServiceTest extends AbstractServiceTest
                 'expectRemoveEntity' => $emailEntity2,
             ],
         ];
+    }
+
+    public function testCreateFromDto()
+    {
+        $email = (new EmailDto())
+            ->setIsPrimary(true)
+            ->setEmail('dummy@dummy.com');
+        $phone = (new PhoneDto())
+            ->setIsPrimary(true)
+            ->setNumber('0123456789');
+
+        $contactDto = (new OrganisationContactDto())
+            ->setType(OrganisationContactTypeCode::REGISTERED_COMPANY)
+            ->setAddress(new AddressDto())
+            ->setEmails([$email])
+            ->setPhones([$phone]);
+
+        $detail = $this->service->setContactDetailsFromDto($contactDto, new ContactDetail());
+
+        $this->assertEquals($email->getEmail(), $detail->getPrimaryEmail()->getEmail());
+        $this->assertEquals($phone->getNumber(), $detail->getPrimaryPhone()->getNumber());
+    }
+
+    public function testCreate()
+    {
+        $data = [
+            'addressLine1' => 'addressLine1',
+            'addressLine2' => 'addressLine2',
+            'addressLine3' => 'addressLine3',
+            'town' => 'town',
+            'postcode' => 'postcode',
+            'phoneNumber' => '0123456789',
+            'email' => 'dummy@dummy.com',
+            'faxNumber' => '0123456789',
+        ];
+
+        $address = (new Address())
+            ->setAddressLine1('addressLine1')
+            ->setAddressLine2('addressLine2')
+            ->setAddressLine3('addressLine3')
+            ->setTown('town')
+            ->setPostcode('postcode');
+
+        $this->mockAddressSrv->expects($this->once())
+            ->method('persist')
+            ->willReturn($address);
+
+        $detail = $this->service->create($data, PhoneContactTypeCode::BUSINESS, true);
+
+        $this->assertEquals($data['email'], $detail->getPrimaryEmail()->getEmail());
+        $this->assertEquals($data['phoneNumber'], $detail->getPrimaryPhone()->getNumber());
+        $this->assertEquals($data['addressLine1'], $detail->getAddress()->getAddressLine1());
+        $this->assertEquals($data['addressLine2'], $detail->getAddress()->getAddressLine2());
+        $this->assertEquals($data['addressLine3'], $detail->getAddress()->getAddressLine3());
+        $this->assertEquals($data['town'], $detail->getAddress()->getTown());
+        $this->assertEquals($data['postcode'], $detail->getAddress()->getPostcode());
+    }
+
+    public function testUpdate()
+    {
+        $data = [
+            'addressLine1' => 'addressLine11',
+            'addressLine2' => 'addressLine22',
+            'addressLine3' => 'addressLine33',
+            'town' => 'townn',
+            'postcode' => 'postcodee',
+            'phoneNumber' => '01234567899',
+            'email' => 'dummy@dummy.come',
+            'faxNumber' => '01234567890',
+        ];
+
+        $address = (new Address())
+            ->setAddressLine1('addressLine1')
+            ->setAddressLine2('addressLine2')
+            ->setAddressLine3('addressLine3')
+            ->setTown('town')
+            ->setPostcode('postcode');
+        $email = (new Email())
+            ->setIsPrimary(true)
+            ->setEmail('dummy@dummy.com');
+        $phone = (new Phone())
+            ->setIsPrimary(true)
+            ->setNumber('0123456789')
+            ->setContactType((new PhoneContactType())->setName(PhoneContactTypeCode::BUSINESS));
+        $detail = (new ContactDetail())
+            ->setAddress($address)
+            ->addEmail($email)
+            ->addPhone($phone);
+
+        $this->mockAddressSrv->expects($this->once())
+            ->method('persist')
+            ->willReturn($address);
+
+        $detail = $this->service->update($detail, $data, PhoneContactTypeCode::BUSINESS, true);
+
+        $this->assertEquals($data['email'], $detail->getPrimaryEmail()->getEmail());
+        $this->assertEquals($data['phoneNumber'], $detail->getPrimaryPhone()->getNumber());
     }
 
     /** @return PhoneDto */

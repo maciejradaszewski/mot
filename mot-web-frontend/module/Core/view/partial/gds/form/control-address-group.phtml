@@ -15,10 +15,11 @@ $tmplFieldName = (!empty($group) ? '%1$s[%2$s]' : '%2$s');
         [
             'id'           => $group . AddressFormModel::FIELD_LINE1,
             'name'         => sprintf($tmplFieldName, $group, AddressFormModel::FIELD_LINE1),
-            'errorMessage' => $form->getError(AddressFormModel::FIELD_LINE1),
+            'errorMessage' => $form->getError(sprintf($tmplFieldName, $group, AddressFormModel::FIELD_LINE1)),
             'divModifier'  => 'form-group-compound',
             'label'        => 'Address line',
             'value'        => $form->getAddressLine1(),
+            'maxLength'    => 50,
         ]
     );
 
@@ -27,9 +28,10 @@ $tmplFieldName = (!empty($group) ? '%1$s[%2$s]' : '%2$s');
         [
             'id'           => $group . AddressFormModel::FIELD_LINE2,
             'name'         => sprintf($tmplFieldName, $group, AddressFormModel::FIELD_LINE2),
-            'errorMessage' => $form->getError(AddressFormModel::FIELD_LINE2),
+            'errorMessage' => $form->getError(sprintf($tmplFieldName, $group, AddressFormModel::FIELD_LINE2)),
             'divModifier'  => 'form-group-compound',
             'value'        => $form->getAddressLine2(),
+            'maxLength'    => 50,
         ]
     );
 
@@ -38,9 +40,10 @@ $tmplFieldName = (!empty($group) ? '%1$s[%2$s]' : '%2$s');
         [
             'id'           => $group . AddressFormModel::FIELD_LINE3,
             'name'         => sprintf($tmplFieldName, $group, AddressFormModel::FIELD_LINE3),
-            'errorMessage' => $form->getError(AddressFormModel::FIELD_LINE3),
+            'errorMessage' => $form->getError(sprintf($tmplFieldName, $group, AddressFormModel::FIELD_LINE3)),
             'divModifier'  => 'form-group-compound',
             'value'        => $form->getAddressLine3(),
+            'maxLength'    => 50,
         ]
     );
 
@@ -49,10 +52,11 @@ $tmplFieldName = (!empty($group) ? '%1$s[%2$s]' : '%2$s');
         [
             'id'           => $group . AddressFormModel::FIELD_TOWN,
             'name'         => sprintf($tmplFieldName, $group, AddressFormModel::FIELD_TOWN),
-            'errorMessage' => $form->getError(AddressFormModel::FIELD_TOWN),
+            'errorMessage' => $form->getError(sprintf($tmplFieldName, $group, AddressFormModel::FIELD_TOWN)),
             'divModifier'  => 'form-group-compound',
             'label'        => 'Town or city',
             'value'        => $form->getTown(),
+            'maxLength'    => 50,
         ]
     );
 
@@ -61,11 +65,12 @@ $tmplFieldName = (!empty($group) ? '%1$s[%2$s]' : '%2$s');
         [
             'id'            => $group . AddressFormModel::FIELD_POSTCODE,
             'name'          => sprintf($tmplFieldName, $group, AddressFormModel::FIELD_POSTCODE),
-            'errorMessage'  => $form->getError(AddressFormModel::FIELD_POSTCODE),
+            'errorMessage'  => $form->getError(sprintf($tmplFieldName, $group, AddressFormModel::FIELD_POSTCODE)),
             'divModifier'   => 'form-group-compound',
             'inputModifier' => '1-8',
             'label'         => 'Postcode',
             'value'         => $form->getPostCode(),
+            'maxLength'     => 10,
         ]
     );
     ?>

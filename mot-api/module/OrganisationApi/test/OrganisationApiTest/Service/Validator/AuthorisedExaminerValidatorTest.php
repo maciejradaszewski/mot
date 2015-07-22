@@ -1,23 +1,199 @@
 <?php
+
 namespace OrganisationApiTest\Service\Validator;
 
-use DvsaCommonApi\Service\Validator\ContactDetailsValidator;
-use DvsaCommonApiTest\Service\AbstractServiceTestCase;
+use DvsaCommon\Dto\Contact\AddressDto;
+use DvsaCommon\Dto\Contact\EmailDto;
+use DvsaCommon\Dto\Contact\PhoneDto;
+use DvsaCommon\Dto\Organisation\OrganisationContactDto;
+use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Enum\CompanyTypeCode;
+use DvsaCommonApi\Service\Exception\BadRequestException;
 use OrganisationApi\Service\Validator\AuthorisedExaminerValidator;
-use OrganisationApi\Service\Validator\OrganisationValidator;
 
 /**
  * Class AuthorisedExaminerValidatorTest
+ *
+ * @package OrganisationApiTest\Service\Validator
  */
-class AuthorisedExaminerValidatorTest extends AbstractServiceTestCase
+class AuthorisedExaminerValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    public function testValidatePassThrough()
-    {
-        $validator = new AuthorisedExaminerValidator(
-            $this->getMockWithDisabledConstructor(OrganisationValidator::class),
-            $this->getMockWithDisabledConstructor(ContactDetailsValidator::class)
-        );
+    const AE_NAME = 'AE Name';
 
-        $validator->validate([]);
+    /** @var AuthorisedExaminerValidator */
+    private $validator;
+
+    public function setUp()
+    {
+        $this->validator = new AuthorisedExaminerValidator();
+    }
+
+    /**
+     * @dataProvider dataProviderTestValidator
+     */
+    public function testValidator($organisation, $errors = false)
+    {
+        if ($errors === true) {
+            $this->setExpectedException(BadRequestException::class, 'Validation errors encountered');
+        }
+
+        $this->validator->validate($organisation);
+    }
+
+    public function dataProviderTestValidator()
+    {
+        return [
+            // no errors
+            [
+                'organisation' => (new OrganisationDto())
+                    ->setContacts(
+                        [
+                            (new OrganisationContactDto())
+                                ->setAddress(
+                                    (new AddressDto())
+                                        ->setAddressLine1('AddressLine1')
+                                        ->setTown('Town')
+                                        ->setPostcode('Postcode')
+                                )
+                                ->setEmails([(new EmailDto())->setIsPrimary(true)->setEmail('dummy@dummy.com')])
+                                ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
+                        ]
+                    )
+                    ->setName(self::AE_NAME)
+                    ->setCompanyType(CompanyTypeCode::SOLE_TRADER),
+            ],
+            // Valid No Email
+            [
+                'organisation' => (new OrganisationDto())
+                    ->setContacts(
+                        [
+                            (new OrganisationContactDto())
+                                ->setAddress(
+                                    (new AddressDto())
+                                        ->setAddressLine1('AddressLine1')
+                                        ->setTown('Town')
+                                        ->setPostcode('Postcode')
+                                )
+                                ->setEmails([(new EmailDto())->setIsSupplied(false)->setIsPrimary(true)])
+                                ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
+                        ]
+                    )
+                    ->setName(self::AE_NAME)
+                    ->setCompanyType(CompanyTypeCode::SOLE_TRADER),
+            ],
+            // Error no Name
+            [
+                'organisation' => (new OrganisationDto())
+                    ->setContacts(
+                        [
+                            (new OrganisationContactDto())
+                                ->setAddress(
+                                    (new AddressDto())
+                                        ->setAddressLine1('AddressLine1')
+                                        ->setTown('Town')
+                                        ->setPostcode('Postcode')
+                                )
+                                ->setEmails([(new EmailDto())->setIsPrimary(true)->setEmail('dummy@dummy.com')])
+                                ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
+                        ]
+                    )
+                    ->setCompanyType(CompanyTypeCode::SOLE_TRADER),
+                'errors' => true,
+            ],
+            // Error no Type
+            [
+                'organisation' => (new OrganisationDto())
+                    ->setContacts(
+                        [
+                            (new OrganisationContactDto())
+                                ->setAddress(
+                                    (new AddressDto())
+                                        ->setAddressLine1('AddressLine1')
+                                        ->setTown('Town')
+                                        ->setPostcode('Postcode')
+                                )
+                                ->setEmails([(new EmailDto())->setIsPrimary(true)->setEmail('dummy@dummy.com')])
+                                ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
+                        ]
+                    )
+                    ->setName(self::AE_NAME),
+                'errors' => true,
+            ],
+            // Error no Address
+            [
+                'organisation' => (new OrganisationDto())
+                    ->setContacts(
+                        [
+                            (new OrganisationContactDto())
+                                ->setAddress((new AddressDto()))
+                                ->setEmails([(new EmailDto())->setIsPrimary(true)->setEmail('dummy@dummy.com')])
+                                ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
+                        ]
+                    )
+                    ->setName(self::AE_NAME)
+                    ->setCompanyType(CompanyTypeCode::SOLE_TRADER),
+                'errors' => true,
+            ],
+            // Error no Telephone
+            [
+                'organisation' => (new OrganisationDto())
+                    ->setContacts(
+                        [
+                            (new OrganisationContactDto())
+                                ->setAddress(
+                                    (new AddressDto())
+                                        ->setAddressLine1('AddressLine1')
+                                        ->setTown('Town')
+                                        ->setPostcode('Postcode')
+                                )
+                                ->setEmails([(new EmailDto())->setIsPrimary(true)->setEmail('dummy@dummy.com')])
+                        ]
+                    )
+                    ->setName(self::AE_NAME)
+                    ->setCompanyType(CompanyTypeCode::SOLE_TRADER),
+                'errors' => true,
+            ],
+            // Error email invalid
+            [
+                'organisation' => (new OrganisationDto())
+                    ->setContacts(
+                        [
+                            (new OrganisationContactDto())
+                                ->setAddress(
+                                    (new AddressDto())
+                                        ->setAddressLine1('AddressLine1')
+                                        ->setTown('Town')
+                                        ->setPostcode('Postcode')
+                                )
+                                ->setEmails([(new EmailDto())->setIsPrimary(true)->setIsSupplied(true)->setEmail('invalidEmail')])
+                                ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
+                        ]
+                    )
+                    ->setName(self::AE_NAME)
+                    ->setCompanyType(CompanyTypeCode::SOLE_TRADER),
+                'errors' => true,
+            ],
+            // Error Company Registration Number Required
+            [
+                'organisation' => (new OrganisationDto())
+                    ->setContacts(
+                        [
+                            (new OrganisationContactDto())
+                                ->setAddress(
+                                    (new AddressDto())
+                                        ->setAddressLine1('AddressLine1')
+                                        ->setTown('Town')
+                                        ->setPostcode('Postcode')
+                                )
+                                ->setEmails([(new EmailDto())->setIsPrimary(true)->setEmail('invalidEmail')])
+                                ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
+                        ]
+                    )
+                    ->setName(self::AE_NAME)
+                    ->setCompanyType(CompanyTypeCode::COMPANY)
+                    ->setRegisteredCompanyNumber(''),
+                'errors' => true,
+            ],
+        ];
     }
 }

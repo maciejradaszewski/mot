@@ -58,7 +58,7 @@ public class CreateAuthorisedExaminerPage extends BasePage {
 
     @FindBy(id = "correspondenceContactDetailsSame") private WebElement checkBoxForSameAddress;
 
-    @FindBy(id = "save") private WebElement buttonSave;
+    @FindBy(id = "submitAeEdit") private WebElement continueToSummary;
 
     @FindBy(id = "authorised-examiner-home") private WebElement cancelLink;
 
@@ -70,6 +70,23 @@ public class CreateAuthorisedExaminerPage extends BasePage {
 
     @FindBy(id = "CORR[isEmailNotSupply]1") private WebElement noCorrEmailOption;
 
+    @FindBy(xpath = ".//*[@id='organisationName']/..//span[@class='validation-message']") private WebElement orgNameMsg;
+
+    @FindBy(xpath = ".//*[@id='companyType']/..//span[@class='validation-message']") private WebElement companyTypeMsg;
+
+    @FindBy(xpath = ".//*[@id='REGCaddressLine1']/..//span[@class='validation-message']") private WebElement addressMsg;
+
+    @FindBy(xpath = ".//*[@id='REGCaddressTown']/..//span[@class='validation-message']") private WebElement townMsg;
+
+    @FindBy(xpath = ".//*[@id='REGCaddressPostCode']/..//span[@class='validation-message']") private WebElement postcodeMsg;
+
+    @FindBy(xpath = ".//*[@id='REGCphoneNumber']/..//span[@class='validation-message']") private WebElement phoneNumberMsg;
+
+    @FindBy(xpath = ".//*[@id='REGCemail']/..//span[@class='validation-message']") private WebElement emailMsg;
+
+    @FindBy(xpath = ".//*[@id='registeredCompanyNumber']/..//span[@class='validation-message']") private WebElement companyNumberMsg;
+
+    @FindBy(xpath = ".//*[@id='REGCemailConfirmation']/..//span[@class='validation-message']") private WebElement confirmationEmailMsg;
 
     public CreateAuthorisedExaminerPage(WebDriver driver) {
         super(driver);
@@ -79,6 +96,42 @@ public class CreateAuthorisedExaminerPage extends BasePage {
     public static CreateAuthorisedExaminerPage navigateHereFromLoginPage(WebDriver driver,
             Login login) {
         return UserDashboardPage.navigateHereFromLoginPage(driver, login).clickAeLink();
+    }
+
+    public String getOrgNameMsg() {
+        return orgNameMsg.getText();
+    }
+
+    public String getCompanyTypeMsg() {
+        return companyTypeMsg.getText();
+    }
+
+    public String getAddressMsg() {
+        return addressMsg.getText();
+    }
+
+    public String getTownMsg() {
+        return townMsg.getText();
+    }
+
+    public String getPostCodeMsg() {
+        return postcodeMsg.getText();
+    }
+
+    public String getPhoneNumberMsg() {
+        return phoneNumberMsg.getText();
+    }
+
+    public String getEmailMsg() {
+        return emailMsg.getText();
+    }
+
+    public String getCompanyNumberMsg() {
+        return companyNumberMsg.getText();
+    }
+
+    public String getSecondaryEmailMsg() {
+        return confirmationEmailMsg.getText();
     }
 
     public CreateAuthorisedExaminerPage enterBusinessAddress1(String busAddress1) {
@@ -249,9 +302,14 @@ public class CreateAuthorisedExaminerPage extends BasePage {
         return this;
     }
 
-    public AuthorisedExaminerOverviewPage clickOnSaveButton() {
-        buttonSave.click();
+    public AuthorisedExaminerOverviewPage clickContinueToSummaryButton() {
+        continueToSummary.click();
         return new AuthorisedExaminerOverviewPage(driver);
+    }
+
+    public CreateAuthorisedExaminerPage clickContinueToSummaryButtonExpectingError() {
+        continueToSummary.click();
+        return new CreateAuthorisedExaminerPage(driver);
     }
 
     public CreateAuthorisedExaminerPage fillCorresPondenceContactDetails(Business businessInfo) {
@@ -301,7 +359,7 @@ public class CreateAuthorisedExaminerPage extends BasePage {
 
     public AuthorisedExaminerOverviewPage fillAuthorisedExaminerDetailsAndSubmit(
             Business organisation) {
-        return fillCorresPondenceContactDetails(organisation).clickOnSaveButton();
+        return fillCorresPondenceContactDetails(organisation).clickContinueToSummaryButton();
     }
 
     public CreateAuthorisedExaminerPage fillBusinessDetailsAndBUtypeRegCompany(

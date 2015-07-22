@@ -15,10 +15,11 @@ echo $this->partial(
     [
         'id'            => $emailFldId,
         'name'          => sprintf($tmplFieldName, $group, EmailFormModel::FIELD_EMAIL),
-        'errorMessage'  => $emailModel->getError(EmailFormModel::FIELD_EMAIL),
+        'errorMessage'  => $emailModel->getError(sprintf($tmplFieldName, $group, EmailFormModel::FIELD_EMAIL)),
         'inputModifier' => '1-3',
         'label'         => 'Email address',
         'value'         => $emailModel->getEmail(),
+        'maxLength'     => 255,
     ]
 );
 
@@ -28,10 +29,11 @@ echo $this->partial(
     [
         'id'            => $confirmFldId,
         'name'          => sprintf($tmplFieldName, $group, EmailFormModel::FIELD_EMAIL_CONFIRM),
-        'errorMessage'  => $emailModel->getError(EmailFormModel::FIELD_EMAIL_CONFIRM),
+        'errorMessage'  => $emailModel->getError(sprintf($tmplFieldName, $group, EmailFormModel::FIELD_EMAIL_CONFIRM)),
         'inputModifier' => '1-3',
         'label'         => 'Confirm email address',
         'value'         => $emailModel->getEmailConfirm(),
+        'maxLength'     => 255,
     ]
 );
 

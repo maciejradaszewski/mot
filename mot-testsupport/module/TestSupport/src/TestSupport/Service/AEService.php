@@ -98,7 +98,7 @@ class AEService
             ->setName($aeName)
             ->setAreaOfficeSite(2007)
             ->setOrganisationType(OrganisationType::AUTHORISED_EXAMINER)
-            ->setCompanyType(CompanyTypeCode::COMPANY)
+            ->setCompanyType(CompanyTypeCode::SOLE_TRADER)
             ->setContacts([$contact]);
     }
 

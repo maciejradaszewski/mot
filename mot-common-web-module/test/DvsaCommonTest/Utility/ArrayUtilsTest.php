@@ -18,6 +18,13 @@ class ArrayUtilsTest extends PHPUnit_Framework_TestCase
     private $notExistingElement;
     private $haystack;
 
+    private $haystackSimple = [
+        'animal1' => 'Dog',
+        'animal2' => 'Bird',
+        'animal3' => 'Cat',
+        'animal4' => 'BigCat',
+    ];
+
     private $sortArray
         = [
             ['name' => 'a', 'age' => 9],
@@ -37,7 +44,12 @@ class ArrayUtilsTest extends PHPUnit_Framework_TestCase
         $this->secondExistingElement = $animal4;
         $this->notExistingElement = $animal5;
 
-        $this->haystack = [$animal1, $animal2, $animal3, $animal4];
+        $this->haystack = [
+            'animal1' => $animal1,
+            'animal2' => $animal2,
+            'animal3' => $animal3,
+            'animal4' => $animal4,
+        ];
     }
 
     public function test_get_keyExists_shouldBeReturnValidValue()
@@ -120,7 +132,7 @@ class ArrayUtilsTest extends PHPUnit_Framework_TestCase
         };
     }
 
-    public function test_SortBy_sorts_as_expected()
+    public function testSortBy()
     {
         $result = ArrayUtils::sortBy($this->sortArray, 'age');
 
@@ -128,12 +140,30 @@ class ArrayUtilsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(9, $result[2]['age']);
     }
 
-    public function test_SortByDesc_sorts_as_expected()
+    public function testSortByDesc()
     {
         $result = ArrayUtils::sortByDesc($this->sortArray, 'name');
 
         $this->assertEquals('z', $result[0]['name']);
         $this->assertEquals('a', $result[2]['name']);
+    }
+
+    public function testAsortByPropertyAsMethod()
+    {
+        $actual = ArrayUtils::asortBy($this->haystack, 'getName');
+
+        $currActual = current($actual);
+        $this->assertEquals('animal3', key($actual));
+        $this->assertEquals('Bird', $currActual->getName());
+    }
+
+    public function testAsortByWithoutProperty()
+    {
+        $actual = ArrayUtils::asortBy($this->haystackSimple);
+
+        $currActual = current($actual);
+        $this->assertEquals('animal4', key($actual));
+        $this->assertEquals('BigCat', $currActual);
     }
 
     public function test_tryGet_returns_existing_value()

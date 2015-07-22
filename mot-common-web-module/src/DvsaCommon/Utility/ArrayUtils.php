@@ -101,7 +101,7 @@ class ArrayUtils
      */
     public static function lastOrNull($haystack, callable $predicate = null)
     {
-        return self::firstOrNull(array_reverse($haystack,$predicate));
+        return self::firstOrNull(array_reverse($haystack, $predicate));
     }
 
     /**
@@ -218,32 +218,49 @@ class ArrayUtils
         return $array;
     }
 
+
     /**
      * Sort array of arrays based on given property in ascending order
      *
      * @param $array
      * @param $property
      */
-    public static function sortBy($array, $property)
+    public static function asortBy($array, $property = null)
+    {
+        uasort($array, self::getFnc($array, $property));
+        return $array;
+    }
+
+    /**
+     * Sort array of arrays based on given property in ascending order
+     *
+     * @param $array
+     * @param $property
+     */
+    public static function sortBy($array, $property = null)
+    {
+        usort($array, self::getFnc($array, $property));
+        return $array;
+    }
+
+    private static function getFnc($array, $property)
     {
         $isMethod = method_exists(current($array), $property);
 
-        usort(
-            $array,
-            function ($x, $y) use ($property, $isMethod) {
-                if ($isMethod) {
-                    $xv = $x->$property();
-                    $yv = $y->$property();
-                } else {
-                    $xv = $x[$property];
-                    $yv = $y[$property];
-                }
-
-                return ($xv === $yv) ? 0 : ($xv > $yv) ? 1 : -1;
+        return function ($x, $y) use ($property, $isMethod) {
+            if ($isMethod) {
+                $xv = $x->$property();
+                $yv = $y->$property();
+            } elseif ($property !== null) {
+                $xv = $x[$property];
+                $yv = $y[$property];
+            } else {
+                $xv = $x;
+                $yv = $y;
             }
-        );
 
-        return $array;
+            return ($xv === $yv) ? 0 : ($xv > $yv) ? 1 : -1;
+        };
     }
 
     /**
@@ -354,12 +371,10 @@ class ArrayUtils
      */
     public static function containsOnlyNull($array)
     {
-        foreach ($array as $item){
-
+        foreach ($array as $item) {
             if (!is_null($item)) {
                 return false;
             }
-
         }
 
         return true;

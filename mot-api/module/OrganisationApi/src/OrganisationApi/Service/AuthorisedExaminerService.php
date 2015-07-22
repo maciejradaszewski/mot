@@ -6,13 +6,15 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\ResultSetMapping;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
+use DvsaCommon\Auth\MotIdentityInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\EventDescription;
+use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode;
-use DvsaCommon\Enum\MotTestStatusName;
-use DvsaCommon\Enum\MotTestTypeCode;
+use DvsaCommon\Enum\EventTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\AbstractService;
@@ -21,6 +23,7 @@ use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\Entity\AuthForAeStatus;
 use DvsaEntities\Entity\AuthorisationForAuthorisedExaminer;
 use DvsaEntities\Entity\ContactDetail;
+use DvsaEntities\Entity\EventOrganisationMap;
 use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Entity\OrganisationContact;
 use DvsaEntities\Entity\OrganisationContactType;
@@ -32,7 +35,7 @@ use DvsaEntities\Repository\OrganisationContactTypeRepository;
 use DvsaEntities\Repository\OrganisationRepository;
 use DvsaEntities\Repository\OrganisationTypeRepository;
 use DvsaEntities\Repository\PersonRepository;
-use DvsaEntities\Repository\SiteRepository;
+use DvsaEventApi\Service\EventService;
 use OrganisationApi\Service\Mapper\OrganisationMapper;
 use OrganisationApi\Service\Validator\AuthorisedExaminerValidator;
 
@@ -49,17 +52,17 @@ class AuthorisedExaminerService extends AbstractService
      */
     private $authService;
     /**
-     * @var OrganisationService
+     * @var MotIdentityInterface
      */
-    private $organisationService;
+    private $identity;
     /**
      * @var ContactDetailsService
      */
     private $contactDetailService;
     /**
-     * @var AuthorisedExaminerValidator
+     * @var EventService $eventService
      */
-    private $validator;
+    private $eventService;
     /**
      * @var OrganisationRepository
      */
@@ -81,10 +84,6 @@ class AuthorisedExaminerService extends AbstractService
      */
     private $organisationContactTypeRepository;
     /**
-     * @var SiteRepository
-     */
-    private $siteRepository;
-    /**
      * @var OrganisationMapper $mapper
      */
     private $mapper;
@@ -99,80 +98,98 @@ class AuthorisedExaminerService extends AbstractService
     /**
      * @var AuthorisationForAuthorisedExaminerRepository
      */
-    private $authForAeExaminerRepository;
+    private $authForAeRepository;
+    /**
+     * @var DateTimeHolder
+     */
+    private $dateTimeHolder;
+    /**
+     * @var AuthorisedExaminerValidator
+     */
+    private $validator;
 
     /**
-     * @param \Doctrine\ORM\EntityManager $entityManager
-     * @param \DvsaAuthorisation\Service\AuthorisationServiceInterface $authService
-     * @param \OrganisationApi\Service\OrganisationService $organisationService
-     * @param \DvsaCommonApi\Service\ContactDetailsService $contactDetailService
-     * @param \DvsaEntities\Repository\OrganisationRepository $organisationRepository
-     * @param \DvsaEntities\Repository\PersonRepository $personRepository
-     * @param \DvsaEntities\Repository\OrganisationTypeRepository $organisationTypeRepository
-     * @param \DvsaEntities\Repository\CompanyTypeRepository $companyTypeRepository
+     * @param EntityManager $entityManager
+     * @param AuthorisationServiceInterface $authService
+     * @param MotIdentityInterface $motIdentity
+     * @param ContactDetailsService $contactDetailService
+     * @param EventService $eventService
+     * @param OrganisationRepository $organisationRepository
+     * @param PersonRepository $personRepository
+     * @param OrganisationTypeRepository $organisationTypeRepository
+     * @param CompanyTypeRepository $companyTypeRepository
      * @param OrganisationContactTypeRepository $organisationContactTypeRepository
-     * @param \OrganisationApi\Service\Validator\AuthorisedExaminerValidator $validator
-     * @param \OrganisationApi\Service\Mapper\OrganisationMapper $mapper
-     * @param \DvsaEntities\Repository\AuthForAeStatusRepository $authForAeStatusRepository
-     * @param \DvsaCommonApi\Filter\XssFilter $xssFilter
+     * @param OrganisationMapper $mapper
+     * @param AuthForAeStatusRepository $authForAeStatusRepository
+     * @param XssFilter $xssFilter
      * @param AuthorisationForAuthorisedExaminerRepository $authorisationForAuthorisedExaminerRepository
-     * @param SiteRepository $siteRepository
+     * @param AuthorisedExaminerValidator $validator
+     * @param DateTimeHolder $dateTimeHolder
      */
     public function __construct(
         EntityManager $entityManager,
         AuthorisationServiceInterface $authService,
-        OrganisationService $organisationService,
+        MotIdentityInterface $motIdentity,
         ContactDetailsService $contactDetailService,
+        EventService $eventService,
         OrganisationRepository $organisationRepository,
         PersonRepository $personRepository,
         OrganisationTypeRepository $organisationTypeRepository,
         CompanyTypeRepository $companyTypeRepository,
         OrganisationContactTypeRepository $organisationContactTypeRepository,
-        AuthorisedExaminerValidator $validator,
         OrganisationMapper $mapper,
         AuthForAeStatusRepository $authForAeStatusRepository,
         XssFilter $xssFilter,
         AuthorisationForAuthorisedExaminerRepository $authorisationForAuthorisedExaminerRepository,
-        SiteRepository $siteRepository
+        AuthorisedExaminerValidator $validator,
+        DateTimeHolder $dateTimeHolder
     ) {
         parent::__construct($entityManager);
 
         $this->authService = $authService;
-        $this->organisationService = $organisationService;
+        $this->identity = $motIdentity;
         $this->contactDetailService = $contactDetailService;
+        $this->eventService = $eventService;
         $this->organisationRepository = $organisationRepository;
         $this->personRepository = $personRepository;
         $this->organisationTypeRepository = $organisationTypeRepository;
         $this->companyTypeRepository = $companyTypeRepository;
         $this->organisationContactTypeRepository = $organisationContactTypeRepository;
-        $this->validator = $validator;
         $this->mapper = $mapper;
         $this->authForAeStatusRepository = $authForAeStatusRepository;
         $this->xssFilter = $xssFilter;
-        $this->authForAeExaminerRepository = $authorisationForAuthorisedExaminerRepository;
-        $this->siteRepository = $siteRepository;
+        $this->authForAeRepository = $authorisationForAuthorisedExaminerRepository;
+        $this->validator = $validator;
+
+        $this->dateTimeHolder = $dateTimeHolder;
     }
 
     /**
-     * @param OrganisationDto $organisationDto
+     * @param OrganisationDto $orgDto
+     *
      * @return array
      * @throws \DvsaCommonApi\Service\Exception\NotFoundException
      */
-    public function create(OrganisationDto $organisationDto)
+    public function create(OrganisationDto $orgDto)
     {
         $this->authService->assertGranted(PermissionInSystem::AUTHORISED_EXAMINER_CREATE);
 
-        /** @var OrganisationDto $organisationDto */
-        $organisationDto = $this->xssFilter->filter($organisationDto);
+        /** @var OrganisationDto $orgDto */
+        $orgDto = $this->xssFilter->filter($orgDto);
 
-        $organisation = new Organisation();
-        $organisation->setSlotsWarning(0);
+        $this->validator->validate($orgDto);
 
-        $this->populateOrganisationFromDto($organisationDto, $organisation);
+        if ($orgDto->isValidateOnly() === true) {
+            return null;
+        }
 
-        //  --  create contact   --
+        $orgEntity = new Organisation();
+
+        $this->populateOrganisationFromDto($orgDto, $orgEntity);
+
+        //  logical block :: create contact
         /** @var OrganisationContactDto $contactDto */
-        foreach ($organisationDto->getContacts() as $contactDto) {
+        foreach ($orgDto->getContacts() as $contactDto) {
             /** @var OrganisationContactType $contactType */
             $contactType = $this->organisationContactTypeRepository->getByCode($contactDto->getType());
 
@@ -180,26 +197,46 @@ class AuthorisedExaminerService extends AbstractService
                 $contactDto, new ContactDetail()
             );
 
-            $organisation->setContact($contactDetails, $contactType);
+            $orgEntity->setContact($contactDetails, $contactType);
         }
 
+        //  logical block :: create authorisation for AE
+        $aeNumber = $this->authForAeRepository->getNextAeRef();
+
         /** @var AuthForAeStatus $status */
-        $status = $this->authForAeStatusRepository->getByCode(AuthorisationForAuthorisedExaminerStatusCode::APPROVED);
+        $status = $this->authForAeStatusRepository->getByCode(AuthorisationForAuthorisedExaminerStatusCode::APPLIED);
 
         $authorisedExaminer = new AuthorisationForAuthorisedExaminer();
         $authorisedExaminer
             ->setValidFrom(new \DateTime())
             ->setStatus($status)
-            ->setOrganisation($organisation);
+            ->setOrganisation($orgEntity)
+            ->setNumber($aeNumber);
 
-        $authorisedExaminer->setNumber($this->authForAeExaminerRepository->getNextAeRef());
+        //  logical block :: create event
+        $event = $this->eventService->addEvent(
+            EventTypeCode::DVSA_ADMINISTRATOR_CREATE_AE,
+            sprintf(
+                EventDescription::DVSA_ADMINISTRATOR_CREATE_AE,
+                $aeNumber,
+                $orgDto->getName(),
+                $this->getUserName()
+            ),
+            $this->dateTimeHolder->getCurrent(true)
+        );
 
-        $this->entityManager->persist($organisation);
+        $eventMap = (new EventOrganisationMap())
+            ->setEvent($event)
+            ->setOrganisation($orgEntity);
+
+        //  logical block :: store in db
+        $this->entityManager->persist($orgEntity);
         $this->entityManager->persist($authorisedExaminer);
+        $this->entityManager->persist($eventMap);
         $this->entityManager->flush();
 
         return [
-            'id'    => $organisation->getId(),
+            'id'    => $orgEntity->getId(),
             'aeRef' => $authorisedExaminer->getNumber(),
         ];
     }
@@ -375,49 +412,22 @@ class AuthorisedExaminerService extends AbstractService
      */
     public function getAuthorisedExaminerData($username)
     {
-        $rsm = new ResultSetMapping();
-        $rsm->addScalarResult('id', 'id');
-        $rsm->addScalarResult('username', 'username');
-        $rsm->addScalarResult('slots', 'slots');
-        $rsm->addScalarResult('slots_in_use', 'slotsInUse');
+        $aeData = $this->authForAeRepository->getAuthorisedExaminerData($username);
 
-        /*
-         * Should really use ORM here but it would require
-         * adding inverse relationships to both VTS, AE, and MOT
-         */
-        $authorisedExaminer = $this->entityManager
-            ->createNativeQuery(
-                "select
-                    ae.id,
-                    p.username,
-                    count(mt.id) as slots_in_use
-                from
-                    mot.authorisation_for_authorised_examiner ae
-                    join mot.organisation o on ae.organisation_id = o.id
-                    join mot.organisation_business_role_map obrm on o.id = obrm.organisation_id
-                    join mot.person p on obrm.person_id = p.id
-                    left outer join mot.site vts on o.id = vts.organisation_id
-                    left outer join mot.mot_test mt on vts.id = mt.site_id and mt.status = '" . MotTestStatusName::ACTIVE . "'
-                    left outer join mot_test_type mtt on mt.mot_test_type_id = mtt.id
-                        and mtt.code not in (
-                        '" . MotTestTypeCode::ROUTINE_DEMONSTRATION_TEST . "',
-                        '" . MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING . "'
-                        )
-                WHERE
-                    p.username = ?
-                GROUP BY
-                    ae.id,
-                    p.username",
-                $rsm
-            )
-            ->setParameter(1, $username)
-            ->getResult();
-
-        if (!$authorisedExaminer) {
+        if (empty($aeData)) {
             throw new NotFoundException('AuthorisationForAuthorisedExaminer', $username);
         }
 
         // Don't bother hydrating, just return array for direct serialization.
-        return current($authorisedExaminer);
+        return $aeData;
+    }
+
+    /**
+     * @return string
+     * @description return Username
+     */
+    private function getUserName()
+    {
+        return $this->identity->getUsername();
     }
 }

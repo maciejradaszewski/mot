@@ -7,12 +7,9 @@ use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
-use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Service\Mapper\AbstractApiMapper;
 use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Entity\OrganisationContact;
-use DvsaEntities\Repository\CompanyTypeRepository;
-use DvsaEntities\Repository\OrganisationTypeRepository;
 
 /**
  * Class OrganisationMapper
@@ -23,18 +20,9 @@ class OrganisationMapper extends AbstractApiMapper
 {
     private $contactMapper;
 
-    /** @var OrganisationTypeRepository */
-    private $organisationTypeRepository;
-    /** @var CompanyTypeRepository */
-    private $companyTypeRepository;
-
-    public function __construct(
-        OrganisationTypeRepository $organisationTypeRepository,
-        CompanyTypeRepository $companyTypeRepository
-    ) {
-        $this->organisationTypeRepository = $organisationTypeRepository;
-        $this->companyTypeRepository      = $companyTypeRepository;
-        $this->contactMapper              = new ContactMapper();
+    public function __construct()
+    {
+        $this->contactMapper = new ContactMapper();
     }
 
     /**
@@ -55,7 +43,6 @@ class OrganisationMapper extends AbstractApiMapper
         if ($companyType) {
             $companyType = $companyType->getName();
         }
-
 
         $organisationDto
             ->setId($organisation->getId())
@@ -137,26 +124,5 @@ class OrganisationMapper extends AbstractApiMapper
         }
 
         return $contactsDtos;
-    }
-
-    public function mapToObject(Organisation $organisation, array $data)
-    {
-        $companyType = ArrayUtils::tryGet($data, 'companyType');
-        if ($companyType) {
-            $type = $this->companyTypeRepository->findOneByName($companyType);
-            $organisation->setCompanyType($type);
-        }
-
-        $organisationType = ArrayUtils::tryGet($data, 'organisationType');
-        if ($organisationType) {
-            $type = $this->organisationTypeRepository->findOneByName($organisationType);
-            $organisation->setOrganisationType($type);
-        }
-
-        $organisation
-            ->setName(ArrayUtils::tryGet($data, 'organisationName', ''))
-            ->setTradingAs(ArrayUtils::tryGet($data, 'tradingAs', ''))
-            ->setRegisteredCompanyNumber(ArrayUtils::tryGet($data, 'registeredCompanyNumber', ''))
-            ->setSlotsWarning(ArrayUtils::tryGet($data, 'slotsWarning', 0));
     }
 }

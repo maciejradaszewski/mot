@@ -13,18 +13,7 @@ use Zend\Filter\Exception\RuntimeException;
  */
 class XssFilter implements FilterInterface
 {
-    /**
-     * @var \HTMLPurifier
-     */
-    protected $htmlPurifier;
-
-    /**
-     * @param \HTMLPurifier $htmlPurifier
-     */
-    public function __construct(HTMLPurifier $htmlPurifier)
-    {
-        $this->htmlPurifier = $htmlPurifier;
-    }
+    private static $REMOVE_TAGS = ['script', 'style'];
 
     /**
      * Returns the result of filtering $value.
@@ -41,9 +30,11 @@ class XssFilter implements FilterInterface
             return  $this->filterDto($value);
         } elseif (is_array($value)) {
             return $this->filterMultiple($value);
+        } elseif (!empty($value) && is_string($value)) {
+            $value = preg_replace('/(<('.join('|', self::$REMOVE_TAGS).')\b[^>]*>).*?(<\/\2>)/is', "", $value);
         }
 
-        return (!empty($value) ? $this->htmlPurifier->purify($value) : $value);
+        return $value;
     }
 
     /**
@@ -60,10 +51,7 @@ class XssFilter implements FilterInterface
 
     public function filterDto(AbstractDataTransferObject $dto)
     {
-        $reflect = new ReflectionClass($dto);
-        $props   = $reflect->getProperties(
-            ReflectionProperty::IS_PRIVATE | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PUBLIC
-        );
+        $props = $this->getProperties($dto);
 
         foreach ($props as $prop) {
             $prop->setAccessible(true);
@@ -75,5 +63,37 @@ class XssFilter implements FilterInterface
         }
 
         return $dto;
+    }
+
+    /**
+     * This function read the property of each element of a class (PRIVATE/PROTECTED/PUBLIC)
+     *
+     * @return ReflectionProperty[]
+     */
+    private function getProperties($className)
+    {
+        $ref = new ReflectionClass($className);
+
+        $result = array();
+
+        $props = $ref->getProperties(
+            ReflectionProperty::IS_PRIVATE | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PUBLIC
+        );
+
+        foreach ($props as $prop) {
+            $f = $prop->getName();
+
+            $result[$f] = $prop;
+        }
+
+        if ($parentClass = $ref->getParentClass()) {
+            $parentProps = $this->getProperties($parentClass->getName());
+
+            if (count($parentProps) > 0) {
+                $result = $parentProps + $result;
+            }
+        }
+
+        return $result;
     }
 }

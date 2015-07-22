@@ -3,8 +3,8 @@
 namespace DvsaCommonApiTest\Filter;
 
 use DvsaCommon\Dto\Contact\AddressDto;
-use DvsaCommon\Dto\Contact\ContactDto;
 use DvsaCommon\Dto\Contact\PhoneDto;
+use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommonApi\Filter\XssFilter;
 use HTMLPurifier;
 
@@ -33,8 +33,8 @@ class XssFilterTest extends \PHPUnit_Framework_TestCase
         ];
 
         // Test using filter()
-        foreach ($valuesExpected as $input => $output) {
-            $this->assertEquals($filter->filter($input), $output);
+        foreach ($valuesExpected as $input => $expect) {
+            $this->assertEquals($expect, $filter->filter($input));
         }
 
         // Test using filterMultiple()
@@ -49,47 +49,51 @@ class XssFilterTest extends \PHPUnit_Framework_TestCase
         //  --  expected dto (clean)   --
         $addressDto = new AddressDto();
         $addressDto
-            ->setAddressLine1('a1 ')
-            ->setAddressLine2('a2 "&gt;')
-            ->setAddressLine3('a3 <img src="#" alt="#" />')
-            ->setAddressLine4('a4 <img src="onmouseover=" alt="onmouseover=&quot;alert(\'xxs\')&quot;" />')
-            ->setTown('a5 <img src="jav%20ascript%3Aalert(\'XSS\');" alt="jav ascript:alert(\'XSS\');" />')
-            ->setCountry('a6 ')
-            ->setPostcode('a7 &lt;');
+            ->setAddressLine1('a1 &<IMG SRC=JaVaScRiPt:alert("XSS")>')
+            ->setAddressLine2('a2 &#34; <IMG """>"> &amp; &lt;')
+            ->setAddressLine3('a3 <IMG SRC=# onmouseover="alert(\'xxs\')">')
+            ->setAddressLine4('a4 <IMG SRC= onmouseover="alert(\'xxs\')">')
+            ->setTown('a5 <IMG SRC="jav&#x0D;ascript:alert(\'XSS\');">')
+            ->setCountry('a6 <BODY onload!#$%&()*~+-_.,:;?@[/|\]^`=alert("XSS")>')
+            ->setPostcode('a7 <');
 
-        $expectDto = new ContactDto();
-        $expectDto->setAddress($addressDto)
+        $expect = new OrganisationContactDto();
+        $expect
+            ->setAddress($addressDto)
             ->setPhones(
                 [
                     (new PhoneDto)->setNumber('b1 Hello World!'),
-                    (new PhoneDto)->setNumber('b2 '),
+                    (new PhoneDto)->setNumber('b2 & <> "'),
                     (new PhoneDto)->setNumber('b3 '),
+                    (new PhoneDto)->setNumber('b4 &amp; &lt; &gt; &quot;  &#34;'),
                 ]
             );
 
         //  --  given dto (dirty) with XSS stuff   --
         $addressDto = new AddressDto();
         $addressDto
-            ->setAddressLine1('a1 <IMG SRC=JaVaScRiPt:alert("XSS")>')
-            ->setAddressLine2('a2 <IMG """><SCRIPT>alert("XSS")</SCRIPT>">')
+            ->setAddressLine1('a1 &<IMG SRC=JaVaScRiPt:alert("XSS")>')
+            ->setAddressLine2('a2 &#34; <IMG """><SCRIPT>alert("XSS")</SCRIPT>"> &amp; &lt;')
             ->setAddressLine3('a3 <IMG SRC=# onmouseover="alert(\'xxs\')">')
             ->setAddressLine4('a4 <IMG SRC= onmouseover="alert(\'xxs\')">')
             ->setTown('a5 <IMG SRC="jav&#x0D;ascript:alert(\'XSS\');">')
             ->setCountry('a6 <BODY onload!#$%&()*~+-_.,:;?@[/|\]^`=alert("XSS")>')
             ->setPostcode('a7 <<SCRIPT>alert("XSS");//<</SCRIPT>');
 
-        $contactDto = new ContactDto();
-        $contactDto->setAddress($addressDto)
+        $contactDto = new OrganisationContactDto();
+        $contactDto
+            ->setAddress($addressDto)
             ->setPhones(
                 [
                     (new PhoneDto)->setNumber('b1 Hello<script>alert(document.cookie)</script> World!'),
-                    (new PhoneDto)->setNumber('b2 <SCRIPT a=">\'>" SRC="http://ha.ckers.org/xss.js"></SCRIPT>'),
+                    (new PhoneDto)->setNumber('b2 & <> "<SCRIPT a=">\'>" SRC="http://ha.ckers.org/xss.js"></SCRIPT>'),
                     (new PhoneDto)->setNumber('b3 <SCRIPT a=`>` SRC="http://ha.ckers.org/xss.js"></SCRIPT>'),
+                    (new PhoneDto)->setNumber('b4 &amp; &lt; &gt; &quot;  &#34;'),
                 ]
             );
 
         $actual = $this->filter->filter($contactDto);
 
-        $this->assertEquals($expectDto, $actual);
+        $this->assertEquals($expect, $actual);
     }
 }

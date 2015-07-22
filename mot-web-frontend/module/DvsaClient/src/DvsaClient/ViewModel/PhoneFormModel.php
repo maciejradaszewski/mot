@@ -7,6 +7,7 @@ use Zend\Stdlib\Parameters;
 
 class PhoneFormModel extends AbstractFormModel
 {
+    const FIELD_CONTACT = '%s[%s]';
     const FIELD_NUMBER = 'phoneNumber';
 
     const ERR_REQUIRE = 'A telephone number must be entered';
@@ -44,17 +45,19 @@ class PhoneFormModel extends AbstractFormModel
         if ($dto instanceof PhoneDto) {
             $this
                 ->setNumber($dto->getNumber())
-                ->setIsPrimary($dto->getIsPrimary())
+                ->setIsPrimary($dto->isPrimary())
                 ->setType($dto->getContactType());
         }
 
         return $this;
     }
 
-    public function isValid()
+    public function isValid($type = null)
     {
+        $field = $type ? sprintf(self::FIELD_CONTACT, $type, self::FIELD_NUMBER) :  self::FIELD_NUMBER;
+
         if (empty($this->getNumber())) {
-            $this->addError(self::FIELD_NUMBER, self::ERR_REQUIRE);
+            $this->addError($field, self::ERR_REQUIRE);
         }
 
         return !$this->hasErrors();
@@ -84,7 +87,7 @@ class PhoneFormModel extends AbstractFormModel
      */
     public function setIsPrimary($isPrimary)
     {
-        $this->isPrimary = $isPrimary;
+        $this->isPrimary = (bool) $isPrimary;
         return $this;
     }
 

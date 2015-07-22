@@ -85,7 +85,7 @@ abstract class AbstractValidator
         return $value === null;
     }
 
-    private function isEmpty($field)
+    protected function isEmpty($field)
     {
         if (strval($field) === '' && !is_bool($field)) {
             return true;

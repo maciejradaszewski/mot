@@ -8,6 +8,7 @@ use DvsaCommonApiTest\Controller\AbstractRestfulControllerTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use OrganisationApi\Controller\AuthorisedExaminerController;
 use OrganisationApi\Service\AuthorisedExaminerService;
+use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use Zend\Stdlib\Parameters;
 
 /**
@@ -19,6 +20,9 @@ class AuthorisedExaminerControllerTest extends AbstractRestfulControllerTestCase
 {
     const AE_ID = 9876;
 
+    /**
+     * @var AuthorisedExaminerService|MockObj
+     */
     private $service;
 
     public function setUp()
@@ -34,20 +38,18 @@ class AuthorisedExaminerControllerTest extends AbstractRestfulControllerTestCase
      */
     public function testActionsResultAndAccess($method, $action, $params, $mocks, $expect)
     {
-        $result = null;
-
+        //  mock methods of classes
         if ($mocks !== null) {
             $this->mockMethod(
                 $this->service, $mocks['method'], $this->once(), $mocks['result'], $mocks['params']
             );
         }
 
+        //  call
         $result = $this->getResultForAction($method, $action, $params['route'], null, $params['post']);
 
-        if (!empty($expect['result'])) {
-            $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, $expect['result'], $result);
-        }
-
+        //  check
+        $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, $expect['result'], $result);
     }
 
     public function dataProviderTestActionsResultAndAccess()
@@ -65,9 +67,9 @@ class AuthorisedExaminerControllerTest extends AbstractRestfulControllerTestCase
                 'action' => null,
                 'params' => [
                     'route' => ['id' => self::AE_ID],
-                    'post' => null,
+                    'post'  => null,
                 ],
-                'mocks' => [
+                'mocks'  => [
                     'method' => 'get',
                     'params' => [self::AE_ID],
                     'result' => $getServiceResult,
@@ -83,9 +85,9 @@ class AuthorisedExaminerControllerTest extends AbstractRestfulControllerTestCase
                 'action' => 'getAuthorisedExaminerByNumber',
                 'params' => [
                     'route' => ['number' => self::AE_ID],
-                    'post' => null,
+                    'post'  => null,
                 ],
-                'mocks' => [
+                'mocks'  => [
                     'method' => 'getByNumber',
                     'params' => [self::AE_ID],
                     'result' => $getServiceResult,
@@ -104,9 +106,9 @@ class AuthorisedExaminerControllerTest extends AbstractRestfulControllerTestCase
                         'id' => self::AE_ID,
                         $jsonOrganisationDto
                     ],
-                    'post' => null,
+                    'post'  => null,
                 ],
-                'mocks' => [
+                'mocks'  => [
                     'method' => 'update',
                     'params' => [self::AE_ID, $getServiceResult],
                     'result' => ['id' => self::AE_ID],
@@ -122,12 +124,12 @@ class AuthorisedExaminerControllerTest extends AbstractRestfulControllerTestCase
                 'action' => null,
                 'params' => [
                     'route' => null,
-                    'post' => [
-                        'id' => self::AE_ID,
+                    'post'  => [
+                        'id'     => self::AE_ID,
                         '_class' => OrganisationDto::class,
                     ],
                 ],
-                'mocks' => [
+                'mocks'  => [
                     'method' => 'create',
                     'params' => $getServiceResult,
                     'result' => ['id' => self::AE_ID],

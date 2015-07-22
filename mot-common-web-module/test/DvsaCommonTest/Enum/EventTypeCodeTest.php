@@ -47,11 +47,12 @@ class EventTypeCodeTest extends \PHPUnit_Framework_TestCase
             EventTypeCode::DEMONSTRATION_TEST,
             EventTypeCode::VT7,
             EventTypeCode::USER_CLAIMS_ACCOUNT,
-            EventTypeCode::ROLE_ASSOCIATION_CHANGE,
             EventTypeCode::USER_RECLAIMS_ACCOUNT,
             EventTypeCode::USER_ACCOUNT_RESET,
+            EventTypeCode::ROLE_ASSOCIATION_CHANGE,
             EventTypeCode::GROUP_A_TESTER_QUALIFICATION,
             EventTypeCode::GROUP_B_TESTER_QUALIFICATION,
+            EventTypeCode::DVSA_ADMINISTRATOR_CREATE_AE,
         ];
         $this->assertEquals($res, EventTypeCode::getAll());
     }
