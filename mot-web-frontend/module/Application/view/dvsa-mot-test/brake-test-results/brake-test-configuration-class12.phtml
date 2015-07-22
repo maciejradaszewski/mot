@@ -10,6 +10,7 @@ use DvsaMotTest\Model\BrakeTestConfigurationClass1And2Helper;
 
 $title = 'Brake test configuration';
 $vehicle = $motTest->getVehicle();
+$vehicleClass = $vehicle->getClassCode();
 $this->headTitle($title);
 $this->layout()->setVariable('pageSubTitle', 'MOT testing');
 $this->layout()->setVariable('pageTitle', "Brake test configuration");
@@ -125,6 +126,7 @@ $this->placeholder('progressBar')->captureEnd();
 
     <div class="row">
         <div class="col-lg-12 btn-bar">
+            <input type="hidden" id="vehicleClass" name="vehicleClass" value="<?php echo $vehicleClass ?>"/>
             <input type="submit" id="brake_test_results_submit" name="submit" value="Next" class="btn btn-primary"/>
             <a id="brake_test_results_cancel" href="<?php echo $this->url('mot-test', ['motTestNumber' => $motTest->getMotTestNumber()]); ?>" class="btn btn-link">Cancel</a>
         </div>

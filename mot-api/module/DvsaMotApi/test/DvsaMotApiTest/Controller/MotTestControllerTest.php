@@ -45,26 +45,6 @@ class MotTestControllerTest extends AbstractMotApiControllerTestCase
         $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, $expectedData, $result);
     }
 
-    public function testMinimalMotCanBeAccessed()
-    {
-        $this->mockValidAuthorization([SiteBusinessRoleCode::TESTER]);
-
-        $motTestNumber = 1;
-        $expectedMotTestData = ['id' => $motTestNumber];
-        $expectedData = ['data' => $expectedMotTestData];
-
-        $mockMotTestService = $this->getMockMotTestService();
-
-        $mockMotTestService->expects($this->once())
-            ->method('getMotTestData')
-            ->with($motTestNumber, 1)
-            ->willReturn($expectedMotTestData);
-
-        $result = $this->getResultForAction('get', 'getMinimalMot', ['motTestNumber' => $motTestNumber]);
-
-        $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, $expectedData, $result);
-    }
-
     public function testCreateMotWithValidData()
     {
         $person = new Person();

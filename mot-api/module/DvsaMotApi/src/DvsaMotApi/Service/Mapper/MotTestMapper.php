@@ -205,14 +205,14 @@ class MotTestMapper
             ->setComplaintRef($motTest->getComplaintRef())
             ->setCountryOfRegistration(
                 $motTest->getCountryOfRegistration()
-                ? (new CountryOfRegistrationMapper())->toDto($motTest->getCountryOfRegistration())
-                : null
+                    ? (new CountryOfRegistrationMapper())->toDto($motTest->getCountryOfRegistration())
+                    : null
             )
             ->setDocument($motTest->getDocument())
             ->setFuelType(
                 $motTest->getFuelType()
-                ? (new FuelTypeMapper())->toDto($motTest->getFuelType(), FuelTypeDto::class)
-                : null
+                    ? (new FuelTypeMapper())->toDto($motTest->getFuelType(), FuelTypeDto::class)
+                    : null
             )
             ->setHasRegistration($motTest->getHasRegistration())
             ->setId($motTest->getId())
@@ -221,34 +221,34 @@ class MotTestMapper
             ->setModel($motTest->getModelName())
             ->setOdometerReading(
                 $motTest->getOdometerReading()
-                ? (new OdometerReadingMapper())->toDto($motTest->getOdometerReading())
-                : null
+                    ? (new OdometerReadingMapper())->toDto($motTest->getOdometerReading())
+                    : null
             )
             ->setOnePersonReInspection($motTest->getOnePersonReInspection())
             ->setOnePersonTest($motTest->getOnePersonTest())
             ->setPrimaryColour(
                 $motTest->getPrimaryColour()
-                ? (new ColourMapper())->toDto($motTest->getPrimaryColour())
-                : null
+                    ? (new ColourMapper())->toDto($motTest->getPrimaryColour())
+                    : null
             )
             ->setRegistration($motTest->getRegistration())
             ->setSecondaryColour(
                 $motTest->getSecondaryColour()
-                ? (new ColourMapper())->toDto($motTest->getSecondaryColour())
-                : null
+                    ? (new ColourMapper())->toDto($motTest->getSecondaryColour())
+                    : null
             )
             ->setStatus($motTest->getStatus())
             ->setTestType(
                 $motTest->getMotTestType()
-                ? (new MotTestTypeMapper())->toDto($motTest->getMotTestType())
-                : null
+                    ? (new MotTestTypeMapper())->toDto($motTest->getMotTestType())
+                    : null
             )
             ->setTester($motTest->getTester() ? (new PersonMapper())->toDto($motTest->getTester()) : null)
             ->setVehicle($motTest->getVehicle() ? (new VehicleMapper())->toDto($motTest->getVehicle()) : null)
             ->setVehicleClass(
                 $motTest->getVehicleClass() !== null
-                ? (new VehicleClassMapper())->toDto($motTest->getVehicleClass())
-                : null
+                    ? (new VehicleClassMapper())->toDto($motTest->getVehicleClass())
+                    : null
             )
             ->setVin($motTest->getVin());
 

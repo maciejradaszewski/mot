@@ -3,8 +3,11 @@
 namespace DvsaMotApiTest\Service;
 
 use DvsaCommon\Enum\BrakeTestTypeCode;
+use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\VehicleClassCode;
+use DvsaCommon\Messages\InvalidTestStatus;
 use DvsaCommonApi\Authorisation\Assertion\ApiPerformMotTestAssertion;
+use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\MockHandler;
 use DvsaCommonTest\TestUtils\XMock;
@@ -13,6 +16,7 @@ use DvsaEntities\Entity\BrakeTestResultClass3AndAbove;
 use DvsaEntities\Entity\BrakeTestResultServiceBrakeData;
 use DvsaEntities\Entity\MotTest;
 use DvsaEntities\Entity\MotTestReasonForRejection;
+use DvsaEntities\Entity\MotTestStatus;
 use DvsaEntities\Entity\TestItemSelector;
 use DvsaEntities\Entity\ReasonForRejection;
 use DvsaEntities\Entity\Vehicle;
@@ -49,6 +53,44 @@ class BrakeTestResultServiceTest extends AbstractServiceTestCase
     const FAILURE_RFR_BOTH_UNDER_SECONDARY_MIN = 1;
     const FAILURE_RFR_ONE_NOT_REACHING_PRIMARY_MIN = 2;
     const FAILURE_RFR_BOTH_UNDER_PRIMARY_MIN = 3;
+
+
+    public function testBrakeTestOfAbandonedMotTestThrowsException()
+    {
+        $this->runBrakeTestWithUnsuitableMotTestStatus(MotTestStatusName::ABANDONED);
+    }
+
+    public function testBrakeTestOfInactiveMotTestThrowsException()
+    {
+        $this->runBrakeTestWithUnsuitableMotTestStatus(MotTestStatusName::FAILED);
+    }
+
+    private function runBrakeTestWithUnsuitableMotTestStatus($status) {
+        $mocks = $this->getMocksForBrakeTestResultService();
+
+        $motTest = $this->getTestMotTest();
+        $motTest->getMotTestStatus()->setName($status);
+
+        $data = BrakeTestResultClass3AndAboveTest::getTestData();
+        $brakeTestResultPrototype = new BrakeTestResultClass3AndAbove();
+        $brakeTestResult = $this->getTestBrakeTestResultClassAbove3WithEntities();
+        $brakeTestResult
+            ->setServiceBrake1TestType(BrakeTestTypeFactory::roller())
+            ->setParkingBrakeTestType(BrakeTestTypeFactory::roller())
+            ->setServiceBrake1Efficiency(50)
+            ->setParkingBrakeEfficiencyPass(false)
+            ->setServiceBrake1EfficiencyPass(false)
+            ->getServiceBrake1Data()->setImbalancePass(false);
+
+        $brakeTestResult->getServiceBrake1Data()->setImbalancePassForAxle(1, false);
+        $brakeTestResult->getServiceBrake1Data()->setImbalancePassForAxle(2, true);
+        $brakeTestResult->getServiceBrake1Data()->setImbalancePassForAxle(3, null);
+
+        $brakeTestResultService = $this->constructBrakeTestResultServiceWithMocks($mocks);
+
+        $this->setExpectedException(BadRequestException::class, InvalidTestStatus::getMessage($status));
+        $brakeTestResultService->createBrakeTestResult($motTest, $data);
+    }
 
     public function testCreateBrakeTestResultOk()
     {
@@ -470,6 +512,9 @@ class BrakeTestResultServiceTest extends AbstractServiceTestCase
         $vehicle->setFirstUsedDate(new \DateTime('2000-01-01'));
         $motTest = new MotTest();
         $motTest->setVehicle($vehicle);
+        $motTestStatus = new MotTestStatus();
+        $motTestStatus->setName(MotTestStatusName::ACTIVE);
+        $motTest->setStatus($motTestStatus);
         return $motTest;
     }
 

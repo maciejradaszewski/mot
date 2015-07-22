@@ -48,11 +48,6 @@ class MotTestController extends AbstractDvsaRestfulController implements Transac
     }
 
     /**
-     * Returns minimal MOT data
-     *
-     * Currently used for Brake test journey which does not
-     * require the fully hydrated MOT object
-     *
      * @return JsonModel
      * @throws \DvsaCommonApi\Service\Exception\ForbiddenException
      */

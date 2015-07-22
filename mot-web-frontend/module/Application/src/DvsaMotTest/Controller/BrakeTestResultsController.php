@@ -41,10 +41,41 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
 
     public function configureBrakeTestAction()
     {
+        $request = $this->getRequest();
         $motTestNumber = $this->getMotTestNumber();
-        /** @var MotTestDto $motTest */
-        $motTest = $this->getMinimalMotTestFromApi($motTestNumber);
 
+        if ($request->isPost()) {
+            $vehicleClass  = $request->getPost()->get('vehicleClass');
+            $isVehicleBikeType = $this->isMotTestVehicleBikeType($vehicleClass);
+            $configDtoMapper = $this->getBrakeTestMapperService($isVehicleBikeType);
+
+            $data = $request->getPost()->getArrayCopy();
+            $dto = $configDtoMapper->mapToDto($data);
+
+            try {
+                $this->postConfigurationDataToApiForValidation($dto, $motTestNumber);
+                return $this->redirectToAddBrakeTestResult($data, $motTestNumber);
+            } catch (RestApplicationException $e) {
+                if ($e->containsError(InvalidTestStatus::getMessage(MotTestStatusName::ABORTED))) {
+                    $this->addErrorMessages([InvalidTestStatus::getMessage(MotTestStatusName::ABORTED)]);
+                    return $this->redirect()->toRoute(MotTestController::ROUTE_MOT_TEST, ['motTestNumber' => $motTestNumber]);
+                } elseif ($e->containsError(InvalidTestStatus::getMessage(MotTestStatusName::FAILED))) {
+                    $this->addErrorMessages([InvalidTestStatus::getMessage(MotTestStatusName::FAILED)]);
+                    return $this->redirect()->toRoute(MotTestController::ROUTE_MOT_TEST, ['motTestNumber' => $motTestNumber]);
+                }
+                $this->addErrorMessages($e->getDisplayMessages());
+            }
+        }
+
+
+        /** @var MotTestDto $motTest */
+        $motTest = $this->tryGetMotTestOrAddErrorMessages($motTestNumber);
+
+        if (!$request->isPost()) {
+            $isVehicleBikeType = $this->isMotTestVehicleBikeType($motTest->getVehicle()->getClassCode());
+            $configDtoMapper = $this->getBrakeTestMapperService($isVehicleBikeType);
+            $dto = $configDtoMapper->mapToDefaultDto($motTest);
+        }
         $this->getPerformMotTestAssertion()->assertGranted($motTest);
 
         if ($motTest->getStatus() !== MotTestStatusName::ACTIVE) {
@@ -53,23 +84,6 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
             return $this->redirect()->toRoute(MotTestController::ROUTE_MOT_TEST, ['motTestNumber' => $motTestNumber]);
         }
 
-        $isVehicleBikeType = $this->isMotTestVehicleBikeType($motTest);
-        $configDtoMapper = $this->getBrakeTestMapperService($isVehicleBikeType);
-
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $data = $request->getPost()->getArrayCopy();
-            $dto = $configDtoMapper->mapToDto($data);
-
-            try {
-                $this->postConfigurationDataToApiForValidation($dto, $motTest);
-                return $this->redirectToAddBrakeTestResult($data, $motTestNumber);
-            } catch (RestApplicationException $e) {
-                $this->addErrorMessages($e->getDisplayMessages());
-            }
-        } else {
-            $dto = $configDtoMapper->mapToDefaultDto($motTest);
-        }
         $configHelper = $this->getConfigHelperService($isVehicleBikeType);
         $configHelper->setConfigDto($dto);
 
@@ -88,9 +102,9 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
         return $viewModel;
     }
 
-    private function postConfigurationDataToApiForValidation($dto, MotTestDto $motTest)
+    private function postConfigurationDataToApiForValidation($dto, $motTestNumber)
     {
-        $apiUrl = UrlBuilder::of()->motTest()->routeParam('motTestNumber', $motTest->getMotTestNumber())
+        $apiUrl = UrlBuilder::of()->motTest()->routeParam('motTestNumber', $motTestNumber)
             ->brakeTestResult()->validateConfiguration();
         $this->getRestClient()->postJson($apiUrl, DtoHydrator::dtoToJson($dto));
     }
@@ -108,70 +122,36 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
     public function addBrakeTestResultsAction()
     {
         $motTestNumber = $this->getMotTestNumber();
-        /** @var MotTestDto $motTest */
-        $motTest = $this->getMinimalMotTestFromApi($motTestNumber);
 
-        if (!$motTest) {
-            return $this->getFlashErrorViewModel();
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $vehicleClass = $request->getPost()->get('vehicleClass');
+            $motTest = null;
+        }
+        else {
+            /** @var MotTestDto $motTest */
+            $motTest = $this->tryGetMotTestOrAddErrorMessages($motTestNumber);
+
+            if (!$motTest) {
+                return $this->getFlashErrorViewModel();
+            }
+
+            $this->getPerformMotTestAssertion()->assertGranted($motTest);
+            $vehicleClass = $motTest->getVehicle()->getClassCode();
         }
 
-        $this->getPerformMotTestAssertion()->assertGranted($motTest);
-
-        if ($this->isMotTestVehicleBikeType($motTest)) {
+        if ($this->isMotTestVehicleBikeType($vehicleClass)) {
             return $this->addBrakeTestResultsClass12($motTest);
         }
 
         return $this->addBrakeTestResultsClass3AndAbove($motTest);
     }
 
-    private function addBrakeTestResultsClass12(MotTestDto $motTest)
+    private function addBrakeTestResultsClass3AndAbove(MotTestDto $motTest = null)
     {
-        $request = $this->getRequest();
-
-        $brakeTestResult = null;
-
-        $brakeTestConfigurationContainer = $this->getServiceLocator()->get('BrakeTestConfigurationContainerHelper');
-        $queryData = $brakeTestConfigurationContainer->fetchConfig();
-
-        $configDto = (new BrakeTestConfigurationClass1And2Mapper)->mapToDto($queryData);
-
-        if ($request->isPost()) {
-            $brakeTestResult = new BrakeTestResultClass1And2ViewModel($configDto, $request->getPost()->getArrayCopy());
-
-            try {
-                $this->getBrakeTestResultsResource()->save($motTest->getMotTestNumber(), $brakeTestResult->toArray());
-
-                return $this->redirect()->toRoute(
-                    self::ROUTE_MOT_TEST_BRAKE_TEST_SUMMARY,
-                    ['motTestNumber' => $motTest->getMotTestNumber()]
-                );
-            } catch (RestApplicationException $e) {
-                $this->addErrorMessages($e->getDisplayMessages());
-            }
-        } else {
-            $brakeTestResult = new BrakeTestResultClass1And2ViewModel($configDto, $motTest->getBrakeTestResult());
-        }
-
-        $viewModel = new ViewModel(
-            [
-                'isMotContingency'       => $this->getContingencySessionManager()->isMotContingency(),
-                'motTestNumber'          => $motTest->getMotTestNumber(),
-                'vehicle'                => $motTest->getVehicle(),
-                'brakeTestResult'        => $brakeTestResult,
-                'brakeTestConfiguration' => $brakeTestResult->getBrakeTestConfiguration(),
-            ]
-        );
-        $viewModel->setTemplate(self::TEMPLATE_ADD_CLASS_1_2);
-
-        return $viewModel;
-    }
-
-    private function addBrakeTestResultsClass3AndAbove(MotTestDto $motTest)
-    {
-        /** @var VehicleDto $vehicle */
-        $vehicle = $motTest->getVehicle();
 
         $request = $this->getRequest();
+        $motTestNumber = $this->getMotTestNumber();
 
         $brakeTestResult = null;
 
@@ -188,11 +168,11 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
             );
 
             try {
-                $this->getBrakeTestResultsResource()->save($motTest->getMotTestNumber(), $brakeTestResult->toArray());
+                $this->getBrakeTestResultsResource()->save($motTestNumber, $brakeTestResult->toArray());
 
                 return $this->redirect()->toRoute(
                     self::ROUTE_MOT_TEST_BRAKE_TEST_SUMMARY,
-                    ['motTestNumber' => $motTest->getMotTestNumber()]
+                    ['motTestNumber' => $motTestNumber]
                 );
             } catch (RestApplicationException $e) {
                 $this->addErrorMessages($e->getDisplayMessages());
@@ -205,16 +185,66 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
             );
         }
 
+        if (!$motTest) {
+            /** @var MotTestDto $motTest */
+            $motTest = $this->tryGetMotTestOrAddErrorMessages($motTestNumber);
+        }
+        /** @var VehicleDto $vehicle */
+        $vehicle = $motTest->getVehicle();
+
         $viewModel = new ViewModel(
             [
                 'isMotContingency'       => $this->getContingencySessionManager()->isMotContingency(),
-                'motTestNumber'          => $motTest->getMotTestNumber(),
+                'motTestNumber'          => $motTestNumber,
                 'vehicle'                => $vehicle,
                 'brakeTestResult'        => $brakeTestResult,
                 'brakeTestConfiguration' => $brakeTestResult->getBrakeTestConfiguration(),
             ]
         );
         $viewModel->setTemplate(self::TEMPLATE_ADD_CLASS_3_AND_ABOVE);
+
+        return $viewModel;
+    }
+
+    private function addBrakeTestResultsClass12(MotTestDto $motTest = null)
+    {
+        $request = $this->getRequest();
+        $motTestNumber = $this->getMotTestNumber();
+
+        $brakeTestResult = null;
+
+        $brakeTestConfigurationContainer = $this->getServiceLocator()->get('BrakeTestConfigurationContainerHelper');
+        $queryData = $brakeTestConfigurationContainer->fetchConfig();
+
+        $configDto = (new BrakeTestConfigurationClass1And2Mapper)->mapToDto($queryData);
+
+        if ($request->isPost()) {
+            $brakeTestResult = new BrakeTestResultClass1And2ViewModel($configDto, $request->getPost()->getArrayCopy());
+
+            try {
+                $this->getBrakeTestResultsResource()->save($motTestNumber, $brakeTestResult->toArray());
+
+                return $this->redirect()->toRoute(
+                    self::ROUTE_MOT_TEST_BRAKE_TEST_SUMMARY,
+                    ['motTestNumber' => $motTestNumber]
+                );
+            } catch (RestApplicationException $e) {
+                $this->addErrorMessages($e->getDisplayMessages());
+            }
+        } else {
+            $brakeTestResult = new BrakeTestResultClass1And2ViewModel($configDto, $motTest->getBrakeTestResult());
+        }
+
+        $viewModel = new ViewModel(
+            [
+                'isMotContingency'       => $this->getContingencySessionManager()->isMotContingency(),
+                'motTestNumber'          => $motTestNumber,
+                'vehicle'                => $motTest->getVehicle(),
+                'brakeTestResult'        => $brakeTestResult,
+                'brakeTestConfiguration' => $brakeTestResult->getBrakeTestConfiguration(),
+            ]
+        );
+        $viewModel->setTemplate(self::TEMPLATE_ADD_CLASS_1_2);
 
         return $viewModel;
     }
@@ -248,10 +278,10 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
         return $this->params()->fromRoute('motTestNumber', null);
     }
 
-    protected function isMotTestVehicleBikeType(MotTestDto $motTest)
+    protected function isMotTestVehicleBikeType($vehicleClass)
     {
-        return $this->isMotTestVehicleClass($motTest, VehicleClassCode::CLASS_1)
-            || $this->isMotTestVehicleClass($motTest, VehicleClassCode::CLASS_2);
+        return $vehicleClass == VehicleClassCode::CLASS_1
+            || $vehicleClass == VehicleClassCode::CLASS_2;
     }
 
     /**
