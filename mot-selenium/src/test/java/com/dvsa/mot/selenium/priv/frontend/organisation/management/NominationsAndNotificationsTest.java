@@ -25,7 +25,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -92,7 +91,7 @@ public class NominationsAndNotificationsTest extends BaseTest {
         SiteDetailsPage siteDetailsPage =
                 assignMultipleRoleAtSiteLevel(aedmLogin, siteNameTwo, trader, roles, driver);
 
-        assertTrue(siteDetailsPage.verifyNominationMessage(traderLogin.username),
+        assertTrue(siteDetailsPage.verifyNominationMessage(trader),
                 "Check that the nomination message is displayed on VTS page");
 
         siteDetailsPage.clickLogout();
@@ -175,7 +174,7 @@ public class NominationsAndNotificationsTest extends BaseTest {
                 assignRoleAtOrganisationLevel(aedmLogin, traderLogin, site, organisation, driver,
                         Role.AED).clickOnConfirmButton();
 
-        assertTrue(authorisedExaminerOverviewPage.verifyNominationMessage(traderLogin.username),
+        assertTrue(authorisedExaminerOverviewPage.verifyNominationMessage(trader),
                 "Check that the nomination message is displayed on AE page");
 
         authorisedExaminerOverviewPage.clickLogout();

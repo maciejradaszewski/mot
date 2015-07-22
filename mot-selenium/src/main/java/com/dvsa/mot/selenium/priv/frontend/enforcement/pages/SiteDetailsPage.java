@@ -1,13 +1,18 @@
 package com.dvsa.mot.selenium.priv.frontend.enforcement.pages;
 
-import com.dvsa.mot.selenium.datasource.*;
+import com.dvsa.mot.selenium.datasource.Login;
+import com.dvsa.mot.selenium.datasource.OpeningHours;
+import com.dvsa.mot.selenium.datasource.Person;
+import com.dvsa.mot.selenium.datasource.Site;
 import com.dvsa.mot.selenium.datasource.enums.Days;
 import com.dvsa.mot.selenium.datasource.enums.Role;
 import com.dvsa.mot.selenium.framework.BasePage;
 import com.dvsa.mot.selenium.framework.util.ElementDisplayUtils;
 import com.dvsa.mot.selenium.priv.frontend.organisation.management.authorisedexamineroverview.pages.AuthorisedExaminerOverviewPage;
-import com.dvsa.mot.selenium.priv.frontend.organisation.management.authorisedexamineroverview.pages.RemoveRolePage;
-import com.dvsa.mot.selenium.priv.frontend.organisation.management.vehicletestingstationoverview.pages.*;
+import com.dvsa.mot.selenium.priv.frontend.organisation.management.vehicletestingstationoverview.pages.ConfigureBrakeTestDefaultsPage;
+import com.dvsa.mot.selenium.priv.frontend.organisation.management.vehicletestingstationoverview.pages.VTSFindAUserPage;
+import com.dvsa.mot.selenium.priv.frontend.organisation.management.vehicletestingstationoverview.pages.VtsInProgressMotTestPage;
+import com.dvsa.mot.selenium.priv.frontend.organisation.management.vehicletestingstationoverview.pages.VtsRemoveARolePage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -16,7 +21,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 
 public class SiteDetailsPage extends BasePage {
 
@@ -195,15 +199,15 @@ public class SiteDetailsPage extends BasePage {
         return new AuthorisedExaminerOverviewPage(driver, org);
     }
 
-    private String getNominationMessageXpath(String userName) {
+    private String getNominationMessageXpath(Person person) {
 
-        String message = "A role notification has been sent to " + userName;
+        String message = "A role notification has been sent to " + person.getNamesAndSurname();
         return "//p[contains(.," + "'" + message + "'" + ")]";
     }
 
-    public boolean verifyNominationMessage(String userName) {
+    public boolean verifyNominationMessage(Person person) {
 
-        String xpath = getNominationMessageXpath(userName);
+        String xpath = getNominationMessageXpath(person);
         WebElement nominationMessage = driver.findElement(By.xpath(xpath));
         return isElementDisplayed(nominationMessage);
     }

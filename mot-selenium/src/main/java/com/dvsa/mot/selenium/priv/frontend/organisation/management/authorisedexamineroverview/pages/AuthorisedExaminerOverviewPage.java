@@ -320,15 +320,15 @@ public class AuthorisedExaminerOverviewPage extends BasePage {
                 && getAuthorisedExaminerAddress().contains(address.postcode);
     }
 
-    private String getNominationMessageXpath(String userName) {
+    private String getNominationMessageXpath(Person person) {
 
-        String message = "A role notification has been sent to " + userName;
+        String message = "A role notification has been sent to " + person.getNamesAndSurname();
         return "//p[contains(.," + "'" + message + "'" + ")]";
     }
 
-    public boolean verifyNominationMessage(String userName) {
+    public boolean verifyNominationMessage(Person person) {
 
-        String xpath = getNominationMessageXpath(userName);
+        String xpath = getNominationMessageXpath(person);
         WebElement nominationMessage = driver.findElement(By.xpath(xpath));
         return isElementDisplayed(nominationMessage);
     }
