@@ -124,6 +124,19 @@ class VehicleContext implements Context
     }
 
     /**
+     * @When /^I Create a new Vehicle Technical Record with fuel (.*) and no cylinder capacity$/
+     *
+     * @param $fuelType
+     */
+    public function ICreateANewVehicleTechnicalRecordWithFuelTypeAndNoCylinderCapacity($fuelType)
+    {
+        $this->createVehicleFromApi([
+            'fuelType' => $fuelType,
+            'cylinderCapacity' => null
+        ]);
+    }
+
+    /**
      * @When /^I Create a new Vehicle Technical Record with the following (\d+) (.*) (.*) (.*) (.*) (\d+) (.*) (.*)$/
      *
      * @param $class

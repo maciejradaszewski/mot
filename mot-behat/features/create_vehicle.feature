@@ -333,3 +333,13 @@ Feature: Create new vehicle record
       | 4     |
       | 5     |
       | 7     |
+
+  Scenario Outline: Vehicle with no cylinder capacity can be created
+    Given I am logged in as a Tester
+    When I Create a new Vehicle Technical Record with fuel <fuelType> and no cylinder capacity
+    Then the Vehicle Record is Created with an MOT Test Number allocated
+  Examples:
+  | fuelType  |
+  | ST        |
+  | FC        |
+  | EL        |
