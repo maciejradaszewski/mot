@@ -55,5 +55,10 @@ mot-devtools
 infrastructure
 Jenkins_Scripts
 
+ Ignore the behat cache files
+mot-behat/bin/classmap_generator.php
+mot-behat/bin/pluginmap_generator.php
+mot-behat/bin/templatemap_generator.php
+
 coverage
 *dist.bak

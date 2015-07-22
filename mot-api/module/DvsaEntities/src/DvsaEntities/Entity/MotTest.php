@@ -943,6 +943,17 @@ class MotTest extends Entity
     }
 
     /**
+     * Get MotTestStatus.
+     * Proper accessor for the associated entity
+     *
+     * @return MotTestStatus
+     */
+    public function getMotTestStatus()
+    {
+        return $this->status;
+    }
+
+    /**
      * Get status
      *
      * @return string

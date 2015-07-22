@@ -33,6 +33,7 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
         $this->controller = new BrakeTestResultsController();
 
         $serviceManager = Bootstrap::getServiceManager();
+        $serviceManager->setAllowOverride(true);
         $webPerformMotTestAssertion = XMock::of(WebPerformMotTestAssertion::class);
         $serviceManager->setService(WebPerformMotTestAssertion::class, $webPerformMotTestAssertion);
         $this->brakeTestConfigurationContainerMock = XMock::of(BrakeTestConfigurationContainerHelper::class);
@@ -58,7 +59,7 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
     ) {
         $motTestData = $this->getMotTestDataDto($vehicleClass, $motTestNumber);
 
-        $this->getRestClientMockWithGetMinimalMotTest($motTestData);
+        $this->getRestClientMockWithGetMotTest($motTestData);
 
         if ($isPost) {
             $this->setPostAndPostParams($postParams);
@@ -170,6 +171,7 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
             'parkingBrakeEffortOffside'       => $brakeTestValue,
             'parkingBrakeLockOffside'         => '1',
             'parkingBrakeLockNearside'        => '0',
+            'vehicleClass' => VehicleClassCode::CLASS_4
         ];
 
         $this->routeMatch->setParam('action', 'addBrakeTestResults');
@@ -210,7 +212,7 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
             '_class'                     => BrakeTestConfigurationClass3AndAboveDto::class,
         ];
 
-        $this->getRestClientMockWithGetMinimalMotTest($motTestData);
+        $this->getRestClientMockWithGetMotTest($motTestData, true);
 
         $this->getBrakeTestResultsResourcesMock()
             ->expects($this->once())
@@ -248,9 +250,11 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
             'control2EffortFront' => $brakeTestValue,
             'control2EffortRear'  => $brakeTestValue,
             'control1LockFront'   => 1,
-            'control1LockRear'    => 0
+            'control1LockRear'    => 0,
+            'vehicleClass'        => VehicleClassCode::CLASS_1
         ];
         $this->setPostAndPostParams($postData);
+        unset($postData['vehicleClass']);
 
         $expectedRestPostData = array_merge(
             $postData,
@@ -271,7 +275,7 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
             ]
         );
 
-        $this->getRestClientMockWithGetMinimalMotTest($motTestData);
+        $this->getRestClientMockWithGetMotTest($motTestData, true);
 
         $this->getBrakeTestResultsResourcesMock()
             ->expects($this->once())
@@ -292,7 +296,7 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
         $this->routeMatch->setParam('motTestNumber', $motTestNumber);
         $this->request->setMethod('post');
 
-        $this->getRestClientMockWithGetMinimalMotTest($this->getMotTestDataDto());
+        $this->getRestClientMockWithGetMotTest($this->getMotTestDataDto());
 
         $this->getBrakeTestResultsResourcesMock()
             ->expects($this->at(0))->method('save')
@@ -311,7 +315,7 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
 
     public function testBrakeTestSummaryCanBeAccessedAuthenticatedRequest()
     {
-        $this->getRestClientMockWithGetMinimalMotTest($this->getMotTestDataDto());
+        $this->getRestClientMockWithGetMotTest($this->getMotTestDataDto(), true);
         $response = $this->getResponseForAction('displayBrakeTestSummary', ['motTestNumber' => '1']);
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -322,7 +326,7 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
         $motTestNumber = 123;
 
         $motTest = $this->getMotTestDataDto(VehicleClassCode::CLASS_4, $motTestNumber, 1, 'PASSED');
-        $this->getRestClientMockWithGetMinimalMotTest($motTest);
+        $this->getRestClientMockWithGetMotTest($motTest);
 
         $this->getResponseForAction('configureBrakeTest', ['motTestNumber' => $motTestNumber]);
 
@@ -337,7 +341,8 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
                     "input"  =>
                         [
                             'gradientControl1' => BrakeTestResultClass1And2ViewModel::EFFICIENCY_ABOVE_30,
-                            'gradientControl2' => BrakeTestResultClass1And2ViewModel::EFFICIENCY_ABOVE_30
+                            'gradientControl2' => BrakeTestResultClass1And2ViewModel::EFFICIENCY_ABOVE_30,
+                            'vehicleClass'     => VehicleClassCode::CLASS_1
                         ],
                     "output" =>
                         [
@@ -353,7 +358,8 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
                     "input"  =>
                         [
                             'gradientControl1' => BrakeTestResultClass1And2ViewModel::EFFICIENCY_BETWEEN_30_AND_25,
-                            'gradientControl2' => BrakeTestResultClass1And2ViewModel::EFFICIENCY_ABOVE_30
+                            'gradientControl2' => BrakeTestResultClass1And2ViewModel::EFFICIENCY_ABOVE_30,
+                            'vehicleClass'     => VehicleClassCode::CLASS_1
                         ],
                     "output" =>
                         [
@@ -370,6 +376,7 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
                         [
                             'gradientControl1' => BrakeTestResultClass1And2ViewModel::EFFICIENCY_BELOW_25,
                             'gradientControl2' => BrakeTestResultClass1And2ViewModel::EFFICIENCY_ABOVE_30,
+                            'vehicleClass'     => VehicleClassCode::CLASS_1
                         ],
                     "output" =>
                         [
@@ -386,6 +393,7 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
                         [
                             'gradientControl1' => BrakeTestResultClass1And2ViewModel::EFFICIENCY_BELOW_25,
                             'gradientControl2' => BrakeTestResultClass1And2ViewModel::EFFICIENCY_BELOW_25,
+                            'vehicleClass'     => VehicleClassCode::CLASS_1
                         ],
                     "output" =>
                         [
@@ -402,6 +410,7 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
                         [
                             'gradientControl1' => BrakeTestResultClass1And2ViewModel::EFFICIENCY_BETWEEN_30_AND_25,
                             'gradientControl2' => BrakeTestResultClass1And2ViewModel::EFFICIENCY_BETWEEN_30_AND_25,
+                            'vehicleClass'     => VehicleClassCode::CLASS_1
                         ],
                     "output" =>
                         [
@@ -456,7 +465,7 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
             $testCase['output']
         );
 
-        $this->getRestClientMockWithGetMinimalMotTest($motTestData);
+        $this->getRestClientMockWithGetMotTest($motTestData, true);
 
         $this->getBrakeTestResultsResourcesMock()
             ->expects($this->once())
@@ -512,27 +521,15 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
         return ['data' => $motTest];
     }
 
-    protected function getRestClientMockWithGetMotTest($motTestData)
+    protected function getRestClientMockWithGetMotTest($motTestData, $minimal = false)
     {
         $motTestNumber = is_object($motTestData['data']) ? $motTestData['data']->getMotTestNumber()
             : $motTestData['data']['motTestNumber'];
         $restClientMock = $this->getRestClientMockForServiceManager();
-        $restClientMock->expects($this->once())
+        $endpoint = $minimal ? "mot-test/$motTestNumber/minimal" : "mot-test/$motTestNumber";
+        $restClientMock
             ->method('get')
-            ->with("mot-test/$motTestNumber")
-            ->will($this->returnValue($motTestData));
-
-        return $restClientMock;
-    }
-
-    protected function getRestClientMockWithGetMinimalMotTest($motTestData)
-    {
-        $motTestNumber = is_object($motTestData['data']) ? $motTestData['data']->getMotTestNumber()
-            : $motTestData['data']['motTestNumber'];
-        $restClientMock = $this->getRestClientMockForServiceManager();
-        $restClientMock->expects($this->once())
-            ->method('get')
-            ->with("mot-test/$motTestNumber/minimal")
+            ->with($endpoint)
             ->will($this->returnValue($motTestData));
 
         return $restClientMock;

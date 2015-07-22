@@ -6,9 +6,12 @@ use Doctrine\ORM\EntityManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Enum\BrakeTestTypeCode;
+use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\ReasonForRejectionTypeName;
+use DvsaCommon\Messages\InvalidTestStatus;
 use DvsaCommonApi\Authorisation\Assertion\ApiPerformMotTestAssertion;
 use DvsaCommonApi\Service\AbstractService;
+use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaEntities\Entity\BrakeTestResultClass12;
 use DvsaEntities\Entity\BrakeTestResultClass3AndAbove;
 use DvsaEntities\Entity\MotTest;
@@ -193,8 +196,27 @@ class BrakeTestResultService extends AbstractService
         }
     }
 
+    private function assertMotActive($motTest)
+    {
+        /** Only allow active MOT test brake test results to be validated */
+        if ($motTest->getStatus() === MotTestStatusName::ABANDONED) {
+            throw new BadRequestException(
+                InvalidTestStatus::getMessage(MotTestStatusName::ABANDONED),
+                BadRequestException::ERROR_CODE_INVALID_DATA
+            );
+        }
+        elseif ($motTest->getStatus() !== MotTestStatusName::ACTIVE) {
+            throw new BadRequestException(
+                InvalidTestStatus::getMessage(MotTestStatusName::FAILED),
+                BadRequestException::ERROR_CODE_INVALID_DATA
+            );
+        }
+    }
+
     private function validateAndCalculateBrakeTestResultClass3AndAbove($data, MotTest $motTest)
     {
+        $this->assertMotActive($motTest);
+
         /** @var Vehicle $vehicle */
         $vehicle = $motTest->getVehicle();
 
@@ -262,6 +284,8 @@ class BrakeTestResultService extends AbstractService
 
     private function validateAndCalculateBrakeTestResultClass1And2($data, MotTest $motTest)
     {
+        $this->assertMotActive($motTest);
+
         /** @var BrakeTestResultClass12 $brakeTestResult */
         $brakeTestResult = $this->brakeTestResultClass12Mapper->mapToObject($data);
 
