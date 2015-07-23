@@ -10,7 +10,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  * LicenceType
  *
  * @ORM\Table(name="licence_type")
- * @ORM\Entity(repositoryClass="\DvsaEntities\Repository\LicenceTypeRepository")
+ * @ORM\Entity(repositoryClass="\DvsaEntities\Repository\LicenceTypeRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class LicenceType extends Entity
 {

@@ -8,7 +8,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
 /**
  * Model
  * @ORM\Table(name="model", indexes={@ORM\Index(name="fk_model_created_by", columns={"created_by"}), @ORM\Index(name="fk_model_last_updated_by", columns={"last_updated_by"}), @ORM\Index(name="fk_model_make_code", columns={"make_code"})})
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\ModelRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\ModelRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class Model extends Entity
 {

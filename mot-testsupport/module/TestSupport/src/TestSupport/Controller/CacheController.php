@@ -2,6 +2,7 @@
 
 namespace TestSupport\Controller;
 
+use Doctrine\Common\Cache\MemcacheCache;
 use TestSupport\Helper\TestDataResponseHelper;
 use Zend\Mvc\Controller\AbstractRestfulController;
 
@@ -30,6 +31,7 @@ class CacheController extends AbstractRestfulController
         $moduleMapCachePath = $this->tryGetConfigValue('mot-api-module-map-cache');
 
         $this->removeFile($configCachePath)->removeFile($moduleMapCachePath);
+        $this->clearDoctrineCache();
 
         return TestDataResponseHelper::jsonOk(["message" => "mot-api cache has been reset"]);
     }
@@ -40,6 +42,7 @@ class CacheController extends AbstractRestfulController
         $moduleMapCachePath = $this->tryGetConfigValue('mot-web-frontend-module-map-cache');
 
         $this->removeFile($configCachePath)->removeFile($moduleMapCachePath);
+        $this->clearDoctrineCache();
 
         return TestDataResponseHelper::jsonOk(["message" => "mot-web-frontend cache has been reset"]);
     }
@@ -72,5 +75,16 @@ class CacheController extends AbstractRestfulController
         }
 
         return $this;
+    }
+
+    private function clearDoctrineCache()
+    {
+        // Since we cannot access services from other projects, the cache configuration is duplicated here
+        $memcache = new \Memcache();
+        $memcache->addServer('127.0.0.1');
+
+        $cache = new MemcacheCache();
+        $cache->setMemcache($memcache);
+        $cache->deleteAll();
     }
 }

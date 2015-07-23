@@ -10,7 +10,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  * AuthForAeStatus
  *
  * @ORM\Table(name="auth_for_ae_status")
- * @ORM\Entity(repositoryClass="\DvsaEntities\Repository\AuthForAeStatusRepository")
+ * @ORM\Entity(repositoryClass="\DvsaEntities\Repository\AuthForAeStatusRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class AuthForAeStatus extends Entity
 {

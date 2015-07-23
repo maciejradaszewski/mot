@@ -11,7 +11,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * @ORM\Table(
  *  name="security_question",
  * )
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\SecurityQuestionRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\SecurityQuestionRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class SecurityQuestion extends Entity
 {

@@ -9,7 +9,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
 
 /**
  * @ORM\Table(name="message_type")
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\MessageTypeRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\MessageTypeRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class MessageType extends Entity
 {

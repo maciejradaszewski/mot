@@ -9,7 +9,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * NonWorkingDayCountry
  *
  * @ORM\Table(name="non_working_day_country_lookup")
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\NonWorkingDayCountryRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\NonWorkingDayCountryRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class NonWorkingDayCountry extends Entity
 {

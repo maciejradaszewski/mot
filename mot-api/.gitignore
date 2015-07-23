@@ -14,3 +14,5 @@ coveragelogs
 data/jasper/bin
 Jenkins_Scripts
 coverage
+data/DoctrineModule/
+data/DoctrineORMModule/

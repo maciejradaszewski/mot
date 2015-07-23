@@ -14,7 +14,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  *      @ORM\Index(name="fk_transmission_type_created_by", columns={"created_by"}),
  *      @ORM\Index(name="fk_transmission_type_last_updated_by", columns={"last_updated_by"})
  *  })
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\TransmissionTypeRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\TransmissionTypeRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class TransmissionType extends Entity
 {

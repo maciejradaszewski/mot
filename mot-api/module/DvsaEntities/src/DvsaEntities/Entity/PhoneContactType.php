@@ -15,7 +15,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  *      @ORM\UniqueConstraint(name = "uk_phone_contact_type_code", columns = {"code"})
  *   }
  * )
- * @ORM\Entity(repositoryClass = "DvsaEntities\Repository\PhoneContactTypeRepository")
+ * @ORM\Entity(repositoryClass = "DvsaEntities\Repository\PhoneContactTypeRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  *
  * @see DvsaCommon\Enum\PhoneContactTypeCode supported code values
  */

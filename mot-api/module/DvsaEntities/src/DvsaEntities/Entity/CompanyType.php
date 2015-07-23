@@ -10,7 +10,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  * CompanyType
  *
  * @ORM\Table(name="company_type", options={"collate"="utf8_general_ci", "charset"="utf8", "engine"="InnoDB"})
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\CompanyTypeRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\CompanyTypeRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class CompanyType extends Entity
 {

@@ -9,7 +9,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * Make
  *
  * @ORM\Table(name="equipment_make")
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class EquipmentMake extends Entity
 {

@@ -5,9 +5,10 @@ use Doctrine\ORM\Mapping as ORM;
 use DvsaEntities\EntityTrait\CommonIdentityTrait;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
  * @ORM\Table(name="visit_reason_lookup",
  *            options={"collate"="utf8_general_ci", "charset"="utf8", "engine"="InnoDB"})
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class VisitReason extends Entity
 {

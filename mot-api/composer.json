@@ -3,13 +3,14 @@
     "description": "API for DVSA MOT modernisation",
     "require": {
         "zendframework/zendframework": "~2.3.9",
-        "doctrine/doctrine-module": "0.8.0",
-        "doctrine/doctrine-orm-module": "0.8.0",
-        "dvsa/dvsa-document-module": "~1.1",
+        "doctrine/doctrine-module": "~0.8",
+        "doctrine/doctrine-orm-module": "~0.9",
+        "dvsa/dvsa-doctrine-module": "~1.0",
+        "dvsa/dvsa-document-module": "~1.2",
         "dvsa/feature-toggle": "~1.0",
         "dvsa/dvsa-openam-client" : "~1.6",
         "dvsa/scripts": "dev-master",
-        "dvsa/dvsa-logger": "v1.0.2",
+        "dvsa/dvsa-logger": "~1.1",
         "dvsa/dvsa-application-logger": "~1.1",
         "soflomo/purifier": "0.1.1",
         "slot-purchase/backend-api": "3.1.*"

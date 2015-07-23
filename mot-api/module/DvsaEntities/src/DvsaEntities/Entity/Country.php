@@ -8,7 +8,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * Country
  *
  * @ORM\Table(name="country_lookup", indexes={@ORM\Index(name="fk_country_of_registration_created_by", columns={"created_by"}), @ORM\Index(name="fk_country_of_registration_last_updated_by", columns={"last_updated_by"})})
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\CountryRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\CountryRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class Country extends Entity
 {

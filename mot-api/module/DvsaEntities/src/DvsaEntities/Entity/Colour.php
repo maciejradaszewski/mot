@@ -15,6 +15,7 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  *      @ORM\Index(name="fk_colour_last_updated_by", columns={"last_updated_by"})
  * })
  * @ORM\Entity(repositoryClass="DvsaEntities\Repository\ColourRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class Colour extends Entity
 {

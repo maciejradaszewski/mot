@@ -10,7 +10,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  * BrakeTestType
  *
  * @ORM\Table(name="brake_test_type")
- * @ORM\Entity(repositoryClass="\DvsaEntities\Repository\BrakeTestTypeRepository")
+ * @ORM\Entity(repositoryClass="\DvsaEntities\Repository\BrakeTestTypeRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class BrakeTestType extends Entity
 {

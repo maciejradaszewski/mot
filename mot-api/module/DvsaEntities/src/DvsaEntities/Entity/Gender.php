@@ -9,7 +9,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * Gender.
  *
  * @ORM\Table(name="gender", uniqueConstraints={@ORM\UniqueConstraint(name="id_UNIQUE", columns={"id"})})
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\GenderRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\GenderRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class Gender extends Entity
 {

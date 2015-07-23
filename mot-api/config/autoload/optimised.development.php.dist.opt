@@ -19,12 +19,21 @@ return array(
         'configuration' => array(
             'orm_default' => array(
                 'sql_logger'       => 'Logging\StubSQLLogger',
-                'result_cache'     => 'apc',
-                'metadata_cache'   => 'apc',
-                'query_cache'      => 'apc',
-                'hydration_cache'  => 'apc',
+                'result_cache'     => 'filesystem',
+                'metadata_cache'   => 'filesystem',
+                'query_cache'      => 'filesystem',
+                'hydration_cache'  => 'filesystem',
                 'generate_proxies' => false,
+                'second_level_cache' => array(
+                    'enabled' => true,
+                    'default_lifetime' => 200,
+                    'regions' => array(
+                        'staticdata' => array(
+                            'lifetime' => 28800,
+                        ),
+                    ),
+                ),
             ),
-        )
+        ),
     ),
 );

@@ -10,8 +10,9 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  * BodyType
  *
  * @ORM\Table(name="body_type")
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\BodyTypeRepository")
-
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\BodyTypeRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
+ *
  * TODO should be EnumType1 (now is mixing id with code)
  */
 class BodyType extends Entity

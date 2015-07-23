@@ -20,15 +20,24 @@ return array(
     ),
     'configuration' => array(
       'orm_default' => array(
-        'result_cache'     => 'apc',
-        'metadata_cache'   => 'apc',
-        'query_cache'      => 'apc',
-        'hydration_cache'  => 'apc',
+        'result_cache'     => 'memcache',
+        'metadata_cache'   => 'memcache',
+        'query_cache'      => 'memcache',
+        'hydration_cache'  => 'memcache',
 //        'sql_logger'       => 'Application\SqlLogger',
         'generate_proxies' => false,
         'proxy_dir' => 'data/DoctrineORMModule/Proxy',
-        'proxy_namespace' => 'DoctrineORMModule\Proxy'
-      ),        
+        'proxy_namespace' => 'DoctrineORMModule\Proxy',
+        'second_level_cache' => array(
+            'enabled' => true,
+            'default_lifetime' => 200,
+            'regions' => array(
+                'staticdata' => array(
+                    'lifetime' => 28800,
+                ),
+            ),
+        ),
+      ),
     ),
   ),
 );

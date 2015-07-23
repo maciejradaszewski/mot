@@ -9,7 +9,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * AuthorisationForTestingMotAtSiteStatus
  *
  * @ORM\Table(name="auth_for_testing_mot_at_site_status")
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class AuthorisationForTestingMotAtSiteStatus extends Entity
 {

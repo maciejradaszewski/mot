@@ -9,7 +9,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * MotTestReasonForRefusal
  *
  * @ORM\Table(name="mot_test_reason_for_refusal_lookup")
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class ReasonForRefusal
 {

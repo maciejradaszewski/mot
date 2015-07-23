@@ -5,8 +5,9 @@ use Doctrine\ORM\Mapping as ORM;
 use DvsaEntities\EntityTrait\CommonIdentityTrait;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
  * @ORM\Table(name="enforcement_decision_category_lookup", options={"collate"="utf8_general_ci", "charset"="utf8", "engine"="InnoDB"})
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class EnforcementDecisionCategory
 {

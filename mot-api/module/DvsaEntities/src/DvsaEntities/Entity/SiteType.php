@@ -10,7 +10,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  * SiteType
  *
  * @ORM\Table(name="site_type")})
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\SiteTypeRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\SiteTypeRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class SiteType
 {

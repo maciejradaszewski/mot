@@ -9,7 +9,8 @@ use DvsaDocument\EntityTrait\CommonIdentityTrait;
  * SiteBusinessRole
  *
  * @ORM\Table(name="site_business_role")
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class SiteBusinessRole extends Entity
 {

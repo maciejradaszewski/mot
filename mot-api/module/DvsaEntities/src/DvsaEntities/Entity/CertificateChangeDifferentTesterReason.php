@@ -11,7 +11,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * indexes={@ORM\Index(name="fk_certificate_change_different_tester_reason_lookup_creator", columns={"created_by"}),
  * @ORM\Index(name="fk_certificate_change_different_tester_reason_lookup_editor", columns={"last_updated_by"})
  * })
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\CertificateChangeReasonRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\CertificateChangeReasonRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class CertificateChangeDifferentTesterReason extends Entity
 {

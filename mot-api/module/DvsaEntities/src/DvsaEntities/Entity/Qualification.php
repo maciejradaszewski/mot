@@ -9,7 +9,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * Qualification
  *
  * @ORM\Table(name="qualification", uniqueConstraints={@ORM\UniqueConstraint(name="id_UNIQUE", columns={"id"})}, indexes={@ORM\Index(name="fk_qualification_1_idx", columns={"awarded_by_organisation_id"}), @ORM\Index(name="fk_qualification_2_idx", columns={"created_by"}), @ORM\Index(name="fk_qualification_3_idx", columns={"last_updated_by"}), @ORM\Index(name="fk_qualification_4_idx", columns={"qualification_type_id"})})
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class Qualification extends Entity
 {

@@ -9,7 +9,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * WheelplanType
  *
  * @ORM\Table(name="wheelplan_type", uniqueConstraints={@ORM\UniqueConstraint(name="id_UNIQUE", columns={"id"})})
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class WheelplanType extends Entity
 {

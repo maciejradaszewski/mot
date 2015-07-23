@@ -6,7 +6,7 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
 
 /**
  *
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
  *
  * @ORM\Table(name="enforcement_visit_outcome_lookup",
  * options={
@@ -14,6 +14,7 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  *  "charset"="utf8",
  *  "engine"="InnoDB"
  * })
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class EnforcementVisitOutcome
 {

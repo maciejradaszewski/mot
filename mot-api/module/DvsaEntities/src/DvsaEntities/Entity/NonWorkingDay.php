@@ -9,7 +9,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * NonWorkingDay
  *
  * @ORM\Table(name="non_working_day_lookup")
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\NonWorkingDayRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\NonWorkingDayRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class NonWorkingDay extends Entity
 {

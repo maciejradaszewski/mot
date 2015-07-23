@@ -8,7 +8,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
 /**
  * Reasons for rejection translated texts.
  * @ORM\Table(name="rfr_language_content_map")
- * @ORM\Entity()
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class ReasonForRejectionDescription extends Entity
 {

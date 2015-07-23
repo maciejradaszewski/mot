@@ -9,7 +9,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * Payment
  *
  * @ORM\Table(name="payment_type", options={"collate"="utf8_general_ci", "charset"="utf8", "engine"="InnoDB"})
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class PaymentType extends Entity
 {

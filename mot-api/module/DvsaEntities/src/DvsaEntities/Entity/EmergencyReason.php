@@ -22,7 +22,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  *          )
  *      },
  * )
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class EmergencyReason extends Entity
 {

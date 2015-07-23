@@ -18,6 +18,7 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  *  }
  * )
  * @ORM\Entity(repositoryClass="DvsaEntities\Repository\MakeRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class Make extends Entity
 {
