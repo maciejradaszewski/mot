@@ -104,7 +104,7 @@ class ContactDetailsService extends AbstractService
             $id = $phoneDto->getId();
             $type = $phoneDto->getContactType();
             $isPrimary = $phoneDto->isPrimary();
-            $number = $phoneDto->getNumber();
+            $number = trim($phoneDto->getNumber());
 
             //  --  find entity by id or if id is null, then if it is primary --
             $phoneEntity = ArrayUtils::firstOrNull(
@@ -181,7 +181,7 @@ class ContactDetailsService extends AbstractService
                 //  --  set(update) data from dto --
                 $emailEntity
                     ->setIsPrimary($emailDto->isPrimary())
-                    ->setEmail($emailDto->getEmail());
+                    ->setEmail(trim($emailDto->getEmail()));
             }
         }
     }

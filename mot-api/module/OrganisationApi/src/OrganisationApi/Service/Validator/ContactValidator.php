@@ -69,14 +69,14 @@ class ContactValidator extends AbstractValidator
 
             $validator = new \Zend\Validator\EmailAddress();
 
-            if ($validator->isValid($contactDto->getPrimaryEmail()->getEmail()) === false) {
+            if ($validator->isValid(trim($contactDto->getPrimaryEmail()->getEmail())) === false) {
                 $this->errors->add(
                     self::ERR_EMAIL_INVALID,
                     sprintf(self::FIELD_CONTACT, $contactDto->getType(), self::FIELD_EMAIL)
                 );
             }
-            if (strtolower($contactDto->getPrimaryEmail()->getEmail())
-                != strtolower($contactDto->getPrimaryEmail()->getEmailConfirm())) {
+            if (strtolower(trim($contactDto->getPrimaryEmail()->getEmail()))
+                != strtolower(trim($contactDto->getPrimaryEmail()->getEmailConfirm()))) {
                 $this->errors->add(
                     self::ERR_CONF_NOT_SAME,
                     sprintf(self::FIELD_CONTACT, $contactDto->getType(), self::FIELD_EMAIL_CONFIRM)
