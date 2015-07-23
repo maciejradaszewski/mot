@@ -94,11 +94,11 @@ class EmailFormModel extends AbstractFormModel
                 : self::FIELD_EMAIL_CONFIRM;
 
             $validator = new \Zend\Validator\EmailAddress();
-            if ($validator->isValid($email) === false) {
+            if ($validator->isValid(trim($email)) === false) {
                 $this->addError($field, self::ERR_INVALID);
             }
 
-            if (strtolower($email) != strtolower($this->getEmailConfirm())) {
+            if (strtolower(trim($email)) != strtolower(trim($this->getEmailConfirm()))) {
                 $this->addError($fieldConfirm, self::ERR_CONF_NOT_SAME);
             }
         }
@@ -121,7 +121,7 @@ class EmailFormModel extends AbstractFormModel
      */
     public function setEmail($email)
     {
-        isset($email) AND $this->email = trim($email);
+        $this->email = $email;
 
         return $this;
     }
@@ -141,7 +141,7 @@ class EmailFormModel extends AbstractFormModel
      */
     public function setEmailConfirm($emailConfirm)
     {
-        isset($emailConfirm) AND $this->emailConfirm = trim($emailConfirm);
+        $this->emailConfirm = $emailConfirm;
 
         return $this;
     }
