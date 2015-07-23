@@ -26,10 +26,17 @@ class BrakeTestConfigurationClass1And2Mapper implements BrakeTestConfigurationMa
 
         $dto = new BrakeTestConfigurationClass1And2Dto();
 
+        $riderWeight = ArrayUtils::tryGet($data, 'riderWeight');
+
+        // value sometimes gets set to a blank sting in the session container
+        if (empty($riderWeight)) {
+            $riderWeight = null;
+        }
+
         $dto->setBrakeTestType(ArrayUtils::tryGet($data, 'brakeTestType'));
         $dto->setVehicleWeightFront(ArrayUtils::tryGet($data, 'vehicleWeightFront'));
         $dto->setVehicleWeightRear(ArrayUtils::tryGet($data, 'vehicleWeightRear'));
-        $dto->setRiderWeight(ArrayUtils::tryGet($data, 'riderWeight'));
+        $dto->setRiderWeight($riderWeight);
         $dto->setSidecarWeight(ArrayUtils::tryGet($data, 'sidecarWeight'));
         $dto->setIsSidecarAttached(ArrayUtils::tryGet($data, 'isSidecarAttached') === '1');
 
