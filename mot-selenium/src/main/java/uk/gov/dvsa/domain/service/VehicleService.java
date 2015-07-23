@@ -38,6 +38,9 @@ public class VehicleService extends Service {
         vehicleDataMap.put("colour", Colour.Black.getId());
         vehicleDataMap.put("secondaryColour", Colour.Yellow.getId());
         vehicleDataMap.put("dateOfFirstUse", getDateMinusYears(5));
+        vehicleDataMap.put("dateOfManufacture", getDateMinusYears(5));
+        vehicleDataMap.put("firstRegistrationDate",getDateMinusYears(5));
+        vehicleDataMap.put("newAtFirstReg", Integer.toString(0));
         vehicleDataMap.put("fuelType", FuelTypes.Petrol.getId());
         vehicleDataMap.put("testClass", vehicleClass.getId());
         vehicleDataMap.put("countryOfRegistration",

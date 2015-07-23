@@ -470,7 +470,6 @@ class MotTestRepository extends AbstractMutableRepository
             ->setParameter('issuedDate', $issuedDate)
             ->setParameter('codes', ['DR', 'DT'])
             ->setMaxResults(1);
-        ;
 
         $result = $qb->getQuery()->getResult();
 
@@ -521,9 +520,12 @@ class MotTestRepository extends AbstractMutableRepository
 
     /**
      * Retrieve the latest MOT test number of a specific status by vehicle ID
-     * @param int $vehicleId Non-obfuscated vehicle ID
-     * @param string $status Status of MOT test to retrieve, default passed
-     * @return string|null Numeric MOT test number or null if no test with $status exists for vehicle ID
+     *
+     * @param int    $vehicleId Non-obfuscated vehicle ID
+     * @param string $status    Status of MOT test to retrieve, default passed
+     *
+     * @return null|string Numeric MOT test number or null if no test with $status exists for vehicle ID
+     * @throws NotFoundException
      */
     public function getLatestMotTestIdByVehicleId($vehicleId, $status = MotTestStatusName::PASSED)
     {
@@ -536,20 +538,21 @@ class MotTestRepository extends AbstractMutableRepository
             ->where("t.vehicle = :vehicleId")
             ->andWhere("t.completedDate IS NOT NULL")
             ->andWhere("tt.code NOT IN (:codes)")
-            ->andWhere("ts.name = :status")
-        ;
+            ->andWhere("ts.name = :status");
 
         // Get the MOT test number for the latest completed test with status $status for a vehicle
         $qb = $this->createQueryBuilder("t2");
+
         $qb->select('t2.number')
            ->where($qb->expr()->in('t2.completedDate', $subQuery->getDQL()))
            ->setParameter('vehicleId', $vehicleId)
            ->setParameter('status', $status)
-           ->setParameter('codes', [
+           ->setParameter(
+               'codes', [
                 MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING,
                 MotTestTypeCode::ROUTINE_DEMONSTRATION_TEST,
-           ])
-        ;
+               ]
+           );
 
         if ($result = $qb->getQuery()->getResult()) {
             return $result[0]['number'];

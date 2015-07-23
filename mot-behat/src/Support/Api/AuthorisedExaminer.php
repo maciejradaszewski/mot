@@ -57,6 +57,7 @@ class AuthorisedExaminer extends MotApi
             'correspondenceEmailConfirmation' => '',
             'correspondencePhoneNumber' => '',
             'correspondenceFaxNumber' => '',
+            'areaOfficeNumber' => 1
         ]);
 
         return $this->client->request(new Request(

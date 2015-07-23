@@ -19,10 +19,10 @@ class VehicleCertificateExpiryController extends AbstractDvsaRestfulController
      * @param mixed $id
      * @return \Zend\View\Model\JsonModel
      */
-    public function get($id)
+    public function get($vehicleId)
     {
-        $vehicleId = $this->params()->fromRoute('id', null);
-        $isDvla    = filter_var($this->params()->fromRoute('isDvla', false), FILTER_VALIDATE_BOOLEAN);
+        $isDvla = filter_var($this->params()->fromRoute('isDvla', false), FILTER_VALIDATE_BOOLEAN);
+
         /** @var CertificateExpiryService $certificateExpiryService */
         $certificateExpiryService = $this->getServiceLocator()->get('CertificateExpiryService');
         $contingencyDate = ArrayUtils::tryGet($this->getRequest()->getQuery()->toArray(), self::FIELD_CONTINGENCY_DATE);

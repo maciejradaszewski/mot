@@ -44,6 +44,8 @@ class VehicleTestHelper
             'colour'                => ColourCode::ORANGE,
             'secondaryColour'       => ColourCode::BLACK,
             'dateOfFirstUse'        => '1999-01-01',
+            'dateOfManufacture'     => '1999-01-01',
+            'firstRegistrationDate' => '1999-01-01',
             'fuelType'              => FuelTypeCode::PETROL,
             'testClass'             => VehicleClassCode::CLASS_4,
             'countryOfRegistration' => CountryOfRegistrationCode::GBG_GG_GUERNSEY,

@@ -1500,7 +1500,7 @@ class MotTest extends Entity
     }
 
     /**
-     * @param mixed $emergencyLog
+     * @param EmergencyLog $emergencyLog
      *
      * @return MotTest
      */
@@ -1511,7 +1511,7 @@ class MotTest extends Entity
     }
 
     /**
-     * @return mixed
+     * @return EmergencyLog
      */
     public function getEmergencyReasonComment()
     {

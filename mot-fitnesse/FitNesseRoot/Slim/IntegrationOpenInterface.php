@@ -65,7 +65,7 @@ class IntegrationOpenInterface
     private function vehicleSpecManufacturedPre1960() {
         return [
             'registrationNumber'    => 'VIN239',
-            'manufactureDate'       => '1059-01-01',
+            'dateOfManufacture'     => '1059-01-01',
         ];
     }
 

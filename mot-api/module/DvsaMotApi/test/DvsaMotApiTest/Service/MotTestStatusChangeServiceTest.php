@@ -4,10 +4,9 @@ namespace DvsaMotApiTest\Service;
 
 use Doctrine\ORM\EntityManager;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
-use DvsaCommon\Auth\MotAuthorizationServiceInterface;
 use DvsaCommon\Auth\MotIdentityInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
-use DvsaCommon\Constants\RfrType;
+use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Date\Time;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
@@ -16,6 +15,8 @@ use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Enum\ReasonForRejectionTypeName;
 use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommonApi\Authorisation\Assertion\ApiPerformMotTestAssertion;
+use DvsaCommonApi\Filter\XssFilter;
+use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonApiTest\Transaction\TestTransactionExecutor;
 use DvsaCommonTest\Date\TestDateTimeHolder;
 use DvsaCommonTest\TestUtils\ArgCapture;
@@ -36,26 +37,25 @@ use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\MotTestStatusRepository;
 use DvsaEntities\Repository\MotTestTypeRepository;
 use DvsaEntitiesTest\Entity\WeightSourceFactory;
-use DvsaMotApi\Service\CertificateExpiryService;
 use DvsaMotApi\Service\Mapper\MotTestMapper;
-use DvsaMotApi\Service\MotTestDateHelper;
+use DvsaMotApi\Service\MotTestDateHelperService;
 use DvsaMotApi\Service\MotTestStatusChangeService;
+use DvsaMotApi\Service\MotTestStatusService;
 use DvsaMotApi\Service\OtpService;
 use DvsaMotApi\Service\TestingOutsideOpeningHoursNotificationService;
 use DvsaMotApi\Service\Validator\MotTestStatusChangeValidator;
 use DvsaMotApi\Service\Validator\MotTestValidator;
 use DvsaMotApiTest\Factory\MotTestObjectsFactory;
 use DvsaMotApiTest\Traits\MockTestTypeTrait;
-use OrganisationApi\Service\OrganisationService;
 use HTMLPurifier;
-use DvsaCommonApi\Filter\XssFilter;
+use OrganisationApi\Service\OrganisationService;
 
 /**
  * Class MotTestStatusChangeServiceTest
  *
  * @package DvsaMotApiTest\Service
  */
-class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
+class MotTestStatusChangeServiceTest extends AbstractServiceTestCase
 {
     use MockTestTypeTrait;
 
@@ -92,7 +92,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
     /** @var TestingOutsideOpeningHoursNotificationService $outsideOpeningHoursNotifier */
     private $outsideOpeningHoursNotifier;
 
-    /** @var MotTestDateHelper */
+    /** @var MotTestDateHelperService */
     private $motTestDateHelper;
 
     /** @var TestDateTimeHolder */
@@ -128,7 +128,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->dateTimeHolder = new TestDateTimeHolder(new \DateTime('now'));
 
-        $this->authService = XMock::of(\DvsaAuthorisation\Service\AuthorisationServiceInterface::class);
+        $this->authService = XMock::of(AuthorisationServiceInterface::class);
         $this->motTestRepository = XMock::of(MotTestRepository::class);
         $this->reasonForCancelRepository = XMock::of(MotTestReasonForCancelRepository::class);
         $this->enforcementFullPartialRetestRepository = XMock::of(EnforcementFullPartialRetestRepository::class);
@@ -138,6 +138,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         $this->organisationService = XMock::of(OrganisationService::class);
         $this->motTestMapper = XMock::of(MotTestMapper::class);
         $this->outsideOpeningHoursNotifier = XMock::of(TestingOutsideOpeningHoursNotificationService::class);
+        $this->mockMotTestStatusService = XMock::of(MotTestStatusService::class);
 
         $this->motIdentityProvider = XMock::of(MotIdentityProviderInterface::class);
         $this->performMotTestAssertion = XMock::of(ApiPerformMotTestAssertion::class);
@@ -156,7 +157,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
             ->method('getIdentity')
             ->willReturn($motIdentity);
 
-        $this->motTestTypeRepository = \DvsaCommonTest\TestUtils\XMock::of(MotTestTypeRepository::class);
+        $this->motTestTypeRepository = XMock::of(MotTestTypeRepository::class);
         $this->motTestTypeRepository->expects($this->any())
             ->method('__call')
             ->with('findOneByCode')
@@ -183,8 +184,11 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->willReturnCallback($this->getRepositoryCallback);
 
-        $this->motTestDateHelper = new MotTestDateHelper(
-            XMock::of(CertificateExpiryService::class)
+        $mockMotRepo = $this->getMockRepository(MotTestRepository::class);
+        $this->motTestDateHelper = new MotTestDateHelperService(
+            new DateTimeHolder(),
+            $mockMotRepo,
+            $this->mockMotTestStatusService
         );
 
         XMock::mockClassField($this->motTestDateHelper, 'dateTimeHolder', $this->dateTimeHolder);
@@ -237,7 +241,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
     public function dataProviderTestIssuedDate()
     {
         $date = '2014-05-30 23:45:01';
-        $expiryDate = '2015-05-29';
+        $expiryDate = '2015-05-29 23:59:59';
 
         $statusPass = MotTestStatusName::PASSED;
         $statusFail = MotTestStatusName::FAILED;
@@ -270,7 +274,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider dataProviderTestIssuedDate
      */
-    public function testUpdateStatus_givenStatusAndTestType_shouldSetIssuedDateAccordingly(
+    public function testUpdateStatusGivenStatusAndTestTypeShouldSetIssuedDateAccordingly(
         $status,
         $motTestTypeCode,
         $expectIssuedDate,
@@ -299,10 +303,9 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($status, $motTest->getStatus());
         $this->assertEquals($expectIssuedDate, $motTest->getIssuedDate());
-        $this->assertEquals($expectExpiryDate, $motTest->getExpiryDate());
     }
 
-    public function testUpdateStatus_givenAbortRequest_setCorrectStatusWithCorrectReason()
+    public function testUpdateStatusGivenAbortRequestSetCorrectStatusWithCorrectReason()
     {
         $testDate = new \DateTime('2012-09-30');
         $this->dateTimeHolder->setCurrent($testDate);
@@ -325,7 +328,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($testDate, $motTest->getCompletedDate());
     }
 
-    public function testUpdateStatus_givenAbortRequestForNormalTest_shouldReturnSlot()
+    public function testUpdateStatusGivenAbortRequestForNormalTestShouldReturnSlot()
     {
         $motTestId = 1;
         $reasonForCancelId = 3;
@@ -342,7 +345,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         $this->createService()->updateStatus($motTestId, $data, 'whatever');
     }
 
-    public function testUpdateStatus_givenAbortRequestForReinspection_shouldNotReturnSlot()
+    public function testUpdateStatusGivenAbortRequestForReinspectionShouldNotReturnSlot()
     {
         $this->markTestSkipped();
         $motTestId = 1;
@@ -362,7 +365,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         $this->createService()->updateStatus($motTestId, $data, 'whatever');
     }
 
-    public function testUpdateStatus_givenAbandonRequest_shouldSetAbandonedStatusWithCorrectCommentAndReason()
+    public function testUpdateStatusGivenAbandonRequestShouldSetAbandonedStatusWithCorrectCommentAndReason()
     {
         $testDate = new \DateTime('2012-09-30');
         $this->dateTimeHolder->setCurrent($testDate);
@@ -376,7 +379,6 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
             motTestStatusChangeService::FIELD_CANCEL_COMMENT    => $cancelComment,
             motTestStatusChangeService::FIELD_OTP               => $otp
         ];
-
 
         $reasonForCancel = $this->reasonForCancel($reasonForCancelId, true);
         $motTest = MotTestObjectsFactory::activeMotTest()->setId($motTestId);
@@ -393,7 +395,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($testDate, $motTest->getCompletedDate());
     }
 
-    public function testUpdateStatus_givenPassRequest_shouldSetCorrectStatusAndDates()
+    public function testUpdateStatusGivenPassRequestShouldSetCorrectStatusAndDates()
     {
         $motTestId = 1;
         $otp = '123456';
@@ -403,10 +405,9 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         ];
 
         $motTest = MotTestObjectsFactory::activeMotTest()->setId($motTestId);
-
         $testDate = new \DateTime('2012-09-30');
-        $expiryDate = new \DateTime('2013-09-29');
 
+        $this->setClass4VehicleForMot($motTest, '2000-01-01');
         $this->motTestResolvesTo($motTest);
         $this->otpAuthExpected(true, $otp);
 
@@ -417,12 +418,10 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($testDate, $motTest->getCompletedDate());
         $this->assertEquals($testDate, $motTest->getIssuedDate());
-        $this->assertEquals($expiryDate, $motTest->getExpiryDate());
-
         $this->assertEquals(MotTestStatusName::PASSED, $motTest->getStatus());
     }
 
-    public function testUpdateStatus_givenPassRequestWithPrs_shouldCreateCorrectPrsMot()
+    public function testUpdateStatusGivenPassRequestWithPrsShouldCreateCorrectPrsMot()
     {
         $motTestId = 1;
         $otp = '123456';
@@ -431,11 +430,25 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
             motTestStatusChangeService::FIELD_OTP    => $otp
         ];
         $motTest = MotTestObjectsFactory::activeMotTest()->setId($motTestId);
-
         MotTestObjectsFactory::addRfr($motTest, ReasonForRejectionTypeName::PRS);
 
         $testDate = new \DateTime('2012-09-30');
-        $expiryDate = new \DateTime('2013-09-29');
+        $expectedExpiry = '2013-09-29';
+
+        /** @var Vehicle $vehicle */
+        $vehicle = $motTest->getVehicle();
+        $vehicleClass = new VehicleClass();
+        $vehicle->setId(999);
+        $vehicleClass->setCode('4');
+        // New vehicle registered as new, the expiry date WILL be that date
+        // plus three years minus a day, the standard expiry date
+        $vehicleDate = new \DateTime('2000-06-20');
+        $vehicle->setVehicleClass($vehicleClass);
+        $vehicle->setNewAtFirstReg(true);
+        $vehicle->setFirstRegistrationDate($vehicleDate);
+        $vehicle->setManufactureDate($vehicleDate);
+        $vehicle->setFirstUsedDate($vehicleDate);
+        $motTest->setVehicle($vehicle);
 
         $this->motTestResolvesTo($motTest);
         $this->otpAuthExpected(true, $otp);
@@ -460,7 +473,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($testDate, $prsMotTest->getCompletedDate());
         $this->assertEquals($testDate, $prsMotTest->getIssuedDate());
-        $this->assertEquals($expiryDate, $prsMotTest->getExpiryDate());
+        $this->assertEquals(new \DateTime($expectedExpiry), $prsMotTest->getExpiryDate());
     }
 
     /**
@@ -537,7 +550,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testUpdateStatus_givenPassRequestWithPrs_shouldRetainAdvisoryRfrsOnPassedTest()
+    public function testUpdateStatusGivenPassRequestWithPrsShouldRetainAdvisoryRfrsOnPassedTest()
     {
         $motTestId = 1;
         $otp = '123456';
@@ -552,7 +565,6 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         MotTestObjectsFactory::addRfr($motTest, ReasonForRejectionTypeName::ADVISORY);
 
         $testDate = new \DateTime('2012-09-30');
-        $expiryDate = new \DateTime('2013-09-29');
 
         $this->motTestResolvesTo($motTest);
         $this->otpAuthExpected(true, $otp);
@@ -576,10 +588,9 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         $testDate->add(new \DateInterval('PT1S'));
         $this->assertEquals($testDate, $prsMotTest->getCompletedDate());
         $this->assertEquals($testDate, $prsMotTest->getIssuedDate());
-        $this->assertEquals($expiryDate, $prsMotTest->getExpiryDate());
     }
 
-    public function testUpdateStatus_givenFailedRequest_shouldSetRightData()
+    public function testUpdateStatusGivenFailedRequestShouldSetRightData()
     {
         $motTestId = 1;
         $otp = '123456';
@@ -605,7 +616,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(MotTestStatusName::FAILED, $motTest->getStatus());
     }
 
-    public function testUpdateStatus_givenStatusAbortedVe_shouldUpdateStatusSetCommentReturnSlot()
+    public function testUpdateStatusGivenStatusAbortedVeShouldUpdateStatusSetCommentReturnSlot()
     {
         $reasonForTerminationComment = 'this is a test reason';
         $motTestId = 1;
@@ -631,7 +642,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($motTest->getExpiryDate());
     }
 
-    public function testUpdateStatus_whenPassingVehicleAndVsiWeightType_shouldUpdateVehicleWeight()
+    public function testUpdateStatusWhenPassingVehicleAndVsiWeightTypeShouldUpdateVehicleWeight()
     {
         $motTestId = 1;
         $otp = '123456';
@@ -656,7 +667,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function dataProvider_shouldUpdateVehicleWeightOnlyForCertainClassAndWeightType()
+    public function dataProviderShouldUpdateVehicleWeightOnlyForCertainClassAndWeightType()
     {
         return [
             [Vehicle::VEHICLE_CLASS_1, WeightSourceFactory::vsi(), false],
@@ -679,9 +690,9 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
      * @param $weightType
      * @param $isUpdated
      *
-     * @dataProvider dataProvider_shouldUpdateVehicleWeightOnlyForCertainClassAndWeightType
+     * @dataProvider dataProviderShouldUpdateVehicleWeightOnlyForCertainClassAndWeightType
      */
-    public function testUpdateStatus_whenPassingVehicleAndVsiWeightType_shouldUpdateVehicleWeightOnlyForCertainClass(
+    public function testUpdateStatusWhenPassingVehicleAndVsiWeightTypeShouldUpdateVehicleWeightOnlyForCertainClass(
         $class,
         $weightType,
         $isUpdated
@@ -712,7 +723,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function dataProvider_givenTestFailedOutsideSiteOpeningHours_shouldNotify()
+    public function dataProviderGivenTestFailedOutsideSiteOpeningHoursShouldNotify()
     {
         return [
             [MotTestStatusName::PASSED, MotTestStatusName::FAILED]
@@ -722,9 +733,9 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $status
      *
-     * @dataProvider dataProvider_givenTestFailedOutsideSiteOpeningHours_shouldNotify
+     * @dataProvider dataProviderGivenTestFailedOutsideSiteOpeningHoursShouldNotify
      */
-    public function testUpdateStatus_givenTestFailedOutsideSiteOpeningHours_shouldNotify($status)
+    public function testUpdateStatusGivenTestFailedOutsideSiteOpeningHoursShouldNotify($status)
     {
         $siteBusRoleMap = new SiteBusinessRoleMap();
         $siteBusRoleMap->setPerson(new Person());
@@ -739,13 +750,16 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         $this->entityManager = XMock::of('Doctrine\ORM\EntityManager');
         $this->entityManager->expects($this->any())
             ->method('getRepository')
-            ->will($this->returnCallback(function ($name) use ($repo, $getRepositoryCallback) {
-                if ($repository = $getRepositoryCallback($name)) {
-                    return $repository;
-                }
-
-                return $repo;
-            }));
+            ->will(
+                $this->returnCallback(
+                    function ($name) use ($repo, $getRepositoryCallback) {
+                        if ($repository = $getRepositoryCallback($name)) {
+                            return $repository;
+                        }
+                        return $repo;
+                    }
+                )
+            );
 
         $motTestId = 1;
         $otp = '123456';
@@ -772,7 +786,7 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($motTest->getCompletedDate(), $completionDateCap->get());
     }
 
-    private function helper_givenConfirmRequestByAnotherUser_ShouldThrowError($status)
+    private function helperGivenConfirmRequestByAnotherUserShouldThrowError($status)
     {
         $this->setExpectedUserId(2);
 
@@ -795,14 +809,14 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(MotTestStatusName::ACTIVE, $motTest->getStatus());
     }
 
-    public function testUpdateStatus_givenPassRequestByAnotherUser_ShouldThrowError()
+    public function testUpdateStatusGivenPassRequestByAnotherUserShouldThrowError()
     {
-        $this->helper_givenConfirmRequestByAnotherUser_ShouldThrowError(MotTestStatusName::PASSED);
+        $this->helperGivenConfirmRequestByAnotherUserShouldThrowError(MotTestStatusName::PASSED);
     }
 
-    public function testUpdateStatus_givenFailRequestByAnotherUser_ShouldThrowError()
+    public function testUpdateStatusGivenFailRequestByAnotherUserShouldThrowError()
     {
-        $this->helper_givenConfirmRequestByAnotherUser_ShouldThrowError(MotTestStatusName::FAILED);
+        $this->helperGivenConfirmRequestByAnotherUserShouldThrowError(MotTestStatusName::FAILED);
     }
 
     /**
@@ -926,5 +940,34 @@ class MotTestStatusChangeServiceTest extends \PHPUnit_Framework_TestCase
             });
 
         return $repository;
+    }
+
+    /**
+     * If the MOT object does not yet have a vehicle then a new one is created.
+     *
+     * @param MotTest $motTest
+     * @param string $vehicleDate
+     */
+    private function setClass4VehicleForMot(MotTest $motTest, $vehicleDate)
+    {
+        /** @var Vehicle $vehicle */
+        $vehicle = $motTest->getVehicle();
+
+        if (is_null($vehicle)) {
+            $vehicle = new Vehicle();
+        }
+
+        $dt = new \DateTime($vehicleDate);
+
+        $vehicleClass = new VehicleClass();
+        $vehicleClass->setCode('4');
+
+        $vehicle->setVehicleClass($vehicleClass);
+        $vehicle->setNewAtFirstReg(true);
+        $vehicle->setFirstRegistrationDate($dt);
+        $vehicle->setManufactureDate($dt);
+        $vehicle->setFirstUsedDate($dt);
+
+        $motTest->setVehicle($vehicle);
     }
 }

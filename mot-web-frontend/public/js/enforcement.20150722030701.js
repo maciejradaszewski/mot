@@ -1,6 +1,6 @@
 /**
  * This is a generated file, please do not edit.
- * created on Friday, June 12th, 2015, 7:29:45 PM
+ * created on Wednesday, July 22nd, 2015, 3:40:01 PM
  */
 
 /*
@@ -471,7 +471,7 @@ var EventListHelper = function(isShowDate, ajaxUrl) {
 
 /**
  * This is a generated file, please do not edit.
- * created on Friday, June 12th, 2015, 7:29:45 PM
+ * created on Wednesday, July 22nd, 2015, 3:40:01 PM
  */
 
 /**

@@ -37,7 +37,10 @@ class VehicleService
             'bodyType' => '01',
             // Not required for a save but required for the API
             'registrationNumber' => 'ABCD123',
-            'dateOfFirstUse' => '1980/01/01'
+            'dateOfFirstUse' => '1980/01/01',
+            'dateOfRegistration' => '1980/01/01',
+            'dateOfManufacture' => '1980/01/01',
+            'newAtFirstReg' => 0,
         ];
         $data = array_merge($defaults, $overrideData);
         return $this->save($data);
@@ -91,8 +94,8 @@ class VehicleService
         $vehicleData["fuel_type_id"] = $this->fetchId("fuel_type", $fuelType);
 
         $countryOfRegistration = ArrayUtils::tryGet($data, 'countryOfRegistration');
-        $vehicleData["country_of_registration_id"] = $this->fetchId("country_of_registration_lookup",
-            $countryOfRegistration);
+        $vehicleData["country_of_registration_id"] =
+            $this->fetchId("country_of_registration_lookup", $countryOfRegistration);
 
         $transmissionType = ArrayUtils::tryGet($data, 'transmissionType');
         $vehicleData["transmission_type_id"] = $this->fetchId("transmission_type", $transmissionType);
@@ -128,6 +131,9 @@ class VehicleService
         $vehicleData["manufacture_date"] = ArrayUtils::tryGet($data, 'manufactureDate', null);
 
         $vehicleData["first_registration_date"] = ArrayUtils::tryGet($data, 'firstRegistrationDate', null);
+        $vehicleData["manufacture_date"] = ArrayUtils::tryGet($data, 'dateOfManufacture', null);
+        $vehicleData["first_used_date"] = ArrayUtils::tryGet($data, 'dateOfFirstUse', null);
+        $vehicleData["is_new_at_first_reg"] = ArrayUtils::tryGet($data, 'newAtFirstReg', 0);
 
         return $vehicleData;
     }

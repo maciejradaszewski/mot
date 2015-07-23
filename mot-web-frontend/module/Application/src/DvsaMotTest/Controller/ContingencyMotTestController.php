@@ -44,7 +44,6 @@ class ContingencyMotTestController extends AbstractDvsaMotTestController
 
         $dto = new ContingencyMotTestDto();
 
-
         if ($request->isPost()) {
             $dto = $this->dtoFromRequest();
 

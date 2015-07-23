@@ -48,7 +48,7 @@ use DvsaEntities\Entity\TestItemSelector;
 use DvsaEntities\Entity\Vehicle;
 use DvsaEntities\Entity\VehicleClass;
 use DvsaMotApi\Service\Mapper\MotTestMapper;
-use DvsaMotApi\Service\MotTestDateHelper;
+use DvsaMotApi\Service\MotTestDateHelperService;
 use DvsaMotApiTest\Service\MotTestServiceTest;
 use PHPUnit_Framework_Assert;
 use VehicleApi\Service\VehicleSearchService;
@@ -222,14 +222,14 @@ class MotTestMapperTest extends AbstractServiceTestCase
             ->will($this->returnValue($brakeTestData));
 
         $mocks[self::MOCK_STATUS_SERVICE]->expects($this->once())
-            ->method('getMotTestPendingStatus')
-            ->with($motTest)
-            ->will($this->returnValue('INCOMPLETE'));
-
-        $mocks[self::MOCK_STATUS_SERVICE]->expects($this->once())
             ->method('hasBrakePerformanceNotTestedRfr')
             ->with($motTest)
             ->will($this->returnValue(false));
+
+        $mocks[self::MOCK_STATUS_SERVICE]->expects($this->any())
+            ->method('getMotTestPendingStatus')
+            ->with($motTest)
+            ->will($this->returnValue('INCOMPLETE'));
 
         //when
         $motTestMapper = $this->constructMotTestMapperWithMocks($mocks);
@@ -295,7 +295,7 @@ class MotTestMapperTest extends AbstractServiceTestCase
         );
         $motTestStatusService = $this->getMockWithDisabledConstructor(\DvsaMotApi\Service\MotTestStatusService::class);
 
-        $motTestDateService = $this->getMockWithDisabledConstructor(MotTestDateHelper::class);
+        $motTestDateService = $this->getMockWithDisabledConstructor(MotTestDateHelperService::class);
 
         $mockParamObfuscator = $this->getMockWithDisabledConstructor(ParamObfuscator::class);
 

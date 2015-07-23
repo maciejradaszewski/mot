@@ -15,7 +15,7 @@ use DvsaMotApi\Factory\Service\VehicleHistoryServiceFactory;
 use DvsaMotApi\Factory\Service\TesterMotTestLogServiceFactory;
 use DvsaMotApi\Factory\TestItemCategoryRepositoryFactory;
 use DvsaMotApi\Service\CertificateCreationService;
-use DvsaMotApi\Service\MotTestDateHelper;
+use DvsaMotApi\Service\MotTestDateHelperService;
 use DvsaMotApi\Service\MotTestOptionsService;
 use DvsaMotApi\Service\MotTestReasonForRejectionService;
 use DvsaMotApi\Service\MotTestStatusChangeNotificationService;
@@ -89,7 +89,7 @@ class Module implements
                 'MotTestStatusChangeService' => \DvsaMotApi\Factory\Service\MotTestStatusChangeServiceFactory::class,
                 MotTestStatusChangeNotificationService::class => \DvsaMotApi\Factory\Service\MotTestStatusChangeNotificationFactory::class,
                 TestingOutsideOpeningHoursNotificationService::class => \DvsaMotApi\Factory\Service\TestingOutsideOpeningHoursNotificationServiceFactory::class,
-                MotTestDateHelper::class => \DvsaMotApi\Factory\Service\MotTestDateHelperFactory::class,
+                MotTestDateHelperService::class => \DvsaMotApi\Factory\Service\MotTestDateHelperFactory::class,
                 'OtpService' => \DvsaMotApi\Factory\Service\OtpServiceFactory::class,
                 'TestSlotTransactionService' => \DvsaMotApi\Factory\Service\TestSlotTransactionServiceFactory::class,
                 'MotTestTypeService' => \DvsaMotApi\Factory\Service\MotTestTypeServiceFactory::class,

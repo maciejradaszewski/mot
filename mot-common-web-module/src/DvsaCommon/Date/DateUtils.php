@@ -71,10 +71,6 @@ final class DateUtils
      */
     public static function cropTime(\DateTime $dateTime)
     {
-        if (!($dateTime instanceof \DateTime)) {
-            return null;
-        }
-
         $newDateTime = clone $dateTime;
         $newDateTime->setTime(0, 0, 0);
 
@@ -554,65 +550,6 @@ final class DateUtils
         return DateUtils::toUserTzTimestamp($dateTo) - DateUtils::toUserTzTimestamp($dateFrom);
     }
 
-    /**
-     * Calculate a preservation date based on the given expiry date.
-     *
-     * Given an arbitrary expiry date for an MOT it will correctly
-     * calculate the preservation date i.e. the earliest date that a
-     * vehicle can be presented for testing.
-     *
-     * ASSUMPTION: the caller has pre-qualified the date as "valid"
-     * within whatever operating context they may be within.
-     */
-    public static function preservationDate(\DateTime $expiryDate)
-    {
-        $resultDate = null;
-        $clonedDate = clone $expiryDate;
-
-        $year  = $clonedDate->format('Y');
-        $month = $clonedDate->format('m');
-        $day   = $clonedDate->format('d');
-
-        switch (strtoupper($clonedDate->format('Md'))) {
-            case 'MAR27':
-                $resultDate = new \DateTime("{$year}-02-28");
-                break;
-
-            case 'MAR28':
-                $resultDate = self::isLeapYear($year)
-                    ? new \DateTime("{$year}-02-29")
-                    : new \DateTime("{$year}-03-01");
-                break;
-
-            case 'MAR29':
-            case 'MAR30':
-            case 'MAR31':
-                $resultDate = new \DateTime("{$year}-03-01");
-                break;
-
-            default:
-                $resultDate = ('31' === $day)
-                    ? new \DateTime("{$year}-{$month}-01")
-                    : $clonedDate->sub(new \DateInterval('P1M'))->add(new \DateInterval('P1D'));
-                break;
-        }
-        return $resultDate;
-    }
-
-    /**
-     * Fast helper for checking if a year is a leap year or not outside
-     * of any other form of date wrapper.
-     *
-     * @param $year
-     * @return bool
-     */
-    public static function isLeapYear($year)
-    {
-        return (
-            (($year % 4) === 0)
-            && ((($year % 100) !== 0) || (($year % 400) === 0))
-        );
-    }
 
     /**
      * Checks if a date (without time) is in the past

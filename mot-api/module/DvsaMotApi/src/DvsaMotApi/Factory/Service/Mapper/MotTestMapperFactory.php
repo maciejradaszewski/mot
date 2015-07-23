@@ -4,7 +4,7 @@ namespace DvsaMotApi\Factory\Service\Mapper;
 
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaMotApi\Service\Mapper\MotTestMapper;
-use DvsaMotApi\Service\MotTestDateHelper;
+use DvsaMotApi\Service\MotTestDateHelperService;
 use VehicleApi\Service\VehicleSearchService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -24,7 +24,7 @@ class MotTestMapperFactory implements FactoryInterface
             $serviceLocator->get(VehicleSearchService::class),
             $serviceLocator->get('CertificateExpiryService'),
             $serviceLocator->get('MotTestStatusService'),
-            $serviceLocator->get(MotTestDateHelper::class),
+            $serviceLocator->get(MotTestDateHelperService::class),
             $serviceLocator->get(ParamObfuscator::class)
         );
     }
