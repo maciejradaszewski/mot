@@ -128,6 +128,7 @@ public class PageInteractionHelper {
      */
     public static void waitForAjaxToComplete() {
         ExpectedCondition<Boolean> jqueryActive = new ExpectedCondition<Boolean>() {
+            @Override
             public Boolean apply(WebDriver driver) {
                 return executeJavascript("return (window.jQuery || { active : 0 }).active")
                         .toString().equals("0");
@@ -192,6 +193,13 @@ public class PageInteractionHelper {
     }
 
     /**
+     * Refresh the current page
+     */
+    public static void refreshPage(){
+        driver.navigate().refresh();
+    }
+
+    /**
      * Returns true if the element is displayed in the page, no timeouts are used
      */
     protected boolean isElementDisplayed(WebElement element) {
@@ -217,10 +225,10 @@ public class PageInteractionHelper {
      */
     protected static Object executeJavascript(String script, Object... args) {
         if (driver instanceof JavascriptExecutor) {
-            return ((JavascriptExecutor) driver).executeScript(script, args);
+            return driver.executeScript(script, args);
         } else {
             throw new IllegalStateException(
-                    "Cannot execute Javascript (the driver " + driver.getClass()
+                    "Cannot execute Javascript (the driver " + driver.getClass().getSimpleName()
                             + " does not implement the JavascriptExecutor interface)");
         }
     }
