@@ -651,4 +651,14 @@ class DvlaVehicle implements VehicleInterface
     {
         return (bool) $this->newAtFirstReg;
     }
+
+    /**
+     * Indicate based on instantiation the nature of this vehicles origins.
+     *
+     * @return bool
+     */
+    public function isDvla()
+    {
+        return true;
+    }
 }

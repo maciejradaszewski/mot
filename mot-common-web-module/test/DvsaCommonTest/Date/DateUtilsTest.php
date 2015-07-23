@@ -446,62 +446,6 @@ class DateUtilsTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $expiryDate
-     * @param $preservationDate
-     *
-     * @dataProvider providerPreservationDates
-     */
-    public function testPreservationDateAwkwardSquad($expiryDate, $preservationDate)
-    {
-        $pd = DateUtils::preservationDate(new \DateTime($expiryDate));
-        $this->assertEquals($preservationDate, $pd->format('Y-m-d'));
-    }
-
-    public function providerPreservationDates()
-    {
-        return [
-            // February non-leap year edge cases, 2002 is not a leap year nor are 2001, 2003
-            ['2002-03-31', '2002-03-01'],
-            ['2002-03-30', '2002-03-01'],
-            ['2002-03-29', '2002-03-01'],
-            ['2002-03-28', '2002-03-01'],
-            ['2002-03-27', '2002-02-28'],
-
-            // February leap-year edge cases
-            ['2004-03-31', '2004-03-01'],
-            ['2004-03-30', '2004-03-01'],
-            ['2004-03-29', '2004-03-01'],
-            ['2004-03-28', '2004-02-29'],
-            ['2003-03-27', '2003-02-28'],
-
-            // Jan/Dec boundary cross-overs...
-            ['2003-01-01', '2002-12-02'],
-            ['2003-01-12', '2002-12-13'],
-            ['2003-01-30', '2002-12-31'],
-
-            // 31st day => 1st day of the month
-            ['2003-01-31', '2003-01-01'],
-            ['2003-03-31', '2003-03-01'],
-            ['2003-05-31', '2003-05-01'],
-            ['2003-07-31', '2003-07-01'],
-            ['2003-08-31', '2003-08-01'],
-            ['2003-10-31', '2003-10-01'],
-            ['2003-12-31', '2003-12-01'],
-
-            ['2015-08-31', '2015-08-01'],
-            ['2015-08-30', '2015-07-31'],
-            ['2015-08-29', '2015-07-30'],
-            ['2015-08-28', '2015-07-29'],
-
-            ['2015-06-30', '2015-05-31'],
-            ['2015-07-30', '2015-07-01'],
-            ['2015-07-29', '2015-06-30'],
-            ['2015-07-28', '2015-06-29'],
-            ['2015-04-30', '2015-03-31'],
-        ];
-    }
-
-    /**
      * @dataProvider dataProviderTestToDateTimeFromParts
      */
     public function testToDateTimeFromParts($parts, $expect)

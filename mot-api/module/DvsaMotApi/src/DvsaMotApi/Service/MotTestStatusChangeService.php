@@ -109,7 +109,7 @@ class MotTestStatusChangeService implements TransactionAwareInterface
 
     /** @var MotTestMapper $motTestMapper */
     protected $motTestMapper;
-    /** @var  MotTestDateHelper */
+    /** @var  MotTestDateHelperService */
     protected $motTestDateHelper;
     /** @var \Doctrine\ORM\EntityManager */
     protected $entityManager;
@@ -151,7 +151,7 @@ class MotTestStatusChangeService implements TransactionAwareInterface
      * @param \DvsaEntities\Repository\MotTestReasonForCancelRepository $reasonForCancelRepository
      * @param \DvsaEntities\Repository\EnforcementFullPartialRetestRepository $fullPartialRetestRepository
      * @param \DvsaMotApi\Service\TestingOutsideOpeningHoursNotificationService $outsideHoursNotificationService
-     * @param \DvsaMotApi\Service\MotTestDateHelper $motTestDateHelper
+     * @param \DvsaMotApi\Service\MotTestDateHelperService $motTestDateHelper
      * @param \Doctrine\ORM\EntityManager $entityManager
      * @param \DvsaCommon\Auth\MotIdentityProviderInterface $motIdentityProvider
      * @param \DvsaCommonApi\Authorisation\Assertion\ApiPerformMotTestAssertion $performMotTestAssertion
@@ -168,7 +168,7 @@ class MotTestStatusChangeService implements TransactionAwareInterface
         MotTestReasonForCancelRepository $reasonForCancelRepository,
         EnforcementFullPartialRetestRepository $fullPartialRetestRepository,
         TestingOutsideOpeningHoursNotificationService $outsideHoursNotificationService,
-        MotTestDateHelper $motTestDateHelper,
+        MotTestDateHelperService $motTestDateHelper,
         EntityManager $entityManager,
         MotIdentityProviderInterface $motIdentityProvider,
         ApiPerformMotTestAssertion $performMotTestAssertion,

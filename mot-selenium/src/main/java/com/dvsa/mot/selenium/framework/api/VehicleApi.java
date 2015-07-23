@@ -42,6 +42,9 @@ public class VehicleApi extends BaseApi {
         vehicleData.put("secondaryColour", vehicle.secondaryColour.getColourId());
         vehicleData.put("dateOfFirstUse",
                 vehicle.dateOfFirstUse.toString(DateTimeFormat.forPattern("YYYY-MM-dd")));
+        vehicleData.put("dateOfManufacture",vehicle.manufactureDate.toString(DateTimeFormat.forPattern("YYYY-MM-dd")));
+        vehicleData.put("firstRegistrationDate",vehicle.dateOfFirstRegistration.toString(DateTimeFormat.forPattern("YYYY-MM-dd")));
+        vehicleData.put("newAtFirstReg", Integer.toString(vehicle.isNewAtFirstRegistration));
         vehicleData.put("fuelType", vehicle.fuelType.getFuelId());
         vehicleData.put("testClass", vehicle.vehicleClass.getId());
         vehicleData.put("countryOfRegistration",
@@ -53,11 +56,12 @@ public class VehicleApi extends BaseApi {
         JsonObject response = post(resource, vehicleData);
 
         Vehicle newVehicle = new Vehicle(vehicle);
-
-
         newVehicle.carID = String.valueOf(response.getInt("data"));
         newVehicle.carReg = carReg;
         newVehicle.fullVIN = fullVIN;
+        newVehicle.isNewAtFirstRegistration = vehicle.isNewAtFirstRegistration;
+        newVehicle.manufactureDate = vehicle.manufactureDate;
+        newVehicle.dateOfFirstRegistration = vehicle.dateOfFirstRegistration;
 
         Utilities.Logger.LogInfo(
                 "Old vehicle " + vehicle.carReg + " -> " + "New vehicle " + newVehicle.carReg);

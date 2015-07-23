@@ -18,7 +18,7 @@ public class CreateNewVehicleRecordTest extends BaseTest {
     private final int LIST_OF_COUNTRY_OF_REGISTRATION_COUNT = 37;
     private final String WRONG_VRM = "12345678";
     private final String WRONG_VIN = "wrongvin";
-
+    
 
     @Test(groups = {"Regression", "VM-2333", "Sprint 22", "VM-2588", "MOT Testing"},
             description = "Create a new vehicle and validate that it has been successfully created")

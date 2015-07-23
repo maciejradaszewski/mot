@@ -371,8 +371,12 @@ class VehicleService
             ->setVin($data['vin'])
             ->setRegistration($data['registrationNumber'])
             ->setCylinderCapacity($data['cylinderCapacity'])
-            ->setFirstUsedDate(DateUtils::toDate($data['dateOfFirstUse']))
             ->setColour($vehDic->getColourByCode($data['colour']))
+            // next two fields MUST be set as they are not captured, this has
+            // been done after P.O. (Simon Smith) consultation / discussion.
+            ->setFirstUsedDate(DateUtils::toDate($data['dateOfFirstUse']))
+            ->setManufactureDate(DateUtils::toDate($data['dateOfFirstUse']))
+            ->setFirstRegistrationDate(DateUtils::toDate($data['dateOfFirstUse']))
             ->setFuelType($vehDic->getFuelTypeByCode($data['fuelType']))
             ->setCountryOfRegistration($vehDic->getCountryOfRegistration($data['countryOfRegistration'], true))
             ->setTransmissionType($vehDic->getTransmissionType($data['transmissionType']))

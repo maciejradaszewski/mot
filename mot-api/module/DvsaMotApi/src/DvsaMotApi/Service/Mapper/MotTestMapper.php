@@ -24,7 +24,7 @@ use DvsaEntities\Entity\Vehicle;
 use DvsaMotApi\Service\BrakeTestResultService;
 use DvsaMotApi\Service\CertificateExpiryService;
 use DvsaMotApi\Service\Helper\ExtractionHelper;
-use DvsaMotApi\Service\MotTestDateHelper;
+use DvsaMotApi\Service\MotTestDateHelperService;
 use DvsaMotApi\Service\MotTestStatusService;
 use OrganisationApi\Service\Mapper\PersonMapper;
 use VehicleApi\Service\Mapper\CountryOfRegistrationMapper;
@@ -53,7 +53,7 @@ class MotTestMapper
         VehicleSearchService $vehicleService,
         CertificateExpiryService $certificateExpiryService,
         MotTestStatusService $motTestStatusService,
-        MotTestDateHelper $motTestDateService,
+        MotTestDateHelperService $motTestDateService,
         ParamObfuscator $paramObfuscator
     ) {
         $this->objectHydrator = $objectHydrator;
@@ -295,21 +295,19 @@ class MotTestMapper
         $result->setBrakeTestCount($motTest->getBrakeTestCount());
 
         if ($motTest->isActive()) {
-            $pendingStatus = $this->motTestStatusService->getMotTestPendingStatus($motTest);
-
-            if (is_null($motTest->getEmergencyLog())) {
-                $pendingIssuedDate = $this->motTestDateService->getIssuedDate($motTest, null, $pendingStatus);
-            } else {
-                $pendingIssuedDate = $motTest->getStartedDate();
-            }
-
             $result->setPendingDetails(
                 [
-                    'currentSubmissionStatus' => $pendingStatus,
-                    'issuedDate'              => DateTimeApiFormat::date($pendingIssuedDate),
-                    'expiryDate'              => DateTimeApiFormat::date(
-                        $this->motTestDateService->getExpiryDate($motTest, $pendingIssuedDate, $pendingStatus)
-                    ),
+                    'currentSubmissionStatus' => $this->motTestStatusService->getMotTestPendingStatus($motTest),
+
+                    'issuedDate' => DateTimeApiFormat::date($this->motTestDateService->getIssuedDate($motTest)),
+
+                    'expiryDate' => DateTimeApiFormat::date(
+                        $this->motTestDateService->getExpiryDate(
+                            $motTest,
+                            null,
+                            $this->motTestStatusService->getMotTestPendingStatus($motTest)
+                        )
+                    )
                 ]
             );
         }

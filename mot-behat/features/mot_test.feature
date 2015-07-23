@@ -144,11 +144,7 @@ Feature: MOT Test
     Then the MOT Test Status is "PASSED"
     Then the recorded IP is "192.111.149.222"
 
-  @VM-10358
-  Scenario: Tester searches for vehicle without a manufactured date and first used date
-    Given I am logged in as a Tester
-    And I search for a vehicle without a manufactured date and first used date
-    Then manufactured date and first used date should be displayed as unknown
+
 
   @VM-10358
   Scenario: Tester performs MOT test on vehicle without a manufactured date and first used date

@@ -16,7 +16,7 @@ class CountryOfRegistrationMapper extends AbstractApiMapper
     /**
      * @param CountryOfRegistration $countryOfReg
      *
-     * @return CountryOfRegistrationMapper
+     * @return CountryDto
      */
     public function toDto($countryOfReg)
     {

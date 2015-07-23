@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 use DvsaEntities\Entity\EnforcementFullPartialRetest;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaEntities\Entity\MotTestReasonForCancel;
-use DvsaMotApi\Service\MotTestDateHelper;
+use DvsaMotApi\Service\MotTestDateHelperService;
 use DvsaMotApi\Service\MotTestStatusChangeService;
 use DvsaMotApi\Service\TestingOutsideOpeningHoursNotificationService;
 use DvsaMotApi\Service\Validator\MotTestStatusChangeValidator;
@@ -41,7 +41,7 @@ class MotTestStatusChangeServiceFactory implements FactoryInterface
             $entityManager->getRepository(MotTestReasonForCancel::class),
             $entityManager->getRepository(EnforcementFullPartialRetest::class),
             $serviceLocator->get(TestingOutsideOpeningHoursNotificationService::class),
-            $serviceLocator->get(MotTestDateHelper::class),
+            $serviceLocator->get(MotTestDateHelperService::class),
             $entityManager,
             $serviceLocator->get(MotIdentityProviderInterface::class),
             $serviceLocator->get(ApiPerformMotTestAssertion::class),

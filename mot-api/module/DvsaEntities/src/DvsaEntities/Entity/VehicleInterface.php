@@ -46,4 +46,9 @@ interface VehicleInterface
      * @return bool
      */
     public function isVehicleNewAtFirstRegistration();
+    
+    /**
+     * @return bool
+     */
+    public function isDvla();
 }

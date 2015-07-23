@@ -284,7 +284,7 @@ class GenerateTestDataForOtherFitnesseTests
     public function setManufactureDate($manufacturedPre1960)
     {
         if ($manufacturedPre1960 !== '') {
-            $this->vehicleData['manufactureDate'] = $manufacturedPre1960;
+            $this->vehicleData['dateOfManufacture'] = $manufacturedPre1960;
         }
     }
 

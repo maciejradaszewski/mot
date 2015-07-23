@@ -10,7 +10,7 @@ use DvsaMotApi\Factory\Validator\UsernameValidatorFactory;
 use DvsaMotApi\Service\CertificateCreationService;
 use DvsaMotApi\Service\EmergencyService;
 use DvsaMotApi\Service\EmergencyServiceFactory;
-use DvsaMotApi\Service\MotTestDateHelper;
+use DvsaMotApi\Service\MotTestDateHelperService;
 use DvsaMotApi\Service\MotTestOptionsService;
 use DvsaMotApi\Service\MotTestReasonForRejectionService;
 use DvsaMotApi\Service\MotTestStatusChangeNotificationService;
@@ -55,7 +55,7 @@ return [
         'MotTestStatusChangeService'                         => \DvsaMotApi\Factory\Service\MotTestStatusChangeServiceFactory::class,
         MotTestStatusChangeNotificationService::class        => \DvsaMotApi\Factory\Service\MotTestStatusChangeNotificationFactory::class,
         TestingOutsideOpeningHoursNotificationService::class => \DvsaMotApi\Factory\Service\TestingOutsideOpeningHoursNotificationServiceFactory::class,
-        MotTestDateHelper::class                             => \DvsaMotApi\Factory\Service\MotTestDateHelperFactory::class,
+        MotTestDateHelperService::class                      => \DvsaMotApi\Factory\Service\MotTestDateHelperFactory::class,
         'OtpService'                                         => \DvsaMotApi\Factory\Service\OtpServiceFactory::class,
         'TestSlotTransactionService'                         => \DvsaMotApi\Factory\Service\TestSlotTransactionServiceFactory::class,
         'MotTestTypeService'                                 => \DvsaMotApi\Factory\Service\MotTestTypeServiceFactory::class,

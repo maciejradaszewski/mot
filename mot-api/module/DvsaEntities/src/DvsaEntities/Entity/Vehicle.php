@@ -908,4 +908,14 @@ class Vehicle extends Entity implements VehicleInterface
     {
         return $this->emptyVinReason;
     }
+
+    /**
+     * Indicate based on instantiation the nature of this vehicles origins.
+     *
+     * @return bool
+     */
+    public function isDvla()
+    {
+        return false;
+    }
 }

@@ -27,4 +27,10 @@ class VehicleTest extends \PHPUnit_Framework_TestCase
         $vehicle->setNewAtFirstReg(false);
         $this->assertFalse($vehicle->isVehicleNewAtFirstRegistration());
     }
+
+    public function testInstanceKnowsItsType()
+    {
+        $dvlaVehicle = new Vehicle();
+        $this->assertFalse($dvlaVehicle->isDvla());
+    }
 }

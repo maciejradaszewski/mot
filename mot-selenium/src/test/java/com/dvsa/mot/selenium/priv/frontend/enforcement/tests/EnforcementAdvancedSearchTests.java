@@ -319,7 +319,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
                 Vehicle.VEHICLE_CLASS1_KAWASAKI_2013.carReg, Vehicle.VEHICLE_CLASS1_KAWASAKI_2013,
                 VehicleDetails.Kawasaki_ZX1400}, {Login.LOGIN_ENFTESTER, Text.TEXT_VIN_TYPE,
                 Vehicle.VEHICLE_CLASS1_DAKOTA_1924.fullVIN, Vehicle.VEHICLE_CLASS1_DAKOTA_1924,
-                VehicleDetails.Kawasaki_ZX1400},
+                VehicleDetails.VEHICLE_CLASS1_DAKOTA_1924},
 
         };
     }

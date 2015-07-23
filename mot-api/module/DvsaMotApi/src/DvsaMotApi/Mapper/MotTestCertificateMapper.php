@@ -10,6 +10,7 @@ namespace DvsaMotApi\Mapper;
 
 use DataCatalogApi\Service\DataCatalogService;
 use DvsaCommon\Date\DateUtils;
+use DvsaMotApi\Service\MotTestDate;
 use DvsaCommon\Utility\ArrayUtils;
 
 /**
@@ -126,7 +127,7 @@ class MotTestCertificateMapper extends AbstractMotTestMapper
         $this->setValue(
             self::REP_VAR_ADDITIONAL_INFO,
             'To preserve the anniversary of the expiry date, the earliest you can present your vehicle for test is '
-            . $this->formatDate(DateUtils::preservationDate(new \DateTime($expiryDate))) . '.'
+            . $this->formatDate(MotTestDate::preservationDate(new \DateTime($expiryDate))) . '.'
         );
     }
 }

@@ -47,6 +47,9 @@ class Vehicle extends MotApi
             'transmissionType' => 2,
             'vin' => self::randomVin(),
             'dateOfFirstUse' => '1990-01-01',
+            'dateOfRegistration' => '1980/01/01',
+            'dateOfManufacture' => '1980/01/01',
+            'newAtFirstReg' => 0,
             'oneTimePassword' => Authentication::ONE_TIME_PASSWORD,
             'vtsId' => 1,
         ], $vehicleMerge);

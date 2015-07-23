@@ -54,4 +54,10 @@ class DvlaVehicleTest extends \PHPUnit_Framework_TestCase
         $dvlaVehicle->setNewAtFirstReg(false);
         $this->assertFalse($dvlaVehicle->isVehicleNewAtFirstRegistration());
     }
+
+    public function testInstanceKnowsItsType()
+    {
+        $dvlaVehicle = new DvlaVehicle();
+        $this->assertTrue($dvlaVehicle->isDvla());
+    }
 }

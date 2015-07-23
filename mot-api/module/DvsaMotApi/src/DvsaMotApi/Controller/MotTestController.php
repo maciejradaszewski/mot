@@ -20,7 +20,6 @@ use Zend\View\Model\JsonModel;
 class MotTestController extends AbstractDvsaRestfulController implements TransactionAwareInterface
 {
     use TransactionAwareTrait;
-
     const FIELD_SITEID = 'siteid';
     const FIELD_LOCATION = 'location';
     const FIELD_ONE_PERSON_TEST = 'onePersonTest';
