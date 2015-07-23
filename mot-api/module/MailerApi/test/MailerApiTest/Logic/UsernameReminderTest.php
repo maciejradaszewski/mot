@@ -11,7 +11,7 @@ use MailerApi\Logic\UsernameReminder;
 use MailerApi\Validator\MailerValidator;
 use MailerApiTest\Mixin\ServiceManager;
 use PHPUnit_Framework_TestCase;
-use UserApi\Person\Service\PersonalDetailsService;
+use PersonApi\Service\PersonalDetailsService;
 use Zend\Log\Logger;
 
 class UsernameReminderTest extends PHPUnit_Framework_TestCase

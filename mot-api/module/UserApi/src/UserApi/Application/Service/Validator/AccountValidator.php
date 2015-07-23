@@ -6,7 +6,7 @@ use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Date\Exception\DateException;
 use DvsaCommonApi\Service\Exception\RequiredFieldException;
 use DvsaCommonApi\Service\Validator\DrivingLicenceValidator;
-use UserApi\Person\Service\Validator\BasePersonValidator;
+use PersonApi\Service\Validator\BasePersonValidator;
 
 /**
  * Class AccountValidator

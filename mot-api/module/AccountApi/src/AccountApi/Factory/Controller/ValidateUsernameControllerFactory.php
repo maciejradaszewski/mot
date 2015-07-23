@@ -3,7 +3,7 @@
 namespace AccountApi\Factory\Controller;
 
 use AccountApi\Controller\ValidateUsernameController;
-use UserApi\Person\Service\PersonService;
+use PersonApi\Service\PersonService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;

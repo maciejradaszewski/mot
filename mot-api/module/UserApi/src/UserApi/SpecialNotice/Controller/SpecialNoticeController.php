@@ -4,7 +4,7 @@ namespace UserApi\SpecialNotice\Controller;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApi\Model\ApiResponse;
 use DvsaCommonApi\Service\Exception\BadRequestException;
-use UserApi\Person\Service\PersonService;
+use PersonApi\Service\PersonService;
 use UserApi\SpecialNotice\Service\SpecialNoticeService;
 
 /**

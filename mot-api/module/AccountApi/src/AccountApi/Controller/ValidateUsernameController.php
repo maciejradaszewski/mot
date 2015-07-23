@@ -6,7 +6,7 @@ use AccountApi\Service\TokenService;
 use Doctrine\ORM\EntityManager;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApi\Model\ApiResponse;
-use UserApi\Person\Service\PersonService;
+use PersonApi\Service\PersonService;
 
 /**
  *

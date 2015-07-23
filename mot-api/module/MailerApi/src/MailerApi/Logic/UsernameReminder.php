@@ -5,7 +5,7 @@ namespace MailerApi\Logic;
 use DvsaCommon\Dto\Mailer\MailerDto;
 use MailerApi\Service\MailerService;
 use MailerApi\Validator\MailerValidator;
-use UserApi\Person\Service\PersonalDetailsService;
+use PersonApi\Service\PersonalDetailsService;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

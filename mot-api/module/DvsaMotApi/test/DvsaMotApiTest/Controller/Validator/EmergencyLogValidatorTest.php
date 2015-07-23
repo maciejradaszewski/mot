@@ -11,7 +11,7 @@ use DvsaEntities\Entity\Person;
 use DvsaMotApi\Controller\Validator\EmergencyLogValidator;
 use DvsaMotApi\Service\EmergencyService;
 use SiteApi\Service\SiteService;
-use UserApi\Person\Service\PersonService;
+use PersonApi\Service\PersonService;
 use Zend\ServiceManager\ServiceManager;
 
 class EmergencyLogValidatorTest extends \PHPUnit_Framework_TestCase
@@ -28,7 +28,7 @@ class EmergencyLogValidatorTest extends \PHPUnit_Framework_TestCase
     /** @var  \SiteApi\Service\SiteService */
     protected $mockSiteService;
 
-    /** \UserApi\Person\Service */
+    /** \PersonApi\Service */
     protected $mockPersonService;
 
     /** @var  \DvsaMotApi\Service\EmergencyService */

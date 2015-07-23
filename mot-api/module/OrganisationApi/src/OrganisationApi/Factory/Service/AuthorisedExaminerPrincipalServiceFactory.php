@@ -5,7 +5,7 @@ namespace OrganisationApi\Factory\Service;
 use Doctrine\ORM\EntityManager;
 use DvsaEntities\Entity\Organisation;
 use OrganisationApi\Service\AuthorisedExaminerPrincipalService;
-use UserApi\Person\Service\BasePersonService;
+use PersonApi\Service\BasePersonService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

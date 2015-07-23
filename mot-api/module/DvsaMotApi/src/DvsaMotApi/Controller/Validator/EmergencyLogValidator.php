@@ -11,7 +11,7 @@ use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaEntities\Entity\EmergencyLog;
 use DvsaMotApi\Service\EmergencyService;
 use SiteApi\Service\SiteService;
-use UserApi\Person\Service\PersonService;
+use PersonApi\Service\PersonService;
 use Zend\ServiceManager\ServiceManager;
 
 /**

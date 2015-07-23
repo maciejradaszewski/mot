@@ -12,11 +12,11 @@ use UserApi\HelpDesk\Factory\Service\ResetClaimAccountServiceFactory;
 use UserApi\HelpDesk\Service\ResetClaimAccountService;
 use UserApi\Message\Service\MessageService;
 use UserApi\HelpDesk\Service\HelpDeskPersonService;
-use UserApi\Person\Service\BasePersonService;
-use UserApi\Person\Service\PersonalAuthorisationForMotTestingService as PersonalAuthorisationService;
-use UserApi\Person\Service\PersonalDetailsService;
-use UserApi\Person\Service\PersonService;
-use UserApi\Person\Service\Validator\BasePersonValidator;
+use PersonApi\Service\BasePersonService;
+use PersonApi\Service\PersonalAuthorisationForMotTestingService as PersonalAuthorisationService;
+use PersonApi\Service\PersonalDetailsService;
+use PersonApi\Service\PersonService;
+use PersonApi\Service\Validator\BasePersonValidator;
 use UserApi\SpecialNotice\Service\SpecialNoticeService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use MailerApi\Factory\MailerServiceFactory;
@@ -45,16 +45,9 @@ class Module
                 AccountService::class               => Factory\AccountServiceFactory::class,
                 AccountValidator::class             => Factory\AccountValidatorFactory::class,
                 ApplicationService::class           => Factory\ApplicationServiceFactory::class,
-                BasePersonService::class            => Factory\BasePersonServiceFactory::class,
-                BasePersonValidator::class          => Factory\BasePersonValidatorFactory::class,
-                DashboardService::class             => Factory\DashboardServiceFactory::class,
                 HelpDeskPersonService::class        => Factory\HelpDeskPersonServiceFactory::class,
                 MessageService::class               => Factory\MessageServiceFactory::class,
-                PersonalAuthorisationService::class => Factory\PersonalAuthorisationForMotTestingServiceFactory::class,
-                PersonalDetailsService::class       => Factory\PersonalDetailsServiceFactory::class,
-                PersonService::class                => Factory\PersonServiceFactory::class,
                 SpecialNoticeService::class         => Factory\SpecialNoticeServiceFactory::class,
-                UserStatsService::class             => Factory\UserStatsServiceFactory::class,
                 MailerService::class                => MailerServiceFactory::class,
                 ResetClaimAccountService::class     => ResetClaimAccountServiceFactory::class,
             ],

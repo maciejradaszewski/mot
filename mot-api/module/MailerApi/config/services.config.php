@@ -1,7 +1,7 @@
 <?php
 
-use UserApi\Person\Service\PersonalDetailsService;
-use UserApi\Factory\PersonalDetailsServiceFactory;
+use PersonApi\Service\PersonalDetailsService;
+use PersonApi\Factory\Service\PersonalDetailsServiceFactory;
 use MailerApi\Factory\MailerServiceFactory;
 use MailerApi\Service\MailerService;
 

@@ -28,7 +28,7 @@ class EmergencyLogControllerTest extends AbstractMotApiControllerTestCase
     /** @var  \SiteApi\Service\SiteService */
     protected $mockSiteService;
 
-    /** \UserApi\Person\Service */
+    /** \PersonApi\Service */
     protected $mockPersonService;
 
     /** @var  \DvsaMotApi\Service\EmergencyService */
@@ -56,7 +56,7 @@ class EmergencyLogControllerTest extends AbstractMotApiControllerTestCase
             ->willReturn(new \stdClass());
 
         $this->mockPersonService = XMock::of(
-            '\UserApi\Person\Service\PersonService',
+            '\PersonApi\Service\PersonService',
             ['getPersonByUserReference']
         );
         $this->mockPerson = XMock::of(

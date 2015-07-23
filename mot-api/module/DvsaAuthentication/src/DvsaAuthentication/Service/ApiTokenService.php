@@ -11,11 +11,13 @@ class ApiTokenService implements TokenServiceInterface
 
     private $request;
 
-    public function __construct($request){
+    public function __construct($request)
+    {
         $this->request = $request;
     }
 
-    public function getToken() {
+    public function getToken()
+    {
 
         return $this->parseToken();
     }

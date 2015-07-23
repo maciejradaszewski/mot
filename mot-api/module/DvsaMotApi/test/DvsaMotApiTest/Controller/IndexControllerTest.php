@@ -1,7 +1,6 @@
 <?php
 namespace DvsaMotApiTest\Controller;
 
-use DvsaMotApiTest\Controller\AbstractMotApiControllerTestCase;
 use DvsaMotApi\Controller\IndexController;
 
 /**
