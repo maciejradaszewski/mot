@@ -2,7 +2,7 @@
 
 namespace UserApiTest\Service\Validator;
 
-use UserApi\Person\Service\Validator\PersonalAuthorisationForMotTestingValidator;
+use PersonApi\Service\Validator\PersonalAuthorisationForMotTestingValidator;
 
 /**
  * unit tests for PersonalAuthorisationForMotTestingValidator

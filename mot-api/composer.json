@@ -35,6 +35,8 @@
             "NonWorkingDaysApi": "module/NonWorkingDaysApi/src",
             "NotificationApi": "module/NotificationApi/src",
             "OrganisationApi": "module/OrganisationApi/src",
+            "PersonApi": "module/PersonApi/src",
+            "PersonApiTest": "module/PersonApi/test",
             "SiteApi": "module/SiteApi/src",
             "UserApi": "module/UserApi/src",
             "UserFacade": "module/UserFacade/src",

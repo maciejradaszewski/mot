@@ -8,7 +8,7 @@ use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApiTest\Controller\AbstractRestfulControllerTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
-use UserApi\Person\Service\PersonService;
+use PersonApi\Service\PersonService;
 
 /**
  * Class ValidateUsernameControllerTest

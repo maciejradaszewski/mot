@@ -9,7 +9,7 @@ use DvsaCommon\Dto\Mailer\MailerDto;
 use DvsaCommon\Utility\ArrayUtils;
 use MailerApi\Logic\UsernameReminder;
 use MailerApi\Service\MailerService;
-use UserApi\Person\Service\PersonalDetailsService;
+use PersonApi\Service\PersonalDetailsService;
 
 use MailerApi\Validator\MailerValidator;
 use Zend\ServiceManager\ServiceLocatorInterface;

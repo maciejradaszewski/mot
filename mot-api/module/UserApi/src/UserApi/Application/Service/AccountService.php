@@ -28,7 +28,7 @@ use DvsaEntities\Repository\CountryOfRegistrationRepository;
 use DvsaEntities\Repository\LicenceTypeRepository;
 use UserApi\Application\Service\Exception\DuplicatedUserException;
 use UserApi\Application\Service\Validator\AccountValidator;
-use UserApi\Person\Service\BasePersonService;
+use PersonApi\Service\BasePersonService;
 use UserFacade\Exception\UserExistsException;
 use Zend\Form\Annotation\Validator;
 

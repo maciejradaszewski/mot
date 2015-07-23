@@ -5,7 +5,7 @@ namespace MailerApi\Logic;
 use DvsaCommon\Dto\Mailer\MailerDto;
 use MailerApi\Service\MailerService;
 use DvsaCommon\Utility\ArrayUtils;
-use UserApi\Person\Service\PersonalDetailsService;
+use PersonApi\Service\PersonalDetailsService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;

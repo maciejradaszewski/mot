@@ -10,7 +10,7 @@ use DvsaEntities\Entity\AuthorisationForAuthorisedExaminer;
 use DvsaEntities\Entity\AuthorisedExaminerPrincipalAssociation;
 use DvsaEntities\Repository\OrganisationRepository;
 use OrganisationApi\Service\Mapper\AuthorisedExaminerPrincipalMapper;
-use UserApi\Person\Service\BasePersonService;
+use PersonApi\Service\BasePersonService;
 
 /**
  * AEP service for getting, adding and deleting in context of an AE

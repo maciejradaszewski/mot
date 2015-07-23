@@ -8,7 +8,7 @@ use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotApi\Service\UserService;
 use DvsaMotApiTest\Controller\AbstractMotApiControllerTestCase;
 use MailerApi\Controller\MailerController;
-use UserApi\Person\Service\PersonalDetailsService;
+use PersonApi\Service\PersonalDetailsService;
 use DvsaEntities\Entity\Person;
 use Zend\View\Renderer\PhpRenderer;
 
