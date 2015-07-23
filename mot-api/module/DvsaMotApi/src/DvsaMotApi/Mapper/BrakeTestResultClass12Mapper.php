@@ -34,7 +34,6 @@ class BrakeTestResultClass12Mapper
             ->setBrakeTestType($brakeTestType)
             ->setVehicleWeightFront(ArrayUtils::tryGet($data, 'vehicleWeightFront'))
             ->setVehicleWeightRear(ArrayUtils::tryGet($data, 'vehicleWeightRear'))
-            ->setRiderWeight(ArrayUtils::tryGet($data, 'riderWeight'))
             ->setSidecarWeight(ArrayUtils::tryGet($data, 'sidecarWeight'))
 
             ->setControl1EffortFront(ArrayUtils::tryGet($data, 'control1EffortFront'))
@@ -56,6 +55,11 @@ class BrakeTestResultClass12Mapper
             ->setControl2EfficiencyPass(ArrayUtils::tryGet($data, 'control2EfficiencyPass'))
             ->setGradientControl2AboveUpperMinimum(ArrayUtils::tryGet($data, 'gradientControl2AboveUpperMinimum'))
             ->setGradientControl2BelowMinimum(ArrayUtils::tryGet($data, 'gradientControl2BelowMinimum'));
+
+        if (isset($data['riderWeight']) && !empty($data['riderWeight']))
+        {
+            $brakeTestResult->setRiderWeight($data['riderWeight']);
+        }
 
         return $brakeTestResult;
     }

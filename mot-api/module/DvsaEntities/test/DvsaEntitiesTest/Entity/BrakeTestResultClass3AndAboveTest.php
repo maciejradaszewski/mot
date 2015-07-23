@@ -136,6 +136,7 @@ class BrakeTestResultClass3AndAboveTest extends \PHPUnit_Framework_TestCase
             'parkingBrakeEfficiencyPass'  => false,
             'generalPass'                 => false,
             'numberOfAxles'               => 2,
+            'riderWeight'                 => null
         ];
     }
 }
