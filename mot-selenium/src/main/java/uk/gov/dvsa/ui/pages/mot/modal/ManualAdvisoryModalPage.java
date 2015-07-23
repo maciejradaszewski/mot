@@ -46,6 +46,7 @@ public class ManualAdvisoryModalPage extends Page {
     }
 
     public ReasonForRejectionPage addManualAdvisory() {
+
         FormCompletionHelper.selectFromDropDownByValue(lateral, String.valueOf(Advisory.Lateral.nearside));
         FormCompletionHelper.selectFromDropDownByValue(longitudinal, String.valueOf(Advisory.Longitudinal.rear));
         FormCompletionHelper.selectFromDropDownByValue(vertical, String.valueOf(Advisory.Vertical.lower));
@@ -54,7 +55,7 @@ public class ManualAdvisoryModalPage extends Page {
         FormCompletionHelper.selectInputBox(dangerousFailure);
 
         addButton.click();
-        PageInteractionHelper.waitForAjaxToComplete();
+        PageInteractionHelper.refreshPage();
         return new ReasonForRejectionPage(driver);
     }
 }

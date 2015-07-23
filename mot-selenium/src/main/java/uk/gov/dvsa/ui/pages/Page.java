@@ -1,5 +1,6 @@
 package uk.gov.dvsa.ui.pages;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -8,7 +9,7 @@ import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.exception.PhpInlineErrorVerifier;
 
 public abstract class Page {
-    @FindBy(tagName = "h1") protected WebElement title;
+    private By title = By.tagName("h1");
     protected MotAppDriver driver;
 
     public Page(MotAppDriver driver) {
@@ -19,7 +20,7 @@ public abstract class Page {
     }
 
     public String getTitle() {
-        return title.getText();
+        return driver.findElement(title).getText();
     }
 
     protected abstract boolean selfVerify();

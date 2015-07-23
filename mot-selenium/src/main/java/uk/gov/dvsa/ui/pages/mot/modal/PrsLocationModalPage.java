@@ -44,6 +44,12 @@ public class PrsLocationModalPage extends Page {
         description = driver.findElement(By.id(prepareLocatorWithRfrId("description-%s")));
     }
 
+    @Override
+    protected boolean selfVerify() {
+        PageInteractionHelper.waitForElementToBeVisible(modalTitle, Configurator.defaultWebElementTimeout);
+        return PageInteractionHelper.verifyTitle(modalTitle.getText(), PAGE_TITLE);
+    }
+
     private String prepareLocatorWithRfrId(String id) {
         return String.format(id, rfrId);
     }
@@ -55,13 +61,7 @@ public class PrsLocationModalPage extends Page {
         FormCompletionHelper.enterText(description, "Horn Destroyed");
 
         addButton.click();
-        PageInteractionHelper.waitForAjaxToComplete();
+        PageInteractionHelper.refreshPage();
         return new ReasonForRejectionPage(driver);
-    }
-
-    @Override
-    protected boolean selfVerify() {
-        PageInteractionHelper.waitForElementToBeVisible(modalTitle, Configurator.defaultWebElementTimeout);
-        return PageInteractionHelper.verifyTitle(modalTitle.getText(), PAGE_TITLE);
     }
 }
