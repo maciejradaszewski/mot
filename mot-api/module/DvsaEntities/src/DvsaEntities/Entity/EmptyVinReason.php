@@ -7,8 +7,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
 
 /**
  * @ORM\Table(name="empty_vin_reason_lookup")
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\EmptyVinReasonRepository")
-
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\EmptyVinReasonRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class EmptyVinReason extends Entity
 {

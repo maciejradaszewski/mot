@@ -15,7 +15,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  *      @ORM\Index(name="fk_vehicle_class_created_by", columns={"created_by"}),
  *      @ORM\Index(name="fk_vehicle_class_last_updated_by", columns={"last_updated_by"})
  *  })
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\VehicleClassRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\VehicleClassRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class VehicleClass extends Entity
 {

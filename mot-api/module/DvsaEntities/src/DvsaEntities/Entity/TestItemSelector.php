@@ -8,7 +8,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * TestItemSelector
  *
  * @ORM\Table(name="test_item_category", options={"collate"="utf8_general_ci", "charset"="utf8", "engine"="InnoDB"})
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class TestItemSelector
 {

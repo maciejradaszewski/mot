@@ -16,7 +16,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  *      @ORM\Index(name="ix_event_type_outcome_category_map_event_category_id", columns={"event_category_id"})
  *  }
  * )
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class EventTypeOutcomeCategoryMap
 {

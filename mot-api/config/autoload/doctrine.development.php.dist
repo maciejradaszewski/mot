@@ -21,11 +21,20 @@ return array(
                 'generate_proxies' => true,
                 'proxy_dir'        => 'data/DoctrineORMModule/Proxy',
                 'proxy_namespace'  => 'DoctrineORMModule\Proxy',
-                'result_cache'     => 'apc',
-                'metadata_cache'   => 'apc',
-                'query_cache'      => 'apc',
-                'hydration_cache'  => 'apc'
+                'result_cache'     => 'filesystem',
+                'metadata_cache'   => 'filesystem',
+                'query_cache'      => 'filesystem',
+                'hydration_cache'  => 'filesystem',
+                'second_level_cache' => array(
+                    'enabled' => true,
+                    'default_lifetime' => 200,
+                    'regions' => array(
+                        'staticdata' => array(
+                            'lifetime' => 28800,
+                        ),
+                    ),
+                ),
             ),
-        )
+        ),
     ),
 );

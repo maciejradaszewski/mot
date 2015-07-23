@@ -8,7 +8,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
 /**
  * Translated test item category name and description.
  * @ORM\Table(name="ti_category_language_content_map")
- * @ORM\Entity()
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class TestItemCategoryDescription extends Entity
 {

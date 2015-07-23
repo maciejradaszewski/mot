@@ -10,7 +10,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  * DirectDebitHistoryStatus
  *
  * @ORM\Table(name="direct_debit_history_status")
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class DirectDebitHistoryStatus
 {

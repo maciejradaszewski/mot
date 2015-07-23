@@ -8,7 +8,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * MotTestReasonForCancel
  *
  * @ORM\Table(name="mot_test_reason_for_cancel_lookup")
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\MotTestReasonForCancelRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\MotTestReasonForCancelRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class MotTestReasonForCancel
 {

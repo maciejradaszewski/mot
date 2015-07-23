@@ -8,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
  * Configuration
  *
  * @ORM\Table(name="configuration", options={"collate"="utf8_general_ci", "charset"="utf8", "engine"="InnoDB"})
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\ConfigurationRepository")
-
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\ConfigurationRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class Configuration
 {

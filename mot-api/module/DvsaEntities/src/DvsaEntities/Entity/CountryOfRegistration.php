@@ -9,7 +9,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * CountryOfRegistration
  *
  * @ORM\Table(name="country_of_registration_lookup")
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\CountryOfRegistrationRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\CountryOfRegistrationRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class CountryOfRegistration extends Entity
 {

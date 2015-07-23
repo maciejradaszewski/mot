@@ -10,7 +10,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  * FacilityType
  *
  * @ORM\Table(name="facility_type")
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\FacilityTypeRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\FacilityTypeRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class FacilityType extends Entity
 {

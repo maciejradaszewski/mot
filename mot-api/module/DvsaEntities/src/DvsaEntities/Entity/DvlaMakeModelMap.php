@@ -14,7 +14,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * reasons not validate the correctness of this settings at runtime but only through the Validate Schema command.
  *
  * @ORM\Table(name="dvla_model_model_detail_code_map")
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class DvlaMakeModelMap extends Entity
 {

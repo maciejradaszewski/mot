@@ -8,7 +8,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * NotificationTemplateAction
  *
  * @ORM\Table(name="notification_template_action", uniqueConstraints={@ORM\UniqueConstraint(name="id_UNIQUE", columns={"id"})}, indexes={@ORM\Index(name="fk_notification_template_action_1", columns={"notification_template_id"}), @ORM\Index(name="fk_notification_template_action_2", columns={"action_id"})})
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class NotificationTemplateAction extends Entity
 {

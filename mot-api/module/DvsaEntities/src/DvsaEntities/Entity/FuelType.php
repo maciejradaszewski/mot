@@ -19,7 +19,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  *      @ORM\Index(name="fk_fuel_type_person_last_updated_by", columns={"last_updated_by"})
  *  }
  * )
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\FuelTypeRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\FuelTypeRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  *
  * TODO should be EnumType1 (now is mixing id with code)
  */

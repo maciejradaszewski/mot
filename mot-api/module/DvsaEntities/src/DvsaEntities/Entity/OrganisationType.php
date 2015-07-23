@@ -10,7 +10,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  * OrganisationType
  *
  * @ORM\Table(name="organisation_type", options={"collate"="utf8_general_ci", "charset"="utf8", "engine"="InnoDB"})
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\OrganisationTypeRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\OrganisationTypeRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class OrganisationType extends Entity
 {

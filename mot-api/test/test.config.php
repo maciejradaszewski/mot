@@ -7,6 +7,7 @@ $config = [
         'DataCatalogApi',
         'DoctrineModule',
         'DoctrineORMModule',
+        'DvsaDoctrineModule',
         'DvsaAuthentication',
         'DvsaAuthorisation',
         'DvsaDocument',

@@ -8,7 +8,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
 
 /**
  * @ORM\Table(name="equipment_model_status")
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class EquipmentModelStatus extends Entity
 {

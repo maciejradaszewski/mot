@@ -9,7 +9,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * Title.
  *
  * @ORM\Table(name="title", uniqueConstraints={@ORM\UniqueConstraint(name="id_UNIQUE", columns={"id"})})
- * @ORM\Entity(repositoryClass="DvsaEntities\Repository\TitleRepository")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\TitleRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class Title extends Entity
 {

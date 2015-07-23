@@ -9,7 +9,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
 /**
  * Languages supported in the system.
  * @ORM\Table(name="language_type")
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class Language extends Entity
 {

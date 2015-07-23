@@ -9,8 +9,9 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * MotTestStatus
  *
  * @ORM\Table(name="mot_test_status")
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
  * @ORM\Entity(repositoryClass="DvsaEntities\Repository\MotTestStatusRepository")
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class MotTestStatus
 {

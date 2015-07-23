@@ -15,7 +15,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  *      @ORM\Index(name="last_updated_by", columns={"last_updated_by"})
  *  }
  * )
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class Role extends Entity
 {

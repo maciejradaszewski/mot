@@ -10,7 +10,8 @@ use DvsaEntities\EntityTrait\EnumType1EntityTrait;
  * AuthForAeStatus
  *
  * @ORM\Table(name="site_contact_type")
- * @ORM\Entity(repositoryClass="\DvsaEntities\Repository\SiteContactTypeRepository")
+ * @ORM\Entity(repositoryClass="\DvsaEntities\Repository\SiteContactTypeRepository", readOnly=true)
+ * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class SiteContactType extends Entity
 {
