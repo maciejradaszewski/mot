@@ -55,7 +55,7 @@ class VehicleController extends AbstractDvsaRestfulController
 
         $vin = $this->sanitize((string)$request->getQuery(self::VIN_QUERY_PARAMETER, ''));
         $reg = $this->sanitize((string)$request->getQuery(self::REG_QUERY_PARAMETER, ''));
-        $searchDvla = $request->getQuery(self::EXCLUDE_DVLA_PARAMETER) != "true";
+        $searchDvla = !$request->getQuery(self::EXCLUDE_DVLA_PARAMETER);
 
         $vehiclesData = $this->vehicleSearchService->searchVehicleWithMotData($vin, $reg, $searchDvla, 10);
 
