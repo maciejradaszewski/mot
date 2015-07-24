@@ -302,7 +302,7 @@ class AbstractDvsaRestfulController
     }
 
     /**
-     * @return array|object
+     * @return Logger
      */
     protected function getLogger()
     {

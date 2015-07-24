@@ -662,7 +662,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
                     $vehicles = $this->getVehicleSearchService()->search(
                         $data[self::PRM_VIN],
                         $data[self::PRM_REG],
-                        !$this->getVehicleSearchService()->shouldSearchInDvlaVehicleList($searchType)
+                        $this->getVehicleSearchService()->shouldSearchInDvlaVehicleList($searchType)
                     );
 
                     return $this->returnViewModel(
