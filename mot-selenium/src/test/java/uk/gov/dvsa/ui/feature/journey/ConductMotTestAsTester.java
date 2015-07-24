@@ -45,28 +45,7 @@ public class ConductMotTestAsTester extends BaseTest {
 
         assertThat(testCompletePage.verifyPrintButtonDisplayed(), is(true));
     }
-
-    @Test(groups = {"BVT", "Regression"}, dataProvider = "TesterAndVehicle")
-    public void failTestSuccessfullyWithRFR(User tester, Vehicle vehicle) throws URISyntaxException, IOException {
-
-        //Given I am at the Test Result Page
-        TestResultsEntryPage testResultsEntryPage = pageNavigator.gotoTestResultsEntryPage(tester, vehicle);
-
-        //When I complete all brake test values with falling data
-        testResultsEntryPage.completeTestDetailsWithFailValues();
-
-        //Then I should see a fail on the test result page
-        assertThat(testResultsEntryPage.isFailedNoticeDisplayed(), is(true));
-
-        //And when I add RFR, Advisory and PRS
-        TestSummaryPage testSummaryPage = testResultsEntryPage.addDefaultRfrPrsAndManualAdvisory();
-
-        //Then I should be able to complete the test
-        TestCompletePage testCompletePage = testSummaryPage.finishTestAndPrint();
-
-        assertThat(testCompletePage.isRefusalMessageDisplayed(), is(true));
-    }
-
+    
     @Test(groups = {"BVT", "Regression"}, dataProvider = "TesterAndVehicle")
     public void startAndAbandonTest(User tester, Vehicle vehicle) throws URISyntaxException, IOException {
 
