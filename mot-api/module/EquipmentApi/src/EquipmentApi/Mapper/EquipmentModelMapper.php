@@ -1,13 +1,12 @@
 <?php
 
-namespace EquipmentApi\Service\Mapper;
+namespace EquipmentApi\Mapper;
 
 use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommon\Dto\Equipment\EquipmentModelDto;
 use DvsaCommon\Dto\VehicleClassification\VehicleClassDto;
-use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommonApi\Service\Mapper\AbstractApiMapper;
 use DvsaEntities\Entity\EquipmentModel;
-use DvsaEntities\Entity\VehicleClass;
 
 /**
  * Class EquipmentMapper
@@ -27,18 +26,14 @@ class EquipmentModelMapper
         $dto->setCertificationDate(DateTimeApiFormat::date($equipmentModel->getCertificationDate()));
         $dto->setSoftwareVersion($equipmentModel->getSoftwareVersion());
 
-        $vehicleClassDtos = ArrayUtils::map(
-            $equipmentModel->getVehiclesClasses(),
-            function (VehicleClass $vehicleClass) {
-                $dto = new VehicleClassDto();
-                $dto->setId($vehicleClass->getId());
-                $dto->setName($vehicleClass->getName());
-
-                return $dto;
-            }
-        );
-
-        $dto->setVehicleClasses($vehicleClassDtos);
+        $vDtoStack = [];
+        foreach ($equipmentModel->getVehiclesClasses() as $vehicleClass) {
+            $vDto = new VehicleClassDto();
+            $vDto->setId($vehicleClass->getId());
+            $vDto->setName($vehicleClass->getName());
+            $vDtoStack[] = $vDto;
+        }
+        $dto->setVehicleClasses($vDtoStack);
 
         return $dto;
     }
@@ -50,10 +45,10 @@ class EquipmentModelMapper
      */
     public function manyToDto($equipmentModels)
     {
-        return ArrayUtils::map(
-            $equipmentModels, function (EquipmentModel $model) {
-                return $this->toDto($model);
-            }
-        );
+        $stack = [];
+        foreach ($equipmentModels as $model) {
+            $stack[] = $this->toDto($model);
+        }
+        return $stack;
     }
 }
