@@ -4,7 +4,7 @@ namespace SiteApi\Service\Mapper;
 use DvsaCommon\Dto\Equipment\EquipmentDto;
 use DvsaCommonApi\Service\DateMappingUtils;
 use DvsaEntities\Entity\Equipment;
-use EquipmentApi\Service\Mapper\EquipmentModelMapper;
+use EquipmentApi\Mapper\EquipmentModelMapper;
 
 /**
  * Class EquipmentMapper

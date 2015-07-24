@@ -5,7 +5,7 @@ namespace EquipmentApi\Controller;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApi\Model\ApiResponse;
 use EquipmentApi\Service\EquipmentModelService;
-use EquipmentApi\Service\Mapper\EquipmentModelMapper;
+use EquipmentApi\Mapper\EquipmentModelMapper;
 
 /**
  * Class EquipmentModelController
@@ -14,26 +14,17 @@ use EquipmentApi\Service\Mapper\EquipmentModelMapper;
  */
 class EquipmentModelController extends AbstractDvsaRestfulController
 {
+    private $equipmentModelService;
 
-    private $mapper;
-
-    public function __construct()
+    public function __construct(EquipmentModelService $service)
     {
-        $this->mapper = new EquipmentModelMapper();
+        $this->equipmentModelService = $service;
     }
 
     public function getList()
     {
-        $equipmentModels = $this->getEquipmentService()->getAll();
+        $equipmentModelDto = $this->equipmentModelService->getAll();
 
-        return ApiResponse::jsonOk($this->mapper->manyToDto($equipmentModels));
-    }
-
-    /**
-     * @return EquipmentModelService
-     */
-    private function getEquipmentService()
-    {
-        return $this->getServiceLocator()->get(EquipmentModelService::class);
+        return ApiResponse::jsonOk($equipmentModelDto);
     }
 }
