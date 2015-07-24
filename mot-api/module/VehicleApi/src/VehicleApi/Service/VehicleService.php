@@ -273,7 +273,7 @@ class VehicleService
             )
             ->setFuelType($fuelType)
             ->setWeight($dvlaVehicle->getDesignedGrossWeight())
-            ->setDvlaVehicleId($dvlaVehicle->getId())
+            ->setDvlaVehicleId($dvlaVehicle->getDvlaVehicleId())
             ->setFreeTextMakeName($makeModelName);
 
         $this->importWeight($dvlaVehicle, $vehicle);

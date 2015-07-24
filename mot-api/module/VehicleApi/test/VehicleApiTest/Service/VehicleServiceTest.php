@@ -268,7 +268,7 @@ class VehicleServiceTest extends AbstractServiceTestCase
         $this->assertEquals($dvlaVehicle->getBodyType(), $v->getBodyType()->getCode());
         $this->assertEquals($dvlaVehicle->getFuelType(), $v->getFuelType()->getCode());
         $this->assertEquals($dvlaVehicle->getDesignedGrossWeight(), $v->getWeight());
-        $this->assertEquals($dvlaVehicle->getId(), $v->getDvlaVehicleId());
+        $this->assertEquals($dvlaVehicle->getDvlaVehicleId(), $v->getDvlaVehicleId());
         $this->assertEquals(WeightSourceCode::DGW, $v->getWeightSource()->getCode());
     }
 
@@ -444,7 +444,7 @@ class VehicleServiceTest extends AbstractServiceTestCase
         $this->assertEquals($dvlaVehicle->getBodyType(), $v->getBodyType()->getCode());
         $this->assertEquals($dvlaVehicle->getFuelType(), $v->getFuelType()->getCode());
         $this->assertEquals($dvlaVehicle->getDesignedGrossWeight(), $v->getWeight());
-        $this->assertEquals($dvlaVehicle->getId(), $v->getDvlaVehicleId());
+        $this->assertEquals($dvlaVehicle->getDvlaVehicleId(), $v->getDvlaVehicleId());
         $this->assertEquals(WeightSourceCode::DGW, $v->getWeightSource()->getCode());
     }
 

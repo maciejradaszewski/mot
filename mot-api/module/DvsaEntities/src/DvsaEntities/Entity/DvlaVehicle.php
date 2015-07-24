@@ -171,6 +171,15 @@ class DvlaVehicle implements VehicleInterface
     private $v5DocumentNumber;
 
     /**
+     * Unique DVLA reference.
+     *
+     * @var int
+     *
+     * @ORM\Column(name="dvla_vehicle_id", type="integer", length=11, nullable=true)
+     */
+    private $dvlaVehicleId;
+
+    /**
      * @param string $value body type code
      *
      * @return $this
@@ -650,6 +659,14 @@ class DvlaVehicle implements VehicleInterface
     public function isVehicleNewAtFirstRegistration()
     {
         return (bool) $this->newAtFirstReg;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDvlaVehicleId()
+    {
+        return $this->dvlaVehicleId;
     }
 
     /**
