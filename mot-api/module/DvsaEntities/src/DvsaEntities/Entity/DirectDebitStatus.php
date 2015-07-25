@@ -27,7 +27,31 @@ class DirectDebitStatus
     private $name;
 
     /**
+     * @var string CPMS mandate status code
+     *
+     * @ORM\Column(name="cpms_code", type="string", length=5, nullable=false)
+     */
+    private $cpmsCode;
+
+    /**
+     * @return string
+     */
+    public function getCpmsCode()
+    {
+        return $this->cpmsCode;
+    }
+
+    /**
+     * @param string $cpmsCode
+     */
+    public function setCpmsCode($cpmsCode)
+    {
+        $this->cpmsCode = $cpmsCode;
+    }
+
+    /**
      * @param string $name
+     *
      * @return $this
      */
     public function setName($name)
