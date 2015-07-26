@@ -8,6 +8,7 @@ use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaEntities\DqlBuilder\SearchParam\VehicleSearchParam;
 use DvsaEntities\Entity\Colour;
 use DvsaEntities\Entity\DvlaVehicle;
 use DvsaEntities\Entity\FuelType;
@@ -18,6 +19,7 @@ use DvsaEntities\Repository\DvlaVehicleRepository;
 use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\VehicleRepository;
 use DvsaMotApi\Service\TesterService;
+use VehicleApi\Helper\VehicleSearchParams;
 
 /**
  * Class VehicleService.
@@ -101,8 +103,66 @@ class VehicleSearchService
             $vehicles = [];
         }
 
-
         return [$vehicles, $exactMatch];
+    }
+
+    /**
+     * @param VehicleSearchParam $searchParam
+     * @return mixed
+     */
+    public function searchVehicleWithAdditionalData(VehicleSearchParam $searchParam)
+    {
+        $searchParam->process();
+
+        $vin = $searchParam->getVin();
+        $reg = $searchParam->getRegistration();
+
+        if ($this->paramsNeedStripping($vin, $reg)) {
+            list($vin, $reg) = $this->stripParams($vin, $reg);
+            $searchParam->setVin($vin);
+            $searchParam->setRegistration($reg);
+        }
+
+        $vehicles = $this->vehicleRepository->search(
+            $vin,
+            $reg,
+            (!is_null($vin))? true : false
+        );
+
+        if ($vehicles) {
+            $vehicles = $this->extractEnforcementVehicles($vehicles);
+        } else {
+            $vehicles = [];
+        }
+
+        $search['resultCount'] = count($vehicles);
+        $search['totalResultCount'] = count($vehicles);
+        $search['data'] = $vehicles;
+        $search['searched'] = ['isElasticSearch' => false] + $searchParam->toArray();
+
+        return $search;
+    }
+
+    /**
+     * @param Vehicle[] $vehicles
+     * @return array
+     */
+    public function extractEnforcementVehicles($vehicles)
+    {
+        $results = [];
+        foreach ($vehicles as $vehicle) {
+            $results[$vehicle->getId()] = [
+                'id'            => $vehicle->getId(),
+                'vin'           => $vehicle->getVin(),
+                'registration'  => $vehicle->getRegistration(),
+                'make'          => $vehicle->getMakeName(),
+                'model'         => $vehicle->getModelName(),
+                'displayDate'   => $vehicle->getLastUpdatedOn() !== null ?
+                    $vehicle->getLastUpdatedOn()->format('d M Y') :
+                    null,
+            ];
+        }
+        return $results;
     }
 
     public function searchVehicleWithMotData($vin = null, $reg = null, $searchDvla = null, $limit = null)

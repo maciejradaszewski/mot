@@ -68,28 +68,6 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
         $this->assertEquals($motTestData, $result->motTest);
     }
 
-    public function testMotTestIndexShouldRedirectToVtsSelectionPageOnResume()
-    {
-        $this->markTestSkipped("This was working in the frontend, just the test needs work following changes to RBAC");
-
-        $testMotTestData = $this->getTestMotTestData();
-
-        $restClientMock = $this->getRestClientMockForServiceManager();
-
-        $restClientMock->expects($this->any())
-            ->method('get')->will($this->returnValue($testMotTestData));
-
-        $urlMock = $this->getMock(\Zend\Mvc\Controller\Plugin\Url::class);
-        $urlMock->expects($this->any())
-            ->method('fromRoute')
-            ->willReturn('/some-page');
-        $this->controller->getPluginManager()->setService('url', $urlMock);
-
-        $this->getResultForAction('index', ['motTestNumber' => 1]);
-
-        $this->assertRedirectLocation2('/some-page');
-    }
-
     public function testMotTestIndexWithoutIdParameterFails()
     {
         $this->controller->dispatch($this->request);
@@ -567,17 +545,19 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
 
     public function testDisplayTestSummaryCanBeAccessedAuthenticatedRequest()
     {
-        $this->markTestSkipped('This test has been skipped since it needs adjustment to meet VM-4499 criteria');
+        $this->setupAuthorizationService(
+            [PermissionInSystem::MOT_TEST_CONFIRM, PermissionAtSite::MOT_TEST_CONFIRM_AT_SITE]
+        );
 
         $motTestNr = (int)rand(1, 1000);
-        $motTestData = $this->getTestMotTestData(['motTestNumber' => $motTestNr]);
+        $motTestData = $this->getTestMotTestDataDto($motTestNr);
 
-        $this->getRestClientMockWithGetMotTest($motTestData);
+        $this->getRestClientMockWithGetMotTest(['data' => $motTestData]);
 
         $result = $this->getResultForAction('displayTestSummary', ['motTestNumber' => $motTestNr]);
 
         $this->assertResponseStatus(self::HTTP_OK_CODE);
-        $this->assertEquals($this->motTestToDto($motTestData), $result->motDetails);
+        $this->assertEquals($motTestData, $result->motDetails);
     }
 
     public function testDisplayCertificateSummary()

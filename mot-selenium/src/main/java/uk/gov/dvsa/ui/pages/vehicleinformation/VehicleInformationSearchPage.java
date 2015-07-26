@@ -1,0 +1,34 @@
+package uk.gov.dvsa.ui.pages.vehicleinformation;
+
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
+import uk.gov.dvsa.helper.FormCompletionHelper;
+import uk.gov.dvsa.helper.PageInteractionHelper;
+import uk.gov.dvsa.ui.pages.Page;
+
+public class VehicleInformationSearchPage extends Page {
+
+    public static final String PATH = "/vehicle/search";
+
+    private static final String PAGE_TITLE = "Search for vehicle information by...";
+
+    @FindBy (id = "vehicle-search") private WebElement vehicleSearchInput;
+    @FindBy (id = "item-selector-btn-search") private WebElement searchButton;
+
+    public VehicleInformationSearchPage(MotAppDriver driver) {
+        super(driver);
+        selfVerify();
+    }
+
+    @Override
+    public boolean selfVerify() {
+        return PageInteractionHelper.verifyTitle(getTitle(), PAGE_TITLE);
+    }
+
+    public VehicleInformationResultsPage searchAndFindVehicleByRegistrationSuccessfully(String registration) {
+        FormCompletionHelper.enterText(vehicleSearchInput, registration);
+        searchButton.click();
+        return new VehicleInformationResultsPage(driver);
+    }
+}

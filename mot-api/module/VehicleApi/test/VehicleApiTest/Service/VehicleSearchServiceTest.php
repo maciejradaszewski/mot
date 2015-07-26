@@ -10,6 +10,7 @@ use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaEntities\DqlBuilder\SearchParam\VehicleSearchParam;
 use DvsaEntities\Entity\BodyType;
 use DvsaEntities\Entity\Colour;
 use DvsaEntities\Entity\DvlaMakeModelMap;
@@ -279,6 +280,73 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
         foreach ($result as $key => $vehicleArray) {
             $this->assertionBetweenDvlaVehicleObjectAndDvlaVehicleResultArray($vehicleObjects[$key], $vehicleArray);
         }
+    }
+
+    public function testSearchWithAdditionalDataBadRequestExceptionThrownIfNoParametersGiven()
+    {
+        $this->setExpectedException('DvsaCommonApi\Service\Exception\BadRequestException');
+
+        $searchParam = new VehicleSearchParam('', 'vin');
+
+        $service = $this->getMockService();
+        $service->searchVehicleWithAdditionalData($searchParam);
+    }
+
+    public function testSearchWithAdditionalDataWtihSpacesInParametersReturnsSanitizedData()
+    {
+        $searchParam = new VehicleSearchParam('F N Z 6  1  00', 'vin');
+
+        $this->getMockVehicleRepositoryWithResult('searchVehicle', false);
+
+        $service = $this->getMockService();
+        $vehicles = $service->searchVehicleWithAdditionalData($searchParam);
+
+        $this->assertEquals('FNZ6100', $vehicles['searched']['vin']);
+
+        $searchParam = new VehicleSearchParam('F N Z 6  1  00', 'registration');
+
+        $this->getMockVehicleRepositoryWithResult('searchVehicle', false);
+
+        $service = $this->getMockService();
+        $vehicles = $service->searchVehicleWithAdditionalData($searchParam);
+
+        $this->assertEquals('FNZ6100', $vehicles['searched']['registration']);
+    }
+
+    public function testSearchWithAdditionalDataWithResultsWithVin()
+    {
+        // 4 Results
+        $this->getMockVehicleRepositoryWithResult('search', $this->getVehicleMockObjects());
+
+        $searchParam = new VehicleSearchParam('FNZ6110', 'vin');
+
+        $service = $this->getMockService();
+        $vehicles = $service->searchVehicleWithAdditionalData($searchParam);
+
+        $this->assertEquals(4, $vehicles['resultCount']);
+        $this->assertEquals(4, $vehicles['totalResultCount']);
+        $this->assertEquals(4, count($vehicles['data']));
+        $this->assertEquals('FNZ6110', $vehicles['searched']['search']);
+        $this->assertEquals('FNZ6110', $vehicles['searched']['vin']);
+        $this->assertFalse($vehicles['searched']['isElasticSearch']);
+    }
+
+    public function testSearchWithAdditionalDataWithResultsWithRegistration()
+    {
+        // 4 Results
+        $this->getMockVehicleRepositoryWithResult('search', $this->getVehicleMockObjects());
+
+        $searchParam = new VehicleSearchParam('FNZ6110', 'registration');
+
+        $service = $this->getMockService();
+        $vehicles = $service->searchVehicleWithAdditionalData($searchParam);
+
+        $this->assertEquals(4, $vehicles['resultCount']);
+        $this->assertEquals(4, $vehicles['totalResultCount']);
+        $this->assertEquals(4, count($vehicles['data']));
+        $this->assertEquals('FNZ6110', $vehicles['searched']['search']);
+        $this->assertEquals('FNZ6110', $vehicles['searched']['registration']);
+        $this->assertFalse($vehicles['searched']['isElasticSearch']);
     }
 
     /**

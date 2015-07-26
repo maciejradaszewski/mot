@@ -3,6 +3,7 @@
 namespace DvsaMotTestTest\Factory\Controller;
 
 use Application\Service\CatalogService;
+use DvsaClient\MapperFactory;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
@@ -26,6 +27,7 @@ class VehicleSearchControllerFactoryTest extends \PHPUnit_Framework_TestCase
         $serviceManager->setService(ParamObfuscator::class, XMock::of(ParamObfuscator::class));
         $serviceManager->setService('CatalogService', XMock::of(CatalogService::class));
         $serviceManager->setService(VehicleSearchResult::class, XMock::of(VehicleSearchResult::class));
+        $serviceManager->setService(MapperFactory::class, XMock::of(MapperFactory::class));
 
         $controllerManager = $this->getMock('Zend\Mvc\Controller\ControllerManager');
         $controllerManager->expects($this->any())

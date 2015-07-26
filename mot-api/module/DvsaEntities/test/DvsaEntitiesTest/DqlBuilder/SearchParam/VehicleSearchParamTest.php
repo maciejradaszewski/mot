@@ -5,6 +5,7 @@ use DoctrineORMModule\Options\EntityManager;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\DqlBuilder\SearchParam\VehicleSearchParam;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
+use DvsaCommonApi\Service\Exception\BadRequestException;
 
 /**
  * Class VehicleSearchParamTest
@@ -18,19 +19,12 @@ class VehicleSearchParamTest extends AbstractServiceTestCase
     const TYPE_VRM_TEST = 'registration';
     const TYPE_INVALID_TEST = 'INVALID';
 
-    protected $mockEm;
-
-    public function setup()
-    {
-        $this->mockEm = XMock::of(EntityManager::class, ['getRepository']);
-    }
-
     /**
      * Test we can create a VehicleSearchParam by vrm
      */
     public function testVehicleSearchParamVrm()
     {
-        $vehicleSearchParam = new VehicleSearchParam($this->mockEm, self::SEARCH_TEST, self::TYPE_VRM_TEST);
+        $vehicleSearchParam = new VehicleSearchParam(self::SEARCH_TEST, self::TYPE_VRM_TEST);
         $vehicleSearchParam->process();
 
         $this->assertSame(self::SEARCH_TEST, $vehicleSearchParam->getSearch());
@@ -43,7 +37,7 @@ class VehicleSearchParamTest extends AbstractServiceTestCase
      */
     public function testVehicleSearchParamVin()
     {
-        $vehicleSearchParam = new VehicleSearchParam($this->mockEm, self::SEARCH_TEST, self::TYPE_VIN_TEST);
+        $vehicleSearchParam = new VehicleSearchParam(self::SEARCH_TEST, self::TYPE_VIN_TEST);
         $vehicleSearchParam->process();
 
         $this->assertSame(self::SEARCH_TEST, $vehicleSearchParam->getSearch());
@@ -56,9 +50,9 @@ class VehicleSearchParamTest extends AbstractServiceTestCase
      */
     public function testVehicleSearchParamInvalidTypeThrowException()
     {
-        $this->setExpectedException('UnexpectedValueException');
+        $this->setExpectedException('DvsaCommonApi\Service\Exception\BadRequestException');
 
-        $vehicleSearchParam = new VehicleSearchParam($this->mockEm, self::SEARCH_TEST, self::TYPE_INVALID_TEST);
+        $vehicleSearchParam = new VehicleSearchParam(self::SEARCH_TEST, self::TYPE_INVALID_TEST);
         $vehicleSearchParam->process();
     }
 
@@ -67,9 +61,9 @@ class VehicleSearchParamTest extends AbstractServiceTestCase
      */
     public function testVehicleSearchParamInvalidSearchThrowException()
     {
-        $this->setExpectedException('UnexpectedValueException');
+        $this->setExpectedException('DvsaCommonApi\Service\Exception\BadRequestException');
 
-        $vehicleSearchParam = new VehicleSearchParam($this->mockEm, '', self::TYPE_VIN_TEST);
+        $vehicleSearchParam = new VehicleSearchParam('', self::TYPE_VIN_TEST);
         $vehicleSearchParam->process();
     }
 
@@ -78,7 +72,7 @@ class VehicleSearchParamTest extends AbstractServiceTestCase
      */
     public function testVehicleSearchParamToArray()
     {
-        $vehicleSearchParam = new VehicleSearchParam($this->mockEm, self::SEARCH_TEST, self::TYPE_VIN_TEST);
+        $vehicleSearchParam = new VehicleSearchParam(self::SEARCH_TEST, self::TYPE_VIN_TEST);
         $vehicleSearchParam->process();
 
         $this->assertSame($this->getToArray(), $vehicleSearchParam->toArray());

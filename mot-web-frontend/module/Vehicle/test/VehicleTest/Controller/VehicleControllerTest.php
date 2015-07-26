@@ -42,10 +42,12 @@ class VehicleControllerTest extends AbstractDvsaMotTestTestCase
         $serviceManager->setAllowOverride(true);
         $this->setServiceManager($serviceManager);
         $paramObfuscator = $this->createParamObfuscatorMock(self::$obfuscationMap);
-        $this->setController(new VehicleController($paramObfuscator));
-        $this->getController()->setServiceLocator($serviceManager);
 
         $serviceManager->setService(MapperFactory::class, $this->getMockMapperFactory());
+
+        $this->setController(new VehicleController($paramObfuscator, $this->getMockMapperFactory()));
+
+        $this->getController()->setServiceLocator($serviceManager);
 
         $this->createHttpRequestForController('Vehicle');
 
@@ -176,8 +178,8 @@ class VehicleControllerTest extends AbstractDvsaMotTestTestCase
                 'postParams'   => $postParams,
                 'searchResult' => $this->getVehicleSearchOneResult(),
                 'expect'       => [
-                    'url' => VehicleUrlBuilderWeb::vehicle(self::$obfuscationMap[1234])
-                        . '?type=' . ArrayUtils::tryGet($postParams, 'type') . '&backTo=search',
+                    'status'     => self::HTTP_OK_CODE,
+                    'instanceOf' => ViewModel::class,
                 ],
             ],
             [

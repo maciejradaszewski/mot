@@ -103,25 +103,6 @@ class ElasticSearchService
     }
 
     /**
-     * Search for Vehicles
-     *
-     * @param VehicleSearchParam $params
-     *
-     * @return array
-     * @throws \UnexpectedValueException
-     */
-    public function findVehicles(VehicleSearchParam $params)
-    {
-        $this->authService->assertGranted(PermissionInSystem::VEHICLE_READ);
-
-        $result = SuperSearchQuery::execute($params, new FbQueryVehicle());
-        if($result['resultCount'] == 0 && $this->checkIfParamsNeedStripping($params)) {
-            $result = SuperSearchQuery::execute($this->stripParams($params), new FbQueryVehicle());
-        }
-        return $result;
-    }
-
-    /**
      * Provides the ability to check the users access to the current search
      *
      * @param string $permission

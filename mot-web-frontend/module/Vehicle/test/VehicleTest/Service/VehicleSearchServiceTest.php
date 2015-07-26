@@ -1,11 +1,13 @@
 <?php
 namespace VehicleTest\Service;
 
+use DvsaClient\MapperFactory;
 use DvsaCommon\Obfuscate\EncryptionKey;
 use DvsaCommon\Obfuscate\ParamEncoder;
 use DvsaCommon\Obfuscate\ParamEncrypter;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommonTest\Bootstrap;
+use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTestTest\Controller\AbstractDvsaMotTestTestCase;
 use Vehicle\Controller\VehicleController;
 use Vehicle\Service\VehicleSearchService;
@@ -26,7 +28,7 @@ class VehicleSearchServiceTest extends AbstractDvsaMotTestTestCase
         $serviceManager->setAllowOverride(true);
         $this->setServiceManager($serviceManager);
 
-        $this->controller = new VehicleController($this->createParamObfuscator());
+        $this->controller = new VehicleController($this->createParamObfuscator(), XMock::of(MapperFactory::class));
         $this->controller->setServiceLocator(Bootstrap::getServiceManager());
 
         $this->restClientMock = $this->getRestClientMockForServiceManager();
@@ -70,8 +72,6 @@ class VehicleSearchServiceTest extends AbstractDvsaMotTestTestCase
 
     public function testCheckVehicleResultsOneResult()
     {
-        $this->markTestSkipped('Redirect not possible until the page detail is done');
-
         $vehicleResults                             = $this->getVehicleResults();
         $vehicleResults['data']['data']             = $this->getVehicleSearchOneResult();
         $vehicleResults['data']['totalResultCount'] = 1;
@@ -80,7 +80,7 @@ class VehicleSearchServiceTest extends AbstractDvsaMotTestTestCase
 
         $this->vehicleSearch->getVehicleResults();
 
-        $this->assertInstanceOf(\Zend\Http\Response::class, $this->vehicleSearch->checkVehicleResults());
+        $this->assertInstanceOf(\Zend\View\Model\ViewModel::class, $this->vehicleSearch->checkVehicleResults());
     }
 
     public function testCheckVehicleResultsMultiResult()

@@ -2,12 +2,12 @@
 
 namespace VehicleApi\Controller;
 
-use DvsaCommonApi\Model\ApiResponse;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
+use DvsaCommonApi\Model\ApiResponse;
 use DvsaEntities\DqlBuilder\SearchParam\VehicleSearchParam;
 use DvsaMotApi\Model\OutputFormat;
+use VehicleApi\Service\VehicleSearchService;
 use Zend\I18n\Validator\DateTime;
-use DvsaElasticSearch\Service\ElasticSearchService as SearchService;
 
 /**
  * Class VehicleSearchController
@@ -16,13 +16,16 @@ use DvsaElasticSearch\Service\ElasticSearchService as SearchService;
  */
 class VehicleSearchController extends AbstractDvsaRestfulController
 {
+    const VIN_QUERY_PARAMETER = 'vin';
+    const REG_QUERY_PARAMETER = 'reg';
+
     const SEARCH_PARAM_REQUIRED_DISPLAY_MESSAGE =
         'Missing Vehicle VRM/VIN number. Please enter a VRM/VIN to search for.';
 
     /**
-     * @var SearchService
+     * @var VehicleSearchService
      */
-    protected $searchService;
+    protected $vehicleSearchService;
 
     /**
      * @var VehicleSearchParam
@@ -30,12 +33,12 @@ class VehicleSearchController extends AbstractDvsaRestfulController
     protected $vehicleSearchParam;
 
     /**
-     * @param SearchService $searchService
+     * @param VehicleSearchService $vehicleSearchService
      * @param VehicleSearchParam $vehicleSearchParam
      */
-    public function __construct(SearchService $searchService, VehicleSearchParam $vehicleSearchParam)
+    public function __construct(VehicleSearchService $vehicleSearchService, VehicleSearchParam $vehicleSearchParam)
     {
-        $this->searchService = $searchService;
+        $this->vehicleSearchService = $vehicleSearchService;
         $this->vehicleSearchParam = $vehicleSearchParam;
     }
 
@@ -45,9 +48,9 @@ class VehicleSearchController extends AbstractDvsaRestfulController
     public function getList()
     {
         try {
-            $vehicles = $this->searchService->findVehicles($this->vehicleSearchParam);
+            $searchParam = $this->vehicleSearchParam;
+            $vehicles = $this->vehicleSearchService->searchVehicleWithAdditionalData($searchParam);
             return ApiResponse::jsonOk($vehicles);
-
         } catch (\UnexpectedValueException $e) {
             return $this->returnBadRequestResponseModel(
                 $e->getMessage(),

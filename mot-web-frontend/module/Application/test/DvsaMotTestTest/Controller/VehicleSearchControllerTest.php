@@ -42,6 +42,7 @@ class VehicleSearchControllerTest extends AbstractVehicleSearchControllerTest
     private $mockParamObfuscator;
 
     private $mockVehicleSearchService;
+    private $mockMapperFactory;
 
     protected function setUp()
     {
@@ -56,17 +57,18 @@ class VehicleSearchControllerTest extends AbstractVehicleSearchControllerTest
 
         $this->mockVehicleSearchService = XMock::of(VehicleSearchService::class);
 
+        $mockMapperFactory = $this->getMapperFactoryMock();
+        $serviceManager->setService(MapperFactory::class, $mockMapperFactory);
+
         $this->setController(
             new VehicleSearchController(
                 $this->mockVehicleSearchService,
                 $this->createParamObfuscator(),
                 new StubCatalogService(),
-                $this->createVehicleSearchResultModel()
+                $this->createVehicleSearchResultModel(),
+                $mockMapperFactory
             )
         );
-
-        $mockMapperFactory = $this->getMapperFactoryMock();
-        $serviceManager->setService(MapperFactory::class, $mockMapperFactory);
 
         parent::setUp();
     }

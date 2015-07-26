@@ -24,12 +24,12 @@ class VehicleSearchParams
 
     public function getSearchParam()
     {
-        return $this->request->getQuery(self::SEARCH_QUERY_PARAMETER);
+        return $this->request->getQuery(self::SEARCH_QUERY_PARAMETER, '');
     }
 
     public function getSearchTypeParam()
     {
-        return $this->request->getQuery(self::SEARCH_TYPE_QUERY_PARAMETER);
+        return $this->request->getQuery(self::SEARCH_TYPE_QUERY_PARAMETER, '');
     }
 
 }

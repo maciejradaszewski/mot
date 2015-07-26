@@ -21,25 +21,16 @@ class VehicleSearchParamFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $sl)
     {
-
-        // @todo - get the SearchParamHelper from the SM and inject it into VehicleSearchParam.
-        // Make sure this change doesn't affect potential multiple calls of VehicleSearchParam::__construct()
-
         $request = $sl->get('Request');
-        $em = $sl->get('Doctrine\ORM\EntityManager');
-
         $vehicleSearchParamsHelper = new VehicleSearchParamsHelper($request);
 
         $searchParams = new VehicleSearchParam(
-            $em,
             $vehicleSearchParamsHelper->getSearchParam(),
             $vehicleSearchParamsHelper->getSearchTypeParam()
         );
 
         $searchParams->loadStandardDataTableValuesFromRequest($request);
-        $searchParams->process();
 
         return $searchParams;
-
     }
 }

@@ -13,6 +13,7 @@ import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
 import uk.gov.dvsa.ui.pages.mot.*;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticePage;
+import uk.gov.dvsa.ui.pages.vehicleinformation.VehicleInformationSearchPage;
 import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticeCreationPage;
 
@@ -142,5 +143,11 @@ public class PageNavigator {
         injectOpenAmCookieAndNavigateToPath(user, SpecialNoticePage.PATH);
 
         return new SpecialNoticePage(driver);
+    }
+
+    public VehicleInformationSearchPage goToVehicleInformationSearchPage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, VehicleInformationSearchPage.PATH);
+
+        return new VehicleInformationSearchPage(driver);
     }
 }

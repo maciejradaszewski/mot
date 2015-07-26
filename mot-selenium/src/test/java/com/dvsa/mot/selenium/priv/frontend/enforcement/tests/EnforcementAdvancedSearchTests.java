@@ -324,18 +324,6 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
         };
     }
 
-    @Test(groups = {"VM-4184", "Sprint2b-V", "Regression"}, dataProvider = "SingleVehicleSearch",
-            description = "Verify vehicle details for a single VRM search")
-    public void verifySingleSearchDetailsPage(Login login, String type, String searchTerm,
-            Vehicle searchVehicle, VehicleDetails vehicleDetails) {
-        VehicleDetailsPage detailsPage =
-                SearchVehicleInformationPage.navigateHereFromLoginPage(driver, login)
-                        .verifyPageTitle().selectVehicleType(type).enterSearchTerm(searchTerm)
-                        .clickSingleVehicleSearch();
-
-        verifyVehicleDetailsPage(detailsPage, searchVehicle, vehicleDetails);
-    }
-
     private VehicleDetailsPage verifyVehicleDetailsPage(VehicleDetailsPage detailsPage,
             Vehicle searchVehicle, VehicleDetails vehicleDetails) {
         detailsPage.verifyPageTitle().verifyPageElements().verifyRegNumber(searchVehicle.carReg)
@@ -355,50 +343,5 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
                 .verifySeatBeltLastCheckedDate(vehicleDetails.getDateOfSeatBelt());
 
         return new VehicleDetailsPage(driver);
-    }
-
-    @DataProvider(name = "MOTTestsSingleVehicles") public Object[][] MOTSingleVehicles() {
-        return new Object[][] {{Login.LOGIN_ENFTESTER, Text.TEXT_VRM_TYPE,
-                Vehicle.VEHICLE_CLASS4_NON_EXISTENT.carReg},
-                {Login.LOGIN_ENFTESTER, Text.TEXT_VIN_TYPE,
-                        Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT.fullVIN}};
-    }
-
-    @Test(groups = {"VM-4186", "Sprint2b-V", "Regression"},
-            description = "Verify vehicle details for a single vehicle search")
-    public void verifyMOTTestsForSingleVehicleSearch() {
-        Site vts = Site.POPULAR_GARAGES;
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_HYUNDAI_2012);
-        createMotTest(login, vts, vehicle, 12345, MotTestApi.TestOutcome.PASSED);
-
-        SearchVehicleInformationPage searchVehicleInformationPage =
-                SearchVehicleInformationPage.navigateHereFromLoginPage(driver, createVE());
-        searchVehicleInformationPage.selectVehicleType(Text.TEXT_VRM_TYPE)
-                .submitVehicleInformationSearch(vehicle.carReg).clickHistoryLink()
-                .clickSummaryLink().verifyReInspectionForVE();
-
-    }
-
-
-    @DataProvider(name = "MOTMultipleVehicles") public Object[][] MOTMultipleVehicles() {
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
-        return new Object[][] {{vehicle, Text.TEXT_VRM_TYPE, vehicle.carReg},
-                {vehicle, Text.TEXT_VIN_TYPE, vehicle.fullVIN}};
-    }
-
-    @Test(groups = {"VM-4186", "Sprint2b-V", "Regression"}, dataProvider = "MOTMultipleVehicles",
-            description = "Verify vehicle details for multiple vehicle search")
-
-    public void verifyMOTTestsForMultipleVehicleSearch(Vehicle vehicle, String vehicleType,
-            String searchTerm) {
-
-        createMotTest(Login.LOGIN_CATBTESTER, Site.POPULAR_GARAGES, vehicle, 13345,
-                MotTestApi.TestOutcome.FAILED);
-
-        RetestSummaryPage retestSummaryPage = SearchVehicleInformationPage
-                .navigateHereFromLoginPage(driver, Login.LOGIN_ENFTESTER).verifyPageTitle()
-                .selectVehicleType(vehicleType).enterSearchTerm(searchTerm)
-                .clickSingleVehicleSearch().clickHistoryLink().clickSummaryLink()
-                .verifyReInspectionForVE();
     }
 }

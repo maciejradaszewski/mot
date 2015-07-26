@@ -55,19 +55,14 @@ public class SearchVehicleInformationPage extends BasePage {
         return new SearchVehicleInformationPage(driver);
     }
 
-    public VehicleDetailsPage clickSingleVehicleSearch() {
-        btnSearch.click();
-        return new VehicleDetailsPage(driver);
-    }
-
     public String getValidationErrors() {
         return validationErrors.getText();
     }
 
-    public VehicleDetailsPage submitVehicleInformationSearch(String search) {
+    public VehicleInformationPage submitVehicleInformationSearch(String search) {
         vehicleSearch.sendKeys(search);
         btnSearch.click();
-        return new VehicleDetailsPage(driver);
+        return new VehicleInformationPage(driver);
     }
 
     public SearchVehicleInformationPage selectVehicleInfoType(String type) {

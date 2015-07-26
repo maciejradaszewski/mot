@@ -63,24 +63,13 @@ class VehicleSearchService
     {
         $data       = $this->apiResults['data'];
         $totalCount = $data['totalResultCount'];
+
         if ($totalCount == 0) {
             $this->controller->addErrorMessagesFromService(self::NO_RESULT_FOUND);
 
             return $this->controller->redirect()->toUrl(
                 VehicleUrlBuilderWeb::search()->queryParams($this->searchData)
             );
-        }
-
-        if ($totalCount == 1) {
-            $vehicleId           = key($data['data']);
-            $obfuscatedVehicleId = $this->paramObfuscator->obfuscateEntry(
-                ParamObfuscator::ENTRY_VEHICLE_ID, $vehicleId
-            );
-
-            $apiUrl = VehicleUrlBuilderWeb::vehicle($obfuscatedVehicleId)
-                ->queryParams($this->searchData + ['backTo' => VehicleController::BACK_TO_SEARCH])->toString();
-
-            return $this->controller->redirect()->toUrl($apiUrl);
         }
 
         return new ViewModel(

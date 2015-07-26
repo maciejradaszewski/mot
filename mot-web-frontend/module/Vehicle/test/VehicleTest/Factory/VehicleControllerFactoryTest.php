@@ -3,7 +3,7 @@
 namespace VehicleTest\Factory;
 
 use DvsaCommon\Obfuscate\ParamObfuscator;
-use DvsaCommonTest\Bootstrap;
+use DvsaClient\MapperFactory;
 use DvsaCommonTest\TestUtils\XMock;
 use Vehicle\Controller\VehicleController;
 use Vehicle\Factory\VehicleControllerFactory;
@@ -18,7 +18,9 @@ class VehicleControllerFactoryTest extends \PHPUnit_Framework_TestCase {
         $serviceManager = new ServiceManager();
 
         $paramObfuscator = XMock::of(ParamObfuscator::class);
+        $mapperFactory = XMock::of(MapperFactory::class);
         $serviceManager->setService(ParamObfuscator::class, $paramObfuscator);
+        $serviceManager->setService(MapperFactory::class, $mapperFactory);
 
         $plugins = $this->getMock('Zend\Mvc\Controller\ControllerManager');
         $plugins->expects($this->any())
