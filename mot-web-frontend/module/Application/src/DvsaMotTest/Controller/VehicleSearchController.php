@@ -4,6 +4,7 @@ namespace DvsaMotTest\Controller;
 
 use Application\Service\CatalogService;
 use Application\Service\ContingencySessionManager;
+use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Dto\Vehicle\VehicleDto;
 use DvsaCommon\Dto\Vehicle\History\VehicleHistoryDto;
@@ -29,7 +30,6 @@ use DvsaMotTest\View\VehicleSearchResult\MotTestUrlTemplate;
 use DvsaMotTest\View\VehicleSearchResult\NoVehiclesFoundMessage;
 use DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultMessage;
 use DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultUrlTemplateInterface;
-use Vehicle\Traits\VehicleServicesTrait;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Request;
 use Zend\Http\Response;
@@ -48,7 +48,6 @@ use Zend\View\Model\ViewModel;
  */
 class VehicleSearchController extends AbstractDvsaMotTestController
 {
-    use VehicleServicesTrait;
 
     const CONTINGENCY_FORM_NOT_RECORDED = 'The contingency test form has not been filled in.';
     const PARTIAL_VIN_NO_REG_ERROR = 'Please complete the registration number field.';
@@ -125,6 +124,11 @@ class VehicleSearchController extends AbstractDvsaMotTestController
     protected $vehicleSearchResultModel;
 
     /**
+     * @var MapperFactory
+     */
+    protected $mapperFactory;
+
+    /**
      * @param VehicleSearchService $vehicleSearchService
      * @param ParamObfuscator $paramObfuscator
      * @param CatalogService $catalogService
@@ -134,12 +138,14 @@ class VehicleSearchController extends AbstractDvsaMotTestController
         VehicleSearchService $vehicleSearchService,
         ParamObfuscator $paramObfuscator,
         CatalogService $catalogService,
-        VehicleSearchResult $vehicleSearchResultModel
+        VehicleSearchResult $vehicleSearchResultModel,
+        MapperFactory $mapperFactory
     ) {
         $this->paramObfuscator = $paramObfuscator;
         $this->catalogService = $catalogService;
         $this->vehicleSearchResultModel = $vehicleSearchResultModel;
         $this->vehicleSearchService = $vehicleSearchService;
+        $this->mapperFactory = $mapperFactory;
     }
 
     /**
@@ -209,7 +215,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
 
         try {
             // Get vehicle data.
-            $vehicle = $this->getMapperFactory()->Vehicle->getById($vehicleId);
+            $vehicle = $this->mapperFactory->Vehicle->getById($vehicleId);
 
             // Get history data.
             $apiUrl = VehicleUrlBuilder::testHistory($vehicleId);
@@ -358,7 +364,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
 
         try {
             // Get vehicle data.
-            $vehicle = $this->getMapperFactory()->Vehicle->getById($vehicleId);
+            $vehicle = $this->mapperFactory->Vehicle->getById($vehicleId);
 
             // Get history data.
             $apiUrl = VehicleUrlBuilder::testHistory($vehicleId);

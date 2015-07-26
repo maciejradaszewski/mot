@@ -3,6 +3,7 @@ namespace DvsaEntities\DqlBuilder\SearchParam;
 
 use Doctrine\ORM\EntityManager;
 use DvsaCommonApi\Model\SearchParam;
+use DvsaCommonApi\Service\Exception\BadRequestException;
 
 /**
  * Class VehicleSearchParam
@@ -11,23 +12,18 @@ use DvsaCommonApi\Model\SearchParam;
  */
 class VehicleSearchParam extends SearchParam
 {
-    /* @var EntityManager */
-    protected $em;
-
     protected $search;
     protected $searchType;
     protected $registration;
     protected $vin;
 
     /**
-     * @param EntityManager $entityManager
      * @param string        $search
      * @param string        $searchType
      */
-    public function __construct($entityManager, $search, $searchType = null)
+    public function __construct($search, $searchType = null)
     {
-        $this->em = $entityManager;
-        $this->search = $search;
+        $this->search = trim($search);
         $this->searchType = strtolower(trim($searchType));
     }
 
@@ -60,8 +56,9 @@ class VehicleSearchParam extends SearchParam
                 break;
 
             default :
-                throw new \UnexpectedValueException(
-                    'Invalid search filter passed, search must contain valid filter type vin or registration.'
+                throw new BadRequestException(
+                    'Invalid search filter passed, search must contain valid filter type vin or registration.',
+                    BadRequestException::ERROR_CODE_INVALID_DATA
                 );
 
         }
@@ -75,8 +72,9 @@ class VehicleSearchParam extends SearchParam
     public function validateInputs()
     {
         if (strlen($this->getSearch()) == 0) {
-            throw new \UnexpectedValueException(
-                'Invalid search passed, search must contain at least one alpha numeric string.'
+            throw new BadRequestException(
+                'Invalid search passed, search must contain at least one alpha numeric string.',
+                BadRequestException::ERROR_CODE_INVALID_DATA
             );
         }
     }
@@ -149,13 +147,4 @@ class VehicleSearchParam extends SearchParam
         return $this;
     }
 
-    /**
-     * @param $repository
-     *
-     * @return \Doctrine\ORM\EntityRepository
-     */
-    public function getRepository($repository)
-    {
-        return $this->em->getRepository($repository);
-    }
 }

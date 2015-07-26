@@ -71,31 +71,6 @@ class ElasticSearchServiceTest extends AbstractServiceTestCase
         $this->assertTrue(true);
     }
 
-    protected function getEsQueryVehicleReturn()
-    {
-        $result = EsHelperTest::getDefaultResult();
-        $result['hits']['hits'][] = [
-            '_index'  => 'development_site',
-            '_type'   => 'site',
-            '_id'     => '14',
-            '_score'  => null,
-            '_source' => [
-                'id' => 26,
-                'vin' => '1HD1BDK10DY123456',
-                'registration' => 'SSE24MAR',
-                'make' => 'Harley Davidson',
-                'model' => 'Service Car Trike',
-                'displayDate' => '2014-10-07 12:32:45',
-                'updatedDate_display' => '07 Oct 2014 12:32',
-                'updatedDate_timestamp' => 1412676600,
-            ],
-            'sort'    => [
-                'S000001'
-            ],
-        ];
-        return $result;
-    }
-
     protected function getEsQuerySiteReturn()
     {
         $result = EsHelperTest::getDefaultResult();
@@ -168,11 +143,4 @@ class ElasticSearchServiceTest extends AbstractServiceTestCase
         return $searchParams;
     }
 
-    protected function getRequestVehicles()
-    {
-        $request = new VehicleSearchParam($this->mockEm, '1HD1BDK10DY123456', 'vin');
-        $request->setFormat('DATA_TABLES');
-        $request->process();
-        return $request;
-    }
 }

@@ -3,6 +3,7 @@
 namespace Vehicle\Controller;
 
 use Core\Controller\AbstractAuthActionController;
+use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
@@ -10,7 +11,6 @@ use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleUrlBuilderWeb;
 use Vehicle\Service\VehicleSearchService;
-use Vehicle\Traits\VehicleServicesTrait;
 use Zend\Stdlib\Parameters;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
@@ -23,14 +23,17 @@ use Zend\View\Model\ViewModel;
  */
 class VehicleController extends AbstractAuthActionController
 {
-    use VehicleServicesTrait;
-
     const BACK_TO_DETAIL             = 'detail';
     const BACK_TO_RESULT             = 'result';
     const BACK_TO_SEARCH             = 'search';
     const ERR_MSG_INVALID_VEHICLE_ID = 'No Vehicle Id provided';
     const FORM_ERROR                 = 'Unable to find Vehicle';
     const NO_RESULT_FOUND            = 'Search term(s) not found...';
+
+    /**
+     * @var MapperFactory
+     */
+    protected $mapperFactory;
 
     /**
      * @var \DvsaCommon\Obfuscate\ParamObfuscator
@@ -40,9 +43,10 @@ class VehicleController extends AbstractAuthActionController
     /**
      * @param \DvsaCommon\Obfuscate\ParamObfuscator $paramObfuscator
      */
-    public function __construct(ParamObfuscator $paramObfuscator)
+    public function __construct(ParamObfuscator $paramObfuscator, MapperFactory $mapperFactory)
     {
         $this->paramObfuscator = $paramObfuscator;
+        $this->mapperFactory = $mapperFactory;
     }
 
     /**
@@ -70,7 +74,7 @@ class VehicleController extends AbstractAuthActionController
 
         $vehicle = null;
         try {
-            $vehicle = $this->getMapperFactory()->Vehicle->getById($vehicleId);
+            $vehicle = $this->mapperFactory->Vehicle->getById($vehicleId);
         } catch (ValidationException $e) {
             $this->addErrorMessages(self::FORM_ERROR);
         }
