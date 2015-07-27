@@ -1,6 +1,6 @@
 <?php
 
-namespace PersonAPi\Service\Validator;
+namespace PersonApi\Service\Validator;
 
 use DvsaCommon\Date\DateUtils;
 use DvsaCommonApi\Service\Exception\BadRequestException;

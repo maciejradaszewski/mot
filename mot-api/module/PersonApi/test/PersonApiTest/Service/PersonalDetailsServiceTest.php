@@ -107,7 +107,7 @@ class PersonDetailsServiceTest extends AbstractServiceTestCase
         $phone             = new Phone();
         $phoneContactType  = PhoneContactTypeCode::PERSONAL;
         $email             = new Email();
-        $personContactType = PersonContactType::personalContact();
+        $personContactType = new \DvsaEntities\Entity\PersonContactType();
         $personContact     = new PersonContact($contactDetail, $personContactType, $person);
 
         $personContactRepository = $this
@@ -164,6 +164,7 @@ class PersonDetailsServiceTest extends AbstractServiceTestCase
                 [PhoneContactType::class, $phoneContactTypeRepository],
                 [Phone::class, $phoneRepository],
                 [Email::class, $emailRepository],
+                [\DvsaEntities\Entity\PersonContactType::class, $personContactTypeRepository]
             ]));
 
         $this->mockIdentity->expects($this->any())

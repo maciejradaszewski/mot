@@ -1,10 +1,10 @@
 <?php
 namespace DvsaEntitiesTest\Entity;
 
-use DvsaCommon\Constants\PersonContactType;
 use DvsaEntities\Entity\ContactDetail;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\PersonContact;
+use DvsaEntities\Entity\PersonContactType;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -20,7 +20,7 @@ class PersonContactTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->personContactType = PersonContactType::fromId(1);
+        $this->personContactType = new PersonContactType();
         $this->contactDetail = new ContactDetail();
         $this->person = new Person();
         $this->personContact = new PersonContact($this->contactDetail, $this->personContactType, $this->person);

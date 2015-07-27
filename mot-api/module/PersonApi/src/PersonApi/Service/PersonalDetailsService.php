@@ -130,6 +130,9 @@ class PersonalDetailsService extends AbstractService
 
         $this->assertViewGranted($person);
 
+        $personContactTypeRepository = $this->entityManager->getRepository(\DvsaEntities\Entity\PersonContactType::class);
+        $personContactType = $personContactTypeRepository->findOneBy(['name' => PersonContactType::PERSONAL]);
+
         /** @var PersonContact $contact */
         $contact = $this
             ->entityManager
@@ -137,7 +140,7 @@ class PersonalDetailsService extends AbstractService
             ->findOneBy(
                 [
                     'person' => $person,
-                    'typeId' => PersonContactType::fromName(PersonContactType::PERSONAL)->getId(),
+                    'type' => $personContactType,
                 ]
             );
         if (null === $contact) {
@@ -286,13 +289,15 @@ class PersonalDetailsService extends AbstractService
      */
     private function updatePersonalContactDetails(Person $person, $data)
     {
+        $personContactTypeRepository = $this->entityManager->getRepository(\DvsaEntities\Entity\PersonContactType::class);
+        $personContactType = $personContactTypeRepository->findOneBy(['name' => PersonContactType::PERSONAL]);
         /** @var $personContact PersonContact */
         $personContact = $this
             ->entityManager
             ->getRepository(PersonContact::class)
             ->findOneBy([
                 'person' => $person,
-                'typeId' => PersonContactType::fromName(PersonContactType::PERSONAL)->getId(),
+                'type' => $personContactType,
             ]);
         if (!$personContact) {
             $contactDetails = $this->createContactDetail();
@@ -381,7 +386,8 @@ class PersonalDetailsService extends AbstractService
     private function createContactDetailPlaceholder(Person $person)
     {
         $contactDetail     = new ContactDetail();
-        $personContactType = PersonContactType::personalContact();
+        $personContactTypeRepository = $this->entityManager->getRepository(\DvsaEntities\Entity\PersonContactType::class);
+        $personContactType = $personContactTypeRepository->findOneBy(['name' => PersonContactType::PERSONAL]);
         $personContact     = new PersonContact($contactDetail, $personContactType, $person);
 
         return $personContact;
@@ -414,7 +420,8 @@ class PersonalDetailsService extends AbstractService
      */
     private function createPersonContact(Person $person, ContactDetail $contactDetail)
     {
-        $personContactType = PersonContactType::personalContact();
+        $personContactTypeRepository = $this->entityManager->getRepository(\DvsaEntities\Entity\PersonContactType::class);
+        $personContactType = $personContactTypeRepository->findOneBy(['name' => PersonContactType::PERSONAL]);
         $personContact     = new PersonContact($contactDetail, $personContactType, $person);
 
         $this->entityManager->persist($personContact);

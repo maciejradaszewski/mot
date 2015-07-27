@@ -219,7 +219,7 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
         $phone             = (new Phone())->setNumber(self::PHONE);
         $phoneContactType  = PhoneContactTypeCode::PERSONAL;
         $email             = (new Email())->setEmail(self::EMAIL);
-        $personContactType = PersonContactType::personalContact();
+        $personContactType = new \DvsaEntities\Entity\PersonContactType();
         $personContact     = new PersonContact($contactDetail, $personContactType, $person);
 
         $this->configureEntityManager($personContactType, $personContact, $phoneContactType, $phone, $email);

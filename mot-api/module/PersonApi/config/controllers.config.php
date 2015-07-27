@@ -6,6 +6,7 @@ use PersonApi\Controller\MotTestingAuthorisationController;
 use PersonApi\Controller\PersonalDetailsController;
 use PersonApi\Controller\PersonAuthorisationController;
 use PersonApi\Controller\PersonByLoginController;
+use PersonApi\Controller\PersonContactController;
 use PersonApi\Controller\PersonController;
 use PersonApi\Controller\PersonCurrentMotTestController;
 use PersonApi\Controller\PersonProfileRestrictedController;
@@ -20,6 +21,7 @@ use PersonApi\Factory\Controller\MotTestingAuthorisationControllerFactory;
 use PersonApi\Factory\Controller\PersonalDetailsControllerFactory;
 use PersonApi\Factory\Controller\PersonAuthorisationControllerFactory;
 use PersonApi\Factory\Controller\PersonByLoginControllerFactory;
+use PersonApi\Factory\Controller\PersonContactControllerFactory;
 use PersonApi\Factory\Controller\PersonControllerFactory;
 use PersonApi\Factory\Controller\PersonCurrentMotTestControllerFactory;
 use PersonApi\Factory\Controller\PersonProfileRestrictedControllerFactory;
@@ -38,6 +40,7 @@ return [
         PersonAuthorisationController::class       => PersonAuthorisationControllerFactory::class,
         PersonByLoginController::class             => PersonByLoginControllerFactory::class,
         PersonController::class                    => PersonControllerFactory::class,
+        PersonContactController::class             => PersonContactControllerFactory::class,
         PersonCurrentMotTestController::class      => PersonCurrentMotTestControllerFactory::class,
         PersonProfileRestrictedController::class   => PersonProfileRestrictedControllerFactory::class,
         PersonProfileUnrestrictedController::class => PersonProfileUnrestrictedControllerFactory::class,

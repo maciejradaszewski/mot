@@ -21,10 +21,11 @@ class PersonServiceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
+        $entityManager = $serviceLocator->get(EntityManager::class);
         $realm = $serviceLocator->get(OpenAMClientOptions::class)->getRealm();
 
         return new PersonService(
-            $serviceLocator->get(EntityManager::class)->getRepository(Person::class),
+            $entityManager->getRepository(Person::class),
             new PersonMapper(),
             $serviceLocator->get(OpenAMClientInterface::class),
             $realm,

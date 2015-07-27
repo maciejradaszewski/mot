@@ -23,6 +23,7 @@ use DvsaEntities\Entity\Message;
 use DvsaEntities\Entity\MessageType;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\PersonContact;
+use DvsaEntities\Entity\PersonContactType;
 use DvsaEntities\Repository\MessageRepository;
 use DvsaEntities\Repository\MessageTypeRepository;
 use DvsaEntities\Repository\PersonRepository;
@@ -341,7 +342,8 @@ class TokenServiceTest extends AbstractServiceTestCase
             ->setId(self::USER_ID)
             ->setUsername(self::USER_NAME);
 
-        $personType = PersonContactTypeEnum::personalContact();
+        $personType = new PersonContactType();
+        $personType->setName(\DvsaCommon\Constants\PersonContactType::PERSONAL);
 
         $contact = new PersonContact($contactDetail, $personType, $person);
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace DvsaAuthentication\Authentication\Service;
+namespace DvsaAuthentication\Service;
 
 use DvsaApplicationLogger\TokenService\TokenServiceInterface;
 use DvsaCommon\Auth\Http\AuthorizationBearer;

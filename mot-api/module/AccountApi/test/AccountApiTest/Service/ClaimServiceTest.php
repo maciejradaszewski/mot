@@ -7,6 +7,7 @@ use AccountApi\Service\OpenAmIdentityService;
 use AccountApi\Service\Validator\ClaimValidator;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use DvsaAuthentication\Identity;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Date\DateTimeHolder;
@@ -14,6 +15,7 @@ use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Person;
+use DvsaEntities\Entity\PersonContactType;
 use DvsaEntities\Entity\PersonSecurityAnswer;
 use DvsaEntities\Entity\SecurityQuestion;
 use DvsaEntities\Repository\PersonRepository;
@@ -54,6 +56,8 @@ class ClaimServiceTest extends AbstractServiceTestCase
 
     protected $mockEventService;
 
+    protected $mockPersonContactTypeRepository;
+
     /** @var  ParamObfuscator|MockObj */
     private $mockParamObfuscator;
 
@@ -65,6 +69,9 @@ class ClaimServiceTest extends AbstractServiceTestCase
         $this->mockMethod($this->mockSecurityQuestionRepository, 'find', null, $this->getMockSecurityQuestion());
 
         $this->mockPersonRepository = XMock::of(PersonRepository::class);
+        $personContactType = new PersonContactType();
+        $this->mockPersonContactTypeRepository = XMock::of(EntityRepository::class);
+        $this->mockMethod($this->mockPersonContactTypeRepository, 'findOneBy', null, $personContactType);
 
         $this->mockOpenAmIdentityService = XMock::of(OpenAmIdentityService::class);
         $this->mockEventService = XMock::of(EventService::class);
@@ -93,7 +100,8 @@ class ClaimServiceTest extends AbstractServiceTestCase
             $this->mockOpenAmIdentityService,
             $this->mockEventService,
             $this->mockParamObfuscator,
-            new DateTimeHolder()
+            new DateTimeHolder(),
+            $this->mockPersonContactTypeRepository
         );
     }
 

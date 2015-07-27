@@ -7,6 +7,7 @@ use AccountApi\Service\ClaimService;
 use AccountApi\Service\OpenAmIdentityService;
 use AccountApi\Service\Validator\ClaimValidator;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommonTest\TestUtils\TestCaseTrait;
@@ -30,6 +31,7 @@ class ClaimServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $entityManager = XMock::of(EntityManager::class);
         $this->mockMethod($entityManager, 'getRepository', $this->at(0), XMock::of(SecurityQuestionRepository::class));
         $this->mockMethod($entityManager, 'getRepository', $this->at(1), XMock::of(PersonRepository::class));
+        $this->mockMethod($entityManager, 'getRepository', $this->at(2), XMock::of(EntityRepository::class));
 
         $mockServiceLocator = XMock::of(ServiceLocatorInterface::class, ['get']);
         $this->mockMethod($mockServiceLocator, 'get', $this->at(0), $entityManager);

@@ -262,7 +262,7 @@ class PersonTest extends PHPUnit_Framework_TestCase
         $contactDetail = (new ContactDetail())
             ->addEmail($email);
 
-        $contactType = PersonContactType::workContact();
+        $contactType = new \DvsaEntities\Entity\PersonContactType();
         $personContact = new PersonContact($contactDetail, $contactType, $person);
         $person->addContact($personContact);
 

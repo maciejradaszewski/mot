@@ -68,8 +68,11 @@ class AuthorisedExaminerPrincipalServiceTest extends AbstractServiceTestCase
         $contactDetail = new ContactDetail();
         $contactDetail->setAddress($address);
 
-        $personalContactType = PersonContactType::personalContact();
-        $workContactType     = PersonContactType::workContact();
+        $personalContactType = new \DvsaEntities\Entity\PersonContactType();
+        $personalContactType->setName(PersonContactType::personalContact()->getName());
+
+        $workContactType     = new \DvsaEntities\Entity\PersonContactType();
+        $workContactType->setName(PersonContactType::workContact()->getName());
 
         $authorisedExaminer = new AuthorisationForAuthorisedExaminer();
 

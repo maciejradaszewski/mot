@@ -5,12 +5,20 @@ namespace DvsaEntities\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use DvsaCommon\Constants\PersonContactType as PersonContactTypeEnum;
 use DvsaEntities\EntityTrait\CommonIdentityTrait;
+use DvsaEntities\Entity\ContactDetail;
 
 /**
  * PersonContact
  *
- * @ORM\Table(name="person_contact_detail_map", options={"collate"="utf8_general_ci", "charset"="utf8", "engine"="InnoDB"})
- * @ORM\Entity
+ * @ORM\Table(
+ *  name="person_contact_detail_map",
+ *  options={
+ *      "collate"="utf8_general_ci",
+ *      "charset"="utf8",
+ *      "engine"="InnoDB"
+ *  }
+ * )
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\PersonContactRepository")
  */
 class PersonContact extends Entity
 {
@@ -37,29 +45,38 @@ class PersonContact extends Entity
     private $person;
 
     /**
-     * @var integer
+     * @var PersonContactType
      *
-     * @ORM\Column(name="contact_type_id", type="smallint", nullable=false)
+     * @ORM\ManyToOne(targetEntity="\DvsaEntities\Entity\PersonContactType")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="contact_type_id", referencedColumnName="id")
+     * })
      */
-    private $typeId;
+    private $type;
 
-    public function __construct(ContactDetail $contactDetail, PersonContactTypeEnum $type, Person $person)
+    public function __construct(ContactDetail $contactDetail, PersonContactType $type, Person $person)
     {
         $this->contactDetail = $contactDetail;
-        $this->typeId = $type->getId();
+        $this->type = $type;
         $this->person = $person;
     }
 
+    public function setDetails(ContactDetail $contactDetail)
+    {
+        $this->contactDetail = $contactDetail;
+
+        return $this;
+    }
     public function getDetails()
     {
         return $this->contactDetail;
     }
 
     /**
-     * @return PersonContactTypeEnum
+     * @return PersonContactType
      */
     public function getType()
     {
-        return PersonContactTypeEnum::fromId($this->typeId);
+        return $this->type;
     }
 }

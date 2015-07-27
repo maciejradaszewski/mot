@@ -1,6 +1,6 @@
 <?php
 
-namespace UserApiTest\Service\Validator;
+namespace PersonApiTest\Service\Validator;
 
 use PersonApi\Service\Validator\PersonalAuthorisationForMotTestingValidator;
 
@@ -13,7 +13,7 @@ class PersonalAuthorisationForMotTestingValidatorTest extends \PHPUnit_Framework
     {
     }
 
-    public function test_validate_shouldBeOk()
+    public function testValidateShouldBeOk()
     {
         $validator = new PersonalAuthorisationForMotTestingValidator();
 
@@ -27,7 +27,7 @@ class PersonalAuthorisationForMotTestingValidatorTest extends \PHPUnit_Framework
     /**
      * @expectedException \DvsaCommonApi\Service\Exception\BadRequestException
      */
-    public function test_validate_invalidGroupOfVehicle_shouldThrowBadRequestException()
+    public function testValidateInvalidGroupOfVehicleShouldThrowBadRequestException()
     {
         $validator = new PersonalAuthorisationForMotTestingValidator();
 
@@ -41,7 +41,7 @@ class PersonalAuthorisationForMotTestingValidatorTest extends \PHPUnit_Framework
     /**
      * @expectedException \DvsaCommonApi\Service\Exception\RequiredFieldException
      */
-    public function test_validate_emptyInput_shouldThrowBadRequestException()
+    public function testValidateEmptyInputShouldThrowBadRequestException()
     {
         $validator = new PersonalAuthorisationForMotTestingValidator();
 
