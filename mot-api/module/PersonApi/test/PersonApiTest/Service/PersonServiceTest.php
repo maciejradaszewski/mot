@@ -31,7 +31,7 @@ class PersonServiceTest extends AbstractServiceTestCase
     public function testGetPerson()
     {
         $personService = $this->constructPersonServiceWithMocks($this->createMocks([], true));
-        $this->assertInstanceOf(PersonDto::class, $personService->getPerson(self::PERSON_ID));
+        $this->assertInternalType('array', $personService->getPerson(self::PERSON_ID));
     }
 
     public function testGetPersonThrowsUnauthorisedExceptionIfNotAuthorised()
