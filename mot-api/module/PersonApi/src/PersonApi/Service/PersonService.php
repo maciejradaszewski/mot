@@ -93,7 +93,7 @@ class PersonService
         $this->assertGetPersonDataGranted();
         $person = $this->personRepository->get($personId);
 
-        return $this->personMapper->toDto($person);
+        return $this->personMapper->toArray($person);
     }
 
     /**
