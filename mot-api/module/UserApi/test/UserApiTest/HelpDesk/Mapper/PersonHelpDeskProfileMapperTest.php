@@ -128,7 +128,9 @@ class PersonHelpDeskProfileMapperTest extends \PHPUnit_Framework_TestCase
             ->setIsPrimary(true)
             ->setNumber('+768-45-4433630');
         $contactDetail   = (new ContactDetail())->setAddress($address)->addPhone($phone);
-        $personalContact = new PersonContact($contactDetail, PersonContactType::personalContact(), $person);
+        $personContactType = new \DvsaEntities\Entity\PersonContactType();
+        $personContactType->setName(PersonContactType::PERSONAL);
+        $personalContact = new PersonContact($contactDetail, $personContactType, $person);
 
         $person->addContact($personalContact);
 
@@ -153,7 +155,9 @@ class PersonHelpDeskProfileMapperTest extends \PHPUnit_Framework_TestCase
             ->setIsPrimary(true)
             ->setNumber('+768-45-4433630');
         $contactDetail   = (new ContactDetail())->setAddress(null)->addPhone($phone);
-        $personalContact = new PersonContact($contactDetail, PersonContactType::personalContact(), $person);
+        $personContactType = new \DvsaEntities\Entity\PersonContactType();
+        $personContactType->setName(PersonContactType::PERSONAL);
+        $personalContact = new PersonContact($contactDetail, $personContactType, $person);
 
         $person->addContact($personalContact);
 

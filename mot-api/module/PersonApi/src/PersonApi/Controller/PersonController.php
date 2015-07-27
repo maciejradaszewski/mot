@@ -3,7 +3,7 @@
 namespace PersonApi\Controller;
 
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
-use PersonApi\Generator\PersonGenerator;
+use DvsaCommonApi\Model\ApiResponse;
 use PersonApi\Service\PersonService;
 use Zend\View\Model\JsonModel;
 
@@ -17,15 +17,9 @@ class PersonController extends AbstractDvsaRestfulController
      */
     protected $personService;
 
-    /**
-     * @var PersonGenerator
-     */
-    protected $personGenerator;
-
-    public function __construct(PersonService $personService, PersonGenerator $personGenerator)
+    public function __construct(PersonService $personService)
     {
-        $this->personService   = $personService;
-        $this->personGenerator = $personGenerator;
+        $this->personService = $personService;
     }
 
     /**
@@ -35,9 +29,8 @@ class PersonController extends AbstractDvsaRestfulController
      */
     public function get($personId)
     {
-        $data     = $this->personService->getPerson($personId);
-        $response = $this->personGenerator->getPerson($data);
+        $data = $this->personService->getPerson($personId);
 
-        return new JsonModel($response);
+        return ApiResponse::jsonOk($data);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace DvsaAuthentication\Factory;
 
-use DvsaAuthentication\Authentication\Service\ApiTokenService;
+use DvsaAuthentication\Service\ApiTokenService;
 use Zend\Http\Request;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\FactoryInterface;

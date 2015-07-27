@@ -13,6 +13,7 @@ use OrganisationApi\Service\AuthorisedExaminerPrincipalService;
 use OrganisationApi\Service\AuthorisedExaminerSearchService;
 use OrganisationApi\Service\AuthorisedExaminerService;
 use OrganisationApi\Service\AuthorisedExaminerSlotService;
+use OrganisationApi\Service\Mapper\PersonContactMapper;
 use OrganisationApi\Service\MotTestLogService;
 use OrganisationApi\Service\NominateRoleService;
 use OrganisationApi\Service\OrganisationNominationService;
@@ -41,7 +42,7 @@ class Module
     public function getServiceConfig()
     {
         return [
-            'factories' => [
+            'factories'  => [
                 Hydrator::class                           => \OrganisationApi\Factory\HydratorFactory::class,
                 OrganisationService::class                => \OrganisationApi\Factory\Service\OrganisationServiceFactory::class,
                 AddressService::class                     => \OrganisationApi\Factory\Service\AddressServiceFactory::class,
@@ -61,6 +62,9 @@ class Module
                 NominationVerifier::class                 => \OrganisationApi\Factory\Service\NominateVerifierFactory::class,
                 SiteService::class                        => \OrganisationApi\Factory\Service\SiteServiceFactory::class,
                 MotTestLogService::class                  => \OrganisationApi\Factory\Service\MotTestLogServiceFactory::class,
+            ],
+            'invokables' => [
+                PersonContactMapper::class => PersonContactMapper::class,
             ],
         ];
     }

@@ -212,7 +212,7 @@ class PersonRepository extends AbstractMutableRepository
             ->join('_contacts.contactDetail', '_contactDetail')
             ->join('_contactDetail.emails', '_emails')
             ->where('_person.id = :personId')
-            ->andWhere('_contacts.typeId = :contactTypeId')
+            ->andWhere('_contacts.type = :contactTypeId')
             ->setParameter('personId', $personId)
             ->setParameter('contactTypeId', $contactType->getId())
             ->setMaxResults(1); // db allows to have multiple personal addresses

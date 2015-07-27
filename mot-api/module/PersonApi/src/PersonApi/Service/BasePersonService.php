@@ -89,7 +89,9 @@ class BasePersonService
 
     protected function createPersonContact(Person $person, ContactDetail $contact)
     {
-        $personContact = new PersonContact($contact, PersonContactType::fromName(PersonContactType::PERSONAL), $person);
+        $personContactTypeRepository = $this->entityManager->getRepository(\DvsaEntities\Entity\PersonContactType::class);
+        $personContactType = $personContactTypeRepository->findOneBy(['name' => PersonContactType::PERSONAL]);
+        $personContact = new PersonContact($contact, $personContactType, $person);
         $this->persistAndFlush($personContact);
 
         return $personContact;

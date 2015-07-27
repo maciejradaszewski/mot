@@ -6,6 +6,7 @@ use AccountApi\Crypt\SecurityAnswerHashFunction;
 use AccountApi\Service\Exception\OpenAmChangePasswordException;
 use AccountApi\Service\Validator\ClaimValidator;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Constants\EventDescription;
 use DvsaCommon\Constants\PersonContactType as PersonContactTypeEnum;
@@ -23,6 +24,7 @@ use DvsaEntities\Entity\Email;
 use DvsaEntities\Entity\EventPersonMap;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\PersonContact;
+use DvsaEntities\Entity\PersonContactType;
 use DvsaEntities\Entity\PersonSecurityAnswer;
 use DvsaEntities\Repository\PersonRepository;
 use DvsaEntities\Repository\SecurityQuestionRepository;
@@ -52,6 +54,7 @@ class ClaimService extends AbstractService
     private $obfuscator;
     /** @var DateTimeHolder */
     private $dateTimeHolder;
+    private $personContactTypeRepository;
 
     /**
      * @param EntityManager                $entityManager
@@ -63,6 +66,7 @@ class ClaimService extends AbstractService
      * @param EventService                 $eventService
      * @param ParamObfuscator              $obfuscator
      * @param DateTimeHolder               $dateTimeHolder
+     * @param EntityRepository             $personContactTypeRepository
      */
     public function __construct(
         EntityManager $entityManager,
@@ -73,7 +77,8 @@ class ClaimService extends AbstractService
         OpenAmIdentityService $openAmIdentityService,
         EventService $eventService,
         ParamObfuscator $obfuscator,
-        DateTimeHolder $dateTimeHolder
+        DateTimeHolder $dateTimeHolder,
+        EntityRepository $personContactTypeRepository
     ) {
         $this->entityManager = $entityManager;
         $this->motIdentityProvider = $motIdentityProvider;
@@ -84,6 +89,7 @@ class ClaimService extends AbstractService
         $this->eventService = $eventService;
         $this->obfuscator = $obfuscator;
         $this->dateTimeHolder = $dateTimeHolder;
+        $this->personContactTypeRepository = $personContactTypeRepository;
     }
 
     /**
@@ -201,9 +207,9 @@ class ClaimService extends AbstractService
         $contact = new ContactDetail();
         $contact->setAddress($address);
 
-        $type = PersonContactTypeEnum::personalContact();
+        $personContactType = $this->personContactTypeRepository->findOneBy(['name' => PersonContactTypeEnum::PERSONAL]);
 
-        $personContact = new PersonContact($contact, $type, $person);
+        $personContact = new PersonContact($contact, $personContactType, $person);
 
         return $personContact;
     }

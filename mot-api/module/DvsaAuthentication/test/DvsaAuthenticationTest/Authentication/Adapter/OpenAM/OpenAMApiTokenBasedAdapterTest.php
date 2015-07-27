@@ -2,12 +2,11 @@
 
 namespace DvsaAuthenticationTest\Authentication\Adapter\OpenAM;
 
-
 use Dvsa\OpenAM\Exception\OpenAMClientException;
 use Dvsa\OpenAM\Exception\OpenAMUnauthorisedException;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMApiTokenBasedAdapter;
-use DvsaAuthentication\Authentication\Service\ApiTokenService;
+use DvsaAuthentication\Service\ApiTokenService;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\PersonRepository;

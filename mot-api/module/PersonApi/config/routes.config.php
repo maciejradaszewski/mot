@@ -6,6 +6,7 @@ use PersonApi\Controller\MotTestingAuthorisationController;
 use PersonApi\Controller\PersonalDetailsController;
 use PersonApi\Controller\PersonAuthorisationController;
 use PersonApi\Controller\PersonByLoginController;
+use PersonApi\Controller\PersonContactController;
 use PersonApi\Controller\PersonController;
 use PersonApi\Controller\PersonCurrentMotTestController;
 use PersonApi\Controller\PersonProfileRestrictedController;
@@ -43,6 +44,16 @@ return [
             ],
             'may_terminate' => true,
             'child_routes'  => [
+                'email' => [
+                    'type' => 'segment',
+                    'options' => [
+                        'route' => '/contact',
+                        'defaults' => [
+                            'controller' => PersonContactController::class,
+                        ],
+                    ],
+                    'may_terminate' => true,
+                ],
                 'help-desk-reset-claim-account'  => [
                     'type'          => 'segment',
                     'options'       => [

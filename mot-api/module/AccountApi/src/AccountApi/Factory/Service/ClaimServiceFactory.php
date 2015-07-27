@@ -10,6 +10,7 @@ use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaEntities\Entity\Person;
+use DvsaEntities\Entity\PersonContactType;
 use DvsaEntities\Entity\SecurityQuestion;
 use DvsaEventApi\Service\EventService;
 use Zend\ServiceManager\FactoryInterface;
@@ -35,7 +36,8 @@ class ClaimServiceFactory implements FactoryInterface
             $serviceLocator->get(OpenAmIdentityService::class),
             $serviceLocator->get(EventService::class),
             $serviceLocator->get(ParamObfuscator::class),
-            new DateTimeHolder()
+            new DateTimeHolder(),
+            $entityManager->getRepository(PersonContactType::class)
         );
 
         return $claimService;

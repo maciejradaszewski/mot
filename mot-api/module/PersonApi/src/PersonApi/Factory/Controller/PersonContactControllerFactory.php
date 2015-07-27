@@ -2,19 +2,23 @@
 
 namespace PersonApi\Factory\Controller;
 
+use PersonApi\Controller\PersonContactController;
 use PersonApi\Controller\PersonController;
+use PersonApi\Generator\PersonContactGenerator;
 use PersonApi\Generator\PersonGenerator;
+use PersonApi\Service\PersonalDetailsService;
+use PersonApi\Service\PersonContactService;
 use PersonApi\Service\PersonService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 
 /**
- * Class PersonControllerFactory
+ * Class PersonContactControllerFactory
  *
- * Generates the PersonController, injecting dependencies
+ * Generates the PersonContactController, injecting dependencies
  */
-class PersonControllerFactory implements FactoryInterface
+class PersonContactControllerFactory implements FactoryInterface
 {
     /**
      * @param ServiceLocatorInterface $controllerManager
@@ -25,9 +29,9 @@ class PersonControllerFactory implements FactoryInterface
     {
         /** @var ServiceManager $serviceLocator */
         $serviceLocator = $controllerManager->getServiceLocator();
-        /** @var PersonService $personService */
-        $personService = $serviceLocator->get(PersonService::class);
+        /** @var PersonContactService $personContactService */
+        $personContactService = $serviceLocator->get(PersonContactService::class);
 
-        return new PersonController($personService);
+        return new PersonContactController($personContactService);
     }
 }
