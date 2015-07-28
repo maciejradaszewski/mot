@@ -84,6 +84,7 @@ class MailerService
         }
 
         $mailFrom = ArrayUtils::tryGet($this->config, 'sender', self::DEFAULT_FROM);
+        $senderName = ArrayUtils::tryGet($this->config, 'senderName', null);
         list($actualRecipient, $override) = $this->getActualRecipient($recipient);
 
         if ($this->logger) {
@@ -97,7 +98,7 @@ class MailerService
         // Hint: Chaining is broken by mocked objects, don't "refactor" this please.
         $mail = $this->getMailInstance();
         $mail->setBody($message);
-        $mail->setFrom($mailFrom);
+        $mail->setFrom($mailFrom, $senderName);
         $mail->addTo($actualRecipient);
         $mail->setSubject($subject);
 
