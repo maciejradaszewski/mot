@@ -1,5 +1,6 @@
 <?php
 use Dashboard\Controller\UserHomeController;
+use DvsaCommon\Auth\PermissionInSystem;
 
 /** @var \UserAdmin\Presenter\UserProfilePresenter $presenter */
 /** @var string $searchResultsUrl */
@@ -73,6 +74,9 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
         </th>
         <td id="person-email" class="key-value-list__value">
             <?php echo $this->escapeHtml($presenter->displayEmail()); ?>
+            <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::PROFILE_EDIT_OTHERS_EMAIL_ADDRESS)) : ?>
+            <a class="key-value-list__action" id="email-address-change" href="<?php echo $this->url('user_admin/user-profile/email-change', ['personId' => $presenter->getPersonId()]) ?>" title="Amend user email">Change this</a>
+            <?php endif; ?>
         </td>
     </tr>
     <tr>

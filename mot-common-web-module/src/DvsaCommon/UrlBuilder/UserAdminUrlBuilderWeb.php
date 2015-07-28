@@ -9,6 +9,7 @@ class UserAdminUrlBuilderWeb extends AbstractUrlBuilder
 {
     const MAIN              = '/user-admin';
     const USER_SEARCH       = '/search';
+    const EMAIL_CHANGE      = '/email';
     const USER_RESULTS      = '/results';
     const USER_PROFILE      = '/user-profile/:personId';
     const SECURITY_QUESTION = '/security-question/:questionId';
@@ -38,6 +39,7 @@ class UserAdminUrlBuilderWeb extends AbstractUrlBuilder
                         self::PASSWORD_RESET_NOT_OK => '',
                         self::USERNAME_RECOVER => '',
                         self::USERNAME_RECOVER_OK => '',
+                        self::EMAIL_CHANGE => '',
                     ],
                 ],
         ];
@@ -57,6 +59,12 @@ class UserAdminUrlBuilderWeb extends AbstractUrlBuilder
     {
         $this->appendRoutesAndParams(self::USER_SEARCH);
         return $this;
+    }
+
+    public static function emailChange($personId)
+    {
+        return self::userProfile($personId)
+            ->appendRoutesAndParams(self::EMAIL_CHANGE);
     }
 
     public function userResults()

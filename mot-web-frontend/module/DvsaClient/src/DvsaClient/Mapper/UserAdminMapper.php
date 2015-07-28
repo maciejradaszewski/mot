@@ -2,6 +2,7 @@
 
 namespace DvsaClient\Mapper;
 
+use DvsaCommon\Dto\Person\PersonContactDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Dto\Person\SearchPersonResultDto;
 use DvsaCommon\Dto\Security\SecurityQuestionDto;
@@ -86,4 +87,15 @@ class UserAdminMapper extends DtoMapper
         return $this->client->post($url, $params);
     }
 
+    /**
+     * @param integer $personId
+     * @param string $email
+     * @throws RestApplicationException
+     * @return PersonContactDto
+     */
+    public function updateEmail($personId, $email)
+    {
+        $url = UserAdminUrlBuilder::personContact($personId);
+        return $this->client->patch($url, ["emails" => [$email]]);
+    }
 }

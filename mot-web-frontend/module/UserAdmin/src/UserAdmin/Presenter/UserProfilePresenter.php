@@ -22,6 +22,8 @@ class UserProfilePresenter implements AddressPresenterInterface
     const DVSA_PROFILE_TEMPLATE = 'user-admin/user-profile/dvsa-profile.phtml';
     /** Unrestricted user profile template path */
     const UNRESTRICTED_PROFILE_TEMPLATE = 'user-admin/user-profile/unrestricted-profile.phtml';
+    /** Change email template */
+    const CHANGE_EMAIL_TEMPLATE = 'user-admin/email-address/form.phtml';
 
     /* @var int */
     private $id;

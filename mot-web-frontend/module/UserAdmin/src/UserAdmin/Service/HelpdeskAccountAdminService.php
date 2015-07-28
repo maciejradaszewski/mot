@@ -5,6 +5,7 @@ namespace UserAdmin\Service;
 use DvsaClient\Mapper\UserAdminMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Dto\Person\PersonContactDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Enum\MessageTypeCode;
 use DvsaCommon\HttpRestJson\Exception\NotFoundException;
@@ -74,5 +75,15 @@ class HelpdeskAccountAdminService
     public function postMessage($params)
     {
         return $this->userAdminMapper->postMessage($params);
+    }
+
+    /**
+     * @param $personId
+     * @param $email
+     * @return PersonContactDto
+     */
+    public function updatePersonContactEmail($personId, $email)
+    {
+        return $this->userAdminMapper->updateEmail($personId, $email);
     }
 }

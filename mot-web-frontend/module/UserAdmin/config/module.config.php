@@ -4,6 +4,7 @@ use UserAdmin\Controller;
 use UserAdmin\Factory\Controller\ResetAccountClaimByPostControllerFactory;
 use UserAdmin\Factory\Controller\SecurityQuestionControllerFactory;
 use UserAdmin\Factory\Controller\UserProfileControllerFactory;
+use UserAdmin\Factory\Controller\EmailAddressControllerFactory;
 use UserAdmin\Factory\Controller\RecordDemoTestControllerFactory;
 use UserAdmin\Controller\RecordDemoTestController;
 
@@ -17,6 +18,7 @@ return [
             SecurityQuestionControllerFactory::class => SecurityQuestionControllerFactory::class,
             ResetAccountClaimByPostControllerFactory::class => ResetAccountClaimByPostControllerFactory::class,
             UserProfileControllerFactory::class => UserProfileControllerFactory::class,
+            EmailAddressControllerFactory::class => EmailAddressControllerFactory::class,
             RecordDemoTestController::class => RecordDemoTestControllerFactory::class,
         ]
     ],
@@ -133,6 +135,16 @@ return [
                                                 'action' => 'passwordResetNok'
                                             ],
                                         ],
+                                    ],
+                                ],
+                            ],
+                            'email-change' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/email',
+                                    'defaults' => [
+                                        'controller' => EmailAddressControllerFactory::class,
+                                        'action' => 'index'
                                     ],
                                 ],
                             ],

@@ -2,6 +2,7 @@
 
 namespace PersonApi\Service;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use DvsaAuthorisation\Service\AuthorisationService;
 use DvsaCommon\Auth\PermissionInSystem;
@@ -38,13 +39,20 @@ class PersonContactService
      * @var AuthorisationService
      */
     protected $authorisationService;
+
+    /**
+     * @var EntityManager
+     */
+    protected $em;
+
     public function __construct(
         PersonContactRepository $repository,
         PersonContactMapper $mapper,
         EntityRepository $emailRepository,
         PersonalDetailsValidator $validator,
         AuthenticationService $authenticationService,
-        AuthorisationService $authorisationService
+        AuthorisationService $authorisationService,
+        EntityManager $em
     ) {
         $this->personContactRepository = $repository;
         $this->personContactMapper = $mapper;
@@ -52,6 +60,7 @@ class PersonContactService
         $this->personalDetailsValidator = $validator;
         $this->authenticationService = $authenticationService;
         $this->authorisationService = $authorisationService;
+        $this->em = $em;
     }
 
     /**
@@ -72,11 +81,15 @@ class PersonContactService
         if ($this->authenticationService->getIdentity()->getUserId() !== $personId) {
             $this->authorisationService->assertGranted(PermissionInSystem::PROFILE_EDIT_OTHERS_EMAIL_ADDRESS);
         }
-        if (!isset($data['emails'][0]) || !$this->personalDetailsValidator->validateEmail($data['emails'][0])) {
+
+        if (!isset($data['emails'][0])
+            || !$this->personalDetailsValidator->validateEmail($data['emails'][0])
+        ) {
             $exception = new DataValidationException();
             $exception->addError('Email Address not Valid', 1);
             throw $exception;
         }
+
         $contact = $this->personContactRepository->getHydratedByTypeCode($personId, 'PRSNL');
         $contactDetails = $contact->getDetails();
         $emails = $contactDetails->getEmails();
@@ -88,11 +101,12 @@ class PersonContactService
             $emails->add($email);
             $this->personContactRepository->persist($email);
         } else {
-            foreach ($emails as $email) {
-                $email->setEmail($data['emails'][0]);
+            foreach ($emails as $emailIter => $email) {
+                $email->setEmail($data['emails'][$emailIter]);
                 $this->personContactRepository->persist($email);
             }
         }
+        $this->em->flush();
         $dto = $this->personContactMapper->toDto($contact);
         return $dto;
     }

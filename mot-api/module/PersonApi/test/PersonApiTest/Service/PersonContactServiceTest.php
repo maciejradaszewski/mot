@@ -3,6 +3,7 @@
 namespace PersonApiTest\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use DvsaAuthorisation\Service\AuthorisationService;
 use DvsaCommon\Dto\Person\PersonContactDto;
@@ -28,6 +29,7 @@ class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
     protected $authenticationServiceMock;
     protected $authorisationServiceMock;
     protected $identityMock;
+    protected $emMock;
 
     public function setUp()
     {
@@ -38,6 +40,7 @@ class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
         $this->authenticationServiceMock = XMock::of(AuthenticationService::class, ['getIdentity']);
         $this->authorisationServiceMock = XMock::of(AuthorisationService::class, ['assertGranted']);
         $this->identityMock = XMock::of(Identity::class, ['getUserId']);
+        $this->emMock = XMock::of(EntityManager::class);
     }
 
     private function createService()
@@ -48,7 +51,8 @@ class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
             $this->emailRepositoryMock,
             $this->personalDetailsValidatorMock,
             $this->authenticationServiceMock,
-            $this->authorisationServiceMock
+            $this->authorisationServiceMock,
+            $this->emMock
         );
     }
     public function testGetForPersonIdWithValidIdReturnsDto()
