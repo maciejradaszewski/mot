@@ -137,7 +137,7 @@ abstract class AbstractVehicleRepository extends AbstractMutableRepository
     {
         $queryBuilder = $this->createQueryBuilder($alias);
 
-        if (!empty($vin)) {
+        if (!is_null($vin)) {
             $preparedVin = $this->sanitize($vin);
             if ($isFullVin) {
                 $queryBuilder->andWhere('vehicle.vin = :vin');
@@ -148,7 +148,7 @@ abstract class AbstractVehicleRepository extends AbstractMutableRepository
             }
         }
 
-        if (!empty($reg)) {
+        if (!is_null($reg)) {
             $queryBuilder->andWhere('vehicle.registration = :reg');
             $queryBuilder->setParameter('reg', $this->sanitize($reg));
         }
