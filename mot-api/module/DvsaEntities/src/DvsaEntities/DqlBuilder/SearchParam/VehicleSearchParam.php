@@ -97,13 +97,16 @@ class VehicleSearchParam extends SearchParam
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getSearch()
     {
-        return $this->search;
+        return (string) $this->search;
     }
 
+    /**
+     * @return string
+     */
     public function getSearchType()
     {
         return $this->searchType;
@@ -124,7 +127,7 @@ class VehicleSearchParam extends SearchParam
      */
     public function setRegistration($registration)
     {
-        $this->registration = $registration;
+        $this->registration = (string) $registration;
         return $this;
     }
 
@@ -143,7 +146,7 @@ class VehicleSearchParam extends SearchParam
      */
     public function setVin($vin)
     {
-        $this->vin = $vin;
+        $this->vin = (string) $vin;
         return $this;
     }
 
