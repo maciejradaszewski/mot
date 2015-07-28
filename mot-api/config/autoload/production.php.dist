@@ -44,6 +44,8 @@ return [
          */
         'sendingAllowed' => true,
 
+        'senderName'   => '',
+
         /**
          * Development mode: If this field is present OR has a non-empty value
          * it will always override the true recipient email address.
