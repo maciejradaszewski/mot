@@ -4,11 +4,7 @@ namespace PersonApi\Factory\Controller;
 
 use PersonApi\Controller\PersonContactController;
 use PersonApi\Controller\PersonController;
-use PersonApi\Generator\PersonContactGenerator;
-use PersonApi\Generator\PersonGenerator;
-use PersonApi\Service\PersonalDetailsService;
 use PersonApi\Service\PersonContactService;
-use PersonApi\Service\PersonService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;

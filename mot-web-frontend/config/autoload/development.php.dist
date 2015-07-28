@@ -28,6 +28,7 @@ return array(
     'apiUrl' => 'http://mot-api/',
     // File path to log file
     'logPath' => '/var/log/dvsa/mot-web-frontend.log',
+    'logApiCalls' => true,
     // Log level to filter log messages, see Zend\Log\Logger, e.g. 7 for DEBUG
     'logLevel' => 7, // DEBUG, WARN=4
     'showErrorsInFrontEnd' => (getenv('APPLICATION_ENV') === 'development'),

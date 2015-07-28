@@ -11,6 +11,7 @@ import uk.gov.dvsa.ui.pages.accountclaim.AccountClaimPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AeSlotsUsagePage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
+import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 import uk.gov.dvsa.ui.pages.mot.*;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticePage;
 import uk.gov.dvsa.ui.pages.vehicleinformation.VehicleInformationSearchPage;
@@ -149,5 +150,11 @@ public class PageNavigator {
         injectOpenAmCookieAndNavigateToPath(user, VehicleInformationSearchPage.PATH);
 
         return new VehicleInformationSearchPage(driver);
+    }
+
+    public HelpDeskUserProfilePage goToUserHelpDeskProfilePage(User user, String profileId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(HelpDeskUserProfilePage.PATH, profileId));
+
+        return new HelpDeskUserProfilePage(driver);
     }
 }

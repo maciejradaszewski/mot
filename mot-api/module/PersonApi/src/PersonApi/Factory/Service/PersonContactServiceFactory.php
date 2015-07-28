@@ -36,13 +36,17 @@ class PersonContactServiceFactory implements FactoryInterface
         $authenticationService = $serviceLocator->get('DvsaAuthenticationService');
         /** @var AuthorisationService $authorisationService */
         $authorisationService = $serviceLocator->get('DvsaAuthorisationService');
+        /** @var EntityManager $entityManager */
+        $entityManager = $serviceLocator->get('doctrine.entitymanager.orm_default');
+
         return new PersonContactService(
             $repository,
             $mapper,
             $emailRepository,
             $validator,
             $authenticationService,
-            $authorisationService
+            $authorisationService,
+            $entityManager
         );
     }
 }

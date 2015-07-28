@@ -7,6 +7,7 @@ namespace DvsaCommon\UrlBuilder;
  */
 class UserAdminUrlBuilder extends AbstractUrlBuilder
 {
+    const PERSON_CONTACT            = 'person/:personId/contact';
     const SECURITY_QUESTION         = 'security-question';
     const SECURITY_QUESTION_CHECK   = '/check/:questionId/:personId';
     const SECURITY_QUESTION_GET     = '/get/:questionId/:personId';
@@ -18,6 +19,7 @@ class UserAdminUrlBuilder extends AbstractUrlBuilder
                     self::SECURITY_QUESTION_CHECK => '',
                     self::SECURITY_QUESTION_GET => '',
                 ],
+            self::PERSON_CONTACT => ''
         ];
 
     public function __construct()
@@ -28,6 +30,15 @@ class UserAdminUrlBuilder extends AbstractUrlBuilder
     public static function of()
     {
         return new static();
+    }
+
+    /**
+     * @param $personId
+     * @return $this
+     */
+    public static function personContact($personId)
+    {
+        return self::of()->appendRoutesAndParams(self::PERSON_CONTACT)->routeParam('personId', $personId);
     }
 
     public static function securityQuestion()
@@ -50,4 +61,5 @@ class UserAdminUrlBuilder extends AbstractUrlBuilder
             ->routeParam('questionId', $questionId)
             ->routeParam('personId', $personId);
     }
+
 }
