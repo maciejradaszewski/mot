@@ -2,11 +2,14 @@
 
 namespace OrganisationApiTest\Service\Validator;
 
+use DvsaCommon\Dto\Common\AuthForAeStatusDto;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Contact\EmailDto;
 use DvsaCommon\Dto\Contact\PhoneDto;
+use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode;
 use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use OrganisationApi\Service\Validator\AuthorisedExaminerValidator;
@@ -192,6 +195,52 @@ class AuthorisedExaminerValidatorTest extends \PHPUnit_Framework_TestCase
                     ->setName(self::AE_NAME)
                     ->setCompanyType(CompanyTypeCode::COMPANY)
                     ->setRegisteredCompanyNumber(''),
+                'errors' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderTestStatusValidator
+     */
+    public function testStatusValidator($ae, $errors = false)
+    {
+        if ($errors === true) {
+            $this->setExpectedException(BadRequestException::class, 'Validation errors encountered');
+        }
+
+        $this->validator->validateStatus($ae);
+    }
+
+    public function dataProviderTestStatusValidator()
+    {
+        return [
+            // no errors
+            [
+                'ae' => (new AuthorisedExaminerAuthorisationDto())
+                    ->setStatus(
+                        (new AuthForAeStatusDto())
+                            ->setCode(AuthorisationForAuthorisedExaminerStatusCode::APPROVED)
+                    ),
+            ],
+            // no data
+            [
+                'ae' => (new AuthorisedExaminerAuthorisationDto()),
+                'errors' => true,
+            ],
+            // empty status
+            [
+                'ae' => (new AuthorisedExaminerAuthorisationDto())
+                    ->setStatus(new AuthForAeStatusDto()),
+                'errors' => true,
+            ],
+            // invalid status
+            [
+                'ae' => (new AuthorisedExaminerAuthorisationDto())
+                    ->setStatus(
+                        (new AuthForAeStatusDto())
+                            ->setCode('invalid')
+                    ),
                 'errors' => true,
             ],
         ];

@@ -8,6 +8,7 @@ use Organisation\Controller\SearchController;
 use Organisation\Controller\SlotsUsageController;
 use Site\Controller\VehicleTestingStationController;
 use Organisation\Factory\Controller\AuthorisedExaminerControllerFactory;
+use Organisation\Factory\Controller\AuthorisedExaminerStatusControllerFactory;
 
 return [
     UsernameValidator::class => [
@@ -70,6 +71,25 @@ return [
                             'defaults'    => [
                                 'controller' => AuthorisedExaminerControllerFactory::class,
                                 'action'     => 'edit',
+                            ],
+                        ],
+                    ],
+                    'edit-status'                => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'       => '/edit-status',
+                            'defaults'    => [
+                                'controller' => AuthorisedExaminerStatusControllerFactory::class,
+                            ],
+                        ],
+                    ],
+                    'edit-status-confirm'                => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'       => '/edit-status/confirmation',
+                            'defaults'    => [
+                                'controller' => AuthorisedExaminerStatusControllerFactory::class,
+                                'action' => 'confirmation'
                             ],
                         ],
                     ],
@@ -208,6 +228,7 @@ return [
         ],
         'factories' => [
             AuthorisedExaminerControllerFactory::class => AuthorisedExaminerControllerFactory::class,
+            AuthorisedExaminerStatusControllerFactory::class => AuthorisedExaminerStatusControllerFactory::class,
         ]
     ],
     'view_manager'   => [

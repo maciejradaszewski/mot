@@ -2,8 +2,10 @@
 
 namespace OrganisationApi\Service\Validator;
 
+use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode;
 use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommonApi\Service\Validator\AbstractValidator;
 
@@ -12,12 +14,12 @@ class AuthorisedExaminerValidator extends AbstractValidator
     const FIELD_ORGANISATION_NAME = 'organisationName';
     const FIELD_COMPANY_TYPE = 'companyType';
     const FIELD_REG_NUMBER= 'registeredCompanyNumber';
+    const FIELD_STATUS= 'status';
 
     const ERR_ORGANISATION_NAME_REQUIRE = 'A business name must be entered';
     const ERR_COMPANY_TYPE_REQUIRE = 'A business type must be selected';
     const ERR_COMPANY_NUMBER_REQUIRE = 'A company number must be entered';
-
-    const REGEX_COMPANY_NUMBER = '/^([a-zA-Z]|[0-9]){2}[0-9]{6,8}$/';
+    const ERR_STATUS = 'A status must be selected';
 
     /** @var ContactValidator */
     private $contactValidator;
@@ -63,5 +65,18 @@ class AuthorisedExaminerValidator extends AbstractValidator
         if ($this->isEmpty($organisationDto->getRegisteredCompanyNumber())) {
             $this->errors->add(self::ERR_COMPANY_NUMBER_REQUIRE, self::FIELD_REG_NUMBER);
         }
+    }
+
+    public function validateStatus(AuthorisedExaminerAuthorisationDto $dto)
+    {
+        if (empty($dto->getStatus()) || $this->isEmpty($dto->getStatus()->getCode())
+            || AuthorisationForAuthorisedExaminerStatusCode::exists(
+                $dto->getStatus()->getCode()
+            ) === false
+        ) {
+            $this->errors->add(self::ERR_STATUS, self::FIELD_STATUS);
+        }
+
+        $this->errors->throwIfAnyField();
     }
 }

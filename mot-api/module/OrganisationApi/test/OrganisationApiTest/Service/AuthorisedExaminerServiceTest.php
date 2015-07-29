@@ -141,7 +141,7 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
         $this->mockMethod($this->validator, 'validate', $this->any(), true);
         $this->authorisedExaminer = $this->buildAuthorisedExaminer();
 
-        $this->mockMethod($this->mockIdentity, 'getUserId', $this->any(), self::PERSON_ID);
+        $this->mockMethod($this->mockIdentity, 'getUsername', $this->any(), self::PERSON_ID);
 
         $this->mockMethod(
             $this->mockOrganisationTypeRepo,

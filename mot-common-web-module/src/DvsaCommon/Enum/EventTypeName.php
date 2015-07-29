@@ -50,9 +50,10 @@ class EventTypeName
     const ROLE_ASSOCIATION_CHANGE = 'Role Association Change';
     const USER_RECLAIMS_ACCOUNT = 'User Reclaims Account';
     const USER_ACCOUNT_RESET = 'User Account Reset';
-    const DVSA_ADMINISTRATOR_CREATE_AE = 'DVSA Administrator Create AE';
     const GROUP_A_TESTER_QUALIFICATION = 'Group A Tester Qualification';
     const GROUP_B_TESTER_QUALIFICATION = 'Group B Tester Qualification';
+    const DVSA_ADMINISTRATOR_CREATE_AE = 'DVSA Administrator Create AE';
+    const UPDATE_AE = 'Update AE';
 
     /**
      * @return array of values for the type EventTypeName
@@ -100,9 +101,10 @@ class EventTypeName
             self::ROLE_ASSOCIATION_CHANGE,
             self::USER_RECLAIMS_ACCOUNT,
             self::USER_ACCOUNT_RESET,
-            self::DVSA_ADMINISTRATOR_CREATE_AE,
             self::GROUP_A_TESTER_QUALIFICATION,
             self::GROUP_B_TESTER_QUALIFICATION,
+            self::DVSA_ADMINISTRATOR_CREATE_AE,
+            self::UPDATE_AE,
         ];
     }
 

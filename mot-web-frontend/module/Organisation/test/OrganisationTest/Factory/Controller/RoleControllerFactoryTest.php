@@ -3,9 +3,12 @@
 namespace OrganisationTest\Factory\Controller;
 
 use DvsaCommon\Validator\UsernameValidator;
-use DvsaCommonTest\Bootstrap;
+use DvsaCommonTest\TestUtils\XMock;
 use Organisation\Controller\RoleController;
 use Organisation\Factory\Controller\RoleControllerFactory;
+use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\ServiceManager;
+use \PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
  * Class RoleControllerFactoryTest.
@@ -14,22 +17,19 @@ class RoleControllerFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testFactoryReturnsRoleControllerInstance()
     {
-        $serviceManager = Bootstrap::getServiceManager();
+        $serviceManager = new ServiceManager();
 
-        $usernameValidatorMock = $this
-            ->getMockBuilder(UsernameValidator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $serviceManager->setService(UsernameValidator::class, $usernameValidatorMock);
+        $serviceManager->setService(UsernameValidator::class, XMock::of(UsernameValidator::class));
+        $serviceManager->setService('HTMLPurifier', XMock::of(\HTMLPurifier::class));
 
-        $serviceManager->setService('HTMLPurifier', $this->getMock('HTMLPurifier'));
-
-        $controllerManager = $this->getMock('Zend\Mvc\Controller\ControllerManager');
-        $controllerManager->expects($this->any())
+        /** @var ServiceLocatorInterface|MockObject $plugins */
+        $plugins = $this->getMock('Zend\Mvc\Controller\ControllerManager');
+        $plugins->expects($this->any())
             ->method('getServiceLocator')
-            ->will($this->returnValue($serviceManager));
+            ->willReturn($serviceManager);
+
         $factory = new RoleControllerFactory();
 
-        $this->assertInstanceOf(RoleController::class, $factory->createService($controllerManager));
+        $this->assertInstanceOf(RoleController::class, $factory->createService($plugins));
     }
 }

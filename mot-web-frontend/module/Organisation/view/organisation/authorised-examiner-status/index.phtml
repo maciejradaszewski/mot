@@ -1,0 +1,55 @@
+<?php
+
+use Organisation\Form\AeStatusForm;
+
+/**
+ * @var \Organisation\ViewModel\AuthorisedExaminer\AeFormViewModel $model
+ * @var AeStatusForm                                               $form
+ * @var \Zend\Mvc\Controller\Plugin\FlashMessenger                 $flashMessenger
+ */
+
+$model = $this->model;
+$form = $model->getForm();
+
+//  show api errors
+$flashMessenger = $this->layout()->flashMessenger;
+echo $this->partial(
+    'partial/gds/general/system-message',
+    ['messages' => $flashMessenger->getErrorMessages(), 'type' => 'failure']
+);
+?>
+
+<form method="POST" action="<?php echo $form->getFormUrl(); ?>">
+    <?php echo $this->csrfToken() ?>
+    <fieldset>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-legend',
+            ['id' => 'legendStatusAreaOffice', 'text' => 'Status and area office']
+        );
+        echo $this->partial(
+            'partial/gds/form/control-select-group',
+            [
+                'id'           => AeStatusForm::FIELD_STATUS,
+                'label'        => 'AE status',
+                'errorMessage' => $form->getError(AeStatusForm::FIELD_STATUS),
+                'value'        => $form->getStatus(),
+                'options'      => $form->getStatuses(),
+                'inputModifier'=> '1-4',
+            ]
+        );
+        ?>
+    </fieldset>
+    <?php
+    echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id'         => 'submitAeStatus',
+            'value'      => 'Continue to summary',
+            'navigation' => [
+                'Cancel and return to AE details' => $model->getCancelUrl(),
+            ],
+        ]
+    );
+    ?>
+</form>

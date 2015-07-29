@@ -1,0 +1,35 @@
+<?php
+
+namespace OrganisationApiTest\Factory\Controller;
+
+use Doctrine\ORM\EntityManager;
+use DvsaCommonTest\TestUtils\XMock;
+use OrganisationApi\Controller\AuthorisedExaminerStatusController;
+use OrganisationApi\Factory\Controller\AuthorisedExaminerStatusControllerFactory;
+use OrganisationApi\Service\AuthorisedExaminerStatusService;
+use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\ServiceManager;
+
+class AuthorisedExaminerStatusControllerFactoryTest extends \PHPUnit_Framework_TestCase
+{
+    public function testFactory()
+    {
+        $serviceManager = new ServiceManager();
+
+        $serviceManager->setService(
+            AuthorisedExaminerStatusService::class,
+            XMock::of(AuthorisedExaminerStatusService::class)
+        );
+
+        $plugins = $this->getMock('Zend\Mvc\Controller\ControllerManager');
+        $plugins->expects($this->any())
+            ->method('getServiceLocator')
+            ->willReturn($serviceManager);
+
+        // Create the factory
+        $factory = new AuthorisedExaminerStatusControllerFactory();
+        $factoryResult = $factory->createService($plugins);
+
+        $this->assertInstanceOf(AuthorisedExaminerStatusController::class, $factoryResult);
+    }
+}

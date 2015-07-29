@@ -53,6 +53,7 @@ class EventTypeCode
     const GROUP_A_TESTER_QUALIFICATION = 'GATQ';
     const GROUP_B_TESTER_QUALIFICATION = 'GBTQ';
     const DVSA_ADMINISTRATOR_CREATE_AE = 'CAE';
+    const UPDATE_AE = 'UAE';
 
     /**
      * @return array of values for the type EventTypeCode
@@ -97,12 +98,13 @@ class EventTypeCode
             self::DEMONSTRATION_TEST,
             self::VT7,
             self::USER_CLAIMS_ACCOUNT,
+            self::ROLE_ASSOCIATION_CHANGE,
             self::USER_RECLAIMS_ACCOUNT,
             self::USER_ACCOUNT_RESET,
-            self::ROLE_ASSOCIATION_CHANGE,
             self::GROUP_A_TESTER_QUALIFICATION,
             self::GROUP_B_TESTER_QUALIFICATION,
             self::DVSA_ADMINISTRATOR_CREATE_AE,
+            self::UPDATE_AE,
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace Organisation\Factory\Controller;
 
+use DvsaClient\MapperFactory;
 use Organisation\Controller\AuthorisedExaminerPrincipalController;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -18,6 +19,9 @@ class AuthorisedExaminerPrincipalControllerFactory implements FactoryInterface
         /* @var ServiceLocatorInterface $serviceLocator */
         $serviceLocator = $controllerManager->getServiceLocator();
 
-        return new AuthorisedExaminerPrincipalController($serviceLocator->get('AuthorisationService'));
+        return new AuthorisedExaminerPrincipalController(
+            $serviceLocator->get('AuthorisationService'),
+            $serviceLocator->get(MapperFactory::class)
+        );
     }
 }

@@ -67,6 +67,7 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
         return [
             ['areaOfficeOptions', ['test_AO1', 'test_AO2']],
             ['companyTypes', ['test_CompanyType1', 'test_CompanyType1']],
+            ['formUrl', ['test_FormUrl1', 'test_FormUrl2']],
         ];
     }
 
@@ -358,5 +359,17 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
             ->setEmails([$emailDto]);
 
         return $contactDto;
+    }
+
+
+    public function testAddErrorsFromApi()
+    {
+        $errors = [
+            'field' => 'field',
+            'displayMessage' => 'message'
+        ];
+
+        $this->form->addErrorsFromApi([$errors]);
+        $this->assertEquals('message', $this->form->getError('field'));
     }
 }

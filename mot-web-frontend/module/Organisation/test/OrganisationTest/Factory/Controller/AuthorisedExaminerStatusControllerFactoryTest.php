@@ -6,17 +6,17 @@ use Core\Service\MotFrontendAuthorisationServiceInterface;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommonTest\TestUtils\XMock;
-use Organisation\Controller\AuthorisedExaminerController;
-use Organisation\Factory\Controller\AuthorisedExaminerControllerFactory;
+use Organisation\Controller\AuthorisedExaminerStatusController;
+use Organisation\Factory\Controller\AuthorisedExaminerStatusControllerFactory;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 use \PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
- * Class AuthorisedExaminerControllerFactoryTest
+ * Class AuthorisedExaminerStatusControllerFactoryTest
  * @package OrganisationTest\Factory\Controller
  */
-class AuthorisedExaminerControllerFactoryTest extends \PHPUnit_Framework_TestCase
+class AuthorisedExaminerStatusControllerFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testFactory()
     {
@@ -34,8 +34,8 @@ class AuthorisedExaminerControllerFactoryTest extends \PHPUnit_Framework_TestCas
 
         //  --  check   --
         $this->assertInstanceOf(
-            AuthorisedExaminerController::class,
-            (new AuthorisedExaminerControllerFactory())->createService($plugins)
+            AuthorisedExaminerStatusController::class,
+            (new AuthorisedExaminerStatusControllerFactory())->createService($plugins)
         );
     }
 }
