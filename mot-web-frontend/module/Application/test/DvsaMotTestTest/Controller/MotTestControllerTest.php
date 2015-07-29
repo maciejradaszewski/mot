@@ -212,7 +212,7 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
 
     public function testMotTestIndexPostWithInvalidOdometerWithWhiteSpaceOnly()
     {
-        $this->getFlashMessengerMockForAddErrorMessage(MotTestController::ODOMETER_FORM_ERROR_MESSAGE);
+        $this->getFlashMessengerMockForAddErrorMessage(MotTestController::ODOMETER_VALUE_REQUIRED_MESSAGE);
 
         $postParams = [
             'odometer' => '  ',

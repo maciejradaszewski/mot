@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "749ae2d52e5843d5c19bad03fe0d8f08",
+    "hash": "1a4ab9ebb85ef43bbf30e5d7f588d677",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -739,30 +739,32 @@
         },
         {
             "name": "dvsa/feature-toggle",
-            "version": "v1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:mot/featuretoggle.git",
-                "reference": "636213e97a7680dba2e4cc6137d21d39b77a9c17"
+                "reference": "2ca85b84d5b20959a5f4fe899fd989f92602403f"
             },
             "require": {
                 "php": ">=5.3.3",
-                "zendframework/zendframework": ">2.1.0"
+                "zendframework/zendframework": "~2.3"
             },
             "require-dev": {
+                "fabpot/php-cs-fixer": "~1.5",
                 "phpunit/phpunit": "~4.0"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "DvsaFeature\\": "src/"
+                "psr-4": {
+                    "DvsaFeature\\": "src/",
+                    "DvsaFeatureTest\\": "test/"
                 },
                 "classmap": [
                     "./Module.php"
                 ]
             },
             "description": "Shared facility to toggle functionality within the codebase",
-            "time": "2014-11-09 10:18:21"
+            "time": "2015-07-23 15:04:18"
         },
         {
             "name": "symfony/console",
@@ -821,16 +823,16 @@
         },
         {
             "name": "zendframework/zendframework",
-            "version": "2.3.9",
+            "version": "2.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zf2.git",
-                "reference": "32858f883fffb5eef9f610b538ed026f6033b6de"
+                "reference": "84cad41e1ee549d634c109de18c4626e51cc6b29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/32858f883fffb5eef9f610b538ed026f6033b6de",
-                "reference": "32858f883fffb5eef9f610b538ed026f6033b6de",
+                "url": "https://api.github.com/repos/zendframework/zf2/zipball/84cad41e1ee549d634c109de18c4626e51cc6b29",
+                "reference": "84cad41e1ee549d634c109de18c4626e51cc6b29",
                 "shasum": ""
             },
             "require": {
@@ -891,14 +893,13 @@
                 "zendframework/zend-xmlrpc": "self.version"
             },
             "require-dev": {
-                "doctrine/annotations": ">=1.0",
-                "fabpot/php-cs-fixer": "1.*",
-                "ircmaxell/random-lib": "dev-master",
-                "ircmaxell/security-lib": "dev-master",
-                "mikey179/vfsstream": "1.2.*",
-                "phpunit/phpunit": "3.7.*",
-                "satooshi/php-coveralls": "dev-master",
-                "sebastianbergmann/phpcov": "1.1.0"
+                "doctrine/annotations": "~1.0",
+                "fabpot/php-cs-fixer": "~1.0",
+                "ircmaxell/random-lib": "~1.1",
+                "mikey179/vfsstream": "~1.2",
+                "phpunit/phpcov": "~2.0",
+                "phpunit/phpunit": "~4.6",
+                "satooshi/php-coveralls": "dev-master"
             },
             "suggest": {
                 "doctrine/annotations": "Doctrine Annotations >=1.0 for annotation features",
@@ -916,13 +917,13 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.3-dev",
-                    "dev-develop": "2.4-dev"
+                    "dev-master": "2.4-dev",
+                    "dev-develop": "2.5-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Zend\\": "library/"
+                "psr-4": {
+                    "Zend\\": "library/Zend/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -935,7 +936,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2015-05-11 16:03:51"
+            "time": "2015-07-21 15:45:25"
         },
         {
             "name": "zendframework/zendpdf",

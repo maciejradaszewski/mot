@@ -76,9 +76,11 @@ class AbstractDvsaRestfulController
     }
 
     /**
+     * @param mixed $data
+     *
      * @return \Zend\View\Model\JsonModel
      */
-    public function deleteList()
+    public function deleteList($data)
     {
         return $this->returnMethodNotAllowedResponseModel();
     }

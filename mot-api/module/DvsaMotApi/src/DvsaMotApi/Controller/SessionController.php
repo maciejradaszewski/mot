@@ -24,7 +24,7 @@ use Zend\View\Model\JsonModel;
 class SessionController extends AbstractDvsaRestfulController
 {
 
-    public function deleteList()
+    public function deleteList($data)
     {
         /** @var Request $request */
         $request = $this->serviceLocator->get('request');

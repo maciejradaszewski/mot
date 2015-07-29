@@ -12,7 +12,7 @@ use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
 use Zend\View\Helper\Url;
 use Zend\View\Renderer\PhpRenderer;
 
-class FilterBuilderTest extends AbstractControllerTestCase
+class FilterBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  FilterBuilder */
     private $targetClass;

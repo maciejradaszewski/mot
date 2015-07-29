@@ -3,7 +3,7 @@
 namespace Report\Table;
 
 use DvsaCommon\Dto\Search\SearchParamsDto;
-use Zend\Paginator\Adapter\Null as NullAdapter;
+use Zend\Paginator\Adapter\NullFill as NullAdapter;
 use Zend\Paginator\Paginator;
 use Zend\View\Renderer\PhpRenderer;
 
