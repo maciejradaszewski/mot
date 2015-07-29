@@ -3,9 +3,12 @@
 namespace OrganisationTest\Presenter;
 
 use DvsaCommon\Dto\Contact\AddressDto;
-use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Dto\Organisation\OrganisationContactDto;
+use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
+use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use Organisation\Presenter;
 use DvsaCommon\Dto\Organisation;
 use Organisation\Presenter\AuthorisedExaminerPresenter;
@@ -16,86 +19,68 @@ use Organisation\Presenter\AuthorisedExaminerPresenter;
  */
 class AuthorisedExaminerPresenterTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetName() {
-        $name = "test";
+    const AE_ID = 1;
+    const AE_NAME = 'name';
+    const AE_SLOT = 1234;
+    const AE_NUMBER = 'number';
+    const AE_TRADING_NAME = 'trading';
+    const AE_COMPANY_NUMBER = 'company number';
+    const AE_TYPE = CompanyTypeCode::COMPANY;
+    const AE_ORG_TYPE = 'org';
+    const ADDRESS_LINE_1 = 'line1';
+    const TOWN = 'town';
+    const POSTCODE = 'postcode';
+    const ADDRESS_INLINE = 'line1, town, postcode';
 
-        $organisationDto = $this->getOrganisationDto();
-        $organisationDto->setName($name);
-        $presenter = new AuthorisedExaminerPresenter($organisationDto);
+    public function testGetter()
+    {
+        $presenter = new AuthorisedExaminerPresenter($this->getOrganisationDto());
 
-        $this->assertEquals($name, $presenter->getName());
+        $this->assertEquals(self::AE_SLOT, $presenter->getSlotsBalance());
+        $this->assertEquals(self::AE_NAME, $presenter->getName());
+        $this->assertEquals(self::AE_NUMBER, $presenter->getNumber());
+        $this->assertEquals(self::AE_TRADING_NAME, $presenter->getTradingName());
+        $this->assertEquals(self::ADDRESS_INLINE, $presenter->getAddressInline());
+        $this->assertEquals(self::AE_COMPANY_NUMBER, $presenter->getCompanyNumber());
+        $this->assertEquals(self::AE_TYPE, $presenter->getCompanyType());
+        $this->assertEquals(self::AE_ORG_TYPE, $presenter->getOrganisationType());
+
     }
 
-    public function testGetNumber() {
-        $companyNumber = "123456789";
+    public function testUrls()
+    {
+        $presenter = new AuthorisedExaminerPresenter($this->getOrganisationDto());
 
-        $organisationDto = $this->getOrganisationDto();
-        $organisationDto->setRegisteredCompanyNumber($companyNumber);
-        $presenter = new AuthorisedExaminerPresenter($organisationDto);
-
-        $this->assertEquals($companyNumber, $presenter->getNumber());
+        $this->assertEquals(AuthorisedExaminerUrlBuilderWeb::aeEdit(self::AE_ID), $presenter->getChangeDetailsUrl());
+        $this->assertEquals(AuthorisedExaminerUrlBuilderWeb::aeEditStatus(self::AE_ID), $presenter->getChangeStatusUrl());
+        $this->assertEquals(AuthorisedExaminerUrlBuilderWeb::principals(self::AE_ID), $presenter->getPrincipalsUrl());
+        $this->assertEquals(AuthorisedExaminerUrlBuilderWeb::roles(self::AE_ID), $presenter->getAssignRoleUrl());
     }
 
-    public function testGetTradingName() {
-        $trading = "test";
+    private function getOrganisationDto()
+    {
+        $authorisation = (new AuthorisedExaminerAuthorisationDto())
+            ->setAuthorisedExaminerRef(self::AE_NUMBER);
 
-        $organisationDto = $this->getOrganisationDto();
-        $organisationDto->setTradingAs($trading);
-        $presenter = new AuthorisedExaminerPresenter($organisationDto);
+        $address = (new AddressDto())
+            ->setAddressLine1(self::ADDRESS_LINE_1)
+            ->setTown(self::TOWN)
+            ->setPostcode(self::POSTCODE);
+        $contact = (new OrganisationContactDto)
+            ->setType(OrganisationContactTypeCode::REGISTERED_COMPANY)
+            ->setAddress($address);
 
-        $this->assertEquals($trading, $presenter->getTradingName());
-    }
-
-    public function testGetAddressInline() {
-        $addressDto = $this->getAddressDto();
-
-        $organisationContactDto = new OrganisationContactDto();
-        $organisationContactDto->setType(OrganisationContactTypeCode::REGISTERED_COMPANY);
-        $organisationContactDto->setAddress($addressDto);
-
-        $organisationDto = $this->getOrganisationDto();
-        $organisationDto->setContacts(array($organisationContactDto));
-        $presenter = new AuthorisedExaminerPresenter($organisationDto);
-
-        $this->assertEquals("Line1, Line2, Line3, Line4", $presenter->getAddressInline());
-    }
-
-    public function testGetOrganisationType() {
-        $organisationType = 1;
-
-        $organisationDto = $this->getOrganisationDto();
-        $organisationDto->setOrganisationType($organisationType);
-        $presenter = new AuthorisedExaminerPresenter($organisationDto);
-
-        $this->assertEquals($organisationType, $presenter->getOrganisationType());
-    }
-
-    private function getOrganisationDto() {
-        $authorisation = new Organisation\AuthorisedExaminerAuthorisationDto();
-        $authorisation->setAuthorisedExaminerRef('123456789');
-
-        $dto = new OrganisationDto();
-        $dto->setAuthorisedExaminerAuthorisation($authorisation);
+        $dto = (new OrganisationDto())
+            ->setId(self::AE_ID)
+            ->setName(self::AE_NAME)
+            ->setSlotBalance(self::AE_SLOT)
+            ->setTradingAs(self::AE_TRADING_NAME)
+            ->setCompanyType(self::AE_TYPE)
+            ->setOrganisationType(self::AE_ORG_TYPE)
+            ->setRegisteredCompanyNumber(self::AE_COMPANY_NUMBER)
+            ->setContacts([$contact])
+            ->setAuthorisedExaminerAuthorisation($authorisation);
 
         return $dto;
-    }
-
-    public function testGetSlotUsage() {
-        $organisationDto = new OrganisationDto();
-        $organisationDto->setSlotBalance('1200');
-
-        $presenter = new AuthorisedExaminerPresenter($organisationDto);
-
-        $this->assertEquals($presenter->getSlotsBalance(), '1200');
-    }
-
-    private function getAddressDto() {
-        $addressDto = new AddressDto();
-        $addressDto->setAddressLine1("Line1");
-        $addressDto->setAddressLine2("Line2");
-        $addressDto->setAddressLine3("Line3");
-        $addressDto->setAddressLine4("Line4");
-
-        return $addressDto;
     }
 }

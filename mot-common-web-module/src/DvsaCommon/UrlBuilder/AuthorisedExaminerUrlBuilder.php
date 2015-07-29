@@ -10,6 +10,7 @@ namespace DvsaCommon\UrlBuilder;
 class AuthorisedExaminerUrlBuilder extends AbstractUrlBuilder
 {
     const AUTHORISED_EXAMINER = 'authorised-examiner[/:id]';
+    const STATUS = '/status';
 
     const SLOT = '/slot';
     const SLOT_USAGE = '/slot-usage[/:period]';
@@ -26,14 +27,15 @@ class AuthorisedExaminerUrlBuilder extends AbstractUrlBuilder
         = [
             self::AUTHORISED_EXAMINER =>
                 [
-                    self::SLOT                          => '',
-                    self::SLOT_USAGE                    => '',
+                    self::STATUS => '',
+                    self::SLOT => '',
+                    self::SLOT_USAGE => '',
                     self::AUTHORISED_EXAMINER_PRINCIPAL => '',
-                    self::AUTHORISED_EXAMINER_LIST      => '',
-                    self::MOT_TEST_LOG                  => [
+                    self::AUTHORISED_EXAMINER_LIST => '',
+                    self::MOT_TEST_LOG => [
                         self::MOT_TEST_LOG_SUMMARY => '',
                     ],
-                    self::AUTHORISED_EXAMINER_NUMBER    => '',
+                    self::AUTHORISED_EXAMINER_NUMBER => '',
                 ],
         ];
 
@@ -116,5 +118,10 @@ class AuthorisedExaminerUrlBuilder extends AbstractUrlBuilder
             $this->routeParam('number', $number);
         }
         return $this;
+    }
+
+    public static function status($id)
+    {
+        return self::of($id)->appendRoutesAndParams(self::STATUS);
     }
 }

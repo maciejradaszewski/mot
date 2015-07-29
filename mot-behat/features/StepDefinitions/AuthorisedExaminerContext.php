@@ -62,7 +62,10 @@ class AuthorisedExaminerContext implements Context
      */
     public function iAttemptToObtainDetailsOfAnAuthorisedExaminer()
     {
-        $this->examinerDetailsResponse = $this->authorisedExaminer->getAEDetails($this->sessionContext->getCurrentAccessTokenOrNull(), 3);
+        $this->examinerDetailsResponse = $this->authorisedExaminer->getAuthorisedExaminerDetails(
+            $this->sessionContext->getCurrentAccessTokenOrNull(),
+            3
+        );
     }
 
     /**
@@ -71,7 +74,10 @@ class AuthorisedExaminerContext implements Context
     public function iWillNotSeeTheAuthorisedExaminerDetails()
     {
         PHPUnit::assertEquals(401, $this->examinerDetailsResponse->getStatusCode(), 'Incorrect status code returned.');
-        PHPUnit::assertArrayNotHasKey('data', $this->examinerDetailsResponse->getBody()->toArray(), 'Data key exists in response body.');
+        PHPUnit::assertArrayNotHasKey(
+            'data',
+            $this->examinerDetailsResponse->getBody()->toArray(), 'Data key exists in response body.'
+        );
     }
 
     /**
@@ -111,25 +117,21 @@ class AuthorisedExaminerContext implements Context
      */
     public function theAuthorisedExaminerRecordContainsDataDisclosureData()
     {
-        $dataDisclosure = $this->examinerDetailsResponse->getBody()['data']['authorisedExaminerAuthorisation']['dataDisclosure'];
+        $dataDisclosure
+            = $this->examinerDetailsResponse->getBody()['data']['authorisedExaminerAuthorisation']['dataDisclosure'];
         PHPUnit::assertContains($dataDisclosure, 'TODO');
     }
 
     /**
      * @Then I should be able to create a new Authorised Examiner
      */
-    public function iCreateANewAuthorisedExaminer()
+    public function createNewAuthorisedExaminer()
     {
-        $featureSrv = $this->sessionContext->testSupportHelper->getServiceManager()->get('Feature\FeatureToggles');
+        $this->examinerDetailsResponse = $this->authorisedExaminer->createAuthorisedExaminer(
+            $this->sessionContext->getCurrentAccessToken()
+        );
 
-        if ($featureSrv->isEnabled(\DvsaCommon\Constants\FeatureToggle::AO1_AE_CREATE)) {
-            $authorisedExaminerResponse = $this->authorisedExaminer->createAE(
-                $this->sessionContext->getCurrentAccessToken(),
-                'Sole Trader'
-            );
-
-            PHPUnit::assertEquals(200, $authorisedExaminerResponse->getStatusCode());
-        }
+        PHPUnit::assertEquals(200, $this->examinerDetailsResponse->getStatusCode());
     }
 
     /**
@@ -137,7 +139,9 @@ class AuthorisedExaminerContext implements Context
      */
     public function iAttemptToRemoveAnAuthorisedExaminer()
     {
-        $this->removeAeResponse = $this->authorisedExaminer->removeAE($this->sessionContext->getCurrentAccessToken());
+        $this->removeAeResponse = $this->authorisedExaminer->removeAuthorisedExaminer(
+            $this->sessionContext->getCurrentAccessToken()
+        );
     }
 
     /**
@@ -146,5 +150,19 @@ class AuthorisedExaminerContext implements Context
     public function theAttemptWillBeForbidden()
     {
         PHPUnit::assertThat($this->removeAeResponse->getStatusCode(), PHPUnit::equalTo(403));
+    }
+
+    /**
+     * @Then /^I should be able to approve this Authorised Examiner$/
+     */
+    public function approveAnAuthorisedExaminer()
+    {
+        $authorisedExaminerResponse = $this->authorisedExaminer->updateStatusAuthorisedExaminer(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->examinerDetailsResponse->getBody()['data']['id'],
+            \DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode::APPROVED
+        );
+
+        PHPUnit::assertEquals(200, $authorisedExaminerResponse->getStatusCode());
     }
 }

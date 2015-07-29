@@ -5,9 +5,11 @@ Feature: Authorised Examiner
 
   @defect @VM-8383
   @story @VM-2166
+  @story @VM-10406
   Scenario: Area Office user creates an Authorised Examiner
     Given I am logged in as an Area Office User
     Then I should be able to create a new Authorised Examiner
+    Then I should be able to approve this Authorised Examiner
 
   Scenario: Area Admin user retrieves details of an Authorised Examiner
     Given I am logged in as an Area Office User

@@ -3,6 +3,7 @@
 namespace Organisation\Controller;
 
 use Core\Controller\AbstractAuthActionController;
+use DvsaClient\MapperFactory;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
@@ -26,10 +27,15 @@ class AuthorisedExaminerPrincipalController extends AbstractAuthActionController
      * @var MotFrontendAuthorisationServiceInterface
      */
     private $authorisationService;
+    /**
+     * @var MapperFactory
+     */
+    private $mapper;
 
-    public function __construct(MotFrontendAuthorisationServiceInterface $authorisationService)
+    public function __construct(MotFrontendAuthorisationServiceInterface $authorisationService, MapperFactory $mapper)
     {
         $this->authorisationService = $authorisationService;
+        $this->mapper = $mapper;
     }
 
     public function indexAction()
@@ -47,12 +53,11 @@ class AuthorisedExaminerPrincipalController extends AbstractAuthActionController
             try {
                 $postData = $this->getRequest()->getPost()->toArray();
                 $form = $postData;
-                $mapperFactory = $this->getMapperFactory();
-                $principalId = $mapperFactory->Person->createPrincipalsForOrganisation(
+                $principalId = $this->mapper->Person->createPrincipalsForOrganisation(
                     $authorisedExaminerId, $postData
                 );
 
-                $principal = $mapperFactory->Person->getById($principalId);
+                $principal = $this->mapper->Person->getById($principalId);
                 $this->addInfoMessages($principal->getFullName() . ' has been added as AEP');
 
                 return $this->redirect()->toUrl($urlAE);
@@ -75,16 +80,15 @@ class AuthorisedExaminerPrincipalController extends AbstractAuthActionController
 
         $principalId = $this->params()->fromRoute('principalId');
 
-        $mapperFactory = $this->getMapperFactory();
-        $authorisedExaminer = $mapperFactory->Organisation->getAuthorisedExaminer($authorisedExaminerId);
-        $principal = $mapperFactory->Person->getById($principalId);
+        $authorisedExaminer = $this->mapper->Organisation->getAuthorisedExaminer($authorisedExaminerId);
+        $principal = $this->mapper->Person->getById($principalId);
 
         $urlAE = AuthorisedExaminerUrlBuilderWeb::of($authorisedExaminerId);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             try {
-                $mapperFactory->Person->removePrincipalsForOrganisation(
+                $this->mapper->Person->removePrincipalsForOrganisation(
                     $authorisedExaminerId, $principalId
                 );
 

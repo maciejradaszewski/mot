@@ -7,6 +7,7 @@ use OrganisationApi\Controller\OrganisationSlotUsageController;
 use OrganisationApi\Controller\SiteController;
 use OrganisationApi\Factory\Controller\MotTestLogControllerFactory;
 use OrganisationApi\Factory\Controller\AuthorisedExaminerControllerFactory;
+use OrganisationApi\Factory\Controller\AuthorisedExaminerStatusControllerFactory;
 
 return [
     'controllers' => [
@@ -20,6 +21,7 @@ return [
         'factories' => [
             MotTestLogControllerFactory::class         => MotTestLogControllerFactory::class,
             AuthorisedExaminerControllerFactory::class => AuthorisedExaminerControllerFactory::class,
+            AuthorisedExaminerStatusControllerFactory::class => AuthorisedExaminerStatusControllerFactory::class,
         ],
     ],
     'router'      => [
@@ -63,6 +65,15 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'status' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'       => '/status',
+                            'defaults'    => [
+                                'controller' => AuthorisedExaminerStatusControllerFactory::class,
+                            ],
+                        ],
+                    ],
                     'number' => [
                         'type'    => 'Segment',
                         'options' => [

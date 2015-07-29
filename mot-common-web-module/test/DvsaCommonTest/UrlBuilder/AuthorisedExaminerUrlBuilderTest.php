@@ -30,6 +30,7 @@ class AuthorisedExaminerUrlBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('authorised-examiner/' . self::AE_ID . '/mot-test-log', AuthorisedExaminerUrlBuilder::of(self::AE_ID)->motTestLog(self::AE_ID)->toString());
         $this->assertEquals('authorised-examiner/' . self::AE_ID . '/mot-test-log/summary', AuthorisedExaminerUrlBuilder::of(self::AE_ID)->motTestLog(self::AE_ID)->motTestLogSummary(self::AE_ID)->toString());
         $this->assertEquals('authorised-examiner/number/A-12345', AuthorisedExaminerUrlBuilder::of()->authorisedExaminerByNumber(self::AE_NUMBER)->toString());
+        $this->assertEquals('authorised-examiner/' . self::AE_ID . '/status', AuthorisedExaminerUrlBuilder::status(self::AE_ID)->toString());
     }
 
 }

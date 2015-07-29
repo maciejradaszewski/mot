@@ -26,6 +26,12 @@ $successMessages = $this->layout()->flashMessenger->getSuccessMessages();
 echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
 ?>
 <h3 class="key-value-list__header">Business details</h3>
+<?php if ($this->isFeatureEnabled(\DvsaCommon\Constants\FeatureToggle::AO1_AE_EDIT_STATUS)): ?>
+    <?php if ($viewModel->getViewAuthorisation()->canUpdateAE()): ?>
+        <a id="change-status-and-area-office" href="<?php echo $this->escapeHtmlAttr($presenter->getChangeStatusUrl()); ?>"
+           class="key-value-list__action">Change status & area office</a>
+    <?php endif; ?>
+<?php endif; ?>
 <table class="key-value-list">
     <tbody>
     <tr>
@@ -327,7 +333,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
 <?php if ($viewModel->canViewAeSection()): ?>
     <h3 class="key-value-list__header">AEP</h3>
         <?php if ($viewModel->getViewAuthorisation()->canCreateAuthorisedExaminerPrincipal()): ?>
-            <a id="add-aep" href="<?php echo AuthorisedExaminerUrlBuilderWeb::of($organisationId)->principals(); ?>" class="key-value-list__action">Add an AEP</a>
+            <a id="add-aep" href="<?php echo AuthorisedExaminerUrlBuilderWeb::principals($organisationId); ?>" class="key-value-list__action">Add an AEP</a>
         <?php endif; ?>
 
             <?php foreach ($viewModel->getPrincipals() as $principalIdx => $principal) :

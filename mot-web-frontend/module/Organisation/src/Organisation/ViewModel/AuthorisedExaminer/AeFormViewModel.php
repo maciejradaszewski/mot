@@ -2,19 +2,19 @@
 
 namespace Organisation\ViewModel\AuthorisedExaminer;
 
-use Organisation\Form\AeCreateForm;
+use DvsaClient\ViewModel\AbstractFormModel;
 
 class AeFormViewModel
 {
     /**
-     * @var  AeCreateForm
+     * @var  AbstractFormModel
      */
     private $form;
 
     private $cancelUrl;
 
     /**
-     * @return AeCreateForm
+     * @return AbstractFormModel
      */
     public function getForm()
     {
@@ -22,11 +22,11 @@ class AeFormViewModel
     }
 
     /**
-     * @param AeCreateForm $dto
+     * @param AbstractFormModel $dto
      *
      * @return $this
      */
-    public function setForm(AeCreateForm $dto = null)
+    public function setForm($dto = null)
     {
         $this->form = $dto;
         return $this;

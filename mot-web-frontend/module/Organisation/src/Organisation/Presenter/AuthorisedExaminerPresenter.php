@@ -41,10 +41,29 @@ class AuthorisedExaminerPresenter
     {
         return AddressUtils::stringify($this->organisation->getRegisteredCompanyContactDetail()->getAddress());
     }
+    public function getCompanyNumber()
+    {
+        return $this->organisation->getRegisteredCompanyNumber();
+    }
+
+    public function getOrganisationType()
+    {
+        return $this->organisation->getOrganisationType();
+    }
+
+    public function getCompanyType()
+    {
+        return $this->organisation->getCompanyType();
+    }
 
     public function getChangeDetailsUrl()
     {
-        return AuthorisedExaminerUrlBuilderWeb::of($this->organisation->getId())->aeEdit();
+        return AuthorisedExaminerUrlBuilderWeb::aeEdit($this->organisation->getId());
+    }
+
+    public function getChangeStatusUrl()
+    {
+        return AuthorisedExaminerUrlBuilderWeb::aeEditStatus($this->organisation->getId());
     }
 
     public function getAssignRoleUrl()
@@ -54,18 +73,6 @@ class AuthorisedExaminerPresenter
 
     public function getPrincipalsUrl()
     {
-        return AuthorisedExaminerUrlBuilderWeb::of($this->organisation->getId())->principals();
-    }
-
-    public function getCompanyNumber() {
-        return $this->organisation->getRegisteredCompanyNumber();
-    }
-
-    public function getOrganisationType() {
-        return $this->organisation->getOrganisationType();
-    }
-
-    public function getCompanyType() {
-        return $this->organisation->getCompanyType();
+        return AuthorisedExaminerUrlBuilderWeb::principals($this->organisation->getId());
     }
 }

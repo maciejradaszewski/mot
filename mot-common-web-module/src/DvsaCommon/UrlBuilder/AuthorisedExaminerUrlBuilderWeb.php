@@ -12,6 +12,8 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
     const CREATE                                = '/create';
     const CREATE_AE_CONFIRMATION                = '/confirmation';
     const EDIT                                  = '/edit';
+    const EDIT_STATUS                           = '/edit-status';
+    const EDIT_STATUS_CONFIRM                   = '/confirmation';
 
     const SLOTS                                 = '/slots';
     const SLOTS_SETTINGS                        = '/settings';
@@ -50,6 +52,9 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
                         self::CREATE_AE_CONFIRMATION => '',
                     ],
                     self::EDIT           => '',
+                    self::EDIT_STATUS    => [
+                        self::EDIT_STATUS_CONFIRM => '',
+                    ],
                     self::SLOTS          => [
                         self::SLOTS_SETTINGS => '',
                         self::SLOTS_PURCHASE => [
@@ -112,9 +117,19 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
         return $this->appendRoutesAndParams(self::SEARCH);
     }
 
-    public function aeEdit()
+    public static function aeEdit($id)
     {
-        return $this->appendRoutesAndParams(self::EDIT);
+        return self::of($id)->appendRoutesAndParams(self::EDIT);
+    }
+
+    public static function aeEditStatus($id)
+    {
+        return self::of($id)->appendRoutesAndParams(self::EDIT_STATUS);
+    }
+
+    public static function aeEditStatusConfirm($id)
+    {
+        return self::aeEditStatus($id)->appendRoutesAndParams(self::EDIT_STATUS_CONFIRM);
     }
 
     public static function roles($aeId)
@@ -122,9 +137,9 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
         return self::of($aeId)->appendRoutesAndParams(self::ROLES);
     }
 
-    public function principals()
+    public static function principals($id)
     {
-        return $this->appendRoutesAndParams(self::PRINCIPALS);
+        return self::of($id)->appendRoutesAndParams(self::PRINCIPALS);
     }
 
     public function principalRemove($principalId)

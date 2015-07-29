@@ -1,0 +1,43 @@
+<?php
+
+use Organisation\Form\AeStatusForm;
+
+/**
+ * @var \Organisation\ViewModel\AuthorisedExaminer\AeFormViewModel $model
+ * @var AeStatusForm                                               $form
+ */
+
+$model = $this->model;
+$form = $model->getForm();
+
+?>
+<!--Display of the information enter-->
+<?php
+echo $this->partial(
+    'partial/gds/table/table',
+    [
+        'head' => 'Confirm changes',
+        'body' => [
+            ['Status', $form->getStatuses()[$form->getStatus()]],
+        ],
+    ]
+);
+?>
+<!--Hidden information of the AE for save purpose-->
+<form method="POST" action="<?php echo $form->getFormUrl(); ?>">
+    <?php
+    echo $this->csrfToken();
+
+    // Navigation
+    echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id'         => 'submitAeEditStatus',
+            'value'      => 'Save AE changes',
+            'navigation' => [
+                'Back to change AE details' => $model->getCancelUrl(),
+            ],
+        ]
+    );
+    ?>
+</form>
