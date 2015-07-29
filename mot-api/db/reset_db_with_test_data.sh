@@ -31,7 +31,6 @@ MyHOST=${3-"localhost"}
 MyDATABASE=${4-${MOT_DATABASE-"mot"}}
 MyGRANTUSER=${5-"motdbuser"}
 ImportFullVtsDataSet=${6-"N"}
-CreateHistory=${7-"Y"}
 
 echo "$(date) Reset database $MyDATABASE with test data"
 
@@ -45,9 +44,6 @@ fi
 if [ ! $THAW_RESULT -eq 0 ] || [ $FORCE_RESET -eq 1 ]; then
     ./drop_db.sh $MyUSER $MyPASS $MyHOST $MyDATABASE $MyGRANTUSER $ImportFullVtsDataSet 2> >(grep -v 'Using a password on the command line interface can be insecure')
     ./create_db_with_test_data.sh $MyUSER $MyPASS $MyHOST $MyDATABASE $MyGRANTUSER $ImportFullVtsDataSet  2> >(grep -v 'Using a password on the command line interface can be insecure')
-    if [ "$CreateHistory" = "Y" ]; then
-        ./create_hist_tables.sh $MyUSER $MyPASS $MyHOST $MyDATABASE $MyGRANTUSER
-    fi
 fi
 
 echo "$(date) Done resetting DB"
