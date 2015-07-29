@@ -15,6 +15,11 @@ public class FormCompletionHelper {
         dropdown.selectByValue(value);
     }
 
+    public static void selectFromDropDownByVisibleText(WebElement element, String value){
+        Select dropdown = new Select(element);
+        dropdown.selectByVisibleText(value);
+    }
+
     public static void selectInputBox(WebElement webElement) {
         if(webElement.isDisplayed() && !webElement.isSelected()) {
             webElement.click();

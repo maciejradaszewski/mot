@@ -9,7 +9,8 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.accountclaim.AccountClaimPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AeSlotsUsagePage;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerPage;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.AedmAuthorisedExaminerViewPage;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 import uk.gov.dvsa.ui.pages.mot.*;
@@ -55,6 +56,12 @@ public class PageNavigator {
         return new ContingencyTestEntryPage(driver);
     }
 
+    public CreateAePage gotoCreateAePage(User user) throws URISyntaxException, IOException {
+        injectOpenAmCookieAndNavigateToPath(user, CreateAePage.path);
+
+        return new CreateAePage(driver);
+    }
+
     public ChangeDetailsPage gotoChangeDetailsPage(User user) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, ChangeDetailsPage.path);
 
@@ -97,17 +104,17 @@ public class PageNavigator {
         return new ProfilePage(driver);
     }
 
-    public AuthorisedExaminerPage goToAuthorisedExaminerPage(User user, String path, String aeId) throws IOException {
+    public AuthorisedExaminerViewPage goToAuthorisedExaminerPage(User user, String path, String aeId) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, String.format(path, aeId));
 
-        return new AuthorisedExaminerPage(driver);
+        return new AedmAuthorisedExaminerViewPage(driver);
     }
 
-    public AuthorisedExaminerPage goToAuthorisedExaminerPage(User user, String aeId)
+    public AuthorisedExaminerViewPage goToAuthorisedExaminerPage(User user, String aeId)
             throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(AuthorisedExaminerPage.PATH, aeId));
+        injectOpenAmCookieAndNavigateToPath(user, String.format(AuthorisedExaminerViewPage.PATH, aeId));
 
-        return new AuthorisedExaminerPage(driver);
+        return new AedmAuthorisedExaminerViewPage(driver);
     }
 
     public AuthorisedExaminerTestLogPage gotoAETestLogPage(User user, String aeId) throws IOException {

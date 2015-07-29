@@ -1,7 +1,8 @@
 package uk.gov.dvsa.ui.pages;
 
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerPage;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.AedmAuthorisedExaminerViewPage;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.braketest.BrakeTestConfigurationPage;
 import uk.gov.dvsa.ui.pages.mot.*;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
@@ -83,7 +84,7 @@ public abstract class PageLocator {
         return new VehicleTestingStationPage(driver);
     }
 
-    public static AuthorisedExaminerPage getAuthorisedExaminerPage(MotAppDriver driver) {
-        return new AuthorisedExaminerPage(driver);
+    public static AuthorisedExaminerViewPage getAuthorisedExaminerPage(MotAppDriver driver) {
+        return new AedmAuthorisedExaminerViewPage(driver);
     }
 }
