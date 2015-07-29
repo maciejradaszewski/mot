@@ -15,8 +15,6 @@ import uk.gov.dvsa.ui.pages.braketest.BrakeTestResultsPage;
 
 public class TestResultsEntryPage extends Page {
     private static final String PAGE_TITLE = "MOT test results entry";
-    private static final String PAGE_TITLE_REINSPECTION = "MOT testing\n" +
-            "MOT reinspection results entry";
 
     @FindBy(id = "odometer_submit") private WebElement odometerSubmit;
 
@@ -91,7 +89,7 @@ public class TestResultsEntryPage extends Page {
 
     @Override
     protected boolean selfVerify() {
-        return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE, PAGE_TITLE_REINSPECTION);
+        return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
 
     public TestResultsEntryPage completeTestDetailsWithPassValues() {
@@ -206,5 +204,9 @@ public class TestResultsEntryPage extends Page {
         odometerSubmit.click();
 
         return this;
+    }
+
+    public String getOdometerReadingText() {
+        return odometerReading.getText();
     }
 }
