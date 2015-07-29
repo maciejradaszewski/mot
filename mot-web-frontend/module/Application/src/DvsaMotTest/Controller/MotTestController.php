@@ -44,7 +44,6 @@ class MotTestController extends AbstractDvsaMotTestController
     const DATE_FORMAT = 'j F Y';
     const DATETIME_FORMAT = 'd M Y H:i';
 
-    const ODOMETER_ENTERED_MESSAGE = "Odometer reading updated";
     const ODOMETER_VALUE_REQUIRED_MESSAGE = "Odometer value must be entered to update odometer reading";
     const ODOMETER_FORM_ERROR_MESSAGE = "The odometer reading should be a valid number between 0 and 999999";
     const TEST_DOCUMENT_VT30 = 'VT30';
@@ -138,8 +137,6 @@ class MotTestController extends AbstractDvsaMotTestController
 
                     $apiUrl = MotTestUrlBuilder::odometerReading($motTestNumber)->toString();
                     $this->getRestClient()->put($apiUrl, $data);
-
-                    $this->addInfoMessages(self::ODOMETER_ENTERED_MESSAGE);
                 } catch (RestApplicationException $e) {
                     $this->addErrorMessages($e->getDisplayMessages());
                 }

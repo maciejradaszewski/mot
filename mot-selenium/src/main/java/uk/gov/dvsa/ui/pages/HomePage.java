@@ -71,6 +71,10 @@ public class HomePage extends Page {
         return new VehicleTestingStationPage(driver);
     }
 
+    public void clickEnterTestResultsButton() {
+        resumeMotTestButton.click();
+    }
+
     public boolean compareUserNameWithSessionUsername() {
         return userNameHeader.getText().equals(driver.getCurrentUser().getNamesAndSurname());
     }

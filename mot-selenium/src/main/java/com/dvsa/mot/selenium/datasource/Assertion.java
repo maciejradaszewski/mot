@@ -52,8 +52,6 @@ public class Assertion {
             "If you're unable to find a vehicle you can create a new vehicle record.");
 
     public static final Assertion ASSERTION_BRAKES_NOT_TESTED = new Assertion("Not tested");
-    public static final Assertion ASSERTION_ODOMETER_UPDATED =
-            new Assertion("Odometer reading updated");
     public static final Assertion ASSERTION_VEHICLE_CURRENTLY_UNDER_TEST =
             new Assertion("This vehicle is currently under test.");
 

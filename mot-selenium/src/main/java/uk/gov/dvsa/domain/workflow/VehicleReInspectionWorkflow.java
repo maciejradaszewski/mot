@@ -43,6 +43,12 @@ public class VehicleReInspectionWorkflow extends BaseWorkflow {
         return new HomePage(driver);
     }
 
+    public TestResultsEntryRetestPage gotoTestResultsEntryPageWhenRetestStarted() {
+        PageLocator.getHomePage(driver)
+                .clickEnterTestResultsButton();
+        return new TestResultsEntryRetestPage(driver);
+    }
+
     public EventsHistoryPage gotoEventsHistoryPage(User user, String siteId) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, String.format(VehicleTestingStationPage.path, siteId));
         PageLocator.getVehicleTestingStationPage(driver)
@@ -59,7 +65,7 @@ public class VehicleReInspectionWorkflow extends BaseWorkflow {
         PageLocator.getTestSummaryPage(driver)
                 .selectTestType(testType)
                 .clickStartReinspectionButton();
-        PageLocator.getTestResultsEntryPage(driver)
+        PageLocator.getTestResultsEntryReinspectionPage(driver)
                 .fillOdometerReadingAndSubmit(odometerValue)
                 .clickReviewTest();
         PageLocator.getTestSummaryPage(driver)

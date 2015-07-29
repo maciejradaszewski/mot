@@ -55,6 +55,10 @@ public abstract class PageLocator {
         return new TestResultsEntryPage(driver);
     }
 
+    public static TestResultsEntryReinspectionPage getTestResultsEntryReinspectionPage(MotAppDriver driver) {
+        return new TestResultsEntryReinspectionPage(driver);
+    }
+
     public static TestCompareResultsPage getTestCompareResultsPage(MotAppDriver driver) {
         return new TestCompareResultsPage(driver);
     }

@@ -80,27 +80,6 @@ public class ResultsOdometerTest extends BaseTest {
         motTestPage.cancelMotTest(ReasonToCancel.REASON_INCORRECT_LOCATION);
     }
 
-    @Test(groups = "Regression", description = "Enter '0' miles and submit")
-    public void testSubmit0Miles() {
-
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
-
-        TestSummary.navigateHereFromLoginPage(driver, login, vehicle, "12345",
-                BrakeTestConfiguration4.brakeTestConfigClass4_CASE1(), BrakeTestResults4.allPass(),
-                null, null, null, null).clickFinishPrint(Text.TEXT_PASSCODE).clickLogout();
-        MotTestPage motTestPage = MotTestPage.navigateHereFromLoginPage(driver, login, vehicle)
-                .enterOdometerValuesAndSubmit("0");
-
-        assertThat("Odometer info is not correct", motTestPage.getInfoMessage(),
-                is(Assertion.ASSERTION_ODOMETER_UPDATED.assertion));
-        assertThat("Displayed value or units for Odometer Reading",
-                motTestPage.getDisplayedOdometerReading(), startsWith("0 miles"));
-        assertThat("Check odometer reading notice", motTestPage.getOdometerReadingNotice(),
-                is(Assertion.ASSERTION_CURRENT_LOWER_THAN_PREVIOUS.assertion));
-
-        motTestPage.cancelMotTest(ReasonToCancel.REASON_VTS_INCIDENT);
-    }
-
     @Test(groups = "Regression", description = "Ensure that no more than 7 digits can be entered into the odometer field")
     public void testSubmitMoreThanLimitChars() {
 

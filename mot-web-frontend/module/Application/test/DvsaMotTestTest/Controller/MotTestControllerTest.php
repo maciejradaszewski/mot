@@ -93,8 +93,6 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
             ->method('put')
             ->with(MotTestUrlBuilder::odometerReading($motTestNumber)->toString(), $expectedRestPostData);
 
-        $this->getFlashMessengerMockForAddInfoMessage('Odometer reading updated');
-
         //  --  request & check    --
         $postParams = [
             'odometer'   => $odometerValue,
@@ -143,8 +141,6 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
         $restClientMock->expects($this->once())
             ->method('put')
             ->with(MotTestUrlBuilder::odometerReading($motTestNumber)->toString(), $expectedRestPostData);
-
-        $this->getFlashMessengerMockForAddInfoMessage('Odometer reading updated');
 
         //  --  request & check    --
         $postParams = [
