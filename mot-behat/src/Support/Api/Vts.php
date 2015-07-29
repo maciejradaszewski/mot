@@ -9,6 +9,9 @@ class Vts extends MotApi
 {
     const PATH = 'vehicle-testing-station/site/{vts_id}';
     const SEARCH = 'vehicle-testing-station/search';
+    const ASSIGN_MANAGER = 'site/{vts_id}/position';
+    const SITE_MANAGER_ACCEPT_NOMINATION = 'notification/{nomination_id}/action';
+    const SITE_MANAGER_NOTIFICATIONS = 'notification/person/{person_id}';
 
     public function getVtsDetails($vtsId, $token)
     {
@@ -28,6 +31,35 @@ class Vts extends MotApi
             MotApi::METHOD_POST,
             self::SEARCH,
             $params
+        );
+    }
+
+    public function assignManager($vtsId, $token, $params)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_POST,
+            str_replace('{vts_id}', $vtsId, self::ASSIGN_MANAGER),
+            $params
+        );
+    }
+
+    public function acceptSiteManagerNomination($nominationId, $token, $params)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_PUT,
+            str_replace('{nomination_id}', $nominationId, self::SITE_MANAGER_ACCEPT_NOMINATION),
+            $params
+        );
+    }
+
+    public function getSiteManagerNotification($personId, $token)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_GET,
+            str_replace('{person_id}', $personId, self::SITE_MANAGER_NOTIFICATIONS)
         );
     }
 

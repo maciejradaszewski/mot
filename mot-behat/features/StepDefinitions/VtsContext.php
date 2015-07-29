@@ -25,6 +25,9 @@ class VtsContext implements Context
     private $siteCreate;
     private $resultContext;
 
+    private $siteManager1Data = null;
+    private $siteManager2Data = null;
+
     /**
      * @param Vts $vehicleTestingStation
      */
@@ -113,6 +116,22 @@ class VtsContext implements Context
         $this->iSearchForAnExistingVehicleTestingStationByParam(['siteName' => self::SITE_NAME]);
     }
 
+    private function iSearchForAnExistingVehicleTestingStationByParam($params)
+    {
+        $params = array_merge(
+            $params,
+            [
+                "pageNr" => 1,
+                "rowsCount" => 10,
+                "sortBy" => "site.name",
+                "sortDirection" => "ASC",
+                '_class' => '\\DvsaCommon\\Dto\\Search\\SiteSearchParamsDto',
+            ]
+        );
+        $response = $this->vehicleTestingStation->searchVts($params, $this->sessionContext->getCurrentAccessToken());
+        $this->resultContext = $response->getBody()->toArray()['data'];
+    }
+
     /**
      * @When /^I search for a existing Vehicle Testing Station by it's number$/
      */
@@ -135,24 +154,6 @@ class VtsContext implements Context
     public function iSearchForAnExistingVehicleTestingStationByItsPostcode()
     {
         $this->iSearchForAnExistingVehicleTestingStationByParam(['sitePostcode' => self::SITE_POSTCODE]);
-    }
-
-
-
-    private function iSearchForAnExistingVehicleTestingStationByParam($params)
-    {
-        $params = array_merge(
-            $params,
-            [
-                "pageNr" => 1,
-                "rowsCount" => 10,
-                "sortBy" => "site.name",
-                "sortDirection" => "ASC",
-                '_class' => '\\DvsaCommon\\Dto\\Search\\SiteSearchParamsDto',
-            ]
-        );
-        $response = $this->vehicleTestingStation->searchVts($params, $this->sessionContext->getCurrentAccessToken());
-        $this->resultContext = $response->getBody()->toArray()['data'];
     }
 
     /**
@@ -218,5 +219,97 @@ class VtsContext implements Context
             $this->sessionContext->getCurrentAccessToken()
         );
         $this->resultContext = $response->getBody()->toArray()['data'];
+    }
+
+    /**
+     * @Given I attempt to assign the role of site manager to more than one user of a vehicle testing station
+     */
+    public function IAttemptToAssignTheRoleOfSiteManagerToMoreThanOneUserOfAVTS()
+    {
+        $testerService = $this->sessionContext->testSupportHelper->getTesterService();
+
+        $this->siteManager1Data        = $testerService->create([
+            'accountClaimRequired' => false,
+            'siteIds'              => [1],
+        ])->data;
+
+        $this->siteManager2Data =  $testerService->create([
+            'accountClaimRequired' => false,
+            'siteIds'              => [1],
+        ])->data;
+
+        $params = [
+            'nomineeId' => $this->siteManager1Data['personId'],
+            'roleCode' => 'SITE-MANAGER'
+        ];
+
+
+        $result1 = $this->vehicleTestingStation->assignManager(
+            $this->siteCreate['id'],
+            $this->sessionContext->getCurrentAccessToken(),
+            $params
+        );
+
+        $params['nomineeId'] =  $this->siteManager2Data['personId'];
+
+        $result2 = $this->vehicleTestingStation->assignManager(
+            $this->siteCreate['id'],
+            $this->sessionContext->getCurrentAccessToken(),
+            $params
+        );
+
+        PHPUnit::assertEquals(200, $result1->getStatusCode());
+        PHPUnit::assertEquals(200, $result2->getStatusCode());
+
+    }
+
+    /**
+     * @Then /^the roles should be assigned successfully$/
+     */
+    public function theRolesShouldBeAssignedSuccessfully()
+    {
+        $params = ['action' => "SITE-NOMINATION-ACCEPTED"];
+
+        // login as user1
+        $this->sessionContext->iMAuthenticatedWithMyUsernameAndPassword(
+            $this->siteManager1Data['username'],
+            $this->siteManager1Data['password']
+        );
+
+        // get first notification, the one we just added
+        $user1NotificationId = $this->vehicleTestingStation->getSiteManagerNotification(
+            $this->siteManager1Data['personId'],
+            $this->sessionContext->getCurrentAccessToken()
+        )->getBody()->toArray()['data'][0]['id'];
+
+        $user1Response =
+        $this->vehicleTestingStation->acceptSiteManagerNomination(
+             $user1NotificationId,
+             $this->sessionContext->getCurrentAccessToken(),
+             $params
+        );
+
+        //login as user2
+        $this->sessionContext->iMAuthenticatedWithMyUsernameAndPassword(
+            $this->siteManager2Data['username'],
+            $this->siteManager2Data['password']
+        );
+
+        // get first notification, the one we just added
+        $user2NotificationId = $this->vehicleTestingStation->getSiteManagerNotification(
+            $this->siteManager2Data['personId'],
+            $this->sessionContext->getCurrentAccessToken()
+        )->getBody()->toArray()['data'][0]['id'];
+
+        $user2Response =
+        $this->vehicleTestingStation->acceptSiteManagerNomination(
+            $user2NotificationId,
+            $this->sessionContext->getCurrentAccessToken(),
+            $params
+        );
+
+        PHPUnit::assertEquals(200, $user1Response->getStatusCode());
+        PHPUnit::assertEquals(200, $user2Response->getStatusCode());
+
     }
 }

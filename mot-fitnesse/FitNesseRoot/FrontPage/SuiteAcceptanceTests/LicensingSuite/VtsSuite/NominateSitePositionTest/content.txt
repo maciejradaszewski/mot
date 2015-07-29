@@ -8,6 +8,5 @@ Nominate a user for a site role
 |1      |20000000  |TESTER           |false   |Person 20000000 not found not found                                     |
 |1      |103       |not-existing-role|false   |Site Role "not-existing-role" does not exist                            |
 |1      |103       |TESTER           |false   |This person has been already nominated to this role                     |
-|1      |104       |SITE-MANAGER     |false   |There is already a Site Manager assigned to this Vehicle Testing Station|
 |1      |          |TESTER           |false   |nomineeId is required                                                   |
 |1      |104       |                 |false   |roleCode is required                                                    |
