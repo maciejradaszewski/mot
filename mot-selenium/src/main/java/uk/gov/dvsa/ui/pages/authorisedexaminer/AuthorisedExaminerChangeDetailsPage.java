@@ -47,8 +47,8 @@ public class AuthorisedExaminerChangeDetailsPage extends Page {
         return this;
     }
 
-    public AuthorisedExaminerPage saveContactDetailChanges() {
+    public AuthorisedExaminerViewPage saveContactDetailChanges() {
         saveChanges.click();
-        return new AuthorisedExaminerPage(driver);
+        return new AedmAuthorisedExaminerViewPage(driver);
     }
 }

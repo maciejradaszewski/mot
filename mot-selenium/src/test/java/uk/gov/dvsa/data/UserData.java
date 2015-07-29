@@ -37,4 +37,8 @@ public class UserData extends UserService{
     public User createSchemeUser(boolean accountClaimRequired) throws IOException {
         return createUserAsSchemeUser(accountClaimRequired);
     }
+
+    public User createAreaOfficer(String namePrefix) throws IOException {
+        return createUserAsAreaOfficeOneUser(namePrefix);
+    }
 }

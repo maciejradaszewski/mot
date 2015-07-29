@@ -54,7 +54,7 @@ public class AuthorisedExaminerOverviewPage extends BasePage {
     
     @FindBy(id = "transaction-history") private WebElement transactionHistoryLink;
 
-    @FindBy(id = "value_AE_address") private WebElement authorisedExaminerAddress;
+    @FindBy(id = "reg_AE_address") private WebElement authorisedExaminerAddress;
 
     @FindBy(id = "authorised-examiner-contact-details") private WebElement
             authorisedExaminerContactDetails;

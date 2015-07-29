@@ -12,7 +12,7 @@ import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AeSlotsUsagePage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerChangeDetailsPage;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerPage;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
@@ -32,11 +32,11 @@ public class AedmManagesMotAccount extends BaseTest {
 
         //Given I am on the Authorised Examiner Change Contact Details Page
         AuthorisedExaminerChangeDetailsPage authorisedExaminerChangeDetailsPage = pageNavigator
-            .goToAuthorisedExaminerPage(aedm, AuthorisedExaminerPage.PATH, String.valueOf(aeDetails.getId()))
+            .goToAuthorisedExaminerPage(aedm, AuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
             .clickChangeContactDetailsLink();
 
         //When I Change the Authorised Examiner Correspondence Details
-        AuthorisedExaminerPage authorisedExaminerPage =
+        AuthorisedExaminerViewPage authorisedExaminerPage =
             authorisedExaminerChangeDetailsPage.fillOutMinimumContactDetails(
                     aeContactDetails).saveContactDetailChanges();
 

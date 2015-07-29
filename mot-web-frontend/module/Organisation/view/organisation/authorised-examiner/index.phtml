@@ -159,7 +159,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
             <th class="key-value-list__key">
                 Address
             </th>
-            <td id="value_AE_address" class="key-value-list__value">
+            <td id="reg_AE_address" class="key-value-list__value">
                 <?php echo ($this->escapeHtml(AddressUtils::stringify($contactDetail->getAddress())) ?: 'N/A') ?>
             </td>
         </tr>
@@ -167,7 +167,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
             <th class="key-value-list__key">
                 Email
             </th>
-            <td class="key-value-list__value">
+            <td id="reg_email" class="key-value-list__value">
                 <?php $email = $contactDetail->getPrimaryEmailAddress(); ?>
                 <?php if ($email): ?>
                     <a href="mailto:<?php echo $this->escapeHtmlAttr($email) ?>"
@@ -181,7 +181,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
             <th class="key-value-list__key">
                 Telephone
             </th>
-            <td class="key-value-list__value--numeric">
+            <td id = "reg_telephone" class="key-value-list__value--numeric">
                 <?php echo $this->escapeHtml(($contactDetail->getPrimaryPhoneNumber()) ?: 'N/A'); ?>
             </td>
         </tr>

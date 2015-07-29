@@ -1,10 +1,7 @@
 package uk.gov.dvsa.domain.service;
 
 import com.jayway.restassured.response.Response;
-import uk.gov.dvsa.domain.api.request.CreateAedmRequest;
-import uk.gov.dvsa.domain.api.request.CreateCscoRequest;
-import uk.gov.dvsa.domain.api.request.CreateTesterRequest;
-import uk.gov.dvsa.domain.api.request.CreateVehicleExaminerRequest;
+import uk.gov.dvsa.domain.api.request.*;
 import uk.gov.dvsa.domain.model.mot.TestGroup;
 import uk.gov.dvsa.domain.api.request.*;
 import uk.gov.dvsa.domain.model.User;
@@ -18,6 +15,7 @@ public class UserService extends Service {
     private static final String CREATE_TESTER_PATH = "/testsupport/tester";
     private static final String CREATE_AEDM_PATH = "/testsupport/aedm";
     private static final String CREATE_CSCO_PATH = "/testsupport/csco";
+    private static final String CREATE_AO_PATH = "/testsupport/areaoffice1";
     private static final String CREATE_VEHICLE_EXAMINER_PATH = "/testsupport/vehicleexaminer";
     private static final String CREATE_FINANCE_USER_PATH = "/testsupport/financeuser";
     private static final String CREATE_SCHEME_USER = "/testsupport/schemeuser";
@@ -60,6 +58,14 @@ public class UserService extends Service {
 
         return userResponse(response);
     }
+
+    public User createUserAsAreaOfficeOneUser(String namePrefix) throws IOException {
+        String aoRequest = jsonHandler.convertToString(new CreateAoRequest(namePrefix, false));
+        Response response = motClient.createUser(aoRequest, CREATE_AO_PATH);
+
+        return userResponse(response);
+    }
+
 
     protected User createUserAsCsco(boolean claimAccount) throws IOException {
         String cscoRequest = jsonHandler.convertToString(new CreateCscoRequest(claimAccount));

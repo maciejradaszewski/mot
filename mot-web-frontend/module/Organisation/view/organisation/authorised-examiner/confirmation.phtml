@@ -22,10 +22,10 @@ $corrContact = $form->isCorrDetailsTheSame() ? $form->getBusContactModel() : $fo
         [
             'head' => 'Business details',
             'body' => [
-                ['Business name', $form->getName()],
-                ['Trading name', $form->getTradingAs()],
-                ['Business type', $form->getCompanyTypes()[$form->getCompanyType()]],
-                ['Company number (optional if not Ltd.)', $form->getRegisteredCompanyNumber()],
+                ['Business name', $form->getName(), 'id' => 'businessName'],
+                ['Trading name', $form->getTradingAs(), 'id' => 'tradingName'],
+                ['Business type', $form->getCompanyTypes()[$form->getCompanyType()], 'id' => 'businessType'],
+                ['Company number (optional if not Ltd.)', $form->getRegisteredCompanyNumber(), 'id' => 'companyNumber'],
             ],
         ]
     );
@@ -35,9 +35,9 @@ $corrContact = $form->isCorrDetailsTheSame() ? $form->getBusContactModel() : $fo
         [
             'head' => 'Business contact details',
             'body' => [
-                ['Address', AddressUtils::stringify($busContact->getAddressModel()->toDto())],
-                ['Email', $busContact->getEmailModel()->getEmail()],
-                ['Telephone', $busContact->getPhoneModel()->getNumber()],
+                ['Address', AddressUtils::stringify($busContact->getAddressModel()->toDto()), 'id' => 'regAddress'],
+                ['Email', $busContact->getEmailModel()->getEmail(), 'id' => 'regEmail'],
+                ['Telephone', $busContact->getPhoneModel()->getNumber(), 'id' => 'regTelephone'],
             ],
         ]
     );
@@ -47,9 +47,9 @@ $corrContact = $form->isCorrDetailsTheSame() ? $form->getBusContactModel() : $fo
         [
             'head' => 'Correspondence contact details',
             'body' => [
-                ['Address', AddressUtils::stringify($corrContact->getAddressModel()->toDto())],
-                ['Email', $corrContact->getEmailModel()->getEmail()],
-                ['Telephone', $corrContact->getPhoneModel()->getNumber()],
+                ['Address', AddressUtils::stringify($corrContact->getAddressModel()->toDto()), 'id' => 'corrAddress'],
+                ['Email', $corrContact->getEmailModel()->getEmail(), 'id' => 'corrEmail'],
+                ['Telephone', $corrContact->getPhoneModel()->getNumber(), 'id' => 'corrTelephone'],
             ],
         ]
     );
