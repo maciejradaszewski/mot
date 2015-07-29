@@ -29,7 +29,7 @@ class MotTestReasonForRejectionController extends AbstractDvsaRestfulController
         }
     }
 
-    public function deleteList()
+    public function deleteList($data)
     {
         $motTestNumber = $this->params()->fromRoute('motTestNumber', null);
         $motTestRfrId = $this->params()->fromRoute('motTestRfrId', null);

@@ -1,7 +1,7 @@
 {
     "name": "dvsa/mot-web-frontend",
     "require": {
-        "zendframework/zendframework": "~2.3.9",
+        "zendframework/zendframework": "~2.4.4",
         "doctrine/common": "v2.4.1",
         "dvsa/transition-group": "dev-master",
         "dvsa/feature-toggle": "~1.0",

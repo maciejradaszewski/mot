@@ -2,7 +2,7 @@
     "name": "dvsa/mot-testsupport",
     "description": "Test Support API for DVSA MOT modernisation",
     "require": {
-        "zendframework/zendframework": "~2.3.9",
+        "zendframework/zendframework": "~2.4.4",
         "doctrine/doctrine-module": "~0.8",
         "doctrine/doctrine-orm-module": "~0.9",
         "dvsa/feature-toggle": "~1.0"

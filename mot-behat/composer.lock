@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "54569df09600f98422eb9cde69edb769",
+    "hash": "b7a10c22139f369a39d2535d779a7979",
     "packages": [
         {
             "name": "behat/behat",
@@ -2042,16 +2042,16 @@
         },
         {
             "name": "zendframework/zendframework",
-            "version": "2.3.9",
+            "version": "2.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zf2.git",
-                "reference": "32858f883fffb5eef9f610b538ed026f6033b6de"
+                "reference": "84cad41e1ee549d634c109de18c4626e51cc6b29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/32858f883fffb5eef9f610b538ed026f6033b6de",
-                "reference": "32858f883fffb5eef9f610b538ed026f6033b6de",
+                "url": "https://api.github.com/repos/zendframework/zf2/zipball/84cad41e1ee549d634c109de18c4626e51cc6b29",
+                "reference": "84cad41e1ee549d634c109de18c4626e51cc6b29",
                 "shasum": ""
             },
             "require": {
@@ -2112,14 +2112,13 @@
                 "zendframework/zend-xmlrpc": "self.version"
             },
             "require-dev": {
-                "doctrine/annotations": ">=1.0",
-                "fabpot/php-cs-fixer": "1.*",
-                "ircmaxell/random-lib": "dev-master",
-                "ircmaxell/security-lib": "dev-master",
-                "mikey179/vfsstream": "1.2.*",
-                "phpunit/phpunit": "3.7.*",
-                "satooshi/php-coveralls": "dev-master",
-                "sebastianbergmann/phpcov": "1.1.0"
+                "doctrine/annotations": "~1.0",
+                "fabpot/php-cs-fixer": "~1.0",
+                "ircmaxell/random-lib": "~1.1",
+                "mikey179/vfsstream": "~1.2",
+                "phpunit/phpcov": "~2.0",
+                "phpunit/phpunit": "~4.6",
+                "satooshi/php-coveralls": "dev-master"
             },
             "suggest": {
                 "doctrine/annotations": "Doctrine Annotations >=1.0 for annotation features",
@@ -2137,13 +2136,13 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.3-dev",
-                    "dev-develop": "2.4-dev"
+                    "dev-master": "2.4-dev",
+                    "dev-develop": "2.5-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Zend\\": "library/"
+                "psr-4": {
+                    "Zend\\": "library/Zend/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2156,7 +2155,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2015-05-11 16:03:51"
+            "time": "2015-07-21 15:45:25"
         },
         {
             "name": "zendframework/zendxml",

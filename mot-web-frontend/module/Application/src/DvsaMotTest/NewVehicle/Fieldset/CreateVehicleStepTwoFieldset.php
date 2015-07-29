@@ -6,7 +6,7 @@ use DvsaCommon\Messages\Vehicle\CreateVehicleErrors;
 use DvsaCommon\Model\FuelTypeAndCylinderCapacity;
 use DvsaMotTest\Service\AuthorisedClassesService;
 use Zend\Form\Fieldset;
-use Zend\I18n\Validator\Int;
+use Zend\I18n\Validator\IsInt;
 use Zend\InputFilter\InputFilterProviderInterface;
 use \Zend\Form\Element\Select;
 use Zend\Validator\Between;
@@ -250,11 +250,11 @@ class CreateVehicleStepTwoFieldset extends Fieldset implements InputFilterProvid
                         ]
                     ],
                     [
-                        'name' => Int::class,
+                        'name' => IsInt::class,
                         'options' => [
                             'messages' =>
                                 [
-                                    Int::NOT_INT => CreateVehicleErrors::CC_INVALID
+                                    IsInt::NOT_INT => CreateVehicleErrors::CC_INVALID
                                 ]
                         ]
                     ],
