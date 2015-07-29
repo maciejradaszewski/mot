@@ -28,3 +28,8 @@ Feature: VTS
     Given I am logged in as an Area Office User 2
     When I request information about a VTS
     Then the VTS details are returned
+
+  Scenario: As a DVSA User I can add more than one site-manager to a vehicle testing station
+    Given I am logged in as an Area Office User
+    When I attempt to assign the role of site manager to more than one user of a vehicle testing station
+    Then the roles should be assigned successfully

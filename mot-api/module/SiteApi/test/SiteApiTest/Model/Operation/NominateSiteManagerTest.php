@@ -60,9 +60,8 @@ class NominateSiteManagerTest extends AbstractServiceTestCase
         $this->assertEquals(1, 1);
     }
 
-    public function test_adding_second_site_manager_should_fail()
+    public function test_adding_second_site_manager_should_succeed()
     {
-        $this->positionRepository->expects($this->never())->method('persist');
         $this->authorizationService->expects($this->once())->method('getRolesAsArray')->willReturn($this->returnValue([]));
 
         $vtsWithASiteManager = $this->buildVehicleTestingStationWithASiteManager();
@@ -73,14 +72,15 @@ class NominateSiteManagerTest extends AbstractServiceTestCase
         $siteManagerNomination->setSiteBusinessRole($this->siteManagerRole);
         $siteManagerNomination->setBusinessRoleStatus($status);
 
-        $error = 'No error';
+        $error = null;
+
         try {
             $this->nominateOperation->nominate(new Person(), $siteManagerNomination);
         } catch (BadRequestException $e) {
             $error = $e->getErrors()[0]["message"];
         }
 
-        $this->assertEquals(SiteManagerRestriction::SITE_ALREADY_HAS_SITE_MANAGER, $error);
+        $this->assertNull($error);
     }
 
     public function test_adding_site_manager_to_authorised_examiner_works()

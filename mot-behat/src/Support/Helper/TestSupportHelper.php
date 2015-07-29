@@ -138,4 +138,13 @@ class TestSupportHelper
     {
         return $this->getServiceManager()->get(VM10519UserService::class);
     }
+
+    /**
+     * @return \TestSupport\Service\SitePositionService
+     */
+    public function getSitePositionService()
+    {
+        return $this->getServiceManager()->get(SitePositionController::class);
+    }
+
 }

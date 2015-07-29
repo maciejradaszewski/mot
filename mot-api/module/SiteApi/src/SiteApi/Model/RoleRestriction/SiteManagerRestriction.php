@@ -16,7 +16,6 @@ use SiteApi\Model\SitePersonnel;
  */
 class SiteManagerRestriction extends AbstractSiteRoleRestriction
 {
-    const SITE_ALREADY_HAS_SITE_MANAGER = 'There is already a Site Manager assigned to this Vehicle Testing Station';
 
     /**
      * Checks if all requirements are met to assign a role to the user in the given organisation.
@@ -31,20 +30,7 @@ class SiteManagerRestriction extends AbstractSiteRoleRestriction
     {
         $errors = parent::verify($person, $personnel);
 
-        if ($this->hasSiteManager($personnel)) {
-            $errors->add(self::SITE_ALREADY_HAS_SITE_MANAGER);
-        }
-
         return $errors;
-    }
-
-    private function hasSiteManager(SitePersonnel $personnel)
-    {
-        return ArrayUtils::anyMatch(
-            $personnel->getPositions(), function (SiteBusinessRoleMap $position) {
-                return $position->getSiteBusinessRole()->getCode() == $this->getRole();
-            }
-        );
     }
 
     /**
