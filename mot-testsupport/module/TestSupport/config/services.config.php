@@ -32,6 +32,7 @@ use TestSupport\Helper\SitePermissionsHelper;
 use TestSupport\Service\InactiveTesterService;
 use TestSupport\Service\TesterAuthorisationStatusService;
 use TestSupport\Factory\TesterAuthorisationStatusServiceFactory;
+use TestSupport\Service\AedmService;
 
 return [
     'factories' => [
@@ -98,5 +99,6 @@ return [
         VehicleExaminerService::class      => \TestSupport\Factory\VehicleExaminerServiceFactory::class,
         VM10519UserService::class          => \TestSupport\Factory\VM10519UserServiceFactory::class,
         TesterAuthorisationStatusService::class => TesterAuthorisationStatusServiceFactory::class,
+        AedmService::class                 => \TestSupport\Factory\AedmServiceFactory::class,
     ]
 ];

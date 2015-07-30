@@ -4,13 +4,14 @@ namespace NotificationApiTest\Service\BusinessLogic;
 
 use Doctrine\ORM\EntityManager;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
-use DvsaCommonTest\TestUtils\MockHandler;
 use NotificationApi\Service\BusinessLogic\AbstractNotificationActionHandler;
 use NotificationApi\Service\BusinessLogic\PositionAtSiteNominationHandler;
 use NotificationApi\Service\BusinessLogic\PositionInOrganisationNominationHandler;
 use NotificationApi\Service\NotificationService;
 use UserFacade\UserFacadeLocal;
 use DvsaEventApi\Service\EventService;
+use NotificationApi\Service\Helper\SiteNominationEventHelper;
+use NotificationApi\Service\Helper\OrganisationNominationEventHelper;
 
 /**
  * Class AbstractNotificationActionHandlerTest
@@ -75,7 +76,9 @@ class AbstractNotificationActionHandlerTest extends AbstractServiceTestCase
                 EventService::class,
                 EntityManager::class,
                 NotificationService::class,
-                UserFacadeLocal::class
+                UserFacadeLocal::class,
+                SiteNominationEventHelper::class,
+                OrganisationNominationEventHelper::class
             ]
         );
 
@@ -86,16 +89,15 @@ class AbstractNotificationActionHandlerTest extends AbstractServiceTestCase
 
     private function mockServiceManager($services)
     {
-        $mockHandler = new MockHandler($this->serviceManager, $this);
-        foreach ($services as $service) {
-            $mockHandler
-                ->next('get')
-                ->with($service)
-                ->will(
-                    $this->returnValue(
-                        $this->getMockWithDisabledConstructor($service)
-                    )
-                );
-        }
+        $this->serviceManager
+            ->expects($this->any())
+            ->method("get")
+            ->willReturnCallback(function ($service) use ($services){
+                if (in_array($service, $services)) {
+                    return $this->getMockWithDisabledConstructor($service);
+                }
+
+                return null;
+            });
     }
 }

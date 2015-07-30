@@ -19,6 +19,7 @@ use DvsaEntities\Entity\NotificationAction;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use DvsaCommon\Enum\EventTypeCode;
 use DvsaCommon\Constants\EventDescription;
+use NotificationApi\Service\Helper\OrganisationNominationEventHelper;
 
 /**
  * Handles nomination for a tester in organisation
@@ -55,6 +56,9 @@ class PositionInOrganisationNominationHandler extends AbstractNotificationAction
     /** @var \DvsaEventApi\Service\EventService $eventService */
     protected $eventService;
 
+    /** @var OrganisationNominationEventHelper  */
+    private $organisationNominationEventHelper;
+
     /**
      * $action === self::ACCEPT or self::REJECT
      *
@@ -63,19 +67,22 @@ class PositionInOrganisationNominationHandler extends AbstractNotificationAction
      * @param NotificationService $notificationService
      * @param UserFacadeInterface         $userFacade
      * @param string              $action
+     * @param OrganisationNominationEventHelper $organisationNominationEventHelper
      */
     public function __construct(
         EventService $eventService,
         EntityManager $entityManger,
         NotificationService $notificationService,
         UserFacadeInterface $userFacade,
-        $action
+        $action,
+        OrganisationNominationEventHelper $organisationNominationEventHelper
     ) {
         $this->eventService = $eventService;
         $this->entityManager = $entityManger;
         $this->notificationService = $notificationService;
         $this->userFacade = $userFacade;
         $this->action = $action;
+        $this->organisationNominationEventHelper = $organisationNominationEventHelper;
     }
 
     /**
@@ -155,6 +162,8 @@ class PositionInOrganisationNominationHandler extends AbstractNotificationAction
 
             $this->entityManager->persist($position);
             $this->entityManager->persist($eventPersonMap);
+
+            $this->organisationNominationEventHelper->create($notification);
         } else {
             $this->updateNotificationStatus($notification, self::ACTION_REJECTED_ID);
             $this->entityManager->remove($position);

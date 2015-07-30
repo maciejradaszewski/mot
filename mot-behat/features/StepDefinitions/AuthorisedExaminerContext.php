@@ -4,6 +4,7 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Dvsa\Mot\Behat\Support\Api\AuthorisedExaminer;
 use Dvsa\Mot\Behat\Support\Response;
+use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use PHPUnit_Framework_Assert as PHPUnit;
 
 class AuthorisedExaminerContext implements Context
@@ -14,6 +15,11 @@ class AuthorisedExaminerContext implements Context
      * @var AuthorisedExaminer
      */
     private $authorisedExaminer;
+
+    /**
+     * @var TestSupportHelper
+     */
+    private $testSupportHelper;
 
     /**
      * @var SessionContext
@@ -31,11 +37,18 @@ class AuthorisedExaminerContext implements Context
     private $removeAeResponse;
 
     /**
-     * @param AuthorisedExaminer $authorisedExaminer
+     * @var array
      */
-    public function __construct(AuthorisedExaminer $authorisedExaminer)
+    private $ae = [];
+
+    /**
+     * @param AuthorisedExaminer $authorisedExaminer
+     * @param TestSupportHelper $testSupportHelper
+     */
+    public function __construct(AuthorisedExaminer $authorisedExaminer, TestSupportHelper $testSupportHelper)
     {
         $this->authorisedExaminer = $authorisedExaminer;
+        $this->testSupportHelper = $testSupportHelper;
     }
 
     /**
@@ -164,5 +177,41 @@ class AuthorisedExaminerContext implements Context
         );
 
         PHPUnit::assertEquals(200, $authorisedExaminerResponse->getStatusCode());
+    }
+
+    /**
+     * @return array
+     */
+    public function createAE()
+    {
+        if (!empty($this->ae)) {
+            return $this->ae;
+        }
+
+        $data = [
+            "slots" => 1001,
+            "requestor" => [
+                "username" => "areaoffice1user",
+                "password" => "Password1"
+            ]
+        ];
+
+        $response = $this->testSupportHelper->getAeService()->create($data);
+
+        $this->ae = [
+            "id" => $response->data["id"],
+            "aeRef" => $response->data["aeRef"],
+            "aeName" => $response->data["aeName"],
+        ];
+
+        return $this->ae;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAE()
+    {
+        return $this->ae;
     }
 }

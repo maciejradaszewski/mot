@@ -9,6 +9,7 @@ use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaEntities\Entity\AuthorisationForAuthorisedExaminer;
 use DvsaEntities\Entity\Person;
+use DvsaCommonApi\Service\Exception\NotFoundException;
 
 /**
  * Repository for {@link \DvsaEntities\Entity\AuthorisationForAuthorisedExaminer}.
@@ -110,5 +111,23 @@ WHERE
             ->getResult();
 
         return current($authorisedExaminer);
+    }
+
+    public function getByNumber($number)
+    {
+        $query = $this
+            ->createQueryBuilder("a")
+            ->addSelect("o")
+            ->innerJoin("a.organisation", "o")
+            ->where("a.number = :number")
+            ->setParameter("number", $number)
+            ->getQuery();
+
+        $auth = $query->getOneOrNullResult();
+        if ($auth === null) {
+            throw new NotFoundException("Authorisation For Authorised Examiner");
+        }
+
+        return $auth;
     }
 }

@@ -4,9 +4,11 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Api\Vts;
+use Dvsa\Mot\Behat\Support\Api\Notification;
 use PHPUnit_Framework_Assert as PHPUnit;
 use DvsaCommon\Dto\Site\SiteListDto;
 use DvsaCommon\Utility\DtoHydrator;
+use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 
 class VtsContext implements Context
 {
@@ -20,6 +22,21 @@ class VtsContext implements Context
      */
     private $vehicleTestingStation;
 
+    /**
+     * @var TestSupportHelper
+     */
+    private $testSupportHelper;
+
+    /**
+     * @var Session
+     */
+    private $session;
+
+    /**
+     * @var Notification
+     */
+    private $notification;
+
     /** @var \SessionContext */
     private $sessionContext;
     private $siteCreate;
@@ -31,9 +48,17 @@ class VtsContext implements Context
     /**
      * @param Vts $vehicleTestingStation
      */
-    public function __construct(Vts $vehicleTestingStation)
+    public function __construct(
+        Vts $vehicleTestingStation,
+        TestSupportHelper $testSupportHelper,
+        Session $session,
+        Notification $notification
+    )
     {
         $this->vehicleTestingStation = $vehicleTestingStation;
+        $this->testSupportHelper = $testSupportHelper;
+        $this->session = $session;
+        $this->notification = $notification;
     }
 
     /**
@@ -50,15 +75,21 @@ class VtsContext implements Context
     public function createSite()
     {
         if ($this->siteCreate === null) {
-            $this->sessionContext->iAmLoggedInAsAnAreaOfficeUser();
+            $areaOffice1Service = $this->testSupportHelper->getAreaOffice1Service();
+            $ao = $areaOffice1Service->create([]);
+            $aoSession = $this->session->startSession(
+                $ao->data["username"],
+                $ao->data["password"]
+            );
+
             $params = [
-                'accessToken' => $this->sessionContext->getCurrentAccessToken(),
+                'accessToken' => $aoSession->getAccessToken(),
                 'name' => self::SITE_NAME,
                 'town' => self::SITE_TOWN,
                 'postcode' => self::SITE_POSTCODE,
             ];
 
-            $response = $this->vehicleTestingStation->create($this->sessionContext->getCurrentAccessToken(), $params);
+            $response = $this->vehicleTestingStation->create($aoSession->getAccessToken(), $params);
             $responseBody = $response->getBody();
             if (! is_object($responseBody)) {
                 throw new Exception("createSite: responseBody is not an object: failed to create Vts");
@@ -243,32 +274,33 @@ class VtsContext implements Context
             'roleCode' => 'SITE-MANAGER'
         ];
 
-
-        $result1 = $this->vehicleTestingStation->assignManager(
+        $role = 'SITE-MANAGER';
+        $result1 = $this->vehicleTestingStation->nominateToRole(
+            $this->siteManager1Data['personId'],
+            $role,
             $this->siteCreate['id'],
-            $this->sessionContext->getCurrentAccessToken(),
-            $params
+            $this->sessionContext->getCurrentAccessToken()
         );
 
         $params['nomineeId'] =  $this->siteManager2Data['personId'];
 
-        $result2 = $this->vehicleTestingStation->assignManager(
+        $result2 = $this->vehicleTestingStation->nominateToRole(
+            $this->siteManager2Data['personId'],
+            $role,
             $this->siteCreate['id'],
-            $this->sessionContext->getCurrentAccessToken(),
-            $params
+            $this->sessionContext->getCurrentAccessToken()
         );
 
         PHPUnit::assertEquals(200, $result1->getStatusCode());
         PHPUnit::assertEquals(200, $result2->getStatusCode());
-
     }
 
     /**
-     * @Then /^the roles should be assigned successfully$/
+     * @Then /^the site manager roles should be assigned successfully$/
      */
-    public function theRolesShouldBeAssignedSuccessfully()
+    public function theSiteManagerRolesShouldBeAssignedSuccessfully()
     {
-        $params = ['action' => "SITE-NOMINATION-ACCEPTED"];
+        $role = "SITE-MANAGER";
 
         // login as user1
         $this->sessionContext->iMAuthenticatedWithMyUsernameAndPassword(
@@ -276,18 +308,13 @@ class VtsContext implements Context
             $this->siteManager1Data['password']
         );
 
-        // get first notification, the one we just added
-        $user1NotificationId = $this->vehicleTestingStation->getSiteManagerNotification(
+        $notification = $this->notification->getRoleNominationNotification(
+            $role,
             $this->siteManager1Data['personId'],
             $this->sessionContext->getCurrentAccessToken()
-        )->getBody()->toArray()['data'][0]['id'];
-
-        $user1Response =
-        $this->vehicleTestingStation->acceptSiteManagerNomination(
-             $user1NotificationId,
-             $this->sessionContext->getCurrentAccessToken(),
-             $params
         );
+
+        $user1Response = $this->notification->acceptSiteNomination($this->sessionContext->getCurrentAccessToken(), $notification["id"]);
 
         //login as user2
         $this->sessionContext->iMAuthenticatedWithMyUsernameAndPassword(
@@ -295,21 +322,24 @@ class VtsContext implements Context
             $this->siteManager2Data['password']
         );
 
-        // get first notification, the one we just added
-        $user2NotificationId = $this->vehicleTestingStation->getSiteManagerNotification(
+        $notification = $this->notification->getRoleNominationNotification(
+            $role,
             $this->siteManager2Data['personId'],
             $this->sessionContext->getCurrentAccessToken()
-        )->getBody()->toArray()['data'][0]['id'];
-
-        $user2Response =
-        $this->vehicleTestingStation->acceptSiteManagerNomination(
-            $user2NotificationId,
-            $this->sessionContext->getCurrentAccessToken(),
-            $params
         );
+
+        $user2Response = $this->notification->acceptSiteNomination($this->sessionContext->getCurrentAccessToken(), $notification["id"]);
 
         PHPUnit::assertEquals(200, $user1Response->getStatusCode());
         PHPUnit::assertEquals(200, $user2Response->getStatusCode());
 
+    }
+
+    /**
+     * @return array
+     */
+    public function getSite()
+    {
+        return $this->siteCreate;
     }
 }

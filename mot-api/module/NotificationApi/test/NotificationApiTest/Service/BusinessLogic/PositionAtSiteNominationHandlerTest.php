@@ -17,6 +17,7 @@ use NotificationApi\Service\BusinessLogic\PositionAtSiteNominationHandler;
 use NotificationApi\Service\NotificationService;
 use NotificationApiTest\Entity\NotificationCreatorTrait;
 use UserFacade\UserFacadeLocal;
+use NotificationApi\Service\Helper\SiteNominationEventHelper;
 
 /**
  * Unit tests for PositionAtSiteNominationHandler
@@ -80,7 +81,8 @@ class PositionAtSiteNominationHandlerTest extends AbstractServiceTestCase
             $entityManagerMock,
             $this->getMockWithDisabledConstructor(NotificationService::class),
             XMock::of(UserFacadeLocal::class),
-            $action
+            $action,
+            XMock::of(SiteNominationEventHelper::class)
         );
     }
 
