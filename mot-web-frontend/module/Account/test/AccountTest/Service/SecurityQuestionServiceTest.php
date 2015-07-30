@@ -17,6 +17,7 @@ use UserAdmin\Service\UserAdminSessionManager;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
 use Zend\Stdlib\Parameters;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
+use Account\Validator\ClaimValidator;
 
 /**
  * Class SecurityQuestionServiceTest
@@ -254,6 +255,15 @@ class SecurityQuestionServiceTest extends \PHPUnit_Framework_TestCase
     public function testManageSessionQuestionInitNoAnswer()
     {
         $request = new FakeRequest(true, '');
+
+        $this->service->setUserAndQuestion(self::PERSON_ID, self::FIRST_QUESTION);
+        $this->assertTrue($this->service->manageSessionQuestion($request, $this->messenger));
+    }
+
+    public function testManageSessionQuestionAnswerTooLong()
+    {
+        $answer = str_pad('A', ClaimValidator::MAX_ANSWER+1, 'A');
+        $request = new FakeRequest(true, $answer);
 
         $this->service->setUserAndQuestion(self::PERSON_ID, self::FIRST_QUESTION);
         $this->assertTrue($this->service->manageSessionQuestion($request, $this->messenger));

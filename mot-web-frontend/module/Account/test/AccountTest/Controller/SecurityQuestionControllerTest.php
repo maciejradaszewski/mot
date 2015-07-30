@@ -20,6 +20,7 @@ use Zend\Mvc\Router\RouteMatch;
 use Zend\Session\Container;
 use Zend\Stdlib\Parameters;
 use DvsaCommon\HttpRestJson\Exception\NotFoundException;
+use Account\Validator\ClaimValidator;
 
 /**
  * Class SecurityQuestionControllerTest
@@ -32,6 +33,8 @@ class SecurityQuestionControllerTest extends AbstractFrontendControllerTestCase
     const PERSON_ID = 999999;
     const QUESTION_ONE = 'question1';
     const ANSWER = 'blah';
+
+    private $answerTooLong;
 
 
     protected $securityQuestionService;
@@ -51,6 +54,8 @@ class SecurityQuestionControllerTest extends AbstractFrontendControllerTestCase
         $this->getController()->setServiceLocator($serviceManager);
 
         $this->createHttpRequestForController('SecurityQuestion');
+
+        $this->answerTooLong = str_pad('A', ClaimValidator::MAX_ANSWER, 'A');
 
         parent::setUp();
     }
@@ -164,6 +169,34 @@ class SecurityQuestionControllerTest extends AbstractFrontendControllerTestCase
                     ],
                 ],
                 'expect'   => [
+                    'url' => AccountUrlBuilderWeb::forgottenPasswordSecurityQuestion(
+                        self::PERSON_ID,
+                        self::QUESTION_NUNMBER
+                    ),
+                ],
+            ],
+            //  --  index: post with answer greater than MAX value permitted   --
+            [
+                'method' => 'post',
+                'action' => 'index',
+                'postData' => [
+                    self::QUESTION_ONE => $this->answerTooLong,
+                ],
+                'mocks'    => [
+                    [
+                        'class'  => 'securityQuestionService',
+                        'method' => 'getUserId',
+                        'params' => null,
+                        'result' => self::PERSON_ID,
+                    ],
+                    [
+                        'class'  => 'securityQuestionService',
+                        'method' => 'getQuestionNumber',
+                        'params' => [],
+                        'result' => self::QUESTION_NUNMBER,
+                    ],
+                ],
+                'expect' => [
                     'url' => AccountUrlBuilderWeb::forgottenPasswordSecurityQuestion(
                         self::PERSON_ID,
                         self::QUESTION_NUNMBER

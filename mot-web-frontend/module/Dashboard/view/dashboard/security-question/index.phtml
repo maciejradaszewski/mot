@@ -1,6 +1,7 @@
 <?php
 use DvsaCommon\UrlBuilder\AccountUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+use Account\Validator\ClaimValidator;
 
 /**
  * @var \Account\ViewModel\SecurityQuestionViewModel  $viewModel
@@ -44,6 +45,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
                 'errorMessage'  => $numberOfAttemptMessage,
                 'label'         => $labelText,
                 'value'         => '',
+                'maxLength'     => ClaimValidator::MAX_ANSWER
             ]
         );
         ?>
