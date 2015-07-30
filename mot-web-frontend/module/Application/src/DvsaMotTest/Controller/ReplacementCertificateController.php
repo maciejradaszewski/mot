@@ -342,7 +342,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
                     if ($odometerReadingParams['resultType'] !== OdometerReadingResultType::OK) {
                         unset($result['odometerReading']['odometer'], $result['odometerReading']['unit']);
                     } else {
-                        $result['odometerReading']['value'] = $result['odometerReading']['odometer'];
+                        $result['odometerReading']['value'] = (int) $result['odometerReading']['odometer'];
                         unset($result['odometerReading']['odometer']);
                     }
                 }
