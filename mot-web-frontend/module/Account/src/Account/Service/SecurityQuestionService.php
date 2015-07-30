@@ -10,6 +10,7 @@ use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 use DvsaClient\Entity\Person;
+use Account\Validator\ClaimValidator;
 
 /**
  * Class SecurityQuestionService
@@ -201,6 +202,16 @@ class SecurityQuestionService
             $answer = $request->getPost('question' . $this->questionNumber);
             if (strlen(trim($answer)) <= 0) {
                 $flashMessenger->addErrorMessage(self::NO_VALUE_ENTER);
+                return $this->isRedirectionIsNeeded();
+            }
+
+            if (strlen($answer) > ClaimValidator::MAX_ANSWER) {
+                $flashMessenger->addErrorMessage(
+                    sprintf(
+                        ClaimValidator::ERR_MSG_ANSWER_MAX,
+                        ClaimValidator::MAX_ANSWER
+                    )
+                );
                 return $this->isRedirectionIsNeeded();
             }
 
