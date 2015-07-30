@@ -7,6 +7,8 @@ use Dvsa\Mot\Behat\Datasource\Authentication;
 use Dvsa\Mot\Behat\Datasource\Random;
 use Dvsa\Mot\Behat\Support\Api\CustomerService;
 use Dvsa\Mot\Behat\Support\Api\Person;
+use Dvsa\Mot\Behat\Support\Api\Vts;
+use Dvsa\Mot\Behat\Support\Api\AuthorisedExaminer;
 use Dvsa\Mot\Behat\Support\Response;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
@@ -90,18 +92,42 @@ class PersonContext implements Context
     private $testerQualificationResponse;
 
     /**
+     * @var VtsContext
+     */
+    private $vtsContext;
+
+    /**
+     * @var Vts
+     */
+    private $vts;
+
+    /**
+     * @var AuthorisedExaminerContext
+     */
+    private $authorisedExaminerContext;
+
+    /**
+     * @var AuthorisedExaminer
+     */
+    private $authorisedExaminer;
+
+    /**
      * @param CustomerService $customerService
      * @param Person          $person
      */
     public function __construct(
         TestSupportHelper $testSupportHelper,
         CustomerService $customerService,
-        Person $person
+        Person $person,
+        Vts $vts,
+        AuthorisedExaminer $authorisedExaminer
     )
     {
         $this->testSupportHelper = $testSupportHelper;
         $this->customerService = $customerService;
         $this->person = $person;
+        $this->vts = $vts;
+        $this->authorisedExaminer = $authorisedExaminer;
     }
 
     /**
@@ -111,6 +137,8 @@ class PersonContext implements Context
     {
         $this->sessionContext = $scope->getEnvironment()->getContext(SessionContext::class);
         $this->motTestContext = $scope->getEnvironment()->getContext(MotTestContext::class);
+        $this->vtsContext = $scope->getEnvironment()->getContext(VtsContext::class);
+        $this->authorisedExaminerContext = $scope->getEnvironment()->getContext(AuthorisedExaminerContext::class);
     }
 
     /**
@@ -507,5 +535,108 @@ class PersonContext implements Context
             throw new \BadMethodCallException('No person password exists');
         }
         return $this->personLoginData->data['password'];
+    }
+
+    /**
+     * @Given I nominate user to TESTER role
+     */
+    public function iNominateUserToTesterRole()
+    {
+        $this->createTester();
+        $this->nominateToSiteRole("TESTER");
+    }
+
+    /**
+     * @Given I nominate user to SITE-ADMIN role
+     */
+    public function iNominateUserToSiteAdminRole()
+    {
+        $siteIds = [$this->vtsContext->getSite()["id"]];
+        $this->createTester($siteIds);
+
+        $this->nominateToSiteRole("SITE-ADMIN");
+    }
+
+    /**
+     * @Given I nominate user to SITE-MANAGER role
+     */
+    public function iNominateUserToSiteManagerRole()
+    {
+        $siteIds = [$this->vtsContext->getSite()["id"]];
+        $this->createTester($siteIds);
+        $this->nominateToSiteRole("SITE-MANAGER");
+    }
+
+    private function createTester(array $siteIds = [1])
+    {
+        $tester = $this->testSupportHelper->getTesterService();
+        $this->personLoginData = $tester->create([
+            'siteIds' => $siteIds,
+            "qualifications"=> [
+                "A"=> $this->getAuthorisationForTestingMotStatusCode("Qualified"),
+                "B"=> $this->getAuthorisationForTestingMotStatusCode("Qualified")
+            ]
+        ]);
+    }
+
+    private function nominateToSiteRole($role)
+    {
+        $siteId = $this->vtsContext->getSite()["id"];
+        $token = $this->sessionContext->getCurrentAccessToken();
+        $response = $this->vts->nominateToRole($this->getPersonUserId(), $role, $siteId, $token);
+        PHPUnit::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * @Given I nominate user to AUTHORISED-EXAMINER-DELEGATE role
+     */
+    public function iNominateUserToAedRole()
+    {
+        $siteIds = [1];
+        $this->createTester($siteIds);
+        $this->nominateToOrganisationRole("AUTHORISED-EXAMINER-DELEGATE");
+    }
+
+    private function nominateToOrganisationRole($role)
+    {
+        $aeId = $this->authorisedExaminerContext->getAe()["id"];
+        $token = $this->sessionContext->getCurrentAccessToken();
+        $response = $this->authorisedExaminer->nominate($this->getPersonUserId(), $role, $aeId, $token );
+
+        PHPUnit::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * @Then a user has new site role :role
+     */
+    public function aUserHasNewSiteRole($role)
+    {
+        $detailsResponse = $this->person->getPersonDetails(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getPersonUserId()
+        );
+
+        $siteId = $this->vtsContext->getSite()["id"];
+        $roles = $detailsResponse->getBody()['data']['roles']->toArray();
+        $siteRoles = $roles["sites"][$siteId]["roles"];
+
+        PHPUnit::assertTrue(in_array($role, $siteRoles), "Site role '" . $role . "' not found");
+    }
+
+    /**
+     * @Then a user has new organisation role :role
+     */
+    public function aUserHasNewOrganisationRole($role)
+    {
+        $detailsResponse = $this->person->getPersonDetails(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getPersonUserId()
+        );
+
+        $aeId = $this->authorisedExaminerContext->getAe()["id"];
+        $roles = $detailsResponse->getBody()['data']['roles']->toArray();
+        $siteRoles = $roles["organisations"][$aeId]["roles"];
+
+        PHPUnit::assertTrue(in_array($role, $siteRoles), "Organisation role '" . $role . "' not found");
     }
 }

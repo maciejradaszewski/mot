@@ -18,6 +18,7 @@ use Zend\ServiceManager\AbstractFactoryInterface;
 use DvsaCommon\Enum\EventTypeCode;
 use DvsaCommon\Constants\EventDescription;
 use DvsaEntities\Entity\EventPersonMap;
+use NotificationApi\Service\Helper\SiteNominationEventHelper;
 
 /**
  * Handles nomination for a tester at site
@@ -54,6 +55,9 @@ class PositionAtSiteNominationHandler extends AbstractNotificationActionHandler
     /** @var EventService $eventService */
     protected $eventService;
 
+    /** SiteNominationEventHelper */
+    private $siteNominationEventHelper;
+
     /**
      * $action === self::ACCEPT or self::REJECT
      *
@@ -61,19 +65,22 @@ class PositionAtSiteNominationHandler extends AbstractNotificationActionHandler
      * @param NotificationService $notificationService
      * @param UserFacadeInterface         $userFacade
      * @param string              $action
+     * @param SiteNominationEventHelper $siteNominationEventHelper
      */
     public function __construct(
         EventService $eventService,
         EntityManager $entityManger,
         NotificationService $notificationService,
         UserFacadeInterface $userFacade,
-        $action
+        $action,
+        SiteNominationEventHelper $siteNominationEventHelper
     ) {
         $this->eventService = $eventService;
         $this->entityManager = $entityManger;
         $this->notificationService = $notificationService;
         $this->userFacade = $userFacade;
         $this->action = $action;
+        $this->siteNominationEventHelper = $siteNominationEventHelper;
     }
 
     /**
@@ -152,6 +159,8 @@ class PositionAtSiteNominationHandler extends AbstractNotificationActionHandler
 
             $this->entityManager->persist($position);
             $this->entityManager->persist($eventPersonMap);
+
+            $this->siteNominationEventHelper->create($notification);
         } else {
             $this->updateNotificationStatus($notification, self::ACTION_REJECTED_ID);
             $this->entityManager->remove($position);

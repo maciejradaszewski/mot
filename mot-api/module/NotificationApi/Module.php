@@ -9,6 +9,10 @@ use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use NotificationApi\Service\Helper\SiteNominationEventHelper;
+use NotificationApi\Factory\Helper\SiteNominationEventHelperFactory;
+use NotificationApi\Service\Helper\OrganisationNominationEventHelper;
+use NotificationApi\Factory\Helper\OrganisationNominationEventHelperFactory;
 
 /**
  * Class Module
@@ -31,6 +35,8 @@ class Module
         return [
             'factories'  => [
                 NotificationService::class => \NotificationApi\Factory\NotificationServiceFactory::class,
+                SiteNominationEventHelper::class => SiteNominationEventHelperFactory::class,
+                OrganisationNominationEventHelper::class => OrganisationNominationEventHelperFactory::class,
             ],
             'invokables' => [
 

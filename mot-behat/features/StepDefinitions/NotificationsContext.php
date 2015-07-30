@@ -4,7 +4,10 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Api\Notification;
+use Dvsa\Mot\Behat\Support\Api\Vts;
+use Dvsa\Mot\Behat\Support\Api\AuthorisedExaminer;
 use PHPUnit_Framework_Assert as PHPUnit;
+use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 
 class NotificationsContext implements Context
 {
@@ -21,6 +24,21 @@ class NotificationsContext implements Context
     private $session;
 
     /**
+     * @var Vts
+     */
+    private $vts;
+
+    /**
+     * @var AuthorisedExaminer
+     */
+    private $ae;
+
+    /**
+     * @var TestSupportHelper
+     */
+    private $testSupportHelper;
+
+    /**
      * @var PersonContext
      */
     private $personContext;
@@ -30,13 +48,29 @@ class NotificationsContext implements Context
      */
     private $sessionContext;
 
+    /**
+     * @var VtsContext
+     */
+    private $vtsContext;
+
+    /**
+     * @var AuthorisedExaminerContext
+     */
+    private $aeContext;
+
     public function __construct(
         Notification $notification,
-        Session $session
+        Session $session,
+        Vts $vts,
+        AuthorisedExaminer $ae,
+        TestSupportHelper $testSupportHelper
     )
     {
         $this->notification = $notification;
         $this->session = $session;
+        $this->vts = $vts;
+        $this->ae = $ae;
+        $this->testSupportHelper = $testSupportHelper;
     }
 
     /**
@@ -46,6 +80,8 @@ class NotificationsContext implements Context
     {
         $this->personContext = $scope->getEnvironment()->getContext(PersonContext::class);
         $this->sessionContext = $scope->getEnvironment()->getContext(SessionContext::class);
+        $this->vtsContext = $scope->getEnvironment()->getContext(VtsContext::class);
+        $this->aeContext = $scope->getEnvironment()->getContext(AuthorisedExaminerContext::class);
     }
 
     /**
@@ -53,7 +89,14 @@ class NotificationsContext implements Context
      */
     public function theUserWillReceiveAStatusChangeNotificationForGroup($group)
     {
-        $notifications = $this->getNotifications();
+        $session = $this->session->startSession(
+            $this->personContext->getPersonUsername(),
+            $this->personContext->getPersonPassword()
+        );
+
+        $response = $this->notification->fetchNotificationForPerson($session->getAccessToken(), $session->getUserId());
+        $notifications = $response->getBody()->toArray();
+
         PHPUnit::assertNotEmpty($notifications);
 
         // Assert that the notification that we are expecting exists
@@ -74,7 +117,13 @@ class NotificationsContext implements Context
      */
     public function theUserWillNotReceiveAStatusChangeNotification()
     {
-        $notifications = $this->getNotifications();
+        $session = $this->session->startSession(
+            $this->personContext->getPersonUsername(),
+            $this->personContext->getPersonPassword()
+        );
+
+        $response = $this->notification->fetchNotificationForPerson($session->getAccessToken(), $session->getUserId());
+        $notifications = $response->getBody()->toArray();
 
         $found = false;
         foreach ($notifications['data'] as $notification) {
@@ -87,19 +136,37 @@ class NotificationsContext implements Context
         PHPUnit::assertFalse($found);
     }
 
-    private function getNotifications()
+    /**
+     * @When a user accepts nomination to :role site role
+     */
+    public function aUserAcceptsNominationToSiteRole($role)
     {
-        $session = $this->session->startSession(
+        $userSession = $this->session->startSession(
             $this->personContext->getPersonUsername(),
             $this->personContext->getPersonPassword()
         );
 
-        /** @var Dvsa\Mot\Behat\Support\Response */
-        $notificationResponse = $this->notification->fetchNotificationForPerson(
-            $session->getAccessToken(),
-            $session->getUserId()
+        $userToken = $userSession->getAccessToken();
+        $notification = $this->notification->getRoleNominationNotification($role, $this->personContext->getPersonUserId(), $userToken);
+
+        $response = $this->notification->acceptSiteNomination($userToken, $notification["id"]);;
+        PHPUnit::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * @When a user accepts nomination to :role organisation role
+     */
+    public function aUserAcceptsNominationToOrganisationRole($role)
+    {
+        $userSession = $this->session->startSession(
+            $this->personContext->getPersonUsername(),
+            $this->personContext->getPersonPassword()
         );
 
-        return $notificationResponse->getBody()->toArray();
+        $userToken = $userSession->getAccessToken();
+        $notification = $this->notification->getRoleNominationNotification($role, $this->personContext->getPersonUserId(), $userToken);
+
+        $response = $this->notification->acceptOrganisationNomination($userToken, $notification["id"]);;
+        PHPUnit::assertEquals(200, $response->getStatusCode());
     }
 }

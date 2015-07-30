@@ -13,6 +13,9 @@ use TestSupport\Service\PasswordResetService;
 use TestSupport\Service\VehicleService;
 use TestSupport\Service\VehicleExaminerService;
 use TestSupport\Service\VM10519UserService;
+use TestSupport\Service\AedmService;
+use TestSupport\Service\AccountDataService;
+use TestSupport\Service\SiteUserDataService;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use Zend\ServiceManager\ServiceManager;
 
@@ -137,6 +140,30 @@ class TestSupportHelper
     public function getSuperVehicleExaminerService()
     {
         return $this->getServiceManager()->get(VM10519UserService::class);
+    }
+
+    /**
+     * @return AedmService
+     */
+    public function getAedmService()
+    {
+        return $this->getServiceManager()->get(AedmService::class);
+    }
+
+    /**
+     * @return AccountDataService:
+     */
+    public function getAccountDataService()
+    {
+        return $this->getServiceManager()->get(AccountDataService::class);
+    }
+
+    /**
+     * @return SiteUserDataService
+     */
+    public function getSiteUserDataService()
+    {
+        return $this->getServiceManager()->get(SiteUserDataService::class);
     }
 
     /**

@@ -15,6 +15,7 @@ use NotificationApi\Service\NotificationService;
 use NotificationApiTest\Entity\NotificationCreatorTrait;
 use UserFacade\UserFacadeLocal;
 use DvsaEventApi\Service\EventService;
+use NotificationApi\Service\Helper\OrganisationNominationEventHelper;
 
 /**
  * unit tests for PositionInOrganisationNominationHandler
@@ -78,7 +79,8 @@ class PositionInOrganisationNominationHandlerTest extends AbstractServiceTestCas
             $entityManagerMock,
             $this->getMockWithDisabledConstructor(NotificationService::class),
             XMock::of(UserFacadeLocal::class),
-            $action
+            $action,
+            XMock::of(OrganisationNominationEventHelper::class)
         );
     }
 }

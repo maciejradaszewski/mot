@@ -15,7 +15,7 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  *      @ORM\Index(name="ix_event_site_map_site_id", columns={"site_id"})
  *  }
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\EventSiteMapRepository")
  */
 class EventSiteMap extends Entity
 {

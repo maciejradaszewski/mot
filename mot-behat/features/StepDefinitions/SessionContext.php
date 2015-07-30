@@ -37,6 +37,16 @@ class SessionContext implements Context
     private $tempPasswordChangeContext;
 
     /**
+     * @var VtsContext
+     */
+    private $vtsContext;
+
+    /**
+     * @var authorisedExaminerContext
+     */
+    private $authorisedExaminerContext;
+
+    /**
      * @param AccountClaim       $accountClaim
      * @param TempPasswordChange $accountClaim
      * @param Session            $session
@@ -56,6 +66,8 @@ class SessionContext implements Context
     {
         $this->accountClaimContext       = $scope->getEnvironment()->getContext(AccountClaimContext::class);
         $this->tempPasswordChangeContext = $scope->getEnvironment()->getContext(TempPasswordChangeContext::class);
+        $this->vtsContext = $scope->getEnvironment()->getContext(VtsContext::class);
+        $this->authorisedExaminerContext = $scope->getEnvironment()->getContext(AuthorisedExaminerContext::class);
     }
 
     /**
@@ -289,5 +301,54 @@ class SessionContext implements Context
     public function iAmLoggedInAsAnAuthorisedExaminer()
     {
         $this->iMAuthenticatedWithMyUsernameAndPassword('aedm', Authentication::PASSWORD_DEFAULT);
+    }
+
+    /**
+     * @Given I am logged in as an Area Office User to new site
+     */
+    public function iAmLoggedInAsAnAreaOfficeUserToNewSite()
+    {
+        $this->vtsContext->createSite();
+        $this->iAmLoggedInAsAnAreaOfficeUser();
+    }
+
+    /**
+     * @Given I am logged in as a Site Manager to new site
+     */
+    public function iAmLoggedInAsASiteManagerToNewSite()
+    {
+        $this->vtsContext->createSite();
+        $siteId = $this->vtsContext->getSite()["id"];
+        $siteManagerService = $this->testSupportHelper->getSiteUserDataService();
+
+        $data = [
+            "siteIds" => [ $siteId ],
+            "requestor" => [
+                "username" => "schememgt",
+                "password" => "Password1"
+            ]
+        ];
+        $user               = $siteManagerService->create($data, "SITE-MANAGER");
+        $this->currentUser  = $this->session->startSession($user->data['username'], $user->data['password']);
+    }
+
+    /**
+     * @Given I am logged in as an Aedm to new organisation
+     */
+    public function iAmLoggedInAsAnAedmToNewOrganisation()
+    {
+        $ae = $this->authorisedExaminerContext->createAE();
+        $aeId = $ae["id"];
+        $aedmService = $this->testSupportHelper->getAedmService();
+
+        $data = [
+            "aeIds" => [ $aeId ],
+            "requestor" => [
+                "username" => "schememgt",
+                "password" => "Password1"
+            ]
+        ];
+        $user              = $aedmService->create($data);
+        $this->currentUser = $this->session->startSession($user->data['username'], $user->data['password']);
     }
 }

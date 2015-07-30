@@ -2,8 +2,6 @@
 
 namespace TestSupport\Helper;
 
-use TestSupport\Helper\TestSupportAccessTokenManager;
-use TestSupport\Helper\RequestorParserHelper;
 use DvsaCommon\HttpRestJson\Client as JsonClient;
 
 class TestSupportRestClientHelper
@@ -15,9 +13,9 @@ class TestSupportRestClientHelper
     private $jsonClient;
 
     /**
-     * @var bool
+     * @var array
      */
-    private $prepared = false;
+    private $requestors = [];
 
     /**
      * @var TestSupportAccessTokenManager
@@ -32,19 +30,26 @@ class TestSupportRestClientHelper
 
     public function prepare(array $data)
     {
+        if (!isset($data["requestor"])) {
+            $data["requestor"] = ["username" => "schememgt", "password" => "Password1"];
+        }
+
         list($schmUsername, $schmPassword) = RequestorParserHelper::parse($data);
 
+        if (in_array($schmUsername, $this->requestors)) {
+            return;
+        }
+
+        $this->requestors[] = $schmUsername;
         $accessToken = $this->accessTokenManager->getToken($schmUsername, $schmPassword);
         $this->jsonClient->setAccessToken($accessToken);
     }
 
     public function getJsonClient($data)
     {
-        if(!$this->prepared) {
-            $this->prepare($data);
-            $this->prepared = true;
-        }
+        $this->prepare($data);
+
         return $this->jsonClient;
     }
-
 }
+

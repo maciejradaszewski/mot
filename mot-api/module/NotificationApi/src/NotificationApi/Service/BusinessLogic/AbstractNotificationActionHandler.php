@@ -10,6 +10,8 @@ use NotificationApi\Service\NotificationService;
 use UserFacade\UserFacadeLocal;
 use Zend\ServiceManager\ServiceManager;
 use DvsaEventApi\Service\EventService;
+use NotificationApi\Service\Helper\SiteNominationEventHelper;
+use NotificationApi\Service\Helper\OrganisationNominationEventHelper;
 
 /**
  * Notification action handlers factory
@@ -56,7 +58,8 @@ abstract class AbstractNotificationActionHandler
                     $serviceManager->get(EntityManager::class),
                     $serviceManager->get(NotificationService::class),
                     $serviceManager->get(UserFacadeLocal::class),
-                    $action
+                    $action,
+                    $serviceManager->get(SiteNominationEventHelper::class)
                 );
 
             case PositionInOrganisationNominationHandler::ACCEPTED:
@@ -66,7 +69,8 @@ abstract class AbstractNotificationActionHandler
                     $serviceManager->get(EntityManager::class),
                     $serviceManager->get(NotificationService::class),
                     $serviceManager->get(UserFacadeLocal::class),
-                    $action
+                    $action,
+                    $serviceManager->get(OrganisationNominationEventHelper::class)
                 );
 
             default:

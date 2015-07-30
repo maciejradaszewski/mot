@@ -15,7 +15,7 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  *      @ORM\Index(name="ix_event_organisation_map_organisation_id", columns={"organisation_id"}),
  *      @ORM\Index(name="ix_event_organisation_map_created_by", columns={"created_by"}),
  *      @ORM\Index(name="ix_event_organisation_map_last_updated_by", columns={"last_updated_by"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\EventOrganisationMapRepository")
  */
 class EventOrganisationMap extends Entity
 {

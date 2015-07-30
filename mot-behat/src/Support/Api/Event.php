@@ -6,6 +6,8 @@ class Event extends MotApi
 {
     const PATH_DETAILS = 'event/{id}';
     const PATH_PERSON_LIST = 'event/list/person/{personId}';
+    const PATH_SITE_LIST = 'event/list/site/{siteId}';
+    const PATH_ORGANISATION_LIST = 'event/list/ae/{organisationId}';
 
     private $params = [
         "dateFrom" => [
@@ -32,9 +34,33 @@ class Event extends MotApi
         "_class" => "DvsaCommon\\Dto\\Event\\EventFormDto"
     ];
 
-    public function getPersonEventData($token, $personId)
+    public function getPersonEventsData($token, $personId)
     {
         $path = str_replace("{personId}", $personId, self::PATH_PERSON_LIST);
+
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_POST,
+            $path,
+            $this->params
+        );
+    }
+
+    public function getSiteEventsData($token, $siteId)
+    {
+        $path = str_replace("{siteId}", $siteId, self::PATH_SITE_LIST);
+
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_POST,
+            $path,
+            $this->params
+        );
+    }
+
+    public function getOrganisationEventsData($token, $organisationId)
+    {
+        $path = str_replace("{organisationId}", $organisationId, self::PATH_ORGANISATION_LIST);
 
         return $this->sendRequest(
             $token,

@@ -3,21 +3,11 @@
 namespace Dvsa\Mot\Behat\Support\Api;
 
 use Dvsa\Mot\Behat\Support\HttpClient;
-use Dvsa\Mot\Behat\Support\Request;
 
-class Notification {
-
+class Notification extends MotApi
+{
     const PATH = '/notification/person/';
-
-    /**
-     * @var HttpClient
-     */
-    private $client;
-
-    public function __construct(HttpClient $client)
-    {
-        $this->client = $client;
-    }
+    const PATH_NOTIFICATION_ACTION = '/notification/{notification_id}/action';
 
     /**
      * @param string $token
@@ -26,10 +16,56 @@ class Notification {
      */
     public function fetchNotificationForPerson($token, $personId)
     {
-        return $this->client->request(new Request(
+        return $this->sendRequest(
+            $token,
             MotApi::METHOD_GET,
-            self::PATH.$personId,
-            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
-        ));
+            self::PATH.$personId
+        );
+    }
+
+    public function getRoleNominationNotification($role, $userId, $token)
+    {
+        $response = $this->fetchNotificationForPerson(
+            $token,
+            $userId
+        );
+
+        $notifications = $response->getBody()->toArray();
+
+        foreach ($notifications['data'] as $notification) {
+            if ($notification['fields']['role'] === $role) {
+                return $notification;
+            }
+        }
+
+        throw new \InvalidArgumentException("Notification not found");
+    }
+
+    public function acceptSiteNomination($token, $notificationId)
+    {
+        $data = [
+            "action" => "SITE-NOMINATION-ACCEPTED",
+        ];
+
+        return $this->acceptNomination($token, $notificationId, $data);
+    }
+
+    public function acceptOrganisationNomination($token, $notificationId)
+    {
+        $data = [
+            "action" => "ORGANISATION-NOMINATION-ACCEPTED",
+        ];
+
+        return $this->acceptNomination($token, $notificationId, $data);
+    }
+
+    private function acceptNomination($token, $notificationId, array $data)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_PUT,
+            str_replace("{notification_id}", $notificationId, self::PATH_NOTIFICATION_ACTION),
+            $data
+        );
     }
 }

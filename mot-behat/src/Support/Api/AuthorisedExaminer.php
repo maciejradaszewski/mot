@@ -20,6 +20,7 @@ use DvsaCommon\Utility\DtoHydrator;
 class AuthorisedExaminer extends MotApi
 {
     const AE_NAME = 'some ae name';
+    const POSITION = '/organisation/{organisation_id}/position';
 
     public function search($token, $aeNumber)
     {
@@ -116,6 +117,32 @@ class AuthorisedExaminer extends MotApi
                 OrganisationUrlBuilder::position(2, 4),
                 ['Content-Type' => 'application/json', 'Authorization' => 'Bearer ' . $token]
             )
+        );
+    }
+
+    public function nominate($userId, $orgRoleName, $orgId, $token)
+    {
+        $roles = [
+            "AUTHORISED-EXAMINER-DESIGNATED-MANAGER" => 1,
+            "AUTHORISED-EXAMINER-DELEGATE" => 2
+
+        ];
+
+        if (!array_key_exists($orgRoleName, $roles)) {
+            throw new \InvalidArgumentException("Organisation role '" .$orgRoleName. "' not found");
+        }
+
+        $orgRoleId = $roles[$orgRoleName];
+        $data = [
+            "nomineeId" => $userId,
+            "roleId" => $orgRoleId
+        ];
+
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_POST,
+            str_replace("{organisation_id}", $orgId, self::POSITION),
+            $data
         );
     }
 }
