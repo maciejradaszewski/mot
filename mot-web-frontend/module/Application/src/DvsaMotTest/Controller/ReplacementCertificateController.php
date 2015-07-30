@@ -340,7 +340,10 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
                     }
 
                     if ($odometerReadingParams['resultType'] !== OdometerReadingResultType::OK) {
-                        unset($result['odometerReading']['value'], $result['odometerReading']['unit']);
+                        unset($result['odometerReading']['odometer'], $result['odometerReading']['unit']);
+                    } else {
+                        $result['odometerReading']['value'] = $result['odometerReading']['odometer'];
+                        unset($result['odometerReading']['odometer']);
                     }
                 }
 
@@ -415,7 +418,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
                 ];
             case self::ACTION_UPDATE_ODOMETER:
                 list($value, $unit, $resultType)
-                    = [(int)$post['odometerValue'], $post['odometerUnit'], $post['odometerResultType']];
+                    = [$post['odometerValue'], $post['odometerUnit'], $post['odometerResultType']];
 
                 if ($resultType !== OdometerReadingResultType::OK) {
                     $value = null;
@@ -427,8 +430,8 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
 
                 return [
                     'odometerReading' => [
-                        'value' => $value,
-                        'unit' => $unit,
+                        'odometer'   => $value,
+                        'unit'       => $unit,
                         'resultType' => $resultType
                     ]
                 ];
