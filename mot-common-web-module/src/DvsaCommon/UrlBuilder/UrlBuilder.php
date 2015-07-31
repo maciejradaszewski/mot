@@ -62,7 +62,7 @@ class UrlBuilder extends AbstractUrlBuilder
     const PERSON_MOT_TESTING = '/mot-testing';
     const TESTER_APPLICATION_LOCK = '/lock';
     const MOT_TEST_COMPARE = 'mot-test/compare';
-    const REPLACEMENT_CERTIFICATE_DRAFT = 'replacement-certificate-draft[/:id]';
+    const REPLACEMENT_CERTIFICATE_DRAFT = '/replacement-certificate-draft[/:id]';
     const REPLACEMENT_CERTIFICATE_DRAFT_DIFF = '/diff';
     const REPLACEMENT_CERTIFICATE_DRAFT_APPLY = '/apply';
     const REPORT_NAME = 'get-report-name/:id';
@@ -139,6 +139,10 @@ class UrlBuilder extends AbstractUrlBuilder
                 self::ODOMETER                      => '',
                 self::MOT_TEST_COMPARE_BY_ID        => '',
                 self::MOT_TEST_OPTIONS              => '',
+                self::REPLACEMENT_CERTIFICATE_DRAFT => [
+                    self::REPLACEMENT_CERTIFICATE_DRAFT_APPLY => '',
+                    self::REPLACEMENT_CERTIFICATE_DRAFT_DIFF  => '',
+                ],
             ],
             self::CERT_CHANGE_DIFF_TESTER_REASON         => '',
             self::ASSESSMENT_APPLICATION_COMMENT         => '',
@@ -154,10 +158,6 @@ class UrlBuilder extends AbstractUrlBuilder
                 self::PERSON_CURRENT_MOT_TEST_NUMBER     => '',
                 self::PERSON_SITE_COUNT                  => '',
                 self::PERSON_MOT_TESTING                 => '',
-            ],
-            self::REPLACEMENT_CERTIFICATE_DRAFT          => [
-                self::REPLACEMENT_CERTIFICATE_DRAFT_APPLY => '',
-                self::REPLACEMENT_CERTIFICATE_DRAFT_DIFF  => '',
             ],
             self::MOT_TEST_COMPARE                       => '',
             self::EQUIPMENT                              => '',
@@ -463,21 +463,23 @@ class UrlBuilder extends AbstractUrlBuilder
     //  @ARCHIVE VM-4532    function enforcementMotDemoTest()
     //  @ARCHIVE VM-4532    function enforcementMotDemoTestSubmit()
 
-    public static function replacementCertificateDraft($id = null)
+    public static function replacementCertificateDraft($id = null, $motTestNumber = null)
     {
-        return self::of()->appendRoutesAndParams(self::REPLACEMENT_CERTIFICATE_DRAFT)
+        return self::of()->appendRoutesAndParams(self::MOT_TEST)
+            ->routeParam('motTestNumber', $motTestNumber)
+            ->appendRoutesAndParams(self::REPLACEMENT_CERTIFICATE_DRAFT)
             ->routeParam('id', $id);
     }
 
-    public static function replacementCertificateDraftApply($id)
+    public static function replacementCertificateDraftApply($id, $motTestNumber)
     {
-        return self::replacementCertificateDraft($id)
+        return self::replacementCertificateDraft($id, $motTestNumber)
             ->appendRoutesAndParams(self::REPLACEMENT_CERTIFICATE_DRAFT_APPLY);
     }
 
-    public static function replacementCertificateDraftDiff($id)
+    public static function replacementCertificateDraftDiff($id, $motTestNumber)
     {
-        return self::replacementCertificateDraft($id)
+        return self::replacementCertificateDraft($id, $motTestNumber)
             ->appendRoutesAndParams(self::REPLACEMENT_CERTIFICATE_DRAFT_DIFF);
     }
 

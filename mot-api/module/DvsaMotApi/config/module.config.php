@@ -403,6 +403,42 @@ return [
                             ],
                         ],
                     ],
+                    'replacement-certificate-draft'  => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/replacement-certificate-draft[/:id]',
+                            'constraints' => [
+                                'id' => '[0-9]+',
+                            ],
+                            'defaults'    => [
+                                'controller' => ReplacementCertificateDraftController::class,
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'replacement-certificate-draft-apply' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/apply',
+                                    'defaults' => [
+                                        'controller' => ReplacementCertificateDraftController::class,
+                                        'action'     => 'apply'
+                                    ],
+                                ]
+                            ],
+                            'replacement-certificate-draft-diff'  => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/diff',
+                                    'defaults' => [
+                                        'controller' => ReplacementCertificateDraftController::class,
+                                        'action'     => 'diff'
+                                    ],
+                                ]
+                            ],
+                        ]
+
+                    ],
                 ],
             ],
             'mot-test-validate-retest' => [
@@ -435,42 +471,6 @@ return [
                         'action'     => 'getMotTestByNumber'
                     ],
                 ],
-            ],
-            'replacement-certificate-draft'  => [
-                'type'          => 'Segment',
-                'options'       => [
-                    'route'       => '/replacement-certificate-draft[/:id]',
-                    'constraints' => [
-                        'id' => '[0-9]+',
-                    ],
-                    'defaults'    => [
-                        'controller' => ReplacementCertificateDraftController::class,
-                    ],
-                ],
-                'may_terminate' => true,
-                'child_routes'  => [
-                    'replacement-certificate-draft-apply' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/apply',
-                            'defaults' => [
-                                'controller' => ReplacementCertificateDraftController::class,
-                                'action'     => 'apply'
-                            ],
-                        ]
-                    ],
-                    'replacement-certificate-draft-diff'  => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/diff',
-                            'defaults' => [
-                                'controller' => ReplacementCertificateDraftController::class,
-                                'action'     => 'diff'
-                            ],
-                        ]
-                    ],
-                ]
-
             ],
             'mot-test-search'                => [
                 'type'          => 'Segment',

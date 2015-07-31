@@ -204,6 +204,9 @@ class UrlBuilder extends AbstractUrlBuilder
                     self::MOT_TEST_STATUS         => '',
                     self::MOT_TEST_OPTIONS        => '',
                     self::TEST_ITEM_CATEGORY_NAME => '',
+                    self::REPLACEMENT_CERTIFICATE_DRAFT => [
+                        self::REPLACEMENT_CERTIFICATE_DRAFT_APPLY => '',
+                    ],
                 ],
             self::MOT_TEST_SEARCH                        => '',
             self::MOT_TEST_REFUSAL                       => '',
@@ -250,9 +253,6 @@ class UrlBuilder extends AbstractUrlBuilder
             self::NOTIFICATION_BY_ID                     => [
                 self::READ   => '',
                 self::ACTION => '',
-            ],
-            self::REPLACEMENT_CERTIFICATE_DRAFT          => [
-                self::REPLACEMENT_CERTIFICATE_DRAFT_APPLY => '',
             ],
             self::EQUIPMENT => '',
             self::INSPECTION_LOCATION => '',
@@ -899,6 +899,7 @@ class UrlBuilder extends AbstractUrlBuilder
 
     public function replacementCertificateDraft()
     {
+        $this->routesAndParameters[]['route'] = self::MOT_TEST;
         $this->routesAndParameters[]['route'] = self::REPLACEMENT_CERTIFICATE_DRAFT;
         return $this;
     }

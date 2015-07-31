@@ -7,9 +7,9 @@ namespace DvsaCommon\UrlBuilder;
  */
 class UrlBuilderWeb extends AbstractUrlBuilder
 {
-    const REPLACE_CERT = '/replacement-certificate[/:id]';
+    const REPLACE_CERT = '/mot-test/:motTestNumber/replacement-certificate[/:id]';
     const REPLACE_CERT_SUMMARY = '/summary';
-    const REPLACE_CERT_FINISH = '/finish/:motTestNumber';
+    const REPLACE_CERT_FINISH = '/finish';
     const MOT_TEST_LOG = '/mot-test-log';
     const MOT_TEST_LOG_CSV = '/csv';
 
@@ -34,22 +34,22 @@ class UrlBuilderWeb extends AbstractUrlBuilder
         return self::motTestLogs()->appendRoutesAndParams(self::MOT_TEST_LOG_CSV);
     }
 
-    public static function replacementCertificate($id = null)
+    public static function replacementCertificate($id, $motTestNumber)
     {
         return self::of()->appendRoutesAndParams(self::REPLACE_CERT)
-            ->routeParam('id', $id);
+            ->routeParam('id', $id)
+            ->routeParam('motTestNumber', $motTestNumber);
     }
 
     public static function replacementCertificateFinish($motTestNr)
     {
-        return self::replacementCertificate()
-            ->appendRoutesAndParams(self::REPLACE_CERT_FINISH)
-            ->routeParam('motTestNumber', $motTestNr);
+        return self::replacementCertificate(null, $motTestNr)
+            ->appendRoutesAndParams(self::REPLACE_CERT_FINISH);
     }
 
-    public static function replacementCertificateSummary($id)
+    public static function replacementCertificateSummary($id, $motTestNumber)
     {
-        return self::replacementCertificate($id)
+        return self::replacementCertificate($id, $motTestNumber)
             ->appendRoutesAndParams(self::REPLACE_CERT_SUMMARY);
     }
 }

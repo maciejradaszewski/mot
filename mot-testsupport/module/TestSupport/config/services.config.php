@@ -1,12 +1,10 @@
 <?php
 
-
+use DvsaCommon\HttpRestJson\ZendClient;
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\Obfuscate\ParamEncrypter;
 use DvsaCommon\Obfuscate\ParamObfuscator;
-
 use Zend\ServiceManager\ServiceLocatorInterface;
-
 use Doctrine\ORM\EntityManager;
 use TestSupport\Service\AccountDataService;
 use TestSupport\Service\AccountService;
@@ -47,7 +45,7 @@ return [
         \DvsaCommon\HttpRestJson\Client::class =>
             function (ServiceLocatorInterface $sm) {
                 $config = $sm->get('config');
-                return new Client(new \Zend\Http\Client(), $config['apiUrl']);
+                return new ZendClient(new \Zend\Http\Client(), $config['apiUrl']);
             },
         SiteUserDataService::class             =>
             function (ServiceLocatorInterface $sm) {

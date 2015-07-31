@@ -25,3 +25,5 @@ Organisation
 DvsaApplicationLogger
 Report
 Dvsa\OpenAM
+DoctrineModule
+DvsaDoctrineModule

@@ -46,4 +46,17 @@ return array(
             ],
         ]
     ],
+
+    'cache' => [
+        'instance' => 'doctrine.cache.apc',
+    ],
+
+    'rest_client' => [
+        'cache' => [
+            'enabled' => true,
+            'mot-test' => [
+                'lifetime' => 7200
+            ]
+        ]
+    ],
 );

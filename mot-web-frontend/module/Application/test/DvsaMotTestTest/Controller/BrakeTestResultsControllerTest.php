@@ -315,7 +315,7 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
 
     public function testBrakeTestSummaryCanBeAccessedAuthenticatedRequest()
     {
-        $this->getRestClientMockWithGetMotTest($this->getMotTestDataDto(), true);
+        $this->getRestClientMockWithGetMotTest($this->getMotTestDataDto());
         $response = $this->getResponseForAction('displayBrakeTestSummary', ['motTestNumber' => '1']);
 
         $this->assertEquals(200, $response->getStatusCode());
