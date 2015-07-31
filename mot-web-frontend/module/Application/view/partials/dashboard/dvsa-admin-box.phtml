@@ -1,6 +1,6 @@
 <?php
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
-use Site\Controller\VehicleTestingStationController;
+use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 
 ?>
 <div class="module-pivot-panel">
@@ -12,13 +12,18 @@ use Site\Controller\VehicleTestingStationController;
         <?php if ($this->isFeatureEnabled(\DvsaCommon\Constants\FeatureToggle::AO1_AE_CREATE)): ?>
             <li>
                 <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::create(); ?>"
-                   id="createAuthorisedExaminerLink"><?php echo $this->translate('Create AE'); ?>
+                   id="createAuthorisedExaminerLink">
+                    Create AE
                 </a>
             </li>
         <?php endif; ?>
-        <li>
-            <a id="action-create-vts" href="<?php echo $this->url(VehicleTestingStationController::ROUTE_CREATE); ?>">
-                Create VTS</a>
-        </li>
+        <?php if ($this->isFeatureEnabled(\DvsaCommon\Constants\FeatureToggle::AO1_SITE_CREATE)): ?>
+            <li>
+                <a href="<?php echo VehicleTestingStationUrlBuilderWeb::create(); ?>"
+                   id="action-create-vts">
+                    Create Site
+                </a>
+            </li>
+        <?php endif; ?>
     </ul>
 </div>

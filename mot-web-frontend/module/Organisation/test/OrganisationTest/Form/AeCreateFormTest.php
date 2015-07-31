@@ -133,7 +133,6 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-
     /**
      * @dataProvider dataProviderTestFromDtoMainFields
      */

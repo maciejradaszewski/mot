@@ -7,6 +7,7 @@ use DvsaCommon\Dto\Event\EventDto;
 use DvsaCommon\Dto\Event\EventFormDto;
 use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use Event\ViewModel\Event\EventDetailViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
@@ -69,9 +70,10 @@ class EventDetailViewModelTest extends \PHPUnit_Framework_TestCase
 
     public function testGetterSetterSite()
     {
+        $result = new VehicleTestingStationDto();
         $this->viewModel = new EventDetailViewModel(null, null, null, null, null, null);
-        $this->assertInstanceOf(EventDetailViewModel::class, $this->viewModel->setSite(['test' => 'test']));
-        $this->assertEquals(['test' => 'test'], $this->viewModel->getSite());
+        $this->assertInstanceOf(EventDetailViewModel::class, $this->viewModel->setSite($result));
+        $this->assertEquals($result, $this->viewModel->getSite());
     }
 
     public function testGetterSetterPerson()
@@ -113,9 +115,9 @@ class EventDetailViewModelTest extends \PHPUnit_Framework_TestCase
                 'Year'  => 2015,
             ],
         ];
-        $site = [
-            'id'    => self::SITE_ID,
-        ];
+        $site = (new VehicleTestingStationDto())
+            ->setId(self::SITE_ID);
+
         $this->viewModel = new EventDetailViewModel($organisation, $site, null, null, 'ae', new EventFormDto($data));
         $this->assertEquals('/event/list/ae/9?search=search&isShowDate=1&dateFrom%5BDay%5D=1&dateFrom%5BMonth%5D=1&dateFrom%5BYear%5D=2015&dateTo%5BDay%5D=1&dateTo%5BMonth%5D=1&dateTo%5BYear%5D=2015', $this->viewModel->getGoBackLink());
         $this->viewModel->setEventType('site');
@@ -132,10 +134,10 @@ class EventDetailViewModelTest extends \PHPUnit_Framework_TestCase
         $organisation
             ->setAuthorisedExaminerAuthorisation($ae)
             ->setName(self::AE_NAME);
-        $site = [
-            'siteNumber'    => self::SITE_NUMBER,
-            'name'          => self::SITE_NAME,
-        ];
+        $site = (new VehicleTestingStationDto())
+            ->setId(self::SITE_ID)
+            ->setSiteNumber(self::SITE_NUMBER)
+            ->setName(self::SITE_NAME);
         $person = new Person();
         $person
             ->setUsername(self::PERSON_USERNAME)

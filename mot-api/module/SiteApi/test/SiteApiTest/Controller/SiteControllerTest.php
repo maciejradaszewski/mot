@@ -3,7 +3,6 @@
 namespace SiteApiTest\Controller;
 
 use DvsaCommon\Constants\Role;
-use DvsaCommon\Dto\Site\SiteContactDto;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonApi\Service\Exception\NotFoundException;
@@ -28,6 +27,7 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
     const SITE_ID = 1;
     const SITE_NR = 'V1234';
 
+    /** @var SiteService|MockObj */
     private $mockService;
 
     protected function setUp()
@@ -41,13 +41,14 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
     /**
      * Test method is accessible for call with valid parameters
      *
-     * @param string $method        HTTP method
-     * @param string $action        route action
-     * @param array  $params        route parameters
-     * @param array  $queryParams   query parameters
+     * @param string $method HTTP method
+     * @param string $action route action
+     * @param array $params route parameters
+     * @param array $queryParams query parameters
      * @param string $serviceMethod mocked service method
-     * @param array  $serviceReturn service method will return
-     * @param array  $expectResult  expected method result
+     * @param array $serviceReturn service method will return
+     * @param array $expectResult expected method result
+     * @param array $postParams
      *
      * @dataProvider dataProviderTestWithValidParam
      */
@@ -58,72 +59,42 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
         $queryParams,
         $serviceMethod,
         $serviceReturn,
-        $expectResult
+        $expectResult,
+        $postParams = null
     ) {
         $this->mockValidAuthorization(array(Role::VEHICLE_EXAMINER));
 
         $this->setupMockForCalls($this->mockService, $serviceMethod, $serviceReturn);
 
-        $result = $this->getResultForAction($method, $action, $params, $queryParams);
+        $result = $this->getResultForAction($method, $action, $params, $queryParams, $postParams);
 
         $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, $expectResult, $result);
     }
 
     public function dataProviderTestWithValidParam()
     {
-        $getSrvResult = [
-            'id'         => self::SITE_ID,
-            'siteNumber' => self::SITE_NR,
-        ];
-        $getExpect = $this->getTestResponse($getSrvResult);
+        $getSrvResult = (new VehicleTestingStationDto())
+            ->setId(self::SITE_ID)
+            ->setSiteNumber(self::SITE_NR);
 
         $getSrvResultDto = DtoHydrator::dtoToJson(new VehicleTestingStationDto());
-        $getExpectDto = ['data' => $getSrvResultDto];
+        $getExpect = ['data' => $getSrvResultDto];
 
         $postSrvResult = ['id' => self::SITE_ID];
         $postExpect = ['data' => $postSrvResult];
 
         return [
             [
-                'method'        => 'get',
-                'action'        => null,
-                'params'        => ['id' => self::SITE_ID],
-                'queryParams'   => [],
-                'serviceMethod' => 'getVehicleTestingStationData',
-                'serviceReturn' => $getSrvResult,
-                'expectResult'  => $getExpect,
-            ],
-            [
                 'get',
                 null,
                 ['id' => self::SITE_ID],
                 ['dto' => true],
-                'getVehicleTestingStationData',
+                'getSite',
                 $getSrvResultDto,
-                $getExpectDto,
-            ],
-
-            ['get', 'siteById', ['id' => self::SITE_ID], [], 'getSiteData', $getSrvResult, $getExpect],
-            [
-                'get',
-                'findBySiteNumber',
-                ['sitenumber' => self::SITE_NR],
-                [],
-                'getVehicleTestingStationDataBySiteNumber',
-                $getSrvResult,
                 $getExpect,
             ],
-            [
-                'get',
-                'findBySiteNumber',
-                ['sitenumber' => self::SITE_NR],
-                ['dto' => true],
-                'getVehicleTestingStationDataBySiteNumber',
-                'serviceReturn' => $getSrvResultDto,
-                'expectResult'  => $getExpectDto,
-            ],
             ['put', null, ['id' => self::SITE_ID, 'data' => []], [], 'update', $postSrvResult, $postExpect],
-            ['post', null, ['data' => []], [], 'create', $postSrvResult, $postExpect],
+            ['post', null, ['data' => []], [], 'create', $postSrvResult, $postExpect, ['_class' => 'DvsaCommon\\Dto\\Site\\VehicleTestingStationDto']],
         ];
     }
 
@@ -161,55 +132,10 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
             [
                 'method'        => 'get',
                 'action'        => null,
-                'serviceMethod' => 'getVehicleTestingStationData',
+                'serviceMethod' => 'getSite',
                 'paramName'     => 'id',
             ],
-            ['get', 'siteById', 'getSiteData', 'id'],
-            ['get', 'findBySiteNumber', 'getVehicleTestingStationDataBySiteNumber', 'sitenumber'],
             ['put', null, 'update', 'id'],
-        ];
-    }
-
-    /**
-     * Test service method return errors when required parameter is null
-     *
-     * @param string $method      HTTP method
-     * @param string $action      route action
-     * @param string $paramName   set value for parameter with name
-     * @param string $expectError error
-     *
-     * @dataProvider dataProviderTestParamNull
-     */
-    public function testParamNull($method, $action, $paramName, $expectError)
-    {
-        $this->mockValidAuthorization(array(Role::VEHICLE_EXAMINER));
-
-        $result = $this->getResultForAction($method, $action, [$paramName => null]);
-
-        $this->assertResultHasErrors($result, [$expectError]);
-    }
-
-    public function dataProviderTestParamNull()
-    {
-        $errSiteId = [
-            'message' => SiteController::SITE_ID_REQUIRED_MESSAGE,
-            'code'    => SiteController::ERROR_CODE_REQUIRED,
-        ];
-
-        $errSiteNr = [
-            'message' => SiteController::SITE_NUMBER_REQUIRED_MESSAGE,
-            'code'    => SiteController::ERROR_CODE_REQUIRED,
-        ];
-
-        return [
-            [
-                'method'        => 'get',
-                'action'        => null,
-                'paramName'     => 'id',
-                'expectError'   => $errSiteId,
-            ],
-            ['get', 'siteById', 'id', $errSiteId],
-            ['get', 'findBySiteNumber', 'sitenumber', $errSiteNr],
         ];
     }
 

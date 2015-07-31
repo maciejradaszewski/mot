@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * @var Site\ViewModel\VehicleTestingStation\VtsFormViewModel $model
+ * @var Site\Form\VtsCreateForm                               $form
+ */
+
+use DvsaCommon\Utility\AddressUtils;
+
+$model = $this->model;
+$form = $model->getForm();
+
+$contact = $form->getContactModel();
+
+?>
+<!--Display of the information enter-->
+<h3 class="key-value-list__header">Site summary</h3>
+<?php
+
+echo $this->partial(
+    'partial/gds/table/table',
+    [
+        'head' => 'Site name and type',
+        'body' => [
+            ['Site name', $form->getName()],
+            ['Site type', $form->getSiteTypes()[$form->getType()]],
+        ],
+    ]
+);
+
+echo $this->partial(
+    'partial/gds/table/table',
+    [
+        'head' => 'Site location and contacts',
+        'body' => [
+            ['Address', AddressUtils::stringify($contact->getAddressModel()->toDto())],
+            ['Country', $form->getCountries()[$form->getCountry()]],
+            ['Email', $contact->getEmailModel()->getEmail()],
+            ['Telephone', $contact->getPhoneModel()->getNumber()],
+        ],
+    ]
+);
+
+echo $this->partial(
+    'partial/gds/table/table',
+    [
+        'head' => 'Testing facilities',
+        'body' => [
+            ['OPTL test lanes', $form->getTestingFacilityOptl()],
+            ['TPTL test lanes', $form->getTestingFacilityTptl()],
+            ['Classes of vehicles tested at site', join(', ', $form->getClasses())],
+        ],
+    ]
+);
+?>
+
+<!--Hidden information of the AE for save purpose-->
+<form method="POST" action="<?php echo $form->getFormUrl(); ?>">
+    <?php
+    echo $this->csrfToken();
+
+    // Navigation
+    echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id'         => 'submitSiteConfirmation',
+            'name'       => 'submitSiteConfirmation',
+            'value'      => 'Create new site',
+            'navigation' => [
+                'Back to Create Site' => $model->getCancelUrl(),
+            ],
+        ]
+    );
+    ?>
+</form>

@@ -6,6 +6,9 @@ $value = $this->value ?: '';
 
 ?>
 <th class="<?php echo $this->escapeHtmlAttr($class); ?>"
-    colspan="<?php echo $this->escapeHtmlAttr($colspan); ?>">
+    <?php
+    echo $colspan ? ' colspan="' . $this->escapeHtmlAttr($colspan) . '"' : '';
+    ?>
+    >
     <?php echo $this->escapeHtml($value); ?>
 </th>

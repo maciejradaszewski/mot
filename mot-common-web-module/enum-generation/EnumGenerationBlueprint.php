@@ -106,6 +106,8 @@ class EnumGenerationBlueprint
      */
     protected function textToConstant($text)
     {
+        $text = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
+
         return $this->enumKeyPrefix . strtr(
             strtoupper($text),
             ['('   => '',
@@ -116,7 +118,10 @@ class EnumGenerationBlueprint
              ','   => '',
              ':'   => '',
              ' - ' => '_',
-             '+'   => 'PLUS'
+             '+'   => 'PLUS',
+             '\''  => '',
+             '.'    => '',
+             '?'    => '',
             ]
         );
     }

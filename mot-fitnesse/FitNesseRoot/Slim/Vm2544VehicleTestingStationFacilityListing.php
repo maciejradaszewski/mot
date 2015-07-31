@@ -51,7 +51,10 @@ class Vm2544VehicleTestingStationFacilityListing
         );
 
         $jsonResult = TestShared::executeAndReturnResponseAsArray($curlHandle);
-        $this->facilities = $jsonResult['vehicleTestingStation']['facilities'];
+        /** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto */
+        $dto = \DvsaCommon\Utility\DtoHydrator::jsonToDto($jsonResult);
+
+        $this->facilities = $dto->getFacilities();
 
         return $this->facilities == null ? false : true;
     }

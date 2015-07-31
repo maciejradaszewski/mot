@@ -2,6 +2,7 @@
 
 namespace DvsaCommonTest\UrlBuilder;
 
+use DvsaCommon\UrlBuilder\AbstractUrlBuilder;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 
 class VehicleTestingStationUrlBuilderWebTest extends \PHPUnit_Framework_TestCase
@@ -11,27 +12,19 @@ class VehicleTestingStationUrlBuilderWebTest extends \PHPUnit_Framework_TestCase
 
     public function test()
     {
-        $urlMainPart = '/vehicle-testing-station';
+        $base = '/vehicle-testing-station';
+        $this->checkUrl(VehicleTestingStationUrlBuilderWeb::create(), $base . '/create');
+        $this->checkUrl(VehicleTestingStationUrlBuilderWeb::createConfirm(), $base . '/create/confirmation');
 
-        $urlBuilder = new VehicleTestingStationUrlBuilderWeb();
+        $base = $base . '/' . self::VTS_ID;
+        $this->checkUrl(VehicleTestingStationUrlBuilderWeb::byId(self::VTS_ID), $base);
+        $this->checkUrl(VehicleTestingStationUrlBuilderWeb::edit(self::VTS_ID), $base . '/edit');
+        $this->checkUrl(VehicleTestingStationUrlBuilderWeb::contactDetails(self::VTS_ID), $base . '/contact-details');
+    }
 
+    private function checkUrl(AbstractUrlBuilder $urlBuilder, $expectUrl)
+    {
+        $this->assertEquals($expectUrl, $urlBuilder->toString());
         $this->assertInstanceOf(VehicleTestingStationUrlBuilderWeb::class, $urlBuilder);
-
-        $this->assertEquals(
-            $urlMainPart . '/' . self::VTS_ID,
-            $urlBuilder::byId(self::VTS_ID)->toString()
-        );
-        $this->assertEquals(
-            $urlMainPart . '/site/' . self::VTS_NUMBER,
-            $urlBuilder::bySiteNumber(self::VTS_NUMBER)->toString()
-        );
-        $this->assertEquals(
-            $urlMainPart . '/' . self::VTS_ID . '/edit',
-            $urlBuilder::edit(self::VTS_ID)->toString()
-        );
-        $this->assertEquals(
-            $urlMainPart . '/' . self::VTS_ID . '/contact-details',
-            $urlBuilder::contactDetails(self::VTS_ID)->toString()
-        );
     }
 }

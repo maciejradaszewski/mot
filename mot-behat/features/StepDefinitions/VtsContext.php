@@ -95,10 +95,6 @@ class VtsContext implements Context
                 throw new Exception("createSite: responseBody is not an object: failed to create Vts");
             }
             $this->siteCreate = $responseBody->toArray()['data'];
-            $this->sessionContext->testSupportHelper->getVtsService()->finishCreatingVtsWithHacking(
-                $this->siteCreate['id'],
-                [1, 2, 3, 4, 5, 7]
-            );
         }
     }
 
@@ -108,7 +104,7 @@ class VtsContext implements Context
     public function iRequestInformationAboutVts()
     {
         $this->resultContext = $this->vehicleTestingStation->getVtsDetails(
-            $this->siteCreate['siteNumber'],
+            $this->siteCreate['id'],
             $this->sessionContext->getCurrentAccessToken()
         );
     }
@@ -118,8 +114,11 @@ class VtsContext implements Context
      */
     public function theVtsDetailsAreReturned()
     {
+        /** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto */
+        $dto = DtoHydrator::jsonToDto($this->resultContext->getBody()->toArray()['data']);
+
         PHPUnit::assertThat(
-            $this->resultContext->getBody()['data']['vehicleTestingStation']['siteNumber'],
+            $dto->getSiteNumber(),
             PHPUnit::equalTo($this->siteCreate['siteNumber']), 'No VTS details returned for VTS Number'
         );
     }

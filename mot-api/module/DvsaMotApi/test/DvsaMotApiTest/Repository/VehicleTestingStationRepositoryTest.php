@@ -3,6 +3,7 @@
 namespace DvsaEntities\Repository;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
+use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 
 /**
@@ -26,12 +27,12 @@ class SiteRepositoryTest extends AbstractServiceTestCase
         $this->assertArrayHasKey('5', $vehicleClasses);
         $this->assertArrayHasKey('7', $vehicleClasses);
 
-        $this->assertEquals(SiteRepository::VEHICLE_CLASS_1, $vehicleClasses['1']);
-        $this->assertEquals(SiteRepository::VEHICLE_CLASS_2, $vehicleClasses['2']);
-        $this->assertEquals(SiteRepository::VEHICLE_CLASS_3, $vehicleClasses['3']);
-        $this->assertEquals(SiteRepository::VEHICLE_CLASS_4, $vehicleClasses['4']);
-        $this->assertEquals(SiteRepository::VEHICLE_CLASS_5, $vehicleClasses['5']);
-        $this->assertEquals(SiteRepository::VEHICLE_CLASS_7, $vehicleClasses['7']);
+        $this->assertEquals(VehicleClassCode::CLASS_1, $vehicleClasses['1']);
+        $this->assertEquals(VehicleClassCode::CLASS_2, $vehicleClasses['2']);
+        $this->assertEquals(VehicleClassCode::CLASS_3, $vehicleClasses['3']);
+        $this->assertEquals(VehicleClassCode::CLASS_4, $vehicleClasses['4']);
+        $this->assertEquals(VehicleClassCode::CLASS_5, $vehicleClasses['5']);
+        $this->assertEquals(VehicleClassCode::CLASS_7, $vehicleClasses['7']);
     }
 
     /**
@@ -103,6 +104,6 @@ class SiteRepositoryTest extends AbstractServiceTestCase
             return $vtsRepository->getVehicleClasses();
         }
 
-        throw \Exception("Unknown Vts Values type {$name}");
+        throw new \Exception("Unknown Vts Values type {$name}");
     }
 }

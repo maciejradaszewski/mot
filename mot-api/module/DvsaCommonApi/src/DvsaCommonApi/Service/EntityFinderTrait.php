@@ -82,6 +82,14 @@ trait EntityFinderTrait
     }
 
     /**
+     * @return EntityManager
+     */
+    public function getEntityManager()
+    {
+        return $this->entityManager;
+    }
+
+    /**
      * @param int $personId
      *
      * @return Person

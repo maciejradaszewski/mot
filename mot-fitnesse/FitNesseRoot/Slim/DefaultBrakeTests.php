@@ -109,11 +109,12 @@ class DefaultBrakeTests
         );
 
         if (TestShared::resultIsSuccess($vtsDetailsResponse)) {
-            $vtsDetails = $vtsDetailsResponse['data']['vehicleTestingStation'];
+            /** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto */
+            $dto = \DvsaCommon\Utility\DtoHydrator::jsonToDto($vtsDetailsResponse['data']);
 
-            $this->defaultBrakeTestClass1And2 = $vtsDetails['defaultBrakeTestClass1And2'];
-            $this->defaultParkingBrakeTestClass3AndAbove = $vtsDetails['defaultParkingBrakeTestClass3AndAbove'];
-            $this->defaultServiceBrakeTestClass3AndAbove = $vtsDetails['defaultServiceBrakeTestClass3AndAbove'];
+            $this->defaultBrakeTestClass1And2 = $dto->getDefaultBrakeTestClass1And2()->getCode();
+            $this->defaultParkingBrakeTestClass3AndAbove = $dto->getDefaultParkingBrakeTestClass3AndAbove()->getCode();
+            $this->defaultServiceBrakeTestClass3AndAbove = $dto->getDefaultServiceBrakeTestClass3AndAbove()->getCode();
         }
     }
 

@@ -25,7 +25,6 @@ class RoleController extends AbstractAuthActionController
     use OrganisationServicesTrait;
 
     const ROUTE_LIST_USER_ROLES = 'authorised-examiner/list-user-roles';
-    const ROUTE_ROLES           = 'authorised-examiner/roles';
     const ROUTE_REMOVE_ROLE     = 'authorised-examiner/remove-role';
 
     /**
@@ -62,6 +61,7 @@ class RoleController extends AbstractAuthActionController
         $personLogin    = '';
         $userNotFound   = false;
 
+        /** @var \Zend\Http\Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $postData    = $request->getPost()->toArray();
@@ -123,6 +123,7 @@ class RoleController extends AbstractAuthActionController
 
         $form = $this->getSelectRoleForm($roles);
 
+        /** @var \Zend\Http\Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
@@ -315,7 +316,7 @@ class RoleController extends AbstractAuthActionController
         }
         $this->addErrorMessages('Position in organisation was not found');
 
-        return;
+        return null;
     }
 
     /**

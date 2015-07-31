@@ -26,6 +26,10 @@ class VehicleTestingStationDto extends SiteDto
 
     /** @var  FacilityDto[] */
     private $facilities;
+    /** @var  Boolean */
+    private $isOptlSelected = false;
+    /** @var  Boolean */
+    private $isTptlSelected = false;
     /** @var  EquipmentDto[] */
     private $equipments;
     /** @var  SiteTestingDailyScheduleDto[] */
@@ -34,11 +38,14 @@ class VehicleTestingStationDto extends SiteDto
     /** @var  MotTestDto[] */
     private $motTests;
 
-    /** @var RolesMapDto */
+    /** @var RolesMapDto[] */
     private $positions;
 
     /** @var  string */
     private $status;
+
+    /** @var  Boolean */
+    private $isNeedConfirmation = false;
 
     /**
      * @return string[]
@@ -193,7 +200,7 @@ class VehicleTestingStationDto extends SiteDto
     }
 
     /**
-     * @return RolesMapDto
+     * @return RolesMapDto[]
      */
     public function getPositions()
     {
@@ -201,7 +208,7 @@ class VehicleTestingStationDto extends SiteDto
     }
 
     /**
-     * @param RolesMapDto $positions
+     * @param RolesMapDto[] $positions
      *
      * @return $this
      */
@@ -217,5 +224,59 @@ class VehicleTestingStationDto extends SiteDto
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isOptlSelected()
+    {
+        return $this->isOptlSelected;
+    }
+
+    /**
+     * @param boolean $isOptlSelected
+     * @return $this
+     */
+    public function setIsOptlSelected($isOptlSelected)
+    {
+        $this->isOptlSelected = $isOptlSelected;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isTptlSelected()
+    {
+        return $this->isTptlSelected;
+    }
+
+    /**
+     * @param boolean $isTptlSelected
+     * @return $this
+     */
+    public function setIsTptlSelected($isTptlSelected)
+    {
+        $this->isTptlSelected = $isTptlSelected;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isNeedConfirmation()
+    {
+        return $this->isNeedConfirmation;
+    }
+
+    /**
+     * @param boolean $needConfirmation
+     * @return $this
+     */
+    public function setIsNeedConfirmation($needConfirmation)
+    {
+        $this->isNeedConfirmation = $needConfirmation;
+        return $this;
     }
 }

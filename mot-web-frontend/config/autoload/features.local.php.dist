@@ -14,5 +14,6 @@ return [
         'example.feature.toggle' => false,
         'ao1.ae.create'          => true,
         'ao1.ae.edit'            => true,
+        'ao1.site.create'        => true,
     ]
 ];

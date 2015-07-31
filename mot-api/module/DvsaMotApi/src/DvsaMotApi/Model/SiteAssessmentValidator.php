@@ -188,19 +188,19 @@ class SiteAssessmentValidator
 
                 if ($this->svcSites) {
                     try {
-                        $data = $this->svcSites->getVehicleTestingStationDataBySiteNumber($id, 1);
+                        $site = $this->svcSites->getSiteBySiteNumber($id);
                     } catch (\Exception $e) {
-                        $data = null;
+                        $site = null;
                     }
 
                     $this->mustHave(
-                        !empty($data),
+                        !empty($site),
                         self::F_SITE_DETAILS,
                         'Invalid site number: ' . $id
                     );
 
-                    if (isset($data['siteNumber'])) {
-                        $this->siteNumber = $data['siteNumber'];
+                    if ($site && !empty($site->getSiteNumber())) {
+                        $this->siteNumber = $site->getSiteNumber();
                     }
                 }
             } else {

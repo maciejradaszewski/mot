@@ -47,7 +47,7 @@ class EmergencyLogValidatorTest extends \PHPUnit_Framework_TestCase
 
         $this->mockSiteService = \DvsaCommonTest\TestUtils\XMock::of(
             SiteService::class,
-            ['getSiteData']
+            ['getSite']
         );
 
         $this->mockEmergencyService = \DvsaCommonTest\TestUtils\XMock::of(
@@ -111,7 +111,7 @@ class EmergencyLogValidatorTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->mockSiteService->expects($this->any())
-            ->method('getSiteData')
+            ->method('getSite')
             ->willReturn(new \stdClass());
 
         $this->assertFalse($this->elv->validate($dataSet));
@@ -155,7 +155,7 @@ class EmergencyLogValidatorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->emergencyLog);
 
         $this->mockSiteService->expects($this->any())
-            ->method('getSiteData')
+            ->method('getSite')
             ->with(345)
             ->willReturn(new \stdClass());
 
@@ -206,7 +206,7 @@ class EmergencyLogValidatorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->emergencyLog);
 
         $this->mockSiteService->expects($this->any())
-            ->method('getSiteData')
+            ->method('getSite')
             ->with(345)
             ->willReturn(new \stdClass());
 
@@ -242,7 +242,7 @@ class EmergencyLogValidatorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->emergencyLog);
 
         $this->mockSiteService->expects($this->any())
-            ->method('getSiteData')
+            ->method('getSite')
             ->with(345)
             ->willReturn(new \stdClass());
 

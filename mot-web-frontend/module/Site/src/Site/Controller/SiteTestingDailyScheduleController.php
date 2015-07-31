@@ -5,6 +5,8 @@ namespace Site\Controller;
 use DvsaClient\Entity\SiteDailyOpeningHours;
 use Core\Controller\AbstractAuthActionController;
 use DvsaCommon\Auth\PermissionAtSite;
+use DvsaCommon\Date\Time;
+use DvsaCommon\Dto\Site\SiteTestingDailyScheduleDto;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use Site\Traits\SiteServicesTrait;
@@ -32,10 +34,10 @@ class SiteTestingDailyScheduleController extends AbstractAuthActionController
         $this->getAuthorizationService()->assertGrantedAtSite(PermissionAtSite::TESTING_SCHEDULE_UPDATE, $siteId);
 
         $mapperFactory = $this->getMapperFactory();
-        $vtsData = $mapperFactory->VehicleTestingStation->getById($siteId);
-        $vtsName = isset($vtsData['name'])? $vtsData['name'] : 'unknown';
+        $site = $mapperFactory->Site->getById($siteId);
+        $vtsName = $site->getName();
 
-        $data = $vtsData['siteOpeningHours'];
+        $data = $site->getSiteTestingSchedule();
         $data = $this->extractOpeningHours($data);
 
         if ($this->getRequest()->isPost()) {
@@ -61,7 +63,7 @@ class SiteTestingDailyScheduleController extends AbstractAuthActionController
     }
 
     /**
-     * @param SiteDailyOpeningHours[] $data
+     * @param SiteTestingDailyScheduleDto[] $data
      *
      * @return Array $extractedData
      */
@@ -69,24 +71,24 @@ class SiteTestingDailyScheduleController extends AbstractAuthActionController
     {
         $extractedData = [];
 
-        for ($i = 0; $i < 7; $i++) {
-            $idPrefix = strtolower($data[$i]->getDayName());
-            $isClosed = $data[$i]->isClosed();
+        foreach ($data as $day) {
+            $idPrefix = strtolower(SiteDailyOpeningHours::$DAY_NAMES[$day->getWeekday()]);
+            $isClosed = $day->getOpenTime() == null || $day->getCloseTime() == null;
 
             $openTime = $isOpenTimeAm = $closeTime = $isCloseTimeAm = null;
 
             if (!$isClosed) {
-                $openTime = $data[$i]->getOpenTime()->format('g.i');
-                $closeTime = $data[$i]->getCloseTime()->format('g.i');
-                $isOpenTimeAm = $data[$i]->getOpenTime()->isAm();
-                $isCloseTimeAm = $data[$i]->getCloseTime()->isAm();
+                $openTime = Time::fromIso8601($day->getOpenTime())->format('g.i');
+                $closeTime = Time::fromIso8601($day->getCloseTime())->format('g.i');
+                $isOpenTimeAm = Time::fromIso8601($day->getOpenTime())->isAm();
+                $isCloseTimeAm = Time::fromIso8601($day->getCloseTime())->isAm();
             }
 
             $extractedData[$idPrefix . 'OpenTime'] = $openTime;
             $extractedData[$idPrefix . 'OpenTimePeriod'] = $isOpenTimeAm ? 'am' : 'pm';
             $extractedData[$idPrefix . 'CloseTime'] = $closeTime;
             $extractedData[$idPrefix . 'CloseTimePeriod'] = $isCloseTimeAm ? 'am' : 'pm';
-            $extractedData[$idPrefix . 'IsClosed'] = $data[$i]->isClosed();
+            $extractedData[$idPrefix . 'IsClosed'] = $isClosed;
         }
 
         return $extractedData;

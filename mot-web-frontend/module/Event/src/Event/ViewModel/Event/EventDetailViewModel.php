@@ -6,6 +6,7 @@ use DvsaCommon\Dto\Event\EventDto;
 use DvsaCommon\Dto\Event\EventFormDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaClient\Entity\Person;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
 
@@ -17,7 +18,7 @@ class EventDetailViewModel
 {
     /** @var OrganisationDto */
     private $organisation;
-    /** @var array */
+    /** @var VehicleTestingStationDto */
     private $site;
     /** @var Person */
     private $person;
@@ -29,11 +30,11 @@ class EventDetailViewModel
     private $formModel;
 
     /**
-     * @param OrganisationDto   $organisation
-     * @param array             $site
-     * @param Person            $person
-     * @param string            $eventType
-     * @param EventDto          $event
+     * @param OrganisationDto           $organisation
+     * @param VehicleTestingStationDto  $site
+     * @param Person                    $person
+     * @param string                    $eventType
+     * @param EventDto                  $event
      */
     public function __construct(
         $organisation,
@@ -66,9 +67,9 @@ class EventDetailViewModel
                     $this->getEventType()
                 )->toString() . '?' . http_build_query($this->formModel->toArray());
             case 'site':
-                return EventUrlBuilderWeb::of()->eventList(
-                    ArrayUtils::tryGet($this->site, 'id'), $this->getEventType()
-                )->toString() . '?' . http_build_query($this->formModel->toArray());
+                return EventUrlBuilderWeb::of()
+                    ->eventList($this->site->getId(), $this->getEventType())
+                    ->toString() . '?' . http_build_query($this->formModel->toArray());
             case 'person':
                 return EventUrlBuilderWeb::of()->eventList(
                     $this->person->getId(), $this->getEventType()
@@ -96,7 +97,7 @@ class EventDetailViewModel
     }
 
     /**
-     * @return array
+     * @return VehicleTestingStationDto
      */
     public function getSite()
     {
@@ -104,7 +105,7 @@ class EventDetailViewModel
     }
 
     /**
-     * @param array $site
+     * @param VehicleTestingStationDto $site
      * @return $this
      */
     public function setSite($site)
@@ -210,8 +211,8 @@ class EventDetailViewModel
             case 'site':
                 return sprintf(
                     '%s - %s',
-                    ArrayUtils::tryGet($this->site, 'siteNumber'),
-                    ArrayUtils::tryGet($this->site, 'name')
+                    $this->site->getSiteNumber(),
+                    $this->site->getName()
                 );
             case 'person':
                 return sprintf(

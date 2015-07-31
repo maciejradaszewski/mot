@@ -111,7 +111,7 @@ class PersonalDetailsService extends AbstractService
         return new PersonDetails(
             $person,
             $personContact->getDetails(),
-            $this->getEntityHelper(),
+            $this->entityManager,
             $this->getUserRoles($person)
         );
     }
@@ -148,7 +148,7 @@ class PersonalDetailsService extends AbstractService
         }
 
         return new PersonDetails(
-            $person, $contact->getDetails(), $this->getEntityHelper(), $this->getUserRoles($person)
+            $person, $contact->getDetails(), $this->entityManager, $this->getUserRoles($person)
         );
     }
 

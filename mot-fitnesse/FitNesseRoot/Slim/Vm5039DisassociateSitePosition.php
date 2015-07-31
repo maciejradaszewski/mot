@@ -92,10 +92,10 @@ class Vm5039DisassociateSitePosition
 
         // Get positionId to remove and nominators username
         $positionId = false;
-        $nominatorUsername = false;
+        /** @var \DvsaCommon\Dto\Security\RolesMapDto $position */
         foreach ($this->positions as $position) {
-            if ($position['person']['id'] == $nomineeUserId) {
-                $positionId = $position['id'];
+            if ($position->getPerson()->getId() == $nomineeUserId) {
+                $positionId = $position->getId();
             }
         }
 
@@ -215,10 +215,12 @@ class Vm5039DisassociateSitePosition
             $vtsUrl->toString(), $this->areaOffice1User['username'], TestShared::PASSWORD
         );
 
-        $positions = $result['vehicleTestingStation']['positions'];
+        /** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto */
+        $dto = \DvsaCommon\Utility\DtoHydrator::jsonToDto($result);
+        $positions = $dto->getPositions();
 
         foreach ($positions as $pos) {
-            if ($pos['id'] === $posId) {
+            if ($pos->getId() === $posId) {
                 return 'FALSE';
             }
         }
@@ -250,7 +252,9 @@ class Vm5039DisassociateSitePosition
             $vtsUrl->toString(), $this->areaOffice2User['username'], TestShared::PASSWORD
         );
 
-        $this->positions = $result['vehicleTestingStation']['positions'];
+        /** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto */
+        $dto = \DvsaCommon\Utility\DtoHydrator::jsonToDto($result);
+        $this->positions = $dto->getPositions();
     }
 
 }

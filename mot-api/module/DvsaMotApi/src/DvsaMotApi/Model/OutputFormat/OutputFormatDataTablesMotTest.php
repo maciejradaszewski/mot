@@ -41,6 +41,10 @@ class OutputFormatDataTablesMotTest extends OutputFormat
             $testDate = $item->getCompletedDate() !== null ? $item->getCompletedDate() :
                 ($item->getStartedDate() !== null ? $item->getStartedDate() : null);
 
+            $motTestType = $item->getMotTestType();
+
+            $isDemoTest = ($motTestType->getCode() === MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING);
+
             $result = [
                 'status'                => $item->getStatus(),
                 'motTestNumber'         => $testNr,
@@ -52,7 +56,8 @@ class OutputFormatDataTablesMotTest extends OutputFormat
                 'make'                  => $item->getMakeName(),
                 'model'                 => $item->getModelName(),
                 'testType'              => $item->getMotTestType()->getDescription(),
-                'siteNumber'            => $this->getSiteNumberOfVtsWhereTestWasConducted($item),
+                'siteId'                => ($isDemoTest ? null : $item->getVehicleTestingStation()->getId()),
+                'siteNumber'            => ($isDemoTest ? null : $item->getVehicleTestingStation()->getSiteNumber()),
                 'startedDate'           => $item->getStartedDate() !== null ?
                     DateTimeApiFormat::dateTime($item->getStartedDate()) :
                     null,
@@ -81,6 +86,7 @@ class OutputFormatDataTablesMotTest extends OutputFormat
                 'make'                => $src['make'],
                 'model'               => $src['model'],
                 'testType'            => $src['testType'],
+                'siteId'              => $src['siteId'],
                 'siteNumber'          => $src['siteNumber'],
                 'startedDate'         => $src['startedDate'],
                 'completedDate'       => $src['completedDate'] ?: $src['startedDate'],
@@ -91,21 +97,6 @@ class OutputFormatDataTablesMotTest extends OutputFormat
         }
 
         $results[$testNr] = $result;
-    }
-
-    /**
-     * Returns site number or empty string (when Demo test 'DT' passed)
-     *
-     * @param MotTest $motTest
-     *
-     * @return string
-     */
-    private function getSiteNumberOfVtsWhereTestWasConducted(MotTest $motTest)
-    {
-        if ($motTest->getMotTestType()->getCode() === MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING) {
-            return '';
-        }
-        return $motTest->getVehicleTestingStation()->getSiteNumber();
     }
 
     private function getOdometer($data)

@@ -32,6 +32,8 @@ use Zend\Stdlib\DateTime;
  */
 class FbQueryMotTestTest extends \PHPUnit_Framework_TestCase
 {
+    const SITE_ID = 9999;
+
     /** @var  EntityManager */
     private $mockEM;
     /** @var  FbQueryMotTest */
@@ -119,7 +121,9 @@ class FbQueryMotTestTest extends \PHPUnit_Framework_TestCase
         $colour->setName('Blue');
 
         $site = new Site();
-        $site->setSiteNumber('V1234');
+        $site
+            ->setId(self::SITE_ID)
+            ->setSiteNumber('V1234');
 
         $type = new MotTestType();
         $type->setDescription("Normal Test");
@@ -166,6 +170,7 @@ class FbQueryMotTestTest extends \PHPUnit_Framework_TestCase
                     'make'                => 'Porshe',
                     'model'               => '911 Turbo',
                     'testType'            => 'Normal Test',
+                    'siteId'              => self::SITE_ID,
                     'siteNumber'          => 'V1234',
                     'testDate'            => null,
                     'startedDate'         => null,

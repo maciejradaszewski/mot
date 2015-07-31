@@ -34,6 +34,8 @@ use PHPUnit_Framework_TestCase;
  */
 class ESDocMotTestTest extends \PHPUnit_Framework_TestCase
 {
+    const SITE_ID = 9999;
+
     /** @var ESDocMotTest */
     protected $docMotTest;
 
@@ -193,6 +195,7 @@ class ESDocMotTestTest extends \PHPUnit_Framework_TestCase
                 'make'                => 'Renault',
                 'model'               => 'Clio',
                 'testType'            => 'Normal Test',
+                'siteId'              => self::SITE_ID,
                 'siteNumber'          => 'V1234',
                 'testDate'            => '2011-02-02T11:11:11Z',
                 'startedDate'         => null,
@@ -222,6 +225,7 @@ class ESDocMotTestTest extends \PHPUnit_Framework_TestCase
                         'make'                => 'Renault',
                         'model'               => 'Clio',
                         'testType'            => 'Normal Test',
+                        'siteId'              => self::SITE_ID,
                         'siteNumber'          => 'V1234',
                         'testDate'            => '2011-02-02T11:11:11Z',
                         'startedDate'         => null,

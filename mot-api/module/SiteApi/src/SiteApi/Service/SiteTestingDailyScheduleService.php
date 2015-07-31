@@ -104,13 +104,12 @@ class SiteTestingDailyScheduleService implements TransactionAwareInterface
     {
         $weeklySchedule = [];
         foreach ($data as $dailyScheduleData) {
-            $s = new SiteTestingDailySchedule();
-            $s->setOpenTime($this->resolveOpeningTime($dailyScheduleData));
-            $s->setCloseTime($this->resolveClosingTime($dailyScheduleData));
-            $s->setSite($this->siteRepository->getReference($siteId));
-            $s->setWeekday((int)$dailyScheduleData['weekday']);
-            $this->scheduleRepository->persist($s);
-            $weeklySchedule [] = $s;
+            $weeklySchedule[] = $this->scheduleRepository->createOpeningHours(
+                $this->siteRepository->getReference($siteId),
+                $dailyScheduleData['weekday'],
+                $this->resolveOpeningTime($dailyScheduleData),
+                $this->resolveClosingTime($dailyScheduleData)
+            );
         }
 
         return $weeklySchedule;

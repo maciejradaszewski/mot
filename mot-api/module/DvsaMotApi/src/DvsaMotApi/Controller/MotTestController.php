@@ -201,10 +201,10 @@ class MotTestController extends AbstractDvsaRestfulController implements Transac
                 if (1 === preg_match('/\w+/', $data[self::FIELD_SITEID], $match)) {
                     $submittedId = $match[0];
                     try {
-                        $siteData = $this->getVehicleTestingStationService()
-                            ->getVehicleTestingStationDataBySiteNumber($submittedId);
+                        $site = $this->getVehicleTestingStationService()
+                            ->getSiteBySiteNumber($submittedId);
 
-                        $response = [$siteData['id'], null];
+                        $response = [$site->getId(), null];
                     } catch (\Exception $e) {
                         $errors[] = $this->makeErrorMessage(
                             self::ERROR_MSG_SITE_NUMBER_INVALID,

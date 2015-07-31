@@ -3,6 +3,7 @@
 namespace DvsaMotApiTest\Model;
 
 use DvsaCommon\Constants\SiteAssessment;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaMotApi\Model\SiteAssessmentValidator;
@@ -165,7 +166,7 @@ class SiteAssessmentValidatorTest extends AbstractServiceTestCase
         $expectErrMsg
     ) {
         $this->mockSiteService->expects($this->once())
-            ->method('getVehicleTestingStationDataBySiteNumber')
+            ->method('getSiteBySiteNumber')
             ->will(
                 $srvIsException
                 ? $this->throwException(new \Exception())
@@ -186,9 +187,10 @@ class SiteAssessmentValidatorTest extends AbstractServiceTestCase
 
     public function dataProviderTestSiteNumberFailsFailsToResolve()
     {
+        $result = (new VehicleTestingStationDto())->setSiteNumber(12345);
         return [
             [
-                'srvResult'      => ['siteNumber' => 12345],
+                'srvResult'      => $result,
                 'srvIsException' => false,
                 'siteData'       => [
                     'vts-search'       => '0003AW, M And T Transmissions Limited, 120 Bradway Road, Sheffield, S17 4QW',
@@ -207,7 +209,7 @@ class SiteAssessmentValidatorTest extends AbstractServiceTestCase
                 null, 1, 'Invalid site'
             ],
             [
-                [], false,
+                null, false,
                 [
                     'vts-search'       => '0003AW, M And T Transmissions Limited, 120 Bradway Road, Sheffield, S17 4QW',
                     'searchSiteNumber' => '0003AW',
@@ -215,15 +217,15 @@ class SiteAssessmentValidatorTest extends AbstractServiceTestCase
                 null, 1, '0003AW'
             ],
             [
-                [], false,
+                null, false,
                 [
                     'vts-search'       => '0003AW, M And T Transmissions Limited, 120 Bradway Road, Sheffield, S17 4QW',
                     'searchSiteNumber' => '-1',
                 ],
                 null, 1, '0003AW'
             ],
-            [[], false, ['vts-search' => 'V1261 - blah'], null, 1, 'Invalid site'],
-            [['siteNumber' => 42], false, [], 42, 0, null],
+            [null, false, ['vts-search' => 'V1261 - blah'], null, 1, 'Invalid site'],
+            [$result, false, [], 12345, 0, null],
         ];
     }
 

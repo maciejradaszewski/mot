@@ -3,35 +3,24 @@
 namespace SiteApi;
 
 use Doctrine\ORM\EntityManager;
-use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
 use DvsaCommon\Database\Transaction;
 use DvsaCommon\Utility\Hydrator;
-use DvsaCommonApi\Filter\XssFilter;
-use DvsaCommonApi\Service\ContactDetailsService;
 use DvsaEntities\Entity\BrakeTestType;
-use DvsaEntities\Entity\NonWorkingDayCountry;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteBusinessRoleMap;
-use DvsaEntities\Entity\SiteContactType;
 use DvsaEntities\Entity\SiteTestingDailySchedule;
-use DvsaEntities\Entity\SiteType;
 use DvsaMotApi\Service\Validator\BrakeTestConfigurationValidator;
 use NotificationApi\Service\NotificationService;
 use SiteApi\Factory\Model\NominationVerifierFactory;
 use SiteApi\Factory\Service\MotTestInProgressServiceFactory;
 use SiteApi\Factory\Service\SiteContactServiceFactory;
 use SiteApi\Factory\Service\SiteSearchServiceFactory;
+use SiteApi\Factory\Service\SiteServiceFactory;
 use SiteApi\Factory\Service\SiteSlotUsageServiceFactory;
-use SiteApi\Factory\SitePersonnelFactory;
 use SiteApi\Model\NominationVerifier;
 use SiteApi\Model\Operation\NominateOperation;
-use SiteApi\Model\RoleRestriction\SiteAdminRestriction;
-use SiteApi\Model\RoleRestriction\SiteManagerRestriction;
-use SiteApi\Model\RoleRestriction\TesterRestriction;
-use SiteApi\Model\RoleRestrictionsSet;
 use SiteApi\Service\DefaultBrakeTestsService;
 use SiteApi\Service\EquipmentService;
-use SiteApi\Service\Mapper\SiteBusinessRoleMapMapper;
 use SiteApi\Service\Mapper\SiteBusinessRoleMapper;
 use SiteApi\Service\MotTestInProgressService;
 use SiteApi\Service\NominateRoleService;
@@ -71,26 +60,6 @@ class Module
                 Hydrator::class                           =>
                     function (ServiceLocatorInterface $sm) {
                         return new Hydrator();
-                    },
-                SiteService::class                             =>
-                    function (ServiceLocatorInterface $sm) {
-                        $dvsaAuthorisationService = $sm->get('DvsaAuthorisationService');
-                        $updateVtsAssertion = new UpdateVtsAssertion($dvsaAuthorisationService);
-
-                        return new SiteService(
-                            $sm->get(EntityManager::class),
-                            $sm->get(EntityManager::class)->getRepository(SiteType::class),
-                            $sm->get(EntityManager::class)->getRepository(Site::class),
-                            $sm->get(EntityManager::class)->getRepository(SiteContactType::class),
-                            $sm->get(EntityManager::class)->getRepository(BrakeTestType::class),
-                            $sm->get(EntityManager::class)->getRepository(NonWorkingDayCountry::class),
-                            $sm->get(Hydrator::class),
-                            $sm->get('DvsaAuthorisationService'),
-                            new SiteBusinessRoleMapMapper($sm->get(Hydrator::class)),
-                            $sm->get(ContactDetailsService::class),
-                            $sm->get(XssFilter::class),
-                            $updateVtsAssertion
-                        );
                     },
                 SiteBusinessRoleService::class                 =>
                     function (ServiceLocatorInterface $sm) {
@@ -172,6 +141,7 @@ class Module
                 SiteSlotUsageService::class => SiteSlotUsageServiceFactory::class,
                 SiteContactService::class => SiteContactServiceFactory::class,
                 SiteSearchService::class => SiteSearchServiceFactory::class,
+                SiteService::class => SiteServiceFactory::class,
             ],
             'invokables' => [
 

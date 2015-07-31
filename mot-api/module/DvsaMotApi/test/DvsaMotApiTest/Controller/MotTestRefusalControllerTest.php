@@ -6,8 +6,12 @@ use DataCatalogApi\Service\DataCatalogService;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Dto\Common\ReasonForRefusalDto;
+use DvsaCommon\Dto\Contact\AddressDto;
+use DvsaCommon\Dto\Site\SiteContactDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Dto\Vehicle\VehicleDto;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
+use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommonApiTest\Transaction\TestTransactionExecutor;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Person;
@@ -75,9 +79,17 @@ class MotTestRefusalControllerTest extends AbstractMotApiControllerTestCase
         $this->getMockVehicleService();
         $this->getMockCerfCreationService();
 
+        $contact = (new SiteContactDto())
+            ->setType(SiteContactTypeCode::BUSINESS)
+            ->setAddress(new AddressDto());
+        $site = (new VehicleTestingStationDto())
+            ->setId($expectedVtsId)
+            ->addContact($contact);
+
         $this->mockSiteService->expects($this->once())
-             ->method('getVehicleTestingStationData')
-             ->with($this->equalTo($expectedVtsId));
+             ->method('getSite')
+             ->with($this->equalTo($expectedVtsId))
+            ->willReturn($site);
 
         //  --  request --
         $this->controller->dispatch($this->request);
@@ -114,6 +126,17 @@ class MotTestRefusalControllerTest extends AbstractMotApiControllerTestCase
                     ->setId($expectedVehicleId)
             );
 
+        $contact = (new SiteContactDto())
+            ->setType(SiteContactTypeCode::BUSINESS)
+            ->setAddress(new AddressDto());
+        $site = (new VehicleTestingStationDto())
+            ->setId(1)
+            ->addContact($contact);
+
+        $this->mockSiteService->expects($this->once())
+            ->method('getSite')
+            ->willReturn($site);
+
         //  --  request --
         $this->controller->dispatch($this->request);
     }
@@ -135,6 +158,17 @@ class MotTestRefusalControllerTest extends AbstractMotApiControllerTestCase
         $this->getMockCerfCreationService();
         $this->getMockSiteService();
         $this->getMockVehicleService();
+
+        $contact = (new SiteContactDto())
+            ->setType(SiteContactTypeCode::BUSINESS)
+            ->setAddress(new AddressDto());
+        $site = (new VehicleTestingStationDto())
+            ->setId(1)
+            ->addContact($contact);
+
+        $this->mockSiteService->expects($this->once())
+            ->method('getSite')
+            ->willReturn($site);
 
         $result = $this->controller->dispatch($this->request);
 
@@ -159,6 +193,17 @@ class MotTestRefusalControllerTest extends AbstractMotApiControllerTestCase
         $this->getMockSiteService();
         $this->getMockVehicleService();
         $this->getMockCerfCreationService($expectedDocumentId);
+
+        $contact = (new SiteContactDto())
+            ->setType(SiteContactTypeCode::BUSINESS)
+            ->setAddress(new AddressDto());
+        $site = (new VehicleTestingStationDto())
+            ->setId(1)
+            ->addContact($contact);
+
+        $this->mockSiteService->expects($this->once())
+            ->method('getSite')
+            ->willReturn($site);
 
         $result = $this->controller->dispatch($this->request);
         $expectedData = [
@@ -191,10 +236,8 @@ class MotTestRefusalControllerTest extends AbstractMotApiControllerTestCase
         $this->mockSiteService = $this->getMockServiceManagerClass(
             SiteService::class,
             SiteService::class,
-            ['getVehicleTestingStationData']
+            ['getSite']
         );
-        $this->mockSiteService->expects($this->never())
-             ->method('getVehicleTestingStationData');
 
         //  --  request and check   --
         $this->controller->dispatch($this->request);
@@ -230,12 +273,8 @@ class MotTestRefusalControllerTest extends AbstractMotApiControllerTestCase
         $this->mockSiteService = $this->getMockServiceManagerClass(
             SiteService::class,
             SiteService::class,
-            ['getVehicleTestingStationData']
+            ['getSite']
         );
-
-        $this->mockSiteService->expects($this->once())
-             ->method('getVehicleTestingStationData')
-             ->will($this->returnValue([]));
     }
 
     /**

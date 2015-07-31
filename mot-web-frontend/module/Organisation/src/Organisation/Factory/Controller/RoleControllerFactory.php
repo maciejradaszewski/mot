@@ -22,9 +22,7 @@ class RoleControllerFactory implements FactoryInterface
         /* @var ServiceLocatorInterface $serviceLocator */
         $serviceLocator    = $controllerManager->getServiceLocator();
 
-        $usernameValidator = $serviceLocator->get(UsernameValidator::class);
-        $htmlPurifier      = $serviceLocator->get('HTMLPurifier');
 
-        return new RoleController($usernameValidator, $htmlPurifier);
+        return new RoleController($serviceLocator->get(UsernameValidator::class), $serviceLocator->get('HTMLPurifier'));
     }
 }

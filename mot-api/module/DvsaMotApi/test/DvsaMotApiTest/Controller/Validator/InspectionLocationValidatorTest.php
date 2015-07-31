@@ -2,6 +2,7 @@
 
 namespace DvsaMotApiTest\Controller\Validator;
 
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaMotApi\Controller\Validator\InspectionLocationValidator;
 
 /**
@@ -92,10 +93,12 @@ class InspectionLocationValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /** MOCK: returning a valid id for a site string */
-    public function getVehicleTestingStationDataBySiteNumber($id)
+    public function getSiteBySiteNumber($id)
     {
         if ('V1234' == $id) {
-            return ['id' => 42];
+            return (new VehicleTestingStationDto())
+                ->setName('V1234')
+                ->setId(42);
         }
         return null;
     }

@@ -1,5 +1,6 @@
 <?php
 use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 
 $title = 'Mot Test Search Results';
 $this->headTitle($title);
@@ -138,8 +139,7 @@ $this->headLink()->appendStylesheet('/css/jquery.dataTables.css');
 
                         <td>
                             <?php if (isset($motTest['siteNumber'])): ?>
-                                <a href="<?php echo $this->url('vehicle-testing-station-by-site',
-                                    array('sitenumber' => $motTest['siteNumber'])) ?>">
+                                <a href="<?php echo VehicleTestingStationUrlBuilderWeb::byId($motTest['siteId']);?>">
                                     <?php echo $this->escapeHtml($motTest['siteNumber']); ?>
                                 </a>
                             <?php else : ?>

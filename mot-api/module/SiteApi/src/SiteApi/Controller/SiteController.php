@@ -1,6 +1,8 @@
 <?php
 namespace SiteApi\Controller;
 
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
+use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApi\Model\ApiResponse;
 use SiteApi\Service\SiteService;
@@ -36,7 +38,9 @@ class SiteController extends AbstractDvsaRestfulController
 
     public function create($data)
     {
-        $result = $this->service->create($data);
+        /** @var VehicleTestingStationDto $dto */
+        $dto    = DtoHydrator::jsonToDto($data);
+        $result = $this->service->create($dto);
 
         return ApiResponse::jsonOk($result);
     }
@@ -56,70 +60,8 @@ class SiteController extends AbstractDvsaRestfulController
 
     public function get($id)
     {
-        if ($id === null) {
-            return $this->getBadRequestResponseModelForId();
-        }
+        $data = $this->service->getSite($id);
 
-        $isNeedDto = (boolean)$this->params()->fromQuery('dto');
-        $data = $this->service->getVehicleTestingStationData($id, $isNeedDto);
-
-        if ($isNeedDto) {
-            return ApiResponse::jsonOk($data);
-        }
-
-        return ApiResponse::jsonOk(["vehicleTestingStation" => $data]);
-    }
-
-    public function siteByIdAction()
-    {
-        $id = $this->params()->fromRoute('id');
-        if ($id === null) {
-            return $this->getBadRequestResponseModelForId();
-        }
-
-        $siteData = $this->service->getSiteData($id);
-
-        return ApiResponse::jsonOk(["vehicleTestingStation" => $siteData]);
-    }
-
-    /**
-     * Find one VTS by siteNumber
-     *
-     * @return JsonModel
-     */
-    public function findBySiteNumberAction()
-    {
-        $siteNumber = $this->params()->fromRoute('sitenumber');
-        if ($siteNumber === null) {
-            return $this->getBadRequestResponseModelForNumber();
-        }
-
-        $isNeedDto = (boolean)$this->params()->fromQuery('dto');
-
-        $data = $this->service->getVehicleTestingStationDataBySiteNumber($siteNumber);
-
-        if ($isNeedDto) {
-            return ApiResponse::jsonOk($data);
-        }
-
-        return ApiResponse::jsonOk(["vehicleTestingStation" => $data]);
-    }
-
-    private function getBadRequestResponseModelForId()
-    {
-        return $this->returnBadRequestResponseModel(
-            self::SITE_ID_REQUIRED_MESSAGE,
-            self::ERROR_CODE_REQUIRED,
-            self::SITE_ID_REQUIRED_DISPLAY_MESSAGE
-        );
-    }
-
-    private function getBadRequestResponseModelForNumber()
-    {
-        return $this->returnBadRequestResponseModel(
-            self::SITE_NUMBER_REQUIRED_MESSAGE,
-            self::ERROR_CODE_REQUIRED,
-            self::SITE_NUMBER_REQUIRED_DISPLAY_MESSAGE
-        );
+        return ApiResponse::jsonOk($data);
     }
 }

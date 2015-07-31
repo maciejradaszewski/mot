@@ -33,7 +33,11 @@ class Vm2231SitePositionRemoval
         $nominatorClient->delete(UrlBuilder::sitePosition($this->site, $positionId));
 
         $vtsUrl = (new UrlBuilder())->vehicleTestingStation()->routeParam("id", $this->site);
-        $positions = $nominatorClient->get($vtsUrl)['vehicleTestingStation']['positions'];
+        $result = $nominatorClient->get($vtsUrl);
+
+        /** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto */
+        $dto = \DvsaCommon\Utility\DtoHydrator::jsonToDto($result);
+        $positions = $dto->getPositions();
 
         // verifying position is no longer there
         return $this->isPositionRemoved($positions, $positionId);
@@ -58,7 +62,7 @@ class Vm2231SitePositionRemoval
     private function isPositionRemoved($positions, $posId)
     {
         foreach ($positions as $pos) {
-            if ($pos['id'] === $posId) {
+            if ($pos->getId() === $posId) {
                 return false;
             }
         }

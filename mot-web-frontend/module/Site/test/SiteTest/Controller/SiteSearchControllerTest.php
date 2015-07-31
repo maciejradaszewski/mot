@@ -4,7 +4,7 @@ namespace SiteTest\Controller;
 
 use Account\ViewModel\PasswordResetFormModel;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
-use DvsaClient\Mapper\VehicleTestingStationMapper;
+use DvsaClient\Mapper\SiteMapper;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Dto\Search\SiteSearchParamsDto;
 use DvsaCommon\Dto\Site\SiteListDto;
@@ -201,10 +201,10 @@ class SiteSearchControllerTest extends AbstractFrontendControllerTestCase
     {
         $mapperFactory = XMock::of(MapperFactory::class);
 
-        $this->siteMapper = XMock::of(VehicleTestingStationMapper::class);
+        $this->siteMapper = XMock::of(SiteMapper::class);
 
         $map = [
-            [MapperFactory::VEHICLE_TESTING_STATION, $this->siteMapper],
+            [MapperFactory::SITE, $this->siteMapper],
         ];
 
         $mapperFactory->expects($this->any())

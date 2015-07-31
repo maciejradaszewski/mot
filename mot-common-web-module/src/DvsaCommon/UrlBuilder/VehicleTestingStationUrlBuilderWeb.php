@@ -9,20 +9,25 @@ class VehicleTestingStationUrlBuilderWeb extends AbstractUrlBuilder
 {
     const MAIN = '/vehicle-testing-station';
     const BY_ID = '/:id';
-    const BY_SITE_NUMBER = '/site/:sitenumber';
+
     const EDIT = '/edit';
     const CONTACT_DETAILS = '/contact-details';
 
+    const CREATE = '/create';
+    const CREATE_CONFIRM = '/confirmation';
+
+
     protected $routesStructure
         = [
-            self::MAIN =>
-                [
-                    self::BY_ID          => [
-                        self::EDIT   => '',
-                        self::CONTACT_DETAILS => '',
-                    ],
-                    self::BY_SITE_NUMBER => '',
+            self::MAIN   => [
+                self::BY_ID          => [
+                    self::EDIT            => '',
+                    self::CONTACT_DETAILS => '',
                 ],
+                self::CREATE => [
+                    self::CREATE_CONFIRM => '',
+                ],
+            ],
         ];
 
     private static function main()
@@ -37,14 +42,6 @@ class VehicleTestingStationUrlBuilderWeb extends AbstractUrlBuilder
             ->routeParam('id', $id);
     }
 
-    public static function bySiteNumber($siteNumber)
-    {
-        return self::main()
-            ->appendRoutesAndParams(self::BY_SITE_NUMBER)
-            ->routeParam('sitenumber', $siteNumber);
-    }
-
-
     public static function edit($siteId)
     {
         return self::byId($siteId)->appendRoutesAndParams(self::EDIT);
@@ -53,5 +50,16 @@ class VehicleTestingStationUrlBuilderWeb extends AbstractUrlBuilder
     public static function contactDetails($siteId)
     {
         return self::byId($siteId)->appendRoutesAndParams(self::CONTACT_DETAILS);
+    }
+
+    public static function create()
+    {
+        return self::main()->appendRoutesAndParams(self::CREATE);
+    }
+
+    public static function createConfirm()
+    {
+        return self::create()
+            ->appendRoutesAndParams(self::CREATE_CONFIRM);
     }
 }

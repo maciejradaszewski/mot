@@ -6,6 +6,7 @@ use DvsaClient\Entity\Person;
 use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Dto\Event\EventFormDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\SiteUrlBuilderWeb;
@@ -25,7 +26,7 @@ class EventViewModel
     private $id;
     /** @var OrganisationDto */
     private $organisation;
-    /** @var array */
+    /** @var VehicleTestingStationDto */
     private $site;
     /** @var Person */
     private $person;
@@ -38,12 +39,12 @@ class EventViewModel
     private $eventType;
 
     /**
-     * @param OrganisationDto   $organisation
-     * @param array             $site
-     * @param Person            $person
-     * @param EventFormDto      $formModel
-     * @param string            $eventType
-     * @param int               $id
+     * @param OrganisationDto           $organisation
+     * @param VehicleTestingStationDto  $site
+     * @param Person                    $person
+     * @param EventFormDto              $formModel
+     * @param string                    $eventType
+     * @param int                       $id
      */
     public function __construct(
         $organisation,
@@ -84,7 +85,7 @@ class EventViewModel
             case 'ae':
                 return AuthorisedExaminerUrlBuilderWeb::of($this->organisation->getId());
             case 'site':
-                return SiteUrlBuilderWeb::of(ArrayUtils::tryGet($this->site, 'id'));
+                return SiteUrlBuilderWeb::of($this->site->getId());
             case 'person':
                 return UserAdminUrlBuilderWeb::userProfile($this->person->getId());
         }
@@ -103,7 +104,7 @@ class EventViewModel
                 return EventUrlBuilderWeb::of()->eventList($this->organisation->getId(), $this->getEventType());
             case 'site':
                 return EventUrlBuilderWeb::of()
-                    ->eventList(ArrayUtils::tryGet($this->site, 'id'), $this->getEventType());
+                    ->eventList($this->site->getId(), $this->getEventType());
             case 'person':
                 return EventUrlBuilderWeb::of()->eventList($this->person->getId(), $this->getEventType());
         }
@@ -128,8 +129,8 @@ class EventViewModel
             case 'site':
                 return sprintf(
                     'List of Site events found for site "%s - %s"',
-                    ArrayUtils::tryGet($this->site, 'siteNumber'),
-                    ArrayUtils::tryGet($this->site, 'name')
+                    $this->site->getSiteNumber(),
+                    $this->site->getName()
                 );
             case 'person':
                 return sprintf(
@@ -197,7 +198,7 @@ class EventViewModel
     }
 
     /**
-     * @return array
+     * @return VehicleTestingStationDto
      */
     public function getSite()
     {
@@ -205,7 +206,7 @@ class EventViewModel
     }
 
     /**
-     * @param array $site
+     * @param VehicleTestingStationDto $site
      * @return $this
      */
     public function setSite($site)

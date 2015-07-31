@@ -8,7 +8,15 @@ use DvsaClient\Entity\SitePosition;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionAtSite;
+use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Dto\Person\PersonDto;
+use DvsaCommon\Dto\Security\RolesMapDto;
+use DvsaCommon\Dto\Security\RoleStatusDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
+use DvsaCommon\Enum\SiteBusinessRoleCode;
+use DvsaCommonTest\TestUtils\TestCaseTrait;
 use DvsaCommonTest\TestUtils\XMock;
 use PHPUnit_Framework_TestCase;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
@@ -16,13 +24,16 @@ use Site\Authorization\VtsOverviewPagePermissions;
 
 class VtsOverviewPagePermissionsTest extends PHPUnit_Framework_TestCase
 {
+    use TestCaseTrait;
+
     private static $USER_ID = 9999;
     private static $SITE_ID = 8888;
     private static $ORG_ID = 8881;
 
-    /** @var  MockObj */
+    /** @var MotAuthorisationServiceInterface|MockObj */
     private $mockAuthSrv;
     private $mockIdentity;
+    /** @var  VehicleTestingStationDto */
     private $mockVtsData;
 
 
@@ -37,12 +48,9 @@ class VtsOverviewPagePermissionsTest extends PHPUnit_Framework_TestCase
             ->method('getUserId')
             ->willReturn(self::$USER_ID);
 
-        $this->mockVtsData = [
-            'id'           => self::$SITE_ID,
-            'organisation' => [
-                'id' => self::$ORG_ID,
-            ],
-        ];
+        $this->mockVtsData = (new VehicleTestingStationDto())
+            ->setId(self::$SITE_ID)
+            ->setOrganisation((new OrganisationDto())->setId(self::$ORG_ID));
     }
 
     public function testCanViewTestsInProgress()
@@ -70,32 +78,42 @@ class VtsOverviewPagePermissionsTest extends PHPUnit_Framework_TestCase
 
         $positions = [];
 
+        $active = (new RoleStatusDto())->setCode(BusinessRoleStatusCode::ACTIVE);
+        $pending = (new RoleStatusDto())->setCode(BusinessRoleStatusCode::PENDING);
+
         // GIVEN I have a person who accepted at least one nomination
-        $employee = new Person();
+        $employee = new PersonDto();
         $employee->setId(1);
-        $position = new SitePosition();
-        $position->setStatus(BusinessRoleStatusCode::ACTIVE);
+
+        $position = new RolesMapDto();
+        $position->setRoleStatus($active);
         $position->setPerson($employee);
 
         $positions[] = $position;
 
-        $position = new SitePosition();
-        $position->setStatus(BusinessRoleStatusCode::PENDING);
+        $position = new RolesMapDto();
+        $position->setRoleStatus($pending);
         $position->setPerson($employee);
 
         $positions[] = $position;
 
         // AND a person that is nominated but haven't accepted yet.
 
-        $nominee = new Person();
+        $nominee = new PersonDto();
         $nominee->setId(2);
-        $position = new SitePosition();
-        $position->setStatus(BusinessRoleStatusCode::PENDING);
+        $position = new RolesMapDto();
+        $position->setRoleStatus($pending);
         $position->setPerson($nominee);
 
         $positions[] = $position;
 
-        $permissions = new VtsOverviewPagePermissions($this->mockAuthSrv, $this->mockIdentity, $this->mockVtsData, $positions, 1);
+        $permissions = new VtsOverviewPagePermissions(
+            $this->mockAuthSrv,
+            $this->mockIdentity,
+            $this->mockVtsData,
+            $positions,
+            1
+        );
 
         // WHEN I want to view their profiles
         $employeeAccessGranted = $permissions->canViewProfile($employee);
@@ -104,7 +122,6 @@ class VtsOverviewPagePermissionsTest extends PHPUnit_Framework_TestCase
 
         // THEN I can my employee profile
         $this->assertTrue($employeeAccessGranted);
-
 
         // AND I cannot view profile of the nominee
         $this->assertFalse($nomineeAccessGranted);
@@ -125,11 +142,11 @@ class VtsOverviewPagePermissionsTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider dataProviderTestСanTestClass
+     * @dataProvider dataProviderCanTestClasses
      */
-    public function testСanTestClass($roles, $expect12, $expect3to7)
+    public function testCanTestClasses($roles, $expect12, $expect3to7)
     {
-        $this->mockVtsData['roles'] = $roles;
+        $this->mockVtsData->setTestClasses($roles);
 
         $obj = new VtsOverviewPagePermissions($this->mockAuthSrv, $this->mockIdentity, $this->mockVtsData, [], 1);
 
@@ -140,7 +157,7 @@ class VtsOverviewPagePermissionsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($actualResult3to7, $expect3to7);
     }
 
-    public function dataProviderTestСanTestClass()
+    public function dataProviderCanTestClasses()
     {
         return [
             [
@@ -187,7 +204,7 @@ class VtsOverviewPagePermissionsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($actualResult, $expectResult);
     }
 
-    public function testCanRemoveARoleAtSite()
+    public function testCanRemoveRoleAtSite()
     {
         $expectResult = true;
 
@@ -201,5 +218,150 @@ class VtsOverviewPagePermissionsTest extends PHPUnit_Framework_TestCase
         $actualResult = $obj->canRemoveRoleAtSite();
 
         $this->assertEquals($actualResult, $expectResult);
+    }
+
+    /**
+     * @dataProvider dataProviderTestPermission
+     */
+    public function testPermission($permission, $method, $expected, $params = null)
+    {
+        $this->mockMethod(
+            $this->mockAuthSrv, $permission['method'], $this->once(), $permission['result'], $permission['params']
+        );
+
+        $obj = new VtsOverviewPagePermissions(
+            $this->mockAuthSrv,
+            $this->mockIdentity,
+            $this->mockVtsData,
+            [],
+            self::$ORG_ID
+        );
+
+        $actualResult = $obj->$method($params);
+
+        $this->assertEquals($actualResult, $expected);
+    }
+
+    public function dataProviderTestPermission()
+    {
+        return [
+            [
+                'permission' => [
+                    'method' => 'isGrantedAtOrganisation',
+                    'params' => [PermissionAtOrganisation::AUTHORISED_EXAMINER_READ, self::$ORG_ID],
+                    'result' => true,
+                ],
+                'method' => 'canViewAuthorisedExaminer',
+                'expected' => true,
+            ],
+            [
+                'permission' => [
+                    'method' => 'isGrantedAtSite',
+                    'params' => [PermissionAtSite::VIEW_TESTS_IN_PROGRESS_AT_VTS, self::$SITE_ID],
+                    'result' => true,
+                ],
+                'method' => 'canViewTestsInProgress',
+                'expected' => true,
+            ],
+            [
+                'permission' => [
+                    'method' => 'isGrantedAtSite',
+                    'params' => [PermissionAtSite::DEFAULT_BRAKE_TESTS_CHANGE, self::$SITE_ID],
+                    'result' => true,
+                ],
+                'method' => 'canChangeDefaultBrakeTests',
+                'expected' => true,
+            ],
+            [
+                'permission' => [
+                    'method' => 'isGrantedAtSite',
+                    'params' => [PermissionAtSite::MOT_TEST_ABORT_AT_SITE, self::$SITE_ID],
+                    'result' => true,
+                ],
+                'method' => 'canAbortMotTest',
+                'expected' => true,
+            ],
+            [
+                'permission' => [
+                    'method' => 'isGrantedAtSite',
+                    'params' => [PermissionAtSite::NOMINATE_ROLE_AT_SITE, self::$SITE_ID],
+                    'result' => true,
+                ],
+                'method' => 'canNominateRole',
+                'expected' => true,
+            ],
+            [
+                'permission' => [
+                    'method' => 'isGrantedAtSite',
+                    'params' => [PermissionAtSite::REMOVE_ROLE_AT_SITE, self::$SITE_ID],
+                    'result' => true,
+                ],
+                'method' => 'canRemoveRoleAtSite',
+                'expected' => true,
+            ],
+            [
+                'permission' => [
+                    'method' => 'isGrantedAtSite',
+                    'params' => [PermissionAtSite::TESTING_SCHEDULE_UPDATE, self::$SITE_ID],
+                    'result' => true,
+                ],
+                'method' => 'canUpdateTestingSchedule',
+                'expected' => true,
+            ],
+            [
+                'permission' => [
+                    'method' => 'isGranted',
+                    'params' => [PermissionInSystem::EVENT_READ],
+                    'result' => true,
+                ],
+                'method' => 'canViewEventHistory',
+                'expected' => true,
+            ],
+            [
+                'permission' => [
+                    'method' => 'isGranted',
+                    'params' => [PermissionInSystem::VEHICLE_TESTING_STATION_SEARCH],
+                    'result' => true,
+                ],
+                'method' => 'canSearchVts',
+                'expected' => true,
+            ],
+            [
+                'permission' => [
+                    'method' => 'isGrantedAtSite',
+                    'params' => [PermissionAtSite::REMOVE_SITE_MANAGER, self::$SITE_ID],
+                    'result' => true,
+                ],
+                'method' => 'canRemovePositionAtSite',
+                'expected' => true,
+                'params' => SiteBusinessRoleCode::SITE_MANAGER,
+            ],
+            [
+                'permission' => [
+                    'method' => 'isGrantedAtSite',
+                    'params' => [PermissionAtSite::REMOVE_ROLE_AT_SITE, self::$SITE_ID],
+                    'result' => true,
+                ],
+                'method' => 'canRemovePositionAtSite',
+                'expected' => true,
+            ],
+        ];
+    }
+
+    public function testCanChangeDetails()
+    {
+        $this->mockMethod($this->mockAuthSrv, 'isGrantedAtSite', $this->any(), true);
+
+        $obj = new VtsOverviewPagePermissions(
+            $this->mockAuthSrv,
+            $this->mockIdentity,
+            $this->mockVtsData,
+            [],
+            self::$ORG_ID
+        );
+
+        $actualResult = $obj->canChangeDetails();
+
+        $this->assertEquals($actualResult, true);
     }
 }

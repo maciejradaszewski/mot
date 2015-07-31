@@ -1,5 +1,6 @@
 <?php
 $id = isset($id) ? $this->id : '';
+$name = isset($name) ? $this->name : '';
 $class  = isset($class) ? $this->class : 'button';
 ?>
 
@@ -9,6 +10,7 @@ $class  = isset($class) ? $this->class : 'button';
         'partial/gds/form/control-submit',
         [
             'id'    => $id,
+            'name'  => $name,
             'class' => $class,
             'value' => $this->value,
         ]

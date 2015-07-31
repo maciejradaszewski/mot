@@ -5,6 +5,7 @@ namespace DvsaMotApiTest\Controller;
 require 'MotTestControllerMockSupport.php';
 
 use DvsaCommon\Dto\Common\MotTestDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaCommon\Enum\VehicleClassCode;
@@ -196,11 +197,12 @@ class MotTestControllerTest extends AbstractMotApiControllerTestCase
                 $this->getMotTestMock(MotTestTypeCode::TARGETED_REINSPECTION)
             );
 
+        $site = (new VehicleTestingStationDto())->setId(1234);
         $mockTestingService = $this->getMockVehicleTestingStationService();
         $mockTestingService->expects($this->once())
-            ->method('getVehicleTestingStationDataBySiteNumber')
+            ->method('getSiteBySiteNumber')
             ->with(42)
-            ->will($this->returnValue(['id' => 1234]));
+            ->willReturn($site);
 
         $mockMotTestService->expects($this->once())
             ->method('updateMotTestLocation')

@@ -147,6 +147,8 @@ class SiteMapper extends AbstractApiMapper
             ->setId($organisation->getId())
             ->setRegisteredCompanyNumber($organisation->getRegisteredCompanyNumber())
             ->setName($organisation->getName())
+            ->setSlotBalance($organisation->getSlotBalance())
+            ->setSlotWarning($organisation->getSlotsWarning())
             ->setTradingAs($organisation->getTradingAs())
             ->setOrganisationType($organisationType);
 

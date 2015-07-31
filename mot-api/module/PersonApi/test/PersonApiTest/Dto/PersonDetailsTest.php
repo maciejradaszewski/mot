@@ -41,11 +41,6 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
     const USERNAME               = 'tester1';
 
     /**
-     * @var EntityHelperService
-     */
-    private $entityHelperService;
-
-    /**
      * @var EntityManager
      */
     private $entityManager;
@@ -68,7 +63,6 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->person              = $this->createPerson();
-        $this->entityHelperService = new EntityHelperService($this->entityManager);
         $this->roles               = [];
     }
 
@@ -80,7 +74,7 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
         $contactDetail = $this->createEmptyContactDetail();
         $this->configureEntityManagerWithNullEntities();
 
-        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityHelperService, $this->roles);
+        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityManager, $this->roles);
 
         $this->assertEquals(self::ID, $personDetails->getId());
         $this->assertEquals(self::USERNAME, $personDetails->getUsername());
@@ -99,7 +93,7 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
         $contactDetail = $this->createEmptyContactDetail();
         $this->configureEntityManagerWithNullEntities();
 
-        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityHelperService, $this->roles);
+        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityManager, $this->roles);
 
         $this->assertNull($personDetails->getAddressLine1());
         $this->assertNull($personDetails->getAddressLine2());
@@ -116,7 +110,7 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
         $contactDetail = $this->createValidContactDetail();
         $this->configureEntityManagerWithValidEntities($this->person, $contactDetail);
 
-        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityHelperService, $this->roles);
+        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityManager, $this->roles);
 
         $this->assertEquals(self::ADDRESS_LINE_1, $personDetails->getAddressLine1());
         $this->assertEquals(self::ADDRESS_LINE_2, $personDetails->getAddressLine2());
@@ -133,7 +127,7 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
         $contactDetail = $this->createEmptyContactDetail();
         $this->configureEntityManagerWithNullEntities();
 
-        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityHelperService, $this->roles);
+        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityManager, $this->roles);
 
         $this->assertNull($personDetails->getPhone());
     }
@@ -146,7 +140,7 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
         $contactDetail = $this->createValidContactDetail();
         $this->configureEntityManagerWithValidEntities($this->person, $contactDetail);
 
-        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityHelperService, $this->roles);
+        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityManager, $this->roles);
 
         $this->assertEquals(self::PHONE, $personDetails->getPhone());
     }
@@ -159,7 +153,7 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
         $contactDetail = $this->createEmptyContactDetail();
         $this->configureEntityManagerWithNullEntities();
 
-        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityHelperService, $this->roles);
+        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityManager, $this->roles);
 
         $this->assertNull($personDetails->getEmail());
     }
@@ -172,7 +166,7 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
         $contactDetail = $this->createValidContactDetail();
         $this->configureEntityManagerWithValidEntities($this->person, $contactDetail);
 
-        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityHelperService, $this->roles);
+        $personDetails = new PersonDetails($this->person, $contactDetail, $this->entityManager, $this->roles);
 
         $this->assertEquals(self::EMAIL, $personDetails->getEmail());
     }
@@ -184,7 +178,7 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
 
         $this->configureEntityManagerWithValidEntities($personZero, $contactDetail);
 
-        $personDetails = new PersonDetails($personZero, $contactDetail, $this->entityHelperService, $this->roles);
+        $personDetails = new PersonDetails($personZero, $contactDetail, $this->entityManager, $this->roles);
 
         $this->assertEmpty($personDetails->getTitle());
     }

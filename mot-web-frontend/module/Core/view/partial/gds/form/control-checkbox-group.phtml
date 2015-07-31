@@ -26,8 +26,8 @@ $legendCssClass = (!empty($this->labelModifier) ? '-' . $this->labelModifier : '
                 <span class="form-hint"><?php echo $this->escapeHtml($formHint); ?></span>
             <?php endif; ?>
 
-            <?php if (!empty($validationMessage)): ?>
-                <span class="validation-message"><?php echo $this->escapeHtml($validationMessage); ?></span>
+            <?php if (!empty($this->errorMessage)): ?>
+                <span class="validation-message"><?php echo $this->escapeHtml($this->errorMessage); ?></span>
             <?php endif; ?>
         </legend>
 

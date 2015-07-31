@@ -181,7 +181,7 @@ class PersonDetailsServiceTest extends AbstractServiceTestCase
         $expectResult = new PersonDetails(
             $person,
             $personContact->getDetails(),
-            new EntityHelperService($this->entityManagerMock),
+            $this->entityManagerMock,
             null
         );
 

@@ -54,7 +54,7 @@ class VtsMapper extends SiteMapper
     /**
      * @param BrakeTestType $typeData
      *
-     * @return $this|null
+     * @return BrakeTestTypeDto|null
      */
     private function mapBrakeTestTypeDto($typeData)
     {

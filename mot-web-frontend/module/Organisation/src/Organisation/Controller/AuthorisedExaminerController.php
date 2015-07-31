@@ -40,20 +40,18 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
     const AE_SUBTITLE = 'AE management';
     const INDEX_TITLE_FULL = 'Full Details of Authorised Examiner';
     const INDEX_TITLE = 'Authorised Examiner';
+
     const CREATE_TITLE = 'Create Authorised Examiner';
-    const CONFIRMATION_TITLE = 'Confirm new AE details';
+    const CREATE_CONFIRM_TITLE = 'Confirm new AE details';
+
     const EDIT_TITLE = 'Change contact details';
     const EDIT_SUBTITLE = 'Authorised examiner';
 
     const FORM_ERROR = 'Unable to find Authorised Examiner';
     const ERR_MSG_INVALID_AE_ID = 'No Authorised Examiner Id provided';
 
-    const ROUTE_INDEX = 'authorised-examiner';
-
     const STEP_ONE = 'Step 1 of 2';
     const STEP_TWO = 'Step 2 of 2';
-
-    const TEMPLATE_CREATE_AE = 'organisation/authorised-examiner/create.phtml';
 
     /**
      * @var MotFrontendAuthorisationServiceInterface
@@ -74,8 +72,9 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
 
     /**
      * @param MotFrontendAuthorisationServiceInterface $auth
-     * @param MapperFactory $mapper
-     * @param MotIdentityProviderInterface $identity
+     * @param MapperFactory                            $mapper
+     * @param MotIdentityProviderInterface             $identity
+     * @param Container                                $session
      */
     public function __construct(
         MotFrontendAuthorisationServiceInterface $auth,
@@ -341,7 +340,7 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
         );
 
         return $this->prepareViewModel(
-            new ViewModel(['model' => $model]), self::CONFIRMATION_TITLE, self::AE_SUBTITLE, null, self::STEP_TWO
+            new ViewModel(['model' => $model]), self::CREATE_CONFIRM_TITLE, self::AE_SUBTITLE, null, self::STEP_TWO
         );
     }
 

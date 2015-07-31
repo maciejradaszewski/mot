@@ -105,7 +105,7 @@ class SlotsUsageController extends AbstractAuthActionController
         $this->getAuthorizationService()->assertGrantedAtSite(PermissionAtSite::SITE_SLOTS_USAGE_READ, $siteId);
 
         $mapperFactory = $this->getMapperFactory();
-        $site = $mapperFactory->VehicleTestingStation->getById($siteId);
+        $site = $mapperFactory->Site->getById($siteId);
 
         $currentPageId = $this->params()->fromRoute(self::ROUTE_PARAM_NAME_PAGE, 1);
 

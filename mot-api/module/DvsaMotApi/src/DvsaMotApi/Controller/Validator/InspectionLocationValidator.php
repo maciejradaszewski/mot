@@ -95,14 +95,12 @@ class InspectionLocationValidator
             // TODO: Refactor somewhere else, this regex has been used  twice now for this.
             if (1 === preg_match('/^\w+$/', $siteNumber, $match)) {
                 try {
-                    $data = $vtsService->getVehicleTestingStationDataBySiteNumber($match[0]);
+                    $site = $vtsService->getSiteBySiteNumber($match[0]);
                     $errorMsg = self::ERROR_SITE_ID_NOT_VALID;
 
-                    if (isset($data['id'])) {
-                        $this->validSiteId = (int)$data['id'];
-                        $this->validSiteName = trim($match[0]);
-                        $siteIdValid = true;
-                    }
+                    $this->validSiteId = $site->getId();
+                    $this->validSiteName = $site->getName();
+                    $siteIdValid = true;
                 } catch (\Exception $e) {
                     $errorMsg = $e->getMessage();
                 }

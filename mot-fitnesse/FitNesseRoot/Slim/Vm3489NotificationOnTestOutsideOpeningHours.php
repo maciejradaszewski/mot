@@ -44,16 +44,19 @@ class Vm3489NotificationOnTestOutsideOpeningHours
         $foundId = null;
         $vtsUrl = (new UrlBuilder())->vehicleTestingStation()->routeParam("id", $this->siteId);
         $vtsData = $client->get($vtsUrl);
-        $positions = $vtsData['vehicleTestingStation']['positions'];
+        /** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto */
+        $dto = \DvsaCommon\Utility\DtoHydrator::jsonToDto($vtsData);
+
+        $positions = $dto->getPositions();
         foreach ($positions as $pos) {
-            if ($pos['person']['userName'] === $this->recipient) {
-                $foundId = $pos['person']['id'];
+            if ($pos->getPerson()->getUsername() === $this->recipient) {
+                $foundId = $pos->getPerson()->getId();
                 break;
             }
         }
         if (is_null($foundId)) {
             $client = FitMotApiClient::create($this->areaOffice, TestShared::PASSWORD);
-            $orgId = $vtsData['vehicleTestingStation']['organisation']['id'];
+            $orgId = $dto->getOrganisation()->getId();
             $orgPosUrl = (new UrlBuilder())->organisationPositionNomination($orgId);
             $aeData = $client->get($orgPosUrl);
             foreach ($aeData as $datum) {

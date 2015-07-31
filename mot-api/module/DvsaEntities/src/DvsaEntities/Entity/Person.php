@@ -157,6 +157,16 @@ class Person extends Entity
     private $personSecurityAnswers;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\OneToMany(targetEntity="PersonSystemRoleMap", mappedBy="person")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="person_id", referencedColumnName="id")
+     * })
+     */
+    private $personSystemRoleMaps;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -790,5 +800,23 @@ class Person extends Entity
         }
         return null;
 
+    }
+
+    /**
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPersonSystemRoleMaps()
+    {
+        return $this->personSystemRoleMaps;
+    }
+
+    /**
+     * @param \Doctrine\Common\Collections\Collection $personSystemRoleMaps
+     * @return $this
+     */
+    public function setPersonSystemRoleMaps($personSystemRoleMaps)
+    {
+        $this->personSystemRoleMaps = $personSystemRoleMaps;
+        return $this;
     }
 }

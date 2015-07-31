@@ -3,7 +3,19 @@
 namespace TestSupport\Service;
 
 use Doctrine\ORM\EntityManager;
+use DvsaCommon\Constants\FacilityTypeCode;
+use DvsaCommon\Dto\Contact\AddressDto;
+use DvsaCommon\Dto\Contact\EmailDto;
+use DvsaCommon\Dto\Contact\PhoneDto;
+use DvsaCommon\Dto\Site\FacilityDto;
+use DvsaCommon\Dto\Site\FacilityTypeDto;
+use DvsaCommon\Dto\Site\SiteContactDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
+use DvsaCommon\Enum\PhoneContactTypeCode;
+use DvsaCommon\Enum\SiteContactTypeCode;
+use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\Utility\DtoHydrator;
 use TestSupport\Helper\TestDataResponseHelper;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use TestSupport\Helper\DataGeneratorHelper;
@@ -53,22 +65,13 @@ class VtsService
             'postcode' => ArrayUtils::tryGet($data, 'postcode', 'BT2 4RR'),
             'email' => ArrayUtils::tryGet($data, 'email', $email),
             'phoneNumber' => ArrayUtils::tryGet($data, 'phoneNumber', $dataGenerator->phoneNumber()),
-            'correspondenceName' => ArrayUtils::tryGet($data, 'siteName', $dataGenerator->siteName()),
-            'correspondenceAddressLine1' => ArrayUtils::tryGet($data, 'addressLine1', $dataGenerator->addressLine1()),
-            'correspondenceTown' => ArrayUtils::tryGet($data, 'town', 'Bristol'),
-            'correspondencePostcode' => ArrayUtils::tryGet($data, 'country', 'BS7 8RR'),
-            'correspondenceEmail' => ArrayUtils::tryGet($data, 'email', $email),
-            'correspondencePhoneNumber' => ArrayUtils::tryGet($data, 'phoneNumber', $dataGenerator->phoneNumber()),
-            'nonWorkingDayCountry' => ArrayUtils::tryGet(
-                $data,
-                'nonWorkingDayCountry',
-                self::NON_WORKING_DAY_COUNTRY_CODE
-            ),
+            'classes' => [1, 2, 3, 4, 5, 7],
         ];
         $data = array_merge($data, $default);
+
         $result = $this->restClientHelper->getJsonClient($data)->post(
             UrlBuilder::of()->vehicleTestingStation()->toString(),
-            $data
+            DtoHydrator::dtoToJson($this->generateSiteDto($data))
         );
 
         $siteId = $result['data']['id'];
@@ -87,19 +90,47 @@ class VtsService
         );
     }
 
-
-    /**
-     * Direct DB access, needs to be removed
-     */
-    public function finishCreatingVtsWithHacking($siteId, $vehicleClasses)
+    private function generateSiteDto($site)
     {
-        foreach ($vehicleClasses as $vehicleClass) {
-            $this->em->getConnection()->executeUpdate(
-                "INSERT INTO auth_for_testing_mot_at_site (site_Id, vehicle_class_id, status_id, created_by)
-                 VALUES (?,?,?,?)",
-                [$siteId, $vehicleClass, self::STATUS_APPROVED, 2]
-            );
-        }
+        $address = (new AddressDto())
+            ->setAddressLine1($site['addressLine1'])
+            ->setPostcode($site['postcode'])
+            ->setCountry($site['country'])
+            ->setTown($site['town']);
+
+        $email = (new EmailDto())
+            ->setEmail($site['email'])
+            ->setIsPrimary(true);
+
+        $phone = (new PhoneDto())
+            ->setNumber($site['phoneNumber'])
+            ->setContactType(PhoneContactTypeCode::BUSINESS)
+            ->setIsPrimary(true);
+
+        $contact = new SiteContactDto();
+        $contact
+            ->setType(SiteContactTypeCode::BUSINESS)
+            ->setAddress($address)
+            ->setEmails([$email])
+            ->setPhones([$phone]);
+
+        $facility = (new FacilityDto())
+            ->setName('OPTL')
+            ->setType((new FacilityTypeDto())->setCode(FacilityTypeCode::ONE_PERSON_TEST_LANE));
+
+        //  logical block :: assemble dto
+        $siteDto = new VehicleTestingStationDto();
+        $siteDto
+            ->setName($site['name'])
+            ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
+            ->setTestClasses($site['classes'])
+            ->setIsDualLanguage(false)
+            ->setContacts([$contact])
+            ->setFacilities([$facility])
+            ->setIsOptlSelected(true)
+            ->setIsTptlSelected(true);
+
+        return $siteDto;
     }
 
     /**
@@ -115,19 +146,6 @@ class VtsService
                 "UPDATE site SET organisation_id = ? WHERE id = ?",
                 [$data['aeId'], $siteId]
             );
-        }
-
-        $testGroups = ['1', '2'];
-        if (isset($data['testGroup'])) {
-            $testGroups = [$data['testGroup']];
-        }
-        $vehicleClasses = $this->vehicleClassesForTestGroups($testGroups);
-
-        if (isset($data['classes'])) {
-            if (isset($data['testGroup'])) {
-                throw new \Exception("Specify either classes or testGroup, not both");
-            }
-            $vehicleClasses = $data['classes'];
         }
 
         $openingTimes = [];
@@ -152,27 +170,5 @@ class VtsService
         $urlBuilder = $this->urlBuilder->vehicleTestingStation()->routeParam('id', $siteId)->siteOpeningHours();
 
         $this->restClientHelper->getJsonClient($data)->put($urlBuilder, $openingTimes);
-
-        $this->finishCreatingVtsWithHacking($siteId, $vehicleClasses);
     }
-
-    /**
-     * @param $testGroups
-     *
-     * @return array
-     */
-    private function vehicleClassesForTestGroups($testGroups)
-    {
-        $vehicleClasses = [];
-
-        if (in_array('1', $testGroups)) {
-            array_push($vehicleClasses, '1', '2');
-        }
-        if (in_array('2', $testGroups)) {
-            array_push($vehicleClasses, '3', '4', '5', '7');
-        }
-
-        return $vehicleClasses;
-    }
-
 }

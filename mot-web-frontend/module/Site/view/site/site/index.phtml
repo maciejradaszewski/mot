@@ -1,0 +1,294 @@
+<?php
+
+use DvsaCommon\Enum\BusinessRoleStatusCode;
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
+use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
+use DvsaMotTest\Controller\MotTestController;
+use Site\ViewModel\MotTest\MotTestInProgressViewModel;
+
+/**
+ * @var \Site\ViewModel\SiteViewModel $viewModel
+ * @var string $searchString
+ * @var string $escRefPage
+ */
+?>
+
+<?php
+//  --  errors  --
+$errorMessages = $this->layout()->flashMessenger->getErrorMessages();
+$successMessages = $this->layout()->flashMessenger->getSuccessMessages();
+
+echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
+echo $this->partial('partial/gds/general/system-message', ['messages' => $errorMessages, 'type' => 'failure']);
+?>
+
+<h3 class="key-value-list__header">Site details</h3>
+
+<?php
+
+$permission = $viewModel->getPermissions();
+$site = $viewModel->getSite();
+$organisation = $site->getOrganisation();
+$contact = $site->getContactByType(\DvsaCommon\Enum\SiteContactTypeCode::BUSINESS);
+
+$organisationDisplay = '';
+if (isset($organisation)) {
+    if ($permission->canViewAuthorisedExaminer()) {
+        $organisationDisplay = '<a id="authorised-examiner-link" href="' . AuthorisedExaminerUrlBuilderWeb::of($organisation->getId()) . '">' . $organisation->getName() . '</a>';
+    } else {
+        $organisationDisplay = $organisation->getName();
+    }
+}
+
+echo $this->partial(
+    'partial/gds/table/table',
+    [
+        'body' => [
+            ['Name', $site->getName(), 'id' => 'site-name'],
+            [
+                'VTS number',
+                $site->getSiteNumber(),
+                'id' => 'site-number',
+                'class' => 'key-value-list__value--numeric',
+            ],
+            ['Classes', implode(',', $site->getTestClasses()), 'id' => 'test-classes'],
+            ['Type', \DvsaCommon\Enum\SiteTypeCode::getAll()[$site->getType()], 'id' => 'site-type'],
+            [
+                'Authorised Examiner',
+                $organisationDisplay,
+                'escape' => !$permission->canViewAuthorisedExaminer(),
+            ],
+        ],
+    ]
+);
+?>
+
+<?php if ($permission->canViewEventHistory()): ?>
+    <div class="row">
+        <div class="vertical col-sm-4">
+            <a id="event-history" href="<?php echo EventUrlBuilderWeb::of()->eventList($site->getId(), 'site'); ?>">Site
+                event history</a>
+        </div>
+    </div>
+<?php endif ?>
+
+<h3 class="key-value-list__header">Contact details</h3>
+
+<?php if ($permission->canChangeDetails()): ?>
+    <a id="change-contact-details"
+       class="key-value-list__action"
+       href="<?php echo VehicleTestingStationUrlBuilderWeb::contactDetails($site->getId()) ?>"
+        >Change contact details</a>
+<?php endif ?>
+
+<?php
+echo $this->partial(
+    'partial/gds/table/table',
+    [
+        'body' => [
+            ['Address', $contact->getAddress()->getFullAddressString(), 'id' => 'site-address'],
+            ['Country', $viewModel->getCountryToggle(), 'id' => 'site-country'],
+            ['Email', $contact->getPrimaryEmailAddress(), 'id' => 'email'],
+            ['Telephone', $contact->getPrimaryPhoneNumber(), 'id' => 'phone-number'],
+        ],
+    ]
+);
+?>
+
+<h3 class="key-value-list__header">Testing facilities</h3>
+<?php
+$facilities = [];
+foreach ($site->getFacilities() as $facility) {
+    $facilities[$facility[0]->getType()->getCode()] = [$facility[0]->getType()->getName() . ' (' . $facility[0]->getType()->getCode() . ')', ''];
+}
+
+echo $this->partial(
+    'partial/gds/table/table',
+    [
+        'body' => $facilities,
+    ]
+);
+?>
+
+<h3 class="key-value-list__header">Roles</h3>
+<?php if ($permission->canNominateRole()): ?>
+    <a id="assign-a-role" class="key-value-list__action"
+       href="<?php echo $this->url('vehicle-testing-station-search-for-person', ['vehicleTestingStationId' => $site->getId()]) ?>">
+        Assign a role
+    </a>
+<?php endif; ?>
+<table class="key-value-list">
+    <tbody>
+    <?php foreach ($site->getPositions() as $position): ?>
+        <tr id="role-assignment-<?php echo $position->getPerson()->getId() . "-" . $position->getRole()->getCode(); ?>">
+            <th class="key-value-list__key">
+                <?php if ($permission->canViewProfile($position->getPerson())): ?>
+
+                    <a href="<?php echo PersonUrlBuilderWeb::profile($position->getPerson()->getId()); ?>">
+                        <?php echo $this->escapeHtml($position->getPerson()->getFullName()); ?>
+                    </a>
+                <?php else: ?>
+                    <?php echo $this->escapeHtml($position->getPerson()->getFullName()); ?>
+                <?php endif; ?>
+            </th>
+            <td class="key-value-list__value">
+                <div class="text">
+                    <?php echo $this->escapeHtml($position->getRole()->getCode()); ?>
+                    <?php if ($position->getRoleStatus()->getCode() !== BusinessRoleStatusCode::ACTIVE): ?>
+                        <br/>
+                        <span class="key-value-list__meta">Pending</span>
+                    <?php endif; ?>
+                </div>
+                <?php if ($permission->canRemovePositionAtSite($position->getRole()->getCode())): ?>
+                    <a id="remove-role" href="<?php echo $this->url(
+                        \Site\Controller\RoleController::ROUTE_REMOVE_ROLE,
+                        [
+                            'siteId' => $site->getId(),
+                            'positionId' => $position->getId(),
+                        ]
+                    ); ?>">Remove</a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<h3 class="key-value-list__header">Default test settings</h3>
+<?php if ($permission->canChangeDefaultBrakeTests()): ?>
+    <a class="key-value-list__action" id="configure-brake-test-defaults-link"
+       href="<?php echo $this->url(\Site\Controller\SiteController::ROUTE_CONFIGURE_BRAKE_TEST_DEFAULTS, ['id' => $site->getId()]); ?>">
+        Change default test settings
+    </a>
+<?php endif ?>
+
+<?php if ($permission->canTestClass1And2() && !empty($site->getDefaultBrakeTestClass1And2())): ?>
+    <?php
+    echo $this->partial(
+        'partial/gds/table/table',
+        [
+            'head' => 'Class 1 and 2',
+            'body' => [
+                [
+                    'Brake test',
+                    ucfirst($site->getDefaultBrakeTestClass1And2()->getName()),
+                    'id' => 'default-brake-test-class-1-and-2',
+                ],
+            ],
+        ]
+    );
+    ?>
+<?php endif; ?>
+
+<?php if ($permission->canTestAnyOfClass3AndAbove() && !empty($site->getDefaultServiceBrakeTestClass3AndAbove())): ?>
+    <?php
+    echo $this->partial(
+        'partial/gds/table/table',
+        [
+            'head' => 'Class 3, 4, 5 and 7',
+            'body' => [
+                [
+                    'Service brake',
+                    ucfirst($site->getDefaultServiceBrakeTestClass3AndAbove()->getName()),
+                    'id' => 'default-service-brake-test-class-3-and-above',
+                ],
+                [
+                    'Parking brake',
+                    ucfirst($site->getDefaultParkingBrakeTestClass3AndAbove()->getName()),
+                    'id' => 'default-parking-brake-test-class-3-and-above',
+                ],
+            ],
+        ]
+    );
+    ?>
+<?php endif; ?>
+
+<div id="opening-hours">
+<h3 class="key-value-list__header">Testing hours</h3>
+<?php if ($permission->canUpdateTestingSchedule()): ?>
+    <a id="change-testing-hours" class="key-value-list__action"
+       href="<?php echo $this->url('site/edit-opening-hours', ['siteId' => $site->getId()]) ?>">
+        Change testing hours
+    </a>
+<?php endif ?>
+<table class="key-value-list">
+    <tbody>
+    <?php foreach ($site->getSiteTestingSchedule() as $day):
+        $dayName = $viewModel->displayWeekday($day);
+        ?>
+        <tr>
+            <th class="key-value-list__key">
+                <?php echo $this->escapeHtml($dayName); ?>
+            </th>
+            <td id="<?php echo $this->escapeHtmlAttr(strtolower($dayName)); ?>-hours"
+                class="key-value-list__value--numeric">
+                <?php echo $this->escapeHtml($viewModel->displayOpeningHours($day)); ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+    <tfoot>
+    <tr>
+        <td class="text-secondary" colspan="2">These times do not include bank holidays</td>
+    </tr>
+    </tfoot>
+</table>
+</div>
+
+<?php if ($permission->canViewTestsInProgress()): ?>
+    <h3 class="key-value-list__header">Active MOT tests</h3>
+    <table class="key-value-list">
+        <tbody>
+        <?php if ($motTests = $viewModel->getTestsInProgress()):
+            /** @var MotTestInProgressViewModel $motTest */
+            foreach ($motTests as $motTest): ?>
+                <tr id="site-active-mot-test-link-<?php echo $this->escapeHtmlAttr($motTest->getNumber()); ?>">
+                    <th class="key-value-list__key">
+                        <?php echo $this->escapeHtml($motTest->getTesterName()); ?>
+                    </th>
+                    <td class="key-value-list__value">
+                        <a href="<?php echo $this->url(MotTestController::ROUTE_MOT_TEST_SHORT_SUMMARY, ['motTestNumber' => $motTest->getNumber()]) ?>">
+                            <?php echo $this->escapeHtml($motTest->getVrmOrItsAbsentReason()); ?>
+                        </a>
+                        <br>
+                    <span class="key-value-list__meta">
+                        <strong><?php echo $this->escapeHtml($motTest->getVehicleMake()); ?></strong>,
+                        <?php echo $this->escapeHtml($motTest->getVehicleModel()); ?>
+                    </span>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <th class="key-value-list__key">No active MOT tests</th>
+            </tr>
+        <?php endif; ?>
+        </tbody>
+    </table>
+<?php endif ?>
+
+<nav class="content-navigation">
+    <ul class="content-navigation__secondary">
+        <?php if ($permission->canSearchVts()) : ?>
+            <li>
+                <?php
+                if (!empty($searchString)) {
+                    $escUrl = $this->url('vehicle-testing-station-results', ['search' => $searchString]);
+                } else {
+                    $escUrl = $this->url('vehicle-testing-station-search');
+                }
+                ?>
+                <a id="search-again" class="btn-link" href="<?php echo $escUrl; ?>">Return to search</a>
+
+                <?php if (!empty($escRefPage)) : ?>
+                    <a href="<?php echo $escRefPage; ?>" class="btn-link">Return to results</a>
+                <?php endif; ?>
+            </li>
+        <?php endif; ?>
+        <li>
+            <a id="return-to-home" href="<?php echo $this->url('user-home') ?>">Return home</a>
+        </li>
+    </ul>
+</nav>

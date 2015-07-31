@@ -49,7 +49,7 @@ class PersonSystemRoleMap extends Entity
     /**
      * @var \DvsaEntities\Entity\Person
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Person", inversedBy="personSystemRoleMaps")
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Person", inversedBy="personSystemRoleMap")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="person_id", referencedColumnName="id")
      * })

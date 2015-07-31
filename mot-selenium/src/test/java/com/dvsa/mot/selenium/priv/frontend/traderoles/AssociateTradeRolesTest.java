@@ -86,11 +86,10 @@ public class AssociateTradeRolesTest extends BaseTest {
                 .loginAsAssociatedUserToCheckNominationLetter(loginPage, tester,
                         "Site manager nomination");
 
-        assertEquals(notificationPage.getNominationDecisionMessage(),
+        assertTrue(notificationPage.getNominationDecisionMessage().contains(
                 Notifications.ASSERTION_ACCEPT_NOMINATION_DECISION.assertion + " " + "'"
                         + Notifications.ASSERTION_SITE_MANAGER_ROLE.assertion + "'" + " at " + "'"
-                        + "Test Site " + vtsName + " " + "S00" + vtsId + "'" + ".",
-                "Acceptance of the nomination letter was not successful");
+                        + "Test Site " + vtsName + " " + "S00"));
     }
 
     /**
@@ -114,11 +113,10 @@ public class AssociateTradeRolesTest extends BaseTest {
                 .loginAsAssociatedUserToCheckNominationLetter(loginPage, tester,
                         "Site admin nomination");
 
-        assertEquals(notificationPage.getNominationDecisionMessage(),
+        assertTrue(notificationPage.getNominationDecisionMessage().contains(
                 Notifications.ASSERTION_ACCEPT_NOMINATION_DECISION.assertion + " " + "'"
                         + Notifications.ASSERTION_SITE_ADMIN_ROLE.assertion + "'" + " at " + "'"
-                        + "Test Site " + vtsName + " " + "S00" + vtsId + "'" + ".",
-                "Acceptance of the nomination letter was not successful");
+                        + "Test Site " + vtsName + " " + "S00"));
     }
 
     /**
@@ -144,11 +142,9 @@ public class AssociateTradeRolesTest extends BaseTest {
                 .loginAsAssociatedUserToCheckNominationLetter(loginPage, tester,
                         "Site admin nomination");
 
-        assertEquals(notificationPage.getNominationDecisionMessage(),
-                Notifications.ASSERTION_ACCEPT_NOMINATION_DECISION.assertion + " " + "'"
+        assertTrue(notificationPage.getNominationDecisionMessage().contains(Notifications.ASSERTION_ACCEPT_NOMINATION_DECISION.assertion + " " + "'"
                         + Notifications.ASSERTION_SITE_ADMIN_ROLE.assertion + "'" + " at " + "'"
-                        + "Test Site " + vtsName + " " + "S00" + vtsId + "'" + ".",
-                "Acceptance of the nomination letter was not successful");
+                        + "Test Site " + vtsName + " " + "S00"));
     }
 
     @Test(groups = {"VM-9042", "Regression"}) public void testVtsAssociationDisplayOnHomePage() {

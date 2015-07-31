@@ -16,14 +16,13 @@ use DvsaClient\Mapper\OrganisationSitesMapper;
 use DvsaClient\Mapper\PersonMapper;
 use DvsaClient\Mapper\RoleMapper;
 use DvsaClient\Mapper\SecurityQuestionMapper;
+use DvsaClient\Mapper\SiteMapper;
 use DvsaClient\Mapper\SitePositionMapper;
 use DvsaClient\Mapper\SiteRoleMapper;
 use DvsaClient\Mapper\TesterQualificationStatusMapper;
 use DvsaClient\Mapper\UserAdminMapper;
 use DvsaClient\Mapper\UserMapper;
 use DvsaClient\Mapper\VehicleMapper;
-use DvsaClient\Mapper\VehicleTestingStationDtoMapper;
-use DvsaClient\Mapper\VehicleTestingStationMapper;
 use DvsaClient\Mapper\VehicleTestingStationOpeningHoursMapper;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use Zend\Http\Client;
@@ -51,8 +50,7 @@ use Zend\Http\Client;
  * @property-read UserAdminMapper                                    $UserAdmin
  * @property-read UserMapper                                         $User
  * @property-read VehicleMapper                                      $Vehicle
- * @property-read VehicleTestingStationMapper                        $VehicleTestingStation
- * @property-read VehicleTestingStationDtoMapper                     $VehicleTestingStationDto
+ * @property-read SiteMapper                                         $Site
  * @property-read VehicleTestingStationOpeningHoursMapper            $VehicleTestingStationOpeningHours
  *
  * @package DvsaClient
@@ -68,14 +66,14 @@ class MapperFactory
     const SITE = 'Site';
     const SITE_ROLE = 'SiteRole';
     const USER = 'User';
-    const VEHICLE_TESTING_STATION = 'VehicleTestingStation';
-    const VEHICLE_TESTING_STATION_DTO = 'VehicleTestingStationDto';
     const VEHICLE = 'Vehicle';
     const EVENT = 'Event';
     const USER_ADMIN = 'UserAdmin';
     const ACCOUNT = 'Account';
     const SECURITY_QUESTION = 'SecurityQuestion';
     const MOT_TEST_LOG = 'MotTestLog';
+    const EQUIPMENT = 'Equipment';
+    const MOT_TEST_IN_PROGRESS = 'MotTestInProgress';
 
     protected $client;
 

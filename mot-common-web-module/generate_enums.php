@@ -30,6 +30,7 @@ $inputArray = [
     enum('BrakeTestTypeCode', 'brake_test_type', 'name', 'code'),
     enum('BusinessRoleStatusCode', 'business_role_status', 'name', 'code'),
     enum('ColourCode', 'colour_lookup', 'name', 'code'),
+    enum('CountryCode', 'country_lookup', 'name', 'code'),
     enum('CountryOfRegistrationCode', 'country_of_registration_lookup', 'name', 'code'),
     enum('DirectDebitStatusCode', 'direct_debit_status', 'name', 'code'),
     enum('EmergencyReasonCode', 'emergency_reason_lookup', 'name', 'code'),
