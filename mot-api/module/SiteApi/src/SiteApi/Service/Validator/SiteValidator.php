@@ -3,51 +3,72 @@
 namespace SiteApi\Service\Validator;
 
 use DvsaCommon\Constants\FacilityTypeCode;
+use DvsaCommon\Dto\Site\SiteContactDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
+use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommonApi\Service\Validator\AbstractValidator;
 use DvsaCommonApi\Service\Validator\ValidatorInterface;
 use DvsaEntities\Entity\Vehicle;
+use OrganisationApi\Service\Validator\ContactValidator;
 
-/**
- * Class SiteValidator
- */
-class SiteValidator extends AbstractValidator implements ValidatorInterface
+class SiteValidator extends AbstractValidator
 {
-    private $requiredFields = [];
+    const FIELD_VEHICLE_CLASS = 'classes';
+    const FIELD_LOCATION_TYPE = 'location';
+    const FIELD_TESTING_FACILITY_OPTL = 'facilityOptl';
+    const FIELD_TESTING_FACILITY_TPTL = 'facilityTptl';
 
-    /** todo wk: this should be extracted to site facilities validator */
-    public function validateFacilities($data)
+    const ERR_LOCATION_TYPE_REQUIRE = 'A location type must be selected';
+    const ERR_VEHICLE_CLASS_REQUIRE = '1 or more vehicle classes must be selected';
+    const ERR_TESTING_FACILITY_OPTL_REQUIRE = 'A number of OPTL must be selected';
+    const ERR_TESTING_FACILITY_TPTL_REQUIRE = 'A number of TPTL must be selected';
+    const ERR_TESTING_FACILITY_REQUIRE = 'A number for either OPTL or TPTL must be selected';
+
+    /** @var ContactValidator */
+    private $contactValidator;
+
+    public function __construct($errors = null)
     {
-        $testClasses = $data['roles'];
-        $facilities = $data['facilities'];
-
-        // The only facility type allowable for classes 1&2 is TPTL.
-        if (in_array(Vehicle::VEHICLE_CLASS_1, $testClasses)
-            && in_array(Vehicle::VEHICLE_CLASS_2, $testClasses)
-            && count($testClasses) == 2
-        ) {
-            if (
-                isset($facilities[FacilityTypeCode::AUTOMATED_TEST_LANE])
-                || isset($facilities[FacilityTypeCode::ONE_PERSON_TEST_LANE])
-            ) {
-                $this->errors->add(
-                    'If a site is class 1&2 the only testing facility type that can be added is ' .
-                    FacilityTypeCode::TWO_PERSON_TEST_LANE . '.'
-                );
-            }
-
-            if (!isset($facilities[FacilityTypeCode::TWO_PERSON_TEST_LANE])) {
-                $this->errors->add(
-                    'If a site is class 1&2 the following testing facility type needs to be present: ' .
-                    FacilityTypeCode::TWO_PERSON_TEST_LANE . '.'
-                );
-            }
-        }
-
-        $this->errors->throwIfAny();
+        parent::__construct($errors);
+        $this->contactValidator = new ContactValidator();
     }
 
-    public function validate(array $data)
+    public function validate(VehicleTestingStationDto $siteDto)
     {
-        $this->validateValuesOfRequiredFields($this->requiredFields, $data);
+        //  --  Validate contact   --
+        /** @var SiteContactDto $contactDto */
+        foreach ($siteDto->getContacts() as $contactDto) {
+            $this->errors = $this->contactValidator->validate($contactDto);
+        }
+
+        $this->validateSiteDetail($siteDto);
+
+        $this->errors->throwIfAnyField();
+    }
+
+    private function validateSiteDetail(VehicleTestingStationDto $siteDto)
+    {
+        if ($this->isEmpty(trim($siteDto->getType())) || SiteTypeCode::exists($siteDto->getType()) === false) {
+            $this->errors->add(self::ERR_LOCATION_TYPE_REQUIRE, self::FIELD_LOCATION_TYPE);
+        }
+
+        if (empty($siteDto->getTestClasses())) {
+            $this->errors->add(self::ERR_VEHICLE_CLASS_REQUIRE, self::FIELD_VEHICLE_CLASS);
+        }
+        $this->validateFacilities($siteDto);
+    }
+
+    private function validateFacilities(VehicleTestingStationDto $siteDto)
+    {
+        if ($siteDto->isOptlSelected() === false) {
+            $this->errors->add(self::ERR_TESTING_FACILITY_OPTL_REQUIRE, self::FIELD_TESTING_FACILITY_OPTL);
+        }
+        if ($siteDto->isTptlSelected() === false) {
+            $this->errors->add(self::ERR_TESTING_FACILITY_TPTL_REQUIRE, self::FIELD_TESTING_FACILITY_TPTL);
+        }
+        if ($siteDto->isOptlSelected() === true && $siteDto->isTptlSelected() === true
+            && empty($siteDto->getFacilities())) {
+            $this->errors->add(self::ERR_TESTING_FACILITY_REQUIRE, self::FIELD_TESTING_FACILITY_OPTL);
+        }
     }
 }

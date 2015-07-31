@@ -7,9 +7,9 @@ use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaClient\Entity\Person;
 use DvsaClient\Entity\VehicleTestingStation;
 use DvsaClient\Mapper\PersonMapper;
+use DvsaClient\Mapper\SiteMapper;
 use DvsaClient\Mapper\SitePositionMapper;
 use DvsaClient\Mapper\SiteRoleMapper;
-use DvsaClient\Mapper\VehicleTestingStationMapper;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaCommon\Validator\UsernameValidator;
@@ -211,7 +211,7 @@ class RoleControllerTest extends AbstractFrontendControllerTestCase
 
     private function getVehicleTestingStationMapperMock()
     {
-        $vehicleTestingStationMapperMock = XMock::of(VehicleTestingStationMapper::class);
+        $vehicleTestingStationMapperMock = XMock::of(SiteMapper::class);
 
         $vehicleTestingStation = new VehicleTestingStation();
 
@@ -242,7 +242,7 @@ class RoleControllerTest extends AbstractFrontendControllerTestCase
             ['Person', $personMapperMock],
             ['SiteRole', $roleMapperMock],
             ['SitePosition', $positionMapperMock],
-            ['VehicleTestingStation', $vehicleTestingStationMock],
+            ['Site', $vehicleTestingStationMock],
         ];
 
         $mapperFactoryMock->expects($this->any())

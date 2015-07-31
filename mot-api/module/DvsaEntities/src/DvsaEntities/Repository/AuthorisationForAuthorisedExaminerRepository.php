@@ -7,6 +7,7 @@ use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
+use DvsaCommonApi\Service\SeqNumberService;
 use DvsaEntities\Entity\AuthorisationForAuthorisedExaminer;
 use DvsaEntities\Entity\Person;
 use DvsaCommonApi\Service\Exception\NotFoundException;
@@ -23,19 +24,12 @@ class AuthorisationForAuthorisedExaminerRepository extends AbstractMutableReposi
 
     public function getNextAeRef()
     {
-        $sql = 'call sp_sequence(:CODE);';
-
-        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
-        $stmt->bindValue('CODE', self::SEQ_CODE);
-        $stmt->execute();
-
-        $result = $stmt->fetch();
-
-        if ($stmt->rowCount() === 0 || !isset($result['sequence'])) {
+        $number = (new SeqNumberService($this->getEntityManager()))->getNextSeqNumber(self::SEQ_CODE);
+        if ($number === null) {
             throw new \Exception(self::ERR_AEREF_NOT_FOUND);
         }
 
-        return $result['sequence'];
+        return $number;
     }
 
     public function getBySitePositionForPerson(Person $person)

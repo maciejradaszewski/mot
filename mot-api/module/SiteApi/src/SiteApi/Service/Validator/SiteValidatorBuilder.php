@@ -34,10 +34,6 @@ class SiteValidatorBuilder
     {
         $validationChain = new ValidationChain();
 
-        if ($this->updateVtsAssertion->canUpdateName($siteId)) {
-            $validationChain->addValidator(new SiteValidator());
-        }
-
         if ($this->updateVtsAssertion->canUpdateBusinessDetails($siteId)) {
             $validationChain->addValidator(new ContactDetailsValidator(new AddressValidator()));
         }
@@ -45,20 +41,6 @@ class SiteValidatorBuilder
         if ($this->updateVtsAssertion->canUpdateCorrespondenceDetails($siteId)) {
             $validationChain->addValidator(new CorrespondenceContactValidator());
         }
-
-        return $validationChain;
-    }
-
-    /**
-     * @return ValidationChain
-     */
-    public function buildCreateValidator()
-    {
-        $validationChain = new ValidationChain();
-
-        $validationChain->addValidator(new SiteValidator());
-        $validationChain->addValidator(new ContactDetailsValidator(new AddressValidator()));
-        $validationChain->addValidator(new CorrespondenceContactValidator());
 
         return $validationChain;
     }

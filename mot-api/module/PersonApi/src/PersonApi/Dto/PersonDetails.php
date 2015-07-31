@@ -119,7 +119,7 @@ class PersonDetails
     /**
      * @param Person              $person
      * @param ContactDetail       $profileContactDetails
-     * @param EntityHelperService $helperService
+     * @param EntityManager       $entityManager
      * @param array               $roles
      *
      * @throws \DvsaCommonApi\Service\Exception\NotFoundException
@@ -127,7 +127,7 @@ class PersonDetails
     public function __construct(
         Person $person,
         ContactDetail $profileContactDetails,
-        EntityHelperService $helperService,
+        EntityManager $entityManager,
         $roles
     ) {
         $this->id    = $person->getId();
@@ -144,8 +144,6 @@ class PersonDetails
         $this->username     = $person->getUsername();
         $this->dateOfBirth  = DateTimeApiFormat::date($person->getDateOfBirth());
         $this->positions    = $person->findAllOrganisationPositions();
-
-        $entityManager = $helperService->getEntityManager();
 
         // VM-10289: Address is optional
         $this->importAddress($profileContactDetails->getAddress());
@@ -201,10 +199,12 @@ class PersonDetails
         if ($phoneContactType) {
             $phone = $entityManager
                 ->getRepository(Phone::class)
-                ->findOneBy([
-                    'contact'     => $profileContactDetails,
-                    'contactType' => $phoneContactType,
-                ]);
+                ->findOneBy(
+                    [
+                        'contact'     => $profileContactDetails,
+                        'contactType' => $phoneContactType,
+                    ]
+                );
             $this->phone = ($phone instanceof Phone) ? ($phone->getNumber() ?: null) : null;
         } else {
             $this->phone = null;

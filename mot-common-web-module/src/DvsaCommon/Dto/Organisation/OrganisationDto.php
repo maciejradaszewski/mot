@@ -25,6 +25,7 @@ class OrganisationDto extends AbstractDataTransferObject
     /** @var AuthorisedExaminerAuthorisationDto */
     private $authorisedExaminerAuthorisation;
     private $slotBalance;
+    private $slotWarning;
     private $dataMayBeDisclosed;
     private $areaOfficeSite;
     private $isValidateOnly = false;
@@ -213,6 +214,24 @@ class OrganisationDto extends AbstractDataTransferObject
     public function getSlotBalance()
     {
         return $this->slotBalance;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSlotWarning()
+    {
+        return $this->slotWarning;
+    }
+
+    /**
+     * @param mixed $slotWarning
+     * @return $this
+     */
+    public function setSlotWarning($slotWarning)
+    {
+        $this->slotWarning = $slotWarning;
+        return $this;
     }
 
     /**

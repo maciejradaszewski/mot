@@ -188,41 +188,6 @@ class ContactDetailFormModelTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-
-    /**
-     * @dataProvider dataProviderTestIsValid
-     */
-    public function testIsValid($notValidModel, $expectIsValid)
-    {
-        $this->mockMethod($this->mockAddressModel, 'isValid', $this->once(), !in_array('addressModel', $notValidModel));
-        $this->mockMethod($this->mockEmailModel, 'isValid', $this->once(), !in_array('emailModel', $notValidModel));
-        $this->mockMethod($this->mockPhoneModel, 'isValid', $this->once(), !in_array('phoneModel', $notValidModel));
-
-        $this->assertEquals($expectIsValid, $this->model->isValid());
-    }
-
-    public function dataProviderTestIsValid()
-    {
-        return [
-            [
-                'mocks'         => [],
-                'expectIsValid' => true,
-            ],
-            [
-                'notValidModel' => ['addressModel'],
-                'expectIsValid' => false,
-            ],
-            [
-                'mocks'         => ['emailModel'],
-                'expectIsValid' => false,
-            ],
-            [
-                'mocks'         => ['phoneModel'],
-                'expectIsValid' => false,
-            ],
-        ];
-    }
-
     private function isCall($isExpectCall)
     {
         return ($isExpectCall ? $this->once() : $this->never());

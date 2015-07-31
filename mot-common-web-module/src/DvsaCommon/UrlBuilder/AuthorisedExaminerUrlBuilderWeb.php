@@ -35,8 +35,6 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
     const PRINCIPALS                            = '/principals';
     const REMOVE_PRINCIPAL_CONFIRMATION         = '/:principalId/remove-principal-confirmation';
 
-    const VEHICLE_TESTING_STATION               = '/vehicle-testing-station/:vehicleTestingStationId';
-
     const VIEW_TRANSACTION                      = '/transactions/:transaction[:extension]';
     const TRANSACTIONS                          = '/transactions[/page/:page][:extension]';
 
@@ -78,7 +76,6 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
                     self::REMOVE_ROLE_CONFIRMATION => '',
                     self::PRINCIPALS => '',
                     self::REMOVE_PRINCIPAL_CONFIRMATION => '',
-                    self::VEHICLE_TESTING_STATION => '',
                     self::MOT_TEST_LOG             => [
                         self::MOT_TEST_LOG_CSV => '',
                     ],

@@ -59,7 +59,7 @@ class SiteFacility extends Entity
     }
 
     /**
-     * @param int $facilityType
+     * @param FacilityType $facilityType
      *
      * @return $this
      */

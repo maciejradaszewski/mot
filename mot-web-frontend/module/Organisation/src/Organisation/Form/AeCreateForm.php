@@ -59,7 +59,7 @@ class AeCreateForm extends AbstractFormModel
 
     public function fromPost(Parameters $data)
     {
-        $this->clearEmpty($data);
+        $this->clearEmptyParams($data);
 
         $this
             ->setName($data->get(self::FIELD_NAME))
@@ -312,7 +312,6 @@ class AeCreateForm extends AbstractFormModel
     {
         return $this->corrContactModel;
     }
-
 
     /**
      * @return string

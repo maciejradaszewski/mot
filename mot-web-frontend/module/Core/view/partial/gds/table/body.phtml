@@ -5,13 +5,13 @@ use DvsaCommon\Utility\ArrayUtils;
 $body = $this->body ?: '';
 
 ?>
-<body>
+<tbody>
     <?php if (!empty($body) && is_array($body)): ?>
         <?php foreach ($body as $item): ?>
             <tr>
                 <?php
                     $id = ArrayUtils::tryGet($item, 'id');
-                    $class = 'key-value-list__value' . ArrayUtils::tryGet($item, 'class', '');
+                    $class = 'key-value-list__value ' . ArrayUtils::tryGet($item, 'class', '');
                     $escape = (ArrayUtils::tryGet($item, 'escape') !== false);
 
                     echo $this->partial(
@@ -35,4 +35,4 @@ $body = $this->body ?: '';
             </tr>
         <?php endforeach; ?>
     <?php endif; ?>
-</body>
+</tbody>

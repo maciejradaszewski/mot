@@ -113,7 +113,7 @@ class SiteSearchController extends AbstractDvsaMotTestController
             $searchParams = $this->viewModel->prepareSearchParams();
 
             /** @var SiteListDto $result */
-            $result = $this->mapper->VehicleTestingStation->search(DtoHydrator::dtoToJson($searchParams));
+            $result = $this->mapper->Site->search(DtoHydrator::dtoToJson($searchParams));
             $result->setSearched($searchParams);
 
             /** @var Table $table */

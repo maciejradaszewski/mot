@@ -3,7 +3,16 @@
 namespace SiteApiTest\Service;
 
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
+use DvsaCommon\Auth\MotIdentityInterface;
 use DvsaCommon\Auth\PermissionAtSite;
+use DvsaCommon\Constants\FacilityTypeCode;
+use DvsaCommon\Dto\Contact\AddressDto;
+use DvsaCommon\Dto\Contact\EmailDto;
+use DvsaCommon\Dto\Contact\PhoneDto;
+use DvsaCommon\Dto\Site\FacilityDto;
+use DvsaCommon\Dto\Site\FacilityTypeDto;
+use DvsaCommon\Dto\Site\SiteContactDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\Utility\ArrayUtils;
@@ -12,31 +21,35 @@ use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\AddressService;
 use DvsaCommonApi\Service\ContactDetailsService;
 use DvsaCommonApi\Service\Exception\BadRequestException;
-use DvsaCommonApi\Service\Exception\BadRequestExceptionWithMultipleErrors;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\Validator\AddressValidator;
 use DvsaCommonApi\Service\Validator\ContactDetailsValidator;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
-use DvsaEntities\Entity\CountryOfRegistration;
-use DvsaEntities\Entity\NonWorkingDayCountry;
+use DvsaEntities\Entity\FacilityType;
 use DvsaEntities\Entity\PhoneContactType;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteContactType;
 use DvsaEntities\Entity\SiteType;
 use DvsaEntities\Mapper\AddressMapper;
+use DvsaEntities\Repository\AuthorisationForTestingMotAtSiteStatusRepository;
 use DvsaEntities\Repository\BrakeTestTypeRepository;
+use DvsaEntities\Repository\FacilityTypeRepository;
 use DvsaEntities\Repository\NonWorkingDayCountryRepository;
 use DvsaEntities\Repository\PhoneContactTypeRepository;
 use DvsaEntities\Repository\SiteContactTypeRepository;
 use DvsaEntities\Repository\SiteRepository;
+use DvsaEntities\Repository\SiteTestingDailyScheduleRepository;
 use DvsaEntities\Repository\SiteTypeRepository;
+use DvsaEntities\Repository\VehicleClassRepository;
+use DvsaEventApi\Service\EventService;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use SiteApi\Service\Mapper\SiteBusinessRoleMapMapper;
 use SiteApi\Service\Mapper\SiteMapper;
 use SiteApi\Service\Mapper\VtsMapper;
 use SiteApi\Service\SiteService;
 use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
+use SiteApi\Service\Validator\SiteValidator;
 
 /**
  * SiteServiceTest
@@ -52,58 +65,91 @@ class SiteServiceTest extends AbstractServiceTestCase
     private $repository;
     /** @var  SiteTypeRepository|MockObj */
     private $siteTypeRepository;
-    /** @var  NonWorkingDayCountryRepository|MockObj */
-    private $nonWorkingDayCountryRepository;
     /** @var BrakeTestTypeRepository|MockObj */
     private $brakeTestTypeRepo;
     /**@var SiteContactTypeRepository */
     private $siteContactTypeRepository;
     /** @var  AuthorisationServiceInterface|MockObj */
     private $mockAuthService;
+    /** @var  FacilityTypeRepository|MockObj */
+    private $facilityTypeRepository;
+    /** @var  VehicleClassRepository|MockObj */
+    private $vehicleClassRepository;
+    /** @var  AuthorisationForTestingMotAtSiteStatusRepository|MockObj */
+    private $authForTestingMotStatusRepository;
+    /** @var  SiteTestingDailyScheduleRepository|MockObj */
+    private $siteTestingDailyScheduleRepository;
+    /** @var  NonWorkingDayCountryRepository|MockObj */
+    private $nonWorkingDayCountryRepository;
+    /** @var  MotIdentityInterface|MockObj */
+    private $mockIdentity;
+    /** @var  EventService|MockObj */
+    private $eventService;
+    /** @var  Hydrator|MockObj */
+    private $mockHydrator;
+    /** @var  SiteValidator|MockObj */
+    private $validator;
 
     public function setup()
     {
         $this->repository = $this->getMockWithDisabledConstructor(SiteRepository::class);
         $this->siteTypeRepository = $this->getMockWithDisabledConstructor(SiteTypeRepository::class);
-        $this->nonWorkingDayCountryRepository = $this->mockNonWorkingDayCountryLookupRepository();
         $this->mockSiteContactTypeRepo();
         $this->brakeTestTypeRepo = $this->getMockWithDisabledConstructor(BrakeTestTypeRepository::class);
+        $this->facilityTypeRepository = $this->getMockWithDisabledConstructor(FacilityTypeRepository::class);
+        $this->vehicleClassRepository = $this->getMockWithDisabledConstructor(VehicleClassRepository::class);
+        $this->authForTestingMotStatusRepository = $this->getMockWithDisabledConstructor(
+            AuthorisationForTestingMotAtSiteStatusRepository::class
+        );
+        $this->siteTestingDailyScheduleRepository = $this->getMockWithDisabledConstructor(
+            SiteTestingDailyScheduleRepository::class
+        );
+        $this->nonWorkingDayCountryRepository = $this->getMockWithDisabledConstructor(
+            NonWorkingDayCountryRepository::class
+        );
+
         $mockEm = $this->getMockEntityManager();
         $xssFilterMock = $this->createXssFilterMock();
 
+        $this->mockIdentity = XMock::of(MotIdentityInterface::class);
+        $this->eventService = XMock::of(EventService::class);
         $this->mockAuthService = $this->getMockAuthorizationService();
         $updateVtsAssertion = new UpdateVtsAssertion($this->mockAuthService);
+        $this->mockHydrator = XMock::of(Hydrator::class);
+        $this->validator = XMock::of(SiteValidator::class);
 
         $this->siteService = new SiteService(
             $mockEm,
+            $this->mockAuthService,
+            $this->mockIdentity,
+            $this->createContactDetailsService(),
+            $this->eventService,
             $this->siteTypeRepository,
             $this->repository,
             $this->siteContactTypeRepository,
             $this->brakeTestTypeRepo,
+            $this->facilityTypeRepository,
+            $this->vehicleClassRepository,
+            $this->authForTestingMotStatusRepository,
+            $this->siteTestingDailyScheduleRepository,
             $this->nonWorkingDayCountryRepository,
-            $this->getMockHydrator(),
-            $this->mockAuthService,
-            new SiteBusinessRoleMapMapper(
-                new Hydrator()
-            ),
-            $this->createContactDetailsService(),
             $xssFilterMock,
-            $updateVtsAssertion
+            new SiteBusinessRoleMapMapper(new Hydrator()),
+            $updateVtsAssertion,
+            $this->mockHydrator,
+            $this->validator
         );
+
+        $this->mockMethod($this->validator, 'validate', $this->any(), true);
     }
 
     public function testCreateSiteCodeDoesNotBreak()
     {
-        // This code doesn't assert anything, it checks if code compiles.
-        $this->siteService->create($this->getSitePostData());
-    }
+        $this->facilityTypeRepository->expects($this->once())
+            ->method('getByCode')
+            ->willReturn((new FacilityType())->setName('Facility'));
 
-    public function testEditSiteCodeDoesNotBreak()
-    {
-        //This code doesn't assert anything, it checks if code compiles.
-        $this->mockMethod($this->repository, 'get', null, new Site());
-
-        $this->siteService->create($this->getSitePostData(), 1);
+        $this->siteService->create($this->getSiteDto());
     }
 
     /**
@@ -170,7 +216,7 @@ class SiteServiceTest extends AbstractServiceTestCase
         return [
             //  --  getVehicleTestingStationDataBySiteNumber method --
             [
-                'method'      => 'getVehicleTestingStationDataBySiteNumber',
+                'method'      => 'getSiteBySiteNumber',
                 'params'      => [
                     'siteNumber' => self::SITE_NR,
                     'isNeedDto'  => false,
@@ -186,7 +232,7 @@ class SiteServiceTest extends AbstractServiceTestCase
                 ],
             ],
             [
-                'method'     => 'getVehicleTestingStationDataBySiteNumber',
+                'method'     => 'getSiteBySiteNumber',
                 'params'     => [
                     'siteNumber' => self::SITE_NR,
                     'isNeedDto'  => false,
@@ -202,7 +248,7 @@ class SiteServiceTest extends AbstractServiceTestCase
                 ],
             ],
             [
-                'method'      => 'getVehicleTestingStationDataBySiteNumber',
+                'method'      => 'getSiteBySiteNumber',
                 'params'      => [
                     'siteNumber' => self::SITE_NR,
                     'isNeedDto'  => true,
@@ -218,55 +264,9 @@ class SiteServiceTest extends AbstractServiceTestCase
                 ],
             ],
 
-            //  --  getSiteData method --
-            [
-                'method'      => 'getSiteData',
-                'params'      => [
-                    'siteId'    => self::SITE_ID,
-                    'isNeedDto' => false,
-                ],
-                'repo'        => [
-                    'method' => 'find',
-                    'result' => null,
-                    'params' => [self::SITE_ID],
-                ],
-                'permissions' => null,
-                'expect'      => [
-                    'exception' => $notFoundExceptionById,
-                ],
-            ],
-            [
-                'method'      => 'getSiteData',
-                'params'      => [
-                    'siteId'    => self::SITE_ID,
-                    'isNeedDto' => false,
-                ],
-                'repo'        => null,
-                'permissions' => [],
-                'expect'      => [
-                    'exception' => $unauthException,
-                ],
-            ],
-            [
-                'method'      => 'getSiteData',
-                'params'      => [
-                    'siteId'    => self::SITE_ID,
-                    'isNeedDto' => true,
-                ],
-                'repo'        => [
-                    'method' => 'find',
-                    'result' => $siteEntity,
-                    'params' => [self::SITE_ID],
-                ],
-                'permissions' => [PermissionAtSite::VEHICLE_TESTING_STATION_READ],
-                'expect'      => [
-                    'result' => $siteDto,
-                ],
-            ],
-
             //  --  getVehicleTestingStationData method --
             [
-                'method'     => 'getVehicleTestingStationData',
+                'method'     => 'getSite',
                 'params'     => [
                     'siteId'    => self::SITE_ID,
                     'isNeedDto' => false,
@@ -278,7 +278,7 @@ class SiteServiceTest extends AbstractServiceTestCase
                 ],
             ],
             [
-                'method'      => 'getVehicleTestingStationData',
+                'method'      => 'getSite',
                 'params'      => [
                     'siteId'    => self::SITE_ID,
                     'isNeedDto' => false,
@@ -294,7 +294,7 @@ class SiteServiceTest extends AbstractServiceTestCase
                 ],
             ],
             [
-                'method'      => 'getVehicleTestingStationData',
+                'method'      => 'getSite',
                 'params'      => [
                     'siteId'    => self::SITE_ID,
                     'isNeedDto' => true,
@@ -307,23 +307,6 @@ class SiteServiceTest extends AbstractServiceTestCase
                 'permissions' => [PermissionAtSite::VEHICLE_TESTING_STATION_READ],
                 'expect'      => [
                     'result' => $vtsDto,
-                ],
-            ],
-
-            //  --  findVehicleTestingStationsByPartialSiteNumber method  --
-            [
-                'method'      => 'findVehicleTestingStationsByPartialSiteNumber',
-                'params'      => [
-                    'partSiteNr' => '_+A9',
-                    'maxResult'  => 10,
-                ],
-                'repo'        => null,
-                'permissions' => null,
-                'expect'      => [
-                    'exception' => [
-                        'class'   => BadRequestExceptionWithMultipleErrors::class,
-                        'message' => SiteService::SITE_NUMBER_INVALID_DATA_DISPLAY_MESSAGE,
-                    ],
                 ],
             ],
 
@@ -402,6 +385,39 @@ class SiteServiceTest extends AbstractServiceTestCase
         return $siteEntity;
     }
 
+    private function getSiteDto()
+    {
+        $addressDto = (new AddressDto())
+            ->setAddressLine1('addressLine1')
+            ->setTown('town')
+            ->setPostcode('postcode');
+        $emailDto = (new EmailDto())
+            ->setEmail('dummy@dummy.com')
+            ->setIsPrimary(true);
+        $phoneDto = (new PhoneDto())
+            ->setNumber('0712345678')
+            ->setIsPrimary(true);
+
+        $contactDto = (new SiteContactDto())
+            ->setType(SiteContactTypeCode::BUSINESS)
+            ->setAddress($addressDto)
+            ->setEmails([$emailDto])
+            ->setPhones([$phoneDto]);
+
+        $facility = (new FacilityDto())
+            ->setName('Facility')
+            ->setType((new FacilityTypeDto())->setCode(FacilityTypeCode::ONE_PERSON_TEST_LANE));
+
+        $dto = (new VehicleTestingStationDto())
+            ->setName('fantastic name')
+            ->addContact($contactDto)
+            ->setIsDualLanguage(true)
+            ->setTestClasses([1, 2, 3])
+            ->setFacilities([$facility]);
+
+        return $dto;
+    }
+
     private function getSitePostData()
     {
         return [
@@ -468,27 +484,6 @@ class SiteServiceTest extends AbstractServiceTestCase
         $this->siteContactTypeRepository->expects($this->any())
             ->method('getByCode')
             ->will($this->returnValueMap($getByCodeValueMap));
-    }
-
-    private function mockNonWorkingDayCountryLookupRepository()
-    {
-        $mockRepo = XMock::of(NonWorkingDayCountryRepository::class, ["getOneByCode"]);
-        $this->mockMethod(
-            $mockRepo,
-            'getOneByCode',
-            null,
-            function ($code) {
-                $country = new CountryOfRegistration();
-                $country->setCode($code);
-
-                $nonWorkingDayCountryLookup = new NonWorkingDayCountry();
-                $nonWorkingDayCountryLookup->setCountry($country);
-
-                return $nonWorkingDayCountryLookup;
-            }
-        );
-
-        return $mockRepo;
     }
 
     /**

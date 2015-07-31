@@ -5,7 +5,8 @@
  * @var $hasRoleOption
  * @var $id
  */
-use Organisation\Controller\RoleController;
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
+
 /**
  * @var \Organisation\Form\SelectRoleForm $form
  */
@@ -61,13 +62,9 @@ use Organisation\Controller\RoleController;
                 <div class="form-group<?php echo ($form->getRoleId()->getMessages()) ? ' has-error' : ''; ?>">
                     <fieldset>
                         <legend class="form-label">Select a role
-                            <?php
-                            if ($form->getRoleId()->getMessages()) {
-                                ?>
+                            <?php if ($form->getRoleId()->getMessages()) : ?>
                                 <span class="validation-message" id="error2">You must select a role</span>
-                            <?php
-                            }
-                            ?>
+                            <?php endif; ?>
                         </legend>
                         <?php echo $this->formRow($form->getRoleId(), null, false); ?>
                     </fieldset>
@@ -83,7 +80,7 @@ use Organisation\Controller\RoleController;
             <ul class="content-navigation__secondary">
                 <li>
                     <a id="vehicle-testing-station-home"
-                       href="<?php echo $this->url(RoleController::ROUTE_ROLES, ['id' => $id]); ?>"
+                       href="<?php echo AuthorisedExaminerUrlBuilderWeb::roles($id); ?>"
                        class="btn btn-link">Back to user search</a>
                 </li>
             </ul>

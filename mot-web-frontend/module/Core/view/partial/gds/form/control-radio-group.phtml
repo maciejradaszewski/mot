@@ -2,6 +2,9 @@
     <fieldset class="<?php echo (!empty($inputModifier) ? $this->escapeHtmlAttr($inputModifier) : ''); ?>">
         <legend class="form-label<?php echo (!empty($labelModifier) ? $this->escapeHtmlAttr($labelModifier) : ''); ?>">
             <?php echo $this->escapeHtml($label); ?>
+            <?php if (!empty($labelHint)): ?>
+                <span class="form-hint"><?php echo $this->escapeHtmlAttr($labelHint); ?></span>
+            <?php endif; ?>
         </legend>
 
         <?php foreach ($options as $option): ?>

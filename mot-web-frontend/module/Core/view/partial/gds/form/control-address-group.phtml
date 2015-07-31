@@ -4,6 +4,7 @@ use DvsaClient\ViewModel\AddressFormModel;
 
 $form = $this->form;
 $group = $this->group ?: '';
+$countryRadio = $this->countryRadio ?: '';
 
 $tmplFieldName = (!empty($group) ? '%1$s[%2$s]' : '%2$s');
 ?>
@@ -73,5 +74,16 @@ $tmplFieldName = (!empty($group) ? '%1$s[%2$s]' : '%2$s');
             'maxLength'     => 10,
         ]
     );
+
+    if (!empty($countryRadio)) {
+        echo $this->partial(
+            'partial/gds/form/control-radio-group',
+            [
+                'divModifier' => 'inline',
+                'label' => 'Country',
+                'options' => $countryRadio,
+            ]
+        );
+    }
     ?>
 </div>

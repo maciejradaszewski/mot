@@ -104,13 +104,17 @@ class Vm2366SitePositionNomination
 
     private function isPositionAccepted($result)
     {
-        $positions = $result['vehicleTestingStation']['positions'];
+        /** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto */
+        $dto = \DvsaCommon\Utility\DtoHydrator::jsonToDto($result);
+
+        $positions = $dto->getPositions();
+
         if (count($positions) > 0) {
             $position = $positions[count($positions) - 1];
 
-            return $position['role'] == $this->getPosition()
-            && $position['person']['id'] == $this->getRecipient()
-            && $position['status'] === BusinessRoleStatusCode::ACTIVE;
+            return $position->getRole()->getCode() == $this->getPosition()
+            && $position->getPerson()->getId() == $this->getRecipient()
+            && $position->getRoleStatus()->getCode() === BusinessRoleStatusCode::ACTIVE;
         } else {
             return false;
         }

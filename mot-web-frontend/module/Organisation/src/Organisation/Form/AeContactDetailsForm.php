@@ -87,6 +87,8 @@ class AeContactDetailsForm extends AbstractFormModel
 
     public function isValid()
     {
+        $this->resetErrors();
+
         $corrModel = $this->getCorrContactModel();
 
         $isEmailValid = $corrModel->getEmailModel()->isValid(OrganisationContactTypeCode::CORRESPONDENCE);

@@ -85,6 +85,8 @@ class EmailFormModel extends AbstractFormModel
 
     public function isValid($type = null)
     {
+        $this->resetErrors();
+
         if ($this->isSupplied()) {
             $email = $this->getEmail();
 

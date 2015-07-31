@@ -26,6 +26,8 @@ use PHPUnit_Framework_TestCase;
  */
 class OutputFormatDataTablesMotTestTest extends \PHPUnit_Framework_TestCase
 {
+    const SITE_ID = 9999;
+
     /* @var \DvsaMotApi\Model\OutputFormat\OutputFormatDataTablesMotTest */
     protected $outputFormat;
     /* @var \DateTime */
@@ -68,6 +70,7 @@ class OutputFormatDataTablesMotTestTest extends \PHPUnit_Framework_TestCase
                 'make'                => 'Renault',
                 'model'               => 'Clio',
                 'testType'            => 'Normal Test',
+                'siteId'              => self::SITE_ID,
                 'siteNumber'          => 'V1234',
                 'startedDate'         => '2011-01-01T11:11:11Z',
                 'completedDate'       => '2011-01-01T11:11:11Z',
@@ -98,7 +101,11 @@ class OutputFormatDataTablesMotTestTest extends \PHPUnit_Framework_TestCase
             ->setMake((new Make())->setName('Renault'))
             ->setModel((new Model())->setName('Clio'))
             ->setMotTestType((new MotTestType())->setDescription('Normal Test'))
-            ->setVehicleTestingStation((new Site())->setSiteNumber('V1234'))
+            ->setVehicleTestingStation(
+                (new Site())
+                    ->setId(self::SITE_ID)
+                    ->setSiteNumber('V1234')
+            )
             ->setTester((new Person())->setUsername('tester1'))
             ->setStartedDate(DateUtils::toDateTime('2011-01-01T11:11:11Z'))
             ->setMotTestReasonForCancel((new MotTestReasonForCancel())->setReason([]))
@@ -121,6 +128,7 @@ class OutputFormatDataTablesMotTestTest extends \PHPUnit_Framework_TestCase
                 'make'                => 'Renault',
                 'model'               => 'Clio',
                 'testType'            => 'Normal Test',
+                'siteId'              => self::SITE_ID,
                 'siteNumber'          => 'V1234',
                 'startedDate'         => '2011-01-01T11:11:11Z',
                 'completedDate'       => '2011-01-01T11:11:11Z',

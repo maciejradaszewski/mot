@@ -15,6 +15,8 @@ class Vm2227SiteContactDetails
 
     private $result;
     private $siteId;
+    /** @var  \DvsaCommon\Dto\Contact\ContactDto */
+    private $contact;
 
     public function setSiteId($siteId)
     {
@@ -28,6 +30,12 @@ class Vm2227SiteContactDetails
         TestShared::setAuthorizationInHeaderForUser($this->username, $this->password, $curlHandle);
         $this->result = TestShared::execCurlForJson($curlHandle);
 
+        $this->contact = null;
+        if (TestShared::resultIsSuccess($this->result)) {
+            /** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto */
+            $dto = \DvsaCommon\Utility\DtoHydrator::jsonToDto($this->result['data']);
+            $this->contact = $dto->getContactByType(\DvsaCommon\Enum\SiteContactTypeCode::BUSINESS);
+        }
         return TestShared::resultIsSuccess($this->result);
     }
 
@@ -48,38 +56,44 @@ class Vm2227SiteContactDetails
 
     public function addressLine1()
     {
-        return $this->getContactFieldFromObject('addressLine1');
+        if ($this->contact !== null) {
+            return $this->contact->getAddress()->getAddressLine1();
+        }
     }
 
     public function addressLine2()
     {
-        return $this->getContactFieldFromObject('addressLine2');
+        if ($this->contact !== null) {
+            return $this->contact->getAddress()->getAddressLine2();
+        }
     }
 
     public function addressLine3()
     {
-        return $this->getContactFieldFromObject('addressLine3');
+        if ($this->contact !== null) {
+            return $this->contact->getAddress()->getAddressLine3();
+        }
     }
 
     public function town()
     {
-        return $this->getContactFieldFromObject('town');
+        if ($this->contact !== null) {
+            return $this->contact->getAddress()->getTown();
+        }
     }
 
     public function postcode()
     {
-        return $this->getContactFieldFromObject('postcode');
+        if ($this->contact !== null) {
+            return $this->contact->getAddress()->getPostcode();
+        }
     }
 
     public function phoneNumber()
     {
-        return isset($this->result['data']['vehicleTestingStation']['contacts'][0]['phones'][0]['number'])
-            ? $this->result['data']['vehicleTestingStation']['contacts'][0]['phones'][0]['number'] : '';
+        if ($this->contact !== null) {
+            return $this->contact->getPrimaryPhoneNumber();
+        }
     }
 
-    private function getContactFieldFromObject($field)
-    {
-        return isset($this->result['data']['vehicleTestingStation']['contacts'][0]['address'])
-            ? $this->result['data']['vehicleTestingStation']['contacts'][0]['address'][$field] : '';
-    }
 }

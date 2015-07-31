@@ -48,11 +48,11 @@ class EmergencyLogControllerTest extends AbstractMotApiControllerTestCase
         // site will always return as a valid site
         $this->mockSiteService = XMock::of(
             SiteService::class,
-            ['getSiteData']
+            ['getSite']
         );
 
         $this->mockSiteService->expects($this->any())
-            ->method('getSiteData')
+            ->method('getSite')
             ->willReturn(new \stdClass());
 
         $this->mockPersonService = XMock::of(

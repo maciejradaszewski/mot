@@ -6,7 +6,6 @@ use Organisation\Controller\MotTestLogController;
 use Organisation\Controller\RoleController;
 use Organisation\Controller\SearchController;
 use Organisation\Controller\SlotsUsageController;
-use Site\Controller\VehicleTestingStationController;
 use Organisation\Factory\Controller\AuthorisedExaminerControllerFactory;
 use Organisation\Factory\Controller\AuthorisedExaminerStatusControllerFactory;
 
@@ -203,19 +202,6 @@ return [
                             ],
                         ],
                     ],
-                    'vehicle-testing-station'       => [
-                        'type'    => 'segment',
-                        'options' => [
-                            'route'       => '/vehicle-testing-station/:vehicleTestingStationId',
-                            'constraints' => [
-                                'vehicleTestingStationId' => '[1-9]+[0-9]*',
-                            ],
-                            'defaults'    => [
-                                'controller' => VehicleTestingStationController::class,
-                                'action'     => 'index',
-                            ],
-                        ],
-                    ],
                 ],
             ],
         ],
@@ -224,7 +210,6 @@ return [
         'invokables' => [
             SearchController::class                      => SearchController::class,
             SlotsUsageController::class                  => SlotsUsageController::class,
-            VehicleTestingStationController::class       => VehicleTestingStationController::class,
         ],
         'factories' => [
             AuthorisedExaminerControllerFactory::class => AuthorisedExaminerControllerFactory::class,

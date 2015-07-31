@@ -9,4 +9,5 @@ class FeatureToggle
 {
     const AO1_AE_CREATE = 'ao1.ae.create';
     const AO1_AE_EDIT_STATUS = 'ao1.ae.edit';
+    const AO1_SITE_CREATE   = 'ao1.site.create';
 }

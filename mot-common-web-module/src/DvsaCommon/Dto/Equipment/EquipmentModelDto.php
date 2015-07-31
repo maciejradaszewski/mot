@@ -71,6 +71,7 @@ class EquipmentModelDto extends AbstractDataTransferObject
     public function setStatus($status)
     {
         $this->status = $status;
+        return $this;
     }
     /**
      *

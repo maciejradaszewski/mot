@@ -3,6 +3,7 @@
 namespace Site\Controller;
 
 use Core\Controller\AbstractAuthActionController;
+use DvsaCommon\Dto\Security\RolesMapDto;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\UrlBuilder\UrlBuilder;
@@ -56,7 +57,7 @@ class RoleController extends AbstractAuthActionController
         $form = [];
         $mapperFactory = $this->getMapperFactory();
         $vehicleTestingStationId = $this->params('vehicleTestingStationId');
-        $vehicleTestingStation = $mapperFactory->VehicleTestingStation->getById($vehicleTestingStationId);
+        $vehicleTestingStation = $mapperFactory->Site->getById($vehicleTestingStationId);
 
         $personLogin = '';
         $userNotFound = false;
@@ -204,9 +205,9 @@ class RoleController extends AbstractAuthActionController
         $siteId = $this->params()->fromRoute('siteId', null);
         $positionId = $this->params()->fromRoute('positionId', null);
 
-        $site = $mapperFactory->VehicleTestingStation->getById($siteId);
+        $site = $mapperFactory->Site->getById($siteId);
 
-        $position = $this->findPositionInListById($site['positions'], (int)$positionId);
+        $position = $this->findPositionInListById($site->getPositions(), (int)$positionId);
         $roleCodeNameMap = $this->getCatalogService()->getSiteBusinessRoles();
 
         if (null === $position) {
@@ -223,8 +224,8 @@ class RoleController extends AbstractAuthActionController
             try {
                 $mapperFactory->SitePosition->delete($siteId, $positionId);
                 $this->addSuccessMessage(
-                    'You have removed the role of ' . $roleCodeNameMap[$position->getRoleCode(
-                    )] . ' from ' . $position->getPerson()->getFullName()
+                    'You have removed the role of ' . $roleCodeNameMap[$position->getRole()->getCode()]
+                    . ' from ' . $position->getPerson()->getFullName()
                 );
             } catch (RestApplicationException $e) {
                 $this->addErrorMessages($e->getDisplayMessages());
@@ -238,8 +239,8 @@ class RoleController extends AbstractAuthActionController
             ->setEmployeeId($position->getPerson()->getId())
             ->setSiteId($siteId)
             ->setPositionId($positionId)
-            ->setRoleName($roleCodeNameMap[$position->getRoleCode()])
-            ->setSiteName($site['name'])
+            ->setRoleName($roleCodeNameMap[$position->getRole()->getCode()])
+            ->setSiteName($site->getName())
             ->setActiveMotTestNumber($activeMotTest['inProgressTestNumber']);
 
         $this->layout('layout/layout-govuk.phtml');
@@ -291,10 +292,10 @@ class RoleController extends AbstractAuthActionController
     }
 
     /**
-     * @param \DvsaClient\Entity\SitePosition[] $list
+     * @param RolesMapDto[] $list
      * @param int $positionId
      *
-     * @return \DvsaClient\Entity\SitePosition|null
+     * @return RolesMapDto|null
      */
     private function findPositionInListById($list, $positionId)
     {

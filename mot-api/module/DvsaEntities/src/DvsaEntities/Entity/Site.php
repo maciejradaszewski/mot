@@ -177,7 +177,9 @@ class Site extends Entity
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\OneToMany(targetEntity="SiteComment", mappedBy="site")
-     * @ORM\JoinColumn(name="site_id", referencedColumnName="id")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="site_id", referencedColumnName="id")
+     * })
      */
     private $siteComments;
 

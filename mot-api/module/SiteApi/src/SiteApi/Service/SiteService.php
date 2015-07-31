@@ -5,37 +5,54 @@ namespace SiteApi\Service;
 use Doctrine\ORM\EntityManager;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
-use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Auth\MotIdentityInterface;
 use DvsaCommon\Auth\PermissionAtSite;
+use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\EventDescription;
+use DvsaCommon\Date\DateTimeHolder;
+use DvsaCommon\Date\Time;
+use DvsaCommon\Dto\Site\FacilityDto;
+use DvsaCommon\Dto\Site\SiteContactDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
+use DvsaCommon\Enum\AuthorisationForTestingMotAtSiteStatusCode;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Enum\BrakeTestTypeCode;
+use DvsaCommon\Enum\CountryCode;
+use DvsaCommon\Enum\EventTypeCode;
 use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommon\Enum\SiteContactTypeCode;
-use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommon\Utility\ArrayUtils;
-use DvsaCommon\Utility\TypeCheck;
-use DvsaCommonApi\Error\Message as ErrorMessage;
+use DvsaCommon\Utility\Hydrator;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\AbstractService;
 use DvsaCommonApi\Service\ContactDetailsService;
-use DvsaCommonApi\Service\Exception\BadRequestException;
-use DvsaCommonApi\Service\Exception\BadRequestExceptionWithMultipleErrors;
 use DvsaCommonApi\Service\Exception\NotFoundException;
+use DvsaEntities\Entity\AuthorisationForTestingMotAtSite;
+use DvsaEntities\Entity\AuthorisationForTestingMotAtSiteStatus;
 use DvsaEntities\Entity\BrakeTestType;
+use DvsaEntities\Entity\ContactDetail;
+use DvsaEntities\Entity\EventSiteMap;
+use DvsaEntities\Entity\FacilityType;
+use DvsaEntities\Entity\NonWorkingDayCountry;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteContactType;
+use DvsaEntities\Entity\SiteFacility;
 use DvsaEntities\Entity\SiteType;
-use DvsaEntities\Entity\NonWorkingDayCountry;
-use DvsaEntities\Repository;
+use DvsaEntities\Entity\VehicleClass;
+use DvsaEntities\Repository\AuthorisationForTestingMotAtSiteStatusRepository;
+use DvsaEntities\Repository\BrakeTestTypeRepository;
+use DvsaEntities\Repository\FacilityTypeRepository;
+use DvsaEntities\Repository\NonWorkingDayCountryRepository;
 use DvsaEntities\Repository\SiteContactTypeRepository;
 use DvsaEntities\Repository\SiteRepository;
+use DvsaEntities\Repository\SiteTestingDailyScheduleRepository;
 use DvsaEntities\Repository\SiteTypeRepository;
-use DvsaEntities\Repository\NonWorkingDayCountryRepository;
-use SiteApi\Model\SiteNumberGenerator;
+use DvsaEntities\Repository\VehicleClassRepository;
+use DvsaEventApi\Service\EventService;
 use SiteApi\Service\Mapper\SiteBusinessRoleMapMapper;
-use SiteApi\Service\Mapper\SiteMapper;
 use SiteApi\Service\Mapper\VtsMapper;
+use SiteApi\Service\Validator\SiteValidator;
 use SiteApi\Service\Validator\SiteValidatorBuilder;
 use Zend\Http\Request;
 
@@ -44,31 +61,60 @@ use Zend\Http\Request;
  */
 class SiteService extends AbstractService
 {
+    const ENGLAND_COUNTRY_CODE = 'GBENG';
+    const MONDAY = 1;
+    const FRIDAY = 5;
+    const SATURDAY = 6;
+    const SUNDAY = 7;
+
     use ExtractSiteTrait;
 
     const SITE_NUMBER_QUERY_PARAMETER = 'siteNumber';
     const SITE_NUMBER_REQUIRED_DISPLAY_MESSAGE = 'You need to enter a Site Number to perform the search';
     const SITE_NUMBER_INVALID_DATA_DISPLAY_MESSAGE = 'Site number should contain alphanumeric characters only';
 
-    /** @var AuthorisationServiceInterface $authService */
+    /**
+     * @var AuthorisationServiceInterface $authService
+     */
     protected $authService;
+    /**
+     * @var MotIdentityInterface
+     */
+    private $identity;
+    /**
+     * @var ContactDetailsService
+     */
+    private $contactService;
+    /**
+     * @var EventService $eventService
+     */
+    private $eventService;
     /** @var SiteRepository */
     private $repository;
     /** @var SiteTypeRepository */
     private $siteTypeRepository;
-    /** @var NonWorkingDayCountryRepository */
-    private $nonWorkingDayCountryRepository;
+    /** @var BrakeTestTypeRepository */
     private $brakeTestTypeRepository;
-    private $siteValidatorBuilder;
-    /** @var ContactDetailsService */
-    private $contactService;
     /** @var SiteContactTypeRepository */
     private $siteContactTypeRepository;
+    /** @var FacilityTypeRepository */
+    private $facilityTypeRepository;
+    /** @var VehicleClassRepository */
+    private $vehicleClassRepository;
+    /** @var AuthorisationForTestingMotAtSiteStatusRepository */
+    private $authForTestingMotStatusRepository;
+    /** @var SiteTestingDailyScheduleRepository */
+    private $siteTestingDailyScheduleRepository;
+    /** @var NonWorkingDayCountryRepository */
+    private $nonWorkingDayCountryRepository;
+
+    /**
+     * @var SiteValidatorBuilder
+     */
+    private $siteValidatorBuilder;
 
     /** @var VtsMapper */
     private $vtsMapper;
-    /** @var SiteMapper */
-    private $siteMapper;
 
     /** @var XssFilter */
     private $xssFilter;
@@ -77,96 +123,285 @@ class SiteService extends AbstractService
      * @var UpdateVtsAssertion
      */
     private $updateVtsAssertion;
+    /**
+     * @var SiteValidator
+     */
+    private $validator;
+    /**
+     * @var DateTimeHolder
+     */
+    private $dateTimeHolder;
 
     /**
      * @param \Doctrine\ORM\EntityManager $entityManager
+     * @param \DvsaAuthorisation\Service\AuthorisationServiceInterface $authService
+     * @param MotIdentityInterface $motIdentity
+     * @param \DvsaCommonApi\Service\ContactDetailsService $contactService
+     * @param EventService $eventService
+     * @param SiteTypeRepository $siteTypeRepository
      * @param \DvsaEntities\Repository\SiteRepository $repository
      * @param \DvsaEntities\Repository\SiteContactTypeRepository $siteContactTypeRepository
      * @param \DvsaEntities\Repository\BrakeTestTypeRepository $brakeTestTypeRepository
-     * @param $objectHydrator
-     * @param \DvsaAuthorisation\Service\AuthorisationServiceInterface $authService
-     * @param \SiteApi\Service\Mapper\SiteBusinessRoleMapMapper $positionMapper
-     * @param \DvsaCommonApi\Service\ContactDetailsService $contactService
+     * @param FacilityTypeRepository $facilityTypeRepository
+     * @param VehicleClassRepository $vehicleClassRepository
+     * @param AuthorisationForTestingMotAtSiteStatusRepository $authForTestingMotStatusRepository
+     * @param SiteTestingDailyScheduleRepository $siteTestingDailyScheduleRepository
+     * @param NonWorkingDayCountryRepository $nonWorkingDayCountryRepository
      * @param \DvsaCommonApi\Filter\XssFilter $xssFilter
+     * @param \SiteApi\Service\Mapper\SiteBusinessRoleMapMapper $positionMapper
      * @param UpdateVtsAssertion $updateVtsAssertion
+     * @param Hydrator $objectHydrator
+     * @param SiteValidator $validator
      */
     public function __construct(
         EntityManager $entityManager,
+        AuthorisationServiceInterface $authService,
+        MotIdentityInterface $motIdentity,
+        ContactDetailsService $contactService,
+        EventService $eventService,
         SiteTypeRepository $siteTypeRepository,
         SiteRepository $repository,
         SiteContactTypeRepository $siteContactTypeRepository,
-        Repository\BrakeTestTypeRepository $brakeTestTypeRepository,
+        BrakeTestTypeRepository $brakeTestTypeRepository,
+        FacilityTypeRepository $facilityTypeRepository,
+        VehicleClassRepository $vehicleClassRepository,
+        AuthorisationForTestingMotAtSiteStatusRepository $authForTestingMotStatusRepository,
+        SiteTestingDailyScheduleRepository $siteTestingDailyScheduleRepository,
         NonWorkingDayCountryRepository $nonWorkingDayCountryRepository,
-        $objectHydrator,
-        AuthorisationServiceInterface $authService,
-        SiteBusinessRoleMapMapper $positionMapper,
-        ContactDetailsService $contactService,
         XssFilter $xssFilter,
-        UpdateVtsAssertion $updateVtsAssertion
+        SiteBusinessRoleMapMapper $positionMapper,
+        UpdateVtsAssertion $updateVtsAssertion,
+        Hydrator $objectHydrator,
+        SiteValidator $validator
     ) {
         parent::__construct($entityManager);
-        $this->siteTypeRepository = $siteTypeRepository;
+
+        $this->authService = $authService;
+        $this->identity = $motIdentity;
+        $this->contactService = $contactService;
+        $this->eventService = $eventService;
+
         $this->repository = $repository;
+        $this->siteTypeRepository = $siteTypeRepository;
         $this->brakeTestTypeRepository = $brakeTestTypeRepository;
         $this->siteContactTypeRepository = $siteContactTypeRepository;
+        $this->facilityTypeRepository = $facilityTypeRepository;
+        $this->vehicleClassRepository = $vehicleClassRepository;
+        $this->authForTestingMotStatusRepository = $authForTestingMotStatusRepository;
+        $this->siteTestingDailyScheduleRepository = $siteTestingDailyScheduleRepository;
         $this->nonWorkingDayCountryRepository = $nonWorkingDayCountryRepository;
 
-        $this->objectHydrator = $objectHydrator;
-        $this->authService = $authService;
+        $this->xssFilter = $xssFilter;
         $this->positionMapper = $positionMapper;
-        $this->contactService = $contactService;
-        $this->xssFilter      = $xssFilter;
         $this->updateVtsAssertion = $updateVtsAssertion;
+        $this->objectHydrator = $objectHydrator;
 
         $this->vtsMapper = new VtsMapper();
-        $this->siteMapper = new SiteMapper();
 
         $this->siteValidatorBuilder = new SiteValidatorBuilder($updateVtsAssertion);
+
+        $this->dateTimeHolder = new DateTimeHolder;
+        $this->validator = $validator;
     }
 
     /**
-     * @param array $data
+     * @param VehicleTestingStationDto $dto
+     *
      * @return array
      * @throws \DvsaCommonApi\Service\Exception\NotFoundException
      */
-    public function create($data)
+    public function create(VehicleTestingStationDto $dto)
     {
         $this->authService->assertGranted(PermissionInSystem::VEHICLE_TESTING_STATION_CREATE);
 
-        $validator = $this->siteValidatorBuilder->buildCreateValidator();
-        $data      = $this->xssFilter->filterMultiple($data);
-        $validator->validate($data);
+        /** @var VehicleTestingStationDto $dto */
+        $dto = $this->xssFilter->filter($dto);
 
+        $this->validator->validate($dto);
+
+        if ($dto->isNeedConfirmation() === true) {
+            return null;
+        }
+
+        //  logical block :: create site
         /** @var SiteType $siteType */
-        $siteType = $this->siteTypeRepository->getByCode(SiteTypeCode::VEHICLE_TESTING_STATION);
+        $siteType = $this->siteTypeRepository->getByCode($dto->getType());
         /** @var BrakeTestType $brakeTestType */
         $brakeTestType = $this->brakeTestTypeRepository->getByCode(BrakeTestTypeCode::ROLLER);
 
-        $nonWorkingDayCountry = ArrayUtils::tryGet($data, 'nonWorkingDayCountry');
+        //  generate site number
+        $siteNumber = $this->repository->getNextSiteNumber();
 
         $site = new Site();
-        $site = $this->hydrateSite($site, $data);
+        $site
+            ->setName(empty($dto->getName()) ? $siteNumber : $dto->getName())
+            ->setSiteNumber($siteNumber)
+            ->setType($siteType)
+            ->setDualLanguage($dto->isDualLanguage())
+            ->setScottishBankHoliday($dto->isScottishBankHoliday())
+            ->setDefaultBrakeTestClass1And2($brakeTestType)
+            ->setDefaultServiceBrakeTestClass3AndAbove($brakeTestType)
+            ->setDefaultParkingBrakeTestClass3AndAbove($brakeTestType);
 
-        $site->setType($siteType);
-        $site->setDefaultBrakeTestClass1And2($brakeTestType);
-        $site->setDefaultServiceBrakeTestClass3AndAbove($brakeTestType);
-        $site->setDefaultParkingBrakeTestClass3AndAbove($brakeTestType);
+        $nonWorkingDayCountry = $this->getNonWorkingDayCountry(
+            $dto->isScottishBankHoliday() ? CountryCode::SCOTLAND : CountryCode::ENGLAND
+        );
+        $site->setNonWorkingDayCountry($nonWorkingDayCountry);
 
-        if (empty($nonWorkingDayCountry) === false) {
-            $nonWorkingDayCountry = $this->getNonWorkingDayCountry($nonWorkingDayCountry);
-            $site->setNonWorkingDayCountry($nonWorkingDayCountry);
+        //  logical block :: create contacts
+        /** @var SiteContactDto $contactDto */
+        foreach ($dto->getContacts() as $contactDto) {
+            /** @var SiteContactType $contactType */
+            $contactType = $this->siteContactTypeRepository->getByCode($contactDto->getType());
+
+            $contactDetails = $this->contactService->setContactDetailsFromDto(
+                $contactDto, new ContactDetail()
+            );
+
+            $site->setContact($contactDetails, $contactType);
         }
 
-        $this->setBusinessContact($site, $data);
-        $this->setCorrespondenceContact($site, $data);
+        //  logical block :: create event
+        //  (should be located before any persist, because somebody put flush in addEvent method)
+        $this->createSiteEvent(
+            $site,
+            EventTypeCode::DVSA_ADMINISTRATOR_CREATE_SITE,
+            sprintf(
+                EventDescription::DVSA_ADMINISTRATOR_CREATE_SITE,
+                $siteNumber,
+                $site->getName(),
+                $this->getUserName()
+            )
+        );
 
+        //  logical block :: create facilities
+        if (!empty($dto->getFacilities())) {
+            $this->createSiteFacility($site, $dto);
+        }
+
+        //  logical block :: create authorisation
+        if (!empty($dto->getTestClasses())) {
+            $this->createAuthorisationForTestingMotAtSite(
+                $site,
+                $dto,
+                AuthorisationForTestingMotAtSiteStatusCode::APPROVED
+            );
+        }
+
+        //  logical block :: create default opening hours
+        $this->mapDefaultOpenHoursTesting($site);
+
+        //  logical block :: store in db
         $this->repository->save($site);
 
-        $siteNumberGenerator = new SiteNumberGenerator();
-        $site->setSiteNumber($siteNumberGenerator->generate($site->getId()));
-        $this->repository->save($site);
+        return [
+            'id'         => $site->getId(),
+            'siteNumber' => $site->getSiteNumber(),
+        ];
+    }
 
-        return ['id' => $site->getId(), 'siteNumber' => $site->getSiteNumber()];
+    /**
+     * Create the default opening/closing time for a site
+     * Monday->Friday
+     * 9am->5pm
+     *
+     * @param Site $site
+     * @param Time $openTime
+     * @param Time $closeTime
+     */
+    private function mapDefaultOpenHoursTesting(Site $site, $openTime = null, $closeTime = null)
+    {
+        $openTime = $openTime === null ? new Time(9, 0, 0) : $openTime;
+        $closeTime = $closeTime === null ? new Time(17, 0, 0) : $closeTime;
+
+        for ($weekday = self::MONDAY; $weekday <= self::FRIDAY; $weekday++) {
+            $this->siteTestingDailyScheduleRepository->createOpeningHours($site, $weekday, $openTime, $closeTime);
+        }
+        $this->siteTestingDailyScheduleRepository->createOpeningHours($site, self::SATURDAY, null, null);
+        $this->siteTestingDailyScheduleRepository->createOpeningHours($site, self::SUNDAY, null, null);
+    }
+
+    /**
+     * Create the Site Facilities relation to the site
+     *
+     * @param Site $site
+     * @param VehicleTestingStationDto $dto
+     * @throws NotFoundException
+     */
+    private function createSiteFacility(Site $site, VehicleTestingStationDto $dto)
+    {
+        $facilities = [];
+        /** @var FacilityDto $facility */
+        foreach ($dto->getFacilities() as $facility) {
+            /** @var FacilityType $type */
+            $type = $this->facilityTypeRepository->getByCode($facility->getType()->getCode());
+
+            $siteFacility = new SiteFacility();
+            $siteFacility
+                ->setFacilityType($type)
+                ->setName($type->getName())
+                ->setVehicleTestingStation($site);
+
+            $this->entityManager->persist($siteFacility);
+
+            $facilities[] = $siteFacility;
+        }
+
+        if (!empty($facilities)) {
+            $site->setFacilities($facilities);
+        }
+    }
+
+    /**
+     * Create the Site authorisation and classes in relation to the site
+     *
+     * @param Site $site
+     * @param VehicleTestingStationDto $dto
+     * @param string $status
+     * @throws NotFoundException
+     */
+    private function createAuthorisationForTestingMotAtSite(Site $site, VehicleTestingStationDto $dto, $status)
+    {
+        foreach ($dto->getTestClasses() as $testClass) {
+            /** @var VehicleClass $vehicleClass */
+            $vehicleClass = $this->vehicleClassRepository->getByCode($testClass);
+            /** @var AuthorisationForTestingMotAtSiteStatus $authStatus */
+            $authStatus = $this->authForTestingMotStatusRepository->getByCode($status);
+
+            $auth = (new AuthorisationForTestingMotAtSite())
+                ->setVehicleClass($vehicleClass)
+                ->setSite($site)
+                ->setStatus($authStatus);
+
+            $this->entityManager->persist($vehicleClass);
+            $this->entityManager->persist($auth);
+
+            $site->addAuthorisationsForTestingMotAtSite($auth);
+        }
+    }
+
+    /**
+     * Create site event
+     *
+     * @param Site $site
+     * @param string $eventType
+     * @param string $eventDesc
+     *
+     * @throws \Exception
+     */
+    private function createSiteEvent(Site $site, $eventType, $eventDesc)
+    {
+        $event = $this->eventService->addEvent(
+            $eventType,
+            $eventDesc,
+            $this->dateTimeHolder->getCurrent(true)
+        );
+
+        $eventMap = (new EventSiteMap())
+            ->setEvent($event)
+            ->setSite($site);
+
+        $this->entityManager->persist($eventMap);
     }
 
     /**
@@ -186,10 +421,6 @@ class SiteService extends AbstractService
 
         $site = $this->repository->get($id);
 
-        if ($this->updateVtsAssertion->canUpdateName($id)) {
-            $site = $this->hydrateSite($site, $data);
-        }
-
         if ($this->updateVtsAssertion->canUpdateBusinessDetails($id)) {
             $this->setBusinessContact($site, $data);
         }
@@ -203,50 +434,27 @@ class SiteService extends AbstractService
         return ['id' => $site->getId()];
     }
 
-    public function getVehicleTestingStationData($id, $isNeedDto = false)
+    /**
+     * @param $id
+     * @return VehicleTestingStationDto
+     * @throws NotFoundException
+     */
+    public function getSite($id)
     {
         $this->authService->assertGrantedAtSite(PermissionAtSite::VEHICLE_TESTING_STATION_READ, $id);
 
         /** @var Site $site */
         $site = $this->repository->find((int)$id);
-        if (!$site) {
+        if ($site === null) {
             throw new NotFoundException('Site', $id);
         }
 
-        if ($isNeedDto === true) {
-            return $this->vtsMapper->toDto($site);
-        }
-
-        return $this->extractVehicleTestingStation($site);
-    }
-
-    /**
-     * @param $id int the site id we want to load back
-     *
-     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
-     *
-     * @return Array
-     */
-    public function getSiteData($id, $isNeedDto = false)
-    {
-        $this->authService->assertGrantedAtSite(PermissionAtSite::VEHICLE_TESTING_STATION_READ, $id);
-
-        /** @var \DvsaEntities\Entity\Site $site */
-        $site = $this->repository->find((int)$id);
-        if (!$site) {
-            throw new NotFoundException('Site', $id);
-        }
-
-        if ($isNeedDto === true) {
-            return $this->siteMapper->toDto($site);
-        }
-
-        return $this->extractSite($site);
+        return $this->vtsMapper->toDto($site);
     }
 
     public function getSiteAuthorisedClasses($siteId)
     {
-        $approvedVehicleClasses = $this->extractApprovedVehicleClasses($this->getSiteData($siteId));
+        $approvedVehicleClasses = $this->extractApprovedVehicleClasses($this->getSite($siteId));
         return $approvedVehicleClasses;
     }
 
@@ -256,10 +464,10 @@ class SiteService extends AbstractService
      *
      * @param $siteNumber
      *
-     * @return array
+     * @return VehicleTestingStationDto
      * @throws \DvsaCommonApi\Service\Exception\NotFoundException
      */
-    public function getVehicleTestingStationDataBySiteNumber($siteNumber, $isNeedDto = false)
+    public function getSiteBySiteNumber($siteNumber)
     {
         /** @var Site $site */
         $site = $this->repository->findOneBy(['siteNumber' => strtoupper(trim($siteNumber))]);
@@ -271,57 +479,7 @@ class SiteService extends AbstractService
             PermissionAtSite::VEHICLE_TESTING_STATION_READ, $site->getId()
         );
 
-        if ($isNeedDto === true) {
-            return $this->vtsMapper->toDto($site);
-        }
-
-        return $this->extractVehicleTestingStation($site);
-    }
-
-    public function findVehicleTestingStationsByPartialSiteNumber($partialSiteNumber, $maxResults)
-    {
-        //$this->authService->assertGranted(PermissionAtOrganisation::VEHICLE_TESTING_STATION_READ);
-
-        $fieldErrors = [];
-        $mainErrors = [];
-
-        if (!TypeCheck::isAlphaNumeric($partialSiteNumber)) {
-            $fieldErrors[] = new ErrorMessage(
-                self::SITE_NUMBER_INVALID_DATA_DISPLAY_MESSAGE,
-                BadRequestException::ERROR_CODE_INVALID_DATA,
-                ['siteNumber' => null]
-            );
-        }
-
-        // Send back any errors we have found
-        if ($fieldErrors) {
-            throw new BadRequestExceptionWithMultipleErrors($mainErrors, $fieldErrors);
-        }
-
-        $preparedPartialSiteNumber = $this->toUpperCaseStripOutNonAlphaNumeric($partialSiteNumber);
-        $results = $this->repository
-            ->findVehicleTestingStationsByPartialSiteNumber($preparedPartialSiteNumber, $maxResults);
-
-        return $this->extractVehicleTestingStations($results);
-    }
-
-    /**
-     * @param \DvsaEntities\Entity\Site $site
-     * @param $data
-     * @return \DvsaEntities\Entity\Site
-     */
-    private function hydrateSite(Site $site, $data)
-    {
-        if (isset($data['name'])) {
-            $site->setName($data['name']);
-        }
-
-        return $site;
-    }
-
-    private function toUpperCaseStripOutNonAlphaNumeric($string)
-    {
-        return strtoupper(preg_replace("/[^a-zA-Z0-9]+/", "", $string));
+        return $this->vtsMapper->toDto($site);
     }
 
     private function setBusinessContact(Site $site, $data)
@@ -359,20 +517,31 @@ class SiteService extends AbstractService
         return $this->nonWorkingDayCountryRepository->getOneByCode($countryCode);
     }
 
-    private function extractApprovedVehicleClasses($approvedVehicleClasses)
+    /**
+     * @param VehicleTestingStationDto $site
+     * @return array
+     */
+    private function extractApprovedVehicleClasses($site)
     {
-        $vtsApprovedClasses = [];
-        foreach ($approvedVehicleClasses['approvedVehicleClasses'] as $approvedClass) {
-            $vtsApprovedClasses[] = $approvedClass->getName();
-        }
+        $vtsApprovedClasses = $site->getTestClasses();
 
         $result = [];
         $allClasses = VehicleClassCode::getAll();
-        foreach ($allClasses as $class)
-        {
-            $result['class'. $class] =  in_array($class, $vtsApprovedClasses) ? AuthorisationForTestingMotStatusCode::QUALIFIED : null ;
+        foreach ($allClasses as $class) {
+            $result['class'. $class] = in_array($class, $vtsApprovedClasses)
+                ? AuthorisationForTestingMotStatusCode::QUALIFIED
+                : null;
         }
 
         return $result;
+    }
+
+    /**
+     * @return integer
+     * @description return ID from zend identity
+     */
+    private function getUserName()
+    {
+        return $this->identity->getUsername();
     }
 }

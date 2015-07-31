@@ -4,6 +4,7 @@ use SiteApi\Controller\DefaultBrakeTestsController;
 use SiteApi\Controller\EquipmentController;
 use SiteApi\Controller\MotTestInProgressController;
 use SiteApi\Controller\SiteContactController;
+use SiteApi\Controller\SiteController;
 use SiteApi\Controller\VehicleTestingStationAuthorisedClassesController;
 use SiteApi\Controller\SitePositionController;
 use SiteApi\Controller\SitePositionValidateController;
@@ -30,7 +31,7 @@ return [
         ],
         'factories' => [
             SiteSearchControllerFactory::class => SiteSearchControllerFactory::class,
-            SiteControllerFactory::class => SiteControllerFactory::class,
+            SiteController::class              => SiteControllerFactory::class,
         ],
     ],
     'router'      => [
@@ -97,19 +98,6 @@ return [
                     ],
                 ],
             ],
-            'site'                    => [
-                'type'    => 'Segment',
-                'options' => [
-                    'route'       => '/site/:id',
-                    'constraints' => [
-                        'id' => '[0-9]+',
-                    ],
-                    'defaults'    => [
-                        'controller' => SiteControllerFactory::class,
-                        'action'     => 'siteById'
-                    ],
-                ],
-            ],
             'vehicle-testing-station' => [
                 'type' => 'Segment',
                 'options' => [
@@ -118,7 +106,7 @@ return [
                         'id' => '[0-9]+',
                     ],
                     'defaults' => [
-                        'controller' => SiteControllerFactory::class,
+                        'controller' => SiteController::class,
                     ],
                 ],
                 'may_terminate' => true,
@@ -129,19 +117,6 @@ return [
                             'route' => '/authorised-classes',
                             'defaults' => [
                                 'controller' => VehicleTestingStationAuthorisedClassesController::class,
-                            ],
-                        ],
-                    ],
-                    'site'          => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'       => '/site/:sitenumber',
-                            'constraints' => [
-                                'sitenumber' => '[0-9a-zA-Z]+',
-                            ],
-                            'defaults'    => [
-                                'controller' => SiteControllerFactory::class,
-                                'action'     => 'findBySiteNumber'
                             ],
                         ],
                     ],

@@ -47,14 +47,19 @@ abstract class AbstractFormModel
         return !empty($this->errors);
     }
 
-    public function clearEmpty(Parameters $params)
+    protected function resetErrors()
+    {
+        $this->errors = [];
+    }
+
+    public function clearEmptyParams(Parameters $params)
     {
         $callback = function (&$item) use (&$callback) {
             if (is_array($item)) {
                 $item = array_filter($item, $callback);
             }
 
-            return !empty($item);
+            return !($item === null || $item === '');
         };
 
         $params->fromArray(array_filter($params->toArray(), $callback));

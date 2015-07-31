@@ -53,6 +53,7 @@ class EventTypeName
     const GROUP_A_TESTER_QUALIFICATION = 'Group A Tester Qualification';
     const GROUP_B_TESTER_QUALIFICATION = 'Group B Tester Qualification';
     const DVSA_ADMINISTRATOR_CREATE_AE = 'DVSA Administrator Create AE';
+    const DVSA_ADMINISTRATOR_CREATE_SITE = 'DVSA Administrator Create Site';
     const UPDATE_AE = 'Update AE';
 
     /**
@@ -104,6 +105,7 @@ class EventTypeName
             self::GROUP_A_TESTER_QUALIFICATION,
             self::GROUP_B_TESTER_QUALIFICATION,
             self::DVSA_ADMINISTRATOR_CREATE_AE,
+            self::DVSA_ADMINISTRATOR_CREATE_SITE,
             self::UPDATE_AE,
         ];
     }

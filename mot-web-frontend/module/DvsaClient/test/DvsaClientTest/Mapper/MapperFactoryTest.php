@@ -75,12 +75,7 @@ class MapperFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function test_VehicleTestingStation()
     {
-        $this->assertInstanceOf(\DvsaClient\Mapper\VehicleTestingStationMapper::class, $this->mapperFactory->VehicleTestingStation);
-    }
-
-    public function testVehicleTestingStationDto()
-    {
-        $this->assertInstanceOf(VehicleTestingStationDtoMapper::class, $this->mapperFactory->VehicleTestingStationDto);
+        $this->assertInstanceOf(\DvsaClient\Mapper\SiteMapper::class, $this->mapperFactory->Site);
     }
 
     /**

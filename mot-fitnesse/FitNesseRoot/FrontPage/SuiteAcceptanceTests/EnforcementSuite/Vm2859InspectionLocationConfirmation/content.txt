@@ -1,8 +1,8 @@
 '''In order to check the inspection location, I need to create a new site'''
 
 !| GenerateTestDataForOtherFitnesseTests |
-| siteNumber? | siteId? |
-| $siteNumber= | $siteId= |
+| siteName | siteNumber? | siteId? |
+| testSite | $siteNumber= | $siteId= |
 
 '''''Passing too much/insufficient information should reject the request:'''''
 
@@ -16,7 +16,7 @@
 
 !| Enforcement_InspectionLocation |
 | site id | location | call ok? | first error? | returned site name? | returned site id? | returned location? |
-| $siteNumber | | true | none | $siteNumber | $siteId | null |
+| $siteNumber | | true | none | testSite | $siteId | null |
 
 '''Create a new ad-hoc location based on a free text string:'''
 

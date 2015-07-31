@@ -2,12 +2,18 @@
 //  TODO IT LOOKS LIKE NEED TO BE REMOVED
 use Organisation\Controller\SlotsUsageController;
 
+/**
+ * @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $site
+ */
+
+$contact = $site->getContactByType(\DvsaCommon\Enum\SiteContactTypeCode::BUSINESS);
+
 $subTitle = implode(
         ', ', 
         [
-            $this->escapeHtml($this->site['address']->getAddressLine1()),
-            $this->escapeHtml($this->site['address']->getTown()),
-            $this->escapeHtml($this->site['address']->getPostCode()),
+            $this->escapeHtml($contact->getAddress()->getAddressLine1()),
+            $this->escapeHtml($contact->getAddress()->getTown()),
+            $this->escapeHtml($contact->getAddress()->getPostCode()),
         ]
 );
         

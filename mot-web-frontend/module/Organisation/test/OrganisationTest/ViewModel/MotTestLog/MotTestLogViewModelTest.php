@@ -3,7 +3,6 @@
 namespace OrganisationTest\ViewModel\MotTestLog;
 
 use DvsaCommon\Constants\SearchParamConst;
-use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Dto\Organisation\MotTestLogSummaryDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;

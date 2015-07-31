@@ -77,10 +77,6 @@ class VehicleTestingStationUrlBuilderTest extends \PHPUnit_Framework_TestCase
 
         //  --  vts && site routes  --
         $this->assertEquals(
-            'site',
-            $urlBuilder->site()->toString()
-        );
-        $this->assertEquals(
             'vehicle-testing-station/search',
             $urlBuilder::search()->toString()
         );
@@ -89,10 +85,6 @@ class VehicleTestingStationUrlBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             $urlVtsPart . '/' . self::VTS_ID,
             $urlBuilder::vtsById(self::VTS_ID)->toString()
-        );
-        $this->assertEquals(
-            $urlVtsPart . '/site/' . self::VTS_NUMBER,
-            $urlBuilder::vtsBySiteNr(self::VTS_NUMBER)->toString()
         );
         $this->assertEquals(
             $urlVtsPart . '/' . self::VTS_ID . '/test-in-progress',

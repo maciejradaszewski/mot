@@ -53,6 +53,7 @@ class EventTypeCode
     const GROUP_A_TESTER_QUALIFICATION = 'GATQ';
     const GROUP_B_TESTER_QUALIFICATION = 'GBTQ';
     const DVSA_ADMINISTRATOR_CREATE_AE = 'CAE';
+    const DVSA_ADMINISTRATOR_CREATE_SITE = 'CS';
     const UPDATE_AE = 'UAE';
 
     /**
@@ -104,6 +105,7 @@ class EventTypeCode
             self::GROUP_A_TESTER_QUALIFICATION,
             self::GROUP_B_TESTER_QUALIFICATION,
             self::DVSA_ADMINISTRATOR_CREATE_AE,
+            self::DVSA_ADMINISTRATOR_CREATE_SITE,
             self::UPDATE_AE,
         ];
     }

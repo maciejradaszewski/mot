@@ -4,15 +4,16 @@ namespace DvsaEntities\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Enum\MotTestStatusName;
-use DvsaCommon\Enum\SiteBusinessRoleCode;
+use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommonApi\Service\Exception\NotFoundException;
+use DvsaCommonApi\Service\SeqNumberService;
 use DvsaEntities\DqlBuilder\SearchParam\SiteSearchParam;
 use DvsaEntities\DqlBuilder\SiteSlotUsageParamDqlBuilder;
 use DvsaEntities\DqlBuilder\SlotUsageParamDqlBuilder;
@@ -21,7 +22,6 @@ use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteBusinessRole;
 use DvsaEntities\Entity\SiteBusinessRoleMap;
-use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * SiteRepository
@@ -54,12 +54,9 @@ class SiteRepository extends AbstractMutableRepository
     const STATUS_REJECTED = 'REJECTED';
     const STATUS_RETRACTED = 'RETRACTED';
 
-    const VEHICLE_CLASS_1 = '1';
-    const VEHICLE_CLASS_2 = '2';
-    const VEHICLE_CLASS_3 = '3';
-    const VEHICLE_CLASS_4 = '4';
-    const VEHICLE_CLASS_5 = '5';
-    const VEHICLE_CLASS_7 = '7';
+    const SEQ_CODE = 'SITENR';
+
+    const ERR_NEXT_SITE_NR_NOT_FOUND = "Next number of Site was not found";
 
     /**
      * Initializes a new <tt>EntityRepository</tt>.
@@ -117,23 +114,6 @@ class SiteRepository extends AbstractMutableRepository
         }
 
         return $site;
-    }
-
-    /**
-     * Find vehicle testing stations that match a (partial) site number
-     * @param string $partialSiteNumber
-     * @param int $maxResults
-     * @return ArrayCollection
-     */
-    public function findVehicleTestingStationsByPartialSiteNumber($partialSiteNumber, $maxResults = 100)
-    {
-        $dql = 'SELECT vts from DvsaEntities\Entity\Site vts '
-            . 'WHERE vts.siteNumber LIKE :SITE_NUMBER '
-            . 'ORDER BY vts.id ASC';
-        $query = $this->_em->createQuery($dql)->setMaxResults($maxResults);
-        $query->setParameter('SITE_NUMBER', $partialSiteNumber . '%');
-
-        return $query->getResult();
     }
 
     /**
@@ -212,18 +192,7 @@ class SiteRepository extends AbstractMutableRepository
 
     protected function makeVehicleClassesArray()
     {
-        $vehicleClasses = [
-            self::VEHICLE_CLASS_1,
-            self::VEHICLE_CLASS_2,
-            self::VEHICLE_CLASS_3,
-            self::VEHICLE_CLASS_4,
-            self::VEHICLE_CLASS_5,
-            self::VEHICLE_CLASS_7,
-        ];
-
-        foreach ($vehicleClasses as $vehicleClass) {
-            $this->vehicleClasses[strtolower($vehicleClass)] = $vehicleClass;
-        }
+        $this->vehicleClasses = array_combine(VehicleClassCode::getAll(), VehicleClassCode::getAll());
     }
 
     protected function getSqlBuilder($params)
@@ -609,5 +578,15 @@ class SiteRepository extends AbstractMutableRepository
 
         $string = preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
         return str_replace('-', ' ', $string); // Replaces multiple hyphens with single one.
+    }
+
+    public function getNextSiteNumber()
+    {
+        $number = (new SeqNumberService($this->getEntityManager()))->getNextSeqNumber(self::SEQ_CODE);
+        if ($number === null) {
+            throw new \Exception(self::ERR_NEXT_SITE_NR_NOT_FOUND);
+        }
+
+        return $number;
     }
 }

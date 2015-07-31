@@ -4,8 +4,8 @@ namespace EventTest\Controller;
 
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaClient\Mapper\EventMapper;
+use DvsaClient\Mapper\SiteMapper;
 use DvsaClient\MapperFactory;
-use DvsaCommon\Auth\NotLoggedInException;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
@@ -13,7 +13,6 @@ use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\Controller\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaClient\Mapper\OrganisationMapper;
-use DvsaClient\Mapper\VehicleTestingStationMapper;
 use DvsaClient\Mapper\PersonMapper;
 use Event\Controller\EventController;
 use Zend\ServiceManager\ServiceManager;
@@ -189,7 +188,7 @@ class EventControllerTest extends AbstractFrontendControllerTestCase
         $map = [
             [MapperFactory::ORGANISATION,
                 $this->getOrganisationMapperMock($expectedException)],
-            [MapperFactory::VEHICLE_TESTING_STATION,
+            [MapperFactory::SITE,
                 $this->getSiteMapperMock($expectedException)],
             [MapperFactory::PERSON, $this->getPersonMapperMock($expectedException)],
             [MapperFactory::EVENT, $this->getEventMapperMock($expectedException, $expectedExceptionDetail)],
@@ -225,7 +224,7 @@ class EventControllerTest extends AbstractFrontendControllerTestCase
 
     private function getSiteMapperMock($expectedException)
     {
-        $mapper = XMock::of(VehicleTestingStationMapper::class);
+        $mapper = XMock::of(SiteMapper::class);
 
         if ($expectedException) {
             $mapper->expects($this->any())

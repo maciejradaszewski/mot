@@ -48,17 +48,19 @@ class Vm2545VehicleTestClasses
 
     public function siteName()
     {
-        return $this->getFieldFromObject('name');
+        if (isset($this->result['data'])) {
+            /** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto */
+            $dto = \DvsaCommon\Utility\DtoHydrator::jsonToDto($this->result['data']);
+            return $dto->getName();
+        }
     }
 
     public function vehicleTestClasses()
     {
-        return $this->getFieldFromObject('roles');
-    }
-
-    private function getFieldFromObject($field)
-    {
-        return isset($this->result['data']['vehicleTestingStation'])
-            ? $this->result['data']['vehicleTestingStation'][$field] : '';
+        if (isset($this->result['data'])) {
+            /** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto */
+            $dto = \DvsaCommon\Utility\DtoHydrator::jsonToDto($this->result['data']);
+            return $dto->getTestClasses();
+        }
     }
 }

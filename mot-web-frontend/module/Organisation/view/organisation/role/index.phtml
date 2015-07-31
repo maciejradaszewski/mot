@@ -1,7 +1,6 @@
 <?php
 
-use Organisation\Controller\AuthorisedExaminerController;
-use Organisation\Controller\RoleController;
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 
 ?>
 <header class="content-header">
@@ -27,12 +26,7 @@ use Organisation\Controller\RoleController;
 <div class="text">
     <p class="lede">This process allows you to assign a role to an existing user.</p>
 </div>
-<form action="<?php echo $this->url(
-    RoleController::ROUTE_ROLES,
-    [
-        'id' => $id,
-    ]
-); ?>" method="POST">
+<form action="<?php echo AuthorisedExaminerUrlBuilderWeb::roles($id); ?>" method="POST">
     <fieldset>
         <legend class="form-title heading-large" id="">Username</legend>
         <?php echo $this->csrfToken() ?>
@@ -67,12 +61,9 @@ use Organisation\Controller\RoleController;
 
         <ul class="content-navigation__secondary">
             <li>
-                <a href="<?php echo $this->url(
-                    AuthorisedExaminerController::ROUTE_INDEX,
-                    [
-                        'id' => $id,
-                    ]
-                ); ?>">Cancel and return to <?php echo $this->escapeHtml($organisation->getName()); ?></a>
+                <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::of($id); ?>">
+                    Cancel and return to <?php echo $this->escapeHtml($organisation->getName()); ?>
+                </a>
             </li>
         </ul>
     </nav>

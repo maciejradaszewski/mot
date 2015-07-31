@@ -54,6 +54,7 @@ class PhoneFormModel extends AbstractFormModel
 
     public function isValid($type = null)
     {
+        $this->resetErrors();
         $field = $type ? sprintf(self::FIELD_CONTACT, $type, self::FIELD_NUMBER) :  self::FIELD_NUMBER;
 
         if (empty($this->getNumber())) {

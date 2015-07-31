@@ -234,7 +234,7 @@ class EmergencyLogValidator
     {
         if (!empty($value)) {
             try {
-                $this->serviceManager->get(SiteService::class)->getSiteData($value);
+                $this->serviceManager->get(SiteService::class)->getSite($value);
             } catch (\Exception $e) {
                 $this->addErrorMsg(self::ERR_SITE_INVALID);
             }

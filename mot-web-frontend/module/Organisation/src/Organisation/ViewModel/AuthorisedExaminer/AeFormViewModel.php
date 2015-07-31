@@ -49,5 +49,4 @@ class AeFormViewModel
         $this->cancelUrl = $url;
         return $this;
     }
-
 }

@@ -67,7 +67,7 @@ class EditSite
 
     public function result()
     {
-        return $this->result['data']['vehicleTestingStation'];
+        return $this->result['data'];
     }
 
     public function setId($value)

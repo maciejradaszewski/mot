@@ -12,7 +12,7 @@ use DvsaCommon\Date\Time;
 class SiteDailyOpeningHours
 {
 
-    private static $DAY_NAMES
+    public static $DAY_NAMES
         = [
             1 => 'Monday',
             2 => 'Tuesday',

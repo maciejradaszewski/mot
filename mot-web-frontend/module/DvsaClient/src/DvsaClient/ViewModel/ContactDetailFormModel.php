@@ -97,17 +97,6 @@ class ContactDetailFormModel extends AbstractFormModel
         $this->getPhoneModel()->addErrors($errors);
     }
 
-    public function isValid()
-    {
-        $isEmailValid = $this->getEmailModel()->isValid();
-        $isAddressValid = $this->getAddressModel()->isValid();
-        $isPhoneValid = $this->getPhoneModel()->isValid();
-
-        return $isPhoneValid
-            && $isAddressValid
-            && $isEmailValid;
-    }
-
     /**
      * @return EmailFormModel
      */

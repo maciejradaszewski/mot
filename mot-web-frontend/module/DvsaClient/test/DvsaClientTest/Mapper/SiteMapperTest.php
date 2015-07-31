@@ -2,81 +2,77 @@
 
 namespace DvsaClientTest\Mapper;
 
-use DvsaClient\Entity\VehicleTestingStation;
-use DvsaClient\Mapper\VehicleTestingStationMapper;
+use DvsaClient\Mapper\SiteMapper;
+use DvsaCommon\Dto\Site\SiteContactDto;
+use DvsaCommon\Dto\Site\SiteDto;
 use DvsaCommon\Dto\Site\SiteListDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilder;
+use DvsaCommon\Utility\DtoHydrator;
 
 /**
- * Class VehicleTestingStationMapperTest
+ * Class SiteMapperTest
  *
  * @package DvsaClientTest\Mapper
  */
-class VehicleTestingStationMapperTest extends AbstractMapperTest
+class SiteMapperTest extends AbstractMapperTest
 {
     const ORGANISATION_ID = 1;
 
-    /** @var $mapper VehicleTestingStationMapper */
+    /** @var $mapper SiteMapper */
     private $mapper;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->mapper = new VehicleTestingStationMapper($this->client);
-    }
-
-    public function testFetchAllForOrganisation()
-    {
-        $this->client->expects($this->once())
-            ->method('get')
-            ->willReturn(['data' => ['vehicleTestingStation' => $this->getSiteAsArray()]]);
-        $this->assertInstanceOf(
-            VehicleTestingStation::class,
-            $this->mapper->fetchAllForOrganisation(self::ORGANISATION_ID)[0]
-        );
+        $this->mapper = new SiteMapper($this->client);
     }
 
     public function testGetById()
     {
         $this->client->expects($this->once())
             ->method('get')
-            ->willReturn(['data' => ['vehicleTestingStation' => $this->getSiteAsArray()]]);
+            ->willReturn(['data' => DtoHydrator::dtoToJson((new VehicleTestingStationDto())->setName('Site1'))]);
 
         $this->assertSame(
             'Site1',
-            $this->mapper->getById(self::ORGANISATION_ID)['name']
-        );
-    }
-
-    public function testGetBySiteNumber()
-    {
-        $this->client->expects($this->once())
-            ->method('get')
-            ->willReturn(['data' => ['vehicleTestingStation' => $this->getSiteAsArray()]]);
-
-        $this->assertSame(
-            'Site1',
-            $this->mapper->getBySiteNumber(self::ORGANISATION_ID)['name']
+            $this->mapper->getById(self::ORGANISATION_ID)->getName()
         );
     }
 
     public function testCreate()
     {
+        $dto = (new VehicleTestingStationDto());
+
         $this->client->expects($this->once())
-            ->method('postJson')
+            ->method('post')
+            ->with(VehicleTestingStationUrlBuilder::vtsById(), DtoHydrator::dtoToJson($dto))
             ->willReturn(['data' => ['id' => self::ORGANISATION_ID]]);
 
         $this->assertSame(
-            self::ORGANISATION_ID,
-            $this->mapper->create([])
+            ['id' => self::ORGANISATION_ID],
+            $this->mapper->create($dto)
         );
+    }
+
+    public function testValidate()
+    {
+        $dto = (new VehicleTestingStationDto())
+            ->setIsNeedConfirmation(true);
+
+        $this->client->expects($this->once())
+            ->method('post')
+            ->with(VehicleTestingStationUrlBuilder::vtsById(), DtoHydrator::dtoToJson($dto))
+            ->willReturn(['data' => true]);
+
+        $this->assertTrue($this->mapper->validate($dto));
     }
 
     public function testUpdate()
     {
         $this->client->expects($this->once())
-            ->method('putJson')
+            ->method('put')
             ->willReturn(['data' => ['id' => self::ORGANISATION_ID]]);
 
         $this->assertSame(
@@ -85,10 +81,26 @@ class VehicleTestingStationMapperTest extends AbstractMapperTest
         );
     }
 
+    public function testUpdateContactDetails()
+    {
+        $dto = (new SiteContactDto())
+            ->setId(self::ORGANISATION_ID);
+
+        $this->client->expects($this->once())
+            ->method('put')
+            ->with(VehicleTestingStationUrlBuilder::contactUpdate(self::ORGANISATION_ID, $dto->getId()))
+            ->willReturn(['data' => ['id' => self::ORGANISATION_ID]]);
+
+        $this->assertSame(
+            ['data' => ['id' => self::ORGANISATION_ID]],
+            $this->mapper->updateContactDetails(self::ORGANISATION_ID, $dto)
+        );
+    }
+
     public function testSaveDefaultBrakeTests()
     {
         $this->client->expects($this->once())
-            ->method('putJson')
+            ->method('put')
             ->willReturn(['data' => ['id' => self::ORGANISATION_ID]]);
 
         $this->assertNull(

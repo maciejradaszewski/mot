@@ -8,6 +8,7 @@ use DvsaCommon\Dto\Event\EventFormDto;
 use DvsaCommon\Dto\Event\EventListDto;
 use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\SiteUrlBuilderWeb;
@@ -72,9 +73,11 @@ class EventViewModelTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(AuthorisedExaminerUrlBuilderWeb::class, $this->viewModel->getGoBackLink());
         $this->assertSame('/authorised-examiner/' . self::AE_ID, $this->viewModel->getGoBackLink()->toString());
 
+        $site = (new VehicleTestingStationDto())
+            ->setId(self::SITE_ID);
         $this->viewModel = new EventViewModel(
             new OrganisationDto(),
-            ['id' => self::SITE_ID],
+            $site,
             [],
             $this->getEventFormModel(),
             'site',
@@ -97,9 +100,11 @@ class EventViewModelTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(EventUrlBuilderWeb::class, $this->viewModel->getCurrentPage());
         $this->assertSame('/event/list/ae/' . self::AE_ID, $this->viewModel->getCurrentPage()->toString());
 
+        $site = (new VehicleTestingStationDto())
+            ->setId(self::SITE_ID);
         $this->viewModel = new EventViewModel(
             new OrganisationDto(),
-            ['id' => self::SITE_ID],
+            $site,
             [],
             $this->getEventFormModel(),
             'site',
@@ -131,9 +136,13 @@ class EventViewModelTest extends \PHPUnit_Framework_TestCase
             $this->viewModel->getTitle()
         );
 
+        $site = (new VehicleTestingStationDto())
+            ->setId(self::SITE_ID)
+            ->setSiteNumber(self::SITE_NUMBER)
+            ->setName(self::SITE_NAME);
         $this->viewModel = new EventViewModel(
             new OrganisationDto(),
-            ['siteNumber' => self::SITE_NUMBER, 'name' => self::SITE_NAME],
+            $site,
             [],
             $this->getEventFormModel(),
             'site',
@@ -172,9 +181,10 @@ class EventViewModelTest extends \PHPUnit_Framework_TestCase
 
     public function testEventViewModelSetGetSite()
     {
+        $result = new VehicleTestingStationDto();
         $this->viewModel = new EventViewModel(null, [], [], $this->getEventFormModel(), 'site', self::SITE_ID);
-        $this->assertInstanceOf(EventViewModel::class, $this->viewModel->setSite(['id' => self::SITE_ID]));
-        $this->assertArrayHasKey('id', $this->viewModel->getSite());
+        $this->assertInstanceOf(EventViewModel::class, $this->viewModel->setSite($result));
+        $this->assertSame($result, $this->viewModel->getSite());
     }
 
     public function testEventViewModelSetGetPerson()

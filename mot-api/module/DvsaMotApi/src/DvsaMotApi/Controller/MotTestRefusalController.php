@@ -3,9 +3,11 @@
 namespace DvsaMotApi\Controller;
 
 use DvsaCommon\Auth\Assertion\RefuseToTestAssertion;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Dto\Common\MotTestDto;
-use DvsaCommon\Dto\Person\PersonDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
+use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApi\Model\ApiResponse;
@@ -38,8 +40,15 @@ class MotTestRefusalController extends AbstractDvsaRestfulController implements 
         // Create the input vars from the post data
         $vehicleId = $data['vehicleId'];
 
-        $vtsData = $this->getVtsData($data['siteId']);
+        $site = $this->getVtsData($data['siteId']);
+        $vts = [
+            'name'         => '',
+            'address'      => '',
+            'siteNumber'   => '',
+            'dualLanguage' => false,
+        ];
 
+        /** @var MotAuthorisationServiceInterface $authorisationService */
         $authorisationService = $this->serviceLocator->get('DvsaAuthorisationService');
         $refuseToTestAssertion = new RefuseToTestAssertion($authorisationService);
         $refuseToTestAssertion->assertGranted($data['siteId']);
@@ -54,22 +63,24 @@ class MotTestRefusalController extends AbstractDvsaRestfulController implements 
         $reasonForRefusal = current($this->getCatalog()->getReasonsForRefusal(['id' => $rfrId]));
 
         //  --  Create the data for the mapper  --
+        if ($site) {
+            $contact = $site->getContactByType(SiteContactTypeCode::BUSINESS);
+            $vts = [
+                'name'         => $site->getName(),
+                'address'      => $contact->getAddress()->toArray(),
+                'siteNumber'   => $site->getSiteNumber(),
+                'dualLanguage' => $site->isDualLanguage(),
+            ];
+        }
         $person = $identity->getPerson();
         $mapperData = (new MotTestDto())
             ->setVehicle($vehicle)
             ->setTester((new PersonMapper())->toDto($person))
             ->setReasonForCancel($reasonForRefusal)
             ->setIssuedDate(DateUtils::nowAsUserDateTime())
-            ->setMake($vehicle->getMakeName())
+			->setMake($vehicle->getMakeName())
             ->setModel($vehicle->getModelName())
-            ->setVehicleTestingStation(
-                [
-                    'name'         => ArrayUtils::tryGet($vtsData, 'name', ''),
-                    'address'      => ArrayUtils::tryGet($vtsData, 'address', ''),
-                    'siteNumber'   => ArrayUtils::tryGet($vtsData, 'siteNumber', ''),
-                    'dualLanguage' => ArrayUtils::tryGet($vtsData, 'dualLanguage', false),
-                ]
-            );
+            ->setVehicleTestingStation($vts);
 
         //  -- Create the snapshot  --
         /** @var CertificateCreationService $certificateCreationService */
@@ -89,7 +100,7 @@ class MotTestRefusalController extends AbstractDvsaRestfulController implements 
      * Get the Vehicle Testing Station data.
      *
      * @param int $vtsId the vehicle testing station ID
-     * @return mixed this will return an associative array if VTS exists, false
+     * @return VehicleTestingStationDto|false this will return an associative array if VTS exists, false
      * otherwise
      */
     protected function getVtsData($vtsId)
@@ -97,7 +108,7 @@ class MotTestRefusalController extends AbstractDvsaRestfulController implements 
         if (is_int($vtsId) && $vtsId > 0) {
             /** @var SiteService $service */
             $service = $this->getServiceLocator()->get(SiteService::class);
-            return $service->getVehicleTestingStationData($vtsId);
+            return $service->getSite($vtsId);
         }
 
         return false;

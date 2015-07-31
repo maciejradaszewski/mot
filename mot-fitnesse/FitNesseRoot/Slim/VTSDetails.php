@@ -42,36 +42,32 @@ class VTSDetails
                 ['content', $result['content']['message']],
             ];
 
-        } elseif (isset($result['data']['vehicleTestingStation'])) {
-            $resultData = $result['data']['vehicleTestingStation'];
+        } elseif (isset($result['data'])) {
+            /** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto */
+            $dto = \DvsaCommon\Utility\DtoHydrator::jsonToDto($result['data']);
 
-            $org = $resultData['organisation'];
+            $org = $dto->getOrganisation();
 
-            $address = $resultData['address'];
-            $positions = $resultData['positions'];
+            $contact = $dto->getContactByType(\DvsaCommon\Enum\SiteContactTypeCode::BUSINESS);
+
+            $positions = $dto->getPositions();
 
             $queryData[] = [
-                ['id', $resultData['id']],
-                ['name', $resultData['name']],
+                ['id', $dto->getId()],
+                ['name', $dto->getName()],
 
-                ['organisation.id', $org['id']],
-                ['organisation.slots', $org['slotBalance']],
-                ['organisation.slotsWarning', $org['slotsWarning']],
+                ['organisation.id', $org->getId()],
+                ['organisation.slots', $org->getSlotBalance()],
+                ['organisation.slotsWarning', $org->getSlotWarning()],
 
-                ['address.id', $address['id']],
-                ['address.addressLine1', $address['addressLine1']],
-                ['address.postcode', $address['postcode']],
-                ['address.town', $address['town']],
-                ['address.country', $address['country']],
-                ['address.createdOn', $this->fieldExistOrValue($address, 'createdOn')],
-                ['address.lastUpdateOn', $this->fieldExistOrValue($address, 'lastUpdatedOn')],
-                ['address.version', $address['version']],
-                ['address.createdBy', $this->fieldExistOrValue($address, 'createdBy')],
-                ['address.lastUpdatedBy', $this->fieldExistOrValue($address, 'lastUpdatedBy')],
+                ['address.addressLine1', $contact->getAddress()->getAddressLine1()],
+                ['address.postcode', $contact->getAddress()->getPostcode()],
+                ['address.town', $contact->getAddress()->getTown()],
+                ['address.country', $contact->getAddress()->getCountry()],
 
-                ['roles', json_encode($resultData['roles'])],
+                ['roles', implode(',', $dto->getTestClasses())],
 
-                ['positions.1.role', $positions[0]['role']],
+                ['positions.1.role', $positions[0]->getRole()->getCode()],
             ];
         }
 

@@ -4,9 +4,11 @@ namespace SiteTest\Controller;
 
 use Core\Service\MotFrontendAuthorisationServiceInterface;
 use DvsaClient\Entity\SiteDailyOpeningHours;
-use DvsaClient\Mapper\VehicleTestingStationMapper;
+use DvsaClient\Mapper\SiteMapper;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Date\Time;
+use DvsaCommon\Dto\Site\SiteTestingDailyScheduleDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommonTest\Bootstrap;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaCommonTest\TestUtils\XMock;
@@ -47,7 +49,7 @@ class SiteTestingDailyScheduleControllerTest extends AbstractFrontendControllerT
 
     private function getVehicleTestingStationMapperMock()
     {
-        $vtsMapperMock = \DvsaCommonTest\TestUtils\XMock::of(VehicleTestingStationMapper::class);
+        $vtsMapperMock = \DvsaCommonTest\TestUtils\XMock::of(SiteMapper::class);
 
         $vtsMapperMock->expects($this->any())
             ->method('getById')
@@ -96,14 +98,18 @@ class SiteTestingDailyScheduleControllerTest extends AbstractFrontendControllerT
         $weeklySchedule = [];
 
         for ($i = 1; $i < 8; $i++) {
-            $tmp = new SiteDailyOpeningHours();
+            $tmp = new SiteTestingDailyScheduleDto();
             $tmp->setWeekday($i)
-                ->setOpenTime(Time::fromIso8601("09:00:00"))
-                ->setCloseTime(Time::fromIso8601("17:00:00"));
-            $weeklySchedule['siteOpeningHours'][] = $tmp;
+                ->setOpenTime("09:00:00")
+                ->setCloseTime("17:00:00");
+            $weeklySchedule[] = $tmp;
         }
 
-        return $weeklySchedule;
+        $dto = (new VehicleTestingStationDto())
+            ->setName('unknown')
+            ->setSiteTestingSchedule($weeklySchedule);
+
+        return $dto;
     }
 
     private function getDummyScheduleData()

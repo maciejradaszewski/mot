@@ -7,6 +7,7 @@ use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Dto\Common\DateDto;
 use DvsaCommon\Dto\Event\EventFormDto;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use DvsaCommon\Utility\DtoHydrator;
@@ -168,7 +169,7 @@ class EventController extends AbstractAuthActionController
      *
      * @param int       $siteId
      * @param string    $type
-     * @return array|null
+     * @return VehicleTestingStationDto|null
      */
     protected function getSite($siteId, $type)
     {
@@ -176,7 +177,7 @@ class EventController extends AbstractAuthActionController
             return null;
         }
         try {
-            return $this->getMapperFactory()->VehicleTestingStation->getById($siteId);
+            return $this->getMapperFactory()->Site->getById($siteId);
         } catch (RestApplicationException $e) {
             $this->addErrorMessages($e->getDisplayMessages());
         }

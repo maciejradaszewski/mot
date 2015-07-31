@@ -1,10 +1,11 @@
 <?php
 
-use Site\Controller\VehicleTestingStationController;
 use Site\Controller\RoleController;
+use Site\Controller\SiteController;
 use Site\Factory\Controller\RoleControllerFactory;
 use Site\Controller\SiteTestingDailyScheduleController;
 use Site\Factory\Controller\SiteSearchControllerFactory;
+use Site\Factory\Controller\SiteControllerFactory;
 
 return [
     'router'       => [
@@ -51,7 +52,7 @@ return [
                         'id' => '[0-9]+',
                     ],
                     'defaults'    => [
-                        'controller' => VehicleTestingStationController::class,
+                        'controller' => SiteController::class,
                         'action'     => 'index',
                     ],
                 ],
@@ -64,7 +65,7 @@ return [
                         'id' => '[0-9]+',
                     ],
                     'defaults'    => [
-                        'controller' => VehicleTestingStationController::class,
+                        'controller' => SiteController::class,
                         'action'     => 'edit',
                     ],
                 ],
@@ -77,7 +78,7 @@ return [
                         'id' => '[0-9]+',
                     ],
                     'defaults'    => [
-                        'controller' => VehicleTestingStationController::class,
+                        'controller' => SiteController::class,
                         'action'     => 'contact-details',
                     ],
                 ],
@@ -110,7 +111,7 @@ return [
                         'sitenumber' => '[0-9a-zA-Z]+',
                     ],
                     'defaults'    => [
-                        'controller' => VehicleTestingStationController::class,
+                        'controller' => SiteController::class,
                         'action'     => 'index',
                     ],
                 ],
@@ -127,8 +128,21 @@ return [
                         'options' => [
                             'route'    => '/create',
                             'defaults' => [
-                                'controller' => VehicleTestingStationController::class,
+                                'controller' => SiteController::class,
                                 'action'     => 'create',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'confirmation' => [
+                                'type'    => 'literal',
+                                'options' => [
+                                    'route'    => '/confirmation',
+                                    'defaults' => [
+                                        'controller' => SiteController::class,
+                                        'action'     => 'confirmation',
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -138,7 +152,7 @@ return [
                             'route'    => '/:id/configure-brake-test-defaults',
                             'defaults' => [
                                 'id'         => '[0-9]+',
-                                'controller' => VehicleTestingStationController::class,
+                                'controller' => SiteController::class,
                                 'action'     => 'configureBrakeTestDefaults'
                             ],
                         ],
@@ -172,13 +186,13 @@ return [
     ],
     'controllers'  => [
         'invokables' => [
-            VehicleTestingStationController::class => VehicleTestingStationController::class,
             SiteTestingDailyScheduleController::class => SiteTestingDailyScheduleController::class,
         ],
-        'factories' => [
-            RoleController::class => RoleControllerFactory::class,
-            SiteSearchControllerFactory::class => SiteSearchControllerFactory::class,
-        ]
+        'factories'  => [
+            RoleController::class                  => RoleControllerFactory::class,
+            SiteSearchControllerFactory::class     => SiteSearchControllerFactory::class,
+            SiteController::class                  => SiteControllerFactory::class,
+        ],
     ],
     'view_manager' => [
         'template_path_stack' => [

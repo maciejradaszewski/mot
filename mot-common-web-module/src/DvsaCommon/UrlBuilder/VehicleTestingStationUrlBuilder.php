@@ -22,7 +22,6 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
     const STATUS = '/status';
 
     const VTS_BY_ID = 'vehicle-testing-station[/:id]';
-    const VTS_BY_SITE_NR = '/site/:sitenumber';
     const VTS_TEST_IN_PROGRESS = '/test-in-progress';
     const VTS_DEFAULT_BRAKE_TESTS = '/default-brake-tests';
 
@@ -31,10 +30,7 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
 
     const SEARCH = 'vehicle-testing-station/search';
 
-    const SITE = 'site[/:siteId]';
-
     protected $routesStructure = [
-        self::SITE                                      => '',
         self::VEHICLE_TESTING_STATION_APPLICATION_START => '',
         self::VEHICLE_TESTING_STATION_APPLICATION       => [
             self::APPLICANT_DETAILS               => '',
@@ -48,7 +44,6 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
             self::STATUS                          => '',
         ],
         self::VTS_BY_ID                                 => [
-            self::VTS_BY_SITE_NR          => '',
             self::VTS_TEST_IN_PROGRESS    => '',
             self::VTS_DEFAULT_BRAKE_TESTS => '',
             self::VTS_CONTACT             => [
@@ -117,11 +112,6 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
         return $this->appendRoutesAndParams(self::STATUS);
     }
 
-    public function site()
-    {
-        return $this->appendRoutesAndParams(self::SITE);
-    }
-
     public static function search()
     {
         return (new self())->appendRoutesAndParams(self::SEARCH);
@@ -131,13 +121,6 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
     {
         return self::of()->appendRoutesAndParams(self::VTS_BY_ID)
             ->routeParam('id', $id);
-    }
-
-    public static function vtsBySiteNr($siteNr = null)
-    {
-        return self::vtsById()
-            ->appendRoutesAndParams(self::VTS_BY_SITE_NR)
-            ->routeParam('sitenumber', $siteNr);
     }
 
     public static function testInProgress($id)

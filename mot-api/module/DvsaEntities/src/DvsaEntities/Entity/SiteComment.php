@@ -18,7 +18,7 @@ class SiteComment extends Entity
     /**
      * @var \DvsaEntities\Entity\Site
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Site", inversedBy="comment")
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Site", inversedBy="siteComments")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="site_id", referencedColumnName="id")
      * })
