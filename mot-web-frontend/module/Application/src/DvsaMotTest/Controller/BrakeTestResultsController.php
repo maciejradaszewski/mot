@@ -253,7 +253,7 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
     {
         $motTestNumber = $this->getMotTestNumber();
         /** @var MotTestDto $motTest */
-        $motTest = $this->getMinimalMotTestFromApi($motTestNumber);
+        $motTest = $this->getMotTestFromApi($motTestNumber);
 
         $this->getPerformMotTestAssertion()->assertGranted($motTest);
 

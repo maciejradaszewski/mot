@@ -47,7 +47,7 @@ if (!$this->isManySites) {
                         
                         <?php if($item->isAllowEdit()) : ?>
                             <form method="POST" style="display:inline-block"
-                                  action="<?php echo $this->url('replacement-certificate'); ?>">
+                                  action="<?php echo $this->url('mot-test/replacement-certificate', ['motTestNumber' => $motTestNumber]); ?>">
                                 <?php echo $this->csrfToken() ?>
                                 <input type="hidden" name="action" value="edit-certificate"/>
                                 <input type="hidden" name="motTestNumber" value="<?php echo $this->escapeHtmlAttr($motTestNumber); ?>"/>

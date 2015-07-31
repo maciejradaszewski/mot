@@ -81,7 +81,7 @@ $this->layout()->setVariable('pageTitle', $buttonAndPageTitle);
         <button class="button" name="submit"><?php echo $buttonAndPageTitle; ?></button>
         <ul class="content-navigation__secondary">
             <li>
-                <a id="cancel-link" href="<?php echo $this->url('replacement-certificate', ['id' => $id]) ?> ">Cancel and return to certificate</a>
+                <a id="cancel-link" href="<?php echo $this->url('mot-test/replacement-certificate', ['id' => $id, 'motTestNumber' => $motTestNumber]) ?> ">Cancel and return to certificate</a>
             </li>
         </ul>
     </nav>

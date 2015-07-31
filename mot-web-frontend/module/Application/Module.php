@@ -163,7 +163,7 @@ class Module implements
                 'LocationSelectContainerHelper'           => LocationSelectContainerFactory::class,
                 AuthorisedClassesService::class           => AuthorisedClassesServiceFactory::class,
                 VehicleSearchResult::class                => VehicleSearchResultFactory::class,
-                VehicleSearchService::class               => VehicleSearchServiceFactory::class
+                VehicleSearchService::class               => VehicleSearchServiceFactory::class,
             ],
             'aliases'    => [
                 \Zend\Authentication\AuthenticationService::class => 'ZendAuthenticationService'

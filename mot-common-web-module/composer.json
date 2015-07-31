@@ -3,16 +3,13 @@
     "require": {
         "zendframework/zendframework": "~2.4.4",
         "dvsa/dvsa-document-module": "~1.1",
-        "dvsa/feature-toggle": "~1.0"
+        "dvsa/feature-toggle": "~1.0",
+        "dvsa/dvsa-doctrine-module": "~1.1"
     },
     "repositories": [
         {
-        "type": "git",
-        "url": "git@gitlab.clb.npm:mot/featuretoggle.git"
-        },
-        {
-            "type": "git",
-            "url": "http://gitlab.clb.npm/sc/dvsa-document-module.git"
+            "type": "composer",
+            "url": "http://artifacts.mot.npm"
         }
     ],
     "autoload": {

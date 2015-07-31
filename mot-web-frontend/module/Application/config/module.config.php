@@ -681,65 +681,65 @@ return [
                             ],
                         ],
                     ],
-                ],
-            ],
-            'replacement-certificate'                     => [
-                'type'          => 'Segment',
-                'options'       => [
-                    'route'       => '/replacement-certificate[/:id]',
-                    'constraints' => [
-                        'id' => '[0-9]+',
-                    ],
-                    'defaults'    => [
-                        'controller' => MotTest\ReplacementCertificateController::class,
-                        'action'     => 'replacementCertificate',
-                    ],
-                ],
-                'may_terminate' => 'true',
-                'child_routes'  => [
-                        'select-model' => [
-                            'type'    => 'Segment',
-                            'options' => [
-                                'route'    => '/select-model[/:makeCode]',
-                                'constraints' => [
-                                    'makeCode' => '[0-9a-zA-Z-_]+',
+                    'replacement-certificate'                     => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/replacement-certificate[/:id]',
+                            'constraints' => [
+                                'id' => '[0-9]+',
+                            ],
+                            'defaults'    => [
+                                'controller' => MotTest\ReplacementCertificateController::class,
+                                'action'     => 'replacementCertificate',
+                            ],
+                        ],
+                        'may_terminate' => 'true',
+                        'child_routes'  => [
+                            'select-model' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/select-model[/:makeCode]',
+                                    'constraints' => [
+                                        'makeCode' => '[0-9a-zA-Z-_]+',
+                                    ]
                                 ]
-                            ]
-                        ],
-                        'other-vehicle' => [
-                            'type'    => 'Segment',
-                            'options' => [
-                                'route'    => '/other-vehicle[/:makeCode]',
-                                'constraints' => [
-                                    'makeCode' => '[0-9a-zA-Z-_]+',
-                                ],
-                                'defaults' => [
-                                    'controller' => MotTest\ReplacementCertificateController::class,
-                                    'action'     => 'otherVehicle',
+                            ],
+                            'other-vehicle' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/other-vehicle[/:makeCode]',
+                                    'constraints' => [
+                                        'makeCode' => '[0-9a-zA-Z-_]+',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => MotTest\ReplacementCertificateController::class,
+                                        'action'     => 'otherVehicle',
+                                    ],
                                 ],
                             ],
-                        ],
-                        'summary' => [
-                            'type'    => 'Segment',
-                            'options' => [
-                                'route'    => '/summary',
-                                'defaults' => [
-                                    'controller' => MotTest\ReplacementCertificateController::class,
-                                    'action'     => 'review',
+                            'summary' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/summary',
+                                    'defaults' => [
+                                        'controller' => MotTest\ReplacementCertificateController::class,
+                                        'action'     => 'review',
+                                    ],
                                 ],
                             ],
-                        ],
-                        'finish'  => [
-                            'type'    => 'Segment',
-                            'options' => [
-                                'route'    => '/finish/:motTestNumber',
-                                'defaults' => [
-                                    'controller' => MotTest\ReplacementCertificateController::class,
-                                    'action'     => 'finish',
+                            'finish'  => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/finish',
+                                    'defaults' => [
+                                        'controller' => MotTest\ReplacementCertificateController::class,
+                                        'action'     => 'finish',
+                                    ],
                                 ],
                             ],
                         ],
                     ],
+                ],
             ],
             'mot-test-certificate'                        => [
                 'type'    => 'segment',

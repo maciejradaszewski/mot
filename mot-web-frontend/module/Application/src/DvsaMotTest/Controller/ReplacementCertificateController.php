@@ -68,16 +68,17 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
 
         $id = $this->params()->fromRoute('id', null);
         $makeCode = $this->params()->fromRoute('makeCode', null);
+        $motTestNumber = $this->params()->fromRoute('motTestNumber', 0);
 
         if ($this->getRequest()->isPost()) {
             if ($id === null) {
                 return $this->createDraft($this->params()->fromPost('motTestNumber'));
             }
 
-            return $this->updateDraft($id);
+            return $this->updateDraft($id, $motTestNumber);
         }
 
-        return $this->showDraft($id, $makeCode);
+        return $this->showDraft($id, $motTestNumber, $makeCode);
     }
 
     /**
@@ -88,6 +89,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
         $this->assertGranted(PermissionInSystem::CERTIFICATE_REPLACEMENT);
 
         $id = $this->params()->fromRoute('id', 0);
+        $motTestNumber = $this->params()->fromRoute('motTestNumber', 0);
 
         /** @var \Zend\Http\Request $request */
         $request = $this->getRequest();
@@ -99,7 +101,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
         }
 
         //  --  get draft data from Api --
-        $draft = $this->getDraftData($id);
+        $draft = $this->getDraftData($id, $motTestNumber);
         $motTestNumber = ArrayUtils::tryGet($draft, 'motTestNumber');
 
         //  --  get mottest data from Api --
@@ -120,7 +122,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
                         $diffTesterReasonCode = $this->params()->fromPost("reasonForDifferentTester");
                         $data = ['reasonForDifferentTester' => $diffTesterReasonCode];
                         $this->getRestClient()->put(
-                            UrlBuilder::replacementCertificateDraft($id),
+                            UrlBuilder::replacementCertificateDraft($id, $motTestNumber),
                             $data
                         );
                     }
@@ -129,7 +131,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
                 $otp = $this->params()->fromPost("oneTimePassword");
                 $data = ['oneTimePassword' => $otp];
                 $this->getRestClient()->post(
-                    UrlBuilder::replacementCertificateDraftApply($id),
+                    UrlBuilder::replacementCertificateDraftApply($id, $motTestNumber),
                     $data
                 );
 
@@ -242,15 +244,16 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
 
         $id = $this->params()->fromRoute('id', null);
         $makeCode = $this->params()->fromRoute('makeCode', null);
+        $motTestNumber = $this->params()->fromRoute('motTestNumber', 0);
 
-        $draft = $this->getDraftData($id);
+        $draft = $this->getDraftData($id, $motTestNumber);
 
         if ($this->getRequest()->isPost()) {
             if ($id === null) {
                 return $this->createDraft($this->params()->fromPost('motTestNumber'));
             }
 
-            return $this->updateDraft($id);
+            return $this->updateDraft($id, $motTestNumber);
         }
 
         $viewData = $this->buildViewData($draft, $makeCode);
@@ -260,7 +263,8 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
             [
                 'isAdmin' => $this->hasAdminRights(),
                 'isTester' => $this->hasTesterRights(),
-                'id' => $id
+                'id' => $id,
+                'motTestNumber' => $motTestNumber,
             ]
         );
 
@@ -277,19 +281,20 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
     private function createDraft($motTestNumber)
     {
         $draftId = $this->getRestClient()->post(
-            UrlBuilder::replacementCertificateDraft(),
+            UrlBuilder::replacementCertificateDraft(null, $motTestNumber),
             ['motTestNumber' => $motTestNumber]
         )['data']['id'];
 
-        return $this->redirectToDraft($draftId);
+        return $this->redirectToDraft($draftId, $motTestNumber);
     }
 
     /**
-     * @param $id
+     * @param string $id
+     * @param string $motTestNumber
      *
      * @return null|\Zend\Http\Response|ViewModel
      */
-    private function updateDraft($id)
+    private function updateDraft($id, $motTestNumber)
     {
         $action = $this->params()->fromPost('action');
         $result = $this->getUpdateData($action);
@@ -299,11 +304,11 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
             if ($action == 'updateMake') {
                 $make = $result['make'];
                 if ($make == self::MAKE_MODEL_OTHER_VALUE) {
-                    return $this->redirect()->toRoute('replacement-certificate/other-vehicle', ['id' => $id]);
+                    return $this->redirect()->toRoute('mot-test/replacement-certificate/other-vehicle', ['id' => $id, 'motTestNumber' => $motTestNumber]);
                 } else {
                     return $this->redirect()->toRoute(
-                        'replacement-certificate/select-model',
-                        ['id' => $id, 'makeCode' => $result['make']]
+                        'mot-test/replacement-certificate/select-model',
+                        ['id' => $id, 'makeCode' => $result['make'], 'motTestNumber' => $motTestNumber]
                     );
                 }
             }
@@ -320,8 +325,8 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
 
                 if ($model == self::MAKE_MODEL_OTHER_VALUE) {
                     return $this->redirect()->toRoute(
-                        'replacement-certificate/other-vehicle',
-                        ['id' => $id, 'makeCode' => $make]
+                        'mot-test/replacement-certificate/other-vehicle',
+                        ['id' => $id, 'makeCode' => $make, 'motTestNumber' => $motTestNumber]
                     );
                 }
             }
@@ -336,7 +341,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
 
                     if (!$odometerForm->isValid()) {
                         $this->addErrorMessages(MotTestController::ODOMETER_FORM_ERROR_MESSAGE);
-                        return $this->redirect()->toUrl(UrlBuilderWeb::replacementCertificate($id));
+                        return $this->redirect()->toUrl(UrlBuilderWeb::replacementCertificate($id, $motTestNumber));
                     }
 
                     if ($odometerReadingParams['resultType'] !== OdometerReadingResultType::OK) {
@@ -348,7 +353,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
                 }
 
                 $this->getRestClient()->put(
-                    UrlBuilder::replacementCertificateDraft($id),
+                    UrlBuilder::replacementCertificateDraft($id, $motTestNumber),
                     $result
                 );
             } catch (ValidationException $ve) {
@@ -362,16 +367,16 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
             }
         }
 
-        $apiUrl = UrlBuilder::replacementCertificateDraftDiff($id);
+        $apiUrl = UrlBuilder::replacementCertificateDraftDiff($id, $motTestNumber);
         $diff = $this->getRestClient()->get($apiUrl)['data'];
 
         if (empty($diff)) {
             $this->addErrorMessages(self::INTACT_CERT_DETAIL);
         } elseif ($action === 'updateCertificate') {
-            return $this->redirect()->toUrl(UrlBuilderWeb::replacementCertificateSummary($id));
+            return $this->redirect()->toUrl(UrlBuilderWeb::replacementCertificateSummary($id, $motTestNumber));
         }
 
-        return $this->redirectToDraft($id);
+        return $this->redirectToDraft($id, $motTestNumber);
     }
 
     /**
@@ -443,25 +448,28 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
     }
 
     /**
-     * @param $id
+     * @param string $id
+     * @param string $motTestNumber
      *
      * @return mixed
      */
-    private function getDraftData($id)
+    private function getDraftData($id, $motTestNumber)
     {
-        $apiPath = UrlBuilder::replacementCertificateDraft($id);
+        $apiPath = UrlBuilder::replacementCertificateDraft($id, $motTestNumber);
 
-        return ArrayUtils::tryGet($this->getRestClient()->get($apiPath), 'data');
+        return ArrayUtils::tryGet($this->getRestClient()->get((string) $apiPath), 'data');
     }
 
     /**
      * @param string $id
-     * @param bool $makeCode
+     * @param string $motTestNumber
+     * @param bool   $makeCode
+     *
      * @return ViewModel
      */
-    private function showDraft($id, $makeCode = false)
+    private function showDraft($id, $motTestNumber, $makeCode = false)
     {
-        $draft = $this->getDraftData($id);
+        $draft = $this->getDraftData($id, $motTestNumber);
         $viewData = $this->buildViewData($draft, $makeCode);
 
         $viewData = array_merge(
@@ -496,13 +504,14 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
     }
 
     /**
-     * @param $id
+     * @param string $id
+     * @param string $motTestNumber
      *
      * @return \Zend\Http\Response
      */
-    private function redirectToDraft($id)
+    private function redirectToDraft($id, $motTestNumber)
     {
-        return $this->redirect()->toUrl(UrlBuilderWeb::replacementCertificate($id));
+        return $this->redirect()->toUrl(UrlBuilderWeb::replacementCertificate($id, $motTestNumber));
     }
 
     /**

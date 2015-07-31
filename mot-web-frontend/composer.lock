@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c690ae8ccecbcf2bb48ba423b14f63c9",
+    "hash": "2d7666b71035a75fc8c9fe4a9162061e",
     "packages": [
         {
             "name": "cpms/client",
@@ -158,16 +158,16 @@
         },
         {
             "name": "doctrine/cache",
-            "version": "v1.4.0",
+            "version": "v1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/cache.git",
-                "reference": "2346085d2b027b233ae1d5de59b07440b9f288c8"
+                "reference": "c9eadeb743ac6199f7eec423cb9426bc518b7b03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/cache/zipball/2346085d2b027b233ae1d5de59b07440b9f288c8",
-                "reference": "2346085d2b027b233ae1d5de59b07440b9f288c8",
+                "url": "https://api.github.com/repos/doctrine/cache/zipball/c9eadeb743ac6199f7eec423cb9426bc518b7b03",
+                "reference": "c9eadeb743ac6199f7eec423cb9426bc518b7b03",
                 "shasum": ""
             },
             "require": {
@@ -178,13 +178,13 @@
             },
             "require-dev": {
                 "phpunit/phpunit": ">=3.7",
-                "predis/predis": "~0.8",
+                "predis/predis": "~1.0",
                 "satooshi/php-coveralls": "~0.6"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4.x-dev"
+                    "dev-master": "1.5.x-dev"
                 }
             },
             "autoload": {
@@ -224,7 +224,7 @@
                 "cache",
                 "caching"
             ],
-            "time": "2015-01-15 20:38:55"
+            "time": "2015-04-15 00:11:59"
         },
         {
             "name": "doctrine/collections",
@@ -844,6 +844,36 @@
                 "zf2"
             ],
             "time": "2015-06-17 16:09:25"
+        },
+        {
+            "name": "dvsa/dvsa-doctrine-module",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.clb.npm:mot/dvsa-doctrine-module.git",
+                "reference": "b6abefa1d1585acc20fff015798415eebef7ee15"
+            },
+            "require": {
+                "doctrine/cache": "~1.4",
+                "zendframework/zend-servicemanager": "~2.3"
+            },
+            "type": "module",
+            "autoload": {
+                "psr-4": {
+                    "DvsaDoctrineModule\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Kainos",
+                    "homepage": "https://www.kainos.com"
+                }
+            ],
+            "description": "DVSA Doctrine Module",
+            "time": "2015-07-29 15:15:11"
         },
         {
             "name": "dvsa/dvsa-document-module",

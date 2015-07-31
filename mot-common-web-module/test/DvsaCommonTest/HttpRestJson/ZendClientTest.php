@@ -1,7 +1,7 @@
 <?php
 namespace DvsaCommonTest\HttpRestJson;
 
-use DvsaCommon\HttpRestJson\Client;
+use DvsaCommon\HttpRestJson\ZendClient;
 use DvsaFeature\FeatureToggles;
 use PHPUnit_Framework_Assert;
 use PHPUnit_Framework_TestCase;
@@ -10,11 +10,9 @@ use Zend\Http\Request;
 use Zend\Http\Response;
 
 /**
- * Class ClientTest
- *
  * @package DvsaCommonTest\HttpRestJson
  */
-class ClientTest extends PHPUnit_Framework_TestCase
+class ZendClientTest extends PHPUnit_Framework_TestCase
 {
     const API_URL = "http://test-url.com/";
     const RESOURCE_PATH = "letest";
@@ -297,7 +295,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
                             )
                         );
 
-        $client = new Client($httpClientMock, self::API_URL, null, null, uniqid());
+        $client = new ZendClient($httpClientMock, self::API_URL, null, null, uniqid());
 
         return $client;
     }

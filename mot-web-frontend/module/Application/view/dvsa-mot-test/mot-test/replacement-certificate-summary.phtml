@@ -54,7 +54,7 @@ if ($motTest instanceof MotTestDto) :
     );
     ?>
 
-    <form action="<?php echo UrlBuilderWeb::replacementCertificateSummary($draftId); ?>" method="POST">
+    <form action="<?php echo UrlBuilderWeb::replacementCertificateSummary($draftId, $motTest->getMotTestNumber()); ?>" method="POST">
         <?php
         echo $this->csrfToken();
         echo $this->prgHelper->getHtml();

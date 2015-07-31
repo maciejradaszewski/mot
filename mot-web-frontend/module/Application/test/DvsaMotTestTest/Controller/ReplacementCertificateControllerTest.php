@@ -53,6 +53,7 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
 
         $this->givenIsAdmin(false);
         $this->routeMatch->setParam('id', self::EXAMPLE_DRAFT_ID);
+        $this->routeMatch->setParam('motTestNumber', self::EXAMPLE_MOT_TEST_NUMBER);
     }
 
     public static function dataProviderUpdateDraftActionToUpdateDataMapping()
@@ -295,7 +296,7 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
             )
         );
 
-        $this->assertRedirectLocation($response, UrlBuilderWeb::replacementCertificate(self::EXAMPLE_DRAFT_ID));
+        $this->assertRedirectLocation($response, UrlBuilderWeb::replacementCertificate(self::EXAMPLE_DRAFT_ID, self::EXAMPLE_MOT_TEST_NUMBER));
     }
 
     /**
@@ -315,7 +316,6 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
 
         $this->assertRedirectLocation2('redirectUrl');
     }
-
 
     private static function restResponseDraft()
     {
@@ -477,9 +477,9 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
      *
      * @return string
      */
-    private function pathReplacementCertificateDraft($id = self::EXAMPLE_DRAFT_ID)
+    private function pathReplacementCertificateDraft($id = self::EXAMPLE_DRAFT_ID, $motTestNumber = self::EXAMPLE_MOT_TEST_NUMBER)
     {
-        return UrlBuilder::replacementCertificateDraft($id)->toString();
+        return UrlBuilder::replacementCertificateDraft($id, $motTestNumber)->toString();
     }
 
     /**
@@ -505,7 +505,7 @@ class ReplacementCertificateControllerTest extends AbstractDvsaMotTestTestCase
      */
     private function pathReplacementDiff()
     {
-        return UrlBuilder::replacementCertificateDraftDiff(self::EXAMPLE_DRAFT_ID)->toString();
+        return UrlBuilder::replacementCertificateDraftDiff(self::EXAMPLE_DRAFT_ID, self::EXAMPLE_MOT_TEST_NUMBER)->toString();
     }
 
     private function givenPostAction($action, $postParams = [])
