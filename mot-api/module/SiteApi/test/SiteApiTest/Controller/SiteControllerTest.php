@@ -8,6 +8,7 @@ use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApiTest\Controller\AbstractRestfulControllerTestCase;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaFeature\FeatureToggles;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use SiteApi\Controller\SiteController;
 use SiteApi\Service\SiteService;
@@ -36,19 +37,26 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
         $this->setController(new SiteController($this->mockService));
 
         parent::setUp();
+
+        $mockFeatureToggle = XMock::of(FeatureToggles::class, ['isEnabled']);
+        $this->mockMethod($mockFeatureToggle, 'isEnabled', $this->any(), true);
+
+        /** @var \Zend\ServiceManager\ServiceManager $serviceManager */
+        $serviceManager = $this->getController()->getServiceLocator();
+        $serviceManager->setService('Feature\FeatureToggles', $mockFeatureToggle);
     }
 
     /**
      * Test method is accessible for call with valid parameters
      *
-     * @param string $method HTTP method
-     * @param string $action route action
-     * @param array $params route parameters
-     * @param array $queryParams query parameters
+     * @param string $method        HTTP method
+     * @param string $action        route action
+     * @param array  $params        route parameters
+     * @param array  $queryParams   query parameters
      * @param string $serviceMethod mocked service method
-     * @param array $serviceReturn service method will return
-     * @param array $expectResult expected method result
-     * @param array $postParams
+     * @param array  $serviceReturn service method will return
+     * @param array  $expectResult  expected method result
+     * @param array  $postParams
      *
      * @dataProvider dataProviderTestWithValidParam
      */
@@ -94,7 +102,16 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
                 $getExpect,
             ],
             ['put', null, ['id' => self::SITE_ID, 'data' => []], [], 'update', $postSrvResult, $postExpect],
-            ['post', null, ['data' => []], [], 'create', $postSrvResult, $postExpect, ['_class' => 'DvsaCommon\\Dto\\Site\\VehicleTestingStationDto']],
+            [
+                'post',
+                null,
+                ['data' => []],
+                [],
+                'create',
+                $postSrvResult,
+                $postExpect,
+                ['_class' => 'DvsaCommon\\Dto\\Site\\VehicleTestingStationDto'],
+            ],
         ];
     }
 
@@ -155,5 +172,4 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
             ]
         ];
     }
-
 }

@@ -1,6 +1,7 @@
 <?php
 namespace SiteApi\Controller;
 
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
@@ -38,6 +39,8 @@ class SiteController extends AbstractDvsaRestfulController
 
     public function create($data)
     {
+        $this->assertFeatureEnabled(FeatureToggle::AO1_SITE_CREATE);
+
         /** @var VehicleTestingStationDto $dto */
         $dto    = DtoHydrator::jsonToDto($data);
         $result = $this->service->create($dto);
