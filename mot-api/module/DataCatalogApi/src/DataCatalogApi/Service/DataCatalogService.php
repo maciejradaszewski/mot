@@ -27,6 +27,7 @@ use DvsaEntities\Entity\FuelType;
 use DvsaEntities\Entity\MotTestReasonForCancel;
 use DvsaEntities\Entity\MotTestType;
 use DvsaEntities\Entity\OrganisationBusinessRole;
+use DvsaEntities\Entity\PersonSystemRole;
 use DvsaEntities\Entity\ReasonForRefusal;
 use DvsaEntities\Entity\SiteBusinessRole;
 use DvsaEntities\Entity\TransmissionType;
@@ -185,6 +186,22 @@ class DataCatalogService extends AbstractService
         $this->authService->assertGranted(PermissionInSystem::DATA_CATALOG_READ);
         $items = $this->entityManager->getRepository(MotTestType::class)->findBy([], ['position' => 'ASC']);
         return $this->extractItemsWithPosition($items);
+    }
+
+    public function getPersonSystemRoles()
+    {
+        $this->authService->assertGranted(PermissionInSystem::DATA_CATALOG_READ);
+        $items = $this->entityManager->getRepository(PersonSystemRole::class)->findAll();
+        $values = [];
+        foreach ($items as $item) {
+
+            $values[$item->getId()] = [
+                'id' => $item->getId(),
+                'code' => $item->getName(),
+                'name' => $item->getFullName(),
+            ];
+        }
+        return $values;
     }
 
     public function getOrganisationBusinessRoles()

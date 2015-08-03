@@ -225,6 +225,14 @@ class CatalogService
         return $types;
     }
 
+    /**
+     * @return array
+     */
+    public function getPersonSystemRoles()
+    {
+        return $this->getData()['personSystemRoles'];
+    }
+
     public function getSiteBusinessRoles()
     {
         $roles = [];

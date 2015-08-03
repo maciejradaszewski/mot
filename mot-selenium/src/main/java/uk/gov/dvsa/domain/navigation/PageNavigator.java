@@ -12,12 +12,14 @@ import uk.gov.dvsa.ui.pages.authorisedexaminer.AeSlotsUsagePage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AedmAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
+import uk.gov.dvsa.ui.pages.dvsarolesandmanagement.DvsaEventHistoryPage;
+import uk.gov.dvsa.ui.pages.dvsarolesandmanagement.DvsaManagesRolesPage;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 import uk.gov.dvsa.ui.pages.mot.*;
+import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticeCreationPage;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticePage;
 import uk.gov.dvsa.ui.pages.vehicleinformation.VehicleInformationSearchPage;
 import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
-import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticeCreationPage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -151,6 +153,17 @@ public class PageNavigator {
         injectOpenAmCookieAndNavigateToPath(user, SpecialNoticePage.PATH);
 
         return new SpecialNoticePage(driver);
+    }
+
+    public DvsaEventHistoryPage goToDvsaEventHistoryPage(User user, String userId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(DvsaEventHistoryPage.PATH, userId));
+        return new DvsaEventHistoryPage(driver);
+    }
+
+    public DvsaManagesRolesPage goToDvsaManageRolesPage(User user, String userId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(DvsaManagesRolesPage.PATH, userId));
+
+        return new DvsaManagesRolesPage(driver);
     }
 
     public VehicleInformationSearchPage goToVehicleInformationSearchPage(User user) throws IOException {

@@ -68,6 +68,10 @@ services:
         class: Dvsa\Mot\Behat\Support\Api\Person
         parent: dvsa.api
 
+    dvsa.tester:
+        class: Dvsa\Mot\Behat\Support\Api\Tester
+        parent: dvsa.api
+
     dvsa.reason_for_rejection:
         class: Dvsa\Mot\Behat\Support\Api\ReasonForRejection
         parent: dvsa.api

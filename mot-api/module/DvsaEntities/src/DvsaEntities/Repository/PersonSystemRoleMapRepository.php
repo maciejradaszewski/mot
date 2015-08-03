@@ -2,14 +2,13 @@
 
 namespace DvsaEntities\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaEntities\Entity\PersonSystemRoleMap;
 
 /**
  * Repository for {@link \DvsaEntities\Entity\PersonSystemRoleMap}.
  */
-class PersonSystemRoleMapRepository extends EntityRepository
+class PersonSystemRoleMapRepository extends AbstractMutableRepository
 {
     /**
      * @param $personId
@@ -17,8 +16,8 @@ class PersonSystemRoleMapRepository extends EntityRepository
      */
     public function getActiveUserRoles($personId)
     {
-        $qb = $this
-            ->createQueryBuilder("srbm")
+        $qb =
+            $this->createQueryBuilder("srbm")
             ->innerJoin("srbm.person", "p")
             ->innerJoin("srbm.businessRoleStatus", "st")
             ->innerJoin("srbm.personSystemRole", "sr")
@@ -31,5 +30,40 @@ class PersonSystemRoleMapRepository extends EntityRepository
         $roles = $qb->getQuery()->getResult();
 
         return $roles;
+    }
+
+    /**
+     * @param int $personId
+     * @param int $personSystemRoleId
+     * @return null|PersonSystemRoleMap
+     */
+    public function findByPersonAndSystemRole($personId, $personSystemRoleId)
+    {
+        return $this->findOneBy(['person' => $personId, 'personSystemRole' => $personSystemRoleId]);
+    }
+
+    /**
+     * Return person's internal roles only
+     *
+     * @param int $personId
+     * @return array
+     */
+    public function getPersonActiveInternalRoleCodes($personId)
+    {
+        $qb = $this->createQueryBuilder('psrm')
+            ->select('r.code')
+            ->innerJoin("psrm.businessRoleStatus", "brs")
+            ->innerJoin('psrm.person', 'p')
+            ->innerJoin('psrm.personSystemRole', 'psr')
+            ->innerJoin('psr.role', 'r')
+            ->where('p.id = :personId')
+            ->andWhere('r.isInternal = 1')
+            ->andWhere("brs.code = :statusCode")
+            ->setParameter('personId', $personId)
+            ->setParameter("statusCode", BusinessRoleStatusCode::ACTIVE);
+
+        $internalRoleCodes = $qb->getQuery()->getResult();
+
+        return $internalRoleCodes;
     }
 }

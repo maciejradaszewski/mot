@@ -1,6 +1,6 @@
 VM-8430 which is a sub task of: VM-7646
 
-As a CSCO/VE and AO, I would like to ability to search for a person.
+As a Scheme manager, CSCO, VE and AO, I must have the ability to search for a person.
 Other users should not be able to access this API call.
 
 Search with at least one parameter.
@@ -8,8 +8,8 @@ Search with at least one parameter.
 |UserType        |Error?|ErrorMessage?|
 |tester          |true  |Forbidden    |
 |aedm            |true  |Forbidden    |
-|schememgmt      |true  |Forbidden    |
 |aed             |true  |Forbidden    |
+|schememgmt      |false |             |
 |vehicle-examiner|false |             |
 |areaoffice      |false |             |
 |csco            |false |             |

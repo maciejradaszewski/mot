@@ -58,7 +58,6 @@ return [
                     ],
                 ],
             ],
-
             'special-notice-content'   => [
                 'type'          => 'segment',
                 'options'       => [

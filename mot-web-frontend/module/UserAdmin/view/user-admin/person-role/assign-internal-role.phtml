@@ -1,0 +1,39 @@
+<?php
+use UserAdmin\Controller\PersonRoleController;
+?>
+
+<div class="text">
+    <p class="lede">Confirm that you wish to add the following role</p>
+</div>
+<table class="key-value-list">
+    <tbody>
+    <tr>
+        <th class="key-value-list__key">
+            User
+        </th>
+        <td class="key-value-list__value">
+            <?php echo $personName ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Add role
+        </th>
+        <td class="key-value-list__value">
+            <?php echo $roleName; ?>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<nav class="content-navigation">
+    <form action="" method="post">
+        <?php echo $this->csrfToken(); ?>
+        <button class="button" id="confirm-add-role" value="<?php echo $roleId ?>">Add role</button>
+    </form>
+
+    <ul class="content-navigation__secondary">
+        <li>
+            <a href="<?php echo $urlManageInternalRoles; ?>"> Cancel and return to manage roles</a>
+        </li>
+    </ul>
+</nav>

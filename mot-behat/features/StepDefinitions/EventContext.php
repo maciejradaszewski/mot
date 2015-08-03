@@ -1,5 +1,6 @@
 <?php
 
+use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use PHPUnit_Framework_Assert as PHPUnit;
 use Dvsa\Mot\Behat\Support\Api\Event;
@@ -7,7 +8,7 @@ use Dvsa\Mot\Behat\Support\Api\Person;
 use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 
-class EventContext implements \Behat\Behat\Context\SnippetAcceptingContext
+class EventContext implements Context
 {
     /**
      * @var SessionContext
@@ -88,13 +89,29 @@ class EventContext implements \Behat\Behat\Context\SnippetAcceptingContext
         $found = false;
         foreach ($eventList as $event) {
             if ($event["type"] === $eventType) {
-                PHPUnit::assertContains($this->getPersonDisplayName(), $event["description"]);
+                $this->userEvent = $event;
                 $found = true;
                 break;
             }
         }
 
         PHPUnit::assertTrue($found, "Event type {$eventType} not found");
+    }
+
+    /**
+     * @Then an event description contains phrase :phrase
+     */
+    public function anEventDescriptionContainsPhrase($phrase)
+    {
+        PHPUnit::assertContains($phrase, $this->userEvent["description"]);
+    }
+
+    /**
+     * @Then an event description contains my name
+     */
+    public function anEventDescriptionContainsMyName()
+    {
+        $this->anEventDescriptionContainsPhrase($this->getPersonDisplayName());
     }
 
     /**

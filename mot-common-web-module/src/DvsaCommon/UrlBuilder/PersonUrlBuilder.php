@@ -21,6 +21,7 @@ class PersonUrlBuilder extends AbstractUrlBuilder
     const MOT_TESTING = '/mot-testing';
     const RESET_PIN = '/reset-pin';
     const RESET_CLAIM_ACCOUNT = '/reset-claim-account';
+    const MANAGE_INTERNAL_ROLES = '/roles';
 
     protected $routesStructure
         = [
@@ -33,6 +34,7 @@ class PersonUrlBuilder extends AbstractUrlBuilder
                     self::MOT_TESTING                    => '',
                     self::RESET_PIN                      => '',
                     self::RESET_CLAIM_ACCOUNT            => '',
+                    self::MANAGE_INTERNAL_ROLES          => '',
                 ],
                 self::BY_IDENTIFIER => '',
             ],
@@ -155,5 +157,15 @@ class PersonUrlBuilder extends AbstractUrlBuilder
     public static function resetClaimAccount($personId)
     {
         return self::byId($personId)->appendRoutesAndParams(self::RESET_CLAIM_ACCOUNT);
+    }
+
+    /**
+     * Return the url to manage the internal roles for the user
+     * @param $personId
+     * @return $this
+     */
+    public static function manageInternalRoles($personId)
+    {
+        return self::byId($personId)->appendRoutesAndParams(self::MANAGE_INTERNAL_ROLES);
     }
 }

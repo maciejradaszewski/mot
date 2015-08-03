@@ -6,9 +6,9 @@ use DvsaMotApi\Factory\Service\MotTestOptionsServiceFactory;
 use DvsaMotApi\Factory\Service\VehicleHistoryServiceFactory;
 use DvsaMotApi\Factory\Service\TesterMotTestLogServiceFactory;
 use DvsaMotApi\Factory\TestItemCategoryRepositoryFactory;
-use DvsaMotApi\Factory\Validator\UsernameValidatorFactory;
 use DvsaMotApi\Service\CertificateCreationService;
 use DvsaMotApi\Service\EmergencyService;
+use DvsaMotApi\Service\MotTestDateHelper;
 use DvsaMotApi\Service\EmergencyServiceFactory;
 use DvsaMotApi\Service\MotTestDateHelperService;
 use DvsaMotApi\Service\MotTestOptionsService;
@@ -21,12 +21,15 @@ use DvsaMotApi\Service\Validator\BrakeTestResultValidator;
 use DvsaMotApi\Service\Validator\MotTestStatusChangeValidator;
 use DvsaMotApi\Service\VehicleHistoryService;
 use DvsaMotApi\Service\TesterMotTestLogService;
-use DvsaMotApi\Validator\UsernameValidator;
 use DvsaMotApi\Service\CreateMotTestService;
 use DvsaMotApi\Service\DemoTestAssessmentService;
 use DvsaMotApi\Factory\Service\DemoTestAssessmentServiceFactory;
 use DvsaMotApi\Helper\TesterQualificationStatusChangeEventHelper;
 use DvsaMotApi\Factory\Helper\TesterQualificationStatusChangeEventHelperFactory;
+use DvsaMotApi\Helper\RoleEventHelper;
+use DvsaMotApi\Factory\Helper\RoleEventHelperFactory;
+use DvsaMotApi\Helper\RoleNotificationHelper;
+use DvsaMotApi\Factory\Helper\RoleNotificationHelperFactory;
 
 return [
     'invokables' => [
@@ -88,10 +91,10 @@ return [
         TestItemCategoryRepository::class                   => TestItemCategoryRepositoryFactory::class,
         VehicleHistoryService::class                        => VehicleHistoryServiceFactory::class,
         MotTestOptionsService::class                        => MotTestOptionsServiceFactory::class,
-        UsernameValidator::class                            => UsernameValidatorFactory::class,
         DemoTestAssessmentService::class                    => DemoTestAssessmentServiceFactory::class,
-        NotificationService::class                          => \NotificationApi\Service\NotificationService,
         TesterQualificationStatusChangeEventHelper::class   => TesterQualificationStatusChangeEventHelperFactory::class,
         TesterMotTestLogService::class                      => TesterMotTestLogServiceFactory::class,
+        RoleEventHelper::class                              => RoleEventHelperFactory::class,
+        RoleNotificationHelper::class                       => RoleNotificationHelperFactory::class,
     ],
 ];

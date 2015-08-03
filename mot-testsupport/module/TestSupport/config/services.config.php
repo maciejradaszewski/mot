@@ -4,6 +4,8 @@ use DvsaCommon\HttpRestJson\ZendClient;
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\Obfuscate\ParamEncrypter;
 use DvsaCommon\Obfuscate\ParamObfuscator;
+use TestSupport\Service\DVLAOperativeService;
+use TestSupport\Service\VM10619RoleManagementUpgradeService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Doctrine\ORM\EntityManager;
 use TestSupport\Service\AccountDataService;
@@ -13,6 +15,8 @@ use TestSupport\Service\VehicleService;
 use TestSupport\Service\SlotTransactionService;
 use TestSupport\Service\JsonErrorHandlingListener;
 use TestSupport\Service\CSCOService;
+use TestSupport\Service\CsmService;
+use TestSupport\Service\DVLAManagerService;
 use TestSupport\Service\AreaOffice1Service;
 use TestSupport\Service\AreaOffice2Service;
 use TestSupport\Service\FinanceUserService;
@@ -20,6 +24,9 @@ use TestSupport\Service\VtsService;
 use TestSupport\Service\AEService;
 use TestSupport\Service\TesterService;
 use TestSupport\Service\PasswordResetService;
+use TestSupport\Service\SchemeManagerService;
+use TestSupport\Service\SchemeUserService;
+use TestSupport\Service\UserService;
 use TestSupport\Service\VehicleExaminerService;
 use TestSupport\Service\VM10519UserService;
 use TestSupport\Service\DvlaVehicleService;
@@ -83,19 +90,26 @@ return [
         ParamObfuscator::class             => \DvsaCommon\Obfuscate\Factory\ParamObfuscatorFactory::class,
         'ApplicationLog'                   => 'TestSupport\Factory\ApplicationLogFactory',
         CSCOService::class                 => \TestSupport\Factory\CSCOServiceFactory::class,
+        CSMService::class                  => \TestSupport\Factory\CSMServiceFactory::class,
+        DVLAManagerService::class          => \TestSupport\Factory\DVLAManagerServiceFactory::class,
+        DVLAOperativeService::class          => \TestSupport\Factory\DVLAOperativeServiceFactory::class,
         AreaOffice1Service::class          => \TestSupport\Factory\AreaOffice1ServiceFactory::class,
         AreaOffice2Service::class          => \TestSupport\Factory\AreaOffice2ServiceFactory::class,
         FinanceUserService::class          => \TestSupport\Factory\FinanceUserServiceFactory::class,
+        UserService::class                 => \TestSupport\Factory\UserServiceFactory::class,
         VtsService::class                  => \TestSupport\Factory\VtsServiceFactory::class,
         TestSupportRestClientHelper::class => \TestSupport\Factory\TestSupportRestClientFactory::class,
         NotificationsHelper::class         => \TestSupport\Factory\NotificationsHelperFactory::class,
         SitePermissionsHelper::class       => \TestSupport\Factory\SitePermissionsHelperFactory::class,
         AEService::class                   => \TestSupport\Factory\AEServiceFactory::class,
         TesterService::class               => \TestSupport\Factory\TesterServiceFactory::class,
-        InactiveTesterService::class      =>  \TestSupport\Factory\InactiveTesterServiceFactory::class,
+        SchemeManagerService::class        => \TestSupport\Factory\SchemeManagerServiceFactory::class,
+        SchemeUserService::class           => \TestSupport\Factory\SchemeUserServiceFactory::class,
+        InactiveTesterService::class       => \TestSupport\Factory\InactiveTesterServiceFactory::class,
         PasswordResetService::class        => \TestSupport\Factory\PasswordResetServiceFactory::class,
         VehicleExaminerService::class      => \TestSupport\Factory\VehicleExaminerServiceFactory::class,
         VM10519UserService::class          => \TestSupport\Factory\VM10519UserServiceFactory::class,
+        VM10619RoleManagementUpgradeService::class          => \TestSupport\Factory\VM10619RoleManagementUpgradeServiceFactory::class,
         TesterAuthorisationStatusService::class => TesterAuthorisationStatusServiceFactory::class,
         AedmService::class                 => \TestSupport\Factory\AedmServiceFactory::class,
     ]

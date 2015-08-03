@@ -1,29 +1,26 @@
+<?php
+use \UserAdmin\Presenter\UserProfilePresenter as Presenter;
+/** @var Presenter $presenter */
+$associatedSitesAndOrganisations = $presenter->getSiteAndOrganisationRoles();
+
+if (!empty($associatedSitesAndOrganisations)):
+?>
 <h3 class="heading-medium">Roles and associations</h3>
 <table class="key-value-list">
     <tbody>
-    <tr>
-        <?php if ($systemRoles = $presenter->getSystemRoles()): ?>
-            <th class="key-value-list__key"></th>
-            <td id="roles-system" class="key-value-list__value">
-                <?php echo join('<br />', $systemRoles) ?>
-            </td>
-        <?php endif; ?>
-    </tr>
-    <?php foreach ($presenter->getSiteAndOrganisationRoles() as $id => $organisationUnit):
-        $escRoute = $organisationUnit['route']; // VM-8519 Route is static no escaping required
-        ?>
+    <?php foreach ($associatedSitesAndOrganisations as $id => $unit): ?>
         <tr>
             <th class="key-value-list__key">
-                <a href="<?php echo $escRoute; ?>"
-                   title="<?php echo $this->escapeHtmlAttr($organisationUnit['name']); ?>">
-                    <?php echo $this->escapeHtml($organisationUnit['name']) ?>
+                <a href="<?php echo $unit['route']; ?>"
+                   title="<?php echo $this->escapeHtmlAttr($unit['name']); ?>">
+                    <?php echo $this->escapeHtml($unit['name']) ?>
                 </a>
-                <?php echo $this->escapeHtml($organisationUnit['number']) ?>
-                <span class="key-value-list__meta"><?php echo $this->escapeHtml($organisationUnit['address']); ?></span>
+                <?php echo $this->escapeHtml($unit['number']) ?>
+                <span class="key-value-list__meta"><?php echo $this->escapeHtml($unit['address']); ?></span>
             </th>
-            <td id="roles-<?php echo md5($organisationUnit['name']) ?>" class="key-value-list__value">
-                <?php if (isset($organisationUnit['roles'])): ?>
-                    <?php echo join('<br />', $organisationUnit['roles']) ?>
+            <td id="roles-<?php echo md5($unit['name']) ?>" class="key-value-list__value">
+                <?php if (isset($unit['roles'])): ?>
+                    <?php echo join('<br />', $unit['roles']) ?>
                 <?php else: ?>
                     No Roles
                 <?php endif; ?>
@@ -32,3 +29,4 @@
     <?php endforeach; ?>
     </tbody>
 </table>
+<?php endif ?>

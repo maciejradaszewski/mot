@@ -1,0 +1,36 @@
+<?php
+
+use \UserAdmin\Controller\PersonRoleController;
+use \UserAdmin\Presenter\UserProfilePresenter as Presenter;
+
+/** @var Presenter $presenter */
+
+if ($presenter->canDisplayRoleSection()):
+    $currentInternalRoles = $presenter->getPersonAssignedInternalRoleCodes();
+    ?>
+
+    <h3 class="heading-medium">Roles</h3>
+
+    <a href="<?php echo $this->url(PersonRoleController::URL_MANAGE_INTERNAL_ROLE, ['personId' => $presenter->getPersonId()]); ?>"
+       class="key-value-list__action">Manage roles</a>
+
+    <?php if (!empty($currentInternalRoles)) : ?>
+
+    <table class="key-value-list">
+        <tbody>
+
+        <?php foreach ($currentInternalRoles as $role): ?>
+            <tr>
+                <th class="key-value-list__key">
+                    <strong><?php echo $role; ?></strong>
+                </th>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <?php
+        endif;
+endif;
+?>
+

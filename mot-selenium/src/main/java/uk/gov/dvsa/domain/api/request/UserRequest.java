@@ -19,3 +19,5 @@ public abstract class UserRequest {
         this.diff = diff;
     }
 }
+
+

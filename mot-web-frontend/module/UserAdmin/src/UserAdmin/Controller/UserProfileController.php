@@ -13,6 +13,7 @@ use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use DvsaMotTest\Controller\AbstractDvsaMotTestController;
 use UserAdmin\Presenter\UserProfilePresenter;
 use UserAdmin\Service\HelpdeskAccountAdminService;
+use UserAdmin\Service\PersonRoleManagementService;
 use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
 use Zend\View\Model\ViewModel;
 
@@ -26,21 +27,39 @@ class UserProfileController extends AbstractDvsaMotTestController
     const RECLAIM_ACCOUNT_SUCCESS = 'Account reclaim by email was requested';
     const RECLAIM_ACCOUNT_FAILURE = 'Account reclaim by email has failed';
 
-    /** @var HelpdeskAccountAdminService */
+    /**
+     * @var HelpdeskAccountAdminService
+     */
     private $userAccountAdminService;
-    /** @var MotAuthorisationServiceInterface*/
+
+    /**
+     * @var MotAuthorisationServiceInterface
+     */
     private $authorisationService;
 
+    /**
+     * @var TesterGroupAuthorisationMapper
+     */
     private $testerGroupAuthorisationMapper;
 
+    /** @var PersonRoleManagementService */
+    private $personRoleManagementService;
+
+    /**
+     * @param MotAuthorisationServiceInterface $authorisationService
+     * @param HelpdeskAccountAdminService $userAccountAdminService
+     * @param TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper
+     */
     public function __construct(
         MotAuthorisationServiceInterface $authorisationService,
         HelpdeskAccountAdminService $userAccountAdminService,
-        TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper
+        TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper,
+        PersonRoleManagementService $personRoleManagementService
     ) {
         $this->userAccountAdminService = $userAccountAdminService;
         $this->authorisationService = $authorisationService;
         $this->testerGroupAuthorisationMapper = $testerGroupAuthorisationMapper;
+        $this->personRoleManagementService = $personRoleManagementService;
     }
 
     /**
@@ -59,7 +78,8 @@ class UserProfileController extends AbstractDvsaMotTestController
             $this->userAccountAdminService->getUserProfile($personId),
             $this->getTesterAuthorisationViewModel($personId),
             $this->authorisationService->isGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE_DVSA_USER) &&
-            !$this->authorisationService->hasRole(Role::CUSTOMER_SERVICE_CENTRE_OPERATIVE)
+            !$this->authorisationService->hasRole(Role::CUSTOMER_SERVICE_CENTRE_OPERATIVE),
+            $this->personRoleManagementService
         );
         $presenter->setPersonId($personId);
 

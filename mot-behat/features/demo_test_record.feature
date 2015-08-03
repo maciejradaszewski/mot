@@ -8,7 +8,11 @@ Feature: Record Demo test outcome
     Given I am logged in as <user_role>
     When I change a user's group "<group>" tester qualification status from "Demo Test Needed" to Qualified
     Then a status change event is generated for the user of "<Event Type>"
-    And the user will receive a status change notification for group "<group>"
+    And an event description contains my name
+    And an event description contains phrase "Group <group>"
+    And the user will receive a "Tester Qualification Status" notification
+    And a notification subject contains phrase "Group <group>"
+    And a notification content contains phrase "Group <group>"
   Examples:
     | user_role     | group | Event Type                   |
     | a VM10519User | A     | Group A Tester Qualification |

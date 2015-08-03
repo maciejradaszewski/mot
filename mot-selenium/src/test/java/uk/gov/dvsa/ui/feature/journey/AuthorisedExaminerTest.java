@@ -26,7 +26,7 @@ public class AuthorisedExaminerTest extends BaseTest {
     @Test(groups = {"FeatureToggleCreateAe"}) public void createAuthorisedExaminerSuccessfully()
             throws IOException, URISyntaxException {
 
-        User areaOffice1User = userData.createAreaOfficer("AreaOfficer");
+        User areaOffice1User = userData.createAreaOfficeOne("AreaOfficer");
 
         //Given I am on the Create AE screen as DVSA Admin user
         CreateAePage createAePage = pageNavigator.gotoCreateAePage(areaOffice1User);
@@ -41,7 +41,7 @@ public class AuthorisedExaminerTest extends BaseTest {
 
     @Test(groups = {"FeatureToggleCreateAe"}) public void verifyConfirmAeDetailsPage()
             throws IOException, URISyntaxException {
-        User areaOffice1User = userData.createAreaOfficer("AreaOfficer");
+        User areaOffice1User = userData.createAreaOfficeOne("AreaOfficer");
 
         //Given I am on the Create AE screen as DVSA Admin user
         CreateAePage createAePage = pageNavigator.gotoCreateAePage(areaOffice1User);
@@ -57,7 +57,7 @@ public class AuthorisedExaminerTest extends BaseTest {
 
     @Test(groups = {"FeatureToggleCreateAe"}) public void verifyRegEmailAddressFields()
             throws IOException, URISyntaxException {
-        User areaOffice1User = userData.createAreaOfficer("AreaOfficer");
+        User areaOffice1User = userData.createAreaOfficeOne("AreaOfficer");
 
         //Given I am on the Create AE screen as DVSA Admin user
         CreateAePage createAePage = pageNavigator.gotoCreateAePage(areaOffice1User);
@@ -72,7 +72,7 @@ public class AuthorisedExaminerTest extends BaseTest {
 
     @Test(groups = {"FeatureToggleCreateAe"}) public void verifyCorrEmailAddressFieldsEmpty()
             throws IOException, URISyntaxException {
-        User areaOffice1User = userData.createAreaOfficer("AreaOfficer");
+        User areaOffice1User = userData.createAreaOfficeOne("AreaOfficer");
 
         //Given I am on the Create AE screen as DVSA Admin user
         CreateAePage createAePage = pageNavigator.gotoCreateAePage(areaOffice1User);

@@ -4,7 +4,6 @@ namespace DvsaMotApi\Helper;
 
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\EventPersonMapRepository;
-use DvsaEntities\Repository\PersonRepository;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Constants\EventDescription;
 use DvsaCommon\Date\DateTimeHolder;
@@ -17,29 +16,42 @@ use Doctrine\ORM\EntityManager;
 
 class TesterQualificationStatusChangeEventHelper
 {
-    private $identityProviderInterface;
+    /**
+     * @var MotIdentityProviderInterface
+     */
+    private $identityProvider;
 
+    /**
+     * @var DateTimeHolder
+     */
     private $dateTimeHolder;
 
+    /**
+     * @var EventService
+     */
     private $eventService;
 
-    private $personRepository;
-
+    /**
+     * @var EventPersonMapRepository
+     */
     private $eventPersonMapRepository;
 
-
+    /**
+     * @param MotIdentityProviderInterface $identityProvider
+     * @param EventService $eventService
+     * @param EventPersonMapRepository $eventPersonMapRepository
+     * @param DateTimeHolder $dateTimeHolder
+     */
     public function __construct(
-        MotIdentityProviderInterface $identityProviderInterface,
+        MotIdentityProviderInterface $identityProvider,
         EventService $eventService,
         EventPersonMapRepository $eventPersonMapRepository,
-        PersonRepository $personRepository,
         DateTimeHolder $dateTimeHolder
     ) {
-        $this->identityProviderInterface = $identityProviderInterface;
+        $this->identityProvider = $identityProvider;
         $this->eventService = $eventService;
         $this->eventPersonMapRepository = $eventPersonMapRepository;
         $this->dateTimeHolder = $dateTimeHolder;
-        $this->personRepository = $personRepository;
     }
 
     /**
@@ -67,7 +79,7 @@ class TesterQualificationStatusChangeEventHelper
     {
         $event = $this->eventService->addEvent(
             EventTypeCode::GROUP_A_TESTER_QUALIFICATION,
-            sprintf(EventDescription::TESTER_QUALIFICATION_STATUS_CHANGE, VehicleClassGroupCode::BIKES, $this->getUsername()),
+            sprintf(EventDescription::TESTER_QUALIFICATION_STATUS_CHANGE, VehicleClassGroupCode::BIKES, $this->getDisplayName()),
             $this->dateTimeHolder->getCurrent(true)
         );
 
@@ -83,7 +95,7 @@ class TesterQualificationStatusChangeEventHelper
     {
         $event = $this->eventService->addEvent(
             EventTypeCode::GROUP_B_TESTER_QUALIFICATION,
-            sprintf(EventDescription::TESTER_QUALIFICATION_STATUS_CHANGE, VehicleClassGroupCode::CARS_ETC, $this->getUsername()),
+            sprintf(EventDescription::TESTER_QUALIFICATION_STATUS_CHANGE, VehicleClassGroupCode::CARS_ETC, $this->getDisplayName()),
             $this->dateTimeHolder->getCurrent(true)
         );
 
@@ -109,9 +121,8 @@ class TesterQualificationStatusChangeEventHelper
     /**
      * @return string
      */
-    private function getUsername()
+    private function getDisplayName()
     {
-        $user = $this->personRepository->get($this->identityProviderInterface->getIdentity()->getUserId());
-        return $user->getDisplayName();
+        return $this->identityProvider->getIdentity()->getPerson()->getDisplayName();
     }
 }

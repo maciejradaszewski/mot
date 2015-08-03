@@ -38,7 +38,18 @@ public class UserData extends UserService{
         return createUserAsSchemeUser(accountClaimRequired);
     }
 
-    public User createAreaOfficer(String namePrefix) throws IOException {
+    /*
+        This method to be deleted once whole user management epic is implemented
+     */
+    public void upgradeUserWithManageRoles(String personId) throws IOException {
+        createUserWithManageRole(personId);
+    }
+
+    public User createAreaOfficeOne(String namePrefix) throws IOException {
         return createUserAsAreaOfficeOneUser(namePrefix);
+    }
+
+    public User createUserWithoutRoles(boolean accountClaimRequired) throws IOException {
+        return createUserWithoutRole(accountClaimRequired);
     }
 }

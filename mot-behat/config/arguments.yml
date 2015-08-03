@@ -1,25 +1,26 @@
 parameters:
     dvsa.argument_resolver.services:
           Dvsa\Mot\Behat\Support\Api\AccountClaim: dvsa.account_claim
-          Dvsa\Mot\Behat\Support\Api\TempPasswordChange: dvsa.temp_password_change
           Dvsa\Mot\Behat\Support\Api\AuthorisedExaminer: dvsa.authorised_examiner
           Dvsa\Mot\Behat\Support\Api\BrakeTestResult: dvsa.brake_test_result
           Dvsa\Mot\Behat\Support\Api\Certificate: dvsa.certificate
           Dvsa\Mot\Behat\Support\Api\ContingencyTest: dvsa.contingency_test
           Dvsa\Mot\Behat\Support\Api\CustomerService: dvsa.customer_service
           Dvsa\Mot\Behat\Support\Api\DemoTest: dvsa.demo_test
+          Dvsa\Mot\Behat\Support\Api\DirectDebit: dvsa.direct_debit
           Dvsa\Mot\Behat\Support\Api\Event: dvsa.event
           Dvsa\Mot\Behat\Support\Api\MotTest: dvsa.mot_test
+          Dvsa\Mot\Behat\Support\Api\Notification: dvsa.notification
           Dvsa\Mot\Behat\Support\Api\OdometerReading: dvsa.odometer_reading
           Dvsa\Mot\Behat\Support\Api\Person: dvsa.person
           Dvsa\Mot\Behat\Support\Api\ReasonForRejection: dvsa.reason_for_rejection
-          Dvsa\Mot\Behat\Support\Api\SecurityPin: dvsa.security_pin
           Dvsa\Mot\Behat\Support\Api\Rest: dvsa.rest
-          Dvsa\Mot\Behat\Support\Api\Notification: dvsa.notification
+          Dvsa\Mot\Behat\Support\Api\SecurityPin: dvsa.security_pin
           Dvsa\Mot\Behat\Support\Api\Session: dvsa.session
           Dvsa\Mot\Behat\Support\Api\SlotPurchase: dvsa.slot_purchase
-          Dvsa\Mot\Behat\Support\Api\DirectDebit: dvsa.direct_debit
           Dvsa\Mot\Behat\Support\Api\SpecialNotice: dvsa.special_notice
+          Dvsa\Mot\Behat\Support\Api\TempPasswordChange: dvsa.temp_password_change
+          Dvsa\Mot\Behat\Support\Api\Tester: dvsa.tester
           Dvsa\Mot\Behat\Support\Api\Vehicle: dvsa.vehicle
           Dvsa\Mot\Behat\Support\Api\Vts: dvsa.vts
           Dvsa\Mot\Behat\Support\History: dvsa.http_client

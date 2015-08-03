@@ -9,7 +9,6 @@ use DvsaMotApi\Helper\TesterQualificationStatusChangeEventHelper;
 use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaEventApi\Service\EventService;
-use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\EventPersonMap;
 
 class TesterQualificationStatusChangeEventHelperFactory implements FactoryInterface
@@ -22,7 +21,6 @@ class TesterQualificationStatusChangeEventHelperFactory implements FactoryInterf
             $serviceLocator->get(MotIdentityProviderInterface::class),
             $serviceLocator->get(EventService::class),
             $entityManager->getRepository(EventPersonMap::class),
-            $entityManager->getRepository(Person::class),
             new DateTimeHolder()
         );
     }

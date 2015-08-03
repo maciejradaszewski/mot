@@ -11,6 +11,8 @@ use PersonApi\Controller\PersonController;
 use PersonApi\Controller\PersonCurrentMotTestController;
 use PersonApi\Controller\PersonProfileRestrictedController;
 use PersonApi\Controller\PersonProfileUnrestrictedController;
+use PersonApi\Controller\PersonRoleController;
+use PersonApi\Controller\PersonTradeRoleController;
 use PersonApi\Controller\PersonSiteCountController;
 use PersonApi\Controller\ResetClaimAccountController;
 use PersonApi\Controller\ResetPinController;
@@ -26,6 +28,8 @@ use PersonApi\Factory\Controller\PersonControllerFactory;
 use PersonApi\Factory\Controller\PersonCurrentMotTestControllerFactory;
 use PersonApi\Factory\Controller\PersonProfileRestrictedControllerFactory;
 use PersonApi\Factory\Controller\PersonProfileUnrestrictedControllerFactory;
+use PersonApi\Factory\Controller\PersonRoleControllerFactory;
+use PersonApi\Factory\Controller\PersonTradeRoleControllerFactory;
 use PersonApi\Factory\Controller\PersonSiteCountControllerFactory;
 use PersonApi\Factory\Controller\ResetClaimAccountControllerFactory;
 use PersonApi\Factory\Controller\ResetPinControllerFactory;
@@ -45,6 +49,7 @@ return [
         PersonProfileRestrictedController::class   => PersonProfileRestrictedControllerFactory::class,
         PersonProfileUnrestrictedController::class => PersonProfileUnrestrictedControllerFactory::class,
         PersonSiteCountController::class           => PersonSiteCountControllerFactory::class,
+        PersonRoleController::class                => PersonRoleControllerFactory::class,
         ResetClaimAccountController::class         => ResetClaimAccountControllerFactory::class,
         ResetPinController::class                  => ResetPinControllerFactory::class,
         UserStatsController::class                 => UserStatsControllerFactory::class,

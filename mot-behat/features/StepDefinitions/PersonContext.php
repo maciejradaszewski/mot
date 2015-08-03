@@ -3,18 +3,21 @@
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode as Table;
+use DvsaCommon\Constants\Role;
 use Dvsa\Mot\Behat\Datasource\Authentication;
 use Dvsa\Mot\Behat\Datasource\Random;
 use Dvsa\Mot\Behat\Support\Api\CustomerService;
 use Dvsa\Mot\Behat\Support\Api\Person;
+use Dvsa\Mot\Behat\Support\Api\Tester;
 use Dvsa\Mot\Behat\Support\Api\Vts;
 use Dvsa\Mot\Behat\Support\Api\AuthorisedExaminer;
 use Dvsa\Mot\Behat\Support\Response;
+use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use PHPUnit_Framework_Assert as PHPUnit;
 
-class PersonContext implements Context
+class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingContext
 {
     private $personalMotTestingClasses;
 
@@ -57,6 +60,11 @@ class PersonContext implements Context
     private $person;
 
     /**
+     * @var Tester
+     */
+    private $tester;
+
+    /**
      * @var SessionContext
      */
     private $sessionContext;
@@ -92,6 +100,11 @@ class PersonContext implements Context
     private $testerQualificationResponse;
 
     /**
+     * @var Session
+     */
+    private $session;
+
+    /**
      * @var VtsContext
      */
     private $vtsContext;
@@ -112,20 +125,29 @@ class PersonContext implements Context
     private $authorisedExaminer;
 
     /**
+     * @param TestSupportHelper $testSupportHelper
      * @param CustomerService $customerService
-     * @param Person          $person
+     * @param Session $session
+     * @param Person $person
+     * @param Tester $tester
+     * @param Vts $vts
+     * @param AuthorisedExaminer $authorisedExaminer
      */
     public function __construct(
         TestSupportHelper $testSupportHelper,
         CustomerService $customerService,
+        Session $session,
         Person $person,
+        Tester $tester,
         Vts $vts,
         AuthorisedExaminer $authorisedExaminer
     )
     {
         $this->testSupportHelper = $testSupportHelper;
         $this->customerService = $customerService;
+        $this->session = $session;
         $this->person = $person;
+        $this->tester = $tester;
         $this->vts = $vts;
         $this->authorisedExaminer = $authorisedExaminer;
     }
@@ -219,7 +241,11 @@ class PersonContext implements Context
     {
         $this->newEmailAddress = Random::getRandomEmail();
 
-        $this->updateUserEmailResponse = $this->person->updateUserEmail($this->sessionContext->getCurrentAccessToken(), $this->sessionContext->getCurrentUserId(), $this->newEmailAddress);
+        $this->updateUserEmailResponse = $this->person->updateUserEmail(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->sessionContext->getCurrentUserId(),
+            $this->newEmailAddress
+        );
     }
 
     /**
@@ -252,7 +278,12 @@ class PersonContext implements Context
         //Get a random email address that doesn't match the first
         $emailMismatch = Random::getRandomEmail();
 
-        $this->updateUserEmailResponse = $this->person->updateUserEmail($this->sessionContext->getCurrentAccessToken(), $this->sessionContext->getCurrentUserId(), $this->newEmailAddress, $emailMismatch);
+        $this->updateUserEmailResponse = $this->person->updateUserEmail(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->sessionContext->getCurrentUserId(),
+            $this->newEmailAddress,
+            $emailMismatch
+        );
     }
 
     /**
@@ -367,7 +398,7 @@ class PersonContext implements Context
      */
     public function iGetMyProfileDetails()
     {
-        $this->testerDetailsResponse = $this->person->getTesterDetails(
+        $this->testerDetailsResponse = $this->tester->getTesterDetails(
             $this->sessionContext->getCurrentAccessToken(),
             $this->sessionContext->getCurrentUserId()
         );
@@ -418,6 +449,38 @@ class PersonContext implements Context
     }
 
     /**
+     * @When I add the role of :role to another user
+     */
+    public function iAddTheRoleOfToAnotherUser($role)
+    {
+        $userService = $this->testSupportHelper->getUserService();
+        $this->personLoginData = $userService->create([]);
+
+        $this->person->addPersonRole(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getPersonUserId(),
+            $role
+        );
+    }
+
+    /**
+     * @When I add the role of :role to a :userRole
+     */
+    public function iAddTheRoleOfRoleToAUserRole($role, $userRole)
+    {
+        $userService = $this->testSupportHelper->userRoleServiceFactory($userRole);
+
+        $this->personLoginData = $userService->create([]);
+
+        $this->person->addPersonRole(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getPersonUserId(),
+            $role
+
+        );
+    }
+
+    /**
      * @When I change a user's group :group tester qualification status from :status to Qualified
      */
     public function iChangeAUserSGroupTesterQualificationStatusFromToQualified($group, $status)
@@ -433,7 +496,7 @@ class PersonContext implements Context
             ]
         ]);
 
-        $this->testerQualificationResponse = $this->person->updateTesterQualification(
+        $this->testerQualificationResponse = $this->tester->updateTesterQualification(
             $this->sessionContext->getCurrentAccessToken(),
             $group,
             $this->getPersonUserId()
@@ -444,20 +507,28 @@ class PersonContext implements Context
     {
         switch ($status) {
             case "Unknown":
-                return AuthorisationForTestingMotStatusCode::UNKNOWN;
+                $code = AuthorisationForTestingMotStatusCode::UNKNOWN;
+                break;
             case "Initial Training Needed":
-                return AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED;
+                $code = AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED;
+                break;
             case "Demo Test Needed":
-                return AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED;
+                $code = AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED;
+                break;
             case "Qualified":
-                return AuthorisationForTestingMotStatusCode::QUALIFIED;
+                $code = AuthorisationForTestingMotStatusCode::QUALIFIED;
+                break;
             case "Refresher Needed":
-                return AuthorisationForTestingMotStatusCode::REFRESHER_NEEDED;
+                $code = AuthorisationForTestingMotStatusCode::REFRESHER_NEEDED;
+                break;
             case "Suspended":
-                return AuthorisationForTestingMotStatusCode::SUSPENDED;
+                $code = AuthorisationForTestingMotStatusCode::SUSPENDED;
+                break;
             default:
                 throw new \InvalidArgumentException('Status \"' . $status . '\" not found');
         }
+
+        return $code;
     }
 
     /**
@@ -474,11 +545,11 @@ class PersonContext implements Context
      */
     public function getTestLogs()
     {
-        $this->userTestLogs = $this->person->getTesterTestLogs(
+        $this->userTestLogs = $this->tester->getTesterTestLogs(
             $this->sessionContext->getCurrentAccessToken(),
             $this->sessionContext->getCurrentUserId()
         );
-        $this->userTestLogsSummary = $this->person->getTesterTestLogsSummary(
+        $this->userTestLogsSummary = $this->tester->getTesterTestLogsSummary(
             $this->sessionContext->getCurrentAccessToken(),
             $this->sessionContext->getCurrentUserId()
         );
@@ -501,6 +572,42 @@ class PersonContext implements Context
     {
         $testLogsDataArray = $this->userTestLogs->getBody()->toArray();
         PHPUnit::assertEquals($number, $testLogsDataArray['data']['resultCount']);
+    }
+
+    /**
+     * @Then the user's RBAC will have the role :role
+     */
+    public function theUserSRBACWillHaveTheRole($role)
+    {
+        $token = $this->getPersonToken();
+
+        $rbacResponse = $this->person->getPersonRBAC(
+            $token,
+            $this->getPersonUserId()
+        );
+
+        $rolesAssigned = $rbacResponse->getBody()->toArray();
+        $rolesAssigned = $rolesAssigned['data']['normal']['roles'];
+        PHPUnit::assertTrue(in_array($role, $rolesAssigned), sprintf("Role %s has not been assigned", $role));
+    }
+
+    /**
+     * @Then the user's RBAC will not have the role :role
+     *
+     */
+    public function theUserSRBACWillNotHaveTheRole($role)
+    {
+        $token = $this->getPersonToken();
+
+        $rbacResponse = $this->person->getPersonRBAC(
+            $token,
+            $this->getPersonUserId()
+        );
+
+        $rolesAssigned = $rbacResponse->getBody()->toArray();
+        $rolesAssigned = $rolesAssigned['data']['normal']['roles'];
+
+        PHPUnit::assertFalse(in_array($role, $rolesAssigned), sprintf("Role %s has been assigned", $role));
     }
 
     /**
@@ -638,5 +745,19 @@ class PersonContext implements Context
         $siteRoles = $roles["organisations"][$aeId]["roles"];
 
         PHPUnit::assertTrue(in_array($role, $siteRoles), "Organisation role '" . $role . "' not found");
+    }
+
+    /**
+     * Login as the person stored and returns the token for them
+     * @return string
+     * @throws Exception
+     */
+    private function getPersonToken()
+    {
+        $tokenResponse = $this->session->startSession(
+            $this->getPersonUsername(),
+            $this->getPersonPassword()
+        );
+        return $tokenResponse->getAccessToken();
     }
 }

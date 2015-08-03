@@ -48,7 +48,6 @@ class SessionContext implements Context
 
     /**
      * @param AccountClaim       $accountClaim
-     * @param TempPasswordChange $accountClaim
      * @param Session            $session
      * @param TestSupportHelper  $testSupportHelper
      */
@@ -90,14 +89,14 @@ class SessionContext implements Context
     }
 
     /**
-     * @Given I am logged in as a Scheme User
+     * @Given /^I am logged in as an? Scheme User$/
      */
     public function iAmLoggedInAsASchemeUser()
     {
-        $username = Authentication::SCHEME_USER;
-        $password = Authentication::PASSWORD_DEFAULT;
+        $schemeUserService = $this->testSupportHelper->getSchemeUserService();
+        $user              = $schemeUserService->create([]);
 
-        $this->currentUser = $this->session->startSession($username, $password);
+        $this->currentUser  = $this->session->startSession($user->data['username'], $user->data['password']);
     }
 
     /**
@@ -109,7 +108,7 @@ class SessionContext implements Context
     }
 
     /**
-     * @Given I am logged in as an Area Office User
+     * @Given /^I am logged in as an? Area Office User$/
      */
     public function iAmLoggedInAsAnAreaOfficeUser()
     {
@@ -119,7 +118,7 @@ class SessionContext implements Context
     }
 
     /**
-     * @Given I am logged in as an Area Office User 2
+     * @Given /^I am logged in as an? Area Office User 2$/
      */
     public function iAmLoggedInAsAnAreaOfficeUser2()
     {
@@ -156,7 +155,7 @@ class SessionContext implements Context
 
     /**
      * @Given I log in as a Vehicle Examiner
-     * @Given I am logged in as a Vehicle Examiner
+     * @Given /^I am logged in as an? Vehicle Examiner$/
      */
     public function iAmLoggedInAsAVehicleExaminer()
     {
@@ -172,28 +171,74 @@ class SessionContext implements Context
      * @Given I log in as a VM10519User
      * @Given I am logged in as a VM10519User
      */
-    public function iAmLoggedInAsASuperVehicleExaminer()
+    public function iAmLoggedInAsAVM10519User()
     {
-        $sveService = $this->testSupportHelper->getSuperVehicleExaminerService();
+        $sveService = $this->testSupportHelper->getVM10519UserService();
         $user                   = $sveService->create([]);
         $this->currentUser      = $this->session->startSession(
             $user->data['username'],
             $user->data['password']
         );
     }
+    /**
+     * @Given /^I have VM10619 user role$/
+     */
+    public function iHaveVM10619UserRole()
+    {
+        $roleManagementUpgradeSvc = $this->testSupportHelper->getVM10619RoleMananagementUpgradeService();
+        $roleManagementUpgradeSvc->create(['personId' => $this->currentUser->getUserId()]);
+    }
 
     /**
-     * @Given I am logged in as a Customer Service Operator
+     * @Given /^I am logged in as an? Customer Service Operator$/
      */
     public function iAmLoggedInAsACustomerServiceOperator()
     {
         $cscoService       = $this->testSupportHelper->getCscoService();
         $user              = $cscoService->create([]);
         $this->currentUser = $this->session->startSession(
-            $user->getVariable('data')['username'],
-            $user->getVariable('data')['password']
+            $user->data['username'],
+            $user->data['password']
         );
     }
+
+    /**
+     * @Given I am logged in as a Customer Service Manager
+     */
+    public function iAmLoggedInAsACustomerServiceManager()
+    {
+        $csmService        = $this->testSupportHelper->getCsmService();
+        $user              = $csmService->create([]);
+        $this->currentUser = $this->session->startSession(
+            $user->data['username'],
+            $user->data['password']
+        );
+    }
+
+    /**
+     * @Given /^I am logged in as an? DVLA Manager$/
+     */
+    public function iAmLoggedInAsADVLAManager()
+    {
+        $dvlaManagerService = $this->testSupportHelper->getDVLAManagerService();
+        $user               = $dvlaManagerService->create([]);
+        $this->currentUser  = $this->session->startSession($user->data['username'], $user->data['password']);
+    }
+
+    /**
+     * @Given I am logged in as a Scheme Manager
+     */
+    public function iAmLoggedInAsASchemeManager()
+    {
+        $schemeManagerService = $this->testSupportHelper->getSchemeManagerService();
+        $schemeManager        = $schemeManagerService->create([]);
+
+        $this->currentUser = $this->session->startSession(
+            $schemeManager->data['username'],
+            $schemeManager->data['password']
+        );
+    }
+
 
     /**
      * @Given I am logged in as a Tester with an unclaimed account
@@ -296,7 +341,7 @@ class SessionContext implements Context
     }
 
     /**
-     * @Given I am logged in as an Authorised Examiner
+     * @Given /^I am logged in as an? Authorised Examiner$/
      */
     public function iAmLoggedInAsAnAuthorisedExaminer()
     {
