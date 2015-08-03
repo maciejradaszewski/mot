@@ -15,7 +15,7 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  *      @ORM\Index(name="last_updated_by", columns={"last_updated_by"})
  *  }
  * )
- * @ORM\Entity(readOnly=true)
+ * @ORM\Entity(repositoryClass="\DvsaEntities\Repository\RoleRepository", readOnly=true)
  * @ORM\Cache(usage="READ_ONLY", region="staticdata")
  */
 class Role extends Entity
@@ -35,6 +35,20 @@ class Role extends Entity
      * @ORM\Column(name="code", type="string", length=5, nullable=false)
      */
     private $code;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_internal", type="boolean")
+     */
+    private $isInternal;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_trade", type="boolean")
+     */
+    private $isTrade;
 
     /**
      * Set name
@@ -80,5 +94,47 @@ class Role extends Entity
     public function getCode()
     {
         return $this->code;
+    }
+
+    /**
+     * @param boolean $isInternal
+     *
+     * @return $this
+     * @codeCoverageIgnore
+     */
+    public function setIsInternal($isInternal)
+    {
+        $this->isInternal = $isInternal;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     * @codeCoverageIgnore
+     */
+    public function isInternal()
+    {
+        return $this->isInternal;
+    }
+
+    /**
+     * @param boolean $isTrade
+     *
+     * @return $this
+     * @codeCoverageIgnore
+     */
+    public function setIsTrade($isTrade)
+    {
+        $this->isTrade = $isTrade;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     * @codeCoverageIgnore
+     */
+    public function isTrade()
+    {
+        return $this->isTrade;
     }
 }

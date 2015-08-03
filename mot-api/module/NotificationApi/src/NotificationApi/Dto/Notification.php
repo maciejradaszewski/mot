@@ -21,6 +21,8 @@ class Notification
     const TEMPLATE_TESTING_OUTSIDE_OPENING_HOURS = 12;
     const TEMPLATE_MOT_TEST_STATUS_CHANGED_BY_ANOTHER_USER = 13;
     const TEMPLATE_TESTER_QUALIFICATION_STATUS = 14;
+    const TEMPLATE_DVSA_ASSIGN_ROLE = 15;
+    const TEMPLATE_DVSA_REMOVE_ROLE = 16;
 
     /** @var $template int */
     private $template;

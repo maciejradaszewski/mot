@@ -1,0 +1,49 @@
+<?php
+$successMessages  = $this->layout()->flashMessenger->getSuccessMessages();
+$errorMessages    = $this->layout()->flashMessenger->getErrorMessages();
+$messages = $successMessages ?: $errorMessages;
+$messageType = empty($successMessages) ? 'failure' : 'success';
+
+echo $this->partial('partial/gds/general/system-message', ['messages' => $messages, 'type' => $messageType]);
+?>
+
+<h3 class="heading-medium">Current roles</h3>
+<table class="key-value-list">
+    <tbody>
+    <?php foreach ($currentInternalRoles as $code => $role) : ?>
+    <tr>
+        <th class="key-value-list__key" id="<?php echo $this->escapeHtmlAttr($code) ?>">
+            <?php echo $this->escapeHtmlAttr($role['name']); ?>
+        </th>
+        <td class="key-value-list__value">
+            <a href="<?php echo $this->url($role['url']['route'], $role['url']['params'])?>"  id="remove-role-<?php echo $this->escapeHtmlAttr($code) ?>">Remove role</a>
+        </td>
+    </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<h3 class="heading-medium">Add roles</h3>
+<table class="key-value-list">
+    <tbody>
+    <?php foreach ($manageableInternalRoles as $code => $role) : ?>
+    <tr>
+        <th class="key-value-list__key" id="<?php echo $this->escapeHtmlAttr($code) ?>">
+            <?php echo $this->escapeHtmlAttr($role['name']); ?>
+        </th>
+        <td class="key-value-list__value">
+            <a href="<?php echo $this->url($role['url']['route'], $role['url']['params'])?>" id="add-role-<?php echo $this->escapeHtmlAttr($code) ?>">Add role</a>
+        </td>
+    </tr>
+    <?php endforeach; ?>
+
+    </tbody>
+</table>
+
+<nav class="content-navigation">
+    <ul class="content-navigation__secondary">
+        <li>
+            <a href="<?php echo $this->escapeHtmlAttr($personProfileUrl); ?>">Return to user profile</a>
+        </li>
+    </ul>
+</nav>

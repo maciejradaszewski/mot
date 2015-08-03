@@ -1014,6 +1014,78 @@ class StubRestForCatalog
                 "name": "Withdrawn"
             }
         ],
+        "personSystemRoles": {
+            "1": {
+                "id": 1,
+                "code": "USER",
+                "name": "User"
+            },
+            "2": {
+                "id": 2,
+                "code": "VEHICLE-EXAMINER",
+                "name": "Vehicle Examiner"
+            },
+            "3": {
+                "id": 3,
+                "code": "DVSA-SCHEME-MANAGEMENT",
+                "name": "DVSA Scheme Management"
+            },
+            "4": {
+                "id": 4,
+                "code": "DVSA-SCHEME-USER",
+                "name": "DVSA Scheme User"
+            },
+            "5": {
+                "id": 5,
+                "code": "DVSA-AREA-OFFICE-1",
+                "name": "DVSA Area Admin"
+            },
+            "6": {
+                "id": 6,
+                "code": "FINANCE",
+                "name": "Finance"
+            },
+            "7": {
+                "id": 7,
+                "code": "CUSTOMER-SERVICE-MANAGER",
+                "name": "Customer Service Manager"
+            },
+            "8": {
+                "id": 8,
+                "code": "CUSTOMER-SERVICE-CENTRE-OPERATIVE",
+                "name": "Customer Service Operative"
+            },
+            "9": {
+                "id": 9,
+                "code": "CRON",
+                "name": "Cron User"
+            },
+            "10": {
+                "id": 10,
+                "code": "DVLA-OPERATIVE",
+                "name": "DVLA Operative"
+            },
+            "11": {
+                "id": 11,
+                "code": "DVSA-AREA-OFFICE-2",
+                "name": "DVSA Area Admin 2"
+            },
+            "12": {
+                "id": 12,
+                "code": "GVTS-TESTER",
+                "name": "GVTS Tester"
+            },
+            "13": {
+                "id": 13,
+                "code": "VM-10519-USER",
+                "name": "VM-10519 User"
+            },
+            "14": {
+                "id": 14,
+                "code": "DVLA-MANAGER",
+                "name": "DVLA Manager"
+            }
+        },
         "reasonsForEmptyVRM": [
             {
                 "id": 1,

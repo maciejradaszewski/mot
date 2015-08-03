@@ -5,6 +5,7 @@ use UserAdmin\Factory\Controller\ResetAccountClaimByPostControllerFactory;
 use UserAdmin\Factory\Controller\SecurityQuestionControllerFactory;
 use UserAdmin\Factory\Controller\UserProfileControllerFactory;
 use UserAdmin\Factory\Controller\EmailAddressControllerFactory;
+use UserAdmin\Factory\Controller\PersonRoleControllerFactory;
 use UserAdmin\Factory\Controller\RecordDemoTestControllerFactory;
 use UserAdmin\Controller\RecordDemoTestController;
 
@@ -18,6 +19,7 @@ return [
             SecurityQuestionControllerFactory::class => SecurityQuestionControllerFactory::class,
             ResetAccountClaimByPostControllerFactory::class => ResetAccountClaimByPostControllerFactory::class,
             UserProfileControllerFactory::class => UserProfileControllerFactory::class,
+            PersonRoleControllerFactory::class => PersonRoleControllerFactory::class,
             EmailAddressControllerFactory::class => EmailAddressControllerFactory::class,
             RecordDemoTestController::class => RecordDemoTestControllerFactory::class,
         ]
@@ -170,6 +172,47 @@ return [
                                         ],
                                     ],
                                 ],
+                            ],
+                            'manage-user-internal-role' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/manage-internal-role',
+                                    'defaults' => [
+                                        'controller' => PersonRoleControllerFactory::class,
+                                        'action' => 'manageInternalRole',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'assign-internal-role' => [
+                                        'type' => 'Segment',
+                                        'options' => [
+                                            'route' => '/assign/:personSystemRoleId',
+                                            'constraints' => [
+                                                'personSystemRoleId' => '[0-9]+',
+                                            ],
+                                            'defaults' => [
+                                                'controller' => PersonRoleControllerFactory::class,
+                                                'action' => 'assignInternalRole',
+                                            ],
+                                        ],
+                                        'may_terminate' => true,
+                                    ],
+                                    'remove-internal-role' => [
+                                        'type' => 'Segment',
+                                        'options' => [
+                                            'route' => '/remove/:personSystemRoleId',
+                                            'constraints' => [
+                                                'personSystemRoleId' => '[0-9]+',
+                                            ],
+                                            'defaults' => [
+                                                'controller' => PersonRoleControllerFactory::class,
+                                                'action' => 'removeInternalRole',
+                                            ],
+                                        ],
+                                        'may_terminate' => true,
+                                    ],
+                                ]
                             ],
                             'record-demo-test' => [
                                 'type' => 'segment',

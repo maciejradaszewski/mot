@@ -23,6 +23,9 @@ class UserAdminUrlBuilderWeb extends AbstractUrlBuilder
     const USERNAME_RECOVER = '/username-recover';
     const USERNAME_RECOVER_OK = '/username-recover/ok';
 
+    const USER_INTERNAL_ROLE_MANAGEMENT = '/manage-internal-role';
+    const ASSIGN_INTERNAL_ROLE = '/assign/:personSystemRoleId';
+    const REMOVE_INTERNAL_ROLE = '/remove/:personSystemRoleId';
 
     protected $routesStructure
         = [
@@ -40,6 +43,10 @@ class UserAdminUrlBuilderWeb extends AbstractUrlBuilder
                         self::USERNAME_RECOVER => '',
                         self::USERNAME_RECOVER_OK => '',
                         self::EMAIL_CHANGE => '',
+                        self::USER_INTERNAL_ROLE_MANAGEMENT => [
+                            self::ASSIGN_INTERNAL_ROLE => '',
+                            self::REMOVE_INTERNAL_ROLE => '',
+                        ]
                     ],
                 ],
         ];
@@ -108,5 +115,23 @@ class UserAdminUrlBuilderWeb extends AbstractUrlBuilder
     {
         return self::userProfile($personId)
             ->appendRoutesAndParams(self::USERNAME_RECOVER);
+    }
+
+    public static function personInternalRoleManagement($personId)
+    {
+        return self::userProfile($personId)
+            ->appendRoutesAndParams(self::USER_INTERNAL_ROLE_MANAGEMENT);
+    }
+
+    public static function assignPersonInternalRole($personId, $personSystemRoleId){
+        return self::personInternalRoleManagement($personId)
+            ->appendRoutesAndParams(self::ASSIGN_INTERNAL_ROLE)
+            ->routeParam('personSystemRoleId', $personSystemRoleId);
+    }
+
+    public static function removePersonInternalRole($personId, $personSystemRoleId){
+        return self::personInternalRoleManagement($personId)
+            ->appendRoutesAndParams(self::REMOVE_INTERNAL_ROLE)
+            ->routeParam('personSystemRoleId', $personSystemRoleId);
     }
 }

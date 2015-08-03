@@ -2,6 +2,7 @@
 
 namespace UserAdmin\Presenter;
 
+use DvsaCommon\Model\DvsaRole;
 use DvsaClient\Entity\TesterAuthorisation;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
@@ -11,6 +12,9 @@ use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Constants\Role;
 use DvsaCommon\Utility\AddressUtils;
+use UserAdmin\Service\PersonRoleManagementService;
+use Zend\Di\Exception\RuntimeException;
+use Zend\Mvc\Controller\Plugin\Url as UrlPlugin;
 use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
 
 /**
@@ -20,6 +24,7 @@ class UserProfilePresenter implements AddressPresenterInterface
 {
     /** DVSA user profile template */
     const DVSA_PROFILE_TEMPLATE = 'user-admin/user-profile/dvsa-profile.phtml';
+
     /** Unrestricted user profile template path */
     const UNRESTRICTED_PROFILE_TEMPLATE = 'user-admin/user-profile/unrestricted-profile.phtml';
     /** Change email template */
@@ -32,17 +37,29 @@ class UserProfilePresenter implements AddressPresenterInterface
     /* @var bool */
     private $isDvsaUser;
 
+    /** @var TesterAuthorisationViewModel */
     private $testerAuthorisation;
 
+    /** @var PersonRoleManagementService s*/
+    private $personRoleManagementService;
+
+    /**
+     * @param PersonHelpDeskProfileDto $person
+     * @param TesterAuthorisationViewModel $testerAuthorisation
+     * @param bool|false $isDvsaUser
+     * @param PersonRoleManagementService|null $personRoleManagementService
+     */
     public function __construct(
         PersonHelpDeskProfileDto $person,
         TesterAuthorisationViewModel $testerAuthorisation,
-        $isDvsaUser = false
+        $isDvsaUser = false,
+        PersonRoleManagementService $personRoleManagementService = null
     )
     {
         $this->person = $person;
         $this->testerAuthorisation = $testerAuthorisation;
         $this->isDvsaUser = $isDvsaUser;
+        $this->personRoleManagementService = $personRoleManagementService;
     }
 
     public function setPersonId($id)
@@ -243,8 +260,43 @@ class UserProfilePresenter implements AddressPresenterInterface
         return self::UNRESTRICTED_PROFILE_TEMPLATE;
     }
 
+    /**
+     * Return an array of all the internal role codes assigned to the person
+     *
+     * @return array
+     */
+    public function getPersonAssignedInternalRoleCodes()
+    {
+        if (is_null($this->personRoleManagementService)) {
+            throw new RuntimeException(
+                sprintf(
+                    'In order to use %s method you have to inject %s service during initiation of %s',
+                    __METHOD__, PersonRoleManagementService::class, get_class($this)
+                )
+            );
+        }
+
+        return array_column(
+            $this->personRoleManagementService->getPersonAssignedInternalRoles($this->getPersonId()),
+            'name'
+        );
+    }
+
+    /**
+     * To find out if we can display the "role" section
+     * @return bool
+     */
+    public function canDisplayRoleSection()
+    {
+        $userHasPermission = $this->personRoleManagementService->userHasPermissionToManagePersonDvsaRoles();
+        $haveNoAssociatedRole = empty($this->getSiteAndOrganisationRoles());
+
+        return $userHasPermission && $haveNoAssociatedRole;
+    }
+
     public function getTesterAuthorisation()
     {
         return $this->testerAuthorisation;
     }
+
 }

@@ -8,6 +8,7 @@ use DvsaCommon\Constants\Role;
 use TestSupport\DataGenSupport;
 use TestSupport\Helper\TestSupportAccessTokenManager;
 use TestSupport\Service\AccountDataService;
+use TestSupport\Service\DVLAOperativeService;
 use TestSupport\TestDataResponseHelper;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
@@ -26,13 +27,9 @@ class DvlaOperativeDataController extends BaseTestSupportRestfulController
      */
     public function create($data)
     {
-        TestSupportAccessTokenManager::addSchemeManagerAsRequestorIfNecessary($data);
+        $cscoService = $this->getServiceLocator()->get(DVLAOperativeService::class);
+        $resultJson = $cscoService->create($data);
 
-        /** @var $accountHelper AccountDataService */
-        $accountHelper = $this->getServiceLocator()->get(AccountDataService::class);
-
-        $resultJson =$accountHelper->create($data, Role::DVLA_OPERATIVE);
-        $accountHelper->addRole($resultJson->data['personId'], Role::DVLA_OPERATIVE);
         return $resultJson;
     }
 }

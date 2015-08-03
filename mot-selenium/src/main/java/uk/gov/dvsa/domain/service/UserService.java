@@ -2,9 +2,8 @@ package uk.gov.dvsa.domain.service;
 
 import com.jayway.restassured.response.Response;
 import uk.gov.dvsa.domain.api.request.*;
-import uk.gov.dvsa.domain.model.mot.TestGroup;
-import uk.gov.dvsa.domain.api.request.*;
 import uk.gov.dvsa.domain.model.User;
+import uk.gov.dvsa.domain.model.mot.TestGroup;
 import uk.gov.dvsa.framework.config.webdriver.WebDriverConfigurator;
 
 import java.io.IOException;
@@ -15,10 +14,12 @@ public class UserService extends Service {
     private static final String CREATE_TESTER_PATH = "/testsupport/tester";
     private static final String CREATE_AEDM_PATH = "/testsupport/aedm";
     private static final String CREATE_CSCO_PATH = "/testsupport/csco";
-    private static final String CREATE_AO_PATH = "/testsupport/areaoffice1";
+    private static final String CREATE_AREA_OFFICE_1_PATH = "/testsupport/areaoffice1";
     private static final String CREATE_VEHICLE_EXAMINER_PATH = "/testsupport/vehicleexaminer";
     private static final String CREATE_FINANCE_USER_PATH = "/testsupport/financeuser";
     private static final String CREATE_SCHEME_USER = "/testsupport/schemeuser";
+    private static final String CREATE_DEFAULT_USER = "/testsupport/user";
+    private static final String CREATE_USER_WITH_MANAGE_ROLES_PATH = "/testsupport/vm10619rolemanagementupgrade";
     private AuthService authService = new AuthService();
 
     protected UserService() {
@@ -60,8 +61,8 @@ public class UserService extends Service {
     }
 
     public User createUserAsAreaOfficeOneUser(String namePrefix) throws IOException {
-        String aoRequest = jsonHandler.convertToString(new CreateAoRequest(namePrefix, false));
-        Response response = motClient.createUser(aoRequest, CREATE_AO_PATH);
+        String aoRequest = jsonHandler.convertToString(new CreateAreaOfficeOneRequest(namePrefix, false));
+        Response response = motClient.createUser(aoRequest, CREATE_AREA_OFFICE_1_PATH);
 
         return userResponse(response);
     }
@@ -97,5 +98,17 @@ public class UserService extends Service {
     private User userResponse(Response response) throws IOException {
         return jsonHandler.hydrateObject(
                 jsonHandler.convertToString(response.body().path("data")), User.class);
+    }
+
+    protected User createUserWithoutRole(boolean claimAccount) throws IOException {
+        String defaultUserRequest = jsonHandler.convertToString(new CreateDefaultUserRequest(claimAccount));
+        Response response = motClient.createUser(defaultUserRequest, CREATE_DEFAULT_USER);
+
+        return userResponse(response);
+    }
+
+    protected void createUserWithManageRole(String personId) throws IOException {
+        String manageRoleRequest = jsonHandler.convertToString(new CreateManageRoleRequest(personId));
+        motClient.createUser(manageRoleRequest, CREATE_USER_WITH_MANAGE_ROLES_PATH);
     }
 }

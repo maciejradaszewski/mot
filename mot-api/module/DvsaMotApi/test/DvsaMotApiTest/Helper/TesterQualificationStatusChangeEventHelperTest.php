@@ -1,6 +1,6 @@
 <?php
 
-namespace DvsaMotApi\ApiTest\Person\Helper;
+namespace DvsaMotApiTest\Helper;
 
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\MotIdentityInterface;
@@ -9,7 +9,6 @@ use DvsaEntities\Entity\EventType;
 use DvsaEntities\Entity\Person;
 use DvsaCommon\Enum\EventTypeCode;
 use DvsaCommon\Constants\EventDescription;
-use DvsaEntities\Repository\PersonRepository;
 use DvsaEventApi\Service\EventService;
 use DvsaMotApi\Helper\TesterQualificationStatusChangeEventHelper;
 use DvsaEntities\Repository\EventPersonMapRepository;
@@ -26,9 +25,6 @@ class TesterQualificationStatusChangeEventHelperTest extends \PHPUnit_Framework_
     /** @var MotIdentityProviderInterface */
     private $identityProvider;
 
-    /** @var PersonRepository */
-    private $personRepository;
-
     /** @var EventPersonMapRepository */
     private $eventPersonMapRepository;
 
@@ -41,11 +37,17 @@ class TesterQualificationStatusChangeEventHelperTest extends \PHPUnit_Framework_
     public function setUp()
     {
         $personId = 1;
-        $identity = XMock::of(MotIdentityInterface::class);
+
+        $person = (new Person())
+            ->setId($personId)
+            ->setFirstName("John")
+            ->setFamilyName("Rambo");
+
+        $identity = XMock::of(MotIdentityInterface::class, ['getPerson']);
         $identity
             ->expects($this->any())
-            ->method('getUserId')
-            ->willReturn($personId);
+            ->method('getPerson')
+            ->willReturn($person);
 
         $identityProvider = XMock::of(MotIdentityProviderInterface::class);
         $identityProvider
@@ -53,24 +55,12 @@ class TesterQualificationStatusChangeEventHelperTest extends \PHPUnit_Framework_
             ->method('getIdentity')
             ->willReturn($identity);
 
-        $person = (new Person())
-            ->setId($personId)
-            ->setFirstName("John")
-            ->setFamilyName("Rambo");
-
-        $personRepository = XMock::of(PersonRepository::class);
-        $personRepository
-            ->expects($this->any())
-            ->method('get')
-            ->willReturn($person);
-
         $tester = (new Person())
             ->setId(123)
             ->setFirstName("Marty")
             ->setFamilyName("McFly");
 
         $this->identityProvider = $identityProvider;
-        $this->personRepository = $personRepository;
         $this->person = $person;
         $this->tester = $tester;
         $this->eventPersonMapRepository = XMock::of(EventPersonMapRepository::class);
@@ -79,9 +69,9 @@ class TesterQualificationStatusChangeEventHelperTest extends \PHPUnit_Framework_
     public function testEventIsSendForGroupA()
     {
         $eventType = (new EventType())->setCode(EventTypeCode::GROUP_A_TESTER_QUALIFICATION);
-        $testerQualificationStatusChangeEvent = $this->createTesterQualificationStatusChangeEventHelper($eventType);
+        $helper = $this->createTesterQualificationStatusChangeEventHelper($eventType);
 
-        $eventPersonMap = $testerQualificationStatusChangeEvent->create($this->tester, "A");
+        $eventPersonMap = $helper->create($this->tester, "A");
         $event = $eventPersonMap->getEvent();
         $description = sprintf(EventDescription::TESTER_QUALIFICATION_STATUS_CHANGE, "A", $this->person->getDisplayName());
 
@@ -92,9 +82,9 @@ class TesterQualificationStatusChangeEventHelperTest extends \PHPUnit_Framework_
     public function testEventIsSendForGroupB()
     {
         $eventType = (new EventType())->setCode(EventTypeCode::GROUP_B_TESTER_QUALIFICATION);
-        $testerQualificationStatusChangeEvent = $this->createTesterQualificationStatusChangeEventHelper($eventType);;
+        $helper = $this->createTesterQualificationStatusChangeEventHelper($eventType);;
 
-        $eventPersonMap = $testerQualificationStatusChangeEvent->create($this->tester, "B");
+        $eventPersonMap = $helper->create($this->tester, "B");
         $event = $eventPersonMap->getEvent();
         $description = sprintf(EventDescription::TESTER_QUALIFICATION_STATUS_CHANGE, "B", $this->person->getDisplayName());
 
@@ -131,7 +121,6 @@ class TesterQualificationStatusChangeEventHelperTest extends \PHPUnit_Framework_
             $this->identityProvider,
             $this->createEventService($eventType),
             $this->eventPersonMapRepository,
-            $this->personRepository,
             new DateTimeHolder()
         );
     }

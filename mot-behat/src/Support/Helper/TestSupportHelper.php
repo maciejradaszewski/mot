@@ -2,16 +2,24 @@
 
 namespace Dvsa\Mot\Behat\Support\Helper;
 
+use TestSupport\Controller\VM10619RoleManagementUpgradeController;
 use TestSupport\Service\CSCOService;
+use TestSupport\Service\CSMService;
+use TestSupport\Service\DVLAManagerService;
 use TestSupport\Service\AreaOffice1Service;
 use TestSupport\Service\AreaOffice2Service;
+use TestSupport\Service\DVLAOperativeService;
 use TestSupport\Service\FinanceUserService;
+use TestSupport\Service\VM10619RoleManagementUpgradeService;
 use TestSupport\Service\VtsService;
 use TestSupport\Service\AEService;
 use TestSupport\Service\TesterService;
 use TestSupport\Service\PasswordResetService;
+use TestSupport\Service\SchemeManagerService;
+use TestSupport\Service\SchemeUserService;
 use TestSupport\Service\VehicleService;
 use TestSupport\Service\VehicleExaminerService;
+use TestSupport\Service\UserService;
 use TestSupport\Service\VM10519UserService;
 use TestSupport\Service\AedmService;
 use TestSupport\Service\AccountDataService;
@@ -32,6 +40,38 @@ class TestSupportHelper
     public function __construct(ServiceManager $serviceManager)
     {
         $this->testSupportServiceManager = $serviceManager;
+    }
+
+    /**
+     * Factory to build user services depending on user role passed in.
+     *
+     * @param $userRole
+     * @return \TestSupport\Service\DVLAManagerService|\TestSupport\Service\UserService
+     * @throws \Exception
+     */
+    public function userRoleServiceFactory($userRole)
+    {
+        switch ($userRole) {
+            case 'Scheme User':
+                return $this->getUserService();
+            case 'DVLA Manager':
+                return $this->getDVLAManagerService();
+            case 'DVLA Operative':
+                return $this->getDVLAOperativeService();
+            case 'Vehicle Examiner':
+                return $this->getVehicleExaminerService();
+            case 'Area Office User':
+                return $this->getAreaOffice1Service();
+            case 'Area Office User 2':
+                return $this->getAreaOffice2Service();
+            case 'Customer Service Operative':
+                return $this->getCscoService();
+            case 'Customer Service Manager':
+                return $this->getCSMService();
+            case 'Finance User':
+                return $this->getFinanceUserService();
+        }
+        throw new \Exception("Unknown service for role '{$userRole}'");
     }
 
     /**
@@ -59,6 +99,7 @@ class TestSupportHelper
     {
         return $this->getServiceManager()->get(AreaOffice1Service::class);
     }
+
     /**
      * Retrieve the FinanceUserService from the ServiceManager
      * @return \TestSupport\Service\AreaOffice1Service
@@ -135,11 +176,68 @@ class TestSupportHelper
     }
 
     /**
+     * @return \TestSupport\Service\SchemeManagerService
+     */
+    public function getSchemeManagerService()
+    {
+        return $this->getServiceManager()->get(SchemeManagerService::class);
+    }
+
+    /**
+     * @return \TestSupport\Service\SchemeUserService
+     */
+    public function getSchemeUserService()
+    {
+        return $this->getServiceManager()->get(SchemeUserService::class);
+    }
+
+    /**
+     * @return \TestSupport\Service\UserService
+     */
+    public function getUserService()
+    {
+        return $this->getServiceManager()->get(UserService::class);
+    }
+
+    /**
+     * @return \TestSupport\Service\CSMService
+     */
+    public function getCSMService()
+    {
+        return $this->getServiceManager()->get(CSMService::class);
+    }
+
+    /**
+     * @return \TestSupport\Service\DVLAManagerService
+     */
+    public function getDVLAManagerService()
+    {
+        return $this->getServiceManager()->get(DVLAManagerService::class);
+    }
+
+    /**
      * @return \TestSupport\Service\VM10519UserService
      */
-    public function getSuperVehicleExaminerService()
+    public function getVM10519UserService()
     {
         return $this->getServiceManager()->get(VM10519UserService::class);
+
+    }
+
+    /**
+     * @return \TestSupport\Service\VM10619RoleManagementUpgradeService
+     */
+    public function getVM10619RoleMananagementUpgradeService()
+    {
+        return $this->getServiceManager()->get(VM10619RoleManagementUpgradeService::class);
+    }
+
+    /**
+     * @return \TestSupport\Service\DVLAOperativeService
+     */
+    public function getDVLAOperativeService()
+    {
+        return $this->getServiceManager()->get(DVLAOperativeService::class);
     }
 
     /**

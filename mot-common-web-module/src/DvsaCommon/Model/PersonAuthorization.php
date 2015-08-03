@@ -68,7 +68,7 @@ class PersonAuthorization
         $siteArray = [];
 
         /**
-         * @var int                       $siteId
+         * @var int $siteId
          * @var ListOfRolesAndPermissions $siteListOfRoleAndPermissions
          */
         foreach ($this->siteRoles as $siteId => $siteListOfRoleAndPermissions) {
@@ -78,7 +78,7 @@ class PersonAuthorization
         $orgArray = [];
 
         /**
-         * @var int                       $orgId
+         * @var int $orgId
          * @var ListOfRolesAndPermissions $orgListOfRoleAndPermissions
          */
         foreach ($this->organisationRoles as $orgId => $orgListOfRoleAndPermissions) {
@@ -86,9 +86,9 @@ class PersonAuthorization
         }
 
         return [
-            'normal'              => $this->normalRoles->asArray(),
-            'sites'               => $siteArray,
-            'organisations'       => $orgArray,
+            'normal' => $this->normalRoles->asArray(),
+            'sites' => $siteArray,
+            'organisations' => $orgArray,
             'siteOrganisationMap' => $this->siteOrganisationMap
         ];
     }
@@ -132,6 +132,32 @@ class PersonAuthorization
         return $places;
     }
 
+    /**
+     * Return an array of all the unique roles assigned to the person in the system level,
+     *  as well as all the associated sites and organisation.
+     *
+     * @return array
+     */
+    public function getAllRoles()
+    {
+        $allRoles = $this->normalRoles->asArray()['roles'];
+
+        foreach ($this->siteRoles as $siteRolesPermissions){
+            $roles = $siteRolesPermissions->asArray()['roles'];
+            foreach ($roles as $role) {
+                $allRoles[] = $role;
+            }
+        }
+
+        foreach ($this->organisationRoles as $organisationRolesPermissions){
+            $roles = $organisationRolesPermissions->asArray()['roles'];
+            foreach ($roles as $role) {
+                $allRoles[] = $role;
+            }
+        }
+
+        return array_unique($allRoles);
+    }
 
     /** @return ListOfRolesAndPermissions */
     public function getRoles()
@@ -239,7 +265,9 @@ class PersonAuthorization
     public function isAedm()
     {
         foreach ($this->organisationRoles as $aListOfRolesAndPermissions) {
-            if ($aListOfRolesAndPermissions->includesRole(OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER)
+            if ($aListOfRolesAndPermissions->includesRole(
+                    OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER
+                )
                 || $aListOfRolesAndPermissions->includesRole(OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE)
             ) {
                 return true;

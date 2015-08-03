@@ -99,8 +99,12 @@ public class User {
         return middleName != null && !middleName.isEmpty();
     }
 
-    public String getPin(){
+    public String getPin() {
         return "123456";
+    }
+
+    public String getPersonId() {
+        return personId;
     }
 
     @Override

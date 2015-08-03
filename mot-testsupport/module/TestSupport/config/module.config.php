@@ -22,6 +22,7 @@ return [
             Controller\FinanceUserController::class         => Controller\FinanceUserController::class,
             Controller\VehicleExaminerDataController::class => Controller\VehicleExaminerDataController::class,
             Controller\VM10519UserDataController::class     => Controller\VM10519UserDataController::class,
+            Controller\VM10619RoleManagementUpgradeController::class    => Controller\VM10619RoleManagementUpgradeController::class,
             Controller\AssessorDataController::class        => Controller\AssessorDataController::class,
             Controller\UserDataController::class            => Controller\UserDataController::class,
             Controller\TestSupportMotTestController::class  => Controller\TestSupportMotTestController::class,
@@ -210,6 +211,15 @@ return [
                             'route'    => '/vm10519user',
                             'defaults' => [
                                 'controller' => Controller\VM10519UserDataController::class
+                            ],
+                        ],
+                    ],
+                    'vm10619rolemanagementupgrade' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/vm10619rolemanagementupgrade',
+                            'defaults' => [
+                                'controller' => Controller\VM10619RoleManagementUpgradeController::class
                             ],
                         ],
                     ],

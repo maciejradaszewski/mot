@@ -8,88 +8,72 @@ class Person extends MotApi
 {
     const PATH = 'person/{user_id}';
     const PATH_PERSONAL_DETAILS = 'personal-details/{user_id}';
-    const PATH_TESTER = 'tester/{user_id}';
-    const PATH_DEMO_TEST_ASSESSMENT = 'demo-test-assessment';
-    const PATH_TESTER_TEST_LOGS = 'tester/{user_id}/mot-test-log';
-    const PATH_TESTER_TEST_LOGS_SUMMARY = 'tester/{user_id}/mot-test-log/summary';
+    const PATH_ROLES = '/roles';
+    const PATH_DASHBOARD = '/dashboard';
+    const PATH_RBAC_ROLES = '/rbac-roles';
 
     public function getPersonMotTestingClasses($token, $user_id)
     {
-        return $this->client->request(new Request(
+        return $this->sendRequest(
+            $token,
             MotApi::METHOD_GET,
-            str_replace('{user_id}', $user_id, self::PATH).'/mot-testing',
-            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
-        ));
-    }
-
-    public function getPersonDashboard($token, $user_id)
-    {
-        return $this->client->request(new Request(
-            MotApi::METHOD_GET,
-            str_replace('{user_id}', $user_id, self::PATH.'/dashboard'),
-            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
-        ));
-    }
-
-    public function getTesterDetails($token, $user_id)
-    {
-        return $this->client->request(new Request(
-            MotApi::METHOD_GET,
-            str_replace('{user_id}', $user_id, self::PATH_TESTER),
-            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
-        ));
-    }
-
-    public function getPersonDetails($token, $user_id)
-    {
-        return $this->client->request(new Request(
-            MotApi::METHOD_GET,
-            str_replace('{user_id}', $user_id, self::PATH_PERSONAL_DETAILS),
-            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
-        ));
-    }
-
-    public function getTesterTestLogsSummary($token, $user_id)
-    {
-        return $this->client->request(new Request(
-            'GET',
-            str_replace('{user_id}', $user_id, self::PATH_TESTER_TEST_LOGS_SUMMARY),
-            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
-        ));
+            str_replace('{user_id}', $user_id, self::PATH).'/mot-testing'
+        );
     }
 
     /**
      * @param string $token
-     * @param string $group
-     * @param int $personId
+     * @param int $user_id
      * @return \Dvsa\Mot\Behat\Support\Response
      */
-    public function updateTesterQualification($token, $group, $personId)
+    public function getPersonDashboard($token, $user_id)
     {
-        $data = [
-            'vehicleClassGroup' => $group,
-            'testerId' => $personId
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_GET,
+            str_replace('{user_id}', $user_id, self::PATH).self::PATH_DASHBOARD
+        );
+    }
+
+    /**
+     * @param string $token
+     * @param int $user_id
+     * @return \Dvsa\Mot\Behat\Support\Response
+     */
+    public function getPersonRBAC($token, $user_id)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_GET,
+            str_replace('{user_id}', $user_id, self::PATH).self::PATH_RBAC_ROLES
+        );
+    }
+
+    public function getPersonDetails($token, $user_id)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_GET,
+            str_replace('{user_id}', $user_id, self::PATH_PERSONAL_DETAILS)
+        );
+    }
+
+    /**
+     * @param string $token
+     * @param int $user_id
+     * @param string $roleCode
+     * @return \Dvsa\Mot\Behat\Support\Response
+     */
+    public function addPersonRole($token, $user_id, $roleCode)
+    {
+        $jsonData = [
+            'personSystemRoleCode' => $roleCode
         ];
         return $this->sendRequest(
             $token,
             MotApi::METHOD_POST,
-            self::PATH_DEMO_TEST_ASSESSMENT,
-            $data
-        );
-    }
-
-    public function getTesterTestLogs($token, $user_id)
-    {
-        return $this->client->request(
-            new Request(
-                'POST',
-                str_replace('{user_id}', $user_id, self::PATH_TESTER_TEST_LOGS),
-                [
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer '.$token
-                ],
-                '{"format":"DATA_TABLES","_class":"DvsaCommon\\\\Dto\\\\Search\\\\MotTestSearchParamsDto"}'
-            )
+            str_replace('{user_id}', $user_id, self::PATH.self::PATH_ROLES),
+            $jsonData
         );
     }
 
@@ -99,7 +83,7 @@ class Person extends MotApi
             $emailConfirmation = $newEmail;
         }
 
-        $body = json_encode([
+        $body = [
             'title' => 'Mr',
             'firstName' => 'Bob',
             'middleName' => 'Thomas',
@@ -117,13 +101,13 @@ class Person extends MotApi
             'phoneNumber' => '+768-45-4433630',
             'update-profile' => 'update-profile',
             'dateOfBirth' => '1981-04-24',
-        ]);
+        ];
 
-        return $this->client->request(new Request(
-            'PUT',
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_PUT,
             str_replace('{user_id}', $user_id, self::PATH_PERSONAL_DETAILS),
-            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
             $body
-        ));
+        );
     }
 }

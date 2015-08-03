@@ -12,6 +12,14 @@ use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 class NotificationsContext implements Context
 {
     const TEMPLATE_TESTER_QUALIFICATION_STATUS = 14;
+    const TEMPLATE_DVSA_ASSIGN_ROLE = 15;
+    const TEMPLATE_DVSA_REMOVE_ROLE = 16;
+
+    private $templateMap = [
+        "Tester Qualification Status" => self::TEMPLATE_TESTER_QUALIFICATION_STATUS,
+        "DVSA Assign Role" => self::TEMPLATE_DVSA_ASSIGN_ROLE,
+        "DVSA Remove Role" => self::TEMPLATE_DVSA_REMOVE_ROLE
+    ];
 
     /**
      * @var Notification
@@ -47,6 +55,11 @@ class NotificationsContext implements Context
      * @var SessionContext
      */
     private $sessionContext;
+
+    /**
+     * @var array
+     */
+    private $userNotification = [];
 
     /**
      * @var VtsContext
@@ -85,9 +98,9 @@ class NotificationsContext implements Context
     }
 
     /**
-     * @Then the user will receive a status change notification for group :group
+     * @Then the user will receive a :template notification
      */
-    public function theUserWillReceiveAStatusChangeNotificationForGroup($group)
+    public function theUserWillReceiveANotification($template)
     {
         $session = $this->session->startSession(
             $this->personContext->getPersonUsername(),
@@ -102,14 +115,29 @@ class NotificationsContext implements Context
         // Assert that the notification that we are expecting exists
         $found = false;
         foreach ($notifications['data'] as $notification) {
-            if ($notification['templateId'] == self::TEMPLATE_TESTER_QUALIFICATION_STATUS) {
-                PHPUnit::assertContains('Group '.$group, $notification['subject']);
-                PHPUnit::assertContains('Group '.$group, $notification['content']);
+            if ($notification['templateId'] == $this->getNotificationTemplateId($template)) {
+                $this->userNotification = $notification;
                 $found = true;
                 break;
             }
         }
-        PHPUnit::assertTrue($found, 'Notification with template '.self::TEMPLATE_TESTER_QUALIFICATION_STATUS.' not found');
+        PHPUnit::assertTrue($found, 'Notification with template "'.self::TEMPLATE_TESTER_QUALIFICATION_STATUS.'" not found');
+    }
+
+    /**
+     * @Then a notification subject contains phrase :phrase
+     */
+    public function aNotificationSubjectContainsPhrase($phrase)
+    {
+        PHPUnit::assertContains($phrase, $this->userNotification['subject']);
+    }
+
+    /**
+     * @Then a notification content contains phrase :phrase
+     */
+    public function aNotificationContentContainsPhrase($phrase)
+    {
+        PHPUnit::assertContains($phrase, $this->userNotification['content']);
     }
 
     /**
@@ -168,5 +196,14 @@ class NotificationsContext implements Context
 
         $response = $this->notification->acceptOrganisationNomination($userToken, $notification["id"]);;
         PHPUnit::assertEquals(200, $response->getStatusCode());
+    }
+
+    private function getNotificationTemplateId($template)
+    {
+        if (isset($this->templateMap[$template])) {
+            return $this->templateMap[$template];
+        }
+
+        throw new \InvalidArgumentException('Template "' . $template . '" not found');
     }
 }
