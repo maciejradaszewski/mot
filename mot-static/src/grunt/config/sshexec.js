@@ -223,6 +223,9 @@ module.exports = function(grunt, config) {
             },
             disable_dvsa_logger_web: {
                 command: 'rm -f /workspace/mot-web-frontend/config/autoload/z.dvsalogger.development.php'
+            },
+            delete_doctrine_cache_folders: {
+                command: 'cd /workspace/mot-api/data/ && rm -fr DoctrineModule && rm -fr DoctrineORMModule'
             }
         });
     }
