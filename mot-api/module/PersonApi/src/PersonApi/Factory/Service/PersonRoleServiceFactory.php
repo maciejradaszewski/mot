@@ -30,7 +30,7 @@ class PersonRoleServiceFactory implements FactoryInterface
         $entityManager = $serviceLocator->get(EntityManager::class);
 
         $personRoleService = new PersonRoleService(
-            new RbacRepository($entityManager),
+            $serviceLocator->get(RbacRepository::class),
             $entityManager->getRepository(BusinessRoleStatus::class),
             $entityManager->getRepository(PermissionToAssignRoleMap::class),
             $entityManager->getRepository(Person::class),

@@ -4,17 +4,17 @@ namespace DvsaEntityTest\Repository;
 
 use Doctrine\ORM\EntityManager;
 use DvsaCommon\Model\ListOfRolesAndPermissions;
-use DvsaEntities\Repository\RbacRepository;
+use DvsaEntities\Repository\SqlRbacRepository;
 
 /**
  * Tests the mapping part of RbacRepository
  */
-class RbacRepositoryTest extends \PHPUnit_Framework_TestCase
+class SqlRbacRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testRbacAndRepoAndPersonAuthorization()
     {
         /** PersonAuthorization $personAuthorization */
-        $personAuthorization = RbacRepository::mapToPersonAuthorization(
+        $personAuthorization = SqlRbacRepository::mapToPersonAuthorization(
             [
                 [
                     "role_type"              => "SYSTEM",

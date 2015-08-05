@@ -2,7 +2,6 @@
 
 namespace DvsaAuthorisation\Factory;
 
-use Doctrine\ORM\EntityManager;
 use DvsaAuthorisation\Service\RoleProviderService;
 use DvsaEntities\Repository\RbacRepository;
 use Zend\ServiceManager\FactoryInterface;
@@ -16,10 +15,6 @@ class RoleProviderServiceFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var EntityManager $entityManager */
-        $entityManager = $serviceLocator->get(\Doctrine\ORM\EntityManager::class);
-        return new RoleProviderService(
-            new RbacRepository($entityManager)
-        );
+        return new RoleProviderService($serviceLocator->get(RbacRepository::class));
     }
 }

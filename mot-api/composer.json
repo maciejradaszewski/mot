@@ -5,7 +5,7 @@
         "zendframework/zendframework": "~2.4.4",
         "doctrine/doctrine-module": "~0.8",
         "doctrine/doctrine-orm-module": "~0.9",
-        "dvsa/dvsa-doctrine-module": "~1.0",
+        "dvsa/dvsa-doctrine-module": "~1.1",
         "dvsa/dvsa-document-module": "~1.2",
         "dvsa/feature-toggle": "~1.0",
         "dvsa/dvsa-openam-client" : "~1.6.2",
@@ -13,7 +13,7 @@
         "dvsa/dvsa-logger": "~1.1",
         "dvsa/dvsa-application-logger": "~1.1",
         "soflomo/purifier": "0.1.1",
-        "slot-purchase/backend-api": "3.1.*"
+        "slot-purchase/backend-api": "~3.1.5"
     },
     "autoload" : {
         "psr-0" : {

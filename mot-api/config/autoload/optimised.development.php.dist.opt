@@ -36,4 +36,15 @@ return array(
             ),
         ),
     ),
+    'cache' => [
+        'instance' => 'doctrine.cache.apc',
+        'rbac_repository' => [
+            'enabled' => true,
+            'options' => [
+                'ttl' => [
+                    'authorization_details' => 30
+                ],
+            ],
+        ],
+    ],
 );

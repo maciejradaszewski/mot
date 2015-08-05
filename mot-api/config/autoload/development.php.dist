@@ -65,4 +65,16 @@ return array(
          */
         'mot-web-frontend-url'   => 'http://mot-web-frontend.mot.gov.uk'
     ],
+
+    'cache' => [
+        'instance' => 'doctrine.cache.apc',
+        'rbac_repository' => [
+            'enabled' => true,
+            'options' => [
+                'ttl' => [
+                    'authorization_details' => 30
+                ],
+            ],
+        ],
+    ],
 );

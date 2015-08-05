@@ -2,7 +2,6 @@
 
 namespace DvsaMotApi\Factory\Service;
 
-use Doctrine\ORM\EntityManager;
 use DvsaRbac\Service\RoleService;
 use DvsaEntities\Repository\RbacRepository;
 use Zend\ServiceManager\FactoryInterface;
@@ -18,7 +17,7 @@ class RoleServiceFactory implements FactoryInterface
     {
         return new RoleService(
             $serviceLocator->get(EntityManager::class),
-            new RbacRepository($serviceLocator->get(EntityManager::class))
+            $serviceLocator->get(RbacRepository::class)
         );
     }
 }
