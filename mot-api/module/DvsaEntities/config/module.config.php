@@ -1,10 +1,16 @@
 <?php
 
+use DvsaEntities\Factory\Repository\RbacRepositoryFactory;
+use DvsaEntities\Repository\RbacRepository;
+
 return [
     'service_manager' => [
         'invokables' => [
             \DvsaEntities\Audit\EntityAuditListener::class => \DvsaEntities\Audit\EntityAuditListener::class
-        ]
+        ],
+        'factories' => [
+            RbacRepository::class => RbacRepositoryFactory::class,
+        ],
     ],
     'doctrine'        => [
         'eventmanager'  => [

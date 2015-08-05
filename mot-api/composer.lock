@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "41700c3608e58755d5cb302e172fd4fa",
+    "hash": "3b7e55b1a1a8609e449127396a907904",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -48,11 +48,11 @@
         },
         {
             "name": "cpms/client",
-            "version": "v1.21.1",
+            "version": "v1.22.1",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:cpms/cpms-client.git",
-                "reference": "8d1e8ac63a75bdfd37d0b0a88c4244e874c32498"
+                "reference": "9572cd02fe214d306554e64f26c3126224b0d6e7"
             },
             "require": {
                 "zendframework/zendframework": "<2.5"
@@ -80,24 +80,24 @@
                 "proprietary"
             ],
             "description": "CPMS Common Client Module",
-            "time": "2015-07-08 12:20:23"
+            "time": "2015-08-04 21:25:21"
         },
         {
             "name": "cpms/shared-reports",
-            "version": "v1.21.1",
+            "version": "v1.22",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:cpms/shared-reports.git",
-                "reference": "ed40f0e075fd154b348a3bb05af9c773146a0df9"
+                "reference": "771998f495f823f924d268aede96e656bb951bc9"
             },
             "require": {
-                "cpms/client": "1.21.*",
+                "cpms/client": "1.22.*",
                 "php": ">=5.5",
                 "zendframework/zendframework": "<2.5"
             },
             "require-dev": {
-                "cpms/common": "1.21.*",
-                "cpms/payment-test": "1.21.*",
+                "cpms/common": "1.22.*",
+                "cpms/payment-test": "1.22.*",
                 "phpunit/phpunit": "4.0.*"
             },
             "type": "library",
@@ -120,7 +120,7 @@
                 "proprietary"
             ],
             "description": "Shared module for displaying reports",
-            "time": "2015-07-08 12:29:04"
+            "time": "2015-08-04 18:04:55"
         },
         {
             "name": "doctrine/annotations",
@@ -924,14 +924,15 @@
         },
         {
             "name": "dvsa/dvsa-doctrine-module",
-            "version": "v1.0.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:mot/dvsa-doctrine-module.git",
-                "reference": "5cd7d05da384b10cbcc3eee4aeef9085a87bc93f"
+                "reference": "a00f3d27bf0b51a67f417c0d85e134539e06c015"
             },
             "require": {
-                "doctrine/doctrine-orm-module": "~0.9"
+                "doctrine/cache": "~1.4",
+                "zendframework/zend-servicemanager": "~2.3"
             },
             "type": "module",
             "autoload": {
@@ -949,7 +950,7 @@
                 }
             ],
             "description": "DVSA Doctrine Module",
-            "time": "2015-07-03 08:21:38"
+            "time": "2015-08-04 19:32:12"
         },
         {
             "name": "dvsa/dvsa-document-module",
@@ -1224,15 +1225,15 @@
         },
         {
             "name": "slot-purchase/backend-api",
-            "version": "v3.1.4",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git",
-                "reference": "dd5f0495167e92055ecda891a2b6692789353c3c"
+                "reference": "ceaa6efa6f12674a3246c015bc99adf5b9b3c203"
             },
             "require": {
-                "cpms/client": "1.21.*",
-                "cpms/shared-reports": "1.21.*",
+                "cpms/client": "1.22.*",
+                "cpms/shared-reports": "1.22.*",
                 "doctrine/doctrine-module": "~0.8",
                 "doctrine/doctrine-orm-module": "~0.8",
                 "gedmo/doctrine-extensions": "2.3.*",
@@ -1259,7 +1260,7 @@
                 "proprietary"
             ],
             "description": "API for slot purchasing and related features",
-            "time": "2015-07-24 17:38:22"
+            "time": "2015-08-05 13:46:01"
         },
         {
             "name": "soflomo/purifier",
@@ -1493,12 +1494,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:zendframework/ZendPdf.git",
+                "url": "https://github.com/zendframework/ZendPdf.git",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },

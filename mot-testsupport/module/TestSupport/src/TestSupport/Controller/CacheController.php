@@ -47,7 +47,7 @@ class CacheController extends AbstractRestfulController
         return TestDataResponseHelper::jsonOk(["message" => "mot-web-frontend cache has been reset"]);
     }
 
-    public function deleteList()
+    public function deleteList($data)
     {
         opcache_reset();
         apc_clear_cache();

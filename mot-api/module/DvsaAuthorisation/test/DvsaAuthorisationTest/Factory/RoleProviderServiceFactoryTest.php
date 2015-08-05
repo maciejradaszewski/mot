@@ -2,11 +2,11 @@
 
 namespace DvsaAuthorisationTest\Factory;
 
-use Doctrine\ORM\EntityManager;
 use DvsaAuthorisation\Factory\RoleProviderServiceFactory;
 use DvsaAuthorisation\Service\RoleProviderService;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaEntities\Repository\RbacRepository;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 
@@ -20,14 +20,14 @@ class RoleProviderServiceFactoryTest extends AbstractServiceTestCase
     private $roleProviderServiceFactory;
 
     private $serviceLocator;
-    private $entityManagerMock;
+    private $rbacRepositoryMock;
 
     public function setUp()
     {
         $this->roleProviderServiceFactory = new RoleProviderServiceFactory();
-        $this->entityManagerMock = XMock::of(EntityManager::class);
+        $this->rbacRepositoryMock = XMock::of(RbacRepository::class);
         $this->serviceLocator = new ServiceManager();
-        $this->serviceLocator->setService(EntityManager::class, $this->entityManagerMock);
+        $this->serviceLocator->setService(RbacRepository::class, $this->rbacRepositoryMock);
     }
 
     public function testRoleProviderServiceFactoryReturnsInstance()

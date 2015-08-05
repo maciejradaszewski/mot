@@ -18,7 +18,7 @@ class AuthorisationServiceFactory implements FactoryInterface
     {
         return new AuthorisationService(
             $serviceLocator->get('DvsaAuthenticationService'),
-            new RbacRepository($serviceLocator->get(\Doctrine\ORM\EntityManager::class))
+            $serviceLocator->get(RbacRepository::class)
         );
     }
 }

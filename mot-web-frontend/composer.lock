@@ -847,11 +847,11 @@
         },
         {
             "name": "dvsa/dvsa-doctrine-module",
-            "version": "v1.1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:mot/dvsa-doctrine-module.git",
-                "reference": "b6abefa1d1585acc20fff015798415eebef7ee15"
+                "reference": "a00f3d27bf0b51a67f417c0d85e134539e06c015"
             },
             "require": {
                 "doctrine/cache": "~1.4",
@@ -873,7 +873,7 @@
                 }
             ],
             "description": "DVSA Doctrine Module",
-            "time": "2015-07-29 15:15:11"
+            "time": "2015-08-04 19:32:12"
         },
         {
             "name": "dvsa/dvsa-document-module",
@@ -1031,6 +1031,12 @@
                 "type": "git",
                 "url": "http://gitlab.clb.npm/sc/transitiongroup.git",
                 "reference": "a1a7ce2e15a8af8b2ae0a3f8918e8e4a3df2d0f5"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "http://satis.inf.mgt.mtpdvsa/dist/dvsa-transition-group-dev-master-a15457.tar",
+                "reference": "a1a7ce2e15a8af8b2ae0a3f8918e8e4a3df2d0f5",
+                "shasum": "25f062a8d188cd96d74e914c7d856b434b85c145"
             },
             "require": {
                 "doctrine/doctrine-orm-module": "~0.8.0",
@@ -1635,12 +1641,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:zendframework/ZendPdf.git",
+                "url": "https://github.com/zendframework/ZendPdf.git",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },
@@ -1660,7 +1666,6 @@
                     "ZendPdf\\": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1670,6 +1675,10 @@
                 "pdf",
                 "zf2"
             ],
+            "support": {
+                "source": "https://github.com/zendframework/ZendPdf/tree/release-2.0.2",
+                "issues": "https://github.com/zendframework/ZendPdf/issues"
+            },
             "time": "2012-11-16 11:16:01"
         },
         {

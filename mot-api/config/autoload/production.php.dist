@@ -62,4 +62,24 @@ return [
          */
         'contactNumber' => '01792 454397'
     ],
+
+    'cache' => [
+        'instance' => 'doctrine.cache.memcached',
+        'memcached' => [
+            'servers' => [
+                [
+                    'host' => 'localhost',
+                    'port' => 11211,
+                ],
+            ],
+        ],
+        'rbac_repository' => [
+            'enabled' => true,
+            'options' => [
+                'ttl' => [
+                    'authorization_details' => 30
+                ],
+            ],
+        ],
+    ],
 ];
