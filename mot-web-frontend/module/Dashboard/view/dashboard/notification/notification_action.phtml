@@ -19,7 +19,7 @@ $fields = $notification->getFields();
             <p class="lede" id="notification-decision">
                 <?php if ($notification->isConfirmedAction()): ?>
                     You have been assigned the role of '<?php echo $this->escapeHtml($fields['positionName']); ?>' at '<?php echo $this->escapeHtml($notification->getName()); ?> <?php echo $this->escapeHtml($fields['siteOrOrganisationId']); ?>'.
-                    <p>You should sign in again for this to take effect.</p>
+                    <p>You should sign out and in again for this to take effect.</p>
                 <?php else: ?>
                     You have rejected the role of '<?php echo $this->escapeHtml($fields['positionName']); ?>' at '<?php echo $this->escapeHtml($notification->getName()); ?> <?php echo $this->escapeHtml($fields['siteOrOrganisationId']); ?>'.
                 <?php endif; ?>
@@ -87,7 +87,7 @@ $fields = $notification->getFields();
             </nav>
         </form>
         <div class="text">
-            <p>You should sign in again for this to take effect.</p>
+            <p>You should sign out and in again for this to take effect.</p>
         </div>
         <ul class="content-navigation__secondary">
             <li>
