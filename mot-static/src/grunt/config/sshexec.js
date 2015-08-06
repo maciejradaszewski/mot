@@ -67,15 +67,6 @@ module.exports = function(grunt, config) {
             mysql_proc_fix: {
                 command: 'mysql -u<%= mysql_config.user %> -ppassword -e "use mysql; repair table mysql.proc;"'
             },
-            mysql_freeze: {
-                command: 'cd /workspace/mot-api/db && ./db_freeze.sh <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> manual'
-            },
-            mysql_freeze_current: {
-                command: 'cd /workspace/mot-api/db && ./db_freeze.sh <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %>'
-            },
-            mysql_thaw: {
-                command: 'cd /workspace/mot-api/db && ./db_thaw.sh <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> manual'
-            },
 
             phpunit: {
                 command: 'export dev_workspace="/workspace/"; /workspace/Jenkins_Scripts/run_unit_tests.sh'
