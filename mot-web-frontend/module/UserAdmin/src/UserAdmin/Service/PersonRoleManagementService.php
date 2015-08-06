@@ -120,6 +120,8 @@ class PersonRoleManagementService
             $manageableRoles
         );
 
+        ksort($manageableRolesAndUrl);
+
         return $manageableRolesAndUrl;
     }
 
@@ -156,6 +158,8 @@ class PersonRoleManagementService
             },
             $manageableRoles
         );
+
+        ksort($manageableRolesAndUrl);
 
         return $manageableRolesAndUrl;
     }
