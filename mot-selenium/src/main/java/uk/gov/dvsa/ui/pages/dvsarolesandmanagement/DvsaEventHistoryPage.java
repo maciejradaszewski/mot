@@ -24,7 +24,6 @@ public class DvsaEventHistoryPage extends Page {
     }
 
     public boolean isEvenHistoryDisplayed() {
-        PageInteractionHelper.waitForAjaxToComplete();
         return PageInteractionHelper.isElementPresent(By.linkText(LINK_TEXT));
     }
 }
