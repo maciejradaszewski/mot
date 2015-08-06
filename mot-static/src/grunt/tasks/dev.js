@@ -9,7 +9,6 @@ module.exports = function (grunt, config) {
         grunt.registerTask('dev:optimise', 'Switches the environment into optimised mode',
             [
                 'sshexec:reset_database',
-                'sshexec:mysql_freeze_current',
                 'sshexec:xdebug_disable',
                 'sshexec:doctrine_optimised_develop_dist',
                 'sshexec:server_mod_prod',
