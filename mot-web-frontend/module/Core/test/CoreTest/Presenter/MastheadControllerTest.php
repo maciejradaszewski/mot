@@ -8,7 +8,7 @@ class MastheadPresenterTest extends \PHPUnit_Framework_TestCase
 {
     protected $presenter;
 
-    protected $expectedMailtoUri = 'mailto:mot.modernisation@vosa.gsi.gov.uk?subject=MOT%20testing%20service%20feedback';
+    protected $expectedUrl = 'http://www.smartsurvey.co.uk/s/MOTFeedback/';
 
     protected function setUp()
     {
@@ -20,8 +20,8 @@ class MastheadPresenterTest extends \PHPUnit_Framework_TestCase
         unset($this->presenter);
     }
 
-    public function testGetFeedbackMailtoUri()
+    public function testGetFeedbackUrl()
     {
-        $this->assertEquals($this->presenter->getFeedbackMailtoUri(), $this->expectedMailtoUri);
+        $this->assertEquals($this->presenter->getFeedbackUrl(), $this->expectedUrl);
     }
 }
