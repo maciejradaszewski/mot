@@ -7,6 +7,7 @@ import com.dvsa.mot.selenium.datasource.enums.Colour;
 import com.dvsa.mot.selenium.datasource.enums.VehicleMake;
 import com.dvsa.mot.selenium.datasource.enums.VehicleModel;
 import com.dvsa.mot.selenium.framework.BasePage;
+import org.joda.time.DateTime;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -89,6 +90,17 @@ public class ReplacementCertificateUpdatePage extends BasePage {
     @FindBy(id = "dashboard-section-toggler-cor") private WebElement editCountryOfRegistration;
 
     @FindBy(id = "input-cor") private WebElement countryOfRegistrationList;
+
+    //EXPIRY DATE
+    @FindBy(id = "dashboard-section-toggler-expiryDate") private WebElement editExpiryDate;
+
+    @FindBy(id = "expiryDateDay") private WebElement dayOfExpiry;
+
+    @FindBy(id = "expiryDateMonth") private WebElement monthOfExpiry;
+
+    @FindBy(id = "expiryDateYear") private WebElement yearOfExpiry;
+
+    @FindBy(id = "section-expiryDate-submit") private WebElement submitExpiryDate;
 
     //INSERT REASON FOR REPLACEMENT
     @FindBy(id = "input-reason-for-replacement") private WebElement enterReasonForReplacement;
@@ -278,6 +290,21 @@ public class ReplacementCertificateUpdatePage extends BasePage {
         submitVRM.click();
         return this;
 
+    }
+
+    public ReplacementCertificateUpdatePage editExpiryDateAndSubmit(DateTime dateTime) {
+        editExpiryDate.click();
+        waitForElementToBeVisible(dayOfExpiry, 1);
+        dayOfExpiry.clear();
+        dayOfExpiry.sendKeys(String.valueOf(dateTime.dayOfMonth().get()));
+        waitForElementToBeVisible(monthOfExpiry, 1);
+        monthOfExpiry.clear();
+        monthOfExpiry.sendKeys(String.valueOf(dateTime.monthOfYear().get()));
+        waitForElementToBeVisible(yearOfExpiry, 1);
+        yearOfExpiry.clear();
+        yearOfExpiry.sendKeys(String.valueOf(dateTime.yearOfEra().get()));
+        submitExpiryDate.click();
+        return this;
     }
 
     public boolean isEditOdometerReadingButtonDisplayed() {

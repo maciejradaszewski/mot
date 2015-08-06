@@ -71,6 +71,10 @@ public class ReplacementCertificateReviewPage extends BasePage {
         return testStatus.getText();
     }
 
+    public String expiryDate() {
+        return expiryDate.getText();
+    }
+
     public String registrationNumber() {
         return registrationNumber.getText();
     }

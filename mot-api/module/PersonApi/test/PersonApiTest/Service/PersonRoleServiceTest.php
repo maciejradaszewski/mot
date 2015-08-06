@@ -64,11 +64,6 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
         $this->assertInstanceOf('DvsaEntities\Entity\PersonSystemRoleMap', $actual);
     }
 
-    public function testDelete()
-    {
-        $this->markTestIncomplete('Not yet implemented');
-    }
-
     public function testAssignRole_NotExists()
     {
         $this->fakePersonSystemRoleMapRepository_findByPersonAndSystemRole_Null();

@@ -203,6 +203,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
                 'motTest' => $motTest,
                 'odometerReading' => $odometerReadingVO,
                 'isOriginalTester' => $isOriginalTester,
+                'expiryDate' => $draft['expiryDate'],
                 'differentTesterReasons' => $differentTesterReasons,
                 'draftId' => $id,
                 'isAdmin' => $this->hasAdminRights(),
@@ -442,6 +443,19 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
                 ];
             case 'updateCor':
                 return ['countryOfRegistration' => (int)$post['cor']];
+            case 'updateExpiryDate':
+                $year = $post['expiryDateYear'];
+                $year = str_pad($year, 2, '0', STR_PAD_LEFT);
+
+                $month = $post['expiryDateMonth'];
+                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
+
+                $day = $post['expiryDateDay'];
+                $day = str_pad($day, 2, '0', STR_PAD_LEFT);
+
+                return [
+                    'expiryDate' => $year .'-' . $month . '-' . $day
+                ];
             default:
                 throw new \InvalidArgumentException("$updateAction action is invalid");
         }

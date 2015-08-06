@@ -33,10 +33,14 @@ $cssDlClass = !empty(trim($this->cssDlClass)) ? $this->cssDlClass : 'col-sm-4';
         <?php
         $expireDate = null;
 
-        if ($isTestPass) {
-            $expireDate = $motTest->getExpiryDate();
-        } elseif ($isTestReadyToPass) {
-            $expireDate = ArrayUtils::tryGet($pendingDetails, 'expiryDate');
+        if (!$this->expiryDate) {
+            if ($isTestPass) {
+                $expireDate = $motTest->getExpiryDate();
+            } elseif ($isTestReadyToPass) {
+                $expireDate = ArrayUtils::tryGet($pendingDetails, 'expiryDate');
+            }
+        } else {
+            $expireDate = $this->expiryDate;
         }
 
         echo $this->escapeHtml(

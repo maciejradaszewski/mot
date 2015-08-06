@@ -3,6 +3,7 @@
 namespace DvsaMotTest\View;
 
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\Date\DateTimeDisplayFormat;
 
 class ReplacementVehicleViewModel
 {
@@ -16,6 +17,10 @@ class ReplacementVehicleViewModel
     private $secondaryColourId;
     private $countryOfRegistration;
     private $displayModelBody;
+    private $expiryDate;
+
+    /** @var boolean */
+    private $isLatestPassedMotTest;
 
     /** @var ReplacementMakeViewModel $make */
     private $make;
@@ -40,6 +45,14 @@ class ReplacementVehicleViewModel
         $this->make = new ReplacementMakeViewModel($make);
         $this->model = new ReplacementModelViewModel($model);
         $this->countryOfRegistration = ArrayUtils::tryGet($data, 'countryOfRegistration');
+        $this->expiryDate = ArrayUtils::tryGet($data, 'expiryDate');
+
+        $this->isLatestPassedMotTest = ArrayUtils::tryGet($data, 'isLatestPassedMotTest');
+    }
+
+    public function isLatestPassedMotTest()
+    {
+        return $this->isLatestPassedMotTest;
     }
 
     /**
@@ -105,6 +118,53 @@ class ReplacementVehicleViewModel
     public function getCountryOfRegistration()
     {
         return $this->countryOfRegistration;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExpiryDate()
+    {
+        return $this->expiryDate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExpiryDisplayDate()
+    {
+        if (!empty($this->getExpiryDate())) {
+            return DateTimeDisplayFormat::date(new \DateTime($this->expiryDate));
+        }
+
+        return null;
+    }
+
+    public function getExpiryDateDay()
+    {
+        if (!empty($this->getExpiryDate())) {
+            return (new \DateTime($this->expiryDate))->format('d');
+        }
+
+        return null;
+    }
+
+    public function getExpiryDateMonth()
+    {
+        if (!empty($this->getExpiryDate())) {
+            return (new \DateTime($this->expiryDate))->format('m');
+        }
+
+        return null;
+    }
+
+    public function getExpiryDateYear()
+    {
+        if (!empty($this->getExpiryDate())) {
+            return (new \DateTime($this->expiryDate))->format('Y');
+        }
+
+        return null;
     }
 
     /**

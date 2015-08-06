@@ -72,7 +72,8 @@ $isReinspection = \DvsaCommon\Domain\MotTestType::isReinspection($motTestType);
                 'partials/mot-test-summary/field-expiry-date.phtml',
                 [
                     'cssDlClass' => 'col-sm-6',
-                    'motTest'    => $motTest,
+                    'motTest' => $motTest,
+                    'expiryDate'    => $this->expiryDate,
                 ]
             );
             ?>

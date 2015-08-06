@@ -22,9 +22,10 @@ class ReplacementCertificateDraftMappingHelper
      *
      * @return array
      */
-    public static function toJsonArray(ReplacementCertificateDraft $draft, $isFullRights)
+    public static function toJsonArray(ReplacementCertificateDraft $draft, $isFullRights, $isLatestPassedMotTest = false)
     {
         $vts = $draft->getVehicleTestingStation();
+
         $json = [
             'primaryColour'   => [
                 "code"   => $draft->getPrimaryColour()->getCode(),
@@ -33,6 +34,7 @@ class ReplacementCertificateDraftMappingHelper
             'motTestNumber'       => $draft->getMotTest()->getNumber(),
         ];
 
+        $json['isLatestPassedMotTest'] = $isLatestPassedMotTest;
 
         $json['odometerReading'] = $draft->getOdometerReading()
             ? [
@@ -50,6 +52,7 @@ class ReplacementCertificateDraftMappingHelper
             ]
             : NULL;
 
+        $json['expiryDate'] = DateTimeApiFormat::date($draft->getExpiryDate());
 
         if ($isFullRights) {
             $hydrator = new Hydrator();
@@ -81,8 +84,7 @@ class ReplacementCertificateDraftMappingHelper
                      "siteNumber" => $vts->getSiteNumber(),
                      "name"       => $vts->getName(),
                      "address"    => $address,
-                 ],
-                 'expiryDate' => DateTimeApiFormat::date($draft->getExpiryDate())
+                 ]
                 ]
             );
         }

@@ -1,7 +1,6 @@
 <?php
 namespace DvsaMotApi\Controller;
 
-use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
@@ -9,6 +8,7 @@ use DvsaCommonApi\Model\ApiResponse;
 use DvsaCommonApi\Service\Exception\RequiredFieldException;
 use DvsaCommonApi\Transaction\TransactionAwareInterface;
 use DvsaCommonApi\Transaction\TransactionAwareTrait;
+use DvsaEntities\Entity\ReplacementCertificateDraft;
 use DvsaMotApi\Dto\ReplacementCertificateDraftChangeDTO;
 use DvsaMotApi\Helper\ReplacementCertificate\ReplacementCertificateDraftDiffHelper;
 use DvsaMotApi\Helper\ReplacementCertificate\ReplacementCertificateDraftMappingHelper;
@@ -95,7 +95,12 @@ class ReplacementCertificateDraftController extends AbstractDvsaRestfulControlle
     public function get($id)
     {
         $draft = $this->replacementCertificateService->getDraft($id);
-        $data = ReplacementCertificateDraftMappingHelper::toJsonArray($draft, $this->hasFullRights());
+
+        $data = ReplacementCertificateDraftMappingHelper::toJsonArray(
+            $draft,
+            $this->hasFullRights(),
+            $this->isLatestPassedMotTest($draft)
+        );
 
         return ApiResponse::jsonOk($data);
     }
@@ -136,6 +141,25 @@ class ReplacementCertificateDraftController extends AbstractDvsaRestfulControlle
         $draftId = $this->params()->fromRoute("id");
         $draft = $this->replacementCertificateService->getDraft($draftId);
         return ApiResponse::jsonOk(ReplacementCertificateDraftDiffHelper::getDiff($draft));
+    }
+
+    /**
+     * @param ReplacementCertificateDraft $draft
+     * @return bool
+     */
+    private function isLatestPassedMotTest(ReplacementCertificateDraft $draft)
+    {
+        $lastMotTest = $this->motTestService->getLatestPassedTestByVehicleId(
+            $draft->getMotTest()->getVehicle()->getId()
+        );
+
+        $isLatestPassedMotTest = false;
+
+        if ($lastMotTest) {
+            $isLatestPassedMotTest = ($draft->getMotTest()->getId() == $lastMotTest->getId());
+        }
+
+        return $isLatestPassedMotTest;
     }
 
     /**

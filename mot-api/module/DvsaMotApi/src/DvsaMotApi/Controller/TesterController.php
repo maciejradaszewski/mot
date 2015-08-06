@@ -30,7 +30,6 @@ class TesterController extends AbstractDvsaRestfulController
 
     public function get($id)
     {
-        $config = $this->getServiceLocator()->get('Config');
         $this->testerService->verifyAndApplyTesterIsActiveByTesterId($id);
         $testerData = $this->testerService->getTesterData($id);
 

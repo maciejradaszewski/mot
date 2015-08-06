@@ -453,7 +453,7 @@ class MotTestRepository extends AbstractMutableRepository
     public function getLatestMotTestByVehicleIdAndResult(
         $vehicleId,
         $status = MotTestStatusName::PASSED,
-        $issuedDate
+        $issuedDate = false
     ) {
         $qb = $this
             ->createQueryBuilder("t")
@@ -463,13 +463,16 @@ class MotTestRepository extends AbstractMutableRepository
             ->andWhere("t.completedDate IS NOT NULL")
             ->andWhere("tt.code NOT IN (:codes)")
             ->andWhere("ts.name = :status")
-            ->andWhere("t.issuedDate < :issuedDate")
             ->orderBy("t.completedDate", "DESC")
             ->setParameter('vehicleId', $vehicleId)
             ->setParameter('status', $status)
-            ->setParameter('issuedDate', $issuedDate)
             ->setParameter('codes', ['DR', 'DT'])
             ->setMaxResults(1);
+
+        if ($issuedDate) {
+            $qb->andWhere("t.issuedDate < :issuedDate")
+               ->setParameter('issuedDate', $issuedDate);
+        }
 
         $result = $qb->getQuery()->getResult();
 

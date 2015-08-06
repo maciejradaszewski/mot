@@ -27,6 +27,7 @@ use DvsaMotApiTest\Factory\ReplacementCertificateObjectsFactory as RCOF;
 use DvsaMotApiTest\Factory\VehicleObjectsFactory;
 use PHPUnit_Framework_TestCase;
 use DvsaCommonApiTest\Transaction\TestTransactionExecutor;
+use DvsaCommon\Date\DateUtils;
 
 /**
  * Test for {@link ReplacementCertificateDraftUpdater}
@@ -157,6 +158,25 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, $updatedDraft->getIsVinRegistrationChanged());
     }
 
+    public function testUpdateReplacementCertificateWithUpdatedExpiryDate()
+    {
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [PermissionInSystem::CERTIFICATE_REPLACEMENT, PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS]
+        );
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->setExpiryDate(DateUtils::toDate("2014-01-01"));
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
+        $change->setExpiryDate("2014-02-02");
+
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        $this->assertEquals(1, $updatedDraft->getIsVinRegistrationChanged());
+    }
+
     public function testUpdateReplacementCertificateWithUpdatedVin()
     {
         $this->returnsOkCheckResult();
@@ -169,18 +189,20 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $draft->getMotTest()->setVin('123456');
         $draft->setVin('123456');
         $draft->setVrm('123456');
+        $draft->setExpiryDate(DateUtils::toDate("2014-01-01"));
         $draft->setIsVinRegistrationChanged(false);
 
         $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
         $change->setVin('7891011');
         $change->setVrm('123456');
+        $change->setExpiryDate("2014-01-01");
 
         $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
 
         $this->assertEquals(1, $updatedDraft->getIsVinRegistrationChanged());
     }
 
-    public function testUpdateReplacementCertificateWithSameVinAndVrmShouldNotUpdateRegistrationChangedStatus()
+    public function testUpdateReplacementCertificateWithSameVinAndVrmAndExpiryDateShouldNotUpdateRegistrationChangedStatus()
     {
         $this->returnsOkCheckResult();
 
@@ -190,12 +212,15 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
 
         $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
         $draft->getMotTest()->setVin('123456');
+        $draft->getMotTest()->setExpiryDate(DateUtils::toDate("2014-01-01"));
+        $draft->setExpiryDate(DateUtils::toDate("2014-01-01"));
         $draft->setVin('123456');
         $draft->setVrm('123456');
         $draft->setIsVinRegistrationChanged(false);
 
         $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
         $draft->getMotTest()->setRegistration('123456');
+        $change->setExpiryDate("2014-01-01");
         $change->setVin('123456');
         $change->setVrm('123456');
 
