@@ -23,7 +23,7 @@ public class DvsaEventHistoryPage extends Page {
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
 
-    public boolean isEvenHistoryDisplayed() {
-        return PageInteractionHelper.isElementPresent(By.linkText(LINK_TEXT));
+    public boolean  isEvenHistoryDisplayed() {
+        return PageInteractionHelper.isElementPresent(By.partialLinkText(LINK_TEXT));
     }
 }
