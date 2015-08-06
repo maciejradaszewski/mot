@@ -8,23 +8,16 @@ namespace Core\Presenter;
 class MastheadPresenter
 {
     /**
-     * The email address that mailto URI's should include
+     * URL for Feedback
      * @var string
      */
-    private $emailAddress = 'mot.modernisation@vosa.gsi.gov.uk';
+    const FEEDBACK_URL = 'http://www.smartsurvey.co.uk/s/MOTFeedback/';
 
     /**
-     * The email subject line to include in mailto links
-     * @var string
-     */
-    private $subjectLine = 'MOT testing service feedback';
-
-    /**
-     * Return the mailto URI for the feedback link in the masthead
      * @return string
      */
-    public function getFeedbackMailtoUri()
+    public function getFeedbackUrl()
     {
-        return 'mailto:' . $this->emailAddress . '?subject=' . rawurlencode($this->subjectLine);
+        return self::FEEDBACK_URL;
     }
 }

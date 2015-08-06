@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 
 public class FeedbackLinkTests extends BaseTest {
 
-    private String feedbackLink = "mailto:mot.modernisation@vosa.gsi.gov.uk?subject=MOT%20testing%20service%20feedback";
+    private String feedbackLink = "http://www.smartsurvey.co.uk/s/MOTFeedback/";
 
     @Test(groups = {"VM-7201", "Regression", "W-Sprint14"},
             description = "As a AEDM user I verify if the Dashboard site feedback link contains correct link, then I navigate to Site Details page and verify the feedback link there")
