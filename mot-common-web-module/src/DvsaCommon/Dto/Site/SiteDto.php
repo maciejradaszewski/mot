@@ -44,8 +44,8 @@ class SiteDto extends AbstractDataTransferObject
     /** @var  CommentDto[] */
     private $comments;
 
-    /** @var  integer */
-    private $type;
+    /** @var  String */
+    private $typeCode;
 
 
     public function getSiteNumber()
@@ -246,7 +246,7 @@ class SiteDto extends AbstractDataTransferObject
 
     public function getType()
     {
-        return $this->type;
+        return $this->typeCode;
     }
 
     /**
@@ -254,9 +254,9 @@ class SiteDto extends AbstractDataTransferObject
      *
      * @return $this
      */
-    public function setType($typeId)
+    public function setType($typeCode)
     {
-        $this->type = $typeId;
+        $this->typeCode = $typeCode;
         return $this;
     }
 }

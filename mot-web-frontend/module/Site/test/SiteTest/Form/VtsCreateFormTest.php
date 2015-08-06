@@ -17,6 +17,7 @@ use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Enum\SiteTypeCode;
+use DvsaCommon\Enum\SiteTypeName;
 use DvsaCommonTest\TestUtils\TestCaseTrait;
 use DvsaCommonTest\TestUtils\XMock;
 use Site\Form\VtsCreateForm;
@@ -206,9 +207,9 @@ class VtsCreateFormTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertSame(
             [
-                SiteTypeCode::VEHICLE_TESTING_STATION => 'VTS',
-                SiteTypeCode::AREA_OFFICE => 'Area Office',
-                SiteTypeCode::CONTRACTED_TRAINING_CENTRE => 'Training Center',
+                SiteTypeCode::VEHICLE_TESTING_STATION => SiteTypeName::VEHICLE_TESTING_STATION,
+                SiteTypeCode::AREA_OFFICE             => SiteTypeName::AREA_OFFICE,
+                SiteTypeCode::TRAINING_CENTRE         => SiteTypeName::TRAINING_CENTRE,
             ],
             $this->model->getSiteTypes()
         );

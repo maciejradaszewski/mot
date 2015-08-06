@@ -58,7 +58,7 @@ class SiteMapper extends AbstractApiMapper
             ->setLatitude($site->getLatitude())
             ->setLongitude($site->getLongitude())
 
-            ->setType($site->getType()->getId())
+            ->setType($site->getType()->getCode())
 
             ->setComments($this->mapComments($site->getSiteComments()))
             ->setContacts($this->mapContacts($site->getContacts()))
