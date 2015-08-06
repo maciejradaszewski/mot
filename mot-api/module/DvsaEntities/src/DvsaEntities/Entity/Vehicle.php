@@ -448,7 +448,7 @@ class Vehicle extends Entity implements VehicleInterface
      *
      * @return $this
      */
-    public function setBodyType(BodyType $bodyType)
+    public function setBodyType(BodyType $bodyType = null)
     {
         $this->bodyType = $bodyType;
 
