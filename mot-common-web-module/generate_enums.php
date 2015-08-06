@@ -47,6 +47,7 @@ $inputArray = [
     enum('SiteBusinessRoleCode', 'site_business_role', 'name', 'code'),
     enum('SiteContactTypeCode', 'site_contact_type', 'name', 'code'),
     enum('SiteTypeCode', 'site_type', 'name', 'code'),
+    enum('SiteTypeName', 'site_type', 'name', 'name'),
     enum('TransitionStatusCode', 'transition_status', 'name', 'code'),
     enum('VehicleClassCode', 'vehicle_class', 'name', 'code', 'CLASS_'),
     enum('VehicleClassGroupCode', 'vehicle_class_group', 'name', 'code'),

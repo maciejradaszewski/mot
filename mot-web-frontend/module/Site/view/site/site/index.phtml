@@ -2,9 +2,9 @@
 
 use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
-use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
-use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use DvsaMotTest\Controller\MotTestController;
 use Site\ViewModel\MotTest\MotTestInProgressViewModel;
 
@@ -54,7 +54,7 @@ echo $this->partial(
                 'class' => 'key-value-list__value--numeric',
             ],
             ['Classes', implode(',', $site->getTestClasses()), 'id' => 'test-classes'],
-            ['Type', \DvsaCommon\Enum\SiteTypeCode::getAll()[$site->getType()], 'id' => 'site-type'],
+            ['Type', $viewModel->getSiteTypes()[$site->getType()], 'id' => 'site-type'],
             [
                 'Authorised Examiner',
                 $organisationDisplay,
@@ -98,10 +98,18 @@ echo $this->partial(
 ?>
 
 <h3 class="key-value-list__header">Testing facilities</h3>
+
+
 <?php
 $facilities = [];
-foreach ($site->getFacilities() as $facility) {
-    $facilities[$facility[0]->getType()->getCode()] = [$facility[0]->getType()->getName() . ' (' . $facility[0]->getType()->getCode() . ')', ''];
+foreach ($site->getFacilities() as $type => $items) {
+    /** @var \DvsaCommon\Dto\Site\FacilityTypeDto $itemType */
+    $itemType = current($items)->getType();
+
+    $facilities[$type] = [
+        $itemType->getName() . ' (' . $itemType->getCode() . ')',
+        count($items),
+    ];
 }
 
 echo $this->partial(

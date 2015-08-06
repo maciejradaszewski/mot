@@ -11,6 +11,7 @@ use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\CountryCode;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Enum\SiteTypeCode;
+use DvsaCommon\Enum\SiteTypeName;
 use Zend\Stdlib\Parameters;
 
 class VtsCreateForm extends AbstractFormModel
@@ -240,9 +241,9 @@ class VtsCreateForm extends AbstractFormModel
     public function getSiteTypes()
     {
         return [
-            SiteTypeCode::VEHICLE_TESTING_STATION => 'VTS',
-            SiteTypeCode::AREA_OFFICE => 'Area Office',
-            SiteTypeCode::CONTRACTED_TRAINING_CENTRE => 'Training Center',
+            SiteTypeCode::VEHICLE_TESTING_STATION    => SiteTypeName::VEHICLE_TESTING_STATION,
+            SiteTypeCode::AREA_OFFICE                => SiteTypeName::AREA_OFFICE,
+            SiteTypeCode::TRAINING_CENTRE            => SiteTypeName::TRAINING_CENTRE,
         ];
     }
 

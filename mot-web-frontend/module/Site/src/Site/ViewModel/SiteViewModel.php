@@ -10,6 +10,8 @@ use DvsaCommon\Dto\Equipment\EquipmentDto;
 use DvsaCommon\Dto\MotTesting\MotTestInProgressDto;
 use DvsaCommon\Dto\Site\SiteTestingDailyScheduleDto;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
+use DvsaCommon\Enum\SiteTypeCode;
+use DvsaCommon\Enum\SiteTypeName;
 use DvsaCommon\Utility\ArrayUtils;
 use Site\Authorization\VtsOverviewPagePermissions;
 use Site\ViewModel\MotTest\MotTestInProgressViewModel;
@@ -146,5 +148,11 @@ class SiteViewModel
 
         return DateTimeDisplayFormat::time(Time::fromIso8601($schedule->getOpenTime())) .
         ' to ' . DateTimeDisplayFormat::time(Time::fromIso8601($schedule->getCloseTime()));
+    }
+
+    public function getSiteTypes()
+    {
+        $types = array_combine(SiteTypeCode::getAll(), SiteTypeName::getAll());
+        return ArrayUtils::asortBy($types);
     }
 }
