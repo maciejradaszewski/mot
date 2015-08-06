@@ -19,6 +19,7 @@ $fields = $notification->getFields();
             <p class="lede" id="notification-decision">
                 <?php if ($notification->isConfirmedAction()): ?>
                     You have been assigned the role of '<?php echo $this->escapeHtml($fields['positionName']); ?>' at '<?php echo $this->escapeHtml($notification->getName()); ?> <?php echo $this->escapeHtml($fields['siteOrOrganisationId']); ?>'.
+                    <p>You should sign in again for this to take effect.</p>
                 <?php else: ?>
                     You have rejected the role of '<?php echo $this->escapeHtml($fields['positionName']); ?>' at '<?php echo $this->escapeHtml($notification->getName()); ?> <?php echo $this->escapeHtml($fields['siteOrOrganisationId']); ?>'.
                 <?php endif; ?>
@@ -42,7 +43,6 @@ $fields = $notification->getFields();
                 <?php echo $this->escapeHtml($notification->getContent()); ?>
             </p>
         </div>
-
         <div class="text">
             <p>Nomination sent <?php echo DateTimeDisplayFormat::textDateTime($notification->getCreatedOn()); ?></p>
         </div>
@@ -86,7 +86,9 @@ $fields = $notification->getFields();
                 <?php endforeach; ?>
             </nav>
         </form>
-
+        <div class="text">
+            <p>You should sign in again for this to take effect.</p>
+        </div>
         <ul class="content-navigation__secondary">
             <li>
                 <a href="<?php echo $this->url(UserHomeController::ROUTE) ?>" id="link-back-to-home">Cancel and return to Home</a>
