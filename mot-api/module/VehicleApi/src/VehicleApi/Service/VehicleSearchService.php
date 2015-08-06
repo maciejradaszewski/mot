@@ -307,8 +307,6 @@ class VehicleSearchService
      */
     private function mergeMotDataToVehicle(array $vehicle)
     {
-        $motTestData = $this->motTestRepository->findHistoricalTestsForVehicle($vehicle['id'], null);
-
         $vehicle = array_merge(
             $vehicle,
             [
@@ -318,12 +316,16 @@ class VehicleSearchService
             ]
         );
 
-        if ($motTestData) {
-            /** @var MotTest $latestMotTest */
-            $latestMotTest = current($motTestData);
-            $vehicle['mot_id'] = $latestMotTest->getNumber();
-            $vehicle['mot_completed_date'] = $latestMotTest->getIssuedDate()->format('Y-m-d');
-            $vehicle['total_mot_tests'] = count($motTestData);
+        if (!$vehicle['isDvla']) {
+            $motTestData = $this->motTestRepository->findHistoricalTestsForVehicle($vehicle['id'], null);
+
+            if ($motTestData) {
+                /** @var MotTest $latestMotTest */
+                $latestMotTest = current($motTestData);
+                $vehicle['mot_id'] = $latestMotTest->getNumber();
+                $vehicle['mot_completed_date'] = $latestMotTest->getIssuedDate()->format('Y-m-d');
+                $vehicle['total_mot_tests'] = count($motTestData);
+            }
         }
 
         return $vehicle;
