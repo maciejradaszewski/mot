@@ -25,6 +25,7 @@ public class DvsaEventHistoryPage extends Page {
     }
 
     public boolean isEvenHistoryDisplayed() {
+        PageInteractionHelper.waitForAjaxToComplete();
         return PageInteractionHelper.waitForElementToBeClickable(eventHistoryList).isDisplayed();
     }
 }
