@@ -127,12 +127,6 @@ class PersonRoleService
         return $obj;
     }
 
-    public function delete()
-    {
-//        $this->createEvent();
-//        $this->sendNotification();
-    }
-
     /**
      * Attaches the role to the person
      * @param Person $person

@@ -2,6 +2,7 @@ package com.dvsa.mot.selenium.priv.frontend.vehicletest;
 
 import com.dvsa.mot.selenium.datasource.*;
 import com.dvsa.mot.selenium.datasource.enums.Colour;
+import com.dvsa.mot.selenium.datasource.enums.Days;
 import com.dvsa.mot.selenium.datasource.enums.VehicleMake;
 import com.dvsa.mot.selenium.framework.BaseTest;
 import com.dvsa.mot.selenium.framework.Utilities;
@@ -84,14 +85,21 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
     @Test(groups = {"Regression", "VM-2570, VM-2571", "VM-2597", "VM-4511"},
             description = "To issue replacement test documents, DVSA Scheme Management need to be able to select a document to edit and print")
     public void testDVSAUserIssueAndEditReplacementCertificatePass() {
+        DateTime expiryDate = DateTime.now().plusDays(1);
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA_REISSUE_CERT);
         createMotTest(login, defaultSite, vehicle, 12345, TestOutcome.PASSED);
         ReplacementCertificateReviewPage replacementCertificateReviewPage =
                 DuplicateReplacementCertificatePage
                         .navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1, vehicle)
-                        .clickEditButtonPass().submitNoOdometerOption()
+                        .clickEditButtonPass()
+                        .submitNoOdometerOption()
                         .editColoursAndSubmit(Colour.Black, Colour.Silver)
-                        .enterReasonForReplacement("None").reviewChangesButton();
+                        .editExpiryDateAndSubmit(DateTime.now().plusDays(1))
+                        .enterReasonForReplacement("None")
+                        .reviewChangesButton();
+        assertThat("Edited expiry date is displayed on Replacement Certificate Review page",
+                replacementCertificateReviewPage.expiryDate(),
+                is(expiryDate.toString("d MMMM YYYY")));
         Assert.assertEquals(replacementCertificateReviewPage.testStatus(), (Text.TEXT_STATUS_PASS));
         Assert.assertEquals(replacementCertificateReviewPage.odometerReading(),
                 (Text.TEXT_NO_ODOMETER));

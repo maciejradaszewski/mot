@@ -49,6 +49,8 @@ class ReplacementCertificateDraftChangeValidatorTest extends PHPUnit_Framework_T
     {
         $this->setCensorServiceReturnValue(true);
 
+        $currentDate = date('Y-m-d', strtotime('+1 day'));
+
         $change = (new ReplacementCertificateDraftChangeDTO())
             ->setPrimaryColour(4)->setSecondaryColour(5)
             ->setVin("2343434")->setVrm("VRM")
@@ -57,7 +59,7 @@ class ReplacementCertificateDraftChangeValidatorTest extends PHPUnit_Framework_T
             ->setOdometerReading(MotTestObjectsFactory::odometerReadingDTO())
             ->setReasonForReplacement("fwegreg")
             ->setMake(4)->setModel(44)
-            ->setExpiryDate("2014-05-01")
+            ->setExpiryDate($currentDate)
             ->setCountryOfRegistration(5);
 
         $result = $this->getValidator()->validate($change);

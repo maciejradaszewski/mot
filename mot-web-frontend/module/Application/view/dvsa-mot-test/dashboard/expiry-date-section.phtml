@@ -1,0 +1,37 @@
+<?php $this->placeholder('dashboard-section-header-caption')->captureStart('SET') ?>
+    <h3>Expiry Date</h3>
+<?php $this->placeholder('dashboard-section-header-caption')->captureEnd() ?>
+
+<?php $this->placeholder('dashboard-section-header-value')->captureStart('SET') ?>
+    <h3><strong><?php echo $this->escapeHTML($expiryDate); ?></strong></h3>
+<?php $this->placeholder('dashboard-section-header-value')->captureEnd() ?>
+
+<?php $this->placeholder('dashboard-section-body')->captureStart('SET') ?>
+    <div class="clearfix">
+        <div>
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <?php echo $this->partial(
+                        'partial/forms/datePickerBox.phtml',
+                        [
+                            'prefix'    => 'expiryDate',
+                            'label'     => 'MOT Test Expiry Date',
+                            'day'       => $day,
+                            'month'     => $month,
+                            'year'      => $year,
+                            'help'      => 'For example, 31 3 2015'
+                        ]
+                    ); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php $this->placeholder('dashboard-section-body')->captureEnd() ?>
+
+<?php echo $this->partial(
+    'dvsa-mot-test/dashboard/generic-section',
+    [
+        'sectionId' => 'expiryDate',
+        'actionName' => 'updateExpiryDate'
+    ]
+);

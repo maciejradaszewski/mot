@@ -103,7 +103,11 @@ class ReplacementCertificateDraftChangeValidator
         }
         if ($dto->isExpiryDateSet()) {
             try {
-                DateUtils::toDate($dto->getExpiryDate());
+                $expiryDate = DateUtils::toDate($dto->getExpiryDate());
+
+                if ($expiryDate < new \DateTime('now')) {
+                    throw new DateException("Date needs to be in the future.");
+                }
             } catch (DateException $e) {
                 $checkResult->add(CM::withText("Invalid expiry date")->field("expiryDate"));
             }

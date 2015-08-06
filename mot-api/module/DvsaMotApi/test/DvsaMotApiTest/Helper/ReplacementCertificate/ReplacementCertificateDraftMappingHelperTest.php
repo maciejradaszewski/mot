@@ -26,10 +26,16 @@ class ReplacementCertificateDraftMappingHelperTest extends PHPUnit_Framework_Tes
         $vts = $draft->getVehicleTestingStation();
         $arr = ReplacementCertificateDraftMappingHelper::toJsonArray($draft, true);
         $eqTable = [
-            ['countryOfRegistration.id', $draft->getCountryOfRegistration()->getId(),
-             $arr['countryOfRegistration']['id']],
-            ['countryOfRegistration.name', $draft->getCountryOfRegistration()->getName(),
-             $arr['countryOfRegistration']['name']],
+            [
+                'countryOfRegistration.id',
+                $draft->getCountryOfRegistration()->getId(),
+                $arr['countryOfRegistration']['id']
+            ],
+            [
+                'countryOfRegistration.name',
+                $draft->getCountryOfRegistration()->getName(),
+                $arr['countryOfRegistration']['name']
+            ],
             ['primaryColour.code', $draft->getPrimaryColour()->getCode(), $arr['primaryColour']['code']],
             ['primaryColour.name', $draft->getPrimaryColour()->getName(), $arr['primaryColour']['name']],
             ['secondaryColour.code', $draft->getSecondaryColour()->getCode(), $arr['secondaryColour']['code']],
@@ -79,6 +85,7 @@ class ReplacementCertificateDraftMappingHelperTest extends PHPUnit_Framework_Tes
             ['odometerReading.unit', OdometerUnit::MILES, $arr['odometerReading']['unit']],
             ['odometerReading.resultType', OdometerReadingResultType::OK, $arr['odometerReading']['resultType']],
             ['motTestId', $draft->getMotTest()->getNumber(), $arr['motTestNumber']],
+            ['expiryDate', DateTimeApiFormat::date($draft->getExpiryDate()), $arr['expiryDate']],
         ];
 
         foreach ($eqTable as $row) {
@@ -90,10 +97,19 @@ class ReplacementCertificateDraftMappingHelperTest extends PHPUnit_Framework_Tes
     {
         $draft = $this->buildReplacementCertificateDraft();
         $arr = ReplacementCertificateDraftMappingHelper::toJsonArray($draft, false);
-        $allowedProperties = ['odometerReading', 'motTestNumber', 'primaryColour', 'secondaryColour'];
+        $allowedProperties = [
+            'odometerReading',
+            'motTestNumber',
+            'primaryColour',
+            'secondaryColour',
+            'isLatestPassedMotTest',
+            'expiryDate'
+        ];
         $result = array_intersect_key(array_keys($arr), $allowedProperties);
+
         $this->assertEquals(
-            0, count(array_diff($result, $allowedProperties)),
+            0,
+            count(array_diff($result, $allowedProperties)),
             "Other than specified properties have been returned"
         );
     }
@@ -110,13 +126,25 @@ class ReplacementCertificateDraftMappingHelperTest extends PHPUnit_Framework_Tes
     {
         $draft = $this->buildReplacementCertificateDraft();
         $arr = ReplacementCertificateDraftMappingHelper::toJsonArray($draft, false);
-        $allowedProperties = ['odometerReading', 'motTestNumber',
-                              'primaryColour', 'secondaryColour',
-                              'vts', 'vin', 'vrm', 'expiryDate',
-                              'make', 'model', 'countryOfRegistration'];
+        $allowedProperties = [
+            'odometerReading',
+            'motTestNumber',
+            'primaryColour',
+            'secondaryColour',
+            'vts',
+            'vin',
+            'vrm',
+            'expiryDate',
+            'make',
+            'model',
+            'countryOfRegistration',
+            'isLatestPassedMotTest',
+            'expiryDate'
+        ];
         $result = array_intersect_key(array_keys($arr), $allowedProperties);
         $this->assertEquals(
-            0, count(array_diff($result, $allowedProperties)),
+            0,
+            count(array_diff($result, $allowedProperties)),
             "Other than specified properties have been returned"
         );
     }
@@ -134,7 +162,9 @@ class ReplacementCertificateDraftMappingHelperTest extends PHPUnit_Framework_Tes
             ->setModelName('SUPRA 3')
             ->setOdometerReading(
                 MotTestObjectsFactory::odometerReading(
-                    333, OdometerUnit::MILES, OdometerReadingResultType::OK
+                    333,
+                    OdometerUnit::MILES,
+                    OdometerReadingResultType::OK
                 )
             )->setReasonForDifferentTester("reasonForDifferentTester")
             ->setReplacementReason("reasonForReplacement")

@@ -574,4 +574,12 @@ class MotTestService extends AbstractSearchService implements TransactionAwareIn
 
         return $this->readMotTestAssertion->isMotTestOwnerForDto($motTest);
     }
+
+    public function getLatestPassedTestByVehicleId($vehicleId)
+    {
+        $lastMotTest = $this->motTestRepository
+                            ->getLatestMotTestByVehicleIdAndResult($vehicleId, MotTestStatusName::PASSED);
+
+        return $lastMotTest;
+    }
 }
