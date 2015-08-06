@@ -146,14 +146,14 @@ class AuthorisationService extends AbstractMotAuthorisationService implements Au
             return self::HERO_DVSA_ADMIN;
         }
 
+        if ($this->personIdHasRole($personId, Role::TESTER_ACTIVE)) {
+            return self::HERO_TESTER;
+        }
+
         if ($this->personIdHasRole($personId, Role::TESTER_APPLICANT_INITIAL_TRAINING_REQUIRED)
             || $this->personIdHasRole($personId, Role::TESTER_APPLICANT_DEMO_TEST_REQUIRED)
         ) {
             return self::HERO_TESTER_APPLICANT;
-        }
-
-        if ($this->personIdHasRole($personId, Role::TESTER_ACTIVE)) {
-            return self::HERO_TESTER;
         }
 
         if ($personAuthorisation->isVe()) {
