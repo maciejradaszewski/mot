@@ -12,6 +12,84 @@
  */
 
 return array(
+    //global.php
+    'dvsa_authentication' => [
+        'openAM' => [
+            // name of the cookie where OpenAM session token is kept
+            'cookie_name' => 'iPlanetDirectoryPro',
+            // logout url to logout of the application through OpenAM - has goto parameter that tells OpenAM where to redirect after logout
+            'logout_url'  => 'http://openam.mot.gov.uk:8080/secure/UI/Logout?goto=',
+            // lowest level domain name of openam instance
+            'lowest_level_domain'         => 'openam',
+            // base url to OpenAM api
+            'url'                         => 'http://openam.mot.gov.uk:8080/secure/',
+            // realm that will be used when adding new accounts
+            'realm'                       => 'mot',
+            // name of the header/token that is used when calling OpenAM
+            'token_field'                 => 'iPlanetDirectoryPro',
+            // login of OpenAM admin
+            'admin_login'                 => 'amadmin',
+            // password of OpenAM admin
+            'admin_password'              => 'cangetinam',
+            // identity attribute name under which username is stored
+            'identity_attribute_username' => 'uid',
+            // identity attribute name under which openAm entryuuid is stored
+            'identity_attribute_uuid'     => 'entryuuid',
+            // What adapter we use to talk to openAM
+            // For SSL Connections to OpenAM, we need to use Curl: 'Zend\Http\Client\Adapter\Curl'.
+            'adapter'                     => 'Zend\Http\Client\Adapter\Socket',
+        ],
+        // This configuration allow us to access part of the application without being logged in
+        'whiteList' => [
+            '|^/forgotten-password(?!/update$)(.*)|'
+        ]
+    ],
+    'gaTrackingCode' => '',
+    'security' => [
+        'obfuscate' => [
+            'key' => 'acjdajsd92md09282822',
+            'entries' => [
+                'vehicleId' => true,
+            ],
+        ],
+    ],
+    'showErrorsInFrontEnd' => (getenv('APPLICATION_ENV') === 'development'),
+
+    // HTMLPurifier
+    'soflomo_purifier' => [
+        'config'          => [
+            'Cache.SerializerPath'  => sys_get_temp_dir(),
+        ],
+    ],
+
+    // Expiration in seconds of the password reset email
+    // TO CHANGE In both FrontEnd And API
+    'password_reset' => [
+        'expireTime' => 5400,
+    ],
+
+    // Helpdesk name and contact details (MUST BE CHANGE in both FrontEnd and Api)
+    'helpdesk' => [
+        'name'        => 'DVSA Helpdesk',
+        'phoneNumber' => '0330 123 5654',
+        'openingHrs'  => '8:30am to 5:30pm',
+        'openingHrsWeekdays' => 'Monday to Friday, 8:00am to 8:00pm',
+        'openingHrsSaturday' => 'Saturday, 8:00am to 2:00pm',
+        'openingHrsSunday' => 'Sunday, closed'
+    ],
+
+    //features.local.php
+    'feature_toggle' => [
+        /*
+         * Example feature is disabled by default. Enable it at your own risk.
+         */
+        'example.feature.toggle' => false,
+        'ao1.ae.create'          => true,
+        'ao1.ae.edit'            => true,
+        'ao1.site.create'        => true,
+    ],
+
+    //production.php
     // Whether or not to enable a configuration cache.
     // If enabled, the merged configuration will be cached and used in
     // subsequent requests.
