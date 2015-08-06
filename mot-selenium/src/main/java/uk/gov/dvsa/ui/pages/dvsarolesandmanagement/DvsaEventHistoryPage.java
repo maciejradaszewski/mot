@@ -1,5 +1,6 @@
 package uk.gov.dvsa.ui.pages.dvsarolesandmanagement;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
@@ -11,9 +12,7 @@ public class DvsaEventHistoryPage extends Page {
     public static final String PATH = "/event/list/person/%s";
     private static final String PAGE_TITLE = "Events History";
 
-    @FindBy(linkText = "Role Association Change")
-    private WebElement eventHistoryList;
-
+    private static final String LINK_TEXT = "Role Association Change";
     public DvsaEventHistoryPage(MotAppDriver driver) {
         super(driver);
         selfVerify();
@@ -26,6 +25,6 @@ public class DvsaEventHistoryPage extends Page {
 
     public boolean isEvenHistoryDisplayed() {
         PageInteractionHelper.waitForAjaxToComplete();
-        return PageInteractionHelper.waitForElementToBeClickable(eventHistoryList).isDisplayed();
+        return PageInteractionHelper.isElementPresent(By.linkText(LINK_TEXT));
     }
 }
