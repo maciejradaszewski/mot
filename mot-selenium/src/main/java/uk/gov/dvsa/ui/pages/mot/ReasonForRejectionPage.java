@@ -55,7 +55,7 @@ public class ReasonForRejectionPage extends Page {
 
 
     private By prsButtons = By.cssSelector("[data-type='PRS']");
-    private static final String PAGE_TITLE = "Reasons for rejection";
+    private static final String PAGE_TITLE = "Add PRS, failures and advisories";
 
     //Locators not created with Page factory
     By modalTitle = By.className("modal-title");
