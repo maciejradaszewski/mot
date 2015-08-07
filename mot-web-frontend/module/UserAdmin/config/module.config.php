@@ -184,16 +184,16 @@ return [
                                 ],
                                 'may_terminate' => true,
                                 'child_routes' => [
-                                    'assign-internal-role' => [
+                                    'add-internal-role' => [
                                         'type' => 'Segment',
                                         'options' => [
-                                            'route' => '/assign/:personSystemRoleId',
+                                            'route' => '/add/:personSystemRoleId',
                                             'constraints' => [
                                                 'personSystemRoleId' => '[0-9]+',
                                             ],
                                             'defaults' => [
                                                 'controller' => PersonRoleControllerFactory::class,
-                                                'action' => 'assignInternalRole',
+                                                'action' => 'addInternalRole',
                                             ],
                                         ],
                                         'may_terminate' => true,

@@ -24,12 +24,14 @@ use DvsaEntities\Repository\RoleRepository;
 use DvsaMotApi\Helper\RoleEventHelper;
 use DvsaMotApi\Helper\RoleNotificationHelper;
 use PersonApi\Service\PersonRoleService;
+use DvsaCommon\Exception\UnauthorisedException;
 
 class PersonRoleServiceTest extends AbstractServiceTestCase
 {
     const PERSON_ID = 1;
     const PERSON_SYSTEM_ROLE_ID = 42;
     const FAKE_PERSON_SYSTEM_ROLE = 'fakeRole';
+    const FAKE_PERMISSION = 'iAmAFaker';
 
     /**
      * Rules for the current logged in user and what the user being managed currently has
@@ -49,21 +51,215 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
      */
     private $mocks;
 
+    /**
+     * Test creating a role for a user
+     */
     public function testCreate()
     {
-        $roleCode = self::FAKE_PERSON_SYSTEM_ROLE;
-        $this->fakePersonRepository_find();
+        $obj = XMock::of(
+            PersonRoleService::class,
+            [
+                "assertManageRolePermission",
+                "checkPersonHasTradeRole",
+                "getPersonEntity",
+                "getPersonSystemRoleEntityFromName",
+                "getPermissionCodeFromPersonSystemRole",
+                "assertSystemRolePermission",
+                "addRole",
+                "sendAssignRoleEvent",
+                "sendAssignRoleNotification",
+            ]
+        );
+        $person = $this->createPersonMock();
+        $personSystemRole = $this->createPersonSystemRoleMock();
+
+        $obj->expects($this->once())->method("assertManageRolePermission");
+        $obj->expects($this->once())->method("checkPersonHasTradeRole")->with(self::PERSON_ID);
+        $obj->expects($this->once())->method("getPersonEntity")->with(self::PERSON_ID)->willReturn($person);
+        $obj->expects($this->once())->method("assertSystemRolePermission")->with(self::FAKE_PERMISSION);
+        $obj->expects($this->once())->method("addRole")->with($person, $personSystemRole);
+        $obj->expects($this->once())->method("sendAssignRoleEvent")->with($person, $personSystemRole);
+        $obj->expects($this->once())->method("sendAssignRoleNotification")->with($person, $personSystemRole);
+
+        $obj->expects($this->once())
+            ->method("getPersonSystemRoleEntityFromName")
+            ->with(self::FAKE_PERSON_SYSTEM_ROLE)
+            ->willReturn($personSystemRole);
+
+        $obj->expects($this->once())
+            ->method("getPermissionCodeFromPersonSystemRole")
+            ->with($personSystemRole)
+            ->willReturn(self::FAKE_PERMISSION);
+
+        $obj->create(self::PERSON_ID, ['personSystemRoleCode' => self::FAKE_PERSON_SYSTEM_ROLE]);
+    }
+
+    /**
+     * Test that the delete function calls the correct methods with the corect values.
+     * All methods are individually tested and we only confirm that delete calls them.
+     * There is no need to test functions multiple times.
+     */
+    public function testDelete()
+    {
+        $obj = XMock::of(
+            PersonRoleService::class,
+            [
+                "assertManageRolePermission",
+                "checkPersonHasTradeRole",
+                "getPersonEntity",
+                "getPersonSystemRoleEntityFromName",
+                "getPermissionCodeFromPersonSystemRole",
+                "assertSystemRolePermission",
+                "removeRole",
+                "sendRemoveRoleEvent",
+                "sendRemoveRoleNotification",
+            ]
+        );
+        $person = $this->createPersonMock();
+        $personSystemRole = $this->createPersonSystemRoleMock();
+
+        $obj->expects($this->once())->method("assertManageRolePermission");
+        $obj->expects($this->once())->method("checkPersonHasTradeRole")->with(self::PERSON_ID);
+        $obj->expects($this->once())->method("getPersonEntity")->with(self::PERSON_ID)->willReturn($person);
+        $obj->expects($this->once())->method("assertSystemRolePermission")->with(self::FAKE_PERMISSION);
+        $obj->expects($this->once())->method("sendRemoveRoleEvent")->with($person, $personSystemRole);
+        $obj->expects($this->once())->method("sendRemoveRoleNotification")->with($person, $personSystemRole);
+        $obj->expects($this->once())->method("removeRole")->with($person, $personSystemRole);
+
+        $obj->expects($this->once())
+            ->method("getPersonSystemRoleEntityFromName")
+            ->with(self::FAKE_PERSON_SYSTEM_ROLE)
+            ->willReturn($personSystemRole);
+
+        $obj->expects($this->once())
+            ->method("getPermissionCodeFromPersonSystemRole")
+            ->with($personSystemRole)
+            ->willReturn(self::FAKE_PERMISSION);
+
+        $obj->delete(self::PERSON_ID, self::FAKE_PERSON_SYSTEM_ROLE);
+    }
+
+    /**
+     * Test the Get person system role entity function
+     */
+    public function testGetPersonSystemRoleEntityFromName()
+    {
         $this->fakePersonSystemRoleRepository_getByName();
-        $this->fakePermissionToAssignRoleMapRepository_getPermissionCodeByRoleCode_Defined($roleCode);
-        $this->fakeEventHelper_createAssignRoleEvent();
-        $this->fakeNotifcationHelper_sendAssignRoleNotification();
+        $obj = $this->createServiceWithMocks();
+        $obj->getPersonSystemRoleEntityFromName(self::FAKE_PERSON_SYSTEM_ROLE);
+    }
 
-        $obj = $this->createMockService();
-        $actual = $obj->create(self::PERSON_ID, ['personSystemRoleCode' => $roleCode]);
+    /**
+     * test a person who has permission to manage roles
+     */
+    public function testAssertManageRolePermission()
+    {
+        $this->fakeAuthService_assertGranted(PermissionInSystem::MANAGE_DVSA_ROLES);
+        $obj = $this->createServiceWithMocks();
+        $obj->assertManageRolePermission();
+    }
 
+    /**
+     * Test for a person who does not have a trade role
+     */
+    public function testCheckPersonHasTradeRole_PersonHasRole()
+    {
+        $obj = $this->createPersonRoleServiceMock(false);
+
+        $obj->checkPersonHasTradeRole(self::PERSON_ID);
+    }
+
+    /**
+     * Test for a person who does not have a trade role
+     * @expectedException \Exception
+     * @expectedExceptionMessage Its not possible to assign an "internal" role to a "trade" role owner
+     */
+    public function testCheckPersonHasTradeRole_DoesNotHaveRole()
+    {
+        $obj = $this->createPersonRoleServiceMock(true);
+
+        $obj->checkPersonHasTradeRole(self::PERSON_ID);
+    }
+
+    /**
+     * Ensure the auth service calls the assertGranted function.
+     */
+    public function testAssertSystemRolePermission()
+    {
+        $this->fakeAuthService_assertGranted(self::FAKE_PERMISSION);
+        $obj = $this->createServiceWithMocks();
+        $obj->assertSystemRolePermission(self::FAKE_PERMISSION);
+    }
+
+    /**
+     * Test the getPersonSystemRoleMap returns a PersonSystemRoleMap for a Person and PersonSystemRole
+     */
+    public function testGetPersonSystemRoleMap()
+    {
+        $this->fakePersonSystemRoleMapRepository_findByPersonAndSystemRole_ReturnObject();
+        $person = $this->createPersonMock();
+        $personSystemRole = $this->createPersonSystemRoleMock();
+
+        $obj = $this->createServiceWithMocks();
+        $actual = $obj->getPersonSystemRoleMap($person, $personSystemRole);
         $this->assertInstanceOf('DvsaEntities\Entity\PersonSystemRoleMap', $actual);
     }
 
+    /**
+     * Ensure that we trigger the event in the Role Event service
+     */
+    public function testSendAssignRoleEvent()
+    {
+        $this->fakeEventHelper_createAssignRoleEvent();
+        $obj = $this->createServiceWithMocks();
+        $obj->sendAssignRoleEvent(
+            $this->createPersonMock(),
+            $this->createPersonSystemRoleMock()
+        );
+    }
+    /**
+     * Ensure that we trigger the event in the Role Event service
+     */
+    public function testSendRemoveRoleEvent()
+    {
+        $this->fakeEventHelper_createRemoveRoleEvent();
+        $obj = $this->createServiceWithMocks();
+        $obj->sendRemoveRoleEvent(
+            $this->createPersonMock(),
+            $this->createPersonSystemRoleMock()
+        );
+    }
+
+    /**
+     * Ensure that we trigger the event in the Role Notification service
+     */
+    public function testSendAssignRoleNotification()
+    {
+        $this->fakeNotificationHelper_sendAssignRoleNotification();
+        $obj = $this->createServiceWithMocks();
+        $obj->sendAssignRoleNotification(
+            $this->createPersonMock(),
+            $this->createPersonSystemRoleMock()
+        );
+    }
+
+    /**
+     * Ensure that we trigger the event in the Role Notification service
+     */
+    public function testSendRemoveRoleNotification()
+    {
+        $this->fakeNotificationHelper_sendRemoveRoleNotification();
+        $obj = $this->createServiceWithMocks();
+        $obj->sendRemoveRoleNotification(
+            $this->createPersonMock(),
+            $this->createPersonSystemRoleMock()
+        );
+    }
+
+    /**
+     * Test assigning a role when it does not exist
+     * @throws \Exception
+     */
     public function testAssignRole_NotExists()
     {
         $this->fakePersonSystemRoleMapRepository_findByPersonAndSystemRole_Null();
@@ -72,29 +268,67 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
         $personMock = $this->createPersonMock();
         $personSystemRoleMock = $this->createPersonSystemRoleMock();
 
-        $obj = $this->createMockService();
-        $actual = $obj->assignRole($personMock, $personSystemRoleMock);
+        $obj = $this->createServiceWithMocks();
+        $actual = $obj->addRole($personMock, $personSystemRoleMock);
 
         $this->assertInstanceOf('DvsaEntities\Entity\PersonSystemRoleMap', $actual);
         $this->assertEquals(1, $actual->getBusinessRoleStatus()->getId());
         $this->assertEquals(BusinessRoleStatusCode::ACTIVE, $actual->getBusinessRoleStatus()->getCode());
     }
 
+    /**
+     * Test assigning a role when it already exists
+     * @throws \Exception
+     */
     public function testAssignRole_Exists()
     {
         $this->fakePersonSystemRoleMapRepository_findByPersonAndSystemRole_ReturnObject();
         $personMock = $this->createPersonMock();
         $personSystemRoleMock = $this->createPersonSystemRoleMock();
 
-        $obj = $this->createMockService();
+        $obj = $this->createServiceWithMocks();
         $this->setExpectedException('Exception', 'PersonSystemRoleMap already exists');
-        $actual = $obj->assignRole($personMock, $personSystemRoleMock);
+        $actual = $obj->addRole($personMock, $personSystemRoleMock);
     }
 
+    /**
+     * Test removing a role for a role that exists
+     */
+    public function testRemoveRole_Exists()
+    {
+        $personSystemRoleMock = $this->fakePersonSystemRoleMapRepository_findByPersonAndSystemRole_ReturnObject();
+        $personSystemRoleMock->expects($this->once())->method('remove');
+
+        $personMock = $this->createPersonMock();
+        $personSystemRoleMock = $this->createPersonSystemRoleMock();
+
+        $obj = $this->createServiceWithMocks();
+        $obj->removeRole($personMock, $personSystemRoleMock);
+    }
+
+    /**
+     * test removing a role when the role does not exist
+     * @expectedException \Exception
+     * @expectedExceptionMessage PersonSystemRoleMap does not exist
+     */
+    public function testRemoveRole_DoesNotExist()
+    {
+        $this->fakePersonSystemRoleMapRepository_findByPersonAndSystemRole_Null();
+
+        $personMock = $this->createPersonMock();
+        $personSystemRoleMock = $this->createPersonSystemRoleMock();
+
+        $obj = $this->createServiceWithMocks();
+        $obj->removeRole($personMock, $personSystemRoleMock);
+    }
+
+    /**
+     * Test getting a system role entity by name
+     */
     public function textGetPersonSystemRoleEntityFromName()
     {
         $this->fakePersonSystemRoleRepository_getByName();
-        $obj = $this->createMockService();
+        $obj = $this->createServiceWithMocks();
         $actual = $obj->getPersonSystemRoleEntityFromName(self::FAKE_PERSON_SYSTEM_ROLE);
         $this->assertInstanceOf('PersonSystemRole', $actual);
         $this->assertSame(self::FAKE_PERSON_SYSTEM_ROLE, $actual->getName());
@@ -111,7 +345,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
         $this->fakeAuthService_isGranted();
         $this->fakeRoleRepository_getAllInternalRoles();
 
-        $obj = $this->createMockService();
+        $obj = $this->createServiceWithMocks();
         $actual = $obj->getPersonManageableInternalRoleCodes(self::PERSON_ID);
 
         $this->assertSame(['C'], $actual);
@@ -131,40 +365,50 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
         $this->fakeAuthService_isGranted();
         $this->fakeRoleRepository_getAllInternalRoles();
 
-        $obj = $this->createMockService();
+        $obj = $this->createServiceWithMocks();
         $actual = $obj->getPersonManageableInternalRoleCodes(self::PERSON_ID);
 
         $this->assertSame(['C', 'D'], $actual);
     }
 
+    /**
+     * Test getting a person's assigned role codes
+     */
     public function testGetPersonAssignedInternalRoleCodes()
     {
         $this->fakePersonSystemRoleMapRepository_getPersonActiveInternalRoleCodes();
 
-        $obj = $this->createMockService();
+        $obj = $this->createServiceWithMocks();
         $actual = $obj->getPersonAssignedInternalRoleCodes(self::PERSON_ID);
 
         $this->assertSame(['A', 'B'], $actual);
     }
 
+    /**
+     * test getting a persons internal role codes after modification
+     */
     public function testGetPersonAssignedInternalRoleCodes_AlteredData()
     {
         $this->permissionMap[2]['active'] = true;
         $this->fakePersonSystemRoleMapRepository_getPersonActiveInternalRoleCodes();
 
-        $obj = $this->createMockService();
+        $obj = $this->createServiceWithMocks();
         $actual = $obj->getPersonAssignedInternalRoleCodes(self::PERSON_ID);
 
         $this->assertSame(['A', 'B', 'C'], $actual);
     }
 
+    /**
+     * Test getting the roles for a user
+     */
     public function testGetRoles()
     {
-        $this->fakeAuthService_assertGranted();
+        $this->fakeAuthService_assertGranted(PermissionInSystem::MANAGE_DVSA_ROLES);
+        $this->fakeAuthService_isGranted(1);
         $this->fakePersonSystemRoleMapRepository_getPersonActiveInternalRoleCodes();
         $this->fakePermissionToAssignRoleMapRepository_getPermissionCodeByRoleCode();
 
-        $obj = $this->createMockService();
+        $obj = $this->createServiceWithMocks();
         $actual = $obj->getRoles(self::PERSON_ID);
         $this->assertSame(
             [
@@ -176,6 +420,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     }
 
     /**
+     * Test a person has trade role
      * @dataProvider dpResultsPeopleRolesCombination
      */
     public function testPersonHasTradeRole($expectedResult, $personId, $roles)
@@ -212,6 +457,9 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
         );
     }
 
+    /**
+     * @return array
+     */
     public function dpResultsPeopleRolesCombination()
     {
         return [
@@ -322,17 +570,16 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
      */
 
     /**
+     * @param string $with
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function fakeAuthService_assertGranted()
+    private function fakeAuthService_assertGranted($with)
     {
         $mock = $this->getMockObj(AuthorisationServiceInterface::class);
         $mock->expects($this->at(0))
             ->method('assertGranted')
-            ->with(PermissionInSystem::MANAGE_DVSA_ROLES)
+            ->with($with)
             ->willReturn(true);
-
-        $this->fakeAuthService_isGranted(1);
 
         return $mock;
     }
@@ -359,6 +606,9 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
         return $mock;
     }
 
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     private function fakeEventHelper_createAssignRoleEvent()
     {
         $mock = $this->getMockObj(RoleEventHelper::class);
@@ -370,7 +620,19 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function fakeNotifcationHelper_sendAssignRoleNotification()
+    private function fakeEventHelper_createRemoveRoleEvent()
+    {
+        $mock = $this->getMockObj(RoleEventHelper::class);
+        $mock->expects($this->once())
+            ->method('createRemoveRoleEvent');
+        return $mock;
+    }
+
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function fakeNotificationHelper_sendAssignRoleNotification()
     {
         $mock = $this->getMockObj(RoleNotificationHelper::class);
         $mock->expects($this->once())
@@ -378,6 +640,22 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
         return $mock;
     }
 
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function fakeNotificationHelper_sendRemoveRoleNotification()
+    {
+        $mock = $this->getMockObj(RoleNotificationHelper::class);
+        $mock->expects($this->once())
+            ->method('sendRemoveRoleNotification');
+        return $mock;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @throws \Exception
+     */
     private function createPersonMock()
     {
         $person = XMock::of(Person::class);
@@ -387,6 +665,10 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
         return $person;
     }
 
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @throws \Exception
+     */
     private function createPersonSystemRoleMock()
     {
         $personSystemRole = XMock::of(PersonSystemRole::class);
@@ -394,6 +676,21 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
             ->method('getId')
             ->willReturn(self::PERSON_SYSTEM_ROLE_ID);
         return $personSystemRole;
+    }
+
+    /**
+     * @param bool|false $willReturn
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @throws \Exception
+     */
+    private function createPersonRoleServiceMock($willReturn = false)
+    {
+        $mock = XMock::of(PersonRoleService::class, ["personHasTradeRole"]);
+        $mock->expects($this->once())
+            ->method("personHasTradeRole")
+            ->with(self::PERSON_ID)
+            ->willReturn($willReturn);
+        return $mock;
     }
 
     /**
@@ -426,7 +723,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     /**
      * @return PersonRoleService
      */
-    private function createMockService()
+    private function createServiceWithMocks()
     {
         return new PersonRoleService(
             $this->stubRbacRepository(['ROLE-A', 'ROLE-B']),
@@ -453,6 +750,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
             ->with(self::FAKE_PERSON_SYSTEM_ROLE)
             ->willReturn(
                 (new PersonSystemRole)
+                    ->setId(self::PERSON_SYSTEM_ROLE_ID)
                     ->setName(self::FAKE_PERSON_SYSTEM_ROLE)
                     ->setRole(
                         (new Role())
@@ -575,6 +873,31 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
+    private function fakePersonSystemRoleMapRepository_findByPersonAndSystemRole_PersonSystemRoleMap()
+    {
+        $personSystemRoleMap =  $this->getMockObj(PersonSystemRoleMap::class);
+        $personSystemRoleMap->expects($this->once())
+            ->method('getPersonID')
+            ->willReturn(self::PERSON_ID);
+
+        $personSystemRoleMap->expects($this->once())
+            ->method('getPersonSystemRoleID')
+            ->willReturn(self::PERSON_SYSTEM_ROLE_ID);
+
+
+        $mock = $this->getMockObj(PersonSystemRoleMapRepository::class);
+
+        $mock->expects($this->once())
+            ->method('findByPersonAndSystemRole')
+            ->with(self::PERSON_ID, self::PERSON_SYSTEM_ROLE_ID)
+            ->willReturn($personSystemRoleMap);
+
+        return $mock;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     private function fakePersonSystemRoleMapRepository_findByPersonAndSystemRole_ReturnObject()
     {
         $mock = $this->getMockObj(PersonSystemRoleMapRepository::class);
@@ -622,6 +945,10 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
         return $mock;
     }
 
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @throws \Exception
+     */
     private function stubRoleRepository()
     {
         $mockRoleRepository = XMock::of(RoleRepository::class);
@@ -638,6 +965,11 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
         return $mockRoleRepository;
     }
 
+    /**
+     * @param $mockPersonRoleCodes
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @throws \Exception
+     */
     private function stubRbacRepository($mockPersonRoleCodes)
     {
         $mockRbacRepository = XMock::of(RbacRepository::class);
@@ -661,6 +993,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
 
     /**
      * to mock all trade roles coming from the role repository
+     * @return array
      */
     private function dpTradeRoles()
     {

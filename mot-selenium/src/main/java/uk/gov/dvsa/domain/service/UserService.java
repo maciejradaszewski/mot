@@ -18,8 +18,6 @@ public class UserService extends Service {
     private static final String CREATE_VEHICLE_EXAMINER_PATH = "/testsupport/vehicleexaminer";
     private static final String CREATE_FINANCE_USER_PATH = "/testsupport/financeuser";
     private static final String CREATE_SCHEME_USER = "/testsupport/schemeuser";
-    private static final String CREATE_DEFAULT_USER = "/testsupport/user";
-    private static final String CREATE_USER_WITH_MANAGE_ROLES_PATH = "/testsupport/vm10619rolemanagementupgrade";
     private AuthService authService = new AuthService();
 
     protected UserService() {
@@ -98,17 +96,5 @@ public class UserService extends Service {
     private User userResponse(Response response) throws IOException {
         return jsonHandler.hydrateObject(
                 jsonHandler.convertToString(response.body().path("data")), User.class);
-    }
-
-    protected User createUserWithoutRole(boolean claimAccount) throws IOException {
-        String defaultUserRequest = jsonHandler.convertToString(new CreateDefaultUserRequest(claimAccount));
-        Response response = motClient.createUser(defaultUserRequest, CREATE_DEFAULT_USER);
-
-        return userResponse(response);
-    }
-
-    protected void createUserWithManageRole(String personId) throws IOException {
-        String manageRoleRequest = jsonHandler.convertToString(new CreateManageRoleRequest(personId));
-        motClient.createUser(manageRoleRequest, CREATE_USER_WITH_MANAGE_ROLES_PATH);
     }
 }

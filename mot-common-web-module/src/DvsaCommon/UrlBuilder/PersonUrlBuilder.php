@@ -12,6 +12,7 @@ class PersonUrlBuilder extends AbstractUrlBuilder
 {
     const PERSON = 'person';
     const BY_ID = '/:id';
+    const BY_REMOVE_ROLE_ID = '/:role';
     const BY_IDENTIFIER = '/username/:login';
     const AUTHORISED_EXAMINER = '/authorised-examiner';
     const RBAC_ROLES = "/rbac-roles";
@@ -34,7 +35,9 @@ class PersonUrlBuilder extends AbstractUrlBuilder
                     self::MOT_TESTING                    => '',
                     self::RESET_PIN                      => '',
                     self::RESET_CLAIM_ACCOUNT            => '',
-                    self::MANAGE_INTERNAL_ROLES          => '',
+                    self::MANAGE_INTERNAL_ROLES          => [
+                        self::BY_REMOVE_ROLE_ID => '',
+                    ],
                 ],
                 self::BY_IDENTIFIER => '',
             ],
@@ -167,5 +170,18 @@ class PersonUrlBuilder extends AbstractUrlBuilder
     public static function manageInternalRoles($personId)
     {
         return self::byId($personId)->appendRoutesAndParams(self::MANAGE_INTERNAL_ROLES);
+    }
+
+    /**
+     * Return the url to remove a role for a user
+     * @param $personId
+     * @return $this
+     */
+    public static function removeInternalRoles($personId, $roleId)
+    {
+        return self::byId($personId)
+            ->appendRoutesAndParams(self::MANAGE_INTERNAL_ROLES)
+            ->appendRoutesAndParams(self::BY_REMOVE_ROLE_ID)
+            ->routeParam('role', $roleId);
     }
 }

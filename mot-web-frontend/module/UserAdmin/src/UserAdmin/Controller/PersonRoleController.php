@@ -32,7 +32,7 @@ class PersonRoleController extends AbstractAuthActionController
         $this->personRoleManagementService = $personRoleManagementService;
     }
 
-    public function assignInternalRoleAction()
+    public function addInternalRoleAction()
     {
         $roleName = $this->getCatalogService()->getPersonSystemRoles()[$this->getPersonSystemRoleIdFromRoute()]['name'];
 
@@ -70,9 +70,46 @@ class PersonRoleController extends AbstractAuthActionController
     }
 
     /**
-     * @todo Placeholder
+     * @return ViewModel
      */
-    public function removeInternalRoleAction($roleId) {}
+    public function removeInternalRoleAction()
+    {
+
+        if ($this->hasBeenConfirmed()) {
+            $this->personRoleManagementService->removeRole(
+                $this->getPersonIdFromRoute(),
+                $this->getPersonSystemRoleIdFromRoute()
+            );
+
+            $roleName = $this->getCatalogService()->getPersonSystemRoles()[$this->getPersonSystemRoleIdFromRoute()]['name'];
+
+            $this->addSuccessMessage(sprintf("%s has been removed", $roleName));
+            $this->redirect()->toUrl(
+                UserAdminUrlBuilderWeb::personInternalRoleManagement($this->getPersonIdFromRoute())
+            );
+        } else {
+            $this->layout()->setVariables(
+                [
+                    'pageSubTitle' => 'User profile',
+                    'pageTitle' => 'Manage roles',
+                    'progressBar' => ['breadcrumbs' => $this->getBreadcrumbs('Manage roles')],
+                ]
+            )->setTemplate('layout/layout-govuk.phtml');
+
+            $viewModel = new ViewModel(
+                [
+                    'roleName' => $this->getCatalogService()
+                        ->getPersonSystemRoles()[$this->getPersonSystemRoleIdFromRoute()]['name'],
+                    'personName' => $this->getPersonNameForBreadcrumbs(),
+                    'urlManageInternalRoles' => UserAdminUrlBuilderWeb::personInternalRoleManagement(
+                        $this->getPersonIdFromRoute()
+                    ),
+                ]
+            );
+
+            return $viewModel;
+        }
+    }
 
     public function manageInternalRoleAction()
     {

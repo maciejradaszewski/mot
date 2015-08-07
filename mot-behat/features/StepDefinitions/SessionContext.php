@@ -181,7 +181,7 @@ class SessionContext implements Context
         );
     }
     /**
-     * @Given /^I have VM10619 user role$/
+     * @Given /^I have the VM10619 user role$/
      */
     public function iHaveVM10619UserRole()
     {

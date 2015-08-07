@@ -82,6 +82,30 @@ class PersonRoleManagementService
     }
 
     /**
+     * @param $personId
+     * @param $personSystemRoleId
+     * @return bool
+     * @throws \Exception
+     */
+    public function removeRole($personId, $personSystemRoleId)
+    {
+        // Use CatalogService to translate between personSystemRoleId and code
+        $array = $this->catalogService->getPersonSystemRoles();
+        $foundItem = (new DataMappingHelper($array, 'id', (int) $personSystemRoleId))
+            ->setReturnKeys(['code'])
+            ->getValue();
+
+        $url = PersonUrlBuilder::removeInternalRoles($personId, $foundItem['code'])->toString();
+
+        try {
+            $this->client->delete($url);
+            return true;
+        } catch (GeneralRestException $e) {
+            return false;
+        }
+    }
+
+    /**
      * @param int $personId
      * @return \DvsaCommon\Dto\Person\PersonHelpDeskProfileDto
      */
@@ -109,7 +133,7 @@ class PersonRoleManagementService
         $manageableRolesAndUrl = array_map(
             function ($element) use ($personId) {
                 $element['url'] = [
-                    'route' => 'user_admin/user-profile/manage-user-internal-role/assign-internal-role',
+                    'route' => 'user_admin/user-profile/manage-user-internal-role/add-internal-role',
                     'params' => [
                         'personId' => $personId,
                         'personSystemRoleId' => $element['id'],
@@ -160,6 +184,10 @@ class PersonRoleManagementService
         return $this->sortRolesByName($manageableRolesAndUrl);
     }
 
+    /**
+     * @param $personId
+     * @return array
+     */
     private function retrievePersonAssignedAndInternalRoles($personId)
     {
         if (is_null($this->personInternalRoles)) {
@@ -172,11 +200,19 @@ class PersonRoleManagementService
         return $this->personInternalRoles;
     }
 
+    /**
+     * @param $personId
+     * @return mixed
+     */
     private function retrievePersonAssignedInternalRoles($personId)
     {
         return $this->retrievePersonAssignedAndInternalRoles($personId)[self::ROLES_ASSIGNED];
     }
 
+    /**
+     * @param $personId
+     * @return mixed
+     */
     private function retrievePersonManageableInternalRoles($personId)
     {
         return $this->retrievePersonAssignedAndInternalRoles($personId)[self::ROLES_MANAGEABLE];

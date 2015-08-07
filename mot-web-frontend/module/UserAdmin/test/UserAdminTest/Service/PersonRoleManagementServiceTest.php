@@ -157,7 +157,7 @@ class PersonRoleManagementServiceTest extends TestCase
                     'id' => 5,
                     'name' => 'DVSA Area Admin',
                     'url' => [
-                        'route' => 'user_admin/user-profile/manage-user-internal-role/assign-internal-role',
+                        'route' => 'user_admin/user-profile/manage-user-internal-role/add-internal-role',
                         'params' => [
                             'personId' => 147,
                             'personSystemRoleId' => 5,

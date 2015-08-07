@@ -38,7 +38,9 @@ class PersonRoleController extends AbstractDvsaRestfulController
      */
     public function delete($id)
     {
-        $this->personRoleService->delete($this->getPersonIdFromRoute(), $id);
+        $role = $this->params()->fromRoute('role', null);
+
+        $this->personRoleService->delete($this->getPersonIdFromRoute(), $role);
 
         return ApiResponse::jsonOk([]);
     }

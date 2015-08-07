@@ -52,6 +52,8 @@ class TestSupportHelper
     public function userRoleServiceFactory($userRole)
     {
         switch ($userRole) {
+            case 'Scheme Manager':
+                return $this->getSchemeManagerService();
             case 'Scheme User':
                 return $this->getUserService();
             case 'DVLA Manager':
