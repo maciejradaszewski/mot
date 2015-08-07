@@ -120,9 +120,7 @@ class PersonRoleManagementService
             $manageableRoles
         );
 
-        ksort($manageableRolesAndUrl);
-
-        return $manageableRolesAndUrl;
+        return $this->sortRolesByName($manageableRolesAndUrl);
     }
 
     /**
@@ -159,9 +157,7 @@ class PersonRoleManagementService
             $manageableRoles
         );
 
-        ksort($manageableRolesAndUrl);
-
-        return $manageableRolesAndUrl;
+        return $this->sortRolesByName($manageableRolesAndUrl);
     }
 
     private function retrievePersonAssignedAndInternalRoles($personId)
@@ -184,5 +180,21 @@ class PersonRoleManagementService
     private function retrievePersonManageableInternalRoles($personId)
     {
         return $this->retrievePersonAssignedAndInternalRoles($personId)[self::ROLES_MANAGEABLE];
+    }
+
+    /**
+     * @param array $roles
+     * @return array
+     */
+    private function sortRolesByName($roles)
+    {
+        uasort($roles, function($a, $b){
+            if ($a['name'] == $b['name']) {
+                return 0;
+            }
+            return ($a['name'] < $b['name']) ? -1 : 1;
+        });
+
+        return $roles;
     }
 }
