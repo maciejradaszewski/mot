@@ -36,20 +36,25 @@ GROUP BY TABLE_NAME ) tmp_table
 SELECT CONCAT('-- Create history table for ',@SOURCE_SCHEMA,'.',TABLE_NAME,'
 ',create_hist,';
 
+',alter_created_modified,';
+
 ') cmd
 FROM (
-SELECT TABLE_NAME, CONCAT('CREATE TABLE `',@TARGET_SCHEMA,'`.`',LEFT(TABLE_NAME,59), '_hist` (
+SELECT TABLE_NAME, CONCAT('CREATE TABLE `',LEFT(TABLE_NAME,59), '_hist` (
 `hist_id` bigint unsigned not null auto_increment,
 `',GROUP_CONCAT(CONCAT (COLUMN_NAME, '` ',COLUMN_TYPE) SEPARATOR ',
 `'),',
 `expired_by` int unsigned,
 `expired_on` timestamp(6) null default null,
   PRIMARY KEY (`hist_id`),
-  UNIQUE INDEX uk_', LEFT(TABLE_NAME,59), '_hist_id_version', ' (`id`,`version`)) ENGINE=InnoDB') AS create_hist
+  UNIQUE INDEX uk_', LEFT(TABLE_NAME,59), '_hist_id_version', ' (`id`,`version`)) ENGINE=InnoDB') AS create_hist,
+CONCAT('ALTER TABLE `', LEFT(TABLE_NAME,59), '_hist`',
+' MODIFY `created_by` int unsigned not null, MODIFY `last_modified_by` int unsigned not null') AS alter_created_modified
 FROM information_schema.COLUMNS 
 WHERE TABLE_SCHEMA = @SOURCE_SCHEMA
 AND TABLE_NAME = @TAB_NAME
 GROUP BY TABLE_NAME ) tmp_table;
+
 
 
 
