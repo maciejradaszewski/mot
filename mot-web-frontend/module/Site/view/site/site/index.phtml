@@ -135,10 +135,18 @@ echo $this->partial(
                 <?php if ($permission->canViewProfile($position->getPerson())): ?>
 
                     <a href="<?php echo PersonUrlBuilderWeb::profile($position->getPerson()->getId()); ?>">
-                        <?php echo $this->escapeHtml($position->getPerson()->getFullName()); ?>
+                        <?php echo $this->escapeHtml($position->getPerson()->getFullName());
+                        if ($permission->canViewUsername()):
+                            echo "(" . $this->escapeHtml($position->getPerson()->getUsername()) . ")";
+                        endif;
+                        ?>
                     </a>
                 <?php else: ?>
-                    <?php echo $this->escapeHtml($position->getPerson()->getFullName()); ?>
+                    <?php echo $this->escapeHtml($position->getPerson()->getFullName());
+                    if ($permission->canViewUsername()):
+                        echo "(" . $this->escapeHtml($position->getPerson()->getUsername()) . ")";
+                    endif;
+                    ?>
                 <?php endif; ?>
             </th>
             <td class="key-value-list__value">

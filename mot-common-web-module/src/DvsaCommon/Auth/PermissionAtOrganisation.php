@@ -31,6 +31,7 @@ class PermissionAtOrganisation
     const AE_EMPLOYEE_PROFILE_READ = 'AE-EMPLOYEE-PROFILE-READ';
     const AUTHORISED_EXAMINER_PRINCIPAL_CREATE = 'AUTHORISED-EXAMINER-PRINCIPAL-CREATE';
     const AUTHORISED_EXAMINER_PRINCIPAL_REMOVE = 'AUTHORISED-EXAMINER-PRINCIPAL-REMOVE';
+    const AE_USERNAME_VIEW = 'AE-USERNAME-VIEW';
 
     public static function all()
     {
@@ -61,7 +62,8 @@ class PermissionAtOrganisation
             self::AUTHORISED_EXAMINER_PRINCIPAL_CREATE,
             self::AUTHORISED_EXAMINER_PRINCIPAL_REMOVE,
             self::SLOTS_CANCEL_DIRECT_DEBIT,
-            self::SLOTS_MANAGE_DIRECT_DEBIT
+            self::SLOTS_MANAGE_DIRECT_DEBIT,
+            self::AE_USERNAME_VIEW,
         ];
     }
 }

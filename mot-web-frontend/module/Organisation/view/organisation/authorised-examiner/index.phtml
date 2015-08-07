@@ -254,9 +254,15 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                     <?php if ($viewModel->getViewAuthorisation()->canViewProfile($employee->getPerson())): ?>
                         <a href="<?php echo PersonUrlBuilderWeb::profile($employee->getPerson()->getId()); ?>">
                             <?php echo $this->escapeHtml($employee->getPerson()->getFullname()); ?>
+                            <?php if ($viewModel->getViewAuthorisation()->canViewUsername()):
+                                echo "(" . $this->escapeHtml($employee->getPerson()->getUsername()) . ")";
+                            endif; ?>
                         </a>
                     <?php else: ?>
-                        <?php echo $this->escapeHtml($employee->getPerson()->getFullname()); ?>
+                        <?php echo $this->escapeHtml($employee->getPerson()->getFullname());
+                        if ($viewModel->getViewAuthorisation()->canViewUsername()):
+                            echo "(" . $this->escapeHtml($employee->getPerson()->getUsername()) . ")";
+                        endif; ?>
                     <?php endif; ?>
                 </th>
                 <td class="key-value-list__value">

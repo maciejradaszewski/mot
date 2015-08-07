@@ -120,6 +120,7 @@ final class PermissionInSystem
     const MANAGE_ROLE_FINANCE = 'MANAGE-ROLE-FINANCE';
     const MANAGE_ROLE_VEHICLE_EXAMINER = 'MANAGE-ROLE-VEHICLE-EXAMINER';
     const MANAGE_DVSA_ROLES = 'MANAGE-DVSA-ROLES';
+    const USERNAME_VIEW = 'USERNAME-VIEW';
 
     /**
      * @return array
@@ -231,7 +232,8 @@ final class PermissionInSystem
             self::MANAGE_ROLE_DVSA_SCHEME_USER,
             self::MANAGE_ROLE_FINANCE,
             self::MANAGE_ROLE_VEHICLE_EXAMINER,
-            self::MANAGE_DVSA_ROLES
+            self::MANAGE_DVSA_ROLES,
+            self::USERNAME_VIEW,
         ];
     }
 }
