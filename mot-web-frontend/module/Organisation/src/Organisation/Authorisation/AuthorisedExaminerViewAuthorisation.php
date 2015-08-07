@@ -206,6 +206,14 @@ class AuthorisedExaminerViewAuthorisation
         && $this->personIsEmployee($person);
     }
 
+    public function canViewUsername()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_USERNAME_VIEW,
+            $this->authorisedExaminerId
+        );
+    }
+
     private function personIsEmployee(PersonDto $person)
     {
         return ArrayUtils::anyMatch(

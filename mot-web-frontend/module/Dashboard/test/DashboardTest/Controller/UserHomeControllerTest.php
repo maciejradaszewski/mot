@@ -4,7 +4,6 @@ namespace DashboardTest\Controller;
 
 use Account\Service\SecurityQuestionService;
 use Application\Data\ApiPersonalDetails;
-use Application\Helper\PrgHelper;
 use Application\Service\CatalogService;
 use Application\Service\LoggedInUserManager;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
@@ -19,11 +18,8 @@ use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaCommon\Auth\NotLoggedInException;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
-use DvsaCommon\HttpRestJson\Exception\NotFoundException;
-use DvsaCommon\HttpRestJson\Exception\ValidationException;
-use DvsaCommon\UrlBuilder\AccountUrlBuilderWeb;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
-use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\Controller\StubIdentityAdapter;
@@ -107,7 +103,8 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
                 XMock::of(WebAcknowledgeSpecialNoticeAssertion::class),
                 $this->mockSecurityQuestionSrv,
                 $this->mockUserAdminSessionSrv,
-                XMock::of(TesterGroupAuthorisationMapper::class)
+                XMock::of(TesterGroupAuthorisationMapper::class),
+                XMock::of(MotAuthorisationServiceInterface::class)
             )
         );
 

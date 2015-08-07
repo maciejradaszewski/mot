@@ -30,7 +30,8 @@ class UserHomeControllerFactory implements FactoryInterface
             $serviceLocator->get(WebAcknowledgeSpecialNoticeAssertion::class),
             $serviceLocator->get(SecurityQuestionService::class),
             $serviceLocator->get(UserAdminSessionManager::class),
-            $serviceLocator->get(TesterGroupAuthorisationMapper::class)
+            $serviceLocator->get(TesterGroupAuthorisationMapper::class),
+            $serviceLocator->get('AuthorisationService')
         );
     }
 }

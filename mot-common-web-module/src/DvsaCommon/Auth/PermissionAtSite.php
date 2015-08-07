@@ -25,6 +25,7 @@ class PermissionAtSite
     const REMOVE_SITE_MANAGER = 'REMOVE-SITE-MANAGER';
     const TESTING_SCHEDULE_UPDATE = 'TESTING-SCHEDULE-UPDATE';
     const DEFAULT_BRAKE_TESTS_CHANGE = 'DEFAULT-BRAKE-TESTS-CHANGE';
+    const VTS_USERNAME_VIEW = 'VTS-USERNAME-VIEW';
 
     public static function all()
     {
@@ -48,6 +49,7 @@ class PermissionAtSite
             self::REMOVE_SITE_MANAGER,
             self::TESTING_SCHEDULE_UPDATE,
             self::DEFAULT_BRAKE_TESTS_CHANGE,
+            self::VTS_USERNAME_VIEW,
         ];
     }
 }

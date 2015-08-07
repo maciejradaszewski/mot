@@ -20,6 +20,7 @@ use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use UserAdmin\Service\UserAdminSessionManager;
 use Zend\Http\Request;
@@ -56,6 +57,8 @@ class UserHomeController extends AbstractAuthActionController
     protected $userAdminSessionManager;
     /** @var TesterGroupAuthorisationMapper */
     private $testerGroupAuthorisationMapper;
+    /** @var MotAuthorisationServiceInterface */
+    private $authorisationService;
 
     public function __construct(
         LoggedInUserManager $loggedIdUserManager,
@@ -66,7 +69,8 @@ class UserHomeController extends AbstractAuthActionController
         WebAcknowledgeSpecialNoticeAssertion $acknowledgeSpecialNoticeAssertion,
         SecurityQuestionService $securityQuestionService,
         UserAdminSessionManager $userAdminSessionManager,
-        TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper
+        TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper,
+        MotAuthorisationServiceInterface $authorisationService
     ) {
         $this->loggedIdUserManager = $loggedIdUserManager;
         $this->personalDetailsService = $personalDetailsService;
@@ -77,6 +81,7 @@ class UserHomeController extends AbstractAuthActionController
         $this->service = $securityQuestionService;
         $this->userAdminSessionManager = $userAdminSessionManager;
         $this->testerGroupAuthorisationMapper = $testerGroupAuthorisationMapper;
+        $this->authorisationService = $authorisationService;
     }
 
     public function userHomeAction()
@@ -243,16 +248,22 @@ class UserHomeController extends AbstractAuthActionController
 
         $authorisations = $this->personalDetailsService->getPersonalAuthorisationForMotTesting($personId);
 
+        $isViewingOwnProfile = ($identity->getUserId() == $personId);
+
+        $canViewUsername = $this->authorisationService->isGranted(PermissionInSystem::USERNAME_VIEW)
+                            && !$isViewingOwnProfile ;
+
         return [
             'personalDetails'      => $personalDetails,
             'isAllowEdit'          => $isAllowEdit,
             'motAuthorisations'    => $authorisations,
-            'isViewingOwnProfile'  => ($identity->getUserId() == $personId),
+            'isViewingOwnProfile'  => $isViewingOwnProfile,
             'countries'            => $this->getCountries(),
             'canAcknowledge'       => $this->acknowledgeSpecialNoticeAssertion->isGranted($personId),
             'canRead'              => $this->getAuthorizationService()->isGranted(PermissionInSystem::SPECIAL_NOTICE_READ),
             'authorisation'        => $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
             'rolesAndAssociations' => $this->getRolesAndAssociations($personalDetails),
+            'canViewUsername'      => $canViewUsername,
         ];
     }
 

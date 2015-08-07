@@ -11,6 +11,7 @@ use Dashboard\Data\ApiDashboardResource;
 use Dashboard\Factory\Controller\UserHomeControllerFactory;
 use Dashboard\PersonStore;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use UserAdmin\Service\UserAdminSessionManager;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -40,6 +41,7 @@ class UserHomeControllerFactoryTest extends \PHPUnit_Framework_TestCase
         $serviceManager->setService(SecurityQuestionService::class, XMock::of(SecurityQuestionService::class));
         $serviceManager->setService(UserAdminSessionManager::class, XMock::of(UserAdminSessionManager::class));
         $serviceManager->setService(TesterGroupAuthorisationMapper::class, XMock::of(TesterGroupAuthorisationMapper::class));
+        $serviceManager->setService('AuthorisationService', XMock::of(MotAuthorisationServiceInterface::class));
 
         $plugins = XMock::of(\Zend\Mvc\Controller\ControllerManager::class, ['getServiceLocator']);
         $plugins->expects($this->any())

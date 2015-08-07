@@ -2,7 +2,6 @@
 namespace Site\Authorization;
 
 use DvsaAuthentication\Model\MotFrontendIdentityInterface;
-use DvsaClient\Entity\SitePosition;
 use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
@@ -14,8 +13,6 @@ use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaCommon\Utility\ArrayUtils;
-use DvsaCommon\Utility\TypeCheck;
-use DvsaClient\Entity\Person;
 
 /**
  * Class VtsOverviewPagePermissions
@@ -75,6 +72,14 @@ class VtsOverviewPagePermissions
             $this->vts->getId()
         )
         && $this->personIsEmployee($person);
+    }
+
+    public function canViewUsername()
+    {
+        return $this->authorisationService->isGrantedAtSite(
+            PermissionAtSite::VTS_USERNAME_VIEW,
+            $this->vts->getId()
+        );
     }
 
     private function personIsEmployee(PersonDto $person)
