@@ -447,6 +447,98 @@ class VehicleServiceTest extends AbstractServiceTestCase
         $this->assertEquals($dvlaVehicle->getDvlaVehicleId(), $v->getDvlaVehicleId());
         $this->assertEquals(WeightSourceCode::DGW, $v->getWeightSource()->getCode());
     }
+    /**
+     * @dataProvider invalidDvlaBodyTypeCodeProvider
+     */
+    public function test_createVtrAndV5CfromDvlaVehicle_whenDvlaBodyTypeIsInvalid_createVehicleWithDefaultBodyType($invalidDvlaBodyType)
+    {
+        $dvlaVehicle = VOF::dvlaVehicle();
+        $dvlaVehicle->setV5DocumentNumber(null);
+        $dvlaVehicle->setBodyType($invalidDvlaBodyType);
+        $vehicleClassCode = VehicleClassCode::CLASS_4;
+
+        $vtrCapture = ArgCapture::create();
+
+        $this->returningOn($this->mockVehicleCatalog, VOF::countryOfRegistration(3), 'getCountryOfRegistrationByCode');
+        $this->returningOn(
+            $this->mockVehicleCatalog,
+            VOF::vehicleClass(VehicleClassId::CLASS_4, VehicleClassCode::CLASS_4),
+            'getVehicleClassByCode'
+        );
+        $this->returningOn($this->mockDvlaVehicleRepository, $dvlaVehicle);
+
+        $this->mockVehicleCatalog
+            ->expects($this->any())
+            ->method("findBodyTypeByCode")
+            ->willReturnCallback(function($code) use ($invalidDvlaBodyType) {
+               if ($code === $invalidDvlaBodyType) {
+                   return null;
+               }
+
+                return VOF::bodyType(103, '0', 'Not Provided');
+            });
+
+        $colourCode = 'R';
+        $secondaryColourCode = 'G';
+        $this->returningOn(
+            $this->mockVehicleCatalog,
+            MultiCallStubBuilder::of()
+                ->add([$colourCode, $this->anything()], VOF::colour(1, $colourCode))
+                ->add([$secondaryColourCode, $this->anything()], VOF::colour(2, $secondaryColourCode))
+                ->build(),
+            'getColourByCode'
+        );
+        $this->returningOn($this->mockVehicleCatalog, VOF::fuelType(), 'findFuelTypeByPropulsionCode');
+        $this->returningOn($this->mockVehicleCatalog, VOF::model(), 'getModelByCode');
+        $this->returningOn($this->mockVehicleCatalog, VOF::make(), 'findMakeByCode');
+
+        $map = (new DvlaMakeModelMap())
+            ->setModel(VOF::model());
+        $this
+            ->mockVehicleCatalog
+            ->expects($this->once())
+            ->method('getMakeModelMapByDvlaCode')
+            ->will($this->returnValue($map));
+
+        $this->returningOn(
+            $this->mockVehicleCatalog, VOF::weightSource(WeightSourceCode::DGW), 'getWeightSourceByCode'
+        );
+
+        $this->mockVehicleRepository
+            ->expects($this->any())
+            ->method('save')
+            ->with($vtrCapture());
+
+        $this->mockVehicleV5CRepository
+            ->expects($this->never())
+            ->method('save');
+
+        $vehicleId = $this->paramObfuscator->obfuscateEntry(ParamObfuscator::ENTRY_VEHICLE_ID, $dvlaVehicle->getId());
+        $this->createService()->createVtrAndV5CFromDvlaVehicle($vehicleId, $vehicleClassCode);
+
+        /** @var Vehicle $v */
+        $v = $vtrCapture->get();
+
+        $this->assertEquals($dvlaVehicle->getVin(), $v->getVin());
+        $this->assertEquals($dvlaVehicle->getRegistration(), $v->getRegistration());
+        $this->assertEquals($dvlaVehicle->getManufactureDate(), $v->getManufactureDate());
+        $this->assertEquals($dvlaVehicle->getFirstRegistrationDate(), $v->getFirstUsedDate());
+        $this->assertEquals($dvlaVehicle->getPrimaryColour(), $v->getColour()->getCode());
+        $this->assertEquals($dvlaVehicle->getSecondaryColour(), $v->getSecondaryColour()->getCode());
+        $this->assertEquals($dvlaVehicle->getMakeName(), $v->getMakeName());
+        $this->assertEquals($dvlaVehicle->getModelName(), $v->getModelName());
+        $this->assertEquals($dvlaVehicle->getCylinderCapacity(), $v->getCylinderCapacity());
+        $this->assertEquals(VehicleService::DEFAULT_BODY_TYPE_CODE, $v->getBodyType()->getCode());
+        $this->assertEquals($dvlaVehicle->getFuelType(), $v->getFuelType()->getCode());
+        $this->assertEquals($dvlaVehicle->getDesignedGrossWeight(), $v->getWeight());
+        $this->assertEquals($dvlaVehicle->getDvlaVehicleId(), $v->getDvlaVehicleId());
+        $this->assertEquals(WeightSourceCode::DGW, $v->getWeightSource()->getCode());
+    }
+
+    public function invalidDvlaBodyTypeCodeProvider()
+    {
+        return [ [""], [null], ["xxx"] ];
+    }
 
     public function testVehicleRecordFromDvlaVehicleWithNoMakeOrModelCodeAndTextShouldBeUnknown()
     {
