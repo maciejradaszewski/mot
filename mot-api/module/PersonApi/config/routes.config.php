@@ -58,9 +58,23 @@ return [
                     'may_terminate' => true,
                 ],
                 'roles' => [
+                    'verb'    => 'put, get, post',
                     'type'    => 'Segment',
                     'options' => [
                         'route'       => '/roles',
+                        'defaults'    => [
+                            'controller' => PersonRoleController::class,
+                        ],
+                    ]
+                ],
+                'delete_role' => [
+                    'verb'    => 'delete',
+                    'type'    => 'Segment',
+                    'options' => [
+                        'route'       => '/roles[/:role]',
+                        'constraints' => [
+                            'role' => '[A-Z0-9-]+',
+                        ],
                         'defaults'    => [
                             'controller' => PersonRoleController::class,
                         ],

@@ -6,7 +6,7 @@ Feature: Role Management
   @VM-10619 @VM-10737 @VM-10722 @VM-10723
   Scenario Outline: A scheme manager adds a role to another user
     When I am logged in as a <manager>
-    And I have VM10619 user role
+    And I have the VM10619 user role
     And I add the role of "<role_name>" to another user
     Then the user's RBAC will have the role "<role_name>"
     And a status change event is generated for the user of "Role Association Change"
@@ -28,8 +28,9 @@ Feature: Role Management
   @VM-10619 @VM-10737 @VM-10722 @VM-10723
   Scenario Outline: A permitted user can add an internal role to a user that does not have a trade role
     Given I am logged in as a <permitted user>
-    And I have VM10619 user role
-    When I add the role of "<role>" to a "<non trade user>"
+    And I have the VM10619 user role
+    And The user "<non trade user>" exists
+    When I add the role of "<role>" to the user
     Then the user's RBAC will have the role "<role>"
   Examples:
     | permitted user           | role                              | non trade user             |
@@ -137,8 +138,9 @@ Feature: Role Management
   @negative @VM-10619 @VM-10737 @VM-10722 @VM-10723
   Scenario Outline: An unpermitted user can not add an internal role to a user
     Given I am logged in as an <unpermitted user>
-    And I have VM10619 user role
-    When I add the role of "<role>" to a "<non trade user>"
+    And I have the VM10619 user role
+    And The user "<non trade user>" exists
+    When I add the role of "<role>" to the user
     Then the user's RBAC will not have the role "<role>"
   Examples:
     | unpermitted user          | role                              | non trade user   |
@@ -150,5 +152,43 @@ Feature: Role Management
     | Area Office User 2        | CUSTOMER-SERVICE-CENTRE-OPERATIVE | Vehicle Examiner |
     | Vehicle Examiner          | CUSTOMER-SERVICE-CENTRE-OPERATIVE | Area Office User |
 
-  # Add Scenario: Users can not add roles to themselves..
-  # - Any roles or internal/trade split required?
+
+#  This needs fleshing out because we currently do not have a method to add a role
+#  to the same user as performing the action
+#
+#  @11244
+#  Scenario: A permitted user can not add a role to themself
+#    Given I am logged in as a Scheme User
+#    And I add the role of "DVLA-OPERATIVE" to a "Scheme User"
+#    Then the user's RBAC will not have the role "DVLA-OPERATIVE"
+
+  @VM-5041
+  Scenario Outline: A permitted user can remove a role from a user
+    Given I am logged in as a <permitted user>
+    And I have the VM10619 user role
+    And The user "<user>" exists
+    And The user has the role "<role>"
+    When I remove the role of "<role>" from the user
+    Then the user's RBAC will not have the role "<role>"
+    And a status change event is generated for the user of "Role Association Change"
+    And an event description contains my name
+    And an event description contains phrase "<role_full_name>"
+    And the user will receive a "DVSA Remove Role" notification
+    And a notification subject contains phrase "<role_full_name>"
+    Examples:
+      | permitted user | role                              | role_full_name             | user           |
+      | Scheme Manager | FINANCE                           | Finance                    | DVLA Manager   |
+      | Scheme Manager | DVLA-OPERATIVE                    | DVLA Operative             | DVLA Manager   |
+      | Scheme Manager | CUSTOMER-SERVICE-CENTRE-OPERATIVE | Customer Service Operative | DVLA Manager   |
+      | DVLA Manager   | DVLA-OPERATIVE                    | DVLA Operative             | Scheme User    |
+
+
+# This test is actually working and complete but the story behind it isnt done yet @11244
+# So, I have commented it out for now to enable behat to pass :)
+#
+#  @11244
+#  Scenario: A permitted user can not remove a role from myself
+#    Given I am logged in as a Scheme Manager
+#    And my RBAC has the role "DVSA-SCHEME-MANAGEMENT"
+#    When I try to remove the role of "DVSA-SCHEME-MANAGEMENT" from myself
+#    Then my RBAC will still have the role "DVSA-SCHEME-MANAGEMENT"

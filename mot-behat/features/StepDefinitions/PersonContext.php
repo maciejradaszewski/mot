@@ -481,6 +481,59 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     }
 
     /**
+     *
+     * @Given The user :userRole exists
+     */
+    public function theUserExists($userRole)
+    {
+        $userService = $this->testSupportHelper->userRoleServiceFactory($userRole);
+
+        $this->personLoginData = $userService->create([]);
+    }
+
+    /**
+     * @When The user has the role :role
+     * @When I add the role of :role to the user
+     */
+    public function iAddTheRoleOfToA($role)
+    {
+        $this->person->addPersonRole(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getPersonUserId(),
+            $role
+
+        );
+    }
+
+    /**
+     * @When I try to remove the role of :role from myself
+     */
+    public function iRemoveTheRoleOfRoleFromMyself($role)
+    {
+        $response = $this->person->removePersonRole(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->sessionContext->getCurrentUserId(),
+            $role
+        );
+
+        PHPUnit::assertEquals(200, $response->getStatusCode(), "Unable to remove role '{$role}'");
+    }
+
+    /**
+     * @When I remove the role of :role from the user
+     */
+    public function iRemoveTheRoleOfRoleFromAUserRole($role)
+    {
+        $response = $this->person->removePersonRole(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getPersonUserId(),
+            $role
+        );
+
+        PHPUnit::assertEquals(200, $response->getStatusCode(), "Unable to remove role '{$role}'");
+    }
+
+    /**
      * @When I change a user's group :group tester qualification status from :status to Qualified
      */
     public function iChangeAUserSGroupTesterQualificationStatusFromToQualified($group, $status)
@@ -608,6 +661,22 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         $rolesAssigned = $rolesAssigned['data']['normal']['roles'];
 
         PHPUnit::assertFalse(in_array($role, $rolesAssigned), sprintf("Role %s has been assigned", $role));
+    }
+
+    /**
+     * @Then my RBAC will still have the role :role
+     * @Given my RBAC has the role :role
+     */
+    public function myRBACWillHaveTheRole($role)
+    {
+        $rbacResponse = $this->person->getPersonRBAC(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->sessionContext->getCurrentUserId()
+        );
+
+        $rolesAssigned = $rbacResponse->getBody()->toArray();
+        $rolesAssigned = $rolesAssigned['data']['normal']['roles'];
+        PHPUnit::assertTrue(in_array($role, $rolesAssigned), sprintf("Role %s has not been assigned", $role));
     }
 
     /**

@@ -9,6 +9,7 @@ class Person extends MotApi
     const PATH = 'person/{user_id}';
     const PATH_PERSONAL_DETAILS = 'personal-details/{user_id}';
     const PATH_ROLES = '/roles';
+    const PATH_ROLES_ROLE = '/roles/{role}';
     const PATH_DASHBOARD = '/dashboard';
     const PATH_RBAC_ROLES = '/rbac-roles';
 
@@ -74,6 +75,23 @@ class Person extends MotApi
             MotApi::METHOD_POST,
             str_replace('{user_id}', $user_id, self::PATH.self::PATH_ROLES),
             $jsonData
+        );
+    }
+
+    /**
+     * @param $token
+     * @param $user_id
+     * @param $roleCode
+     * @return \Dvsa\Mot\Behat\Support\Response
+     */
+    public function removePersonRole($token, $user_id, $roleCode)
+    {
+        $uri = str_replace(['{user_id}','{role}'], [$user_id, $roleCode], self::PATH.self::PATH_ROLES_ROLE);
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_DELETE,
+            $uri,
+            []
         );
     }
 

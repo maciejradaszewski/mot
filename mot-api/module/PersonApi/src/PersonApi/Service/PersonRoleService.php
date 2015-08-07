@@ -78,8 +78,7 @@ class PersonRoleService
         AuthorisationServiceInterface $authService,
         RoleEventHelper $roleEventHelper,
         RoleNotificationHelper $roleNotificationHelper
-    )
-    {
+    ) {
         $this->rbacRepository = $rbacRepository;
 
         $this->businessRoleStatusRepository = $businessRoleStatusRepository;
@@ -104,27 +103,36 @@ class PersonRoleService
      */
     public function create($personId, $data)
     {
-        // Check the permission to use this feature has been granted
-        $this->authService->assertGranted(PermissionInSystem::MANAGE_DVSA_ROLES);
-
-        if ($this->personHasTradeRole($personId)) {
-            throw new \Exception(self::ERR_MSG_TRADE_ROLE_OWNER);
-        }
-
+        $this->assertManageRolePermission();
+        $this->checkPersonHasTradeRole($personId);
         $person = $this->getPersonEntity($personId);
         $personSystemRole = $this->getPersonSystemRoleEntityFromName($data['personSystemRoleCode']);
-        $role = $personSystemRole->getRole();
-
-        $permission = $this->getPermissionCodeFromRole($role);
-
-        $this->authService->assertGranted($permission);
-
-        $obj = $this->assignRole($person, $personSystemRole);
-
-        $this->roleEventHelper->createAssignRoleEvent($person, $personSystemRole);
-        $this->roleNotificationHelper->sendAssignRoleNotification($person, $personSystemRole);
-
+        $permission = $this->getPermissionCodeFromPersonSystemRole($personSystemRole);
+        $this->assertSystemRolePermission($permission);
+        $obj = $this->addRole($person, $personSystemRole);
+        $this->sendAssignRoleEvent($person, $personSystemRole);
+        $this->sendAssignRoleNotification($person, $personSystemRole);
         return $obj;
+    }
+
+    /**
+     * Remove a role from the user
+     * @param int $personId
+     * @param string $role
+     * @throws NotFoundException
+     * @throws \Exception
+     */
+    public function delete($personId, $role)
+    {
+        $this->assertManageRolePermission();
+        $this->checkPersonHasTradeRole($personId);
+        $person = $this->getPersonEntity($personId);
+        $personSystemRole = $this->getPersonSystemRoleEntityFromName($role);
+        $permission = $this->getPermissionCodeFromPersonSystemRole($personSystemRole);
+        $this->assertSystemRolePermission($permission);
+        $this->removeRole($person, $personSystemRole);
+        $this->sendRemoveRoleEvent($person, $personSystemRole);
+        $this->sendRemoveRoleNotification($person, $personSystemRole);
     }
 
     /**
@@ -134,15 +142,12 @@ class PersonRoleService
      * @return PersonSystemRoleMap
      * @throws \Exception if the mapping for the person already exists
      */
-    public function assignRole(Person $person, PersonSystemRole $personSystemRole)
+    public function addRole(Person $person, PersonSystemRole $personSystemRole)
     {
-        $personSystemRoleMap = $this->personSystemRoleMapRepository->findByPersonAndSystemRole(
-            $person->getId(),
-            $personSystemRole->getId()
-        );
+        $personSystemRoleMap = $this->getPersonSystemRoleMap($person, $personSystemRole);
 
         // If the mapping already exists in the DB we want to throw an exception
-        if($personSystemRoleMap instanceof PersonSystemRoleMap) {
+        if ($personSystemRoleMap instanceof PersonSystemRoleMap) {
             throw new \Exception('PersonSystemRoleMap already exists');
         }
 
@@ -159,6 +164,23 @@ class PersonRoleService
 
         $this->personSystemRoleMapRepository->save($personSystemRoleMap);
         return $personSystemRoleMap;
+    }
+
+    /**
+     * Detaches the role from the person
+     * @param Person $person
+     * @param PersonSystemRole $personSystemRole
+     * @throws \Exception
+     */
+    public function removeRole(Person $person, PersonSystemRole $personSystemRole)
+    {
+        $personSystemRoleMap = $this->getPersonSystemRoleMap($person, $personSystemRole);
+
+        if (!$personSystemRoleMap instanceof PersonSystemRoleMap) {
+            throw new \Exception('PersonSystemRoleMap does not exist');
+        }
+
+        $this->personSystemRoleMapRepository->remove($personSystemRoleMap);
     }
 
     /**
@@ -184,12 +206,77 @@ class PersonRoleService
     }
 
     /**
+     * Check the permission to use this feature has been granted
+     * @throws \Exception
+     */
+    public function assertManageRolePermission()
+    {
+        $this->authService->assertGranted(PermissionInSystem::MANAGE_DVSA_ROLES);
+    }
+
+    /**
+     * @param int $personId
+     * @throws \Exception
+     */
+    public function checkPersonHasTradeRole($personId)
+    {
+        if ($this->personHasTradeRole($personId)) {
+            throw new \Exception(self::ERR_MSG_TRADE_ROLE_OWNER);
+        }
+    }
+
+    /**
+     * @param string $permission
+     * @throws \DvsaCommon\Exception\UnauthorisedException
+     */
+    public function assertSystemRolePermission($permission)
+    {
+        $this->authService->assertGranted($permission);
+    }
+
+    /**
+     * @param Person $person
+     * @param PersonSystemRole $personSystemRole
+     */
+    public function sendAssignRoleEvent(Person $person, PersonSystemRole $personSystemRole)
+    {
+        $this->roleEventHelper->createAssignRoleEvent($person, $personSystemRole);
+    }
+
+    /**
+     * @param Person $person
+     * @param PersonSystemRole $personSystemRole
+     */
+    public function sendRemoveRoleEvent(Person $person, PersonSystemRole $personSystemRole)
+    {
+        $this->roleEventHelper->createRemoveRoleEvent($person, $personSystemRole);
+    }
+
+    /**
+     * @param Person $person
+     * @param PersonSystemRole $personSystemRole
+     */
+    public function sendAssignRoleNotification(Person $person, PersonSystemRole $personSystemRole)
+    {
+        $this->roleNotificationHelper->sendAssignRoleNotification($person, $personSystemRole);
+    }
+
+    /**
+     * @param Person $person
+     * @param PersonSystemRole $personSystemRole
+     */
+    public function sendRemoveRoleNotification(Person $person, PersonSystemRole $personSystemRole)
+    {
+        $this->roleNotificationHelper->sendRemoveRoleNotification($person, $personSystemRole);
+    }
+
+    /**
      * Retrieves the person entity from the DB
      * @param int $personId
      * @return Person
      * @throws \DvsaCommonApi\Service\Exception\NotFoundException
      */
-    private function getPersonEntity($personId)
+    public function getPersonEntity($personId)
     {
         // PersonRepository
         $person = $this->personRepository->find($personId);
@@ -262,6 +349,17 @@ class PersonRoleService
     }
 
     /**
+     * Uses the mapping repository to return the relevant permission code
+     * @param PersonSystemRole $personSystemRole
+     * @return string
+     * @throws \DvsaEntities\Repository\NotFoundException
+     */
+    public function getPermissionCodeFromPersonSystemRole(PersonSystemRole $personSystemRole)
+    {
+        return $this->getPermissionCodeFromRole($personSystemRole->getRole());
+    }
+
+    /**
      * Return an array of all the internal roles, NOT associated to the given person
      *
      * @param int $personId
@@ -319,5 +417,19 @@ class PersonRoleService
     private function getPersonRoles($personId)
     {
         return $this->rbacRepository->authorizationDetails($personId)->getAllRoles();
+    }
+
+    /**
+     * @param Person $person
+     * @param PersonSystemRole $personSystemRole
+     * @return PersonSystemRoleMap|null
+     */
+    public function getPersonSystemRoleMap(Person $person, PersonSystemRole $personSystemRole)
+    {
+        $personSystemRoleMap = $this->personSystemRoleMapRepository->findByPersonAndSystemRole(
+            $person->getId(),
+            $personSystemRole->getId()
+        );
+        return $personSystemRoleMap;
     }
 }
