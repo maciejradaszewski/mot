@@ -25,18 +25,41 @@ use Site\Controller\RoleController;
     </h1>
 </header>
 
+<!-- new start -->
 <div class="text">
+
     <?php if ($hasRoleOption): ?>
-        <p class="lede">You are assigning a role to <?php echo $this->escapeHtml($personFullName); ?> '<?php echo $this->escapeHtml($personUsername); ?>'.</p>
-        <p>The roles that this user is permitted to have are displayed below.</p>
+
+        <p class="lede">Choose a new role for the following person:</p>
+
+        <table class="key-value-list">
+            <tbody>
+                <tr>
+                    <th class="key-value-list__key">Name</th>
+                    <td class="key-value-list__value">
+                        <?php echo $this->escapeHtml($personFullName); ?>
+                        <span class="key-value-list__meta"><?php echo $this->escapeHtml($personUsername); ?></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br />
+
     <?php else: ?>
+
         <div class="message--failure">
             <p>We could not find the user <strong>'<?php echo $this->escapeHtml($personUsername); ?>'</strong>.</p>
         </div>
+
     <?php endif; ?>
+
 </div>
 
+<!-- new end -->
+
 <div>
+
     <?php
     $form = $this->form;
     $form->setAttribute('action', 'foo')->prepare();
@@ -54,7 +77,7 @@ use Site\Controller\RoleController;
 
         <?php if ($hasRoleOption): ?>
             <fieldset>
-                <legend class="form-title heading-large">Available roles</legend>
+                <legend class="form-title heading-large" style="clear:both;">Available roles</legend>
                     <fieldset>
                         <div class="form-group <?php echo ($form->getRoleId()->getMessages()) ? ' has-error' : ''; ?>">
                             <legend class="form-label">Select a role
