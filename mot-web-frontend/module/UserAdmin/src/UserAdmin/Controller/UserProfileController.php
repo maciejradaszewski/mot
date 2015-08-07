@@ -77,8 +77,7 @@ class UserProfileController extends AbstractDvsaMotTestController
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
             $this->getTesterAuthorisationViewModel($personId),
-            $this->authorisationService->isGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE_DVSA_USER) &&
-            !$this->authorisationService->hasRole(Role::CUSTOMER_SERVICE_CENTRE_OPERATIVE),
+            $this->authorisationService->isGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE_DVSA_USER),
             $this->personRoleManagementService
         );
         $presenter->setPersonId($personId);

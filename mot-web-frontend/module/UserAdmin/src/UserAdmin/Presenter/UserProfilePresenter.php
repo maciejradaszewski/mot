@@ -257,6 +257,7 @@ class UserProfilePresenter implements AddressPresenterInterface
         if ($this->isDvsaUser) {
             return self::DVSA_PROFILE_TEMPLATE;
         }
+        // Customer service people have the power to reset passwords in this template
         return self::UNRESTRICTED_PROFILE_TEMPLATE;
     }
 
