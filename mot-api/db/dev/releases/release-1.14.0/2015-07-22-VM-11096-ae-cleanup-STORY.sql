@@ -3,6 +3,7 @@
 -- May not produce any rows to delete in lower environments, as these were created in
 -- Prod for business testing after go-live.
 
+SET @createdBy = (SELECT id FROM person WHERE user_reference = 'Static Data' OR username = 'static data');
 
 -- Delete AEs that are no longer required
 SET @org1 = (select id from organisation where name = 'Test new AE 1');
@@ -16,8 +17,17 @@ set @dvla = (select id from organisation where name = 'Driver Vehicle Licensing 
 set @atos = (select id from organisation where name = 'Atos IT Solutions & Services');
 
 -- Update AEs that do not have an ae_ref
-UPDATE auth_for_ae SET ae_ref = 'A000000' WHERE organisation_id = @dvla;
-UPDATE auth_for_ae SET ae_ref = 'A999999' WHERE organisation_id = @atos;
+UPDATE auth_for_ae
+SET ae_ref = 'A000000',
+  last_updated_by = @createdBy,
+  version = version + 1
+WHERE organisation_id = @dvla;
+
+UPDATE auth_for_ae
+SET ae_ref = 'A999999',
+  last_updated_by = @createdBy,
+  version = version + 1
+WHERE organisation_id = @atos;
 
 DELETE from auth_for_ae where organisation_id in (@org1, @org2, @org3, @org4);
 DELETE from organisation where id in (@org1, @org2, @org3, @org4);
