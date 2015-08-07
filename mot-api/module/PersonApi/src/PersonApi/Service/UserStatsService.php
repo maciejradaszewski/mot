@@ -85,10 +85,11 @@ class UserStatsService extends AbstractService
             't.motTestType = tt.id'
         );
         $queryBuilder->where('t.tester = :person');
-        $queryBuilder->andWhere('t.completedDate >= :startDate');
-        $queryBuilder->andWhere('t.completedDate IS NOT NULL');
+        $queryBuilder->andWhere("t.startedDate  >= DATE_SUB(:startDate, 10, 'day')"); /* VM-11281 */
+        $queryBuilder->andWhere('t.completedDate >= :completeDate');
         $queryBuilder->setParameter('person', $person);
-        $queryBuilder->setParameter('startDate', $startDate);
+        $queryBuilder->setParameter('startDate', $startDate);                        /* VM-11281 */
+        $queryBuilder->setParameter('completeDate', $startDate);
 
         if ($onlyNormalTests) {
             $queryBuilder->andWhere("tt.code IN (:SLOT_TEST_TYPES)");
