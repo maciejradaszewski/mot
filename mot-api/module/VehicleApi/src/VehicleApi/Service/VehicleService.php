@@ -38,6 +38,8 @@ class VehicleService
 {
     const DEFAULT_COUNTRY_OF_REGISTRATION = 'GB';
     const DEFAULT_MAKE_MODEL_NAME = 'Unknown';
+    const DEFAULT_BODY_TYPE_CODE = '0';
+
     /**
      * Uplift added to unladen weight in kilos.
      */
@@ -254,6 +256,10 @@ class VehicleService
         $make = $map ? $map->getMake() : null;
         $model = $map ? $map->getModel() : null;
         $bodyType = $this->vehicleCatalog->findBodyTypeByCode($dvlaVehicle->getBodyType());
+
+        if (is_null($bodyType)) {
+            $bodyType = $this->vehicleCatalog->findBodyTypeByCode(self::DEFAULT_BODY_TYPE_CODE);
+        }
 
         $vehicle = (new Vehicle())
             ->setVin($dvlaVehicle->getVin())
