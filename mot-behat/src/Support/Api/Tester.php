@@ -7,7 +7,7 @@ use Dvsa\Mot\Behat\Support\Request;
 class Tester extends MotApi
 {
     const PATH_TESTER = 'tester/{user_id}';
-    const PATH_DEMO_TEST_ASSESSMENT = 'demo-test-assessment';
+    const PATH_DEMO_TEST_ASSESSMENT = 'person/{person_id}/demo-test-assessment';
     const PATH_TESTER_TEST_LOGS = 'tester/{user_id}/mot-test-log';
     const PATH_TESTER_TEST_LOGS_SUMMARY = 'tester/{user_id}/mot-test-log/summary';
 
@@ -44,7 +44,7 @@ class Tester extends MotApi
         return $this->sendRequest(
             $token,
             MotApi::METHOD_POST,
-            self::PATH_DEMO_TEST_ASSESSMENT,
+            str_replace('{person_id}', $personId, self::PATH_DEMO_TEST_ASSESSMENT),
             $data
         );
     }

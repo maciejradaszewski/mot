@@ -4,7 +4,8 @@
         "zendframework/zendframework": "~2.4.4",
         "dvsa/dvsa-document-module": "~1.1",
         "dvsa/feature-toggle": "~1.0",
-        "dvsa/dvsa-doctrine-module": "~1.1"
+        "dvsa/dvsa-doctrine-module": "~1.1",
+        "dvsa/dvsa-application-logger": "~1.1"
     },
     "repositories": [
         {

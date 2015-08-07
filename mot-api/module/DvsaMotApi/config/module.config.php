@@ -219,7 +219,7 @@ return [
             'demo-test-assessment' => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'       => '/demo-test-assessment',
+                    'route'       => '/person/:personId/demo-test-assessment',
                     'defaults'    => [
                         'controller' => DemoTestAssessmentController::class,
                     ],

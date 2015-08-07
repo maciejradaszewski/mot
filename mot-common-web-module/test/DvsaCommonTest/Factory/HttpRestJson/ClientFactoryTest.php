@@ -1,6 +1,6 @@
 <?php
 
-namespace DvsaMCommonTest\Factory\Validator;
+namespace DvsaCommonTest\Factory\Validator;
 
 use Doctrine\Common\Cache\Cache;
 use DvsaApplicationLogger\TokenService\TokenServiceInterface;
@@ -8,10 +8,19 @@ use DvsaCommon\Factory\HttpRestJson\ClientFactory;
 use DvsaCommon\HttpRestJson\CachingClient;
 use DvsaCommon\HttpRestJson\ZendClient;
 use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceManager;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ClientFactoryTest extends \PHPUnit_Framework_TestCase
 {
+    private $services = [];
+
+    public function setUp()
+    {
+        $this->services = [
+            'tokenService' => $this->getMock(TokenServiceInterface::class, ['getToken']),
+        ];
+    }
+
     public function testItIsAZendSerivceManagerFactory()
     {
         $this->assertInstanceOf(FactoryInterface::class, new ClientFactory());
@@ -19,58 +28,47 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testItCreatesTheZendClientByDefault()
     {
-        $serviceManager = $this->getServiceManager(['apiUrl' => 'localhost']);
+        $this->services['config'] = ['apiUrl' => 'localhost'];
+        $serviceLocator = $this->getServiceLocator($this->services);
 
         $factory = new ClientFactory();
 
-        $this->assertInstanceOf(ZendClient::class, $factory->createService($serviceManager));
+        $this->assertInstanceOf(ZendClient::class, $factory->createService($serviceLocator));
     }
 
     public function testItCreatesTheCachingClientIfEnabled()
     {
-        $serviceManager = $this->getServiceManager([
+        $this->services['config'] = [
             'apiUrl' => 'localhost',
             'rest_client' => [
                 'cache' => [
                     'enabled' => true
                 ]
             ]
-        ]);
-        $serviceManager->expects($this->at(2))
-            ->method('get')
-            ->with(Cache::class)
-            ->willReturn($this->getCache());
+        ];
+        $this->services[Cache::class] = $this->getMock(Cache::class);;
+
+        $serviceLocator = $this->getServiceLocator($this->services);
 
         $factory = new ClientFactory();
 
-        $this->assertInstanceOf(CachingClient::class, $factory->createService($serviceManager));
+        $this->assertInstanceOf(CachingClient::class, $factory->createService($serviceLocator));
     }
 
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function getServiceManager(array $config)
+    private function getServiceLocator(array $services)
     {
-        $serviceManager = $this->getMock(ServiceManager::class);
-        $serviceManager->expects($this->at(0))
+        $serviceLocator = $this->getMock(ServiceLocatorInterface::class);
+
+        $serviceLocator->expects($this->any())
             ->method('get')
-            ->with('config')
-            ->willReturn($config);
-        $serviceManager->expects($this->at(1))
-            ->method('get')
-            ->with('tokenService')
-            ->willReturn($this->getTokenService());
+            ->with(call_user_func_array([$this, 'logicalOr'], array_keys($services)))
+            ->will($this->returnCallback(function ($serviceName) use ($services) {
+                return $services[$serviceName];
+            }));
 
-        return $serviceManager;
-    }
-
-    private function getTokenService()
-    {
-        return $this->getMock(TokenServiceInterface::class, ['getToken']);
-    }
-
-    private function getCache()
-    {
-        return $this->getMock(Cache::class);
+        return $serviceLocator;
     }
 }
