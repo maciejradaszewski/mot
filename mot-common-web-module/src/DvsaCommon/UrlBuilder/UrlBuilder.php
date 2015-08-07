@@ -86,7 +86,7 @@ class UrlBuilder extends AbstractUrlBuilder
     const RESET_PIN = 'person/:userId/reset-pin';
     const SITE = 'site/:id';
     const AUTHORISED_CLASSES = '/authorised-classes';
-    const DEMO_TEST_ASSESSMENT = 'demo-test-assessment';
+    const DEMO_TEST_ASSESSMENT = 'person/:personId/demo-test-assessment';
 
     protected $routesStructure
         = [
@@ -376,9 +376,10 @@ class UrlBuilder extends AbstractUrlBuilder
         return $this->appendRoutesAndParams(self::ODOMETER);
     }
 
-    public function demoTestAssessment()
+    public function demoTestAssessment($personId)
     {
-        return $this->appendRoutesAndParams(self::DEMO_TEST_ASSESSMENT);
+        return $this->appendRoutesAndParams(self::DEMO_TEST_ASSESSMENT)
+            ->routeParam('personId', $personId);
     }
 
     public function certChangeDiffTesterReason()

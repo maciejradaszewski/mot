@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\Cache as DoctrineCache;
 use DvsaCommon\HttpRestJson\CachingClient;
 use DvsaCommon\HttpRestJson\CachingClient\Cache;
 use DvsaCommon\HttpRestJson\CachingClient\CacheContextFactory\MotTestCacheContextFactory;
+use DvsaCommon\HttpRestJson\CachingClient\CacheContextFactory\PersonCacheContextFactory;
 use DvsaCommon\HttpRestJson\CachingClient\ChainedCacheContextFactory;
 use DvsaCommon\HttpRestJson\CachingClient\PatternCacheContextFactory;
 use DvsaCommon\HttpRestJson\ZendClient;
@@ -39,7 +40,7 @@ class ClientFactory implements FactoryInterface
             $client = new CachingClient(
                 $client,
                 new Cache($serviceLocator->get(DoctrineCache::class)),
-                new ChainedCacheContextFactory($this->getCacheContextFactories($config))
+                new ChainedCacheContextFactory($this->getCacheContextFactories($serviceLocator))
             );
 
         }
@@ -80,10 +81,13 @@ class ClientFactory implements FactoryInterface
      *
      * @return array
      */
-    private function getCacheContextFactories(array $config)
+    private function getCacheContextFactories(ServiceLocatorInterface $serviceLocator)
     {
+        $config = $serviceLocator->get('config');
+
         return [
-            new MotTestCacheContextFactory($this->getMotTestCacheLifeTime($config))
+            new MotTestCacheContextFactory($this->getMotTestCacheLifeTime($config)),
+            new PersonCacheContextFactory($serviceLocator->get('tokenService'), $this->getPersonCacheLifeTime($config)),
         ];
     }
 
@@ -107,6 +111,18 @@ class ClientFactory implements FactoryInterface
         return isset($config['rest_client']['cache']['mot-test']['lifetime'])
             ? $config['rest_client']['cache']['mot-test']['lifetime']
             : MotTestCacheContextFactory::DEFAULT_LIFE_TIME;
+    }
+
+    /**
+     * @param array $config
+     *
+     * @return int
+     */
+    private function getPersonCacheLifeTime($config)
+    {
+        return isset($config['rest_client']['cache']['person']['lifetime'])
+            ? $config['rest_client']['cache']['person']['lifetime']
+            : PersonCacheContextFactory::DEFAULT_LIFE_TIME;
     }
 
     /**

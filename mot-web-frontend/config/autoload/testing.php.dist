@@ -61,7 +61,10 @@ return array(
             'enabled' => true,
             'mot-test' => [
                 'lifetime' => 7200
-            ]
+            ],
+            'person' => [
+                'lifetime' => 7200
+            ],
         ]
     ],
 );

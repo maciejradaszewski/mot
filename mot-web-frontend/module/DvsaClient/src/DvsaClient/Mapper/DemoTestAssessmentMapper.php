@@ -15,7 +15,7 @@ class DemoTestAssessmentMapper extends Mapper
             throw new \InvalidArgumentException('Unknown VehicleClassGroupCode: ' . $vehicleTestingGroup);
         }
 
-        $url = (new UrlBuilder())->demoTestAssessment()->toString();
+        $url = (new UrlBuilder())->demoTestAssessment($testerId)->toString();
 
         $data = [
             'testerId'            => $testerId,
