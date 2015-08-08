@@ -4,7 +4,6 @@ namespace TestSupport;
 
 use Doctrine\ORM\EntityManager;
 use TestSupport\Service\JsonErrorHandlingListener;
-
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
@@ -15,7 +14,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 /**
  * Basic logic for module
  */
-class Module implements AutoloaderProviderInterface, ConfigProviderInterface, ServiceProviderInterface
+class Module implements ConfigProviderInterface, ServiceProviderInterface
 {
     public function onBootstrap(MvcEvent $e)
     {
@@ -33,20 +32,6 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Se
         );
 
         $application->getEventManager()->attach($sm->get(JsonErrorHandlingListener::class));
-    }
-
-    public function getAutoloaderConfig()
-    {
-        return [
-            'Zend\Loader\ClassMapAutoloader' => [
-                __DIR__ . '/autoload_classmap.php',
-            ],
-            'Zend\Loader\StandardAutoloader' => [
-                'namespaces' => [
-                    'TestSupport' => __DIR__ . '/src/TestSupport',
-                ],
-            ],
-        ];
     }
 
     public function getConfig()

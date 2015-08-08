@@ -39,7 +39,12 @@ class DirectDebit extends Entity
      * @ORM\Column(name="mandate_reference", type="string", length=50, nullable=false, unique=true)
      */
     private $mandateReference;
-
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="unique_identifier", type="string", length=8, nullable=true)
+     */
+    private $uniqueIdentifier;
     /**
      * @var \DvsaEntities\Entity\DirectDebitStatus
      *
@@ -94,6 +99,7 @@ class DirectDebit extends Entity
 
     /**
      * @param $isActive
+     *
      * @return $this
      */
     public function setIsActive($isActive)
@@ -131,6 +137,7 @@ class DirectDebit extends Entity
      * Set organisation
      *
      * @param \DvsaEntities\Entity\Organisation $organisation
+     *
      * @return $this
      */
     public function setOrganisation(\DvsaEntities\Entity\Organisation $organisation = null)
@@ -152,6 +159,7 @@ class DirectDebit extends Entity
 
     /**
      * @param \DateTime $nextCollectionDate
+     *
      * @return $this
      */
     public function setNextCollectionDate($nextCollectionDate)
@@ -171,6 +179,7 @@ class DirectDebit extends Entity
 
     /**
      * @param \DateTime $lastIncrementDate
+     *
      * @return $this
      */
     public function setLastIncrementDate($lastIncrementDate)
@@ -190,11 +199,15 @@ class DirectDebit extends Entity
 
     /**
      * @param string $mandateReference
+     *
      * @return $this
      */
     public function setMandateReference($mandateReference)
     {
         $this->mandateReference = $mandateReference;
+        if (is_string($mandateReference)) {
+            $this->setUniqueIdentifier(substr($mandateReference, -8));
+        }
 
         return $this;
     }
@@ -209,6 +222,7 @@ class DirectDebit extends Entity
 
     /**
      * @param \DvsaEntities\Entity\DirectDebitStatus $status
+     *
      * @return $this
      */
     public function setStatus(\DvsaEntities\Entity\DirectDebitStatus $status)
@@ -228,6 +242,7 @@ class DirectDebit extends Entity
 
     /**
      * @param \DateTime $setupDate
+     *
      * @return $this
      */
     public function setSetupDate($setupDate)
@@ -247,6 +262,7 @@ class DirectDebit extends Entity
 
     /**
      * @param int $slots
+     *
      * @return $this
      */
     public function setSlots($slots)
@@ -262,5 +278,25 @@ class DirectDebit extends Entity
     public function getSlots()
     {
         return $this->slots;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUniqueIdentifier()
+    {
+        return $this->uniqueIdentifier;
+    }
+
+    /**
+     * @param $uniqueIdentifier
+     *
+     * @return $this
+     */
+    public function setUniqueIdentifier($uniqueIdentifier)
+    {
+        $this->uniqueIdentifier = $uniqueIdentifier;
+
+        return $this;
     }
 }

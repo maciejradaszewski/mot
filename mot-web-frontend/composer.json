@@ -12,7 +12,7 @@
         "dvsa/dvsa-openam-client" : "~1.6.2",
         "maglnet/magl-markdown": "1.3.0",
         "soflomo/purifier": "0.1.1",
-        "slot-purchase/web-frontend": "3.1.*",
+        "slot-purchase/web-frontend": "3.3.*",
         "dvsa/web-frontend-assets": "0.4.2",
         "dvsa/dvsa-application-logger": "~1.1",
         "dvsa/dvsa-doctrine-module": "~1.1"
@@ -33,6 +33,7 @@
             "Organisation": "module/Organisation/src",
             "Session": "module/Session/src",
             "Site": "module/Site/src",
+            "Report": "module/Report/src",
             "UserAdmin": "module/UserAdmin/src",
             "Vehicle": "module/Vehicle/src",
             "DvsaMotTest": "module/Application/src",

@@ -119,3 +119,7 @@ services:
     dvsa.direct_debit:
         class: Dvsa\Mot\Behat\Support\Api\DirectDebit
         parent: dvsa.rest
+
+    dvsa.slot_report:
+        class: Dvsa\Mot\Behat\Support\Api\SlotReport
+        parent: dvsa.rest

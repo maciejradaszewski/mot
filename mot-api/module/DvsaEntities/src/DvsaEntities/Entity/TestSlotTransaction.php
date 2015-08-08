@@ -48,6 +48,12 @@ class TestSlotTransaction extends Entity
      */
     private $salesReference;
     /**
+     * @var string
+     *
+     * @ORM\Column(name="unique_identifier", type="string", length=8, nullable=true)
+     */
+    private $uniqueIdentifier;
+    /**
      * @var \DvsaEntities\Entity\TestSlotTransactionStatus
      *
      * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\TestSlotTransactionStatus")
@@ -298,7 +304,11 @@ class TestSlotTransaction extends Entity
     public function setSalesReference($salesReference)
     {
         $this->salesReference = $salesReference;
-        return $this ;
+        if (is_string($salesReference)) {
+            $this->setUniqueIdentifier(substr($salesReference, -8));
+        }
+
+        return $this;
     }
 
     /**
@@ -336,6 +346,27 @@ class TestSlotTransaction extends Entity
     public function setRealSlots($realSlots)
     {
         $this->realSlots = $realSlots;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUniqueIdentifier()
+    {
+        return $this->uniqueIdentifier;
+    }
+
+    /**
+     * @param $uniqueIdentifier
+     *
+     * @return $this
+     */
+    public function setUniqueIdentifier($uniqueIdentifier)
+    {
+        $this->uniqueIdentifier = $uniqueIdentifier;
+
         return $this;
     }
 }

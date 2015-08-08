@@ -1,16 +1,11 @@
 package com.dvsa.mot.selenium.priv.frontend.payment;
 
-import com.dvsa.mot.selenium.datasource.Assertion;
 import com.dvsa.mot.selenium.datasource.ChequePayment;
 import com.dvsa.mot.selenium.datasource.Login;
-import com.dvsa.mot.selenium.datasource.Payments;
 import com.dvsa.mot.selenium.framework.BaseTest;
 import com.dvsa.mot.selenium.framework.api.FinanceUserCreationApi;
 import com.dvsa.mot.selenium.framework.api.authorisedexaminer.AeDetails;
 import com.dvsa.mot.selenium.framework.api.authorisedexaminer.AeService;
-import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.DetailsOfAuthorisedExaminerPage;
-import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.SearchForAePage;
-import com.dvsa.mot.selenium.priv.frontend.payment.pages.AdjustmentConfirmationPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.ManualAdjustmentSuccessPage;
 
 import org.testng.annotations.Test;
@@ -31,61 +26,6 @@ public class CpmsSlotsManualAdjustmentTests extends BaseTest {
         FinanceUserCreationApi financeUserCreationApi = new FinanceUserCreationApi();
         Login financeUserLogin = financeUserCreationApi.createFinanceUser().getLogin();
         return financeUserLogin;
-    }
-
-    private DetailsOfAuthorisedExaminerPage loginAsFinanceUserAndSearchForAe(Login login, String aeRef) {
-        DetailsOfAuthorisedExaminerPage detailsOfAuthorisedExaminerPage =
-                SearchForAePage.navigateHereFromLoginPage(driver, login)
-                        .searchForAeAndSubmit(aeRef);
-        return detailsOfAuthorisedExaminerPage;
-    }
-
-    @Test(groups = {"Regression", "SPMS-143"})
-    public void manualPositiveAdjustmentOfSlotsBalanceByFinanceUser() {
-        String aeRef = createAeAndReturnAeReference("positiveManualAdjustment");
-        Login financeUserLogin = createFinanceUserReturnFinanceUserLogin();
-        DetailsOfAuthorisedExaminerPage detailsOfAuthorisedExaminerPage =
-                loginAsFinanceUserAndSearchForAe(financeUserLogin, aeRef);
-
-        int slotsBeforeAdjustment =
-                Integer.parseInt(detailsOfAuthorisedExaminerPage.getAeSlotBalance());
-        detailsOfAuthorisedExaminerPage.clickLogout();
-
-        AdjustmentConfirmationPage adjustmentConfirmationPage = AdjustmentConfirmationPage
-                .loginAndCompleteManualPositiveAdjustmentOfSlotBalance(driver, financeUserLogin, aeRef);
-                
-        assertThat("Verifying Manual Adjustment of slots success message",
-                adjustmentConfirmationPage.getManualAdjustmentStatusMessage(),
-                is(Assertion.ASSERTION_MANUAL_ADJUSTMENT_OF_SLOTS_SUCCESS_MESSAGE.assertion));
-
-        assertThat("Verifying adjusted slots balance message",
-                adjustmentConfirmationPage.getAdjustedBalanceMessage(),
-                is(("New slot balance for this Authorised Examiner is: " + (slotsBeforeAdjustment
-                        + Payments.VALID_PAYMENTS.slots))));
-    }
-
-    @Test(groups = {"Regression", "SPMS-143"})
-    public void manualNegativeAdjustmentOfSlotsBalanceByFinanceUser() {
-        String aeRef = createAeAndReturnAeReference("negativeManualAdjustment");
-        Login financeUserLogin = createFinanceUserReturnFinanceUserLogin();
-        DetailsOfAuthorisedExaminerPage detailsOfAuthorisedExaminerPage =
-                loginAsFinanceUserAndSearchForAe(financeUserLogin, aeRef);
-
-        int slotsBeforeAdjustment =
-                Integer.parseInt(detailsOfAuthorisedExaminerPage.getAeSlotBalance());
-        detailsOfAuthorisedExaminerPage.clickLogout();
-
-        AdjustmentConfirmationPage adjustmentConfirmationPage = AdjustmentConfirmationPage
-                .loginAndCompleteManualNegativeAdjustmentOfSlotBalance(driver, financeUserLogin, aeRef);
-
-        assertThat("Verifying Manual Adjustment of slots success message",
-                adjustmentConfirmationPage.getManualAdjustmentStatusMessage(),
-                is(Assertion.ASSERTION_MANUAL_ADJUSTMENT_OF_SLOTS_SUCCESS_MESSAGE.assertion));
-        
-        assertThat("Verifying adjusted slots balance message",
-                adjustmentConfirmationPage.getAdjustedBalanceMessage(),
-                is(("New slot balance for this Authorised Examiner is: " + (slotsBeforeAdjustment
-                        - Payments.VALID_PAYMENTS.slots))));
     }
     
     @Test(groups = {"Regression", "SPMS-80"})
