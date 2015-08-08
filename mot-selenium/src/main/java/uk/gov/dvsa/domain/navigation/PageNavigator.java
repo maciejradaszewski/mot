@@ -12,6 +12,7 @@ import uk.gov.dvsa.ui.pages.authorisedexaminer.AeSlotsUsagePage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AedmAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
+import uk.gov.dvsa.ui.pages.cpms.GenerateReportPage;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 import uk.gov.dvsa.ui.pages.mot.*;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticeCreationPage;
@@ -151,6 +152,12 @@ public class PageNavigator {
         injectOpenAmCookieAndNavigateToPath(user, SpecialNoticePage.PATH);
 
         return new SpecialNoticePage(driver);
+    }
+    
+    public GenerateReportPage goToGenerateReportPage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, GenerateReportPage.PATH);
+        return new GenerateReportPage(driver);
+        
     }
 
     public VehicleInformationSearchPage goToVehicleInformationSearchPage(User user) throws IOException {

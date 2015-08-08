@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3b7e55b1a1a8609e449127396a907904",
+    "hash": "96a832a138dce9c95901295a3d9b955c",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1225,11 +1225,11 @@
         },
         {
             "name": "slot-purchase/backend-api",
-            "version": "v3.1.6",
+            "version": "v3.3.4",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git",
-                "reference": "ceaa6efa6f12674a3246c015bc99adf5b9b3c203"
+                "reference": "dd884016fdf8de9c0c670b7d34f9561739965795"
             },
             "require": {
                 "cpms/client": "1.22.*",
@@ -1260,7 +1260,7 @@
                 "proprietary"
             ],
             "description": "API for slot purchasing and related features",
-            "time": "2015-08-05 13:46:01"
+            "time": "2015-08-06 17:02:01"
         },
         {
             "name": "soflomo/purifier",
@@ -1519,7 +1519,6 @@
                     "ZendPdf\\": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1529,6 +1528,10 @@
                 "pdf",
                 "zf2"
             ],
+            "support": {
+                "source": "https://github.com/zendframework/ZendPdf/tree/release-2.0.2",
+                "issues": "https://github.com/zendframework/ZendPdf/issues"
+            },
             "time": "2012-11-16 11:16:01"
         },
         {

@@ -43,10 +43,14 @@ class DirectDebitStatus
 
     /**
      * @param string $cpmsCode
+     *
+     * @return $this
      */
     public function setCpmsCode($cpmsCode)
     {
         $this->cpmsCode = $cpmsCode;
+
+        return $this;
     }
 
     /**

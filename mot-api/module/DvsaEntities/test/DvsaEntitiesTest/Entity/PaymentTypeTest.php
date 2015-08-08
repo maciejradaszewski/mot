@@ -15,9 +15,11 @@ class PaymentTypeTest extends PHPUnit_Framework_TestCase
         $paymentType->setName("name")
             ->setActive(true)
             ->setDisplayOrder(4);
+        $paymentType->setIsAdjustable(false);
 
         $this->assertEquals("name", $paymentType->getName());
         $this->assertTrue($paymentType->getActive());
         $this->assertEquals(4, $paymentType->getDisplayOrder());
+        $this->assertFalse($paymentType->getIsAdjustable());
     }
 }

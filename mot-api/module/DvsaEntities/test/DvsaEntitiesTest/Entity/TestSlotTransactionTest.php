@@ -38,6 +38,7 @@ class TestSlotTransactionTest extends PHPUnit_Framework_TestCase
             'organisation' => new Organisation(),
             'created' => new \DateTime('now'),
             'completedOn' => new \DateTime('now'),
+            'reference' => uniqid('ref'),
         ];
 
         $testSlotTransaction = new TestSlotTransaction();
@@ -46,6 +47,7 @@ class TestSlotTransactionTest extends PHPUnit_Framework_TestCase
             ->setPayment($data['payment'])
             ->setOrganisation($data['organisation'])
             ->setCreated($data['created'])
+            ->setSalesReference($data['reference'])
             ->setCompletedOn($data['completedOn']);
 
         $this->assertEquals($data['slots'], $testSlotTransaction->getSlots());
@@ -54,5 +56,7 @@ class TestSlotTransactionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($data['organisation'], $testSlotTransaction->getOrganisation());
         $this->assertEquals($data['created'], $testSlotTransaction->getCreated());
         $this->assertEquals($data['completedOn'], $testSlotTransaction->getCompletedOn());
+        $this->assertEquals($data['reference'], $testSlotTransaction->getSalesReference());
+        $this->assertNotEmpty($testSlotTransaction->getUniqueIdentifier());
     }
 }

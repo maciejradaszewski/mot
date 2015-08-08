@@ -37,7 +37,28 @@ class PaymentType extends Entity
      * @ORM\Column(name="display_order", type="smallint", nullable=false)
      */
     private $displayOrder;
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_adjustable", type="boolean", nullable=false)
+     */
+    private $isAdjustable;
 
+    /**
+     * @return bool
+     */
+    public function getIsAdjustable()
+    {
+        return $this->isAdjustable;
+    }
+
+    /**
+     * @param bool $isAdjustable
+     */
+    public function setIsAdjustable($isAdjustable)
+    {
+        $this->isAdjustable = $isAdjustable;
+    }
     /**
      * Set name
      *

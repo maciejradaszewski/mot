@@ -30,7 +30,12 @@ class Payment extends Entity
      * @ORM\Column(name="receipt_reference", type="string", length=55)
      */
     private $receiptReference;
-
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="unique_identifier", type="string", length=8, nullable=true)
+     */
+    private $uniqueIdentifier;
     /**
      * @var array
      *
@@ -81,10 +86,15 @@ class Payment extends Entity
 
     /**
      * @param string $receiptReference
+     *
+     * @return $this
      */
     public function setReceiptReference($receiptReference)
     {
         $this->receiptReference = $receiptReference;
+        if (is_string($receiptReference)) {
+            $this->setUniqueIdentifier(substr($receiptReference, -8));
+        }
 
         return $this;
     }
@@ -198,5 +208,25 @@ class Payment extends Entity
     public function getCreated()
     {
         return $this->created;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUniqueIdentifier()
+    {
+        return $this->uniqueIdentifier;
+    }
+
+    /**
+     * @param $uniqueIdentifier
+     *
+     * @return $this
+     */
+    public function setUniqueIdentifier($uniqueIdentifier)
+    {
+        $this->uniqueIdentifier = $uniqueIdentifier;
+
+        return $this;
     }
 }

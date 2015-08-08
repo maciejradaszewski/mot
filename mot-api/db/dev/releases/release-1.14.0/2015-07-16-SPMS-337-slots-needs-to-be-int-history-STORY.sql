@@ -1,0 +1,1 @@
+ALTER TABLE `test_slot_transaction_amendment_hist` CHANGE `slots` `slots` INT DEFAULT NULL COMMENT 'Adjustment can be either positive or negative';

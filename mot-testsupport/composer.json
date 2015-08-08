@@ -16,7 +16,8 @@
     "autoload" : {
         "psr-0" : {
             "DvsaCommon" : "../mot-common-web-module/src",
-            "DvsaCommonTest" : "../mot-common-web-module/test"
+            "DvsaCommonTest" : "../mot-common-web-module/test",
+            "TestSupport" : "module/TestSupport/src"
         },
         "classmap" : [
             "../mot-common-web-module/Module.php"

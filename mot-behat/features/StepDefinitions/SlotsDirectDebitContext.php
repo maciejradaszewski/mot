@@ -22,10 +22,12 @@ class SlotsDirectDebitContext implements Context
      * @var array
      */
     private $organisationMap = [
-        'kwikfit'  => 10,
-        'halfords' => 9,
-        'asda'     => 12,
-        'tesco'    => 1
+        'crazyWheels' => 10,
+        'halfords'    => 9,
+        'asda'        => 12,
+        'city'        => 13,
+        'speed'       => 1001,
+        'kwikfit'     => 2001,
     ];
 
     private $slotPrice = 2.05;
@@ -145,7 +147,46 @@ class SlotsDirectDebitContext implements Context
             $this->responseReceived->getStatusCode(),
             'Direct request was not rejected'
         );
+
         PHPUnit::assertArrayHasKey('validationError', $body);
         PHPUnit::assertArrayHasKey('code', $body['validationError']);
+    }
+
+    /**
+     * @When I setup direct debit of :numberOfSlots slots for :organisation on :dayOfMonth day of the month
+     */
+    public function iSetupDirectDebitOfSlotsForAsdaOnDayOfTheMonth($numberOfSlots, $organisation, $dayOfMonth)
+    {
+        $token           = $this->sessionContext->getCurrentAccessToken();
+        $mandateResponse = $this->directDebit->getActiveMandate($token, $this->organisationMap[$organisation]);
+        $mandateBody     = $mandateResponse->getBody();
+
+        if (isset($mandateBody['data']['mandate_id'])) {
+            //Cancel existing mandate
+            $this->directDebit->cancelDirectDebit(
+                $token,
+                $this->organisationMap[$organisation],
+                $mandateBody['data']['mandate_id']
+            );
+        }
+
+        $this->responseReceived = $this->directDebit->setUpDirectDebitMandate(
+            $token,
+            $this->organisationMap[$organisation],
+            $numberOfSlots,
+            $dayOfMonth,
+            number_format($numberOfSlots * $this->slotPrice, 2, '.', '')
+        );
+    }
+
+    /**
+     * @Then The direct debit should not be setup
+     */
+    public function theDirectDebitShouldNotBeSetup()
+    {
+        $responseBody = $this->responseReceived->getBody();
+        PHPUnit::assertArrayHasKey('validationError', $responseBody);
+        PHPUnit::assertArrayHasKey('code', $responseBody['validationError']);
+        PHPUnit::assertSame(433, $responseBody['validationError']['code']);
     }
 }

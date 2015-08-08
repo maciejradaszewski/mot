@@ -174,7 +174,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
         assertThat("Verifying PurchaserDetails displayed",
                 paymentDetailsPage.getPurchaserDetailsText(), is("Purchaser details"));
         assertThat("Verifying PaymentDetails displayed", paymentDetailsPage.getPaymentDetailsText(),
-                is("Payment reference"));
+                is("Payment details"));
         assertThat("Verifying OrderDetails displayed", paymentDetailsPage.getOrderDetailsText(),
                 is("Order details"));
         assertThat("Verifying Print button present", paymentDetailsPage.isPrintButtonDisplayed(),
@@ -229,7 +229,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
         assertThat("Verifying PurchaserDetails displayed",
                 searchedPaymentDetailsPage.getPurchaserDetailsText(), is("Purchaser details"));
         assertThat("Verifying PaymentDetails displayed",
-                searchedPaymentDetailsPage.getPaymentDetailsText(), is("Payment reference"));
+                searchedPaymentDetailsPage.getPaymentDetailsText(), is("Payment details"));
         assertThat("Verifying OrderDetails displayed",
                 searchedPaymentDetailsPage.getOrderDetailsText(), is("Order details"));
     }
@@ -252,7 +252,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
         assertThat("Verifying PurchaserDetails displayed",
                 searchedPaymentDetailsPage.getPurchaserDetailsText(), is("Purchaser details"));
         assertThat("Verifying PaymentDetails displayed",
-                searchedPaymentDetailsPage.getPaymentDetailsText(), is("Payment reference"));
+                searchedPaymentDetailsPage.getPaymentDetailsText(), is("Payment details"));
         assertThat("Verifying OrderDetails displayed",
                 searchedPaymentDetailsPage.getOrderDetailsText(), is("Order details"));
     }
