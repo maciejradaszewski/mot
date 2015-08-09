@@ -2,7 +2,7 @@
 UPDATE `role` SET `code`='CUSTOMER-SERVICE-MANAGER' WHERE `code`='CUSTOMER-SERVICE-MANAGEMENT';
 
 -- Permission matrix for which internal users can add roles to other users
-SET @created_by = (SELECT `id` FROM `person` WHERE `username` = 'static data' );
+SET @created_by = (SELECT `id` FROM `person` WHERE `username` = 'static data' OR `user_reference` = 'Static Data');
 
 -- Permission codes
 SET @perm_dvsa_sm      = 'MANAGE-ROLE-DVSA-SCHEME-MANAGEMENT';
