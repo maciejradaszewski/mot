@@ -2,7 +2,7 @@
 
 namespace DvsaMotTestTest\Controller;
 
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaMotTest\Controller\VehicleSearchController;
 use ReflectionMethod;
 use Zend\Stdlib\Parameters;

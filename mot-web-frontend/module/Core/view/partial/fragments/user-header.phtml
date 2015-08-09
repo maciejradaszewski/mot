@@ -11,7 +11,7 @@ use DvsaMotTest\Controller\LocationSelectController;
 
 <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::MOT_TEST_READ)): ?>
     <?php
-    /** @var $vts \DvsaAuthentication\Model\VehicleTestingStation */
+    /** @var $vts \Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation */
     $vts = $this->identityHelper()->getCurrentVts(); ?>
     <?php if (null !== $vts): ?>
     <span id="current-site" class="header-user__address">

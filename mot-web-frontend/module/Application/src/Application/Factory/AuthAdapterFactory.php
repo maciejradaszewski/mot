@@ -6,7 +6,7 @@ use DvsaCommon\HttpRestJson\Client;
 use Zend\Session\Container;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use DvsaAuthentication\AuthAdapter\Rest as AuthAdapter;
+use Dvsa\Mot\Frontend\AuthenticationModule\AuthAdapter\Rest as AuthAdapter;
 
 class AuthAdapterFactory implements FactoryInterface
 {

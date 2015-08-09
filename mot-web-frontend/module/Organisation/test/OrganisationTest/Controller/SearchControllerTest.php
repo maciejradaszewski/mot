@@ -8,7 +8,7 @@ use DvsaCommon\Auth\PermissionInSystem;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use Organisation\Controller\SearchController;
 use Zend\View\Model\ViewModel;

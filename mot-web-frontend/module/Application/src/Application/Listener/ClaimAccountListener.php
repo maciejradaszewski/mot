@@ -2,7 +2,7 @@
 
 namespace Application\Listener;
 
-use DvsaAuthentication\Model\Identity;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use Zend\Mvc\MvcEvent;
 

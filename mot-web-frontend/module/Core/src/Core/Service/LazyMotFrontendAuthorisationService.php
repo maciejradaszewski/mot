@@ -55,7 +55,7 @@ class LazyMotFrontendAuthorisationService extends AbstractMotAuthorisationServic
      */
     protected function getPersonAuthorization()
     {
-        /** @var \DvsaAuthentication\Model\Identity $identity */
+        /** @var \Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity $identity */
         $identity = $this->motIdentityProvider->getIdentity();
         if (is_null($identity)) {
             return PersonAuthorization::emptyAuthorization();
@@ -78,7 +78,7 @@ class LazyMotFrontendAuthorisationService extends AbstractMotAuthorisationServic
 
     public function refreshAuthorization()
     {
-        /** @var \DvsaAuthentication\Model\Identity $identity */
+        /** @var \Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity $identity */
         $identity = $this->motIdentityProvider->getIdentity();
         $identity->setPersonAuthorization(null);
     }

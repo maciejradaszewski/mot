@@ -3,7 +3,7 @@
 namespace ApplicationTest\Listener;
 
 use Application\Listener\ClaimAccountListener;
-use DvsaAuthentication\Model\Identity;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommonTest\TestUtils\XMock;
 use PHPUnit_Framework_TestCase;

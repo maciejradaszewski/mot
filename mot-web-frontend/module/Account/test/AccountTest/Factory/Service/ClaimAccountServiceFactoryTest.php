@@ -5,7 +5,7 @@ namespace AccountTest\Factory\Service;
 use Account\Factory\Service\ClaimAccountServiceFactory;
 use Account\Service\ClaimAccountService;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
-use DvsaAuthentication\Model\MotFrontendIdentityInterface;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;

@@ -4,8 +4,8 @@ namespace DvsaMotTestTest\Controller;
 use Core\Service\MotFrontendIdentityProviderInterface;
 use CoreTest\Service\StubCatalogService;
 use CoreTest\Service\StubRestForCatalog;
-use DvsaAuthentication\Model\Identity;
-use DvsaAuthentication\Model\VehicleTestingStation;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation;
 use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\HttpRestJson\Client;
@@ -20,7 +20,7 @@ use DvsaMotTest\NewVehicle\Container\NewVehicleContainer;
 use DvsaMotTest\NewVehicle\Form\VehicleWizard\SummaryStep;
 use DvsaMotTest\NewVehicle\Form\VehicleWizard\VehicleIdentificationStep;
 use DvsaMotTest\NewVehicle\Form\VehicleWizard\VehicleSpecificationStep;
-use UserAdminTest\Controller\AbstractLightWebControllerTest;
+use CoreTest\Controller\AbstractLightWebControllerTest;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Form\Form;
@@ -347,13 +347,5 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
     private function setApiData()
     {
         $this->container->set(AbstractStep::API_DATA, $this->dataCatalog());
-    }
-
-    private function expectRedirectToUrl($route)
-    {
-        $this->redirectPluginMock
-            ->expects(\PHPUnit_Framework_TestCase::once())
-            ->method('toUrl')
-            ->with($route);
     }
 }

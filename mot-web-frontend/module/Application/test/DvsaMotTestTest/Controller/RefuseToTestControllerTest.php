@@ -12,7 +12,7 @@ use DvsaCommon\Obfuscate\ParamEncrypter;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTest\Controller\RefuseToTestController;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;

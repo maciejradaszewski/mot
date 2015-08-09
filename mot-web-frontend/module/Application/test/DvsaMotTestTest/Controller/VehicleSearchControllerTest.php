@@ -16,7 +16,7 @@ use DvsaCommon\Obfuscate\ParamEncoder;
 use DvsaCommon\Obfuscate\ParamEncrypter;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTest\Constants\VehicleSearchSource;
 use DvsaMotTest\Controller\VehicleSearchController;

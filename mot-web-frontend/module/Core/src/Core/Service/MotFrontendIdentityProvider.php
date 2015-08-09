@@ -2,7 +2,7 @@
 
 namespace Core\Service;
 
-use DvsaAuthentication\Model\MotFrontendIdentityInterface;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
 use Zend\Authentication\AuthenticationService;
 
 /**

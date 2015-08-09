@@ -3,7 +3,7 @@ namespace DvsaMotTestTest\Controller;
 
 use DvsaCommonTest\Bootstrap;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 
 /**
  * Superclass of controller tests for MOT-testing related controllers.

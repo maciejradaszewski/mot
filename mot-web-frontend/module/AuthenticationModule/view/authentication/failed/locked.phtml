@@ -1,0 +1,16 @@
+<div class="text">
+    <p class="lede">
+        Your account has been locked for 30 minutes. Please try again soon.
+    </p>
+    <p>
+        You can <a href="<?php echo $this->url('forgotten-password') ?>">change your password</a> if you have forgotten it. For other sign in related queries you can contact the <strong><?php echo $this->helpdesk['name'] ?></strong> on <strong><?php echo $this->helpdesk['phoneNumber'] ?></strong>.
+    </p>
+    <p>
+        <?php echo $this->helpdesk['name'] ?> opening hours
+    </p>
+    <p>
+        <?php echo $this->helpdesk['openingHrsWeekdays'] ?><br>
+        <?php echo $this->helpdesk['openingHrsSaturday'] ?><br>
+        <?php echo $this->helpdesk['openingHrsSunday'] ?>
+    </p>
+</div>

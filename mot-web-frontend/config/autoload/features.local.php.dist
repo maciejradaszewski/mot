@@ -15,5 +15,9 @@ return [
         'ao1.ae.create'          => true,
         'ao1.ae.edit'            => true,
         'ao1.site.create'        => true,
+        /*
+         * Enable login and logout using the OpenAM DAS interface.
+         */
+        'openam.das.enabled' => true,
     ]
 ];

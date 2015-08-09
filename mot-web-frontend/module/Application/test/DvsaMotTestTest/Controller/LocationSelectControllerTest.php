@@ -2,10 +2,10 @@
 namespace DvsaMotTestTest\Controller;
 
 use CoreTest\Controller\StubIdentities;
-use DvsaAuthentication\Model\Identity;
-use DvsaAuthentication\Model\VehicleTestingStation;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaMotTest\Controller\LocationSelectController;
 use DvsaMotTest\Data\TesterInProgressTestNumberResource;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;

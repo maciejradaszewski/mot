@@ -1,6 +1,6 @@
 <?php
 use Dashboard\Controller\UserHomeController;
-use DvsaAuthentication\Controller\AuthenticationController;
+use Dvsa\Mot\Frontend\AuthenticationModule\Controller\LogoutController;
 use DvsaCommon\Constants\Role;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 
@@ -17,8 +17,7 @@ if ($this->authorisationHelper()->hasRole(Role::USER)):
         <a href="<?php echo PersonUrlBuilderWeb::profile(); ?>" id="user-profile">Your Profile</a>
     </li>
     <li>
-        <a href="<?php echo $this->url(AuthenticationController::ROUTE_LOGOUT); ?>"
-           id="logout">
+        <a href="<?php echo $this->url(LogoutController::ROUTE_LOGOUT); ?>" id="logout">
             Sign out
         </a>
     </li>

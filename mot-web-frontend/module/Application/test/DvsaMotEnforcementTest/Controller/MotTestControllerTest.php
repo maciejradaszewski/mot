@@ -19,7 +19,7 @@ use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotEnforcement\Controller\MotTestController;
 use DvsaMotTestTest\Controller\AbstractDvsaMotTestTestCase;

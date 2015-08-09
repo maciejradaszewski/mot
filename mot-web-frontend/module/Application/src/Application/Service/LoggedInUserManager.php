@@ -3,8 +3,8 @@
 namespace Application\Service;
 
 use Core\Service\MotFrontendAuthorisationServiceInterface;
-use DvsaAuthentication\Model\Identity;
-use DvsaAuthentication\Model\VehicleTestingStation;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\UrlBuilder\TesterUrlBuilder;

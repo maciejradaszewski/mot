@@ -10,7 +10,7 @@ use DvsaCommon\Obfuscate\ParamEncrypter;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\UrlBuilder\MotTestUrlBuilder;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaMotEnforcement\Controller\MotTestSearchController;
 use DvsaMotEnforcement\Service\VehicleTestSearch;
 use DvsaMotTestTest\Controller\AbstractDvsaMotTestTestCase;

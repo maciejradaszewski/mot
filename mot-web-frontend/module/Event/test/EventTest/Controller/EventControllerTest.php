@@ -10,7 +10,7 @@ use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaClient\Mapper\OrganisationMapper;
 use DvsaClient\Mapper\PersonMapper;

@@ -320,7 +320,7 @@ class MotTestController extends AbstractDvsaMotTestController
                 $this->getRestClient()->post($apiUrl, $data);
 
                 //  --  reset current site  --
-                /** @var \DvsaAuthentication\Model\Identity $identity */
+                /** @var \Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity $identity */
                 $identity = $this->getIdentity();
                 if ($this->getAuthorizationService()->isVehicleExaminer()) {
                     $identity->setCurrentVts();

@@ -2,7 +2,7 @@
 
 namespace SiteTest\Authorisation;
 
-use DvsaAuthentication\Model\MotFrontendIdentityInterface;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
 use DvsaClient\Entity\Person;
 use DvsaClient\Entity\SitePosition;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;

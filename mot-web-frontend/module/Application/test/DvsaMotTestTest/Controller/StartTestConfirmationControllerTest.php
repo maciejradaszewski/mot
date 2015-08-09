@@ -17,7 +17,7 @@ use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleUrlBuilder;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTest\Constants\VehicleSearchSource;
 use DvsaMotTest\Controller\StartTestConfirmationController;
@@ -36,7 +36,7 @@ class StartTestConfirmationControllerTest extends AbstractDvsaMotTestTestCase
     /** VehicleMapper|@var MockObj */
     protected $mockVehicleMapper;
 
-    /** @var \DvsaAuthentication\Model\VehicleTestingStation */
+    /** @var \Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation */
     protected $vts;
 
     protected function setUp()

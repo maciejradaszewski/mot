@@ -6,7 +6,7 @@ use Core\Service\LazyMotFrontendAuthorisationService;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTest\Controller\SpecialNoticesController;
 use Zend\Http\Request;

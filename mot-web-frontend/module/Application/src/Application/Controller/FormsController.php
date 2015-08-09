@@ -3,7 +3,7 @@
 namespace Application\Controller;
 
 use Core\Controller\AbstractAuthActionController;
-use DvsaAuthentication\Model\Identity;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
 use DvsaCommon\Constants\Role;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\UrlBuilder\ReportUrlBuilder;
@@ -96,7 +96,7 @@ class FormsController extends AbstractAuthActionController
     }
 
     /**
-     * @param \DvsaAuthentication\Model\VehicleTestingStation $vts
+     * @param \Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation $vts
      *
      * @return string
      */

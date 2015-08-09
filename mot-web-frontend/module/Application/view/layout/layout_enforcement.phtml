@@ -1,13 +1,13 @@
 <?php
+
 use Application\Build\BuildConfig;
 use Application\Controller\ManualsAndGuidesController;
 use Application\Controller\IndexController;
 use Dashboard\Controller\UserHomeController;
+use Dvsa\Mot\Frontend\AuthenticationModule\Controller\LogoutController;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
-use DvsaMotTest\Controller\LocationSelectController;
-use DvsaAuthentication\Controller\AuthenticationController;
-
 use Core\Presenter\MastheadPresenter;
+
 $mastheadPresenter = new MastheadPresenter;
 
 if ($this->authorisationHelper()->hasRole(\DvsaCommon\Constants\Role::USER)) {
@@ -67,7 +67,7 @@ if ($this->authorisationHelper()->hasRole(\DvsaCommon\Constants\Role::USER)) {
         <?php if ($this->authorisationHelper() && $this->authorisationHelper()->isTester()): ?>
             <p class="global-header_address" id="current-site">
                 <?php
-                /** @var $vts \DvsaAuthentication\Model\VehicleTestingStation */
+                /** @var $vts \Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation */
                 $vts = $this->identityHelper()->getCurrentVts(); ?>
                 <?php if (null !== $vts) : ?>
                     <span><?php echo $vts->getName(); ?></span>,
@@ -82,7 +82,7 @@ if ($this->authorisationHelper()->hasRole(\DvsaCommon\Constants\Role::USER)) {
                 <ul>
                     <li><a href="<?php echo $this->url(UserHomeController::ROUTE); ?>" class="selected" id="homepage">Home</a></li>
                     <li><a href="<?php echo PersonUrlBuilderWeb::profile(); ?>" id="user-profile">Your Profile</a></li>
-                    <li><a href="<?php echo $this->url(AuthenticationController::ROUTE_LOGOUT); ?>" id="logout">Sign out</a></li>
+                    <li><a href="<?php echo $this->url(LogoutController::ROUTE_LOGOUT); ?>" id="logout">Sign out</a></li>
                 </ul>
             </nav>
         <?php endif; ?>

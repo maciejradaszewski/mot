@@ -13,7 +13,7 @@ use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\UrlBuilder\VehicleUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTestTest\Controller\AbstractDvsaMotTestTestCase;
 use Vehicle\Controller\VehicleController;

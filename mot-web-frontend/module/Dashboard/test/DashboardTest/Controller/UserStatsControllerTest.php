@@ -6,7 +6,7 @@ use DvsaCommonTest\Bootstrap;
 //use DvsaCommonTest\Controller\AbstractAuthControllerTestCase;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use Dashboard\Controller\UserStatsController;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 
 /**
  * Tests for UserStatsController

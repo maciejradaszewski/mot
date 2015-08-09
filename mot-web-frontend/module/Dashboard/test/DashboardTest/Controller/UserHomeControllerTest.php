@@ -22,7 +22,7 @@ use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use UserAdmin\Service\UserAdminSessionManager;

@@ -17,6 +17,8 @@ $shortMessage = !empty($shortErrorMessage) ? $shortErrorMessage : $errorMessage;
         <?php if ($shortMessage): ?>
             <span class="validation-message"><?php echo $shortMessage; //this is HTML content ?></span>
         <?php endif; ?>
+        <?php // Blacnk, hidden password input to prevent browser autofilling ?>
+        <input type="password" style="display:none;" aria-hidden="true" />
         <input type="password" name="oneTimePassword" id="oneTimePassword" class="form-control" />
     </div>
 

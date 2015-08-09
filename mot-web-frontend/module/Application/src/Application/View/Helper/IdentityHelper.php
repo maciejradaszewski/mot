@@ -2,7 +2,7 @@
 
 namespace Application\View\Helper;
 
-use DvsaAuthentication\Model\MotFrontendIdentityInterface;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use Zend\View\Helper\AbstractHelper;
 
@@ -47,7 +47,7 @@ class IdentityHelper extends AbstractHelper implements MotFrontendIdentityInterf
     }
 
     /**
-     * @return \DvsaAuthentication\Model\VehicleTestingStation
+     * @return \Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation
      */
     public function getCurrentVts()
     {

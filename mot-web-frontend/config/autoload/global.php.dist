@@ -1,35 +1,68 @@
 <?php
+
 return [
     'dvsa_authentication' => [
         'openAM' => [
-            // name of the cookie where OpenAM session token is kept
+            /*
+             * The adapter used to talk to the OpenAM REST API.
+             *
+             * For SSL Connections to OpenAM we need to use Curl: 'Zend\Http\Client\Adapter\Curl'.
+             */
+            'adapter' => 'Zend\Http\Client\Adapter\Socket',
+            /*
+             * Username of the OpenAM admin account.
+             */
+            'admin_login' => 'amadmin',
+            /*
+             * Password of the OpenAM admin account.
+             */
+            'admin_password' => 'cangetinam',
+            /*
+             * Name of the cookie where the OpenAM session token is kept.
+             */
             'cookie_name' => 'iPlanetDirectoryPro',
-            // logout url to logout of the application through OpenAM - has goto parameter that tells OpenAM where to redirect after logout
-            'logout_url'  => 'http://openam.mot.gov.uk:8080/secure/UI/Logout?goto=',
-            // lowest level domain name of openam instance
-            'lowest_level_domain'         => 'openam',
-            // base url to OpenAM api
-            'url'                         => 'http://openam.mot.gov.uk:8080/secure/',
-            // realm that will be used when adding new accounts
-            'realm'                       => 'mot',
-            // name of the header/token that is used when calling OpenAM
-            'token_field'                 => 'iPlanetDirectoryPro',
-            // login of OpenAM admin
-            'admin_login'                 => 'amadmin',
-            // password of OpenAM admin
-            'admin_password'              => 'cangetinam',
-            // identity attribute name under which username is stored
+            /*
+             * Path for OpenAM cookies.
+             */
+            'cookie_path' => '/',
+            /*
+             * Domain for OpenAM cookies.
+             */
+            'cookie_domain' => '.mot.gov.uk',
+            /*
+             * Secure flag value for OpenAM cookies.
+             */
+            'cookie_secure' => false,
+            /*
+             * Secure flag value for OpenAM cookies.
+             */
+            'cookie_http_only' => true,
+            /*
+             * Identity attribute name under which username is stored.
+             */
             'identity_attribute_username' => 'uid',
-             // identity attribute name under which openAm entryuuid is stored
-            'identity_attribute_uuid'     => 'entryuuid',
-            // What adapter we use to talk to openAM
-            // For SSL Connections to OpenAM, we need to use Curl: 'Zend\Http\Client\Adapter\Curl'.
-            'adapter'                     => 'Zend\Http\Client\Adapter\Socket',
+            /*
+             * Identity attribute name under which OpenAM entryuuid is stored.
+             */
+            'identity_attribute_uuid' => 'entryuuid',
+            /*
+             * Logout URL to logout of the application through OpenAM. Has a goto parameter that tells OpenAM where to
+             * redirect after logout. Web Frontend only.
+             */
+            'logout_url'  => 'http://openam.mot.gov.uk:8080/secure/UI/Logout?goto=',
+            /*
+             * Realm that will be used when adding new accounts.
+             */
+            'realm' => 'mot',
+            /*
+             * Name of the header/token that is used when calling OpenAM.
+             */
+            'token_field' => 'iPlanetDirectoryPro',
+            /*
+             * Base URL of the OpenAM REST API.
+             */
+            'url' => 'http://openam.mot.gov.uk:8080/secure/',
         ],
-        // This configuration allow us to access part of the application without being logged in
-        'whiteList' => [
-            '|^/forgotten-password(?!/update$)(.*)|'
-        ]
     ],
     'gaTrackingCode' => '',
     'security' => [
