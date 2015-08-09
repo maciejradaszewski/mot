@@ -22,7 +22,7 @@ use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTest\Controller\MotTestController;
 use Zend\Http\PhpEnvironment\Request;

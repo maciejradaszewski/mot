@@ -20,7 +20,7 @@ use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\TestCasePermissionTrait;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTest\Controller\TesterMotTestLogController;

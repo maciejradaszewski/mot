@@ -8,7 +8,7 @@ use Dashboard\Model\AuthorisedExaminer;
 use Dashboard\Model\Dashboard;
 use Dashboard\Model\Site;
 use DashboardTest\Data\ApiDashboardResourceTest;
-use DvsaAuthentication\Model\MotFrontendIdentityInterface;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;

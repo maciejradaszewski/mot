@@ -4,7 +4,7 @@ namespace AccountTest\Service;
 
 use Account\Service\ClaimAccountService;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
-use DvsaAuthentication\Model\Identity;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
 use DvsaClient\Mapper\AccountMapper;
 use DvsaClient\Mapper\SecurityQuestionMapper;
 use DvsaClient\MapperFactory;

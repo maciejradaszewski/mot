@@ -9,7 +9,7 @@ use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaCommon\UrlBuilder\AccountUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use Zend\Http\Request;

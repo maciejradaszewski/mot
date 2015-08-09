@@ -9,7 +9,7 @@ use DvsaCommon\Auth\NotLoggedInException;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Dto\Person\SearchPersonResultDto;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use UserAdmin\Controller\UserSearchController;
 use UserAdmin\Service\UserAdminSessionManager;

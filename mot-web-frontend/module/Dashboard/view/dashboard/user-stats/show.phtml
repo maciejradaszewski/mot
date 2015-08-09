@@ -1,6 +1,6 @@
 <?php
 
-use \DvsaAuthentication\Controller\AuthenticationController;
+use Dashboard\Controller\UserHomeController;
 
 $sectionName = $this->identityHelper()->getDisplayName();
 $taskName = "Performance dashboard";
@@ -76,5 +76,5 @@ $this->layout()->setVariable('pageTitle', $taskName);
     </div>
 </div>
 <hr class="hr-thin">
-<a id="back-to-home-link" href="<?php echo $this->url(AuthenticationController::ROUTE_USER_HOME); ?>">Back to home</a>
+<a id="back-to-home-link" href="<?php echo $this->url(UserHomeController::ROUTE); ?>">Back to home</a>
 

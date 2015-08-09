@@ -4,7 +4,7 @@ namespace Account\Service;
 
 use Account\Controller\ClaimController;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
-use DvsaAuthentication\Model\MotFrontendIdentityInterface;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use Zend\Http\Response;
@@ -37,7 +37,7 @@ class ClaimAccountService
     private $mapper;
     /** @var  ParamObfuscator */
     private $obfuscator;
-    /** @var  \DvsaAuthentication\Model\Identity */
+    /** @var  \Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity */
     private $identity;
 
 

@@ -1,7 +1,8 @@
 <?php
+
 namespace Site\Authorization;
 
-use DvsaAuthentication\Model\MotFrontendIdentityInterface;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
 use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;

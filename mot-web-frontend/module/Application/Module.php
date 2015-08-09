@@ -94,33 +94,6 @@ class Module implements
             MvcEvent::EVENT_RENDER_ERROR, [$this, 'handleError'],
             WebListenerEventsPriorities::DISPATCH_ERROR_HANDLE_ERROR
         );
-
-        $config = $e->getApplication()
-            ->getServiceManager()
-            ->get('Configuration');
-
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
-
-        $sessionConfig = new SessionConfig();
-        $sessionConfig->setOptions($config['session']);
-        $sessionManager = new SessionManager($sessionConfig);
-
-        /** @var Request $request */
-        $request = $e->getApplication()->getServiceManager()->get('Request');
-        $referrer = $request->getHeader('referer');
-
-        /* VM-8950 */
-        $sessionManager->start();
-        // FIXME: Move lowest_level_domain to OpenAMClientOptions.
-        if ($referrer && stripos($referrer->uri()->getHost(), $config['dvsa_authentication']['openAM']['lowest_level_domain']) === 0) {
-            $sessionManager->destroy([
-                'send_expire_cookie' => false,
-                'clear_storage'      => true,
-            ]);
-            $sessionManager->start();
-            $sessionManager->regenerateId(false);
-        }
     }
 
     public function getConfig()

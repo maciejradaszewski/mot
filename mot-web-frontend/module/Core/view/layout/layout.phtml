@@ -1,15 +1,16 @@
 <?php
+
 use Application\Build\BuildConfig;
 use Application\Controller\ManualsAndGuidesController;
 use Dashboard\Controller\UserHomeController;
-use DvsaAuthentication\Controller\AuthenticationController;
+use Dvsa\Mot\Frontend\AuthenticationModule\Controller\LogoutController;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\Role;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
-use DvsaMotTest\Controller\LocationSelectController;
-
 use Core\Presenter\MastheadPresenter;
+
 $mastheadPresenter = new MastheadPresenter;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,7 +68,7 @@ $mastheadPresenter = new MastheadPresenter;
         <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::MOT_TEST_READ)): ?>
             <p class="global-header_address" id="current-site">
                 <?php
-                /** @var $vts \DvsaAuthentication\Model\VehicleTestingStation */
+                /** @var $vts \Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation */
                 $vts = $this->identityHelper()->getCurrentVts(); ?>
                 <?php if (null !== $vts): ?>
                     <span><?php echo $this->escapeHtml($vts->getName()); ?></span>,
@@ -89,7 +90,7 @@ $mastheadPresenter = new MastheadPresenter;
                         <a href="<?php echo PersonUrlBuilderWeb::profile(); ?>" id="user-profile">Your Profile</a>
                     </li>
                     <li>
-                        <a href="<?php echo $this->url(AuthenticationController::ROUTE_LOGOUT); ?>" id="logout">
+                        <a href="<?php echo $this->url(LogoutController::ROUTE_LOGOUT); ?>" id="logout">
                             Sign out
                         </a>
                     </li>

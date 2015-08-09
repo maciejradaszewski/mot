@@ -4,11 +4,11 @@ namespace DvsaMotTestTest\Controller;
 
 use Application\Service\LoggedInUserManager;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
-use DvsaAuthentication\Model\VehicleTestingStation;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTest\Controller\ContingencyMotTestController;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;

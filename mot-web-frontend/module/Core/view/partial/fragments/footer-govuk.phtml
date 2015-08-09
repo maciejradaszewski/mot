@@ -3,8 +3,8 @@ use Application\Controller\ManualsAndGuidesController;
 ?>
 <footer class="group js-footer" id="footer" role="contentinfo">
     <div class="footer-wrapper">
-        
-        <div class="footer-categories">
+
+        <?php if ($this->identity()) : ?><div class="footer-categories">
             <div class="footer-resources">
                 <h2 class="footer-resources__header">Resources</h2>
                 <ul>
@@ -16,7 +16,7 @@ use Application\Controller\ManualsAndGuidesController;
                 </ul>
             </div>
             <hr>
-        </div>
+        </div><?php endif; ?>
 
         <div class="footer-meta">
             <div class="footer-meta-inner">
@@ -25,10 +25,10 @@ use Application\Controller\ManualsAndGuidesController;
                     <li><a href="https://www.gov.uk/help/cookies">Cookies</a></li>
                     <li>
                         Built by the <a href="https://www.gov.uk/government/organisations/driver-and-vehicle-standards-agency">Driver &amp; Vehicle Standards Agency</a>
-                        <?php
+                        <?php if ($this->identity()):
                             $releaseTagTemplate = '<span class="tt-hint">Release {release_tag_name}</span>';
                             echo $this->getReleaseTag()->renderReleaseTag($releaseTagTemplate);
-                        ?>
+                        endif; ?>
                     </li>
                 </ul>
                 <div class="open-government-licence">

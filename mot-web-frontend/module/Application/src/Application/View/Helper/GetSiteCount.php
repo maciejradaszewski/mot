@@ -4,7 +4,7 @@ namespace Application\View\Helper;
 
 use Application\Data\ApiUserSiteCount;
 use Core\Helper\AbstractMotViewHelper;
-use DvsaAuthentication\Model\Identity;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
 
 /**
  * Class GetSiteCount

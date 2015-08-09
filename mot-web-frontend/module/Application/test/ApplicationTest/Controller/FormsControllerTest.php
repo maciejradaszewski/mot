@@ -7,7 +7,7 @@ use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\UrlBuilder\ReportUrlBuilder;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
@@ -207,7 +207,7 @@ class FormsControllerTest extends AbstractFrontendControllerTestCase
 
         $motIdProv = $this->controller->getServiceLocator()->get('MotIdentityProvider');
 
-        /** @var \DvsaAuthentication\Model\VehicleTestingStation $vts */
+        /** @var \Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation $vts */
         $vts = $motIdProv->getIdentity()->getCurrentVts();
 
         if ($vts) {

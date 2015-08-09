@@ -8,7 +8,6 @@ use Application\View\HelperFactory\GetSiteCountFactory;
 use Application\View\HelperFactory\GetSitesFactory;
 use Application\View\HelperFactory\IdentityHelperFactory;
 use Application\View\HelperFactory\LocationSelectorFactory;
-use DvsaAuthentication\Controller\AuthenticationController;
 use DvsaMotEnforcement\Controller as Enforcement;
 use DvsaMotEnforcement\Controller\MotTestSearchController as EnforcementMotTestSearchController;
 use DvsaMotEnforcementApi\Controller as Ajax;
@@ -20,16 +19,6 @@ return [
     'controllers' => require __DIR__ . '/controllers.config.php',
     'router'                     => [
         'routes' => [
-            'logout'                                      => [
-                'type'    => 'segment',
-                'options' => [
-                    'route'    => '/logout',
-                    'defaults' => [
-                        'controller' => AuthenticationController::class,
-                        'action'     => 'logout',
-                    ],
-                ],
-            ],
             'contingency'                                 => [
                 'type'    => 'segment',
                 'options' => [
@@ -943,11 +932,7 @@ return [
     'session_namespace_prefixes' => [
         'DvsaMotEnforcement\\Session\\',
     ],
-    'session'                    => [
-        'remember_me_seconds' => 2419200,
-        'use_cookies'         => true,
-        'cookie_httponly'     => true,
-    ],
+
     'controller_plugins'         => [
         'invokables' => [
             'ajaxResponse' => \Dvsa\Mot\Frontend\Plugin\AjaxResponsePlugin::class,
@@ -1121,7 +1106,7 @@ return [
     ],
     'module_layouts'             => [
         'Application'           => 'application/layout',
-        'DvsaAuthentication'    => 'application/layout',
+        'Dvsa\Mot\Frontend\AuthenticationModule'    => 'application/layout',
         'DvsaMotEnforcement'    => 'application/layout',
         'DvsaMotEnforcementApi' => 'application/layout',
         'DvsaMotTest'           => 'application/layout',

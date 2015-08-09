@@ -5,7 +5,7 @@ namespace DvsaCommon\Auth;
 /**
  * Temporary class to represent the identity.
  *
- * Needs to supercede \DvsaAuthentication\Model\Identity
+ * Needs to supercede \Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity
  */
 class MotIdentity implements MotIdentityInterface
 {

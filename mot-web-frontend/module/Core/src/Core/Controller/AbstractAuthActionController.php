@@ -2,7 +2,7 @@
 namespace Core\Controller;
 
 use Core\Service\MotFrontendAuthorisationServiceInterface;
-use DvsaAuthentication\Model\MotFrontendIdentityInterface;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
 use DvsaCommon\Auth\NotLoggedInException;
 use Zend\Session\Container;
 
@@ -71,7 +71,7 @@ abstract class AbstractAuthActionController extends AbstractDvsaActionController
     }
 
     /**
-     * @return \DvsaAuthentication\Model\MotFrontendIdentityInterface
+     * @return \Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface
      * @deprecated
      */
     protected function getIdentityProviderService()

@@ -187,7 +187,6 @@ return [
     'controllers' => [
         'invokables' => [
             'Account\Controller\Index'  => 'Account\Controller\IndexController',
-            'Account\Controller\Logout' => 'Account\Controller\LogoutController',
         ],
         'factories' => [
             ClaimAccountControllerFactory::class     => ClaimAccountControllerFactory::class,

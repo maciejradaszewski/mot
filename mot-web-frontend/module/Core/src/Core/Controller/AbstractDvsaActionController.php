@@ -66,6 +66,8 @@ abstract class AbstractDvsaActionController
 
     /**
      * @return OpenAMClientInterface
+     *
+     * @deprecated Please inject the OpenAMClient into the Controller instead of relying in the ServiceManager.
      */
     protected function getOpenAmClient()
     {

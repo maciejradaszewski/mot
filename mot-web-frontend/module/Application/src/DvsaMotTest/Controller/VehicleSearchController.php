@@ -355,7 +355,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
             return $this->handleDifferentVtsAction($obfuscatedVehicleId, $request->getPost()->toArray());
         }
 
-        /** @var \DvsaAuthentication\Model\VehicleTestingStation $site */
+        /** @var \Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation $site */
         $site = $this->getIdentity()->getCurrentVts();
         $siteId = $site->getVtsId();
 

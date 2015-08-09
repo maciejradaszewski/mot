@@ -10,7 +10,7 @@ use DvsaClient\Entity\Person;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use DvsaCommonTest\Bootstrap;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use UserAdmin\Controller\SecurityQuestionController;
 use Zend\ServiceManager\ServiceManager;

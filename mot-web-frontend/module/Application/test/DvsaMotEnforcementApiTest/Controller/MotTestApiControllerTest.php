@@ -2,7 +2,7 @@
 namespace DvsaMotEnforcementApiTest\Controller;
 
 use DvsaCommon\Auth\PermissionInSystem;
-use DvsaCommonTest\Controller\StubIdentityAdapter;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaMotEnforcementApi\Controller\MotTestApiController;
 use DvsaMotTestTest\Controller\AbstractDvsaMotTestTestCase;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
