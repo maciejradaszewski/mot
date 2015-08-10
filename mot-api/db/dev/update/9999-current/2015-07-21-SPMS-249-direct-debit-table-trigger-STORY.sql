@@ -1,3 +1,4 @@
+/*
 DROP TRIGGER IF EXISTS `tr_direct_debit_au`;
 
 CREATE TRIGGER `tr_direct_debit_au` AFTER UPDATE
@@ -77,4 +78,4 @@ OLD.`last_updated_by`,
 OLD.`last_updated_on`,
 OLD.`version`,
 OLD.`batch_number`,
-OLD.`is_active`);
+OLD.`is_active`);*/

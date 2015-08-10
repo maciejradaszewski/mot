@@ -1,3 +1,4 @@
+/*
 DROP TRIGGER IF EXISTS `tr_test_slot_transaction_au`;
 
 CREATE TRIGGER `tr_test_slot_transaction_au` AFTER UPDATE
@@ -85,4 +86,4 @@ OLD.`created_on`,
 OLD.`last_updated_by`,
 OLD.`last_updated_on`,
 OLD.`version`,
-OLD.`batch_number`);
+OLD.`batch_number`);*/
