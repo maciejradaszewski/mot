@@ -1,3 +1,4 @@
+/*
 
 DROP TRIGGER IF EXISTS `tr_payment_type_au`;
 
@@ -54,4 +55,4 @@ OLD.`created_on`,
 OLD.`last_updated_by`,
 OLD.`last_updated_on`,
 OLD.`version`,
-OLD.`batch_number`);
+OLD.`batch_number`);*/
