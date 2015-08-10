@@ -12,8 +12,8 @@ use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 class NotificationsContext implements Context
 {
     const TEMPLATE_TESTER_QUALIFICATION_STATUS = 14;
-    const TEMPLATE_DVSA_ASSIGN_ROLE = 15;
-    const TEMPLATE_DVSA_REMOVE_ROLE = 16;
+    const TEMPLATE_DVSA_ASSIGN_ROLE = 16;
+    const TEMPLATE_DVSA_REMOVE_ROLE = 17;
 
     private $templateMap = [
         "Tester Qualification Status" => self::TEMPLATE_TESTER_QUALIFICATION_STATUS,
@@ -121,7 +121,7 @@ class NotificationsContext implements Context
                 break;
             }
         }
-        PHPUnit::assertTrue($found, 'Notification with template "'.self::TEMPLATE_TESTER_QUALIFICATION_STATUS.'" not found');
+        PHPUnit::assertTrue($found, 'Notification for template "'. $template .'" not found');
     }
 
     /**
