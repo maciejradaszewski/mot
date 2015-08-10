@@ -54,6 +54,7 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
                     $model = ArrayUtils::tryGet($motTest, 'model', '');
                     $testType = ArrayUtils::tryGet($motTest, 'testType', '');
                     $siteNr = ArrayUtils::tryGet($motTest, 'siteNumber');
+                    $siteId = ArrayUtils::tryGet($motTest, 'siteId');
 
                     $canPrintTestDetails = in_array($motTest['status'], $arrMotStatus);
 
@@ -93,9 +94,9 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
                         ?></td>
 
                         <td>
-                            <?php if (isset($siteNr)): ?>
+                            <?php if (isset($siteId)): ?>
                                 <a href="<?php echo $this->url('vehicle-testing-station-by-site',
-                                    ['sitenumber' => $siteNr]) ?>">
+                                    ['id' => $siteId]) ?>">
                                     <?php echo $this->escapeHtml($siteNr); ?>
                                 </a>
                             <?php else : ?>
