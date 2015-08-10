@@ -13006,7 +13006,8 @@ PUBLIC "=//iPlanet//Service Management Services (SMS) 1.0 DTD//EN"
 </AttributeValuePair>
 <AttributeValuePair>
     <Attribute name="com.sun.identity.agents.config.login.url"/>
-    <Value>[0]=http:&#47;&#47;mot-web-frontend.mot.gov.uk:80&#47;login</Value>
+    <Value>[1]=http:&#47;&#47;mot-web-frontend.mot.gov.uk:80&#47;login</Value>
+    <Value>[0]=http:&#47;&#47;openam.mot.gov.uk:8080&#47;secureLogin&#47;UI&#47;Login?realm=mot</Value>
 </AttributeValuePair>
 <AttributeValuePair>
     <Attribute name="com.sun.identity.agents.config.profile.attribute.cookie.maxage"/>
