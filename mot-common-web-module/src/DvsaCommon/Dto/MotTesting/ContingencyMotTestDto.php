@@ -1,17 +1,14 @@
 <?php
+
 namespace DvsaCommon\Dto\MotTesting;
 
-use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Dto\AbstractDataTransferObject;
 
 /**
  * Represents an in-progress contingency test
- *
- * @package DvsaCommon\Dto\MotTesting
  */
 class ContingencyMotTestDto extends AbstractDataTransferObject
 {
-
     private $testedByWhom;
 
     private $siteId;
@@ -33,7 +30,6 @@ class ContingencyMotTestDto extends AbstractDataTransferObject
     private $reasonText;
 
     private $testerCode;
-
 
     /**
      * @return string
@@ -61,11 +57,13 @@ class ContingencyMotTestDto extends AbstractDataTransferObject
 
     /**
      * @param mixed $contingencyCode
+     *
      * @return ContingencyMotTestDto
      */
     public function setContingencyCode($contingencyCode)
     {
         $this->contingencyCode = $contingencyCode;
+
         return $this;
     }
 
@@ -79,11 +77,13 @@ class ContingencyMotTestDto extends AbstractDataTransferObject
 
     /**
      * @param string $performedAt
+     *
      * @return ContingencyMotTestDto
      */
     public function setPerformedAt($performedAt)
     {
         $this->performedAt = $this->filterDateFormat($performedAt);
+
         return $this;
     }
 
@@ -97,11 +97,13 @@ class ContingencyMotTestDto extends AbstractDataTransferObject
 
     /**
      * @param string $reason
+     *
      * @return ContingencyMotTestDto
      */
     public function setReasonCode($reason)
     {
         $this->reasonCode = $reason;
+
         return $this;
     }
 
@@ -115,11 +117,13 @@ class ContingencyMotTestDto extends AbstractDataTransferObject
 
     /**
      * @param string $reason
+     *
      * @return ContingencyMotTestDto
      */
     public function setReasonText($reason)
     {
         $this->reasonText = trim($reason);
+
         return $this;
     }
 
@@ -133,11 +137,13 @@ class ContingencyMotTestDto extends AbstractDataTransferObject
 
     /**
      * @param mixed $site
+     *
      * @return ContingencyMotTestDto
      */
     public function setSiteId($site)
     {
         $this->siteId = $site;
+
         return $this;
     }
 
@@ -151,11 +157,13 @@ class ContingencyMotTestDto extends AbstractDataTransferObject
 
     /**
      * @param mixed $testType
+     *
      * @return ContingencyMotTestDto
      */
     public function setTestType($testType)
     {
         $this->testType = $testType;
+
         return $this;
     }
 
@@ -169,11 +177,13 @@ class ContingencyMotTestDto extends AbstractDataTransferObject
 
     /**
      * @param mixed $testedByWhom
+     *
      * @return ContingencyMotTestDto
      */
     public function setTestedByWhom($testedByWhom)
     {
         $this->testedByWhom = $testedByWhom;
+
         return $this;
     }
 
@@ -187,11 +197,13 @@ class ContingencyMotTestDto extends AbstractDataTransferObject
 
     /**
      * @param string $dateYear
+     *
      * @return ContingencyMotTestDto
      */
     public function setDateYear($dateYear)
     {
         $this->dateYear = $dateYear;
+
         return $this;
     }
 
@@ -205,11 +217,13 @@ class ContingencyMotTestDto extends AbstractDataTransferObject
 
     /**
      * @param string $dateMonth
+     *
      * @return ContingencyMotTestDto
      */
     public function setDateMonth($dateMonth)
     {
         $this->dateMonth = $dateMonth;
+
         return $this;
     }
 
@@ -223,11 +237,13 @@ class ContingencyMotTestDto extends AbstractDataTransferObject
 
     /**
      * @param string $dateDay
+     *
      * @return ContingencyMotTestDto
      */
     public function setDateDay($dateDay)
     {
         $this->dateDay = $dateDay;
+
         return $this;
     }
 
@@ -235,6 +251,7 @@ class ContingencyMotTestDto extends AbstractDataTransferObject
      * @desc Filter date string to be sure that it's in correct format
      *
      * @param string $date
+     *
      * @return string
      */
     protected function filterDateFormat($date)

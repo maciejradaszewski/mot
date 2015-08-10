@@ -6,6 +6,7 @@ use VehicleApi\Controller\VehicleController;
 use VehicleApi\Controller\VehicleRetestEligibilityController;
 use VehicleApi\Controller\VehicleSearchController;
 use VehicleApi\Controller\VehicleDvlaController;
+use DvsaMotApi\Controller\MotTestController;
 
 return [
     'controllers' => include 'controllers.config.php',
@@ -35,7 +36,7 @@ return [
                         'options' => [
                             'route' => '/test-in-progress-check',
                             'defaults' => [
-                                'controller' => 'DvsaMotApi\Controller\MotTest',
+                                'controller' => MotTestController::class,
                                 'action' => 'isTestInProgress',
                             ],
                         ],

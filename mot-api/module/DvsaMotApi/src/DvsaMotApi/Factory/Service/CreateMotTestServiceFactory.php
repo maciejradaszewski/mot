@@ -5,6 +5,7 @@ namespace DvsaMotApi\Factory\Service;
 use Doctrine\ORM\EntityManager;
 use DvsaEntities\Entity\MotTest;
 use DvsaEntities\Entity\Person;
+use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 use VehicleApi\Service\VehicleService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -24,7 +25,7 @@ class CreateMotTestServiceFactory implements FactoryInterface
             $serviceLocator->get('MotTestValidator'),
             $serviceLocator->get('DvsaAuthorisationService'),
             $serviceLocator->get('TesterService'),
-            $serviceLocator->get('RetestEligibilityValidator'),
+            $serviceLocator->get(RetestEligibilityValidator::class),
             $serviceLocator->get('OtpService'),
             $serviceLocator->get(OrganisationService::class),
             $serviceLocator->get(VehicleService::class),

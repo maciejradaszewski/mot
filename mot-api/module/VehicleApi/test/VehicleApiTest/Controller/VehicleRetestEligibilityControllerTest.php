@@ -2,70 +2,74 @@
 
 namespace VehicleApiTest\Controller;
 
-use DvsaCommon\Enum\SiteBusinessRoleCode;
+use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
 use DvsaCommonTest\TestUtils\XMock;
-use DvsaEntities\Entity\Person;
 use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 use DvsaMotApiTest\Controller\AbstractMotApiControllerTestCase;
 use VehicleApi\Controller\VehicleRetestEligibilityController;
+use Zend\Http\Request;
 
 /**
- * Class VehicleRetestEligibilityController
- *
- * @package DvsaMotApiTest\Controller
+ * Unit tests for VehicleRetestEligibilityController
  */
 class VehicleRetestEligibilityControllerTest extends AbstractMotApiControllerTestCase
 {
+    const CONTINGENCY_TEST = true;
+
     protected function setUp()
     {
-        $this->controller = new VehicleRetestEligibilityController();
         parent::setUp();
+
+        $retestEligibilityValidatorMock = $this->createRetestEligibilityValidatorMockService();
+        $this->controller = new VehicleRetestEligibilityController($retestEligibilityValidatorMock);
+        $this->setUpController($this->controller);
     }
 
     public function testCreateEligibilityWithValidData()
     {
-        $person = new Person();
-        $person->setId(5);
-
-        $this->mockValidAuthorization([SiteBusinessRoleCode::TESTER, 'TESTER-CLASS-4'], null, $person);
-
-        $mockMotTestService = $this->getMockService();
-        $mockMotTestService->expects($this->once())
-            ->method('checkEligibilityForRetest')
-            ->willReturn(true);
-
-        $result = $this->getResultForAction('post', null, ['id' => 3, 'siteId' => 1]);
-
-        $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, ['data' => ['isEligible' => true]], $result);
+        $this->runTestCreateEligibilityWithValidData();
     }
 
     public function testCreateEligibilityWithValidDataAndContingency()
     {
-        $person = new Person();
-        $person->setId(5);
+        $this->runTestCreateEligibilityWithValidData(self::CONTINGENCY_TEST);
+    }
 
-        $this->mockValidAuthorization([SiteBusinessRoleCode::TESTER, 'TESTER-CLASS-4'], null, $person);
+    private function runTestCreateEligibilityWithValidData($isContingencyPostParamSent = false)
+    {
+        if (false === $isContingencyPostParamSent) {
+            $this->request->getPost()->set(
+                VehicleRetestEligibilityController::FIELD_CONTINGENCY_DTO,
+                [
+                    "_class" => ContingencyMotTestDto::class
+                ]
+            );
+        }
 
-        $mockMotTestService = $this->getMockService();
-        $mockMotTestService->expects($this->once())
-            ->method('checkEligibilityForRetest')
-            ->willReturn(true);
-
-        $this->request->getPost()->set(
-            'contingencyDto', [
-                "_class" => "DvsaCommon\\Dto\\MotTesting\\ContingencyMotTestDto"
+        $result = $this->getResultForAction(
+            Request::METHOD_POST,
+            null,
+            [
+                VehicleRetestEligibilityController::FIELD_VEHICLE_ID => 3,
+                VehicleRetestEligibilityController::FIELD_SITE_ID    => 1
             ]
         );
-        $result = $this->getResultForAction('post', null, ['id' => 3, 'siteId' => 1]);
-
         $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, ['data' => ['isEligible' => true]], $result);
     }
 
-    private function getMockService()
+    /**
+     * @return RetestEligibilityValidator|\PHPUnit_Framework_MockObject_MockObject
+     * @throws \Exception
+     */
+    private function createRetestEligibilityValidatorMockService()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|RetestEligibilityValidator $mockService */
         $mockService = XMock::of(RetestEligibilityValidator::class, ['checkEligibilityForRetest']);
+        $mockService->expects($this->once())
+            ->method('checkEligibilityForRetest')
+            ->willReturn(true);
 
-        $this->serviceManager->setService('RetestEligibilityValidator', $mockService);
+        $this->serviceManager->setService(RetestEligibilityValidator::class, $mockService);
 
         return $mockService;
     }
