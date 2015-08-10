@@ -3,23 +3,40 @@ return [
     //global.php
     'dvsa_authentication' => [
         'openAM'    => [
-            // base url to OpenAM api
-            'url'                         => 'http://openam.mot.gov.uk:8080/secure/',
-            // realm that will be used when adding new accounts
-            'realm'                       => 'mot',
-            // name of the header/token that is used when calling OpenAM
-            'token_field'                 => 'iPlanetDirectoryPro',
-            // login of OpenAM admin
-            'admin_login'                 => 'amadmin',
-            // password of OpenAM admin
-            'admin_password'              => 'cangetinam',
-            // identity attribute name under which username is stored
+            /*
+             * The adapter used to talk to the OpenAM REST API.
+             *
+             * For SSL Connections to OpenAM we need to use Curl: 'Zend\Http\Client\Adapter\Curl'.
+             */
+            'adapter' => 'Zend\Http\Client\Adapter\Socket',
+            /*
+             * Username of the OpenAM admin account.
+             */
+            'admin_login' => 'amadmin',
+            /*
+             * Password of the OpenAM admin account.
+             */
+            'admin_password' => 'cangetinam',
+            /*
+             * Identity attribute name under which username is stored.
+             */
             'identity_attribute_username' => 'uid',
-            // identity attribute name under which openAm entryuuid is stored
-            'identity_attribute_uuid'     => 'entryuuid',
-            // What adapter we use to talk to openAM
-            // For SSL Connections to OpenAM, we need to use Curl: 'Zend\Http\Client\Adapter\Curl'.
-            'adapter'                     => 'Zend\Http\Client\Adapter\Socket',
+            /*
+             * Identity attribute name under which OpenAM entryuuid is stored.
+             */
+            'identity_attribute_uuid' => 'entryuuid',
+            /*
+             * Realm that will be used when adding new accounts.
+             */
+            'realm' => 'mot',
+            /*
+             * Name of the header/token that is used when calling OpenAM.
+             */
+            'token_field' => 'iPlanetDirectoryPro',
+            /*
+             * Base URL of the OpenAM REST API.
+             */
+            'url' => 'http://openam.mot.gov.uk:8080/secure/',
         ],
         'whitelist' => [
             'DvsaMotApi\Controller\Session',
