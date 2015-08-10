@@ -34,7 +34,7 @@ return array(
                 'options' => [
                     'output' => '/var/log/dvsa/mot-webfrontend.log',
                 ],
-                'filter' => \Zend\Log\Logger::DEBUG,
+                'filter' => \Zend\Log\Logger::ERR,
                 'enabled' => true
             ],
         ]
