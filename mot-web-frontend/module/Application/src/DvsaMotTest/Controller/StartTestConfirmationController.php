@@ -476,6 +476,11 @@ class StartTestConfirmationController extends AbstractDvsaMotTestController
             $apiResult = $this->getRestClient()->post($apiUrl, $data);
 
             $this->isEligibleForRetest = ($apiResult['data']['isEligible'] === true);
+
+            if (false === $this->isEligibleForRetest) {
+                $this->eligibilityNotices  = $apiResult['data']['reasons'];
+            }
+
         } catch (ValidationException $e) {
             $this->isEligibleForRetest = false;
             $this->eligibilityNotices  = $e->getDisplayMessages();

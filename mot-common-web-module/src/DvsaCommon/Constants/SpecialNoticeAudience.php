@@ -3,7 +3,7 @@
 namespace DvsaCommon\Constants;
 
 /**
- * SpecialNoticeAudience
+ * const values for special notice audience
  */
 class SpecialNoticeAudience
 {

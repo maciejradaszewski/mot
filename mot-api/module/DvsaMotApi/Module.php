@@ -25,6 +25,7 @@ use DvsaMotApi\Service\UserService;
 use DvsaMotApi\Service\Validator\BrakeTestConfigurationValidator;
 use DvsaMotApi\Service\Validator\BrakeTestResultValidator;
 use DvsaMotApi\Service\Validator\MotTestStatusChangeValidator;
+use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 use DvsaMotApi\Service\VehicleHistoryService;
 use DvsaMotApi\Service\EmergencyServiceFactory;
 use DvsaMotApi\Service\EmergencyService;
@@ -49,6 +50,7 @@ use DvsaMotApi\Helper\RoleEventHelper;
 use DvsaMotApi\Factory\Helper\RoleEventHelperFactory;
 use DvsaMotApi\Helper\RoleNotificationHelper;
 use DvsaMotApi\Factory\Helper\RoleNotificationHelperFactory;
+use DvsaMotApi\Factory\Service\Validator\RetestEligibilityValidatorFactory;
 
 /**
  * Zend module containing the main factory for MOT API services
@@ -102,7 +104,7 @@ class Module implements
                 MotTestStatusChangeValidator::class => \DvsaMotApi\Factory\Service\Validator\MotTestChangeValidatorFactory::class,
                 'MotTestRepository' => \DvsaMotApi\Factory\MotTestRepositoryFactory::class,
                 'MotTestTypeRepository' => \DvsaMotApi\Factory\MotTestTypeRepositoryFactory::class,
-                'RetestEligibilityValidator' => \DvsaMotApi\Factory\Service\Validator\RetestEligibilityValidatorFactory::class,
+                RetestEligibilityValidator::class => RetestEligibilityValidatorFactory::class,
                 'DvlaVehicleRepository' => DvlaVehicleRepositoryFactory::class,
                 'VehicleRepository' => \DvsaMotApi\Factory\VehicleRepositoryFactory::class,
                 'CertificateExpiryService' => \DvsaMotApi\Factory\Service\CertificateExpiryServiceFactory::class,

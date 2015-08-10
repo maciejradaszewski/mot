@@ -4,35 +4,49 @@ namespace VehicleApi\Controller;
 
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\DtoHydrator;
-use DvsaCommonApi\Model\ApiResponse;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
+use DvsaCommonApi\Model\ApiResponse;
+use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 
-/**
- * Class VehicleRetestEligibilityController
- */
 class VehicleRetestEligibilityController extends AbstractDvsaRestfulController
 {
+    const FIELD_VEHICLE_ID = 'id';
+    const FIELD_SITE_ID = 'siteId';
     const FIELD_CONTINGENCY_DTO = 'contingencyDto';
+
+    /** @var RetestEligibilityValidator */
+    private $retestEligibilityValidator;
+
+    public function __construct(RetestEligibilityValidator $retestEligibilityValidator)
+    {
+        $this->retestEligibilityValidator = $retestEligibilityValidator;
+    }
 
     public function create($data)
     {
-        $vehicleId      = $this->params()->fromRoute('id', null);
-        $siteId         = $this->params()->fromRoute('siteId', null);
-        $motTestNumber  = $this->params()->fromRoute('motTestNumber', null);
+        $vehicleId = $this->params()->fromRoute(self::FIELD_VEHICLE_ID, null);
+        $siteId = $this->params()->fromRoute(self::FIELD_SITE_ID, null);
         $contingencyDto = ArrayUtils::tryGet($data, self::FIELD_CONTINGENCY_DTO);
 
         if (!is_null($contingencyDto)) {
             $contingencyDto = DtoHydrator::jsonToDto($contingencyDto);
         }
 
-        /** @var RetestEligibilityValidator $retestEligibilityValidator */
-        $retestEligibilityValidator = $this->getServiceLocator()->get('RetestEligibilityValidator');
+        $result = [];
 
-        // TODO: validation of fields
+        try {
+            $isEligible = $this->retestEligibilityValidator
+                ->checkEligibilityForRetest($vehicleId, $siteId, $contingencyDto);
+        } catch (BadRequestException $e) {
+            $isEligible = false;
+            foreach ($e->getErrors() as $reason) {
+                $result['reasons'][] = $reason['displayMessage'];
+            }
+        }
 
-        $isEligible = $retestEligibilityValidator->checkEligibilityForRetest($vehicleId, $siteId, $contingencyDto, $motTestNumber);
+        $result['isEligible'] = $isEligible;
 
-        return ApiResponse::jsonOk(['isEligible' => $isEligible]);
+        return ApiResponse::jsonOk($result);
     }
 }

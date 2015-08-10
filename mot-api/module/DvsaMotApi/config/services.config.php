@@ -30,6 +30,7 @@ use DvsaMotApi\Helper\RoleEventHelper;
 use DvsaMotApi\Factory\Helper\RoleEventHelperFactory;
 use DvsaMotApi\Helper\RoleNotificationHelper;
 use DvsaMotApi\Factory\Helper\RoleNotificationHelperFactory;
+use DvsaMotApi\Factory\Service\Validator\RetestEligibilityValidatorFactory;
 
 return [
     'invokables' => [
@@ -67,7 +68,7 @@ return [
         MotTestStatusChangeValidator::class                  => \DvsaMotApi\Factory\Service\Validator\MotTestChangeValidatorFactory::class,
         'MotTestRepository'                                  => \DvsaMotApi\Factory\MotTestRepositoryFactory::class,
         'MotTestTypeRepository'                              => \DvsaMotApi\Factory\MotTestTypeRepositoryFactory::class,
-        'RetestEligibilityValidator'                         => \DvsaMotApi\Factory\Service\Validator\RetestEligibilityValidatorFactory::class,
+        RetestEligibilityValidator::class                    => RetestEligibilityValidatorFactory::class,
         'VehicleRepository'                                  => \DvsaMotApi\Factory\VehicleRepositoryFactory::class,
         'CertificateExpiryService'                           => \DvsaMotApi\Factory\Service\CertificateExpiryServiceFactory::class,
         'ConfigurationRepository'                            => \DvsaMotApi\Factory\ConfigurationRepositoryFactory::class,
