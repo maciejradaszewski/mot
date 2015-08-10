@@ -106,9 +106,9 @@ return [
             'vehicle-testing-station-by-site'            => [
                 'type'    => 'segment',
                 'options' => [
-                    'route'       => '/vehicle-testing-station/site/:sitenumber',
+                    'route'       => '/vehicle-testing-station/site/:id',
                     'constraints' => [
-                        'sitenumber' => '[0-9a-zA-Z]+',
+                        'id' => '[0-9]+',
                     ],
                     'defaults'    => [
                         'controller' => SiteController::class,
