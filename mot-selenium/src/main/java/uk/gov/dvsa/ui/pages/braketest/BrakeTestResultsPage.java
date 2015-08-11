@@ -8,7 +8,6 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.BrakeTestResultsHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.mot.TestResultsEntryPage;
 import uk.gov.dvsa.ui.pages.module.BrakeTestResultsPageElements;
 
 import java.util.Map;
@@ -30,7 +29,7 @@ public class BrakeTestResultsPage extends Page {
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
 
-    public TestResultsEntryPage completeBrakeEffortField(String outcome) {
+    public BrakeTestResultsPage completeBrakeEffortField(String outcome) {
         if(outcome.equals("pass")) {
             enterBrakeResultsPageFields(BrakeTestResultsHelper.allPass());
         }else {
@@ -40,7 +39,8 @@ public class BrakeTestResultsPage extends Page {
         submitButton.click();
 
         doneButton.click();
-        return new TestResultsEntryPage(driver);
+
+        return this;
     }
 
     public BrakeTestResultsPage enterField(BrakeTestResultsPageElements field, String value) {

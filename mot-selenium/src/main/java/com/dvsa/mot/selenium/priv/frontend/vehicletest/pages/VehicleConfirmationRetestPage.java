@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 public class VehicleConfirmationRetestPage extends StartTestConfirmation1Page {
-    public static String CONFIRMATION_RETEST_PAGE_TITLE = "START RETEST CONFIRMATION";
+    public static String CONFIRMATION_RETEST_PAGE_TITLE = "FIND A VEHICLE";
     public static String MOT_RETEST_STARTED_PAGE_TITLE = "MOT RETEST STARTED";
 
     @FindBy(id = "confirm_vehicle_confirmation") private WebElement confirmButton;

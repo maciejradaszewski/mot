@@ -6,10 +6,8 @@ use Application\Service\CatalogService;
 use Application\Service\ContingencySessionManager;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\PermissionInSystem;
-use DvsaCommon\Dto\Vehicle\VehicleDto;
 use DvsaCommon\Dto\Vehicle\History\VehicleHistoryDto;
 use DvsaCommon\Dto\Vehicle\History\VehicleHistoryMapper;
-use DvsaCommon\HttpRestJson\Exception\NotFoundException;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\UrlBuilder\MotTestUrlBuilder;
@@ -18,9 +16,7 @@ use DvsaCommon\UrlBuilder\VehicleUrlBuilder;
 use DvsaCommon\UrlBuilder\VehicleUrlBuilderWeb;
 use DvsaCommon\Utility\AddressUtils;
 use DvsaCommon\Utility\ArrayUtils;
-use DvsaCommon\HttpRestJson\Exception\ForbiddenApplicationException;
 use DvsaMotTest\Constants\VehicleSearchSource;
-use DvsaMotTest\Form\VehicleRetestSearch;
 use DvsaMotTest\Form\VehicleSearch;
 use DvsaMotTest\Model\VehicleSearchResult;
 use DvsaMotTest\Service\VehicleSearchService;
@@ -37,13 +33,6 @@ use Zend\I18n\Filter\Alnum;
 use Zend\View\Model\ViewModel;
 
 /**
- * @internal
- * Currently there are 2 layouts integrated with this.  One for Search and one for Re-test search.
- * If you view both of these interfaces they are completely different.
- * Logic has been seperated, the new layout integrates the VehicleSearchService.
- * As the logic changes for re-test and testhistory, we should integrate the VehicleSearchServie.
- * This will decrease the amount of logic in this controller.
- *
  * Class VehicleSearchController.
  */
 class VehicleSearchController extends AbstractDvsaMotTestController
@@ -146,15 +135,6 @@ class VehicleSearchController extends AbstractDvsaMotTestController
         $this->vehicleSearchResultModel = $vehicleSearchResultModel;
         $this->vehicleSearchService = $vehicleSearchService;
         $this->mapperFactory = $mapperFactory;
-    }
-
-    /**
-     * @return \Zend\View\Model\ViewModel
-     */
-    public function retestVehicleSearchAction()
-    {
-        $this->assertGranted(PermissionInSystem::MOT_TEST_START);
-        return $this->vehicleRetestSearch(self::SEARCH_TYPE_RETEST);
     }
 
     /**
@@ -390,179 +370,6 @@ class VehicleSearchController extends AbstractDvsaMotTestController
         );
     }
 
-
-    protected function vehicleRetestSearch($searchType = null)
-    {
-        /** @var \Zend\Http\Request $request */
-        $request = $this->getRequest();
-
-        /*
-         * We check if we the user start to test a contingency test and validate if the form is really set in the
-         * session. If not we redirect to an error page who ask the user to fill the form.
-         */
-        $ctSessionMng = $this->getContingencySessionManager();
-
-        $isContingency = ($request->getQuery('contingency') !== null);
-        if ($isContingency) {
-            if ($ctSessionMng->isMotContingency() === false) {
-                $ctSessionMng->deleteContingencySession();
-
-                return $this->redirect()->toRoute('contingency-error');
-            }
-        } else {
-            $ctSessionMng->deleteContingencySession();
-        }
-
-        if ($searchType !== self::SEARCH_TYPE_DEMO
-            && $this->getAuthorizationService()->isTester()
-            && !$this->getIdentity()->getCurrentVts()
-        ) {
-            $loggedInUserManager = $this->getServiceLocator()->get('LoggedInUserManager');
-            $tester = $loggedInUserManager->getTesterData();
-            // Avoid redirecting to the LocationSelectionController if the tester has only one associated site.
-            if (count($tester['vtsSites']) == 1) {
-                $loggedInUserManager->changeCurrentLocation($tester['vtsSites'][0]['id']);
-            } else {
-                $routeMatch = $this->getRouteMatch();
-                $route = $routeMatch->getMatchedRouteName();
-                $params = [];
-                if ($isContingency) {
-                    $params = ['contingency' => 1];
-                }
-
-                $container = $this->getServiceLocator()->get('LocationSelectContainerHelper');
-                $container->persistConfig(['route' => $route, 'params' => $params]);
-
-                return $this->redirect()->toRoute('location-select');
-            }
-        }
-
-        if ($this->getVehicleSearchService()->areSlotsNeeded($searchType)) {
-            $slots = $this->getIdentity()->getCurrentVts()->getSlots();
-            if (!$slots) {
-                $this->addErrorMessages('Your VTS has no slots available');
-
-                return $this->redirect()->toUrl(PersonUrlBuilderWeb::home());
-            }
-        }
-
-        $showCreateButton = false;
-        $form = $this->getForm(new VehicleRetestSearch());
-        $query = $request->getPost();
-
-        if ($ctSessionMng->isMotContingency() === true) {
-            $hiddenContingencyField = new Hidden('contingency');
-            $hiddenContingencyField->setValue('1');
-            $form->add($hiddenContingencyField);
-        }
-
-        if ($query->get(self::PRM_SUBMIT)) {
-            $form->setData($query);
-
-            if ($form->isValid()) {
-                // indicates whether we should search for vehicles in DVLA data source or not
-                $excludeDvla = !$this->getVehicleSearchService()->shouldSearchInDvlaVehicleList($searchType);
-
-                $data = [
-                    'vin' => $query->get(self::PRM_VIN),
-                    'reg' => $query->get(self::PRM_REG),
-                    'testNumber' => $query->get(self::PRM_TEST_NR),
-                    'vinType' => $query->get(self::PRM_VIN_TYPE),
-                    'excludeDvla' => $excludeDvla ? 'true' : 'false', // todo refactor api to use bool
-                ];
-
-                $noRegistration = ($data['reg'] || $data['testNumber']) ? 0 : 1;
-
-                if (isset($data['testNumber'])) {
-
-                    $motTestNumber = $data['testNumber'];
-
-                    try {
-                        $vehicle = $this->getVehicleSearchService()
-                            ->getVehicleFromMotTestCertificateForRetest($motTestNumber);
-
-                        if ($vehicle instanceof VehicleDto) {
-                            $vehicle->setId(
-                                $this->paramObfuscator->obfuscateEntry(
-                                    ParamObfuscator::ENTRY_VEHICLE_ID,
-                                    $vehicle->getId()
-                                )
-                            );
-                            return $this->returnRedirectStartRetestConfirmation($vehicle->getId(), $noRegistration);
-                        }
-                    } catch (ForbiddenApplicationException $e) {
-                        $this->addErrorMessages($e->getDisplayMessages());
-                    } catch (NotFoundException $e) {
-                        $this->addErrorMessage("MOT test $motTestNumber not found");
-                    }
-
-                    return $this->returnViewModel($form, $searchType, false, false);
-                }
-
-                if ($data['vinType'] == self::PARTIAL_VIN && !$data['reg']) {
-                    $this->addErrorMessages(self::PARTIAL_VIN_NO_REG_ERROR);
-
-                    return $this->returnViewModel($form, $searchType, false, true);
-                }
-
-                // Check that the registration number doesn't exceed `self::SEARCH_REGISTRATION_NUMBER_MAX_LENGTH`
-                // characters.
-                if (strlen($data['reg']) > self::SEARCH_REGISTRATION_NUMBER_MAX_LENGTH) {
-                    $this->addErrorMessages(
-                        sprintf(
-                            "The registration number must not exceed %d characters.",
-                            self::SEARCH_REGISTRATION_NUMBER_MAX_LENGTH
-                        )
-                    );
-
-                    return $this->returnViewModel($form, $searchType, false, true);
-                }
-
-                $form->get('previousSearchRegistration')->setValue($data['reg']);
-                $form->get('previousSearchVin')->setValue($data['vin']);
-                $form->get('registration')->setValue($data['reg']);
-                $form->get('vin')->setValue($data['vin']);
-
-                try {
-                    $apiUrl = VehicleUrlBuilder::vehicle();
-                    $result = $this->getRestClient()->getWithParams($apiUrl, $data);
-
-                    $resultType = $result['data']['resultType'];
-
-                    switch ($resultType) {
-                        case self::SEARCH_RESULT_EXACT_MATCH:
-                            $vehicleId = $this->paramObfuscator->obfuscateEntry(
-                                ParamObfuscator::ENTRY_VEHICLE_ID,
-                                $result['data']['vehicle']['id']
-                            );
-                            $isDvla = $result['data']['vehicle']['isDvla'];
-
-                            return $this->redirectTo($searchType, $vehicleId, $noRegistration, $isDvla);
-                        case self::SEARCH_RESULT_MULTIPLE_MATCHES:
-                            $results = $this->getVehicleSearchService()->obfuscateIdAndAddSourceToVehicleArray(
-                                $result['data']['vehicles']
-                            );
-                            return $this->returnViewModel($form, $searchType, false, false, false, $results, false);
-                        case self::SEARCH_RESULT_TOO_MANY_MATCHES:
-                            return $this->returnViewModel($form, $searchType, false, false, false, null, true);
-                        default:
-                            $showCreateButton = $searchType == self::SEARCH_TYPE_STANDARD
-                                && strtoupper($query->get('previousSearchRegistration')) == strtoupper($data['reg'])
-                                && strtoupper($query->get('previousSearchVin')) == strtoupper($data['vin']);
-                    }
-                } catch (RestApplicationException $e) {
-                    $this->addErrorMessages($e->getDisplayMessages());
-
-                    return $this->returnViewModel($form, $searchType, false, false, $showCreateButton);
-                }
-
-                return $this->returnViewModel($form, $searchType, true, false, $showCreateButton);
-            }
-        }
-
-        return $this->returnViewModel($form, $searchType);
-    }
-
     /**
      * @param null $searchType
      *
@@ -637,9 +444,14 @@ class VehicleSearchController extends AbstractDvsaMotTestController
 
         if (!is_null($reg) && !is_null($vin)) {
             $filter = new Alnum();
+            $filter->setAllowWhiteSpace(false);
+
+            $vin = $filter->filter($vin);
+            $reg = $filter->filter($reg);
+
             $data = [
-                  self::PRM_VIN => strtoupper($vin),
-                  self::PRM_REG => strtoupper($reg),
+                self::PRM_VIN => strtoupper($vin),
+                self::PRM_REG => strtoupper($reg),
             ];
             $form->setData($data);
 
@@ -665,10 +477,18 @@ class VehicleSearchController extends AbstractDvsaMotTestController
                 }
 
                 try {
+                    $vtsId = false;
+
+                    if ($this->getIdentity()->getCurrentVts()) {
+                        $vtsId = $this->getIdentity()->getCurrentVts()->getVtsId();
+                    }
+
                     $vehicles = $this->getVehicleSearchService()->search(
                         $data[self::PRM_VIN],
                         $data[self::PRM_REG],
-                        $this->getVehicleSearchService()->shouldSearchInDvlaVehicleList($searchType)
+                        $this->getVehicleSearchService()->shouldSearchInDvlaVehicleList($searchType),
+                        $vtsId,
+                        $ctSessionMng->isMotContingency()
                     );
 
                     return $this->returnViewModel(

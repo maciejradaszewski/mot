@@ -20,6 +20,8 @@ public class HomePage extends Page {
     @FindBy (css = ".pivot-panel_meta-list span") private WebElement roleType;
     @FindBy (css = ".site-link") private WebElement siteName;
     @FindBy (id = "action-resume-mot-test") private WebElement resumeMotTestButton;
+    private By startMotRetest = By.id("action-start-mot-retest");
+    @FindBy (id = "action-start-certificate-reissue") private  WebElement StartCertificateReissue;
     @FindBy(className = "notification_link") private WebElement notificationMessage;
 
     private static final By ROLE_NOMINATION_LIST = By.cssSelector(".notification_subject > a");
@@ -80,6 +82,9 @@ public class HomePage extends Page {
         return userNameHeader.getText().equals(driver.getCurrentUser().getNamesAndSurname());
     }
 
+    public boolean isRetestPreviousVehicleLinkPresent() {
+        return PageInteractionHelper.isElementPresent(startMotRetest);
+    }
     public boolean isNotificationMessageDisplayed() {
         return notificationMessage.isDisplayed();
     }

@@ -1,4 +1,4 @@
-package uk.gov.dvsa.ui.feature.journey;
+package uk.gov.dvsa.ui.views;
 
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.User;
@@ -9,10 +9,10 @@ import uk.gov.dvsa.ui.pages.vehicleinformation.VehicleInformationSearchPage;
 
 import java.io.IOException;
 
-public class VehicleInformation extends BaseTest {
+public class VehicleInformationViewTest extends BaseTest {
 
     @Test (groups = {"BVT", "Regression"})
-    public void ViewVehicleInformationSuccessfully() throws IOException{
+    public void viewVehicleInformationSuccessfully() throws IOException{
         User areaOffice1User = new User("areaOffice1User", "Password1");
         Vehicle vehicle = vehicleData.getNewVehicle(userData.createTester(1));
 

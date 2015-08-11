@@ -91,7 +91,7 @@ public class VehicleReInspectionWorkflow extends BaseWorkflow {
         injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.path);
 
         VehicleSearchPage vehicleSearchPage = PageLocator.getVehicleSearchPage(driver).searchVehicle(vehicle);
-        StartTestConfirmationPage testConfirmationPage = vehicleSearchPage.selectVehicleFromTable();
+        StartTestConfirmationPage testConfirmationPage = vehicleSearchPage.selectVehicleForTest();
         testConfirmationPage.clickStartMotTest();
 
         return new TestOptionsPage(driver);

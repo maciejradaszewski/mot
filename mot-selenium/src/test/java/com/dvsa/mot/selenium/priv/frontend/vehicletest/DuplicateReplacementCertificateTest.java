@@ -294,40 +294,6 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
     }
 
     @Test(groups = {"VM-4450", "Regression", "W-Sprint3"})
-    public void testIsAllowToDuplicateAbandonedCertificates() {
-
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
-        Login tester = createTester();
-        //Create one passed and one failed mot test
-        String passedMotNumber =
-                createMotTest(tester, defaultSite, vehicle, 1346, TestOutcome.PASSED,
-                        DateTime.now().minusDays(3));
-        String failedMotNumber =
-                createMotTest(tester, defaultSite, vehicle, 1358, TestOutcome.FAILED);
-        //Create Abandoned mot test
-        MotTestPage motTestPage = MotTestPage.navigateHereFromLoginPage(driver, tester, vehicle);
-        String abandonedMotNumber = motTestPage.getMotTestId();
-
-        motTestPage.clickCancelMotTest().enterAndSubmitReasonsToCancelPageExpectingAbandonedPage(
-                ReasonToCancel.REASON_DANGEROUS_OR_CAUSE_DAMAGE, Text.TEXT_PASSCODE).clickLogout();
-        DuplicateReplacementCertificatePage duplicateReplacementCertificatePage =
-                DuplicateReplacementCertificatePage
-                        .navigateHereFromLoginPage(driver, tester, vehicle);
-        //Assertions
-        assertThat("First listed test should have 'Abandoned' status",
-                duplicateReplacementCertificatePage.getTestStatus(1), is(Text.TEXT_STATUS_ABANDONED));
-        assertThat("Abandoned tests must not display 'Edit' button",
-                duplicateReplacementCertificatePage
-                        .isReplacementCertificateEditButtonDisplayed(abandonedMotNumber), is(false));
-        assertThat("First not abandoned test must display 'Edit' button",
-                duplicateReplacementCertificatePage
-                        .isReplacementCertificateEditButtonDisplayed(failedMotNumber), is(true));
-        assertThat("Only first not abandoned test should display 'Edit' button",
-                duplicateReplacementCertificatePage
-                        .isReplacementCertificateEditButtonDisplayed(passedMotNumber), is(false));
-    }
-
-    @Test(groups = {"VM-4450", "Regression", "W-Sprint3"})
     public void testIsAllowToDuplicateAbandonedCertificatesIssuedOnAnotherSite() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);

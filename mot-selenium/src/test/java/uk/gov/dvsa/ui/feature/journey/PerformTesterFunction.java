@@ -1,11 +1,14 @@
 package uk.gov.dvsa.ui.feature.journey;
 
 import org.joda.time.DateTime;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import uk.gov.dvsa.domain.model.*;
+import uk.gov.dvsa.domain.model.AeDetails;
+import uk.gov.dvsa.domain.model.Site;
+import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.MotTest;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
+import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.ChangeDetailsPage;
 import uk.gov.dvsa.ui.pages.HomePage;
@@ -13,6 +16,7 @@ import uk.gov.dvsa.ui.pages.PerformanceDashBoardPage;
 import uk.gov.dvsa.ui.pages.ProfilePage;
 
 import java.io.IOException;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -21,12 +25,14 @@ public class PerformTesterFunction extends BaseTest {
     private User tester;
     private Site testSite;
     private AeDetails aeDetails;
+    private Vehicle vehicle;
 
-    @BeforeClass(alwaysRun = true)
+    @BeforeMethod(alwaysRun = true)
     private void setUp() throws IOException {
         aeDetails = aeData.createNewAe("My_Test_AE", 100);
         testSite = siteData.createNewSite(aeDetails.getId(), "Test_Site");
         tester = userData.createTester(testSite.getId());
+        vehicle = vehicleData.getNewVehicle(tester);
     }
 
     @Test (groups = {"BVT"})
@@ -51,7 +57,7 @@ public class PerformTesterFunction extends BaseTest {
     @Test (groups = {"BVT", "Regression"})
     public void viewPerformanceDashboard() throws IOException {
         //Given I have done only 1 mot test
-        MotTest motTest = motData.createTest(tester, testSite.getId(),
+        motApi.createTest(tester, testSite.getId(),
                 vehicleData.getNewVehicle(tester), TestOutcome.PASSED, 14000, DateTime.now());
 
         //When I navigate to my performance dashboard page

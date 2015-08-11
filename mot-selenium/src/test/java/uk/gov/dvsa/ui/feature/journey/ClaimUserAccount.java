@@ -7,10 +7,10 @@ import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.helper.RandomDataGenerator;
 import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.accountclaim.AccountClaimConfirmationPage;
 import uk.gov.dvsa.ui.pages.accountclaim.AccountClaimPage;
 import uk.gov.dvsa.ui.pages.accountclaim.AccountClaimReviewPage;
-import uk.gov.dvsa.ui.pages.HomePage;
 
 import java.io.IOException;
 

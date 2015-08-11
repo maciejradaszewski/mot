@@ -17,6 +17,7 @@ use VehicleApi\Service\VehicleSearchService;
 use VehicleApi\Factory\Service\VehicleSearchServiceFactory;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use DvsaMotApi\Service\TesterService;
+use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 
 class VehicleSearchServiceFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,6 +37,7 @@ class VehicleSearchServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $this->mockMethod($mockServiceLocator, 'get', $this->at(2), XMock::of(TesterService::class));
         $this->mockMethod($mockServiceLocator, 'get', $this->at(3), XMock::of(VehicleCatalogService::class));
         $this->mockMethod($mockServiceLocator, 'get', $this->at(4), XMock::of(ParamObfuscator::class));
+        $this->mockMethod($mockServiceLocator, 'get', $this->at(5), XMock::of(RetestEligibilityValidator::class));
 
         $this->assertInstanceOf(
             VehicleSearchService::class,

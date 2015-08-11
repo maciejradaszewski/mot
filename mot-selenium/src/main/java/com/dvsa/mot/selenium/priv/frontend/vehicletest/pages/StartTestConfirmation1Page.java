@@ -18,7 +18,7 @@ import org.openqa.selenium.support.ui.Select;
 public class StartTestConfirmation1Page extends BasePage {
     public String pageTitle;
 
-    public static final String DEFAULT_PAGE_TITLE = "START TEST CONFIRMATION";
+    public static final String DEFAULT_PAGE_TITLE = "CONFIRM VEHICLE FOR TEST";
 
     @FindBy(id = "user-info") @CacheLookup private WebElement testerVTSInfo;
 

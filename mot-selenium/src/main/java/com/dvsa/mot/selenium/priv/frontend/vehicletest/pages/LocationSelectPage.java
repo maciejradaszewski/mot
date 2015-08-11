@@ -34,7 +34,7 @@ public class LocationSelectPage extends BasePage {
 
     public static LocationSelectPage navigateHereFromLoginPage(WebDriver driver, Login login) {
         return UserDashboardPage.navigateHereFromLoginPage(driver, login)
-                .startMotRetestAsManyVtsTesterWithoutVtsChosen();
+                .startMotTestAsManyVtsTesterWithoutVtsChosen();
     }
 
     public List<WebElement> getVtsRadio() {

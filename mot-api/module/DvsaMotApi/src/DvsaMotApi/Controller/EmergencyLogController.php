@@ -78,7 +78,6 @@ class EmergencyLogController extends AbstractDvsaRestfulController
                 'contingency_code' => $dto->getContingencyCode(), // db: emergency_log
                 'tested_by_whom'   => $dto->getTestedByWhom(),    // alpha
                 'tester_code'      => $dto->getTesterCode(),      // other | current
-                'test_type'        => $dto->getTestType(),        // normal | retest
                 'test_date'        => $testDateTime,              // DateTime of test
                 'test_date_year'   => $dto->getDateYear(),        // year of test
                 'test_date_month'  => $dto->getDateMonth(),       // month of test

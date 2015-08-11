@@ -117,7 +117,6 @@ class EmergencyLogControllerTest extends AbstractMotApiControllerTestCase
 
         $dto->setTestedByWhom('current');
         $dto->setSiteId(1);
-        $dto->setTestType('normal');
         $dto->setPerformedAt($today->format('Y-m-d'));
         $dto->setDateYear($today->format('Y'));
         $dto->setDateMonth($today->format('m'));
@@ -154,7 +153,6 @@ class EmergencyLogControllerTest extends AbstractMotApiControllerTestCase
 
         $dto->setTestedByWhom('current');
         $dto->setSiteId(1);
-        $dto->setTestType('normal');
         $dto->setPerformedAt($today->format('Y-m-d'));
         $dto->setDateYear($today->format('Y'));
         $dto->setDateMonth($today->format('m'));

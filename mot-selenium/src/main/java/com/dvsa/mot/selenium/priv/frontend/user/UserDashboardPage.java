@@ -57,7 +57,7 @@ public class UserDashboardPage extends BasePage {
 
     @FindBy(id = "unread-special-notice-count") private WebElement unReadSpecialNotificationCount;
 
-    @FindBy(id = "action-start-mot-retest") private WebElement retestPreviousVehicle;
+    //@FindBy(id = "action-start-mot-retest") private WebElement retestPreviousVehicle;
 
     @FindBy(id = "action-start-mot-training-mode") private WebElement startMotTrainingMode;
 
@@ -221,7 +221,7 @@ public class UserDashboardPage extends BasePage {
         if (!existStartMotRetestLink()) {
             resumeMotTest().cancelMotTest(ReasonToCancel.REASON_VEHICLE_REGISTERED_ERROR);
         }
-        retestPreviousVehicle.click();
+        resumeMotTestButton.click();
         if (getPageTitle().equals(LocationSelectPage.PAGE_TITLE)) {
             new LocationSelectPage(driver).selectAndConfirmFirstVts();
         }
@@ -229,7 +229,7 @@ public class UserDashboardPage extends BasePage {
     }
 
     public LocationSelectPage startMotRetestAsManyVtsTesterWithoutVtsChosen() {
-        retestPreviousVehicle.click();
+        resumeMotTestButton.click();
         return new LocationSelectPage(driver);
     }
 

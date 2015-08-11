@@ -50,14 +50,6 @@ $hasInProgressTest = $this->dashboardDataProvider()->hasTestInProgress();
                         </a>
                     <?php endif; ?>
                     <ul class="list-unstyled">
-                        <?php if ($isTestingEnabled && ($hasSlots || empty($testersCurrentVts))) : ?>
-                            <?php if (!$hasInProgressTest) : ?>
-                                <li>
-                                    <a href="<?php echo $this->url('retest-vehicle-search'); ?>"
-                                       id="action-start-mot-retest">re-test a previous vehicle</a>
-                                </li>
-                            <?php endif; ?>
-                        <?php endif; ?>
                         <?php if ($isTestingEnabled) : ?>
                             <li>
                                 <a href="<?php echo $this->url('demo-vehicle-search') ?>"

@@ -4,11 +4,13 @@ namespace VehicleApi\Controller;
 
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\DtoHydrator;
-use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApi\Model\ApiResponse;
-use DvsaCommonApi\Service\Exception\BadRequestException;
+use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 
+/**
+ * Class VehicleRetestEligibilityController
+ */
 class VehicleRetestEligibilityController extends AbstractDvsaRestfulController
 {
     const FIELD_VEHICLE_ID = 'id';

@@ -64,7 +64,6 @@ public class ContingencyTestEntryPage extends Page {
 
     public VehicleSearchPage fillContingencyTestFormAndConfirm(String code, DateTime date) {
         fillContingencyCode(code)
-                .selectContingencyTestTypeNormalTest()
                 .selectReasonForContingencyTestCommunicationProblems()
                 .fillDateContingencyTestPerformed(date)
                 .clickConfirmContingencyTestDetailsButton();

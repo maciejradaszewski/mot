@@ -1,31 +1,30 @@
 '''Happy path, all good and clean results should be saved in the session for when needed:'''
 
-!| Vm 4827 Emergency Log |
-| Emergency Code | Tester ID | Tester Code | Test Type | Test Date | Test Site | Reason Code | Reason Text | Response? |
-| 12345A | current | tester1 | normal | now | 1 | PI | empty | pass |
+!| Vm 4827 Emergency Log                                                                   |
+|Emergency Code|Tester ID|Tester Code|Test Date|Test Site|Reason Code|Reason Text|Response?|
+|12345A        |current  |tester1    |now      |1        |PI         |empty      |pass     |
 
 '''Dates cannot be in the future but past dates are allowed:'''
 
-!| Vm 4827 Emergency Log |
-| Emergency Code | Tester ID | Tester Code | Test Type | Test Date | Test Site | Reason Code | Reason Text | Response? |
-| 12345A | current | tester1 | normal | now | 1 | PI | empty | pass |
-| 12345A | current | tester1 | normal | +1 day | 1 | PI | empty | fail |
-| 12345A | current | tester1 | normal | -1 day | 1 | PI | empty | pass |
+!| Vm 4827 Emergency Log                                                                   |
+|Emergency Code|Tester ID|Tester Code|Test Date|Test Site|Reason Code|Reason Text|Response?|
+|12345A        |current  |tester1    |now      |1        |PI         |empty      |pass     |
+|12345A        |current  |tester1    |+1 day   |1        |PI         |empty      |fail     |
+|12345A        |current  |tester1    |-1 day   |1        |PI         |empty      |pass     |
 
 '''Should fail when various fields are invalid, first row is good, one error on  subsequent rows:'''
 
-!| Vm 4827 Emergency Log |
-| Emergency Code | Tester ID | Tester Code | Test Type | Test Date | Test Site | Reason Code | Reason Text | Response? |
-| 12345A | current | tester1 | normal | now | 1 | PI | empty | pass |
-| BAD CODE | current | tester1 | normal | now | 1 | PI | empty | fail |
-| 12345A | _TOOLONG_ | tester1 | normal | now | 1 | PI | empty | fail |
-| 12345A | NOTREAL! | tester1 | normal | now | 1 | PI | empty | fail |
-| 12345A | current | tester1 | INVALID | now | 1 | PI | empty | fail |
-| 12345A | current | tester1 | normal | now | 99999999 | PI | empty | fail |
-| 12345A | current | tester1 | normal | now | 1 | XX | empty | fail |
+!| Vm 4827 Emergency Log                                                                   |
+|Emergency Code|Tester ID|Tester Code|Test Date|Test Site|Reason Code|Reason Text|Response?|
+|12345A        |current  |tester1    |now      |1        |PI         |empty      |pass     |
+|BAD CODE      |current  |tester1    |now      |1        |PI         |empty      |fail     |
+|12345A        |_TOOLONG_|tester1    |now      |1        |PI         |empty      |fail     |
+|12345A        |NOTREAL! |tester1    |now      |1        |PI         |empty      |fail     |
+|12345A        |current  |tester1    |now      |99999999 |PI         |empty      |fail     |
+|12345A        |current  |tester1    |now      |1        |XX         |empty      |fail     |
 
 '''Should tester ID should be ignored when tester ID (i.e. tested by whom) is that of current tester: '''
 
-!| Vm 4827 Emergency Log |
-| Emergency Code | Tester ID | Tester Code | Test Type | Test Date | Test Site | Reason Code | Reason Text | Response? |
-| 12345A | current | INVALID | normal | now | 1 | PI | empty | pass |
+!| Vm 4827 Emergency Log                                                                   |
+|Emergency Code|Tester ID|Tester Code|Test Date|Test Site|Reason Code|Reason Text|Response?|
+|12345A        |current  |INVALID    |now      |1        |PI         |empty      |pass     |

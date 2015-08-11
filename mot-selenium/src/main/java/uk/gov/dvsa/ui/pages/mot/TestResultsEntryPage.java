@@ -15,6 +15,8 @@ import uk.gov.dvsa.ui.pages.braketest.BrakeTestResultsPage;
 
 public class TestResultsEntryPage extends Page {
     private static final String PAGE_TITLE = "MOT test results entry";
+    private static final String PAGE_TITLE_REINSPECTION = "MOT reinspection results entry";
+
 
     @FindBy(id = "odometer_submit") private WebElement odometerSubmit;
 
@@ -143,7 +145,7 @@ public class TestResultsEntryPage extends Page {
     public void clickReviewTest() {
         reviewTestButton.click();
     }
-    
+
     private TestResultsEntryPage addOdometerReading(int odometerReading) {
         editOdometerButton.click();
         PageInteractionHelper.waitForElementToBeVisible(odometerSubmit, Configurator.defaultFastWebElementTimeout);

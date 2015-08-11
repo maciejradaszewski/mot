@@ -45,8 +45,6 @@ class EmergencyLogValidator
     const ERR_CODE_INVALID         = 'Please use a valid contingency code';
     const ERR_SITE_REQUIRED        = 'Please supply a site ID';
     const ERR_SITE_INVALID         = 'Please enter a valid site ID';
-    const ERR_TEST_TYPE_REQUIRED   = 'Please supply a test type';
-    const ERR_TEST_TYPE_INVALID    = 'Please select a valid test type';
     const ERR_TESTER_CODE_REQUIRED = 'Please supply a tested by whom value';
     const ERR_TESTER_CODE_INVALID  = 'Please select a valid tested by whom value';
 
@@ -72,7 +70,6 @@ class EmergencyLogValidator
             'contingency_code' => ['is_string', 'isValidEmergencyLogCode'],
             'tested_by_whom'   => ['is_string', 'isValidTestedByWhom'],
             'site_id'          => ['is_numeric', 'isValidSite'],
-            'test_type'        => ['is_string', 'isValidTestType'],
             'tester_code'      => ['is_string', 'isValidTesterCode'],
             'reason_code'      => ['is_string', 'isValidReasonCode'],
             'test_date'        => ['isValidTestDate'],
@@ -267,27 +264,6 @@ class EmergencyLogValidator
             }
         } else {
             $this->addErrorMsg(self::ERR_REASON_INVALID);
-        }
-    }
-
-    /**
-     * Checks the re-test type for being a recognised value.
-     *
-     * @param $value \DateTime the submitted for value
-     */
-    protected function isValidTestType($value)
-    {
-        if (!empty($value)) {
-            switch (strtolower($value)) {
-                case 'normal':
-                case 'retest':
-                    break;
-                default:
-                    $this->addErrorMsg(self::ERR_TEST_TYPE_INVALID);
-                    break;
-            }
-        } else {
-            $this->addErrorMsg(self::ERR_TEST_TYPE_REQUIRED);
         }
     }
 

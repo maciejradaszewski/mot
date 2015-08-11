@@ -2,6 +2,7 @@
 
 namespace DvsaMotTest\View\VehicleSearchResult;
 
+use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaMotTest\Constants\VehicleSearchSource;
 use DvsaMotTest\Controller\StartTestConfirmationController;
 use DvsaMotTest\Model\VehicleSearchResult;
@@ -54,6 +55,12 @@ class MotTestUrlTemplate implements VehicleSearchResultUrlTemplateInterface
         $searchVrm = $searchParams['searchVrm'];
         $searchVin = $searchParams['searchVin'];
 
+        if ($vehicle->isRetest()) {
+            $retest = true;
+        } else {
+            $retest = false;
+        }
+
         return $helper->fromRoute(
             'start-test-confirmation',
             [
@@ -66,7 +73,8 @@ class MotTestUrlTemplate implements VehicleSearchResultUrlTemplateInterface
             ['query' => ["vin"          => $vin,
                 'registration' => $registration,
                 'searchVrm'    => $searchVrm,
-                'searchVin'    => $searchVin]]
+                'searchVin'    => $searchVin,
+                'retest'       => $retest]]
         );
     }
 }

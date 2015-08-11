@@ -62,11 +62,7 @@ class ContingencyMotTestController extends AbstractDvsaMotTestController
 
                 $contingencySessionManager->createContingencySession($dto, $apiResult['data']['emergencyLogId']);
 
-                return $this->redirect()->toRoute(
-                    $dto->getTestType() == 'normal' ? 'vehicle-search' : 'retest-vehicle-search',
-                    [],
-                    ['query' => ['contingency' => 1]]
-                );
+                return $this->redirect()->toRoute('vehicle-search', [], [ 'query' => [ 'contingency' => 1 ] ]);
             } catch (RestApplicationException $e) {
                 $this->addErrorMessages($e->getDisplayMessages());
             } catch (GeneralRestException $e) {
@@ -94,9 +90,6 @@ class ContingencyMotTestController extends AbstractDvsaMotTestController
         $dto = new ContingencyMotTestDto;
         $dto->setTestedByWhom(trim($data['radio-test-who-group']));
         $dto->setSiteId(trim($data['radio-site-group']));
-        if (isset($data['radio-test-type-group'])) {
-            $dto->setTestType(trim($data['radio-test-type-group']));
-        }
         $dto->setContingencyCode(trim($data['ct-code']));
         $dto->setTesterCode(''); // VM-7493: removed ==> $data['testerNumber']);
         $dto->setPerformedAt(

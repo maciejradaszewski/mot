@@ -29,70 +29,6 @@ import static org.testng.Assert.assertTrue;
 
 public class VehicleConfirmationTest extends BaseTest {
 
-    @Test(groups = {"Regression", "VM-1854"})
-    public void testTryRetestVehicleWithOriginalTestMoreThan10Days() {
-
-        DateTime twentyDaysAgo = DateTime.now().minusDays(20);
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
-
-        String motTestNumber = createMotTest(login, Site.POPULAR_GARAGES, vehicle, 12000,
-                MotTestApi.TestOutcome.FAILED, twentyDaysAgo);
-        StartTestConfirmation1Page confirmationPage = VehicleConfirmationRetestPage
-                .navigateHereFromLoginPage_PreviousNo(driver, login, motTestNumber);
-
-        assertThat("Check reject title", confirmationPage.getRejectTitle(),
-                is(Assertion.ASSERTION_NOT_QUALIFIED_FOR_RETEST.assertion));
-        assertThat("Check content of rejection message", confirmationPage.getRejectMessage()
-                        .contains(
-                                Assertion.ASSERTION_ORIGINAL_TEST_PERFORMED_MORE_10_DAYS_AGO.assertion),
-                is(true));
-    }
-
-    @Test(groups = {"Regression", "VM-1854"})
-    public void testTryRetestVehicleWithOriginalTestCarriedOutInDifferentVTS() {
-
-        Site site = new VtsCreationApi()
-                .createVtsSite(createAE("VM-1854-DifferentVtsTester"), TestGroup.ALL,
-                        Login.LOGIN_AREA_OFFICE1, "VM-1854-DifferentVtsTester");
-        Login testerAtDifferentSite = createTester(Collections.singleton(site.getId()));
-
-        // create new mot fail test
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BMW_ALPINA);
-        createMotTest(createTester(), Site.POPULAR_GARAGES, vehicle, 12500,
-                MotTestApi.TestOutcome.FAILED);
-
-        StartTestConfirmation1Page confirmationPage = VehicleConfirmationRetestPage
-                .navigateHereFromLoginPage(driver, testerAtDifferentSite, vehicle);
-
-        assertThat("Check reject title", confirmationPage.getRejectTitle(),
-                is(Assertion.ASSERTION_NOT_QUALIFIED_FOR_RETEST.assertion));
-        assertThat("Check content of rejection message", confirmationPage.getRejectMessage()
-                        .contains(
-                                Assertion.ASSERTION_ORIGINAL_TEST_PERFORMED_DIFFERENT_VTS.assertion),
-                is(true));
-    }
-
-    @Test(groups = {"Regression", "VM-1854"})
-    public void testTryRetestVehicleWithOriginalTestCancelled() {
-
-        // create new Mot test and cancel
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_BOXSTER_2001);
-        MotTestPage motTestPage = MotTestPage.navigateHereFromLoginPage(driver, login, vehicle)
-                .addMotTest("2000", BrakeTestConfiguration4.brakeTestConfigClass4_CASE1(),
-                        BrakeTestResults4.allFail(), null, null, null, null);
-
-        motTestPage.clickCancelMotTest().enterAndSubmitReasonsToCancelPageExpectingAbortedPage(
-                ReasonToCancel.REASON_ACCIDENT_OR_ILLNESS).clickFinish().clickLogout();
-        StartTestConfirmation1Page confirmationPage =
-                VehicleConfirmationRetestPage.navigateHereFromLoginPage(driver, login, vehicle);
-
-        assertThat("Check reject title", confirmationPage.getRejectTitle(),
-                is(Assertion.ASSERTION_NOT_QUALIFIED_FOR_RETEST.assertion));
-        assertThat("Check content of rejection message", confirmationPage.getRejectMessage(),
-                is(Assertion.ASSERTION_ORIGINAL_TEST_CANCELLED.assertion));
-
-    }
-
     @Test(groups = {"Regression", "VM-2073"})
     public void testDisplayExpiryMotDateMessageMoreThanOneMonthPreviousPassedTestExpirationDateInTest() {
 
@@ -105,22 +41,6 @@ public class VehicleConfirmationTest extends BaseTest {
         assertThat("Check the content of expiry information alert", StartTestConfirmation1Page
                 .navigateHereFromLoginPageAsMotTest(driver, tester, vehicle).getExpiryInfoAlert()
                 .contains(Assertion.ASSERTION_PRESERVE_MOT_EXPIRY_DATE_ADVICE.assertion), is(true));
-    }
-
-    @Test(groups = {"Regression", "VM-2073"})
-    public void testRetestCannotBeCarriedOutUsingPassedMotTestNumber() {
-        Site site = Site.POPULAR_GARAGES;
-        Login login = createTester();
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
-
-        String motPassedTestId =
-                createMotTest(login, site, vehicle, 78924, MotTestApi.TestOutcome.PASSED,
-                        new DateTime().minus(Period.years(1)));
-        VehicleSearchRetestPage vehicleSearchRetestPage = VehicleSearchRetestPage
-                .navigateHereFromLoginPage(driver, login)
-                .submitSearchWithPreviousTestNumberExpectingError(motPassedTestId);
-        assertThat("Test number is invalid", vehicleSearchRetestPage.isVehicleSearchFormDisplayed(),
-                is(true));
     }
 
     @Test(groups = {"Regression", "VM-2531", "VM-2384", "VM-5018"},

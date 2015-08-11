@@ -28,6 +28,7 @@ use Vehicle\Helper\ColoursContainer;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
+use DvsaMotTest\ViewModel\StartTestConfirmationViewModel;
 
 /**
  * Class StartTestConfirmationController.
@@ -35,7 +36,6 @@ use Zend\View\Model\ViewModel;
 class StartTestConfirmationController extends AbstractDvsaMotTestController
 {
     const ROUTE_START_TEST_CONFIRMATION   = 'start-test-confirmation';
-    const ROUTE_START_RETEST_CONFIRMATION = 'start-retest-confirmation';
     const ROUTE_PARAM_NO_REG              = 'noRegistration';
     const ROUTE_PARAM_ID                  = 'id';
     const ROUTE_PARAM_SOURCE              = 'source';
@@ -66,17 +66,21 @@ class StartTestConfirmationController extends AbstractDvsaMotTestController
     /** @var  PrgHelper */
     private $prgHelper;
 
+    /** @var StartTestConfirmationViewModel */
+    private $startTestConfirmationViewModel;
+
     /** @param \DvsaCommon\Obfuscate\ParamObfuscator $paramObfuscator */
     public function __construct(ParamObfuscator $paramObfuscator)
     {
         $this->paramObfuscator = $paramObfuscator;
+        $this->startTestConfirmationViewModel = new StartTestConfirmationViewModel();
     }
 
     public function indexAction()
     {
         /** @var \Zend\Http\Request $request */
         $request = $this->getRequest();
-        $method  = $request->getPost('retest') ? MotTestTypeCode::RE_TEST : MotTestTypeCode::NORMAL_TEST;
+        $method  = $request->getQuery('retest') ? MotTestTypeCode::RE_TEST : MotTestTypeCode::NORMAL_TEST;
 
         return $this->commonAction($method);
     }
@@ -234,6 +238,7 @@ class StartTestConfirmationController extends AbstractDvsaMotTestController
             'vehicleClassCode'        => intval($request->getPost('vehicleClass')),
             'hasRegistration'         => !$this->noRegistration,
             'oneTimePassword'         => $request->getPost('oneTimePassword'),
+            'motTestType'             => $request->getPost('motTestType', $this->method)
         ];
 
         $contingencySessionManager = $this->getContingencySessionManager();
@@ -263,57 +268,57 @@ class StartTestConfirmationController extends AbstractDvsaMotTestController
     protected function prepareViewData()
     {
         $viewData = [
-            'method'               => $this->method,
             'vehicleDetails'       => $this->vehicleDetails,
-            'id'                   => $this->obfuscatedVehicleId,
-            'noRegistration'       => $this->noRegistration,
             'checkExpiryResults'   => null,
             'staticData'           => $this->getStaticData(),
-            'source'               => $this->vehicleSource,
-            'isMotContingency'     => $this->getContingencySessionManager()->isMotContingency(),
-            'inProgressTestExists' => $this->inProgressTestExists,
-            'canRefuseToTest'      => false,
-            'isEligibleForRetest'  => false,
             'prgHelper'            => $this->prgHelper,
-            'vin'                  => '',
-            'registration'         => '',
-            'searchVrm'            => $this->params()->fromQuery('searchVrm', ''),
-            'searchVin'            => $this->params()->fromQuery('searchVin', '')
         ];
 
-        $isReTest     = ($this->isRetest());
-        $isNormalTest = ($this->method === MotTestTypeCode::NORMAL_TEST);
+        $viewModel = $this->startTestConfirmationViewModel;
+        $viewModel->setMethod($this->method);
+        $viewModel->setObfuscatedVehicleId($this->obfuscatedVehicleId);
+        $viewModel->setNoRegistration($this->noRegistration);
+        $viewModel->setVehicleSource($this->vehicleSource);
+        $viewModel->setInProgressTestExists($this->inProgressTestExists);
+        $viewModel->setSearchVrm($this->params()->fromQuery('searchVrm', ''));
+        $viewModel->setSearchVin($this->params()->fromQuery('searchVin', ''));
+        $viewModel->setCanRefuseToTest(false, false);
 
-        if (!$isReTest) {
-            $viewData['vin'] = $this->params()->fromQuery('vin', '');
-            $viewData['registration'] = $this->params()->fromQuery('registration', '');
-        }
+        $motContingency = $this->getContingencySessionManager()->isMotContingency();
+        $viewModel->setMotContingency($motContingency);
 
-        //  --  check eligibility for retest  --
-        if ($isReTest
-            || ($isNormalTest && $this->isVehicleSource(VehicleSearchSource::VTR))
+        if ($viewModel->isRetest()
+            || ($viewModel->isNormalTest() && $viewModel->getVehicleSource() == VehicleSearchSource::VTR)
         ) {
-            //  --  to prevent double check at API after POST   --
             if ($this->isEligibleForRetest === null) {
                 $this->checkEligibilityForRetest();
             }
 
-            $viewData['isEligibleForRetest'] = $this->isEligibleForRetest;
-            $viewData['eligibilityNotices']  = $this->eligibilityNotices;
+            if ($this->isEligibleForRetest) {
+                $viewModel->setMethod(MotTestTypeCode::RE_TEST);
+                $viewModel->setEligibleForRetest(true);
+            }
+
+            $viewModel->setEligibilityNotices($this->eligibilityNotices);
+        } else {
+            $viewModel->setEligibleForRetest(false);
         }
 
-        //  --  process method specific parameters  --
-        if ($isReTest || $isNormalTest) {
-            //  --  get expire data   --
+        if ($viewModel->isRetest() || $viewModel->isNormalTest()) {
             $viewData['checkExpiryResults'] = $this->getCheckExpiryResults();
 
-            //  --  ability to refuse    --
-            $viewData['canRefuseToTest'] = (
-                ($isNormalTest || ($isReTest && $this->isEligibleForRetest))
-                && !$this->inProgressTestExists
-                && $this->createRefuseToTestAssertion()->isGranted($this->vtsId)
+            $viewModel->setCanRefuseToTest(
+                $this->isEligibleForRetest,
+                $this->createRefuseToTestAssertion()->isGranted($this->vtsId)
             );
         }
+
+        if ($viewModel->isRetest()) {
+            $this->isRetest();
+            $this->method = MotTestTypeCode::RE_TEST;
+        }
+
+        $viewData['viewModel'] = $viewModel;
 
         return $viewData;
     }

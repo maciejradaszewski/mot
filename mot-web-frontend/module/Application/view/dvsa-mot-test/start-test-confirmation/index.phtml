@@ -2,79 +2,39 @@
 use Application\Helper\PrgHelper;
 use Dashboard\Controller\UserHomeController;
 use DvsaCommon\Date\DateTimeDisplayFormat;
-use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaMotTest\Controller\RefuseToTestController;
+use DvsaMotTest\ViewModel\StartTestConfirmationViewModel;
 
 /**
- * @var string  $method
- * @var boolean $isEligibleForRetest
+ * @var StartTestConfirmationViewModel $viewModel
  */
-$method = $this->method;
-$isMethodStandard = ($this->isMethodStandard || $method === MotTestTypeCode::NORMAL_TEST);
-$isMethodRetest = ($this->isMethodRetest || $method == MotTestTypeCode::RE_TEST);
-$isMethodDemoTest = ($this->isMethodDemo || $method === MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING);
-
-$id = $this->id;
-$noRegistration = $this->noRegistration ? '1' : '0';
-
 $vehicleDetails = $this->vehicleDetails;
-$eligibilityNotices = $this->eligibilityNotices;
-$isEligibleForRetest = $this->isEligibleForRetest;
 
 //  --  urls    --
 $query = [];
-if (!$isMethodRetest) {
-    $query['vin'] = $this->searchVin;
-    $query['registration'] = $this->searchVrm;
-}
+$query['vin'] = $viewModel->getSearchVin();
+$query['registration'] = $viewModel->getSearchVrm();
 
-$escUrlToHome = $this->url(UserHomeController::ROUTE);
+$escUrlSearch = $this->url('vehicle-search', [], ['query' => $query]);
+
 if (!empty($this->urlSearch)) {
     $escUrlSearch = $this->urlSearch;
-} elseif ($this->isMotContingency) {
-    $route = ($isMethodRetest ? 'retest-vehicle-search' : 'vehicle-search');
+} elseif ($viewModel->isMotContingency()) {
     $query['contingency'] = 1;
-    $escUrlSearch = $this->url($route, [], ['query' => $query]);
-} else {
-    $route = ($isMethodRetest ? 'retest-vehicle-search' : 'vehicle-search');
-    $escUrlSearch = $this->url($route, [], ['query' => $query]);
-};
+}
 
 $escUrlDemoSearch = $this->url('demo-vehicle-search', [], ['query' => $query]);
 
-//  --  title & header  --
 $title = $this->title;
-if (empty($title)) {
-    $title = ($isMethodRetest ? 'Start retest confirmation' : 'Start test confirmation');
-}
-
 $header = $this->header;
+if (empty($title)) {
+    $title = 'Confirm vehicle for ' . $viewModel->getTestTypeString();
+}
 if (empty($header)) {
-    $header = ($isMethodRetest ? 'Vehicle Confirmation - retest' : 'Vehicle Confirmation');
+    $header = $title;
 }
 
-
-//  --  define action   --
-$actionConfirm = $this->actionConfirm;
-$safeSource = filter_var($this->source, FILTER_VALIDATE_INT); // this should really already have been sanitized, but hasn't
-if (empty($actionConfirm)) {
-    if ($method === MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING) {
-        $actionConfirm = '/start-demo-confirmation';
-    } elseif ($isMethodRetest) {
-        if (empty($eligibilityNotices)) {
-            $actionConfirm = '/start-retest-confirmation';
-        } else {
-            $safeSource = '1';
-        }
-    } else {
-        $actionConfirm = '/start-test-confirmation';
-    }
-}
-$actionConfirm .= '/'. $id . '/' . $noRegistration . (!empty($safeSource) ? '/' . $safeSource : '');
-
-//  -- expire   --
 $expiryDate = null;
-
 $earliestTestDateForPostdatingExpiryDate = null;
 $isEarlierThanTestDateLimit = false;
 
@@ -85,16 +45,13 @@ if (!empty($checkExpiryResults)) {
     if ($isPreviousCertificateExists) {
         $expiryDate = $checkExpiryResults['expiryDate'];
 
-        if ($isMethodStandard) {
+        if ($viewModel->isNormalTest()) {
             $earliestTestDateForPostdatingExpiryDate = $checkExpiryResults['earliestTestDateForPostdatingExpiryDate'];
             $isEarlierThanTestDateLimit = $checkExpiryResults['isEarlierThanTestDateLimit'];
         }
     }
 }
 
-$inProgressTestExists = $this->inProgressTestExists;
-
-//  --
 $this->layout()->setVariable('pageSubTitle', 'MOT testing');
 $this->layout()->setVariable('pageTitle', $title);
 $this->headTitle($title);
@@ -102,14 +59,14 @@ $this->headTitle($title);
 $this->placeholder('progressBar')->captureStart();
 echo $this->partial(
     'motTestProgress',
-    ['currentStep' => 1, 'isMotContingency' => $this->isMotContingency]
+    ['currentStep' => 1, 'isMotContingency' => $viewModel->isMotContingency()]
 );
 $this->placeholder('progressBar')->captureEnd();
 
 echo $this->partial('errorMessages', ['getFromFlash' => true]);
 ?>
 
-<?php if ($inProgressTestExists): ?>
+<?php if ($viewModel->isInProgressTestExists()): ?>
     <div class="row">
         <div class="col-md-8">
             <div id="inProgressTestExistsAlert" class="info-alert null-top-margin">
@@ -123,18 +80,19 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
     <hr class="hr-thin" />
 <?php endif; ?>
 
-<form action="<?php echo $actionConfirm ?>" method="POST" name="StartTestConfirmation" id="StartTestConfirmation">
+<form action="<?php echo $viewModel->getConfirmActionUrl() ?>" method="POST" name="StartTestConfirmation" id="StartTestConfirmation">
     <?php
     echo $this->csrfToken();
     echo ($this->prgHelper instanceof PrgHelper ? $this->prgHelper->getHtml() : '');
     ?>
     <input type="hidden" name="startTestConfirm" value="true" />
+    <input type="hidden" name="motTestType" value="<?php echo $this->escapeHtmlAttr($viewModel->getMethod()); ?>" />
     <div class="row">
         <div class="col-sm-12" id="vehicleDetails">
             <h2 class="second-header">Vehicle details</h2>
 
             <?php
-            if ($isEarlierThanTestDateLimit && !$inProgressTestExists): ?>
+            if ($isEarlierThanTestDateLimit && !$viewModel->isInProgressTestExists()): ?>
                 <div class="col-md-8">
                     <div id="expiryInfoAlert" class="info-alert null-top-margin">
                         <?php
@@ -152,11 +110,11 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
 
             echo $this->partial(
                 'confirmationVehicleSummary', [
-                    'noRegistration' => $noRegistration,
+                    'noRegistration' => $viewModel->isNoRegistration(),
                     'vehicle'        => $vehicleDetails,
                     'expiryDate'     => $expiryDate,
                     'staticData'     => $this->staticData,
-                    'doNotShowDropDowns' => $inProgressTestExists,
+                    'doNotShowDropDowns' => $viewModel->isInProgressTestExists(),
                 ]
             );
             ?>
@@ -164,20 +122,7 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
     </div>
 
     <?php
-    if ($isMethodStandard && $isEligibleForRetest): ?>
-        <div class="row">
-            <span class="divider"></span>
-            <div class="col-sm-8">
-                <div class="info-notice">
-                    <p>This vehicle is eligible for a <strong>retest</strong>.
-                        You can either retest the vehicle or continue with full MOT test.</p>
-                </div>
-            </div>
-        </div>
-    <?php
-    endif;
-
-    if ($isMethodRetest && !$isEligibleForRetest): ?>
+    if ($viewModel->isRetest() && !$viewModel->isEligibleForRetest()): ?>
         <div class="row">
             <span class="divider"></span>
             <div class="col-md-6">
@@ -198,73 +143,55 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
         </div>
     <?php endif ?>
 
-    <?php if (!$inProgressTestExists): ?>
+    <?php if (!$viewModel->isInProgressTestExists()): ?>
         <hr class="hr-thin"/>
 
         <div class="row">
             <div class="col-sm-6 btn-bar">
-                <?php if ($isMethodRetest && !empty($eligibilityNotices)): ?>
-                    <a href="<?php echo $escUrlToHome;?>"
+                <?php if ($viewModel->isRetest() && !empty($viewModel->getEligibilityNotices())): ?>
+                    <a href="<?php echo $this->url(UserHomeController::ROUTE);?>"
                        class="btn btn-link" id="confirm_vehicle_confirmation">Go to homepage</a>
                 <?php else : ?>
-                    <h4>Start MOT test</h4>
-                    <p>Confirm this vehicle for MOT test</p>
-                    <?php
-                    $btnText = 'Start MOT test'
-                        . ($isMethodRetest && !empty($eligibilityNotices) ? ' and start MOT test' : '');?>
-
-                    <button type="submit" class="btn btn-primary"
-                            id="confirm_vehicle_confirmation"><?php echo $this->escapeHtml($btnText); ?></button>
+                    <h4>Start MOT <?php echo $viewModel->getTestTypeString(); ?></h4>
                 <?php endif ?>
 
-                <?php if ($isMethodStandard): ?>
-                    <?php if ($isEligibleForRetest): ?>
-                        <button type="submit" name="retest" value="true" class="btn btn-info"
-                                id="retest_vehicle_confirmation">Retest instead</button>
-                    <?php endif; ?>
-
-                    <nav class="module-content-navigation">
-                        <ul class="content-navigation_secondary">
-                            <li>
-                                <a href="<?php echo $escUrlSearch; ?>">Return to Vehicle search</a>
-                            </li>
-                            <li>
-                                <a href="<?php echo $escUrlToHome;?>" id="abort_vehicle_confirmation">
-                                    Cancel and return to user home
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-
-                <?php elseif ($isMethodRetest): ?>
-                    &nbsp; &nbsp; Or would you prefer to
-                    <a href="<?php echo $escUrlSearch; ?>">Return to Vehicle search</a>
-
-                <?php elseif ($isMethodDemoTest): ?>
-                    <nav class="module-content-navigation">
-                        <ul class="content-navigation_secondary">
-                            <li>
-                                <a href="<?php echo $escUrlDemoSearch; ?>">Return to Vehicle search</a>
-                            </li>
-                            <li>
-                                <a href="<?php echo $escUrlToHome;?>" id="abort_vehicle_confirmation">
-                                    Cancel and return to user home
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+                <?php if ($viewModel->isNormalTest() || $viewModel->isDemoTest()): ?>
+                    <button type="submit" class="btn btn-primary" id="confirm_vehicle_confirmation">
+                        Confirm vehicle and start MOT test
+                    </button>
                 <?php endif; ?>
+
+                <?php if ($viewModel->isRetest()): ?>
+                    <button type="submit" name="retest" value="true" class="btn btn-primary" id="retest_vehicle_confirmation">
+                        Confirm vehicle and start retest
+                    </button>
+                <?php endif; ?>
+
+                <nav class="module-content-navigation">
+                    <ul class="content-navigation_secondary">
+                        <li>
+                            <a href="<?php echo ($viewModel->isDemoTest())? $escUrlDemoSearch : $escUrlSearch; ?>">
+                                Return to Vehicle search
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?php echo $this->url(UserHomeController::ROUTE);?>" id="abort_vehicle_confirmation">
+                                Cancel and return to user home
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
 
-            <?php if($this->canRefuseToTest):  ?>
+            <?php if ($viewModel->canRefuseToTest()):  ?>
                 <div class="col-sm-6 btn-bar">
                     <h4>Refuse test</h4>
                     <a href="<?php echo $this->url(
                         RefuseToTestController::ROUTE_REFUSE_TO_TEST_REASON,
-                        ['testTypeCode' => $method],
-                        ['query' => ['no-reg' => $noRegistration, 'source' => $safeSource]],
+                        ['testTypeCode' => $viewModel->getMethod()],
+                        ['query' => ['no-reg' => $viewModel->isNoRegistration(), 'source' => $viewModel->getSafeSource()]],
                         true
-                    ); ?>" id="refuse-to-test">Refuse to test this vehicle</a> and provide a reason
+                    ); ?>" id="refuse-to-test">Refuse to <?php echo $viewModel->getTestTypeString(); ?> this vehicle</a> and provide a reason
                 </div>
             <?php endif ?>
         </div>

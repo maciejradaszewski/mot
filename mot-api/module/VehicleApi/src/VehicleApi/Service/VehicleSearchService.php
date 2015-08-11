@@ -19,6 +19,8 @@ use DvsaEntities\Repository\DvlaVehicleRepository;
 use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\VehicleRepository;
 use DvsaMotApi\Service\TesterService;
+use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
+use DvsaCommonApi\Service\Exception\BadRequestException;
 use VehicleApi\Helper\VehicleSearchParams;
 
 /**
@@ -43,6 +45,8 @@ class VehicleSearchService
     private $vehicleCatalog;
     /** @var  ParamObfuscator */
     private $paramObfuscator;
+    /** @var RetestEligibilityValidator */
+    private $retestEligibilityValidator;
 
     /**
      * @param AuthorisationServiceInterface $authService
@@ -53,6 +57,7 @@ class VehicleSearchService
      * @param TesterService $testerService
      * @param VehicleCatalogService $vehicleCatalog
      * @param ParamObfuscator $paramObfuscator
+     * @param RetestEligibilityValidator $retestEligibilityValidator
      */
     public function __construct(
         AuthorisationServiceInterface $authService,
@@ -62,7 +67,8 @@ class VehicleSearchService
         MotTestRepository $motTestRepository,
         TesterService $testerService,
         VehicleCatalogService $vehicleCatalog,
-        ParamObfuscator $paramObfuscator
+        ParamObfuscator $paramObfuscator,
+        RetestEligibilityValidator $retestEligibilityValidator
     ) {
         $this->vehicleRepository = $vehicleRepository;
         $this->dvlaVehicleRepository = $dvlaVehicleRepository;
@@ -72,6 +78,7 @@ class VehicleSearchService
         $this->testerService = $testerService;
         $this->paramObfuscator = $paramObfuscator;
         $this->motTestRepository = $motTestRepository;
+        $this->retestEligibilityValidator = $retestEligibilityValidator;
     }
 
     /**
@@ -165,8 +172,14 @@ class VehicleSearchService
         return $results;
     }
 
-    public function searchVehicleWithMotData($vin = null, $reg = null, $searchDvla = null, $limit = null)
-    {
+    public function searchVehicleWithMotData(
+        $vin = null,
+        $reg = null,
+        $searchDvla = null,
+        $limit = null,
+        $vtsId = false,
+        $contingencyDto = null
+    ) {
         $isFullVin = true;
         $vinHasSpaces = false;
         $regHasSpaces = false;
@@ -196,7 +209,7 @@ class VehicleSearchService
         }
 
         if (!empty($vehicles)) {
-            $vehicles = $this->mergeMotDataToVehicles($vehicles);
+            $vehicles = $this->mergeMotDataToVehicles($vehicles, $vtsId, $contingencyDto);
         }
 
         return !empty($vehicles) ? $vehicles : [];
@@ -223,22 +236,28 @@ class VehicleSearchService
         }
     }
 
-    private function mergeMotDataToVehicles($vehicles)
+    /**
+     * @param array $vehicles
+     * @param bool $vtsId
+     * @return array
+     */
+    private function mergeMotDataToVehicles($vehicles, $vtsId = false, $contingencyDto = null)
     {
-        $vehicleData = array_map(
-            function ($vehicle) {
-                if (is_array($vehicle)) {
-                    return $this->mergeMotDataToVehicle($vehicle);
-                }
-            },
-            $vehicles
-        );
+        foreach ($vehicles as &$vehicle) {
+            if (is_array($vehicle)) {
+                $vehicle = $this->mergeMotDataToVehicle($vehicle, $vtsId, $contingencyDto);
+            }
+        }
 
-        $vehicleData = ArrayUtils::sortByDesc($vehicleData, 'mot_completion_date');
+        $vehicleData = ArrayUtils::sortByDesc($vehicles, 'mot_completed_date');
 
         return $vehicleData;
     }
 
+    /**
+     * @param array $vehicles
+     * @return array
+     */
     private function extractVehicles($vehicles)
     {
         return array_map(
@@ -305,13 +324,13 @@ class VehicleSearchService
      * @param array $vehicle
      * @return array
      */
-    private function mergeMotDataToVehicle(array $vehicle)
+    private function mergeMotDataToVehicle(array $vehicle, $vtsId = false, $contingencyDto = null)
     {
         $vehicle = array_merge(
             $vehicle,
             [
                 'mot_id' => '',
-                'mot_completion_date' => '',
+                'mot_completed_date' => '',
                 'total_mot_tests' => '0',
             ]
         );
@@ -325,6 +344,21 @@ class VehicleSearchService
                 $vehicle['mot_id'] = $latestMotTest->getNumber();
                 $vehicle['mot_completed_date'] = $latestMotTest->getIssuedDate()->format('Y-m-d');
                 $vehicle['total_mot_tests'] = count($motTestData);
+            }
+        }
+
+        if ($vtsId) {
+            try {
+                $this->retestEligibilityValidator
+                     ->checkEligibilityForRetest(
+                         $vehicle['id'],
+                         $vtsId,
+                         $contingencyDto
+                     );
+
+                $vehicle['retest_eligibility'] = true;
+            } catch(BadRequestException $exception) {
+                $vehicle['retest_eligibility'] = false;
             }
         }
 

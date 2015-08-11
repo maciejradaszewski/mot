@@ -24,6 +24,7 @@ use DvsaMotTest\Controller\StartTestConfirmationController;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use Zend\Session\Container;
 use Application\Helper\PrgHelper;
+use DvsaMotTest\ViewModel\StartTestConfirmationViewModel;
 
 /**
  * Class StartTestConfirmationControllerTest.
@@ -532,6 +533,27 @@ class StartTestConfirmationControllerTest extends AbstractDvsaMotTestTestCase
             $actualResult = $result->getVariables();
 
             foreach ($expect['result'] as $key => $val) {
+                if ($key == 'noRegistration') {
+                    /** @var StartTestConfirmationViewModel $viewModelResult */
+                    $viewModelResult = $actualResult['viewModel'];
+                    $this->assertEquals($viewModelResult->isNoRegistration(), $val);
+                    continue;
+                }
+
+                if ($key == 'eligibilityNotices') {
+                    /** @var StartTestConfirmationViewModel $viewModelResult */
+                    $viewModelResult = $actualResult['viewModel'];
+                    $this->assertEquals($viewModelResult->getEligibilityNotices(), $val);
+                    continue;
+                }
+
+                if ($key == 'isEligibleForRetest') {
+                    /** @var StartTestConfirmationViewModel $viewModelResult */
+                    $viewModelResult = $actualResult['viewModel'];
+                    $this->assertEquals($viewModelResult->isEligibleForRetest(), $val);
+                    continue;
+                }
+
                 $actualVal = $actualResult[$key];
                 $this->assertEquals(
                     $val,
@@ -543,7 +565,6 @@ class StartTestConfirmationControllerTest extends AbstractDvsaMotTestTestCase
             }
         }
     }
-
 
     /**
      * Check for double post
@@ -575,8 +596,6 @@ class StartTestConfirmationControllerTest extends AbstractDvsaMotTestTestCase
             ['action' => 'cancelMotTest'],
         ];
     }
-
-
 
     protected function assertException($expect)
     {

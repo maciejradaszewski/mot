@@ -6,9 +6,6 @@ import uk.gov.dvsa.helper.RandomDataGenerator;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-
 import java.io.IOException;
 
 public class HelpDesk extends BaseTest {

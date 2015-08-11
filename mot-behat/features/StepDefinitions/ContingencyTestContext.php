@@ -59,43 +59,43 @@ class ContingencyTestContext implements Context
     }
 
     /**
-     * @When /^I create a new (.*) contingency test$/
+     * @When /^I create a new contingency test$/
      */
-    public function iCreateANewContingencyTest($testType)
+    public function iCreateANewContingencyTest()
     {
-        $this->createContingencyCode($testType, $this->dailyContingencyCode, 'PI');
+        $this->createContingencyCode($this->dailyContingencyCode, 'PI');
     }
 
     /**
-     * @When /^I attempt to create a new (.*) contingency test$/
+     * @When /^I attempt to create a new contingency test$/
      */
-    public function iAttemptToCreateANewContingencyTest($testType)
+    public function iAttemptToCreateANewContingencyTest()
     {
-        $this->createContingencyCode($testType, $this->dailyContingencyCode, 'PI');
+        $this->createContingencyCode($this->dailyContingencyCode, 'PI');
     }
 
     /**
-     * @When /^I attempt to create a new (normal|retest) contingency test with a (.*)$/
+     * @When /^I attempt to create a new contingency test with a (.*)$/
      */
-    public function iAttemptToCreateANewContingencyTestWithA($testType, $contingencyCode)
+    public function iAttemptToCreateANewContingencyTestWithA($contingencyCode)
     {
-        $this->createContingencyCode($testType, $contingencyCode, 'PI');
+        $this->createContingencyCode($contingencyCode, 'PI');
     }
 
     /**
-     * @When /^I create a new (.*) contingency test with a Contingency Code and Reason (.*) (.*)$/
+     * @When /^I create a new contingency test with a Contingency Code and Reason (.*) (.*)$/
      */
-    public function iCreateANewContingencyTestWithAContingencyCodeAndReason($testType, $contingencyCode, $reason)
+    public function iCreateANewContingencyTestWithAContingencyCodeAndReason($contingencyCode, $reason)
     {
-        $this->createContingencyCode($testType, $contingencyCode, $reason);
+        $this->createContingencyCode($contingencyCode, $reason);
     }
 
     /**
-     * @When /^I create a new (.*) contingency test with reason (.*)$/
+     * @When /^I create a new contingency test with reason (.*)$/
      */
-    public function iCreateANewContingencyTestWithReason($testType, $reason)
+    public function iCreateANewContingencyTestWithReason($reason)
     {
-        $this->createContingencyCode($testType, Authentication::CONTINGENCY_CODE_DEFAULT, $reason);
+        $this->createContingencyCode(Authentication::CONTINGENCY_CODE_DEFAULT, $reason);
     }
 
     /**
@@ -111,17 +111,15 @@ class ContingencyTestContext implements Context
      * @param string $contingencyCode
      * @param string $reasonCode
      */
-    public function createContingencyCode($testType = 'normal', $contingencyCode = Authentication::CONTINGENCY_CODE_DEFAULT, $reasonCode = 'PI')
+    public function createContingencyCode($contingencyCode = Authentication::CONTINGENCY_CODE_DEFAULT, $reasonCode = 'PI')
     {
         $this->contingencyData = [
-            'testType' => $testType,
             'contingencyCode' => $contingencyCode,
             'reasonCode' => $reasonCode,
         ];
 
         $this->createContingencyCodeIdResponse = $this->contingencyTest->getContingencyCodeID(
             $this->sessionContext->getCurrentAccessTokenOrNull(),
-            $this->contingencyData['testType'],
             $this->contingencyData['contingencyCode'],
             $this->contingencyData['reasonCode']
         );

@@ -48,50 +48,24 @@ $form->setAttribute('method', 'post');
 $form->setAttribute('action', $action);
 $form->prepare();
 
-if ($searchType === VehicleSearchController::SEARCH_TYPE_RETEST){
-    $data = [
-        'registrationElement'         => $form->get('registration'),
-        'vinElement'                  => $form->get('vin'),
-        'submitElement'               => $form->get('submit'),
-        'testNumberElement'           => $form->get('testNumber'),
-        'searchType'                  => (isset($searchType) ? $searchType : null),
-        'vinTypeElement'              => $form->get('vinType'),
-        'previousRegistrationElement' => $form->get('previousSearchRegistration'),
-        'previousVinElement'          => $form->get('previousSearchVin'),
-    ];
+$data = [
+    'registrationElement'         => $form->get('registration'),
+    'vinElement'                  => $form->get('vin'),
+    'submitElement'               => $form->get('submit'),
+    'searchType'                  => (isset($searchType) ? $searchType : null),
+];
 
-    echo $this->partial(
-        'vehicleRetestSearch',
-        [
-            'form'                          => $form,
-            'data'                          => $data,
-            'noMatches'                     => $noMatches,
-            'showCreateButton'              => $showCreateButton,
-            'results'                       => $results,
-            'tooManyMatches'                => $tooManyMatches,
-            'registrationNumberMaxLength'   => $registrationNumberMaxLength,
-        ]
-    );
-} else {
-    $data = [
-        'registrationElement'         => $form->get('registration'),
-        'vinElement'                  => $form->get('vin'),
-        'submitElement'               => $form->get('submit'),
-        'searchType'                  => (isset($searchType) ? $searchType : null),
-    ];
-
-    echo $this->partial(
-        'vehicleSearch',
-        [
-            'form'                          => $form,
-            'data'                          => $data,
-            'noMatches'                     => $noMatches,
-            'showCreateButton'              => $showCreateButton,
-            'results'                       => $results,
-            'tooManyMatches'                => $tooManyMatches,
-            'registrationNumberMaxLength'   => $registrationNumberMaxLength,
-            'urlTemplate'                   => $urlTemplate,
-            'searchResultMessage'          => $searchResultMessage,
-        ]
-    );
-}
+echo $this->partial(
+    'vehicleSearch',
+    [
+        'form'                          => $form,
+        'data'                          => $data,
+        'noMatches'                     => $noMatches,
+        'showCreateButton'              => $showCreateButton,
+        'results'                       => $results,
+        'tooManyMatches'                => $tooManyMatches,
+        'registrationNumberMaxLength'   => $registrationNumberMaxLength,
+        'urlTemplate'                   => $urlTemplate,
+        'searchResultMessage'          => $searchResultMessage,
+    ]
+);

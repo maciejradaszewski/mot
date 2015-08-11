@@ -11,7 +11,6 @@ class Vm4827EmergencyLog
     protected $testerCode;
     protected $testDate;
     protected $site;
-    protected $testType;
     protected $reasonCode;
     protected $reasonText;
     protected $response;
@@ -49,14 +48,6 @@ class Vm4827EmergencyLog
     public function setTestSite($site)
     {
         $this->site = $site;
-    }
-
-    /**
-     * @param mixed $testType
-     */
-    public function setTestType($testType)
-    {
-        $this->testType = $testType;
     }
 
     /**
@@ -110,7 +101,6 @@ class Vm4827EmergencyLog
             'testerCode'      => $this->testerCode,
             'testedByWhom'    => $this->testerId,
             'siteId'          => $this->site,
-            'testType'        => $this->testType,
             'contingencyCode' => $this->emergencyCode,
             'performedAt'     => $testDate->format('Y-m-d'),
             'dateYear'        => $testDate->format('Y'),

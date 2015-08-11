@@ -44,6 +44,9 @@ class VehicleSearchResult
     /** @var string $lastMotTestDate */
     private $lastMotTestDate;
 
+    /** @var string $retestEligibility */
+    private $retestEligibility;
+
     /** @var array $results */
     private $results;
 
@@ -92,6 +95,7 @@ class VehicleSearchResult
             $newVehicleObject->setMotTestCount(ArrayUtils::tryGet($vehicleData, 'total_mot_tests', 0));
             $newVehicleObject->setLastMotTestDate(ArrayUtils::tryGet($vehicleData, 'mot_completed_date'));
             $newVehicleObject->setIsDvlaVehicle(ArrayUtils::tryGet($vehicleData, 'isDvla'));
+            $newVehicleObject->setRetestEligibility(ArrayUtils::tryGet($vehicleData, 'retest_eligibility'));
 
             $this->addResult($newVehicleObject);
         }
@@ -331,9 +335,46 @@ class VehicleSearchResult
     /**
      * @return string
      */
+    public function getRetestEligibility()
+    {
+        return $this->retestEligibility;
+    }
+
+    /**
+     * @param string $retestEligibility
+     */
+    public function setRetestEligibility($retestEligibility)
+    {
+        if (is_null($retestEligibility)) {
+            $retestEligibility = false;
+        }
+
+        $this->retestEligibility = $retestEligibility;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getSource()
     {
         return ($this->isDvlaVehicle()) ? VehicleSearchSource::DVLA : VehicleSearchSource::VTR;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRetest()
+    {
+        return $this->retestEligibility;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNormalTest()
+    {
+        return !$this->retestEligibility;
     }
 
 }

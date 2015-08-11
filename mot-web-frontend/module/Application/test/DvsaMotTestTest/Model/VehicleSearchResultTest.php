@@ -79,6 +79,9 @@ class VehicleSearchResultTest extends PHPUnit_Framework_TestCase
             $this->assertEquals($result->isDvlaVehicle(), $apiVehicles[$i]['isDvla']);
             $this->assertEquals($result->getModelDetail(), $apiVehicles[$i]['modelDetail']);
             $this->assertEquals($result->getFuelType(), $apiVehicles[$i]['fuelType']['name']);
+            $this->assertFalse($result->getRetestEligibility());
+            $this->assertFalse($result->isRetest());
+            $this->assertTrue($result->isNormalTest());
 
             if ($result->isDvlaVehicle()) {
                 $this->assertEquals($result->getSource(), VehicleSearchSource::DVLA);
@@ -96,6 +99,56 @@ class VehicleSearchResultTest extends PHPUnit_Framework_TestCase
         $vehicleSearchModel->addResults([]);
 
         $this->assertEquals(0, $vehicleSearchModel->getResultsCount());
+    }
+
+    public function testRetestEligibilitySetToTrueAvailableAsPartOfResults()
+    {
+        $results = $this->getDemoApiResults();
+
+        foreach ($results['data']['vehicles'] as &$result) {
+            $result['retest_eligibility'] = true;
+        }
+
+        $vehicleSearchModel = $this->vehicleSearchResultModel;
+        $vehicleSearchModel->addResults($results['data']['vehicles']);
+
+        $this->assertEquals(3, $vehicleSearchModel->getResultsCount());
+
+        $i = 0;
+
+        /** @var VehicleSearchResult $result */
+        foreach ($vehicleSearchModel->getResults() as $result) {
+            $this->assertInstanceOf(VehicleSearchResult::class, $result);
+            $this->assertTrue($result->isRetest());
+            $this->assertFalse($result->isNormalTest());
+
+            $i++;
+        }
+    }
+
+    public function testRetestEligibilitySetToFalseAvailableAsPartOfResults()
+    {
+        $results = $this->getDemoApiResults();
+
+        foreach ($results['data']['vehicles'] as &$result) {
+            $result['retest_eligibility'] = false;
+        }
+
+        $vehicleSearchModel = $this->vehicleSearchResultModel;
+        $vehicleSearchModel->addResults($results['data']['vehicles']);
+
+        $this->assertEquals(3, $vehicleSearchModel->getResultsCount());
+
+        $i = 0;
+
+        /** @var VehicleSearchResult $result */
+        foreach ($vehicleSearchModel->getResults() as $result) {
+            $this->assertInstanceOf(VehicleSearchResult::class, $result);
+            $this->assertFalse($result->isRetest());
+            $this->assertTrue($result->isNormalTest());
+
+            $i++;
+        }
     }
 
     private function getDemoApiResults()

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MotTest {
 
-    public String motTestNumber;
+    private String motTestNumber;
 
     @Override
     public String toString() {

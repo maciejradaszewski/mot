@@ -22,7 +22,8 @@ public abstract class BaseTest {
     protected SiteData siteData = new SiteData();
     protected UserData userData = new UserData();
     protected VehicleData vehicleData = new VehicleData();
-    protected MotData motData = new MotData();
+    protected MotApi motApi = new MotApi();
+    protected MotUI motUI;
 
     protected static final ThreadLocal<WebDriverConfigurator> webDriverConfigurator =
             new ThreadLocal<>();
@@ -46,6 +47,7 @@ public abstract class BaseTest {
 
         driver = webDriverConfigurator.get().getDriver();
         pageNavigator.setDriver(driver);
+        motUI = new MotUI(driver);
         roleAssociationWorkflow.setDriver(driver);
         vehicleReInspectionWorkflow.setDriver(driver);
 
