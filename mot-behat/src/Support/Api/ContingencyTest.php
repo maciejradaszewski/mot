@@ -14,13 +14,12 @@ class ContingencyTest extends MotApi
 
     /**
      * @param $token
-     * @param $testType
      * @param string $contingencyCode
      * @param string $reasonCode
      *
      * @return array
      */
-    public function getContingencyCodeID($token, $testType, $contingencyCode, $reasonCode)
+    public function getContingencyCodeID($token, $contingencyCode, $reasonCode)
     {
         //use generic password if $password is "default"
         $contingencyCode = strcasecmp($contingencyCode, 'DEFAULT') == 0 ? Authentication::CONTINGENCY_CODE_DEFAULT : $contingencyCode;
@@ -37,7 +36,6 @@ class ContingencyTest extends MotApi
             'testerCode' => $testerCode,
             'reasonText' => $reasonText,
             'siteId' => $siteId,
-            'testType' => $testType,
             'contingencyCode' => $contingencyCode,
             'performedAt' => $today->format('Y-m-d'),
             'dateYear' => $today->format('Y'),

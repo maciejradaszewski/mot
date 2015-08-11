@@ -6,7 +6,9 @@ import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
+import uk.gov.dvsa.ui.pages.mot.retest.ConfirmVehicleRetestPage;
 import uk.gov.dvsa.ui.pages.mot.StartTestConfirmationPage;
+
 
 public class VehicleSearchPage extends Page {
 
@@ -46,6 +48,8 @@ public class VehicleSearchPage extends Page {
 
     private By searchResultsTable = By.cssSelector("#results-table a");
 
+    private By testStatus = By.id("vehicle-search-retest");
+
     public VehicleSearchPage(MotAppDriver driver) {
         super(driver);
         selfVerify();
@@ -74,11 +78,25 @@ public class VehicleSearchPage extends Page {
         return this;
     }
 
-    public StartTestConfirmationPage selectVehicleFromTable(){
+    public VehicleSearchPage selectVehicle(){
+        WebElement vehicleLink = driver.findElement(searchResultsTable);
+        vehicleLink.click();
+
+        return this;
+    }
+
+    public StartTestConfirmationPage selectVehicleForTest(){
         WebElement vehicleLink = driver.findElement(searchResultsTable);
         vehicleLink.click();
 
         return new StartTestConfirmationPage(driver);
+    }
+
+    public ConfirmVehicleRetestPage selectVehicleForRetest() {
+        WebElement vehicleLink = driver.findElement(searchResultsTable);
+        vehicleLink.click();
+
+        return new ConfirmVehicleRetestPage(driver);
     }
 
     public String getVehicleSearchStepNumber() {
@@ -97,6 +115,10 @@ public class VehicleSearchPage extends Page {
         return mainMessage.getText();
     }
 
+    public String getTestStatus() {
+        return driver.findElement(testStatus).getText();
+    }
+
     public boolean isResultVehicleDisplayed() {
         return driver.findElement(searchResultsTable).isDisplayed();
     }
@@ -105,5 +127,13 @@ public class VehicleSearchPage extends Page {
         searchAgainLink.click();
 
         return this;
+    }
+
+    public boolean isSearchAgainDisplyed(){
+       return searchAgainLink.isDisplayed();
+    }
+
+    public  String getSearchResultMessage() {
+        return mainMessage.getText();
     }
 }

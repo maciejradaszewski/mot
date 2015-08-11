@@ -12,6 +12,7 @@ import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.mot.modal.ManualAdvisoryModalPage;
 import uk.gov.dvsa.ui.pages.Page;
 import uk.gov.dvsa.ui.pages.mot.modal.PrsLocationModalPage;
+import uk.gov.dvsa.ui.pages.mot.retest.ReTestResultsEntryPage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +64,7 @@ public class ReasonForRejectionPage extends Page {
 
     public ReasonForRejectionPage(MotAppDriver driver) {
         super(driver);
+        PageInteractionHelper.refreshPage();
         selfVerify();
     }
 
@@ -81,7 +83,13 @@ public class ReasonForRejectionPage extends Page {
         return new TestResultsEntryPage(driver);
     }
 
-    protected ReasonForRejectionPage addManualAdvisory() {
+    public ReTestResultsEntryPage clickRetestDone() {
+        PageInteractionHelper.waitForElementToBeVisible(doneButton, Configurator.defaultFastWebElementTimeout);
+        doneButton.click();
+        return new ReTestResultsEntryPage(driver);
+    }
+
+    public ReasonForRejectionPage addManualAdvisory() {
         manualAdvisory.click();
 
         ManualAdvisoryModalPage advisoryModalPage = new ManualAdvisoryModalPage(driver);
@@ -90,7 +98,7 @@ public class ReasonForRejectionPage extends Page {
         return this;
     }
 
-    protected ReasonForRejectionPage addPRS() {
+    public ReasonForRejectionPage addPRS() {
 
         driver.findElement(searchForRfrField).sendKeys(Fault.HORN_CONTROL_MISSING.getDescription());
         searchButton.click();

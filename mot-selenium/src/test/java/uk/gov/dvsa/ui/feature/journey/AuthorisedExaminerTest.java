@@ -18,7 +18,8 @@ import static org.hamcrest.core.Is.is;
 
 public class AuthorisedExaminerTest extends BaseTest {
 
-    @BeforeMethod(alwaysRun = true) public void setup() {
+    @BeforeMethod(alwaysRun = true)
+    public void setup() {
         CompanyDetailsHelper.setCompanyDetails();
         ContactDetailsHelper.setContactDetails();
     }

@@ -9,7 +9,7 @@ import uk.gov.dvsa.domain.service.MotTestService;
 
 import java.io.IOException;
 
-public class MotData extends MotTestService{
+public class MotApi extends MotTestService{
 
     public MotTest createTest(User requestor, int siteId, Vehicle vehicle, TestOutcome outcome,
                                  int mileage, DateTime issuedDate) throws IOException {

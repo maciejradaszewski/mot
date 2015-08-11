@@ -16,6 +16,7 @@ use DvsaMotTest\Constants\VehicleSearchSource;
 use DvsaMotTest\Model\VehicleSearchResult;
 use DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultMessage;
 use Zend\Di\Exception\ClassNotFoundException;
+use DvsaCommon\Utility\DtoHydrator;
 
 /**
  * Class VehicleSearchService
@@ -82,14 +83,25 @@ class VehicleSearchService
      * @param bool $searchDvla
      * @return array
      */
-    public function search($vin, $vrm, $searchDvla = false)
+    public function search($vin, $vrm, $searchDvla = false, $vtsId = false, $isContingency = false)
     {
         $apiUrl = VehicleUrlBuilder::vehicleList();
         $params = [
             'reg' => $vrm,
             'vin' => $vin,
-            'excludeDvla' => !$searchDvla
+            'excludeDvla' => !$searchDvla,
+            'vtsId' => $vtsId
         ];
+
+        if ($isContingency) {
+            if ($this->contingencySessionManager->isMotContingency()) {
+                $contingencySession = $this->contingencySessionManager->getContingencySession();
+
+                $params += [
+                    'contingencyDate' => $contingencySession['dto']->getPerformedAt(),
+                ];
+            }
+        }
 
         $result = $this->restClient->getWithParams($apiUrl, $params);
 

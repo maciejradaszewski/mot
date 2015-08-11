@@ -8,6 +8,7 @@ use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommon\Obfuscate\ParamObfuscator;
+use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\DqlBuilder\SearchParam\VehicleSearchParam;
@@ -29,6 +30,7 @@ use VehicleApi\Service\VehicleSearchService;
 use Zend\Http\Header\Date;
 use DvsaMotApi\Service\TesterService;
 use DvsaMotApiTest\Factory\VehicleObjectsFactory as VOF;
+use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 
 /**
  * it test functionality of class VehicleSearchService
@@ -56,6 +58,8 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
     private $paramObfuscator;
     /** @var bool $vehicleSearchFuzzyEnabled */
     private $vehicleSearchFuzzyEnabled = true;
+    /* @var RetestEligibilityValidator $retestEligibilityValidator */
+    private $retestEligibilityValidator;
 
     public function setUp()
     {
@@ -67,6 +71,11 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
         $this->mockTesterService = XMock::of(TesterService::class);
         $this->mockVehicleCatalog = XMock::of(VehicleCatalogService::class);
         $this->paramObfuscator = XMock::of(ParamObfuscator::class);
+
+        $this->retestEligibilityValidator = $this
+            ->getMockBuilder(RetestEligibilityValidator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     public function testSearchAllParametersNullReturnsEmptyArray()
@@ -349,6 +358,53 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
         $this->assertFalse($vehicles['searched']['isElasticSearch']);
     }
 
+    public function testSearchForVehiclesWithResultWithSiteAndVehicleEligibleForRetest()
+    {
+        $vehicleObject = VOF::vehicle(1);
+
+        $this->retestEligibilityValidator->expects($this->any())
+                                         ->method('checkEligibilityForRetest')
+                                         ->with(1, 1)
+                                         ->willReturn(true);
+
+        $this->getMockVehicleRepositoryWithResult('searchVehicle', [ $vehicleObject ]);
+
+        $service = $this->getMockService();
+        $result =  $service->searchVehicleWithMotData('DUMMY', null, true, 10, 1, 1);
+
+        $this->assertEquals(1, count($result));
+
+        $result = current($result);
+
+        $this->assertionBetweenVehicleObjectAndVehicleResultArray($vehicleObject, $result);
+        $this->assertTrue($result['retest_eligibility']);
+    }
+
+    public function testSearchForVehiclesWithResultWithSiteAndNotVehicleEligibleForRetest()
+    {
+        $vehicleObject = VOF::vehicle(1);
+
+        $this->retestEligibilityValidator->expects($this->any())
+             ->method('checkEligibilityForRetest')
+             ->will(
+                 $this->throwException(
+                     new BadRequestException('Vehicle is not eligible for a retest', 404)
+                 )
+             );
+
+        $this->getMockVehicleRepositoryWithResult('searchVehicle', [ $vehicleObject ]);
+
+        $service = $this->getMockService();
+        $result =  $service->searchVehicleWithMotData('DUMMY', null, true, true, 10, 1);
+
+        $this->assertEquals(1, count($result));
+
+        $result = current($result);
+
+        $this->assertionBetweenVehicleObjectAndVehicleResultArray($vehicleObject, $result);
+        $this->assertFalse($result['retest_eligibility']);
+    }
+
     /**
      * @param $vehicleObject DvlaVehicle
      * @param $result array
@@ -384,7 +440,7 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
             $this->mockTesterService,
             $this->getMockVehicleCatalog(),
             $this->paramObfuscator,
-            $this->vehicleSearchFuzzyEnabled
+            $this->retestEligibilityValidator
         );
     }
 

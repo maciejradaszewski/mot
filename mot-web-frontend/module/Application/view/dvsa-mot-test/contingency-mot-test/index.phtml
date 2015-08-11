@@ -9,7 +9,6 @@ use DvsaCommon\Enum\EmergencyReasonCode;
 
 $radioTestWhoGroupValue   = $dto->getTestedByWhom();
 $radioSiteGroupValue      = (int)$dto->getSiteId();
-$radioTestTypeGroupValue  = $dto->getTestType();
 $ctCodeValue              = $dto->getContingencyCode();
 $testerCodeValue          = $dto->getTesterCode();
 
@@ -96,27 +95,6 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
                     <label for="ct-code">Contingency code</label>
                     <input type="text" name="ct-code" class="form-control" id="ct-code" value="<?php echo $this->escapeHtml($ctCodeValue) ?>" maxlength="10">
                 </div>
-            </div>
-            <div class="col-sm-6">
-                <?php echo $this->partial(
-                    'partial/forms/radioBoxDouble.phtml',
-                    [
-                        'id1'       => 'type-1',
-                        'id2'       => 'type-2',
-                        'option1'   => 'Normal test',
-                        'option2'   => 'Retest',
-                        'option1Value' => 'normal',
-                        'option2Value' => 'retest',
-                        'value'     => $this->escapeHtml($radioTestTypeGroupValue),
-                        'name'      => 'radio-test-type-group',
-                        'label'   => 'Contingency test type',
-                        'required' => false,
-                        'labelId'   => 'radio-test-type-group-label',
-                        'labelId1' => 'radio-test-type-group-labelnormal-test',
-                        'labelId2' => 'radio-test-type-group-labelretest',
-                        'fieldsetCssClass' => 'test-type'
-                    ]
-                ); ?>
             </div>
         </div>
 

@@ -92,34 +92,58 @@ class VehicleSearchControllerTest extends AbstractVehicleSearchControllerTest
         parent::cantBeAccessedUnauthenticatedRequest('vehicleSearch');
     }
 
-    public function testSearchVehicleWithValidPartialVinAndReg($action = null, $expUrl = null)
+    public function testSearchVehicleWithValidPartialVinAndReg()
     {
         $this->setupAuthorizationService([PermissionInSystem::MOT_TEST_START]);
         $vehicleData = $this->getTestVehicleData();
 
-        parent::testSearchVehicleWithValidPartialVinAndReg(
-            '/start-test-confirmation/' . $vehicleData['id'] . '/0/' . VehicleSearchSource::VTR
+        $this->getRestClientMock('getWithParams', $this->getPositiveTestSearchResult());
+        $this->requestSearch(
+            [
+                VehicleSearchController::PRM_VIN => self::TEST_PARTIAL_VIN,
+                VehicleSearchController::PRM_REG => self::TEST_REG,
+            ],
+            'vehicle-search',
+            'get'
         );
+
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
     }
 
-    public function testSearchVehicleWithValidFullVinAndNoReg($action = null, $expUrl = null)
+    public function testSearchVehicleWithValidFullVinAndNoReg()
     {
         $this->setupAuthorizationService([PermissionInSystem::MOT_TEST_START]);
         $vehicleData = $this->getTestVehicleData();
 
-        parent::testSearchVehicleWithValidFullVinAndNoReg(
-            '/start-test-confirmation/' . $vehicleData['id'] . '/1/' . VehicleSearchSource::VTR
+        $this->getRestClientMock('getWithParams', $this->getPositiveTestSearchResult());
+        $this->requestSearch(
+            [
+                VehicleSearchController::PRM_VIN => self::TEST_FULL_VIN,
+                VehicleSearchController::PRM_REG => ""
+            ],
+            'vehicle-search',
+            'get'
         );
+
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
     }
 
-    public function testSearchVehicleWithFullVinWithSpacesAndNoReg($action = null, $expUrl = null)
+    public function testSearchVehicleWithFullVinWithSpacesAndNoReg()
     {
         $this->setupAuthorizationService([PermissionInSystem::MOT_TEST_START]);
         $vehicleData = $this->getTestVehicleData();
 
-        parent::testSearchVehicleWithFullVinWithSpacesAndNoReg(
-            '/start-test-confirmation/' . $vehicleData['id'] . '/1/' . VehicleSearchSource::VTR
+        $this->getRestClientMock('getWithParams', $this->getPositiveTestSearchResult());
+        $this->requestSearch(
+            [
+                VehicleSearchController::PRM_VIN => self::TEST_FULL_VIN_WITH_SPACES,
+                VehicleSearchController::PRM_REG => ""
+            ],
+            'vehicle-search',
+            'get'
         );
+
+        $this->assertResponseStatus(self::HTTP_OK_CODE);
     }
 
     public function testSearchVehicleWithPartialVinAndNoReg($action = null)
@@ -166,24 +190,6 @@ class VehicleSearchControllerTest extends AbstractVehicleSearchControllerTest
         $this->assertEquals($variables['noMatches'], false);
     }
 
-    private function assertVehicles($actualVehicles)
-    {
-        $expectVehicles = $this->translateDvlaFlagIntoSource($this->getTwoTestVehicleData());
-
-        foreach ($expectVehicles as $idx => $expect) {
-            $actual = $actualVehicles[$idx];
-
-            //  check actual id is not empty
-            $this->assertRegExp('/[A-Za-z]+[0-9-_]+/', $actual['id']);
-            //  because id obfuscated
-            $this->assertNotEquals($expect['id'], $actual['id']);
-
-            unset($actual['id'], $expect['id']);
-
-            $this->assertEquals($expect, $actual);
-        }
-    }
-
     private function assertVehiclesSearchModel($actualVehicles)
     {
         $expectVehicles = $this->getTwoTestVehicleDataResultsViaVehicleSearchService();
@@ -196,18 +202,6 @@ class VehicleSearchControllerTest extends AbstractVehicleSearchControllerTest
 
             $this->assertEquals($expect, $actual);
         }
-    }
-
-    private function translateDvlaFlagIntoSource($data)
-    {
-        array_walk(
-            $data,
-            function (&$vehicle) {
-                $vehicle['source'] = $vehicle['isDvla'] ? VehicleSearchSource::DVLA : VehicleSearchSource::VTR;
-            }
-        );
-
-        return $data;
     }
 
     public function testSearchVehicleWithValidRegNoVinMultipleResults()
@@ -295,79 +289,6 @@ class VehicleSearchControllerTest extends AbstractVehicleSearchControllerTest
         );
 
         $this->assertResponseStatus(self::HTTP_OK_CODE);
-    }
-
-    public function testRetestVehicleSearchCanBeAccessedForAuthenticatedRequest()
-    {
-        parent::canBeAccessedForAuthenticatedRequest('retestVehicleSearch');
-    }
-
-    /**
-     * @expectedException \DvsaCommon\Exception\UnauthorisedException
-     */
-    public function testRetestSearchVehicleUnauthenticated()
-    {
-        parent::cantBeAccessedUnauthenticatedRequest('retestVehicleSearch');
-    }
-
-    public function testRetestSearchVehicleWithValidMotTestId()
-    {
-        $this->setupAuthorizationService([PermissionInSystem::MOT_TEST_START]);
-
-        $motTestData = $this->getTestMotTestDataDto();
-        /** @var MotTestDto $motTestDto */
-        $motTestDto = $motTestData['data'];
-
-        $this->setResultForVehicleSearchService('getVehicleFromMotTestCertificateForRetest', $motTestDto->getVehicle());
-
-        $this->requestSearch(
-            [
-                VehicleSearchController::PRM_TEST_NR => self::MOT_TEST_NUMBER,
-                VehicleSearchController::PRM_REG => null,
-                VehicleSearchController::PRM_SUBMIT => 'Search',
-            ],
-            'retest-vehicle-search'
-        );
-
-        $this->assertRedirectLocation(
-            $this->getController()->getResponse(),
-            '/start-retest-confirmation/' . self::VEHICLE_ID_ENC . '/0'
-        );
-
-        $this->assertResponseStatus(self::HTTP_REDIRECT_CODE);
-    }
-
-    public function testRetestSearchVehicleWithInvalidMotTestId()
-    {
-        $this->setupAuthorizationService([PermissionInSystem::MOT_TEST_START]);
-        $error = 'error';
-
-        $this->setResultForVehicleSearchService('getVehicleFromMotTestCertificateForRetest', $error);
-
-        $this->requestSearch(
-            [
-                VehicleSearchController::PRM_TEST_NR => self::MOT_TEST_INVALID_NUMBER,
-                VehicleSearchController::PRM_SUBMIT => 'Search',
-            ], 'retest-vehicle-search'
-        );
-
-        $this->assertResponseStatus(self::HTTP_OK_CODE);
-    }
-
-    public function testRetestSearchVehicleWithValidPartialVinAndReg()
-    {
-        $this->setupAuthorizationService([PermissionInSystem::MOT_TEST_START]);
-        $this->getRestClientMock('getWithParams', $this->getPositiveRetestSearchResult());
-
-        $this->requestSearch(
-            [
-                VehicleSearchController::PRM_VIN => self::TEST_PARTIAL_VIN,
-                VehicleSearchController::PRM_REG => self::TEST_REG,
-                VehicleSearchController::PRM_SUBMIT => 'Search',
-            ], 'retest-vehicle-search'
-        );
-
-        $this->assertResponseStatus(self::HTTP_REDIRECT_CODE);
     }
 
     /**
@@ -609,4 +530,5 @@ class VehicleSearchControllerTest extends AbstractVehicleSearchControllerTest
                                        ->method($method)
                                        ->willReturn($resultWithSearchMethod);
     }
+
 }

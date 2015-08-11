@@ -7,6 +7,7 @@ use DvsaEntities\Entity\DvlaVehicle;
 use DvsaEntities\Entity\DvlaVehicleImportChangeLog;
 use DvsaEntities\Entity\MotTest;
 use DvsaEntities\Entity\Vehicle;
+use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 use VehicleApi\Service\VehicleSearchService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -31,8 +32,8 @@ class VehicleSearchServiceFactory implements FactoryInterface
             $entityManager->getRepository(MotTest::class),
             $serviceLocator->get('TesterService'),
             $serviceLocator->get('VehicleCatalogService'),
-            $serviceLocator->get(ParamObfuscator::class)
-
+            $serviceLocator->get(ParamObfuscator::class),
+            $serviceLocator->get(RetestEligibilityValidator::class)
         );
     }
 }

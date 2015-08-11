@@ -312,16 +312,6 @@ return [
                     ],
                 ],
             ],
-            'retest-vehicle-search'                       => [
-                'type'    => 'segment',
-                'options' => [
-                    'route'    => '/retest-vehicle-search',
-                    'defaults' => [
-                        'controller' => MotTest\VehicleSearchController::class,
-                        'action'     => 'retestVehicleSearch',
-                    ],
-                ],
-            ],
             'demo-vehicle-search'                         => [
                 'type'    => 'segment',
                 'options' => [
@@ -359,21 +349,6 @@ return [
                     'defaults'    => [
                         'controller' => MotTest\StartTestConfirmationController::class,
                         'action'     => 'demo',
-                    ],
-                ],
-            ],
-            'start-retest-confirmation'                   => [
-                'type'    => 'segment',
-                'options' => [
-                    'route'       => '/start-retest-confirmation[/:id[/:noRegistration[/:source]]]',
-                    'constraints' => [
-                        'id'             => '[0-9a-zA-Z-_]+',   // vehicleId are obfuscated
-                        'noRegistration' => '[0-9]+',
-                        'source'         => '[0-9]+'
-                    ],
-                    'defaults'    => [
-                        'controller' => MotTest\StartTestConfirmationController::class,
-                        'action'     => 'retest',
                     ],
                 ],
             ],

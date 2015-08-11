@@ -1,10 +1,14 @@
 package uk.gov.dvsa.ui.views;
 
+import org.joda.time.DateTime;
+import org.openqa.selenium.NoSuchElementException;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
+import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
@@ -20,11 +24,12 @@ public class VehicleSearchPageViewTest extends BaseTest {
 
     private User tester;
     private Vehicle vehicle;
+    private Site site;
 
-    @BeforeClass(alwaysRun = true)
+    @BeforeMethod(alwaysRun = true)
     private void setup() throws IOException {
         AeDetails aeDetails = aeData.createAeWithDefaultValues();
-        Site site = siteData.createNewSite(aeDetails.getId(), "My_Site");
+        site = siteData.createNewSite(aeDetails.getId(), "My_Site");
         tester = userData.createTester(site.getId());
         vehicle = vehicleData.getNewVehicle(tester);
     }
@@ -68,7 +73,7 @@ public class VehicleSearchPageViewTest extends BaseTest {
         //When I search for a vehicle with correct VIN and registration number
         vehicleSearchPage.searchVehicle(vehicle.getRegistrationNumber(), vehicle.getVin());
 
-        //Then the vehicle is found record was found
+        //Then the vehicle record is found
         assertThat(vehicleSearchPage.isResultVehicleDisplayed(), is(true));
         assertThat(vehicleSearchPage.getMainMessageText(), containsString("with registration " +
                 vehicle.getRegistrationNumber() + " and a VIN matching " + vehicle.getVin() + "."));
@@ -77,5 +82,32 @@ public class VehicleSearchPageViewTest extends BaseTest {
     private void verifyNewVehicleInfoAndLinkDisplayed(VehicleSearchPage page, boolean value) {
         assertThat(page.isCreateNewVehicleInfoDisplayed(), is(value));
         assertThat(page.isCreateNewVehicleRecordLinkDisplayed(), is(value));
+    }
+
+
+    @Test(groups = {"Regression","VM_9444"})
+    public void forRetestIsDisplayedForVehicleWithFailedMotTest() throws IOException, URISyntaxException {
+
+        //Given I have a vehicle with a failed MOT test
+        motApi.createTest(tester, site.getId(), vehicle, TestOutcome.FAILED, 12345, DateTime.now());
+
+        //When I search for this vehicle
+        motUI.searchForVehicle(tester, vehicle);
+
+        //Then text for "Re-Test" is present on the page
+        motUI.isTextPresent("For retest");
+    }
+
+    @Test(groups = {"Regression", "VM-1854"}, expectedExceptions = NoSuchElementException.class)
+    public void forRetestIsNotDisplayedForVehicleAfter10DayGracePeriod() throws IOException, URISyntaxException {
+
+        //Given a vehicle with more than 10days failed mot test
+        motApi.createTest(tester, site.getId(), vehicle, TestOutcome.FAILED, 12000, DateTime.now().minusDays(20));
+
+        //When I search for and locate the vehicle
+        motUI.searchForVehicle(tester, vehicle);
+
+        //Then I should not the text for "For retest" on the result
+        motUI.isTextPresent("For retest");
     }
 }

@@ -125,7 +125,7 @@ class EmergencyLogValidatorTest extends \PHPUnit_Framework_TestCase
     {
         return array_map(
             [$this, 'dpForMissing'],
-            ['contingency_code', 'tested_by_whom', 'tester_code', 'test_type', 'site_id', 'reason_code', 'reason_text']
+            ['contingency_code', 'tested_by_whom', 'tester_code', 'site_id', 'reason_code', 'reason_text']
         );
     }
 
@@ -136,7 +136,6 @@ class EmergencyLogValidatorTest extends \PHPUnit_Framework_TestCase
             'reason_code'      => EmergencyReasonCode::OTHER,
             'reason_text'      => 'four',
             'tester_code'      => 'SEAN0001',
-            'test_type'        => 'normal',
             'tested_by_whom'   => 'current',
             'site_id'          => 345,
             'test_date'        => DateUtils::today(),
@@ -180,50 +179,12 @@ class EmergencyLogValidatorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testValidationFailsTestTypeNotKnown()
-    {
-
-        $reqData = [
-            'contingency_code' => '123456A',
-            'reason_code'      => EmergencyReasonCode::COMMUNICATION_PROBLEM,
-            'tester_code'      => 'SEAN0001',
-            'test_type'        => 'weirdtype',
-            'tested_by_whom'   => 'current',
-            'site_id'          => 345,
-            'test_date'        => DateUtils::today(),
-            'test_date_year'   => '2014',
-            'test_date_month'  => '01',
-            'test_date_day'    => '01',
-        ];
-
-
-        $this->emergencyLog = \DvsaCommonTest\TestUtils\XMock::of(
-            EmergencyLog::class
-        );
-        $this->mockEmergencyService->expects($this->any())
-            ->method('getEmergencyLog')
-            ->with($this->anything())
-            ->willReturn($this->emergencyLog);
-
-        $this->mockSiteService->expects($this->any())
-            ->method('getSite')
-            ->with(345)
-            ->willReturn(new \stdClass());
-
-        $validationReturn = $this->elv->validate($reqData);
-        $errorMessages    = $this->elv->getErrorMsg();
-        $this->assertFalse($validationReturn, 'Validation return did not fail. Error messages: ' . var_export($errorMessages, true));
-        $this->assertEquals(1, count($errorMessages), 'Validation return did not include expected number of messages. Error messages: ' . var_export($errorMessages, true));
-        $this->assertEquals(EmergencyLogValidator::ERR_TEST_TYPE_INVALID, $errorMessages[0]->getDisplayMessage(), 'Error message not as expected');
-    }
-
     public function testTesterCodeIgnoredWhenTestedByOther()
     {
         $reqData = [
             'contingency_code' => '123456A',
             'reason_code'      => EmergencyReasonCode::COMMUNICATION_PROBLEM,
             'tester_code'      => 'SEAN0001',
-            'test_type'        => 'normal',
             'tested_by_whom'   => 'current',
             'site_id'          => 345,
             'test_date'        => DateUtils::today(),
@@ -265,7 +226,6 @@ class EmergencyLogValidatorTest extends \PHPUnit_Framework_TestCase
             'contingency_code' => '123456A',
             'tested_by_whom'   => 'current',
             'tester_code'      => 'SEAN0001',
-            'test_type'        => 'normal',
             'test_date'        => $testDate,
             'test_date_year'   => '2014',
             'test_date_month'  => '01',
@@ -288,7 +248,6 @@ class EmergencyLogValidatorTest extends \PHPUnit_Framework_TestCase
             'contingency_code' => EmergencyLogValidator::ERR_CODE_INVALID,
             'tested_by_whom'   => EmergencyLogValidator::ERR_TESTER_CODE_REQUIRED,
             'tester_code'      => EmergencyLogValidator::ERR_TESTER_INVALID,
-            'test_type'        => EmergencyLogValidator::ERR_TEST_TYPE_REQUIRED,
             'test_date'        => EmergencyLogValidator::ERR_DATE_REQUIRED,
             'site_id'          => EmergencyLogValidator::ERR_SITE_REQUIRED,
             'reason_code'      => EmergencyLogValidator::ERR_REASON_INVALID,

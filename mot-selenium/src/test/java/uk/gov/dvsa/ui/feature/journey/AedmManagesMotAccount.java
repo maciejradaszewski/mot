@@ -12,8 +12,8 @@ import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AeSlotsUsagePage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerChangeDetailsPage;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
 
@@ -74,7 +74,7 @@ public class AedmManagesMotAccount extends BaseTest {
     public void viewAETestLogs(User aedm, AeDetails aeDetails, Site site, User tester) throws IOException {
 
         //Given I perform an MOT test for my selected Authorised Examiner
-        motData.createTest(tester, site.getId(),
+        motApi.createTest(tester, site.getId(),
                 vehicleData.getNewVehicle(tester), TestOutcome.PASSED, 14000, DateTime.now());
 
         //When I navigate to the Authorised Examiner Test Logs page
@@ -90,7 +90,7 @@ public class AedmManagesMotAccount extends BaseTest {
     public void viewSlotReport(User aedm, AeDetails aeDetails, Site site, User tester) throws IOException {
 
         //Given I perform an MOT test for my selected Authorised Examiner
-        motData.createTest(tester, site.getId(),
+        motApi.createTest(tester, site.getId(),
                         vehicleData.getNewVehicle(tester), TestOutcome.PASSED, 14000, DateTime.now());
 
 

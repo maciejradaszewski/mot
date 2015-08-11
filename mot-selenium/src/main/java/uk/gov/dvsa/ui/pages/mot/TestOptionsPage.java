@@ -9,26 +9,17 @@ import uk.gov.dvsa.ui.pages.Page;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class TestOptionsPage extends Page {
+public class TestOptionsPage extends OptionsPage {
     private static final String PAGE_TITLE = "test started";
 
     @FindBy(id = "sign-out") private WebElement signOut;
     @FindBy(id = "return_to_home") private WebElement returnToHome;
 
     public TestOptionsPage(MotAppDriver driver) {
-        super(driver);
-        selfVerify();
+        super(driver, PAGE_TITLE);
     }
 
-    @Override
-    protected boolean selfVerify() {
-        return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
-    }
-
-    public String getMotTestPath() throws URISyntaxException {
-        URI uri = new URI(driver.getCurrentUrl());
-        String path = uri.getPath();
-
-        return path.substring(0, path.lastIndexOf('/'));
+    public void clickReturnHome(){
+        clickReturnToHome();
     }
 }

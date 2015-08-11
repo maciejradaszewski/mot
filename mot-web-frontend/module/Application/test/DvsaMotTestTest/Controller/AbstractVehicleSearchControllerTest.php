@@ -38,51 +38,6 @@ abstract class AbstractVehicleSearchControllerTest extends AbstractDvsaMotTestTe
         $this->getResponseForAction($action);
     }
 
-    public function testSearchVehicleWithValidPartialVinAndReg($expUrl, $action = null)
-    {
-        $this->getRestClientMock('getWithParams', $this->getPositiveTestSearchResult());
-        $this->requestSearch(
-            [
-                VehicleSearchController::PRM_VIN => self::TEST_PARTIAL_VIN,
-                VehicleSearchController::PRM_REG => self::TEST_REG,
-            ],
-            $action,
-            'get'
-        );
-
-        $this->assertResponseStatus(self::HTTP_OK_CODE);
-    }
-
-    public function testSearchVehicleWithValidFullVinAndNoReg($expUrl, $action = null)
-    {
-        $this->getRestClientMock('getWithParams', $this->getPositiveTestSearchResult());
-        $this->requestSearch(
-            [
-                VehicleSearchController::PRM_VIN => self::TEST_FULL_VIN,
-                VehicleSearchController::PRM_REG => ""
-            ],
-            $action,
-            'get'
-        );
-
-        $this->assertResponseStatus(self::HTTP_OK_CODE);
-    }
-
-    public function testSearchVehicleWithFullVinWithSpacesAndNoReg($expUrl, $action = null)
-    {
-        $this->getRestClientMock('getWithParams', $this->getPositiveTestSearchResult());
-        $this->requestSearch(
-            [
-                VehicleSearchController::PRM_VIN => self::TEST_FULL_VIN_WITH_SPACES,
-                VehicleSearchController::PRM_REG => ""
-            ],
-            $action,
-            'get'
-        );
-
-        $this->assertResponseStatus(self::HTTP_OK_CODE);
-    }
-
     protected function requestSearch(array $params, $action = null, $method = 'post')
     {
         $queryParams = [];

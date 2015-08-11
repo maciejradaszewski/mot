@@ -1,14 +1,15 @@
 package uk.gov.dvsa.ui.feature.journey;
 
 import org.joda.time.DateTime;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
+import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.ui.BaseTest;
-import uk.gov.dvsa.ui.pages.*;
+import uk.gov.dvsa.ui.pages.VehicleSearchPage;
 import uk.gov.dvsa.ui.pages.mot.*;
 
 import java.io.IOException;
@@ -20,17 +21,19 @@ import static org.hamcrest.core.Is.is;
 public class ContingencyMotTest extends BaseTest {
     private User tester;
     private Vehicle vehicle;
-    private static final String contingencyCode = "12345A";
+    private final String contingencyCode = "12345A";
+    private AeDetails aeDetails;
+    private Site site;
 
-    @BeforeClass(alwaysRun = true)
+    @BeforeMethod(alwaysRun = true)
     private void setup() throws IOException {
-        AeDetails aeDetails = aeData.createAeWithDefaultValues();
-        Site testSite = siteData.createNewSite(aeDetails.getId(), "New_vts");
-        tester = userData.createTester(testSite.getId());
+        aeDetails = aeData.createAeWithDefaultValues();
+        site = siteData.createNewSite(aeDetails.getId(), "New_vts");
+        tester = userData.createTester(site.getId());
         vehicle = vehicleData.getNewVehicle(tester);
     }
 
-    @Test(groups = {"BVT", "Regression"})
+    @Test(groups = {"BVT", "Regression", "VM-4825,Sprint05,VM-9444 Regression"})
     public void conductTestSuccessfully() throws IOException, URISyntaxException {
 
         //Given I am on the Test Contingency Test Entry page
@@ -42,7 +45,7 @@ public class ContingencyMotTest extends BaseTest {
 
         //I can proceed with the Mot test
         StartTestConfirmationPage startTestConfirmationPage =
-                vehicleSearchPage.searchVehicle(vehicle).selectVehicleFromTable();
+                vehicleSearchPage.searchVehicle(vehicle).selectVehicleForTest();
 
         TestResultsEntryPage testResultsEntryPage =
                 startTestConfirmationPage.clickStartMotTestWhenConductingContingencyTest();
@@ -59,5 +62,20 @@ public class ContingencyMotTest extends BaseTest {
         TestCompletePage testCompletePage = testSummaryPage.finishTestAndPrint();
 
         assertThat(testCompletePage.verifyPrintButtonDisplayed(), is(true));
+    }
+
+    @Test(groups = {"BVT", "Regression", "VM-4825,Sprint05,VM-9444 Regression"})
+    public void conductReTestSuccessfully() throws IOException, URISyntaxException {
+
+        //Given I have a vehicle with a failed MOT test
+        motApi.createTest(tester, site.getId(), vehicle, TestOutcome.FAILED, 12345, DateTime.now());
+
+        //And all faults has been fixed
+
+        //When I Conduct a re-test on the vehicle via contingency route
+        motUI.retest.conductContingencyRetest(tester, contingencyCode, vehicle);
+
+        //Then the retest is successful
+        motUI.retest.verifyRetestIsSuccessful();
     }
 }

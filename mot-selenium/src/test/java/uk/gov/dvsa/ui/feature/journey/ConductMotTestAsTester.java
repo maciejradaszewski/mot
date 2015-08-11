@@ -1,9 +1,13 @@
 package uk.gov.dvsa.ui.feature.journey;
 
-import org.testng.annotations.DataProvider;
+import org.joda.time.DateTime;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import uk.gov.dvsa.domain.model.*;
+import uk.gov.dvsa.domain.model.AeDetails;
+import uk.gov.dvsa.domain.model.Site;
+import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.CancelTestReason;
+import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.mot.*;
@@ -16,18 +20,21 @@ import static org.hamcrest.core.Is.is;
 
 public class ConductMotTestAsTester extends BaseTest {
 
-    @DataProvider(name = "TesterAndVehicle")
-    public Object[][] createTesterAndVehicle() throws IOException {
-        AeDetails aeDetails = aeData.createAeWithDefaultValues();
-        Site testSite = siteData.createNewSite(aeDetails.getId(), "My_Site");
-        User tester = userData.createTester(testSite.getId());
-        Vehicle vehicle = vehicleData.getNewVehicle(tester);
+    private Site site;
+    private AeDetails aeDetails;
+    private User tester;
+    private Vehicle vehicle;
 
-        return new Object[][]{{tester, vehicle}};
+    @BeforeMethod(alwaysRun = true)
+    private void setupTestData() throws IOException {
+        aeDetails = aeData.createAeWithDefaultValues();
+        site = siteData.createNewSite(aeDetails.getId(), "TestSite");
+        tester = userData.createTester(site.getId());
+        vehicle = vehicleData.getNewVehicle(tester);
     }
 
-    @Test(groups = {"BVT", "Regression"}, dataProvider = "TesterAndVehicle")
-    public void passTestSuccessfullyWithNoRFR(User tester, Vehicle vehicle) throws IOException, URISyntaxException {
+    @Test(groups = {"BVT", "Regression"})
+    public void passTestSuccessfullyWithNoRFR() throws IOException, URISyntaxException {
 
         //Given I am on the Test Results Entry Page
         TestResultsEntryPage testResultsEntryPage = pageNavigator.gotoTestResultsEntryPage(tester,vehicle);
@@ -45,9 +52,9 @@ public class ConductMotTestAsTester extends BaseTest {
 
         assertThat(testCompletePage.verifyPrintButtonDisplayed(), is(true));
     }
-    
-    @Test(groups = {"BVT", "Regression"}, dataProvider = "TesterAndVehicle")
-    public void startAndAbandonTest(User tester, Vehicle vehicle) throws URISyntaxException, IOException {
+
+    @Test(groups = {"BVT", "Regression"} )
+    public void startAndAbandonTest() throws URISyntaxException, IOException {
 
         //Given I start a test and I am on the Test Results Page
         TestResultsEntryPage testResultsEntryPage = pageNavigator.gotoTestResultsEntryPage(tester, vehicle);
@@ -60,8 +67,8 @@ public class ConductMotTestAsTester extends BaseTest {
         assertThat(testAbandonedPage.isVT30messageDisplayed(), is(true));
     }
 
-    @Test(groups = {"BVT", "Regression"}, dataProvider = "TesterAndVehicle")
-    public void startAndAbortTest(User tester, Vehicle vehicle) throws URISyntaxException, IOException {
+    @Test(groups = {"BVT", "Regression"} )
+    public void startAndAbortTest() throws URISyntaxException, IOException {
 
         //Given I start a test and I am on the Test Results Page
         TestResultsEntryPage testResultsEntryPage = pageNavigator.gotoTestResultsEntryPage(tester, vehicle);
@@ -71,5 +78,20 @@ public class ConductMotTestAsTester extends BaseTest {
 
         //Then the test process should be cancelled and a VT30 Certificate generated message is displayed
         assertThat(testAbortedPage.isVT30messageDisplayed(), is(true));
+    }
+
+    @Test(groups = "Regression")
+    public void conductRetestSuccessfully() throws IOException, URISyntaxException {
+
+        //Given I have a vehicle with a failed MOT test
+        motApi.createTest(tester, site.getId(), vehicle, TestOutcome.FAILED, 12345, DateTime.now());
+
+        //And all faults has been fixed
+
+        //When I conduct a retest on the vehicle
+        motUI.retest.conductRetestPass(vehicle, tester);
+
+        //Then the retest is successful
+        motUI.retest.verifyRetestIsSuccessful();
     }
 }

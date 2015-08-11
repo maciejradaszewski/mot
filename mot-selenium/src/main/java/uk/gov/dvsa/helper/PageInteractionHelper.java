@@ -40,9 +40,8 @@ public class PageInteractionHelper {
             return true;
         }
 
-        throw new PageInstanceNotFoundException(
-                String.format("Page verification failed for %s page. ", expected)
-                + String.format("\n Expected %s page, but found %s page", expected, actual)
+        throw new PageInstanceNotFoundException("Page verification failed: "
+                + String.format("\n Expected: %s page, \n Found: %s page", expected, actual)
         );
     }
 
@@ -202,9 +201,24 @@ public class PageInteractionHelper {
     /**
      * Returns true if the element is displayed in the page, no timeouts are used
      */
-    protected boolean isElementDisplayed(WebElement element) {
+    public static boolean isElementDisplayed(WebElement element) {
         try {
             turnOffImplicitWaits();
+            return element.isDisplayed();
+        } catch (NoSuchElementException | TimeoutException ex) {
+            return false;
+        } finally {
+            turnOnImplicitWaits();
+        }
+    }
+
+    /**
+     * Returns true if the element is displayed in the page, no timeouts are used
+     */
+    public static boolean isElementDisplayed(By elementLocator) {
+        try {
+            turnOffImplicitWaits();
+            WebElement element = driver.findElement(elementLocator);
             return element.isDisplayed();
         } catch (NoSuchElementException | TimeoutException ex) {
             return false;

@@ -124,7 +124,7 @@ class ContingencyMotTestControllerTest extends AbstractFrontendControllerTestCas
                 'dateTestDay' => 01,
                 'radio-reason-group' => 'SO',
                 'other-reasons' => '',
-            ], [PermissionInSystem::EMERGENCY_TEST_READ], false, '/retest-vehicle-search?contingency=1'],
+            ], [PermissionInSystem::EMERGENCY_TEST_READ], false, '/vehicle-search?contingency=1'],
             [[
                 'radio-test-who-group' => 'current',
                 'radio-site-group' => '1',

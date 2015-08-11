@@ -50,14 +50,14 @@ if ($this->form->has('contingency')) {
 <?php endif; ?>
 
 <?php if ($results): ?>
-    <table id="results-table" class="result-table" >
+    <table id="results-table" class="result-table">
         <thead>
-            <tr>
-                <th scope="col">Vehicle</th>
-                <th scope="col">Registration mark</th>
-                <th scope="col">VIN</th>
-                <th scope="col">&nbsp;</th>
-            </tr>
+        <tr>
+            <th scope="col">Vehicle</th>
+            <th scope="col">Registration mark</th>
+            <th scope="col">VIN</th>
+            <th scope="col">&nbsp;</th>
+        </tr>
         </thead>
         <tbody>
         <?php foreach ($results as $vehicle): ?>
@@ -73,10 +73,12 @@ if ($this->form->has('contingency')) {
                         ?>
                     </strong>
                     <br/>
+                    <?php echo $this->escapeHtml($vehicle->getModelDetail()); ?>
                     <span class="result-table__meta">
                         <?php if ($vehicle->hasMotTests()): ?>
-                            <?php echo $this->escapeHtml($vehicle->getMotTestCount()); ?> tests,
-                            last tested <?php echo $this->escapeHtml($vehicle->getReadableLastMotTestDate()); ?>
+                            <?php echo $this->escapeHtml($vehicle->getMotTestCount()); ?> test<?php if ($vehicle->getMotTestCount() > 1): ?>s<?php endif; ?>,
+                            last tested
+                            <?php echo $this->escapeHtml($vehicle->getReadableLastMotTestDate()); ?>
                         <?php else: ?>
                             No tests
                         <?php endif; ?>
@@ -86,9 +88,12 @@ if ($this->form->has('contingency')) {
                 <td class="tabular"><?php echo $this->escapeHtml($vehicle->getVin()); ?></td>
                 <td class="tabular">
                     <a href="<?php echo $url ?>">
-
                         Select vehicle
                     </a>
+                    <?php if ($vehicle->isRetest()): ?>
+                        <br/>
+                        <span id="vehicle-search-retest">For retest</span>
+                    <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>
@@ -98,71 +103,87 @@ if ($this->form->has('contingency')) {
 
 <?php if ($results): ?>
     <details>
-        <summary role="button" aria-controls="details-content-1" tabindex="0" aria-expanded="false"><span class="summary" id="search-again">Search again</span></summary>
-            <div class="panel-indent" id="details-content-1" aria-hidden="true">
+    <summary role="button" aria-controls="details-content-1" tabindex="0" aria-expanded="false"><span class="summary"
+                                                                                                      id="search-again">Search again</span>
+    </summary>
+    <div class="panel-indent" id="details-content-1" aria-hidden="true">
 <?php endif; ?>
 
-<fieldset>
-    <div class="form-group" id="registration-field">
-        <label id="reg-label" for="reg-input" class="form-label">
-            Registration mark
-        </label>
-        <?php
-        $registrationElement->setAttribute('class', 'form-control is-reg');
-        $registrationElement->setAttribute('id', 'reg-input');
-        $registrationElement->setAttribute('style','width: '.(VehicleSearchController::SEARCH_VIN_NUMBER_MAX_LENGTH).'ch');
-        $registrationElement->setAttribute('maxLength', $registrationNumberMaxLength);
-        echo $this->formInput($registrationElement);
-        ?>
-    </div>
-
-    <div class="form-group <?php echo ($vinElement->getMessages() ? 'has-error' :''); ?>">
-        <label id="vin-label" for="vin-input" class="form-label">
-            VIN
-            <span class="form-hint">Enter the last 6 digits or the full VIN</span>
-        </label>
-        <?php
-        $vinElement->setAttribute('id', 'vin-input');
-        $vinElement->setAttribute('class', 'form-control is-vin');
-        $vinElement->setAttribute('style','width: '.(VehicleSearchController::SEARCH_VIN_NUMBER_MAX_LENGTH*1.5).'ch');
-        $vinElement->setAttribute('maxLength', VehicleSearchController::SEARCH_VIN_NUMBER_MAX_LENGTH);
-        echo $this->formInput($vinElement);
-        ?>
-    </div>
-
-    <?php if (!$results): ?>
-        <div class="form-group">
-            <details>
-                <summary role="button" aria-controls="details-content-0" tabindex="0" aria-expanded="false"><span class="summary">Unable to provide a registration mark or full VIN</span></summary>
-                <div class="panel-indent" id="details-content-0" aria-hidden="true">
-                    <div class="text">
-                        <p>
-                            If the vehicle doesn't have a registration mark or VIN it can still be found using the information you have available.
-                        </p>
-                        <h4 class="heading-small">If registration mark is missing</h4>
-                        <p>
-                            You must enter the VIN.
-                        </p>
-                        <p>
-                            You will only get results where the vehicle matches the VIN but has no registration mark recorded.
-                        </p>
-                        <h4 class="heading-small">If VIN is missing or cannot be found</h4>
-                        <p>
-                            You must enter the registration mark.
-                        </p>
-                        <p>
-                            You will only get results where the vehicle matches the registration mark but has no VIN recorded.
-                        </p>
-                    </div>
-                </div>
-            </details>
+    <fieldset>
+        <div class="form-group" id="registration-field">
+            <label id="reg-label" for="reg-input" class="form-label">
+                Registration mark
+            </label>
+            <?php
+            $registrationElement->setAttribute('class', 'form-control is-reg');
+            $registrationElement->setAttribute('id', 'reg-input');
+            $registrationElement->setAttribute(
+                'style',
+                'width: ' . (VehicleSearchController::SEARCH_VIN_NUMBER_MAX_LENGTH) . 'ch'
+            );
+            $registrationElement->setAttribute('maxLength', $registrationNumberMaxLength);
+            echo $this->formInput($registrationElement);
+            ?>
         </div>
-    <?php endif; ?>
 
-    <div class="form-group">
-        <input type="submit" value="Search" class="button" id="vehicle-search">
-    </div>
-</fieldset>
+        <div class="form-group <?php echo($vinElement->getMessages() ? 'has-error' : ''); ?>">
+            <label id="vin-label" for="vin-input" class="form-label">
+                VIN
+                <span class="form-hint">Enter the last 6 digits or the full VIN</span>
+            </label>
+            <?php
+            $vinElement->setAttribute('id', 'vin-input');
+            $vinElement->setAttribute('class', 'form-control is-vin');
+            $vinElement->setAttribute(
+                'style',
+                'width: ' . (VehicleSearchController::SEARCH_VIN_NUMBER_MAX_LENGTH * 1.5) . 'ch'
+            );
+            $vinElement->setAttribute('maxLength', VehicleSearchController::SEARCH_VIN_NUMBER_MAX_LENGTH);
+            echo $this->formInput($vinElement);
+            ?>
+        </div>
+
+        <?php if (!$results): ?>
+            <div class="form-group">
+                <details>
+                    <summary role="button" aria-controls="details-content-0" tabindex="0" aria-expanded="false"><span
+                            class="summary">Unable to provide a registration mark or full VIN</span></summary>
+                    <div class="panel-indent" id="details-content-0" aria-hidden="true">
+                        <div class="text">
+                            <p>
+                                If the vehicle doesn't have a registration mark or VIN it can still be found using the
+                                information you have available.
+                            </p>
+                            <h4 class="heading-small">If registration mark is missing</h4>
+
+                            <p>
+                                You must enter the VIN.
+                            </p>
+
+                            <p>
+                                You will only get results where the vehicle matches the VIN but has no registration mark
+                                recorded.
+                            </p>
+                            <h4 class="heading-small">If VIN is missing or cannot be found</h4>
+
+                            <p>
+                                You must enter the registration mark.
+                            </p>
+
+                            <p>
+                                You will only get results where the vehicle matches the registration mark but has no VIN
+                                recorded.
+                            </p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        <?php endif; ?>
+
+        <div class="form-group">
+            <input type="submit" value="Search" class="button" id="vehicle-search">
+        </div>
+    </fieldset>
 
 <?php if ($results): ?>
             </div>
@@ -172,19 +193,25 @@ if ($this->form->has('contingency')) {
 
 <?php echo $this->form()->closeTag(); ?>
 
-<nav class="content-navigation">
-    <ul class="content-navigation__secondary">
-        <li>
-            <a id="cancel_vehicle_search" href="<?php echo $this->url(\Dashboard\Controller\UserHomeController::ROUTE); ?>">Cancel and return Home</a> 
-        </li>
-    </ul>
-</nav>
+    <nav class="content-navigation">
+        <ul class="content-navigation__secondary">
+            <li>
+                <a id="cancel_vehicle_search"
+                   href="<?php echo $this->url(\Dashboard\Controller\UserHomeController::ROUTE); ?>">Cancel and return
+                    Home</a>
+            </li>
+        </ul>
+    </nav>
 
 <?php if ($showCreateButton): ?>
     <div class="message--important">
         <p id="new-vehicle-record-info">
-            If you're unable to find a vehicle you can 
-            <a id="new-vehicle-record-link" href="<?php echo $this->url('vehicle-step',[], ['query' => ['reg'=> $registrationElement->getValue(), 'vin'=>$vinElement->getValue()]]); ?>">create a new vehicle record</a>.
+            If you're unable to find a vehicle you can
+            <a id="new-vehicle-record-link" href="<?php echo $this->url(
+                'vehicle-step',
+                [],
+                ['query' => ['reg' => $registrationElement->getValue(), 'vin' => $vinElement->getValue()]]
+            ); ?>">create a new vehicle record</a>.
         </p>
     </div>
 <?php endif; ?>

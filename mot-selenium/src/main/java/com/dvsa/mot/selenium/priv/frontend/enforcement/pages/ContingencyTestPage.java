@@ -99,20 +99,11 @@ public class ContingencyTestPage extends BasePage {
     }
 
     // Use this method to fill the Contingency Test Entry form
-    public ContingencyTestPage fillContingencyTestEntryForm(Boolean normalTest, String ctyCode,
+    public ContingencyTestPage fillContingencyTestEntryForm(String ctyCode,
             int testDay, int testMonth, int testYear, ContingencyReasons reason) {
 
         // Enter Contingency code
         enterContingencyCodes(ctyCode);
-
-        // Choose type of test
-        if (normalTest) {
-
-            normalTestOption.click();
-        } else {
-
-            retest.click();
-        }
 
         // Enter the date that test was performed
         enterDay(testDay);
@@ -138,8 +129,6 @@ public class ContingencyTestPage extends BasePage {
         btnConfirmContingency.click();
 
         return new ContingencyTestPage(driver);
-
-
     }
 
     public static ContingencyTestPage navigateHereFromLoginPage(WebDriver driver, Login login,
