@@ -1,9 +1,8 @@
 -- Adding recently added flags to the role table to its history table
 
 ALTER TABLE `role_hist`
-ADD COLUMN `is_internal` TINYINT(4) UNSIGNED NULL DEFAULT 0 AFTER `code`,
-ADD COLUMN `is_trade` TINYINT(4) UNSIGNED NULL DEFAULT 0 AFTER `is_internal`;
-
+ADD COLUMN `is_internal` TINYINT UNSIGNED NULL AFTER `code`,
+ADD COLUMN `is_trade` TINYINT UNSIGNED NULL AFTER `is_internal`;
 
 DROP TRIGGER IF EXISTS `tr_role_au`;
 CREATE TRIGGER `tr_role_au` AFTER UPDATE
