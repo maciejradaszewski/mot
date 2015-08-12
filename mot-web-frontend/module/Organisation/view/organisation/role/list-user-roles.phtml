@@ -29,9 +29,25 @@ use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 </header>
 
 <div class="text">
+
     <?php if ($hasRoleOption): ?>
-        <p class="lede">You are assigning a role to <?php echo $this->escapeHtml($personFullName); ?> '<?php echo $this->escapeHtml($personUsername); ?>'.</p>
-        <p>The roles that this user is permitted to have are displayed below.</p>
+
+        <p class="lede">Choose a new role for the following person:</p>
+
+        <table class="key-value-list">
+            <tbody>
+                <tr>
+                    <th class="key-value-list__key">Name</th>
+                    <td class="key-value-list__value">
+                        <?php echo $this->escapeHtml($personFullName); ?>
+                        <span class="key-value-list__meta"><?php echo $this->escapeHtml($personUsername); ?></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br />
+
     <?php else: ?>
         <div class="message--failure">
             <p>We could not find the user <strong>'<?php echo $this->escapeHtml($personUsername); ?>'</strong>.</p>
@@ -58,7 +74,7 @@ use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 
         <?php if ($hasRoleOption): ?>
             <fieldset>
-                <legend class="form-title heading-large">Available roles</legend>
+                <legend class="form-title heading-large" style="clear:both;">Available roles</legend>
                 <div class="form-group<?php echo ($form->getRoleId()->getMessages()) ? ' has-error' : ''; ?>">
                     <fieldset>
                         <legend class="form-label">Select a role
