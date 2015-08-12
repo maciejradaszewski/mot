@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<talendfile:ContextType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:talendfile="platform:/resource/org.talend.model/model/TalendFile.xsd" confirmationNeeded="false" name="Default">
+  <contextParameter comment="" name="databaseHost" prompt="databaseHost?" promptNeeded="false" type="id_String" value="mot-api"/>
+  <contextParameter comment="" name="ldapHost" prompt="ldapHost?" promptNeeded="false" type="id_String" value="openam.mot.gov.uk"/>
+  <contextParameter comment="" name="databasePassword" prompt="databasePassword?" promptNeeded="false" type="id_String" value="password"/>
+  <contextParameter comment="" name="databaseUserName" prompt="databaseUserName?" promptNeeded="false" type="id_String" value="motdbuser"/>
+  <contextParameter comment="" name="databasePort" prompt="databasePort?" promptNeeded="false" type="id_Integer" value="3306"/>
+  <contextParameter comment="" name="ldapOU" prompt="ldapOU?" promptNeeded="false" type="id_String" value="External"/>
+  <contextParameter comment="" name="ldapPassword" prompt="ldapPassword?" promptNeeded="false" type="id_String" value="cangetinam"/>
+  <contextParameter comment="" name="databaseName" prompt="databaseName?" promptNeeded="false" type="id_String" value="mot"/>
+  <contextParameter comment="" name="defaultPassword" prompt="defaultPassword?" promptNeeded="false" type="id_String" value="Password1"/>
+  <contextParameter comment="" name="ldapBaseDN" prompt="ldapBaseDN?" promptNeeded="false" type="id_String" value="dc=mot,dc=gov,dc=uk"/>
+  <contextParameter comment="" name="ldapPort" prompt="ldapPort?" promptNeeded="false" type="id_String" value="1389"/>
+</talendfile:ContextType>
