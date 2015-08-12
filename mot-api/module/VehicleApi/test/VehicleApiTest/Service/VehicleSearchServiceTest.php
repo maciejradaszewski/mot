@@ -98,7 +98,7 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
     public function testSearchNoResultsInVehicleRepoButReturnResultFromDvlaRepo()
     {
         $this->getMockVehicleRepositoryWithResult('searchVehicle', false);
-        $this->getMockDvlaVehicleRepositoryWithResult('search', $this->getDvlaVehicleMockObjects());
+        $this->getMockDvlaVehicleRepositoryWithResult('searchVehicle', $this->getDvlaVehicleMockObjects());
 
         $service = $this->getMockService();
         $result  = $service->search('DUMMY', null, true, true, 10);
@@ -159,7 +159,7 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
     public function testSearchVehicleDataWithMotDataNoResultsInVehicleRepoButReturnResultFromDvlaRepo()
     {
         $this->getMockVehicleRepositoryWithResult('searchVehicle', false);
-        $this->getMockDvlaVehicleRepositoryWithResult('search', $this->getDvlaVehicleMockObjects());
+        $this->getMockDvlaVehicleRepositoryWithResult('searchVehicle', $this->getDvlaVehicleMockObjects());
 
         $service = $this->getMockService();
         $result  =  $service->searchVehicleWithMotData('DUMMY', null, true, 10);
@@ -260,7 +260,7 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
         $vehicleObject = VOF::dvlavehicle(1);
 
         $this->getMockVehicleRepositoryWithResult('searchVehicle', false);
-        $this->getMockDvlaVehicleRepositoryWithResult('search', [ $vehicleObject ]);
+        $this->getMockDvlaVehicleRepositoryWithResult('searchVehicle', [ $vehicleObject ]);
 
         $service = $this->getMockService();
         $result =  $service->search('DUMMY', null, true, true, 10);
@@ -279,7 +279,7 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
         $vehicleObjects = $this->getDvlaVehicleMockObjects();
 
         $this->getMockVehicleRepositoryWithResult('searchVehicle', false);
-        $this->getMockDvlaVehicleRepositoryWithResult('search', $vehicleObjects);
+        $this->getMockDvlaVehicleRepositoryWithResult('searchVehicle', $vehicleObjects);
 
         $service = $this->getMockService();
         $result  = $service->search('DUMMY', null, true, true, 10);

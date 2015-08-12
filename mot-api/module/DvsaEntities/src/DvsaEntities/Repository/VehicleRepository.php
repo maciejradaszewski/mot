@@ -46,16 +46,16 @@ class VehicleRepository extends AbstractVehicleRepository
     }
 
     /**
+     * Search used for 'vehicle information' list
      * @param string $vin       VIN number
      * @param string $reg       Registration number
-     * @param bool   $isFullVin Indicates whether passed VIN number is full
      * @param int    $limit
      *
      * @return array
      */
-    public function search($vin, $reg, $isFullVin, $limit = null)
+    public function search($vin, $reg, $limit = null)
     {
-        return $this->createSearchQueryBuilder('vehicle', $vin, $reg, $isFullVin, $limit)
+        return $this->createExactMatchSearchQueryBuilder('vehicle', $vin, $reg, $limit)
             ->select([
                 'vehicle', 'model', 'make', 'class', 'colour', 'fuel', 'body',
                 'secondary_colour', 'country', 'transmission'
@@ -71,5 +71,35 @@ class VehicleRepository extends AbstractVehicleRepository
             ->leftJoin('vehicle.transmissionType', 'transmission')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * Different conditions are used on 'vehicle information' search
+     * @param $alias
+     * @param $vin
+     * @param $reg
+     * @param $limit
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    protected function createExactMatchSearchQueryBuilder($alias, $vin, $reg, $limit)
+    {
+        $queryBuilder = $this->createQueryBuilder($alias);
+
+        if (!is_null($vin)) {
+            $preparedVin = $this->sanitize($vin);
+            $queryBuilder->andWhere('vehicle.vin = :vin');
+            $queryBuilder->setParameter('vin', $preparedVin);
+        }
+
+        if (!is_null($reg)) {
+            $queryBuilder->andWhere('vehicle.registration = :reg');
+            $queryBuilder->setParameter('reg', $this->sanitize($reg));
+        }
+
+        if (!is_null($limit)) {
+            $queryBuilder->setMaxResults($limit);
+        }
+
+        return $queryBuilder;
     }
 }
