@@ -6,11 +6,9 @@ use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonApi\Model\ApiResponse;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
+use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 
-/**
- * Class VehicleRetestEligibilityController
- */
 class VehicleRetestEligibilityController extends AbstractDvsaRestfulController
 {
     const FIELD_VEHICLE_ID = 'id';
