@@ -132,8 +132,7 @@ class VehicleSearchService
 
         $vehicles = $this->vehicleRepository->search(
             $vin,
-            $reg,
-            (!is_null($vin))? true : false
+            $reg
         );
 
         if ($vehicles) {
@@ -229,7 +228,7 @@ class VehicleSearchService
         }
 
         if ($searchDvla) {
-            $vehicles = $this->dvlaVehicleRepository->search($vin, $reg, $isFullVin, $limit);
+            $vehicles = $this->dvlaVehicleRepository->searchVehicle($vin, $reg, $isFullVin, 10);
             if (!empty($vehicles)) {
                 return $this->extractDvlaVehicles($vehicles);
             }
