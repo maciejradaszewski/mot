@@ -52,6 +52,12 @@ module.exports = function(grunt, config) {
                 }
             },
 
+            apache_clear_php_sessions: {
+                command: 'sudo service httpd stop; sudo rm -f /var/lib/php/session/sess_*; sudo service httpd start;'
+            },
+            apache_restart: {
+                command: 'sudo service httpd restart'
+            },
             reset_database: {
                 command: 'export dev_workspace="/workspace/"; cd /workspace/mot-api/db && ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> N && echo "DB Reset"'
             },
@@ -152,9 +158,6 @@ module.exports = function(grunt, config) {
             },
             xhprof_enable: {
                 command: '/workspace/mot-devtools/bin/xhprof.sh enable_xhprof'
-            },
-            apache_restart: {
-                command: 'sudo service httpd restart'
             },
             server_mod_prod: {
                 command: ['sudo sed -i.bak "s/.*opcache.validate_timestamps=.*/opcache.validate_timestamps=0/g" /etc/php.d/opcache.ini']
