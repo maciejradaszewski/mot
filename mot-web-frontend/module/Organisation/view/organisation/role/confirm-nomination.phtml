@@ -21,9 +21,28 @@
 <?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
 
 <div class="text">
-    <p class="lede">
-        You are assigning the role of '<?php echo $roleName ?>' to <?php echo $this->escapeHtml($nominee->getFullName()); ?> '<?php echo $this->escapeHtml($nominee->getUsername()); ?>'.
-    </p>
+
+    <p class="lede">Review the summary below before confirming:</p>
+
+    <table class="key-value-list">
+        <tbody>
+            <tr>
+                <th class="key-value-list__key">Name</th>
+                <td class="key-value-list__value">
+                    <?php echo $this->escapeHtml($nominee->getFullName()); ?>
+                    <span class="key-value-list__meta"><?php echo $this->escapeHtml($nominee->getUsername()); ?></span>
+                </td>
+            </tr>
+
+            <tr>
+                <th class="key-value-list__key">New role</th>
+                <td class="key-value-list__value"><?php echo $roleName ?></td>
+            </tr>
+
+        </tbody>
+    </table>
+
+
 </div>
 
 <div class="message">
