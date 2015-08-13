@@ -314,4 +314,13 @@ class UserProfilePresenter implements AddressPresenterInterface
         return $this->testerAuthorisation;
     }
 
+    /**
+     * Tells us if the user is trying to manage their own roles
+     * @return bool
+     */
+    public function isManagingOwnRoles()
+    {
+        return $this->personRoleManagementService->personToManageIsSelf($this->getPersonId());
+    }
+
 }

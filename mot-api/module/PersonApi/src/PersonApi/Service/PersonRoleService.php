@@ -7,6 +7,8 @@ use Doctrine\ORM\EntityRepository;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
+use DvsaCommon\Exception\UnauthorisedException;
+use DvsaCommon\Model\PersonAuthorization;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\BusinessRoleStatus;
@@ -26,6 +28,7 @@ use DvsaMotApi\Helper\RoleNotificationHelper;
 class PersonRoleService
 {
     const ERR_MSG_TRADE_ROLE_OWNER = 'Its not possible to assign an "internal" role to a "trade" role owner';
+    const ERR_MSG_SELF_MANAGEMENT = 'You are not allowed to change your own roles';
 
     const ROLES_ALL = 'all';
     const ROLES_ASSIGNED = 'assigned';
@@ -104,7 +107,8 @@ class PersonRoleService
     public function create($personId, $data)
     {
         $this->assertManageRolePermission();
-        $this->checkPersonHasTradeRole($personId);
+        $this->assertForSelfManagement($personId);
+        $this->assertPersonHasTradeRole($personId);
         $person = $this->getPersonEntity($personId);
         $personSystemRole = $this->getPersonSystemRoleEntityFromName($data['personSystemRoleCode']);
         $permission = $this->getPermissionCodeFromPersonSystemRole($personSystemRole);
@@ -125,7 +129,8 @@ class PersonRoleService
     public function delete($personId, $role)
     {
         $this->assertManageRolePermission();
-        $this->checkPersonHasTradeRole($personId);
+        $this->assertForSelfManagement($personId);
+        $this->assertPersonHasTradeRole($personId);
         $person = $this->getPersonEntity($personId);
         $personSystemRole = $this->getPersonSystemRoleEntityFromName($role);
         $permission = $this->getPermissionCodeFromPersonSystemRole($personSystemRole);
@@ -215,14 +220,37 @@ class PersonRoleService
     }
 
     /**
+     * Checks to see if the user being managed has a trade role
      * @param int $personId
      * @throws \Exception
      */
-    public function checkPersonHasTradeRole($personId)
+    public function assertPersonHasTradeRole($personId)
     {
         if ($this->personHasTradeRole($personId)) {
             throw new \Exception(self::ERR_MSG_TRADE_ROLE_OWNER);
         }
+    }
+
+    /**
+     * Checks to see if the user is trying to manage their own roles
+     * @param int $personId
+     * @throws UnauthorisedException
+     */
+    public function assertForSelfManagement($personId)
+    {
+        if ($this->IsIdentitySelfForPerson($personId)) {
+            throw new UnauthorisedException(self::ERR_MSG_SELF_MANAGEMENT);
+        };
+    }
+
+    /**
+     * @param $personId
+     * @return bool
+     */
+    public function isIdentitySelfForPerson($personId)
+    {
+        $identity = $this->authService->getIdentity();
+        return ($personId == $identity->getUserId());
     }
 
     /**

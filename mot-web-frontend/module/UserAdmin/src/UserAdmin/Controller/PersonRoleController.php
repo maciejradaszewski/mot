@@ -34,6 +34,7 @@ class PersonRoleController extends AbstractAuthActionController
 
     public function addInternalRoleAction()
     {
+        $this->personRoleManagementService->forbidManagementOfSelf($this->getPersonIdFromRoute());
         $roleName = $this->getCatalogService()->getPersonSystemRoles()[$this->getPersonSystemRoleIdFromRoute()]['name'];
 
         if($this->hasBeenConfirmed()) {
@@ -74,6 +75,7 @@ class PersonRoleController extends AbstractAuthActionController
      */
     public function removeInternalRoleAction()
     {
+        $this->personRoleManagementService->forbidManagementOfSelf($this->getPersonIdFromRoute());
 
         if ($this->hasBeenConfirmed()) {
             $this->personRoleManagementService->removeRole(
@@ -120,6 +122,8 @@ class PersonRoleController extends AbstractAuthActionController
                 'breadcrumbs' => $this->getBreadcrumbs('Manage roles'),
             ]
         )->setTemplate('layout/layout-govuk.phtml');
+
+        $this->personRoleManagementService->forbidManagementOfSelf($this->getPersonIdFromRoute());
 
         $assignedInternalRoles = $this->personRoleManagementService->getPersonAssignedInternalRoles(
             $this->getPersonIdFromRoute()

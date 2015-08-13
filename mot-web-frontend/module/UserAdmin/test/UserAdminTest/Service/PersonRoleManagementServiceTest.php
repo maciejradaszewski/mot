@@ -4,6 +4,8 @@ namespace UserAdminTest\Service;
 
 use CoreTest\Service\StubCatalogService;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use DvsaCommon\Auth\MotIdentityInterface;
+use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
@@ -23,13 +25,18 @@ class PersonRoleManagementServiceTest extends TestCase
     /** @var MotAuthorisationServiceInterface */
     private $authorisationMock;
 
+    /** @var MotIdentityProviderInterface */
+    private $identityMock;
+
     public function setUp()
     {
+        $this->identityMock = XMock::of(MotIdentityProviderInterface::class);
         $this->authorisationMock = AuthorisationServiceMock::grantedAll();
         $mockRestClient = $this->stubHttpRestJsonClient();
         $mockCatalogService = new StubCatalogService();
 
         $this->service = new PersonRoleManagementService(
+            $this->identityMock,
             $this->authorisationMock,
             $mockRestClient,
             $mockCatalogService
@@ -52,6 +59,7 @@ class PersonRoleManagementServiceTest extends TestCase
             ->with($url, $data);
 
         (new PersonRoleManagementService(
+            $this->identityMock,
             $this->authorisationMock,
             $mockRestClient,
             $mockCatalogService)
@@ -81,6 +89,60 @@ class PersonRoleManagementServiceTest extends TestCase
             PersonHelpDeskProfileDto::class,
             $this->service->getUserProfile(self::PID_AO1)
         );
+    }
+
+    /**
+     * @expectedException DvsaCommon\Exception\UnauthorisedException
+     */
+    public function testForbidManagementOfSelf()
+    {
+        $mockRestClient = $this->stubHttpRestJsonClient();
+        $mockCatalogService = new StubCatalogService();
+
+        $id = 123;
+        $mockIdentity = XMock::of(MotIdentityInterface::class);
+        $mockIdentity->expects($this->once())
+            ->method('getUserId')
+            ->willReturn($id);
+
+        $mockIdentityProvider = XMock::of(MotIdentityProviderInterface::class);
+        $mockIdentityProvider->expects($this->once())
+            ->method('getIdentity')
+            ->willReturn($mockIdentity);
+
+        $obj = (new PersonRoleManagementService(
+            $mockIdentityProvider,
+            $this->authorisationMock,
+            $mockRestClient,
+            $mockCatalogService)
+        );
+        $obj->forbidManagementOfSelf($id);
+    }
+
+    public function testPersonToManageIsSelf()
+    {
+        $mockRestClient = $this->stubHttpRestJsonClient();
+        $mockCatalogService = new StubCatalogService();
+
+        $id = 123;
+        $mockIdentity = XMock::of(MotIdentityInterface::class);
+        $mockIdentity->expects($this->exactly(2))
+            ->method('getUserId')
+            ->willReturn($id);
+
+        $mockIdentityProvider = XMock::of(MotIdentityProviderInterface::class);
+        $mockIdentityProvider->expects($this->exactly(2))
+            ->method('getIdentity')
+            ->willReturn($mockIdentity);
+
+        $obj = (new PersonRoleManagementService(
+            $mockIdentityProvider,
+            $this->authorisationMock,
+            $mockRestClient,
+            $mockCatalogService)
+        );
+        $this->assertTrue($obj->personToManageIsSelf($id));
+        $this->assertFalse($obj->personToManageIsSelf(321));
     }
 
     private function stubHttpRestJsonClient()
