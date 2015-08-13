@@ -189,7 +189,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
         EnforcementHomePage homePage =
                 EnforcementHomePage.navigateHereFromLoginPage(driver, Login.LOGIN_ENFTESTER);
         homePage.clickMyProfile();
-        Assert.assertTrue(homePage.getDisplayRole().contains("VEHICLE-EXAMINER"));
+        Assert.assertTrue(homePage.getDisplayRole().contains("Vehicle Examiner"));
         Assert.assertFalse(homePage.getDisplayRole().contains("Tester"));
     }
 

@@ -3,6 +3,7 @@
 namespace UserAdminTest\Controller;
 
 use Application\Helper\PrgHelper;
+use Application\Service\CatalogService;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaClient\Entity\TesterAuthorisation;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
@@ -26,6 +27,7 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
     private $authorisationMock;
     private $testerGroupAuthorisationMapper;
     private $personRoleManagementService;
+    private $catalogService;
 
     public function setUp()
     {
@@ -40,13 +42,15 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
             ->method('getAuthorisation')
             ->willReturn(new TesterAuthorisation());
         $this->personRoleManagementService = XMock::of(PersonRoleManagementService::class);
+        $this->catalogService = XMock::of(CatalogService::class);
 
         $this->setController(
             new UserProfileController(
                 $this->authorisationMock,
                 $this->accountAdminServiceMock,
                 $this->testerGroupAuthorisationMapper,
-                $this->personRoleManagementService
+                $this->personRoleManagementService,
+                $this->catalogService
             )
         );
 

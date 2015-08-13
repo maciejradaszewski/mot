@@ -35,6 +35,7 @@ class DataCatalogControllerTest extends AbstractRestfulControllerTestCase
             'getEnforcementDecisionScoreData',
             'getSiteAssessmentVisitOutcomeData',
             'getReasonForSiteVisitData',
+            'getBusinessRoles',
         ];
         foreach ($mockedMethods as $method) {
             $mockService->expects($this->once())

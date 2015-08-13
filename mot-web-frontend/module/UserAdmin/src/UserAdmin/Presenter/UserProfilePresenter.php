@@ -16,6 +16,8 @@ use UserAdmin\Service\PersonRoleManagementService;
 use Zend\Di\Exception\RuntimeException;
 use Zend\Mvc\Controller\Plugin\Url as UrlPlugin;
 use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
+use Application\Service\CatalogService;
+use Application\Helper\DataMappingHelper;
 
 /**
  * Decorator for PersonHelpDeskProfileDto
@@ -29,13 +31,15 @@ class UserProfilePresenter implements AddressPresenterInterface
     const UNRESTRICTED_PROFILE_TEMPLATE = 'user-admin/user-profile/unrestricted-profile.phtml';
     /** Change email template */
     const CHANGE_EMAIL_TEMPLATE = 'user-admin/email-address/form.phtml';
-
     /* @var int */
     private $id;
     /* @var PersonHelpDeskProfileDto $person */
     private $person;
     /* @var bool */
     private $isDvsaUser;
+
+    /** @var CatalogService */
+    private $catalogService;
 
     /** @var TesterAuthorisationViewModel */
     private $testerAuthorisation;
@@ -46,12 +50,14 @@ class UserProfilePresenter implements AddressPresenterInterface
     /**
      * @param PersonHelpDeskProfileDto $person
      * @param TesterAuthorisationViewModel $testerAuthorisation
+     * @param CatalogService $catalogService
      * @param bool|false $isDvsaUser
      * @param PersonRoleManagementService|null $personRoleManagementService
      */
     public function __construct(
         PersonHelpDeskProfileDto $person,
         TesterAuthorisationViewModel $testerAuthorisation,
+        CatalogService $catalogService = null,
         $isDvsaUser = false,
         PersonRoleManagementService $personRoleManagementService = null
     )
@@ -60,6 +66,7 @@ class UserProfilePresenter implements AddressPresenterInterface
         $this->testerAuthorisation = $testerAuthorisation;
         $this->isDvsaUser = $isDvsaUser;
         $this->personRoleManagementService = $personRoleManagementService;
+        $this->catalogService = $catalogService;
     }
 
     public function setPersonId($id)
@@ -208,23 +215,6 @@ class UserProfilePresenter implements AddressPresenterInterface
     }
 
     /**
-     * Returns the persons assigned system roles. USER and CRON are filtered
-     * from roles as we don't want to display these in the user profile
-     * @return array
-     */
-    public function getSystemRoles()
-    {
-        $roles = $this->person->getRoles();
-        $rolesFiltered = [];
-        foreach ($roles['system']['roles'] as $role) {
-            if ($role != Role::CRON && $role != Role::USER && $role != Role::TESTER_ACTIVE) {
-                $rolesFiltered[] = $role;
-            }
-        }
-        return $rolesFiltered;
-    }
-
-    /**
      * Returns an array of all site and organisation roles,
      * grouped by site/organisation ID
      * @return array
@@ -236,12 +226,36 @@ class UserProfilePresenter implements AddressPresenterInterface
 
         foreach ($roles['organisations'] as $id => $organisationData) {
             $organisationData['route'] = AuthorisedExaminerUrlBuilderWeb::of($id);
-            $processedRoles[$id] = $organisationData;
+            $organisationData['roles'] = $this->getNameFromRoleCode($organisationData['roles']);
+            $processedRoles[] = $organisationData;
         }
 
         foreach ($roles['sites'] as $id => $siteData) {
             $siteData['route'] = VehicleTestingStationUrlBuilderWeb::byId($id);
-            $processedRoles[$id] = $siteData;
+            $siteData['roles'] = $this->getNameFromRoleCode($siteData['roles']);
+            $processedRoles[] = $siteData;
+        }
+
+        return $processedRoles;
+    }
+
+    /**
+     * Function to make use of the service catalog
+     * and Data Mapping helper to get a role's name from codes
+     * @param array $roles
+     * @throws \Exception
+     */
+    public function getNameFromRoleCode(array $roles)
+    {
+
+        $siteAndOrganisationRoles = $this->catalogService->getBusinessRoles();
+        $processedRoles = [];
+
+        foreach ($roles as $role) {
+            $temp = (new DataMappingHelper($siteAndOrganisationRoles, 'code', $role))
+                ->setReturnKeys(['name'])
+                ->getValue();
+            $processedRoles [] = $temp['name'];
         }
 
         return $processedRoles;

@@ -25,6 +25,7 @@ use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use UserAdmin\Service\UserAdminSessionManager;
 use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
+use Application\Helper\DataMappingHelper;
 
 /**
  * Controller for dashboard
@@ -264,26 +265,86 @@ class UserHomeController extends AbstractAuthActionController
             'authorisation'        => $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
             'rolesAndAssociations' => $this->getRolesAndAssociations($personalDetails),
             'canViewUsername'      => $canViewUsername,
+            'systemRoles'          => $this->getSystemRoles($personalDetails),
+            'roleNiceNameList'     => $this->getRoleNiceNameList($personalDetails),
         ];
+    }
+
+    /**
+     * Gets and returns an array of System (internal) DVLA/DVSA roles
+     * @param PersonalDetails $personalDetails
+     * @return array
+     * @throws \Exception
+     */
+    private function getSystemRoles(PersonalDetails $personalDetails)
+    {
+        $roles = [];
+        $systemRoles = $personalDetails->getSystemRoles();
+
+        $personSystemRoles = $this->catalogService->getPersonSystemRoles();
+
+        foreach ($systemRoles as $systemRole) {
+            $temp = (new DataMappingHelper($personSystemRoles, 'code', $systemRole))
+                ->setReturnKeys(['name'])
+                ->getValue();
+
+            $temp = $temp['name'];
+            $roles[] = $this->createRoleData($systemRole, $temp);
+        }
+
+
+        return $roles;
+    }
+
+
+    /**
+     * @param PersonalDetails $personalDetails
+     * @return array
+     * @throws \Exception
+     */
+    private function getRoleNiceNameList(PersonalDetails $personalDetails)
+    {
+        $currentUserRoles = $personalDetails->getRoles();
+        $roles = [];
+
+        $allRoles = $this->catalogService->getBusinessRoles();
+        $allRoles = array_merge($allRoles, $this->catalogService->getPersonSystemRoles());
+        foreach ($currentUserRoles as $currentUserRole) {
+            $temp = (new DataMappingHelper($allRoles, 'code', $currentUserRole))
+                ->setReturnKeys(['name'])
+                ->getValue();
+            $roles[] = $temp['name'];
+        }
+
+        return $roles;
+
     }
 
     /**
      * @param PersonalDetails $personalDetails
      * @return array
+     * @throws \Exception
      */
     private function getRolesAndAssociations(PersonalDetails $personalDetails)
     {
         $rolesAndAssociations = [];
-        $systemRoles = $personalDetails->getSystemRoles();
         $siteAndOrganisationRoles = $personalDetails->getSiteAndOrganisationRoles();
 
-        foreach ($systemRoles as $role) {
-            $rolesAndAssociations[] = $this->createRoleData($role);
-        }
+        $personSiteAndOrganisationRoles = $this->catalogService->getBusinessRoles();
 
-        foreach ($siteAndOrganisationRoles as $id=>$data) {
-            foreach ($data['roles'] as $role) {
-                $rolesAndAssociations[] = $this->createRoleData($role, $id, $data["name"], $data["address"]);
+        foreach ($siteAndOrganisationRoles as $id => $siteAndOrganisationRole) {
+            foreach ($siteAndOrganisationRole['roles'] as $role) {
+                $niceName = (new DataMappingHelper($personSiteAndOrganisationRoles, 'code', $role))
+                    ->setReturnKeys(['name'])
+                    ->getValue();
+
+                $rolesAndAssociations[] = $this->createRoleData(
+                    $role,
+                    $niceName['name'],
+                    $id,
+                    $siteAndOrganisationRole["name"],
+                    $siteAndOrganisationRole["address"]
+                );
             }
         }
 
@@ -297,11 +358,12 @@ class UserHomeController extends AbstractAuthActionController
      * @param string $address
      * @return array
      */
-    private function createRoleData($role, $id = "",  $name = "", $address = "")
+    private function createRoleData($role, $nicename, $id = "", $name = "", $address = "")
     {
         return [
             "id"      => $id,
             "role"    => $role,
+            'nicename' => $nicename,
             "name"    => $name,
             "address" => $address
         ];

@@ -79,14 +79,6 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
                 </td>
             </tr>
         <?php endif; ?>
-        <tr>
-            <th class="key-value-list__key">
-                Roles
-            </th>
-            <td class="key-value-list__value" id="display-role">
-                <?php echo $this->escapeHtml(implode(', ', $personalDetails->getRoles())); ?>
-            </td>
-        </tr>
     </tbody>
 </table>
 
@@ -128,33 +120,23 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
     </tbody>
 </table>
 
-<h3 id="roles-and-associations" class="heading-medium">Roles and associations</h3>
-    <table class="key-value-list">
-        <tbody>
-        <?php
-            foreach ($rolesAndAssociations as $item):
-                $escAddress = $this->escapeHtml($item["address"]);
-                $escRole = $this->escapeHtml($item["role"]);
-                $escId = $this->escapeHtml($item['id']);
-                $escName = $this->escapeHtml($item['name']);
-                ?>
-                    <tr>
-                        <th class="key-value-list__key">
-                            <?php echo $escName; ?>
-                            <?php if ($escAddress): ?>
-                                <span class="key-value-list__meta"><?php echo $escAddress; ?></span>
-                            <?php endif ?>
-                        </th>
-                        <td class="key-value-list__value" <?php echo
-                            ( $escId ? ' id="role-' . $escRole . '-' .  $escId . '"' : 'id="role-' . $escRole .'"');
-                        ?>><?php echo $escRole; ?></td>
-                    </tr>
-                <?php 
-            endforeach; ?>
-    </tbody>
-</table>
+<?php if ($systemRoles) : ?>
+<?php echo $this->partial('dashboard/partials/profile/roles.phtml', ['title' => "Roles" , 'roles' => $systemRoles]) ?>
+<?php endif; ?>
 
-<?php if($authorisation->hasAnyTestingAuthorisation()): ?>
+<?php if ($rolesAndAssociations) : ?>
+    <?php echo $this->partial('dashboard/partials/profile/roles.phtml', ['title' => "Roles and Associations" , 'roles' => $rolesAndAssociations]) ?>
+<?php endif; ?>
+
+<?php if(!$rolesAndAssociations && !$systemRoles) : ?>
+    <h3 id="roles" class="heading-medium">Roles</h3>
+    <div class="text">
+        <p>No roles assigned</p>
+    </div>
+<?php endif; ?>
+
+
+<?php if($authorisation->hasAnyTestingAuthorisation()) : ?>
     <h3 id="tester-qualification-status" class="heading-medium">Tester qualification status</h3>
     <table class="key-value-list">
         <tbody>

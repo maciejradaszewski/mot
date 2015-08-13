@@ -92,6 +92,17 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
         $this->mockSecurityQuestionSrv = XMock::of(SecurityQuestionService::class);
         $this->mockUserAdminSessionSrv = XMock::of(UserAdminSessionManager::class);
 
+        $catalogMockOrgData = $this->buildBusinessRolesData();
+        $catalogMockSysData = $this->buildPersonSystemCatalog();
+
+        $this->mockCatalogSrv->expects($this->any())
+            ->method("getBusinessRoles")
+            ->willReturn($catalogMockOrgData);
+
+        $this->mockCatalogSrv->expects($this->any())
+            ->method("getPersonSystemRoles")
+            ->willReturn($catalogMockSysData);
+
         //  --  create controller instance --
         $this->setController(
             new UserHomeController(
@@ -254,6 +265,41 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
         if (!empty($expect['url'])) {
             $this->assertRedirectLocation2($expect['url']);
         }
+    }
+
+    /**
+     * Mock for Catalog System Roles Data - if you change this please change $this->setMockRoles
+     * @return array
+     */
+    private function buildPersonSystemCatalog()
+    {
+        return [
+           [
+               'id' => 1,
+               'code' => 'USER',
+               'name' => 'User',
+           ],
+        ];
+    }
+
+    /**
+     * Mock for Catalog Business Roles Data - if you change this please change $this->setMockRoles
+     * @return array
+     */
+    private function buildBusinessRolesData()
+    {
+        return [
+            [
+                'id' => 1,
+                'code' => 'TESTER',
+                'name' => 'Tester',
+            ],
+            [
+                'id' => 2,
+                'code' => 'AEDM',
+                'name' => 'Authorised Examiner Designated Manager',
+            ]
+        ];
     }
 
 
@@ -438,11 +484,29 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
             'drivingLicenceNumber' => 'foo',
             'drivingLicenceRegion' => 'bar',
             'positions'            => [],
-            'roles'                => [
-                "system" => [ "roles" => [] ],
-                "organisations" => [],
-                "sites" => []
+            'roles'                => $this->setMockRoles(),
+
+        ];
+    }
+
+    private function setMockRoles()
+    {
+        return [
+            'system' => [
+                'roles' => ['USER']
             ],
+            'organisations' =>  [[
+                'name' => 'testing',
+                'number' => 'VTESTING',
+                'address' => '34 Test Road',
+                'roles' => ['AEDM'],
+            ]],
+            'sites'  =>  [[
+                'name' => 'testing',
+                'number' => 'VTESTING',
+                'address' => '34 Test Road',
+                'roles' => ['TESTER'],
+            ]]
         ];
     }
 
@@ -472,11 +536,30 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
 
         $actual = $this->getResultForAction('profile');
 
-        $this->assertArrayHasKey('personalDetails', $actual);
-        $this->assertArrayHasKey('isAllowEdit', $actual);
-        $this->assertArrayHasKey('motAuthorisations', $actual);
-        $this->assertArrayHasKey('isViewingOwnProfile', $actual);
-        $this->assertArrayHasKey('countries', $actual);
+        $arrayKeys = array(
+            "personalDetails",
+            "isAllowEdit",
+            "motAuthorisations",
+            "isViewingOwnProfile",
+            "systemRoles",
+            "rolesAndAssociations",
+            "authorisation",
+            "canRead",
+            "canAcknowledge",
+            "countries",
+            "roleNiceNameList",
+            "canViewUsername",
+            );
+
+        foreach($arrayKeys as $key) {
+            $this->assertArrayHasKey($key, $actual);
+        }
+
+
+        //Test will fail if any more keys are added to the returned value
+        $count = count($actual);
+        $this->assertEquals(count($arrayKeys), $count);
+
 
         $this->assertEquals(new PersonalDetails($this->getPersonalDetailsData()), $actual['personalDetails']);
         //Removed assert due to lack of mocks.

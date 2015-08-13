@@ -19,7 +19,7 @@ public class EnforcementHomePage extends BasePage {
 
     @FindBy(id = "user-profile") private WebElement userProfile;
 
-    @FindBy(id = "display-role") private WebElement displayRole;
+    @FindBy(id = "role-VEHICLE-EXAMINER") private WebElement displayRole;
 
     @FindBy(partialLinkText = "AE information") private WebElement listAllAEs;
 

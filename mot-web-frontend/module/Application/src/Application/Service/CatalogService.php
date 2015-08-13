@@ -233,6 +233,15 @@ class CatalogService
         return $this->getData()['personSystemRoles'];
     }
 
+    /**
+     * Business Roles added to the catalog
+     * @return mixed
+     */
+    public function getBusinessRoles()
+    {
+        return $this->getData()['BusinessRoles'];
+    }
+
     public function getSiteBusinessRoles()
     {
         $roles = [];

@@ -8,6 +8,7 @@ use UserAdmin\Service\HelpdeskAccountAdminService;
 use UserAdmin\Service\PersonRoleManagementService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Application\Service\CatalogService;
 
 /**
  * Factory for {@link \UserAdmin\Controller\UserProfileController}
@@ -22,12 +23,14 @@ class UserProfileControllerFactory implements FactoryInterface
         $accountAdminService = $appServiceLocator->get(HelpdeskAccountAdminService::class);
         $testerGroupAuthorisationMapper = $appServiceLocator->get(TesterGroupAuthorisationMapper::class);
         $personRoleManagementService = $appServiceLocator->get(PersonRoleManagementService::class);
+        $catalogService = $appServiceLocator->get("CatalogService");
 
         $controller = new UserProfileController(
             $authorisationService,
             $accountAdminService,
             $testerGroupAuthorisationMapper,
-            $personRoleManagementService
+            $personRoleManagementService,
+            $catalogService
         );
 
         return $controller;

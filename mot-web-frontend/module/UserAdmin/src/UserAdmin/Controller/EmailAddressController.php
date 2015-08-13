@@ -116,6 +116,7 @@ class EmailAddressController extends AbstractDvsaMotTestController
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
             $this->getTesterAuthorisationViewModel($personId),
+            null,
             $this->authorisationService->isGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE_DVSA_USER) &&
             !$this->authorisationService->hasRole(Role::CUSTOMER_SERVICE_CENTRE_OPERATIVE)
         );
