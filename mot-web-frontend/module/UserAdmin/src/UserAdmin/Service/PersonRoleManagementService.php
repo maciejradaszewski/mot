@@ -6,10 +6,12 @@ use Application\Helper\DataMappingHelper;
 use Application\Service\CatalogService;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaClient\Mapper\UserAdminMapper;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
+use DvsaCommon\Auth\MotIdentityProviderInterface;
 
 class PersonRoleManagementService
 {
@@ -24,6 +26,11 @@ class PersonRoleManagementService
     /** @var MotAuthorisationServiceInterface */
     private $authorisationService;
 
+    /**
+     * @var MotIdentityProviderInterface
+     */
+    private $motIdentityProvider;
+
     /** @var HttpRestJsonClient */
     private $client;
 
@@ -37,23 +44,53 @@ class PersonRoleManagementService
     private $personInternalRoles;
 
     /**
-     * @param UserAdminMapper $userAdminMapper
+     * @param MotIdentityProviderInterface $motIdentityProvider
+     * @param MotAuthorisationServiceInterface $authorisationService
+     * @param HttpRestJsonClient $client
      * @param CatalogService $catalogService
      */
     public function __construct(
+        MotIdentityProviderInterface $motIdentityProvider,
         MotAuthorisationServiceInterface $authorisationService,
         HttpRestJsonClient $client,
         CatalogService $catalogService
     ) {
+        $this->motIdentityProvider = $motIdentityProvider;
         $this->authorisationService = $authorisationService;
         $this->client = $client;
         $this->userAdminMapper = new UserAdminMapper($client);
         $this->catalogService = $catalogService;
     }
 
+    /**
+     * Checks to see if the user has the relevant permission
+     * @throws UnauthorisedException
+     */
     public function userHasPermissionToManagePersonDvsaRoles()
     {
         return $this->authorisationService->isGranted(PermissionInSystem::MANAGE_DVSA_ROLES);
+    }
+
+    /**
+     * Throws an exception if the user attempts to manage themselves
+     * @param int $personToBeManagedId
+     * @throws UnauthorisedException if the user attempts to manage themselves
+     */
+    public function forbidManagementOfSelf($personToBeManagedId)
+    {
+        if(true === $this->personToManageIsSelf($personToBeManagedId)) {
+            throw new UnauthorisedException('You are not allowed to manage yourself');
+        }
+    }
+
+    /**
+     * Returns true if the logged in user is the same as the user being managed
+     * @param int $personToBeManagedId
+     * @return bool
+     */
+    public function personToManageIsSelf($personToBeManagedId)
+    {
+        return ($this->motIdentityProvider->getIdentity()->getUserId() == $personToBeManagedId);
     }
 
     /**

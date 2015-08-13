@@ -11,8 +11,11 @@ if ($presenter->canDisplayRoleSection()):
 
     <h3 class="heading-medium">Roles</h3>
 
-    <a href="<?php echo $this->url(PersonRoleController::URL_MANAGE_INTERNAL_ROLE, ['personId' => $presenter->getPersonId()]); ?>"
-       class="key-value-list__action">Manage roles</a>
+    <?php if (false === $presenter->isManagingOwnRoles()): ?>
+        <a href="<?php echo $this->url(PersonRoleController::URL_MANAGE_INTERNAL_ROLE, ['personId' => $presenter->getPersonId()]); ?>"
+            class="key-value-list__action">Manage roles</a>
+    <?php endif ?>
+
 
     <?php if (!empty($currentInternalRoles)) : ?>
 
