@@ -16,6 +16,7 @@ use UserAdmin\Service\HelpdeskAccountAdminService;
 use UserAdmin\Service\PersonRoleManagementService;
 use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
 use Zend\View\Model\ViewModel;
+use Application\Service\CatalogService;
 
 /**
  * Class UserProfileController
@@ -38,6 +39,11 @@ class UserProfileController extends AbstractDvsaMotTestController
     private $authorisationService;
 
     /**
+     * @var CatalogService
+     */
+    private $catalogService;
+
+    /**
      * @var TesterGroupAuthorisationMapper
      */
     private $testerGroupAuthorisationMapper;
@@ -49,17 +55,21 @@ class UserProfileController extends AbstractDvsaMotTestController
      * @param MotAuthorisationServiceInterface $authorisationService
      * @param HelpdeskAccountAdminService $userAccountAdminService
      * @param TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper
+     * @param PersonRoleManagementService $personRoleManagementService
+     * @param CatalogService $catalogService
      */
     public function __construct(
         MotAuthorisationServiceInterface $authorisationService,
         HelpdeskAccountAdminService $userAccountAdminService,
         TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper,
-        PersonRoleManagementService $personRoleManagementService
+        PersonRoleManagementService $personRoleManagementService,
+        CatalogService $catalogService
     ) {
         $this->userAccountAdminService = $userAccountAdminService;
         $this->authorisationService = $authorisationService;
         $this->testerGroupAuthorisationMapper = $testerGroupAuthorisationMapper;
         $this->personRoleManagementService = $personRoleManagementService;
+        $this->catalogService = $catalogService;
     }
 
     /**
@@ -77,6 +87,7 @@ class UserProfileController extends AbstractDvsaMotTestController
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
             $this->getTesterAuthorisationViewModel($personId),
+            $this->catalogService,
             $this->authorisationService->isGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE_DVSA_USER),
             $this->personRoleManagementService
         );
@@ -100,7 +111,8 @@ class UserProfileController extends AbstractDvsaMotTestController
         $personId = $this->params()->fromRoute('personId');
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
-            $this->getTesterAuthorisationViewModel($personId)
+            $this->getTesterAuthorisationViewModel($personId),
+            $this->catalogService
         );
         $presenter->setPersonId($personId);
         $pageTitleSuccess = 'Reset password for ' . $presenter->displayFullName();
@@ -126,7 +138,8 @@ class UserProfileController extends AbstractDvsaMotTestController
         $personId = $this->params()->fromRoute('personId');
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
-            $this->getTesterAuthorisationViewModel($personId)
+            $this->getTesterAuthorisationViewModel($personId),
+            $this->catalogService
         );
         $presenter->setPersonId($personId);
         $pageTitleSuccess = 'Recover username for ' . $presenter->displayFullName();
@@ -188,7 +201,8 @@ class UserProfileController extends AbstractDvsaMotTestController
         }
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
-            $this->getTesterAuthorisationViewModel($personId)
+            $this->getTesterAuthorisationViewModel($personId),
+            $this->catalogService
         );
 
         $pageTitle = 'Reclaim account';

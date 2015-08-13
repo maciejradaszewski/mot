@@ -204,6 +204,40 @@ class DataCatalogService extends AbstractService
         return $values;
     }
 
+
+    /**
+     * Generates an array of business roles for use in the catalog
+     * @return array
+     */
+    public function getBusinessRoles()
+    {
+        $values = [];
+        $this->authService->assertGranted(PermissionInSystem::DATA_CATALOG_READ);
+        $organisationRoles = $this->entityManager->getRepository(OrganisationBusinessRole::class)->findAll();
+        $siteRoles = $this->entityManager->getRepository(SiteBusinessRole::class)->findAll();
+
+        foreach ($organisationRoles as $organisationRole) {
+            $values[] = [
+                'role' => 'organisation',
+                'id' => $organisationRole->getId(),
+                'code' => $organisationRole->getShortName(),
+                'name' => $organisationRole->getFullName(),
+            ];
+        }
+
+        foreach ($siteRoles as $siteRole) {
+            $values[] = [
+                'role' => 'site',
+                'id' => $siteRole->getId(),
+                'code' => $siteRole->getCode(),
+                'name' => $siteRole->getName(),
+            ];
+        }
+
+        return $values;
+
+    }
+
     public function getOrganisationBusinessRoles()
     {
         $this->authService->assertGranted(PermissionInSystem::DATA_CATALOG_READ);

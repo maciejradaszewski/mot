@@ -2,6 +2,7 @@
 
 namespace UserAdminTest\Factory\Controller;
 
+use Application\Service\CatalogService;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommonTest\TestUtils\XMock;
@@ -32,6 +33,9 @@ class UserProfileControllerFactoryTest extends \PHPUnit_Framework_TestCase
 
         $personRoleManagementService = XMock::of(PersonRoleManagementService::class);
         $serviceManager->setService(PersonRoleManagementService::class, $personRoleManagementService);
+
+        $catalogService = XMock::of(CatalogService::class);
+        $serviceManager->setService("CatalogService" , $catalogService);
 
         $plugins = $this->getMock(ControllerManager::class);
         $plugins->expects($this->any())

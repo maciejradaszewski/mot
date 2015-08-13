@@ -45,6 +45,7 @@ class DataCatalogController extends AbstractDvsaRestfulController
                 'transmissionType'      => $service->getTransmissionTypes(),
                 'vehicleClass'          => $service->getVehicleClasses(),
                 'visitOutcomes'         => $service->getSiteAssessmentVisitOutcomeData(),
+                'BusinessRoles'         => $service->getBusinessRoles(),
             ]
         );
     }

@@ -9,6 +9,7 @@ use UserAdmin\Factory\Controller\PersonRoleControllerFactory;
 use UserAdmin\Factory\Controller\RecordDemoTestControllerFactory;
 use UserAdmin\Controller\RecordDemoTestController;
 
+
 return [
     'controllers' => [
         'invokables' => [

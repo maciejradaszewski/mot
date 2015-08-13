@@ -47,7 +47,7 @@ use Dashboard\Controller\NotificationController;
                 <ul>
                     <li id="display-role">
                         <?php echo $this->escapeHtml(
-                            implode(', ', $personalDetails->getRoles())
+                            implode(', ', $roleNiceNameList)
                         ); ?>
                     </li>
                 </ul>

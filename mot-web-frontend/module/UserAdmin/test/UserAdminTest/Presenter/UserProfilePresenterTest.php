@@ -2,6 +2,7 @@
 
 namespace UserAdminTest\Presenter;
 
+use Application\Service\CatalogService;
 use DvsaClient\Entity\TesterAuthorisation;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Dto\Contact\AddressDto;
@@ -22,6 +23,13 @@ class UserProfilePresenterTest extends \PHPUnit_Framework_TestCase
 
     public function testDisplayInformation()
     {
+        $catalogService = XMock::of(CatalogService::class);
+        $catalogMockMethod = $this->buildSiteAndOrganisationCatalog();
+
+        $catalogService->expects($this->atLeastOnce())
+            ->method("getBusinessRoles")
+            ->willReturn($catalogMockMethod);
+
         $this->presenter = new UserProfilePresenter(
             $this->buildPersonHelpDeskProfileDto(),
             new TesterAuthorisationViewModel(
@@ -29,6 +37,7 @@ class UserProfilePresenterTest extends \PHPUnit_Framework_TestCase
                 new TesterAuthorisation(),
                 XMock::of(MotAuthorisationServiceInterface::class)
             ),
+            $catalogService,
             true
         );
         $this->presenter->setPersonId(1);
@@ -56,33 +65,55 @@ class UserProfilePresenterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('+768-45-4433630', $this->presenter->displayTelephone());
 
         $this->assertEquals('/event/list/person/1', $this->presenter->displayEventsHistoryLink());
-        $this->assertEquals(['AE'], $this->presenter->getSystemRoles());
 
         $roles = [
+            0 => [
+                'roles' => ['Authorised Examiner Designated Manager'],
+                'route' => AuthorisedExaminerUrlBuilderWeb::of(0)
+            ],
             1 => [
-                ['data' => 'data'],
-                'route' => AuthorisedExaminerUrlBuilderWeb::of(1)
+                'roles' => ['Tester'],
+                'route' => VehicleTestingStationUrlBuilderWeb::byId(0)
             ],
-            2 => [
-                ['data' => 'data'],
-                'route' => VehicleTestingStationUrlBuilderWeb::byId(2)
-            ],
-        ];
+    ];
         $this->assertEquals($roles, $this->presenter->getSiteAndOrganisationRoles());
         $this->assertEquals('user-admin/user-profile/dvsa-profile.phtml', $this->presenter->getTemplate());
     }
 
     public function testGetTemplate()
     {
+        $catalogService = XMock::of(CatalogService::class);
+
         $this->presenter = new UserProfilePresenter(
             $this->buildPersonHelpDeskProfileDto(),
             new TesterAuthorisationViewModel(1,
                 new TesterAuthorisation(),
                 XMock::of(MotAuthorisationServiceInterface::class)
             ),
+            $catalogService,
             false
         );
         $this->assertEquals('user-admin/user-profile/unrestricted-profile.phtml', $this->presenter->getTemplate());
+    }
+
+    /**
+     * Generates a mock array of the catalog Site and Organisation response
+     * @return array
+     */
+    private function buildSiteAndOrganisationCatalog()
+    {
+        return [
+                [
+                    'id' => 1,
+                    'code' => 'AEDM',
+                    'name' => 'Authorised Examiner Designated Manager',
+                ],
+                [
+                    'id' => 1,
+                    'code' => 'TESTER',
+                    'name' => 'Tester',
+                ],
+        ];
     }
 
     private function buildPersonHelpDeskProfileDto()
@@ -100,10 +131,14 @@ class UserProfilePresenterTest extends \PHPUnit_Framework_TestCase
                 'roles' => ['AE']
             ],
             'organisations' => [
-                1 => [['data' => 'data']]
+                [
+                    'roles' => ['AEDM']
+                ]
             ],
             'sites' => [
-                2 => [['data' => 'data']]
+                [
+                    'roles' => ['TESTER']
+                ]
             ],
         ];
 
