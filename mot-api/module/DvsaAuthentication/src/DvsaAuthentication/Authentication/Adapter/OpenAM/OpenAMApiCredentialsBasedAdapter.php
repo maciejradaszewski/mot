@@ -62,7 +62,7 @@ class OpenAMApiCredentialsBasedAdapter implements AdapterInterface
         $loginDetails = new OpenAMLoginDetails($this->username, $this->password, $this->realm);
         try {
             $token = $this->openAMClient->authenticate($loginDetails);
-            $identityAttrs = $this->openAMClient->getIdentityAttributes($token, [$this->uuidAttribute]);
+            $identityAttrs = $this->openAMClient->getIdentityAttributes($token);
         } catch (OpenAMUnauthorisedException $ex) {
             $this->logger->debug('OpenAM client - message ' . $ex->getMessage());
 

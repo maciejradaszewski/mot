@@ -3,13 +3,14 @@
 namespace DvsaAuthentication\Authentication\Adapter\OpenAM\Factory;
 
 use Doctrine\ORM\EntityManager;
+use Dvsa\OpenAM\OpenAMClient;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use Dvsa\OpenAM\Options\OpenAMClientOptions;
 use DvsaApplicationLogger\TokenService\TokenServiceInterface;
 use DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMApiTokenBasedAdapter;
+use DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMCachedClient;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\PersonRepository;
-use Zend\Http\PhpEnvironment\Request;
 use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -35,7 +36,7 @@ class OpenAMApiTokenBasedAdapterFactory implements FactoryInterface
          * @var TokenServiceInterface $tokenService
          * @var LoggerInterface $logger
          */
-        $openAMClient = $serviceLocator->get(OpenAMClientInterface::class);
+        $openAMClient = $this->getOpenAMClient($serviceLocator);
         $entityManager = $serviceLocator->get(EntityManager::class);
         $personRepository = $entityManager->getRepository(Person::class);
         $logger = $serviceLocator->get('Application\Logger');
@@ -51,5 +52,28 @@ class OpenAMApiTokenBasedAdapterFactory implements FactoryInterface
         );
 
         return $adapter;
+    }
+
+    private function getOpenAMClient(ServiceLocatorInterface $serviceLocator)
+    {
+        $openAMClientClass = $this->isCacheEnabled($serviceLocator)
+            ? OpenAMCachedClient::class
+            : OpenAMClientInterface::class;
+
+        return $serviceLocator->get($openAMClientClass);
+    }
+
+    private function isCacheEnabled(ServiceLocatorInterface $serviceLocator)
+    {
+        $openAMCacheEnabled = false;
+        $config = $serviceLocator->get('config');
+        if (isset($config['cache'])
+            && isset($config['cache']['open_am_client'])
+            && isset($config['cache']['open_am_client']['enabled'])
+        ) {
+            $openAMCacheEnabled = true;
+        }
+
+        return $openAMCacheEnabled;
     }
 }
