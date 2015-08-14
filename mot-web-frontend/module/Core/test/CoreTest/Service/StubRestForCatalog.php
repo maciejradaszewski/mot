@@ -949,7 +949,7 @@ class StubRestForCatalog
             },
             {
                 "id": 4,
-                "code": "' . OrganisationBusinessRoleCode::DVSA_SCHEME_MANAGEMENT . '",
+                "code": "' . OrganisationBusinessRoleCode::SCHEME_MANAGER . '",
                 "name": "DVSA Scheme Management"
             }
         ],

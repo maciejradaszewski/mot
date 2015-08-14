@@ -189,7 +189,10 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
         EnforcementHomePage homePage =
                 EnforcementHomePage.navigateHereFromLoginPage(driver, Login.LOGIN_ENFTESTER);
         homePage.clickMyProfile();
-        Assert.assertTrue(homePage.getDisplayRole().contains("Vehicle Examiner"));
+
+        // If the DB Table 'organisation_business_role' table's 'name' column is updated this test should be updated.
+        Assert.assertTrue(homePage.getDisplayRole().contains("Vehicle examiner"));
+
         Assert.assertFalse(homePage.getDisplayRole().contains("Tester"));
     }
 

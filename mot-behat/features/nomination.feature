@@ -25,4 +25,4 @@ Feature: Nomination
     Then an organisation event is generated for the organisation of "Role Association Change"
   Examples:
     |user_manager       |role                        |role_short_name|
-    |an Aedm            |AUTHORISED-EXAMINER-DELEGATE|AED            |
+    |an Aedm            |Authorised examiner delegate|AED            |

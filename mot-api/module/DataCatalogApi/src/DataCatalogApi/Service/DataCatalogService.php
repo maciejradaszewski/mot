@@ -221,7 +221,7 @@ class DataCatalogService extends AbstractService
                 'role' => 'organisation',
                 'id' => $organisationRole->getId(),
                 'code' => $organisationRole->getShortName(),
-                'name' => $organisationRole->getFullName(),
+                'name' => $organisationRole->getName(),
             ];
         }
 

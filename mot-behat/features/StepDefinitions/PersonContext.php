@@ -789,13 +789,13 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     }
 
     /**
-     * @Given I nominate user to AUTHORISED-EXAMINER-DELEGATE role
+     * @Given I nominate user to Authorised examiner delegate role
      */
     public function iNominateUserToAedRole()
     {
         $siteIds = [1];
         $this->createTester($siteIds);
-        $this->nominateToOrganisationRole("AUTHORISED-EXAMINER-DELEGATE");
+        $this->nominateToOrganisationRole("Authorised examiner delegate");
     }
 
     private function nominateToOrganisationRole($role)
