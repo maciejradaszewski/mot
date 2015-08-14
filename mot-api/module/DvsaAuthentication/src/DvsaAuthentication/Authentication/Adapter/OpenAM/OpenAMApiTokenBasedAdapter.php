@@ -61,8 +61,7 @@ class OpenAMApiTokenBasedAdapter implements AdapterInterface
 
         try {
             $identityAttrs = $this->openAMClient->getIdentityAttributes(
-                $token,
-                [$this->usernameAttribute, $this->uuidAttribute]
+                $token
             );
         } catch (OpenAMUnauthorisedException $ex) {
             $this->logger->debug('OpenAM client - message ' . $ex->getMessage());

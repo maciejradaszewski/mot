@@ -76,5 +76,9 @@ return array(
                 ],
             ],
         ],
+        'open_am_client' => [
+            'enabled' => true,
+            'ttl'   => 15,
+        ],
     ],
 );
