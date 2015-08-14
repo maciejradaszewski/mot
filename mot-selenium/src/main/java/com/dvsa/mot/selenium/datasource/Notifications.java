@@ -30,7 +30,7 @@ public class Notifications {
     public static final Notifications ASSERTION_ROLE_REMOVAL_NOTIFICATION = new Notifications
             ("You have removed the role of Tester from Bob Thomas Arctor Tester1");
 
-    public static final Notifications ASSERTION_AED_ROLE_REMOVAL = new Notifications("You have removed the role of AUTHORISED-EXAMINER-DELEGATE from Pam Poovey");
+    public static final Notifications ASSERTION_AED_ROLE_REMOVAL = new Notifications("You have removed the role of Authorised examiner delegate from Pam Poovey");
 
     public static final Notifications ASSERTION_QUALIFICATION_GROUP =
             new Notifications("You passed your demonstration test. You are now qualified to test Group");

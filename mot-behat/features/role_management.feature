@@ -16,14 +16,14 @@ Feature: Role Management
     And a notification subject contains phrase "<role_full_name>"
   Examples:
     | manager                  | role_name                         | role_full_name             |
-    | Scheme Manager           | DVSA-SCHEME-MANAGEMENT            | DVSA Scheme Management     |
-    | Scheme Manager           | DVSA-SCHEME-USER                  | DVSA Scheme User           |
-    | Scheme Manager           | CUSTOMER-SERVICE-CENTRE-OPERATIVE | Customer Service Operative |
-    | Scheme Manager           | DVSA-AREA-OFFICE-1                | DVSA Area Admin            |
+    | Scheme Manager           | DVSA-SCHEME-MANAGEMENT            | Scheme manager             |
+    | Scheme Manager           | DVSA-SCHEME-USER                  | Scheme user                |
+    | Scheme Manager           | CUSTOMER-SERVICE-CENTRE-OPERATIVE | Customer service operative |
+    | Scheme Manager           | DVSA-AREA-OFFICE-1                | Area office 1              |
     | Scheme Manager           | FINANCE                           | Finance                    |
-    | Scheme Manager           | DVLA-OPERATIVE                    | DVLA Operative             |
-    | Customer Service Manager | CUSTOMER-SERVICE-CENTRE-OPERATIVE | Customer Service Operative |
-    | DVLA Manager             | DVLA-OPERATIVE                    | DVLA Operative             |
+    | Scheme Manager           | DVLA-OPERATIVE                    | DVLA operative             |
+    | Customer Service Manager | CUSTOMER-SERVICE-CENTRE-OPERATIVE | Customer service operative |
+    | DVLA Manager             | DVLA-OPERATIVE                    | DVLA operative             |
 
   @VM-10619 @VM-10737 @VM-10722 @VM-10723
   Scenario Outline: A permitted user can add an internal role to a user that does not have a trade role
@@ -168,9 +168,9 @@ Feature: Role Management
   Examples:
     | permitted user | role                              | role_full_name             | user         |
     | Scheme Manager | FINANCE                           | Finance                    | DVLA Manager |
-    | Scheme Manager | DVLA-OPERATIVE                    | DVLA Operative             | DVLA Manager |
-    | Scheme Manager | CUSTOMER-SERVICE-CENTRE-OPERATIVE | Customer Service Operative | DVLA Manager |
-    | DVLA Manager   | DVLA-OPERATIVE                    | DVLA Operative             | Scheme User  |
+    | Scheme Manager | DVLA-OPERATIVE                    | DVLA operative             | DVLA Manager |
+    | Scheme Manager | CUSTOMER-SERVICE-CENTRE-OPERATIVE | Customer service operative | DVLA Manager |
+    | DVLA Manager   | DVLA-OPERATIVE                    | DVLA operative             | Scheme User  |
 
   # Self management
   @VM-11244

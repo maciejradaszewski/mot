@@ -13,7 +13,7 @@ class OrganisationBusinessRoleId
     const AUTHORISED_EXAMINER_DESIGNATED_MANAGER = 1;
     const AUTHORISED_EXAMINER_DELEGATE = 2;
     const AUTHORISED_EXAMINER_PRINCIPAL = 3;
-    const DVSA_SCHEME_MANAGEMENT = 4;
+    const SCHEME_MANAGER = 4;
 
     /**
      * @return array of values for the type OrganisationBusinessRoleId
@@ -24,7 +24,7 @@ class OrganisationBusinessRoleId
             self::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
             self::AUTHORISED_EXAMINER_DELEGATE,
             self::AUTHORISED_EXAMINER_PRINCIPAL,
-            self::DVSA_SCHEME_MANAGEMENT,
+            self::SCHEME_MANAGER,
         ];
     }
 

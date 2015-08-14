@@ -68,14 +68,6 @@ class RoleAvailabilityTest extends \PHPUnit_Framework_TestCase
         $roles = $this->roleAvailability->listRolesNominatorIsPermittedToAssignToPerson(new Organisation(), 1);
 
         $this->assertCount(2, $roles);
-        $roleName = str_replace(
-            ' ', '-', strtoupper($roles[OrganisationBusinessRoleId::AUTHORISED_EXAMINER_DESIGNATED_MANAGER])
-        );
-        $this->assertSame(OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER, $roleName);
-        $roleName = str_replace(
-            ' ', '-', strtoupper($roles[OrganisationBusinessRoleId::AUTHORISED_EXAMINER_DELEGATE])
-        );
-        $this->assertSame(OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE, $roleName);
     }
 
     public function test_listRolesNominatorIsPermittedToAssignToPerson_canNotNominateDvsaRoleOwnerForTradeRole()

@@ -123,9 +123,8 @@ class AuthorisedExaminer extends MotApi
     public function nominate($userId, $orgRoleName, $orgId, $token)
     {
         $roles = [
-            "AUTHORISED-EXAMINER-DESIGNATED-MANAGER" => 1,
-            "AUTHORISED-EXAMINER-DELEGATE" => 2
-
+            "Authorised examiner delegate manager" => 1,
+            "Authorised examiner delegate" => 2
         ];
 
         if (!array_key_exists($orgRoleName, $roles)) {

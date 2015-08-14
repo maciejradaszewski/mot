@@ -1,7 +1,7 @@
 package com.dvsa.mot.selenium.datasource.enums;
 
 public enum Role {
-    AED("AED", "Authorised Examiner Delegate", "AUTHORISED-EXAMINER-DELEGATE", "AED","2"),
+    AED("AED", "Authorised examiner delegate", "Authorised examiner delegate", "AED","2"),
     AEDM("AEDM", "AEDM", "Authorised Examiner Designated Manager", "AEDM","1"),
     SITE_MANAGER("Site Manager", "Site Manager", "Site Manager", "SITE-MANAGER",""),
     SITE_ADMIN("Site Admin", "Site Admin", "Site Admin", "SITE-ADMIN",""),

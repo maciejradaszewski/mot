@@ -10,10 +10,10 @@ namespace DvsaCommon\Enum;
  */
 class OrganisationBusinessRoleCode
 {
-    const AUTHORISED_EXAMINER_DESIGNATED_MANAGER = 'AUTHORISED-EXAMINER-DESIGNATED-MANAGER';
-    const AUTHORISED_EXAMINER_DELEGATE = 'AUTHORISED-EXAMINER-DELEGATE';
-    const AUTHORISED_EXAMINER_PRINCIPAL = 'AUTHORISED-EXAMINER-PRINCIPAL';
-    const DVSA_SCHEME_MANAGEMENT = 'DVSA-SCHEME-MANAGEMENT';
+    const AUTHORISED_EXAMINER_DESIGNATED_MANAGER = 'Authorised examiner designated manager';
+    const AUTHORISED_EXAMINER_DELEGATE = 'Authorised examiner delegate';
+    const AUTHORISED_EXAMINER_PRINCIPAL = 'Authorised examiner principal';
+    const SCHEME_MANAGER = 'Scheme manager';
 
     /**
      * @return array of values for the type OrganisationBusinessRoleCode
@@ -24,7 +24,7 @@ class OrganisationBusinessRoleCode
             self::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
             self::AUTHORISED_EXAMINER_DELEGATE,
             self::AUTHORISED_EXAMINER_PRINCIPAL,
-            self::DVSA_SCHEME_MANAGEMENT,
+            self::SCHEME_MANAGER,
         ];
     }
 

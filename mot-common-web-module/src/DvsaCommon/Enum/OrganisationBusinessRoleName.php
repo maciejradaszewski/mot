@@ -13,7 +13,7 @@ class OrganisationBusinessRoleName
     const AUTHORISED_EXAMINER_DESIGNATED_MANAGER = 'Authorised Examiner Designated Manager';
     const AUTHORISED_EXAMINER_DELEGATE = 'Authorised Examiner Delegate';
     const AUTHORISED_EXAMINER_PRINCIPAL = 'Authorised Examiner Principal';
-    const DVSA_SCHEME_MANAGEMENT = 'DVSA Scheme Management';
+    const SCHEME_MANAGER = 'DVSA Scheme Management';
 
     /**
      * @return array of values for the type OrganisationBusinessRoleName
@@ -24,7 +24,7 @@ class OrganisationBusinessRoleName
             self::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
             self::AUTHORISED_EXAMINER_DELEGATE,
             self::AUTHORISED_EXAMINER_PRINCIPAL,
-            self::DVSA_SCHEME_MANAGEMENT,
+            self::SCHEME_MANAGER,
         ];
     }
 
