@@ -72,7 +72,7 @@ UPDATE `role` SET
 	`last_updated_on` = CURRENT_TIMESTAMP(6),
 	`name`='Customer service manager'
 WHERE
-	`code`='CUSTOMER-SERVICE-MANAGEMENT';
+	`code`='CUSTOMER-SERVICE-MANAGER';
 
 UPDATE `role` SET
 	`version` = (`version` + 1),
