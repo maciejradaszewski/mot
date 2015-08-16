@@ -198,7 +198,7 @@ echo $this->partial(
     ?>
 <?php endif; ?>
 
-<?php if ($permission->canTestAnyOfClass3AndAbove() && !empty($site->getDefaultServiceBrakeTestClass3AndAbove())): ?>
+<?php if ($permission->canTestAnyOfClass3AndAbove() && !empty($site->getDefaultServiceBrakeTestClass3AndAbove()) && !empty($site->getDefaultParkingBrakeTestClass3AndAbove())): ?>
     <?php
     echo $this->partial(
         'partial/gds/table/table',
