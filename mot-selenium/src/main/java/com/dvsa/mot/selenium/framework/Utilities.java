@@ -20,8 +20,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Time;
 import java.text.*;
-import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -91,6 +89,11 @@ public class Utilities {
         DateTime dt = DateTime.now();
         return dt.minusMonths(1);
     }
+    
+    public static String getTodaysDate() {
+        return String.valueOf(DateTime.now().getDayOfMonth());
+    }
+    
     public static String getFutureDate() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, 1);

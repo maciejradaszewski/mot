@@ -35,11 +35,12 @@ class TestSlotTransactionAmendmentTest extends PHPUnit_Framework_TestCase
             [
                 [
                     [
-                        'organisation'        => new Organisation(),
-                        'testSlotTransaction' => new TestSlotTransaction(),
-                        'type'                => new TestSlotTransactionAmendmentType(),
-                        'reason'              => new TestSlotTransactionAmendmentReason(),
-                        'slots'               => 100
+                        'organisation'             => new Organisation(),
+                        'testSlotTransaction'      => new TestSlotTransaction(),
+                        'type'                     => new TestSlotTransactionAmendmentType(),
+                        'reason'                   => new TestSlotTransactionAmendmentReason(),
+                        'slots'                    => 100,
+                        'previousReceiptReference' => 'reference',
                     ]
                 ]
             ];

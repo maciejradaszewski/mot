@@ -37,17 +37,17 @@ class SlotPurchase_SlotConfiguration
 
     public function testSlotMinAmount()
     {
-        if (isset($this->apiResult['testSlotMaxAmount'])) {
+        if (isset($this->apiResult['testSlotMinAmount'])) {
             return $this->apiResult['testSlotMinAmount'];
         }
 
         return 0;
     }
 
-    public function testSlotMaxAmount()
+    public function maxSlotsPurchasable()
     {
-        if (isset($this->apiResult['testSlotMaxAmount'])) {
-            return $this->apiResult['testSlotMaxAmount'];
+        if (isset($this->apiResult['maxSlotsPurchasable'])) {
+            return $this->apiResult['maxSlotsPurchasable'];
         }
 
         return 0;
@@ -57,6 +57,15 @@ class SlotPurchase_SlotConfiguration
     {
         if (isset($this->apiResult['testSlotPrice'])) {
             return $this->apiResult['testSlotPrice'];
+        }
+
+        return 0;
+    }
+
+    public function maxSlotsHeld()
+    {
+        if (isset($this->apiResult['maxSlotsHeld'])) {
+            return $this->apiResult['maxSlotsHeld'];
         }
 
         return 0;

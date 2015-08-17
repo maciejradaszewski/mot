@@ -17,7 +17,6 @@ import com.dvsa.mot.selenium.priv.frontend.organisation.management.notifications
 import com.dvsa.mot.selenium.priv.frontend.organisation.management.notifications.pages.NotificationAcceptedPage;
 import com.dvsa.mot.selenium.priv.frontend.organisation.management.notifications.pages.NotificationsRoleRemovalPage;
 import com.dvsa.mot.selenium.priv.frontend.organisation.management.vehicletestingstationoverview.pages.CreateSitePage;
-import com.dvsa.mot.selenium.priv.frontend.payment.pages.FinancialReportsPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.PaymentSearchPage;
 import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.*;
 import com.dvsa.mot.selenium.pub.frontend.application.tester.pages.NotificationPage;
@@ -408,11 +407,6 @@ public class UserDashboardPage extends BasePage {
     public PaymentSearchPage clickPaymentsLink() {
         paymentsLink.click();
         return new PaymentSearchPage(driver);
-    }
-
-    public FinancialReportsPage clickGeneralFinancialReportsLink() {
-        generalFinancialReportsLink.click();
-        return new FinancialReportsPage(driver);
     }
 
     public AuthorisedExaminerOverviewPage clickFirstAeLink() {
