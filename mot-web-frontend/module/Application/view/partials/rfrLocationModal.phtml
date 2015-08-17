@@ -1,8 +1,11 @@
 <?php
+
 use DvsaCommon\Constants\ReasonForRejection;
+use DvsaCommon\Enum\ReasonForRejectionTypeName;
 
 $showRfrName = true;
 $descriptionValidation = "";
+
 if (!isset($title)) {
     $title = '';
 }
@@ -31,7 +34,7 @@ if (!isset($rfr)) {
             <div class="modal-body">
 
                 <form data-dialog-form
-                      action="<?php echo $this->url('mot-test/rfr-add', array('motTestNumber' => $motTestNumber, 'tis-id' => $rfr['testItemSelectorId'], 'rfr-id' => $rfr['rfrId'])); ?>"
+                      action="<?php echo $this->url('mot-test/rfr-add', ['motTestNumber' => $motTestNumber, 'tis-id' => $rfr['testItemSelectorId'], 'rfr-id' => $rfr['rfrId']]); ?>"
                       method="POST">
                     <?php echo $this->csrfToken() ?>
                     <?php if ($showRfrName): ?>
@@ -47,7 +50,7 @@ if (!isset($rfr)) {
                            value='<?php echo isset($searchString) ? $this->escapeHtml($searchString) : null; ?>'/>
 
                     <input id='type-<?php echo $escRfrId; ?>' name='type' type='hidden'
-                           value='<?php echo isset($rfrType) ? $this->escapeHtmlAttr($rfrType) : 'FAILURE' ?>'/>
+                           value='<?php echo isset($rfrType) ? $this->escapeHtmlAttr($rfrType) : ReasonForRejectionTypeName::FAIL; ?>'/>
 
                     <div class="failure-group">
                         <div class="row">
@@ -168,8 +171,7 @@ if (!isset($rfr)) {
                 } else {
                     updateMessagesPane(data.data);
                 }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-
+            }).fail(function () {
                 var errorCtx = { messages : ["Error occurred. Please try to resubmit the form"]};
                 updateMessagesPane(errorCtx);
             });
