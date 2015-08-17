@@ -238,7 +238,7 @@ UPDATE `role` SET
 	`version` = (`version` + 1),
 	`last_updated_by` = @app_user_id,
 	`last_updated_on` = CURRENT_TIMESTAMP(6),
-	`name`=''
+	`name`='VM-10519 User'
 WHERE
 	`code`='VM-10519-USER';
 
@@ -367,7 +367,7 @@ UPDATE `site_business_role` SET
 	`last_updated_on` = CURRENT_TIMESTAMP(6),
 	`name`='Site admin'
 WHERE
-	`code`='Site admin';
+	`code`='SITE-ADMIN';
 
 UPDATE `site_business_role` SET
 	`version` = (`version` + 1),
@@ -375,7 +375,7 @@ UPDATE `site_business_role` SET
 	`last_updated_on` = CURRENT_TIMESTAMP(6),
 	`name`='Site manager'
 WHERE
-	`code`='Site manager';
+	`code`='SITE-MANAGER';
 
 UPDATE `site_business_role` SET
 	`version` = (`version` + 1),
@@ -383,4 +383,4 @@ UPDATE `site_business_role` SET
 	`last_updated_on` = CURRENT_TIMESTAMP(6),
 	`name`='Tester'
 WHERE
-	`code`='Tester';
+	`code`='TESTER';
