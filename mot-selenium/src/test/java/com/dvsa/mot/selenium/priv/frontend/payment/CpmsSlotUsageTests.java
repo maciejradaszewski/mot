@@ -59,7 +59,7 @@ public class CpmsSlotUsageTests extends BaseTest {
         OrganisationSlotsUsagePage slotsUsedTodayPage =
                 organisationSlotsUsagePage.filterSlotsUsedToday();
         assertThat("Verifying Number of slots used - Today",
-                slotsUsedTodayPage.getNumberOfSlotsUsed(), is("1 slot used today"));
+                slotsUsedTodayPage.isNumberOfSlotsUsedDisplayed(), is(true));
         assertThat("Verifying Slot usage table displayed",
                 slotsUsedTodayPage.isSlotUsageTableDisplayed(), is(true));
         assertThat("Verifying Download file options displayed",

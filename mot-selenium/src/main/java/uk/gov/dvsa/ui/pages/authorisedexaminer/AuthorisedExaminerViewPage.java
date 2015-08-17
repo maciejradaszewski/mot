@@ -2,12 +2,13 @@ package uk.gov.dvsa.ui.pages.authorisedexaminer;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.CompanyDetailsHelper;
 import uk.gov.dvsa.helper.ContactDetailsHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
-
+import uk.gov.dvsa.ui.pages.cpms.BuyTestSlotsPage;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -15,6 +16,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public abstract class AuthorisedExaminerViewPage extends Page {
 
     @FindBy(id = "change-contact-details") private WebElement changeContactDetails;
+    @FindBy(id = "add-slots" ) private WebElement buySlots;
 
     @FindBy(id = "cor_email") private WebElement correspondenceEmail;
 
@@ -47,6 +49,11 @@ public abstract class AuthorisedExaminerViewPage extends Page {
     public AuthorisedExaminerChangeDetailsPage clickChangeContactDetailsLink() {
         changeContactDetails.click();
         return new AuthorisedExaminerChangeDetailsPage(driver);
+    }
+    
+    public BuyTestSlotsPage clickBuySlotsLink() {
+        buySlots.click();
+        return new BuyTestSlotsPage(driver);
     }
 
     public String getCorrespondenceEmailText() {

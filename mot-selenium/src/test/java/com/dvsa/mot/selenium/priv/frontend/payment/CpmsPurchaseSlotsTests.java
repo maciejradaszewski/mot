@@ -10,10 +10,7 @@ import com.dvsa.mot.selenium.priv.frontend.payment.pages.*;
 
 import org.testng.annotations.Test;
 
-import java.math.BigDecimal;
-
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 public class CpmsPurchaseSlotsTests extends BaseTest {
@@ -73,30 +70,6 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 authorisedExaminerOverviewPage.isSlotsAdjustmentLinkVisible(), is(false));
     }
 
-    @Test(groups = {"Regression", "SPMS-37"}) public void purchaseSlotsByCardSuccessfulJourney() {
-        PaymentConfirmationPage paymentConfirmationPage = loginAsAedmAndPurchaseSlotsByCard();
-
-        assertThat("Verifying Purchase Success Message", paymentConfirmationPage.getStatusMessage(),
-                containsString(
-                        Assertion.ASSERTION_PURCHASE_SLOTS_BY_CARD_SUCCESS_MESSAGE.assertion));
-        assertThat("Verifying Slots Ordered", paymentConfirmationPage.getSlotsOrdered(),
-                is(Payments.VALID_PAYMENTS.slots + " slots"));
-        assertThat("Verifying Total Cost displayed", paymentConfirmationPage.getTotalCost(),
-                is("£" + String.format("%.2f", (new BigDecimal(Payments.VALID_PAYMENTS.slots)
-                        .multiply(Payments.COST_PER_SLOT)))));
-    }
-
-    @Test(groups = {"Regression", "SPMS-37"})
-    public void purchaseSlotsExceedingMaximumBalanceErrorTest() {
-        Login aedmLogin = createAedmAndReturnAedmLogin("ExceedMaximumSlotBalance");
-        BuySlotsPage buySlotsPage = BuySlotsPage.navigateToBuySlotsPageFromLogin(driver, aedmLogin)
-                .enterSlotsRequired(Payments.MAXIMUM_SLOTS.slots)
-                .clickCalculateCostButtonInvalidSlots();
-
-        assertThat("Verifying Maximum Slot Balance Exceeds Message displayed",
-                buySlotsPage.isExceedsMaximumSlotBalanceMessageDisplayed(), is(true));
-    }
-
     @Test(groups = {"Regression", "SPMS-88"}) public void purchaseSlotsUserCancelsPaymentTest() {
         Login aedmLogin = createAedmAndReturnAedmLogin("UserCancelsPayment");
         BuySlotsPage buySlotsPage = AuthorisedExaminerOverviewPage
@@ -128,7 +101,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
         TransactionHistoryPage todayTransactionsHistory =
                 transactionHistoryPage.clickTodayTransactionsLink();
         assertThat("Verifying Number of purchases - Today",
-                todayTransactionsHistory.getNumberOfTransactionsText(), is("1 purchase today"));
+                todayTransactionsHistory.isNumberOfTransactionsDisplayed(), is(true));
         assertThat("Verifying Transaction table is displayed",
                 todayTransactionsHistory.isTransactionsTableDisplayed(), is(true));
         assertThat("Verifying download file options displayed",

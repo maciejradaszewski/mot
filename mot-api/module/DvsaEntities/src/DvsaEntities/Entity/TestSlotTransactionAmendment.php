@@ -59,6 +59,13 @@ class TestSlotTransactionAmendment extends Entity
     private $slots;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="previous_receipt_reference", type="string", length=55, nullable=true)
+     */
+    private $previousReceiptReference;
+
+    /**
      * Set organisation
      *
      * @param \DvsaEntities\Entity\Organisation $organisation
@@ -122,6 +129,25 @@ class TestSlotTransactionAmendment extends Entity
         return $this->slots;
     }
 
+    /**
+     * @return string
+     */
+    public function getPreviousReceiptReference()
+    {
+        return $this->previousReceiptReference;
+    }
+
+    /**
+     * @param string $prevReceiptReference
+     *
+     * @return $this
+     */
+    public function setPreviousReceiptReference($prevReceiptReference)
+    {
+        $this->previousReceiptReference = $prevReceiptReference;
+
+        return $this;
+    }
     /**
      * @return TestSlotTransactionAmendmentType
      */

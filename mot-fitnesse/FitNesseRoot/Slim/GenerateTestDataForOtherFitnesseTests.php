@@ -91,6 +91,7 @@ class GenerateTestDataForOtherFitnesseTests
         $this->userTester = null;
         $this->userSiteMngr = null;
         $this->userSiteAdmin = null;
+        $this->userFinanceUser = null;
 
         $this->slots = 1024;
         $this->orgId = null;
@@ -574,6 +575,11 @@ class GenerateTestDataForOtherFitnesseTests
     public function schemeuserUsername()
     {
         return $this->getUserName($this->getSchemeUser());
+    }
+
+    public function financeUser()
+    {
+        return $this->getUsername($this->getFinanceUser());
     }
 
     public function getAreaOffice()
