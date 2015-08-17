@@ -9,7 +9,7 @@ $mods = file('config/modules.list', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINE
 # files are loaded from the standard locaiton within the source tree.
 $path = getenv('APPLICATION_CONFIG_PATH') ? : 'config/autoload';
 
-if($env === 'development') {
+if ($env === 'development') {
     $mods[] = 'ZendDeveloperTools';
 }
 

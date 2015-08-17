@@ -132,12 +132,16 @@ class SecurityController extends AbstractDvsaActionController
         } else {
             $goto = $this->gotoService->encodeGoto($rawGoto);
 
-            return (new ViewModel([
-                'forgottenPasswordRoute' => self::ROUTE_FORGOTTEN_PASSWORD,
-                'gotoUrl'                => $goto,
-                'loginCheckRoute'        => self::ROUTE_LOGIN_GET,
-                'pageTitle'              => self::PAGE_TITLE,
-            ]))->setTemplate('authentication/login');
+            return (
+            new ViewModel(
+                [
+                    'forgottenPasswordRoute' => self::ROUTE_FORGOTTEN_PASSWORD,
+                    'gotoUrl'                => $goto,
+                    'loginCheckRoute'        => self::ROUTE_LOGIN_GET,
+                    'pageTitle'              => self::PAGE_TITLE,
+                ]
+            )
+            )->setTemplate('authentication/login');
         }
     }
 
