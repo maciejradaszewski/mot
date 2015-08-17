@@ -14,6 +14,12 @@ use DvsaMotEnforcementApi\Controller as Ajax;
 use DvsaMotTest\Controller as MotTest;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaMotEnforcement\Controller\MotTestController as EnforcementMotTestController;
+use DvsaMotTest\Form\Validator\SpecialNoticePublishDateValidator;
+use Application\View\Helper\CamelCaseToReadable;
+use Application\View\Helper\CamelCaseToFirstUppercaseReadable;
+use Dvsa\Mot\Frontend\Plugin\AjaxResponsePlugin;
+use DvsaCommon\Constants\MotTestNumberConstraint;
+use DvsaMotTest\NewVehicle\Controller\CreateVehicleController;
 
 return [
     'controllers' => require __DIR__ . '/controllers.config.php',
@@ -194,7 +200,7 @@ return [
                 'options' => [
                     'route'    => '/vehicle-step[/:action]',
                     'defaults' => [
-                        'controller' => \DvsaMotTest\NewVehicle\Controller\CreateVehicleController::class,
+                        'controller' => CreateVehicleController::class,
                         'action'     => 'index',
                     ],
                 ],
@@ -400,7 +406,7 @@ return [
                 'options'       => [
                     'route'       => '/mot-test/:motTestNumber',
                     'constraints' => [
-                        'motTestNumber' => \DvsaCommon\Constants\MotTestNumberConstraint::FORMAT_REGEX,
+                        'motTestNumber' => MotTestNumberConstraint::FORMAT_REGEX,
                     ],
                     'defaults'    => [
                         'controller' => MotTest\MotTestController::class,
@@ -910,7 +916,7 @@ return [
 
     'controller_plugins'         => [
         'invokables' => [
-            'ajaxResponse' => \Dvsa\Mot\Frontend\Plugin\AjaxResponsePlugin::class,
+            'ajaxResponse' => AjaxResponsePlugin::class,
         ],
     ],
     'view_manager'               => [
@@ -1066,8 +1072,8 @@ return [
     ],
     'view_helpers'               => [
         'invokables' => [
-            'camelCaseToReadable' => \Application\View\Helper\CamelCaseToReadable::class,
-            'camelCaseToFirstUppercaseReadable' => \Application\View\Helper\CamelCaseToFirstUppercaseReadable::class,
+            'camelCaseToReadable'               => CamelCaseToReadable::class,
+            'camelCaseToFirstUppercaseReadable' => CamelCaseToFirstUppercaseReadable::class,
         ],
         'factories'  => [
             'identityHelper'        => IdentityHelperFactory::class,
@@ -1088,7 +1094,7 @@ return [
     ],
     'validators' => [
         'invokables' => [
-            'SpecialNoticePublishDate' => \DvsaMotTest\Form\Validator\SpecialNoticePublishDateValidator::class
+            'SpecialNoticePublishDate' => SpecialNoticePublishDateValidator::class
         ]
     ]
 ];

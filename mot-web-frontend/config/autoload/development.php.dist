@@ -11,7 +11,7 @@
  * credentials from accidentally being committed into version control.
  */
 
-return array(
+return [
     // Whether or not to enable a configuration cache.
     // If enabled, the merged configuration will be cached and used in
     // subsequent requests.
@@ -62,4 +62,4 @@ return array(
             ],
         ]
     ],
-);
+];

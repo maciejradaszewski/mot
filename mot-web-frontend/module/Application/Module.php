@@ -4,36 +4,45 @@ namespace Application;
 use Application\Data\ApiCurrentMotTest;
 use Application\Data\ApiPersonalDetails;
 use Application\Data\ApiUserSiteCount;
+use Application\Factory\ApplicationLoggerFactory;
+use Application\Factory\ApplicationSessionFactory;
 use Application\Factory\ApplicationWideCacheFactory;
+use Application\Factory\AuthAdapterFactory;
 use Application\Factory\ContingencySessionManagerFactory;
 use Application\Factory\Data\ApiCurrentMotTestFactory;
 use Application\Factory\Data\ApiPersonalDetailsFactory;
 use Application\Factory\Data\ApiUserSiteCountFactory;
 use Application\Factory\Data\BrakeTestResultsResourceFactory;
 use Application\Factory\Data\TesterInProgressTestNumberResourceFactory;
+use Application\Factory\FileTemplateFactory;
 use Application\Factory\LoggedInUserManagerFactory;
-use Application\Factory\Service\ReportBuilderServiceFactory;
+use Application\Factory\LoggerFactory;
+use Application\Factory\MotSessionFactory;
+use Application\Factory\Service\CatalogServiceFactory;
 use Application\Factory\ZendAuthenticationServiceFactory;
-use Application\Listener\ClaimAccountListener;
-use Application\Listener\Factory\ClaimAccountListenerFactory;
 use Application\Listener\ChangeTempPasswordListener;
+use Application\Listener\ClaimAccountListener;
 use Application\Listener\Factory\ChangeTempPasswordListenerFactory;
+use Application\Listener\Factory\ClaimAccountListenerFactory;
 use Application\Listener\WebListenerEventsPriorities;
 use Application\Service\ContingencySessionManager;
-use Application\Service\ReportBuilder\Service as ReportBuilderService;
+use DvsaCommon\Auth\NotLoggedInException;
 use DvsaCommon\Exception\UnauthorisedException;
+use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
+use DvsaCommon\HttpRestJson\Exception\NotFoundException;
 use DvsaFeature\Exception\FeatureNotAvailableException;
-use DvsaMotEnforcement\Service\Event;
-use DvsaMotEnforcement\Service\ReInspection;
 use DvsaMotTest\Data\BrakeTestResultsResource;
 use DvsaMotTest\Data\TesterInProgressTestNumberResource;
 use DvsaMotTest\Factory\BrakeTestConfigurationContainerFactory;
 use DvsaMotTest\Factory\LocationSelectContainerFactory;
+use DvsaMotTest\Factory\Model\VehicleSearchResultFactory;
 use DvsaMotTest\Factory\Service\AuthorisedClassesServiceFactory;
+use DvsaMotTest\Factory\Service\VehicleSearchServiceFactory;
 use DvsaMotTest\Mapper\BrakeTestConfigurationClass1And2Mapper;
 use DvsaMotTest\Mapper\BrakeTestConfigurationClass3AndAboveMapper;
 use DvsaMotTest\Model\BrakeTestConfigurationClass1And2Helper;
 use DvsaMotTest\Model\BrakeTestConfigurationClass3AndAboveHelper;
+use DvsaMotTest\Model\VehicleSearchResult;
 use DvsaMotTest\Service\AuthorisedClassesService;
 use DvsaMotTest\Service\VehicleSearchService;
 use Zend\Authentication\AuthenticationService;
@@ -49,9 +58,6 @@ use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\SessionManager;
-use DvsaMotTest\Model\VehicleSearchResult;
-use DvsaMotTest\Factory\Model\VehicleSearchResultFactory;
-use DvsaMotTest\Factory\Service\VehicleSearchServiceFactory;
 
 /**
  * Class Module.
@@ -62,7 +68,7 @@ class Module implements
     ServiceProviderInterface,
     BootstrapListenerInterface
 {
-    const APPLICATION_SESSION = 'applicationSession'; //TODO: duplicated
+    const APPLICATION_SESSION = 'applicationSession';
 
     public function onBootstrap(EventInterface $e)
     {
@@ -70,12 +76,16 @@ class Module implements
 
         $claimAccountListener = $e->getApplication()->getServiceManager()->get(ClaimAccountListener::class);
         $eventManager->attach(
-            MvcEvent::EVENT_DISPATCH, $claimAccountListener, WebListenerEventsPriorities::DISPATCH_CLAIM_ACCOUNT
+            MvcEvent::EVENT_DISPATCH,
+            $claimAccountListener,
+            WebListenerEventsPriorities::DISPATCH_CLAIM_ACCOUNT
         );
 
         $changeTempPasswordListener = $e->getApplication()->getServiceManager()->get(ChangeTempPasswordListener::class);
         $eventManager->attach(
-            MvcEvent::EVENT_DISPATCH, $changeTempPasswordListener, WebListenerEventsPriorities::DISPATCH_CHANGE_TEMP_PASSWORD
+            MvcEvent::EVENT_DISPATCH,
+            $changeTempPasswordListener,
+            WebListenerEventsPriorities::DISPATCH_CHANGE_TEMP_PASSWORD
         );
 
         $eventManager->attach(
@@ -87,18 +97,20 @@ class Module implements
         );
 
         $eventManager->attach(
-            MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleError'],
+            MvcEvent::EVENT_DISPATCH_ERROR,
+            [$this, 'handleError'],
             WebListenerEventsPriorities::DISPATCH_ERROR_HANDLE_ERROR
         );
         $eventManager->attach(
-            MvcEvent::EVENT_RENDER_ERROR, [$this, 'handleError'],
+            MvcEvent::EVENT_RENDER_ERROR,
+            [$this, 'handleError'],
             WebListenerEventsPriorities::DISPATCH_ERROR_HANDLE_ERROR
         );
     }
 
     public function getConfig()
     {
-        return include __DIR__.'/config/module.config.php';
+        return include __DIR__ . '/config/module.config.php';
     }
 
     public function getAutoloaderConfig()
@@ -112,21 +124,20 @@ class Module implements
     {
         return [
             'factories'  => [
-                self::APPLICATION_SESSION                 => \Application\Factory\ApplicationSessionFactory::class,
-                'CatalogService'                          => \Application\Factory\Service\CatalogServiceFactory::class,
-                'AuthAdapter'                             => \Application\Factory\AuthAdapterFactory::class,
+                self::APPLICATION_SESSION                 => ApplicationSessionFactory::class,
+                'CatalogService'                          => CatalogServiceFactory::class,
+                'AuthAdapter'                             => AuthAdapterFactory::class,
                 'ZendAuthenticationService'               => ZendAuthenticationServiceFactory::class,
                 'ApplicationWideCache'                    => ApplicationWideCacheFactory::class,
-                'MotSession'                              => \Application\Factory\MotSessionFactory::class,
-                'FileTemplate'                            => \Application\Factory\FileTemplateFactory::class,
-                'Application\Logger'                      => 'Application\Factory\ApplicationLoggerFactory',
+                'MotSession'                              => MotSessionFactory::class,
+                'FileTemplate'                            => FileTemplateFactory::class,
+                'Application\Logger'                      => ApplicationLoggerFactory::class,
                 'LoggedInUserManager'                     => LoggedInUserManagerFactory::class,
                 ApiPersonalDetails::class                 => ApiPersonalDetailsFactory::class,
                 ApiCurrentMotTest::class                  => ApiCurrentMotTestFactory::class,
                 ApiUserSiteCount::class                   => ApiUserSiteCountFactory::class,
-                'AuthorisedExaminerApplication/Logger'    => \Application\Factory\LoggerFactory::class,
-                'Logger'                                  => \Application\Factory\LoggerFactory::class,
-                ReportBuilderService::class               => ReportBuilderServiceFactory::class,
+                'AuthorisedExaminerApplication/Logger'    => LoggerFactory::class,
+                'Logger'                                  => LoggerFactory::class,
                 TesterInProgressTestNumberResource::class => TesterInProgressTestNumberResourceFactory::class,
                 BrakeTestResultsResource::class           => BrakeTestResultsResourceFactory::class,
                 ContingencySessionManager::class          => ContingencySessionManagerFactory::class,
@@ -139,7 +150,7 @@ class Module implements
                 VehicleSearchService::class               => VehicleSearchServiceFactory::class,
             ],
             'aliases'    => [
-                \Zend\Authentication\AuthenticationService::class => 'ZendAuthenticationService'
+                AuthenticationService::class => 'ZendAuthenticationService'
             ],
             'invokables' => [
                 BrakeTestConfigurationClass1And2Helper::class     => BrakeTestConfigurationClass1And2Helper::class,
@@ -163,9 +174,9 @@ class Module implements
         /** @var  $viewManager \Zend\Mvc\View\Console\ViewManager */
         $viewManager = $serviceManager->get('viewManager');
 
-        if ($exception instanceof \DvsaCommon\Auth\NotLoggedInException) {
+        if ($exception instanceof NotLoggedInException) {
             // From http://stackoverflow.com/a/14170913/116509
-            $url      = $e->getRouter()->assemble([], ['name' => 'login']);
+            $url = $e->getRouter()->assemble([], ['name' => 'login']);
             $response = $e->getResponse();
             $response->getHeaders()->addHeaderLine('Location', $url);
             $response->setStatusCode(302);
@@ -177,7 +188,9 @@ class Module implements
                 return $response;
             };
             $e->getApplication()->getEventManager()->attach(
-                MvcEvent::EVENT_ROUTE, $stopCallBack, WebListenerEventsPriorities::ROUTE_STOP_PROPAGATION
+                MvcEvent::EVENT_ROUTE,
+                $stopCallBack,
+                WebListenerEventsPriorities::ROUTE_STOP_PROPAGATION
             );
 
             return $response;
@@ -201,16 +214,16 @@ class Module implements
         $config = $serviceManager->get('config');
 
         $viewModel = $e->getResult();
-        $viewModel->setVariables(['showErrorsInFrontEnd' => $config['showErrorsInFrontEnd'], 'errorId'=>$eid ]);
+        $viewModel->setVariables(['showErrorsInFrontEnd' => $config['showErrorsInFrontEnd'], 'errorId' => $eid]);
 
         if ($exception instanceof FeatureNotAvailableException) {
             $e->getResponse()->setStatusCode(404);
             $viewManager->getRouteNotFoundStrategy()->prepareNotFoundViewModel($e);
         }
 
-        if ($exception instanceof \DvsaCommon\HttpRestJson\Exception\GeneralRestException) {
+        if ($exception instanceof GeneralRestException) {
             $e->getResponse()->setStatusCode($exception->getCode());
-            if ($exception instanceof \DvsaCommon\HttpRestJson\Exception\NotFoundException) {
+            if ($exception instanceof NotFoundException) {
                 $viewManager->getRouteNotFoundStrategy()->prepareNotFoundViewModel($e);
             }
         } elseif ($exception instanceof UnauthorisedException) {

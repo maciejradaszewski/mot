@@ -2,6 +2,7 @@
 
 namespace SiteApi\Model;
 
+use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommonApi\Service\Validator\ErrorSchema;
 use DvsaEntities\Entity\SiteBusinessRoleMap;
 use SiteApi\Factory\SitePersonnelFactory;
@@ -54,7 +55,7 @@ class NominationVerifier
     {
         $errors = new ErrorSchema();
 
-        if ($existingPosition->getBusinessRoleStatus()->getCode() == 'PEND') {
+        if ($existingPosition->getBusinessRoleStatus()->getCode() == BusinessRoleStatusCode::PENDING) {
             $errors->add(self::ERROR_ALREADY_HAS_NOMINATION);
         } else {
             $errors->add(self::ERROR_ALREADY_HAS_ROLE);

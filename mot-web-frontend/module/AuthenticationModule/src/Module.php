@@ -94,8 +94,11 @@ class Module implements
 
         $webAuthenticationListener = $app->getServiceManager()->get(WebAuthenticationListener::class);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, $webAuthenticationListener, -1);
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH, [$this, 'handleCsrfExceptions'],
-            CsrfModule::CSRF_VALIDATING_LISTENER_PRIORITY + 1);
+        $eventManager->attach(
+            MvcEvent::EVENT_DISPATCH,
+            [$this, 'handleCsrfExceptions'],
+            CsrfModule::CSRF_VALIDATING_LISTENER_PRIORITY + 1
+        );
     }
 
     /**
