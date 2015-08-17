@@ -145,7 +145,7 @@ class UserProfileController extends AbstractDvsaMotTestController
         $pageTitleSuccess = 'Recover username for ' . $presenter->displayFullName();
 
         return $this->processRequest(
-            MessageTypeCode::PASSWORD_RESET_BY_LETTER,
+            MessageTypeCode::USERNAME_REMINDER_BY_LETTER,
             $presenter,
             $pageTitleSuccess,
             $pageTitleSuccess
