@@ -10,6 +10,7 @@ class Tester extends MotApi
     const PATH_DEMO_TEST_ASSESSMENT = 'person/{person_id}/demo-test-assessment';
     const PATH_TESTER_TEST_LOGS = 'tester/{user_id}/mot-test-log';
     const PATH_TESTER_TEST_LOGS_SUMMARY = 'tester/{user_id}/mot-test-log/summary';
+    const PATH_TESTER_FULL = 'tester/full';
 
     public function getTesterDetails($token, $user_id)
     {
@@ -61,6 +62,21 @@ class Tester extends MotApi
                 ],
                 '{"format":"DATA_TABLES","_class":"DvsaCommon\\\\Dto\\\\Search\\\\MotTestSearchParamsDto"}'
             )
+        );
+    }
+
+    public function getTesterFull($token, $search, $searchBy = "username")
+    {
+        $params = [
+            "format" => "TYPE_AHEAD",
+            "search_by" =>  $searchBy,
+            "search" => $search
+        ];
+
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_GET,
+            self::PATH_TESTER_FULL . "?" . http_build_query($params)
         );
     }
 }

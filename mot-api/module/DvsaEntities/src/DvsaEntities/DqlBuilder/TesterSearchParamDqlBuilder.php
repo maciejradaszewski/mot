@@ -44,10 +44,7 @@ class TesterSearchParamDqlBuilder extends SearchParamDqlBuilder
         $dql[] = $this->generateDqlHeader($totalCount);
 
         if ($this->searchWords) {
-            $this->addFiltersByValues($filters, $this->searchWords, "tester.username LIKE :TESTER_USERNAME", "OR");
-            $this->addFiltersByValues($filters, $this->searchWords, "tester.firstName LIKE :TESTER_FIRST_NAME", "OR");
-            $this->addFiltersByValues($filters, $this->searchWords, "tester.middleName LIKE :TESTER_MIDDLE_NAME", "OR");
-            $this->addFiltersByValues($filters, $this->searchWords, "tester.familyName LIKE :TESTER_SURNAME", "OR");
+            $this->addFiltersByValues($filters, $this->searchWords, "tester.username = :TESTER_USERNAME", "OR");
         }
 
         $dql[] = count($filters) ? join(' OR ', $filters): '1';
@@ -65,13 +62,12 @@ class TesterSearchParamDqlBuilder extends SearchParamDqlBuilder
     protected function buildQuery($totalCount = false)
     {
         $query = $this->createQuery($totalCount);
+        $searchLength = strlen($this->params->getSearch()) ;
 
-        if (strlen($this->params->getSearch())) {
-            $this->addParametersByValues($query, $this->searchWords, 'TESTER_USERNAME', '%%%s%%');
-            $this->addParametersByValues($query, $this->searchWords, 'TESTER_FIRST_NAME', '%%%s%%');
-            $this->addParametersByValues($query, $this->searchWords, 'TESTER_MIDDLE_NAME', '%%%s%%');
-            $this->addParametersByValues($query, $this->searchWords, 'TESTER_SURNAME', '%%%s%%');
+        if ($searchLength) {
+            $this->addParametersByValues($query, $this->searchWords, 'TESTER_USERNAME');
         }
+
         $query->setParameter(
             'statuses', [
                 AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED,
@@ -96,13 +92,14 @@ class TesterSearchParamDqlBuilder extends SearchParamDqlBuilder
     {
         $select = $totalCount ? 'count(DISTINCT tester)' : ' DISTINCT tester';
 
-        return 'SELECT ' . $select . ' from DvsaEntities\Entity\Person tester
-                    WHERE EXISTS (SELECT 1 FROM DvsaEntities\Entity\AuthorisationForTestingMot auth,
-                        DvsaEntities\Entity\AuthorisationForTestingMotStatus status
-                        WHERE auth.person = tester.id
-                            AND auth.status = status.id
-                            AND status.code IN (:statuses)
-                    ) AND ';
+        return 'SELECT ' . $select . ' FROM
+                     DvsaEntities\Entity\AuthorisationForTestingMot auth,
+                     DvsaEntities\Entity\AuthorisationForTestingMotStatus status,
+                     DvsaEntities\Entity\Person tester
+                     WHERE auth.person = tester.id
+                     AND auth.status = status.id
+                     AND status.code IN (:statuses)
+                     AND ';
     }
 
     /**
