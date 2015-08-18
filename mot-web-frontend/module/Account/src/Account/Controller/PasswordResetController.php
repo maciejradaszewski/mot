@@ -313,9 +313,7 @@ class PasswordResetController extends AbstractAuthActionController
         $this->view = new ChangePasswordFormModel();
         $this->layout()->setVariable('pageLede', self::TEXT_YOU_MUST_CHANGE_PWORD);
 
-        $flashMsgr = $this->flashMessenger();
-
-        if (!$flashMsgr->hasCurrentErrorMessages()) {
+        if (!$this->flashMessenger()->hasCurrentErrorMessages()) {
             /** @var Request $request */
             $request = $this->getRequest();
 

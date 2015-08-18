@@ -106,6 +106,7 @@ class ClaimAccountService
     public function markClaimedSuccessfully()
     {
         $this->identity->setAccountClaimRequired(false);
+        $this->identity->setPasswordChangeRequired(false);
     }
 
     public function getFromSession($key)
