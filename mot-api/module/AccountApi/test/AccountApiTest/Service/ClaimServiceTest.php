@@ -201,6 +201,37 @@ class ClaimServiceTest extends AbstractServiceTestCase
         $this->sut->save($data);
     }
 
+    public function testAccountToBeClaimedAndPasswordResetDisablesPasswordResetAfterSuccessfulClaim()
+    {
+        $data = $this->getPostData();
+        $data['personId'] = 4;
+        $data['password'] = self::PASSWORD;
+        $data['passwordConfirmation'] = self::PASSWORD;
+
+        $this->mockMethod($this->mockEventService, 'addEvent', $this->any(), true);
+        $this->mockMethod($this->mockEventService, 'isEventCreatedBy', $this->any(), true);
+
+        $person = $this->getMockPerson();
+        $person->getPerson()->addSecurityAnswer($this->getMockPersonSecurityAnswer());
+        $person->getPerson()->setAccountClaimRequired(true);
+        $person->getPerson()->setPasswordChangeRequired(true);
+
+        $this->mockMethod($this->mockPersonRepository, 'find', $this->any(), $person->getPerson());
+
+        $securityQuestions = [
+            $data['securityQuestionOneId'] => new SecurityQuestion(),
+            $data['securityQuestionTwoId'] => new SecurityQuestion(),
+        ];
+
+        $this->mockSecurityQuestionRepository->expects($this->any())
+            ->method('findAllByIds')
+            ->willReturn($securityQuestions);
+
+        $this->sut->save($data);
+
+        $this->assertFalse( $person->getPerson()->isPasswordChangeRequired() );
+    }
+
     protected function getMockPerson()
     {
         $person = new Person();

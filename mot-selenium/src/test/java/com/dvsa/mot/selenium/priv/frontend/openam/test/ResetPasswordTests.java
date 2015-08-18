@@ -35,21 +35,6 @@ public class ResetPasswordTests extends BaseTest{
     }
 
     @Test(groups = {"Regression"})
-    public void passwordResetAfterClaimingAccount() {
-        Login login = createTester(Collections.singleton(Site.POPULAR_GARAGES.getId()), TestGroup.ALL,
-            true, true);
-        OpenAMClaimAccountSignInPage openAMClaimAccountSignInPage = new LoginPage(driver)
-            .navigateToClaimAccountPage(driver, login);
-
-        ChangePasswordPage changePasswordPage = openAMClaimAccountSignInPage
-            .submitPasswordSuccessfully(RandomDataGenerator.generatePassword(8))
-            .clickOnSubmitButton().setSecurityQuestionAndAnswersSuccessfully()
-            .clickSubmitButtonExpectingChangePasswordPage();
-
-        changePasswordPage.enterNewPasswordAndSubmitChangesSuccessfully();
-    }
-
-    @Test(groups = {"Regression"})
     public void changePasswordValidationChecks(){
         Login login = createTester(Collections.singleton(Site.POPULAR_GARAGES.getId()), TestGroup.ALL,
             false, true);

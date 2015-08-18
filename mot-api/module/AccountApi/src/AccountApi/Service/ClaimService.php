@@ -186,6 +186,8 @@ class ClaimService extends AbstractService
 
         $person = $this->saveSecurityQuestions($person, $data, $securityQuestions);
         $person->setAccountClaimRequired(false);
+        //prevents situation when user is asked to reset password right after setting new during account claim
+        $person->setPasswordChangeRequired(false);
 
         $this->entityManager->persist($person);
 
