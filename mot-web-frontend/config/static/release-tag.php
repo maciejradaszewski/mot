@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'release_tag' => '1.14.0',
+    'release_tag' => '1.15.0',
 ];
