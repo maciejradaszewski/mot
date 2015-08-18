@@ -24,6 +24,7 @@ use TestSupport\Service\VM10519UserService;
 use TestSupport\Service\AedmService;
 use TestSupport\Service\AccountDataService;
 use TestSupport\Service\SiteUserDataService;
+use TestSupport\Helper\DataGeneratorHelper;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use Zend\ServiceManager\ServiceManager;
 
@@ -272,6 +273,15 @@ class TestSupportHelper
     public function getSitePositionService()
     {
         return $this->getServiceManager()->get(SitePositionController::class);
+    }
+
+    /**
+     * @param array $data
+     * @return DataGeneratorHelper
+     */
+    public function getDataGeneratorHelper(array $data = [])
+    {
+        return DataGeneratorHelper::buildForDifferentiator($data);
     }
 
 }

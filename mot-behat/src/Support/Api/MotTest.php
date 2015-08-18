@@ -132,4 +132,27 @@ class MotTest extends AbstractMotTest
             $params
         );
     }
+
+    public function searchMotTestHistory($token, array $params)
+    {
+        $defaults = [
+            "tester" => 0,
+            "dateFrom" => (new \DateTime())->sub(new \DateInterval('P30D'))->getTimestamp(),
+            "dateTo"   => (new \DateTime())->getTimestamp(),
+            "format" => "DATA_TABLES",
+            "rowCount" => 10,
+            "start" => 0,
+            "sortColumnId" => 0,
+            "sortDirection" => "desc",
+            "pageNumber" => 1
+        ];
+
+        $params = array_replace($defaults, $params);
+
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_GET,
+            self::PATH_SEARCH . "?" . http_build_query($params)
+        );
+    }
 }

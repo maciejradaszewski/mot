@@ -17,20 +17,12 @@ use PHPUnit_Framework_Assert as PHPUnit;
 class MotTestContext implements Context
 {
     const SITE_NUMBER = 'V1234';
-
-    private $brakeTestResultData;
+    const USERNAME_PREFIX_LENGTH = 20;
 
     /**
      * @var Response
      */
     private $motTestData;
-
-    /**
-     * @var Response
-     */
-    private $motData;
-
-    private $contingencyData;
 
     private $statusData;
 
@@ -99,6 +91,11 @@ class MotTestContext implements Context
      */
     private $contingencyTest;
 
+    /**
+     * @var PersonContext
+     */
+    private $personContext;
+
     public function __construct(
         BrakeTestResult $brakeTestResult,
         MotTest $motTest,
@@ -127,6 +124,7 @@ class MotTestContext implements Context
         $this->sessionContext = $scope->getEnvironment()->getContext(SessionContext::class);
         $this->vehicleContext = $scope->getEnvironment()->getContext(VehicleContext::class);
         $this->contingencyTestContext = $scope->getEnvironment()->getContext(ContingencyTestContext::class);
+        $this->personContext = $scope->getEnvironment()->getContext(PersonContext::class);
     }
 
     /**
@@ -149,17 +147,17 @@ class MotTestContext implements Context
     public function iStartMotTestAsTester()
     {
         $this->sessionContext->iAmLoggedInAsATester();
-        $this->startMotTest();
+        $this->startMotTest($this->sessionContext->getCurrentUserId(), $this->sessionContext->getCurrentAccessToken());
     }
 
-    public function startMotTest()
+    public function startMotTest($userId, $token)
     {
         $testClass = 4;
         $vehicleId = $this->vehicleContext->createVehicle(['testClass' => $testClass]);
 
         $this->motTestData = $this->motTest->startNewMotTestWithVehicleId(
-            $this->sessionContext->getCurrentAccessToken(),
-            $this->sessionContext->getCurrentUserId(),
+            $token,
+            $userId,
             $vehicleId,
             $testClass
         );
@@ -538,7 +536,7 @@ class MotTestContext implements Context
     public function ICreateMotTests($number)
     {
         for ($i=0; $i < $number; $i++) {
-            $this->startMotTest();
+            $this->startMotTest($this->sessionContext->getCurrentUserId(), $this->sessionContext->getCurrentAccessToken());
             $this->motTest->abort(
                 $this->sessionContext->getCurrentAccessToken(),
                 $this->motTest->getInProgressTestId(
@@ -630,5 +628,33 @@ class MotTestContext implements Context
                 break;
         }
         return $mot;
+    }
+
+    /**
+     * @Given :number MOT tests have been created by different testers with the same prefix
+     */
+    public function motTestsHaveBeenCreatedByDifferentTestersWithTheSamePrefix($number)
+    {
+        $dataGeneratorHelper = $this->testSupportHelper->getDataGeneratorHelper();
+        $baseUsername = $dataGeneratorHelper->generateRandomString(self::USERNAME_PREFIX_LENGTH);
+        $suffix = $dataGeneratorHelper->generateRandomString(2);
+
+        while ($number) {
+            $username = $baseUsername . str_repeat($suffix, $number);
+
+            $this->personContext->createTester(["username" => $username]);
+            $this->createPassedMotTest($this->personContext->getPersonUserId(), $this->personContext->getPersonToken());
+
+            $number--;
+        }
+    }
+
+    public function createPassedMotTest($userId, $token)
+    {
+        $this->startMotTest($userId, $token);
+        $this->motTest->passed(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getMotTestNumber()
+        );
     }
 }

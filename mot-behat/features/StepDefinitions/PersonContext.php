@@ -753,7 +753,8 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     public function iNominateUserToSiteAdminRole()
     {
         $siteIds = [$this->vtsContext->getSite()["id"]];
-        $this->createTester($siteIds);
+        $params = ["siteIds" => $siteIds];
+        $this->createTester($params);
 
         $this->nominateToSiteRole("SITE-ADMIN");
     }
@@ -764,20 +765,25 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     public function iNominateUserToSiteManagerRole()
     {
         $siteIds = [$this->vtsContext->getSite()["id"]];
-        $this->createTester($siteIds);
+        $params = ["siteIds" => $siteIds];
+        $this->createTester($params);
         $this->nominateToSiteRole("SITE-MANAGER");
     }
 
-    private function createTester(array $siteIds = [1])
+    public function createTester(array $params = [])
     {
-        $tester = $this->testSupportHelper->getTesterService();
-        $this->personLoginData = $tester->create([
-            'siteIds' => $siteIds,
+        $defaults = [
+            'siteIds' => [1],
             "qualifications"=> [
                 "A"=> $this->getAuthorisationForTestingMotStatusCode("Qualified"),
                 "B"=> $this->getAuthorisationForTestingMotStatusCode("Qualified")
             ]
-        ]);
+        ];
+
+        $params = array_replace($defaults, $params);
+
+        $tester = $this->testSupportHelper->getTesterService();
+        $this->personLoginData = $tester->create($params);
     }
 
     private function nominateToSiteRole($role)
@@ -793,8 +799,8 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
      */
     public function iNominateUserToAedRole()
     {
-        $siteIds = [1];
-        $this->createTester($siteIds);
+        $params = ["siteIds" => [1]];
+        $this->createTester($params);
         $this->nominateToOrganisationRole("Authorised examiner delegate");
     }
 
@@ -846,7 +852,7 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
      * @return string
      * @throws Exception
      */
-    private function getPersonToken()
+    public function getPersonToken()
     {
         $tokenResponse = $this->session->startSession(
             $this->getPersonUsername(),
