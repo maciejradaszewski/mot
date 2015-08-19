@@ -33,7 +33,7 @@ class AuthorisationForTestingMot extends Entity
     /**
      * @var \DvsaEntities\Entity\VehicleClass
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\VehicleClass", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\VehicleClass")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="vehicle_class_id", referencedColumnName="id")
      * })
@@ -43,7 +43,7 @@ class AuthorisationForTestingMot extends Entity
     /**
      * @var \DvsaEntities\Entity\AuthorisationForTestingMotStatus
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\AuthorisationForTestingMotStatus", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\AuthorisationForTestingMotStatus")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="status_id", referencedColumnName="id")
      * })

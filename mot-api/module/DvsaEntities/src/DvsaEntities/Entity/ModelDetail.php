@@ -38,7 +38,7 @@ class ModelDetail extends Entity
     /**
      * @var Make
      *
-     * @ORM\ManyToOne(targetEntity="Make", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Make")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="make_id", referencedColumnName="id"),
      * })
@@ -48,7 +48,7 @@ class ModelDetail extends Entity
     /**
      * @var Model
      *
-     * @ORM\ManyToOne(targetEntity="Model", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Model")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="model_id", referencedColumnName="id"),
      * })

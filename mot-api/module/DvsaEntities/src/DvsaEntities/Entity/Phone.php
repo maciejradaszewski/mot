@@ -52,7 +52,7 @@ class Phone extends Entity
     /**
      * @var PhoneContactType
      *
-     * @ORM\ManyToOne(targetEntity="PhoneContactType", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="PhoneContactType")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="phone_contact_type_id", referencedColumnName="id")
      * })

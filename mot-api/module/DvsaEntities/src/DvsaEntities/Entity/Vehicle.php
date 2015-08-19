@@ -116,7 +116,7 @@ class Vehicle extends Entity implements VehicleInterface
     /**
      * @var Model
      *
-     * @ORM\ManyToOne(targetEntity="Model", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Model")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="model_id", referencedColumnName="id"),
      * })
@@ -133,7 +133,7 @@ class Vehicle extends Entity implements VehicleInterface
     /**
      * @var Make
      *
-     * @ORM\ManyToOne(targetEntity="Make", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Make")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="make_id", referencedColumnName="id"),
      * })
@@ -158,7 +158,7 @@ class Vehicle extends Entity implements VehicleInterface
     /**
      * @var VehicleClass
      *
-     * @ORM\ManyToOne(targetEntity="VehicleClass", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="VehicleClass")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="vehicle_class_id", referencedColumnName="id")
      * })
@@ -168,7 +168,7 @@ class Vehicle extends Entity implements VehicleInterface
     /**
      * @var Colour
      *
-     * @ORM\ManyToOne(targetEntity="Colour", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Colour")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="primary_colour_id", referencedColumnName="id")
      * })
@@ -178,7 +178,7 @@ class Vehicle extends Entity implements VehicleInterface
     /**
      * @var Colour
      *
-     * @ORM\ManyToOne(targetEntity="Colour", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Colour")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="secondary_colour_id", referencedColumnName="id")
      * })
@@ -188,7 +188,7 @@ class Vehicle extends Entity implements VehicleInterface
     /**
      * @var FuelType
      *
-     * @ORM\ManyToOne(targetEntity="FuelType", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="FuelType")
      * @ORM\JoinColumn(name="fuel_type_id", referencedColumnName="id")
      */
     private $fuelType;
@@ -196,7 +196,7 @@ class Vehicle extends Entity implements VehicleInterface
     /**
      * @var BodyType
      *
-     * @ORM\ManyToOne(targetEntity="BodyType", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="BodyType")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="body_type_id", referencedColumnName="id")
      * })
@@ -206,7 +206,7 @@ class Vehicle extends Entity implements VehicleInterface
     /**
      * @var CountryOfRegistration
      *
-     * @ORM\ManyToOne(targetEntity="CountryOfRegistration", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="CountryOfRegistration")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="country_of_registration_id", referencedColumnName="id")
      * })
@@ -216,7 +216,7 @@ class Vehicle extends Entity implements VehicleInterface
     /**
      * @var TransmissionType
      *
-     * @ORM\ManyToOne(targetEntity="TransmissionType", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="TransmissionType")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="transmission_type_id", referencedColumnName="id")
      * })

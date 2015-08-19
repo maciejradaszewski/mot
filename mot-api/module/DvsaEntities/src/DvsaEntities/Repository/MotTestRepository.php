@@ -286,14 +286,11 @@ class MotTestRepository extends AbstractMutableRepository
 
         $qb = $this
             ->createQueryBuilder("t")
-            ->select(["t", "v", "o", "c1", "p", "vts", "tt", "ts", "vc", "ma", "mo"])
+            ->select(["t", "v", "o", "p", "vts"])
             ->innerJoin("t.tester", "p")
             ->innerJoin("t.vehicle", "v")
             ->innerJoin("t.vehicleTestingStation", "vts")
             ->innerJoin("v.vehicleClass", "vc")
-            ->leftJoin("t.make", "ma")
-            ->leftJoin("t.model", "mo")
-            ->innerJoin("t.primaryColour", "c1")
             ->innerJoin("t.motTestType", "tt")
             ->innerJoin("t.status", "ts")
             ->leftJoin("t.odometerReading", "o")
@@ -318,7 +315,7 @@ class MotTestRepository extends AbstractMutableRepository
     public function getMotTestByNumber($motTestNumber)
     {
         $result = $this->createQueryBuilder('mt')
-            ->select('mt, tt, s, rfr')
+            ->select('mt, rfr')
             ->innerJoin('mt.motTestType', 'tt')
             ->innerJoin('mt.status', 's')
             ->leftJoin('mt.motTestReasonForRejections', 'rfr')
