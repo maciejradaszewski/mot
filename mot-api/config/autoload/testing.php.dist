@@ -50,6 +50,9 @@ return array(
          */
         'sendingAllowed' => true,
 
+        /**
+         * Human friendly name of the sender i.e. 'MOT Service'
+         */
         'senderName'   => '',
 
         /**
