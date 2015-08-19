@@ -95,5 +95,11 @@ return array(
             'enabled' => true,
             'ttl'   => 15,
         ],
+        'identity_factory' => [
+            'enabled' => true,
+            'options' => [
+                'ttl' => 300,
+            ],
+        ],
     ],
 );

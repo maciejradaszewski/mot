@@ -9,8 +9,11 @@ use Dvsa\OpenAM\Options\OpenAMClientOptions;
 use DvsaApplicationLogger\TokenService\TokenServiceInterface;
 use DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMApiTokenBasedAdapter;
 use DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMCachedClient;
+use DvsaAuthentication\IdentityFactory\CacheableIdentityFactory;
+use DvsaAuthentication\IdentityFactory\DoctrineIdentityFactory;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\PersonRepository;
+use DvsaAuthentication\Factory\IdentityFactoryFactory;
 use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -30,22 +33,19 @@ class OpenAMApiTokenBasedAdapterFactory implements FactoryInterface
         $uuidAttribute       = $openAMClientOptions->getIdentityAttributeUuid();
 
         /**
-         * @var EntityManager $entityManager
-         * @var PersonRepository $personRepository
          * @var OpenAMClientInterface $openAMClient
          * @var TokenServiceInterface $tokenService
          * @var LoggerInterface $logger
          */
         $openAMClient = $this->getOpenAMClient($serviceLocator);
-        $entityManager = $serviceLocator->get(EntityManager::class);
-        $personRepository = $entityManager->getRepository(Person::class);
+        $openAMClient = $serviceLocator->get(OpenAMClientInterface::class);
         $logger = $serviceLocator->get('Application\Logger');
-
         $tokenService = $serviceLocator->get('tokenService');
+
         $adapter = new OpenAMApiTokenBasedAdapter(
             $openAMClient,
             $usernameAttribute,
-            $personRepository,
+            $serviceLocator->get(IdentityFactoryFactory::class),
             $logger,
             $tokenService,
             $uuidAttribute

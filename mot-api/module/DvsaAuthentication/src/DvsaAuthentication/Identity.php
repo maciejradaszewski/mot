@@ -6,45 +6,110 @@ use DvsaCommon\Auth\MotIdentityInterface;
 use DvsaEntities\Entity\Person;
 
 /**
- * Class Identity
- *
- * @package     DvsaAuthentication
- *
- * @description Wrapper for the identity used by the authentication system.
+ * Wrapper for the identity used by the authentication system.
  */
 class Identity implements MotIdentityInterface
 {
     /**
-     * @var \DvsaEntities\Entity\Person
-     */
-    protected $person;
-    /**
-     * @var string
+     * @var string|null
      */
     protected $token;
 
-    /** @var  string */
+    /**
+     * @var string|null
+     */
     protected $uuid;
+
+    /**
+     * @var int
+     */
+    protected $userId;
+
+    /**
+     * @var string
+     */
+    protected $username;
+
+    /**
+     * @var string
+     */
+    protected $displayName;
+
+    /**
+     * @var bool
+     */
+    protected $isAccountClaimRequired;
+
+    /**
+     * @var bool
+     */
+    protected $isPasswordChangeRequired;
+
+    /**
+     * @var Person
+     */
+    private $person;
 
     public function __construct(Person $person)
     {
+        $this->userId = $person->getId();
+        $this->username = $person->getUsername();
+        $this->displayName = $person->getDisplayName();
+        $this->isAccountClaimRequired = $person->isAccountClaimRequired();
+        $this->isPasswordChangeRequired = $person->isPasswordChangeRequired();
         $this->person = $person;
-
-        return $this;
-    }
-
-    /**
-     * @return \DvsaEntities\Entity\Person
-     * @codeCoverageIgnore
-     */
-    public function getPerson()
-    {
-        return $this->person;
     }
 
     /**
      * @return string
-     * @codeCoverageIgnore
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDisplayName()
+    {
+        return $this->displayName;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPasswordChangeRequired()
+    {
+        return $this->isPasswordChangeRequired;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAccountClaimRequired()
+    {
+        return $this->isAccountClaimRequired;
+    }
+
+    /**
+     * @return null|string
      */
     public function getToken()
     {
@@ -52,10 +117,9 @@ class Identity implements MotIdentityInterface
     }
 
     /**
-     * @param mixed $token
+     * @param string $token
      *
-     * @return $this
-     * @codeCoverageIgnore
+     * @return self
      */
     public function setToken($token)
     {
@@ -65,25 +129,9 @@ class Identity implements MotIdentityInterface
     }
 
     /**
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->person->getUsername();
-    }
-
-    /**
-     * @return string
-     */
-    public function getUuid()
-    {
-        return $this->uuid;
-    }
-
-    /**
-     * @param $uuid
+     * @param string $uuid
      *
-     * @return $this
+     * @return self
      */
     public function setUuid($uuid)
     {
@@ -93,20 +141,10 @@ class Identity implements MotIdentityInterface
     }
 
     /**
-     * @return int
+     * @return Person
      */
-    public function getUserId()
+    public function getPerson()
     {
-        return $this->person->getId();
-    }
-
-    public function isAccountClaimRequired()
-    {
-        return $this->person->isAccountClaimRequired();
-    }
-
-    public function isPasswordChangeRequired()
-    {
-        return $this->person->isPasswordChangeRequired();
+        return $this->person;
     }
 }

@@ -6,10 +6,10 @@ use Dvsa\OpenAM\Exception\OpenAMClientException;
 use Dvsa\OpenAM\Exception\OpenAMUnauthorisedException;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMApiTokenBasedAdapter;
+use DvsaAuthentication\Identity;
+use DvsaAuthentication\IdentityFactory;
 use DvsaAuthentication\Service\ApiTokenService;
 use DvsaCommonTest\TestUtils\XMock;
-use DvsaEntities\Entity\Person;
-use DvsaEntities\Repository\PersonRepository;
 use Zend\Authentication\Result;
 use Zend\Log\LoggerInterface;
 
@@ -23,13 +23,13 @@ class OpenAMApiTokenBasedAdapterTest extends \PHPUnit_Framework_TestCase
 
     private $client;
     private $tokenService;
-    private $personRepo;
+    private $identityFactory;
 
     public function setUp()
     {
         $this->client = XMock::of(OpenAMClientInterface::class);
-        $this->personRepo = XMock::of(PersonRepository::class);
         $this->tokenService = XMock::of(ApiTokenService::class);
+        $this->identityFactory = XMock::of(IdentityFactory::class);
     }
     
     public function testAuthenticate_tokenNotFound_shouldReturnInvalidCredential()
@@ -79,11 +79,11 @@ class OpenAMApiTokenBasedAdapterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Result::FAILURE_CREDENTIAL_INVALID, $result->getCode());
     }
 
-    public function testAuthenticate_personNotFound_shouldReturnFailure()
+    public function testAuthenticate_identityNotCreated_shouldReturnFailure()
     {
         $this->tokenWasFound();
         $this->identityAttributesResolvedTo($this->identityAttributes_valid());
-        $this->personWasFound(false);
+        $this->identityWasNotCreated();
 
         $result = $this->createAdapter()->authenticate();
 
@@ -92,18 +92,16 @@ class OpenAMApiTokenBasedAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testAuthenticate_success_shouldReturnValidIdentity()
     {
+        $expectedIdentity = XMock::of(Identity::class);
+
         $this->tokenWasFound();
         $this->identityAttributesResolvedTo($this->identityAttributes_valid());
-        $this->personWasFound();
+        $this->identityWasCreated($expectedIdentity);
 
         $result = $this->createAdapter()->authenticate();
 
         $this->assertEquals(Result::SUCCESS, $result->getCode());
-        $identity = $result->getIdentity();
-        $this->assertNotNull($identity);
-        $this->assertEquals(self::EXAMPLE_UUID, $identity->getUuid());
-        $this->assertEquals(self::EXAMPLE_USERNAME, $identity->getPerson()->getUsername());
-        $this->assertEquals(self::EXAMPLE_TOKEN, $identity->getToken());
+        $this->assertSame($expectedIdentity, $result->getIdentity());
     }
 
     private function createAdapter()
@@ -111,7 +109,7 @@ class OpenAMApiTokenBasedAdapterTest extends \PHPUnit_Framework_TestCase
         return new OpenAMApiTokenBasedAdapter(
             $this->client,
             self::ATTR_USERNAME,
-            $this->personRepo,
+            $this->identityFactory,
             XMock::of(LoggerInterface::class),
             $this->tokenService,
             self::ATTR_UUID
@@ -153,10 +151,19 @@ class OpenAMApiTokenBasedAdapterTest extends \PHPUnit_Framework_TestCase
         return $attrs;
     }
 
-    private function personWasFound($isFound = true)
+    private function identityWasCreated(Identity $identity)
     {
-        $this->personRepo->expects($this->atLeastOnce())
-            ->method('findOneBy')->with(['username' => self::EXAMPLE_USERNAME])
-            ->willReturn($isFound ? (new Person())->setUsername(self::EXAMPLE_USERNAME) : null);
+
+        $this->identityFactory->expects($this->any())
+            ->method('create')
+            ->with(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID)
+            ->willReturn($identity);
+    }
+
+    private function identityWasNotCreated()
+    {
+        $this->identityFactory->expects($this->any())
+            ->method('create')
+            ->will($this->throwException(new \InvalidArgumentException()));
     }
 }

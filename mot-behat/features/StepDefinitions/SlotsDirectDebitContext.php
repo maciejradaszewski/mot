@@ -81,6 +81,11 @@ class SlotsDirectDebitContext implements Context
                 $this->responseReceived->getStatusCode(),
                 'Unable to setup mandate'
             );
+            PHPUnit::assertArrayNotHasKey(
+                'validationError',
+                $this->responseReceived->getBody()->toArray(),
+                'Did not expect any errors while setting up a direct debit mandate'
+            );
         }
     }
 

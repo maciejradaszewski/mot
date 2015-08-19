@@ -8,9 +8,7 @@ use Dvsa\OpenAM\Exception\OpenAMUnauthorisedException;
 use Dvsa\OpenAM\Model\OpenAMLoginDetails;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaAuthentication\Authentication\Adapter\AuthenticationAdapterTrait;
-use DvsaAuthentication\Identity;
-use DvsaCommon\Log\Logger;
-use DvsaEntities\Entity\Person;
+use DvsaAuthentication\IdentityFactory;
 use DvsaEntities\Repository\PersonRepository;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Result;
@@ -21,10 +19,16 @@ class OpenAMApiCredentialsBasedAdapter implements AdapterInterface
 {
     use AuthenticationAdapterTrait;
 
-    /** @var \DvsaEntities\Repository\PersonRepository */
-    private $personRepository;
-    /** @var \Dvsa\OpenAM\OpenAMClientInterface */
+    /**
+     * @var IdentityFactory
+     */
+    private $identityFactory;
+
+    /**
+     * @var OpenAMClientInterface
+     */
     private $openAMClient;
+
     private $username;
     private $password;
     private $uuidAttribute;
@@ -40,11 +44,11 @@ class OpenAMApiCredentialsBasedAdapter implements AdapterInterface
     public function __construct(
         OpenAMClientInterface $openAMClient,
         $realm,
-        PersonRepository $personRepository,
+        IdentityFactory $identityFactory,
         LoggerInterface $logger,
         $uuidAttribute
     ) {
-        $this->personRepository = $personRepository;
+        $this->identityFactory = $identityFactory;
         $this->openAMClient = $openAMClient;
         $this->realm = $realm;
         $this->uuidAttribute = $uuidAttribute;
@@ -80,16 +84,14 @@ class OpenAMApiCredentialsBasedAdapter implements AdapterInterface
             return self::identityResolutionFailedResult();
         }
 
-        /** @var Person $person */
-        $person = $this->personRepository->findOneBy(['username' => $this->username]);
-        if (is_null($person)) {
-            $this->logger->err('Person: ' . $this->username . ' not found in database!');
+        try {
+            $identity = $this->identityFactory->create($this->username, $token, $uuid);
+
+            return new Result(Result::SUCCESS, $identity);
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->err(sprintf('Person: %s not found in database!', $this->username));
 
             return self::identityResolutionFailedResult();
         }
-
-        $identity = (new Identity($person))->setToken($token)->setUuid($uuid);
-
-        return new Result(Result::SUCCESS, $identity);
     }
 }

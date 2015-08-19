@@ -66,7 +66,7 @@ class AuthorisationService extends AbstractMotAuthorisationService implements Au
      */
     public function isAuthenticatedAsPerson($id)
     {
-        return $id == $this->authenticationService->getIdentity()->getPerson()->getId();
+        return $id == $this->authenticationService->getIdentity()->getUserId();
     }
 
     /**
