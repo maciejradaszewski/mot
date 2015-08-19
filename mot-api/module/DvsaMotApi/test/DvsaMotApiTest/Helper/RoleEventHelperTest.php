@@ -2,9 +2,8 @@
 
 namespace DvsaMotApiTest\Helper;
 
+use DvsaAuthentication\Identity;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
-use DvsaCommon\Auth\MotIdentityInterface;
-use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\EventPersonMap;
 use DvsaEntities\Entity\EventType;
@@ -49,11 +48,15 @@ class RoleEventHelperTest extends \PHPUnit_Framework_TestCase
             ->setFirstName("John")
             ->setFamilyName("Rambo");
 
-        $identity = XMock::of(MotIdentityInterface::class, ['getPerson']);
+        $identity = XMock::of(Identity::class);
         $identity
             ->expects($this->any())
             ->method('getPerson')
             ->willReturn($person);
+        $identity
+            ->expects($this->any())
+            ->method('getDisplayName')
+            ->willReturn('John Rambo');
 
         $identityProvider = XMock::of(MotIdentityProviderInterface::class);
         $identityProvider

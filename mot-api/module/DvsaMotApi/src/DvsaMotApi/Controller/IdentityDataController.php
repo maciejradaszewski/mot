@@ -30,10 +30,10 @@ class IdentityDataController extends AbstractDvsaRestfulController
         $personData = [
             'userId'                   => $identity->getUserId(),
             'username'                 => $identity->getUsername(),
-            'displayName'              => $identity->getPerson()->getDisplayName(),
+            'displayName'              => $identity->getDisplayName(),
             'role'                     => '',
-            'isAccountClaimRequired'   => $identity->getPerson()->isAccountClaimRequired(),
-            'isPasswordChangeRequired' => $identity->getPerson()->isPasswordChangeRequired()
+            'isAccountClaimRequired'   => $identity->isAccountClaimRequired(),
+            'isPasswordChangeRequired' => $identity->isPasswordChangeRequired()
         ];
         $returnStruct['user'] = $personData;
         $returnStruct['identity'] = $identity->getUsername();

@@ -87,9 +87,9 @@ class SessionController extends AbstractDvsaRestfulController
             $personData = [
                 'userId'      => $identity->getUserId(),
                 'username'    => $identity->getUsername(),
-                'displayName' => $identity->getPerson()->getDisplayName(),
+                'displayName' => $identity->getDisplayName(),
                 'role'        => '',
-                'accountClaimRequired' => $identity->getPerson()->isAccountClaimRequired(),
+                'accountClaimRequired' => $identity->isAccountClaimRequired(),
             ];
             $returnStruct['accessToken'] = $identity->getToken();
             $returnStruct['user'] = $personData;

@@ -113,6 +113,6 @@ class RoleEventHelper
      */
     private function getDisplayName()
     {
-        return $this->identityProvider->getIdentity()->getPerson()->getDisplayName();
+        return $this->identityProvider->getIdentity()->getDisplayName();
     }
 }

@@ -2,8 +2,8 @@
 
 namespace DvsaMotApiTest\Helper;
 
+use DvsaAuthentication\Identity;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
-use DvsaCommon\Auth\MotIdentityInterface;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\EventType;
 use DvsaEntities\Entity\Person;
@@ -43,11 +43,15 @@ class TesterQualificationStatusChangeEventHelperTest extends \PHPUnit_Framework_
             ->setFirstName("John")
             ->setFamilyName("Rambo");
 
-        $identity = XMock::of(MotIdentityInterface::class, ['getPerson']);
+        $identity = XMock::of(Identity::class);
         $identity
             ->expects($this->any())
             ->method('getPerson')
             ->willReturn($person);
+        $identity
+            ->expects($this->any())
+            ->method('getDisplayName')
+            ->willReturn('John Rambo');
 
         $identityProvider = XMock::of(MotIdentityProviderInterface::class);
         $identityProvider

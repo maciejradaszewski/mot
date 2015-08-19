@@ -42,7 +42,7 @@ class ResetPinControllerTest extends AbstractPersonControllerTestCase
 
         $expectedPin = 123456;
 
-        $viewModel = $this->controller->update(($identity->getPerson()->getId() + 1), []);
+        $viewModel = $this->controller->update(($identity->getUserId() + 1), []);
         $response = $this->controller->getResponse();
 
         $this->assertEquals(400, $response->getStatusCode());
@@ -63,7 +63,7 @@ class ResetPinControllerTest extends AbstractPersonControllerTestCase
             ->method('regeneratePinForPerson')
             ->will($this->returnValue($expectedPin));
 
-        $viewModel = $this->controller->update($identity->getPerson()->getId(), []);
+        $viewModel = $this->controller->update($identity->getUserId(), []);
         $response = $this->controller->getResponse();
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -83,7 +83,7 @@ class ResetPinControllerTest extends AbstractPersonControllerTestCase
             ->method('regeneratePinForPerson')
             ->will($this->returnValue($expectedPin));
 
-        $viewModel = $this->controller->update($identity->getPerson()->getId(), []);
+        $viewModel = $this->controller->update($identity->getUserId(), []);
         $response = $this->controller->getResponse();
 
         $this->assertEquals(200, $response->getStatusCode());

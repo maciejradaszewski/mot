@@ -7,9 +7,7 @@ use Dvsa\OpenAM\Exception\OpenAMUnauthorisedException;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaApplicationLogger\TokenService\TokenServiceInterface;
 use DvsaAuthentication\Authentication\Adapter\AuthenticationAdapterTrait;
-use DvsaAuthentication\Identity;
-use DvsaEntities\Entity\Person;
-use DvsaEntities\Repository\PersonRepository;
+use DvsaAuthentication\IdentityFactory;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Result;
 use Zend\Http\Exception\InvalidArgumentException;
@@ -20,7 +18,7 @@ class OpenAMApiTokenBasedAdapter implements AdapterInterface
 {
     use AuthenticationAdapterTrait;
 
-    private $personRepository;
+    private $identityFactory;
     private $openAMClient;
     private $usernameAttribute;
     private $tokenService;
@@ -30,20 +28,20 @@ class OpenAMApiTokenBasedAdapter implements AdapterInterface
     /**
      * @param OpenAMClientInterface $openAMClient
      * @param                       $usernameAttribute
-     * @param PersonRepository $personRepository
-     * @param LoggerInterface $logger
+     * @param IdentityFactory       $identityFactory
+     * @param LoggerInterface       $logger
      * @param                       $tokenService
      * @param string $uuidAttribute
      */
     public function __construct(
         OpenAMClientInterface $openAMClient,
         $usernameAttribute,
-        PersonRepository $personRepository,
+        IdentityFactory $identityFactory,
         LoggerInterface $logger,
         $tokenService,
         $uuidAttribute
     ) {
-        $this->personRepository = $personRepository;
+        $this->identityFactory = $identityFactory;
         $this->openAMClient = $openAMClient;
         $this->usernameAttribute = $usernameAttribute;
         $this->logger = $logger;
@@ -83,15 +81,14 @@ class OpenAMApiTokenBasedAdapter implements AdapterInterface
             return self::identityResolutionFailedResult();
         }
 
-        /** @var Person $person */
-        $person = $this->personRepository->findOneBy(['username' => $username]);
-        if (is_null($person)) {
-            $this->logger->err('Person: '. $username . ' not found in database!');
+        try {
+            $identity = $this->identityFactory->create($username, $token, $uuid);
+
+            return new Result(Result::SUCCESS, $identity);
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->err(sprintf('Person: %s not found in database!', $username));
+
             return self::identityResolutionFailedResult();
         }
-
-        $identity = (new Identity($person))->setToken($token)->setUuid($uuid);
-
-        return new Result(Result::SUCCESS, $identity);
     }
 }
