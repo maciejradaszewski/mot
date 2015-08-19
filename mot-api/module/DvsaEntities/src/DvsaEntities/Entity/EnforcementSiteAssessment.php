@@ -72,7 +72,7 @@ class EnforcementSiteAssessment extends Entity
     /**
      * @var \DvsaEntities\Entity\EnforcementVisitOutcome
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\EnforcementVisitOutcome", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\EnforcementVisitOutcome")
      * @ORM\JoinColumn(name="visit_outcome_id", referencedColumnName="id")
      */
     private $visitOutcome;

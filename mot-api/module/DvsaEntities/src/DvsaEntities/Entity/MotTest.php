@@ -72,7 +72,7 @@ class MotTest extends Entity
     /**
      * @var \DvsaEntities\Entity\Colour
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Colour", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Colour")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="primary_colour_id", referencedColumnName="id")
      * })
@@ -82,7 +82,7 @@ class MotTest extends Entity
     /**
      * @var \DvsaEntities\Entity\Colour
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Colour", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Colour")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="secondary_colour_id", referencedColumnName="id")
      * })
@@ -284,7 +284,7 @@ class MotTest extends Entity
     /**
      * @var \DvsaEntities\Entity\MotTestType
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\MotTestType", fetch="EAGER", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\MotTestType", cascade={"persist"})
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="mot_test_type_id", referencedColumnName="id")
      * })

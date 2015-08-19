@@ -57,18 +57,8 @@ class VehicleRepository extends AbstractVehicleRepository
     {
         return $this->createExactMatchSearchQueryBuilder('vehicle', $vin, $reg, $limit)
             ->select([
-                'vehicle', 'model', 'make', 'class', 'colour', 'fuel', 'body',
-                'secondary_colour', 'country', 'transmission'
+                'vehicle'
             ])
-            ->leftJoin('vehicle.model', 'model')
-            ->leftJoin('vehicle.make', 'make')
-            ->leftJoin('vehicle.vehicleClass', 'class')
-            ->leftJoin('vehicle.colour', 'colour')
-            ->leftJoin('vehicle.secondaryColour', 'secondary_colour')
-            ->leftJoin('vehicle.fuelType', 'fuel')
-            ->leftJoin('vehicle.bodyType', 'body')
-            ->leftJoin('vehicle.countryOfRegistration', 'country')
-            ->leftJoin('vehicle.transmissionType', 'transmission')
             ->getQuery()
             ->getResult();
     }
