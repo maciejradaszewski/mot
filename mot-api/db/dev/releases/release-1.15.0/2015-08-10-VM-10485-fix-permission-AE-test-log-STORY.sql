@@ -1,4 +1,4 @@
-
+SET @app_user_id = (SELECT `id` FROM `person` WHERE `username` = 'static data' || `user_reference` = 'Static Data');
 DELETE FROM role_permission_map
 WHERE
     role_id IN (
@@ -26,4 +26,4 @@ WHERE
             permission
         WHERE
             code = 'AE-TEST-LOG'
-    )
+    );
