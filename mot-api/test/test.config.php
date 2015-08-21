@@ -18,6 +18,7 @@ $config = [
         'DvsaMotApi',
         'EquipmentApi',
         'IntegrationApi',
+        'Dvsa\OpenAM',
         'OrganisationApi',
         'NonWorkingDaysApi',
         'NotificationApi',
@@ -26,7 +27,8 @@ $config = [
         'UserFacade',
         'VehicleApi',
         'MailerApi',
-        'DvsaApplicationLogger'
+        'DvsaApplicationLogger',
+        'AuditApi'
     ],
 ];
 
@@ -46,8 +48,9 @@ $config['test_namespaces'] = [
     'NotificationApiTest' => __DIR__  . '/../module/NotificationApi/test/NotificationApiTest',
     'SiteApiTest' => __DIR__  . '/../module/SiteApi/test/SiteApiTest',
     'UserApiTest' => __DIR__  . '/../module/UserApi/test/UserApiTest',
-    'MailerApiTest' => __DIR__  . '/../module/MailerApi/test/MailerApiTest'
-
+    'MailerApiTest' => __DIR__  . '/../module/MailerApi/test/MailerApiTest',
+    'AuditApiTest' => __DIR__  . '/../module/AuditApi/test',
+    'AuditApiIntegrationTest' => __DIR__  . '/../module/AuditApi/integration-test',
 ];
 
 return $config;

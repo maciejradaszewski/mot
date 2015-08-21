@@ -9,6 +9,7 @@ use Zend\Http\Headers;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Mvc\Router\RouteMatch;
+use Dvsa\Mot\AuditApi\Service\HistoryAuditService;
 
 class ApiAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,6 +28,11 @@ class ApiAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
      */
     private $mockEvent;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    private $mockKdd069;
+
     public function setUp()
     {
         $this->mockLogger = $this->getMock('Zend\Log\Logger');
@@ -34,6 +40,7 @@ class ApiAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             'Zend\Authentication\AuthenticationService'
         );
         $this->mockEvent = $this->getMock('Zend\Mvc\MvcEvent');
+        $this->mockKdd069 = $this->getMockBuilder(HistoryAuditService::class)->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -42,7 +49,7 @@ class ApiAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testNoAuthCheckWhenNoRouteMatches()
     {
-        $listener = new ApiAuthenticationListener($this->mockAuthService, $this->mockLogger, []);
+        $listener = new ApiAuthenticationListener($this->mockAuthService, $this->mockLogger, [], $this->mockKdd069);
         $this->assertFalse($listener($this->mockEvent));
     }
 
@@ -54,7 +61,7 @@ class ApiAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         $controllerName = 'NoAuth\Controller';
 
         // create the listener with the controller name in the whitelist
-        $listener = new ApiAuthenticationListener($this->mockAuthService, $this->mockLogger, [$controllerName]);
+        $listener = new ApiAuthenticationListener($this->mockAuthService, $this->mockLogger, [$controllerName], $this->mockKdd069);
 
         $matches = new RouteMatch([]);
         $matches->setParam('controller', $controllerName);
@@ -102,7 +109,7 @@ class ApiAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             ->method('authenticate')
             ->will($this->returnValue(new Result(Result::FAILURE, false)));
 
-        $listener = new ApiAuthenticationListener($this->mockAuthService, $this->mockLogger);
+        $listener = new ApiAuthenticationListener($this->mockAuthService, $this->mockLogger, [], $this->mockKdd069);
 
         return $listener;
     }

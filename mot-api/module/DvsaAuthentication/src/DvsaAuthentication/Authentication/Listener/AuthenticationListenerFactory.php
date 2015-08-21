@@ -2,6 +2,8 @@
 
 namespace DvsaAuthentication\Authentication\Listener;
 
+use Dvsa\Mot\AuditApi\Service\HistoryAuditService;
+use Zend\EventManager\EventManager;
 use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\Exception;
 use Zend\ServiceManager\FactoryInterface;
@@ -29,7 +31,10 @@ class AuthenticationListenerFactory implements FactoryInterface
         $config = $sl->get('config');
 
         $whitelist = $config['dvsa_authentication']['whitelist'];
-        $listener = new ApiAuthenticationListener($auth, $logger, $whitelist);
+
+        $historyAuditService = $sl->get(HistoryAuditService::class);
+
+        $listener = new ApiAuthenticationListener($auth, $logger, $whitelist, $historyAuditService);
         return $listener;
     }
 }

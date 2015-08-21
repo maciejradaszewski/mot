@@ -446,6 +446,13 @@ class MotTest extends Entity
      */
     private $clientIp;
 
+    /**
+     * @var integer
+     *
+     * @ORM\Column(type="integer", nullable=false)
+     */
+    protected $version = 1;
+
 
     /**
      * Constructor

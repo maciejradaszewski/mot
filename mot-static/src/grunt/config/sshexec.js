@@ -37,6 +37,12 @@ module.exports = function(grunt, config) {
                         cloverPath: '/workspace/coverage/api-coverage.xml',
                         htmlPath: '/workspace/coverage/api-coverage'
                     },
+                    db_verification: {
+                        defaultCoverageType: 'html',
+                        baseCmd: 'cd /workspace/mot-api && vendor/bin/phpunit db-verification-test-suite',
+                        cloverPath: '/workspace/coverage/api-coverage.xml',
+                        htmlPath: '/workspace/coverage/api-coverage'
+                    },
                     frontend: {
                         defaultCoverageType: 'html',
                         baseCmd: 'cd /workspace/mot-web-frontend && vendor/bin/phpunit',
@@ -95,6 +101,22 @@ module.exports = function(grunt, config) {
             test_php_api: {
                 command: function() {
                     var coverageOptions = grunt.config('sshexec.options.coverage.api');
+
+                    // No coverage options - bail out
+                    if(!grunt.option('coverage')) {
+                        return coverageOptions.baseCmd;
+                    }
+
+                    return handleCoverageOptions(
+                        coverageOptions,
+                        grunt.option('coverage-type'),
+                        grunt.option('coverage-path')
+                    );
+                }
+            },
+            test_php_api_db_verification: {
+                command: function() {
+                    var coverageOptions = grunt.config('sshexec.options.coverage.db_verification');
 
                     // No coverage options - bail out
                     if(!grunt.option('coverage')) {

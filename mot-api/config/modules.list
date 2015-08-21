@@ -33,3 +33,4 @@ MailerApi
 DvsaCommon
 Dvsa\OpenAM
 PersonApi
+AuditApi

@@ -2,8 +2,11 @@
 
 namespace DvsaAuthentication\Authentication\Listener;
 
+use DvsaAuthentication\Identity;
+use Dvsa\Mot\AuditApi\Service\HistoryAuditService;
 use Zend\Authentication\Adapter\AbstractAdapter;
 use Zend\Authentication\AuthenticationService;
+use Zend\EventManager\EventManager;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\Response;
 use Zend\Log\LoggerInterface;
@@ -36,6 +39,11 @@ class ApiAuthenticationListener
     private $logger;
 
     /**
+     * @var HistoryAuditService
+     */
+    private $historyAuditService;
+
+    /**
      * @param \Zend\Authentication\AuthenticationService $authService
      * @param \Zend\Log\LoggerInterface                  $logger
      * @param                                            $whitelist
@@ -43,11 +51,13 @@ class ApiAuthenticationListener
     public function __construct(
         AuthenticationService $authService,
         LoggerInterface $logger,
-        $whitelist = []
+        $whitelist = [],
+        HistoryAuditService $historyAuditService
     ) {
         $this->authService = $authService;
         $this->whitelist = $whitelist;
         $this->logger = $logger;
+        $this->historyAuditService = $historyAuditService;
     }
 
     /**
@@ -87,7 +97,9 @@ class ApiAuthenticationListener
             return false;
         }
 
-        if (!$this->authService->authenticate()->isValid()) {
+        $authenticateRes = $this->authService->authenticate();
+
+        if (!$authenticateRes->isValid()) {
 
             /** @var \Zend\Http\PhpEnvironment\Response $response */
             $response = $event->getResponse();
@@ -97,6 +109,7 @@ class ApiAuthenticationListener
             return $response;
         }
 
+        $this->setKDD069SessionVars($authenticateRes->getIdentity());
 
         // we reach here if authentication is passed successfully or they
         // already have an identity
@@ -123,5 +136,11 @@ class ApiAuthenticationListener
                 ],
             ]
         );
+    }
+
+    protected function setKDD069SessionVars(Identity $identity)
+    {
+        $this->historyAuditService->setUser($identity->getPerson());
+        $this->historyAuditService->execute();
     }
 }
