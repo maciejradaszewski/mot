@@ -3,8 +3,8 @@
 namespace DvsaCommon\Model;
 
 use DvsaCommon\Constants\Role;
+use DvsaCommon\Enum\RoleCode;
 use DvsaCommon\Utility\ArrayUtils;
-use DvsaCommon\Enum\OrganisationBusinessRoleCode;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
 
 /**
@@ -266,9 +266,9 @@ class PersonAuthorization
     {
         foreach ($this->organisationRoles as $aListOfRolesAndPermissions) {
             if ($aListOfRolesAndPermissions->includesRole(
-                    OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER
+                    RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER
                 )
-                || $aListOfRolesAndPermissions->includesRole(OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE)
+                || $aListOfRolesAndPermissions->includesRole(RoleCode::AUTHORISED_EXAMINER_DELEGATE)
             ) {
                 return true;
             }
