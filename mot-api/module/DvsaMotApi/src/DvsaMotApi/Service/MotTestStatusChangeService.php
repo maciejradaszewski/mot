@@ -259,6 +259,8 @@ class MotTestStatusChangeService implements TransactionAwareInterface
             }
         );
 
+        $this->entityManager->refresh($motTest); // need to have our entity aware of the after-update trigger
+
         // NOTE: placed here on purpose to have disjoint transaction
         $this->returnSlotIfApplicable(
             $motTest,

@@ -44,7 +44,10 @@
         },
         "psr-4" : {
             "Api\\": "src",
-            "Api\\Test\\": "test/src"
+            "Api\\Test\\": "test/src",
+            "Dvsa\\Mot\\AuditApi\\":  "module/AuditApi/src",
+            "Dvsa\\Mot\\AuditApiTest\\": "module/AuditApi/test",
+            "Dvsa\\Mot\\AuditApiIntegrationTest\\": "module/AuditApi/integration-test"
         },
         "classmap" : [
             "../mot-common-web-module/Module.php"

@@ -56,9 +56,7 @@ class Bootstrap
         ];
 
         static::$config = ArrayUtils::merge($baseConfig, $appTestConfig);
-
         static::setupServiceManager();
-
         //self::setupElasticSearch($serviceManager);
     }
 

@@ -20,10 +20,10 @@ return array(
     ),
     'configuration' => array(
       'orm_default' => array(
-        'result_cache'     => 'memcache',
-        'metadata_cache'   => 'memcache',
-        'query_cache'      => 'memcache',
-        'hydration_cache'  => 'memcache',
+        'result_cache'     => 'apc',
+        'metadata_cache'   => 'apc',
+        'query_cache'      => 'apc',
+        'hydration_cache'  => 'apc',
 //        'sql_logger'       => 'Application\SqlLogger',
         'generate_proxies' => false,
         'proxy_dir' => 'data/DoctrineORMModule/Proxy',

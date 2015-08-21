@@ -112,7 +112,6 @@ class CreateMotTestService implements TransactionAwareInterface
     public function create(array $data)
     {
         CreateMotTestRequestValidator::validate($data);
-
         $userId = $this->identityProvider->getIdentity()->getUserId();
         $person = $this->personRepository->get($userId);
 
