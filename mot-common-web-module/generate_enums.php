@@ -42,6 +42,7 @@ $inputArray = [
     enum('MessageTypeCode', 'message_type', 'name', 'code'),
     enum('MotTestTypeCode', 'mot_test_type', 'description', 'code'),
     enum('OrganisationBusinessRoleCode', 'organisation_business_role', 'name', 'name'), //TODO: this will use 'code' instead of 'name', once VM-8254 point 4 takes place
+    enum('RoleCode', 'role', 'name', 'code'), // Unfortunately the correct name for this class has been registered by the previous line (OrganisationBusinessRoleCode) and most importantly codes on the organisation_business_role and role tables are not matching!!
     enum('OrganisationContactTypeCode', 'organisation_contact_type', 'name', 'code'),
     enum('PhoneContactTypeCode', 'phone_contact_type', 'name', 'code'),
     enum('SiteBusinessRoleCode', 'site_business_role', 'name', 'code'),
