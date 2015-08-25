@@ -29,7 +29,7 @@ use DvsaEntities\Repository\LicenceTypeRepository;
 use UserApi\Application\Service\Exception\DuplicatedUserException;
 use UserApi\Application\Service\Validator\AccountValidator;
 use PersonApi\Service\BasePersonService;
-use UserFacade\Exception\UserExistsException;
+use DvsaCommonApi\Service\Exception\UserExistsException;
 use Zend\Form\Annotation\Validator;
 
 /**

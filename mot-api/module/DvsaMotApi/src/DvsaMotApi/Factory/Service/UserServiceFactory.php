@@ -4,7 +4,6 @@ namespace DvsaMotApi\Factory\Service;
 
 use Doctrine\ORM\EntityManager;
 use DvsaMotApi\Service\UserService;
-use UserFacade\UserFacadeLocal;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -23,7 +22,6 @@ class UserServiceFactory implements FactoryInterface
         return new UserService(
             $serviceLocator->get(EntityManager::class),
             $serviceLocator->get('Hydrator'),
-            $serviceLocator->get(UserFacadeLocal::class),
             $serviceLocator->get('RoleProviderService'),
             $serviceLocator->get('DvsaAuthorisationService')
         );

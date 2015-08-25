@@ -1,6 +1,6 @@
 <?php
 
-namespace UserFacade\Exception;
+namespace DvsaCommonApi\Service\Exception;
 
 /**
  * Class UnauthenticatedException

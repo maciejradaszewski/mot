@@ -8,7 +8,6 @@ return [
         'NonWorkingDaysApi',
         'DvsaMotApi',
         'OrganisationApi',
-        'UserFacade',
         'DvsaEntities',
         'SiteApi',
         'DataCatalogApi',

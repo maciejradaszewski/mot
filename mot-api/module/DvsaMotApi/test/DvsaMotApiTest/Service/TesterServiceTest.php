@@ -1,7 +1,6 @@
 <?php
 namespace DvsaMotApiTest\Service;
 
-use DvsaCommon\Constants\Role as RoleConstants;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\MockHandler;
@@ -17,7 +16,6 @@ use DvsaEntities\Repository\PersonRepository;
 use DvsaEntities\Repository\SiteRepository;
 use DvsaMotApi\Service\TesterService;
 use UserApi\SpecialNotice\Service\SpecialNoticeService;
-use UserFacade\Role;
 
 /**
  * Class TesterServiceTest
@@ -34,7 +32,7 @@ class TesterServiceTest extends AbstractServiceTestCase
         $vts = $this->getTestVts();
 
         $mocks = $this->getMocksForTesterService();
-        $tester = $this->getTestTester($vts, $mocks['mockUserFacade'], $mocks['mockAuthorisationService']);
+        $tester = $this->getTestTester($vts, $mocks['mockAuthorisationService']);
 
         $hydratorTesterData = $this->getHydratorTesterReturnData($username);
         $hydratorVtsData = ['id' => 1, 'roles' => []];
@@ -65,7 +63,7 @@ class TesterServiceTest extends AbstractServiceTestCase
         $vts = $this->getTestVts();
 
         $mocks = $this->getMocksForTesterService();
-        $tester = $this->getTestTester($vts, $mocks['mockUserFacade'], $mocks['mockAuthorisationService']);
+        $tester = $this->getTestTester($vts, $mocks['mockAuthorisationService']);
 
         $hydratorTesterData = $this->getHydratorTesterReturnData($username);
         $hydratorVtsData = ['id' => 1, 'roles' => []];
@@ -98,7 +96,7 @@ class TesterServiceTest extends AbstractServiceTestCase
         $vts = $this->getTestVts();
 
         $mocks = $this->getMocksForTesterService();
-        $tester = $this->getTestTester($vts, $mocks['mockUserFacade'], $mocks['mockAuthorisationService'], $isTesterPreviouslyActive);
+        $tester = $this->getTestTester($vts, $mocks['mockAuthorisationService'], $isTesterPreviouslyActive);
 
         $this->setupMockForSingleCall($mocks['mockRepository'], 'find', $tester, $personId);
         $mocks['mockSpecialNoticesService']
@@ -181,15 +179,10 @@ class TesterServiceTest extends AbstractServiceTestCase
         ];
     }
 
-    private function getTestTester($vts, $mockUserFacade, $mockAuthorisationService, $isActive = true)
+    private function getTestTester($vts, $mockAuthorisationService, $isActive = true)
     {
         $tester = new Person();
         if ($isActive) {
-            $mockUserFacade
-                ->expects($this->any())
-                ->method('getRoles')
-                ->will($this->returnValue([Role::createRole(RoleConstants::TESTER_ACTIVE)]));
-
             $mockAuthorisationService
                 ->expects($this->any())
                 ->method('personHasRole')
@@ -281,7 +274,6 @@ class TesterServiceTest extends AbstractServiceTestCase
             'mockRepository' => $mockRepository,
             'mockAuthorisationService' => $mockAuthorisationService,
             'mockSpecialNoticesService' => $mockSpecialNoticesService,
-            'mockUserFacade' => $this->getMockUserFacade(),
             'mockRoleProviderService' => $mockRoleProviderService,
             'mockSiteRepository' => $mockSiteRepository,
             'mockIdentityProvicerService' => $mockIdentityProviderService,

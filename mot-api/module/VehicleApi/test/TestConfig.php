@@ -10,7 +10,6 @@ return [
         'OrganisationApi',
         'DvsaEntities',
         'NotificationApi',
-        'UserFacade',
         'DvsaMotApi',
         'DataCatalogApi',
         'VehicleApi',

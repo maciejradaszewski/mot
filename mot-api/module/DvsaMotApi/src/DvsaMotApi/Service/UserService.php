@@ -6,12 +6,10 @@ use Doctrine\ORM\EntityManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use DvsaAuthorisation\Service\AuthorisationService;
 use DvsaAuthorisation\Service\RoleProviderService;
-use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommonApi\Service\AbstractService;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\PersonRepository;
-use UserFacade\UserFacadeInterface;
 
 /**
  * Class UserService.
@@ -29,11 +27,6 @@ class UserService extends AbstractService
     private $objectHydrator;
 
     /**
-     * @var UserFacadeInterface
-     */
-    private $userFacade;
-
-    /**
      * @var RoleProviderService
      */
     protected $roleProviderService;
@@ -45,19 +38,17 @@ class UserService extends AbstractService
     /**
      * @param EntityManager        $entityManager
      * @param DoctrineObject       $objectHydrator
-     * @param UserFacadeInterface  $userFacade
      * @param RoleProviderService  $roleProviderService
      * @param AuthorisationService $authorisationService
      */
     public function __construct(EntityManager $entityManager, DoctrineObject $objectHydrator,
-                                UserFacadeInterface $userFacade, RoleProviderService $roleProviderService,
+                                RoleProviderService $roleProviderService,
                                 AuthorisationService $authorisationService)
     {
         parent::__construct($entityManager);
 
         $this->userRepository       = $this->entityManager->getRepository(Person::class);
         $this->objectHydrator       = $objectHydrator;
-        $this->userFacade           = $userFacade;
         $this->roleProviderService  = $roleProviderService;
         $this->authorisationService = $authorisationService;
     }

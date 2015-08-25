@@ -3,13 +3,13 @@
 namespace DvsaMotApiTest\Service;
 
 use DvsaAuthorisation\Service\AuthorisationService;
-use DvsaCommon\Constants\Role as RoleConstants;
+use DvsaAuthorisation\Service\RoleProviderService;
+use DvsaCommon\Constants\Role;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Person;
 use DvsaMotApi\Service\UserService;
-use UserFacade\Role;
 
 /**
  * Class UserServiceTest.
@@ -32,11 +32,15 @@ class UserServiceTest extends AbstractServiceTestCase
 
         $mockEntityManager = $this->getMockEntityManagerWithRepository($mockRepository, Person::class);
 
-        $mockRoleProvider         = XMock::of(\DvsaAuthorisation\Service\RoleProviderService::class);
+        $mockRoleProvider         = XMock::of(RoleProviderService::class);
         $authorisationServiceMock = XMock::of(AuthorisationService::class);
 
-        $userService = $this->getUserService($mockEntityManager, $mockHydrator, $this->getMockUserFacade(),
-            $mockRoleProvider, $authorisationServiceMock);
+        $userService = $this->getUserService(
+            $mockEntityManager,
+            $mockHydrator,
+            $mockRoleProvider,
+            $authorisationServiceMock
+        );
 
         $this->assertEquals($expectedDataArray, $userService->getAllUserData());
     }
@@ -46,9 +50,7 @@ class UserServiceTest extends AbstractServiceTestCase
         $username = 'tester1';
         $role = SiteBusinessRoleCode::TESTER;
         $user = new Person();
-        $userRole = Role::createRole($role);
 
-        $expectedDataWithoutPassword                   = $this->getExpectedUserData($username, false);
         $expectedDataWithoutPasswordWithRoles          = $this->getExpectedUserData($username, false);
         $expectedDataWithoutPasswordWithRoles['roles'] = [$role];
         $expectedHydratorData                          = $this->getExpectedUserData($username);
@@ -60,18 +62,21 @@ class UserServiceTest extends AbstractServiceTestCase
         $this->setupMockForSingleCall($mockHydrator, 'extract', $expectedHydratorData, $user);
 
         $mockEntityManager = $this->getMockEntityManagerWithRepository($mockRepository, Person::class);
-        $mockUserFacade    = $this->getMockUserFacade();
 
         $mockRoleProvider = XMock::of(\DvsaAuthorisation\Service\RoleProviderService::class);
         $mockRoleProvider
             ->expects($this->once())
             ->method('getRolesForPerson')
-            ->will($this->returnValue([$userRole]));
+            ->will($this->returnValue([SiteBusinessRoleCode::TESTER]));
 
         $authorisationServiceMock = XMock::of(AuthorisationService::class);
 
-        $userService = $this->getUserService($mockEntityManager, $mockHydrator, $mockUserFacade, $mockRoleProvider,
-            $authorisationServiceMock);
+        $userService = $this->getUserService(
+            $mockEntityManager,
+            $mockHydrator,
+            $mockRoleProvider,
+            $authorisationServiceMock
+        );
 
         $this->assertEquals($expectedDataWithoutPasswordWithRoles, $userService->getUserData($username));
     }
@@ -95,7 +100,7 @@ class UserServiceTest extends AbstractServiceTestCase
 
         $authorisationServiceMock = XMock::of(AuthorisationService::class);
 
-        $userService = $this->getUserService($mockEntityManager, $mockHydrator, $this->getMockUserFacade(),
+        $userService = $this->getUserService($mockEntityManager, $mockHydrator,
             $mockRoleProvider, $authorisationServiceMock);
 
         $userService->getUserData($username);
@@ -120,15 +125,14 @@ class UserServiceTest extends AbstractServiceTestCase
     /**
      * @param $mockEntityManager
      * @param $mockHydrator
-     * @param $userFacade
      * @param $roleProvider
      * @param $authorisationService
      *
      * @return \DvsaMotApi\Service\UserService
      */
-    private function getUserService($mockEntityManager, $mockHydrator, $userFacade, $roleProvider, $authorisationService)
+    private function getUserService($mockEntityManager, $mockHydrator, $roleProvider, $authorisationService)
     {
-        $userService = new UserService($mockEntityManager, $mockHydrator, $userFacade, $roleProvider, $authorisationService);
+        $userService = new UserService($mockEntityManager, $mockHydrator, $roleProvider, $authorisationService);
 
         return $userService;
     }

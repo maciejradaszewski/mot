@@ -24,7 +24,6 @@ $config = [
         'NotificationApi',
         'SiteApi',
         'UserApi',
-        'UserFacade',
         'VehicleApi',
         'MailerApi',
         'DvsaApplicationLogger',

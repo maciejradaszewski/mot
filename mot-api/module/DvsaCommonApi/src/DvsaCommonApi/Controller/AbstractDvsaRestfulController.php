@@ -5,7 +5,7 @@ namespace DvsaCommonApi\Controller;
 use DataCatalogApi\Service\DataCatalogService;
 use DvsaCommon\Http\HttpStatus;
 use DvsaCommonApi\Service\Exception\NotFoundException;
-use UserFacade\Exception\UnauthenticatedException;
+use DvsaCommonApi\Service\Exception\UnauthenticatedException;
 use Zend\Http\Response;
 use Zend\Json\Json;
 use Zend\Log\Logger;
