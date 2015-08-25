@@ -29,8 +29,6 @@ use DvsaEntitiesTest\Entity\SiteTest;
 use DvsaMotApi\Service\Validator\MotTestValidator;
 use DvsaMotApiTest\Factory\MotTestObjectsFactory;
 use PHPUnit_Framework_TestCase;
-use ReflectionMethod;
-use UserFacade\UserFacadeLocal;
 
 /**
  * Class MotTestValidatorTest
@@ -43,7 +41,6 @@ class MotTestValidatorTest extends PHPUnit_Framework_TestCase
 
     /** @var  AuthorisationServiceInterface $motAuthorizationService */
     private $motAuthorizationService;
-    private $userFacadeMock;
 
     /** @var  MotIdentityProviderInterface $motIdentityProvider */
     private $motIdentityProvider;
@@ -62,8 +59,6 @@ class MotTestValidatorTest extends PHPUnit_Framework_TestCase
         $this->motIdentityProvider->expects($this->any())
             ->method('getIdentity')
             ->will($this->returnValue(new MotIdentity(self::LOGGED_IN_USER_ID, null)));
-
-        $this->userFacadeMock = XMock::of(UserFacadeLocal::class);
 
         $this->motTestValidator = new MotTestValidator(
             $this->censorServiceMock,

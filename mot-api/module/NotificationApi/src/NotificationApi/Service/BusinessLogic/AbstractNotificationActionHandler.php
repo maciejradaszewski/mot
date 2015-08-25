@@ -7,7 +7,6 @@ use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\Entity\Notification;
 use DvsaEntities\Entity\NotificationTemplateAction;
 use NotificationApi\Service\NotificationService;
-use UserFacade\UserFacadeLocal;
 use Zend\ServiceManager\ServiceManager;
 use DvsaEventApi\Service\EventService;
 use NotificationApi\Service\Helper\SiteNominationEventHelper;
@@ -57,7 +56,6 @@ abstract class AbstractNotificationActionHandler
                     $serviceManager->get(EventService::class),
                     $serviceManager->get(EntityManager::class),
                     $serviceManager->get(NotificationService::class),
-                    $serviceManager->get(UserFacadeLocal::class),
                     $action,
                     $serviceManager->get(SiteNominationEventHelper::class)
                 );
@@ -68,7 +66,6 @@ abstract class AbstractNotificationActionHandler
                     $serviceManager->get(EventService::class),
                     $serviceManager->get(EntityManager::class),
                     $serviceManager->get(NotificationService::class),
-                    $serviceManager->get(UserFacadeLocal::class),
                     $action,
                     $serviceManager->get(OrganisationNominationEventHelper::class)
                 );

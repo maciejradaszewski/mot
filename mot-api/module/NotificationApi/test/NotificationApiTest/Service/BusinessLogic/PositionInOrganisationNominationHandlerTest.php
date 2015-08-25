@@ -13,7 +13,6 @@ use DvsaEntities\Entity\OrganisationBusinessRoleMap;
 use NotificationApi\Service\BusinessLogic\PositionInOrganisationNominationHandler;
 use NotificationApi\Service\NotificationService;
 use NotificationApiTest\Entity\NotificationCreatorTrait;
-use UserFacade\UserFacadeLocal;
 use DvsaEventApi\Service\EventService;
 use NotificationApi\Service\Helper\OrganisationNominationEventHelper;
 
@@ -78,7 +77,6 @@ class PositionInOrganisationNominationHandlerTest extends AbstractServiceTestCas
             XMock::of(EventService::class),
             $entityManagerMock,
             $this->getMockWithDisabledConstructor(NotificationService::class),
-            XMock::of(UserFacadeLocal::class),
             $action,
             XMock::of(OrganisationNominationEventHelper::class)
         );

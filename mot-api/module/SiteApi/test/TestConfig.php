@@ -10,7 +10,6 @@ return [
         'DvsaEntities',
         'OrganisationApi',
         'DvsaMotApi',
-        'UserFacade',
         'DvsaAuthentication',
         'DvsaAuthorisation'
     ],

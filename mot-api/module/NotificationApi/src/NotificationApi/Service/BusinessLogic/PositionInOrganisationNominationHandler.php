@@ -13,7 +13,6 @@ use DvsaEntities\Entity\OrganisationBusinessRoleMap;
 use DvsaEventApi\Service\EventService;
 use NotificationApi\Dto\Notification as DtoNotification;
 use NotificationApi\Service\NotificationService;
-use UserFacade\UserFacadeInterface;
 use Zend\ServiceManager\ServiceManager;
 use DvsaEntities\Entity\NotificationAction;
 use Zend\ServiceManager\AbstractFactoryInterface;
@@ -50,9 +49,6 @@ class PositionInOrganisationNominationHandler extends AbstractNotificationAction
     /** @var $notificationService NotificationService */
     protected $notificationService;
 
-    /** @var UserFacadeInterface $userFacade */
-    protected $userFacade;
-
     /** @var \DvsaEventApi\Service\EventService $eventService */
     protected $eventService;
 
@@ -65,7 +61,6 @@ class PositionInOrganisationNominationHandler extends AbstractNotificationAction
      * @param EventService        $eventService
      * @param EntityManager       $entityManger
      * @param NotificationService $notificationService
-     * @param UserFacadeInterface         $userFacade
      * @param string              $action
      * @param OrganisationNominationEventHelper $organisationNominationEventHelper
      */
@@ -73,14 +68,12 @@ class PositionInOrganisationNominationHandler extends AbstractNotificationAction
         EventService $eventService,
         EntityManager $entityManger,
         NotificationService $notificationService,
-        UserFacadeInterface $userFacade,
         $action,
         OrganisationNominationEventHelper $organisationNominationEventHelper
     ) {
         $this->eventService = $eventService;
         $this->entityManager = $entityManger;
         $this->notificationService = $notificationService;
-        $this->userFacade = $userFacade;
         $this->action = $action;
         $this->organisationNominationEventHelper = $organisationNominationEventHelper;
     }

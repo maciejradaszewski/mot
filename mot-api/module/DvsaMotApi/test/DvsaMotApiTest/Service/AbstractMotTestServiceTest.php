@@ -201,7 +201,6 @@ abstract class AbstractMotTestServiceTest extends AbstractServiceTestCase
             'mockOtpService'               => $this->mockOtpService,
             'mockOrganisationService'      => $this->mockOrganisationService,
             'mockVehicleService'           => $this->mockVehicleService,
-            'mockUserFacade'               => $this->getMockUserFacade(),
             self::MOCK_DATETIME_HOLDER     => $this->dateTimeHolder,
             'mockIdentity'                 => $motIdentity,
             'mockMotTestTypeRepository'    => $this->mockMotTestTypeRepository,

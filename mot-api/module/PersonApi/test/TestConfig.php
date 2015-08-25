@@ -8,7 +8,6 @@ return [
         'DvsaEntities',
         'OrganisationApi',
         'NotificationApi',
-        'UserFacade',
         'PersonApi',
         'DvsaMotApi',
         'DvsaAuthorisation',

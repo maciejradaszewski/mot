@@ -16,7 +16,6 @@ use DvsaEntities\Entity\SiteBusinessRoleMap;
 use NotificationApi\Service\BusinessLogic\PositionAtSiteNominationHandler;
 use NotificationApi\Service\NotificationService;
 use NotificationApiTest\Entity\NotificationCreatorTrait;
-use UserFacade\UserFacadeLocal;
 use NotificationApi\Service\Helper\SiteNominationEventHelper;
 
 /**
@@ -80,7 +79,6 @@ class PositionAtSiteNominationHandlerTest extends AbstractServiceTestCase
             XMock::of(EventService::class),
             $entityManagerMock,
             $this->getMockWithDisabledConstructor(NotificationService::class),
-            XMock::of(UserFacadeLocal::class),
             $action,
             XMock::of(SiteNominationEventHelper::class)
         );

@@ -11,7 +11,6 @@ use DvsaEntities\Entity\SiteBusinessRoleMap;
 use DvsaEventApi\Service\EventService;
 use NotificationApi\Dto\Notification as DtoNotification;
 use NotificationApi\Service\NotificationService;
-use UserFacade\UserFacadeInterface;
 use Zend\ServiceManager\ServiceManager;
 use DvsaCommonApi\Service\EntityFinderTrait;
 use Zend\ServiceManager\AbstractFactoryInterface;
@@ -49,9 +48,6 @@ class PositionAtSiteNominationHandler extends AbstractNotificationActionHandler
     /** @var $notificationService NotificationService */
     protected $notificationService;
 
-    /** @var UserFacadeInterface $userFacade */
-    protected $userFacade;
-
     /** @var EventService $eventService */
     protected $eventService;
 
@@ -63,7 +59,6 @@ class PositionAtSiteNominationHandler extends AbstractNotificationActionHandler
      *
      * @param EntityManager       $entityManger
      * @param NotificationService $notificationService
-     * @param UserFacadeInterface         $userFacade
      * @param string              $action
      * @param SiteNominationEventHelper $siteNominationEventHelper
      */
@@ -71,14 +66,12 @@ class PositionAtSiteNominationHandler extends AbstractNotificationActionHandler
         EventService $eventService,
         EntityManager $entityManger,
         NotificationService $notificationService,
-        UserFacadeInterface $userFacade,
         $action,
         SiteNominationEventHelper $siteNominationEventHelper
     ) {
         $this->eventService = $eventService;
         $this->entityManager = $entityManger;
         $this->notificationService = $notificationService;
-        $this->userFacade = $userFacade;
         $this->action = $action;
         $this->siteNominationEventHelper = $siteNominationEventHelper;
     }

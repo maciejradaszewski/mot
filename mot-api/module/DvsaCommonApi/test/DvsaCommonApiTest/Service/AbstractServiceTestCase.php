@@ -13,7 +13,6 @@ use PHPUnit_Framework_ExpectationFailedException;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use PHPUnit_Framework_TestCase;
 use ReflectionClass;
-use UserFacade\UserFacadeLocal;
 
 /**
  * Class AbstractServiceTestCase
@@ -140,14 +139,6 @@ abstract class AbstractServiceTestCase extends PHPUnit_Framework_TestCase
     protected function getMockEntityManager()
     {
         return $this->getMockWithDisabledConstructor(EntityManager::class);
-    }
-
-    /**
-     * @return UserFacadeLocal
-     */
-    protected function getMockUserFacade()
-    {
-        return $this->getMockWithDisabledConstructor(UserFacadeLocal::class);
     }
 
     protected function getMockRepository($repositoryClass = \Doctrine\ORM\EntityRepository::class)

@@ -7,10 +7,8 @@ return [
         'DvsaAuthorisation',
         'DvsaCommonApi',
         'DvsaEntities',
-        'UserFacade',
         'DvsaMotApi',
         'UserApi',
-        'UserFacade',
         'AccountApi'
     ],
     'test_namespaces' => [

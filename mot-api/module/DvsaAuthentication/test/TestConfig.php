@@ -5,7 +5,6 @@ return [
         'DvsaCommonApi',
         'DvsaEntities',
         'DvsaMotApi',
-        'UserFacade',
         'DvsaAuthentication',
         'DvsaAuthorisation'
     ],

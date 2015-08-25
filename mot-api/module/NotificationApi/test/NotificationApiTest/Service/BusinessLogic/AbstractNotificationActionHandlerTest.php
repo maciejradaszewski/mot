@@ -8,7 +8,6 @@ use NotificationApi\Service\BusinessLogic\AbstractNotificationActionHandler;
 use NotificationApi\Service\BusinessLogic\PositionAtSiteNominationHandler;
 use NotificationApi\Service\BusinessLogic\PositionInOrganisationNominationHandler;
 use NotificationApi\Service\NotificationService;
-use UserFacade\UserFacadeLocal;
 use DvsaEventApi\Service\EventService;
 use NotificationApi\Service\Helper\SiteNominationEventHelper;
 use NotificationApi\Service\Helper\OrganisationNominationEventHelper;
@@ -76,7 +75,6 @@ class AbstractNotificationActionHandlerTest extends AbstractServiceTestCase
                 EventService::class,
                 EntityManager::class,
                 NotificationService::class,
-                UserFacadeLocal::class,
                 SiteNominationEventHelper::class,
                 OrganisationNominationEventHelper::class
             ]

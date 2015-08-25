@@ -39,7 +39,6 @@
             "PersonApiTest": "module/PersonApi/test",
             "SiteApi": "module/SiteApi/src",
             "UserApi": "module/UserApi/src",
-            "UserFacade": "module/UserFacade/src",
             "VehicleApi": "module/VehicleApi/src"
         },
         "psr-4" : {

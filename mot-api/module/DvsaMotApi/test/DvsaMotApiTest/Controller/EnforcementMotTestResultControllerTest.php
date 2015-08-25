@@ -62,7 +62,7 @@ class EnforcementMotTestResultControllerTest extends AbstractMotApiControllerTes
     }
 
     /**
-     * @expectedException \UserFacade\Exception\UnauthenticatedException
+     * @expectedException \DvsaCommonApi\Service\Exception\UnauthenticatedException
      */
     public function testPutServiceFailsWhenNotAuthorised()
     {
