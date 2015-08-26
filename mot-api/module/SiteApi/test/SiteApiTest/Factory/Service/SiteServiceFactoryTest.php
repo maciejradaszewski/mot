@@ -24,6 +24,7 @@ use SiteApi\Factory\Service\SiteServiceFactory;
 use SiteApi\Service\SiteService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
+use DvsaEntities\Repository\SiteStatusRepository;
 
 /**
  * Class SiteServiceFactoryTest
@@ -32,7 +33,7 @@ use Zend\ServiceManager\ServiceManager;
  */
 class SiteServiceFactoryTest extends AbstractServiceTestCase
 {
-    public function testEventServiceGetList()
+    public function testSiteServiceFactoryReturnsSiteServiceInstance()
     {
         $serviceManager = new ServiceManager();
 
@@ -64,6 +65,9 @@ class SiteServiceFactoryTest extends AbstractServiceTestCase
 
         $mockNonWorkDayCountryRepo = XMock::of(NonWorkingDayCountryRepository::class);
         $this->mockMethod($entityManager, 'getRepository', $this->at(8), $mockNonWorkDayCountryRepo);
+
+        $siteStatusRepository = XMock::of(SiteStatusRepository::class);
+        $this->mockMethod($entityManager, 'getRepository', $this->at(9), $siteStatusRepository);
 
         $factory = new SiteServiceFactory();
 

@@ -54,6 +54,9 @@ $inputArray = [
     enum('VehicleClassGroupCode', 'vehicle_class_group', 'name', 'code'),
     enum('WeightSourceCode', 'weight_source_lookup', 'name', 'code'),
 
+    // Site Statuses
+    enum('SiteStatusCode', 'site_status_lookup', 'name', 'code'),
+
     // Enums which has values that are database names, ideally usages of these would be replaced with the 'code' column.
     enum('EventTypeName', 'event_type_lookup', 'name', 'name'),
     enum('CompanyTypeName', 'company_type', 'name', 'name'),

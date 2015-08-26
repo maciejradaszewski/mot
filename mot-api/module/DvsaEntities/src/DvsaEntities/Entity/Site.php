@@ -9,6 +9,7 @@ use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaEntities\EntityTrait\CommonIdentityTrait;
+use DvsaEntities\Entity\SiteStatus;
 
 /**
  * Site
@@ -212,6 +213,14 @@ class Site extends Entity
      * @ORM\JoinColumn(name="non_working_day_country_lookup_id", referencedColumnName="id")
      **/
     private $nonWorkingDayCountry;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="SiteStatus")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="site_status_id", referencedColumnName="id")
+     * })
+     */
+    private $status;
 
     /**
      * @return \DvsaEntities\Entity\SiteTestingDailySchedule[]
@@ -773,5 +782,23 @@ class Site extends Entity
     {
         $this->nonWorkingDayCountry = $nonWorkingDayCountry;
         return $this;
+    }
+
+    /**
+     * @param SiteStatus $status
+     * @return $this
+     */
+    public function setStatus(SiteStatus $status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    /**
+     * @return SiteStatus
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 }

@@ -21,6 +21,7 @@ use DvsaCommon\Enum\CountryCode;
 use DvsaCommon\Enum\EventTypeCode;
 use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommon\Enum\SiteContactTypeCode;
+use DvsaCommon\Enum\SiteStatusCode;
 use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\Hydrator;
@@ -46,6 +47,7 @@ use DvsaEntities\Repository\FacilityTypeRepository;
 use DvsaEntities\Repository\NonWorkingDayCountryRepository;
 use DvsaEntities\Repository\SiteContactTypeRepository;
 use DvsaEntities\Repository\SiteRepository;
+use DvsaEntities\Repository\SiteStatusRepository;
 use DvsaEntities\Repository\SiteTestingDailyScheduleRepository;
 use DvsaEntities\Repository\SiteTypeRepository;
 use DvsaEntities\Repository\VehicleClassRepository;
@@ -73,21 +75,13 @@ class SiteService extends AbstractService
     const SITE_NUMBER_REQUIRED_DISPLAY_MESSAGE = 'You need to enter a Site Number to perform the search';
     const SITE_NUMBER_INVALID_DATA_DISPLAY_MESSAGE = 'Site number should contain alphanumeric characters only';
 
-    /**
-     * @var AuthorisationServiceInterface $authService
-     */
+    /** @var AuthorisationServiceInterface $authService */
     protected $authService;
-    /**
-     * @var MotIdentityInterface
-     */
+    /** @var MotIdentityInterface */
     private $identity;
-    /**
-     * @var ContactDetailsService
-     */
+    /** @var ContactDetailsService */
     private $contactService;
-    /**
-     * @var EventService $eventService
-     */
+    /** @var EventService $eventService */
     private $eventService;
     /** @var SiteRepository */
     private $repository;
@@ -107,48 +101,39 @@ class SiteService extends AbstractService
     private $siteTestingDailyScheduleRepository;
     /** @var NonWorkingDayCountryRepository */
     private $nonWorkingDayCountryRepository;
-
-    /**
-     * @var SiteValidatorBuilder
-     */
+    /** @var SiteStatusRepository */
+    private $siteStatusRepository;
+    /** @var SiteValidatorBuilder */
     private $siteValidatorBuilder;
-
     /** @var VtsMapper */
     private $vtsMapper;
-
     /** @var XssFilter */
     private $xssFilter;
-
-    /**
-     * @var UpdateVtsAssertion
-     */
+    /** @var UpdateVtsAssertion */
     private $updateVtsAssertion;
-    /**
-     * @var SiteValidator
-     */
+    /** @var SiteValidator */
     private $validator;
-    /**
-     * @var DateTimeHolder
-     */
+    /** @var DateTimeHolder */
     private $dateTimeHolder;
 
     /**
-     * @param \Doctrine\ORM\EntityManager $entityManager
-     * @param \DvsaAuthorisation\Service\AuthorisationServiceInterface $authService
+     * @param EntityManager $entityManager
+     * @param AuthorisationServiceInterface $authService
      * @param MotIdentityInterface $motIdentity
-     * @param \DvsaCommonApi\Service\ContactDetailsService $contactService
+     * @param ContactDetailsService $contactService
      * @param EventService $eventService
      * @param SiteTypeRepository $siteTypeRepository
-     * @param \DvsaEntities\Repository\SiteRepository $repository
-     * @param \DvsaEntities\Repository\SiteContactTypeRepository $siteContactTypeRepository
-     * @param \DvsaEntities\Repository\BrakeTestTypeRepository $brakeTestTypeRepository
+     * @param SiteRepository $repository
+     * @param SiteContactTypeRepository $siteContactTypeRepository
+     * @param BrakeTestTypeRepository $brakeTestTypeRepository
      * @param FacilityTypeRepository $facilityTypeRepository
      * @param VehicleClassRepository $vehicleClassRepository
      * @param AuthorisationForTestingMotAtSiteStatusRepository $authForTestingMotStatusRepository
      * @param SiteTestingDailyScheduleRepository $siteTestingDailyScheduleRepository
      * @param NonWorkingDayCountryRepository $nonWorkingDayCountryRepository
-     * @param \DvsaCommonApi\Filter\XssFilter $xssFilter
-     * @param \SiteApi\Service\Mapper\SiteBusinessRoleMapMapper $positionMapper
+     * @param SiteStatusRepository $siteStatusRepository
+     * @param XssFilter $xssFilter
+     * @param SiteBusinessRoleMapMapper $positionMapper
      * @param UpdateVtsAssertion $updateVtsAssertion
      * @param Hydrator $objectHydrator
      * @param SiteValidator $validator
@@ -168,6 +153,7 @@ class SiteService extends AbstractService
         AuthorisationForTestingMotAtSiteStatusRepository $authForTestingMotStatusRepository,
         SiteTestingDailyScheduleRepository $siteTestingDailyScheduleRepository,
         NonWorkingDayCountryRepository $nonWorkingDayCountryRepository,
+        SiteStatusRepository $siteStatusRepository,
         XssFilter $xssFilter,
         SiteBusinessRoleMapMapper $positionMapper,
         UpdateVtsAssertion $updateVtsAssertion,
@@ -190,6 +176,7 @@ class SiteService extends AbstractService
         $this->authForTestingMotStatusRepository = $authForTestingMotStatusRepository;
         $this->siteTestingDailyScheduleRepository = $siteTestingDailyScheduleRepository;
         $this->nonWorkingDayCountryRepository = $nonWorkingDayCountryRepository;
+        $this->siteStatusRepository = $siteStatusRepository;
 
         $this->xssFilter = $xssFilter;
         $this->positionMapper = $positionMapper;
@@ -233,6 +220,17 @@ class SiteService extends AbstractService
         $siteNumber = $this->repository->getNextSiteNumber();
 
         $site = new Site();
+
+        // Default status for Site is Approved only on creation (see: Alisdar Cameron)
+        $approvedStatus = SiteStatusCode::APPROVED;
+        $status = $this->siteStatusRepository->getByCode($approvedStatus);
+
+        if (!$status) {
+            throw new NotFoundException('SiteStatusCode', $approvedStatus);
+        }
+
+        $site->setStatus($status);
+
         $site
             ->setName(empty($dto->getName()) ? $siteNumber : $dto->getName())
             ->setSiteNumber($siteNumber)

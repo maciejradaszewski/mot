@@ -24,6 +24,7 @@ use SiteApi\Service\SiteService;
 use SiteApi\Service\Validator\SiteValidator;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use DvsaEntities\Entity\SiteStatus;
 
 /**
  * Class SiteServiceFactory
@@ -56,6 +57,7 @@ class SiteServiceFactory implements FactoryInterface
             $entityManager->getRepository(AuthorisationForTestingMotAtSiteStatus::class),
             $entityManager->getRepository(SiteTestingDailySchedule::class),
             $entityManager->getRepository(NonWorkingDayCountry::class),
+            $entityManager->getRepository(SiteStatus::class),
             $serviceLocator->get(XssFilter::class),
             new SiteBusinessRoleMapMapper($hydrator),
             $updateVtsAssertion,
