@@ -37,6 +37,7 @@ class VehicleService
             'bodyType' => '01',
             // Not required for a save but required for the API
             'registrationNumber' => 'ABCD123',
+            'vin' => 'VIN123456789',
             'dateOfFirstUse' => '1980/01/01',
             'dateOfRegistration' => '1980/01/01',
             'dateOfManufacture' => '1980/01/01',

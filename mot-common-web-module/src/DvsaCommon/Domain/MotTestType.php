@@ -145,4 +145,22 @@ class MotTestType
     {
         return $testTypeCode === MotTestTypeCode::RE_TEST;
     }
+
+    /**
+     * @return array
+     */
+    public static function getMotTestHistoryTypes()
+    {
+        return [
+            MotTestTypeCode::NORMAL_TEST,
+            MotTestTypeCode::PARTIAL_RETEST_LEFT_VTS,
+            MotTestTypeCode::PARTIAL_RETEST_REPAIRED_AT_VTS,
+            MotTestTypeCode::TARGETED_REINSPECTION,
+            MotTestTypeCode::MOT_COMPLIANCE_SURVEY,
+            MotTestTypeCode::INVERTED_APPEAL,
+            MotTestTypeCode::STATUTORY_APPEAL,
+            MotTestTypeCode::OTHER,
+            MotTestTypeCode::RE_TEST
+        ];
+    }
 }

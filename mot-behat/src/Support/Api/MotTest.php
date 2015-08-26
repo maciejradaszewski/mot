@@ -33,12 +33,12 @@ class MotTest extends AbstractMotTest
      * @param string $vehicleId
      * @param string $testClass
      *
+     * @param array $params
      * @return \Dvsa\Mot\Behat\Support\Response
-     * @throws \Exception
      */
-    public function startMOTTest($token, $vehicleId = '3', $testClass = '4')
+    public function startMOTTest($token, $vehicleId = '3', $testClass = '4', $params = [])
     {
-        $params = [
+        $defaults = [
             'vehicleId' => $vehicleId,
             'vehicleTestingStationId' => '1',
             'primaryColour' => 'L',
@@ -48,6 +48,8 @@ class MotTest extends AbstractMotTest
             'hasRegistration' => '1',
             'oneTimePassword' => Authentication::ONE_TIME_PASSWORD,
         ];
+
+        $params = array_replace($defaults, $params);
 
         return parent::createMotWithParams($token, $params);
     }
@@ -64,10 +66,10 @@ class MotTest extends AbstractMotTest
         }
     }
 
-    public function startNewMotTestWithVehicleId($token, $userId, $vehicleId, $vehicleClass = '4')
+    public function startNewMotTestWithVehicleId($token, $userId, $vehicleId, $vehicleClass = '4', $motTestParams = [])
     {
         if (!$this->isMOTTestInProgressForTester($token, $userId)) {
-            return $this->startMOTTest($token, $vehicleId, $vehicleClass);
+            return $this->startMOTTest($token, $vehicleId, $vehicleClass, $motTestParams);
         } else {
             //Stop Current Test and Start a New one with the new Vehicle Id
 
@@ -110,7 +112,7 @@ class MotTest extends AbstractMotTest
         );
     }
 
-    public function searchMOTTest($token, $params)
+    public function searchMOTTest($token, $params = [])
     {
         $defaults = [
             'status' => [],

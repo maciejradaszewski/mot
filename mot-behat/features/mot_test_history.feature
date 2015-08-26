@@ -22,3 +22,63 @@ Feature: MOT Test history
       | user_role          |
       | a Vehicle Examiner |
       | an Area Office User|
+
+  Scenario Outline: Search for MOT tests history by site
+    Given I am logged in as a Vehicle Examiner
+    And vehicle has a <test_type> test started
+    When I search for an MOT tests history by site
+    Then MOT test history for vehicle and type <test_type> is <result>
+    Examples:
+    | test_type                             | result       |
+    | Normal Test                           | returned     |
+    | Partial Retest Left VTS               | returned     |
+    | Partial Retest Repaired at VTS        | returned     |
+    | Targeted Reinspection                 | returned     |
+    | MOT Compliance Survey                 | returned     |
+    | Inverted Appeal                       | returned     |
+    | Statutory Appeal                      | returned     |
+    | Other                                 | returned     |
+    | Re-Test                               | returned     |
+    | Demonstration Test following training | not returned |
+    | Routine Demonstration Test            | not returned |
+    | Non-Mot Test                          | not returned |
+
+  Scenario Outline: Search for MOT tests history by site
+    Given I am logged in as a Vehicle Examiner
+    And vehicle has a <test_type> test started
+    When I search for an MOT tests history by vin
+    Then MOT test history for vehicle and type <test_type> is <result>
+  Examples:
+    | test_type                             | result       |
+    | Normal Test                           | returned     |
+    | Partial Retest Left VTS               | returned     |
+    | Partial Retest Repaired at VTS        | returned     |
+    | Targeted Reinspection                 | returned     |
+    | MOT Compliance Survey                 | returned     |
+    | Inverted Appeal                       | returned     |
+    | Statutory Appeal                      | returned     |
+    | Other                                 | returned     |
+    | Re-Test                               | returned     |
+    | Demonstration Test following training | not returned |
+    | Routine Demonstration Test            | not returned |
+    | Non-Mot Test                          | not returned |
+
+  Scenario Outline: Search for MOT tests history by site
+    Given I am logged in as a Vehicle Examiner
+    And vehicle has a <test_type> test started
+    When I search for an MOT tests history by registration
+    Then MOT test history for vehicle and type <test_type> is <result>
+  Examples:
+    | test_type                             | result       |
+    | Normal Test                           | returned     |
+    | Partial Retest Left VTS               | returned     |
+    | Partial Retest Repaired at VTS        | returned     |
+    | Targeted Reinspection                 | returned     |
+    | MOT Compliance Survey                 | returned     |
+    | Inverted Appeal                       | returned     |
+    | Statutory Appeal                      | returned     |
+    | Other                                 | returned     |
+    | Re-Test                               | returned     |
+    | Demonstration Test following training | not returned |
+    | Routine Demonstration Test            | not returned |
+    | Non-Mot Test                          | not returned |
