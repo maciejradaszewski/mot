@@ -14,6 +14,7 @@ use DvsaCommon\Dto\Site\FacilityTypeDto;
 use DvsaCommon\Dto\Site\SiteContactDto;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\SiteContactTypeCode;
+use DvsaCommon\Enum\SiteStatusCode;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\Hydrator;
@@ -30,6 +31,7 @@ use DvsaEntities\Entity\FacilityType;
 use DvsaEntities\Entity\PhoneContactType;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteContactType;
+use DvsaEntities\Entity\SiteStatus;
 use DvsaEntities\Entity\SiteType;
 use DvsaEntities\Mapper\AddressMapper;
 use DvsaEntities\Repository\AuthorisationForTestingMotAtSiteStatusRepository;
@@ -50,6 +52,7 @@ use SiteApi\Service\Mapper\VtsMapper;
 use SiteApi\Service\SiteService;
 use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
 use SiteApi\Service\Validator\SiteValidator;
+use DvsaEntities\Repository\SiteStatusRepository;
 
 /**
  * SiteServiceTest
@@ -81,6 +84,8 @@ class SiteServiceTest extends AbstractServiceTestCase
     private $siteTestingDailyScheduleRepository;
     /** @var  NonWorkingDayCountryRepository|MockObj */
     private $nonWorkingDayCountryRepository;
+    /** @var  SiteStatusRepository|MockObj */
+    private $siteStatusRepository;
     /** @var  MotIdentityInterface|MockObj */
     private $mockIdentity;
     /** @var  EventService|MockObj */
@@ -108,6 +113,8 @@ class SiteServiceTest extends AbstractServiceTestCase
             NonWorkingDayCountryRepository::class
         );
 
+        $this->siteStatusRepository = XMock::of(SiteStatusRepository::class);
+
         $mockEm = $this->getMockEntityManager();
         $xssFilterMock = $this->createXssFilterMock();
 
@@ -133,6 +140,7 @@ class SiteServiceTest extends AbstractServiceTestCase
             $this->authForTestingMotStatusRepository,
             $this->siteTestingDailyScheduleRepository,
             $this->nonWorkingDayCountryRepository,
+            $this->siteStatusRepository,
             $xssFilterMock,
             new SiteBusinessRoleMapMapper(new Hydrator()),
             $updateVtsAssertion,
@@ -145,9 +153,20 @@ class SiteServiceTest extends AbstractServiceTestCase
 
     public function testCreateSiteCodeDoesNotBreak()
     {
+        $facilityType = (new FacilityType())->setName('Facility');
+
         $this->facilityTypeRepository->expects($this->once())
+                                     ->method('getByCode')
+                                     ->willReturn(
+                                         $facilityType
+                                     );
+
+        $siteStatus = (new SiteStatus())->setCode('Approved');
+
+        $this->siteStatusRepository->expects($this->once())
             ->method('getByCode')
-            ->willReturn((new FacilityType())->setName('Facility'));
+            ->with(SiteStatusCode::APPROVED)
+            ->willReturn($siteStatus);
 
         $this->siteService->create($this->getSiteDto());
     }

@@ -13,7 +13,9 @@ use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Domain\MotTestType;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Dto\Common\MotTestTypeDto;
-use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
+use DvsaCommon\Enum\SiteStatusCode;
+use DvsaCommonApi\Service\Exception\NotFoundException;
+use DvsaEntities\Entity\SiteStatus;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
@@ -39,6 +41,7 @@ use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\SiteTypeRepository;
 use DvsaMotApi\Service\Mapper\MotTestMapper;
 use DvsaMotApi\Service\Validator\MotTestValidator;
+use DvsaEntities\Repository\SiteStatusRepository;
 
 /**
  * Service with logic for MOT test
@@ -294,6 +297,17 @@ class MotTestService extends AbstractSearchService implements TransactionAwareIn
             $siteType = $siteTypeRepo->getByCode($type);
 
             $riSite = new Site();
+
+            // Default status for Site is Approved only on creation (see: Alisdar Cameron)
+            $approvedStatus = SiteStatusCode::APPROVED;
+
+            /** @var SiteStatusRepository $statusRepo */
+            $statusRepo = $this->entityManager->getRepository(SiteStatus::class);
+            /** @var $status \DvsaEntities\Entity\SiteStatus */
+            $status = $statusRepo->getByCode($approvedStatus);
+
+            $riSite->setStatus($status);
+
             $riComment = new Comment();
             $siteComment = new SiteComment();
 
