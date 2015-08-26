@@ -12,6 +12,7 @@ use Dvsa\Mot\Behat\Support\Api\ReasonForRejection;
 use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use Dvsa\Mot\Behat\Support\Response;
+use DvsaCommon\Enum\MotTestTypeCode;
 use PHPUnit_Framework_Assert as PHPUnit;
 
 class MotTestContext implements Context
@@ -96,6 +97,11 @@ class MotTestContext implements Context
      */
     private $personContext;
 
+    /**
+     * @var MotTestTypeCode
+     */
+    private $MotTestTypeCode;
+
     public function __construct(
         BrakeTestResult $brakeTestResult,
         MotTest $motTest,
@@ -150,16 +156,20 @@ class MotTestContext implements Context
         $this->startMotTest($this->sessionContext->getCurrentUserId(), $this->sessionContext->getCurrentAccessToken());
     }
 
-    public function startMotTest($userId, $token)
+    public function startMotTest($userId, $token, $motTestParams = [], $vehicleId = null)
     {
         $testClass = 4;
-        $vehicleId = $this->vehicleContext->createVehicle(['testClass' => $testClass]);
+
+        if(is_null($vehicleId)) {
+            $this->vehicleId  = $this->vehicleContext->createVehicle(['testClass' => $testClass]);
+        }
 
         $this->motTestData = $this->motTest->startNewMotTestWithVehicleId(
             $token,
             $userId,
-            $vehicleId,
-            $testClass
+            $this->vehicleId,
+            $testClass,
+            $motTestParams
         );
     }
 
@@ -656,5 +666,155 @@ class MotTestContext implements Context
             $this->sessionContext->getCurrentAccessToken(),
             $this->getMotTestNumber()
         );
+    }
+
+    /**
+     * @Given vehicle has a Re-Test test started
+     */
+    public function vehicleHasMotTestReTestStarted()
+    {
+        $this->sessionContext->iAmLoggedInAsATester();
+
+        $this->vehicleHasMotTestFailed();
+
+        $this->startMotTest($this->sessionContext->getCurrentUserId(),
+            $this->sessionContext->getCurrentAccessToken(),
+            ['motTestType' => MotTestTypeCode::RE_TEST],
+            !empty($this->vehicleId) ? $this->vehicleId : null
+        );
+    }
+
+    protected function vehicleHasMotTestStarted($testType)
+    {
+        $this->sessionContext->iAmLoggedInAsATester();
+
+        $this->startMotTest($this->sessionContext->getCurrentUserId(),
+            $this->sessionContext->getCurrentAccessToken(),
+            ['motTestType' => $testType],
+            !empty($this->vehicleId) ? $this->vehicleId : null
+        );
+    }
+
+
+    public function vehicleHasMotTestFailed()
+    {
+        $this->startMotTest($this->sessionContext->getCurrentUserId(),
+            $this->sessionContext->getCurrentAccessToken()
+        );
+        $this->odometerReading->addMeterReading($this->sessionContext->getCurrentAccessToken(), $this->motTest->getLastMotTestNumber(), 658, 'mi');
+        $this->brakeTestResult->addBrakeTestDecelerometerClass3To7($this->sessionContext->getCurrentAccessToken(), $this->motTest->getLastMotTestNumber());
+        $this->theTesterAddsAReasonForRejection();
+        $this->theTesterFailsTheMotTest();
+    }
+    /**
+     * @Given vehicle has a Normal Test test started
+     */
+    public function vehicleHasANormalTestTestStarted()
+    {
+        $this->vehicleHasMotTestStarted(MotTestTypeCode::NORMAL_TEST);
+    }
+
+    /**
+     * @Given vehicle has a Partial Retest Left VTS test started
+     */
+    public function vehicleHasAPartialRetestLeftVtsTestStarted()
+    {
+        $this->vehicleHasMotTestStarted(MotTestTypeCode::PARTIAL_RETEST_LEFT_VTS);
+    }
+
+    /**
+     * @Given vehicle has a Partial Retest Repaired at VTS test started
+     */
+    public function vehicleHasAPartialRetestRepairedAtVtsTestStarted()
+    {
+        $this->vehicleHasMotTestStarted(MotTestTypeCode::PARTIAL_RETEST_REPAIRED_AT_VTS);
+    }
+
+    /**
+     * @Given vehicle has a Targeted Reinspection test started
+     */
+    public function vehicleHasATargetedReinspectionTestStarted()
+    {
+        $this->sessionContext->iAmLoggedInAsATester();
+
+        $this->vehicleHasMotTestFailed();
+
+        $this->startMotTest($this->sessionContext->getCurrentUserId(),
+            $this->sessionContext->getCurrentAccessToken(),
+            ['motTestType' => MotTestTypeCode::TARGETED_REINSPECTION],
+            !empty($this->vehicleId) ? $this->vehicleId : null
+        );
+    }
+
+    /**
+     * @Given vehicle has a MOT Compliance Survey test started
+     */
+    public function vehicleHasAMotComplianceSurveyTestStarted()
+    {
+        $this->vehicleHasMotTestStarted(MotTestTypeCode::MOT_COMPLIANCE_SURVEY);
+    }
+
+    /**
+     * @Given vehicle has a Inverted Appeal test started
+     */
+    public function vehicleHasAInvertedAppealTestStarted()
+    {
+        $this->vehicleHasMotTestStarted(MotTestTypeCode::INVERTED_APPEAL);
+    }
+
+    /**
+     * @Given vehicle has a Statutory Appeal test started
+     */
+    public function vehicleHasAStatutoryAppealTestStarted()
+    {
+        $this->vehicleHasMotTestStarted(MotTestTypeCode::STATUTORY_APPEAL);
+    }
+
+    /**
+     * @Given vehicle has a Other test started
+     */
+    public function vehicleHasAOtherTestStarted()
+    {
+        $this->vehicleHasMotTestStarted(MotTestTypeCode::OTHER);
+    }
+
+    /**
+     * @Given vehicle has a Demonstration Test following training test started
+     */
+    public function vehicleHasADemonstrationTestFollowingTrainingTestStarted()
+    {
+        $this->sessionContext->iAmLoggedInAsATester();
+
+        $this->startMotTest($this->sessionContext->getCurrentUserId(),
+            $this->sessionContext->getCurrentAccessToken(),
+            [
+                'motTestType'      => MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING,
+                'vehicleStationId' => null
+            ]
+        );
+    }
+
+    /**
+     * @Given vehicle has a Routine Demonstration Test test started
+     */
+    public function vehicleHasARoutineDemonstrationTestTestStarted()
+    {
+        $this->sessionContext->iAmLoggedInAsATester();
+
+        $this->startMotTest($this->sessionContext->getCurrentUserId(),
+            $this->sessionContext->getCurrentAccessToken(),
+            [
+                'motTestType'      => MotTestTypeCode::ROUTINE_DEMONSTRATION_TEST,
+                'vehicleStationId' => null
+            ]
+        );
+    }
+
+    /**
+     * @Given vehicle has a Non-Mot Test test started
+     */
+    public function vehicleHasANonMotTestTestStarted()
+    {
+        $this->vehicleHasMotTestStarted(MotTestTypeCode::NON_MOT_TEST);
     }
 }

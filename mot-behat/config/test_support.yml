@@ -4,6 +4,9 @@ services:
         arguments:
             - @dvsa.test_support_service_manager
 
+    dvsa.mot_test_type_helper:
+        class: Dvsa\Mot\Behat\Support\Helper\MotTestTypeHelper
+
     dvsa.test_support_service_manager:
         class: Zend\ServiceManager\ServiceManager
         public: false

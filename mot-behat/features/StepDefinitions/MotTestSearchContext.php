@@ -88,4 +88,71 @@ class MotTestSearchContext implements Context
         $body = $this->searchResponse->getBody()->toArray();
         PHPUnit::assertEmpty($body['data']['data']);
     }
+
+    /**
+     * @When /^I search for an MOT tests history by (.*)$/
+     */
+    public function iSearchForAnMOTTestHistoryBy($type)
+    {
+        $params = [
+            "dateFrom" => null,
+            "dateTo" => null,
+            "rowCount" => 1,
+            "order" => "desc"
+        ];
+
+        switch($type) {
+            case "site":
+                $params["siteNumber"] = "V1234";
+                break;
+            case "vin":
+                $params["vin"] = "VIN123456789";
+                break;
+            case "registration":
+                $params["vrm"] = "ABCD123";
+                break;
+        }
+
+        $this->searchResponse = $this->motTest->searchMotTestHistory(
+            $this->sessionContext->getCurrentAccessToken(),
+            $params
+        );
+
+    }
+
+    /**
+     * @Then /^MOT test history for vehicle and type (.*) is returned$/
+     *
+     * @param $testType
+     */
+    public function motTestHistoryForVehicleIsReturned($testType)
+    {
+        PHPUnit::assertNotEmpty(
+            $this->filterMotHistorySearchResponse($this->searchResponse, "ABCD123", $testType)
+        );
+    }
+
+    /**
+     * @Then /^MOT test history for vehicle and type (.*) is not returned$/
+     *
+     * @param $testType
+     */
+    public function motTestHistoryForVehicleIsNotReturned($testType)
+    {
+        PHPUnit::assertEmpty(
+            $this->filterMotHistorySearchResponse($this->searchResponse, "ABCD123", $testType)
+        );
+    }
+
+    protected function filterMotHistorySearchResponse($response, $registration, $testType)
+    {
+        $data = $response->getBody()["data"]["data"]->toArray();
+
+        $result = array_filter($data, function ($value) use ($registration, $testType) {
+            return $value["registration"] == $registration &&
+            $value["testType"] == $testType;
+        });
+
+        return $result;
+    }
 }

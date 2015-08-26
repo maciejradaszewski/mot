@@ -299,6 +299,8 @@ class MotTestRepository extends AbstractMutableRepository
             ->orderBy("t.startedDate", "DESC")
             ->addOrderBy("v.id", "DESC")
             ->andWhere("t.startedDate >= :minDate")
+            ->andWhere("tt.code IN (:testTypes)")
+            ->setParameter("testTypes", $this->getMotTestHistoryTestTypes())
             ->setParameter("minDate", $minDate);
 
         return $qb->getQuery()->getResult();
@@ -1196,7 +1198,7 @@ class MotTestRepository extends AbstractMutableRepository
             ->innerJoin(MotTestType::class, 'testType', 'WITH', 'test.motTestType = testType.id')
             ->innerJoin(Person::class, 'tester', 'WITH', 'tester.id = test.tester')
             ->andWhere("testType.code IN (:testTypes)")
-            ->setParameter("testTypes", $this->testTypes);
+            ->setParameter("testTypes", $this->getMotTestHistoryTestTypes());
 
         if ($searchParam->getDateFrom()) {
             $qb->andwhere('test.startedDate >= :DATE_FROM')
@@ -1294,5 +1296,10 @@ class MotTestRepository extends AbstractMutableRepository
         $result = $qb->getQuery()->getOneOrNullResult();
 
         return $result !== null;
+    }
+
+    private function getMotTestHistoryTestTypes()
+    {
+        return \DvsaCommon\Domain\MotTestType::getMotTestHistoryTypes();
     }
 }
