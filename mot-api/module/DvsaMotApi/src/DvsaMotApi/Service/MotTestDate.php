@@ -174,6 +174,14 @@ class MotTestDate
                 $date = $vehicle->getFirstRegistrationDate();
             } else {
                 $date = $vehicle->getManufactureDate();
+
+                if (!$date) {
+                    $date = $vehicle->getFirstRegistrationDate();
+                }
+
+                if (!$date) {
+                    $date = $vehicle->getFirstUsedDate();
+                }
             }
 
             if (!$date instanceof \DateTime) {
