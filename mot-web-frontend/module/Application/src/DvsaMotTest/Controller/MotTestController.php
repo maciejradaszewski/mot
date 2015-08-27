@@ -555,23 +555,15 @@ class MotTestController extends AbstractDvsaMotTestController
         $motTestNumber = (int)$this->params()->fromRoute('motTestNumber', 0);
         $isDuplicate = $this->params('isDuplicate');
 
-        try {
-            $certificateUrl = ReportUrlBuilder::printCertificate($motTestNumber, ($isDuplicate ? 'dup' : null));
+        $certificateUrl = ReportUrlBuilder::printCertificate($motTestNumber, ($isDuplicate ? 'dup' : null));
 
-            //  --  get number of current site --
-            $site = $this->getIdentity()->getCurrentVts();
-            if ($site && $site->getSiteNumber()) {
-                $certificateUrl->queryParam('siteNr', $site->getSiteNumber());
-            }
-
-            $result = $this->getRestClient()->getPdf($certificateUrl); // @todo - add some pdf parsing checks in client
-        } catch (RestApplicationException $e) {
-            $this->addErrorMessages($e->getDisplayMessages());
-            throw $e;
-        } catch (\Exception $e) {
-            $this->addErrorMessages($e->getMessage());
-            throw $e;
+        //  --  get number of current site --
+        $site = $this->getIdentity()->getCurrentVts();
+        if ($site && $site->getSiteNumber()) {
+            $certificateUrl->queryParam('siteNr', $site->getSiteNumber());
         }
+
+        $result = $this->getRestClient()->getPdf($certificateUrl); // @todo - add some pdf parsing checks in client
 
         $response = new Response;
         $response->setContent($result);
