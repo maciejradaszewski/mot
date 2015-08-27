@@ -244,5 +244,33 @@ class MotTestDateTest extends AbstractServiceTestCase
     {
         $this->assertNull(MotTestDate::getNotionalExpiryDateForVehicle(new DvlaVehicle()));
     }
+
+    public function testNotionalExpiryHandlesMissingProductionDate()
+    {
+        $vehicle = new Vehicle();
+
+        $vehicleClass = new VehicleClass();
+        $vehicleClass->setCode(3);
+
+        $registrationDate = new \DateTime('1953-01-01');
+
+        $vehicle->setFirstRegistrationDate($registrationDate);
+        $vehicle->setVehicleClass($vehicleClass);
+
+        $expiryDate = MotTestDate::getNotionalExpiryDateForVehicle($vehicle);
+
+        $this->assertNotNull($expiryDate);
+        $this->assertEquals($registrationDate->modify('+3 years -1 day'), $expiryDate);
+
+        $vehicle->setFirstRegistrationDate(NULL);
+        $vehicle->setFirstUsedDate($registrationDate);
+        $vehicleClass->setCode(5);
+
+        $expiryDate = MotTestDate::getNotionalExpiryDateForVehicle($vehicle);
+
+        $this->assertNotNull($expiryDate);
+        $this->assertEquals($registrationDate->modify('+1 years -1 day'), $expiryDate);
+
+    }
 }
 
