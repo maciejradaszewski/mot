@@ -95,7 +95,7 @@ class Vehicle extends MotApi
         ));
     }
 
-    private function randomRegNumber($length = 7)
+    public function randomRegNumber($length = 7)
     {
         $str = '';
         $characters = array_merge(range('A', 'Z'), range('a', 'z'), range('0', '9'));
@@ -108,7 +108,7 @@ class Vehicle extends MotApi
         return strtoupper($str);
     }
 
-    private function randomVin($length = 17)
+    public function randomVin($length = 17)
     {
         $str = '';
         $characters = array_merge(range('0', '9'));

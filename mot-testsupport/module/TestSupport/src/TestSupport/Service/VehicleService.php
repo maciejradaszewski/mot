@@ -27,8 +27,8 @@ class VehicleService
     {
         $defaults = [
             'countryOfRegistration' => 'GB',
-            'make' => 'BMW',
-            'model' => 'Mini',
+            'make' => '18811', //BMW
+            'model' => '01459', //Alpina
             'transmissionType' => 'a',
             'colour' => 'S',
             'secondaryColour' => 'P',

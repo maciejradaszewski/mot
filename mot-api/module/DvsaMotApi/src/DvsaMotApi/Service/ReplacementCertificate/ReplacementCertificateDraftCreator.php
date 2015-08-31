@@ -61,6 +61,9 @@ class ReplacementCertificateDraftCreator
             );
         }
 
+        $makeName = $motTest->getMake() ? null : $motTest->getMakeName();
+        $modelName = $motTest->getModel() ? null : $motTest->getModelName();
+
         $draft = ReplacementCertificateDraft::create()
             ->setMotTest($motTest)
             ->setMotTestVersion($motTest->getVersion())
@@ -73,7 +76,9 @@ class ReplacementCertificateDraftCreator
             ->setVin($motTest->getVin())
             ->setEmptyVinReason($motTest->getEmptyVinReason())
             ->setMake($motTest->getMake())
+            ->setMakeName($makeName)
             ->setModel($motTest->getModel())
+            ->setModelName($modelName)
             ->setCountryOfRegistration($motTest->getCountryOfRegistration())
             ->setExpiryDate($motTest->getExpiryDate())
             ->setVehicleTestingStation($motTest->getVehicleTestingStation())
