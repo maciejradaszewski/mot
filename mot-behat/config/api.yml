@@ -68,6 +68,10 @@ services:
         class: Dvsa\Mot\Behat\Support\Api\Person
         parent: dvsa.api
 
+    dvsa.replacement_certificate:
+        class: Dvsa\Mot\Behat\Support\Api\ReplacementCertificate
+        parent: dvsa.api
+
     dvsa.tester:
         class: Dvsa\Mot\Behat\Support\Api\Tester
         parent: dvsa.api

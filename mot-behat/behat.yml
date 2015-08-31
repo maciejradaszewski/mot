@@ -28,6 +28,7 @@ default:
                 - NotificationsContext
                 - OdometerReadingContext
                 - PersonContext
+                - ReplacementCertificateContext
                 - SecurityPinContext
                 - SessionContext
                 - SlotsAdjustTransactionContext

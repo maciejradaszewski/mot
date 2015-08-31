@@ -2,6 +2,7 @@
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Gherkin\Node\TableNode;
 use Dvsa\Mot\Behat\Datasource\Authentication;
 use Dvsa\Mot\Behat\Support\Api\BrakeTestResult;
 use Dvsa\Mot\Behat\Support\Api\ContingencyTest;
@@ -10,6 +11,7 @@ use Dvsa\Mot\Behat\Support\Api\MotTest;
 use Dvsa\Mot\Behat\Support\Api\OdometerReading;
 use Dvsa\Mot\Behat\Support\Api\ReasonForRejection;
 use Dvsa\Mot\Behat\Support\Api\Session;
+use Dvsa\Mot\Behat\Support\Api\Vehicle;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use Dvsa\Mot\Behat\Support\Response;
 use DvsaCommon\Enum\MotTestTypeCode;
@@ -63,6 +65,11 @@ class MotTestContext implements Context
     private $session;
 
     /**
+     * @var Vehicle
+     */
+    private $vehicle;
+
+    /**
      * @var TestSupportHelper
      */
     private $testSupportHelper;
@@ -110,7 +117,8 @@ class MotTestContext implements Context
         OdometerReading $odometerReading,
         ReasonForRejection $reasonForRejection,
         Session $session,
-        TestSupportHelper $testSupportHelper
+        TestSupportHelper $testSupportHelper,
+        Vehicle $vehicle
     ) {
         $this->brakeTestResult = $brakeTestResult;
         $this->motTest = $motTest;
@@ -120,6 +128,7 @@ class MotTestContext implements Context
         $this->reasonForRejection = $reasonForRejection;
         $this->session = $session;
         $this->testSupportHelper = $testSupportHelper;
+        $this->vehicle = $vehicle;
     }
 
     /**
@@ -384,8 +393,6 @@ class MotTestContext implements Context
             $testClass
         );
     }
-
-
 
     /**
      * @When /^a logged in Vehicle Examiner aborts the test$/
@@ -659,12 +666,46 @@ class MotTestContext implements Context
         }
     }
 
-    public function createPassedMotTest($userId, $token)
+    public function createPassedMotTest($userId, $token, $vehicleId = null)
     {
-        $this->startMotTest($userId, $token);
+        $this->startMotTest($userId, $token, [], $vehicleId);
+        $this->brakeTestResult->addBrakeTestDecelerometerClass3To7($token, $this->getMotTestNumber());
+        $this->odometerReading->addNoMeterReadingToTest($token, $this->getMotTestNumber());
         $this->motTest->passed(
-            $this->sessionContext->getCurrentAccessToken(),
+            $token,
             $this->getMotTestNumber()
+        );
+    }
+
+    /**
+     * @Given a MOT test for vehicle with the following data exists:
+     */
+    public function aMotTestForVehicleWithTheFollowingDataExists(TableNode $table)
+    {
+        $this->personContext->createTester();
+        $hash = $table->getColumnsHash();
+
+        if (count($hash) !== 1) {
+            throw new \InvalidArgumentException(sprintf('Expected a single vehicle record but got: %d', count($hash)));
+        }
+
+        $row = $hash[0];
+
+        $vehicleData = [
+            'registrationNumber' => $this->vehicle->randomRegNumber(),
+            'vin' => $this->vehicle->randomVin(),
+            'make' => $row['make_code'],
+            'makeOther' => $row['make_other'],
+            'model' => null,
+            'modelOther' => $row['model_other']
+        ];
+
+        $this->vehicleId = $this->vehicleContext->createVehicle($vehicleData);
+
+        $this->createPassedMotTest(
+            $this->personContext->getPersonUserId(),
+            $this->personContext->getPersonToken(),
+            $this->vehicleId
         );
     }
 

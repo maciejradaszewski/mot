@@ -8,10 +8,6 @@
 Modify selected vehicle fields duplicate or replacement. 
 Vehicle (class 4) is generated.
 
-!|Replacement Certificate Issue Admin|$testerUsername1                                                                                         |
-|Site Id                             |New Vrm|New Vin        |Old Primary Colour|New Primary Colour|Reason             |Is Certificate Updated?|
-|$siteId1                            |NEW007 |NEWDEFT12345678|M                 |S                 |Just another reason|true                   |
-
 '''In order to amend issued certificate a tester has to be able to issue a replacement certificate'''
 
 Vehicle (class 4) is generated.

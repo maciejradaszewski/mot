@@ -7,6 +7,8 @@ use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommonApi\Service\Exception\ForbiddenException;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\CountryOfRegistration;
+use DvsaEntities\Entity\Make;
+use DvsaEntities\Entity\Model;
 use DvsaEntities\Entity\MotTestStatus;
 use DvsaMotApi\Service\MotTestSecurityService;
 use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateDraftCreator;
@@ -54,8 +56,13 @@ class ReplacementCertificateDraftCreatorTest extends PHPUnit_Framework_TestCase
 
     public function testCreateGivenMotTestShouldCreateValidDraft()
     {
+        $make = (new Make())->setCode("BT")->setName("Bat");
+        $model = (new Model())->setCode("MB")->setName("Mobil");
+
         $motTest = MotTestObjectsFactory::motTest();
         $motTest->setCountryOfRegistration(new CountryOfRegistration());
+        $motTest->setMake($make);
+        $motTest->setModel($model);
         $this->userAssignedToVts();
         $this->permissionsGranted(
             [PermissionInSystem::CERTIFICATE_REPLACEMENT, PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS]
@@ -70,6 +77,59 @@ class ReplacementCertificateDraftCreatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(
             $motTest->getOdometerReading()->getResultType(), $draft->getOdometerReading()->getResultType()
         );
+        $this->assertEquals($motTest->getMake(), $draft->getMake());
+        $this->assertEquals($motTest->getModel(), $draft->getModel());
+    }
+
+    public function testCreatedGivenMotTestWithModelOtherAndMakeOtherShouldCreateValidDraft()
+    {
+        $motTest = MotTestObjectsFactory::motTest();
+        $motTest->setCountryOfRegistration(new CountryOfRegistration());
+        $motTest->setFreeTextMakeName("Bat");
+        $motTest->setFreeTextModelName("Mobile");
+        $this->userAssignedToVts();
+        $this->permissionsGranted(
+            [PermissionInSystem::CERTIFICATE_REPLACEMENT, PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS]
+        );
+
+        $draft = $this->createSut()->create($motTest);
+
+        $this->assertEquals($motTest->getModel(), $draft->getModel());
+        $this->assertEquals($motTest->getModelName(), $draft->getModelName());
+        $this->assertEquals($motTest->getMake(), $draft->getMake());
+        $this->assertEquals($motTest->getMakeName(), $draft->getMakeName());
+        $this->assertEquals($motTest->getVersion(), $draft->getMotTestVersion());
+        $this->assertEquals($motTest->getExpiryDate(), $draft->getExpiryDate());
+        $this->assertEquals($motTest->getOdometerReading()->getValue(), $draft->getOdometerReading()->getValue());
+        $this->assertEquals($motTest->getOdometerReading()->getUnit(), $draft->getOdometerReading()->getUnit());
+        $this->assertEquals(
+            $motTest->getOdometerReading()->getResultType(), $draft->getOdometerReading()->getResultType()
+        );
+    }
+
+    public function testCreatedModelOtherAndMakeOtherShouldBeIgnoredWhenModelAndMakeExists()
+    {
+        $make = (new Make())->setCode("BT")->setName("Bat");
+        $model = (new Model())->setCode("MB")->setName("Mobil");
+
+        $motTest = MotTestObjectsFactory::motTest();
+        $motTest->setCountryOfRegistration(new CountryOfRegistration());
+        $motTest->setMake($make);
+        $motTest->setModel($model);
+        $motTest->setFreeTextMakeName("Bat");
+        $motTest->setFreeTextModelName("Mobile");
+
+        $this->userAssignedToVts();
+        $this->permissionsGranted(
+            [PermissionInSystem::CERTIFICATE_REPLACEMENT, PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS]
+        );
+
+        $draft = $this->createSut()->create($motTest);
+
+        $this->assertEquals($motTest->getModel(), $draft->getModel());
+        $this->assertEquals(null, $draft->getModelName());
+        $this->assertEquals($motTest->getMake(), $draft->getMake());
+        $this->assertEquals(null, $draft->getMakeName());
     }
 
     private function createSut()
