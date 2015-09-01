@@ -207,8 +207,7 @@ class ReplacementCertificateDraftUpdater implements TransactionAwareInterface
 
             if ($draftChange->isVinSet()) {
                 $draft->setVin($draftChange->getVin());
-
-                if ($draft->getMotTest()->getVin() != $draftChange->getVin()) {
+                if ($this->canChangeVin($draft, $draftChange)) {
                     $draft->setIsVinRegistrationChanged(true);
                 } else {
                     $draft->setIsVinRegistrationChanged(false);
@@ -217,8 +216,7 @@ class ReplacementCertificateDraftUpdater implements TransactionAwareInterface
 
             if ($draftChange->isVrmSet()) {
                 $draft->setVrm($draftChange->getVrm());
-
-                if ($draft->getMotTest()->getRegistration() != $draftChange->getVrm()) {
+                if ($this->canChangeVrm($draft, $draftChange)) {
                     $draft->setIsVinRegistrationChanged(true);
                 } else {
                     $draft->setIsVinRegistrationChanged(false);
@@ -259,5 +257,30 @@ class ReplacementCertificateDraftUpdater implements TransactionAwareInterface
         || $draftChange->isReasonForReplacementSet()
         || $draftChange->isCustomMakeSet()
         || $draftChange->isCustomModelSet();
+    }
+
+    /**
+     * @param ReplacementCertificateDraft $draft
+     * @param ReplacementCertificateDraftChangeDTO $draftChange
+     * @return bool
+     */
+    private function canChangeVin($draft,$draftChange)
+    {
+        return $draft->getMotTest()->getVin() !== $draftChange->getVin() &&
+            !$this->authorizationService->isGranted(
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_NO_MISMATCH_ON_VIN_AND_VRN_CHANGE);
+    }
+
+    /**
+     * @param ReplacementCertificateDraft $draft
+     * @param ReplacementCertificateDraftChangeDTO $draftChange
+     * @return bool
+     */
+    private function canChangeVrm($draft,$draftChange)
+    {
+        return $draft->getMotTest()->getRegistration() !== $draftChange->getVrm() &&
+            !$this->authorizationService->isGranted(
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_NO_MISMATCH_ON_VIN_AND_VRN_CHANGE
+            );
     }
 }
