@@ -81,15 +81,14 @@ class NotificationsHelper
      */
     private function processUnreadNotifications(Account $account, array $notifications, $action, $templateIdFilter = null)
     {
-        // I think this sets the rest client to be logged in as the user
-        $this->testSupportRestClientHelper->prepare([
-            'requestor' => [
-                'username' => $account->getUsername(),
-                'password' => $account->getPassword(),
+        $restClient = $this->testSupportRestClientHelper->getJsonClient(
+            [
+                'requestor' => [
+                    'username' => $account->getUsername(),
+                    'password' => $account->getPassword(),
+                ]
             ]
-        ]);
-
-        $restClient = $this->testSupportRestClientHelper->getJsonClient([]);
+        );
 
         foreach ($notifications as $notification) {
 
