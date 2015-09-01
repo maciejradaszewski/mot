@@ -19,6 +19,7 @@ return [
             'DvsaAuthenticationService'             => \DvsaAuthentication\Factory\AuthenticationServiceFactory::class,
             AuthenticationListenerFactory::class    => AuthenticationListenerFactory::class,
             MotIdentityProviderInterface::class     => \DvsaAuthentication\Factory\IdentityProviderFactory::class,
+            'MotIdentityProvider'                   => \DvsaAuthentication\Factory\IdentityProviderFactory::class,
             'tokenService'                          => ApiTokenServiceFactory::class,
             OpenAMApiCredentialsBasedAdapter::class => OpenAMApiCredentialsBasedAdapterFactory::class,
             OpenAMApiTokenBasedAdapter::class       => OpenAMApiTokenBasedAdapterFactory::class,

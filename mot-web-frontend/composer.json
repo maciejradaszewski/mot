@@ -14,7 +14,7 @@
         "soflomo/purifier": "0.1.1",
         "slot-purchase/web-frontend": "3.4.*",
         "dvsa/web-frontend-assets": "0.5.1",
-        "dvsa/dvsa-application-logger": "~1.1",
+        "dvsa/dvsa-application-logger": "~1.2.0",
         "dvsa/dvsa-doctrine-module": "~1.1"
     },
     "autoload" : {

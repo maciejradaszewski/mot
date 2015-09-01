@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "11af6c5dc2d7f4b80e44d03b94c65d2c",
+    "hash": "a685e4e8fe520d65d1f95f10bbe58543",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -880,11 +880,11 @@
         },
         {
             "name": "dvsa/dvsa-application-logger",
-            "version": "v1.1.0",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/dvsa-application-logger.git",
-                "reference": "ee389402fa7a8a4bb89d282d24b3f1240c08dca0"
+                "reference": "5978b63ddea888c298ac16df012fa52a7781ea3f"
             },
             "require": {
                 "php": ">=5.5",
@@ -920,7 +920,7 @@
                 "logging",
                 "zf2"
             ],
-            "time": "2015-06-17 16:09:25"
+            "time": "2015-09-01 12:47:09"
         },
         {
             "name": "dvsa/dvsa-doctrine-module",
@@ -1499,12 +1499,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:zendframework/ZendPdf.git",
+                "url": "https://github.com/zendframework/ZendPdf.git",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },
@@ -1524,6 +1524,7 @@
                     "ZendPdf\\": "library/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1533,10 +1534,6 @@
                 "pdf",
                 "zf2"
             ],
-            "support": {
-                "source": "https://github.com/zendframework/ZendPdf/tree/release-2.0.2",
-                "issues": "https://github.com/zendframework/ZendPdf/issues"
-            },
             "time": "2012-11-16 11:16:01"
         },
         {
