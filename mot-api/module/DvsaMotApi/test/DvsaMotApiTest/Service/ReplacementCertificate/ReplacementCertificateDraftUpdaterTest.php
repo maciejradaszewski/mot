@@ -282,6 +282,32 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('SUPRA UK', $updatedDraft->getModelName());
     }
 
+    public function testChangeInExpiryDateShouldNotAffectIsVinRegistrationChanged()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [PermissionInSystem::CERTIFICATE_REPLACEMENT, PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS]
+        );
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setExpiryDate("2013-12-01");
+        $draft->getMotTest()->setVin('123456');
+        $draft->getMotTest()->setRegistration('123456');
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
+        $change->setExpiryDate("2014-01-01");
+        $change->setVin('123456');
+        $change->setVrm('123456');
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertFalse($updatedDraft->getIsVinRegistrationChanged());
+    }
+
     private function returnsMake(Make $make)
     {
         $this->vehDict->expects($this->any())->method('getMake')
