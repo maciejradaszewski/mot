@@ -190,10 +190,30 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
         $motTestMock = (new MotTest())->setId(1)->setNumber('100001')->setIssuedDate(new \DateTime());
 
         $this->getMockVehicleRepositoryWithResult('searchVehicle', $vehicleObjects);
-        $this->getMockMotTestRepositoryWithResult('findHistoricalTestsForVehicle', $motTestMock);
+        $this->getMockMotTestRepositoryWithResult('findHistoricalTestsForVehicle', [$motTestMock]);
 
         $service = $this->getMockService();
         $result =  $service->searchVehicleWithMotData('DUMMY', null, true, 10);
+
+        $this->assertEquals(count($vehicleObjects), count($result));
+    }
+
+    public function testSearchVehicleDataWithMotDataResultsWithNoIssuedDateUsesStartedDate()
+    {
+        $vehicleObjects = $this->getVehicleMockObjects();
+
+        $startedDate = new \DateTime();
+        $motTestMock = (new MotTest())->setId(1)->setNumber('100001')->setStartedDate($startedDate);
+
+        $this->getMockVehicleRepositoryWithResult('searchVehicle', $vehicleObjects);
+        $this->getMockMotTestRepositoryWithResult('findHistoricalTestsForVehicle', [$motTestMock]);
+
+        $service = $this->getMockService();
+        $result =  $service->searchVehicleWithMotData('DUMMY', null, true, 10);
+
+        foreach($result as $vehicle) {
+            $this->assertEquals($startedDate->format('Y-m-d'), $vehicle['mot_completed_date']);
+        }
 
         $this->assertEquals(count($vehicleObjects), count($result));
     }
@@ -446,7 +466,7 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
 
     private function getMockMotTestRepositoryWithResult($method, $result)
     {
-        $this->mockVehicleRepository->expects($this->any())
+        $this->mockMotTestRepository->expects($this->any())
             ->method($method)
             ->willReturn($result);
     }
