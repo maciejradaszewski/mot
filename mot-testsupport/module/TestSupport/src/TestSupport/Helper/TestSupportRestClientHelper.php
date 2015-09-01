@@ -13,9 +13,9 @@ class TestSupportRestClientHelper
     private $jsonClient;
 
     /**
-     * @var array
+     * @var array username => access token
      */
-    private $requestors = [];
+    private $tokenCache = [];
 
     /**
      * @var TestSupportAccessTokenManager
@@ -28,27 +28,22 @@ class TestSupportRestClientHelper
         $this->accessTokenManager = $accessTokenManager;
     }
 
-    public function prepare(array $data)
+    public function getJsonClient($data)
     {
         if (!isset($data["requestor"])) {
             $data["requestor"] = ["username" => "schememgt", "password" => "Password1"];
         }
 
-        list($schmUsername, $schmPassword) = RequestorParserHelper::parse($data);
+        list($requestorUsername, $requestorPassword) = RequestorParserHelper::parse($data);
 
-        if (in_array($schmUsername, $this->requestors)) {
-            return;
+        if (isset($this->tokenCache[$requestorUsername])) {
+            $accessToken = $this->tokenCache[$requestorUsername];
+        } else {
+            $accessToken = $this->accessTokenManager->getToken($requestorUsername, $requestorPassword);
+            $this->tokenCache[$requestorUsername] = $accessToken;
         }
 
-        $this->requestors[] = $schmUsername;
-        $accessToken = $this->accessTokenManager->getToken($schmUsername, $schmPassword);
         $this->jsonClient->setAccessToken($accessToken);
-    }
-
-    public function getJsonClient($data)
-    {
-        $this->prepare($data);
-
         return $this->jsonClient;
     }
 }
