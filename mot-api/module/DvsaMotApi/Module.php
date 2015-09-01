@@ -96,7 +96,6 @@ class Module implements
                 MotTestStatusChangeNotificationService::class => \DvsaMotApi\Factory\Service\MotTestStatusChangeNotificationFactory::class,
                 TestingOutsideOpeningHoursNotificationService::class => \DvsaMotApi\Factory\Service\TestingOutsideOpeningHoursNotificationServiceFactory::class,
                 MotTestDateHelperService::class => \DvsaMotApi\Factory\Service\MotTestDateHelperFactory::class,
-                'OtpService' => \DvsaMotApi\Factory\Service\OtpServiceFactory::class,
                 'TestSlotTransactionService' => \DvsaMotApi\Factory\Service\TestSlotTransactionServiceFactory::class,
                 'MotTestTypeService' => \DvsaMotApi\Factory\Service\MotTestTypeServiceFactory::class,
                 'MotTestCompareService' => \DvsaMotApi\Factory\Service\MotTestCompareServiceFactory::class,

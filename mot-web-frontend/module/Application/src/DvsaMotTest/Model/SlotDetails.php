@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: arto
- * Date: 31/01/2014
- * Time: 13:28
- */
 
 namespace DvsaMotTest\Model;
 

@@ -17,7 +17,7 @@ use DvsaEntities\Repository\PersonRepository;
 use DvsaEntities\Repository\VehicleRepository;
 use DvsaEntities\Repository\VehicleV5CRepository;
 use DvsaMotApi\Service\MotTestServiceProvider;
-use DvsaMotApi\Service\OtpService;
+use DvsaAuthentication\Service\OtpService;
 use VehicleApi\Factory\Service\VehicleServiceFactory;
 use VehicleApi\Service\VehicleService;
 use Zend\ServiceManager\ServiceLocatorInterface;

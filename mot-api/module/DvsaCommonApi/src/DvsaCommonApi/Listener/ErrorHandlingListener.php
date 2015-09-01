@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: przemyslaws
- * Date: 24/02/2014
- * Time: 11:19
- */
 
 namespace DvsaCommonApi\Listener;
 

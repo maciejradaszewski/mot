@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vosabristol
- * Date: 03/12/2014
- * Time: 14:57
- */
 
 namespace DvsaMotApiTest\Controller;
 

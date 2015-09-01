@@ -7,7 +7,7 @@ use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotApi\Factory\Service\ReplacementCertificateServiceFactory;
 use DvsaMotApi\Service\CertificateCreationService;
-use DvsaMotApi\Service\OtpService;
+use DvsaAuthentication\Service\OtpService;
 use Zend\Authentication\AuthenticationService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
@@ -48,7 +48,7 @@ class ReplacementCertificateServiceFactoryTest extends AbstractServiceTestCase
         $this->serviceLocator->setService('ReplacementCertificateUpdater', $replacementCertificateUpdater);
         $this->serviceLocator->setService('CertificateReplacementRepository', $certificateReplacementRepository);
         $this->serviceLocator->setService('MotTestRepository', $motTestRepository);
-        $this->serviceLocator->setService('OtpService', $otpService);
+        $this->serviceLocator->setService(OtpService::class, $otpService);
         $this->serviceLocator->setService(CertificateCreationService::class, $certificateCreationService);
     }
 

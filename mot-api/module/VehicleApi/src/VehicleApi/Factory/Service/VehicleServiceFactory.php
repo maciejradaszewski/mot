@@ -3,6 +3,7 @@
 namespace VehicleApi\Factory\Service;
 
 use Doctrine\ORM\EntityManager;
+use DvsaAuthentication\Service\OtpService;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Database\Transaction;
 use DvsaCommon\Obfuscate\ParamObfuscator;
@@ -36,7 +37,7 @@ class VehicleServiceFactory implements FactoryInterface
             $em->getRepository(DvlaMakeModelMap::class),
             $serviceLocator->get('VehicleCatalogService'),
             new VehicleValidator(),
-            $serviceLocator->get('OtpService'),
+            $serviceLocator->get(OtpService::class),
             $serviceLocator->get(ParamObfuscator::class),
             new MotTestServiceProvider($serviceLocator),
             $serviceLocator->get(MotIdentityProviderInterface::class),

@@ -32,7 +32,7 @@ use DvsaMotApi\Service\CertificateCreationService;
 use DvsaMotApi\Service\CreateMotTestService;
 use DvsaMotApi\Service\Mapper\MotTestMapper;
 use DvsaMotApi\Service\MotTestService;
-use DvsaMotApi\Service\OtpService;
+use DvsaAuthentication\Service\OtpService;
 use DvsaMotApi\Service\TesterService;
 use DvsaMotApi\Service\Validator\MotTestValidator;
 use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;

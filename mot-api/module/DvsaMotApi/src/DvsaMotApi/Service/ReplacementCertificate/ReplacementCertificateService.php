@@ -13,7 +13,7 @@ use DvsaEntities\Repository\CertificateReplacementRepository;
 use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\ReplacementCertificateDraftRepository;
 use DvsaMotApi\Dto\ReplacementCertificateDraftChangeDTO;
-use DvsaMotApi\Service\OtpService;
+use DvsaAuthentication\Service\OtpService;
 use DvsaMotApi\Service\CertificateCreationService;
 
 /**

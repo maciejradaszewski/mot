@@ -3,6 +3,7 @@
 namespace DvsaMotApi\Factory\Service;
 
 use Doctrine\ORM\EntityManager;
+use DvsaAuthentication\Service\OtpService;
 use DvsaEntities\Entity\EnforcementFullPartialRetest;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaEntities\Entity\MotTestReasonForCancel;
@@ -34,7 +35,7 @@ class MotTestStatusChangeServiceFactory implements FactoryInterface
             $serviceLocator->get('DvsaAuthorisationService'),
             $serviceLocator->get('MotTestValidator'),
             $serviceLocator->get(MotTestStatusChangeValidator::class),
-            $serviceLocator->get('OtpService'),
+            $serviceLocator->get(OtpService::class),
             $serviceLocator->get(OrganisationService::class),
             $serviceLocator->get('MotTestMapper'),
             $serviceLocator->get('MotTestRepository'),
