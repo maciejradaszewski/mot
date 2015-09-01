@@ -11,6 +11,7 @@ use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\Messages\InvalidTestStatus;
 use DvsaCommon\UrlBuilder\UrlBuilder;
+use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaMotTest\Data\BrakeTestResultsResource;
 use DvsaMotTest\Mapper\BrakeTestConfigurationClass1And2Mapper;
@@ -70,6 +71,7 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
 
         /** @var MotTestDto $motTest */
         $motTest = $this->tryGetMotTestOrAddErrorMessages($motTestNumber);
+        $brakeTestResult = $motTest->getBrakeTestResult();
 
         if (!$request->isPost()) {
             $isVehicleBikeType = $this->isMotTestVehicleBikeType($motTest->getVehicle()->getClassCode());
@@ -88,14 +90,26 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
         $configHelper->setConfigDto($dto);
 
         $viewModel = new ViewModel();
-        $viewModel->setVariable(
-            'isMotContingency',
-            $this->getContingencySessionManager()->isMotContingency()
-        );
-        $viewModel->setVariable('brakeTestTypes', $this->getCatalogService()->getBrakeTestTypes());
+        $viewModel->setVariable('isMotContingency', $this->getContingencySessionManager()->isMotContingency());
+        $viewModel->setVariable('brakeTestTypes', array_reverse($this->getCatalogService()->getBrakeTestTypes()));
         $viewModel->setVariable('motTest', $motTest);
         $viewModel->setVariable('showVehicleType', $this->displayConfigurationVehicleType($motTest));
         $viewModel->setVariable('configHelper', $configHelper);
+        $viewModel->setVariable('brakeTestResult', $brakeTestResult);
+
+        if ($isVehicleBikeType) {
+            $viewModel->setVariable('brakeTestType',
+                ArrayUtils::tryGet($brakeTestResult,'brakeTestType',$configHelper->getBrakeTestType()));
+            $viewModel->setVariable('vehicleWeightFront',
+                ArrayUtils::tryGet($brakeTestResult,'vehicleWeightFront',$configHelper->getVehicleWeightFront()));
+            $viewModel->setVariable('vehicleWeightRear',
+                ArrayUtils::tryGet($brakeTestResult,'vehicleWeightRear',$configHelper->getVehicleWeightRear()));
+            $viewModel->setVariable('riderWeight',
+                ArrayUtils::tryGet($brakeTestResult,'riderWeight',$configHelper->getRiderWeight()));
+            $viewModel->setVariable('isSidecarAttached',(isset($brakeTestResult['sidecarWeight']) ? 1 : 0));
+            $viewModel->setVariable('sidecarWeight',
+                ArrayUtils::tryGet($brakeTestResult,'sidecarWeight',$configHelper->getSidecarWeight()));
+        }
 
         $viewModel->setTemplate($this->getConfigViewModelTemplate($isVehicleBikeType));
 
