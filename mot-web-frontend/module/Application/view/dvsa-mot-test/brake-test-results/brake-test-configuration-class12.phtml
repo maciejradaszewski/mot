@@ -6,6 +6,13 @@ use DvsaMotTest\Model\BrakeTestConfigurationClass1And2Helper;
  * @var BrakeTestConfigurationClass1And2Helper $configHelper
  * @var \DvsaCommon\Dto\Common\MotTestDto      $motTest
  * @var array                                  $brakeTestTypes
+ * @var array                                  $brakeTestResult
+ * @var string                                 $brakeTestType
+ * @var string                                 $vehicleWeightFront
+ * @var string                                 $vehicleWeightRear
+ * @var string                                 $riderWeight
+ * @var string                                 $sidecarWeight
+ * @var boolean                                $isSidecarAttached
  */
 
 $title = 'Brake test configuration';
@@ -41,7 +48,7 @@ $this->placeholder('progressBar')->captureEnd();
                         'id'       => 'brakeTestType',
                         'label'    => 'Brake test type',
                         'options'  => $brakeTestTypes,
-                        'value'    => $configHelper->getBrakeTestType(),
+                        'value'    => $brakeTestType,
                         'required' => true,
                     ]
                 ); ?>
@@ -54,9 +61,9 @@ $this->placeholder('progressBar')->captureEnd();
                         [
                             'id'       => 'vehicleWeightFront',
                             'name'     => 'vehicleWeightFront',
-                            'value'    => $configHelper->getVehicleWeightFront(),
-                        ]
-                    ); ?>
+                            'value'    =>  $vehicleWeightFront,
+                            ]
+                        ); ?>
 
                     <label for="vehicleWeight">Machine weight rear in kilograms</label>
                     <?php echo $this->partial(
@@ -64,7 +71,7 @@ $this->placeholder('progressBar')->captureEnd();
                         [
                             'id'       => 'vehicleWeightRear',
                             'name'     => 'vehicleWeightRear',
-                            'value'    => $configHelper->getVehicleWeightRear(),
+                            'value'    => $vehicleWeightRear,
                         ]
                     ); ?>
 
@@ -74,7 +81,7 @@ $this->placeholder('progressBar')->captureEnd();
                         [
                             'id'       => 'riderWeight',
                             'name'     => 'riderWeight',
-                            'value'    => $configHelper->getRiderWeight(),
+                            'value'    => $riderWeight,
                         ]
                     ); ?>
 
@@ -88,7 +95,7 @@ $this->placeholder('progressBar')->captureEnd();
                                         'id'        => 'isSidecarAttachedNo',
                                         'name'      => 'isSidecarAttached',
                                         'value'     => '0',
-                                        'isChecked' => !($configHelper->isSidecarAttached()),
+                                        'isChecked' => !($isSidecarAttached),
                                         'label'     => 'No',
                                     ]
                                 );
@@ -99,7 +106,7 @@ $this->placeholder('progressBar')->captureEnd();
                                         'id'        => 'isSidecarAttachedYes',
                                         'name'      => 'isSidecarAttached',
                                         'value'     => '1',
-                                        'isChecked' => $configHelper->isSidecarAttached(),
+                                        'isChecked' => ($isSidecarAttached),
                                         'label'     => 'Yes',
                                     ]
                                 );
@@ -113,7 +120,7 @@ $this->placeholder('progressBar')->captureEnd();
                                     [
                                         'id'       => 'sidecarWeight',
                                         'name'     => 'sidecarWeight',
-                                        'value'    => $configHelper->getSidecarWeight(),
+                                        'value'    => $sidecarWeight,
                                     ]
                                 ); ?>
                             </div>
