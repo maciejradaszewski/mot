@@ -38,7 +38,6 @@ class OpenAMApiTokenBasedAdapterFactory implements FactoryInterface
          * @var LoggerInterface $logger
          */
         $openAMClient = $this->getOpenAMClient($serviceLocator);
-        $openAMClient = $serviceLocator->get(OpenAMClientInterface::class);
         $logger = $serviceLocator->get('Application\Logger');
         $tokenService = $serviceLocator->get('tokenService');
 
@@ -65,15 +64,14 @@ class OpenAMApiTokenBasedAdapterFactory implements FactoryInterface
 
     private function isCacheEnabled(ServiceLocatorInterface $serviceLocator)
     {
-        $openAMCacheEnabled = false;
         $config = $serviceLocator->get('config');
         if (isset($config['cache'])
             && isset($config['cache']['open_am_client'])
             && isset($config['cache']['open_am_client']['enabled'])
         ) {
-            $openAMCacheEnabled = true;
+            return $config['cache']['open_am_client']['enabled'];
         }
 
-        return $openAMCacheEnabled;
+        return false;
     }
 }
