@@ -1,8 +1,8 @@
 <?php
 
-namespace DvsaMotApi\Factory\Service;
+namespace DvsaAuthentication\Factory;
 
-use DvsaMotApi\Service\OtpService;
+use DvsaAuthentication\Service\OtpService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use DvsaEntities\Entity\Person;

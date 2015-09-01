@@ -4,6 +4,7 @@ namespace DvsaMotApi\Service;
 
 use Doctrine\ORM\EntityManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use DvsaAuthentication\Service\OtpService;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
 use DvsaCommon\Utility\ArrayUtils;

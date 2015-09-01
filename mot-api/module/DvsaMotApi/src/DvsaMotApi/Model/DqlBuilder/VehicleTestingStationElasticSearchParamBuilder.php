@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jaetask
- * Date: 06/05/2014
- * Time: 10:56
- */
 
 namespace DvsaMotApi\Model\DqlBuilder;
 

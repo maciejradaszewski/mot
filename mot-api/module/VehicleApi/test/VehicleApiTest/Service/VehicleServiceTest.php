@@ -19,7 +19,7 @@ use DvsaCommon\Enum\WeightSourceCode;
 use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommon\Enum\VehicleClassId;
 use DvsaCommon\Obfuscate\ParamObfuscator;
-use DvsaCommonApi\Service\Exception\OtpException;
+use DvsaAuthentication\Service\Exception\OtpException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\ArgCapture;
 use DvsaCommonTest\TestUtils\MultiCallStubBuilder;
@@ -40,7 +40,7 @@ use DvsaEntities\Repository\VehicleV5CRepository;
 use Doctrine\ORM\EntityRepository;
 use DvsaMotApi\Service\MotTestService;
 use DvsaMotApi\Service\MotTestServiceProvider;
-use DvsaMotApi\Service\OtpService;
+use DvsaAuthentication\Service\OtpService;
 use DvsaMotApi\Service\Validator\VehicleValidator;
 use DvsaMotApiTest\Factory\VehicleObjectsFactory as VOF;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
@@ -994,7 +994,7 @@ class VehicleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @expectedException \DvsaCommonApi\Service\Exception\OtpException
+     * @expectedException \DvsaAuthentication\Service\Exception\OtpException
      */
     public function testCreateCalledByUserWithoutPermissionAndInvalidOtpThrowsAnException()
     {
@@ -1005,7 +1005,7 @@ class VehicleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @expectedException \DvsaCommonApi\Service\Exception\OtpException
+     * @expectedException \DvsaAuthentication\Service\Exception\OtpException
      */
     public function testCreateCalledByUserWithoutPermissionRequiresOneTimePassword()
     {

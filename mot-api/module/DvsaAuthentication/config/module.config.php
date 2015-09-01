@@ -9,6 +9,8 @@ use DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMCachedClient;
 use DvsaAuthentication\Authentication\Listener\AuthenticationListenerFactory;
 use DvsaAuthentication\Factory\ApiTokenServiceFactory;
 use DvsaAuthentication\Factory\IdentityFactoryFactory;
+use DvsaAuthentication\Factory\OtpServiceFactory;
+use DvsaAuthentication\Service\OtpService;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 
 return [
@@ -20,6 +22,7 @@ return [
             'tokenService'                          => ApiTokenServiceFactory::class,
             OpenAMApiCredentialsBasedAdapter::class => OpenAMApiCredentialsBasedAdapterFactory::class,
             OpenAMApiTokenBasedAdapter::class       => OpenAMApiTokenBasedAdapterFactory::class,
+            OtpService::class                       => OtpServiceFactory::class,
             OpenAMCachedClient::class               => OpenAMCachedClientFactory::class,
             IdentityFactoryFactory::class           => IdentityFactoryFactory::class,
         ],

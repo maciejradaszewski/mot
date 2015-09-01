@@ -3,6 +3,7 @@
 namespace DvsaMotApi\Service;
 
 use Doctrine\ORM\EntityManager;
+use DvsaAuthentication\Service\OtpService;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Auth\PermissionAtSite;
@@ -94,7 +95,7 @@ class MotTestCreationHelper
      *
      * @throws \DvsaCommonApi\Service\Exception\BadRequestException
      * @throws \DvsaCommonApi\Service\Exception\NotFoundException
-     * @throws \DvsaCommonApi\Service\Exception\OtpException
+     * @throws \DvsaAuthentication\Service\Exception\OtpException
      * @throws \DvsaCommon\Date\Exception\IncorrectDateFormatException
      * @throws \DvsaCommon\Date\Exception\NonexistentDateTimeException
      * @throws \Exception

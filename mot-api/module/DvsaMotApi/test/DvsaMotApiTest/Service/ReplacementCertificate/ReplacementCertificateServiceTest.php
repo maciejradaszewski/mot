@@ -9,7 +9,7 @@ use DvsaEntities\Entity\ReplacementCertificateDraft;
 use DvsaEntities\Repository\CertificateReplacementRepository;
 use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\ReplacementCertificateDraftRepository;
-use DvsaMotApi\Service\OtpService;
+use DvsaAuthentication\Service\OtpService;
 use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateUpdater;
 use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateDraftCreator;
 use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateDraftUpdater;

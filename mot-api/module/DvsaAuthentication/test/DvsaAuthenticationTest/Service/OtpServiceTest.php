@@ -1,15 +1,15 @@
 <?php
-namespace DvsaMotApiTest\Service;
+namespace DvsaAuthenticationTest\Service;
 
 use DvsaCommon\Auth\MotIdentity;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
-use DvsaCommonApi\Service\Exception\OtpException;
+use DvsaAuthentication\Service\Exception\OtpException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\ConfigurationRepository;
 use DvsaEntities\Repository\PersonRepository;
-use DvsaMotApi\Service\OtpService;
+use DvsaAuthentication\Service\OtpService;
 use DvsaCommon\Crypt\Hash\BCryptHashFunction;
 
 /**
@@ -65,7 +65,7 @@ class OtpServiceTest extends AbstractServiceTestCase
             $this->configurationRepository
         );
 
-        $this->mockOtpService = XMock::of('DvsaMotApi\Service\OtpService', [ 'authenticate', 'isTokenValid' ]);
+        $this->mockOtpService = XMock::of(OtpService::class, [ 'authenticate', 'isTokenValid' ]);
         $this->mockOtpService->expects($this->any())
                              ->method('isTokenValid')
                              ->will($this->returnValue(true));
@@ -75,7 +75,7 @@ class OtpServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @expectedException \DvsaCommonApi\Service\Exception\OtpException
+     * @expectedException \DvsaAuthentication\Service\Exception\OtpException
      */
     public function testAuthenticateWhenTokenInvalidShouldThrowException()
     {

@@ -4,6 +4,7 @@ namespace DvsaMotApi\Service;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use DvsaAuthentication\Service\OtpService;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\Assertion\AbandonVehicleTestAssertion;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
@@ -27,7 +28,7 @@ use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Authorisation\Assertion\ApiPerformMotTestAssertion;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\Exception\ForbiddenException;
-use DvsaCommonApi\Service\Exception\OtpException;
+use DvsaAuthentication\Service\Exception\OtpException;
 use DvsaCommonApi\Service\Exception\RequiredFieldException;
 use DvsaCommonApi\Transaction\TransactionAwareInterface;
 use DvsaCommonApi\Transaction\TransactionAwareTrait;
@@ -144,7 +145,7 @@ class MotTestStatusChangeService implements TransactionAwareInterface
      * @param \DvsaAuthorisation\Service\AuthorisationServiceInterface $authService
      * @param \DvsaMotApi\Service\Validator\MotTestValidator $motTestValidator
      * @param \DvsaMotApi\Service\Validator\MotTestStatusChangeValidator $motTestStatusChangeValidator
-     * @param \DvsaMotApi\Service\OtpService $otpService
+     * @param \dvsaAuthentication\Service\OtpService $otpService
      * @param \OrganisationApi\Service\OrganisationService $organisationService
      * @param \DvsaMotApi\Service\Mapper\MotTestMapper $motTestMapper
      * @param \DvsaEntities\Repository\MotTestRepository $motTestRepository

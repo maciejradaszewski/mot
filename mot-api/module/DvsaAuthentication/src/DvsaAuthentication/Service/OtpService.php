@@ -1,8 +1,8 @@
 <?php
 
-namespace DvsaMotApi\Service;
+namespace DvsaAuthentication\Service;
 
-use DvsaCommonApi\Service\Exception\OtpException;
+use DvsaAuthentication\Service\Exception\OtpException;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\ConfigurationRepositoryInterface;
 use DvsaEntities\Repository\PersonRepository;
@@ -12,7 +12,7 @@ use Zend\Authentication\Validator\Authentication;
 /**
  * Class OtpService provides One Time Password verification
  *
- * @package DvsaMotApi\Service
+ * @package DvsaAuthentication\Service
  */
 class OtpService
 {

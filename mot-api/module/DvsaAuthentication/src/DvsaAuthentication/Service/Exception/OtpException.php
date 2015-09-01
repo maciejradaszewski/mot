@@ -1,12 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: maciejsz
- * Date: 25/06/2014
- * Time: 09:35
- */
 
-namespace DvsaCommonApi\Service\Exception;
+namespace DvsaAuthentication\Service\Exception;
+
+use DvsaCommonApi\Service\Exception\ServiceException;
 
 /**
  * Class OtpException
@@ -17,9 +13,9 @@ class OtpException extends ServiceException
     const ERROR_CODE_FORBIDDEN = 403;
     const OTP_TOKEN_INVALID_ERROR_CODE = 140;
 
-    const MESSAGE_INVALID = "The PIN you have entered is incorrect";
+    const MESSAGE_INVALID = 'The PIN you have entered is incorrect';
     const MESSAGE_RESET = "The PIN you have entered does not match the PIN for this user account, you can reset your PIN in Your profile";
-    const MESSAGE_OTP_REQUIRED = "PIN required";
+    const MESSAGE_OTP_REQUIRED = 'PIN required';
 
     /**
      * @description Acceptance criteria: VM-5189

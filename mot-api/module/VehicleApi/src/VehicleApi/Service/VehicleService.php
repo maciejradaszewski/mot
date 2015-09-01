@@ -26,7 +26,7 @@ use DvsaEntities\Repository\VehicleRepository;
 use DvsaEntities\Repository\VehicleV5CRepository;
 use DvsaMotApi\Service\CreateMotTestService;
 use DvsaMotApi\Service\MotTestServiceProvider;
-use DvsaMotApi\Service\OtpService;
+use DvsaAuthentication\Service\OtpService;
 use DvsaMotApi\Service\Validator\VehicleValidator;
 use VehicleApi\Service\Mapper\DvlaVehicleMapper;
 use VehicleApi\Service\Mapper\VehicleMapper;
