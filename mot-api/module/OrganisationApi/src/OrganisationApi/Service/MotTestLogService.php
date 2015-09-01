@@ -40,7 +40,7 @@ class MotTestLogService
      */
     public function getMotTestLogSummaryForOrganisation($organisationId)
     {
-        $this->authSrv->assertGrantedAtOrganisation(PermissionAtOrganisation::MOT_TEST_LIST, $organisationId);
+        $this->authSrv->assertGrantedAtOrganisation(PermissionAtOrganisation::MOT_TEST_LIST_AT_AE, $organisationId);
 
         $countOfTestsSummary = $this->motTestRepository->getCountOfMotTestsSummary($organisationId);
 

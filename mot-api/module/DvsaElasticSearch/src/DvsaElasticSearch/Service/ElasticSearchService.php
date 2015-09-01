@@ -83,7 +83,7 @@ class ElasticSearchService
     public function findTestsLog(MotTestSearchParam $params)
     {
         $this->authService->assertGrantedAtOrganisation(
-            PermissionAtOrganisation::MOT_TEST_LIST, $params->getOrganisationId()
+            PermissionAtOrganisation::MOT_TEST_LIST_AT_AE, $params->getOrganisationId()
         );
 
         return SuperSearchQuery::execute($params, new FbQueryMotTestLog());

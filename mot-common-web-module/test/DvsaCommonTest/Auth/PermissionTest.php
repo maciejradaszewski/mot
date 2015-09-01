@@ -1,6 +1,6 @@
 <?php
 
-namespace DvsaCommonTest\Auth\Http;
+namespace DvsaCommonTest\Auth;
 
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Auth\PermissionAtOrganisation;
@@ -25,20 +25,9 @@ class PermissionTest extends \PHPUnit_Framework_TestCase
             function ($element)
             {
                 // !!!!!!! DO NOT ADD TO THIS LIST, ASK WITOLD KACPERSKI OR PRZEMYSŁAW SEMPRUCH!!!!!!!!!!
-                return $element != 'MOT-TEST-LIST'
+                return $element != 'SLOTS-PURCHASE-INSTANT-SETTLEMENT'
                 // !!!!!!! DO NOT ADD TO THIS LIST, ASK WITOLD KACPERSKI OR PRZEMYSŁAW SEMPRUCH!!!!!!!!!!
-                && $element != 'SLOTS-PURCHASE-INSTANT-SETTLEMENT'
-                // !!!!!!! DO NOT ADD TO THIS LIST, ASK WITOLD KACPERSKI OR PRZEMYSŁAW SEMPRUCH!!!!!!!!!!
-                && $element != 'SLOTS-TRANSACTION-READ-FULL'
-                // !!!!!!! DO NOT ADD TO THIS LIST, ASK WITOLD KACPERSKI OR PRZEMYSŁAW SEMPRUCH!!!!!!!!!!
-                && $element != 'CERTIFICATE-PRINT'; //Required by finance user
-                // !!!!!!! DO NOT ADD TO THIS LIST, ASK WITOLD KACPERSKI OR PRZEMYSŁAW SEMPRUCH!!!!!!!!!!
-            });
-        $repeated ['system_site'] = ArrayUtils::filter($repeated['system_site'],
-            function ($element)
-            {
-                // !!!!!!! DO NOT ADD TO THIS LIST, ASK WITOLD KACPERSKI OR PRZEMYSŁAW SEMPRUCH!!!!!!!!!!
-                return $element != 'CERTIFICATE-PRINT';
+                && $element != 'SLOTS-TRANSACTION-READ-FULL';
                 // !!!!!!! DO NOT ADD TO THIS LIST, ASK WITOLD KACPERSKI OR PRZEMYSŁAW SEMPRUCH!!!!!!!!!!
             });
         $permissionRepeats = ArrayUtils::anyMatch(

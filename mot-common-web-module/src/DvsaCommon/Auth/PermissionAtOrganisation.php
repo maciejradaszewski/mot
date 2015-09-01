@@ -23,7 +23,7 @@ class PermissionAtOrganisation
     const AUTHORISED_EXAMINER_READ = 'AUTHORISED-EXAMINER-READ';
     const AUTHORISED_EXAMINER_UPDATE = 'AUTHORISED-EXAMINER-UPDATE';
     const AE_TEST_LOG = 'AE-TEST-LOG';
-    const MOT_TEST_LIST = 'MOT-TEST-LIST';
+    const MOT_TEST_LIST_AT_AE = 'MOT-TEST-LIST-AT-AE';
     const LIST_AEP_AT_AUTHORISED_EXAMINER = 'LIST-AEP-AT-AUTHORISED-EXAMINER';
     const LIST_AE_POSITIONS = 'LIST-AE-POSITIONS';
     const NOMINATE_ROLE_AT_AE = 'NOMINATE-ROLE-AT-AE';
@@ -52,7 +52,7 @@ class PermissionAtOrganisation
             self::AUTHORISED_EXAMINER_READ,
             self::AUTHORISED_EXAMINER_UPDATE,
             self::AE_TEST_LOG,
-            self::MOT_TEST_LIST,
+            self::MOT_TEST_LIST_AT_AE,
             self::VEHICLE_TESTING_STATION_LIST_AT_AE,
             self::LIST_AEP_AT_AUTHORISED_EXAMINER,
             self::LIST_AE_POSITIONS,
