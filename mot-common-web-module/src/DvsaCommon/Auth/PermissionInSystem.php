@@ -4,15 +4,8 @@ namespace DvsaCommon\Auth;
 /**
  * List of all system permissions. Permissions at site or organisation level should go to their respective classes.
  *
- * Following permissions should be cleaned up as part of the story: VM-8601
- *
  * Permission that is present on more than one level should be decided on which level it should exist or if it should be
  * split into two separate permissions.
- *
- * Here is a list of permissions that are present on both system and organisation level:
- *
- *      MOT-TEST-LIST
- *
  */
 final class PermissionInSystem
 {
@@ -108,7 +101,7 @@ final class PermissionInSystem
     const PROFILE_EDIT_OTHERS_PERSONAL_DETAILS = 'PROFILE-EDIT-OTHERS-PERSONAL-DETAILS';
     const PROFILE_EDIT_OWN_CONTACT_DETAILS = 'PROFILE-EDIT-OWN-CONTACT-DETAILS';
     const PROFILE_EDIT_OTHERS_EMAIL_ADDRESS = 'PROFILE-EDIT-OTHERS-EMAIL-ADDRESS';
-    const CERTIFICATE_PRINT = 'CERTIFICATE-PRINT';
+    const CERTIFICATE_PRINT_ANY = 'CERTIFICATE-PRINT-ANY';
     const CERTIFICATE_SEARCH = 'CERTIFICATE-SEARCH';
     const MANAGE_ROLE_CSCO =  'MANAGE-ROLE-CUSTOMER-SERVICE-CENTRE-OPERATIVE';
     const MANAGE_ROLE_CSM = 'MANAGE-ROLE-CUSTOMER-SERVICE-MANAGER';
@@ -167,7 +160,7 @@ final class PermissionInSystem
             self::LATEST_VEHICLE_MOT_TEST_HISTORY_VIEW,
             self::ENFORCEMENT_DEMO_TEST,
             self::VISIT_CREATE,
-            self::CERTIFICATE_PRINT,
+            self::CERTIFICATE_PRINT_ANY,
             self::CERTIFICATE_REPLACEMENT,
             self::CERTIFICATE_REPLACEMENT_FULL,
             self::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS,
