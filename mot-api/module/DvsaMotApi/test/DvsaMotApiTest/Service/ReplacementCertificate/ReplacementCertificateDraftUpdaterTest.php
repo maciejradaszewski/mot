@@ -77,6 +77,62 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSetIsVinRegistrationChanged_isAlwaysFalse_forNoMismatchPermission_Only_VIN_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_NO_MISMATCH_ON_VIN_AND_VRN_CHANGE,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin('123456');
+        $draft->getMotTest()->setRegistration('123456');
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
+        $change->setVin('123457'); // vin change
+        $change->setVrm('123456');
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertFalse($updatedDraft->getIsVinRegistrationChanged());
+    }
+
+    public function testSetIsVinRegistrationChanged_isAlwaysFalse_forNoMismatchPermission_Only_VRN_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_NO_MISMATCH_ON_VIN_AND_VRN_CHANGE,
+            ]
+        );
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin('123456');
+        $draft->getMotTest()->setRegistration('123456');
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
+        $change->setVin('123456');
+        $change->setVrm('123457');
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertFalse($updatedDraft->getIsVinRegistrationChanged());
+    }
+
     public function testUpdate_givenFullRights_and_reasonForDifferentTester_shouldForbidAction()
     {
         $this->returnsOkCheckResult();
