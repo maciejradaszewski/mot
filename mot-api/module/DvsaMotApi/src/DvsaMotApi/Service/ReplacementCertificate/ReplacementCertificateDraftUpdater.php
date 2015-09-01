@@ -226,12 +226,6 @@ class ReplacementCertificateDraftUpdater implements TransactionAwareInterface
             }
 
             if ($draftChange->isExpiryDateSet()) {
-                if ($draft->getMotTest()->getExpiryDate() != DateUtils::toDate($draftChange->getExpiryDate())) {
-                    $draft->setIsVinRegistrationChanged(true);
-                } else {
-                    $draft->setIsVinRegistrationChanged(false);
-                }
-
                 $draft->setExpiryDate(DateUtils::toDate($draftChange->getExpiryDate()));
             }
 
