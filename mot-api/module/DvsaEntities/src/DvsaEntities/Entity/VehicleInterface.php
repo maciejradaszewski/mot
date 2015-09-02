@@ -46,7 +46,7 @@ interface VehicleInterface
      * @return bool
      */
     public function isVehicleNewAtFirstRegistration();
-    
+
     /**
      * @return bool
      */

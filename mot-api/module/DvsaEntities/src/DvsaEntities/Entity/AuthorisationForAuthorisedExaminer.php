@@ -234,5 +234,4 @@ class AuthorisationForAuthorisedExaminer extends Entity
     {
         $this->areaOffice = $areaOffice;
     }
-
 }

@@ -142,6 +142,4 @@ class VehicleV5C extends Entity
         $this->vehicle = $vehicle;
         return $this;
     }
-
-
 }

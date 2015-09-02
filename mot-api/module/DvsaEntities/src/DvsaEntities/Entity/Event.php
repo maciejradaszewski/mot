@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use DvsaEntities\EntityTrait\CommonIdentityTrait;
 
-
 /**
  * Event
  *
@@ -230,5 +229,4 @@ class Event extends Entity
         $this->eventPersonMaps->add($eventPersonMap);
         return $this;
     }
-
 }

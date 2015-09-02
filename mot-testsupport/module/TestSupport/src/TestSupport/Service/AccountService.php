@@ -4,6 +4,7 @@ namespace TestSupport\Service;
 
 use Doctrine\ORM\EntityManager;
 use DvsaCommon\Enum\CountryOfRegistrationCode;
+use DvsaCommon\Enum\PersonAuthType;
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use TestSupport\Helper\DataGeneratorHelper;
@@ -81,6 +82,7 @@ class AccountService
             'accountClaimRequired' => $accountPerson->isAccountClaimRequired(),
             'passwordChangeRequired' => $accountPerson->isPasswordChangeRequired(),
             'pin' => '123456',
+            'authenticationMethod' => PersonAuthType::PIN
         ]);
 
         if ($accountPerson->isSecurityQuestionsRequired()) {

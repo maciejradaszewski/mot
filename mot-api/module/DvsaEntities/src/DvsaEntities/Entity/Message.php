@@ -172,6 +172,8 @@ class Message extends Entity
     }
 
     /**
+     * @param $isAcknowledged
+     *
      * @return $this
      */
     public function setIsAcknowledged($isAcknowledged)

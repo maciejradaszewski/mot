@@ -742,6 +742,8 @@ class Site extends Entity
     }
 
     /**
+     * @param $authId
+     *
      * @return array
      */
     private function vehicleClassesOfType($authId)
