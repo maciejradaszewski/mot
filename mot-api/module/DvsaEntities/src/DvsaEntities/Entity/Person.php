@@ -38,6 +38,16 @@ class Person extends Entity
     private $pin;
 
     /**
+     * @var AuthenticationMethod
+     *
+     * @ORM\OneToOne(targetEntity="AuthenticationMethod", cascade={"persist"})
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="person_auth_type_lookup_id", referencedColumnName="id")
+     * })
+     */
+    private $authenticationMethod;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="user_reference", type="string", length=45, nullable=true)
@@ -197,6 +207,26 @@ class Person extends Entity
     public function getPin()
     {
         return $this->pin;
+    }
+
+    /**
+     * @param AuthenticationMethod $method
+     *
+     * @return Person
+     */
+    public function setAuthenticationMethod($method)
+    {
+        $this->authenticationMethod = $method;
+
+        return $this;
+    }
+
+    /**
+     * @return AuthenticationMethod
+     */
+    public function getAuthenticationMethod()
+    {
+        return $this->authenticationMethod;
     }
 
     /**

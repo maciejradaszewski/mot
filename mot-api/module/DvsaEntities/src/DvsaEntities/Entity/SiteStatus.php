@@ -32,5 +32,4 @@ class SiteStatus
     {
         return $this->name;
     }
-
 }

@@ -1,7 +1,6 @@
 <?php
 namespace DvsaEntities\Entity;
 
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -80,14 +79,15 @@ class EnforcementMotTestResultWitnesses
     }
 
     /**
+     * @param EnforcementMotTestResult $enforcementMotTestResult
      *
-     * @param
-     *            $enforcementMotTestResult
+     * @return $this
      */
     public function setEnforcementMotTestResult(EnforcementMotTestResult $enforcementMotTestResult)
     {
         $enforcementMotTestResult->addEnforcementMotTestResultWitness($this);
         $this->enforcementMotTestResult = $enforcementMotTestResult;
+
         return $this;
     }
 
@@ -101,19 +101,19 @@ class EnforcementMotTestResultWitnesses
     }
 
     /**
+     * @param $name
      *
-     * @param
-     *            $name
+     * @return $this
      */
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
     /**
-     *
-     * @return the string
+     * @return string
      */
     public function getPosition()
     {
@@ -121,13 +121,14 @@ class EnforcementMotTestResultWitnesses
     }
 
     /**
+     * @param $position
      *
-     * @param
-     *            $position
+     * @return $this
      */
     public function setPosition($position)
     {
         $this->position = $position;
+
         return $this;
     }
 
@@ -138,6 +139,7 @@ class EnforcementMotTestResultWitnesses
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 

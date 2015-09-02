@@ -545,5 +545,4 @@ class ReplacementCertificateDraft extends Entity implements OdometerHolderInterf
         $this->modelName = $modelName;
         return $this;
     }
-
 }

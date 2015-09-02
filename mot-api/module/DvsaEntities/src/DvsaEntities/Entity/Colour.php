@@ -2,7 +2,6 @@
 namespace DvsaEntities\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use DvsaEntities\Entity\Person;
 use DvsaEntities\EntityTrait\CommonIdentityTrait;
 
 /**

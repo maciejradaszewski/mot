@@ -150,5 +150,4 @@ class CertificateReplacement extends Entity
     {
         return $this->isVinRegistrationChanged;
     }
-
 }

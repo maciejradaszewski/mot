@@ -13,9 +13,12 @@ use DvsaCommon\Crypt\Hash\HashFunctionInterface;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Enum\CountryOfRegistrationCode;
 use DvsaCommon\Enum\LicenceTypeCode;
+use DvsaCommon\Enum\PersonAuthType;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Service\ContactDetailsService;
 use DvsaCommonApi\Service\Exception\NotFoundException;
+use DvsaCommonApi\Service\Exception\UserExistsException;
+use DvsaEntities\Entity\AuthenticationMethod;
 use DvsaEntities\Entity\BusinessRoleStatus;
 use DvsaEntities\Entity\CountryOfRegistration;
 use DvsaEntities\Entity\Licence;
@@ -24,12 +27,12 @@ use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\PersonSystemRole;
 use DvsaEntities\Entity\PersonSystemRoleMap;
 use DvsaEntities\Mapper\PersonMapper;
+use DvsaEntities\Repository\AuthenticationMethodRepository;
 use DvsaEntities\Repository\CountryOfRegistrationRepository;
 use DvsaEntities\Repository\LicenceTypeRepository;
+use PersonApi\Service\BasePersonService;
 use UserApi\Application\Service\Exception\DuplicatedUserException;
 use UserApi\Application\Service\Validator\AccountValidator;
-use PersonApi\Service\BasePersonService;
-use DvsaCommonApi\Service\Exception\UserExistsException;
 use Zend\Form\Annotation\Validator;
 
 /**
@@ -167,6 +170,27 @@ class AccountService extends BasePersonService
     }
 
     /**
+     * @param array $data
+     * @return AuthenticationMethod
+     * @throws NotFoundException
+     */
+    private function getAuthenticationMethod($data)
+    {
+        $code = ArrayUtils::get($data, 'drivingLicenceNumber');
+
+        /** @var AuthenticationMethodRepository $authMethodRepo */
+        $authMethodRepo = $this->entityManager->getRepository(AuthenticationMethod::class);
+
+        try {
+            $authMethod = $authMethodRepo->getByCode($code);
+        } catch (NotFoundException $e) {
+            $authMethod = $authMethodRepo->getByCode(PersonAuthType::PIN);
+        }
+
+        return $authMethod;
+    }
+
+    /**
      * @param string $code
      *
      * @throws NotFoundException
@@ -253,7 +277,7 @@ class AccountService extends BasePersonService
         $person->setDrivingLicence($this->createLicenceEntity($data));
         $person->setAccountClaimRequired(ArrayUtils::tryGet($data, 'accountClaimRequired', false));
         $person->setPasswordChangeRequired(ArrayUtils::tryGet($data, 'passwordChangeRequired', false));
-
+        $person->setAuthenticationMethod($this->getAuthenticationMethod($data));
 
         if (!empty($data['pin'])) {
             /** @var HashFunctionInterface $hashFunction */
@@ -265,4 +289,5 @@ class AccountService extends BasePersonService
 
         return $person;
     }
+
 }

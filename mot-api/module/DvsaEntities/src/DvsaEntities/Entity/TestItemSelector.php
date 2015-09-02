@@ -58,7 +58,7 @@ class TestItemSelector
         $this->descriptions = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-// TODO VM-3386 remove
+    // TODO VM-3386 remove
     /**
      * Set name
      *
@@ -72,7 +72,7 @@ class TestItemSelector
         return $this;
     }
 
-// TODO VM-3386 remove
+    // TODO VM-3386 remove
     /**
      * Get name
      *
@@ -83,7 +83,7 @@ class TestItemSelector
         return $this->name;
     }
 
-// TODO VM-3386 remove
+    // TODO VM-3386 remove
     /**
      * Set cy name
      *
