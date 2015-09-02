@@ -4,7 +4,9 @@ namespace UserApi\HelpDesk\Mapper;
 
 use DvsaCommon\Constants\PersonContactType;
 use DvsaCommon\Date\DateTimeApiFormat;
+use DvsaCommon\Dto\Account\AuthenticationMethodDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
+use DvsaEntities\Entity\AuthenticationMethod;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\PersonContact;
 use DvsaEntities\Mapper\AddressMapper;
@@ -81,5 +83,20 @@ class PersonHelpDeskProfileMapper
             $dto->setEmail($email->getEmail());
             break;
         }
+    }
+
+    /**
+     * @param AuthenticationMethod     $authenticationMethod
+     * @param PersonHelpDeskProfileDto $dto
+     */
+    public function mapAuthenticationMethod(AuthenticationMethod $authenticationMethod, PersonHelpDeskProfileDto $dto)
+    {
+        $authenticationMethodDto = new AuthenticationMethodDto();
+
+        $authenticationMethodDto
+            ->setName($authenticationMethod->getName())
+            ->setCode($authenticationMethod->getCode());
+
+        $dto->setAuthenticationMethod($authenticationMethodDto);
     }
 }

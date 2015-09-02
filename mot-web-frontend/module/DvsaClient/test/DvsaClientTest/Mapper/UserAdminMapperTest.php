@@ -75,6 +75,7 @@ class UserAdminMapperTest extends \PHPUnit_Framework_TestCase
             'addressLine4' => '',
             'roles' => [],
             'drivingLicence' => '',
+            'authenticationMethod' => [],
         ];
         $this->client->expects($this->any())
             ->method('get')

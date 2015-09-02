@@ -204,6 +204,10 @@ class PersonRoleManagementServiceTest extends TestCase
 
                     ],
                     'drivingLicence' => 'GARDN605109C99LY60',
+                    'authenticationMethod' => [
+                        'name' => 'Pin',
+                        'code' => 'PIN',
+                    ]
                 ],
             ],
         ];

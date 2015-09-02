@@ -2,6 +2,7 @@
 
 namespace DvsaCommonTest\Dto\Person;
 
+use DvsaCommon\Dto\Account\AuthenticationMethodDto;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
@@ -55,7 +56,12 @@ class PersonHelpDeskProfileDtoTest extends \PHPUnit_Framework_TestCase
             ->setTelephone('+768-45-4433630')
             ->setEmail('dummy@email.com')
             ->setRoles([SiteBusinessRoleCode::TESTER])
-            ->setDrivingLicenceNumber('1234567890');
+            ->setDrivingLicenceNumber('1234567890')
+            ->setAuthenticationMethod(
+                (new AuthenticationMethodDto())
+                    ->setName("Pin")
+                    ->setCode("PIN")
+            );
     }
 
     private function getPopulatedArray()
@@ -79,6 +85,10 @@ class PersonHelpDeskProfileDtoTest extends \PHPUnit_Framework_TestCase
                 SiteBusinessRoleCode::TESTER,
             ],
             'drivingLicence' => '1234567890',
+            'authenticationMethod' => [
+                'name' => 'Pin',
+                'code' => 'PIN',
+            ],
         ];
     }
 }

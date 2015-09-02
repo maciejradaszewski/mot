@@ -2,6 +2,7 @@
 
 namespace DvsaCommon\Dto\Person;
 
+use DvsaCommon\Dto\Account\AuthenticationMethodDto;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\TypeCheck;
@@ -80,6 +81,11 @@ class PersonHelpDeskProfileDto
     private $drivingLicence;
 
     /**
+     * @var string
+     */
+    private $authenticationMethod;
+
+    /**
      * @param $data
      *
      * @return PersonHelpDeskProfileDto
@@ -100,7 +106,8 @@ class PersonHelpDeskProfileDto
             ->setTelephone(ArrayUtils::get($data, 'telephone'))
             ->setAddress(AddressDto::fromArray($data))
             ->setRoles(ArrayUtils::get($data, 'roles'))
-            ->setDrivingLicenceNumber(ArrayUtils::get($data, 'drivingLicence'));
+            ->setDrivingLicenceNumber(ArrayUtils::get($data, 'drivingLicence'))
+            ->setAuthenticationMethod(AuthenticationMethodDto::fromArray(ArrayUtils::get($data, 'authenticationMethod')));
 
         return $dto;
     }
@@ -111,24 +118,26 @@ class PersonHelpDeskProfileDto
     public function toArray()
     {
         $address = $this->getAddress();
+        $authenticationMethod = $this->getAuthenticationMethod() ? $this->getAuthenticationMethod()->toArray() : null;
 
         return [
-            'title'          => $this->getTitle(),
-            'userName'       => $this->getUserName(),
-            'firstName'      => $this->getFirstName(),
-            'middleName'     => $this->getMiddleName(),
-            'lastName'       => $this->getLastName(),
-            'dateOfBirth'    => $this->getDateOfBirth(),
-            'postcode'       => $address ? $address->getPostcode() : null,
-            'addressLine1'   => $address ? $address->getAddressLine1() : null,
-            'addressLine2'   => $address ? $address->getAddressLine2() : null,
-            'addressLine3'   => $address ? $address->getAddressLine3() : null,
-            'addressLine4'   => $address ? $address->getAddressLine4() : null,
-            'town'           => $address ? $address->getTown() : null,
-            'email'          => $this->getEmail(),
-            'telephone'      => $this->getTelephone(),
-            'roles'          => $this->getRoles(),
-            'drivingLicence' => $this->getDrivingLicenceNumber(),
+            'title'                 => $this->getTitle(),
+            'userName'              => $this->getUserName(),
+            'firstName'             => $this->getFirstName(),
+            'middleName'            => $this->getMiddleName(),
+            'lastName'              => $this->getLastName(),
+            'dateOfBirth'           => $this->getDateOfBirth(),
+            'postcode'              => $address ? $address->getPostcode() : null,
+            'addressLine1'          => $address ? $address->getAddressLine1() : null,
+            'addressLine2'          => $address ? $address->getAddressLine2() : null,
+            'addressLine3'          => $address ? $address->getAddressLine3() : null,
+            'addressLine4'          => $address ? $address->getAddressLine4() : null,
+            'town'                  => $address ? $address->getTown() : null,
+            'email'                 => $this->getEmail(),
+            'telephone'             => $this->getTelephone(),
+            'roles'                 => $this->getRoles(),
+            'drivingLicence'        => $this->getDrivingLicenceNumber(),
+            'authenticationMethod'  => $authenticationMethod,
         ];
     }
 
@@ -351,4 +360,25 @@ class PersonHelpDeskProfileDto
     {
         return $this->drivingLicence;
     }
+
+    /**
+     * @return AuthenticationMethodDto $authenticationMethod
+     */
+    public function getAuthenticationMethod()
+    {
+        return $this->authenticationMethod;
+    }
+
+    /**
+     * @param AuthenticationMethodDto $authenticationMethod
+     * @return $this
+     */
+    public function setAuthenticationMethod(AuthenticationMethodDto $authenticationMethod)
+    {
+        $this->authenticationMethod = $authenticationMethod;
+
+        return $this;
+    }
+
+
 }
