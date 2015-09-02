@@ -144,15 +144,15 @@ END;
 $$
 DELIMITER ;
 
-
--- ADD COLUMN 'site_status_id' WITH NULL
+-- ADD COLUMN 'site_status_id' and 'status_changed_on' WITH NULL
 ALTER TABLE `site`
-  ADD COLUMN `site_status_id` BIGINT UNSIGNED NULL COMMENT 'Vehicle Testing Station Status'
-  AFTER `site_number`;
+  ADD COLUMN `site_status_id` BIGINT UNSIGNED NULL COMMENT 'Vehicle Testing Station Status' AFTER `site_number`,
+  ADD COLUMN `status_changed_on` DATETIME(6) NULL COMMENT 'Vehicle Testing Station Status Effective Date' AFTER `site_status_id`;
 
--- ADD COLUMN 'site_status_id' WITH NULL
+-- ADD COLUMN 'site_status_id' and 'status_changed_on' WITH NULL
 ALTER TABLE `site_hist`
-  ADD COLUMN `site_status_id` BIGINT UNSIGNED NULL AFTER `site_number`;
+  ADD COLUMN `site_status_id` BIGINT UNSIGNED NULL COMMENT 'Vehicle Testing Station Status' AFTER `site_number`,
+  ADD COLUMN `status_changed_on` DATETIME(6) NULL COMMENT 'Vehicle Testing Station Status Effective Date' AFTER `site_status_id`;
 
 -- Create after triggers for site
 DROP TRIGGER IF EXISTS `tr_site_ai`;
@@ -173,6 +173,7 @@ INSERT INTO  `site_hist` (`hist_transaction_type`, `hist_batch_number`, `id`,
 `name`,
 `site_number`,
 `site_status_id`,
+`status_changed_on`,
 `default_brake_test_class_1_and_2_id`,
 `default_service_brake_test_class_3_and_above_id`,
 `default_parking_brake_test_class_3_and_above_id`,
@@ -206,6 +207,7 @@ OLD.`organisation_id`,
 OLD.`name`,
 OLD.`site_number`,
 OLD.`site_status_id`,
+OLD.`status_changed_on`,
 OLD.`default_brake_test_class_1_and_2_id`,
 OLD.`default_service_brake_test_class_3_and_above_id`,
 OLD.`default_parking_brake_test_class_3_and_above_id`,
@@ -247,6 +249,7 @@ INSERT INTO  `site_hist` (`hist_transaction_type`, `hist_batch_number`, `id`,
 `name`,
 `site_number`,
 `site_status_id`,
+`status_changed_on`,
 `default_brake_test_class_1_and_2_id`,
 `default_service_brake_test_class_3_and_above_id`,
 `default_parking_brake_test_class_3_and_above_id`,
@@ -280,6 +283,7 @@ OLD.`organisation_id`,
 OLD.`name`,
 OLD.`site_number`,
 OLD.`site_status_id`,
+OLD.`status_changed_on`,
 OLD.`default_brake_test_class_1_and_2_id`,
 OLD.`default_service_brake_test_class_3_and_above_id`,
 OLD.`default_parking_brake_test_class_3_and_above_id`,
