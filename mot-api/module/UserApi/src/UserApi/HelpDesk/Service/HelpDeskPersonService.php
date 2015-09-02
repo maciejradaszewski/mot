@@ -106,6 +106,7 @@ class HelpDeskPersonService
             $mapper->setRoles(
                 $this->userRoleService->getDetailedRolesForPerson($person)
             );
+            $this->personHelpDeskProfileMapper->mapAuthenticationMethod($person->getAuthenticationMethod(), $mapper);
         }
 
         return $mapper;

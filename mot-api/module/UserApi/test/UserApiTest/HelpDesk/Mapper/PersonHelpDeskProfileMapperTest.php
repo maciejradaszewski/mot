@@ -4,9 +4,11 @@ namespace UserApiTest\HelpDesk\Mapper;
 
 use DvsaCommon\Constants\PersonContactType;
 use DvsaCommon\Date\DateUtils;
+use DvsaCommon\Dto\Account\AuthenticationMethodDto;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaEntities\Entity\Address;
+use DvsaEntities\Entity\AuthenticationMethod;
 use DvsaEntities\Entity\ContactDetail;
 use DvsaEntities\Entity\Licence;
 use DvsaEntities\Entity\Person;
@@ -162,5 +164,32 @@ class PersonHelpDeskProfileMapperTest extends \PHPUnit_Framework_TestCase
         $person->addContact($personalContact);
 
         return $person;
+    }
+
+    public function testFromPersonEntityToDtoWithPinAuthentication()
+    {
+        $person   = $this->getPopulatedPersonEntity();
+
+        $authenticationMethod = new AuthenticationMethod();
+
+        $authenticationMethod
+                ->setName("Pin")
+                ->setCode("PIN");
+
+        $expected = $this->getPopulatedDto();
+
+        $expected->setAuthenticationMethod(
+            (new AuthenticationMethodDto())
+                ->setName("Pin")
+                ->setCode("PIN")
+        );
+
+
+        $actual = $this->personHelpDeskProfileMapper->fromPersonEntityToDto($person);
+
+        $this->personHelpDeskProfileMapper->mapAuthenticationMethod($authenticationMethod, $actual);
+
+
+        $this->assertEquals($expected, $actual);
     }
 }
