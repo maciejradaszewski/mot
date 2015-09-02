@@ -223,6 +223,13 @@ class Site extends Entity
     private $status;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="status_changed_on", type="datetime", nullable=true)
+     */
+    private $statusChangedOn;
+
+    /**
      * @return \DvsaEntities\Entity\SiteTestingDailySchedule[]
      */
     public function getSiteTestingSchedule()
@@ -803,4 +810,29 @@ class Site extends Entity
     {
         return $this->status;
     }
+
+    /**
+     * Set statusChangedOn
+     *
+     * @param \DateTime $statusChangedOn
+     *
+     * @return Site
+     */
+    public function setStatusChangedOn(\DateTime $statusChangedOn)
+    {
+        $this->statusChangedOn = $statusChangedOn;
+
+        return $this;
+    }
+
+    /**
+     * Get statusChangedOn
+     *
+     * @return \DateTime
+     */
+    public function getStatusChangedOn()
+    {
+        return $this->statusChangedOn;
+    }
+
 }
