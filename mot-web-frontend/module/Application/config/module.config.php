@@ -572,7 +572,7 @@ return [
                         'options' => [
                             'route'    => '/print-certificate',
                             'defaults' => [
-                                'controller' => MotTest\MotTestController::class,
+                                'controller' => MotTest\CertificatePrintingController::class,
                                 'action'     => 'retrievePdf',
                             ],
                         ],
@@ -582,7 +582,7 @@ return [
                         'options' => [
                             'route'    => '/print-duplicate-certificate',
                             'defaults' => [
-                                'controller'  => MotTest\MotTestController::class,
+                                'controller'  => MotTest\CertificatePrintingController::class,
                                 'action'      => 'retrievePdf',
                                 'isDuplicate' => true,
                             ],

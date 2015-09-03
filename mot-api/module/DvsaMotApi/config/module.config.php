@@ -23,51 +23,7 @@ use DvsaMotApi\Factory\Controller\DemoTestAssessmentControllerFactory;
 use DvsaMotApi\Factory\Controller\ReplacementCertificateDraftControllerFactory;
 
 return [
-    'controllers'     => [
-        'invokables' => [
-            'DvsaMotApi\Controller\Session' => \DvsaMotApi\Controller\SessionController::class,
-            'DvsaMotApi\Controller\Index' => \DvsaMotApi\Controller\IndexController::class,
-            RetestController::class => RetestController::class,
-            MotTestController::class => MotTestController::class,
-            'DvsaMotApi\Controller\MotTestRefusal' => \DvsaMotApi\Controller\MotTestRefusalController::class,
-            'DvsaMotApi\Controller\DemoTest' => \DvsaMotApi\Controller\DemoTestController::class,
-            'DvsaMotApi\Controller\TesterExpiry' => \DvsaMotApi\Controller\TesterExpiryController::class,
-            'DvsaMotApi\Controller\Vehicle' => \DvsaMotApi\Controller\VehicleController::class,
-            'DvsaMotApi\Controller\TesterSearch' => \DvsaMotApi\Controller\TesterSearchController::class,
-            'DvsaMotApi\Controller\TestItemSelector' => \DvsaMotApi\Controller\TestItemSelectorController::class,
-            TestItemCategoryNameController::class => TestItemCategoryNameController::class,
-            ReasonForRejectionController::class => ReasonForRejectionController::class,
-            'DvsaMotApi\Controller\MotTestOdometer' => \DvsaMotApi\Controller\MotTestOdometerController::class,
-            'DvsaMotApi\Controller\MotTestCompare' => \DvsaMotApi\Controller\MotTestCompareController::class,
-            MotTestSearchController::class => MotTestSearchController::class,
-            'DvsaMotApi\Controller\EnforcementMotTestResult' =>
-                \DvsaMotApi\Controller\EnforcementMotTestResultController::class,
-            'DvsaMotApi\Controller\MotTestReasonForRejection' =>
-                \DvsaMotApi\Controller\MotTestReasonForRejectionController::class,
-            'DvsaMotApi\Controller\MotTestBrakeTestResult' =>
-                \DvsaMotApi\Controller\MotTestBrakeTestResultController::class,
-            'DvsaMotApi\Controller\MotTestBrakeTestConfigurationValidation' =>
-                \DvsaMotApi\Controller\MotTestBrakeTestConfigurationValidationController::class,
-            'DvsaMotApi\Controller\CertChangeDiffTesterReason' =>
-                \DvsaMotApi\Controller\CertChangeDiffTesterReasonController::class,
-            'DvsaMotApi\Controller\InspectionLocation' => \DvsaMotApi\Controller\InspectionLocationController::class,
-            'DvsaMotApi\Controller\ReinspectionReport' => \DvsaMotApi\Controller\ReinspectionReportController::class,
-            CertificatePrintingController::class => CertificatePrintingController::class,
-            MotTestShortSummaryController::class => MotTestShortSummaryController::class,
-            'DvsaMotApi\Controller\EmergencyLogController' => \DvsaMotApi\Controller\EmergencyLogController::class,
-            MotTestOptionsController::class => MotTestOptionsController::class,
-            IdentityDataController::class => IdentityDataController::class,
-        ],
-        'factories' => [
-            'DvsaMotApi\Controller\Tester' => TesterControllerFactory::class,
-            'DvsaMotApi\Controller\User'   => UserControllerFactory::class,
-            MotTestStatusController::class => MotTestStatusControllerFactory::class,
-            DemoTestAssessmentController::class => DemoTestAssessmentControllerFactory::class,
-            TesterMotTestLogController::class => TesterMotTestLogControllerFactory::class,
-            ReplacementCertificateDraftController::class => ReplacementCertificateDraftControllerFactory::class,
-        ]
-    ],
-
+    'controllers' => include 'controllers.config.php',
     UsernameValidator::class => [
         'options' => [
             'max' => Person::FIELD_USERNAME_LENGTH,

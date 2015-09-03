@@ -5,7 +5,6 @@ namespace DvsaMotApi;
 use Core\Authorisation\Assertion\WebPerformMotTestAssertion;
 use Core\Factory\WebPerformMotTestAssertionFactory;
 use Doctrine\Tests\ORM\Mapping\User;
-use DvsaCommonApi\Transaction\ControllerTransactionAwareInitializer;
 use DvsaCommonApi\Transaction\ServiceTransactionAwareInitializer;
 use DvsaEntities\Repository\TestItemCategoryRepository;
 use DvsaMotApi\Factory\Repository\DvlaVehicleRepositoryFactory;
@@ -56,17 +55,11 @@ use DvsaMotApi\Factory\Service\Validator\RetestEligibilityValidatorFactory;
  * Zend module containing the main factory for MOT API services
  */
 class Module implements
-    AutoloaderProviderInterface,
     ConfigProviderInterface,
-    ControllerProviderInterface,
     ServiceProviderInterface
 {
 
     public static $em;
-
-    public function getAutoloaderConfig()
-    {
-    }
 
     public function getConfig()
     {
@@ -143,21 +136,6 @@ class Module implements
             ],
             'initializers' => [
                 'transactionAware' => ServiceTransactionAwareInitializer::class,
-            ]
-        ];
-    }
-
-    /**
-     * Expected to return \Zend\ServiceManager\Config object or array to seed
-     * such an object.
-     *
-     * @return array|\Zend\ServiceManager\Config
-     */
-    public function getControllerConfig()
-    {
-        return [
-            'initializers' => [
-                'transactionAware' => ControllerTransactionAwareInitializer::class,
             ]
         ];
     }

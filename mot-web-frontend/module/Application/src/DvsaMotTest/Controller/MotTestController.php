@@ -24,7 +24,6 @@ use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\Messages\InvalidTestStatus;
 use DvsaCommon\UrlBuilder\MotTestUrlBuilder;
 use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
-use DvsaCommon\UrlBuilder\ReportUrlBuilder;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaMotTest\Model\OdometerReadingViewObject;
@@ -539,36 +538,6 @@ class MotTestController extends AbstractDvsaMotTestController
         }
 
         return $this->redirect()->toUrl($redirectUrl);
-    }
-
-    /**
-     * Called to retrieve a PDF from the document service (and Jasper), and returns
-     * the binary with content-type header.
-     * Relies on an MOT ID being passed in the URL, which resolves to a document ID.
-     *
-     * @return Response
-     * @throws RestApplicationException
-     * @throws \Exception
-     */
-    public function retrievePdfAction()
-    {
-        $motTestNumber = (int)$this->params()->fromRoute('motTestNumber', 0);
-        $isDuplicate = $this->params('isDuplicate');
-
-        $certificateUrl = ReportUrlBuilder::printCertificate($motTestNumber, ($isDuplicate ? 'dup' : null));
-
-        //  --  get number of current site --
-        $site = $this->getIdentity()->getCurrentVts();
-        if ($site && $site->getSiteNumber()) {
-            $certificateUrl->queryParam('siteNr', $site->getSiteNumber());
-        }
-
-        $result = $this->getRestClient()->getPdf($certificateUrl); // @todo - add some pdf parsing checks in client
-
-        $response = new Response;
-        $response->setContent($result);
-        $response->getHeaders()->addHeaderLine('Content-Type', 'application/pdf');
-        return $response;
     }
 
     public function printTestResultAction()
