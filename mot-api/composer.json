@@ -13,7 +13,7 @@
         "dvsa/dvsa-logger": "~1.1",
         "dvsa/dvsa-application-logger": "~1.2.0",
         "soflomo/purifier": "0.1.1",
-        "slot-purchase/backend-api": "3.4.*"
+        "slot-purchase/backend-api": "3.5.*"
     },
     "autoload" : {
         "psr-0" : {

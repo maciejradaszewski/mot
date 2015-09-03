@@ -3,7 +3,6 @@ package com.dvsa.mot.selenium.priv.frontend.enforcement.pages;
 import com.dvsa.mot.selenium.framework.BasePage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.ChoosePaymentTypePage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.ManualAdjustmentOfSlotsPage;
-import com.dvsa.mot.selenium.priv.frontend.payment.pages.SlotRefundPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.TransactionHistoryPage;
 
 import org.openqa.selenium.WebDriver;
@@ -60,10 +59,4 @@ public class DetailsOfAuthorisedExaminerPage extends BasePage {
     public String getAeSlotBalance() {
         return numberOfSlots.getText();
     }
-    
-    public SlotRefundPage clickRefundsLink() {
-        refundsLink.click();
-        return new SlotRefundPage(driver);
-    }
-
 }

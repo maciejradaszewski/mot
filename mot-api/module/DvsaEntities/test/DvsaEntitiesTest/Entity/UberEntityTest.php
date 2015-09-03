@@ -131,6 +131,7 @@ class UberEntityTest extends \PHPUnit_Framework_TestCase
         $this->stack[] = new Entity\EventCategory();
         $this->stack[] = new Entity\EventOrganisationMap();
         $this->stack[] = new Entity\EventSiteMap();
+        $this->stack[] = new Entity\TestSlotTransactionAmendmentReason();
     }
 
     public function testEntities()

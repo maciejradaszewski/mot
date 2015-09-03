@@ -27,6 +27,16 @@ class SlotsAdjustTransactionContext implements Context
         'asda'     => 12
     ];
 
+    /**
+     * @var array
+     */
+    private $amendmentReasonTypesMap = [
+        'Failures'                         => 'T701',
+        'Slot Refund'                      => 'T702',
+        'Manual Adjustment of slots'       => 'T700',
+        'Manual adjustment of transaction' => 'T703',
+    ];
+
     private $reasonMap = [
         'wrongData' => 'IV',
 
@@ -103,4 +113,38 @@ class SlotsAdjustTransactionContext implements Context
         ];
         $this->responseReceived = $this->slotPurchase->adjustTransaction($token, $transactionId, $body);
     }
+
+    /**
+     * @When I request a list of amendment reasons by type ":type"
+     */
+    public function requestListOfAmendmentReasonsByType($type)
+    {
+            $token = $this->sessionContext->getCurrentAccessToken();
+
+            $this->responseReceived = $this->slotPurchase->getAmendmentReasonsByType(
+                $token, $this->amendmentReasonTypesMap[$type]
+            );
+    }
+
+    /**
+     * @Then I should have ":reason" available in the result
+     */
+    public function checkReasonPresentInResponse($reason)
+    {
+        PHPUnit::assertEquals(
+            200,
+            $this->responseReceived->getStatusCode(),
+            'Unable to adjust transaction'
+        );
+
+        $arrayOfReasons = array_values($this->responseReceived->getBody()->toArray()['data']);
+
+        PHPUnit::assertNotFalse(
+            array_search($reason, $arrayOfReasons),
+            'Unable to find reason for that type'
+        );
+
+    }
+
+
 }

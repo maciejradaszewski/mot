@@ -62,3 +62,18 @@ Feature: Initiate Refund
     Given I am logged in as a Finance User
     When I request a refund of "0" slots for organisation "halfords"
     Then My refund request should be rejected
+
+  @slots
+  Scenario Outline: Refund slots when the latest transaction is reversed
+    Given I am logged in as a Finance User
+    And I bought <slots> slots for organisation <organisation> at <price> price
+    And I bought <slots> slots for organisation <organisation> at <price> price
+    And The latest transaction is reversed
+    When I request a refund of <slotsToRefund> slots for organisation <organisation>
+    Then The slots purchased should be refunded
+  Examples:
+    | slots | organisation | price | slotsToRefund |
+    | 1000  | kwikfit      | 2.05  | 100           |
+    | 500   | kwikfit      | 2.05  | 500           |
+
+

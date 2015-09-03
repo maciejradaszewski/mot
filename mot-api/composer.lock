@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "06137107a31104ac2ec59e092efa8fb0",
+    "hash": "fb86f8c6677a7c8c85f0821bfeab62d0",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1226,11 +1226,11 @@
         },
         {
             "name": "slot-purchase/backend-api",
-            "version": "v3.4.5",
+            "version": "v3.5.4",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git",
-                "reference": "e4add6db43f909350ddaf23fb948786da3d36584"
+                "reference": "366a547fd38dcc69b16660a6be24648f4cd7b25e"
             },
             "require": {
                 "cpms/client": "1.22.*",
@@ -1265,7 +1265,7 @@
                 "proprietary"
             ],
             "description": "API for slot purchasing and related features",
-            "time": "2015-08-12 13:01:53"
+            "time": "2015-09-01 12:05:03"
         },
         {
             "name": "soflomo/purifier",
@@ -1499,12 +1499,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/ZendPdf.git",
+                "url": "git@github.com:zendframework/ZendPdf.git",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },
