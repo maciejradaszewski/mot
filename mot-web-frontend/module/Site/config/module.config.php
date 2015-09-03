@@ -180,6 +180,54 @@ return [
                             ],
                         ],
                     ],
+                    'edit-testing-facilities'            => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'    => '/:id/testing-facilities',
+                            'defaults' => [
+                                'siteId'     => '[0-9]+',
+                                'controller' => SiteController::class,
+                                'action'     => 'testingFacilities'
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'confirmation' => [
+                                'type'    => 'literal',
+                                'options' => [
+                                    'route'    => '/confirmation',
+                                    'defaults' => [
+                                        'controller' => SiteController::class,
+                                        'action'     => 'testingFacilitiesConfirmation',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'edit-site-details'            => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'    => '/:id/site-details',
+                            'defaults' => [
+                                'siteId'     => '[0-9]+',
+                                'controller' => SiteController::class,
+                                'action'     => 'siteDetails'
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'confirmation' => [
+                                'type'    => 'literal',
+                                'options' => [
+                                    'route'    => '/confirmation',
+                                    'defaults' => [
+                                        'controller' => SiteController::class,
+                                        'action'     => 'siteDetailsConfirmation',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],

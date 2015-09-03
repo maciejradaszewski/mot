@@ -23,6 +23,8 @@ class Vts extends MotApi
     const PATH = 'vehicle-testing-station/{vts_id}';
     const SEARCH = 'vehicle-testing-station/search';
     const POSITION = 'site/{site_id}/position';
+    const TESTING_FACILITIES = 'vehicle-testing-station/{site_id}/testing-facilities';
+    const SITE_DETAILS = 'vehicle-testing-station/{site_id}/site-details';
 
     public function getVtsDetails($vtsId, $token)
     {
@@ -60,18 +62,23 @@ class Vts extends MotApi
         );
     }
 
+    protected function getDefaults()
+    {
+        return [
+            'name'         => 'Garage Name',
+            'status'       => 'AV',
+            'addressLine1' => 'addressLine1',
+            'town'         => 'Boston',
+            'postcode'     => 'BT2 4RR',
+            'email'        => 'dummy@dummy.com',
+            'phoneNumber'  => '01117 26374',
+            'classes'      => [1, 2, 3, 4, 5, 7],
+        ];
+    }
+
     public function create($token, $site)
     {
-        $default = [
-            'name' => 'Garage Name',
-            'addressLine1' => 'addressLine1',
-            'town' => 'Boston',
-            'postcode' => 'BT2 4RR',
-            'email' => 'dummy@dummy.com',
-            'phoneNumber' => '01117 26374',
-            'classes' => [1, 2, 3, 4, 5, 7],
-        ];
-        $site = array_merge($default, $site);
+        $site = array_merge($this->getDefaults(), $site);
 
         $body = json_encode(DtoHydrator::dtoToJson($this->generateSiteDto($site)));
 
@@ -79,6 +86,63 @@ class Vts extends MotApi
             new Request(
                 'POST',
                 UrlBuilder::of()->vehicleTestingStation()->toString(),
+                ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
+                $body
+            )
+        );
+    }
+
+    /**
+     * @param string $token
+     * @param int $siteId
+     * @param array $site
+     * @param int $numOptl
+     * @param int $numTptl
+     */
+    public function updateTestingFacilities($token, $siteId, array $site, $numOptl, $numTptl)
+    {
+        $site = array_merge($this->getDefaults(), $site);
+        $siteDto = $this->generateSiteDto($site);
+
+        // add number of specified testing facilities
+        $facilities = [];
+        for ($i = 0; $i < $numOptl; $i++) {
+            $facility = (new FacilityDto())
+                ->setName('OPTL')
+                ->setType((new FacilityTypeDto())->setCode(FacilityTypeCode::ONE_PERSON_TEST_LANE));
+            array_push($facilities, $facility);
+        }
+
+        for ($i = 0; $i < $numTptl; $i++) {
+            $facility = (new FacilityDto())
+                ->setName('TPTL')
+                ->setType((new FacilityTypeDto())->setCode(FacilityTypeCode::TWO_PERSON_TEST_LANE));
+            array_push($facilities, $facility);
+        }
+
+        $siteDto->setFacilities($facilities);
+        $body = json_encode(DtoHydrator::dtoToJson($siteDto));
+
+        return $this->client->request(
+            new Request(
+                'PUT',
+                str_replace('{site_id}', $siteId, self::TESTING_FACILITIES),
+                ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
+                $body
+            )
+        );
+    }
+
+    public function updateSiteDetails($token, $siteId, array $site)
+    {
+        $site = array_merge($this->getDefaults(), $site);
+        $siteDto = $this->generateSiteDto($site);
+        $body = json_encode(DtoHydrator::dtoToJson($siteDto));
+
+        return $this->client->request(
+            new Request(
+                'PUT',
+                str_replace('{site_id}', $siteId, self::SITE_DETAILS),
                 ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
                 $body
             )
@@ -116,6 +180,7 @@ class Vts extends MotApi
         $siteDto = new VehicleTestingStationDto();
         $siteDto
             ->setName($site['name'])
+            ->setStatus($site['status'])
             ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
             ->setTestClasses($site['classes'])
             ->setIsDualLanguage(false)

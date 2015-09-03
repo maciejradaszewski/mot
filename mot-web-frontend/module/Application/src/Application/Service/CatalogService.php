@@ -302,4 +302,13 @@ class CatalogService
         }
         return $reasons;
     }
+
+    public function getSiteStatus()
+    {
+        $types = [];
+        foreach ($this->getData()['siteStatus'] as $type) {
+            $types[$type['code']] = $type['name'];
+        }
+        return $types;
+    }
 }

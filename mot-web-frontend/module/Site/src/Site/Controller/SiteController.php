@@ -20,6 +20,8 @@ use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use Site\Authorization\VtsOverviewPagePermissions;
 use Site\Form\VtsContactDetailsUpdateForm;
 use Site\Form\VtsCreateForm;
+use Site\Form\VtsSiteDetailsForm;
+use Site\Form\VtsUpdateTestingFacilitiesForm;
 use Site\ViewModel\SiteViewModel;
 use Site\ViewModel\VehicleTestingStation\VtsFormViewModel;
 use Zend\Http\Request;
@@ -47,6 +49,10 @@ class SiteController extends AbstractAuthActionController
 
     const EDIT_TITLE = 'Change contact details';
     const EDIT_SUBTITLE = 'Vehicle testing station';
+    const EDIT_TESTING_FACILITIES = 'Change testing facilities';
+    const EDIT_TESTING_FACILITIES_CONFIRM = 'Confirm testing facilities';
+    const EDIT_SITE_DETAILS = 'Change site details';
+    const EDIT_SITE_DETAILS_CONFIRM = 'Confirm site details';
 
     const ROUTE_CONFIGURE_BRAKE_TEST_DEFAULTS = 'site/configure-brake-test-defaults';
 
@@ -130,6 +136,7 @@ class SiteController extends AbstractAuthActionController
         );
 
         $equipmentModelStatusMap = $this->catalog->getEquipmentModelStatuses();
+        $siteStatusMap = $this->catalog->getSiteStatus();
 
         $view = new SiteViewModel($site, $equipment, $testInProgress, $permissions, $equipmentModelStatusMap);
 
@@ -162,6 +169,7 @@ class SiteController extends AbstractAuthActionController
                 'viewModel'     => $view,
                 'searchString'  => $searchString,
                 'escRefPage'    => $escRefPage,
+                'siteStatusMap' => $siteStatusMap,
             ]
         );
 
@@ -317,6 +325,287 @@ class SiteController extends AbstractAuthActionController
         return $this->prepareViewModel($viewModel, self::EDIT_TITLE, $subTitle, $breadcrumbs);
     }
 
+    public function testingFacilitiesAction()
+    {
+        $siteId = $this->getSiteIdOrFail();
+        $this->auth->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_TESTING_FACILITIES_DETAILS, $siteId);
+        /** @var VehicleTestingStationDto $vtsDto */
+        $vtsDto = $this->mapper->Site->getById($siteId);
+
+        /**
+         * @var \Zend\Http\Request $request
+         */
+        $request = $this->getRequest();
+
+        //  create new form or get from session when come back from confirmation
+        $sessionKey = $request->getQuery(self::SESSION_KEY) ?: uniqid();
+        $form = $this->session->offsetGet($sessionKey);
+
+        if (!$form instanceof VtsUpdateTestingFacilitiesForm) {
+            /**
+             * @var VehicleTestingStationDto $vtsDto
+             */
+            $vtsDto = $this->mapper->Site->getById($siteId);
+            $form = new VtsUpdateTestingFacilitiesForm();
+            $form->fromDto($vtsDto);
+        }
+
+        $form->setFormUrl(VehicleTestingStationUrlBuilderWeb::testingFacilities($siteId)
+            ->queryParam(self::SESSION_KEY, $sessionKey));
+
+        $vtsViewUrl = VehicleTestingStationUrlBuilderWeb::byId($siteId)->toString();
+
+        if ($request->isPost()) {
+            $form->fromPost($request->getPost());
+            $dto = $form->toDto();
+
+            try {
+                $this->mapper->Site->validateTestingFacilities($siteId, $dto);
+                $this->session->offsetSet($sessionKey, $form);
+
+                $confirmUrl = VehicleTestingStationUrlBuilderWeb::testingFacilitiesConfirmation($siteId)
+                    ->queryParam(self::SESSION_KEY, $sessionKey);
+
+                return $this->redirect()->toUrl($confirmUrl);
+            } catch (ValidationException $ve) {
+                $form->addErrorsFromApi($ve->getErrors());
+            }
+        }
+
+        //  logical block :: prepare view model
+        $viewModel = new ViewModel([
+            'form'      => $form,
+            'cancelUrl' => $vtsViewUrl,
+        ]);
+
+        $breadcrumbs = [
+            $form->getVtsDto()->getName() => $vtsViewUrl,
+        ];
+
+        $subTitle = self::EDIT_SUBTITLE . ' - ' . $form->getVtsDto()->getSiteNumber();
+
+        $this->layout()->setVariable(
+            'pageTertiaryTitle',
+            $vtsDto->getContactByType(SiteContactTypeCode::BUSINESS)
+                ->getAddress()->getFullAddressString()
+        );
+
+        return $this->prepareViewModel(
+            $viewModel,
+            self::EDIT_TESTING_FACILITIES,
+            $subTitle,
+            $breadcrumbs,
+            self::STEP_ONE
+        );
+    }
+
+    public function testingFacilitiesConfirmationAction()
+    {
+        $siteId = $this->getSiteIdOrFail();
+        $this->auth->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_TESTING_FACILITIES_DETAILS, $siteId);
+
+        $vtsViewUrl = VehicleTestingStationUrlBuilderWeb::byId($siteId)->toString();
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+
+        //  get form from session
+        $sessionKey = $request->getQuery(self::SESSION_KEY);
+        $form = $this->session->offsetGet($sessionKey);
+
+        if (!$form instanceof VtsUpdateTestingFacilitiesForm) {
+            return $this->redirect()->toUrl($vtsViewUrl);
+        }
+
+        /**
+         * @var VehicleTestingStationDto $vtsDto
+         */
+        $vtsDto = $form->getVtsDto();
+
+        if ($request->isPost()) {
+            try {
+                $this->mapper->Site->updateTestingFacilities($siteId, $form->toDto());
+                $this->session->offsetUnset($sessionKey);
+                return $this->redirect()->toUrl($vtsViewUrl);
+            } catch (RestApplicationException $ve) {
+                $this->addErrorMessages($ve->getDisplayMessages());
+            }
+        }
+
+        $breadcrumbs = [
+            $vtsDto->getName() => $vtsViewUrl,
+        ];
+
+        $form->setFormUrl(VehicleTestingStationUrlBuilderWeb::testingFacilitiesConfirmation($siteId)
+            ->queryParam(self::SESSION_KEY, $sessionKey));
+
+        $cancelUrl = VehicleTestingStationUrlBuilderWeb::testingFacilities($siteId)
+            ->queryParam(self::SESSION_KEY, $sessionKey);
+
+        $viewModel = new ViewModel([
+            'form'      => $form,
+            'cancelUrl' => $cancelUrl,
+        ]);
+
+        $this->layout()->setVariable(
+            'pageTertiaryTitle',
+            $vtsDto->getContactByType(SiteContactTypeCode::BUSINESS)
+                ->getAddress()->getFullAddressString()
+        );
+
+        return $this->prepareViewModel(
+            $viewModel,
+            self::EDIT_TESTING_FACILITIES_CONFIRM,
+            sprintf('Site - %s', $vtsDto->getSiteNumber()),
+            $breadcrumbs,
+            self::STEP_TWO
+        );
+    }
+
+    public function siteDetailsAction()
+    {
+        $siteId = $this->getSiteIdOrFail();
+        $this->auth->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_SITE_DETAILS, $siteId);
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+
+        /** @var VehicleTestingStationDto $vtsDto */
+        $vtsDto = $this->mapper->Site->getById($siteId);
+        
+        //  create new form or get from session when come back from confirmation
+        $sessionKey = $request->getQuery(self::SESSION_KEY) ?: uniqid();
+        $form = $this->session->offsetGet($sessionKey);
+
+        //  redirect to site details page if form data not provided
+        if (!($form instanceof VtsSiteDetailsForm)) {
+            $form = new VtsSiteDetailsForm();
+            $form->fromDto($vtsDto);
+        }
+
+        $form->setFormUrl(
+            VehicleTestingStationUrlBuilderWeb::siteDetails($siteId)
+                ->queryParam(self::SESSION_KEY, $sessionKey)
+        );
+
+        if ($request->isPost()) {
+            $form->fromPost($request->getPost());
+            $dto = $form->toDto();
+
+            try {
+                $this->mapper->Site->validateSiteDetails($siteId, $dto);
+
+                $this->session->offsetSet($sessionKey, $form);
+
+                $url = VehicleTestingStationUrlBuilderWeb::siteDetailsConfirm($siteId)
+                    ->queryParam(self::SESSION_KEY, $sessionKey);
+
+                return $this->redirect()->toUrl($url);
+            } catch (ValidationException $ve) {
+                $form->addErrorsFromApi($ve->getErrors());
+            }
+        }
+
+        $vtsViewUrl = VehicleTestingStationUrlBuilderWeb::byId($siteId)->toString();
+
+        //  logical block :: prepare view model
+        $model = (new VtsFormViewModel())
+            ->setForm($form)
+            ->setCancelUrl($vtsViewUrl)
+        ;
+
+        $subTitle = self::EDIT_SUBTITLE . ' - ' . $form->getVtsDto()->getSiteNumber();
+
+
+        $breadcrumbs = [
+            $form->getVtsDto()->getName() => $vtsViewUrl,
+        ];
+
+        $this->layout()->setVariable(
+            'pageTertiaryTitle',
+            $vtsDto->getContactByType(SiteContactTypeCode::BUSINESS)
+                ->getAddress()->getFullAddressString()
+        );
+
+        return $this->prepareViewModel(
+            new ViewModel(['model' => $model]),
+            self::EDIT_SITE_DETAILS,
+            $subTitle,
+            $breadcrumbs,
+            self::STEP_ONE
+        );
+    }
+
+    public function siteDetailsConfirmationAction()
+    {
+        $siteId = $this->getSiteIdOrFail();
+        $this->auth->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_TESTING_FACILITIES_DETAILS, $siteId);
+
+        $vtsViewUrl = VehicleTestingStationUrlBuilderWeb::byId($siteId)->toString();
+
+        /** @var Request $request */
+        $request = $this->getRequest();
+
+        //  get form from session
+        $sessionKey = $request->getQuery(self::SESSION_KEY);
+        $form = $this->session->offsetGet($sessionKey);
+
+        if (!$form instanceof VtsSiteDetailsForm) {
+            return $this->redirect()->toUrl($vtsViewUrl);
+        }
+
+        /**
+         * @var VehicleTestingStationDto $vtsDto
+         */
+        $vtsDto = $form->getVtsDto();
+
+        if ($request->isPost()) {
+            try {
+                $this->mapper->Site->updateSiteDetails($siteId, $form->toDto());
+                $this->session->offsetUnset($sessionKey);
+                return $this->redirect()->toUrl($vtsViewUrl);
+            } catch (RestApplicationException $ve) {
+                $this->addErrorMessages($ve->getDisplayMessages());
+            }
+        }
+
+        $breadcrumbs = [
+            $vtsDto->getName() => $vtsViewUrl,
+        ];
+
+        $form->setFormUrl(VehicleTestingStationUrlBuilderWeb::siteDetailsConfirm($siteId)
+            ->queryParam(self::SESSION_KEY, $sessionKey));
+
+        $cancelUrl = VehicleTestingStationUrlBuilderWeb::siteDetails($siteId)
+            ->queryParam(self::SESSION_KEY, $sessionKey);
+
+        $siteStatusMap = $this->catalog->getSiteStatus();
+
+        $hasStatusChanged = $form->getStatus() != $vtsDto->getStatus();
+
+        $viewModel = new ViewModel([
+            'form'      => $form,
+            'cancelUrl' => $cancelUrl,
+            'siteStatusMap' => $siteStatusMap,
+            'site' => $vtsDto,
+            'hasStatusChanged' => $hasStatusChanged,
+        ]);
+
+        $this->layout()->setVariable(
+            'pageTertiaryTitle',
+            $vtsDto->getContactByType(SiteContactTypeCode::BUSINESS)
+                ->getAddress()->getFullAddressString()
+        );
+
+        return $this->prepareViewModel(
+            $viewModel,
+            self::EDIT_SITE_DETAILS_CONFIRM,
+            sprintf('Site - %s', $vtsDto->getSiteNumber()),
+            $breadcrumbs,
+            self::STEP_TWO
+        );
+    }
+
     /**
      * Prepare the view model for all the step of the create ae
      *
@@ -414,5 +703,18 @@ class SiteController extends AbstractAuthActionController
     private function getUpdateVtsAssertion()
     {
         return new UpdateVtsAssertion($this->auth);
+    }
+
+    /**
+     * @return int
+     * @throws \Exception
+     */
+    private function getSiteIdOrFail()
+    {
+        $siteId = (int)$this->params('id');
+        if ($siteId == 0) {
+            throw new \Exception(self::ERR_MSG_INVALID_SITE_ID_OR_NR);
+        }
+        return $siteId;
     }
 }

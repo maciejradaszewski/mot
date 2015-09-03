@@ -39,6 +39,7 @@ default:
                 - TempPasswordChangeContext
                 - VehicleContext
                 - VtsContext
+                - VtsManagementContext
             filters:
                 tags: "~@functional"
         functional:

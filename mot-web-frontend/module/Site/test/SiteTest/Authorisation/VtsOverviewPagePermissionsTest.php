@@ -345,6 +345,24 @@ class VtsOverviewPagePermissionsTest extends PHPUnit_Framework_TestCase
                 'method' => 'canRemovePositionAtSite',
                 'expected' => true,
             ],
+            [
+                'permission' => [
+                    'method' => 'isGrantedAtSite',
+                    'params' => [PermissionAtSite::VTS_UPDATE_TESTING_FACILITIES_DETAILS, self::$SITE_ID],
+                    'result' => true,
+                ],
+                'method' => 'canChangeTestingFacilities',
+                'expected' => true,
+            ],
+            [
+                'permission' => [
+                    'method' => 'isGrantedAtSite',
+                    'params' => [PermissionAtSite::VTS_UPDATE_SITE_DETAILS, self::$SITE_ID],
+                    'result' => true,
+                ],
+                'method' => 'canChangeSiteDetails',
+                'expected' => true,
+            ],
         ];
     }
 
