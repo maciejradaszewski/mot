@@ -6,7 +6,7 @@
         "doctrine/doctrine-module": "~0.8",
         "doctrine/doctrine-orm-module": "~0.9",
         "dvsa/dvsa-doctrine-module": "~1.1",
-        "dvsa/dvsa-document-module": "~1.2",
+        "dvsa/dvsa-document-module": "1.3.0",
         "dvsa/feature-toggle": "~1.0",
         "dvsa/dvsa-openam-client" : "~1.8.0",
         "dvsa/scripts": "~2.0.3",

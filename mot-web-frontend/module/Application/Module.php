@@ -58,6 +58,8 @@ use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\SessionManager;
+use DvsaMotTest\Service\CertificatePrintingService;
+use DvsaMotTest\Factory\Service\CertificatePrintingServiceFactory;
 
 /**
  * Class Module.
@@ -148,6 +150,7 @@ class Module implements
                 AuthorisedClassesService::class           => AuthorisedClassesServiceFactory::class,
                 VehicleSearchResult::class                => VehicleSearchResultFactory::class,
                 VehicleSearchService::class               => VehicleSearchServiceFactory::class,
+                CertificatePrintingService::class         => CertificatePrintingServiceFactory::class
             ],
             'aliases'    => [
                 AuthenticationService::class => 'ZendAuthenticationService'

@@ -197,6 +197,8 @@ class MotTestDto extends AbstractDataTransferObject
     }
 
     /**
+     * This method returns the ID of the jasper data snapshot row
+     *
      * @return int
      */
     public function getDocument()
@@ -205,7 +207,7 @@ class MotTestDto extends AbstractDataTransferObject
     }
 
     /**
-     * @param int $document
+     * @param int $document The ID of the jasper snapshot data ID
      *
      * @return MotTestDto
      */

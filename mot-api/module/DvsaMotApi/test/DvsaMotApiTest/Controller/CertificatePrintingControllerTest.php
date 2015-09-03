@@ -29,7 +29,7 @@ use Zend\Uri\Http;
 /**
  * Unit tests for ReportController
  */
-class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
+class CertificatePrintinibgControllerTest extends AbstractMotApiControllerTestCase
 {
     /** @var  \DvsaMotApi\Service\MotTestService|MockObj */
     private $mockedTestService;
@@ -46,17 +46,26 @@ class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
 
     protected function setUp()
     {
-        $this->controller = new CertificatePrintingController();
+
+
+        $this->mockedDocumentService = $this
+            ->getMockBuilder(DocumentService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->controller = new CertificatePrintingController($this->mockedDocumentService);
+
         parent::setUp();
 
         $this->mockedTestService = $this->getMockMotTestService();
         $this->mockedReportService = $this->getMockReportService();
-        $this->mockedDocumentService = $this->getMockDocumentService();
+
         $this->mockedCertificateCreationService = $this->getMockCertificateCreationService();
         $this->mockedDvsaAuthenticationService =  $this->getMockAuthenticationService();
         $this->mockedAuthService = $this->getMockAuthService();
 
         $mockLogger = XMock::of(Logger::class);
+
         $this->serviceManager->setService('Application/Logger', $mockLogger);
     }
 
@@ -64,13 +73,6 @@ class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
     {
         $mock = $this->getMockWithDisabledConstructor(ReportService::class);
         $this->serviceManager->setService('ReportService', $mock);
-        return $mock;
-    }
-
-    private function getMockDocumentService()
-    {
-        $mock = $this->getMockWithDisabledConstructor(DocumentService::class);
-        $this->serviceManager->setService('DocumentService', $mock);
         return $mock;
     }
 
@@ -316,6 +318,10 @@ class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
             ->method('getReportName')
             ->willReturn($jasperReportName);
 
+        $this->mockedDocumentService->expects($this->any())
+            ->method('getSnapshotById')
+            ->willReturn(['TestNumber' => $motTestNr]);
+
         $sessionPerson = (new Person())
             ->setId(1)
             ->setFirstName('Simon')
@@ -340,6 +346,7 @@ class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
                     'Vts'         => $siteOtherNr,
                     'NowCy'       => datefmt_format_object(DateUtils::nowAsUserDateTime(), 'dd MMMM Y', 'cy_GB'),
                     'Watermark'   => 'NOT VALID',
+                    'snapshotData' => ['TestNumber' => $motTestNr]
                 ]
             ]
         ];
