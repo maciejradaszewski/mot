@@ -769,6 +769,28 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         $this->nominateToSiteRole("SITE-MANAGER");
     }
 
+    /**
+     * @Given I nominate user to Authorised examiner delegate role
+     */
+    public function iNominateUserToAedRole()
+    {
+        $params = [
+            "siteIds" => [1]
+        ];
+        $this->createTester($params);
+        $this->nominateToOrganisationRole("Authorised examiner delegate");
+    }
+
+    /**
+     * @Given I nominate user to Authorised examiner delegate manager role
+     */
+    public function iNominateUserToAedmRole()
+    {
+        $params = ["siteIds" => [1]];
+        $this->createTester($params);
+        $this->nominateToOrganisationRole("Authorised examiner designated manager");
+    }
+
     public function createTester(array $params = [])
     {
         $defaults = [
@@ -793,21 +815,38 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         PHPUnit::assertEquals(200, $response->getStatusCode());
     }
 
-    /**
-     * @Given I nominate user to Authorised examiner delegate role
-     */
-    public function iNominateUserToAedRole()
-    {
-        $params = ["siteIds" => [1]];
-        $this->createTester($params);
-        $this->nominateToOrganisationRole("Authorised examiner delegate");
-    }
-
     private function nominateToOrganisationRole($role)
     {
-        $aeId = $this->authorisedExaminerContext->getAe()["id"];
+        $siteId = $this->authorisedExaminerContext->getAe()["id"];
         $token = $this->sessionContext->getCurrentAccessToken();
-        $response = $this->authorisedExaminer->nominate($this->getPersonUserId(), $role, $aeId, $token );
+        $response = $this->authorisedExaminer->nominate($this->getPersonUserId(), $role, $siteId, $token);
+        PHPUnit::assertEquals(200, $response->getStatusCode());
+    }
+
+    private function denominateFromOrganisationRole($role)
+    {
+        $token = $this->sessionContext->getCurrentAccessToken();
+        $aeId = $this->authorisedExaminerContext->getAE()['id'];
+
+        // Retrieve details from organisation
+        $positions = $this->authorisedExaminer->getAuthorisedExaminerPositions($token, $aeId);
+        $positionsToArray = $positions->getBody()->toArray();
+
+        $positionId = null;
+
+        foreach ($positionsToArray['data'] as $position) {
+            if ($position['role'] == $role) {
+                $positionId = $position['id'];
+                continue;
+            }
+        }
+
+        if (is_null($positionId)) {
+            throw new \InvalidArgumentException('Invalid Position Id');
+        }
+
+        // Remove role from organisation using the current session from context
+        $response = $this->authorisedExaminer->denominate($aeId, $positionId, $token);
 
         PHPUnit::assertEquals(200, $response->getStatusCode());
     }
@@ -841,9 +880,10 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
 
         $aeId = $this->authorisedExaminerContext->getAe()["id"];
         $roles = $detailsResponse->getBody()['data']['roles']->toArray();
-        $siteRoles = $roles["organisations"][$aeId]["roles"];
 
-        PHPUnit::assertTrue(in_array($role, $siteRoles), "Organisation role '" . $role . "' not found");
+        $orgRoles = $roles["organisations"][$aeId]["roles"];
+
+        PHPUnit::assertTrue(in_array($role, $orgRoles), "Organisation role '" . $role . "' not found");
     }
 
     /**
@@ -875,4 +915,69 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         );
         return $tokenResponse->getAccessToken();
     }
+
+    /**
+     * @Then I denominate user to Authorised examiner delegate role to new organisation
+     */
+    public function iDenominateUserToAuthorisedExaminerDelegateRoleToNewOrganisation()
+    {
+        $this->denominateFromOrganisationRole("Authorised examiner delegate");
+    }
+
+    /**
+     * @Then I denominate user to Authorised examiner designated manager role to new organisation
+     */
+    public function iDenominateUserToAuthorisedExaminerDesignatedManagerRoleToNewOrganisation()
+    {
+        $this->denominateFromOrganisationRole("Authorised examiner designated manager");
+    }
+
+    /**
+     * @Given I nominate user to Authorised Examiner Delegate role to new organisation
+     */
+    public function iNominateUserToAuthorisedExaminerDelegateRoleToNewOrganisation()
+    {
+        $this->authorisedExaminerContext->createAE();
+
+        $params = ["siteIds" => [1]];
+        $this->createTester($params);
+        $this->nominateToOrganisationRole("Authorised examiner delegate");
+    }
+
+    /**
+     * @Given I nominate user to Authorised Examiner Designated Manager role to new organisation
+     */
+    public function iNominateUserToAuthorisedExaminerDesignatedManagerRoleToNewOrganisation()
+    {
+        $this->authorisedExaminerContext->createAE();
+
+        $params = ["siteIds" => [1]];
+        $this->createTester($params);
+        $this->nominateToOrganisationRole("Authorised examiner designated manager");
+    }
+
+    /**
+     * @Then a user does not have organisation role :arg1
+     */
+    public function aUserDoesNotHaveOrganisationRole($role)
+    {
+        $token = $this->sessionContext->getCurrentAccessToken();
+        $aeId = $this->authorisedExaminerContext->getAE()['id'];
+
+        // Retrieve details from organisation
+        $positions = $this->authorisedExaminer->getAuthorisedExaminerPositions($token, $aeId);
+        $positionsToArray = $positions->getBody()->toArray();
+
+        $positionId = null;
+
+        foreach ($positionsToArray['data'] as $position) {
+            if ($position['role'] == $role) {
+                $positionId = $position['id'];
+                continue;
+            }
+        }
+
+        PHPUnit::assertNull($positionId);
+    }
+
 }

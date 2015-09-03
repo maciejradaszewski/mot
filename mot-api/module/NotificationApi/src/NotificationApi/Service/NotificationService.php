@@ -6,6 +6,7 @@ use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommonApi\Service\AbstractService;
 use DvsaCommonApi\Service\Exception\BadRequestException;
+use DvsaCommonApi\Service\Exception\ForbiddenException;
 use DvsaEntities\Entity\Notification;
 use DvsaEntities\Entity\NotificationField;
 use DvsaEntities\Entity\NotificationTemplate;
@@ -13,7 +14,6 @@ use DvsaEntities\Entity\Person;
 use NotificationApi\Service\BusinessLogic\AbstractNotificationActionHandler;
 use NotificationApi\Service\Validator\NotificationValidator;
 use Zend\ServiceManager\ServiceManager;
-use DvsaCommonApi\Service\Exception\ForbiddenException;
 
 /**
  * Class NotificationService
@@ -64,15 +64,15 @@ class NotificationService extends AbstractService
         );
 
         $notification = new Notification();
-        $notification
-            ->setRecipient($person)
-            ->setNotificationTemplate($template);
+        $notification->setRecipient($person)
+                     ->setNotificationTemplate($template);
 
         $this->entityManager->persist($notification);
 
         foreach ($data['fields'] as $field => $value) {
             $notificationField = new NotificationField();
             $notificationField->setField($field)->setValue($value)->setNotification($notification);
+            $notification->addField($notificationField);
             $this->entityManager->persist($notificationField);
         }
 
@@ -119,6 +119,10 @@ class NotificationService extends AbstractService
         $service = $this->serviceManager->get('DvsaAuthenticationService');
         $identity = $service->getIdentity();
         $recipientId = $notification->getRecipient();
+
+        if ($this->authService->isGranted(PermissionInSystem::NOMINATE_AEDM)) {
+            return $notification;
+        }
 
         if ($recipientId) {
             if ($recipientId->getId() != $identity->getUserId()) {

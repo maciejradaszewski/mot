@@ -358,6 +358,15 @@ class SessionContext implements Context
     }
 
     /**
+     * @Given I am logged in as an Area Office User 2 to new site
+     */
+    public function iAmLoggedInAsAnAreaOfficeUser2ToNewSite()
+    {
+        $this->vtsContext->createSite();
+        $this->iAmLoggedInAsAnAreaOfficeUser2();
+    }
+
+    /**
      * @Given I am logged in as a Site Manager to new site
      */
     public function iAmLoggedInAsASiteManagerToNewSite()
@@ -396,4 +405,5 @@ class SessionContext implements Context
         $user              = $aedmService->create($data);
         $this->currentUser = $this->session->startSession($user->data['username'], $user->data['password']);
     }
+
 }

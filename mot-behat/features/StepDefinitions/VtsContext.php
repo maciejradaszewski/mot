@@ -299,7 +299,7 @@ class VtsContext implements Context
      */
     public function theSiteManagerRolesShouldBeAssignedSuccessfully()
     {
-        $role = "SITE-MANAGER";
+        $positionName = 'Site manager';
 
         // login as user1
         $this->sessionContext->iMAuthenticatedWithMyUsernameAndPassword(
@@ -308,7 +308,7 @@ class VtsContext implements Context
         );
 
         $notification = $this->notification->getRoleNominationNotification(
-            $role,
+            $positionName,
             $this->siteManager1Data['personId'],
             $this->sessionContext->getCurrentAccessToken()
         );
@@ -322,7 +322,7 @@ class VtsContext implements Context
         );
 
         $notification = $this->notification->getRoleNominationNotification(
-            $role,
+            $positionName,
             $this->siteManager2Data['personId'],
             $this->sessionContext->getCurrentAccessToken()
         );

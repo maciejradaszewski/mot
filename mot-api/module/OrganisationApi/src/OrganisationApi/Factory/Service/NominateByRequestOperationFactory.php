@@ -8,6 +8,7 @@ use OrganisationApi\Model\Operation\NominateByRequestOperation;
 use OrganisationApi\Service\OrganisationNominationService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use NotificationApi\Service\NotificationService;
 
 /**
  * Class NominateByRequestOperationFactory
@@ -20,7 +21,8 @@ class NominateByRequestOperationFactory implements FactoryInterface
         return new NominateByRequestOperation(
             $serviceLocator->get(EntityManager::class),
             $serviceLocator->get(NominationVerifier::class),
-            $serviceLocator->get(OrganisationNominationService::class)
+            $serviceLocator->get(OrganisationNominationService::class),
+            $serviceLocator->get(NotificationService::class)
         );
     }
 }
