@@ -141,8 +141,7 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         Tester $tester,
         Vts $vts,
         AuthorisedExaminer $authorisedExaminer
-    )
-    {
+    ) {
         $this->testSupportHelper = $testSupportHelper;
         $this->customerService = $customerService;
         $this->session = $session;
@@ -845,6 +844,22 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         $siteRoles = $roles["organisations"][$aeId]["roles"];
 
         PHPUnit::assertTrue(in_array($role, $siteRoles), "Organisation role '" . $role . "' not found");
+    }
+
+    /**
+     * @When I have a Tester Qualification status of :status for group :group
+     *
+     * @param $status
+     * @param $group
+     */
+    public function iHaveATesterQualificationStatusForGroup($status, $group)
+    {
+        $this->iGetMyProfileDetails();
+
+        $testerService = $this->testSupportHelper->getTesterService();
+        $statusCode = $this->getAuthorisationForTestingMotStatusCode($status);
+
+        $testerService->updateTesterQualificationStatus($this->sessionContext->getCurrentUserId(), $group, $statusCode);
     }
 
     /**

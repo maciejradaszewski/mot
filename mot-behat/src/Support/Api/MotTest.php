@@ -15,7 +15,7 @@ class MotTest extends AbstractMotTest
      * @var Person
      */
     private $person;
-    
+
     public function __construct(HttpClient $client, Person $person)
     {
         parent::__construct($client);

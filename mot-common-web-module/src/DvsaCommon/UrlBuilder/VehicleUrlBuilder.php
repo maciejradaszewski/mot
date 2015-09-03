@@ -19,6 +19,7 @@ class VehicleUrlBuilder extends AbstractUrlBuilder
     const RETEST_ELIGIBILITY_CHECK = '/retest-eligibility-check/[:siteId]';
 
     const SEARCH = 'vehicle-search';
+    const DEMO_SEARCH = 'demo-vehicle-search';
 
     protected $routesStructure
         = [
@@ -30,6 +31,7 @@ class VehicleUrlBuilder extends AbstractUrlBuilder
             ],
             self::VEHICLE_DVLA => '',
             self::SEARCH       => '',
+            self::DEMO_SEARCH  => '',
             self::VEHICLE_LIST => ''
         ];
 
@@ -98,5 +100,10 @@ class VehicleUrlBuilder extends AbstractUrlBuilder
     public static function search()
     {
         return self::of()->appendRoutesAndParams(self::SEARCH);
+    }
+
+    public static function demoSearch()
+    {
+        return self::of()->appendRoutesAndParams(self::DEMO_SEARCH);
     }
 }

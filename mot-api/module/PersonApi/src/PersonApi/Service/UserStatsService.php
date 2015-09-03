@@ -25,7 +25,7 @@ class UserStatsService extends AbstractService
     /**
      * @var MotTestRepository
      */
-    protected $motTestRepository;
+    private $motTestRepository;
 
     public function __construct(EntityManager $entityManager, MotTestRepository $repository)
     {

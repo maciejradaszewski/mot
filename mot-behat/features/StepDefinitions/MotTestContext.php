@@ -1,6 +1,7 @@
 <?php
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Dvsa\Mot\Behat\Datasource\Authentication;
@@ -17,7 +18,7 @@ use Dvsa\Mot\Behat\Support\Response;
 use DvsaCommon\Enum\MotTestTypeCode;
 use PHPUnit_Framework_Assert as PHPUnit;
 
-class MotTestContext implements Context
+class MotTestContext implements Context, SnippetAcceptingContext
 {
     const SITE_NUMBER = 'V1234';
     const USERNAME_PREFIX_LENGTH = 20;
@@ -169,7 +170,7 @@ class MotTestContext implements Context
     {
         $testClass = 4;
 
-        if(is_null($vehicleId)) {
+        if (is_null($vehicleId)) {
             $this->vehicleId  = $this->vehicleContext->createVehicle(['testClass' => $testClass]);
         }
 
@@ -242,6 +243,42 @@ class MotTestContext implements Context
     public function iHaveAnMOTTestInProgress()
     {
         $this->iStartAnMotTestWithAClassVehicle(4);
+    }
+
+    /**
+     * @When /^I have a Demo MOT Test In Progress$/
+     */
+    public function iHaveADemoMOTTestInProgress()
+    {
+        $this->iStartDemoTest();
+    }
+
+    /**
+     * @When I don't have a demo test already in progress
+     */
+    function iDontHaveDemoTestAlreadyInProgress()
+    {
+        if (null !== $this->motTestData) {
+            throw new \LogicException('You already have a demo test in progress');
+        }
+    }
+
+    /**
+     * @Then I can complete a Demo test for vehicle class :vehicleClassCode
+     *
+     * @param string $vehicleClassCode
+     */
+    function iCanCompleteDemoTestForVehicleClass($vehicleClassCode)
+    {
+        $vehicleId = $this->vehicleContext->createVehicle(['testClass' => $vehicleClassCode]);
+
+        $this->motTestData = $this->demoTest->startMotTest(
+            $this->sessionContext->getCurrentAccessTokenOrNull(), $vehicleId, $vehicleClassCode
+        );
+        $this->demoTest->passed(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getMotTestNumber()
+        );
     }
 
     /**
@@ -399,7 +436,9 @@ class MotTestContext implements Context
      */
     public function anAuthenticatedVehicleExaminerAbortsTheTest()
     {
-        $user = $this->session->startSession(Authentication::LOGIN_VEHICLE_EXAMINER_USER, Authentication::PASSWORD_DEFAULT);
+        $user = $this->session->startSession(
+            Authentication::LOGIN_VEHICLE_EXAMINER_USER, Authentication::PASSWORD_DEFAULT
+        );
 
         $this->statusData = $this->motTest->abortTestByVE($user->getAccessToken(), $this->getMotTestNumber());
     }
@@ -407,11 +446,13 @@ class MotTestContext implements Context
     /**
      * @Given /^the Tester cancels the test with a reason of (\d+)$/
      *
-     * @param $cancelReason
+     * @param $cancelReasonId
      */
     public function theTesterCancelsTheTestWithAReasonOf($cancelReasonId)
     {
-        $this->statusData = $this->motTest->abandon($this->sessionContext->getCurrentAccessToken(), $this->getMotTestNumber(), $cancelReasonId);
+        $this->statusData = $this->motTest->abandon(
+            $this->sessionContext->getCurrentAccessToken(), $this->getMotTestNumber(), $cancelReasonId
+        );
     }
 
     /**
@@ -420,7 +461,9 @@ class MotTestContext implements Context
     public function iShouldReceiveTheMotTestNumber()
     {
         //Get the "In Progress" MOT Test number for the user
-        $motTestNumber = $this->motTest->getInProgressTestId($this->sessionContext->getCurrentAccessToken(), $this->sessionContext->getCurrentUserId());
+        $motTestNumber = $this->motTest->getInProgressTestId(
+            $this->sessionContext->getCurrentAccessToken(), $this->sessionContext->getCurrentUserId()
+        );
 
         PHPUnit::assertTrue(is_numeric($motTestNumber), 'MOT Test number is not a number or was not returned.');
 
@@ -506,6 +549,19 @@ class MotTestContext implements Context
 
         PHPUnit::assertEquals($this->contingencyTestContext->getContingencyCode(), $actual->getBody()['data']['emergencyLog']['number'], 'Contingency Code not returned.');
         PHPUnit::assertEquals($this->contingencyTestContext->getEmergencyLogId(), $actual->getBody()['data']['emergencyLog']['id'], 'Emergency Log Id not returned.');
+    }
+
+    /**
+     * @Then I am unable to start a new Demo MOT test
+     */
+    public function iAmUnableToStartANewDemoMotTest()
+    {
+        $this->getMotTestNumber(); // you already have a demo test in progress
+        $this->iStartDemoTest(); // try to create another one
+        // We cannot create another demo test as long as the previous one is not finished
+        PHPUnit::AssertSame(
+            'You have a demo test that is already in progress', $this->motTestData->getBody()['errors'][0]['message']
+        );
     }
 
     /**

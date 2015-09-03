@@ -1,7 +1,10 @@
 <?php
+
 namespace UserApiTest\Service;
 
+use Doctrine\ORM\EntityManager;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
+use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\MockHandler;
 use DvsaEntities\Entity\AuthorisationForTestingMot;
@@ -14,17 +17,21 @@ use PersonApi\Service\PersonalAuthorisationForMotTestingService;
 use PersonApi\Service\Validator\PersonalAuthorisationForMotTestingValidator;
 
 /**
- * Class PersonalAuthorisationForMotTestingServiceTest
- *
- * @package NotificationApiTest\Service
+ * Unit tests for PersonalAuthorisationForMotTestingService
  */
 class PersonalAuthorisationForMotTestingServiceTest extends AbstractServiceTestCase
 {
     const PERSON_ID = 1;
 
+    private static $groupA = [VehicleClassCode::CLASS_1, VehicleClassCode::CLASS_2];
+    private static $groupB = [
+        VehicleClassCode::CLASS_3, VehicleClassCode::CLASS_4, VehicleClassCode::CLASS_5, VehicleClassCode::CLASS_7
+    ];
+
     private $authStatusRepo;
     private $authRepo;
     private $mocks;
+    /** @var EntityManager*/
     private $entityManager;
     /** @var $person Person  */
     private $person;
@@ -36,13 +43,12 @@ class PersonalAuthorisationForMotTestingServiceTest extends AbstractServiceTestC
         $this->mocks = $this->getMocksForPersonalAuthorisationService();
         $this->entityManager = new MockHandler($this->mocks['entityManagerMock'], $this);
         $this->person = (new Person())->setId(self::PERSON_ID);
-        $this
-            ->entityManager->find()->with(Person::class, self::PERSON_ID)->will($this->returnValue($this->person));
+        $this->entityManager->find()->with(Person::class, self::PERSON_ID)->will($this->returnValue($this->person));
     }
 
     public function test_updatePersonalTestingAuthorisationGroup_groupASuccess_shouldBeOk()
     {
-        $authorisations = $this->createAuthorisationsForVehicleClasses([1, 2]);
+        $authorisations = $this->createAuthorisationsForVehicleClasses(self::$groupA);
 
         $this->runTest_updatePersonalTestingAuthorisationGroup_authorisationListPass(
             PersonalAuthorisationForMotTestingService::GROUP_A_VEHICLE,
@@ -52,7 +58,7 @@ class PersonalAuthorisationForMotTestingServiceTest extends AbstractServiceTestC
 
     public function test_updatePersonalTestingAuthorisationGroup_groupBSuccess_shouldBeOk()
     {
-        $authorisations = $this->createAuthorisationsForVehicleClasses([3, 4, 5, 7]);
+        $authorisations = $this->createAuthorisationsForVehicleClasses(self::$groupB);
         $this->person->setAuthorisationsForTestingMot($authorisations);
         $this->runTest_updatePersonalTestingAuthorisationGroup_authorisationListPass(
             PersonalAuthorisationForMotTestingService::GROUP_B_VEHICLE,
@@ -62,7 +68,7 @@ class PersonalAuthorisationForMotTestingServiceTest extends AbstractServiceTestC
 
     public function test_updatePersonalTestingAuthorisationGroup_trainingFailedGroupA_shouldBeOk()
     {
-        $authorisations = $this->createAuthorisationsForVehicleClasses([1, 2]);
+        $authorisations = $this->createAuthorisationsForVehicleClasses(self::$groupA);
         $this->runTest_updatePersonalTestingAuthorisationGroup_authorisationListFail(
             PersonalAuthorisationForMotTestingService::GROUP_A_VEHICLE,
             $authorisations
@@ -71,7 +77,7 @@ class PersonalAuthorisationForMotTestingServiceTest extends AbstractServiceTestC
 
     public function test_updatePersonalTestingAuthorisationGroup_trainingFailedGroupB_shouldBeOk()
     {
-        $authorisations = $this->createAuthorisationsForVehicleClasses([3, 4, 5, 7]);
+        $authorisations = $this->createAuthorisationsForVehicleClasses(self::$groupB);
         $this->runTest_updatePersonalTestingAuthorisationGroup_authorisationListFail(
             PersonalAuthorisationForMotTestingService::GROUP_B_VEHICLE,
             $authorisations
@@ -80,7 +86,7 @@ class PersonalAuthorisationForMotTestingServiceTest extends AbstractServiceTestC
 
     public function test_getPersonalTestingAuthorisation_shouldBeOk()
     {
-        $authorisations = $this->createAuthorisationsForVehicleClasses([1, 2, 3, 4, 5, 7]);
+        $authorisations = $this->createAuthorisationsForVehicleClasses(array_merge(self::$groupA, self::$groupB));
         $this->person->setAuthorisationsForTestingMot($authorisations);
         $service = $this->constructPersonalAuthorisationServiceWithMocks($this->mocks);
 
