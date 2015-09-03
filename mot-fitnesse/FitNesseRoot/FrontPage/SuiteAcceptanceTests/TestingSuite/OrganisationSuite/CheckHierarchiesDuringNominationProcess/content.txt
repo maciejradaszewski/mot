@@ -54,8 +54,8 @@
 |$aedA_username    |$testerMA_id|$testerMA_username|AEDM |$orgA_id|Forbidden error, code 160                                                   |            |Disassociate AED can not nominate AEDM            |
 |$aedmA_username   |$testerDA_id|$testerDA_username|AED  |$orgA_id|Forbidden error, code 160                                                   |            |Disassociate AEDM can not nominate AED            |
 |$aedmA_username   |$testerMA_id|$testerMA_username|AEDM |$orgA_id|Forbidden error, code 160                                                   |            |Disassociate AEDM can not nominate AEDM           |
-|$testerMA_username|$ao1_id     |$ao1_username     |AED  |$orgA_id|You can not nominate a user with DVSA role for trade roles. error, code 60  |            |Can not nominate a DVSA role owner for trade roles|
-|$ao2_username     |$testerMA_id|$testerMA_username|AEDM |$orgA_id|This person already has this role error, code 60                            |            |Tester already is an AEDM                         |
+|$testerMA_username|$ao1_id     |$ao1_username     |AED  |$orgA_id|Forbidden error, code 160                                                   |            |Can not nominate a DVSA role owner for trade roles|
+|$ao2_username     |$testerMA_id|$testerMA_username|AEDM |$orgA_id|                                                                            |            |Tester already is an AEDM                         |
 |$testerDA_username|$testerDB_id|$testerDB_username|AED  |$orgA_id|Forbidden error, code 160                                                   |            |Tester now is an AED & can't nominate AED         |
 |$testerDA_username|$testerDA_id|$testerDA_username|AEDM |$orgA_id|Forbidden error, code 160                                                   |            |Tester now is an AED & can't nominate AEDM        |
 |$testerDA_username|$testerA_id |$testerA_username |AEDM |$orgA_id|Forbidden error, code 160                                                   |            |Tester now is an AED & can't self-nominate AEDM   |
@@ -77,14 +77,9 @@
 |$siteAManagerA_username|$orgA_id                                       |Forbidden error, code 160|Site Manager can not get list of AE roles       |
 
 !4 Remove position
-!| VM-8416 check hierarchies during nomination process remove                                                                          |
-|Acting User       |At      |try to disassociate user by id|Position Id|And it will result in?   |Comment                              |
-|$testerDA_username|$orgA_id|$testerDB_id                  |$positionDB|Forbidden error, code 160|AED can not remove AED               |
-|$testerDS_username|$orgA_id|$testerDS_id                  |$positionDS|[]                       |AED can remove his/her own role      |
-|$ao2_username     |$orgD_id|$testerDD_id                  |$positionDD|[]                       |AO2 can remove AEDM                  |
-|$ao2_username     |$orgD_id|$testerMD_id                  |$positionMD|[]                       |AO2 can remove AED                   |
-
-!4 List positions after losing AED role
-!| VM-8416 check hierarchies during nomination process list                                                                                 |
-|Acting User       |try to get the management roles at organisation|And it will result in?                                                  |
-|$testerMA_username|$orgA_id                                       |Forbidden error, code 160|Disassociate AEDM can not get list of AE roles|
+!| VM-8416 check hierarchies during nomination process remove                                                                    |
+|Acting User       |At      |try to disassociate user by id|Position Id|And it will result in?   |Comment                        |
+|$testerDA_username|$orgA_id|$testerDB_id                  |$positionDB|Forbidden error, code 160|AED can not remove AED         |
+|$testerDS_username|$orgA_id|$testerDS_id                  |$positionDS|[]                       |AED can remove his/her own role|
+|$ao2_username     |$orgD_id|$testerDD_id                  |$positionDD|[]                       |AO2 can remove AEDM            |
+|$ao2_username     |$orgD_id|$testerMD_id                  |$positionMD|[]                       |AO2 can remove AED             |
