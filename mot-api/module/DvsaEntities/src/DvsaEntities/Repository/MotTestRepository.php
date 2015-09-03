@@ -168,6 +168,58 @@ class MotTestRepository extends AbstractMutableRepository
         return empty($resultArray) ? null : $resultArray[0];
     }
 
+
+    /**
+     * Return in progress DEMO test number for the given person
+     * @see findInProgressDemoTestForPerson for different type of demo tests
+     *
+     * @param int $personId
+     * @param boolean $routine To set the demo test type
+     *
+     * @return string|null
+     */
+    public function findInProgressDemoTestNumberForPerson($personId, $routine = false)
+    {
+        $motTest = $this->findInProgressDemoTestForPerson($personId, $routine);
+
+        return is_null($motTest) ? null : $motTest->getNumber();
+    }
+
+    /**
+     * Return in progress Demo test for the given person
+     *
+     * note: there are 2 type of the demo test
+     *          - Demonstration Test following training (DT)
+     *          - Routine Demonstration Test (DR)
+     *       this method will return the "Demonstration Test following training" by default
+     *
+     * @param int $personId
+     * @param boolean $routine To set the demo test type
+     *
+     * @return MotTest|null
+     */
+    public function findInProgressDemoTestForPerson($personId, $routine = false)
+    {
+        $qb = $this
+            ->createQueryBuilder("mt")
+            ->innerJoin("mt.motTestType", "t")
+            ->innerJoin("mt.status", "ts")
+            ->where("mt.tester = :personId")
+            ->andWhere("ts.name = :status")
+            ->andWhere("t.code = :code")
+            ->setParameter("personId", $personId)
+            ->setParameter("status", MotTestStatusName::ACTIVE)
+            ->setParameter(
+                "code",
+                $routine ? MotTestTypeCode::ROUTINE_DEMONSTRATION_TEST : MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING
+            )
+            ->setMaxResults(1);
+
+        $resultArray = $qb->getQuery()->getResult();
+
+        return empty($resultArray) ? null : $resultArray[0];
+    }
+
     private function findInProgressTestDataForVehicle($vehicleId, $selectClause)
     {
         $demoTestTypes = [

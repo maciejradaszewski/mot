@@ -1036,6 +1036,8 @@ return [
                 __DIR__ . '/../view/partials/dashboard/tester-contingency-box.phtml',
             'dashboard/financeBox'                                                       =>
                 __DIR__ . '/../view/partials/dashboard/finance-box.phtml',
+            'dashboard/demoTestBox'                                                       =>
+                __DIR__ . '/../view/partials/dashboard/tester-demo-test-box.phtml',
             'vehicle/history'                                                            =>
                 __DIR__ . '/../view/partials/vehicle-history/history.phtml',
             'vehicle/history-item'                                                       => __DIR__ .

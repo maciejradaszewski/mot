@@ -247,6 +247,23 @@ class TesterService extends AbstractService
     }
 
     /**
+     * Return in progress demo test number for the given person.
+     * @see MotTestRepository::findInProgressDemoTestForPerson for different type of demo testst
+     *
+     * @param int $personId
+     * @param boolean $routine To set the demo test type
+     *
+     * @return null|string
+     * @throws UnauthorisedException
+     */
+    public function findInProgressDemoTestNumberForTester($personId, $routine = false)
+    {
+        $this->assertGrantedToFindInProgress($personId);
+
+        return $this->motTestRepository->findInProgressDemoTestNumberForPerson($personId, $routine);
+    }
+
+    /**
      * Returns a collection of VehicleTestingStations where a tester has a role of 'TESTER'.
      *
      * @param int $testerId
@@ -349,7 +366,7 @@ class TesterService extends AbstractService
                 $vehicleTestingStationData['slotsWarning'] = $slotsWarning;
             }
 
-            if(is_object($ae)){
+            if (is_object($ae)) {
                 $vehicleTestingStationData['aeId'] = $ae->getId();
             }
 
@@ -359,7 +376,6 @@ class TesterService extends AbstractService
         }
 
         unset($testerData['authorisationsForTestingMot']);
-
 
         if (!$onlyVtsSlotBalance) {
             /** @var AuthorisationForTestingMot $authorisationForTestingMot */

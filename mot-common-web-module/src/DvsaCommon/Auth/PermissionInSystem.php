@@ -28,6 +28,7 @@ final class PermissionInSystem
     const MOT_TEST_READ_ALL = 'MOT-TEST-READ-ALL';
     const MOT_TEST_LIST = 'MOT-TEST-LIST';
     const MOT_TEST_PERFORM = 'MOT-TEST-PERFORM'; // duplicate of PermissionAtSite::MOT_TEST_PERFORM_AT_SITE
+    const MOT_DEMO_TEST_PERFORM = 'MOT-DEMO-TEST-PERFORM';
     const MOT_TEST_REINSPECTION_PERFORM = 'MOT-TEST-REINSPECTION-PERFORM';
     const MOT_TEST_START = 'MOT-TEST-START';
     const RFR_LIST = 'RFR-LIST';
@@ -143,6 +144,7 @@ final class PermissionInSystem
             self::MOT_TEST_READ_ALL,
             self::MOT_TEST_LIST,
             self::MOT_TEST_PERFORM,
+            self::MOT_DEMO_TEST_PERFORM,
             self::MOT_TEST_START,
             self::RFR_LIST,
             self::APPLICATION_COMMENT,

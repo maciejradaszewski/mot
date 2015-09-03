@@ -4,7 +4,6 @@ namespace PersonApiTest\Service;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use DvsaAuthentication\IdentityProvider;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Model\PersonAuthorization;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
@@ -25,9 +24,9 @@ use DvsaEntities\Repository\RoleRepository;
 use DvsaMotApi\Helper\RoleEventHelper;
 use DvsaMotApi\Helper\RoleNotificationHelper;
 use PersonApi\Service\PersonRoleService;
-use DvsaCommon\Exception\UnauthorisedException;
 use DvsaAuthentication\Identity;
 use Zend\Server\Reflection\ReflectionClass;
+use DvsaCommon\Constants\Role as RoleName;
 
 class PersonRoleServiceTest extends AbstractServiceTestCase
 {
@@ -59,6 +58,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
      */
     public function testCreate()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|PersonRoleService $obj */
         $obj = XMock::of(
             PersonRoleService::class,
             [
@@ -106,6 +106,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
      */
     public function testDelete()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|PersonRoleService $obj */
         $obj = XMock::of(
             PersonRoleService::class,
             [
@@ -178,7 +179,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
 
     /**
      * Test for a person trying to manage themselves
-     * @expectedException DvsaCommon\Exception\UnauthorisedException
+     * @expectedException \DvsaCommon\Exception\UnauthorisedException
      * @expectedExceptionMessage You are not allowed to change your own roles
      */
     public function testAssertForSelfManagement_True()
@@ -201,10 +202,11 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     /**
      * Test for a person who does not have a trade role
      * @expectedException \Exception
-     * @expectedExceptionMessage Its not possible to assign an "internal" role to a "trade" role owner
+     * @expectedExceptionMessage It's not possible to assign an "internal" role to a "trade" role owner
      */
     public function testAssertPersonHasTradeRole_DoesNotHaveRole()
     {
+        /** @var PersonRoleService $obj */
         $obj = $this->createPersonRoleServiceMock('personHasTradeRole', true);
 
         $obj->assertPersonHasTradeRole(self::PERSON_ID);
@@ -231,7 +233,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
 
         $obj = $this->createServiceWithMocks();
         $actual = $obj->getPersonSystemRoleMap($person, $personSystemRole);
-        $this->assertInstanceOf('DvsaEntities\Entity\PersonSystemRoleMap', $actual);
+        $this->assertInstanceOf(PersonSystemRoleMap::class, $actual);
     }
 
     /**
@@ -512,93 +514,95 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
             [
                 false,
                 [
-                    'ASSESSMENT',
-                    'ASSESSMENT-LINE-MANAGER',
-                    'CRON',
-                    'DEMOTEST',
-                    'GUEST',
-                    'SLOT-PURCHASER',
-                    'TESTER-APPLICANT-DEMO-TEST-REQUIRED',
-                    'TESTER-APPLICANT-INITIAL-TRAINING-FAILED',
-                    'TESTER-APPLICANT-INITIAL-TRAINING-REQUIR',
-                    'TESTER-INACTIVE',
-                    'USER',
+                    RoleName::ASSESSMENT,
+                    RoleName::ASSESSMENT_LINE_MANAGER,
+                    RoleName::CRON,
+                    RoleName::DEMOTEST,
+                    RoleName::GUEST,
+                    RoleName::SLOT_PURCHASER,
+                    RoleName::TESTER_APPLICANT_DEMO_TEST_REQUIRED,
+                    RoleName::TESTER_APPLICANT_INITIAL_TRAINING_FAILED,
+                    RoleName::TESTER_APPLICANT_INITIAL_TRAINING_REQUIRED,
+                    RoleName::TESTER_INACTIVE,
+                    RoleName::USER,
                     'GVTS-TESTER',
                     'VM-10519-USER',
-                    'DVLA-MANAGER',
+                    RoleName::DVLA_MANAGER,
                 ],
             ],
             [
                 true,
                 [
-                    'AUTHORISED-EXAMINER',
-                    'ASSESSMENT',
-                    'ASSESSMENT-LINE-MANAGER',
-                    'CRON',
-                    'DEMOTEST',
-                    'GUEST',
-                    'SLOT-PURCHASER',
-                    'TESTER-APPLICANT-DEMO-TEST-REQUIRED',
-                    'TESTER-APPLICANT-INITIAL-TRAINING-FAILED',
-                    'TESTER-APPLICANT-INITIAL-TRAINING-REQUIR',
-                    'TESTER-INACTIVE',
-                    'USER',
+                    RoleName::AUTHORISED_EXAMINER,
+                    RoleName::ASSESSMENT,
+                    RoleName::ASSESSMENT_LINE_MANAGER,
+                    RoleName::CRON,
+                    RoleName::DEMOTEST,
+                    RoleName::GUEST,
+                    RoleName::SLOT_PURCHASER,
+                    RoleName::TESTER_APPLICANT_DEMO_TEST_REQUIRED,
+                    RoleName::TESTER_APPLICANT_INITIAL_TRAINING_FAILED,
+                    RoleName::TESTER_APPLICANT_INITIAL_TRAINING_REQUIRED,
+                    RoleName::TESTER_INACTIVE,
+                    RoleName::USER,
                     'GVTS-TESTER',
                     'VM-10519-USER',
-                    'DVLA-MANAGER',
+                    RoleName::DVLA_MANAGER
                 ],
             ],
             [
                 true,
                 [
-                    'AUTHORISED-EXAMINER',
+                    RoleName::AUTHORISED_EXAMINER,
                     'AUTHORISED-EXAMINER-DELEGATE',
                     'AUTHORISED-EXAMINER-DESIGNATED-MANAGER',
                     'AUTHORISED-EXAMINER-PRINCIPAL',
                     'SITE-ADMIN',
                     'SITE-MANAGER',
                     'TESTER',
-                    'TESTER-ACTIVE',
+                    RoleName::TESTER_ACTIVE,
                 ],
             ],
             [
                 true,
                 [
-                    'AUTHORISED-EXAMINER',
+                    RoleName::AUTHORISED_EXAMINER
                 ],
             ],
             [
                 false,
                 [
-                    'ASSESSMENT',
-                    'ASSESSMENT-LINE-MANAGER',
-                    'CRON',
-                    'DEMOTEST',
-                    'DVSA-AREA-OFFICE-1',
-                    'DVSA-SCHEME-MANAGEMENT',
-                    'DVSA-SCHEME-USER',
-                    'GUEST',
-                    'SLOT-PURCHASER',
-                    'TESTER-APPLICANT-DEMO-TEST-REQUIRED',
-                    'TESTER-APPLICANT-INITIAL-TRAINING-FAILED',
-                    'TESTER-APPLICANT-INITIAL-TRAINING-REQUIR',
-                    'TESTER-INACTIVE',
-                    'USER',
-                    'VEHICLE-EXAMINER',
-                    'CUSTOMER-SERVICE-MANAGER',
-                    'CUSTOMER-SERVICE-CENTRE-OPERATIVE',
-                    'FINANCE',
-                    'DVLA-OPERATIVE',
-                    'DVSA-AREA-OFFICE-2',
+                    RoleName::ASSESSMENT,
+                    RoleName::ASSESSMENT_LINE_MANAGER,
+                    RoleName::CRON,
+                    RoleName::DEMOTEST,
+                    RoleNAme::DVSA_AREA_OFFICE_1,
+                    RoleName::DVSA_SCHEME_MANAGEMENT,
+                    RoleName::DVSA_SCHEME_USER,
+                    RoleName::GUEST,
+                    RoleName::SLOT_PURCHASER,
+                    RoleName::TESTER_APPLICANT_DEMO_TEST_REQUIRED,
+                    RoleName::TESTER_APPLICANT_INITIAL_TRAINING_FAILED,
+                    RoleName::TESTER_APPLICANT_INITIAL_TRAINING_REQUIRED,
+                    RoleName::TESTER_INACTIVE,
                     'GVTS-TESTER',
                     'VM-10519-USER',
-                    'DVLA-MANAGER',
+                    RoleName::USER,
+                    RoleName::VEHICLE_EXAMINER,
+                    RoleName::CUSTOMER_SERVICE_MANAGER,
+                    RoleName::CUSTOMER_SERVICE_CENTRE_OPERATIVE,
+                    RoleName::FINANCE,
+                    RoleName::DVLA_OPERATIVE,
+                    RoleName::DVSA_AREA_OFFICE_2,
+                    'GVTS-TESTER',
+                    'VM-10519-USER',
+                    RoleName::DVLA_MANAGER,
                 ],
             ],
             [
                 false,
                 [
-                    'ASSESSMENT',
+                    RoleName::ASSESSMENT,
                 ],
             ],
         ];
@@ -611,7 +615,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
 
     /**
      * @param string $with
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|AuthorisationService
      */
     private function fakeAuthService_assertGranted($with)
     {
@@ -626,15 +630,15 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
 
     /**
      * @param int $startNumber
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|AuthorisationService
      */
     private function fakeAuthService_isGranted($startNumber = 0)
     {
         $mock = $this->getMockObj(AuthorisationService::class);
         $count = $startNumber;
-        foreach($this->permissionMap as $entry) {
+        foreach ($this->permissionMap as $entry) {
             // Only deal with inactive entries in the map
-            if(false === $entry['active']) {
+            if (false === $entry['active']) {
                 $mock->expects($this->at($count))
                     ->method('isGranted')
                     ->with($entry['permission'])
@@ -647,7 +651,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|RoleEventHelper
      */
     private function fakeEventHelper_createAssignRoleEvent()
     {
@@ -658,7 +662,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|RoleEventHelper
      */
     private function fakeEventHelper_createRemoveRoleEvent()
     {
@@ -668,9 +672,8 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
         return $mock;
     }
 
-
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|RoleNotificationHelper
      */
     private function fakeNotificationHelper_sendAssignRoleNotification()
     {
@@ -680,9 +683,8 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
         return $mock;
     }
 
-
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|RoleNotificationHelper
      */
     private function fakeNotificationHelper_sendRemoveRoleNotification()
     {
@@ -693,7 +695,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|Person
      * @throws \Exception
      */
     private function createPersonMock()
@@ -706,7 +708,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|PersonSystemRole
      * @throws \Exception
      */
     private function createPersonSystemRoleMock()
@@ -721,7 +723,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     /**
      * @param string $functionName The function you want to mock
      * @param bool|false $willReturn
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|PersonRoleService
      * @throws \Exception
      */
     private function createPersonRoleServiceMock($functionName, $willReturn = false)
@@ -784,7 +786,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|PersonSystemRoleRepository
      */
     private function fakePersonSystemRoleRepository_getByName()
     {
@@ -805,24 +807,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    private function fakePersonRepository_find()
-    {
-        $mock = $this->getMockObj(PersonRepository::class);
-        $mock->expects($this->once())
-            ->method('find')
-            ->with(self::PERSON_ID)
-            ->willReturn(
-                (new Person())
-                    ->setId(self::PERSON_ID)
-            );
-
-        return $mock;
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|PermissionToAssignRoleMapRepository
      */
     private function fakePermissionToAssignRoleMapRepository_getPermissionCodeByRoleCode()
     {
@@ -845,7 +830,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|PersonSystemRoleMapRepository
      */
     private function fakePersonSystemRoleMapRepository_getPersonActiveInternalRoleCodes()
     {
@@ -872,7 +857,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|RoleRepository
      */
     private function fakeRoleRepository_getAllInternalRoles()
     {
@@ -884,7 +869,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|PersonSystemRoleMapRepository
      */
     private function fakePersonSystemRoleMapRepository_findByPersonAndSystemRole_Null()
     {
@@ -897,7 +882,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|PersonSystemRoleMapRepository
      */
     private function fakePersonSystemRoleMapRepository_findByPersonAndSystemRole_ReturnObject()
     {
@@ -919,7 +904,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|PersonSystemRoleMapRepository
      */
     private function fakePersonSystemRoleMapRepository_save()
     {
@@ -930,7 +915,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|EntityRepository
      */
     private function fakeBusinessRoleStatusRepository_findOneBy()
     {
@@ -968,7 +953,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
 
     /**
      * @param $mockPersonRoleCodes
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|RbacRepository
      * @throws \Exception
      */
     private function stubRbacRepository($mockPersonRoleCodes)
@@ -999,14 +984,14 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
                 return (new Role())->setCode($roleCode);
             },
             [
-                'AUTHORISED-EXAMINER',
+                RoleName::AUTHORISED_EXAMINER,
                 'AUTHORISED-EXAMINER-DELEGATE',
                 'AUTHORISED-EXAMINER-DESIGNATED-MANAGER',
                 'AUTHORISED-EXAMINER-PRINCIPAL',
                 'SITE-ADMIN',
                 'SITE-MANAGER',
                 'TESTER',
-                'TESTER-ACTIVE',
+                RoleName::TESTER_ACTIVE,
             ]
         );
 

@@ -1,9 +1,10 @@
 <?php
+
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaMotTest\Controller\VehicleSearchController;
 
-$isTestingEnabled = $this->authorisationHelper()->isGranted(\DvsaCommon\Auth\PermissionInSystem::MOT_TEST_START);
+$isTestingEnabled = $this->authorisationHelper()->isGranted(PermissionInSystem::MOT_TEST_START);
 
 /** @var VehicleTestingStation $testersCurrentVts */
 $testersCurrentVts = $this->identityHelper()->getCurrentVts();
@@ -44,19 +45,9 @@ $hasInProgressTest = $this->dashboardDataProvider()->hasTestInProgress();
                                 <span class="fa fa-chevron-right"> </span>
                             </a>
                         <?php endif; ?>
-                    <?php else: ?>
-                        <a href="<?php echo $this->url('demo-vehicle-search') ?>" class="btn btn-primary btn-lg" id="action-start-mot-training-mode">
-                            Start Demo Test <span class="fa fa-chevron-right"> </span>
-                        </a>
                     <?php endif; ?>
                     <ul class="list-unstyled">
-                        <?php if ($isTestingEnabled) : ?>
-                            <li>
-                                <a href="<?php echo $this->url('demo-vehicle-search') ?>"
-                                   id="action-start-mot-training-mode">start MOT training mode</a>
-                            </li>
-                        <?php endif; ?>
-                        <?php if (!$hasInProgressTest && $this->authorisationHelper()->isGranted(\DvsaCommon\Auth\PermissionInSystem::CERTIFICATE_REPLACEMENT)) : ?>
+                        <?php if (!$hasInProgressTest && $this->authorisationHelper()->isGranted(PermissionInSystem::CERTIFICATE_REPLACEMENT)) : ?>
                             <li>
                                 <a href="<?php echo $this->url(VehicleSearchController::ROUTE_REPLACEMENT_CERTIFICATE_VEHICLE_SEARCH); ?>"
                                    id="action-start-certificate-reissue">replacement/duplicate certificate</a>

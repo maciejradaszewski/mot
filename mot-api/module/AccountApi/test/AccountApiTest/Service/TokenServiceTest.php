@@ -13,7 +13,6 @@ use DvsaCommon\Enum\MessageTypeCode;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Service\Exception\NotFoundException;
-use DvsaCommonApi\Service\Exception\ServiceException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
@@ -30,7 +29,6 @@ use DvsaEntities\Repository\PersonRepository;
 use MailerApi\Service\MailerService;
 use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceManager;
-use DvsaCommon\Constants\PersonContactType as PersonContactTypeEnum;
 use DvsaAuthorisation\Service\AuthorisationService;
 use Zend\Authentication\AuthenticationService;
 
@@ -63,15 +61,12 @@ class TokenServiceTest extends AbstractServiceTestCase
     private $mockDateTimeHolder;
     /** @var OpenAmIdentityService */
     private $mockOpenAmIdentityService;
-
     /** @var  MailerService */
     private $mockMailerService;
     /** @var  ParamObfuscator */
     private $mockObfuscator;
-
     /** @var  AuthenticationService */
     private $authenticationService;
-
     /** @var  AuthorisationService */
     private $authorisationService;
 
@@ -427,7 +422,6 @@ class TokenServiceTest extends AbstractServiceTestCase
         $this->mockMethod(
             $this->mockMessageRepo, 'getHydratedMessageByToken', $this->any(), $message, [self::TOKEN, $onlyValid]
         );
-
 
         $exception = new OpenAmChangePasswordException('test');
 

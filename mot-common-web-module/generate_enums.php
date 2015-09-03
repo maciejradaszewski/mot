@@ -46,6 +46,7 @@ $inputArray = [
     enum('OrganisationContactTypeCode', 'organisation_contact_type', 'name', 'code'),
     enum('PersonAuthType', 'person_auth_type_lookup', 'name', 'code'),
     enum('PhoneContactTypeCode', 'phone_contact_type', 'name', 'code'),
+    enum('PersonContactTypeCode', 'person_contact_type', 'name', 'code'),
     enum('SiteBusinessRoleCode', 'site_business_role', 'name', 'code'),
     enum('SiteContactTypeCode', 'site_contact_type', 'name', 'code'),
     enum('SiteTypeCode', 'site_type', 'name', 'code'),

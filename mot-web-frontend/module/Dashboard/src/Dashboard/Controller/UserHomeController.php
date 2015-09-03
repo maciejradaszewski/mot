@@ -53,9 +53,9 @@ class UserHomeController extends AbstractAuthActionController
     /** @var WebAcknowledgeSpecialNoticeAssertion  */
     private $acknowledgeSpecialNoticeAssertion;
     /** @var SecurityQuestionService */
-    protected $service;
+    private $service;
     /** @var UserAdminSessionManager */
-    protected $userAdminSessionManager;
+    private $userAdminSessionManager;
     /** @var TesterGroupAuthorisationMapper */
     private $testerGroupAuthorisationMapper;
     /** @var MotAuthorisationServiceInterface */
@@ -71,7 +71,8 @@ class UserHomeController extends AbstractAuthActionController
         SecurityQuestionService $securityQuestionService,
         UserAdminSessionManager $userAdminSessionManager,
         TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper,
-        MotAuthorisationServiceInterface $authorisationService
+        MotAuthorisationServiceInterface $authorisationService,
+        UserAdminSessionManager $userAdminSessionManager
     ) {
         $this->loggedIdUserManager = $loggedIdUserManager;
         $this->personalDetailsService = $personalDetailsService;
@@ -103,15 +104,17 @@ class UserHomeController extends AbstractAuthActionController
             ]
         );
 
-        return array_merge(
+        $return = array_merge(
             [
-                'dashboard' => $dashboard
+                'dashboard' => $dashboard,
             ],
             $authenticatedData,
             [
                 'specialNotice' => $specialNotice
             ]
         );
+
+        return $return;
     }
 
     public function profileAction()
@@ -252,7 +255,7 @@ class UserHomeController extends AbstractAuthActionController
         $isViewingOwnProfile = ($identity->getUserId() == $personId);
 
         $canViewUsername = $this->authorisationService->isGranted(PermissionInSystem::USERNAME_VIEW)
-                            && !$isViewingOwnProfile ;
+            && !$isViewingOwnProfile;
 
         return [
             'personalDetails'      => $personalDetails,
@@ -292,10 +295,8 @@ class UserHomeController extends AbstractAuthActionController
             $roles[] = $this->createRoleData($systemRole, $temp);
         }
 
-
         return $roles;
     }
-
 
     /**
      * @param PersonalDetails $personalDetails
@@ -317,7 +318,6 @@ class UserHomeController extends AbstractAuthActionController
         }
 
         return $roles;
-
     }
 
     /**
@@ -361,12 +361,11 @@ class UserHomeController extends AbstractAuthActionController
     private function createRoleData($role, $nicename, $id = "", $name = "", $address = "")
     {
         return [
-            "id"      => $id,
-            "role"    => $role,
+            'id'       => $id,
+            'role'     => $role,
             'nicename' => $nicename,
-            "name"    => $name,
-            "address" => $address
+            'name'     => $name,
+            'address'  => $address
         ];
     }
 }
-
