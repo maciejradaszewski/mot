@@ -82,11 +82,6 @@ public class PaymentDetailsPage extends BasePage {
         return (reverseThisPaymentButton.size() > 0);
     }
 
-    public TransactionReversalSummaryPage clickReverseThisPaymentButton() {
-        reverseThisPaymentButton.click();
-        return new TransactionReversalSummaryPage(driver);
-    }
-
     public String getTransactionStatusMessage() {
         return transactionStatusMessage.getText();
     }

@@ -4,6 +4,7 @@ namespace DvsaEntities\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use DvsaEntities\EntityTrait\CommonIdentityTrait;
+use DvsaEntities\Entity\TestSlotTransactionAmendmentType;
 
 /**
  * Reasons for amending a transaction
@@ -35,6 +36,36 @@ class TestSlotTransactionAmendmentReason extends Entity
      * @ORM\Column(name="display_order", type="smallint", nullable=false)
      */
     private $displayOrder;
+
+    /**
+     * @var TestSlotTransactionAmendmentType
+     *
+     * @ORM\ManyToOne(targetEntity="TestSlotTransactionAmendmentType", fetch="EAGER")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="amendment_type_id", referencedColumnName="id")
+     * })
+     */
+    private $amendmentType;
+
+    /**
+     * @return TestSlotTransactionAmendmentType
+     */
+    public function getAmendmentType()
+    {
+        return $this->amendmentType;
+    }
+
+    /**
+     * @param TestSlotTransactionAmendmentType $amendmentType
+     *
+     * @return $this
+     */
+    public function setAmendmentType($amendmentType)
+    {
+        $this->amendmentType = $amendmentType;
+
+        return $this;
+    }
 
     /**
      * @return string

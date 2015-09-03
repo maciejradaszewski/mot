@@ -9,25 +9,15 @@ import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.FinanceAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.cpms.BuyTestSlotsPage;
 import uk.gov.dvsa.ui.pages.cpms.CardPaymentConfirmationPage;
+import uk.gov.dvsa.ui.pages.cpms.ChoosePaymentTypePage;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
 public class CpmsPurchaseSlotsTests extends BaseTest {
-    
-    private CardPaymentConfirmationPage purchaseSlotsByCard(User aedm, AeDetails aeDetails, int slots) throws IOException {
-        CardPaymentConfirmationPage cardPaymentConfirmationPage = pageNavigator
-                .goToAuthorisedExaminerPage(aedm, AuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
-                .clickBuySlotsLink()
-                .enterSlotsRequired(slots)
-                .clickCalculateCostButton()
-                .clickContinueToPay()
-                .enterCardDetails()
-                .clickPayNowButton();
-        return cardPaymentConfirmationPage;
-    }
 
     @Test (groups = {"BVT", "Regression"}, description = "SPMS-37 Purachase slots by card successfully", dataProvider = "createAedmAndAe")
     public void purchaseSlotsByCardSuccessfully(User aedm, AeDetails aeDetails) throws IOException { 
@@ -53,10 +43,17 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
     }
     
     @Test (groups = {"BVT", "Regression"}, description = "SPMS-37 Purachase slots exceeding maximun balance", dataProvider = "createAedmAndAe")
-    public void purchaseSlotsExceedingMaximumBalanceErrorTest(User aedm, AeDetails aeDetails) throws IOException { 
+    public void purchaseSlotsExceedingMaximumBalanceErrorTest(User aedm, AeDetails aeDetails) throws IOException {
         
       //Given I am on Buy test slots page as an Aedm with positive slot balance
-      purchaseSlotsByCard(aedm, aeDetails, 60000);
+      pageNavigator.goToAuthorisedExaminerPage(aedm, AuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
+                .clickBuySlotsLink()
+                .enterSlotsRequired(60000)
+                .clickCalculateCostButton()
+                .clickContinueToPay()
+                .enterCardDetails()
+                .clickPayNowButton();
+      
       BuyTestSlotsPage buyTestSlotsPage = pageNavigator
               .goToAuthorisedExaminerPage(aedm, AuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
               .clickBuySlotsLink();
@@ -71,10 +68,41 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
               buyTestSlotsPageWithError.isExceedsMaximumSlotBalanceMessageDisplayed(), is(true));   
     }
     
+    @Test (groups = {"BVT", "Regression"}, description = "SPMS-264 Finance user processes Card payment", dataProvider = "createFinanceUserAndAe")
+    public void financeUserProcessesCardPayment(User financeUser, AeDetails aeDetails) throws IOException { 
+        
+      //Given I am on Choose payment type page as a Finance user
+        ChoosePaymentTypePage choosePaymentTypePage = pageNavigator
+                .goToFinanceAuthorisedExaminerViewPage(financeUser, FinanceAuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
+                .clickBuySlotsLinkAsFinanceUser();
+      
+     //When I submit the card payment request with required slots & valid card details
+      CardPaymentConfirmationPage cardPaymentConfirmationPage = choosePaymentTypePage
+              .selectCardPaymentTypeAndSubmit()
+              .enterSlotsRequired(50000)
+              .clickCalculateCostButton()
+              .clickContinueToPay()
+              .enterCardDetails()
+              .clickPayNowButton();
+      
+      //Then the payment should be successful
+      assertThat("Verifying payment successful message is displayed",
+              cardPaymentConfirmationPage.isPaymentSuccessfulMessageDisplayed(), is(true));
+      assertThat("Payment status message verification",
+              cardPaymentConfirmationPage.getPaymentStatusMessage(), containsString("Payment has been successful"));
+    }
+    
     @DataProvider(name = "createAedmAndAe")
     public Object[][] createAedmAndAe() throws IOException {
         AeDetails aeDetails = aeData.createAeWithDefaultValues();
         User aedm = userData.createAedm(aeDetails.getId(), "My_AEDM", false);
         return new Object[][]{{aedm, aeDetails}};
+    }
+    
+    @DataProvider(name = "createFinanceUserAndAe")
+    public Object[][] createFinanceUserAndAe() throws IOException {
+        AeDetails aeDetails = aeData.createAeWithDefaultValues();
+        User financeUser = userData.createAFinanceUser("Finance", false);
+        return new Object[][]{{financeUser, aeDetails}};
     }
 }

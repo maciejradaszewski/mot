@@ -7,10 +7,13 @@ use Dvsa\Mot\Behat\Support\Response;
 
 class SlotPurchase extends MotApi
 {
-    const END_POINT_SLOT_PAYMENT       = 'slots/add-instant-settlement';
-    const END_POINT_REFUND             = 'slots/refund/%s';
-    const END_POINT_TRANSACTION_SEARCH = 'slots/transaction/search/%s';
-    const END_POINT_ADJUSTMENT         = 'slots/amendment/%s/adjustment';
+    const END_POINT_SLOT_PAYMENT           = 'slots/add-instant-settlement';
+    const END_POINT_REFUND                 = 'slots/refund/%s';
+    const END_POINT_TRANSACTION_SEARCH     = 'slots/transaction/search/%s';
+    const END_POINT_ADJUSTMENT             = 'slots/amendment/%s/adjustment';
+    const END_POINT_ADJUSTMENT_REASON_TYPE = 'slots/amendment-reason/type/%s';
+    const END_POINT_REVERSAL               = 'slots/amendment/%s/charge-back';
+    const END_POINT_REDIRECTION_DATE       = 'slots/redirection-data';
 
     /**
      * Adjust transaction
@@ -116,5 +119,65 @@ class SlotPurchase extends MotApi
         $url   = sprintf(self::END_POINT_TRANSACTION_SEARCH, $reference) . '?' . http_build_query($param);
 
         return $this->sendRequest($token, 'GET', $url);
+    }
+
+    /**
+     * @param $token
+     * @param $type
+     *
+     * @return Response
+     */
+    public function getAmendmentReasonsByType($token, $type)
+    {
+        $url = sprintf(self::END_POINT_ADJUSTMENT_REASON_TYPE, $type);
+
+        return $this->sendRequest($token, 'GET', $url);
+    }
+
+    /**
+     * @param     $token
+     * @param int $transactionId
+     *
+     * @return Response
+     */
+    public function reverseTransaction($token, $transactionId)
+    {
+        $url = sprintf(self::END_POINT_REVERSAL, $transactionId);
+
+        return $this->sendRequest($token, 'POST', $url);
+    }
+
+    /**
+     * @param $token
+     * @param $slots
+     * @param $price
+     * @param $invoiceNumber
+     *
+     * @return Response
+     */
+    public function getRedirectionData($token, $slots, $price, $invoiceNumber)
+    {
+        $amount = number_format($price * $slots, 2, '.', '');
+        $body   = [
+            'scope'   => 'CARD',
+            'payload' => [
+                'customer_reference' => 'AE555',
+                'total_amount'       => $amount,
+                'scope'              => 'CARD',
+                'user_id'            => 'test',
+                'customer_name'      => 'MOT User',
+                'redirect_uri'       => 'http://mot-web-frontend.mot.gov.uk',
+                'cost_centre'        => '12345,90987',
+                'payment_data'       => [
+                    [
+                        'sales_reference'   => $invoiceNumber,
+                        'amount'            => $amount,
+                        'product_reference' => 'MOT_SLOTS',
+                    ]
+                ]
+            ],
+        ];
+
+        return $this->sendRequest($token, 'POST', self::END_POINT_REDIRECTION_DATE, $body);
     }
 }

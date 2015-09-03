@@ -2,6 +2,7 @@ package uk.gov.dvsa.domain.navigation;
 
 import org.joda.time.DateTime;
 import org.openqa.selenium.Cookie;
+
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.CookieService;
@@ -13,6 +14,7 @@ import uk.gov.dvsa.ui.pages.authorisedexaminer.AeSlotsUsagePage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AedmAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.FinanceAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.cpms.GenerateReportPage;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 import uk.gov.dvsa.ui.pages.mot.*;
@@ -154,6 +156,11 @@ public class PageNavigator {
         injectOpenAmCookieAndNavigateToPath(user, String.format(AuthorisedExaminerViewPage.PATH, aeId));
 
         return new AedmAuthorisedExaminerViewPage(driver);
+    }
+    
+    public FinanceAuthorisedExaminerViewPage goToFinanceAuthorisedExaminerViewPage(User user, String path, String aeId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(path, aeId));
+        return new FinanceAuthorisedExaminerViewPage(driver);
     }
 
     public AuthorisedExaminerTestLogPage gotoAETestLogPage(User user, String aeId) throws IOException {

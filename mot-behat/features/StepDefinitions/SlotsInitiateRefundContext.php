@@ -56,6 +56,19 @@ class SlotsInitiateRefundContext implements Context
     }
 
     /**
+     * @Given The latest transaction is reversed
+     */
+    public function theLatestTransactionIsReversed()
+    {
+        $transactionId = $this->responseReceived->getBody()->toArray()['data']['transaction_id'];
+
+        $this->responseReceived = $this->slotPurchase->reverseTransaction(
+            $this->sessionContext->getCurrentAccessToken(),
+            $transactionId
+        );
+    }
+
+    /**
      * @When I request a refund of :slots slots for organisation :organisation
      */
     public function iRequestARefundOfSlotsForOrganisation($slots, $organisation)
@@ -179,5 +192,31 @@ class SlotsInitiateRefundContext implements Context
         PHPUnit::assertArrayHasKey('data', $body);
         PHPUnit::assertArrayHasKey('found', $body['data']);
         PHPUnit::assertFalse($body['data']['found']);
+    }
+
+    /**
+     * @When I initiate the request to make a card payment
+     */
+    public function iInitiateTheRequestToMakeACardPayment()
+    {
+        $token                  = $this->sessionContext->getCurrentAccessToken();
+        $responseReceived       = $this->slotPurchase->makePaymentForSlot(
+            $token, 120, $this->organisationMap['kwikfit'], 2.05
+        );
+        $body                   = $responseReceived->getBody();
+        $this->responseReceived = $this->slotPurchase->getRedirectionData(
+            $token, 120, 2.05, $body['data']['sales_reference']
+        );
+        $body                   = $this->responseReceived->getBody();
+        PHPUnit::assertArrayHasKey('data', $body);
+    }
+
+    /**
+     * @Then I should receive :parameter parameter in the data returned
+     */
+    public function iShouldReceiveParameterInTheDataReturned($parameter)
+    {
+        $body = $this->responseReceived->getBody();
+        PHPUnit::assertArrayHasKey($parameter, $body['data']);
     }
 }
