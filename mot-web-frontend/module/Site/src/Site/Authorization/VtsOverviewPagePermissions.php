@@ -176,6 +176,16 @@ class VtsOverviewPagePermissions
         return $assertions->isGranted($this->vts->getId());
     }
 
+    public function canChangeTestingFacilities()
+    {
+        return $this->isGranted(PermissionAtSite::VTS_UPDATE_TESTING_FACILITIES_DETAILS);
+    }
+
+    public function canChangeSiteDetails()
+    {
+        return $this->isGranted(PermissionAtSite::VTS_UPDATE_SITE_DETAILS);
+    }
+
     public function canSearchVts()
     {
         return $this->authorisationService->isGranted(PermissionInSystem::VEHICLE_TESTING_STATION_SEARCH);

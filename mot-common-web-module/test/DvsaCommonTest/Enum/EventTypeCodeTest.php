@@ -54,6 +54,7 @@ class EventTypeCodeTest extends \PHPUnit_Framework_TestCase
             EventTypeCode::GROUP_B_TESTER_QUALIFICATION,
             EventTypeCode::DVSA_ADMINISTRATOR_CREATE_AE,
             EventTypeCode::DVSA_ADMINISTRATOR_CREATE_SITE,
+            EventTypeCode::DVSA_ADMINISTRATOR_UPDATE_SITE,
             EventTypeCode::UPDATE_AE,
         ];
         $this->assertEquals($res, EventTypeCode::getAll());

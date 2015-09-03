@@ -595,6 +595,9 @@ class Site extends Entity
         return $this;
     }
 
+    /**
+     * @return SiteFacility[]
+     */
     public function getFacilities()
     {
         return $this->facilities;
@@ -753,7 +756,16 @@ class Site extends Entity
      *
      * @return array
      */
-    private function vehicleClassesOfType($authId)
+    public function getApprovedAuthorisationForTestingMotAtSite()
+    {
+        return $this->getAuthorisationForTestingMotAtSiteOfType(AuthorisationForTestingMotAtSiteStatusCode::APPROVED);
+    }
+
+    /**
+     * @param $authId
+     * @return AuthorisationForTestingMotAtSite[]
+     */
+    private function getAuthorisationForTestingMotAtSiteOfType($authId)
     {
         $qualifiedAuthorisationForTestingMotAtSite = ArrayUtils::filter(
             $this->authorisationsForTestingMotAtSite,
@@ -761,6 +773,16 @@ class Site extends Entity
                 return $authorisationForTestingMotAtSite->getStatus()->getCode() === $authId;
             }
         );
+
+        return $qualifiedAuthorisationForTestingMotAtSite;
+    }
+
+    /**
+     * @return array
+     */
+    private function vehicleClassesOfType($authId)
+    {
+        $qualifiedAuthorisationForTestingMotAtSite = $this->getAuthorisationForTestingMotAtSiteOfType($authId);
 
         return ArrayUtils::map(
             $qualifiedAuthorisationForTestingMotAtSite,
@@ -812,6 +834,14 @@ class Site extends Entity
     }
 
     /**
+     * @param AuthorisationForTestingMotAtSite $toRemove
+     */
+    public function removeAuthorisationForTestingMotAtSite(AuthorisationForTestingMotAtSite $toRemove)
+    {
+        $this->authorisationsForTestingMotAtSite->removeElement($toRemove);
+    }
+
+    /**
      * Set statusChangedOn
      *
      * @param \DateTime $statusChangedOn
@@ -834,5 +864,6 @@ class Site extends Entity
     {
         return $this->statusChangedOn;
     }
+
 
 }

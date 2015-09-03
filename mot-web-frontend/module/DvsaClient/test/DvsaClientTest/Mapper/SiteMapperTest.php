@@ -3,10 +3,15 @@
 namespace DvsaClientTest\Mapper;
 
 use DvsaClient\Mapper\SiteMapper;
+use DvsaCommon\Constants\FacilityTypeCode;
+use DvsaCommon\Dto\Site\FacilityDto;
+use DvsaCommon\Dto\Site\FacilityTypeDto;
 use DvsaCommon\Dto\Site\SiteContactDto;
 use DvsaCommon\Dto\Site\SiteDto;
 use DvsaCommon\Dto\Site\SiteListDto;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
+use DvsaCommon\Enum\SiteStatusCode;
+use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilder;
 use DvsaCommon\Utility\DtoHydrator;
 
@@ -94,6 +99,90 @@ class SiteMapperTest extends AbstractMapperTest
         $this->assertSame(
             ['data' => ['id' => self::ORGANISATION_ID]],
             $this->mapper->updateContactDetails(self::ORGANISATION_ID, $dto)
+        );
+    }
+
+    public function testValidateTestingFacilities()
+    {
+        $dto = (new VehicleTestingStationDto())
+            ->setIsNeedConfirmation(true);
+
+        $this->client->expects($this->once())
+            ->method('put')
+            ->with(VehicleTestingStationUrlBuilder::updateTestingFacilities(self::ORGANISATION_ID), DtoHydrator::dtoToJson($dto))
+            ->willReturn(['data' => true]);
+
+        $this->assertTrue(
+            $this->mapper->validateTestingFacilities(self::ORGANISATION_ID, $dto)
+        );
+    }
+
+    public function testValidateSiteDetails()
+    {
+        $dto = (new VehicleTestingStationDto())
+            ->setIsNeedConfirmation(true);
+
+        $this->client->expects($this->once())
+            ->method('put')
+            ->with(VehicleTestingStationUrlBuilder::validateSiteDetails(self::ORGANISATION_ID), DtoHydrator::dtoToJson($dto))
+            ->willReturn(['data' => true]);
+
+        $this->assertTrue(
+            $this->mapper->validateSiteDetails(self::ORGANISATION_ID, $dto)
+        );
+    }
+
+    public function testUpdateTestingFacilities()
+    {
+        $this->client->expects($this->once())
+            ->method('put')
+            ->with(VehicleTestingStationUrlBuilder::updateTestingFacilities(self::ORGANISATION_ID))
+            ->willReturn(['data' => ['success' => true]])
+        ;
+
+        $siteDto = (new SiteDto())
+            ->setId(self::ORGANISATION_ID)
+        ;
+        $OptlFacilitTypeDto = (new FacilityTypeDto())
+            ->setCode(FacilityTypeCode::ONE_PERSON_TEST_LANE)
+        ;
+        $OptlFacilityDto = (new FacilityDto())
+            ->setType($OptlFacilitTypeDto)
+            ->setSite($siteDto)
+        ;
+        $vtsDto = (new VehicleTestingStationDto())
+            ->setFacilities([$OptlFacilityDto])
+        ;
+
+        $actualResult = $this->mapper->updateTestingFacilities(self::ORGANISATION_ID, $vtsDto);
+
+        $this->assertSame(
+            ['data' => ['success' => true]],
+            $actualResult
+        );
+    }
+
+    public function testUpdateSiteDetails()
+    {
+        $this->client->expects($this->once())
+            ->method('put')
+            ->with(VehicleTestingStationUrlBuilder::updateSiteDetails(self::ORGANISATION_ID))
+            ->willReturn(['data' => ['success' => true]])
+        ;
+
+        $vtsDto = (new VehicleTestingStationDto())
+            ->setId(self::ORGANISATION_ID)
+            ->setStatus(SiteStatusCode::APPROVED)
+            ->setName("test name")
+            ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
+            ->setTestClasses(["1", "2"])
+        ;
+
+        $actualResult = $this->mapper->updateSiteDetails(self::ORGANISATION_ID, $vtsDto);
+
+        $this->assertSame(
+            ['success' => true],
+            $actualResult
         );
     }
 

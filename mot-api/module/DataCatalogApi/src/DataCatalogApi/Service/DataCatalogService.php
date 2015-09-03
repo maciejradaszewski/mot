@@ -30,11 +30,13 @@ use DvsaEntities\Entity\OrganisationBusinessRole;
 use DvsaEntities\Entity\PersonSystemRole;
 use DvsaEntities\Entity\ReasonForRefusal;
 use DvsaEntities\Entity\SiteBusinessRole;
+use DvsaEntities\Entity\SiteStatus;
 use DvsaEntities\Entity\TransmissionType;
 use DvsaEntities\Entity\VehicleClass;
 use DvsaEntities\Entity\VisitReason;
 use DvsaEntities\Repository\ColourRepository;
 use DvsaEntities\Repository\FuelTypeRepository;
+use DvsaEntities\Repository\SiteStatusRepository;
 
 /**
  * Class DataCatalogService
@@ -390,5 +392,16 @@ class DataCatalogService extends AbstractService
         }
 
         return $this->extractItems($items);
+    }
+
+    /**
+     * @return array
+     */
+    public function getSiteStatuses()
+    {
+        /** @var SiteStatusRepository $repo */
+        $repo = $this->entityManager->getRepository(SiteStatus::class);
+        $items = $repo->getAll();
+        return $this->extractType2EnumValues($items);
     }
 }

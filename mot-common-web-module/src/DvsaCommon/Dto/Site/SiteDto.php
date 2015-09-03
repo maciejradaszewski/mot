@@ -6,6 +6,7 @@ use DvsaCommon\Dto\AbstractDataTransferObject;
 use DvsaCommon\Dto\Common\CommentDto;
 use DvsaCommon\Dto\CommonTrait\CommonIdentityDtoTrait;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Enum\SiteStatusCode;
 use DvsaCommon\Utility\ArrayUtils;
 
 /**
@@ -46,6 +47,12 @@ class SiteDto extends AbstractDataTransferObject
 
     /** @var  String */
     private $typeCode;
+
+    /** @var  string */
+    private $status;
+
+    /** @var string  */
+    private $statusChangedOn;
 
 
     public function getSiteNumber()
@@ -259,4 +266,44 @@ class SiteDto extends AbstractDataTransferObject
         $this->typeCode = $typeCode;
         return $this;
     }
+
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param $status
+     *
+     * @return $this
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStatusChangedOn()
+    {
+        return $this->statusChangedOn;
+    }
+
+    /**
+     * @param mixed $statusChangedOn
+     *
+     * @return $this
+     */
+    public function setStatusChangedOn($statusChangedOn)
+    {
+        $this->statusChangedOn = $statusChangedOn;
+        return $this;
+    }
+
 }

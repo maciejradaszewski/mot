@@ -42,6 +42,7 @@ class DataCatalogController extends AbstractDvsaRestfulController
                 'scores'                => $service->getEnforcementDecisionScoreData(),
                 'siteBusinessRole'      => $service->getSiteBusinessRoles(),
                 'testerStatus'          => [],
+                'siteStatus'            => $service->getSiteStatuses(),
                 'transmissionType'      => $service->getTransmissionTypes(),
                 'vehicleClass'          => $service->getVehicleClasses(),
                 'visitOutcomes'         => $service->getSiteAssessmentVisitOutcomeData(),

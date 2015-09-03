@@ -17,6 +17,7 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
     const PLANNING_PERMISSION = '/planning-permission';
     const PLANS_AND_DIMENSIONS = '/plans-and-dimensions';
     const TESTING_FACILITIES = '/testing-facilities';
+    const SITE_DETAILS = '/site-details';
     const VEHICLE_TESTING_STATION_DETAILS = '/vehicle-testing-station-details';
     const DOCUMENTS = '/documents';
     const STATUS = '/status';
@@ -39,6 +40,7 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
             self::PLANNING_PERMISSION             => '',
             self::PLANS_AND_DIMENSIONS            => '',
             self::TESTING_FACILITIES              => '',
+            self::SITE_DETAILS                    => '',
             self::VEHICLE_TESTING_STATION_DETAILS => '',
             self::DOCUMENTS                       => '',
             self::STATUS                          => '',
@@ -49,6 +51,8 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
             self::VTS_CONTACT             => [
                 self::VTS_CONTACT_UPDATE => '',
             ],
+            self::TESTING_FACILITIES => '',
+            self::SITE_DETAILS => '',
         ],
         self::SEARCH                                    => '',
     ];
@@ -149,5 +153,26 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
     {
         return self::contact($siteId, $contactId)
             ->appendRoutesAndParams(self::VTS_CONTACT_UPDATE);
+    }
+
+    public static function updateTestingFacilities($siteId)
+    {
+        $url = self::vtsById($siteId)
+            ->appendRoutesAndParams(self::TESTING_FACILITIES);
+
+        return $url;
+    }
+
+    public static function updateSiteDetails($siteId)
+    {
+        $url = self::vtsById($siteId)
+            ->appendRoutesAndParams(self::SITE_DETAILS);
+
+        return $url;
+    }
+
+    public static function validateSiteDetails($siteId)
+    {
+        return self::updateSiteDetails($siteId);
     }
 }

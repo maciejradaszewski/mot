@@ -23,6 +23,10 @@ public class VehicleTestingStationPage extends Page {
     @FindBy(id = "site-address") private WebElement vtsAddress;
     @FindBy(id = "email") private WebElement vtsEmail;
     @FindBy(id = "phone-number") private WebElement vtsPhoneNumber;
+    @FindBy(id = "edit-site-details") private WebElement editSiteDetails;
+    @FindBy(id = "change-testing-facilities") private WebElement changeTestingFacilitiesLink;
+    @FindBy(id = "testing-facility-optl") private WebElement onePersonTestLaneValue;
+    @FindBy(id = "testing-facility-tptl") private WebElement twoPersonTestLaneValue;
 
     public VehicleTestingStationPage(MotAppDriver driver) {
         super(driver);
@@ -102,5 +106,18 @@ public class VehicleTestingStationPage extends Page {
         driver.findElement(By.linkText(regNum)).click();
 
         return new TestShortSummaryPage(driver);
+    }
+
+    public ChangeTestingFacilitiesPage clickOnChangeTestingFacilitiesLink() {
+        changeTestingFacilitiesLink.click();
+        return new ChangeTestingFacilitiesPage(driver);
+    }
+
+    public String verifyOnePersonTestLaneValueDisplayed() {
+        return onePersonTestLaneValue.getText();
+    }
+
+    public String verifyTwoPersonTestLaneValueDisplayed() {
+        return twoPersonTestLaneValue.getText();
     }
 }

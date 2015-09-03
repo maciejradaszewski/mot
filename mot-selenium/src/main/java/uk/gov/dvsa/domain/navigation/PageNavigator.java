@@ -21,6 +21,7 @@ import uk.gov.dvsa.ui.pages.mot.retest.ReTestResultsEntryPage;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticeCreationPage;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticePage;
 import uk.gov.dvsa.ui.pages.vehicleinformation.VehicleInformationSearchPage;
+import uk.gov.dvsa.ui.pages.vts.ChangeTestingFacilitiesPage;
 import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
 
 import java.io.IOException;
@@ -217,4 +218,10 @@ public class PageNavigator {
 
         return new DuplicateReplacementCertificatePage(driver);
     }
+
+    public ChangeTestingFacilitiesPage goToChangeTestingFacilitiesPage(User aoUser, String siteId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(aoUser, String.format(ChangeTestingFacilitiesPage.PATH, siteId) );
+        return new ChangeTestingFacilitiesPage(driver);
+    }
+
 }

@@ -69,6 +69,9 @@ class SiteFacility extends Entity
         return $this;
     }
 
+    /**
+     * @return FacilityType
+     */
     public function getFacilityType()
     {
         return $this->facilityType;
@@ -85,6 +88,9 @@ class SiteFacility extends Entity
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;

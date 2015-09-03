@@ -11,8 +11,13 @@ use SiteApi\Controller\SitePositionValidateController;
 use SiteApi\Controller\SiteRoleController;
 use SiteApi\Controller\SiteSlotUsageController;
 use SiteApi\Controller\SiteTestingDailyScheduleController;
+use SiteApi\Factory\Controller\SiteDetailsControllerFactory;
 use SiteApi\Factory\Controller\SiteSearchControllerFactory;
+use SiteApi\Controller\SiteSearchController;
 use SiteApi\Factory\Controller\SiteControllerFactory;
+use SiteApi\Controller\SiteTestingFacilitiesController;
+use SiteApi\Factory\Controller\SiteTestingFacilitiesControllerFactory;
+use SiteApi\Controller\SiteDetailsController;
 
 return [
     'controllers' => [
@@ -27,11 +32,13 @@ return [
             DefaultBrakeTestsController::class        => DefaultBrakeTestsController::class,
             MotTestInProgressController::class        => MotTestInProgressController::class,
             SiteContactController::class              => SiteContactController::class,
-            SitePositionValidateController::class => SitePositionValidateController::class,
+            SitePositionValidateController::class     => SitePositionValidateController::class,
         ],
         'factories' => [
-            SiteSearchControllerFactory::class => SiteSearchControllerFactory::class,
+            SiteSearchController::class => SiteSearchControllerFactory::class,
             SiteController::class              => SiteControllerFactory::class,
+            SiteTestingFacilitiesController::class => SiteTestingFacilitiesControllerFactory::class,
+            SiteDetailsController::class => SiteDetailsControllerFactory::class,
         ],
     ],
     'router'      => [
@@ -150,6 +157,24 @@ return [
                             ]
                         ],
                     ],
+                    'testing-facilities' => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'    => '/testing-facilities',
+                            'defaults' => [
+                                'controller' => SiteTestingFacilitiesController::class
+                            ]
+                        ],
+                    ],
+                    'site-details' => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'    => '/site-details',
+                            'defaults' => [
+                                'controller' => SiteDetailsController::class
+                            ]
+                        ],
+                    ],
                     'test-in-progress' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -190,7 +215,7 @@ return [
                 'options' => [
                     'route'    => '/vehicle-testing-station/search',
                     'defaults' => [
-                        'controller' => SiteSearchControllerFactory::class,
+                        'controller' => SiteSearchController::class,
                     ],
                 ],
             ],
