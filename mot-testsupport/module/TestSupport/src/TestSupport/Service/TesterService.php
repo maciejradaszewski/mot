@@ -74,6 +74,7 @@ class TesterService
     public function create(array $data)
     {
         FieldValidation::checkForRequiredFieldsInData(['siteIds'], $data);
+
         TestSupportAccessTokenManager::addSchemeManagerAsRequestorIfNecessary($data);
 
         if (!isset($data['personId'])) {

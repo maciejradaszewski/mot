@@ -46,6 +46,11 @@ class OrganisationNominationService
         return $this->notificationService->add($data);
     }
 
+    /**
+     * @param Person $nominator
+     * @param OrganisationBusinessRoleMap $nomination
+     * @return int
+     */
     public function sendNotification(Person $nominator, OrganisationBusinessRoleMap $nomination)
     {
         $data = (new Notification())
