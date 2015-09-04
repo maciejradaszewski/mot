@@ -583,30 +583,25 @@ class MotTestRepository extends AbstractMutableRepository
      */
     public function getLatestMotTestIdByVehicleId($vehicleId, $status = MotTestStatusName::PASSED)
     {
-        // Get the latest completed test date - this is used as a subquery
-        // to prevent possible performance hit by doing ORDER BY
-        $subQuery = $this->createQueryBuilder('t')
-            ->select('MAX(t.completedDate)')
+        $qb = $this
+            ->createQueryBuilder("t")
+            ->select('t.number')
             ->innerJoin("t.motTestType", "tt")
             ->innerJoin("t.status", "ts")
             ->where("t.vehicle = :vehicleId")
             ->andWhere("t.completedDate IS NOT NULL")
             ->andWhere("tt.code NOT IN (:codes)")
-            ->andWhere("ts.name = :status");
-
-        // Get the MOT test number for the latest completed test with status $status for a vehicle
-        $qb = $this->createQueryBuilder("t2");
-
-        $qb->select('t2.number')
-           ->where($qb->expr()->in('t2.completedDate', $subQuery->getDQL()))
-           ->setParameter('vehicleId', $vehicleId)
-           ->setParameter('status', $status)
-           ->setParameter(
+            ->andWhere("ts.name = :status")
+            ->orderBy("t.completedDate", "DESC")
+            ->setParameter('vehicleId', $vehicleId)
+            ->setParameter('status', $status)
+            ->setParameter(
                'codes', [
                 MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING,
                 MotTestTypeCode::ROUTINE_DEMONSTRATION_TEST,
-               ]
-           );
+               ])
+            ->setMaxResults(1);
+        ;
 
         if ($result = $qb->getQuery()->getResult()) {
             return $result[0]['number'];
