@@ -59,7 +59,14 @@ class AuthorisedExaminer extends MotApi
 
     public function createAuthorisedExaminer($token)
     {
+        $aeDto = new AuthorisedExaminerAuthorisationDto();
+        $aeDto->setAssignedAreaOffice(1);
+        $statusDto = new AuthForAeStatusDto();
+        $statusDto->setCode("APRVD");
+        $aeDto->setStatus($statusDto);
+
         $dto = (new OrganisationDto())
+            ->setAuthorisedExaminerAuthorisation($aeDto)
             ->setContacts(
                 [
                     (new OrganisationContactDto())
@@ -102,15 +109,15 @@ class AuthorisedExaminer extends MotApi
 
     public function updateStatusAuthorisedExaminer($token, $id, $status)
     {
+        $aeDto = new AuthorisedExaminerAuthorisationDto();
+        $aeDto->setAssignedAreaOffice(1);
+        $statusDto = new AuthForAeStatusDto();
+        $statusDto->setCode($status);
+        $aeDto->setStatus($statusDto);
+
         $dto = (new OrganisationDto())
             ->setId($id)
-            ->setAuthorisedExaminerAuthorisation(
-                (new AuthorisedExaminerAuthorisationDto())
-                    ->setStatus(
-                        (new AuthForAeStatusDto())
-                            ->setCode($status)
-                    )
-            );
+            ->setAuthorisedExaminerAuthorisation($aeDto);
 
         return $this->client->request(
             new Request(

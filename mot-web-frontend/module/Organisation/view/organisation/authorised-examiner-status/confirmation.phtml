@@ -19,6 +19,7 @@ echo $this->partial(
         'head' => 'Confirm changes',
         'body' => [
             ['Status', $form->getStatuses()[$form->getStatus()]],
+            ['DVSA area Office', $form->getAssignedAreaOffice(), 'id' => 'areaOfficeNumber'],
         ],
     ]
 );

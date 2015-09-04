@@ -30,4 +30,9 @@ class AuthorisedExaminerStatusController extends AbstractDvsaRestfulController
 
         return ApiResponse::jsonOk($result);
     }
+
+    public function getAreaOfficesAction()
+    {
+        return ApiResponse::jsonOk($this->service->getAllAreaOffices());
+    }
 }

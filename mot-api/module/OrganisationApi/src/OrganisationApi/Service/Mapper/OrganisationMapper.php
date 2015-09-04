@@ -6,10 +6,12 @@ use DvsaCommon\Dto\Common\AuthForAeStatusDto;
 use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Dto\Site\SiteDto;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaCommonApi\Service\Mapper\AbstractApiMapper;
 use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Entity\OrganisationContact;
+use DvsaEntities\Entity\Site;
 
 /**
  * Class OrganisationMapper
@@ -65,8 +67,20 @@ class OrganisationMapper extends AbstractApiMapper
                     ->setName($aeStatus->getName());
             }
 
+            //The assigned area *is* a Site entity
+            $siteAO = $ae->getAreaOffice();
+            $siteDto = new SiteDto();
+            if ($siteAO) {
+                $siteDto
+                    ->setId($siteAO->getId())
+                    ->setSiteNumber($siteAO->getSiteNumber())
+                    ->setName($siteAO->getName());
+            }
+
+
             $aeAuthorisation = new AuthorisedExaminerAuthorisationDto();
             $aeAuthorisation
+                ->setAssignedAreaOffice($siteDto)
                 ->setAuthorisedExaminerRef($ae->getNumber())
                 ->setStatus($statusDto)
                 ->setValidFrom(DateTimeApiFormat::date($ae->getValidFrom()))

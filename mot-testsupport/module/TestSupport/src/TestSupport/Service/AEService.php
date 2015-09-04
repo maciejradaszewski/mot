@@ -5,6 +5,7 @@ namespace TestSupport\Service;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Contact\EmailDto;
 use DvsaCommon\Dto\Contact\PhoneDto;
+use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\CompanyTypeCode;
@@ -23,6 +24,7 @@ use Zend\View\Model\JsonModel;
 
 class AEService
 {
+    const DEFAULT_AREA_OFFICE = 1;
 
     /**
      * @var TestSupportRestClientHelper
@@ -94,9 +96,12 @@ class AEService
             ->setPhones([$phones])
             ->setEmails([$email]);
 
+        $authForAeDto = new AuthorisedExaminerAuthorisationDto();
+        $authForAeDto->setAssignedAreaOffice(self::DEFAULT_AREA_OFFICE);
+
         return (new OrganisationDto())
             ->setName($aeName)
-            ->setAreaOfficeSite(2007)
+            ->setAuthorisedExaminerAuthorisation($authForAeDto)
             ->setOrganisationType(OrganisationType::AUTHORISED_EXAMINER)
             ->setCompanyType(CompanyTypeCode::SOLE_TRADER)
             ->setContacts([$contact]);

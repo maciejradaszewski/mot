@@ -10,6 +10,7 @@ use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommonApi\Service\SeqNumberService;
 use DvsaEntities\Entity\AuthorisationForAuthorisedExaminer;
 use DvsaEntities\Entity\Person;
+use DvsaEntities\Entity\Site;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 
 /**

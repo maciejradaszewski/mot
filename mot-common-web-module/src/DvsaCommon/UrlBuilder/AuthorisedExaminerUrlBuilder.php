@@ -17,6 +17,7 @@ class AuthorisedExaminerUrlBuilder extends AbstractUrlBuilder
 
     const AUTHORISED_EXAMINER_PRINCIPAL = '/authorised-examiner-principal[/:principalId]';
     const AUTHORISED_EXAMINER_LIST = '/list';
+    const LIST_AREA_OFFICES = '/area-offices/list';
 
     const MOT_TEST_LOG = '/mot-test-log';
     const MOT_TEST_LOG_SUMMARY = '/summary';
@@ -32,6 +33,7 @@ class AuthorisedExaminerUrlBuilder extends AbstractUrlBuilder
                     self::SLOT_USAGE => '',
                     self::AUTHORISED_EXAMINER_PRINCIPAL => '',
                     self::AUTHORISED_EXAMINER_LIST => '',
+                    self::LIST_AREA_OFFICES => '',
                     self::MOT_TEST_LOG => [
                         self::MOT_TEST_LOG_SUMMARY => '',
                     ],
@@ -123,5 +125,10 @@ class AuthorisedExaminerUrlBuilder extends AbstractUrlBuilder
     public static function status($id)
     {
         return self::of($id)->appendRoutesAndParams(self::STATUS);
+    }
+
+    public static function getAllAreaOffices()
+    {
+        return self::of()->appendRoutesAndParams(self::LIST_AREA_OFFICES);
     }
 }

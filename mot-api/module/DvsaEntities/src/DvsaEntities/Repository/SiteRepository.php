@@ -58,6 +58,8 @@ class SiteRepository extends AbstractMutableRepository
 
     const ERR_NEXT_SITE_NR_NOT_FOUND = "Next number of Site was not found";
 
+    const AREA_OFFICE_ROLE_TYPE_ID = 1;
+
     /**
      * Initializes a new <tt>EntityRepository</tt>.
      *
@@ -375,6 +377,36 @@ class SiteRepository extends AbstractMutableRepository
     public function findSites(SiteSearchParam $searchParam)
     {
         return $this->buildFindSites($searchParam)->getResult(AbstractQuery::HYDRATE_SCALAR);
+    }
+
+
+    /**
+     * Answers an array containing all Site entities that are "APPROVED" and also
+     * classified within the "assembly" group of tables as being an "Area Office"
+     *
+     *
+     */
+    public function getAllAreaOffices()
+    {
+        // TODO: Somebody replace this with something DECENT please!
+        $sql = sprintf(
+            "select s.id, s.name, s.site_number, substring(s.site_number,1,2) as ao_number
+        from   site as s
+        join   site_assembly_role_map
+	    on site_assembly_role_map.site_id = s.id
+        and site_assembly_role_map.assembly_role_id =%d order by convert(substring(s.site_number,1,2), unsigned)",
+            self::AREA_OFFICE_ROLE_TYPE_ID);
+
+        $rsm = new Query\ResultSetMapping();
+        $rsm->addScalarResult('id', 'id');
+        $rsm->addScalarResult('site_number', 'siteNumber');
+        $rsm->addScalarResult('name', 'name');
+        $rsm->addScalarResult('ao_number', 'areaOfficeNumber');
+
+        /** @var \Doctrine\ORM\NativeQuery $query */
+        $query = $this->_em->createNativeQuery($sql, $rsm);
+
+        return $query->getResult();
     }
 
     /**

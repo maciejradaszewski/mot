@@ -196,6 +196,17 @@ echo $this->partial(
 
     <?php
     echo $this->partial(
+        '/organisation/authorised-examiner/partials/area-office-select',
+        [
+            'value' => $form->getAssignedAreaOffice(),
+            'options' => $form->getAreaOfficeOptions(),
+            'errorMessage' => $form->getError(AeCreateForm::FIELD_AO_NR),
+        ]
+    );
+    ?>
+
+    <?php
+    echo $this->partial(
         'partial/gds/form/control-navigation',
         [
             'id'         => 'submitAeEdit',

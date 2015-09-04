@@ -11,6 +11,7 @@ use DvsaCommonTest\TestUtils\TestCaseTrait;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Repository\AuthForAeStatusRepository;
 use DvsaEntities\Repository\OrganisationRepository;
+use DvsaEntities\Repository\SiteRepository;
 use DvsaEventApi\Service\EventService;
 use OrganisationApi\Factory\Service\AuthorisedExaminerStatusServiceFactory;
 use OrganisationApi\Service\AuthorisedExaminerStatusService;
@@ -37,6 +38,7 @@ class AuthorisedExaminerStatusServiceFactoryTest extends PHPUnit_Framework_TestC
 
         $this->mockMethod($entityManager, 'getRepository', $this->at(0), XMock::of(OrganisationRepository::class));
         $this->mockMethod($entityManager, 'getRepository', $this->at(1), XMock::of(AuthForAeStatusRepository::class));
+        $this->mockMethod($entityManager, 'getRepository', $this->at(2), XMock::of(SiteRepository::class));
 
         // Create the factory
         $factory = new AuthorisedExaminerStatusServiceFactory();

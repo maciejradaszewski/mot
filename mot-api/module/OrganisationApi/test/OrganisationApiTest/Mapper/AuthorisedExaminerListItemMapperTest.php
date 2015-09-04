@@ -37,7 +37,7 @@ class AuthorisedExaminerListItemMapperTest extends \PHPUnit_Framework_TestCase
         $result = $this->mapper->toArray(self::getAuthorisedExaminerEntity());
 
         $this->assertTrue(is_array($result));
-        $this->assertCount(10, $result);
+        $this->assertCount(11, $result);
     }
 
     public function testToDto()

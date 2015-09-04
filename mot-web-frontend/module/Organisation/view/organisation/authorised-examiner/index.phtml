@@ -127,6 +127,14 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
             ); ?>
         </td>
     </tr>
+    <tr>
+        <th class="key-value-list__key">
+            DVSA area office
+        </th>
+        <td id="ae-disclosure-indicator" class="key-value-list__value">
+            <a href="<?php echo $this->escapeHtmlAttr($this->aoOfficeUrl); ?>"><?php echo $this->escapeHtml($this->aoOfficeLabel); ?></a>
+        </td>
+    </tr>
 <?php endif; ?>
     </tbody>
 </table>
