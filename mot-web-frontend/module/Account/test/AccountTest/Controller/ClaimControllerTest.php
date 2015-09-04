@@ -49,6 +49,10 @@ class ClaimControllerTest extends AbstractFrontendControllerTestCase
         $this->mockMethod($this->mockClaimAccountSrv, 'getSession', null, $this->mockSession);
 
         $this->mockClaimValidator = XMock::of(ClaimValidator::class);
+        $this->mockClaimValidator->expects($this->any())
+            ->method('getMessages')
+            ->willReturn([]);
+
         $this->config = [
             'helpdesk' => [],
         ];

@@ -15,6 +15,10 @@ services:
         class: Dvsa\Mot\Behat\Support\Api\AccountClaim
         parent: dvsa.api
 
+    dvsa.account_registration:
+        class: Dvsa\Mot\Behat\Support\Api\AccountRegistration
+        parent: dvsa.api
+
     dvsa.temp_password_change:
         class: Dvsa\Mot\Behat\Support\Api\TempPasswordChange
         parent: dvsa.api

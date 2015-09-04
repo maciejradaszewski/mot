@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a436fa44d10beb7701170d14e9ff5968",
+    "hash": "082b30dca02f30d6b6d9a9c95b20f080",
     "packages": [
         {
             "name": "cpms/client",
@@ -529,12 +529,12 @@
             "version": "0.8.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/doctrine/DoctrineORMModule.git",
+                "url": "git@github.com:doctrine/DoctrineORMModule.git",
                 "reference": "31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineORMModule/zipball/31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0",
+                "url": "https://api.github.com/repos/doctrine/DoctrineORMModule/zipball/473e12ff9b39e2ec00f09bf89758d1fb0bec829e",
                 "reference": "31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0",
                 "shasum": ""
             },
@@ -1062,11 +1062,11 @@
         },
         {
             "name": "dvsa/web-frontend-assets",
-            "version": "v0.5.1",
+            "version": "v0.5.5",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/web-frontend-assets.git",
-                "reference": "13cb2db6238b92ef5363ad10eb7d17e43ffb238e"
+                "reference": "85dd1cd3a582ddd6f803321edefd0cf2de5ff26b"
             },
             "type": "library",
             "authors": [
@@ -1075,7 +1075,7 @@
                     "email": ""
                 }
             ],
-            "time": "2015-08-06 07:39:11"
+            "time": "2015-08-28 08:03:22"
         },
         {
             "name": "erusev/parsedown",

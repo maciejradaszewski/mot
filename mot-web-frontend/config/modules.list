@@ -4,6 +4,7 @@ Application
 Csrf
 DvsaFeature
 Dvsa\Mot\Frontend\AuthenticationModule
+Dvsa\Mot\Frontend\RegistrationModule
 Dashboard
 UserAdmin
 DvsaClient

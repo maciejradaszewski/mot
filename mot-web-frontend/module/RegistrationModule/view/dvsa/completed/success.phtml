@@ -1,0 +1,27 @@
+<?php
+    $emailAddress = isset($email) ? $email : 'undefined';
+?>
+
+<div class="text">
+    <p id="successBanner" class="banner--confirmation">
+        <span class="banner__heading-large">Now check your email</span>
+        <span>Your User ID has been sent to
+        <strong><?php echo $this->escapeHtmlAttr($emailAddress) ?></strong>
+        </span>
+    </p>
+
+    <h2 class="heading-medium">What happens next?</h2>
+
+    <p>An email containing your <strong>User ID</strong> has been sent to
+        <strong><?php echo $this->escapeHtmlAttr($emailAddress) ?></strong></p>
+
+    <p>You will need the User ID in the email and the password you just created to
+        <a href="<?php echo $signInUrl ?>">Sign in</a> to the MOT testing service.</p>
+
+    <h2 class="heading-small">If you haven't received an email within 15 minutes</h2>
+
+    <p>Please check your spam folder.</p>
+
+    <h2 class="heading-small">If you are still having problems</h2>
+    <?php echo $this->partial('partial/gds/general/contactHelpdesk', ['config' => $this->helpdesk]) ?>
+</div>

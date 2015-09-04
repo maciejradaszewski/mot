@@ -1,0 +1,143 @@
+<?php
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
+
+use Dvsa\Mot\Frontend\RegistrationModule\Controller\AddressController;
+use Dvsa\Mot\Frontend\RegistrationModule\Controller\CompletedController;
+use Dvsa\Mot\Frontend\RegistrationModule\Controller\CreateAccountController;
+use Dvsa\Mot\Frontend\RegistrationModule\Controller\DetailsController;
+use Dvsa\Mot\Frontend\RegistrationModule\Controller\IndexController;
+use Dvsa\Mot\Frontend\RegistrationModule\Controller\PasswordController;
+use Dvsa\Mot\Frontend\RegistrationModule\Controller\SecurityQuestionOneController;
+use Dvsa\Mot\Frontend\RegistrationModule\Controller\SecurityQuestionTwoController;
+use Dvsa\Mot\Frontend\RegistrationModule\Controller\SummaryController;
+
+/*
+ * The Registration module is a multi-page from and the following routes are sorted in the same order as the user journey,
+ * and not alphabetically.
+ *
+ * http://mot-web-frontend.mot.gov.uk/account/register/create-an-account
+ * http://mot-web-frontend.mot.gov.uk/account/register/details
+ * http://mot-web-frontend.mot.gov.uk/account/register/address
+ * http://mot-web-frontend.mot.gov.uk/account/register/security-question/one
+ * http://mot-web-frontend.mot.gov.uk/account/register/security-question/two
+ * http://mot-web-frontend.mot.gov.uk/account/register/password
+ * http://mot-web-frontend.mot.gov.uk/account/register/summary
+ * http://mot-web-frontend.mot.gov.uk/account/register/completed
+ */
+return [
+    'router' => [
+        'routes' => [
+            'account-register' => [
+                'type'    => 'literal',
+                'options' => [
+                    'route'    => '/account/register',
+                    'defaults' => [
+                        'controller' => IndexController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes'  => [
+                    'create-an-account' => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'    => '/create-an-account[/]',
+                            'defaults' => [
+                                'controller' => CreateAccountController::class,
+                            ],
+                        ],
+                    ],
+                    'details' => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'    => '/details[/]',
+                            'defaults' => [
+                                'controller' => DetailsController::class,
+                            ],
+                        ],
+                    ],
+                    'address' => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'    => '/address[/]',
+                            'defaults' => [
+                                'controller' => AddressController::class,
+                            ],
+                        ],
+                    ],
+                    'security-question-one' => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'    => '/security-question-one[/]',
+                            'defaults' => [
+                                'controller' => SecurityQuestionOneController::class,
+                            ],
+                        ],
+                    ],
+                    'security-question-two' => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'    => '/security-question-two[/]',
+                            'defaults' => [
+                                'controller' => SecurityQuestionTwoController::class,
+                            ],
+                        ],
+                    ],
+                    'password' => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'    => '/password[/]',
+                            'defaults' => [
+                                'controller' => PasswordController::class,
+                            ],
+                        ],
+                    ],
+                    'summary' => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'    => '/summary[/]',
+                            'defaults' => [
+                                'controller' => SummaryController::class,
+                            ],
+                        ],
+                    ],
+                    'complete' => [
+                        'type'    => 'literal',
+                        'options' => [
+                            'route'    => '/complete',
+                            'defaults' => [
+                                'controller' => CompletedController::class,
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
+                    'complete-registration-success' => [
+                        'type'    => 'literal',
+                        'options' => [
+                            'route'    => '/success',
+                            'defaults' => [
+                                'controller' => CompletedController::class,
+                                'action'     => 'success',
+                            ],
+                        ],
+                    ],
+                    'complete-registration-failure' => [
+                        'type'    => 'literal',
+                        'options' => [
+                            'route'    => '/fail',
+                            'defaults' => [
+                                'controller' => CompletedController::class,
+                                'action'     => 'fail',
+                            ],
+                        ],
+                    ],
+
+                ],
+            ],
+        ],
+    ],
+];

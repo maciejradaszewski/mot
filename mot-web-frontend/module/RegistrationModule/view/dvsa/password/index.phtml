@@ -1,0 +1,82 @@
+<?php
+use DvsaCommon\UrlBuilder\RegistrationUrlBuilderWeb;
+
+?>
+
+<div class="text">
+    <p class="lede">Now you need to create a memorable password for your account.</p>
+</div>
+
+<?php echo $this->partial('partial/forms/errorMessagePageHeader.phtml',['messages' => $errorsSummary]); ?>
+
+<form action="<?php echo $this->escapeHtmlAttr(RegistrationUrlBuilderWeb::of()->passwordStep());?>" method="POST" autocomplete="off" novalidate="">
+    <?php echo $this->csrfToken(); ?>
+    <fieldset>
+        <legend class="visuallyhidden">Your password</legend>
+        <div class="module-criteria" id="password-criteria-scope">
+            <span>Your password must have:</span>
+            <ul class="criteria__list">
+                <li class="criteria__criterion" data-criteria="minLength" data-criteria-param="8">8, or more, characters</li>
+                <li class="criteria__criterion" data-criteria="hasNumeric">1, or more, numbers</li>
+                <li class="criteria__criterion" data-criteria="hasMixedCase">upper and lower case letters</li>
+            </ul>
+        </div>
+        <div class="form-group<?php if ($passwordHasError) echo ' has-error' ?>">
+            <label for="password" class="form-label">
+                Create a password
+                <?php
+                if ($passwordHasError) {
+                    echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors['password']]);
+                }
+                ?>
+            </label>
+            <input type="password" name="password" id="password" class="form-control"
+                   value="<?php echo $this->escapeHtmlAttr($password) ?>">
+        </div>
+        <div class="form-group<?php if ($passwordConfirmHasError) echo ' has-error' ?>">
+            <label for="passwordConfirm" class="form-label">
+                Re-type your password
+                <?php
+                if ($passwordConfirmHasError) {
+                    echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors['passwordConfirm']]);
+                }
+                ?>
+            </label>
+            <input type="password" name="passwordConfirm" id="passwordConfirm" class="form-control"
+                   value="<?php echo $this->escapeHtmlAttr($passwordConfirm) ?>">
+        </div>
+    </fieldset>
+
+    <nav class="content-navigation">
+
+        <input type="submit" value="Continue" id="continue" class="button">
+
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo $this->escapeHtmlAttr(RegistrationUrlBuilderWeb::of()->securityQuestionStepTwo());?>" id="back">Back</a>
+            </li>
+        </ul>
+
+    </nav>
+
+</form>
+<?php
+/**
+ * To enable the password validator's JS widget
+ */
+$inlineScript = <<<EOT
+
+    if(typeof(document.querySelectorAll) != 'undefined'){
+        var passwordCriteria = new DVSA.Modules.DVSACriteria.Criteria({
+            trigger: document.querySelector("#password"),
+            criteria: document.querySelector('#password-criteria-scope')
+        });
+        passwordCriteria.checkCriteria();
+    }
+
+EOT;
+
+$this->headScript()
+    ->appendFile('/assets/javascripts/dvsa.js')
+    ->appendScript($inlineScript);
+?>
