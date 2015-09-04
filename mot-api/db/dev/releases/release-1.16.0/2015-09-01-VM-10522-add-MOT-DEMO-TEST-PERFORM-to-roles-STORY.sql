@@ -2,7 +2,7 @@
 # added new permission 'MOT-DEMO-TEST-PERFORM' to a list of roles provided by PO (Chris Price)
 # document with list of these roles is attahced in jira to this ticket
 
-SET @created_by = (SELECT `id` FROM `person` WHERE `username` = 'static data' );
+SET @created_by = (SELECT `id` FROM `person` WHERE `user_reference` = 'Static Data' OR `username` = 'static data');
 
 INSERT INTO `permission` (`name`, `code`, `created_by`) VALUES
   ('MOT demo test perform', 'MOT-DEMO-TEST-PERFORM', @created_by);
