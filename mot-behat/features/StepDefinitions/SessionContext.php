@@ -101,6 +101,7 @@ class SessionContext implements Context
 
     /**
      * @Given /^I am not logged in$/
+     * @Given I am an unregistered user
      */
     public function iAmNotLoggedIn()
     {

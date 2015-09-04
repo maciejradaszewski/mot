@@ -1,5 +1,6 @@
 DoctrineModule
 DoctrineORMModule
+Dvsa\Mot\Api\RegistrationModule
 DvsaDoctrineModule
 DvsaAuthentication
 DvsaAuthorisation

@@ -13,7 +13,7 @@
         "maglnet/magl-markdown": "1.3.0",
         "soflomo/purifier": "0.1.1",
         "slot-purchase/web-frontend": "3.5.*",
-        "dvsa/web-frontend-assets": "0.5.1",
+        "dvsa/web-frontend-assets": "0.5.5",
         "dvsa/dvsa-application-logger": "~1.2.0",
         "dvsa/dvsa-doctrine-module": "~1.1"
     },
@@ -43,6 +43,8 @@
             "Dvsa\\Mot\\Frontend\\": "src",
             "Dvsa\\Mot\\Frontend\\AuthenticationModule\\": "module/AuthenticationModule/src",
             "Dvsa\\Mot\\Frontend\\AuthenticationModuleTest\\": "module/AuthenticationModule/test",
+            "Dvsa\\Mot\\Frontend\\RegistrationModule\\": "module/RegistrationModule/src",
+            "Dvsa\\Mot\\Frontend\\RegistrationModuleTest\\": "module/RegistrationModule/test",
             "Dvsa\\Mot\\FrontendTest\\": "test/src"
         },
         "classmap" : [

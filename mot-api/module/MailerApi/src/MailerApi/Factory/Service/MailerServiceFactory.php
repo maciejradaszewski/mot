@@ -1,5 +1,5 @@
 <?php
-namespace MailerApi\Factory;
+namespace MailerApi\Factory\Service;
 
 use MailerApi\Validator\MailerValidator;
 use DvsaMotApi\Service\UserService;

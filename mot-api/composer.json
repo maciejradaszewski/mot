@@ -13,7 +13,8 @@
         "dvsa/dvsa-logger": "~1.1",
         "dvsa/dvsa-application-logger": "~1.2.0",
         "soflomo/purifier": "0.1.1",
-        "slot-purchase/backend-api": "3.5.*"
+        "slot-purchase/backend-api": "3.5.*",
+        "danielstjules/stringy": "~2.0"
     },
     "autoload" : {
         "psr-0" : {
@@ -46,7 +47,9 @@
             "Api\\Test\\": "test/src",
             "Dvsa\\Mot\\AuditApi\\":  "module/AuditApi/src",
             "Dvsa\\Mot\\AuditApiTest\\": "module/AuditApi/test",
-            "Dvsa\\Mot\\AuditApiIntegrationTest\\": "module/AuditApi/integration-test"
+            "Dvsa\\Mot\\AuditApiIntegrationTest\\": "module/AuditApi/integration-test",
+            "Dvsa\\Mot\\Api\\RegistrationModule\\": "module/RegistrationModule/src",
+            "Dvsa\\Mot\\Api\\RegistrationModuleTest\\": "module/RegistrationModule/test"
         },
         "classmap" : [
             "../mot-common-web-module/Module.php"

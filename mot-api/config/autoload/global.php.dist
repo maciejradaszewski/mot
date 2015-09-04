@@ -1,4 +1,5 @@
 <?php
+
 return [
     'dvsa_authentication' => [
         'openAM'    => [
@@ -21,6 +22,7 @@ return [
             'adapter'                     => 'Zend\Http\Client\Adapter\Socket',
         ],
         'whitelist' => [
+            'Dvsa\Mot\Api\RegistrationModule\Controller\RegistrationController',
             'DvsaMotApi\Controller\Session',
             'AccountApi\Factory\Controller\ValidateUsernameControllerFactory',
             'AccountApi\Factory\Controller\PasswordResetControllerFactory',

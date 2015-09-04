@@ -17,11 +17,13 @@ import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.FinanceAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.cpms.GenerateReportPage;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
+import uk.gov.dvsa.ui.pages.login.LoginPage;
 import uk.gov.dvsa.ui.pages.mot.*;
 import uk.gov.dvsa.ui.pages.mot.retest.ConfirmVehicleRetestPage;
 import uk.gov.dvsa.ui.pages.mot.retest.ReTestResultsEntryPage;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticeCreationPage;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticePage;
+import uk.gov.dvsa.ui.pages.userregistration.CreateAnAccountPage;
 import uk.gov.dvsa.ui.pages.vehicleinformation.VehicleInformationSearchPage;
 import uk.gov.dvsa.ui.pages.vts.ChangeTestingFacilitiesPage;
 import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
@@ -229,6 +231,16 @@ public class PageNavigator {
     public ChangeTestingFacilitiesPage goToChangeTestingFacilitiesPage(User aoUser, String siteId) throws IOException {
         injectOpenAmCookieAndNavigateToPath(aoUser, String.format(ChangeTestingFacilitiesPage.PATH, siteId) );
         return new ChangeTestingFacilitiesPage(driver);
+    }
+
+    public CreateAnAccountPage goToCreateAnAccountPage() throws IOException {
+        driver.navigateToPath(CreateAnAccountPage.PATH);
+
+        return new CreateAnAccountPage(driver);
+    }
+
+    public LoginPage goToLoginPage() throws IOException {
+        return new LoginPage(driver);
     }
 
 }

@@ -26,6 +26,7 @@ use DvsaEntities\Entity\PersonContactType;
 use DvsaEntities\Repository\MessageRepository;
 use DvsaEntities\Repository\MessageTypeRepository;
 use DvsaEntities\Repository\PersonRepository;
+use MailerApi\Logic\AbstractMailerLogic;
 use MailerApi\Service\MailerService;
 use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceManager;
@@ -93,10 +94,10 @@ class TokenServiceTest extends AbstractServiceTestCase
         $this->mockConfig = $serviceManager->get('Config');
         $this->mockConfig[TokenService::CFG_PASSWORD_RESET][TokenService::CFG_PASSWORD_RESET_EXPIRE_TIME]
             = self::CFG_EXPIRE_TIME;
-        $this->mockConfig[TokenService::CFG_MAILER] = [
+        $this->mockConfig[AbstractMailerLogic::CONFIG_KEY] = [
             'sendingAllowed' => true,
             'recipient'   => 'sean.charles@valtech.co.uk',
-            'mot-web-frontend-url'   => 'http://mot-web-frontend.mot.gov.uk',
+            AbstractMailerLogic::CONFIG_KEY_BASE_URL => 'http://mot-web-frontend.mot.gov.uk',
         ];
         $this->mockConfig[TokenService::CFG_HELPDESK] = [
             'name' => 'TEST HELPDESK',
