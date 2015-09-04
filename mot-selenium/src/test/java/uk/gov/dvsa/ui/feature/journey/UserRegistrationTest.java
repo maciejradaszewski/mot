@@ -16,11 +16,6 @@ import static org.hamcrest.core.Is.is;
 
 public class UserRegistrationTest extends BaseTest {
 
-    @BeforeMethod(alwaysRun = true)
-    private void setUp() throws IOException{
-
-    }
-
     @Test(groups = {"BVT", "Regression"}, description = "VM-11472")
     public void createUserAccountSuccessfully() throws IOException {
 
