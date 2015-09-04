@@ -12,7 +12,6 @@ use DvsaCommon\Auth\PermissionInSystem;
 <div class="row">
     <div class="col-sm-6">
         <?php echo $this->partial('dashboard/specialNotice', $specialNotice); ?>
-        <?php if ($dashboard->getHero() !== 'vehicle-examiner'): ?>
             <?php echo $this->partial(
                 'notification/list',
                 [
@@ -21,8 +20,6 @@ use DvsaCommon\Auth\PermissionInSystem;
                 ]
             );
             ?>
-        <?php endif; ?>
-
     </div>
     <div class="col-sm-6">
         <?php if ($dashboard->getHero() === 'vehicle-examiner'): ?>
