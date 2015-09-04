@@ -41,6 +41,7 @@ public class CreateAePage extends Page {
 
     @FindBy(id = "submitAeEdit") private WebElement continueToSummary;
     @FindBy(id = "navigation-link-") private WebElement cancelAndReturnHome;
+    @FindBy(id = "assignedAreaOffice") private WebElement DVSAareaOffice;
 
     public CreateAePage(MotAppDriver driver) {
         super(driver);
@@ -95,6 +96,7 @@ public class CreateAePage extends Page {
     public CreateAePage completeBusinessAndCorrespondenceDetails(boolean useBusinessDetailsForCorrespondence){
         enterBusinessDetails();
         enterBusinessAddress();
+        selectAreaOffice(generateAreaOfficeValue());
 
         if(useBusinessDetailsForCorrespondence){
             selectBusinessDetailsSameAsCorrespondenceDetails(useBusinessDetailsForCorrespondence);
@@ -288,6 +290,17 @@ public class CreateAePage extends Page {
 
     public String getCorrespondenceEmailConfirmAddress() {
         return corrEmailConfirmation.getAttribute("value");
+    }
+
+    private String generateAreaOfficeValue(){
+        int Min=1;
+        int Max =9;
+       return String.valueOf (Min + (int)(Math.random() * ((Max - Min) + 1)));
+    }
+
+    public CreateAePage selectAreaOffice(String areaOfficeValue){
+        FormCompletionHelper.selectFromDropDownByValue(DVSAareaOffice, areaOfficeValue);
+        return this;
     }
 
     public ConfirmNewAeDetailsPage clickContinueToSummary() {

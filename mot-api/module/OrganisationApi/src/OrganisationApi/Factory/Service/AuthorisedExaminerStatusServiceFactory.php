@@ -8,6 +8,7 @@ use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaEntities\Entity\AuthForAeStatus;
 use DvsaEntities\Entity\Organisation;
+use DvsaEntities\Entity\Site;
 use DvsaEventApi\Service\EventService;
 use OrganisationApi\Service\AuthorisedExaminerStatusService;
 use OrganisationApi\Service\Validator\AuthorisedExaminerValidator;
@@ -36,7 +37,8 @@ class AuthorisedExaminerStatusServiceFactory implements FactoryInterface
             $entityManager->getRepository(AuthForAeStatus::class),
             $serviceLocator->get(XssFilter::class),
             new AuthorisedExaminerValidator(),
-            new DateTimeHolder()
+            new DateTimeHolder(),
+            $entityManager->getRepository(Site::class)
         );
     }
 }

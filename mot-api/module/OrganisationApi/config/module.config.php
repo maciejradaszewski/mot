@@ -65,6 +65,16 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'area-offices' => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'       => '/area-offices/list',
+                            'defaults'    => [
+                                'controller' => AuthorisedExaminerStatusControllerFactory::class,
+                                'action' => 'getAreaOffices'
+                            ],
+                        ],
+                    ],
                     'status' => [
                         'type'    => 'Segment',
                         'options' => [

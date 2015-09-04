@@ -19,6 +19,7 @@ class EventDescription extends BaseEnumeration
     const DVSA_ADMINISTRATOR_CREATE_AE = 'Authorised examiner %s %s created by user %s';
     const DVSA_ADMINISTRATOR_CREATE_SITE = 'Site %s %s created by user %s';
     const DVSA_ADMINISTRATOR_UPDATE_SITE = '%s has been updated from %s to %s for Site %s %s by user %s';
+    const DVSA_ADMINISTRATOR_AMEND_AREA_OFFICE = 'Area Office has been updated from %s to %s for Authorised Examiner %s %s by user %s';
     const DVSA_ADMINISTRATOR_UPDATE_AE_STATUS = 'Status has been updated from %s to %s for Authorised Examiner %s %s by user %s';
     const TESTER_QUALIFICATION_STATUS_CHANGE = 'Qualified to test Group %s vehicles following a demonstration test. Recorded by %s';
     const DVSA_ROLE_ASSOCIATION_REMOVE = 'Removed %s role. Recorded by %s';
