@@ -6,6 +6,8 @@ use AccountApi\Service\ClaimService;
 use DvsaCommonApiTest\Controller\AbstractRestfulControllerTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use AccountApi\Controller\ClaimController;
+use Zend\Http\PhpEnvironment\Request;
+use PHPUnit_Framework_MockObject_MockObject as MockObj;
 
 /**
  * Class ClaimControllerTest
@@ -15,13 +17,14 @@ class ClaimControllerTest extends AbstractRestfulControllerTestCase
     CONST PIN = '123456';
     const PERSON_ID = 1;
 
+    /**
+     * @var ClaimService|MockObj
+     */
     private $service;
 
     protected function setUp()
     {
-        $this->service = XMock::of(
-            ClaimService::class
-        );
+        $this->service = XMock::of(ClaimService::class);
 
         $this->setController(new ClaimController($this->service));
 
@@ -33,21 +36,18 @@ class ClaimControllerTest extends AbstractRestfulControllerTestCase
 
     public function testClaimControllerGet()
     {
-        $this->service->expects($this->once())
-            ->method('generateClaimAccountData')
-            ->willReturn(self::PIN);
+        $this->mockMethod($this->service, 'generateClaimAccountData', $this->once(), self::PIN);
 
         $result = $this->getResultForAction('get', null, ['id' => self::PERSON_ID]);
+
         $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, ['data' => self::PIN], $result);
     }
 
     public function testClaimControllerUpdate()
     {
-        $this->service->expects($this->once())
-            ->method('save')
-            ->willReturn(true);
+        $this->mockMethod($this->service, 'save', $this->once(), true);
 
-        $result = $this->getResultForAction('put', null, ['id' => self::PERSON_ID], null, []);
+        $result = $this->getResultForAction(Request::METHOD_PUT, null, ['id' => self::PERSON_ID], null, []);
 
         $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, ['data' => true], $result);
     }

@@ -82,6 +82,20 @@ class AuthorisedExaminerViewAuthorisation
         );
     }
 
+    public function canCreateSiteAssociation()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_SITE_LINK, $this->authorisedExaminerId
+        );
+    }
+
+    public function canRemoveSiteAssociation()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_SITE_UNLINK, $this->authorisedExaminerId
+        );
+    }
+
     public function canViewVts($id)
     {
         return $this->authorisationService->isGrantedAtSite(PermissionAtSite::VEHICLE_TESTING_STATION_READ, $id);

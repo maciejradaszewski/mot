@@ -5,6 +5,7 @@ namespace DvsaEntities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use DvsaCommon\Enum\AuthorisationForTestingMotAtSiteStatusCode;
+use DvsaCommon\Enum\OrganisationSiteStatusCode;
 use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
@@ -215,6 +216,13 @@ class Site extends Entity
     private $nonWorkingDayCountry;
 
     /**
+     * @var OrganisationSiteMap[]
+     *
+     * @ORM\OneToMany(targetEntity="OrganisationSiteMap", mappedBy="site", fetch="LAZY")
+     */
+    private $associationsWithAe;
+
+    /**
      * @ORM\ManyToOne(targetEntity="SiteStatus")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="site_status_id", referencedColumnName="id")
@@ -282,6 +290,7 @@ class Site extends Entity
         $this->siteComments = new ArrayCollection();
         $this->contacts = new ArrayCollection();
         $this->authorisationsForTestingMotAtSite = new ArrayCollection();
+        $this->associationsWithAe = new ArrayCollection();
     }
 
     /**
@@ -813,6 +822,23 @@ class Site extends Entity
     {
         $this->nonWorkingDayCountry = $nonWorkingDayCountry;
         return $this;
+    }
+
+    public function getAssociationWithAe()
+    {
+        return $this->associationsWithAe;
+    }
+
+    public function getActiveAssociationWithAe()
+    {
+        $maps = ArrayUtils::filter(
+            $this->getAssociationWithAe(),
+            function(OrganisationSiteMap $map) {
+                return $map->getStatus()->getCode() === OrganisationSiteStatusCode::ACTIVE;
+            }
+        );
+
+        return current($maps);
     }
 
     /**

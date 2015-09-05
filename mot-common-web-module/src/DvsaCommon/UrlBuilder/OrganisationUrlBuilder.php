@@ -13,8 +13,6 @@ class OrganisationUrlBuilder extends UrlBuilder
     const USAGE = '/slot-usage';
     const USAGE_PERIOD_DATA = '/period-data';
 
-    const SITES = '/site';
-
     protected $routesStructure
         = [
             self::ORGANISATION => [
@@ -22,7 +20,6 @@ class OrganisationUrlBuilder extends UrlBuilder
                 self::USAGE    => [
                     self::USAGE_PERIOD_DATA => '',
                 ],
-                self::SITES    => '',
             ],
         ];
 
@@ -46,15 +43,5 @@ class OrganisationUrlBuilder extends UrlBuilder
     public function periodData()
     {
         return $this->appendRoutesAndParams(self::USAGE_PERIOD_DATA);
-    }
-
-    /**
-     * @param integer $orgId
-     *
-     * @return $this
-     */
-    public static function sites($orgId)
-    {
-        return self::organisationById($orgId)->appendRoutesAndParams(self::SITES);
     }
 }

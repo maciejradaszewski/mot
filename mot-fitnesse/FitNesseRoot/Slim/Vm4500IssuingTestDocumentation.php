@@ -52,6 +52,8 @@ class Vm4500IssuingTestDocumentation
             return 'NOT ACCESS';
         } elseif ($statusCode === 404) {
             return 'TEST NOT FOUND';
+        } elseif ($statusCode === 503) {
+            return 'JASPER IS DOWN';
         }
 
         return 0 === strpos((string) $statusCode, '2') ?: 'ERROR '.$statusCode;

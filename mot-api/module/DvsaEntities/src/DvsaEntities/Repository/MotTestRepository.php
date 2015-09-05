@@ -10,6 +10,7 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DvsaCommon\Constants\SearchParamConst;
 use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
+use DvsaCommon\Enum\MotTestStatusCode;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommonApi\Model\SearchParam;
@@ -283,6 +284,19 @@ class MotTestRepository extends AbstractMutableRepository
             ->getQuery();
 
         return $query->getResult();
+    }
+
+    public function countInProgressTestsForVts($vtsId)
+    {
+        $qb = $this->createQueryBuilder("mt")
+            ->select('COUNT(mt.id) AS cnt')
+            ->innerJoin("mt.status", 'ts')
+            ->where("ts.code = :STATUS")
+            ->andWhere("mt.vehicleTestingStation = :VTS_ID")
+            ->setParameter(":STATUS", MotTestStatusCode::ACTIVE)
+            ->setParameter(":VTS_ID", $vtsId);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**

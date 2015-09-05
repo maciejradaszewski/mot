@@ -10,6 +10,7 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use DvsaCommon\Enum\AuthorisationForTestingMotAtSiteStatusCode;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommonApi\Service\Exception\NotFoundException;
@@ -88,7 +89,7 @@ class SiteRepository extends AbstractMutableRepository
         $site = $this->find($id);
 
         if ($site === null) {
-            throw new NotFoundException("Site not found");
+            throw new NotFoundException("Site");
         }
 
         return $site;
@@ -128,7 +129,7 @@ class SiteRepository extends AbstractMutableRepository
     {
         $result = $this->findBy(['siteNumber' => $siteNumber]);
         if (empty($result)) {
-            throw new NotFoundException('VehicleTestingStation', $siteNumber);
+            throw new NotFoundException('Vehicle Testing Station with site number', $siteNumber);
         }
 
         return $result[0];
@@ -620,5 +621,21 @@ class SiteRepository extends AbstractMutableRepository
         }
 
         return $number;
+    }
+
+    public function getApprovedUnlinkedSite()
+    {
+        $rsm = new Query\ResultSetMapping();
+        $rsm->addScalarResult('site_number', 'site_number');
+
+        $sql = "SELECT site.site_number
+            FROM site
+            WHERE site.organisation_id IS NULL";
+
+        $query = $this->_em
+            ->createNativeQuery($sql, $rsm)
+            ->setParameter(':APPROVED', AuthorisationForTestingMotAtSiteStatusCode::APPROVED);
+
+        return $query->getResult(AbstractQuery::HYDRATE_SCALAR);
     }
 }

@@ -51,14 +51,12 @@ class OrganisationMapper extends DtoMapper
     public function update($id, OrganisationDto $dto)
     {
         $url = AuthorisedExaminerUrlBuilder::of($id);
-
         return $this->put($url, DtoHydrator::dtoToJson($dto));
     }
 
     public function create(OrganisationDto $dto)
     {
         $url = AuthorisedExaminerUrlBuilder::of();
-
         return $this->post($url, DtoHydrator::dtoToJson($dto));
     }
 

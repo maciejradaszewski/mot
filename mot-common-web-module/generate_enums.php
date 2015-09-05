@@ -56,6 +56,8 @@ $inputArray = [
     enum('VehicleClassGroupCode', 'vehicle_class_group', 'name', 'code'),
     enum('WeightSourceCode', 'weight_source_lookup', 'name', 'code'),
     enum('MotTestStatusId', 'mot_test_status', 'name', 'id'),
+    enum('OrganisationSiteStatusCode', 'organisation_site_status', 'name', 'code'),
+    enum('MotTestStatusCode', 'mot_test_status', 'name', 'code'),
 
     // Site Statuses
     enum('SiteStatusCode', 'site_status_lookup', 'name', 'code'),
@@ -67,6 +69,7 @@ $inputArray = [
     enum('MotTestStatusName', 'mot_test_status', 'name', 'name'),
     enum('BusinessRoleName', 'person_system_role', 'name', 'name'),
     enum('ReasonForRejectionTypeName', 'reason_for_rejection_type', 'name', 'name'),
+    enum('OrganisationSiteStatusName', 'organisation_site_status', 'name', 'name'),
 
     // Enums which has values that are database IDs, ideally usages of these would be replaced with the 'code' column.
     enum('CountryOfRegistrationId', 'country_of_registration_lookup', 'name', 'id'),

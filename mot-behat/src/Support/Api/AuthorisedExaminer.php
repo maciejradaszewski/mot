@@ -20,8 +20,9 @@ use DvsaCommon\Utility\DtoHydrator;
 class AuthorisedExaminer extends MotApi
 {
     const AE_NAME = 'some ae name';
+    const POSITION = '/organisation/{organisation_id}/position';
     const POSITION_DELETE = '/organisation/{organisation_id}/position/{position_id}';
-
+    
     public function search($token, $aeNumber)
     {
         return $this->client->request(
@@ -163,6 +164,18 @@ class AuthorisedExaminer extends MotApi
             OrganisationUrlBuilder::position($orgId),
             $data
         );
+    }
+
+    public function linkAuthorisedExaminerWithSite($token, $aeId, $siteName)
+    {
+        $linkUrl = AuthorisedExaminerUrlBuilder::siteLink($aeId);
+        $request = new Request(
+            'POST',
+            $linkUrl,
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer ' . $token],
+            json_encode(['siteNumber' => $siteName])
+        );
+        return $this->client->request($request);
     }
 
     public function denominate($orgId, $positionId, $token)

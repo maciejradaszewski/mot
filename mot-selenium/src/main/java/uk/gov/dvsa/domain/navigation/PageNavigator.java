@@ -25,6 +25,7 @@ import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticeCreationPage;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticePage;
 import uk.gov.dvsa.ui.pages.userregistration.CreateAnAccountPage;
 import uk.gov.dvsa.ui.pages.vehicleinformation.VehicleInformationSearchPage;
+import uk.gov.dvsa.ui.pages.vts.AssociateASitePage;
 import uk.gov.dvsa.ui.pages.vts.ChangeTestingFacilitiesPage;
 import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
 
@@ -171,6 +172,11 @@ public class PageNavigator {
         return new FinanceAuthorisedExaminerViewPage(driver);
     }
 
+    public AuthorisedExaminerViewPage goToAreaOfficeAuthorisedExaminerPage(User user, String aeId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(AreaOfficerAuthorisedExaminerViewPage.PATH, aeId));
+        return new AreaOfficerAuthorisedExaminerViewPage(driver);
+    }
+
     public AuthorisedExaminerTestLogPage gotoAETestLogPage(User user, String aeId) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, String.format(AuthorisedExaminerTestLogPage.PATH, aeId));
 
@@ -232,6 +238,11 @@ public class PageNavigator {
         new VehicleSearchPage(driver).searchVehicle(vehicle).selectVehicle();
 
         return new DuplicateReplacementCertificatePage(driver);
+    }
+
+    public AssociateASitePage goToAssociateASitePage(User user, String aeId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(AssociateASitePage.PATH, aeId));
+        return new AssociateASitePage(driver);
     }
 
     public ChangeTestingFacilitiesPage goToChangeTestingFacilitiesPage(User aoUser, String siteId) throws IOException {

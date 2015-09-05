@@ -185,8 +185,14 @@ abstract class AbstractRestfulControllerTestCase extends BaseRestfulControllerTe
      *
      * @return HttpResponse|\Zend\Stdlib\ResponseInterface
      */
-    public function getResultForAction($method, $action = null, $routeParams = [], $queryParams = [], $postParams = [])
-    {
+    public function getResultForAction(
+        $method,
+        $action = null,
+        $routeParams = [],
+        $queryParams = [],
+        $postParams = [],
+        $putParams = []
+    ) {
         if ($method) {
             $this->request->setMethod($method);
         }
@@ -197,21 +203,23 @@ abstract class AbstractRestfulControllerTestCase extends BaseRestfulControllerTe
 
         //  --  set route params    --
         if (!empty($routeParams) && is_array($routeParams)) {
-            if ($method === 'put') {
-                $this->routeMatch->setParam(key($routeParams), current($routeParams));
-
-                next($routeParams);
-                $value = current($routeParams);
-
-                if (!empty($value)) {
-                    $this->request->getHeaders()->addHeader(ContentType::fromString("content-type: application/json"));
-                    $this->request->setContent(json_encode(current($routeParams)));
+            $content = null;
+            if (strtoupper($method) === Request::METHOD_PUT) {
+                if (!empty($putParams)) {
+                    $content = $putParams;
+                } elseif (count($routeParams) > 1) {
+                    $content = end($routeParams);
+                    array_pop($routeParams);
                 }
+            }
 
-            } else {
-                foreach ($routeParams as $key => $value) {
-                    $this->routeMatch->setParam($key, $value);
-                }
+            foreach ($routeParams as $key => $value) {
+                $this->routeMatch->setParam($key, $value);
+            }
+
+            if (!empty($content)) {
+                $this->request->getHeaders()->addHeader(ContentType::fromString("content-type: application/json"));
+                $this->request->setContent(json_encode($content));
             }
         }
 

@@ -11,6 +11,7 @@ use DvsaEntities\Entity\Notification;
 use DvsaEntities\Entity\NotificationField;
 use DvsaEntities\Entity\NotificationTemplate;
 use DvsaEntities\Entity\Person;
+use NotificationApi\Dto\Notification as NotificationDto;
 use NotificationApi\Service\BusinessLogic\AbstractNotificationActionHandler;
 use NotificationApi\Service\Validator\NotificationValidator;
 use Zend\ServiceManager\ServiceManager;
@@ -49,6 +50,10 @@ class NotificationService extends AbstractService
      */
     public function add($data)
     {
+        if ($data instanceof NotificationDto) {
+            $data = $data->toArray();
+        }
+
         $this->validator->validate($data);
         /** @var $person Person */
         $person = $this->findOrThrowException(

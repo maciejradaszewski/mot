@@ -3,6 +3,7 @@
 namespace DvsaCommon\Dto\Organisation;
 
 use DvsaCommon\Dto\AbstractDataTransferObject;
+use DvsaCommon\Dto\CommonTrait\CommonIdentityDtoTrait;
 use DvsaCommon\Dto\Contact\ContactDto;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
@@ -14,7 +15,8 @@ use DvsaCommon\Utility\ArrayUtils;
  */
 class OrganisationDto extends AbstractDataTransferObject
 {
-    private $id;
+    use CommonIdentityDtoTrait;
+
     private $name;
     private $tradingAs;
     private $registeredCompanyNumber;
@@ -76,22 +78,6 @@ class OrganisationDto extends AbstractDataTransferObject
     public function getTradingAs()
     {
         return $this->tradingAs;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return OrganisationDto
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

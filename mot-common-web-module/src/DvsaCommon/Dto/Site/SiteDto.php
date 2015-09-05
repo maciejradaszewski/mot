@@ -7,6 +7,7 @@ use DvsaCommon\Dto\Common\CommentDto;
 use DvsaCommon\Dto\CommonTrait\CommonIdentityDtoTrait;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\SiteStatusCode;
+use DvsaCommon\Dto\Organisation\OrganisationSiteLinkDto;
 use DvsaCommon\Utility\ArrayUtils;
 
 /**
@@ -48,13 +49,17 @@ class SiteDto extends AbstractDataTransferObject
     /** @var  String */
     private $typeCode;
 
+    /**
+     * @var OrganisationSiteLinkDto
+     */
+    private $linkWithAe;
+    
     /** @var  string */
     private $status;
 
     /** @var string  */
     private $statusChangedOn;
-
-
+    
     public function getSiteNumber()
     {
         return $this->siteNumber;
@@ -264,6 +269,25 @@ class SiteDto extends AbstractDataTransferObject
     public function setType($typeCode)
     {
         $this->typeCode = $typeCode;
+        return $this;
+    }
+
+    /**
+     * @return OrganisationSiteLinkDto
+     */
+    public function getLinkWithAe()
+    {
+        return $this->linkWithAe;
+    }
+
+    /**
+     * @param OrganisationSiteLinkDto $linkToAe
+     *
+     * @return $this
+     */
+    public function setLinkWithAe($linkToAe)
+    {
+        $this->linkWithAe = $linkToAe;
         return $this;
     }
 
