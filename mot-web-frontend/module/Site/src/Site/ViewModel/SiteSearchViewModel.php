@@ -364,8 +364,8 @@ class SiteSearchViewModel extends AbstractFormModel
         if (empty($this->getSiteNumber())
             && empty($this->getSiteName())
             && empty($this->getSiteTown())
-            && empty($this->getSitePostcode())) {
-
+            && empty($this->getSitePostcode())
+        ) {
             if (empty($this->getSiteVehicleClass())) {
                 $flashMessenger->addErrorMessage(self::ONE_FIELD_REQUIRED);
             } else {

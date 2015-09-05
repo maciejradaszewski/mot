@@ -24,6 +24,10 @@ class AuthorisedExaminerUrlBuilder extends AbstractUrlBuilder
 
     const AUTHORISED_EXAMINER_NUMBER = '/number[/:number]';
 
+    const SITE = '/site[/:siteNumber]';
+    const SITE_LINK = '/link[/:linkId]';
+    const SITE_UNLINKED = '/authorised';
+
     protected $routesStructure
         = [
             self::AUTHORISED_EXAMINER =>
@@ -37,7 +41,10 @@ class AuthorisedExaminerUrlBuilder extends AbstractUrlBuilder
                     self::MOT_TEST_LOG => [
                         self::MOT_TEST_LOG_SUMMARY => '',
                     ],
-                    self::AUTHORISED_EXAMINER_NUMBER => '',
+                    self::AUTHORISED_EXAMINER_NUMBER    => '',
+                    self::SITE                          => [
+                        self::SITE_LINK   => '',
+                    ]
                 ],
         ];
 
@@ -120,6 +127,19 @@ class AuthorisedExaminerUrlBuilder extends AbstractUrlBuilder
             $this->routeParam('number', $number);
         }
         return $this;
+    }
+
+    public static function site($aeId = null)
+    {
+        return self::of($aeId)
+            ->appendRoutesAndParams(self::SITE);
+    }
+
+    public static function siteLink($aeId = null, $linkId = null)
+    {
+        return self::site($aeId)
+            ->appendRoutesAndParams(self::SITE_LINK)
+            ->routeParam('linkId', $linkId);
     }
 
     public static function status($id)

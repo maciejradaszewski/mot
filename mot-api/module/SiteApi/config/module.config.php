@@ -15,6 +15,7 @@ use SiteApi\Factory\Controller\SiteDetailsControllerFactory;
 use SiteApi\Factory\Controller\SiteSearchControllerFactory;
 use SiteApi\Controller\SiteSearchController;
 use SiteApi\Factory\Controller\SiteControllerFactory;
+use SiteApi\Factory\Controller\MotTestInProgressControllerFactory;
 use SiteApi\Controller\SiteTestingFacilitiesController;
 use SiteApi\Factory\Controller\SiteTestingFacilitiesControllerFactory;
 use SiteApi\Controller\SiteDetailsController;
@@ -30,7 +31,6 @@ return [
             EquipmentController::class                => EquipmentController::class,
             SiteTestingDailyScheduleController::class => SiteTestingDailyScheduleController::class,
             DefaultBrakeTestsController::class        => DefaultBrakeTestsController::class,
-            MotTestInProgressController::class        => MotTestInProgressController::class,
             SiteContactController::class              => SiteContactController::class,
             SitePositionValidateController::class     => SitePositionValidateController::class,
         ],
@@ -39,6 +39,7 @@ return [
             SiteController::class              => SiteControllerFactory::class,
             SiteTestingFacilitiesController::class => SiteTestingFacilitiesControllerFactory::class,
             SiteDetailsController::class => SiteDetailsControllerFactory::class,
+            MotTestInProgressController::class => MotTestInProgressControllerFactory::class,
         ],
     ],
     'router'      => [
@@ -182,7 +183,20 @@ return [
                             'defaults'    => [
                                 'controller' => MotTestInProgressController::class,
                             ],
-                        ]
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'update' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route' => '/count',
+                                    'defaults' => [
+                                        'controller' => MotTestInProgressController::class,
+                                        'action'     => 'count',
+                                    ],
+                                ],
+                            ],
+                        ],
                     ],
                     'contact'      => [
                         'type'          => 'Segment',

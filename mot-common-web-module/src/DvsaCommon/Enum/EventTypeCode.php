@@ -56,6 +56,8 @@ class EventTypeCode
     const DVSA_ADMINISTRATOR_CREATE_SITE = 'CS';
     const DVSA_ADMINISTRATOR_UPDATE_SITE = 'US';
     const UPDATE_AE = 'UAE';
+    const UNLINK_AE_SITE = 'AEULS';
+    const DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE = 'LAES';
 
     /**
      * @return array of values for the type EventTypeCode
@@ -109,6 +111,8 @@ class EventTypeCode
             self::DVSA_ADMINISTRATOR_CREATE_SITE,
             self::DVSA_ADMINISTRATOR_UPDATE_SITE,
             self::UPDATE_AE,
+            self::UNLINK_AE_SITE,
+            self::DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE,
         ];
     }
 

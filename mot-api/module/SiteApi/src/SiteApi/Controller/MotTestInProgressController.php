@@ -13,19 +13,23 @@ use SiteApi\Service\MotTestInProgressService;
  */
 class MotTestInProgressController extends AbstractDvsaRestfulController
 {
+    /** @var MotTestInProgressService */
+    protected $service;
+
+    public function __construct(
+        MotTestInProgressService $service
+    ) {
+        $this->service = $service;
+    }
 
     public function get($siteId)
     {
-        $service = $this->getMotTestInProgressService();
-
-        return ApiResponse::jsonOk($service->getAllForSite($siteId));
+        return ApiResponse::jsonOk($this->service->getAllForSite($siteId));
     }
 
-    /**
-     * @return MotTestInProgressService
-     */
-    private function getMotTestInProgressService()
+    public function countAction()
     {
-        return $this->getServiceLocator()->get(MotTestInProgressService::class);
+        $siteId = $this->params('id');
+        return ApiResponse::jsonOk($this->service->getCountForSite($siteId));
     }
 }

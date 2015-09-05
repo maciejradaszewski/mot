@@ -12,7 +12,7 @@ class AeFormViewModel
     private $form;
 
     private $cancelUrl;
-
+    
     /**
      * @return AbstractFormModel
      */
@@ -22,13 +22,13 @@ class AeFormViewModel
     }
 
     /**
-     * @param AbstractFormModel $dto
+     * @param AbstractFormModel $form
      *
      * @return $this
      */
-    public function setForm($dto = null)
+    public function setForm(AbstractFormModel $form = null)
     {
-        $this->form = $dto;
+        $this->form = $form;
         return $this;
     }
 

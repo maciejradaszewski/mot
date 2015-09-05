@@ -21,8 +21,13 @@ class EventDescription extends BaseEnumeration
     const DVSA_ADMINISTRATOR_UPDATE_SITE = '%s has been updated from %s to %s for Site %s %s by user %s';
     const DVSA_ADMINISTRATOR_AMEND_AREA_OFFICE = 'Area Office has been updated from %s to %s for Authorised Examiner %s %s by user %s';
     const DVSA_ADMINISTRATOR_UPDATE_AE_STATUS = 'Status has been updated from %s to %s for Authorised Examiner %s %s by user %s';
-    const TESTER_QUALIFICATION_STATUS_CHANGE = 'Qualified to test Group %s vehicles following a demonstration test. Recorded by %s';
-    const DVSA_ROLE_ASSOCIATION_REMOVE = 'Removed %s role. Recorded by %s';
+    const TESTER_QUALIFICATION_STATUS_CHANGE =
+        'Qualified to test Group %s vehicles following a demonstration test. Recorded by %s';
+
     const DVSA_ROLE_ASSOCIATION_ASSIGN = 'Assigned %s role. Recorded by %s';
+    const DVSA_ROLE_ASSOCIATION_REMOVE = 'Removed %s role. Recorded by %s';
     const ROLE_NOMINATION_ACCEPT = '%s role for %s - %s added to %s %s';
+
+    const DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE = 'Site %s %s has been linked to AE %s %s by %s';
+    const AE_UNLINK_SITE = 'Site %s %s has been unlinked from AE %s %s by %s';
 }

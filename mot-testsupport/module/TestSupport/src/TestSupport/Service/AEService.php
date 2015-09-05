@@ -8,6 +8,7 @@ use DvsaCommon\Dto\Contact\PhoneDto;
 use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode;
 use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaCommon\Enum\PhoneContactTypeCode;
@@ -60,6 +61,7 @@ class AEService
         );
 
         $aeId = $result['data']['id'];
+        $this->setSiteAeStatusApproved($result['data']['aeRef']);
         $this->addSlotsToAe($aeId, ArrayUtils::tryGet($data, 'slots', 2000));
 
         return TestDataResponseHelper::jsonOk(
@@ -116,6 +118,31 @@ class AEService
         $this->em->getConnection()->executeUpdate(
             "UPDATE organisation SET slots_balance = :slots WHERE id = :id",
             ["slots" => $slots, "id" => $aeId]
+        );
+
+        $this->em->flush();
+    }
+
+    /**
+     * For a site we create, this will ensure the AE that manages it has status approved
+     * so that a link site-to-ae request will succeed.
+     *
+     * @param string $aeNumber
+     */
+    public function setSiteAeStatusApproved($aeNumber)
+    {
+        $this->em->getConnection()->executeUpdate(
+            "
+            UPDATE auth_for_ae
+            SET
+                status_id = (SELECT id FROM auth_for_ae_status WHERE code=:STATUS)
+            WHERE
+                ae_ref=:AE_NUMBER
+            ",
+            [
+                'STATUS'    => AuthorisationForAuthorisedExaminerStatusCode::APPROVED,
+                "AE_NUMBER" => $aeNumber,
+            ]
         );
 
         $this->em->flush();

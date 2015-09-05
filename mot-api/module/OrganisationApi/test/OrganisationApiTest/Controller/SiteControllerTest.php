@@ -3,10 +3,10 @@
 namespace OrganisationApiTest\Controller;
 
 use DvsaCommonApiTest\Controller\AbstractRestfulControllerTestCase;
-use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
 use OrganisationApi\Controller\SiteController;
 use OrganisationApi\Service\SiteService;
+use PHPUnit_Framework_MockObject_MockObject as MockObj;
 
 /**
  * Class SiteControllerTest
@@ -15,14 +15,24 @@ use OrganisationApi\Service\SiteService;
  */
 class SiteControllerTest extends AbstractRestfulControllerTestCase
 {
-    private $organisationId = 1;
-    private $siteServiceMock;
+    const AE_ID = 111;
+
+    /**
+     * @var SiteService|MockObj
+     */
+    private $mockSiteSrv;
+    /**
+     * @var SiteController
+     */
+    protected $controller;
 
     protected function setUp()
     {
-        $this->controller      = new SiteController();
-        $this->siteServiceMock = $this->getSiteServiceMock();
-        $this->setupServiceManager();
+        $this->mockSiteSrv = $this->getSiteServiceMock();
+
+        $this->setController(
+            new SiteController($this->mockSiteSrv)
+        );
 
         parent::setUp();
     }
@@ -30,33 +40,24 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
     public function testGetListWithOrganisationIdCanBeAccessed()
     {
         //given
-        $this->routeMatch->setParam('organisationId', $this->organisationId);
+        $this->routeMatch->setParam('id', self::AE_ID);
 
         //when
         $result = $this->controller->getList();
 
         //then
-        $this->assertInstanceOf("Zend\View\Model\JsonModel", $result);
+        $this->assertInstanceOf(\Zend\View\Model\JsonModel::class, $result);
     }
 
     private function getSiteServiceMock()
     {
-        $siteServiceMock = XMock::of(SiteService::class);
+        $this->mockSiteSrv = XMock::of(SiteService::class);
 
-        $siteServiceMock->expects($this->once())
+        $this->mockSiteSrv->expects($this->once())
             ->method('getListForOrganisation')
-            ->with($this->organisationId)
+            ->with(self::AE_ID)
             ->will($this->returnValue([]));
 
-        return $siteServiceMock;
-    }
-
-    private function setupServiceManager()
-    {
-        $serviceManager = Bootstrap::getServiceManager();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService(SiteService::class, $this->siteServiceMock);
-
-        $this->controller->setServiceLocator($serviceManager);
+        return $this->mockSiteSrv;
     }
 }

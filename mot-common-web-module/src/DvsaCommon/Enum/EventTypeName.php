@@ -55,6 +55,8 @@ class EventTypeName
     const DVSA_ADMINISTRATOR_CREATE_AE = 'DVSA Administrator Create AE';
     const DVSA_ADMINISTRATOR_CREATE_SITE = 'DVSA Administrator Create Site';
     const UPDATE_AE = 'Update AE';
+    const UNLINK_AE_SITE = 'Unlink AE/Site';
+    const DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE = 'DVSA Administrator link a site to an AE';
 
     /**
      * @return array of values for the type EventTypeName
@@ -107,6 +109,8 @@ class EventTypeName
             self::DVSA_ADMINISTRATOR_CREATE_AE,
             self::DVSA_ADMINISTRATOR_CREATE_SITE,
             self::UPDATE_AE,
+            self::UNLINK_AE_SITE,
+            self::DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE,
         ];
     }
 

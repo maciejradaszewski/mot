@@ -24,7 +24,6 @@ class OrganisationUrlBuilderTest extends PHPUnit_Framework_TestCase
             OrganisationUrlBuilder::position(self::ORG_ID, $positionId),
             $base . '/position/' . $positionId
         );
-        $this->checkUrl(OrganisationUrlBuilder::sites(self::ORG_ID), $base . '/site');
 
         $urlBuilder = OrganisationUrlBuilder::organisationById(self::ORG_ID);
         $this->checkUrl($urlBuilder->usage(), $base . '/slot-usage');

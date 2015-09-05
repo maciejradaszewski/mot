@@ -5,8 +5,11 @@ use OrganisationApi\Controller\OrganisationPositionController;
 use OrganisationApi\Controller\OrganisationRoleController;
 use OrganisationApi\Controller\OrganisationSlotUsageController;
 use OrganisationApi\Controller\SiteController;
+use OrganisationApi\Controller\SiteLinkController;
 use OrganisationApi\Factory\Controller\MotTestLogControllerFactory;
 use OrganisationApi\Factory\Controller\AuthorisedExaminerControllerFactory;
+use OrganisationApi\Factory\Controller\SiteControllerFactory;
+use OrganisationApi\Factory\Controller\SiteLinkControllerFactory;
 use OrganisationApi\Factory\Controller\AuthorisedExaminerStatusControllerFactory;
 
 return [
@@ -16,9 +19,10 @@ return [
             AuthorisedExaminerPrincipalController::class => AuthorisedExaminerPrincipalController::class,
             OrganisationPositionController::class        => OrganisationPositionController::class,
             OrganisationRoleController::class            => OrganisationRoleController::class,
-            SiteController::class                        => SiteController::class,
         ],
         'factories' => [
+            SiteController::class                      => SiteControllerFactory::class,
+            SiteLinkController::class                  => SiteLinkControllerFactory::class,
             MotTestLogControllerFactory::class         => MotTestLogControllerFactory::class,
             AuthorisedExaminerControllerFactory::class => AuthorisedExaminerControllerFactory::class,
             AuthorisedExaminerStatusControllerFactory::class => AuthorisedExaminerStatusControllerFactory::class,
@@ -117,6 +121,30 @@ return [
                             ],
                         ],
                     ],
+                    'site' => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'       => '/site',
+                            'defaults'    => [
+                                'controller' => SiteController::class,
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'link' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/link[/:linkId]',
+                                    'constraints' => [
+                                        'linkId' => '\d+',
+                                    ],
+                                    'defaults'    => [
+                                        'controller' => SiteLinkController::class,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'authorised-examiner-principal'        => [
@@ -154,7 +182,7 @@ return [
                     ],
                     'defaults'    => [
                         'controller' => OrganisationPositionController::class,
-                    ],
+                    ]
                 ],
             ],
             'organisation-role'                    => [
@@ -167,18 +195,6 @@ return [
                     ],
                     'defaults'    => [
                         'controller' => OrganisationRoleController::class,
-                    ],
-                ],
-            ],
-            'organisation-vehicle-testing-station' => [
-                'type'    => 'Segment',
-                'options' => [
-                    'route'       => '/organisation/:organisationId/site',
-                    'constraints' => [
-                        'organisationId' => '[0-9]+',
-                    ],
-                    'defaults'    => [
-                        'controller' => SiteController::class,
                     ],
                 ],
             ],
