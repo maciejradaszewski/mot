@@ -107,7 +107,7 @@ public class VehicleTestingStationOverviewTest extends BaseTest {
         brakeTestConfigurationPage.cancel()
                 .addMotTest("12000", BrakeTestConfiguration4.brakeTestConfigClass4_CASE1(),
                         BrakeTestResults4.allPass(), null, null, null, null).createCertificate()
-                .clickFinishPrint(Text.TEXT_PASSCODE).clickDoneButton();
+                .clickFinishPrint(Text.TEXT_PASSCODE).clickBackToHomeLink();
     }
 
     private OpeningHours testDataForOpeningHoursTest(Days day) {

@@ -86,6 +86,6 @@ public class BrakeTestEndToEndTest extends BaseTest {
         assertNotNull(summaryScreen.getMotTestNumber());
 
         //Click finish and print
-        summaryScreen.enterNewPasscode(Text.TEXT_PASSCODE).clickFinishPrint().clickDoneButton();
+        summaryScreen.enterNewPasscode(Text.TEXT_PASSCODE).clickFinishPrint().clickBackToHomeLink();
     }
 }

@@ -141,6 +141,12 @@ public class PageNavigator {
         return new HomePage(driver);
     }
 
+    public MotTestCertificatesPage gotoMotTestCertificatesPage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, MotTestCertificatesPage.path);
+
+        return new MotTestCertificatesPage(driver);
+    }
+
     public ProfilePage gotoProfilePage(User user) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, ProfilePage.path);
 

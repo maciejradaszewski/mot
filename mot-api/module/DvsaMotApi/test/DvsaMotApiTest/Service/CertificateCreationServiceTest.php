@@ -15,7 +15,6 @@ use DvsaDocument\Service\Document\DocumentService;
 use DvsaMotApi\Service\CertificateCreationService;
 use DvsaMotApi\Service\MotTestService;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
-use Zend\Authentication\AuthenticationService;
 
 /**
  * Class CertificateCreationServiceTest
@@ -33,8 +32,6 @@ class CertificateCreationServiceTest extends AbstractServiceTestCase
 
     /** @var  DataCatalogService */
     private $catalog;
-    /** @var  AuthenticationService */
-    private $mockAuth;
 
     public function setup()
     {
@@ -46,15 +43,12 @@ class CertificateCreationServiceTest extends AbstractServiceTestCase
             MotTestService::class
         );
 
-        $this->mockAuth = $this->getMockWithDisabledConstructor(AuthenticationService::class);
-
         $this->catalog = XMock::of(DataCatalogService::class);
 
         $this->service = new CertificateCreationService(
             $this->mockMotService,
             $this->mockDocumentService,
-            $this->catalog,
-            $this->mockAuth
+            $this->catalog
         );
     }
 
@@ -258,28 +252,28 @@ class CertificateCreationServiceTest extends AbstractServiceTestCase
             ->setPrsMotTestNumber($prsTestId);
 
         $expectedPrsTestData = (new MotTestDto())
-                ->setId($prsTestId)
-                ->setDocument($passId)
-                ->setExpiryDate('2015-01-01')
-                ->setIssuedDate('2014-01-01')
-                ->setVehicle(
-                    (new VehicleDto())
-                        ->setVehicleClass((new VehicleClassDto())->setCode(4))
-                )
-                ->setTester(
-                    (new PersonDto())
-                        ->setDisplayName('Testy McTest')
-                        ->setFirstName('Testy')
-                        ->setFamilyName('McTest')
-                )
-                ->setStatus('PASSED')
-                ->setVehicleTestingStation(
-                    [
-                        'name'       => 'Montys Mots',
-                        'siteNumber' => 'asdfasda',
-                        'primaryTelephone' => '011712013243',
-                    ]
-                );
+            ->setId($prsTestId)
+            ->setDocument($passId)
+            ->setExpiryDate('2015-01-01')
+            ->setIssuedDate('2014-01-01')
+            ->setVehicle(
+                (new VehicleDto())
+                    ->setVehicleClass((new VehicleClassDto())->setCode(4))
+            )
+            ->setTester(
+                (new PersonDto())
+                    ->setDisplayName('Testy McTest')
+                    ->setFirstName('Testy')
+                    ->setFamilyName('McTest')
+            )
+            ->setStatus('PASSED')
+            ->setVehicleTestingStation(
+                [
+                    'name'       => 'Montys Mots',
+                    'siteNumber' => 'asdfasda',
+                    'primaryTelephone' => '011712013243',
+                ]
+            );
 
         $this->mockMotService->expects($this->once())
             ->method('getMotTestData')

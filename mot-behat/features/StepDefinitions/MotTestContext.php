@@ -914,4 +914,12 @@ class MotTestContext implements Context, SnippetAcceptingContext
     {
         $this->vehicleHasMotTestStarted(MotTestTypeCode::NON_MOT_TEST);
     }
+
+    /**
+     * @return array
+     */
+    public function getMotTestData()
+    {
+        return $this->statusData->getBody()['data'];
+    }
 }

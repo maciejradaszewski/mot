@@ -50,7 +50,7 @@ public class ConductMotTestAsTester extends BaseTest {
 
         TestCompletePage testCompletePage = testSummaryPage.finishTestAndPrint();
 
-        assertThat(testCompletePage.verifyPrintButtonDisplayed(), is(true));
+        assertThat(testCompletePage.verifyBackToHomeLinkDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression"} )

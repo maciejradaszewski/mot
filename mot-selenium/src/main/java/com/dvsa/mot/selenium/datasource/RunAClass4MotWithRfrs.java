@@ -81,7 +81,7 @@ public class RunAClass4MotWithRfrs {
         return motTestPage.addMotTest("12345", BrakeTestConfiguration4.enforcement_CASE1(),
                 BrakeTestResults4.enforcement_CASE1(), failures, null, null, null)
                 .createCertificate().enterNewPasscode(Text.TEXT_PASSCODE).clickFinishPrint()
-                .clickDoneButton();
+                .clickBackToHomeLink();
 
     }
 
@@ -96,7 +96,7 @@ public class RunAClass4MotWithRfrs {
                 .addMotTest("12345", BrakeTestConfiguration4.enforcement_CASE1(),
                         BrakeTestResults4.enforcement_CASE1(), failures, prs, advisories, null)
                 .createCertificate().enterNewPasscode(Text.TEXT_PASSCODE).clickFinishPrint()
-                .clickDoneButton();
+                .clickBackToHomeLink();
     }
 
     public UserDashboardPage runMotClass4TestWithSingleRfr(Login login, Vehicle vehicleInfo) {
@@ -106,7 +106,7 @@ public class RunAClass4MotWithRfrs {
                 .addMotTest("12346", BrakeTestConfiguration4.enforcement_CASE1(),
                         BrakeTestResults4.enforcement_CASE1(), failures, null, null, null)
                 .createCertificate().enterNewPasscode(Text.TEXT_PASSCODE).clickFinishPrint()
-                .clickDoneButton();
+                .clickBackToHomeLink();
     }
 
     public UserDashboardPage runMotClass4TestWithPRSFailAdvisoryRfrs2(Login login,
@@ -120,7 +120,7 @@ public class RunAClass4MotWithRfrs {
                 .addMotTest("12345", BrakeTestConfiguration4.enforcement_CASE1(),
                         BrakeTestResults4.enforcement_CASE1(), failures, prs, advisories, null)
                 .createCertificate().enterNewPasscode(Text.TEXT_PASSCODE).clickFinishPrint()
-                .clickDoneButton();
+                .clickBackToHomeLink();
     }
 
     public TestSummary runMotClass4TestWithAdvisoryRfrs(Login login, Vehicle vehicleInfo){

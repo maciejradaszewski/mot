@@ -250,7 +250,7 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
             'post', 'displayTestSummary', ['motTestNumber' => $motTestNumber], null, $postParams
         );
 
-        $this->assertRedirectLocation2(MotTestUrlBuilderWeb::printResult($motTestNumber));
+        $this->assertRedirectLocation2(MotTestUrlBuilderWeb::showResult($motTestNumber));
     }
 
     public function testSubmitTestResultsCatchOtpApplicationException()
@@ -371,7 +371,7 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
             'post', 'displayTestSummary', ['motTestNumber' => $motTestNumber], null, $postParams
         );
 
-        $this->assertRedirectLocation2(MotTestUrlBuilderWeb::printResult($motTestNumber));
+        $this->assertRedirectLocation2(MotTestUrlBuilderWeb::showResult($motTestNumber));
     }
 
     public function testDisplayTestResultsWithStatus()
@@ -611,7 +611,7 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
 
         $this->getResultForAction2('post', 'displayTestSummary', ['motTestNumber' => $motTestNumber]);
 
-        $this->assertRedirectLocation2(MotTestUrlBuilderWeb::printResult($motTestNumber));
+        $this->assertRedirectLocation2(MotTestUrlBuilderWeb::showResult($motTestNumber));
     }
 
     /**
@@ -674,7 +674,7 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
         $this->setupAuthorizationService();
         $this->getRestClientMockWithGetMotTest(['data' => $motTestData]);
 
-        $result = $this->getResultForAction('printTestResult', ['motTestNumber' => $motTestNr]);
+        $result = $this->getResultForAction('testResult', ['motTestNumber' => $motTestNr]);
 
         $this->assertResponseStatus(self::HTTP_OK_CODE);
         $this->assertEquals($motTestData, $result->motDetails);

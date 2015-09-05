@@ -35,6 +35,11 @@ class AuthorisationHelper extends AbstractHelper implements MotFrontendAuthorisa
         return $this->authorisationService->isGrantedAtSite($permissionName, $siteId);
     }
 
+    public function isGrantedAtAnySite($permissionName)
+    {
+        return $this->authorisationService->isGrantedAtAnySite($permissionName);
+    }
+
     public function isGrantedAtOrganisation($permissionName, $orgId)
     {
         return $this->authorisationService->isGrantedAtOrganisation($permissionName, $orgId);
@@ -48,6 +53,11 @@ class AuthorisationHelper extends AbstractHelper implements MotFrontendAuthorisa
     public function assertGrantedAtSite($permissionName, $siteId)
     {
         $this->authorisationService->assertGrantedAtSite($permissionName, $siteId);
+    }
+
+    public function assertGrantedAtAnySite($permissionName)
+    {
+        $this->authorisationService->assertGrantedAtAnySite($permissionName);
     }
 
     public function assertGrantedAtOrganisation($permissionName, $orgId)

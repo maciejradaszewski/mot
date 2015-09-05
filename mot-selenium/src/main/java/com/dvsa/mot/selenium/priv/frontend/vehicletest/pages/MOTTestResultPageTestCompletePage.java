@@ -5,7 +5,6 @@ import com.dvsa.mot.selenium.datasource.braketest.BrakeTestConfigurationPageFiel
 import com.dvsa.mot.selenium.datasource.braketest.BrakeTestResultsPageField;
 import com.dvsa.mot.selenium.framework.BasePage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -15,9 +14,10 @@ import java.util.Map;
 
 public class MOTTestResultPageTestCompletePage extends BasePage {
 
-    private static String PAGE_TITLE = "MOT TEST COMPLETE";
+    private static String PAGE_TITLE = "MOT TESTING\n" +
+            "MOT TEST COMPLETE";
 
-    @FindBy(id = "quit") private WebElement doneButton;
+    @FindBy(id = "back-to-home-link") private WebElement backToHomeLink;
 
     @FindBy(id = "reprint-certificate") private WebElement reprintReceiptButton;
 
@@ -49,20 +49,8 @@ public class MOTTestResultPageTestCompletePage extends BasePage {
                 .enterNewPasscode(passcode).clickFinishPrint();
     }
 
-    public UserDashboardPage clickDoneButton() {
-        doneButton.click();
+    public UserDashboardPage clickBackToHomeLink() {
+        backToHomeLink.click();
         return new UserDashboardPage(driver);
-    }
-
-    public boolean passCertificateMessageIsPresent() {
-        return isElementPresent(By.id("pass-certificate-item"));
-    }
-
-    public boolean refusalCertificateMessageIsPresent() {
-        try {
-            return refusalCertificateItem.isDisplayed();
-        } catch (Exception e) {
-            return false;
-        }
     }
 }

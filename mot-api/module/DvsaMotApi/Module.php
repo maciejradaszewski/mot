@@ -2,33 +2,54 @@
 
 namespace DvsaMotApi;
 
-use Core\Authorisation\Assertion\WebPerformMotTestAssertion;
-use Core\Factory\WebPerformMotTestAssertionFactory;
 use Doctrine\Tests\ORM\Mapping\User;
 use DvsaCommonApi\Transaction\ServiceTransactionAwareInitializer;
 use DvsaEntities\Repository\TestItemCategoryRepository;
+use DvsaMotApi\Factory\AmazonS3ServiceFactory;
+use DvsaMotApi\Factory\AmazonSDKServiceFactory;
+use DvsaMotApi\Factory\AwsCredentialsProviderFactory;
+use DvsaMotApi\Factory\CertificatePdfServiceFactory;
+use DvsaMotApi\Factory\CertificateStorageServiceFactory;
+use DvsaMotApi\Factory\Helper\RoleEventHelperFactory;
+use DvsaMotApi\Factory\Helper\RoleNotificationHelperFactory;
+use DvsaMotApi\Factory\Helper\TesterQualificationStatusChangeEventHelperFactory;
+use DvsaMotApi\Factory\MotTestCertificatesServiceFactory;
 use DvsaMotApi\Factory\Repository\DvlaVehicleRepositoryFactory;
-use DvsaMotApi\Factory\Service\MotTestOptionsServiceFactory;
 use DvsaMotApi\Factory\Service\DemoTestAssessmentServiceFactory;
-use DvsaMotApi\Factory\Service\VehicleHistoryServiceFactory;
+use DvsaMotApi\Factory\Service\MotTestOptionsServiceFactory;
 use DvsaMotApi\Factory\Service\TesterMotTestLogServiceFactory;
+use DvsaMotApi\Factory\Service\Validator\ReplacementCertificateDraftChangeValidatorFactory;
+use DvsaMotApi\Factory\Service\Validator\RetestEligibilityValidatorFactory;
+use DvsaMotApi\Factory\Service\VehicleHistoryServiceFactory;
 use DvsaMotApi\Factory\TestItemCategoryRepositoryFactory;
+use DvsaMotApi\Factory\Validator\UsernameValidatorFactory;
+use DvsaMotApi\Helper\RoleEventHelper;
+use DvsaMotApi\Helper\RoleNotificationHelper;
+use DvsaMotApi\Helper\TesterQualificationStatusChangeEventHelper;
+use DvsaMotApi\Service\AmazonS3Service;
+use DvsaMotApi\Service\AmazonSDKService;
+use DvsaMotApi\Service\AwsCredentialsProviderService;
 use DvsaMotApi\Service\CertificateCreationService;
+use DvsaMotApi\Service\CertificatePdfService;
+use DvsaMotApi\Service\CertificateStorageService;
+use DvsaMotApi\Service\CreateMotTestService;
+use DvsaMotApi\Service\DemoTestAssessmentService;
+use DvsaMotApi\Service\EmergencyService;
+use DvsaMotApi\Service\EmergencyServiceFactory;
+use DvsaMotApi\Service\MotTestCertificatesService;
 use DvsaMotApi\Service\MotTestDateHelperService;
 use DvsaMotApi\Service\MotTestOptionsService;
 use DvsaMotApi\Service\MotTestReasonForRejectionService;
 use DvsaMotApi\Service\MotTestStatusChangeNotificationService;
-use DvsaMotApi\Service\DemoTestAssessmentService;
+use DvsaMotApi\Service\TesterMotTestLogService;
 use DvsaMotApi\Service\TestingOutsideOpeningHoursNotificationService;
 use DvsaMotApi\Service\UserService;
 use DvsaMotApi\Service\Validator\BrakeTestConfigurationValidator;
 use DvsaMotApi\Service\Validator\BrakeTestResultValidator;
 use DvsaMotApi\Service\Validator\MotTestStatusChangeValidator;
+use DvsaMotApi\Service\Validator\ReplacementCertificateDraftChangeValidator;
 use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 use DvsaMotApi\Service\VehicleHistoryService;
-use DvsaMotApi\Service\EmergencyServiceFactory;
-use DvsaMotApi\Service\EmergencyService;
-use DvsaMotApi\Service\TesterMotTestLogService;
 use DvsaMotApi\Validator\UsernameValidator;
 use Zend\EventManager\EventInterface;
 use Zend\Http\Client as HttpClient;
@@ -39,17 +60,6 @@ use Zend\ModuleManager\Feature\ControllerProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
-use DvsaMotApi\Factory\Validator\UsernameValidatorFactory;
-use DvsaMotApi\Service\Validator\ReplacementCertificateDraftChangeValidator;
-use DvsaMotApi\Factory\Service\Validator\ReplacementCertificateDraftChangeValidatorFactory;
-use DvsaMotApi\Service\CreateMotTestService;
-use DvsaMotApi\Helper\TesterQualificationStatusChangeEventHelper;
-use DvsaMotApi\Factory\Helper\TesterQualificationStatusChangeEventHelperFactory;
-use DvsaMotApi\Helper\RoleEventHelper;
-use DvsaMotApi\Factory\Helper\RoleEventHelperFactory;
-use DvsaMotApi\Helper\RoleNotificationHelper;
-use DvsaMotApi\Factory\Helper\RoleNotificationHelperFactory;
-use DvsaMotApi\Factory\Service\Validator\RetestEligibilityValidatorFactory;
 
 /**
  * Zend module containing the main factory for MOT API services
@@ -128,7 +138,13 @@ class Module implements
                 TesterQualificationStatusChangeEventHelper::class => TesterQualificationStatusChangeEventHelperFactory::class,
                 TesterMotTestLogService::class => TesterMotTestLogServiceFactory::class,
                 RoleEventHelper::class => RoleEventHelperFactory::class,
-                RoleNotificationHelper::class => RoleNotificationHelperFactory::class
+                RoleNotificationHelper::class => RoleNotificationHelperFactory::class,
+                CertificatePdfService::class  => CertificatePdfServiceFactory::class,
+                AmazonS3Service::class => AmazonS3ServiceFactory::class,
+                CertificateStorageService::class => CertificateStorageServiceFactory::class,
+                AwsCredentialsProviderService::class => AwsCredentialsProviderFactory::class,
+                AmazonSDKService::class => AmazonSDKServiceFactory::class,
+                MotTestCertificatesService::class =>MotTestCertificatesServiceFactory::class
             ],
             'invokables' => [
                 'BrakeTestConfigurationValidator' => BrakeTestConfigurationValidator::class,

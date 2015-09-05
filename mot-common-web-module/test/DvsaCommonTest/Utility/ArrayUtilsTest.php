@@ -401,4 +401,15 @@ class ArrayUtilsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("QFD", $collection[2]);
         $this->assertEquals("QFD", $collection[6]);
     }
+
+    public function test_getKeys_returnsAllTheKeys()
+    {
+        $array = ['val', 'key2' => 'val', 'key3' => ['val', 'key4' => 'val'] ];
+        $keys = ArrayUtils::getKeys($array);
+
+        $this->assertEquals(3, count($keys));
+        $this->assertEquals(0, $keys[0]);
+        $this->assertEquals('key2', $keys[1]);
+        $this->assertEquals('key3', $keys[2]);
+    }
 }

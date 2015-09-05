@@ -55,6 +55,7 @@ $inputArray = [
     enum('VehicleClassCode', 'vehicle_class', 'name', 'code', 'CLASS_'),
     enum('VehicleClassGroupCode', 'vehicle_class_group', 'name', 'code'),
     enum('WeightSourceCode', 'weight_source_lookup', 'name', 'code'),
+    enum('MotTestStatusId', 'mot_test_status', 'name', 'id'),
 
     // Site Statuses
     enum('SiteStatusCode', 'site_status_lookup', 'name', 'code'),

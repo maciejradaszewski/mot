@@ -4,6 +4,7 @@ namespace DvsaCommonTest\TestUtils\Auth;
 
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Exception\UnauthorisedException;
+use DvsaCommon\Utility\ArrayUtils;
 
 /**
  * Helps test multiple assertions in a fluent fashion. The idea of using it in the tests
@@ -70,6 +71,18 @@ final class AuthorisationServiceMock implements MotAuthorisationServiceInterface
             ? true : $this->acceptAll;
     }
 
+    public function isGrantedAtAnySite($permissionName)
+    {
+        $sites = ArrayUtils::getKeys($this->siteMap);
+        foreach ($sites as $id) {
+            if ($this->isGrantedAtSite($permissionName, $id)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function isGrantedAtOrganisation($permissionName, $orgId)
     {
         $idxExists = isset($this->organisationMap[$orgId]);
@@ -87,6 +100,13 @@ final class AuthorisationServiceMock implements MotAuthorisationServiceInterface
     public function assertGrantedAtSite($permissionName, $siteId)
     {
         if (!$this->isGrantedAtSite($permissionName, $siteId)) {
+            throw new UnauthorisedException("Permission ${permissionName} not given");
+        }
+    }
+
+    public function assertGrantedAtAnySite($permissionName)
+    {
+        if (!$this->isGrantedAtAnySite($permissionName)) {
             throw new UnauthorisedException("Permission ${permissionName} not given");
         }
     }

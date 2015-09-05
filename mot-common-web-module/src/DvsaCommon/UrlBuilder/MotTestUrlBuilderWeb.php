@@ -11,7 +11,7 @@ class MotTestUrlBuilderWeb extends AbstractUrlBuilder
     const SUMMARY = '/test-summary';
     const PRINT_CERT = '/print-certificate';
     const PRINT_CERT_DUPL = '/print-duplicate-certificate';
-    const PRINT_RESULT = '/print-test-result';
+    const SHOW_RESULT = '/test-result';
     const PRINT_DUPLICATE_RESULT = '/print-duplicate-test-result';
     const ABORT_SUCCESS = '/abort-success';
     const ABORT_FAIL = '/abort-fail';
@@ -29,7 +29,7 @@ class MotTestUrlBuilderWeb extends AbstractUrlBuilder
             self::MOTTEST => [
                 self::PRINT_CERT             => '',
                 self::PRINT_CERT_DUPL        => '',
-                self::PRINT_RESULT           => '',
+                self::SHOW_RESULT            => '',
                 self::PRINT_DUPLICATE_RESULT => '',
                 self::SUMMARY                => '',
                 self::ABORT_SUCCESS          => '',
@@ -59,9 +59,9 @@ class MotTestUrlBuilderWeb extends AbstractUrlBuilder
         return $url;
     }
 
-    public static function printResult($motTestNr)
+    public static function showResult($motTestNr)
     {
-        return self::motTest($motTestNr)->appendRoutesAndParams(self::PRINT_RESULT);
+        return self::motTest($motTestNr)->appendRoutesAndParams(self::SHOW_RESULT);
     }
 
     public static function printDuplicateResult($motTestNr)

@@ -3,24 +3,18 @@ package com.dvsa.mot.selenium.priv.frontend.vehicletest;
 
 import com.dvsa.mot.selenium.datasource.*;
 import com.dvsa.mot.selenium.datasource.braketest.BrakeTestConfiguration1And2;
-import com.dvsa.mot.selenium.datasource.braketest.BrakeTestConfiguration4;
 import com.dvsa.mot.selenium.datasource.braketest.BrakeTestResults1And2;
-import com.dvsa.mot.selenium.datasource.braketest.BrakeTestResults4;
 import com.dvsa.mot.selenium.datasource.enums.FuelTypes;
 import com.dvsa.mot.selenium.datasource.enums.PageTitles;
 import com.dvsa.mot.selenium.datasource.enums.VehicleClasses;
 import com.dvsa.mot.selenium.framework.BaseTest;
 import com.dvsa.mot.selenium.framework.api.MotTestApi;
-import com.dvsa.mot.selenium.framework.api.TestGroup;
-import com.dvsa.mot.selenium.framework.api.VtsCreationApi;
 import com.dvsa.mot.selenium.framework.util.validation.ValidationSummary;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.*;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.testng.annotations.Test;
-
-import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -140,7 +134,7 @@ public class VehicleConfirmationTest extends BaseTest {
         assertThat("Assert vehicle class", testSummary.getTestClass(),
                 is(VehicleClasses.one.getId()));
 
-        testSummary.enterNewPasscode(Text.TEXT_PASSCODE).clickFinishPrint().clickDoneButton()
+        testSummary.enterNewPasscode(Text.TEXT_PASSCODE).clickFinishPrint().clickBackToHomeLink()
                 .clickLogout();
     }
 

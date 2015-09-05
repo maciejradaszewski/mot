@@ -69,7 +69,7 @@ public class EndToEndTestForATesterRoleTest extends BaseTest {
         //Assert MOT Test Number is not null
         assertNotNull(motTestNumber);
 
-        testSummaryPage.clickFinishPrint(Text.TEXT_PASSCODE).clickDoneButton();
+        testSummaryPage.clickFinishPrint(Text.TEXT_PASSCODE).clickBackToHomeLink();
     }
 
     /*  Data Provider for pass brake test results */
