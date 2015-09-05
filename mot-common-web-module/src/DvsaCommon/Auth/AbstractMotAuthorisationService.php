@@ -4,6 +4,7 @@ namespace DvsaCommon\Auth;
 
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\Model\PersonAuthorization;
+use DvsaCommon\Utility\ArrayUtils;
 
 /**
  * An abstract common service for api and web implementations
@@ -39,6 +40,28 @@ abstract class AbstractMotAuthorisationService
         }
 
         return true;
+    }
+
+    public function assertGrantedAtAnySite($permissionName)
+    {
+        if (!$this->isGrantedAtAnySite($permissionName)) {
+            $this->throwUnauthorizedException($permissionName);
+        }
+    }
+
+    public function isGrantedAtAnySite($permissionName)
+    {
+        $personAuthorization = $this->getPersonAuthorization()->asArray();
+        $siteRoles = ArrayUtils::get($personAuthorization, "sites");
+        $sites = ArrayUtils::getKeys($siteRoles);
+
+        foreach ($sites as $siteId) {
+            if ($this->isGrantedAtSite($permissionName, $siteId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function isGrantedAtOrganisation($permissionName, $orgId)

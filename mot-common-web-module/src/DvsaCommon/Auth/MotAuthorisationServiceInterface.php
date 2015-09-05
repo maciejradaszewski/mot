@@ -11,11 +11,15 @@ interface MotAuthorisationServiceInterface
 
     public function isGrantedAtSite($permissionName, $siteId);
 
+    public function isGrantedAtAnySite($permissionName);
+
     public function isGrantedAtOrganisation($permissionName, $orgId);
 
     public function assertGranted($permissionName);
 
     public function assertGrantedAtSite($permissionName, $siteId);
+
+    public function assertGrantedAtAnySite($permissionName);
 
     public function assertGrantedAtOrganisation($permissionName, $orgId);
 

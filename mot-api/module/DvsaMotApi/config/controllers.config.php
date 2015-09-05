@@ -2,6 +2,9 @@
 
 use DvsaCommonApi\Transaction\ControllerTransactionAwareInitializer;
 use DvsaMotApi\Controller\CertificatePrintingController;
+use DvsaMotApi\Controller\MotCertificateEmailController;
+use DvsaMotApi\Controller\MotCertificatePdfController;
+use DvsaMotApi\Controller\MotCertificatesController;
 use DvsaMotApi\Factory\Controller\CertificatePrintingControllerFactory;
 use DvsaMotApi\Controller\IdentityDataController;
 use DvsaMotApi\Controller\MotTestController;
@@ -14,6 +17,9 @@ use DvsaMotApi\Controller\ReplacementCertificateDraftController;
 use DvsaMotApi\Controller\RetestController;
 use DvsaMotApi\Controller\TestItemCategoryNameController;
 use DvsaMotApi\Controller\TesterMotTestLogController;
+use DvsaMotApi\Factory\Controller\MotCertificateEmailControllerFactory;
+use DvsaMotApi\Factory\Controller\MotCertificatePdfControllerFactory;
+use DvsaMotApi\Factory\Controller\MotCertificatesControllerFactory;
 use DvsaMotApi\Factory\Controller\MotTestStatusControllerFactory;
 use DvsaMotApi\Factory\Controller\TesterControllerFactory;
 use DvsaMotApi\Factory\Controller\UserControllerFactory;
@@ -68,5 +74,8 @@ return [
         DemoTestAssessmentController::class => DemoTestAssessmentControllerFactory::class,
         TesterMotTestLogController::class => TesterMotTestLogControllerFactory::class,
         ReplacementCertificateDraftController::class => ReplacementCertificateDraftControllerFactory::class,
+        MotCertificatesController::class => MotCertificatesControllerFactory::class,
+        MotCertificatePdfController::class => MotCertificatePdfControllerFactory::class,
+        MotCertificateEmailController::class => MotCertificateEmailControllerFactory::class,
     ]
 ];

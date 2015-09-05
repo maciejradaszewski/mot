@@ -30,6 +30,7 @@ use DvsaMotTest\Factory\Controller\TesterMotTestLogControllerFactory;
 use DvsaMotTest\Factory\Controller\VehicleSearchControllerFactory;
 use DvsaMotTest\NewVehicle\Controller\CreateVehicleController;
 use DvsaMotTest\NewVehicle\Controller\Factory\CreateVehicleControllerFactory;
+use DvsaMotTest\Factory\Controller\MotTestCertificatesControllerFactory;
 use DvsaMotTest\Controller\CertificatePrintingController;
 use DvsaMotTest\Factory\Controller\CertificatePrintingControllerFactory;
 
@@ -58,6 +59,8 @@ return [
         EnforcementMotTestController::class       => EnforcementMotTestControllerFactory::class,
         TesterMotTestLogController::class         => TesterMotTestLogControllerFactory::class,
         ReplacementCertificateController::class   => ReplacementCertificateControllerFactory::class,
-        CertificatePrintingController::class      => CertificatePrintingControllerFactory::class
-    ]
+        CertificatePrintingController::class      => CertificatePrintingControllerFactory::class,
+        ReplacementCertificateController::class   => ReplacementCertificateControllerFactory::class,
+        \DvsaMotTest\Controller\MotTestCertificatesController::class => MotTestCertificatesControllerFactory::class
+    ],
 ];

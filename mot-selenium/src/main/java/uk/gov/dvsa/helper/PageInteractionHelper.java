@@ -1,11 +1,9 @@
 package uk.gov.dvsa.helper;
 
 import com.dvsa.mot.selenium.framework.Utilities;
+import com.google.common.base.Function;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.*;
 import uk.gov.dvsa.framework.config.Configurator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
@@ -151,6 +149,20 @@ public class PageInteractionHelper {
      */
     public static void waitForElementToBeVisible(WebElement element, int timeout) {
         new WebDriverWait(driver, timeout).until(ExpectedConditions.visibilityOf(element));
+    }
+
+    public static WebElement refreshPageUntilElementWontBeVisible(final By locator, int timeout, int refreshEveryTimeout) {
+        Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+                .withTimeout(timeout, TimeUnit.SECONDS)
+                .pollingEvery(refreshEveryTimeout, TimeUnit.SECONDS)
+                .ignoring(NoSuchElementException.class);
+
+        return wait.until(new Function<WebDriver, WebElement>() {
+            public WebElement apply(WebDriver driver) {
+                driver.navigate().refresh();
+                return driver.findElement(locator);
+            }
+        });
     }
 
     protected boolean isElementClickable(WebElement element, int timeout) {

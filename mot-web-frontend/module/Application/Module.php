@@ -38,6 +38,7 @@ use DvsaMotTest\Factory\LocationSelectContainerFactory;
 use DvsaMotTest\Factory\Model\VehicleSearchResultFactory;
 use DvsaMotTest\Factory\Service\AuthorisedClassesServiceFactory;
 use DvsaMotTest\Factory\Service\VehicleSearchServiceFactory;
+use DvsaMotTest\Factory\Service\MotTestCertificatesServiceFactory;
 use DvsaMotTest\Mapper\BrakeTestConfigurationClass1And2Mapper;
 use DvsaMotTest\Mapper\BrakeTestConfigurationClass3AndAboveMapper;
 use DvsaMotTest\Model\BrakeTestConfigurationClass1And2Helper;
@@ -150,6 +151,7 @@ class Module implements
                 AuthorisedClassesService::class           => AuthorisedClassesServiceFactory::class,
                 VehicleSearchResult::class                => VehicleSearchResultFactory::class,
                 VehicleSearchService::class               => VehicleSearchServiceFactory::class,
+                'MotTestCertificatesService'              => MotTestCertificatesServiceFactory::class,
                 CertificatePrintingService::class         => CertificatePrintingServiceFactory::class
             ],
             'aliases'    => [

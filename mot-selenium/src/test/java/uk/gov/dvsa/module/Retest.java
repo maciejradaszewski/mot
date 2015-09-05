@@ -33,7 +33,7 @@ public class Retest {
 
         ReTestCompletePage testCompletePage = summaryPage.finishTestAndPrint();
 
-        successful = testCompletePage.verifyPrintButtonDisplayed();
+        successful = testCompletePage.verifyBackToHomeDisplayed();
     }
 
     public void conductRetestFail(Vehicle vehicle, User tester) throws IOException, URISyntaxException {
@@ -57,7 +57,7 @@ public class Retest {
 
         ReTestCompletePage testCompletePage = summaryPage.finishTestAndPrint();
 
-        successful = testCompletePage.verifyPrintButtonDisplayed();
+        successful = testCompletePage.verifyBackToHomeDisplayed();
     }
 
     public void verifyRetestIsSuccessful() {

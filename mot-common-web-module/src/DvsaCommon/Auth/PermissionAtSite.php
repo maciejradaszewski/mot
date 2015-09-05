@@ -28,6 +28,7 @@ class PermissionAtSite
     const TESTING_SCHEDULE_UPDATE = 'TESTING-SCHEDULE-UPDATE';
     const DEFAULT_BRAKE_TESTS_CHANGE = 'DEFAULT-BRAKE-TESTS-CHANGE';
     const VTS_USERNAME_VIEW = 'VTS-USERNAME-VIEW';
+    const RECENT_CERTIFICATE_PRINT = 'RECENT-CERTIFICATE-PRINT';
 
     public static function all()
     {
@@ -54,6 +55,7 @@ class PermissionAtSite
             self::TESTING_SCHEDULE_UPDATE,
             self::DEFAULT_BRAKE_TESTS_CHANGE,
             self::VTS_USERNAME_VIEW,
+            self::RECENT_CERTIFICATE_PRINT
         ];
     }
 }

@@ -20,6 +20,7 @@ use Application\View\Helper\CamelCaseToFirstUppercaseReadable;
 use Dvsa\Mot\Frontend\Plugin\AjaxResponsePlugin;
 use DvsaCommon\Constants\MotTestNumberConstraint;
 use DvsaMotTest\NewVehicle\Controller\CreateVehicleController;
+use DvsaMotTest\Controller\MotTestCertificatesController;
 
 return [
     'controllers' => require __DIR__ . '/controllers.config.php',
@@ -401,6 +402,34 @@ return [
                     ],
                 ],
             ],
+            'print-certificate-pdf' => [
+                'type' => 'segment',
+                'options' => [
+                    'route'    => '/print-certificate-pdf/[:vin]-[:status]-[:motRecentCertificateId].pdf',
+                    'constraints' => [
+                        'timestamp' => '[0-9]{10}',
+                        'vin' => '[0-9A-Z]{1,30}',
+                    ],
+                    'defaults' => [
+                        'controller'  => MotTestCertificatesController::class,
+                        'action'      => 'printPdf',
+                    ],
+                ],
+            ],
+            'download-certificate-pdf' => [
+                'type' => 'segment',
+                'options' => [
+                    'route'    => '/download-certificate-pdf/[:vin]-[:status]-[:motRecentCertificateId].pdf',
+                    'constraints' => [
+                        'timestamp' => '[0-9]{10}',
+                        'vin' => '[0-9A-Z]{1,30}',
+                    ],
+                    'defaults' => [
+                        'controller'  => MotTestCertificatesController::class,
+                        'action'      => 'downloadPdf',
+                    ],
+                ],
+            ],
             'mot-test'                                    => [
                 'type'          => 'segment',
                 'options'       => [
@@ -547,13 +576,13 @@ return [
                             ],
                         ],
                     ],
-                    'print-test-result'           => [
+                    'test-result'           => [
                         'type'    => 'segment',
                         'options' => [
-                            'route'    => '/print-test-result',
+                            'route'    => '/test-result',
                             'defaults' => [
                                 'controller' => MotTest\MotTestController::class,
-                                'action'     => 'printTestResult',
+                                'action'     => 'testResult',
                             ],
                         ],
                     ],
@@ -708,6 +737,46 @@ return [
                                 ],
                             ],
                         ],
+                    ],
+                ],
+            ],
+            'mot-test-certificate-list' => [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/mot-test-certificates',
+                    'defaults'    => [
+                        'controller' => MotTest\MotTestCertificatesController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+            'mot-test-certificate-email'=> [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/mot-test-certificate/:certificateId/email',
+                    'defaults'    => [
+                        'controller' => MotTest\MotTestCertificatesController::class,
+                        'action'     => 'emailCertificate',
+                    ],
+                ],
+            ],
+            'mot-test-certificate-email-confirmation'=> [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/mot-test-certificate/:certificateId/email/confirmation',
+                    'defaults'    => [
+                        'controller' => MotTest\MotTestCertificatesController::class,
+                        'action'     => 'emailConfirmation',
+                    ],
+                ],
+            ],
+            'mot-test-certificate-email-error'=> [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/mot-test-certificate/:certificateId/email/error',
+                    'defaults'    => [
+                        'controller' => MotTest\MotTestCertificatesController::class,
+                        'action'     => 'emailError',
                     ],
                 ],
             ],
@@ -1038,6 +1107,8 @@ return [
                 __DIR__ . '/../view/partials/dashboard/finance-box.phtml',
             'dashboard/demoTestBox'                                                       =>
                 __DIR__ . '/../view/partials/dashboard/tester-demo-test-box.phtml',
+            'dashboard/motActivity'                                                       =>
+                __DIR__ . '/../view/partials/dashboard/mot-activity.phtml',
             'vehicle/history'                                                            =>
                 __DIR__ . '/../view/partials/vehicle-history/history.phtml',
             'vehicle/history-item'                                                       => __DIR__ .

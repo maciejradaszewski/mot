@@ -66,8 +66,7 @@ public class MotDemoTest extends BaseTest {
                 .addMotTest("12345", BrakeTestConfiguration4.enforcement_CASE1(),
                         BrakeTestResults4.brakeTestEntry_CASE1(), null, null, null, null).
                         createCertificate().
-                        clickFinishPrint().
-                        clickDoneButton();
+                        clickFinishPrint().clickBackToHomeLink();
     }
 
     @Test(groups = {"VM-3654", "VM-3653", "Sprint 25", "MOT Testing", "Regression"},

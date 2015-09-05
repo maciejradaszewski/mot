@@ -24,6 +24,7 @@ use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\Messages\InvalidTestStatus;
 use DvsaCommon\UrlBuilder\MotTestUrlBuilder;
 use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
+use DvsaCommon\UrlBuilder\ReportUrlBuilder;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaMotTest\Model\OdometerReadingViewObject;
@@ -188,7 +189,7 @@ class MotTestController extends AbstractDvsaMotTestController
                     return $this->redirect()->toUrl(MotTestUrlBuilderWeb::summary($motTestNumber));
                 }
 
-                return $this->redirect()->toUrl(MotTestUrlBuilderWeb::printResult($motTestNumber));
+                return $this->redirect()->toUrl(MotTestUrlBuilderWeb::showResult($motTestNumber));
             } catch (RestApplicationException $e) {
                 $this->addErrorMessages($e->getDisplayMessages());
             }
@@ -303,7 +304,7 @@ class MotTestController extends AbstractDvsaMotTestController
         if ($request->isPost()) {
             $motTestNumber = (int)$this->params()->fromRoute('motTestNumber', 0);
 
-            $urlFinish = MotTestUrlBuilderWeb::printResult($motTestNumber);
+            $urlFinish = MotTestUrlBuilderWeb::showResult($motTestNumber);
             $prgHelper->setRedirectUrl($urlFinish->toString());
 
             $data = $request->getPost()->toArray();
@@ -540,7 +541,37 @@ class MotTestController extends AbstractDvsaMotTestController
         return $this->redirect()->toUrl($redirectUrl);
     }
 
-    public function printTestResultAction()
+    /**
+     * Called to retrieve a PDF from the document service (and Jasper), and returns
+     * the binary with content-type header.
+     * Relies on an MOT ID being passed in the URL, which resolves to a document ID.
+     *
+     * @return Response
+     * @throws RestApplicationException
+     * @throws \Exception
+     */
+    public function retrievePdfAction()
+    {
+        $motTestNumber = (int)$this->params()->fromRoute('motTestNumber', 0);
+        $isDuplicate = $this->params('isDuplicate');
+
+        $certificateUrl = ReportUrlBuilder::printCertificate($motTestNumber, ($isDuplicate ? 'dup' : null));
+
+        //  --  get number of current site --
+        $site = $this->getIdentity()->getCurrentVts();
+        if ($site && $site->getSiteNumber()) {
+            $certificateUrl->queryParam('siteNr', $site->getSiteNumber());
+        }
+
+        $result = $this->getRestClient()->getPdf($certificateUrl); // @todo - add some pdf parsing checks in client
+
+        $response = new Response;
+        $response->setContent($result);
+        $response->getHeaders()->addHeaderLine('Content-Type', 'application/pdf');
+        return $response;
+    }
+
+    public function testResultAction()
     {
         $motTestNumber = $this->params()->fromRoute('motTestNumber', 0);
 
@@ -548,14 +579,21 @@ class MotTestController extends AbstractDvsaMotTestController
 
         $this->layout()->setVariable('hideChangeSiteLink', true);
 
-        return new MotPrintModel(
+        $model =  new MotPrintModel(
             [
-                'motDetails'        => $motDetails,
-                'motTestNumber'     => $motTestNumber,
-                'isDuplicate'       => $this->params('isDuplicate'),
-                'isMotContingency'  => $this->getContingencySessionManager()->isMotContingency(),
+                'motDetails'    => $motDetails,
+                'motTestNumber' => $motTestNumber,
+                'isDuplicate'   => false
             ]
         );
+
+        if (true === $model->isReinspection) {
+            $model->setTemplate('dvsa-mot-test/mot-test/print-test-result');
+        } else {
+            $this->layout('layout/layout-govuk.phtml');
+        }
+
+        return $model;
     }
 
     public function printDuplicateCertificateResultAction()
