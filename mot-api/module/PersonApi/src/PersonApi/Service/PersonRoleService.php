@@ -195,7 +195,7 @@ class PersonRoleService
      */
     public function getRoles($personId)
     {
-        $this->authService->assertGranted(PermissionInSystem::MANAGE_DVSA_ROLES);
+        $this->authService->assertGranted(PermissionInSystem::READ_DVSA_ROLES);
         return $this->getPersonAssignedAndAvailableInternalRoleCodes($personId);
     }
 
@@ -309,7 +309,7 @@ class PersonRoleService
         // PersonRepository
         $person = $this->personRepository->find($personId);
         if (!$person instanceof Person) {
-            throw new NotFoundException('Unable to find person with id '.$personId);
+            throw new NotFoundException('Unable to find person with id ' . $personId);
         }
         return $person;
     }
@@ -369,7 +369,7 @@ class PersonRoleService
      * Uses the mapping repository to return the relevant permission code
      * @param Role $role
      * @return string
-     * @throws \DvsaEntities\Repository\NotFoundException
+     * @throws NotFoundException
      */
     private function getPermissionCodeFromRole(Role $role)
     {
@@ -380,7 +380,7 @@ class PersonRoleService
      * Uses the mapping repository to return the relevant permission code
      * @param PersonSystemRole $personSystemRole
      * @return string
-     * @throws \DvsaEntities\Repository\NotFoundException
+     * @throws NotFoundException
      */
     public function getPermissionCodeFromPersonSystemRole(PersonSystemRole $personSystemRole)
     {
@@ -416,7 +416,7 @@ class PersonRoleService
     {
         $allTradeRoles = $this->getAllTradeRoleCodes();
         $personRoles = $this->getPersonRoles($personId);
-        $intersect = array_intersect($allTradeRoles,$personRoles);
+        $intersect = array_intersect($allTradeRoles, $personRoles);
 
         return !empty($intersect);
     }

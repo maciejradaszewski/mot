@@ -64,11 +64,44 @@ class PersonRoleManagementService
 
     /**
      * Checks to see if the user has the relevant permission
-     * @throws UnauthorisedException
+     *
+     * @return bool
      */
     public function userHasPermissionToManagePersonDvsaRoles()
     {
         return $this->authorisationService->isGranted(PermissionInSystem::MANAGE_DVSA_ROLES);
+    }
+
+    /**
+     * @return bool
+     */
+    public function userHasPermissionToReadPersonDvsaRoles()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::READ_DVSA_ROLES);
+    }
+
+    /**
+     * @return bool
+     */
+    public function userHasPermissionToResetPassword()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::USER_PASSWORD_RESET);
+    }
+
+    /**
+     * @return bool
+     */
+    public function userHasPermissionToRecoveryUsername()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::USERNAME_RECOVERY);
+    }
+
+    /**
+     * @return bool
+     */
+    public function userHasPermissionToReclaimUserAccount()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::USER_ACCOUNT_RECLAIM);
     }
 
     /**
@@ -78,7 +111,7 @@ class PersonRoleManagementService
      */
     public function forbidManagementOfSelf($personToBeManagedId)
     {
-        if(true === $this->personToManageIsSelf($personToBeManagedId)) {
+        if (true === $this->personToManageIsSelf($personToBeManagedId)) {
             throw new UnauthorisedException('You are not allowed to manage yourself');
         }
     }
@@ -190,7 +223,7 @@ class PersonRoleManagementService
      */
     public function getPersonAssignedInternalRoles($personId)
     {
-        if (!$this->userHasPermissionToManagePersonDvsaRoles()) {
+        if (false === $this->userHasPermissionToReadPersonDvsaRoles()) {
             return [];
         }
 
@@ -257,16 +290,21 @@ class PersonRoleManagementService
 
     /**
      * @param array $roles
+     *
      * @return array
      */
     private function sortRolesByName($roles)
     {
-        uasort($roles, function($a, $b){
-            if ($a['name'] == $b['name']) {
-                return 0;
+        uasort(
+            $roles,
+            function ($a, $b) {
+                if ($a['name'] === $b['name']) {
+                    return 0;
+                }
+
+                return ($a['name'] < $b['name']) ? -1 : 1;
             }
-            return ($a['name'] < $b['name']) ? -1 : 1;
-        });
+        );
 
         return $roles;
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace DvsaCommon\Auth;
 
 /**
@@ -117,7 +118,11 @@ final class PermissionInSystem
     const MANAGE_ROLE_FINANCE = 'MANAGE-ROLE-FINANCE';
     const MANAGE_ROLE_VEHICLE_EXAMINER = 'MANAGE-ROLE-VEHICLE-EXAMINER';
     const MANAGE_DVSA_ROLES = 'MANAGE-DVSA-ROLES';
+    const READ_DVSA_ROLES = 'READ-DVSA-ROLES';
     const USERNAME_VIEW = 'USERNAME-VIEW';
+    const USER_PASSWORD_RESET = 'USER-PASSWORD-RESET';
+    const USERNAME_RECOVERY = 'USERNAME-RECOVERY';
+    const USER_ACCOUNT_RECLAIM = 'USER-ACCOUNT-RECLAIM';
 
     /**
      * @return array
@@ -233,7 +238,11 @@ final class PermissionInSystem
             self::MANAGE_ROLE_FINANCE,
             self::MANAGE_ROLE_VEHICLE_EXAMINER,
             self::MANAGE_DVSA_ROLES,
+            self::READ_DVSA_ROLES,
             self::USERNAME_VIEW,
+            self::USER_PASSWORD_RESET,
+            self::USERNAME_RECOVERY,
+            self::USER_ACCOUNT_RECLAIM,
         ];
     }
 }

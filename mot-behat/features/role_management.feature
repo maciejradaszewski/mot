@@ -3,10 +3,9 @@ Feature: Role Management
   I want to be able to assign roles to other users
   So that I can delegate tasks to other users
 
-  @VM-10619 @VM-10737 @VM-10722 @VM-10723
+  @VM-10619 @VM-10737 @VM-10722 @VM-10723 @VM-11697
   Scenario Outline: A scheme manager adds a role to another user
     When I am logged in as a <manager>
-    And I have the VM10619 user role
     And I add the role of "<role_name>" to another user
     Then the user's RBAC will have the role "<role_name>"
     And a status change event is generated for the user of "Role Association Change"
@@ -19,16 +18,18 @@ Feature: Role Management
     | Scheme Manager           | DVSA-SCHEME-MANAGEMENT            | Scheme manager             |
     | Scheme Manager           | DVSA-SCHEME-USER                  | Scheme user                |
     | Scheme Manager           | CUSTOMER-SERVICE-CENTRE-OPERATIVE | Customer service operative |
+    | Scheme Manager           | CUSTOMER-SERVICE-MANAGER          | Customer service manager   |
     | Scheme Manager           | DVSA-AREA-OFFICE-1                | Area office 1              |
+    | Scheme Manager           | DVSA-AREA-OFFICE-2                | Area office 2              |
+    | Scheme Manager           | VEHICLE-EXAMINER                  | Vehicle examiner           |
     | Scheme Manager           | FINANCE                           | Finance                    |
     | Scheme Manager           | DVLA-OPERATIVE                    | DVLA operative             |
     | Customer Service Manager | CUSTOMER-SERVICE-CENTRE-OPERATIVE | Customer service operative |
     | DVLA Manager             | DVLA-OPERATIVE                    | DVLA operative             |
 
-  @VM-10619 @VM-10737 @VM-10722 @VM-10723
+  @VM-10619 @VM-10737 @VM-10722 @VM-10723 @VM-11697
   Scenario Outline: A permitted user can add an internal role to a user that does not have a trade role
     Given I am logged in as a <permitted user>
-    And I have the VM10619 user role
     And The user "<non trade user>" exists
     When I add the role of "<role>" to the user
     Then the user's RBAC will have the role "<role>"
@@ -135,10 +136,9 @@ Feature: Role Management
 
   # We have deliberately only tested a selection of the possibilities here.. not the entire grid matrix.
   # We were told not to slow down behat too much and that the main coverage is done through selenium.
-  @negative @VM-10619 @VM-10737 @VM-10722 @VM-10723
+  @negative @VM-10619 @VM-10737 @VM-10722 @VM-10723 @VM-11697
   Scenario Outline: An unpermitted user can not add an internal role to a user
     Given I am logged in as an <unpermitted user>
-    And I have the VM10619 user role
     And The user "<non trade user>" exists
     When I add the role of "<role>" to the user
     Then the user's RBAC will not have the role "<role>"
@@ -152,10 +152,9 @@ Feature: Role Management
     | Area Office User 2        | CUSTOMER-SERVICE-CENTRE-OPERATIVE | Vehicle Examiner |
     | Vehicle Examiner          | CUSTOMER-SERVICE-CENTRE-OPERATIVE | Area Office User |
 
-  @VM-5041
+  @VM-5041 @VM-11697
   Scenario Outline: A permitted user can remove a role from a user
     Given I am logged in as a <permitted user>
-    And I have the VM10619 user role
     And The user "<user>" exists
     And The user has the role "<role>"
     When I remove the role of "<role>" from the user
@@ -173,10 +172,9 @@ Feature: Role Management
     | DVLA Manager   | DVLA-OPERATIVE                    | DVLA operative             | Scheme User  |
 
   # Self management
-  @VM-11244
+  @VM-11244 @VM-11697
   Scenario Outline: Check permitted DVSA users can not allocate a role to themselves
     Given I am logged in as a <permitted user>
-    And I have the VM10619 user role
     When I try to add the role of "<role>" to myself
     Then I should receive a Forbidden response
     And my RBAC will not contain the role "<role>"
@@ -195,10 +193,9 @@ Feature: Role Management
     | Area Office User         | DVSA-AREA-OFFICE-2                |
     | Area Office User         | VEHICLE-EXAMINER                  |
 
-  @VM-11244
+  @VM-11244 @VM-11697
   Scenario Outline: Check permitted DVSA users can not remove a role from themselves
     Given I am logged in as a <permitted user>
-    And I have the VM10619 user role
     And my RBAC has the role "<role>"
     When I try to remove the role of "<role>" from myself
     Then I should receive a Forbidden response

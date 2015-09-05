@@ -434,7 +434,7 @@ class PersonRoleServiceTest extends AbstractServiceTestCase
      */
     public function testGetRoles()
     {
-        $this->fakeAuthService_assertGranted(PermissionInSystem::MANAGE_DVSA_ROLES);
+        $this->fakeAuthService_assertGranted(PermissionInSystem::READ_DVSA_ROLES);
         $this->fakeAuthService_isGranted(1);
         $this->fakePersonSystemRoleMapRepository_getPersonActiveInternalRoleCodes();
         $this->fakePermissionToAssignRoleMapRepository_getPermissionCodeByRoleCode();
