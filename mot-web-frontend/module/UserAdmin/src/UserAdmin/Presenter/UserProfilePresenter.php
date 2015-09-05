@@ -2,15 +2,12 @@
 
 namespace UserAdmin\Presenter;
 
-use DvsaCommon\Model\DvsaRole;
-use DvsaClient\Entity\TesterAuthorisation;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use Core\Presenter\AddressPresenterInterface;
 use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
-use DvsaCommon\Constants\Role;
 use DvsaCommon\Utility\AddressUtils;
 use UserAdmin\Service\PersonRoleManagementService;
 use Zend\Di\Exception\RuntimeException;
@@ -47,6 +44,9 @@ class UserProfilePresenter implements AddressPresenterInterface
     /** @var PersonRoleManagementService s*/
     private $personRoleManagementService;
 
+    /** @var array $dvsaRoles - cache for data retrieved from API */
+    private $dvsaRoles;
+
     /**
      * @param PersonHelpDeskProfileDto $person
      * @param TesterAuthorisationViewModel $testerAuthorisation
@@ -60,8 +60,7 @@ class UserProfilePresenter implements AddressPresenterInterface
         CatalogService $catalogService = null,
         $isDvsaUser = false,
         PersonRoleManagementService $personRoleManagementService = null
-    )
-    {
+    ) {
         $this->person = $person;
         $this->testerAuthorisation = $testerAuthorisation;
         $this->isDvsaUser = $isDvsaUser;
@@ -72,6 +71,7 @@ class UserProfilePresenter implements AddressPresenterInterface
     public function setPersonId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -215,8 +215,8 @@ class UserProfilePresenter implements AddressPresenterInterface
     }
 
     /**
-     * Returns an array of all site and organisation roles,
-     * grouped by site/organisation ID
+     * Returns an array of all site and organisation roles, grouped by site/organisation ID
+     *
      * @return array
      */
     public function getSiteAndOrganisationRoles()
@@ -240,14 +240,15 @@ class UserProfilePresenter implements AddressPresenterInterface
     }
 
     /**
-     * Function to make use of the service catalog
-     * and Data Mapping helper to get a role's name from codes
+     * Function to make use of the service catalog and Data Mapping helper to get a role's name from codes
+     *
      * @param array $roles
+     *
+     * @return array
      * @throws \Exception
      */
     public function getNameFromRoleCode(array $roles)
     {
-
         $siteAndOrganisationRoles = $this->catalogService->getBusinessRoles();
         $processedRoles = [];
 
@@ -291,22 +292,16 @@ class UserProfilePresenter implements AddressPresenterInterface
             );
         }
 
-        return array_column(
+        if (null !== $this->dvsaRoles) {
+            return $this->dvsaRoles;
+        }
+
+        $this->dvsaRoles = array_column(
             $this->personRoleManagementService->getPersonAssignedInternalRoles($this->getPersonId()),
             'name'
         );
-    }
 
-    /**
-     * To find out if we can display the "role" section
-     * @return bool
-     */
-    public function canDisplayRoleSection()
-    {
-        $userHasPermission = $this->personRoleManagementService->userHasPermissionToManagePersonDvsaRoles();
-        $haveNoAssociatedRole = empty($this->getSiteAndOrganisationRoles());
-
-        return $userHasPermission && $haveNoAssociatedRole;
+        return $this->dvsaRoles;
     }
 
     public function getTesterAuthorisation()
@@ -315,7 +310,36 @@ class UserProfilePresenter implements AddressPresenterInterface
     }
 
     /**
+     * Don't display only when user has trade roles (e.g tester, AEDM, etc.) and has no DVSA/DVLA roles
+     * or if user has no permission to see it
+     *
+     * @return bool
+     */
+    public function canDisplayDvsaRoleSection()
+    {
+        $hasTradeRoles = count($this->getSiteAndOrganisationRoles()) > 0;
+
+        return $this->canReadDvsaRoles() && !($hasTradeRoles && false === $this->hasDvsaRoles());
+    }
+
+    /**
+     * User has permissions to:
+     *  - reset password
+     *  - recover username
+     *  - reclaim account
+     *
+     * @return bool
+     */
+    public function canDisplayResetSection()
+    {
+        return $this->personRoleManagementService->userHasPermissionToResetPassword()
+            && $this->personRoleManagementService->userHasPermissionToRecoveryUsername()
+            && $this->personRoleManagementService->userHasPermissionToReclaimUserAccount();
+    }
+
+    /**
      * Tells us if the user is trying to manage their own roles
+     *
      * @return bool
      */
     public function isManagingOwnRoles()
@@ -323,4 +347,27 @@ class UserProfilePresenter implements AddressPresenterInterface
         return $this->personRoleManagementService->personToManageIsSelf($this->getPersonId());
     }
 
+    /**
+     * @return bool
+     */
+    public function canManageDvsaRoles()
+    {
+        return $this->personRoleManagementService->userHasPermissionToManagePersonDvsaRoles();
+    }
+
+    /**
+     * @return bool
+     */
+    public function canReadDvsaRoles()
+    {
+        return $this->personRoleManagementService->userHasPermissionToReadPersonDvsaRoles();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasDvsaRoles()
+    {
+        return count($this->getPersonAssignedInternalRoleCodes()) > 0;
+    }
 }

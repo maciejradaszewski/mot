@@ -20,8 +20,7 @@ class TesterAuthorisationViewModel
         $testerId,
         TesterAuthorisation $testerAuthorisation,
         MotAuthorisationServiceInterface $authorisationService
-    )
-    {
+    ) {
         $this->testerId = $testerId;
         $this->testerAuthorisation = $testerAuthorisation;
         $this->authorisationService = $authorisationService;
@@ -45,13 +44,15 @@ class TesterAuthorisationViewModel
     public function shouldDisplayGroupARecordDemoLink()
     {
         return $this->hasPermissionToAssessDemo()
-        && $this->testerAuthorisation->getGroupAStatus()->getCode() == AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED;
+            && $this->testerAuthorisation
+            ->getGroupAStatus()->getCode() === AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED;
     }
 
     public function shouldDisplayGroupBRecordDemoLink()
     {
         return $this->hasPermissionToAssessDemo()
-        && $this->testerAuthorisation->getGroupBStatus()->getCode() == AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED;
+            && $this->testerAuthorisation->getGroupBStatus()
+            ->getCode() == AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED;
     }
 
     private function hasPermissionToAssessDemo()
