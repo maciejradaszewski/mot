@@ -59,11 +59,9 @@
 |$testerDA_username|$testerDB_id|$testerDB_username|AED  |$orgA_id|Forbidden error, code 160                                                   |            |Tester now is an AED & can't nominate AED         |
 |$testerDA_username|$testerDA_id|$testerDA_username|AEDM |$orgA_id|Forbidden error, code 160                                                   |            |Tester now is an AED & can't nominate AEDM        |
 |$testerDA_username|$testerA_id |$testerA_username |AEDM |$orgA_id|Forbidden error, code 160                                                   |            |Tester now is an AED & can't self-nominate AEDM   |
-|$testerMA_username|$testerDB_id|$testerDB_username|AED  |$orgA_id|=~/\{"id":\d+\}/                                                            |$positionDB=|Tester now is an AEDM & can nominate AED          |
+|$testerMA_username|$testerDB_id|$testerDB_username|AED  |$orgA_id|=~/\{"id":\d+\}/                                                            |$positionDB=|Tester now is an AED                              |
+|$testerMA_username|$testerDS_id|$testerDS_username|AED  |$orgA_id|=~/\{"id":\d+\}/                                                            |$positionDS=|Tester now is an AED                              |
 |$testerMA_username|$testerMD_id|$testerMD_username|AEDM |$orgA_id|There is already an AEDM assigned to this Authorised Examiner error, code 60|            |Organisation A already has an AEDM                |
-|$ao2_username     |$testerMD_id|$testerMD_username|AED  |$orgD_id|=~/\{"id":\d+\}/                                                            |$positionMD=|AO2 can nominate AED                              |
-|$ao2_username     |$testerDD_id|$testerDD_username|AEDM |$orgD_id|=~/\{"id":\d+\}/                                                            |$positionDD=|AO2 can nominate AEDM                             |
-|$ao2_username     |$testerDS_id|$testerDS_username|AED  |$orgA_id|=~/\{"id":\d+\}/                                                            |$positionDS=|AO2 can nominate AED                              |
 
 !4 List position
 !| VM-8416 check hierarchies during nomination process list                                                                                        |
@@ -81,5 +79,3 @@
 |Acting User       |At      |try to disassociate user by id|Position Id|And it will result in?   |Comment                        |
 |$testerDA_username|$orgA_id|$testerDB_id                  |$positionDB|Forbidden error, code 160|AED can not remove AED         |
 |$testerDS_username|$orgA_id|$testerDS_id                  |$positionDS|[]                       |AED can remove his/her own role|
-|$ao2_username     |$orgD_id|$testerDD_id                  |$positionDD|[]                       |AO2 can remove AEDM            |
-|$ao2_username     |$orgD_id|$testerMD_id                  |$positionMD|[]                       |AO2 can remove AED             |

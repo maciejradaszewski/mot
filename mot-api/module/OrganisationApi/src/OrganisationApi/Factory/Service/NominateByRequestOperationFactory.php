@@ -21,8 +21,7 @@ class NominateByRequestOperationFactory implements FactoryInterface
         return new NominateByRequestOperation(
             $serviceLocator->get(EntityManager::class),
             $serviceLocator->get(NominationVerifier::class),
-            $serviceLocator->get(OrganisationNominationService::class),
-            $serviceLocator->get(NotificationService::class)
+            $serviceLocator->get(OrganisationNominationService::class)
         );
     }
 }
