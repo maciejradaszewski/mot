@@ -19,6 +19,7 @@ Feature: Nomination
     | an Area Office User 2 | SITE-ADMIN   | Site admin   |
     | a Site Manager        | SITE-ADMIN   | Site admin   |
     | a Site Manager        | TESTER       | Tester       |
+    | a Site Manager        | SITE-MANAGER | Site manager |
 
   Scenario Outline: A Manager nominates user to organisation role
     Given I am logged in as <user_manager> to new organisation
