@@ -7,7 +7,7 @@ import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 
-public class SecurityQuestionOne extends Page {
+public class SecurityQuestionOnePage extends Page {
 
     private static final String PAGE_TITLE = "First security question";
 
@@ -17,7 +17,7 @@ public class SecurityQuestionOne extends Page {
 
     @FindBy(id = "answer1") private WebElement securityQAnswer;
 
-    public SecurityQuestionOne(MotAppDriver driver) {
+    public SecurityQuestionOnePage(MotAppDriver driver) {
         super(driver);
         selfVerify();
     }
@@ -27,16 +27,22 @@ public class SecurityQuestionOne extends Page {
         return PageInteractionHelper.verifyTitle(getTitle(), PAGE_TITLE);
     }
 
-    public SecurityQuestionTwo selectQuestionAndEnterAnswerExpectingSecurityQuestionTwoPage(String securityQ1selected, String answer){
+    public SecurityQuestionTwoPage selectQuestionAndEnterAnswerExpectingSecurityQuestionTwoPage(String securityQ1selected, String answer){
         FormCompletionHelper.selectFromDropDownByValue(securityQDropDown, securityQ1selected);
         FormCompletionHelper.enterText(securityQAnswer, answer);
         continueToNextPage.click();
-        return new SecurityQuestionTwo(driver);
+        return new SecurityQuestionTwoPage(driver);
     }
 
-    public  SecurityQuestionTwo clickContinue() {
+    public SecurityQuestionTwoPage clickContinue() {
         continueToNextPage.click();
-        return new SecurityQuestionTwo(driver);
+        return new SecurityQuestionTwoPage(driver);
     }
 
+    public SecurityQuestionOnePage chooseQuestionAndAnswer()
+    {
+        FormCompletionHelper.selectFromDropDownByValue(securityQDropDown, "1");
+        FormCompletionHelper.enterText(securityQAnswer, "Answer");
+        return this;
+    }
 }

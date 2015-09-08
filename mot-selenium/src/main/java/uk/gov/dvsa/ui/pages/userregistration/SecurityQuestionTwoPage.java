@@ -7,7 +7,7 @@ import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 
-public class SecurityQuestionTwo extends Page {
+public class SecurityQuestionTwoPage extends Page {
 
     private static final String PAGE_TITLE = "Second security question";
 
@@ -17,7 +17,7 @@ public class SecurityQuestionTwo extends Page {
 
     @FindBy(id = "answer2") private WebElement securityQAnswer;
 
-    public SecurityQuestionTwo (MotAppDriver driver){
+    public SecurityQuestionTwoPage(MotAppDriver driver){
         super(driver);
         selfVerify();
     }
@@ -39,4 +39,10 @@ public class SecurityQuestionTwo extends Page {
         return new PasswordPage(driver);
     }
 
+    public SecurityQuestionTwoPage chooseQuestionAndAnswer()
+    {
+        FormCompletionHelper.selectFromDropDownByValue(securityQDropDown, "6");
+        FormCompletionHelper.enterText(securityQAnswer, "Answer");
+        return this;
+    }
 }

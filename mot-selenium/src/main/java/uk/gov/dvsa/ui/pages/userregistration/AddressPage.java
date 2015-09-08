@@ -3,6 +3,7 @@ package uk.gov.dvsa.ui.pages.userregistration;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
+import uk.gov.dvsa.helper.ContactDetailsHelper;
 import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
@@ -33,7 +34,13 @@ public class AddressPage extends Page {
         return PageInteractionHelper.verifyTitle(getTitle(), PAGE_TITLE);
     }
 
-    public SecurityQuestionOne enterAddressAndSubmitExpectingFirstSecurityQuestionPage(String addressLine1, String addressLine2, String addressLine3, String town,
+    public SecurityQuestionOnePage clickContinue()
+    {
+        continueToNextPage.click();
+        return new SecurityQuestionOnePage(driver);
+    }
+
+    public SecurityQuestionOnePage enterAddressAndSubmitExpectingFirstSecurityQuestionPage(String addressLine1, String addressLine2, String addressLine3, String town,
                                                      String postCode) {
         FormCompletionHelper.enterText(homeAddressLineOne, addressLine1);
         FormCompletionHelper.enterText(homeAddressLineTwo, addressLine2);
@@ -41,7 +48,18 @@ public class AddressPage extends Page {
         FormCompletionHelper.enterText(townCity, town);
         FormCompletionHelper.enterText(postcode, postCode);
         continueToNextPage.click();
-        return new SecurityQuestionOne(driver);
+        return new SecurityQuestionOnePage(driver);
     }
 
+    public AddressPage enterAddress()
+    {
+        ContactDetailsHelper.setContactDetails();
+        FormCompletionHelper.enterText(homeAddressLineOne, ContactDetailsHelper.addressLine1);
+        FormCompletionHelper.enterText(homeAddressLineTwo, ContactDetailsHelper.addressLine2);
+        FormCompletionHelper.enterText(homeAddressLineThree, ContactDetailsHelper.addressLine3);
+        FormCompletionHelper.enterText(townCity, ContactDetailsHelper.city);
+        FormCompletionHelper.enterText(postcode, ContactDetailsHelper.postCode);
+
+        return this;
+    }
 }

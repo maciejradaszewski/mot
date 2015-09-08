@@ -3,6 +3,7 @@ package uk.gov.dvsa.ui.pages.userregistration;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
+import uk.gov.dvsa.helper.ContactDetailsHelper;
 import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
@@ -47,4 +48,14 @@ public class DetailsPage extends Page {
         return new AddressPage(driver);
     }
 
+    public DetailsPage enterYourDetaisl()
+    {
+        String email = ContactDetailsHelper.generateUniqueEmail();
+        FormCompletionHelper.enterText(firstName, ContactDetailsHelper.generateUniqueName());
+        FormCompletionHelper.enterText(lastName, ContactDetailsHelper.generateUniqueName());
+        FormCompletionHelper.enterText(emailAddress, email);
+        FormCompletionHelper.enterText(verifyEmailAddress, email);
+
+        return this;
+    }
 }
