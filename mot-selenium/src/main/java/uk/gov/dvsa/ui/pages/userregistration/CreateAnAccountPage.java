@@ -11,7 +11,7 @@ public class CreateAnAccountPage extends Page {
 
     private static final String PAGE_TITLE = "Create an account";
 
-    public static final String PATH = "/account/register/create-an-account/";
+    public static final String PATH = "/account/register";
 
     @FindBy(id = "continue") private WebElement continueToNextPage;
 
@@ -27,9 +27,8 @@ public class CreateAnAccountPage extends Page {
         return PageInteractionHelper.verifyTitle(getTitle(), PAGE_TITLE);
     }
 
-    public DetailsPage clickContinue() {
+    public DetailsPage details() {
         continueToNextPage.click();
         return new DetailsPage(driver);
     }
-
 }

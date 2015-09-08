@@ -39,4 +39,12 @@ public class PasswordPage extends Page {
         return new SummaryPage(driver);
     }
 
+    public PasswordPage enterPassword()
+    {
+        FormCompletionHelper.enterText(createPassword, "1Password2");
+        FormCompletionHelper.enterText(retypePassword, "1Password2");
+        return this;
+
+    }
+
 }

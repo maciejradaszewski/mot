@@ -2,19 +2,15 @@ package uk.gov.dvsa.data;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-import org.testng.Assert;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.AssertionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
+import uk.gov.dvsa.module.Register;
 import uk.gov.dvsa.module.Retest;
-import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
-import uk.gov.dvsa.ui.pages.mot.DuplicateReplacementCertificatePage;
-import uk.gov.dvsa.ui.pages.mot.retest.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -30,11 +26,13 @@ public class MotUI {
     private boolean successful = false;
 
     public final Retest retest;
+    public final Register register;
 
     public MotUI(MotAppDriver driver) {
         this.driver = driver;
         pageNavigator.setDriver(driver);
         retest = new Retest(pageNavigator);
+        register = new Register(pageNavigator);
     }
 
     public void searchForVehicle(User user, Vehicle vehicle) throws IOException, URISyntaxException {
