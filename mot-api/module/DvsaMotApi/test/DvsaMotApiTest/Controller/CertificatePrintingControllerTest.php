@@ -3,13 +3,14 @@
 namespace DvsaMotApiTest\Controller;
 
 use DvsaAuthentication\Identity;
-use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Dto\Common\MotTestTypeDto;
 use DvsaCommon\Dto\Person\PersonDto;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaDocument\Service\Document\DocumentService;
 use DvsaEntities\Entity\Person;
@@ -26,18 +27,19 @@ use Zend\Log\Logger;
 use Zend\Stdlib\Parameters;
 use Zend\Uri\Http;
 
-/**
- * Unit tests for ReportController
- */
-class CertificatePrintinibgControllerTest extends AbstractMotApiControllerTestCase
+
+class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
 {
+
+    const SITE_ID = 5;
+
     /** @var  \DvsaMotApi\Service\MotTestService|MockObj */
     private $mockedTestService;
     /** @var ReportService|MockObj */
     private $mockedReportService;
     /** @var DocumentService|MockObj */
     private $mockedDocumentService;
-    /** @var MotAuthorisationServiceInterface */
+    /** @var AuthorisationServiceMock */
     private $mockedAuthService;
     /** @var CertificateCreationService|MockObj */
     private $mockedCertificateCreationService;
@@ -46,12 +48,7 @@ class CertificatePrintinibgControllerTest extends AbstractMotApiControllerTestCa
 
     protected function setUp()
     {
-
-
-        $this->mockedDocumentService = $this
-            ->getMockBuilder(DocumentService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->mockedDocumentService = XMock::of(DocumentService::class);
 
         $this->controller = new CertificatePrintingController($this->mockedDocumentService);
 
@@ -62,7 +59,7 @@ class CertificatePrintinibgControllerTest extends AbstractMotApiControllerTestCa
 
         $this->mockedCertificateCreationService = $this->getMockCertificateCreationService();
         $this->mockedDvsaAuthenticationService =  $this->getMockAuthenticationService();
-        $this->mockedAuthService = $this->getMockAuthService();
+        $this->mockedAuthService = $this->setMockAuthService(AuthorisationServiceMock::grantedAll());
 
         $mockLogger = XMock::of(Logger::class);
 
@@ -83,10 +80,9 @@ class CertificatePrintinibgControllerTest extends AbstractMotApiControllerTestCa
         return $mock;
     }
 
-    private function getMockAuthService()
+    private function setMockAuthService($mock)
     {
-        $mock = $this->getMockWithDisabledConstructor(MotAuthorisationServiceInterface::class);
-        $this->serviceManager->setService('AuthorizationService', $mock);
+        $this->serviceManager->setService('DvsaAuthorisationService', $mock);
         return $mock;
     }
 
@@ -230,9 +226,7 @@ class CertificatePrintinibgControllerTest extends AbstractMotApiControllerTestCa
 
     public function testFailsWhenMotHasNoReportIds()
     {
-        $this->mockedTestService->expects($this->once())
-            ->method('canPrintCertificateForMotTest')
-            ->will($this->returnValue(true));
+        $this->mockedAuthService->granted(PermissionAtSite::CERTIFICATE_PRINT);
 
         $motTestNr = 99999;
         $motTestId = 888;
@@ -265,9 +259,6 @@ class CertificatePrintinibgControllerTest extends AbstractMotApiControllerTestCa
 
     public function testSetsRuntimeParametersForDuplicateIssueModeWelshVersion()
     {
-        $this->mockedTestService->expects($this->once())
-            ->method('canPrintCertificateForMotTest')
-            ->will($this->returnValue(true));
 
         $motTestNr = 9999;
         $motTestId = 7777;
@@ -415,11 +406,7 @@ class CertificatePrintinibgControllerTest extends AbstractMotApiControllerTestCa
      */
     public function testUnauthExceptionWhenPrintingWithoutAuthorisation()
     {
-        // mock failing RBAC check
-        $this->mockedTestService->expects($this->once())
-            ->method('canPrintCertificateForMotTest')
-            ->willReturn(false);
-
+        $this->setMockAuthService(AuthorisationServiceMock::denyAll());
         $motTestDto = self::createMotTestDto();
 
         $this->mockedTestService->expects($this->once())
@@ -498,7 +485,7 @@ class CertificatePrintinibgControllerTest extends AbstractMotApiControllerTestCa
      */
     private static function createMotTestDto()
     {
-        $motTestDto = (new MotTestDto())->setMotTestNumber(1);
+        $motTestDto = (new MotTestDto())->setMotTestNumber(1)->setVehicleTestingStation(['id' => self::SITE_ID]);
 
         return $motTestDto;
     }
