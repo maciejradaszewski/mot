@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "082b30dca02f30d6b6d9a9c95b20f080",
+    "hash": "cc5e63fe852d867a20177105a9c493d3",
     "packages": [
         {
             "name": "cpms/client",
@@ -803,11 +803,11 @@
         },
         {
             "name": "dvsa/dvsa-application-logger",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/dvsa-application-logger.git",
-                "reference": "5978b63ddea888c298ac16df012fa52a7781ea3f"
+                "reference": "34da62e20b980a569bbca4a5d7cf9dbe2810bbd4"
             },
             "require": {
                 "php": ">=5.5",
@@ -843,7 +843,7 @@
                 "logging",
                 "zf2"
             ],
-            "time": "2015-09-01 12:47:09"
+            "time": "2015-09-09 11:41:53"
         },
         {
             "name": "dvsa/dvsa-doctrine-module",
@@ -1647,12 +1647,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:zendframework/ZendPdf.git",
+                "url": "https://github.com/zendframework/ZendPdf.git",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },

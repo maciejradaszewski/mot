@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7b0998a7edc517a4780ab085c2d7e0bc",
+    "hash": "a0197d0594ac73ee7f5aa9d4457fca70",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1009,11 +1009,11 @@
         },
         {
             "name": "dvsa/dvsa-application-logger",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/dvsa-application-logger.git",
-                "reference": "5978b63ddea888c298ac16df012fa52a7781ea3f"
+                "reference": "34da62e20b980a569bbca4a5d7cf9dbe2810bbd4"
             },
             "require": {
                 "php": ">=5.5",
@@ -1049,7 +1049,7 @@
                 "logging",
                 "zf2"
             ],
-            "time": "2015-09-01 12:47:09"
+            "time": "2015-09-09 11:41:53"
         },
         {
             "name": "dvsa/dvsa-doctrine-module",
@@ -1280,12 +1280,12 @@
             "version": "v2.3.12",
             "source": {
                 "type": "git",
-                "url": "git@github.com:Atlantic18/DoctrineExtensions.git",
+                "url": "https://github.com/Atlantic18/DoctrineExtensions.git",
                 "reference": "c3ff3c73c95b01e107af33d4fe3abf80794e2df9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Atlantic18/DoctrineExtensions/zipball/5512c9f1800bcef5760e4dac1db3ae0e251fd1a6",
+                "url": "https://api.github.com/repos/Atlantic18/DoctrineExtensions/zipball/c3ff3c73c95b01e107af33d4fe3abf80794e2df9",
                 "reference": "c3ff3c73c95b01e107af33d4fe3abf80794e2df9",
                 "shasum": ""
             },
