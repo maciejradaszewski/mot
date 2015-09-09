@@ -101,20 +101,20 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
         $vm = $this->getIndexViewModel($orgId);
         $presenter = new AuthorisedExaminerPresenter($vm->getOrganisation());
 
-        /** @var \DvsaCommon\Dto\Site\SiteDto $aoSiteDto */
-        $aoSiteDto = $vm->getOrganisation()->getAuthorisedExaminerAuthorisation()->getAssignedAreaOffice();
+        /** @var \DvsaCommon\Dto\AreaOffice\AreaOfficeDto $aoDto */
+        $aoDto = $vm->getOrganisation()->getAuthorisedExaminerAuthorisation()->getAssignedAreaOffice();
         $aoDetailsUrl = '#';
-        $aoSiteLabel = '';
+        $aoLabel = '';
 
-        if ($aoSiteDto) {
-            $siteId = $aoSiteDto->getId();
-            $siteLabel = $aoSiteDto->getSiteNumber();
+        if ($aoDto) {
+            $aoId = $aoDto->getSiteId();
+            $aoNumber = $aoDto->getAoNumber();
 
-            if ($siteId) {
+            if ($aoId) {
                 $aoDetailsUrl = VehicleTestingStationUrlBuilderWeb::byId(1);
             }
-            if ($siteLabel) {
-                $aoSiteLabel = $siteLabel;
+            if ($aoNumber) {
+                $aoLabel = $aoNumber;
             }
         }
 
@@ -143,7 +143,7 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
                 ),
                 'eventButton' => $this->auth->isGranted(PermissionInSystem::LIST_EVENT_HISTORY),
 
-                'aoOfficeLabel' => $aoSiteLabel,
+                'aoOfficeLabel' => $aoLabel,
                 'aoOfficeUrl' => $aoDetailsUrl,
             ]
         );
