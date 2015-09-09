@@ -6,12 +6,11 @@ use DvsaCommon\Dto\Common\AuthForAeStatusDto;
 use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
-use DvsaCommon\Dto\Site\SiteDto;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaCommonApi\Service\Mapper\AbstractApiMapper;
 use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Entity\OrganisationContact;
-use DvsaEntities\Entity\Site;
+use DvsaCommon\Dto\AreaOffice\AreaOfficeDto;
 
 /**
  * Class OrganisationMapper
@@ -69,18 +68,23 @@ class OrganisationMapper extends AbstractApiMapper
 
             //The assigned area *is* a Site entity
             $siteAO = $ae->getAreaOffice();
-            $siteDto = new SiteDto();
+            $aoDto = new AreaOfficeDto();
             if ($siteAO) {
-                $siteDto
-                    ->setId($siteAO->getId())
+                $partialSiteNumber = substr($siteAO->getSiteNumber(), 0, 2);
+                $aoNumber = ctype_digit($partialSiteNumber)
+                    ? (int) $partialSiteNumber
+                    : $siteAO->getSiteNumber();
+
+                $aoDto
+                    ->setSiteId($siteAO->getId())
                     ->setSiteNumber($siteAO->getSiteNumber())
+                    ->setAoNumber($aoNumber)
                     ->setName($siteAO->getName());
             }
 
-
             $aeAuthorisation = new AuthorisedExaminerAuthorisationDto();
             $aeAuthorisation
-                ->setAssignedAreaOffice($siteDto)
+                ->setAssignedAreaOffice($aoDto)
                 ->setAuthorisedExaminerRef($ae->getNumber())
                 ->setStatus($statusDto)
                 ->setValidFrom(DateTimeApiFormat::date($ae->getValidFrom()))
