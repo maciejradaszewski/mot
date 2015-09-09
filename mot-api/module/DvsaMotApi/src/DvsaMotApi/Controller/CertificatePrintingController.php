@@ -2,6 +2,7 @@
 
 namespace DvsaMotApi\Controller;
 
+use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Enum\MotTestTypeCode;
@@ -58,6 +59,7 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
     /** @var ReportService */
     private $reportService;
 
+
     public function __construct(DocumentService $documentService)
     {
         $this->documentService = $documentService;
@@ -109,7 +111,7 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
         return $this->getReportService()->getReport(
             'MOT/' . $certificate . '.pdf',
             [
-                self::JREPORT_PRM_SITE_NR   => $testStation,
+                self::JREPORT_PRM_SITE_NR => $testStation,
                 self::JREPORT_PRM_INSP_AUTH => $inspAuthority,
                 self::JREPORT_PRM_WATERMARK => $this->getInvalidWatermark(),
             ]
@@ -192,11 +194,11 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
             $tester = $this->getIdentity()->getPerson()->getDisplayShortName();
 
             $runtimeParameters += [
-                self::JREPORT_PRM_ISSUE_TYPE    => ($isDuplicate ? 'Duplicate' : 'Replacement'),
+                self::JREPORT_PRM_ISSUE_TYPE => ($isDuplicate ? 'Duplicate' : 'Replacement'),
                 self::JREPORT_PRM_ISSUE_TYPE_CY => ($isDuplicate ? 'Dyblyg' : 'Ailddodiad'),
-                self::JREPORT_PRM_ISSUER        => $tester,
-                self::JREPORT_PRM_SITE_NR       => $siteNr,
-                self::JREPORT_PRM_NOW_CY        => datefmt_format_object(
+                self::JREPORT_PRM_ISSUER => $tester,
+                self::JREPORT_PRM_SITE_NR => $siteNr,
+                self::JREPORT_PRM_NOW_CY => datefmt_format_object(
                     DateUtils::nowAsUserDateTime(), 'dd MMMM Y', 'cy_GB'
                 ),
             ];
@@ -219,13 +221,13 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
                 // Pull in snapshot data and pass it to the certificate creation call
                 $snapshotData = $this->documentService->getSnapshotById($certDocId);
 
-                if(empty($snapshotData)) {
+                if (empty($snapshotData)) {
                     throw new \LogicException('Unable to find certificate json snapshot data for certificate document id: ' . $certDocId);
                 }
                 $runtimeParameters['snapshotData'] = $this->documentService->getSnapshotById($certDocId);
                 $reportArgs[] = [
-                    'documentId'    => $certDocId,
-                    'reportName'    => $this->amendTemplateForContentType($certificateDetail['reportName']),
+                    'documentId' => $certDocId,
+                    'reportName' => $this->amendTemplateForContentType($certificateDetail['reportName']),
                     'runtimeParams' => $runtimeParameters
                 ];
 
@@ -250,6 +252,7 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
         if ($this->requestIs(self::TYPE_HTML)) {
             $reportName = str_replace('.pdf', '.html', $reportName);
         }
+
         return $reportName;
     }
 
@@ -325,14 +328,16 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
     /**
      * Checks to see if the current user can print the current certificate
      * in question. If not, then an exception is thrown.
-
      * @param MotTestDto $motTest
      *
      * @throws UnauthorisedException
      */
     private function assertUserCanPrintCertificate(MotTestDto $motTest)
     {
-        if (!$this->motTestService->canPrintCertificateForMotTest($motTest)) {
+        $authorisationService = null;
+        $siteId = ArrayUtils::tryGet($motTest->getVehicleTestingStation(), 'id');
+        $this->getService('DvsaAuthorisationService', $authorisationService);
+        if (!$authorisationService->isGrantedAtSite(PermissionAtSite::CERTIFICATE_PRINT, $siteId)) {
             throw new UnauthorisedException('You are not authorised to print this certificate');
         }
     }

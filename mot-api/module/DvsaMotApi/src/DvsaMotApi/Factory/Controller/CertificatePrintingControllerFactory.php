@@ -20,12 +20,12 @@ class CertificatePrintingControllerFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $controllerManager)
     {
 
-            /* @var ServiceLocatorInterface $serviceLocator */
-            $serviceLocator = $controllerManager->getServiceLocator();
+        /* @var ServiceLocatorInterface $serviceLocator */
+        $serviceLocator = $controllerManager->getServiceLocator();
 
-            /* @var DocumentService $documentService */
-            $documentService = $serviceLocator->get('DocumentService');
+        /* @var DocumentService $documentService */
+        $documentService = $serviceLocator->get('DocumentService');
 
-            return new CertificatePrintingController($documentService);
+        return new CertificatePrintingController($documentService);
     }
 }
