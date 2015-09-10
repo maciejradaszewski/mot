@@ -66,7 +66,8 @@ return [
                     $entityManager->getRepository(SiteBusinessRoleMap::class),
                     $sm->get('DvsaAuthorisationService'),
                     $entityManager,
-                    $sm->get(NotificationService::class)
+                    $sm->get(NotificationService::class),
+                    $sm->get(\NotificationApi\Service\PositionRemovalNotificationService::class)
                 );
             },
         NominateRoleService::class             =>
