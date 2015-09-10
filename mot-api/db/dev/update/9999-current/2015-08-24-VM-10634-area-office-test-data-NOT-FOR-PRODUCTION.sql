@@ -32,20 +32,25 @@ SET @app_user_id = (SELECT `id`
                     FROM `person`
                     WHERE `username` = 'static data' || `user_reference` = 'Static Data');
 
+SET @assembly_id = (SELECT `id`
+                    FROM `assembly`
+                    WHERE `name` = 'Unknown'
+                    LIMIT 1);
+
 INSERT INTO `site_assembly_role_map` (`id`, `site_id`, `assembly_id`, `assembly_role_id`, `created_by`, `created_on`, `last_updated_by`, `last_updated_on`)
 VALUES
-  ('1', '3000', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
-  ('2', '3001', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
-  ('3', '3002', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
-  ('4', '3003', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
-  ('5', '3004', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
-  ('6', '3005', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
-  ('7', '3006', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
-  ('8', '3007', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
-  ('9', '3008', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
-  ('10', '3009', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
-  ('11', '3010', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
-  ('12', '3011', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
-  ('13', '3012', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
-  ('14', '3013', '0', '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6));
+  ('1', '3000', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
+  ('2', '3001', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
+  ('3', '3002', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
+  ('4', '3003', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
+  ('5', '3004', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
+  ('6', '3005', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
+  ('7', '3006', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
+  ('8', '3007', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
+  ('9', '3008', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
+  ('10', '3009', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
+  ('11', '3010', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
+  ('12', '3011', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
+  ('13', '3012', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6)),
+  ('14', '3013', @assembly_id, '1', @app_user_id, CURRENT_TIMESTAMP(6), @app_user_id, CURRENT_TIMESTAMP(6));
 
