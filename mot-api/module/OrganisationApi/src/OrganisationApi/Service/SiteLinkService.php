@@ -167,6 +167,7 @@ ERR_MSG;
 
         /** @var Organisation $organisation */
         $organisation = $this->orgRepo->get($orgId);
+
         /** @var Site $site */
         $site = $this->siteRepo->getBySiteNumber($siteNumber);
 
@@ -206,9 +207,12 @@ ERR_MSG;
                 )
             );
 
-            //  store in db
+            // persist site changes
             $this->entityManager->persist($site);
+
+            // persist map object
             $this->entityManager->persist($map);
+            $this->entityManager->flush();
 
             //  create notification and !!!    FLUSH   !!!
             $this->createLinkNotification($organisation, $site, Notification::TEMPLATE_DVSA_USER_LINK_SITE_TO_AE);

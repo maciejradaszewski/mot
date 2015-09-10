@@ -12,6 +12,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DvsaCommon\Enum\AuthorisationForTestingMotAtSiteStatusCode;
 use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\Enum\SiteStatusCode;
 use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\SeqNumberService;
@@ -630,11 +631,11 @@ class SiteRepository extends AbstractMutableRepository
 
         $sql = "SELECT site.site_number
             FROM site
-            WHERE site.organisation_id IS NULL";
+            WHERE site.organisation_id IS NULL AND site.site_status_id = (SELECT id FROM site_status_lookup WHERE code = :APPROVED)";
 
         $query = $this->_em
             ->createNativeQuery($sql, $rsm)
-            ->setParameter(':APPROVED', AuthorisationForTestingMotAtSiteStatusCode::APPROVED);
+            ->setParameter(':APPROVED', SiteStatusCode::APPROVED);
 
         return $query->getResult(AbstractQuery::HYDRATE_SCALAR);
     }
