@@ -7,6 +7,7 @@ use DvsaCommon\Enum\OrganisationSiteStatusCode;
 use DvsaCommonApi\Service\Validator\AbstractValidator;
 use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Entity\Site;
+use DvsaCommon\Enum\SiteStatusCode;
 
 class SiteLinkValidator extends AbstractValidator
 {
@@ -16,6 +17,7 @@ class SiteLinkValidator extends AbstractValidator
     const ERR_ORGANISATION_NOT_FOUND = 'We could not find the organisation ID %s';
     const ERR_ORGANISATION_NOT_APPROVED = 'The organisation is not approved';
     const ERR_SITE_NOT_FOUND = 'We could not find the site ID %s';
+    const ERR_SITE_NOT_APPROVED = 'The site %s is not approved';
     const ERR_SITE_NOT_AVAILABLE = 'This site is not available, it is currently associated to %s';
     const ERR_UNLINK_INVALID_STATUS = 'A status must be selected';
 
@@ -32,9 +34,15 @@ class SiteLinkValidator extends AbstractValidator
         if (empty($organisation)) {
             $this->errors->add(sprintf(self::ERR_ORGANISATION_NOT_FOUND, $orgId), self::FIELD_SITE_NUMBER);
         }
+
         if (empty($site)) {
             $this->errors->add(sprintf(self::ERR_SITE_NOT_FOUND, $siteNumber), self::FIELD_SITE_NUMBER);
         }
+
+        if (!empty($site) && $site->getStatus()->getCode() != SiteStatusCode::APPROVED) {
+            $this->errors->add(sprintf(self::ERR_SITE_NOT_APPROVED, $siteNumber), self::FIELD_SITE_NUMBER);
+        }
+
         $this->errors->throwIfAnyField();
 
         // Second check: Check if the data are valid

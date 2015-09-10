@@ -4,6 +4,7 @@ namespace OrganisationApiTest\Service\Validator;
 
 use DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode;
 use DvsaCommon\Enum\OrganisationSiteStatusCode;
+use DvsaCommon\Enum\SiteStatusCode;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\AuthForAeStatus;
@@ -11,6 +12,7 @@ use DvsaEntities\Entity\AuthorisationForAuthorisedExaminer;
 use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Entity\Site;
 use OrganisationApi\Service\Validator\SiteLinkValidator;
+use DvsaEntities\Entity\SiteStatus;
 
 /**
  * Class SiteLinkValidatorTest
@@ -54,12 +56,17 @@ class SiteLinkValidatorTest extends \PHPUnit_Framework_TestCase
                     )
             );
 
+        $siteEntity = new Site;
+        $siteEntity->setStatus(
+            (new SiteStatus)->setCode(SiteStatusCode::APPROVED)
+        );
+
         return [
             //  logical block :: check validateLink method
             //  no errors
             [
                 'organisation' => $orgEntity,
-                'site'         => new Site(),
+                'site'         => $siteEntity,
                 'orgId'        => self::ORGANISATION_ID,
                 'siteNumber'   => self::SITE_NUMBER,
                 'errors'       => false,
@@ -67,7 +74,7 @@ class SiteLinkValidatorTest extends \PHPUnit_Framework_TestCase
             //  Error no organisation
             [
                 'organisation' => null,
-                'site'         => new Site(),
+                'site'         => $siteEntity,
                 'orgId'        => self::ORGANISATION_ID,
                 'siteNumber'   => self::SITE_NUMBER,
                 'errors'       => true,
@@ -80,14 +87,22 @@ class SiteLinkValidatorTest extends \PHPUnit_Framework_TestCase
                 'siteNumber'   => self::SITE_NUMBER,
                 'errors'       => true,
             ],
+            //  Error site not approved
+            [
+                'organisation' => new Organisation(),
+                'site'         => (new Site)->setStatus((new SiteStatus)->setCode(SiteStatusCode::APPLIED)),
+                'orgId'        => self::ORGANISATION_ID,
+                'siteNumber'   => self::SITE_NUMBER,
+                'errors'       => true,
+            ],
             //  Error site already linked
             [
                 'organisation' => $orgEntity,
                 'site'         => (new Site())->setOrganisation(
-                    (new Organisation())->setAuthorisedExaminer(
-                        (new AuthorisationForAuthorisedExaminer())->setNumber(self::AE_REF)
-                    )
-                ),
+                                        (new Organisation())->setAuthorisedExaminer(
+                                            (new AuthorisationForAuthorisedExaminer())->setNumber(self::AE_REF)
+                                        )
+                                  )->setStatus((new SiteStatus())->setCode(SiteStatusCode::APPROVED)),
                 'orgId'        => self::ORGANISATION_ID,
                 'siteNumber'   => self::SITE_NUMBER,
                 'errors'       => true,
@@ -102,7 +117,7 @@ class SiteLinkValidatorTest extends \PHPUnit_Framework_TestCase
                                     ->setCode(AuthorisationForAuthorisedExaminerStatusCode::APPLIED)
                             )
                     ),
-                'site'         => new Site(),
+                'site'         => $siteEntity,
                 'orgId'        => self::ORGANISATION_ID,
                 'siteNumber'   => self::SITE_NUMBER,
                 'errors'       => true,
