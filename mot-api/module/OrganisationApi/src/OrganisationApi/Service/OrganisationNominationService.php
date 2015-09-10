@@ -56,6 +56,7 @@ class OrganisationNominationService
         $data = (new Notification())
             ->setRecipient($nomination->getPerson()->getId())
             ->setTemplate(Notification::TEMPLATE_ORGANISATION_NOMINATION_GIVEN)
+            ->addField('siteOrOrganisationId', $nomination->getOrganisation()->getAuthorisedExaminer()->getNumber())
             ->addField('organisationName', $nomination->getOrganisation()->getName())
             ->addField('positionName', $nomination->getOrganisationBusinessRole()->getFullName())
             ->toArray();

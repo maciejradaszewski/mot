@@ -10,6 +10,7 @@ use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use DvsaEventApi\Service\EventService;
 use DvsaCommon\Date\DateTimeHolder;
+use NotificationApi\Service\Helper\OrganisationNominationEventHelper;
 
 /**
  * Class DirectNominationOperationFactory
@@ -25,7 +26,8 @@ class DirectNominationOperationFactory implements FactoryInterface
             $serviceLocator->get(NominationVerifier::class),
             $serviceLocator->get(OrganisationNominationService::class),
             $serviceLocator->get(EventService::class),
-            new DateTimeHolder()
+            new DateTimeHolder(),
+            $serviceLocator->get(OrganisationNominationEventHelper::class)
         );
     }
 }
