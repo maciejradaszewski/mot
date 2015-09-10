@@ -8,6 +8,7 @@ use Core\Authorisation\Assertion\WebPerformMotTestAssertion;
 use DvsaCommon\Auth\Assertion\AbandonVehicleTestAssertion;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Constants\Network;
 use DvsaCommon\Constants\OdometerReadingResultType;
 use DvsaCommon\Domain\MotTestType;
@@ -587,7 +588,7 @@ class MotTestController extends AbstractDvsaMotTestController
             ]
         );
 
-        if (true === $model->isReinspection) {
+        if (true === $model->isReinspection || !$this->isFeatureEnabled(FeatureToggle::JASPER_ASYNC)) {
             $model->setTemplate('dvsa-mot-test/mot-test/print-test-result');
         } else {
             $this->layout('layout/layout-govuk.phtml');

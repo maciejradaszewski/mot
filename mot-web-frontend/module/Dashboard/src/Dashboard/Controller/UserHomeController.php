@@ -15,6 +15,7 @@ use Dvsa\OpenAM\Exception\OpenAMClientException;
 use Dvsa\OpenAM\Exception\OpenAMUnauthorisedException;
 use Dvsa\OpenAM\Model\OpenAMLoginDetails;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Enum\CountryOfRegistrationCode;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
@@ -107,6 +108,7 @@ class UserHomeController extends AbstractAuthActionController
         $return = array_merge(
             [
                 'dashboard' => $dashboard,
+                'jasperAsyncEnabled' => $this->isFeatureEnabled(FeatureToggle::JASPER_ASYNC),
             ],
             $authenticatedData,
             [
