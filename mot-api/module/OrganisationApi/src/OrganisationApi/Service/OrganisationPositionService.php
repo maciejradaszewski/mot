@@ -7,7 +7,6 @@ use DvsaCommon\Auth\Assertion\RemovePositionAtAeAssertion;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
-use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\Utility\ArrayUtils;
@@ -25,8 +24,8 @@ use OrganisationApi\Service\Mapper\OrganisationPositionMapper;
 use DvsaEntities\Repository\OrganisationBusinessRoleMapRepository;
 use DvsaCommon\Enum\EventTypeCode;
 use DvsaCommon\Constants\EventDescription;
-use DvsaEntities\Entity\EventSiteMap;
 use DvsaEntities\Entity\EventPersonMap;
+use NotificationApi\Service\PositionRemovalNotificationService;
 
 /**
  * Class OrganisationPositionService
@@ -45,6 +44,8 @@ class OrganisationPositionService implements TransactionAwareInterface
     private $authorisationService;
     private $entityManager;
     private $eventService;
+    /** @var PositionRemovalNotificationService  */
+    private $positionRemovalNotificationService;
 
     public function __construct(
         OrganisationRepository $organisationRepository,
@@ -55,7 +56,8 @@ class OrganisationPositionService implements TransactionAwareInterface
         MotIdentityProviderInterface $motIdentityProvider,
         MotAuthorisationServiceInterface $authorisationService,
         EntityManager $entityManager,
-        EventService $eventService
+        EventService $eventService,
+        PositionRemovalNotificationService $positionRemovalNotificationService
     ) {
         $this->organisationRepository                = $organisationRepository;
         $this->organisationBusinessRoleMapRepository = $organisationBusinessRoleMapRepository;
@@ -66,6 +68,7 @@ class OrganisationPositionService implements TransactionAwareInterface
         $this->authorisationService                  = $authorisationService;
         $this->entityManager                         = $entityManager;
         $this->eventService                          = $eventService;
+        $this->positionRemovalNotificationService    = $positionRemovalNotificationService;
     }
 
     public function getListForOrganisation($organisationId)
@@ -114,11 +117,15 @@ class OrganisationPositionService implements TransactionAwareInterface
 
     private function sendRemovalNotification(OrganisationBusinessRoleMap $map)
     {
+        $orgId = $map->getOrganisation()->getId();
+        $contactText = $this->positionRemovalNotificationService->getOrganisationRoleRemovalContactText($orgId);
+
         $removalNotification = (new Notification())->setTemplate(Notification::TEMPLATE_ORGANISATION_POSITION_REMOVED)
             ->setRecipient($map->getPerson()->getId())
             ->addField("positionName", $map->getOrganisationBusinessRole()->getFullName())
             ->addField("organisationName", $map->getOrganisation()->getName())
             ->addField("siteOrOrganisationId", $map->getOrganisation()->getAuthorisedExaminer()->getNumber())
+            ->addField("contactText", $contactText)
             ->toArray();
 
         $this->notificationService->add($removalNotification);
