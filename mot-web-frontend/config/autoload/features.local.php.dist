@@ -31,6 +31,6 @@ return [
         /**
          * Enable Jasper async printing
          */
-        'jasper.async' => true,
+        'jasper.async' => false,
     ]
 ];
