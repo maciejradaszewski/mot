@@ -1,4 +1,4 @@
-package uk.gov.dvsa.ui.views;
+package uk.gov.dvsa.ui.feature.journey;
 
 import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
@@ -12,10 +12,11 @@ import uk.gov.dvsa.ui.pages.HomePage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class JasperServiceTest extends BaseTest {
+public class JasperAsyncServiceTest extends BaseTest {
     FeaturesService service = new FeaturesService();
 
     @BeforeMethod(alwaysRun = true)
@@ -39,7 +40,7 @@ public class JasperServiceTest extends BaseTest {
     }
 
     @Test(groups = {"BVT", "Regression"})
-    public void ShowAsyncSummaryPageAndCertificateListTest() throws IOException, URISyntaxException {
+    public void showAsyncSummaryPageAndCertificateListTest() throws IOException, URISyntaxException {
 
         //When I perform an MOT test as a tester
         User tester = userData.createTester(1);

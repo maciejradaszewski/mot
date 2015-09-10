@@ -13,6 +13,7 @@ public class TestCompletePage extends Page {
     @FindBy (id = "compareTestResults") private WebElement compareResultsButton;
     @FindBy (id = "reprintDialog") private WebElement reinspectionMsg;
     @FindBy (css = "p a[href*='/mot-test-certificates']") private WebElement certificateLink;
+    @FindBy (id = "reprint-certificate") private WebElement printDocumentButton;
     @FindBy (className = "container") private WebElement testSummaryMessage;
 
     private static final String PAGE_TITLE = "MOT test complete";
@@ -51,5 +52,9 @@ public class TestCompletePage extends Page {
     public MotTestCertificatesPage clickCertificateLink(){
         certificateLink.click();
         return new MotTestCertificatesPage(driver);
+    }
+
+    public boolean isPrintDocumentButtonDisplayed(){
+        return printDocumentButton.isDisplayed();
     }
 }
