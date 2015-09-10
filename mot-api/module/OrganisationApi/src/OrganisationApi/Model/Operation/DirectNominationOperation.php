@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaEntities\Entity\BusinessRoleStatus;
+use DvsaEntities\Entity\Notification;
 use DvsaEntities\Entity\OrganisationBusinessRoleMap;
 use DvsaEntities\Entity\Person;
 use DvsaEventApi\Service\EventService;
@@ -14,6 +15,7 @@ use OrganisationApi\Service\OrganisationNominationService;
 use DvsaCommon\Enum\EventTypeCode;
 use DvsaCommon\Constants\EventDescription;
 use DvsaEntities\Entity\EventPersonMap;
+use NotificationApi\Service\Helper\OrganisationNominationEventHelper;
 
 /**
  * Class DirectNominationOperation
@@ -32,19 +34,22 @@ class DirectNominationOperation implements NominateOperationInterface
     private $organisationNominationService;
     private $eventService;
     private $dateTimeHolder;
+    private $organisationNominationEventHelper;
 
     public function __construct(
         EntityManager $entityManager,
         NominationVerifier $nominationVerifier,
         OrganisationNominationService $organisationNominationService,
         EventService $eventService,
-        DateTimeHolder $dateTimeHolder
+        DateTimeHolder $dateTimeHolder,
+        OrganisationNominationEventHelper $organisationNominationEventHelper
     ) {
         $this->entityManager                 = $entityManager;
         $this->nominationVerifier            = $nominationVerifier;
         $this->organisationNominationService = $organisationNominationService;
         $this->eventService = $eventService;
         $this->dateTimeHolder = $dateTimeHolder;
+        $this->organisationNominationEventHelper = $organisationNominationEventHelper;
     }
 
     /**
@@ -71,7 +76,11 @@ class DirectNominationOperation implements NominateOperationInterface
         $this->entityManager->persist($event);
         $this->entityManager->flush();
 
-        $this->organisationNominationService->sendNotification($nominator, $nomination);
+        $notificationId = $this->organisationNominationService->sendNotification($nominator, $nomination);
+
+        $notification = $this->entityManager->find(Notification::class, $notificationId);
+
+        $this->organisationNominationEventHelper->create($notification);
 
         return $nomination;
     }
