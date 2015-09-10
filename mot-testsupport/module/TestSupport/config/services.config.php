@@ -4,7 +4,6 @@ use DvsaCommon\HttpRestJson\ZendClient;
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\Obfuscate\ParamEncrypter;
 use DvsaCommon\Obfuscate\ParamObfuscator;
-use TestSupport\Factory\FeaturesServiceFactory;
 use TestSupport\Service\FeaturesService;
 use TestSupport\Service\DVLAOperativeService;
 use TestSupport\Service\VM10619RoleManagementUpgradeService;
@@ -96,7 +95,7 @@ return [
         CSCOService::class                 => \TestSupport\Factory\CSCOServiceFactory::class,
         CSMService::class                  => \TestSupport\Factory\CSMServiceFactory::class,
         DVLAManagerService::class          => \TestSupport\Factory\DVLAManagerServiceFactory::class,
-        DVLAOperativeService::class          => \TestSupport\Factory\DVLAOperativeServiceFactory::class,
+        DVLAOperativeService::class        => \TestSupport\Factory\DVLAOperativeServiceFactory::class,
         AreaOffice1Service::class          => \TestSupport\Factory\AreaOffice1ServiceFactory::class,
         AreaOffice2Service::class          => \TestSupport\Factory\AreaOffice2ServiceFactory::class,
         CronUserService::class             => \TestSupport\Factory\CronUserServiceFactory::class,
@@ -109,7 +108,7 @@ return [
         AEService::class                   => \TestSupport\Factory\AEServiceFactory::class,
         TesterService::class               => \TestSupport\Factory\TesterServiceFactory::class,
         FeaturesService::class             => \TestSupport\Factory\FeaturesServiceFactory::class,
-        InactiveTesterService::class      =>  \TestSupport\Factory\InactiveTesterServiceFactory::class,
+        InactiveTesterService::class       =>  \TestSupport\Factory\InactiveTesterServiceFactory::class,
         SchemeManagerService::class        => \TestSupport\Factory\SchemeManagerServiceFactory::class,
         SchemeUserService::class           => \TestSupport\Factory\SchemeUserServiceFactory::class,
         InactiveTesterService::class       => \TestSupport\Factory\InactiveTesterServiceFactory::class,
