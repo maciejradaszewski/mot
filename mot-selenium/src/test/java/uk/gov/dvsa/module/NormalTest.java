@@ -14,8 +14,6 @@ import java.net.URISyntaxException;
 public class NormalTest {
 
     PageNavigator pageNavigator = null;
-    private boolean isValueDisplayed = false;
-
     public NormalTest(PageNavigator pageNavigator)
     {
         this.pageNavigator = pageNavigator;
@@ -25,12 +23,15 @@ public class NormalTest {
         TestResultsEntryPage testResultsEntryPage = pageNavigator.gotoTestResultsEntryPage(tester,vehicle);
         testResultsEntryPage.completeTestDetailsWithPassValues();
         TestSummaryPage testSummaryPage = testResultsEntryPage.clickReviewTestButton();
-        TestCompletePage testCompletePage = testSummaryPage.finishTestAndPrint();
-        isValueDisplayed = testCompletePage.isMotCertificateLinkPresent();
+        testSummaryPage.finishTestAndPrint();
     }
 
     public boolean isMotCertificateLinkDisplayed(){
-        return isValueDisplayed;
+        return new TestCompletePage(pageNavigator.getDriver()).isMotCertificateLinkPresent();
+    }
+
+    public boolean isPrintButtonDisplayed() {
+        return new TestCompletePage(pageNavigator.getDriver()).isPrintDocumentButtonDisplayed();
     }
 
     public void certificatePage() {

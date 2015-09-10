@@ -46,4 +46,8 @@ public class MotUI {
     public boolean isTextPresent(String actual) throws NoSuchElementException{
         return AssertionHelper.compareText(expectedText, actual);
     }
+
+    public void certificatePage(User user) throws IOException {
+        pageNavigator.gotoMotTestCertificatesPage(user);
+    }
 }
