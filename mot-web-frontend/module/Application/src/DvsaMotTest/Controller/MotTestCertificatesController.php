@@ -6,6 +6,7 @@ use Application\Service\LoggedInUserManager;
 use Application\Service\MotTestCertificatesService;
 use DvsaCommon\Auth\PermissionAtSite;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Dto\Common\MotTestRecentCertificatesDto;
 use DvsaMotTest\Helper\LocationSelectContainerHelper;
 use DvsaMotTest\Form\EmailCertificateForm;
@@ -54,6 +55,8 @@ class MotTestCertificatesController extends AbstractDvsaMotTestController
 
     public function indexAction()
     {
+        $this->assertFeatureEnabled(FeatureToggle::JASPER_ASYNC);
+
         $this->layout('layout/layout-govuk.phtml');
 
         if (!$this->getIdentity()->getCurrentVts()) {
@@ -90,6 +93,8 @@ class MotTestCertificatesController extends AbstractDvsaMotTestController
      */
     public function printPdfAction()
     {
+        $this->assertFeatureEnabled(FeatureToggle::JASPER_ASYNC);
+
         $pdfUrl = $this->certificateService->getCertificatePdfUrl(
             $this->params()->fromRoute('motRecentCertificateId')
         );
@@ -111,6 +116,8 @@ class MotTestCertificatesController extends AbstractDvsaMotTestController
      */
     public function downloadPdfAction()
     {
+        $this->assertFeatureEnabled(FeatureToggle::JASPER_ASYNC);
+
         $vin = $this->params()->fromRoute('vin');
         $status = $this->params()->fromRoute('status');
         $motRecentCertificateId = $this->params()->fromRoute('motRecentCertificateId');
@@ -134,6 +141,8 @@ class MotTestCertificatesController extends AbstractDvsaMotTestController
 
     public function emailCertificateAction()
     {
+        $this->assertFeatureEnabled(FeatureToggle::JASPER_ASYNC);
+
         $this->layout('layout/layout-govuk.phtml');
 
         $certificateId = (int)$this->params('certificateId');
@@ -175,6 +184,8 @@ class MotTestCertificatesController extends AbstractDvsaMotTestController
 
     public function emailConfirmationAction()
     {
+        $this->assertFeatureEnabled(FeatureToggle::JASPER_ASYNC);
+
         $this->layout('layout/layout-govuk.phtml');
 
         $certificateId = (int)$this->params('certificateId');
@@ -186,6 +197,8 @@ class MotTestCertificatesController extends AbstractDvsaMotTestController
 
     public function emailErrorAction()
     {
+        $this->assertFeatureEnabled(FeatureToggle::JASPER_ASYNC);
+
         $this->authorisationService->isGrantedAtAnySite(PermissionAtSite::RECENT_CERTIFICATE_PRINT);
 
         $this->layout('layout/layout-govuk.phtml');
