@@ -10,6 +10,7 @@ import uk.gov.dvsa.ui.pages.Page;
 
 public class TestSummaryPage extends Page {
 
+    public static String PATH = "/mot-test/%s/test-summary";
     private static final String PAGE_TITLE = "MOT test summary";
     private static final String PAGE_TITLE_REINSPECTION = "MOT testing\n" +
             "MOT reinspection summary";

@@ -21,6 +21,8 @@ public class HomePage extends Page {
     @FindBy (css = ".pivot-panel_meta-list span") private WebElement roleType;
     @FindBy (css = ".site-link") private WebElement siteName;
     @FindBy (id = "action-resume-mot-test") private WebElement resumeMotTestButton;
+    @FindBy (id = "header_title") private WebElement vtsActivityLabel;
+    @FindBy (id = "mot-test-certificates-list") private WebElement motCertificateList;
     private By startMotRetest = By.id("action-start-mot-retest");
     @FindBy (id = "action-start-certificate-reissue") private  WebElement StartCertificateReissue;
     @FindBy(className = "notification_link") private WebElement notificationMessage;
@@ -95,4 +97,13 @@ public class HomePage extends Page {
     public boolean isNotificationMessageDisplayed() {
         return notificationMessage.isDisplayed();
     }
+
+    public boolean isVtsActivityLabelDisplayed(){
+        return vtsActivityLabel.isDisplayed();
+    }
+
+    public boolean isMotCertificateListDisplayed(){
+        return motCertificateList.isDisplayed();
+    }
+
 }

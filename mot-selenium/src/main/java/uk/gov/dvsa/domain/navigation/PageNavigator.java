@@ -34,10 +34,15 @@ import java.net.URISyntaxException;
 
 public class PageNavigator {
     private MotAppDriver driver;
+
     private String motTestPath;
 
     public void setDriver(MotAppDriver driver) {
         this.driver = driver;
+    }
+
+    public MotAppDriver getDriver() {
+        return driver;
     }
 
     private Cookie getCookieForUser(User user) throws IOException {
@@ -260,5 +265,11 @@ public class PageNavigator {
         return new LoginPage(driver);
     }
 
+    public TestCompletePage gotoTestCompletePage(User user, String motTestNumber) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(TestSummaryPage.PATH, motTestNumber));
+        TestSummaryPage summaryPage = new TestSummaryPage(driver);
+        summaryPage.finishTestAndPrint();
 
+        return new TestCompletePage(driver);
+    }
 }

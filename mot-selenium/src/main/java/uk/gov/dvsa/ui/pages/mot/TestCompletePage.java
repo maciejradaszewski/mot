@@ -12,6 +12,7 @@ public class TestCompletePage extends Page {
     @FindBy (id = "refusal-certificate-item") private WebElement refusalMessage;
     @FindBy (id = "compareTestResults") private WebElement compareResultsButton;
     @FindBy (id = "reprintDialog") private WebElement reinspectionMsg;
+    @FindBy (css = "p a[href*='/mot-test-certificates']") private WebElement certificateLink;
     @FindBy (className = "container") private WebElement testSummaryMessage;
 
     private static final String PAGE_TITLE = "MOT test complete";
@@ -42,5 +43,13 @@ public class TestCompletePage extends Page {
 
     public String getTestSummaryMessageText() {
         return testSummaryMessage.getText();
+    }
+
+    public boolean isMotCertificateLinkPresent(){
+        return certificateLink.isDisplayed();
+    }
+    public MotTestCertificatesPage clickCertificateLink(){
+        certificateLink.click();
+        return new MotTestCertificatesPage(driver);
     }
 }
