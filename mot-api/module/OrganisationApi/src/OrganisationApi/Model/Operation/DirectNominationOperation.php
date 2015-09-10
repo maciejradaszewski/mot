@@ -95,7 +95,7 @@ class DirectNominationOperation implements NominateOperationInterface
 
         $eventPersonMap = new EventPersonMap();
         $eventPersonMap->setEvent($event)
-            ->setPerson($nomination->getPerson());
+                       ->setPerson($nomination->getPerson());
 
         return $eventPersonMap;
     }
