@@ -17,7 +17,6 @@ import static org.hamcrest.core.Is.is;
 public class Retest {
 
     PageNavigator pageNavigator = null;
-    private String expectedText;
     private boolean successful = false;
 
     public Retest(PageNavigator pageNavigator)
