@@ -13,6 +13,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use DvsaCommon\Enum\AuthorisationForTestingMotAtSiteStatusCode;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\SiteStatusCode;
+use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\SeqNumberService;
@@ -59,8 +60,6 @@ class SiteRepository extends AbstractMutableRepository
     const SEQ_CODE = 'SITENR';
 
     const ERR_NEXT_SITE_NR_NOT_FOUND = "Next number of Site was not found";
-
-    const AREA_OFFICE_ROLE_TYPE_ID = 1;
 
     /**
      * Initializes a new <tt>EntityRepository</tt>.
@@ -391,13 +390,15 @@ class SiteRepository extends AbstractMutableRepository
     public function getAllAreaOffices()
     {
         // TODO: Somebody replace this with something DECENT please!
+        // We check the length to equal 2 so sub area offices are ignored
         $sql = sprintf(
-            "select s.id, s.name, s.site_number, substring(s.site_number,1,2) as ao_number
-        from   site as s
-        join   site_assembly_role_map
-	    on site_assembly_role_map.site_id = s.id
-        and site_assembly_role_map.assembly_role_id =%d order by convert(substring(s.site_number,1,2), unsigned)",
-            self::AREA_OFFICE_ROLE_TYPE_ID);
+            'SELECT s.id, s.name, s.site_number, substring(s.site_number,1,2) as ao_number
+             FROM site AS s
+             INNER JOIN site_type AS st ON st.id=s.type_id
+             INNER JOIN site_status_lookup `ssl` ON `ssl`.id=s.site_status_id
+             WHERE st.code="%s" AND LENGTH(s.site_number)=2 AND `ssl`.code="%s"
+             ORDER BY s.site_number',
+            SiteTypeCode::AREA_OFFICE, SiteStatusCode::APPROVED);
 
         $rsm = new Query\ResultSetMapping();
         $rsm->addScalarResult('id', 'id');
