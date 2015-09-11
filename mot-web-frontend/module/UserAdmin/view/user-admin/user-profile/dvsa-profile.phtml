@@ -6,6 +6,12 @@ use Dashboard\Controller\UserHomeController;
 /** @var string $passwordResetUrl */
 /** @var string $usernameRecoverUrl */
 
+$errorMessages      = $this->layout()->flashMessenger->getErrorMessages();
+$successMessages    = $this->layout()->flashMessenger->getSuccessMessages();
+
+echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
+echo $this->partial('partial/gds/general/system-message', ['messages' => $errorMessages, 'type' => 'failure']);
+
 ?>
 
 <h3 class="heading-medium">Personal details</h3>

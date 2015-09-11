@@ -5,16 +5,16 @@ namespace UserAdmin\Presenter;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
+use Application\Helper\DataMappingHelper;
+use Application\Service\CatalogService;
 use Core\Presenter\AddressPresenterInterface;
 use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Utility\AddressUtils;
 use UserAdmin\Service\PersonRoleManagementService;
+use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
 use Zend\Di\Exception\RuntimeException;
 use Zend\Mvc\Controller\Plugin\Url as UrlPlugin;
-use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
-use Application\Service\CatalogService;
-use Application\Helper\DataMappingHelper;
 
 /**
  * Decorator for PersonHelpDeskProfileDto

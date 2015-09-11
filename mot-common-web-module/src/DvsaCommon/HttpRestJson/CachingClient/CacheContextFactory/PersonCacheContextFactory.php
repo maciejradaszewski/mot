@@ -33,19 +33,24 @@ class PersonCacheContextFactory implements ConditionalCacheContextFactory
      */
     public function fromResourcePath($resourcePath)
     {
-        if (preg_match('#person/\d+/(site-count|mot-testing)#', $resourcePath)) {
+        if (preg_match('#person/(?P<personId>\d+)/(site-count|mot-testing)#', $resourcePath, $matches)) {
             return CacheContext::configured(
                 $this->calculateCacheKey($resourcePath),
                 $this->ttl,
-                []
+                [
+                    $this->calculateCacheKey(sprintf('person/%d/site-count', $matches['personId'])),
+                    $this->calculateCacheKey(sprintf('person/%d/mot-testing', $matches['personId'])),
+                ]
             );
         }
 
         if (preg_match('#person/(?P<personId>\d+)/demo-test-assessment#', $resourcePath, $matches)) {
-            return CacheContext::notCached([
-                $this->calculateCacheKey(sprintf('person/%d/site-count', $matches['personId'])),
-                $this->calculateCacheKey(sprintf('person/%d/mot-testing', $matches['personId'])),
-            ]);
+            return CacheContext::notCached(
+                [
+                    $this->calculateCacheKey(sprintf('person/%d/site-count', $matches['personId'])),
+                    $this->calculateCacheKey(sprintf('person/%d/mot-testing', $matches['personId'])),
+                ]
+            );
         }
 
         return CacheContext::notCached([]);

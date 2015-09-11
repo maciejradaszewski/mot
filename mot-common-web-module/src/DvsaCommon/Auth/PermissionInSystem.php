@@ -123,6 +123,7 @@ final class PermissionInSystem
     const USER_PASSWORD_RESET = 'USER-PASSWORD-RESET';
     const USERNAME_RECOVERY = 'USERNAME-RECOVERY';
     const USER_ACCOUNT_RECLAIM = 'USER-ACCOUNT-RECLAIM';
+    const ALTER_TESTER_AUTHORISATION_STATUS = 'ALTER-TESTER-AUTHORISATION-STATUS';
 
     /**
      * @return array
@@ -243,6 +244,7 @@ final class PermissionInSystem
             self::USER_PASSWORD_RESET,
             self::USERNAME_RECOVERY,
             self::USER_ACCOUNT_RECLAIM,
+            self::ALTER_TESTER_AUTHORISATION_STATUS,
         ];
     }
 }

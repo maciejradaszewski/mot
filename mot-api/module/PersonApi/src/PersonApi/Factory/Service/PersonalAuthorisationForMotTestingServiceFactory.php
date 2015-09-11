@@ -8,6 +8,8 @@ use PersonApi\Service\PersonalAuthorisationForMotTestingService;
 use PersonApi\Service\Validator\PersonalAuthorisationForMotTestingValidator;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use DvsaEventApi\Service\EventService;
+use PersonApi\Service\PersonService;
 
 class PersonalAuthorisationForMotTestingServiceFactory implements FactoryInterface
 {
@@ -16,7 +18,10 @@ class PersonalAuthorisationForMotTestingServiceFactory implements FactoryInterfa
         return new PersonalAuthorisationForMotTestingService(
             $serviceLocator->get(EntityManager::class),
             $serviceLocator->get(NotificationService::class),
-            new PersonalAuthorisationForMotTestingValidator()
+            new PersonalAuthorisationForMotTestingValidator(),
+            $serviceLocator->get('DvsaAuthorisationService'),
+            $serviceLocator->get(EventService::class),
+            $serviceLocator->get(PersonService::class)
         );
     }
 }
