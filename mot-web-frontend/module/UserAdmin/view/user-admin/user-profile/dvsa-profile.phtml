@@ -22,7 +22,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
             Name
         </th>
         <td id="person-name" class="key-value-list__value">
-            <?php echo $presenter->displayTitleAndFullName() ?>
+            <?php echo $this->escapeHtml($presenter->displayTitleAndFullName()) ?>
         </td>
     </tr>
     <tr>
@@ -30,7 +30,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
             Username
         </th>
         <td id="person-username" class="key-value-list__value--numeric">
-            <?php echo $presenter->displayUsername(); ?>
+            <?php echo $this->escapeHtml($presenter->displayUsername()); ?>
         </td>
     </tr>
     <tr>
@@ -38,7 +38,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
             Date of birth
         </th>
         <td id="person-dob" class="key-value-list__value">
-            <?php echo $presenter->displayDateOfBirth(); ?>
+            <?php echo $this->escapeHtml($presenter->displayDateOfBirth()); ?>
         </td>
     </tr>
     <tr>
@@ -46,7 +46,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
             Driving licence number
         </th>
         <td id="person-driving-licence" class="key-value-list__value--numeric">
-            <?php echo $presenter->displayDrivingLicenceNumber(); ?>
+            <?php echo $this->escapeHtml($presenter->displayDrivingLicenceNumber()); ?>
         </td>
     </tr>
     </tbody>

@@ -28,7 +28,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             Name
         </th>
         <td id="person-name" class="key-value-list__value">
-            <?php echo $presenter->displayTitleAndFullName() ?>
+            <?php echo $this->escapeHtml($presenter->displayTitleAndFullName()); ?>
         </td>
     </tr>
     <tr>
@@ -36,7 +36,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             Username
         </th>
         <td id="person-username" class="key-value-list__value--numeric">
-            <?php echo $presenter->displayUsername(); ?>
+            <?php echo $this->escapeHtml($presenter->displayUsername()); ?>
         </td>
     </tr>
     <tr>
@@ -44,7 +44,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             Date of birth
         </th>
         <td id="person-dob" class="key-value-list__value">
-            <?php echo $presenter->displayDateOfBirth(); ?>
+            <?php echo $this->escapeHtml($presenter->displayDateOfBirth()); ?>
         </td>
     </tr>
     <tr>
@@ -52,7 +52,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             Driving licence number
         </th>
         <td id="person-driving-licence" class="key-value-list__value--numeric">
-            <?php echo $presenter->displayDrivingLicenceNumber(); ?>
+            <?php echo $this->escapeHtml($presenter->displayDrivingLicenceNumber()); ?>
         </td>
     </tr>
     </tbody>
