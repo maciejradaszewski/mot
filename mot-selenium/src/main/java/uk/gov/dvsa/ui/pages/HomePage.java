@@ -5,6 +5,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
+import uk.gov.dvsa.ui.pages.dvsamanageroles.UserSearchPage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class HomePage extends Page {
     private By startMotRetest = By.id("action-start-mot-retest");
     @FindBy (id = "action-start-certificate-reissue") private  WebElement StartCertificateReissue;
     @FindBy(className = "notification_link") private WebElement notificationMessage;
+    @FindBy(id = "action-start-user-search") private WebElement userSearchLink;
 
     private static final By ROLE_NOMINATION_LIST = By.cssSelector(".notification_subject > a");
 
@@ -72,6 +74,11 @@ public class HomePage extends Page {
         siteName.click();
 
         return new VehicleTestingStationPage(driver);
+    }
+
+    public UserSearchPage clickUserSearchLinkExpectingUserSearchPage() {
+        userSearchLink.click();
+        return new UserSearchPage(driver);
     }
 
     public void clickEnterTestResultsButton() {

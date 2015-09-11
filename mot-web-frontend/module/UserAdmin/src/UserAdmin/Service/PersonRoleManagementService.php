@@ -235,6 +235,8 @@ class PersonRoleManagementService
             $manageableRoles[$roleCode] = (new DataMappingHelper($personSystemRoles, 'code', $roleCode))
                 ->setReturnKeys(['id', 'name'])
                 ->getValue();
+
+            $manageableRoles[$roleCode]['canManageThisRole'] = $this->canManageThisRole($roleCode);
         }
 
         $manageableRolesAndUrl = array_map(
@@ -252,6 +254,18 @@ class PersonRoleManagementService
         );
 
         return $this->sortRolesByName($manageableRolesAndUrl);
+    }
+
+    /**
+     * @param string $roleCode
+     *
+     * @return bool
+     */
+    private function canManageThisRole($roleCode)
+    {
+        $manageRoleCode = 'MANAGE-ROLE-' . $roleCode;
+
+        return $this->authorisationService->isGranted($manageRoleCode);
     }
 
     /**

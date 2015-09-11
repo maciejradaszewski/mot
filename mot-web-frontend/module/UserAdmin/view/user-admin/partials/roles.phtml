@@ -33,7 +33,8 @@ if ($presenter->canDisplayDvsaRoleSection()): ?>
     <?php if (true === $presenter->canManageDvsaRoles() && false === $presenter->isManagingOwnRoles()): ?>
         <p>
             <a href="<?php echo $this->url(PersonRoleController::URL_MANAGE_INTERNAL_ROLE, ['personId' => $presenter->getPersonId()]); ?>"
-               class="key-value-list__action">
+               class="key-value-list__action"
+               id="manage-internal-roles">
                 Manage roles
             </a>
         </p>
