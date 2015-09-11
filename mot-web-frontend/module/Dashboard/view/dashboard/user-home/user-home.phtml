@@ -2,6 +2,7 @@
 
 use Dashboard\Controller\NotificationController;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Auth\PermissionAtSite;
 
     $this->placeholder('hero')
         ->set($this->partial('primaryAction/' . $dashboard->getHero(), ['dashboard' => $dashboard]));
@@ -22,7 +23,7 @@ use DvsaCommon\Auth\PermissionInSystem;
             ?>
     </div>
     <div class="col-sm-6">
-        <?php if ($this->authorisationHelper()->isGrantedAtAnySite(\DvsaCommon\Auth\PermissionAtSite::RECENT_CERTIFICATE_PRINT)) : ?>
+        <?php if ($this->authorisationHelper()->isGrantedAtAnySite(PermissionAtSite::RECENT_CERTIFICATE_PRINT)) : ?>
             <?php echo $this->partial('dashboard/motActivity'); ?>
         <?php endif; ?>        
         <?php if ($dashboard->getHero() === 'vehicle-examiner'): ?>

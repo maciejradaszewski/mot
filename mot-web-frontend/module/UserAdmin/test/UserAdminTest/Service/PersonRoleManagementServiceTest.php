@@ -265,6 +265,7 @@ class PersonRoleManagementServiceTest extends TestCase
                 'VEHICLE-EXAMINER' => [
                     'id' => 2,
                     'name' => 'Vehicle Examiner',
+                    'canManageThisRole' => true,
                     'url' => [
                         'route' => 'user_admin/user-profile/manage-user-internal-role/remove-internal-role',
                         'params' => [
@@ -276,6 +277,7 @@ class PersonRoleManagementServiceTest extends TestCase
                 'DVSA-AREA-OFFICE-2' => [
                     'id' => 11,
                     'name' => 'DVSA Area Admin 2',
+                    'canManageThisRole' => true,
                     'url' => [
                         'route' => 'user_admin/user-profile/manage-user-internal-role/remove-internal-role',
                         'params' => [

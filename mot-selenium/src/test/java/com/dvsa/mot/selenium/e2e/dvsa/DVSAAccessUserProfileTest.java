@@ -144,7 +144,7 @@ public class DVSAAccessUserProfileTest extends BaseTest {
         recordDemoPageGroupB.clickCancel();
     }
 
-    private HelpDeskUserProfilePage userSearch(Person personUser, Login DVSAUser) {
+    public HelpDeskUserProfilePage userSearch(Person personUser, Login DVSAUser) {
         HelpdeskUserResultsPage helpdeskUserResultsPage =
                 HelpdeskUserSearchPage.navigateHereFromLoginPage(driver, DVSAUser)
                         .enterLastName(personUser.getSurname()).search();
