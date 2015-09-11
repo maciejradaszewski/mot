@@ -3,6 +3,7 @@
 namespace UserAdmin\ViewModel\UserProfile;
 
 use DvsaClient\Entity\TesterAuthorisation;
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
@@ -58,5 +59,10 @@ class TesterAuthorisationViewModel
     private function hasPermissionToAssessDemo()
     {
         return $this->authorisationService->isGranted(PermissionInSystem::ASSESS_DEMO_TEST);
+    }
+
+    public function canAlterTesterAuthorisation()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS);
     }
 }

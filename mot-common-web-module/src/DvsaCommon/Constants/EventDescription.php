@@ -27,6 +27,7 @@ class EventDescription extends BaseEnumeration
     const DVSA_ROLE_ASSOCIATION_ASSIGN = 'Assigned %s role. Recorded by %s';
     const DVSA_ROLE_ASSOCIATION_REMOVE = 'Removed %s role. Recorded by %s';
     const ROLE_NOMINATION_ACCEPT = '%s role for %s - %s added to %s %s';
+    const TESTER_QUALIFICATION_STATUS_CHANGE_NEW = 'Tester qualification status for group %s changed from %s to %s, by %s';
 
     const DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE = 'Site %s %s has been linked to AE %s %s by %s';
     const AE_UNLINK_SITE = 'Site %s %s has been unlinked from AE %s %s by %s';
