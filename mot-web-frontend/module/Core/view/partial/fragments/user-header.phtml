@@ -1,11 +1,11 @@
 <?php
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\Role;
-use DvsaMotTest\Controller\LocationSelectController;
+
 ?>
 <?php if ($this->authorisationHelper()->hasRole(Role::USER)): ?>
     <span class="header-user__name">
-    <?php echo $this->identityHelper()->getDisplayName(); ?>
+    <?php echo $this->escapeHtml($this->identityHelper()->getDisplayName()); ?>
     </span>
 <?php endif; ?>
 
