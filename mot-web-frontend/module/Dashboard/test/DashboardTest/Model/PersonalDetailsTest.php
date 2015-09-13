@@ -50,6 +50,7 @@ class PersonalDetailsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::USERNAME, $personalDetails->getUsername());
         $this->assertEquals(self::MIDDLE_NAME, $personalDetails->getMiddleName());
         $this->assertEquals(self::SURNAME, $personalDetails->getSurname());
+        $this->assertEquals(self::TITLE. ' '.self::FIRST_NAME.' '.self::MIDDLE_NAME.' '.self::SURNAME, $personalDetails->getFullName());
         $this->assertEquals(self::DOB, $personalDetails->getDateOfBirth());
         $this->assertEquals(self::TITLE, $personalDetails->getTitle());
         $this->assertEquals(self::GENDER, $personalDetails->getGender());
