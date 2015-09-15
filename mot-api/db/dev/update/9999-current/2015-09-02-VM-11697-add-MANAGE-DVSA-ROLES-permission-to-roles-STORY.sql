@@ -3,6 +3,10 @@
 # document with list of roles is attached in the jira ticket
 
 SET @created_by = (SELECT `id` FROM `person` WHERE `user_reference` = 'Static Data' OR `username` = 'static data');
+
+INSERT IGNORE INTO `permission` (`name`, `code`, `is_restricted`, `created_by`)
+VALUES ('VM-10619 Role Management', 'MANAGE-DVSA-ROLES', 1, @created_by);
+
 SET @manage_dvsa_roles_id = (SELECT `id` FROM `permission` WHERE `code` = 'MANAGE-DVSA-ROLES');
 
 INSERT INTO
