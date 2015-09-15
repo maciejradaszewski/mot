@@ -53,6 +53,25 @@ public class ConductMotTestAsTester extends BaseTest {
         assertThat(testCompletePage.verifyBackToHomeLinkDisplayed(), is(true));
     }
 
+    @Test(groups = {"BVT", "Regression"})
+    public void canViewExternalRfrMotInfoLink() throws IOException, URISyntaxException {
+
+        //Given I am on the Test Results Entry Page
+        TestResultsEntryPage testResultsEntryPage = pageNavigator.gotoTestResultsEntryPage(tester,vehicle);
+
+        //When I complete all Brake test Values with passing data
+        testResultsEntryPage.completeTestDetailsWithPassValues();
+
+        //Then I shouldn't see a fail on the test result page
+        assertThat(testResultsEntryPage.isPassNoticeDisplayed(), is(true));
+
+        //Then I should be redirected to external page with reference information
+        ReasonForRejectionPage reasonForRejectionPage = testResultsEntryPage.clickAddFRFButton();
+        reasonForRejectionPage.checkRFR();
+
+        assertThat(reasonForRejectionPage.isNewWindowOpened(), is(true));
+    }
+
     @Test(groups = {"BVT", "Regression"} )
     public void startAndAbandonTest() throws URISyntaxException, IOException {
 
