@@ -33,6 +33,13 @@ public class CpmsSlotsManualAdjustmentTests extends BaseTest {
         return financeUserLogin;
     }
 
+    private DetailsOfAuthorisedExaminerPage loginAsFinanceUserAndSearchForAe(Login login, String aeRef) {
+        DetailsOfAuthorisedExaminerPage detailsOfAuthorisedExaminerPage =
+                SearchForAePage.navigateHereFromLoginPage(driver, login)
+                        .searchForAeAndSubmit(aeRef);
+        return detailsOfAuthorisedExaminerPage;
+    }
+
     @Test(groups = {"Regression", "SPMS-80"})
     public void manualAdjustmentOfTransactionForIncorrectCustomer() {
         String aeRef1 = createAeAndReturnAeReference("ChequePayment");
