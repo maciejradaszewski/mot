@@ -53,12 +53,11 @@ public class AddressPage extends Page {
 
     public AddressPage enterAddress()
     {
-        ContactDetailsHelper.setContactDetails();
-        FormCompletionHelper.enterText(homeAddressLineOne, ContactDetailsHelper.addressLine1);
-        FormCompletionHelper.enterText(homeAddressLineTwo, ContactDetailsHelper.addressLine2);
-        FormCompletionHelper.enterText(homeAddressLineThree, ContactDetailsHelper.addressLine3);
-        FormCompletionHelper.enterText(townCity, ContactDetailsHelper.city);
-        FormCompletionHelper.enterText(postcode, ContactDetailsHelper.postCode);
+        FormCompletionHelper.enterText(homeAddressLineOne, ContactDetailsHelper.getAddressLine1());
+        FormCompletionHelper.enterText(homeAddressLineTwo, ContactDetailsHelper.getAddressLine2());
+        FormCompletionHelper.enterText(homeAddressLineThree, ContactDetailsHelper.getAddressLine3());
+        FormCompletionHelper.enterText(townCity, ContactDetailsHelper.getCity());
+        FormCompletionHelper.enterText(postcode, ContactDetailsHelper.getPostCode());
 
         return this;
     }
