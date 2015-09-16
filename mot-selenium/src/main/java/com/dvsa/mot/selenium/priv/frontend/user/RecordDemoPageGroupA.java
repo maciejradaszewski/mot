@@ -12,7 +12,7 @@ public class RecordDemoPageGroupA extends BasePage {
 
     @FindBy(id = "cancel-record-demo-test") private WebElement cancelLink;
 
-    @FindBy(id = "radioStandard3") private WebElement qualifiedRadioButton;
+    @FindBy(id = "radioStandard2") private WebElement qualifiedRadioButton;
 
     public RecordDemoPageGroupA(WebDriver driver){
         super(driver);

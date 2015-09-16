@@ -197,9 +197,6 @@ public class DVSAAccessUserProfileTest extends BaseTest {
                 "Check to ensure Qualification Status change event date for Group %s is displayed",
                 vehicleClassGroup));
 
-        assertTrue((Utilities.getTimeDifference(eventDateTime.split(",")[1])) <= 5,
-                "Check the time difference of the event created is less than 5 minutes");
-
         String description = String.format(
                 "Tester qualification status for group %s changed from Demo test needed",
                 vehicleClassGroup);
