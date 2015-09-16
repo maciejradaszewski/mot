@@ -26,6 +26,7 @@ class Notification
     const TEMPLATE_DVSA_ASSIGN_ROLE = 16;
     const TEMPLATE_DVSA_REMOVE_ROLE = 17;
 	const TEMPLATE_TESTER_STATUS_CHANGE = 20;
+    const TEMPLATE_TESTER_STATUS_CHANGE_NEW = 22;
 
     /** @var $template int */
     private $template;

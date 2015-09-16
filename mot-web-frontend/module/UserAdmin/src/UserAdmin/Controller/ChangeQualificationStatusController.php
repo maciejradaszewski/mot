@@ -53,7 +53,6 @@ class ChangeQualificationStatusController extends AbstractDvsaMotTestController
     {
         // N.B. order of this array determines output of options in index.phtml
         $authDescriptionLookup = [
-            'UNKN' => 'Not applied',
             'ITRN' => 'Initial Training Needed',
             'DMTN' => 'Demo test needed',
             'QLFD' => 'Qualified',
