@@ -19,6 +19,7 @@ use TestSupport\Service\CsmService;
 use TestSupport\Service\DVLAManagerService;
 use TestSupport\Service\AreaOffice1Service;
 use TestSupport\Service\AreaOffice2Service;
+use TestSupport\Service\CronUserService;
 use TestSupport\Service\FinanceUserService;
 use TestSupport\Service\VtsService;
 use TestSupport\Service\AEService;
@@ -95,6 +96,7 @@ return [
         DVLAOperativeService::class          => \TestSupport\Factory\DVLAOperativeServiceFactory::class,
         AreaOffice1Service::class          => \TestSupport\Factory\AreaOffice1ServiceFactory::class,
         AreaOffice2Service::class          => \TestSupport\Factory\AreaOffice2ServiceFactory::class,
+        CronUserService::class             => \TestSupport\Factory\CronUserServiceFactory::class,
         FinanceUserService::class          => \TestSupport\Factory\FinanceUserServiceFactory::class,
         UserService::class                 => \TestSupport\Factory\UserServiceFactory::class,
         VtsService::class                  => \TestSupport\Factory\VtsServiceFactory::class,
