@@ -10,6 +10,7 @@ class Person extends MotApi
     const PATH_ROLES_ROLE = '/roles/{role}';
     const PATH_DASHBOARD = '/dashboard';
     const PATH_RBAC_ROLES = '/rbac-roles';
+    const PATH_PASSWORD = '/password';
 
     public function getPersonMotTestingClasses($token, $user_id)
     {
@@ -124,6 +125,16 @@ class Person extends MotApi
             MotApi::METHOD_PUT,
             str_replace('{user_id}', $user_id, self::PATH_PERSONAL_DETAILS),
             $body
+        );
+    }
+
+    public function changePassword($token, $user_id, array $data)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_PUT,
+            str_replace('{user_id}', $user_id, self::PATH.self::PATH_PASSWORD),
+            $data
         );
     }
 }

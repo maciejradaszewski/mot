@@ -34,6 +34,9 @@ use PersonApi\Factory\Controller\PersonSiteCountControllerFactory;
 use PersonApi\Factory\Controller\ResetClaimAccountControllerFactory;
 use PersonApi\Factory\Controller\ResetPinControllerFactory;
 use PersonApi\Factory\Controller\UserStatsControllerFactory;
+use PersonApi\Controller\PasswordController;
+use PersonApi\Factory\Controller\PasswordControllerFactory;
+
 
 return [
     'factories' => [
@@ -53,5 +56,6 @@ return [
         ResetClaimAccountController::class         => ResetClaimAccountControllerFactory::class,
         ResetPinController::class                  => ResetPinControllerFactory::class,
         UserStatsController::class                 => UserStatsControllerFactory::class,
+        PasswordController::class                  => PasswordControllerFactory::class,
     ],
 ];

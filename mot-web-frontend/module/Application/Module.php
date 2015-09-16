@@ -24,6 +24,8 @@ use Application\Listener\ChangeTempPasswordListener;
 use Application\Listener\ClaimAccountListener;
 use Application\Listener\Factory\ChangeTempPasswordListenerFactory;
 use Application\Listener\Factory\ClaimAccountListenerFactory;
+use Application\Listener\Factory\ExpiredPasswordListenerFactory;
+use Application\Listener\ExpiredPasswordListener;
 use Application\Listener\WebListenerEventsPriorities;
 use Application\Service\ContingencySessionManager;
 use DvsaCommon\Auth\NotLoggedInException;
@@ -91,6 +93,24 @@ class Module implements
             WebListenerEventsPriorities::DISPATCH_CHANGE_TEMP_PASSWORD
         );
 
+        $config = $e->getApplication()->getServiceManager()->get('config');
+
+
+        if (!array_key_exists('openam.password.expiry.enabled', $config['feature_toggle'])) {
+            throw new \OutOfBoundsException("Configuration is missing a key: ['feature_toggle']['openam.password.expiry.enabled'].");
+        }
+
+        $passwordExpiryEnabled = $config['feature_toggle']['openam.password.expiry.enabled'];
+
+        if ($passwordExpiryEnabled) {
+            $resetPasswordListener = $e->getApplication()->getServiceManager()->get(ExpiredPasswordListener::class);
+            $eventManager->attach(
+                MvcEvent::EVENT_DISPATCH,
+                $resetPasswordListener,
+                WebListenerEventsPriorities::DISPATCH_RESET_EXPIRED_PASSWORD
+            );
+        }
+
         $eventManager->attach(
             MvcEvent::EVENT_RENDER,
             function ($e) {
@@ -143,6 +163,7 @@ class Module implements
                 BrakeTestResultsResource::class           => BrakeTestResultsResourceFactory::class,
                 ContingencySessionManager::class          => ContingencySessionManagerFactory::class,
                 ClaimAccountListener::class               => ClaimAccountListenerFactory::class,
+                ExpiredPasswordListener::class            => ExpiredPasswordListenerFactory::class,
                 ChangeTempPasswordListener::class         => ChangeTempPasswordListenerFactory::class,
                 'BrakeTestConfigurationContainerHelper'   => BrakeTestConfigurationContainerFactory::class,
                 'LocationSelectContainerHelper'           => LocationSelectContainerFactory::class,

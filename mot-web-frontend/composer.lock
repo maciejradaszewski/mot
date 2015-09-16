@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cc5e63fe852d867a20177105a9c493d3",
+    "hash": "48635a6808c18aa338f899acf6a97d37",
     "packages": [
         {
             "name": "cpms/client",
@@ -530,12 +530,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:doctrine/DoctrineORMModule.git",
-                "reference": "31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0"
+                "reference": "473e12ff9b39e2ec00f09bf89758d1fb0bec829e"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/doctrine/DoctrineORMModule/zipball/473e12ff9b39e2ec00f09bf89758d1fb0bec829e",
-                "reference": "31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0",
+                "reference": "473e12ff9b39e2ec00f09bf89758d1fb0bec829e",
                 "shasum": ""
             },
             "require": {
@@ -582,12 +582,6 @@
                     "homepage": "http://www.spiffyjr.me/"
                 },
                 {
-                    "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com",
-                    "homepage": "http://ocramius.github.com/",
-                    "role": "Developer"
-                },
-                {
                     "name": "Evan Coury",
                     "email": "me@evancoury.com",
                     "homepage": "http://blog.evan.pro/"
@@ -595,6 +589,11 @@
                 {
                     "name": "Guilherme Blanco",
                     "email": "guilhermeblanco@hotmail.com"
+                },
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "http://marco-pivetta.com/"
                 }
             ],
             "description": "Zend Framework 2 Module that provides Doctrine ORM functionality",
@@ -951,11 +950,11 @@
         },
         {
             "name": "dvsa/dvsa-openam-client",
-            "version": "v1.8.1",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/dvsa-openam-client.git",
-                "reference": "25856569a5b226a116ca9ca39e9d66fe9f3755da"
+                "reference": "8c8c75166f64807d636a2c1a884d108a93f9f758"
             },
             "require": {
                 "php": ">=5.5",
@@ -982,7 +981,7 @@
                 }
             },
             "description": "JSON mapper used to map objects to/from JSON compatible arrays",
-            "time": "2015-09-01 14:09:11"
+            "time": "2015-09-16 09:13:14"
         },
         {
             "name": "dvsa/feature-toggle",
@@ -1032,12 +1031,6 @@
                 "type": "git",
                 "url": "http://gitlab.clb.npm/sc/transitiongroup.git",
                 "reference": "a1a7ce2e15a8af8b2ae0a3f8918e8e4a3df2d0f5"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "http://satis.inf.mgt.mtpdvsa/dist/dvsa-transition-group-dev-master-a15457.tar",
-                "reference": "a1a7ce2e15a8af8b2ae0a3f8918e8e4a3df2d0f5",
-                "shasum": "25f062a8d188cd96d74e914c7d856b434b85c145"
             },
             "require": {
                 "doctrine/doctrine-orm-module": "~0.8.0",
@@ -1648,12 +1641,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/ZendPdf.git",
-                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
+                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
-                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
+                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "shasum": ""
             },
             "require": {
@@ -1672,7 +1665,6 @@
                     "ZendPdf\\": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
