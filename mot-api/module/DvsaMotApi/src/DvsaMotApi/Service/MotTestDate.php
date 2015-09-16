@@ -74,7 +74,7 @@ class MotTestDate
      *
      * @return DateTime|null
      */
-    protected function withPreviousTest()
+    private function withPreviousTest()
     {
         $expiryDate = null;
         $previousExpiry = $this->motPrevious->getExpiryDate();
@@ -108,19 +108,13 @@ class MotTestDate
      *
      * @return DateTime|null
      */
-    protected function withNoPreviousTest()
+    private function withNoPreviousTest()
     {
         $vehicle = $this->motCurrent->getVehicle();
         $notionalExpiryDate = $this->getNotionalExpiryDateForVehicle($vehicle);
         $expiryDate = null;
 
-        if (is_null($this->motCurrent->getEmergencyLog())) {
-            $isPreservable = $this->isPreservable($notionalExpiryDate);
-        } else {
-            $isPreservable = $this->isPreservable($notionalExpiryDate, $this->motCurrent->getStartedDate());
-        }
-
-        if ($isPreservable) {
+        if ($notionalExpiryDate && $this->isPreservable($notionalExpiryDate)) {
             if (is_null($this->motCurrent->getEmergencyLog())) {
                 $expiryDate = self::asDatePlusOffset($notionalExpiryDate, self::MOT_YEAR_DURATION, 0);
             } else {
@@ -210,12 +204,17 @@ class MotTestDate
      * date window i.e. within a "month" of the expiry date.
      *
      * @param DateTime $date
-     * @param DateTime $alternativeToday
      * @return bool
      * @throws \Exception
      */
-    public function isPreservable(\DateTime $date, $alternativeToday = null)
+    private function isPreservable(\DateTime $date)
     {
+        $alternativeToday = null;
+
+        if ($this->motCurrent->getEmergencyLog()) {
+            $alternativeToday = $this->motCurrent->getStartedDate();
+        }
+
         // Clamp expiry to the END-Of-DAY in case the test was performed on this day
         $expiryDate = clone $date;
         $expiryDate->setTime(23, 59, 59);
