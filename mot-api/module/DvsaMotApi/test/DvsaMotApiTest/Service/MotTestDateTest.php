@@ -47,7 +47,6 @@ class MotTestDateTest extends AbstractServiceTestCase
             ->willReturn($this->vehicle);
     }
 
-
     public function testNoPreviousOutsidePreservationDateNormalTestNotClass5()
     {
         $today = new \DateTime('2000-10-10');
@@ -146,7 +145,6 @@ class MotTestDateTest extends AbstractServiceTestCase
         $this->assertEquals('1996-12-31', $e->format('Y-m-d'));
     }
 
-
     public function testNoPreviousInsidePreservationDateNormalTestNotClass5()
     {
         $today = new \DateTime('1997-12-10');
@@ -215,6 +213,31 @@ class MotTestDateTest extends AbstractServiceTestCase
 
         $e = $motDate->getExpiryDate();
         $this->assertEquals('2001-10-09', $e->format('Y-m-d'));
+    }
+
+    public function testWithPreviousOutsidePreservationDateContingencyTestOnNextDay()
+    {
+        $this->motPrevious->expects($this->any())
+            ->method('getExpiryDate')
+            ->willReturn(new \DateTime('2019-05-24'));
+
+        $emergencyTest = XMock::of('\DvsaEntities\Entity\MotTest', []);
+
+        $this->motCurrent->expects($this->any())
+            ->method('getEmergencyLog')
+            ->willReturn($emergencyTest);
+
+        $yesterday = new \DateTime('2019-04-24');
+        $today = new \DateTime('2019-04-25');
+
+        $this->motCurrent->expects($this->any())
+            ->method('getStartedDate')
+            ->willReturn($yesterday);
+
+        $motDate = new MotTestDate($today, $this->motCurrent, $this->motPrevious);
+
+        $e = $motDate->getExpiryDate();
+        $this->assertEquals('2020-04-23', $e->format('Y-m-d'));
     }
 
     public function testStandardDurationPassesThroughNull()
