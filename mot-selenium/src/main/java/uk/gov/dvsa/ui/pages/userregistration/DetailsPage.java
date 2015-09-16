@@ -50,7 +50,7 @@ public class DetailsPage extends Page {
 
     public DetailsPage enterYourDetaisl()
     {
-        String email = ContactDetailsHelper.generateUniqueEmail();
+        String email = ContactDetailsHelper.getEmail();
         FormCompletionHelper.enterText(firstName, ContactDetailsHelper.generateUniqueName());
         FormCompletionHelper.enterText(lastName, ContactDetailsHelper.generateUniqueName());
         FormCompletionHelper.enterText(emailAddress, email);
