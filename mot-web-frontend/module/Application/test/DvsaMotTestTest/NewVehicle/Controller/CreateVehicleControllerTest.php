@@ -29,6 +29,7 @@ use Zend\Session\Container;
 use Zend\Stdlib\ArrayObject;
 use Zend\Stdlib\Parameters;
 use Core\Service\RemoteAddress;
+use Application\Service\ContingencySessionManager;
 
 /* @method CreateVehicleController sut() service/controller under test, see parent::sut() */
 class CreateVehicleControllerTest extends AbstractLightWebControllerTest
@@ -51,6 +52,9 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
     /** @var CreateVehicleFormWizard */
     private $wizard;
 
+    /** @var ContingencySessionManager */
+    private $contingencySessionManager;
+
     protected function setUp()
     {
         parent::setUp();
@@ -58,6 +62,7 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
         $this->request = new Request();
         $this->container = new NewVehicleContainer(new ArrayObject());
         $this->identityProvider = XMock::of(MotFrontendIdentityProviderInterface::class);
+        $this->contingencySessionManager = XMock::of(ContingencySessionManager::class);
 
         $this->expectIdentitySet();
 
@@ -98,7 +103,7 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
         $step2->setPrevStep($step1);
         $wizard->addStep($step2);
 
-        $step3 = new SummaryStep($this->container,$this->client,$catalogService, $this->identityProvider);
+        $step3 = new SummaryStep($this->container,$this->client,$catalogService, $this->identityProvider,$this->contingencySessionManager);
         $step3->setPrevStep($step2);
         $wizard->addStep($step3);
 
