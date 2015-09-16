@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "48635a6808c18aa338f899acf6a97d37",
+    "hash": "fab9abcf8b388c0fbc0d89ad63c2c2bb",
     "packages": [
         {
             "name": "cpms/client",
@@ -530,12 +530,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:doctrine/DoctrineORMModule.git",
-                "reference": "473e12ff9b39e2ec00f09bf89758d1fb0bec829e"
+                "reference": "31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/doctrine/DoctrineORMModule/zipball/473e12ff9b39e2ec00f09bf89758d1fb0bec829e",
-                "reference": "473e12ff9b39e2ec00f09bf89758d1fb0bec829e",
+                "reference": "31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0",
                 "shasum": ""
             },
             "require": {
@@ -582,6 +582,12 @@
                     "homepage": "http://www.spiffyjr.me/"
                 },
                 {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "http://ocramius.github.com/",
+                    "role": "Developer"
+                },
+                {
                     "name": "Evan Coury",
                     "email": "me@evancoury.com",
                     "homepage": "http://blog.evan.pro/"
@@ -589,11 +595,6 @@
                 {
                     "name": "Guilherme Blanco",
                     "email": "guilhermeblanco@hotmail.com"
-                },
-                {
-                    "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com",
-                    "homepage": "http://marco-pivetta.com/"
                 }
             ],
             "description": "Zend Framework 2 Module that provides Doctrine ORM functionality",
@@ -1367,11 +1368,11 @@
         },
         {
             "name": "slot-purchase/web-frontend",
-            "version": "v3.5.5",
+            "version": "v3.6",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/web-frontend.git",
-                "reference": "64e0e6c1f0c724bda87b2e69f0a33e72eebdbb16"
+                "reference": "1d833c775d63266cef1a58c36cd5ca4f39a6e004"
             },
             "require": {
                 "cpms/cpms-forms": "1.22.*",
@@ -1405,7 +1406,7 @@
                 "proprietary"
             ],
             "description": "Slot Purchase Frontend",
-            "time": "2015-09-01 12:47:56"
+            "time": "2015-09-09 10:40:37"
         },
         {
             "name": "soflomo/purifier",
@@ -1640,13 +1641,13 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/ZendPdf.git",
-                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0"
+                "url": "git@github.com:zendframework/ZendPdf.git",
+                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
-                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },
             "require": {
@@ -1674,6 +1675,10 @@
                 "pdf",
                 "zf2"
             ],
+            "support": {
+                "source": "https://github.com/zendframework/ZendPdf/tree/release-2.0.2",
+                "issues": "https://github.com/zendframework/ZendPdf/issues"
+            },
             "time": "2012-11-16 11:16:01"
         },
         {

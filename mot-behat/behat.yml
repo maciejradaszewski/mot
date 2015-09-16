@@ -37,6 +37,7 @@ default:
                 - SlotsDirectDebitContext
                 - SlotsInitiateRefundContext
                 - SlotsReportContext
+                - SlotsRefreshPaymentsContext
                 - SpecialNoticeContext
                 - TempPasswordChangeContext
                 - VehicleContext

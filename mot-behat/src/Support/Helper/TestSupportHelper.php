@@ -3,6 +3,7 @@
 namespace Dvsa\Mot\Behat\Support\Helper;
 
 use TestSupport\Controller\VM10619RoleManagementUpgradeController;
+use TestSupport\Service\CronUserService;
 use TestSupport\Service\CSCOService;
 use TestSupport\Service\CSMService;
 use TestSupport\Service\DVLAManagerService;
@@ -119,6 +120,11 @@ class TestSupportHelper
     public function getAreaOffice2Service()
     {
         return $this->getServiceManager()->get(AreaOffice2Service::class);
+    }
+
+    public function getCronUserService()
+    {
+        return $this->getServiceManager()->get(CronUserService::class);
     }
 
     /**

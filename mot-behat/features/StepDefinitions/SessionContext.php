@@ -129,6 +129,17 @@ class SessionContext implements Context
     }
 
     /**
+     * @Given /^I am logged in as an? Cron User$/
+     */
+    public function iAmLoggedInAsAnCronUser()
+    {
+        $cronUserService = $this->testSupportHelper->getCronUserService();
+        $user               = $cronUserService->create([]);
+        $this->currentUser  = $this->session->startSession($user->data['username'], $user->data['password']);
+    }
+
+
+    /**
      * @Given I am logged in as a Finance User
      */
     public function iAmLoggedInAsAFinanceUser()
