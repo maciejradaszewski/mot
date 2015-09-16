@@ -101,7 +101,7 @@ class MailerService
         }
 
         $text = new Mime\Part();
-        $text->type = Mime\Mime::TYPE_TEXT;
+        $text->type = Mime\Mime::TYPE_HTML;
         $text->charset = 'utf-8';
         $text->setContent($message);
 
