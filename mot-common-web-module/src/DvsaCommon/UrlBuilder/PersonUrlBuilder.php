@@ -23,6 +23,7 @@ class PersonUrlBuilder extends AbstractUrlBuilder
     const RESET_PIN = '/reset-pin';
     const RESET_CLAIM_ACCOUNT = '/reset-claim-account';
     const MANAGE_INTERNAL_ROLES = '/roles';
+    const PASSWORD = '/password';
 
     protected $routesStructure
         = [
@@ -38,6 +39,7 @@ class PersonUrlBuilder extends AbstractUrlBuilder
                     self::MANAGE_INTERNAL_ROLES          => [
                         self::BY_REMOVE_ROLE_ID => '',
                     ],
+                    self::PASSWORD                       => '',
                 ],
                 self::BY_IDENTIFIER => '',
             ],
@@ -183,5 +185,15 @@ class PersonUrlBuilder extends AbstractUrlBuilder
             ->appendRoutesAndParams(self::MANAGE_INTERNAL_ROLES)
             ->appendRoutesAndParams(self::BY_REMOVE_ROLE_ID)
             ->routeParam('role', $roleId);
+    }
+
+    /**
+     * Return the url to change password
+     * @param $personId
+     * @return $this
+     */
+    public static function personPassword($personId)
+    {
+        return self::byId($personId)->appendRoutesAndParams(self::PASSWORD);
     }
 }

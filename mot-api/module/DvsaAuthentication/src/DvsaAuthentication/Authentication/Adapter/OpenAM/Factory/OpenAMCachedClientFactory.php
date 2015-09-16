@@ -4,7 +4,6 @@ namespace DvsaAuthentication\Authentication\Adapter\OpenAM\Factory;
 
 use Doctrine\Common\Cache\Cache;
 use Dvsa\OpenAM\OpenAMClientInterface;
-use Dvsa\OpenAM\OpenAMClient;
 use DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMCachedClient;
 use DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMIdentityAttributesCacheProvider;
 use Zend\Log\LoggerInterface;
@@ -38,8 +37,9 @@ class OpenAMCachedClientFactory implements FactoryInterface
         $timeToLive = 15;
 
         if (isset($config['cache'])
-        && isset($config['cache']['open_am_client'])
-        && isset($config['cache']['open_am_client']['ttl'])){
+            && isset($config['cache']['open_am_client'])
+            && isset($config['cache']['open_am_client']['ttl'])
+        ) {
             $timeToLive = $config['cache']['open_am_client']['ttl'];
         }
 

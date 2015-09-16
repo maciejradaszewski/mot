@@ -19,6 +19,10 @@ use PersonApi\Service\PersonRoleService;
 use PersonApi\Service\UserStatsService;
 use PersonApi\Service\Validator\BasePersonValidator;
 use PersonApi\Service\Validator\PersonalDetailsValidator;
+use PersonApi\Service\Validator\ChangePasswordValidator;
+use PersonApi\Factory\Service\Validator\ChangePasswordValidatorFactory;
+use PersonApi\Factory\Service\PasswordServiceFactory;
+use PersonApi\Service\PasswordService;
 
 return [
     'factories'  => [
@@ -31,6 +35,8 @@ return [
         UserStatsService::class                          => UserStatsServiceFactory::class,
         DashboardService::class                          => DashboardServiceFactory::class,
         PersonContactService::class                      => PersonContactServiceFactory::class,
+        ChangePasswordValidator::class                   => ChangePasswordValidatorFactory::class,
+        PasswordService::class                           => PasswordServiceFactory::class
     ],
     'invokables' => [
         PersonGenerator::class          => PersonGenerator::class,

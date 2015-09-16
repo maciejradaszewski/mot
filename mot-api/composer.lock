@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a0197d0594ac73ee7f5aa9d4457fca70",
+    "hash": "8594df5b0b3343a3ad24919f73e6b484",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1157,11 +1157,11 @@
         },
         {
             "name": "dvsa/dvsa-openam-client",
-            "version": "v1.8.1",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/dvsa-openam-client.git",
-                "reference": "25856569a5b226a116ca9ca39e9d66fe9f3755da"
+                "reference": "8c8c75166f64807d636a2c1a884d108a93f9f758"
             },
             "require": {
                 "php": ">=5.5",
@@ -1188,7 +1188,7 @@
                 }
             },
             "description": "JSON mapper used to map objects to/from JSON compatible arrays",
-            "time": "2015-09-01 14:09:11"
+            "time": "2015-09-16 09:13:14"
         },
         {
             "name": "dvsa/feature-toggle",

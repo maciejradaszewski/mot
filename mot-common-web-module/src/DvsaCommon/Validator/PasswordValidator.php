@@ -39,11 +39,17 @@ class PasswordValidator extends AbstractValidator
      */
     public $minDigit = 1;
 
+    /**
+     * @var Default username
+     */
+    public $username = '';
+
     const MSG_DIGIT                         = 'msgDigit';
     const MSG_UPPER_AND_LOWERCASE           = 'msgUpperAndLowerCase';
     const MSG_MIN_CHAR                      = 'msgMinChar';
     const MSG_MAX_CHAR                      = 'msgMaxChar';
     const MSG_SPECIAL_CHARS                 = 'msgSpecialChar';
+    const MSG_USERNAME                      = 'msgUsername';
 
     // OpenDJ Character Sets (1-4)
     const OPENDJ_CS_1_LOWERCASE_CHARS       = 'abcdefghijklmnopqrstuvwxyz';
@@ -73,6 +79,7 @@ class PasswordValidator extends AbstractValidator
         self::MSG_UPPER_AND_LOWERCASE   => 'must contain both upper and lower case letters',
         self::MSG_MAX_CHAR              => 'must be less than %maxChar% characters long',
         self::MSG_SPECIAL_CHARS         => 'can only contain letters, numbers and the following symbols ( ) ! ? - _ : = "',
+        self::MSG_USERNAME              => 'must not match your username'
     ];
 
 
@@ -98,6 +105,11 @@ class PasswordValidator extends AbstractValidator
     public function setMinDigit($minDigit)
     {
         $this->minDigit = $minDigit;
+    }
+
+    public function setUsername($username)
+    {
+        $this->username = $username;
     }
 
     /**
@@ -146,6 +158,11 @@ class PasswordValidator extends AbstractValidator
 
         if (preg_match(self::OPENDJ_CS_4_SPECIAL_CHARS_REGEX, $value)) {
             $this->error(self::MSG_SPECIAL_CHARS);
+            $isValid = false;
+        }
+
+        if (!empty($this->username) && $this->username === $value) {
+            $this->error(self::MSG_USERNAME);
             $isValid = false;
         }
 
