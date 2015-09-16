@@ -84,16 +84,15 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
 
 <?php echo $this->partial('user-admin/partials/roles.phtml', ['presenter' => $presenter]) ?>
 <?php echo $this->partial('user-admin/partials/roles-and-associations.phtml', ['presenter' => $presenter]) ?>
-<?php if ($presenter->getTesterAuthorisation()->shouldBeDisplayed()): ?>
-    <?php echo $this->partial(
-            'user-admin/partials/tester-qualification-status.phtml',
-            [
-                'viewModel' => $presenter->getTesterAuthorisation(),
-                'searchQueryParams' => $searchQueryParams,
-            ]
-        )
-    ?>
-<?php endif ?>
+<?php echo $this->partial(
+        'user-admin/partials/tester-qualification-status.phtml',
+        [
+            'viewModel' => $presenter->getTesterAuthorisation(),
+            'searchQueryParams' => $searchQueryParams,
+        ]
+    )
+?>
+
 <?php echo $this->partial('user-admin/partials/event-history.phtml', ['presenter' => $presenter]) ?>
 
 <nav class="content-navigation">
