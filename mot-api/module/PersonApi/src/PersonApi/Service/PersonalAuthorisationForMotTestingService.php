@@ -87,6 +87,7 @@ class PersonalAuthorisationForMotTestingService
         AuthorisationForTestingMotStatusCode::QUALIFIED => 'Qualified',
         AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED => 'Demo test needed',
         AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED => 'Initial training needed',
+        AuthorisationForTestingMotStatusCode::REFRESHER_NEEDED => 'Refresher Needed'
     ];
 
     /**
