@@ -13,7 +13,7 @@ class VehicleUrlBuilderTest extends \PHPUnit_Framework_TestCase
     const IS_DVLA = true;
     const SITE_ID = 8888;
 
-    public function test()
+    public function testVehicle()
     {
         $base = 'vehicle/' . self::VEHICLE_ID;
         $this->checkUrl(VehicleUrlBuilder::vehicle(self::VEHICLE_ID), $base);
@@ -36,6 +36,37 @@ class VehicleUrlBuilderTest extends \PHPUnit_Framework_TestCase
         $this->checkUrl(
             VehicleUrlBuilder::vehicle(self::VEHICLE_ID)->testInProgressCheck(),
             $base . '/test-in-progress-check'
+        );
+    }
+
+    public function testMysteryShopper()
+    {
+        $base = 'vehicle/' . self::VEHICLE_ID;
+        $incognitoId = 1;
+
+        $this->checkUrl(
+            VehicleUrlBuilder::mysteryShopperCampaign(self::VEHICLE_ID),
+            $base . VehicleUrlBuilder::MYSTERY_SHOPPER_CAMPAIGN
+        );
+
+        $this->checkUrl(
+            VehicleUrlBuilder::mysteryShopperCurrent(self::VEHICLE_ID),
+            $base . VehicleUrlBuilder::MYSTERY_SHOPPER_CAMPAIGN . VehicleUrlBuilder::MYSTERY_SHOPPER_CURRENT
+        );
+
+        $this->checkUrl(
+            VehicleUrlBuilder::mysteryShopperDelete(self::VEHICLE_ID, $incognitoId),
+            $base . VehicleUrlBuilder::MYSTERY_SHOPPER_CAMPAIGN . '/' . $incognitoId
+        );
+
+        $this->checkUrl(
+            VehicleUrlBuilder::mysteryShopperExtend(self::VEHICLE_ID),
+            $base . VehicleUrlBuilder::MYSTERY_SHOPPER_CAMPAIGN . VehicleUrlBuilder::MYSTERY_SHOPPER_EXTEND
+        );
+
+        $this->checkUrl(
+            VehicleUrlBuilder::mysteryShopperList(self::VEHICLE_ID),
+            $base . VehicleUrlBuilder::MYSTERY_SHOPPER_CAMPAIGN . VehicleUrlBuilder::MYSTERY_SHOPPER_LIST
         );
     }
 
