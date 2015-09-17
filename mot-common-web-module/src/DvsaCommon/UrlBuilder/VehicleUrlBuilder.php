@@ -21,6 +21,12 @@ class VehicleUrlBuilder extends AbstractUrlBuilder
     const SEARCH = 'vehicle-search';
     const DEMO_SEARCH = 'demo-vehicle-search';
 
+    const MYSTERY_SHOPPER_CAMPAIGN = '/mystery-shopper-campaign';
+    const MYSTERY_SHOPPER_DELETE = '/:incognitoVehicleId';
+    const MYSTERY_SHOPPER_CURRENT = '/current';
+    const MYSTERY_SHOPPER_EXTEND = '/extend';
+    const MYSTERY_SHOPPER_LIST = '/list';
+
     protected $routesStructure
         = [
             self::VEHICLE      => [
@@ -28,6 +34,12 @@ class VehicleUrlBuilder extends AbstractUrlBuilder
                 self::TEST_EXPIRY_CHECK        => '',
                 self::TEST_HISTORY             => '',
                 self::RETEST_ELIGIBILITY_CHECK => '',
+                self::MYSTERY_SHOPPER_CAMPAIGN => [
+                    self::MYSTERY_SHOPPER_DELETE => '',
+                    self::MYSTERY_SHOPPER_CURRENT => '',
+                    self::MYSTERY_SHOPPER_EXTEND => '',
+                    self::MYSTERY_SHOPPER_LIST => '',
+                ],
             ],
             self::VEHICLE_DVLA => '',
             self::SEARCH       => '',
@@ -52,6 +64,53 @@ class VehicleUrlBuilder extends AbstractUrlBuilder
     public static function vehicleList()
     {
         return self::of()->appendRoutesAndParams(self::VEHICLE_LIST);
+    }
+
+    /**
+     * @param $vehicleId
+     * @return $this
+     */
+    public static function mysteryShopperCampaign($vehicleId)
+    {
+        return self::vehicle($vehicleId)
+            ->appendRoutesAndParams(self::MYSTERY_SHOPPER_CAMPAIGN);
+    }
+
+    /**
+     * @param $vehicleId
+     * @return $this
+     */
+    public static function mysteryShopperCurrent($vehicleId)
+    {
+        return self::mysteryShopperCampaign($vehicleId)
+            ->appendRoutesAndParams(self::MYSTERY_SHOPPER_CURRENT);
+    }
+
+    /**
+     * @param $vehicleId
+     * @return $this
+     */
+    public static function mysteryShopperExtend($vehicleId)
+    {
+        return self::mysteryShopperCampaign($vehicleId)
+            ->appendRoutesAndParams(self::MYSTERY_SHOPPER_EXTEND);
+    }
+
+    /**
+     * @param $vehicleId
+     * @return $this
+     */
+    public static function mysteryShopperList($vehicleId)
+    {
+        return self::mysteryShopperCampaign($vehicleId)
+            ->appendRoutesAndParams(self::MYSTERY_SHOPPER_LIST);
+    }
+
+    public static function mysteryShopperDelete($vehicleId, $incognitoVehicleId)
+    {
+        return self::of()->mysteryShopperCampaign($vehicleId)
+            ->appendRoutesAndParams(self::MYSTERY_SHOPPER_DELETE)
+            ->routeParam('incognitoVehicleId', $incognitoVehicleId);
     }
 
     /**
