@@ -2,10 +2,10 @@
 
 namespace Dvsa\Mot\Frontend\RegistrationModuleTest\Controller;
 
+use Core\Controller\AbstractStepController;
+use Core\Service\StepService;
 use Zend\Mvc\Controller\Plugin\Redirect;
-use Dvsa\Mot\Frontend\RegistrationModule\Controller\AbstractRegistrationController;
 use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationSessionService;
-use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
 use Dvsa\Mot\Frontend\RegistrationModule\Step\DetailsStep;
 use DvsaCommon\InputFilter\Registration\DetailsInputFilter;
 use DvsaCommonTest\TestUtils\XMock;
@@ -13,7 +13,7 @@ use Zend\Http\Request as HttpRequest;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
 
-class AbstractRegistrationControllerTest extends \PHPUnit_Framework_TestCase
+class AbstractStepControllerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Mock the GET path through doStepLogic.
@@ -40,7 +40,7 @@ class AbstractRegistrationControllerTest extends \PHPUnit_Framework_TestCase
         $step->expects($this->once())->method('getProgress');
         $step->expects($this->once())->method('toViewArray');
 
-        $stepService = XMock::of(RegistrationStepService::class);
+        $stepService = XMock::of(StepService::class);
         $stepService->expects($this->once())->method('setActiveById')->willReturnSelf();
         $stepService->expects($this->once())->method('current')->willReturn($step);
         $stepService->expects($this->once())->method('previous')->willReturn($previousStep);
@@ -49,7 +49,7 @@ class AbstractRegistrationControllerTest extends \PHPUnit_Framework_TestCase
         $request = XMock::of(HttpRequest::class);
         $request->expects($this->once())->method('isPost')->willReturn(false);
 
-        $controller = $this->getMockBuilder(AbstractRegistrationController::class)
+        $controller = $this->getMockBuilder(AbstractStepController::class)
             ->setConstructorArgs([
                 $stepService,
             ])
@@ -83,7 +83,7 @@ class AbstractRegistrationControllerTest extends \PHPUnit_Framework_TestCase
         $step->expects($this->once())->method('getProgress');
         $step->expects($this->once())->method('toViewArray');
 
-        $stepService = XMock::of(RegistrationStepService::class);
+        $stepService = XMock::of(StepService::class);
         $stepService->expects($this->once())->method('setActiveById')->willReturnSelf();
         $stepService->expects($this->once())->method('current')->willReturn($step);
 
@@ -94,7 +94,7 @@ class AbstractRegistrationControllerTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('isPost')->willReturn(true);
         $request->expects($this->once())->method('getPost')->willReturn($params);
 
-        $controller = $this->getMockBuilder(AbstractRegistrationController::class)
+        $controller = $this->getMockBuilder(AbstractStepController::class)
             ->setConstructorArgs([
                 $stepService,
             ])
@@ -128,7 +128,7 @@ class AbstractRegistrationControllerTest extends \PHPUnit_Framework_TestCase
         $step->expects($this->never())->method('getProgress');
         $step->expects($this->never())->method('toViewArray');
 
-        $stepService = XMock::of(RegistrationStepService::class);
+        $stepService = XMock::of(StepService::class);
         $stepService->expects($this->once())->method('setActiveById')->willReturnSelf();
         $stepService->expects($this->once())->method('current')->willReturn($step);
         $stepService->expects($this->once())->method('next')->willReturn($step);
@@ -143,7 +143,7 @@ class AbstractRegistrationControllerTest extends \PHPUnit_Framework_TestCase
         $redirect = XMock::of(Redirect::class);
         $redirect->expects($this->once())->method('toRoute');
 
-        $controller = $this->getMockBuilder(AbstractRegistrationController::class)
+        $controller = $this->getMockBuilder(AbstractStepController::class)
             ->setConstructorArgs([
                 $stepService,
             ])

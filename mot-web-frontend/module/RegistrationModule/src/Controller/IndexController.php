@@ -7,8 +7,8 @@
 
 namespace Dvsa\Mot\Frontend\RegistrationModule\Controller;
 
+use Core\Service\StepService;
 use Core\Controller\AbstractDvsaActionController;
-use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
 use Dvsa\Mot\Frontend\RegistrationModule\Step\CreateAccountStep;
 
 /**
@@ -17,17 +17,17 @@ use Dvsa\Mot\Frontend\RegistrationModule\Step\CreateAccountStep;
 class IndexController extends AbstractDvsaActionController
 {
     /**
-     * @var RegistrationStepService
+     * @var StepService
      */
-    private $registrationService;
+    private $stepService;
 
     /**
-     * @param RegistrationStepService $registrationService
+     * @param StepService $stepService
      */
     public function __construct(
-        RegistrationStepService $registrationService
+        StepService $stepService
     ) {
-        $this->registrationService = $registrationService;
+        $this->stepService = $stepService;
     }
 
     /**
@@ -41,7 +41,7 @@ class IndexController extends AbstractDvsaActionController
      */
     public function indexAction()
     {
-        $step = $this->registrationService->setActiveById(CreateAccountStep::STEP_ID)->current();
+        $step = $this->stepService->setActiveById(CreateAccountStep::STEP_ID)->current();
 
         return $this->redirect()->toRoute($step->route());
     }

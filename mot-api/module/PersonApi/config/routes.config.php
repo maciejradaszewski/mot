@@ -17,6 +17,8 @@ use PersonApi\Controller\PersonSiteCountController;
 use PersonApi\Controller\ResetClaimAccountController;
 use PersonApi\Controller\ResetPinController;
 use PersonApi\Controller\UserStatsController;
+use PersonApi\Service\PersonRoleService;
+use PersonApi\Controller\PersonEventController;
 use PersonApi\Controller\PasswordController;
 use UserApi\SpecialNotice\Controller\SpecialNoticeController;
 
@@ -53,6 +55,16 @@ return [
                         'route' => '/password',
                         'defaults' => [
                             'controller' => PasswordController::class,
+                        ],
+                    ],
+                    'may_terminate' => true,
+                ],
+                'manual-event' => [
+                    'type' => 'segment',
+                    'options' => [
+                        'route' => '/event',
+                        'defaults' => [
+                            'controller' => PersonEventController::class,
                         ],
                     ],
                     'may_terminate' => true,

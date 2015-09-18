@@ -30,11 +30,13 @@ use SiteApi\Service\SiteNominationService;
 use SiteApi\Service\SitePositionService;
 use SiteApi\Service\SiteSearchService;
 use SiteApi\Service\SiteService;
+use SiteApi\Service\SiteEventService;
 use SiteApi\Service\SiteSlotUsageService;
 use SiteApi\Service\SiteTestingDailyScheduleService;
 use SiteApi\Service\SiteTestingFacilitiesService;
 use SiteApi\Service\Validator\SiteTestingDailyScheduleValidator;
 use SiteApi\Factory\Service\SiteTestingFacilitiesServiceFactory;
+use SiteApi\Factory\Service\SiteEventServiceFactory;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 use DvsaEventApi\Service\EventService;
@@ -130,7 +132,8 @@ return [
         SiteSearchService::class               => SiteSearchServiceFactory::class,
         SiteService::class                     => SiteServiceFactory::class,
         SiteTestingFacilitiesService::class    => SiteTestingFacilitiesServiceFactory::class,
-        SiteDetailsService::class              => SiteDetailsServiceFactory::class
+        SiteDetailsService::class              => SiteDetailsServiceFactory::class,
+        SiteEventService::class                =>SiteEventServiceFactory::class
     ],
     'invokables' => [
         TestingFacilitiesValidator::class => TestingFacilitiesValidator::class,

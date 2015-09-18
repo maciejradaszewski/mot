@@ -48,7 +48,7 @@ echo $this->url(
         <ul class="content-navigation__secondary">
             <li>
                 <a id="cancel-and-return-to-garage" href="<?php echo $this->url('vehicle-testing-station', [ 'id' => $viewModel->getSiteId()]); ?>">
-                    Cancel and return to <?php echo $viewModel->getSiteName(); ?>
+                    Cancel and return to <?php echo $this->escapeHtml($viewModel->getSiteName()); ?>
                 </a>
             </li>
         </ul>

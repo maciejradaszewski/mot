@@ -5,7 +5,7 @@ use DvsaEventApi\Controller\EventController;
 return [
     'controllers'     => [
         'invokables' => [
-            EventController::class => EventController::class,
+            EventController::class       => EventController::class,
         ],
     ],
     'router'          => [
@@ -35,6 +35,7 @@ return [
                     ],
                 ],
             ],
+
         ],
     ],
 ];

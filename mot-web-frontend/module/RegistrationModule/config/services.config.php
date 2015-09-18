@@ -18,8 +18,7 @@ return [
     'factories' => [
         PasswordService::class              => PasswordServiceFactory::class,
         RegistrationSessionService::class   => RegistrationSessionServiceFactory::class,
-        RegistrationStepService::class      => RegistrationStepServiceFactory::class,
-        RegistrationStepService::class      => RegistrationStepServiceFactory::class,
         RegisterUserService::class          => RegisterUserServiceFactory::class,
+        RegistrationStepService::class      => RegistrationStepServiceFactory::class,
     ],
 ];

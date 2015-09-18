@@ -26,8 +26,8 @@ class SecurityQuestionTwoControllerFactory implements FactoryInterface
     {
         $serviceLocator = $serviceLocator->getServiceLocator();
 
-        $registrationService = $serviceLocator->get(RegistrationStepService::class);
+        $stepService = $serviceLocator->get(RegistrationStepService::class);
 
-        return new SecurityQuestionTwoController($registrationService);
+        return new SecurityQuestionTwoController($stepService);
     }
 }

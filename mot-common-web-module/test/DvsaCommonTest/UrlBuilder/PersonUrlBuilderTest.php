@@ -37,11 +37,11 @@ class PersonUrlBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testById()
     {
-        $base = 'person/' . self::USER_ID;
+        $base = PersonUrlBuilder::PERSON .'/'. self::USER_ID;
 
         $this->checkUrl(PersonUrlBuilder::byId(self::USER_ID), $base);
-        $this->checkUrl(PersonUrlBuilder::byId(self::USER_ID)->authorisedExaminer(), $base . '/authorised-examiner');
-        $this->checkUrl(PersonUrlBuilder::byId(self::USER_ID)->rbacRoles(), $base . '/rbac-roles');
+        $this->checkUrl(PersonUrlBuilder::byId(self::USER_ID)->authorisedExaminer(), $base . PersonUrlBuilder::AUTHORISED_EXAMINER);
+        $this->checkUrl(PersonUrlBuilder::byId(self::USER_ID)->rbacRoles(), $base . PersonUrlBuilder::RBAC_ROLES);
         $this->checkUrl(
             PersonUrlBuilder::helpDeskProfile(self::USER_ID),
             $base . '/help-desk-profile-restricted'
@@ -50,10 +50,11 @@ class PersonUrlBuilderTest extends \PHPUnit_Framework_TestCase
             PersonUrlBuilder::helpDeskProfileUnrestricted(self::USER_ID),
             $base . '/help-desk-profile-unrestricted'
         );
+        $this->checkUrl(PersonUrlBuilder::byId(self::USER_ID)->event(), $base . PersonUrlBuilder::EVENT);
 
-        $this->checkUrl(PersonUrlBuilder::motTesting(self::USER_ID), $base . '/mot-testing');
-        $this->checkUrl(PersonUrlBuilder::resetPin(self::USER_ID), $base . '/reset-pin');
-        $this->checkUrl(PersonUrlBuilder::resetClaimAccount(self::USER_ID), $base . '/reset-claim-account');
+        $this->checkUrl(PersonUrlBuilder::motTesting(self::USER_ID), $base . PersonUrlBuilder::MOT_TESTING);
+        $this->checkUrl(PersonUrlBuilder::resetPin(self::USER_ID), $base . PersonUrlBuilder::RESET_PIN);
+        $this->checkUrl(PersonUrlBuilder::resetClaimAccount(self::USER_ID), $base . PersonUrlBuilder::RESET_CLAIM_ACCOUNT);
     }
 
     public function testBySearchPerson()

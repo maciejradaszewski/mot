@@ -7,12 +7,13 @@
 
 namespace Dvsa\Mot\Frontend\RegistrationModule\Controller;
 
+
 use Dvsa\Mot\Frontend\RegistrationModule\Step\DetailsStep;
 
 /**
  * Details Controller.
  */
-class DetailsController extends AbstractRegistrationController
+class DetailsController extends RegistrationBaseController
 {
     const PAGE_TITLE = 'Your details';
 

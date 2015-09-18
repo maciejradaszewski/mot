@@ -7,10 +7,10 @@
 
 namespace Dvsa\Mot\Frontend\RegistrationModuleTest\Factory\Controller;
 
+use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
 use Dvsa\Mot\Frontend\RegistrationModule\Controller\PasswordController;
 use Dvsa\Mot\Frontend\RegistrationModule\Factory\Controller\PasswordControllerFactory;
 use Dvsa\Mot\Frontend\RegistrationModule\Service\PasswordService;
-use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
 use DvsaCommonTest\TestUtils\XMock;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\ServiceManager\ServiceManager;
@@ -28,10 +28,10 @@ class PasswordControllerFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $serviceManager = new ServiceManager();
 
-        $registrationService = XMock::of(RegistrationStepService::class);
+        $stepService = XMock::of(RegistrationStepService::class);
         $passwordService = XMock::of(PasswordService::class);
 
-        $serviceManager->setService(RegistrationStepService::class, $registrationService);
+        $serviceManager->setService(RegistrationStepService::class, $stepService);
         $serviceManager->setService(PasswordService::class, $passwordService);
 
         $plugins = $this->getMock(ControllerManager::class);

@@ -1,23 +1,23 @@
 <?php
-namespace Dvsa\Mot\Frontend\RegistrationModuleTest\Service;
+namespace Core\Service;
 
-use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
-use Dvsa\Mot\Frontend\RegistrationModule\Step\RegistrationStep;
+use Core\Step\Step;
 use DvsaCommonTest\TestUtils\XMock;
 
+
 /**
- * Class RegistrationStepServiceTest.
+ * Class StepServiceTest.
  *
- * @group registration
+ * @group step
  */
-class RegistrationStepServiceTest extends \PHPUnit_Framework_TestCase
+class StepServiceTest extends \PHPUnit_Framework_TestCase
 {
     const FIRST = 'first';
 
     /**
-     * @var RegistrationStepService
+     * @var StepService
      */
-    private $registrationStepService;
+    private $stepService;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject[]
@@ -34,27 +34,56 @@ class RegistrationStepServiceTest extends \PHPUnit_Framework_TestCase
     ];
 
     /**
-     * Setup function for RegistrationService.
+     * Setup function for Service.
      */
     public function setUp()
     {
-        $this->registrationStepService = new RegistrationStepService();
+        $this->stepService = new StepService();
 
         foreach ($this->data as $value) {
             $mock = $this->createStepMock($value);
             $this->stepInterfaceStackMock[] = $mock;
 
-            $this->registrationStepService->add($mock);
+            $this->stepService->add($mock);
         }
+    }
+
+    /**
+     * Ensure that getRoutes returns an array of routes in key=>value format
+     *
+     * @group step
+     * @throws \Exception
+     */
+    public function testGetRoutes()
+    {
+        $stepOne = XMock::of(Step::class);
+        $stepTwo = XMock::of(Step::class);
+
+        $stepOne->expects($this->any())->method('getId')->willReturn('ONE');
+        $stepOne->expects($this->any())->method('route')->willReturn('example/one');
+        $stepTwo->expects($this->any())->method('getId')->willReturn('TWO');
+        $stepTwo->expects($this->any())->method('route')->willReturn('example/two');
+
+        $this->stepService = new StepService();
+        $this->stepService->add($stepOne);
+        $this->stepService->add($stepTwo);
+
+        $this->assertEquals(
+            [
+                'ONE' => 'example/one',
+                'TWO' => 'example/two',
+            ],
+            $this->stepService->getRoutes()
+        );
     }
 
     public function testConstructor()
     {
-        $registrationStepService = new RegistrationStepService($this->stepInterfaceStackMock);
-        $this->assertInstanceOf(RegistrationStepService::class, $registrationStepService);
+        $stepService = new StepService($this->stepInterfaceStackMock);
+        $this->assertInstanceOf(StepService::class, $stepService);
 
         $expected = current($this->stepInterfaceStackMock);
-        $actual = $registrationStepService->current();
+        $actual = $stepService->current();
 
         $this->assertSame($expected, $actual);
     }
@@ -64,36 +93,36 @@ class RegistrationStepServiceTest extends \PHPUnit_Framework_TestCase
         // Testing to see if the pointer has been incremented by next
         $expected = next($this->stepInterfaceStackMock);
 
-        $actual = $this->registrationStepService->next();
-        $this->assertInstanceOf(RegistrationStep::class, $actual);
+        $actual = $this->stepService->next();
+        $this->assertInstanceOf(Step::class, $actual);
         $this->assertSame($expected, $actual);
     }
 
     public function testNext_False()
     {
-        $this->registrationStepService->next();
-        $this->registrationStepService->next();
-        $actual = $this->registrationStepService->next();
+        $this->stepService->next();
+        $this->stepService->next();
+        $actual = $this->stepService->next();
         $this->assertFalse($actual);
     }
 
     public function testPrevious()
     {
-        $this->registrationStepService->next();
-        $actual = $this->registrationStepService->previous();
+        $this->stepService->next();
+        $actual = $this->stepService->previous();
         $expected = $this->stepInterfaceStackMock[0];
-        $this->assertInstanceOf(RegistrationStep::class, $actual);
+        $this->assertInstanceOf(Step::class, $actual);
         $this->assertSame($expected, $actual);
     }
 
     public function testPrevious_False()
     {
-        $this->assertFalse($this->registrationStepService->previous());
+        $this->assertFalse($this->stepService->previous());
     }
 
     public function testCurrent()
     {
-        $actual = $this->registrationStepService->current();
+        $actual = $this->stepService->current();
         $expected = current($this->stepInterfaceStackMock);
 
         $this->assertSame($expected, $actual);
@@ -101,15 +130,15 @@ class RegistrationStepServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testRewind()
     {
-        $this->registrationStepService->rewind();
-        $actualClass = $this->registrationStepService->current();
+        $this->stepService->rewind();
+        $actualClass = $this->stepService->current();
 
         $this->assertSame($this->stepInterfaceStackMock[0], $actualClass);
     }
 
     public function testGetById()
     {
-        $actual = $this->registrationStepService->getById(self::FIRST);
+        $actual = $this->stepService->getById(self::FIRST);
         $expected = $this->stepInterfaceStackMock[0];
 
         $this->assertSame($expected, $actual);
@@ -120,13 +149,13 @@ class RegistrationStepServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetById_Exception()
     {
-        $this->registrationStepService->getById('doesNotExist');
+        $this->stepService->getById('doesNotExist');
     }
 
     public function testAdd()
     {
         $mockStep = $this->createStepMock(__METHOD__);
-        $actual = $this->registrationStepService->add($mockStep);
+        $actual = $this->stepService->add($mockStep);
 
         $expected = 3;
 
@@ -139,14 +168,14 @@ class RegistrationStepServiceTest extends \PHPUnit_Framework_TestCase
     public function testAdd_Exception()
     {
         $mockStep = $this->createStepMock(self::FIRST);
-        $this->registrationStepService->add($mockStep);
+        $this->stepService->add($mockStep);
     }
 
     public function testFirst()
     {
-        $actual = $this->registrationStepService->first();
+        $actual = $this->stepService->first();
         $expected = $this->stepInterfaceStackMock[0];
-        $this->assertInstanceOf(RegistrationStep::class, $actual);
+        $this->assertInstanceOf(Step::class, $actual);
         $this->assertSame($expected, $actual);
     }
 
@@ -157,34 +186,34 @@ class RegistrationStepServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testFirst_Exception()
     {
-        $registrationStepService = new RegistrationStepService();
-        $registrationStepService->first();
+        $stepService = new StepService();
+        $stepService->first();
     }
 
     public function testLast()
     {
-        $actual = $this->registrationStepService->last();
+        $actual = $this->stepService->last();
         $index = count($this->stepInterfaceStackMock) - 1;
         $expected = $this->stepInterfaceStackMock[$index];
-        $this->assertInstanceOf(RegistrationStep::class, $actual);
+        $this->assertInstanceOf(Step::class, $actual);
         $this->assertSame($expected, $actual);
     }
 
     public function testIsLast()
     {
-        $this->assertFalse($this->registrationStepService->isLast());
-        $this->registrationStepService->next();
-        $this->registrationStepService->next();
-        $this->assertTrue($this->registrationStepService->isLast());
+        $this->assertFalse($this->stepService->isLast());
+        $this->stepService->next();
+        $this->stepService->next();
+        $this->assertTrue($this->stepService->isLast());
     }
 
     public function testSetActiveById()
     {
-        $this->registrationStepService->next();
-        $this->registrationStepService->setActiveById(self::FIRST);
+        $this->stepService->next();
+        $this->stepService->setActiveById(self::FIRST);
 
-        $actual = $this->registrationStepService->current();
-        $expected = $this->registrationStepService->getById(self::FIRST);
+        $actual = $this->stepService->current();
+        $expected = $this->stepService->getById(self::FIRST);
 
         $this->assertSame($expected, $actual);
     }
@@ -194,19 +223,19 @@ class RegistrationStepServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetActiveById_Exception()
     {
-        $this->registrationStepService->setActiveById("notAStep");
+        $this->stepService->setActiveById("notAStep");
     }
 
-    public function testSetActiveStepByRegistrationStep()
+    public function testSetActiveByStep()
     {
-        $this->registrationStepService->next();
+        $this->stepService->next();
 
-        $registrationStepMock = $this->createStepMock(self::FIRST);
+        $stepMock = $this->createStepMock(self::FIRST);
 
-        $this->registrationStepService->setActiveByRegistrationStep($registrationStepMock);
+        $this->stepService->setActiveByStep($stepMock);
 
-        $actual = $this->registrationStepService->current();
-        $expected = $this->registrationStepService->getById(self::FIRST);
+        $actual = $this->stepService->current();
+        $expected = $this->stepService->getById(self::FIRST);
 
         $this->assertSame($expected, $actual);
     }
@@ -214,22 +243,22 @@ class RegistrationStepServiceTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException Exception
      */
-    public function testSetActiveByRegistrationStep_Exception()
+    public function testSetActiveByStep_Exception()
     {
-        $registrationStepMock = $this->createStepMock('iDoNotExist');
-        $this->registrationStepService->setActiveByRegistrationStep($registrationStepMock);
+        $stepMock = $this->createStepMock('iDoNotExist');
+        $this->stepService->setActiveByStep($stepMock);
     }
 
     public function testCount()
     {
-        $numberOfSteps = $this->registrationStepService->count();
+        $numberOfSteps = $this->stepService->count();
         $this->assertSame(3, $numberOfSteps);
     }
 
     public function testGetPosition()
     {
-        $this->registrationStepService->next();
-        $currentStepNumber = $this->registrationStepService->getPosition();
+        $this->stepService->next();
+        $currentStepNumber = $this->stepService->getPosition();
         $this->assertSame(2, $currentStepNumber);
     }
 
@@ -240,14 +269,14 @@ class RegistrationStepServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testCurrent_Exception()
     {
-        $registrationStepService = new RegistrationStepService();
-        $registrationStepService->current();
+        $stepService = new StepService();
+        $stepService->current();
     }
 
     public function testGetIterator()
     {
         $count = 0;
-        foreach ($this->registrationStepService as $step) {
+        foreach ($this->stepService as $step) {
             $expected = $this->stepInterfaceStackMock[$count];
             $this->assertSame($expected, $step);
             $count++;
@@ -263,7 +292,7 @@ class RegistrationStepServiceTest extends \PHPUnit_Framework_TestCase
      */
     private function createStepMock($value)
     {
-        $mock = XMock::of(RegistrationStep::class, ['getId']);
+        $mock = XMock::of(Step::class, ['getId']);
         $mock->expects($this->any())
             ->method('getId')
             ->willReturn($value);

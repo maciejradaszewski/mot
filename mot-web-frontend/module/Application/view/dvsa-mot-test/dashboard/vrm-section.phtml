@@ -10,7 +10,7 @@
 <?php $this->placeholder('dashboard-section-header-caption')->captureEnd() ?>
 
 <?php $this->placeholder('dashboard-section-header-value')->captureStart('SET') ?>
-    <h3><strong><?php echo $vrm ?></strong></h3>
+    <h3><strong><?php echo $this->escapeHtml($vrm) ?></strong></h3>
 <?php $this->placeholder('dashboard-section-header-value')->captureEnd() ?>
 
 <?php $this->placeholder('dashboard-section-body')->captureStart('SET') ?>

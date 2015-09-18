@@ -1,4 +1,9 @@
 <?php
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
 
 namespace Event\Controller;
 
@@ -19,9 +24,7 @@ use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
 /**
- * Class EventController
- *
- * @package Event\Controller
+ * Event Controller.
  */
 class EventController extends AbstractAuthActionController
 {
@@ -36,19 +39,31 @@ class EventController extends AbstractAuthActionController
 
     /**
      * This is the common action who allow us to get the information needed
-     * and build the view
+     * and build the view.
+     *
+     * @throws \DvsaCommon\Auth\NotLoggedInException
      *
      * @return Response|ViewModel
-     * @throws \DvsaCommon\Auth\NotLoggedInException
      */
     public function listAction()
     {
-        $this->layout('layout/layout_enforcement');
+        $this->layout()->setVariable('pageSubTitle', 'Events');
+        $this->layout()->setVariable('pageTitle', 'Events history');
+
+        // breadcrumbs removed for now as devs don't have time to look at them
+        /*
+        $breadcrumbs = [
+            'Entity name'    => 'entity_profile_page_URL',
+            'Events history' => '',
+        ];
+        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
+        */
+
+        $this->layout('layout/layout-govuk.phtml');
 
         $id = $this->params()->fromRoute('id');
         $type = $this->params()->fromRoute('type');
 
-        //  --  check permissions
         if ($this->getAuthorizationService()->isGranted(PermissionInSystem::LIST_EVENT_HISTORY) === false) {
             return $this->redirect()->toUrl(PersonUrlBuilderWeb::home());
         }
@@ -56,7 +71,6 @@ class EventController extends AbstractAuthActionController
         /* @var Request $request */
         $request = $this->getRequest();
 
-        //  --  prepare models for view --
         $formData = $request->getQuery()->toArray();
 
         $viewModel = new EventViewModel(
@@ -72,14 +86,41 @@ class EventController extends AbstractAuthActionController
             $this->getEvents($id, $type, $this->validateForm($viewModel->getFormModel(), $request->isXmlHttpRequest()))
         );
 
-        return $viewModel->getViewOrJson($request->isXmlHttpRequest());
+        if ($request->isXmlHttpRequest()) {
+            return $viewModel->getJsonModel();
+        }
+
+        // Now inject our type and ids into the actual ViewModel object
+        $viewModel = $viewModel->getViewModel();
+        $viewModel->setVariable('type', $type);
+        $viewModel->setVariable('id', $id);
+        $viewModel->setVariable(
+            'canRecordEvent',
+            $this->getAuthorizationService()->isGranted(PermissionInSystem::EVENT_CREATE)
+        );
+
+        return $viewModel;
     }
 
     /**
-     * This function is responsible to validate that the form is valid
+     * @throws \DvsaCommon\Auth\NotLoggedInException
+     *
+     * @return Response|ViewModel
+     */
+    public function createAction()
+    {
+        $type = $this->params()->fromRoute('type');
+
+        var_dump($this->getCatalogService()->getEventTypesWithOutcomesForCategory($type));
+        die;
+    }
+
+    /**
+     * This function is responsible to validate that the form is valid.
      *
      * @param EventFormDto $formModel
-     * @param Boolean $isAjax
+     * @param Boolean      $isAjax
+     *
      * @return EventFormDto|null
      */
     protected function validateForm(EventFormDto $formModel, $isAjax)
@@ -87,13 +128,15 @@ class EventController extends AbstractAuthActionController
         if ($formModel->isShowDate() === true && $isAjax === false) {
             return $this->validateDatesAndRange($formModel);
         }
+
         return $formModel;
     }
 
     /**
-     * This function prepare the two date form to be validated
+     * This function prepare the two date form to be validated.
      *
      * @param EventFormDto $formModel
+     *
      * @return EventFormDto|null
      */
     protected function validateDatesAndRange(EventFormDto $formModel)
@@ -117,10 +160,10 @@ class EventController extends AbstractAuthActionController
      * - Day/Month/Year is present
      * - Day/Month/Year is a valid date
      * - Day/Month/Year is not in the future
-     * - Day/Month/Year is not before 01-01-1900
+     * - Day/Month/Year is not before 01-01-1900.
      *
      * @param DateDto $date
-     * @param string $fieldSfx
+     * @param string  $fieldSfx
      */
     protected function validateDate(DateDto $date, $fieldSfx)
     {
@@ -145,10 +188,11 @@ class EventController extends AbstractAuthActionController
     }
 
     /**
-     * This function return the organisation Dto
+     * This function return the organisation Dto.
      *
-     * @param int       $organisationId
-     * @param string    $type
+     * @param int    $organisationId
+     * @param string $type
+     *
      * @return \DvsaCommon\Dto\Organisation\OrganisationDto|null
      */
     protected function getOrganisation($organisationId, $type)
@@ -161,14 +205,16 @@ class EventController extends AbstractAuthActionController
         } catch (RestApplicationException $e) {
             $this->addErrorMessages($e->getDisplayMessages());
         }
+
         return null;
     }
 
     /**
-     * This function return an array of the site information
+     * This function return an array of the site information.
      *
-     * @param int       $siteId
-     * @param string    $type
+     * @param int    $siteId
+     * @param string $type
+     *
      * @return VehicleTestingStationDto|null
      */
     protected function getSite($siteId, $type)
@@ -176,19 +222,21 @@ class EventController extends AbstractAuthActionController
         if ($type != 'site') {
             return null;
         }
+
         try {
             return $this->getMapperFactory()->Site->getById($siteId);
         } catch (RestApplicationException $e) {
             $this->addErrorMessages($e->getDisplayMessages());
         }
+
         return null;
     }
 
     /**
-     * This function return the information about a person
+     * This function return the information about a person.
      *
-     * @param  int    $personId
-     * @param  string    $type
+     * @param int    $personId
+     * @param string $type
      *
      * @return \DvsaClient\Entity\Person|null
      */
@@ -197,21 +245,24 @@ class EventController extends AbstractAuthActionController
         if ($type != 'person') {
             return null;
         }
+
         try {
             return $this->getMapperFactory()->Person->getById($personId);
         } catch (RestApplicationException $e) {
             $this->addErrorMessages($e->getDisplayMessages());
         }
+
         return null;
     }
 
     /**
-     * This function return the list of the events linked to an entity
+     * This function return the list of the events linked to an entity.
      *
-     * @param int               $id
-     * @param string            $type
-     * @param EventFormDto      $formDto
-     * @return \DvsaCommon\Dto\Event\EventListDto
+     * @param int          $id
+     * @param string       $type
+     * @param EventFormDto $formDto
+     *
+     * @return \DvsaCommon\Dto\Event\EventListDto|null
      */
     protected function getEvents($id, $type, $formDto)
     {
@@ -223,31 +274,48 @@ class EventController extends AbstractAuthActionController
         } catch (RestApplicationException $e) {
             $this->addErrorMessages($e->getDisplayMessages());
         }
+
         return null;
     }
 
     /**
-     * This is the common action who allow us to get the information about an event
+     * This is the common action who allow us to get the information about an event.
+     *
+     * @throws \DvsaCommon\Auth\NotLoggedInException
      *
      * @return Response|ViewModel
-     * @throws \DvsaCommon\Auth\NotLoggedInException
      */
     public function detailAction()
     {
-        $this->layout('layout/layout_enforcement');
-
         $id = $this->params()->fromRoute('id');
         $eventId = $this->params()->fromRoute('event-id');
         $type = $this->params()->fromRoute('type');
 
-        //  --  check permissions
+        if ($type === 'ae') {
+            $thisTitle = 'AE';
+        } else {
+            $thisTitle = ucfirst($type);
+        }
+
+        $this->layout()->setVariable('pageSubTitle', 'Events');
+        $this->layout()->setVariable('pageTitle', 'Event details');
+
+        /*
+        $breadcrumbs = [
+            'Events for [Entity name]' => '[entity_events_list__page_URL]',
+            'Events detail'            => '',
+        ];
+        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
+        */
+
+        $this->layout('layout/layout-govuk.phtml');
+
         if ($this->getAuthorizationService()->isGranted(PermissionInSystem::EVENT_READ) === false) {
             return $this->redirect()->toUrl(PersonUrlBuilderWeb::home());
         }
 
         /* @var Request $request */
         $request = $this->getRequest();
-        //  --  prepare models for view --
         $formData = $request->getQuery()->toArray();
 
         $viewModel = new EventDetailViewModel(
@@ -261,11 +329,16 @@ class EventController extends AbstractAuthActionController
 
         return (new ViewModel(
             [
-                'viewModel' => $viewModel
+                'viewModel' => $viewModel,
             ]
         ))->setTemplate('event/event/details.phtml');
     }
 
+    /**
+     * @param $id
+     *
+     * @return \DvsaCommon\Dto\Event\EventDto|void
+     */
     protected function getEventDetails($id)
     {
         try {
@@ -273,6 +346,7 @@ class EventController extends AbstractAuthActionController
         } catch (RestApplicationException $e) {
             $this->addErrorMessages($e->getDisplayMessages());
         }
+
         return null;
     }
 }

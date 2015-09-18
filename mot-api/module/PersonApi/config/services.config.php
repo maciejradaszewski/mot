@@ -9,6 +9,8 @@ use PersonApi\Factory\Service\PersonServiceFactory;
 use PersonApi\Factory\Service\UserStatsServiceFactory;
 use PersonApi\Factory\Validator\BasePersonValidatorFactory;
 use PersonApi\Factory\Service\PersonRoleServiceFactory;
+use PersonApi\Service\PersonEventService;
+use PersonApi\Factory\Service\PersonEventServiceFactory;
 use PersonApi\Service\BasePersonService;
 use PersonApi\Service\DashboardService;
 use PersonApi\Service\PersonalAuthorisationForMotTestingService;
@@ -36,7 +38,8 @@ return [
         DashboardService::class                          => DashboardServiceFactory::class,
         PersonContactService::class                      => PersonContactServiceFactory::class,
         ChangePasswordValidator::class                   => ChangePasswordValidatorFactory::class,
-        PasswordService::class                           => PasswordServiceFactory::class
+        PasswordService::class                           => PasswordServiceFactory::class,
+        PersonEventService::class                        => PersonEventServiceFactory::class,
     ],
     'invokables' => [
         PersonGenerator::class          => PersonGenerator::class,

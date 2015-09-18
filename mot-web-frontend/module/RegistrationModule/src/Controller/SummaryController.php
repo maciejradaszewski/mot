@@ -13,7 +13,7 @@ use Zend\View\Model\ViewModel;
 /**
  * Summary Controller.
  */
-class SummaryController extends AbstractRegistrationController
+class SummaryController extends RegistrationBaseController
 {
     const PAGE_TITLE = 'Account summary';
 

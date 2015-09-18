@@ -29,7 +29,7 @@ class CompletedControllerFactory implements FactoryInterface
     {
         $serviceLocator = $serviceLocator->getServiceLocator();
 
-        $registrationService = $serviceLocator->get(RegistrationStepService::class);
+        $stepService = $serviceLocator->get(RegistrationStepService::class);
         $registerUserService = $serviceLocator->get(RegisterUserService::class);
         $session = $serviceLocator->get(RegistrationSessionService::class);
 
@@ -40,6 +40,6 @@ class CompletedControllerFactory implements FactoryInterface
             throw new RuntimeException('Helpdesk details not found in $config["helpdesk"]');
         }
 
-        return new CompletedController($registrationService, $registerUserService, $session, $helpdeskConfig);
+        return new CompletedController($stepService, $registerUserService, $session, $helpdeskConfig);
     }
 }

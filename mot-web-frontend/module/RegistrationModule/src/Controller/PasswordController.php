@@ -14,14 +14,9 @@ use Zend\View\Model\ViewModel;
 /**
  * Password Controller.
  */
-class PasswordController extends AbstractRegistrationController
+class PasswordController extends RegistrationBaseController
 {
     const PAGE_TITLE = 'Create a password';
-
-    /**
-     * @var PasswordService
-     */
-    private $passwordService;
 
     /**
      * @return ViewModel

@@ -12,7 +12,7 @@ use Dvsa\Mot\Frontend\RegistrationModule\Step\SecurityQuestionTwoStep;
 /**
  * SecurityQuestion Controller.
  */
-class SecurityQuestionTwoController extends AbstractRegistrationController
+class SecurityQuestionTwoController extends RegistrationBaseController
 {
     const PAGE_TITLE = 'Second security question';
 

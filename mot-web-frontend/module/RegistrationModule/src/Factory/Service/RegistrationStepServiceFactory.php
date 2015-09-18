@@ -2,6 +2,8 @@
 
 namespace Dvsa\Mot\Frontend\RegistrationModule\Factory\Service;
 
+use Core\Factory\StepServiceFactory;
+use Core\Service\SessionService;
 use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationSessionService;
 use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
 use Dvsa\Mot\Frontend\RegistrationModule\Step\AccountSummaryStep;
@@ -21,13 +23,8 @@ use Zend\InputFilter\InputFilter;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class RegistrationStepServiceFactory implements FactoryInterface
+class RegistrationStepServiceFactory extends StepServiceFactory
 {
-    /**
-     * @var RegistrationSessionService
-     */
-    private $sessionService;
-
     /**
      * @param ServiceLocatorInterface $serviceLocator
      *
@@ -45,7 +42,7 @@ class RegistrationStepServiceFactory implements FactoryInterface
     /**
      * @return array
      */
-    public function createSteps(RegistrationSessionService $sessionService)
+    public function createSteps(SessionService $sessionService)
     {
         $steps = [
             new CreateAccountStep($sessionService, new InputFilter()),

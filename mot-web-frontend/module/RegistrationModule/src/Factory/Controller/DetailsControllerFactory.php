@@ -7,6 +7,7 @@
 
 namespace Dvsa\Mot\Frontend\RegistrationModule\Factory\Controller;
 
+
 use Dvsa\Mot\Frontend\RegistrationModule\Controller\DetailsController;
 use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
 use Zend\ServiceManager\FactoryInterface;
@@ -26,8 +27,8 @@ class DetailsControllerFactory implements FactoryInterface
     {
         $serviceLocator = $serviceLocator->getServiceLocator();
 
-        $registrationService = $serviceLocator->get(RegistrationStepService::class);
+        $stepService = $serviceLocator->get(RegistrationStepService::class);
 
-        return new DetailsController($registrationService);
+        return new DetailsController($stepService);
     }
 }

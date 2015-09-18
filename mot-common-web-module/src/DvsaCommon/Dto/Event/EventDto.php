@@ -3,6 +3,8 @@
 namespace DvsaCommon\Dto\Event;
 
 use DvsaCommon\Dto\AbstractDataTransferObject;
+use DvsaEntities\Entity\EventOutcome;
+use DvsaEntities\Entity\Person;
 
 /**
  * Class EventDto
@@ -21,6 +23,16 @@ class EventDto extends AbstractDataTransferObject
 
     /* @var string  $description */
     private $description;
+
+    /**
+     * @var string $addedByName
+     * */
+    private $addedByName;
+
+    /**
+     * @var string $eventOutcomeDescription
+     */
+    private $eventOutcomeDescription;
 
     /**
      * @return int
@@ -46,6 +58,46 @@ class EventDto extends AbstractDataTransferObject
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @param string|null $addedByName
+     *
+     * @return $this
+     */
+    public function setAddedByName($addedByName = null)
+    {
+        $this->addedByName = $addedByName;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAddedByName()
+    {
+        return $this->addedByName;
+    }
+
+    /**
+     * @param string|null $eventOutcomeDescription
+     *
+     * @return $this
+     */
+    public function setEventOutcomeDescription($eventOutcomeDescription = null)
+    {
+        $this->eventOutcomeDescription = $eventOutcomeDescription;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEventOutcomeDescription()
+    {
+        return $this->eventOutcomeDescription;
     }
 
     /**

@@ -7,8 +7,8 @@
 
 namespace Dvsa\Mot\Frontend\RegistrationModule\Factory\Controller;
 
-use Dvsa\Mot\Frontend\RegistrationModule\Controller\AddressController;
 use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
+use Dvsa\Mot\Frontend\RegistrationModule\Controller\AddressController;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -26,8 +26,8 @@ class AddressControllerFactory implements FactoryInterface
     {
         $serviceLocator = $serviceLocator->getServiceLocator();
 
-        $registrationService = $serviceLocator->get(RegistrationStepService::class);
+        $stepService = $serviceLocator->get(RegistrationStepService::class);
 
-        return new AddressController($registrationService);
+        return new AddressController($stepService);
     }
 }
