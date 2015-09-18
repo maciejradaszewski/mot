@@ -3,7 +3,7 @@
 ?>
 <div class="text">
     <p class="lede">
-        Confirm changing <?php echo $viewModel->getTester()->getFullName() ?>'s Group <?php echo $viewModel->getVehicleClassGroup() ?> tester qualification status to <strong>Qualified</strong>.
+        Confirm changing <?php echo $this->escapeHtml($viewModel->getTester()->getFullName()) ?>'s Group <?php echo $viewModel->getVehicleClassGroup() ?> tester qualification status to <strong>Qualified</strong>.
     </p>
 </div>
 <table class="key-value-list">
@@ -13,7 +13,7 @@
                 Name
             </th>
             <td class="key-value-list__value">
-                <?php echo $viewModel->getTester()->getFullName() ?>
+                <?php echo $this->escapeHtml($viewModel->getTester()->getFullName()); ?>
             </td>
         </tr>
         <tr>

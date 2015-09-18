@@ -1,11 +1,11 @@
 <?php
 
-namespace Dvsa\Mot\Frontend\RegistrationModule\Step;
+namespace Core\Step;
 
 /**
- * Interface for a Registration step.
+ * Interface for a Paged Step.
  */
-interface RegistrationStep
+interface Step
 {
     /**
      * @return string
@@ -20,7 +20,7 @@ interface RegistrationStep
     public function validate(array $values = []);
 
     /**
-     * @return RegistrationStep
+     * @return Step
      */
     public function load();
 
@@ -49,12 +49,17 @@ interface RegistrationStep
     /**
      * The route for this step.
      *
-     * @return mixed
+     * @return string
      */
     public function route();
 
     /**
-     * describes the steps progress in the registration process.
+     * @return array
+     */
+    public function routeParams();
+
+    /**
+     * describes the steps progress in the process.
      *
      * Step 1 of 6
      * Step 2 of 6

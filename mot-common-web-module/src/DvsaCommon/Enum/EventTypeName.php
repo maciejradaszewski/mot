@@ -57,6 +57,12 @@ class EventTypeName
     const UPDATE_AE = 'Update AE';
     const UNLINK_AE_SITE = 'Unlink AE/Site';
     const DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE = 'DVSA Administrator link a site to an AE';
+    const DVSA_ADMINISTRATOR_UPDATE_SITE = 'DVSA Administrator Update Site';
+    const INTELLIGENCE_MARKER = 'Intelligence marker';
+    const VTS_COMPLAINT = 'VTS complaint';
+    const TESTER_TRAINING_ASSESSMENT = 'Tester training assessment';
+    const NTT_DIRECTED_RETRAINING_CLASSES_12 = 'NTT Directed Retraining: classes 1,2';
+    const NTT_REFRESHER_CLASSES_12 = 'NTT Refresher: classes 1,2';
 
     /**
      * @return array of values for the type EventTypeName
@@ -111,6 +117,12 @@ class EventTypeName
             self::UPDATE_AE,
             self::UNLINK_AE_SITE,
             self::DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE,
+            self::DVSA_ADMINISTRATOR_UPDATE_SITE,
+            self::INTELLIGENCE_MARKER,
+            self::VTS_COMPLAINT,
+            self::TESTER_TRAINING_ASSESSMENT,
+            self::NTT_DIRECTED_RETRAINING_CLASSES_12,
+            self::NTT_REFRESHER_CLASSES_12,
         ];
     }
 

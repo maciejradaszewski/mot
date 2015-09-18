@@ -78,6 +78,7 @@ final class PermissionInSystem
     const CREATE_USER_ACCOUNT = 'CREATE-USER-ACCOUNT';
     const LIST_EVENT_HISTORY = 'LIST-EVENT-HISTORY';
     const EVENT_READ = 'EVENT-READ';
+    const EVENT_CREATE = 'EVENT-CREATE';
     const DVSA_SITE_SEARCH = 'DVSA-SITE-SEARCH';
     const PERSON_BASIC_DATA_READ = 'PERSON-BASIC-DATA-READ';
     const EMERGENCY_TEST_READ = 'EMERGENCY-TEST-READ';
@@ -201,6 +202,7 @@ final class PermissionInSystem
             self::VEHICLE_MOT_TEST_HISTORY_READ,
             self::LIST_EVENT_HISTORY,
             self::EVENT_READ,
+            self::EVENT_CREATE,
             self::DVSA_SITE_SEARCH,
             self::PERSON_BASIC_DATA_READ,
             self::EMERGENCY_TEST_READ,

@@ -23,6 +23,8 @@ use OrganisationApi\Service\OrganisationService;
 use OrganisationApi\Service\OrganisationSlotUsageService;
 use OrganisationApi\Service\SiteLinkService;
 use OrganisationApi\Service\SiteService;
+use OrganisationApi\Service\OrganisationEventService;
+use OrganisationApi\Factory\Service\OrganisationEventServiceFactory;
 use OrganisationApi\Factory\Service as ServiceX;
 use OrganisationApi\Factory\Model as ModelX;
 
@@ -67,6 +69,8 @@ class Module
                 SiteService::class                        => ServiceX\SiteServiceFactory::class,
                 MotTestLogService::class                  => ServiceX\MotTestLogServiceFactory::class,
                 SiteLinkService::class                    => ServiceX\SiteLinkServiceFactory::class,
+                OrganisationEventService::class           => OrganisationEventServiceFactory::class
+
             ],
             'invokables' => [
                 PersonContactMapper::class => PersonContactMapper::class,

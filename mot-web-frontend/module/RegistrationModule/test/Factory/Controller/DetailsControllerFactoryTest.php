@@ -7,9 +7,9 @@
 
 namespace Dvsa\Mot\Frontend\RegistrationModuleTest\Factory\Controller;
 
+use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
 use Dvsa\MOT\Frontend\RegistrationModule\Controller\DetailsController;
 use Dvsa\Mot\Frontend\RegistrationModule\Factory\Controller\DetailsControllerFactory;
-use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
 use DvsaCommonTest\TestUtils\XMock;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\ServiceManager\ServiceManager;

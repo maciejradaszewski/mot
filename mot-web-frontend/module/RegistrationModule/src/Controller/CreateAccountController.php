@@ -7,14 +7,14 @@
 
 namespace Dvsa\Mot\Frontend\RegistrationModule\Controller;
 
+use Core\Service\StepService;
 use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationSessionService;
-use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
 use Dvsa\Mot\Frontend\RegistrationModule\Step\CreateAccountStep;
 
 /**
  * CreateAccount Controller.
  */
-class CreateAccountController extends AbstractRegistrationController
+class CreateAccountController extends RegistrationBaseController
 {
     const PAGE_TITLE = 'Create an account';
 
@@ -24,14 +24,14 @@ class CreateAccountController extends AbstractRegistrationController
     protected $session;
 
     /**
-     * @param RegistrationStepService    $registrationService
+     * @param StepService                $stepService
      * @param RegistrationSessionService $session
      */
     public function __construct(
-        RegistrationStepService $registrationService,
+        StepService $stepService,
         RegistrationSessionService $session
     ) {
-        parent::__construct($registrationService);
+        parent::__construct($stepService);
         $this->session = $session;
     }
 

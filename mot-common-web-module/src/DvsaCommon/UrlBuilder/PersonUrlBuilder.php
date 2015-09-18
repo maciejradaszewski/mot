@@ -24,12 +24,14 @@ class PersonUrlBuilder extends AbstractUrlBuilder
     const RESET_CLAIM_ACCOUNT = '/reset-claim-account';
     const MANAGE_INTERNAL_ROLES = '/roles';
     const PASSWORD = '/password';
+    const EVENT = '/event';
 
     protected $routesStructure
         = [
             self::PERSON        => [
                 self::BY_ID         => [
                     self::AUTHORISED_EXAMINER            => '',
+                    self::EVENT                          => '',
                     self::RBAC_ROLES                     => '',
                     self::HELP_DESK_PROFILE              => '',
                     self::HELP_DESK_PROFILE_UNRESTRICTED => '',
@@ -94,6 +96,14 @@ class PersonUrlBuilder extends AbstractUrlBuilder
     public function rbacRoles()
     {
         return $this->appendRoutesAndParams(self::RBAC_ROLES);
+    }
+
+    /**
+     * @return $this
+     */
+    public function event()
+    {
+        return $this->appendRoutesAndParams(self::EVENT);
     }
 
     /**

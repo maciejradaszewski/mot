@@ -565,6 +565,10 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         );
     }
 
+    public function iCreateAUserWithData($data) {
+
+    }
+
     private function getAuthorisationForTestingMotStatusCode($status)
     {
         switch ($status) {

@@ -1,0 +1,80 @@
+<?php echo $this->partial('partial/forms/errorMessagePageHeader.phtml',['messages' => $errorsSummary]); ?>
+
+<form action="<?php echo $this->escapeHtmlAttr($this->url($routes['RECORD'], array('type' => $type, 'id' => $id))); ?>" method="POST" autocomplete="off" novalidate="">
+    <?php echo $this->csrfToken(); ?>
+    <input type="hidden" name="date" value=""/>
+
+
+    <fieldset>
+        <legend class="form-title heading-large visuallyhidden">Event details</legend>
+
+        <div class="form-group<?php if ($eventTypeHasError) echo ' has-error' ?>">
+            <label for="selectStandard" class="form-label">
+                Event
+                <?php
+                if ($eventTypeHasError) {
+                    echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors['eventType']]);
+                }
+                ?>
+            </label>
+            <select name="eventType" id="eventType" class="form-control">
+                <option value="">Please select</option>
+                <?php
+                    foreach ($eventTypeLookup as $values) {
+                        $selected = $values['code'] === $eventType ? 'selected' : null;
+                        echo sprintf('<option value="%s"%s>%s</option>', $values['code'], $selected, $values['name']);
+                    }
+                ?>
+            </select>
+        </div>
+
+        <div class="form-group<?php if ($dateHasError) echo ' has-error' ?>">
+            <fieldset>
+                <legend class="form-label">
+                    Date of event
+                </legend>
+                <div class="form-date">
+
+                    <span class="form-hint">For example, 31 03 2015
+                        <?php
+                        if ($dateHasError) {
+                            echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors['date']]);
+                        }
+                        ?>
+                    </span>
+
+                    <div class="form-group form-group-day">
+                        <label for="date1-day">Day</label>
+                        <input type="text" id="date1-day" name="day" class="form-control" value="<?php echo $this->escapeHtmlAttr($day);?>">
+                    </div>
+                    <div class="form-group form-group-month">
+                        <label for="date1-month">Month</label>
+                        <input type="text" id="date1-month" name="month" class="form-control" value="<?php echo $this->escapeHtmlAttr($month);?>">
+                    </div>
+                    <div class="form-group form-group-year">
+                        <label for="date1-year">Year</label>
+                        <input type="text" id="date1-year" name="year" class="form-control" value="<?php echo $this->escapeHtmlAttr($year);?>">
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+
+    </fieldset>
+
+
+    <nav class="content-navigation">
+
+        <input type="submit" value="Continue" id="continue" class="button">
+
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo $this->escapeHtmlAttr($this->url('event-list', array('type' => $type, 'id' => $id))); ?>" id="back">
+                    Cancel and return to event history
+                </a>
+            </li>
+        </ul>
+
+    </nav>
+
+</form>

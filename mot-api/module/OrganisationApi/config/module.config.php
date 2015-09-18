@@ -6,6 +6,8 @@ use OrganisationApi\Controller\OrganisationRoleController;
 use OrganisationApi\Controller\OrganisationSlotUsageController;
 use OrganisationApi\Controller\SiteController;
 use OrganisationApi\Controller\SiteLinkController;
+use OrganisationApi\Controller\OrganisationEventController;
+use OrganisationApi\Factory\Controller\OrganisationEventControllerFactory;
 use OrganisationApi\Factory\Controller\MotTestLogControllerFactory;
 use OrganisationApi\Factory\Controller\AuthorisedExaminerControllerFactory;
 use OrganisationApi\Factory\Controller\SiteControllerFactory;
@@ -26,6 +28,8 @@ return [
             MotTestLogControllerFactory::class         => MotTestLogControllerFactory::class,
             AuthorisedExaminerControllerFactory::class => AuthorisedExaminerControllerFactory::class,
             AuthorisedExaminerStatusControllerFactory::class => AuthorisedExaminerStatusControllerFactory::class,
+            OrganisationEventController::class               => OrganisationEventControllerFactory::class,
+
         ],
     ],
     'router'      => [
@@ -53,6 +57,19 @@ return [
                     'route'       => '/organisation/:organisationId',
                     'constraints' => [
                         'organisationId' => '[0-9]+',
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes'  => [
+                    'manual-event' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/event',
+                            'defaults' => [
+                                'controller' => OrganisationEventController::class,
+                            ],
+                        ],
+                        'may_terminate' => true,
                     ],
                 ],
             ],

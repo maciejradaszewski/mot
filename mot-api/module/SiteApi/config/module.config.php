@@ -5,6 +5,7 @@ use SiteApi\Controller\EquipmentController;
 use SiteApi\Controller\MotTestInProgressController;
 use SiteApi\Controller\SiteContactController;
 use SiteApi\Controller\SiteController;
+use SiteApi\Controller\SiteEventController;
 use SiteApi\Controller\VehicleTestingStationAuthorisedClassesController;
 use SiteApi\Controller\SitePositionController;
 use SiteApi\Controller\SitePositionValidateController;
@@ -16,6 +17,7 @@ use SiteApi\Factory\Controller\SiteSearchControllerFactory;
 use SiteApi\Controller\SiteSearchController;
 use SiteApi\Factory\Controller\SiteControllerFactory;
 use SiteApi\Factory\Controller\MotTestInProgressControllerFactory;
+use SiteApi\Factory\Controller\SiteEventControllerFactory;
 use SiteApi\Controller\SiteTestingFacilitiesController;
 use SiteApi\Factory\Controller\SiteTestingFacilitiesControllerFactory;
 use SiteApi\Controller\SiteDetailsController;
@@ -40,10 +42,21 @@ return [
             SiteTestingFacilitiesController::class => SiteTestingFacilitiesControllerFactory::class,
             SiteDetailsController::class => SiteDetailsControllerFactory::class,
             MotTestInProgressController::class => MotTestInProgressControllerFactory::class,
+            SiteEventController::class => SiteEventControllerFactory::class
         ],
     ],
     'router'      => [
         'routes' => [
+            'site-manual-event' => [
+                'type' => 'segment',
+                'options' => [
+                    'route' => '/site/:siteId/event',
+                    'defaults' => [
+                        'controller' => SiteEventController::class,
+                    ],
+                ],
+                'may_terminate' => true,
+            ],
             'site-role'               => [
                 'type'    => 'Segment',
                 'options' => [

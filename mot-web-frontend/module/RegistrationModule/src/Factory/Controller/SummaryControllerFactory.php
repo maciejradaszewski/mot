@@ -26,8 +26,8 @@ class SummaryControllerFactory implements FactoryInterface
     {
         $serviceLocator = $serviceLocator->getServiceLocator();
 
-        $registrationService = $serviceLocator->get(RegistrationStepService::class);
+        $stepService = $serviceLocator->get(RegistrationStepService::class);
 
-        return new SummaryController($registrationService);
+        return new SummaryController($stepService);
     }
 }

@@ -12,6 +12,7 @@ class DateTimeDisplayFormat
     const FORMAT_DATETIME_SHORT = 'j M Y, g:ia';
     const FORMAT_DATETIME = 'j F Y, g:ia';
     const FORMAT_DATE = 'j F Y';
+    const FORMAT_DATE_SHORT = 'j M Y';
     const FORMAT_TIME = 'g:ia';
     const FORMAT_MONTH_YEAR = 'M Y';
 
@@ -39,6 +40,18 @@ class DateTimeDisplayFormat
         return is_null($dateTime) ? '' : DateUtils::toUserTz($dateTime)->format(self::FORMAT_DATETIME_SHORT);
     }
 
+    /**
+     * Outputs date according to GDS UX guidelines
+     *
+     * @param \DateTime $dateTime
+     *
+     * @return string
+     */
+    public static function dateShort($dateTime)
+    {
+        return is_null($dateTime) ? '' : DateUtils::toUserTz($dateTime)->format(self::FORMAT_DATE_SHORT);
+    }
+
 
     /**
      * Outputs date and time according to GDS UX guidelines
@@ -50,6 +63,18 @@ class DateTimeDisplayFormat
     public static function textDateTime($textDateTime)
     {
         return is_null($textDateTime) ? '' : self::dateTime(DateUtils::toDateTime($textDateTime));
+    }
+
+    /**
+     * Outputs short date according to GDS UX guidelines
+     *
+     * @param string $textDateTime parsable date time representation (see DateUtils::toDate)
+     *
+     * @return string
+     */
+    public static function textDateShort($textDateTime)
+    {
+        return is_null($textDateTime) ? '' : self::dateShort(DateUtils::toDateTime($textDateTime));
     }
 
 

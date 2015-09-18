@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fab9abcf8b388c0fbc0d89ad63c2c2bb",
+    "hash": "4d1e00ae63b5891eb269921a0edb9d3c",
     "packages": [
         {
             "name": "cpms/client",
@@ -1033,6 +1033,12 @@
                 "url": "http://gitlab.clb.npm/sc/transitiongroup.git",
                 "reference": "a1a7ce2e15a8af8b2ae0a3f8918e8e4a3df2d0f5"
             },
+            "dist": {
+                "type": "tar",
+                "url": "http://satis.inf.mgt.mtpdvsa/dist/dvsa-transition-group-dev-master-a15457.tar",
+                "reference": "a1a7ce2e15a8af8b2ae0a3f8918e8e4a3df2d0f5",
+                "shasum": "25f062a8d188cd96d74e914c7d856b434b85c145"
+            },
             "require": {
                 "doctrine/doctrine-orm-module": "~0.8.0",
                 "zendframework/zendframework": "~2.2"
@@ -1056,11 +1062,11 @@
         },
         {
             "name": "dvsa/web-frontend-assets",
-            "version": "v0.5.5",
+            "version": "v0.6.0",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/web-frontend-assets.git",
-                "reference": "85dd1cd3a582ddd6f803321edefd0cf2de5ff26b"
+                "reference": "b20ce18e1ee231c22927c088d99bdc04a70d0c01"
             },
             "type": "library",
             "authors": [
@@ -1069,7 +1075,7 @@
                     "email": ""
                 }
             ],
-            "time": "2015-08-28 08:03:22"
+            "time": "2015-09-14 12:05:17"
         },
         {
             "name": "erusev/parsedown",
@@ -1641,12 +1647,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:zendframework/ZendPdf.git",
+                "url": "https://github.com/zendframework/ZendPdf.git",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },
@@ -1666,6 +1672,7 @@
                     "ZendPdf\\": "library/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1675,10 +1682,6 @@
                 "pdf",
                 "zf2"
             ],
-            "support": {
-                "source": "https://github.com/zendframework/ZendPdf/tree/release-2.0.2",
-                "issues": "https://github.com/zendframework/ZendPdf/issues"
-            },
             "time": "2012-11-16 11:16:01"
         },
         {

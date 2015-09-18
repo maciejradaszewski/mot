@@ -13,7 +13,7 @@ use Zend\View\Model\ViewModel;
 /**
  * Address Controller.
  */
-class AddressController extends AbstractRegistrationController
+class AddressController extends RegistrationBaseController
 {
     const PAGE_TITLE = 'Your address';
 

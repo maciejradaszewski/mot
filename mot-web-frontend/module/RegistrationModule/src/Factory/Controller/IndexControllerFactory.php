@@ -26,8 +26,8 @@ class IndexControllerFactory implements FactoryInterface
     {
         $serviceLocator = $serviceLocator->getServiceLocator();
 
-        $registrationService = $serviceLocator->get(RegistrationStepService::class);
+        $stepService = $serviceLocator->get(RegistrationStepService::class);
 
-        return new IndexController($registrationService);
+        return new IndexController($stepService);
     }
 }

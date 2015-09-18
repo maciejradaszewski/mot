@@ -57,7 +57,7 @@ class TestSupportHelper
             case 'Scheme Manager':
                 return $this->getSchemeManagerService();
             case 'Scheme User':
-                return $this->getUserService();
+                return $this->getSchemeUserService();
             case 'DVLA Manager':
                 return $this->getDVLAManagerService();
             case 'DVLA Operative':
@@ -74,6 +74,8 @@ class TestSupportHelper
                 return $this->getCSMService();
             case 'Finance User':
                 return $this->getFinanceUserService();
+            case 'User':
+                return $this->getUserService();
         }
         throw new \Exception("Unknown service for role '{$userRole}'");
     }

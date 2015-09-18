@@ -18,6 +18,7 @@ use DvsaEntities\Repository\EventRepository;
 use DvsaEventApi\Service\EventService;
 use DvsaEventApi\Service\Mapper\EventListMapper;
 use Zend\Log\Logger;
+use DvsaEntities\Repository\EventTypeOutcomeCategoryMapRepository;
 
 /**
  * Class EventServiceTest
@@ -41,6 +42,9 @@ class EventServiceTest extends AbstractServiceTestCase
     private $entityManagerMock;
     private $eventRepositoryMock;
     private $eventTypeRepositoryMock;
+    private $eventCategoryRepositoryMock;
+    private $eventOutcomeRepositoryMock;
+    private $eventTypeOutcomeCategoryMapRepositoryMock;
     private $hydratorMock;
     private $mockLogger;
 
@@ -50,6 +54,9 @@ class EventServiceTest extends AbstractServiceTestCase
         $this->entityManagerMock = XMock::of(EntityManager::class);
         $this->eventRepositoryMock =  XMock::of(EventRepository::class);
         $this->eventTypeRepositoryMock =  XMock::of(EntityRepository::class);
+        $this->eventCategoryRepositoryMock = XMock::of(EntityRepository::class);
+        $this->eventOutcomeRepositoryMock = XMock::of(EntityRepository::class);
+        $this->eventTypeOutcomeCategoryMapRepositoryMock = XMock::of(EventTypeOutcomeCategoryMapRepository::class);
         $this->hydratorMock = XMock::of(DoctrineObject::class);
         $this->mockLogger = XMock::of(Logger::class);
 
@@ -58,6 +65,9 @@ class EventServiceTest extends AbstractServiceTestCase
             $this->entityManagerMock,
             $this->eventRepositoryMock,
             $this->eventTypeRepositoryMock,
+            $this->eventCategoryRepositoryMock,
+            $this->eventOutcomeRepositoryMock,
+            $this->eventTypeOutcomeCategoryMapRepositoryMock,
             $this->hydratorMock,
             new EventListMapper()
         );

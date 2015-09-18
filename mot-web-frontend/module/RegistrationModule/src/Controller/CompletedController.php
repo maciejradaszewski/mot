@@ -9,7 +9,7 @@ namespace Dvsa\Mot\Frontend\RegistrationModule\Controller;
 
 use Dvsa\Mot\Frontend\RegistrationModule\Service\RegisterUserService;
 use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationSessionService;
-use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
+use Core\Service\StepService;
 use Dvsa\Mot\Frontend\RegistrationModule\Step\DetailsStep;
 use DvsaCommon\InputFilter\Registration\DetailsInputFilter;
 use DvsaCommon\UrlBuilder\AccountUrlBuilderWeb;
@@ -18,7 +18,7 @@ use Zend\View\Model\ViewModel;
 /**
  * Completed Controller.
  */
-class CompletedController extends AbstractRegistrationController
+class CompletedController extends RegistrationBaseController
 {
     const PAGE_TITLE = 'Your account has been created';
     const PAGE_TITLE_FAILURE = 'Your account has not been created';
@@ -36,17 +36,17 @@ class CompletedController extends AbstractRegistrationController
     private $helpdeskConfig;
 
     /**
-     * @param RegistrationStepService    $registrationService
+     * @param StepService                $stepService
      * @param RegisterUserService        $registerUserService
      * @param RegistrationSessionService $session
      */
     public function __construct(
-        RegistrationStepService $registrationService,
+        StepService $stepService,
         RegisterUserService $registerUserService,
         RegistrationSessionService $session,
         array $helpdeskConfig
     ) {
-        parent::__construct($registrationService);
+        parent::__construct($stepService);
         $this->registerUserService = $registerUserService;
         $this->session = $session;
         $this->helpdeskConfig = $helpdeskConfig;

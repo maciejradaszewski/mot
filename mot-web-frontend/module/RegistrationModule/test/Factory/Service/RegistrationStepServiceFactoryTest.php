@@ -1,10 +1,10 @@
 <?php
 
-namespace Dvsa\Mot\Frontend\RegistrationModuleTest\Factory\Service;
+namespace Dvsa\Mot\Frontend\RegistrationModule\Factory\Service;
 
-use Dvsa\Mot\Frontend\RegistrationModule\Factory\Service\RegistrationStepServiceFactory;
+use Core\Service\StepService;
+use Core\Step\Step;
 use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationSessionService;
-use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
 use Dvsa\Mot\Frontend\RegistrationModule\Step\AccountSummaryStep;
 use Dvsa\Mot\Frontend\RegistrationModule\Step\AddressStep;
 use Dvsa\Mot\Frontend\RegistrationModule\Step\CompletedStep;
@@ -35,13 +35,13 @@ class RegistrationStepServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new RegistrationStepServiceFactory();
 
         $this->assertInstanceOf(
-            RegistrationStepService::class,
+            StepService::class,
             $factory->createService($serviceManager)
         );
     }
 
     /**
-     * Test the createSteps function on an Actual RegistrationStepService object.
+     * Test the createSteps function on an Actual StepService object.
      *
      * @throws \Exception
      */

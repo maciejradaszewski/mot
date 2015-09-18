@@ -27,9 +27,9 @@ class CreateAccountControllerFactory implements FactoryInterface
     {
         $serviceLocator = $serviceLocator->getServiceLocator();
 
-        $registrationService = $serviceLocator->get(RegistrationStepService::class);
+        $stepService = $serviceLocator->get(RegistrationStepService::class);
         $session = $serviceLocator->get(RegistrationSessionService::class);
 
-        return new CreateAccountController($registrationService, $session);
+        return new CreateAccountController($stepService, $session);
     }
 }

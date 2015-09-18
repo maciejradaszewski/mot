@@ -5,39 +5,33 @@
  * @link http://gitlab.clb.npm/mot/mot
  */
 
-namespace Dvsa\Mot\Frontend\RegistrationModule\Controller;
+namespace Core\Controller;
 
-use Core\Controller\AbstractDvsaActionController;
-use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
+use Core\Service\StepService;
+use Core\Step\Step;
 use Zend\View\Model\ViewModel;
 
 /**
- * Abstract Registration Controller.
+ * Abstract Step Controller.
  */
-abstract class AbstractRegistrationController extends AbstractDvsaActionController
+abstract class AbstractStepController extends AbstractDvsaActionController
 {
-    /** Registration journey's default subtitle */
-    const DEFAULT_SUB_TITLE = 'Create an account';
-
     /**
-     * Registration journey's default layout.
-     *
-     * @TODO: (ABN) this can be in the module's config
+     * Default layout.
      */
     const DEFAULT_LAYOUT = 'layout/layout-govuk.phtml';
 
     /**
-     * @var RegistrationStepService
+     * @var StepService
      */
-    protected $registrationService;
+    protected $stepService;
 
     /**
-     * @param RegistrationStepService $registrationService
+     * @param StepService $stepService
      */
-    public function __construct(
-        RegistrationStepService $registrationService
-    ) {
-        $this->registrationService = $registrationService;
+    public function __construct(StepService $stepService)
+    {
+        $this->stepService = $stepService;
     }
 
     /**
@@ -48,7 +42,8 @@ abstract class AbstractRegistrationController extends AbstractDvsaActionControll
     protected function setLayout($title, $subtitle = null, $progress = null)
     {
         $this->layout(self::DEFAULT_LAYOUT);
-        $this->layout()
+        $this
+            ->layout()
             ->setVariable('pageTitle', $title)
             ->setVariable('pageSubTitle', $subtitle)
             ->setVariable('progress', $progress);
@@ -68,7 +63,7 @@ abstract class AbstractRegistrationController extends AbstractDvsaActionControll
      */
     public function doStepLogic($stepID, $title, $subtitle = null)
     {
-        $step = $this->registrationService->setActiveById($stepID)->current();
+        $step = $this->stepService->setActiveById($stepID)->current();
         $step->load();
 
         if ($this->getRequest()->isPost()) {
@@ -76,12 +71,24 @@ abstract class AbstractRegistrationController extends AbstractDvsaActionControll
             $step->save();
 
             if ($step->validate()) {
-                return $this->redirect()->toRoute($this->registrationService->next()->route());
+                $next = $this->stepService->next();
+                if ($next instanceof Step) {
+                    return $this->redirect()->toRoute(
+                        $next->route(),
+                        $next->routeParams()
+                    );
+                }
             }
         } else {
-            if ($step !== $this->registrationService->first()) {
-                if ($this->registrationService->previous()->load()->validate() === false) {
-                    return $this->redirect()->toRoute($this->registrationService->previous()->route());
+            if ($step !== $this->stepService->first()) {
+                if ($this->stepService->previous()->load()->validate() === false) {
+                    $previous = $this->stepService->previous();
+                    if ($previous instanceof Step) {
+                        return $this->redirect()->toRoute(
+                            $previous->route(),
+                            $previous->routeParams()
+                        );
+                    }
                 }
             }
         }
