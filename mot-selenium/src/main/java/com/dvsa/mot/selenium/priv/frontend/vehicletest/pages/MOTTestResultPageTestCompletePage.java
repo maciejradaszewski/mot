@@ -14,8 +14,7 @@ import java.util.Map;
 
 public class MOTTestResultPageTestCompletePage extends BasePage {
 
-    private static String PAGE_TITLE = "MOT TESTING\n" +
-            "MOT TEST COMPLETE";
+    private static String PAGE_TITLE = "MOT TEST COMPLETE";
 
     @FindBy(id = "back-to-home-link") private WebElement backToHomeLink;
 
