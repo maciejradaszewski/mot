@@ -22,6 +22,8 @@ class CompletedController extends RegistrationBaseController
 {
     const PAGE_TITLE = 'Your account has been created';
     const PAGE_TITLE_FAILURE = 'Your account has not been created';
+    const SESSION_CHECK = "SESSION_CHECK";
+    const SESSION_RESULT = "SESSION_RESULT";
 
     /**
      * @var RegisterUserService
@@ -52,12 +54,43 @@ class CompletedController extends RegistrationBaseController
         $this->helpdeskConfig = $helpdeskConfig;
     }
 
+
     /**
+     * To stop dbl clicks on the registration button we only process the request once.
+     *
      * @return \Zend\Http\Response
      */
     public function indexAction()
     {
-        if ($this->registerUserService->registerUser($this->session->toArray())) {
+        $container = $this->session->load(self::SESSION_CHECK);
+
+        if (is_array($container) && count($container) == 0) {
+
+            $this->session->save(self::SESSION_CHECK,['PreviousSubmission'=>true]);
+
+            $userCreated = (bool) $this->registerUserService->registerUser($this->session->toArray());
+
+            $this->session->save(self::SESSION_RESULT,['UserCreated'=>$userCreated]);
+
+            return $this->redirectToRoute($userCreated);
+        }
+
+        // Handle double clicks
+        $resultContainer = $this->session->load(self::SESSION_RESULT);
+        if (is_array($resultContainer) && count($resultContainer) > 0 && isset($resultContainer['UserCreated'])) {
+            return $this->redirectToRoute($resultContainer['UserCreated']);
+        }
+    }
+
+    /**
+     * redirect to the success or failure route
+     *
+     * @param bool $result
+     * @return \Zend\Http\Response
+     */
+    protected function redirectToRoute($result)
+    {
+        if ($result === true) {
             return $this->redirect()->toRoute('account-register/complete-registration-success');
         } else {
             return $this->redirect()->toRoute('account-register/complete-registration-failure');
