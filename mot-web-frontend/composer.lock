@@ -1374,11 +1374,11 @@
         },
         {
             "name": "slot-purchase/web-frontend",
-            "version": "v3.6",
+            "version": "v3.6.1",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/web-frontend.git",
-                "reference": "1d833c775d63266cef1a58c36cd5ca4f39a6e004"
+                "reference": "f5c7539889bcb63c9a3070fe8cbd131ce795e26a"
             },
             "require": {
                 "cpms/cpms-forms": "1.22.*",
@@ -1412,7 +1412,7 @@
                 "proprietary"
             ],
             "description": "Slot Purchase Frontend",
-            "time": "2015-09-09 10:40:37"
+            "time": "2015-09-17 13:00:28"
         },
         {
             "name": "soflomo/purifier",

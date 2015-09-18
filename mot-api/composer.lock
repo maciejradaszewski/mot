@@ -1630,11 +1630,11 @@
         },
         {
             "name": "slot-purchase/backend-api",
-            "version": "v3.6.1",
+            "version": "v3.6.2",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git",
-                "reference": "80a329780148fc0bbb5e3a9df6044a97e4dd2ea2"
+                "reference": "bb8952e13d7071bbfcd30835d9ca0a898caa8540"
             },
             "require": {
                 "cpms/client": "1.22.*",
@@ -1672,7 +1672,7 @@
                 "proprietary"
             ],
             "description": "API for slot purchasing and related features",
-            "time": "2015-09-16 13:34:54"
+            "time": "2015-09-17 12:49:42"
         },
         {
             "name": "soflomo/purifier",
