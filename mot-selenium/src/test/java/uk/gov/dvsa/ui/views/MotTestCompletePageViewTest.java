@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringContains.containsString;
 
 public class MotTestCompletePageViewTest extends BaseTest {
@@ -40,6 +41,6 @@ public class MotTestCompletePageViewTest extends BaseTest {
                 .finishTestAndPrint();
 
         //I can see test summary message with "passed" status
-        assertThat(testCompletePage.getTestSummaryMessageText(), containsString("passed"));
+        assertThat(testCompletePage.isPrintDocumentButtonDisplayed(), is(true));
     }
 }
