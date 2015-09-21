@@ -2,10 +2,14 @@
 
 namespace Dvsa\Mot\Behat\Support\Api;
 
+use Dvsa\Mot\Behat\Support\HttpClient;
+use Dvsa\Mot\Behat\Support\Request;
+
 class Certificate extends MotApi
 {
     const PATH = 'certificate-print/{:motTestNumber}';
     const PATH_DUPE_CERT = 'certificate-print/100000010240/dup?siteNr=V1234';
+    const PATH_JASPER_DOCUMENT = 'http://mot-testsupport/testsupport/document/{:id}/';
 
     public function requestCertificate($motTestNumber, $accessToken)
     {
@@ -52,5 +56,33 @@ class Certificate extends MotApi
         ];
 
         return $this->get(self::PATH_DUPE_CERT, $headers);
+    }
+
+    public function getJasperDocument($id, $token)
+    {
+        if(empty($id)) {
+            throw new \Exception("Id is empty");
+        }
+        $path = str_replace('{:id}', $id, self::PATH_JASPER_DOCUMENT);
+
+        return $this->client->request(new Request(
+            'GET',
+            $path,
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
+        ));
+    }
+
+    public function deleteJasperDocument($id, $token)
+    {
+        if(empty($id)) {
+            throw new \Exception("Id is empty");
+        }
+        $path = str_replace('{:id}', $id, self::PATH_JASPER_DOCUMENT);
+
+        return $this->client->request(new Request(
+            'DELETE',
+            $path,
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
+        ));
     }
 }
