@@ -6,6 +6,9 @@ use Zend\Form\Form;
 use Zend\Validator\NotEmpty;
 use Core\Service\MotFrontendIdentityProviderInterface;
 use DvsaCommon\InputFilter\Account\ChangePasswordInputFilter;
+use Dvsa\OpenAM\OpenAMClientInterface;
+use Dvsa\OpenAM\Model\OpenAMLoginDetails;
+use Dvsa\OpenAM\Exception\OpenAMClientException;
 
 class ChangePasswordForm extends PasswordForm
 {
@@ -13,12 +16,20 @@ class ChangePasswordForm extends PasswordForm
     const LABEL_OLD_PASSWORD = "Old password";
 
     private $identityProvider;
+    private $client;
+    private $realm;
 
-    public function __construct(MotFrontendIdentityProviderInterface $identityProvider, $options = [])
+    public function __construct(
+        MotFrontendIdentityProviderInterface $identityProvider,
+        OpenAMClientInterface $client,
+        $realm,
+        $options = [])
     {
         parent::__construct($identityProvider, $options);
 
         $this->identityProvider = $identityProvider;
+        $this->client = $client;
+        $this->realm = $realm;
 
         $this->add(
             [
@@ -36,6 +47,24 @@ class ChangePasswordForm extends PasswordForm
         );
 
         $this->setInputFilter($this->createInputFilter());
+    }
+
+    public function isValid()
+    {
+        $isValid = parent::isValid();
+
+        $username = $this->identityProvider->getIdentity()->getUsername();
+        $password = $this->get(ChangePasswordInputFilter::FIELD_OLD_PASSWORD)->getValue();
+        $loginDetails = new OpenAMLoginDetails($username, $password, $this->realm);
+
+        try {
+            $this->client->validateCredentials($loginDetails);
+        } catch (OpenAMClientException $e) {
+            $isValid = false;
+            $this->get(ChangePasswordInputFilter::FIELD_OLD_PASSWORD)->setMessages([ChangePasswordInputFilter::MSG_PASSWORD_INVALID]);
+        }
+
+        return $isValid;
     }
 
     private function createInputFilter()

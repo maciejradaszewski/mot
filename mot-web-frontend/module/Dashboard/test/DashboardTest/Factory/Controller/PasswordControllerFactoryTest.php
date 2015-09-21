@@ -11,6 +11,8 @@ use Core\Service\MotFrontendIdentityProviderInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
+use Dvsa\OpenAM\OpenAMClientInterface;
+use Dvsa\OpenAM\Options\OpenAMClientOptions;
 
 class PasswordControllerFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,8 +29,14 @@ class PasswordControllerFactoryTest extends \PHPUnit_Framework_TestCase
 
         $serviceManager->setService('MotIdentityProvider', $identityProvider);
 
-        $entityManager = XMock::of(PasswordService::class);
-        $serviceManager->setService(PasswordService::class, $entityManager);
+        $service = XMock::of(PasswordService::class);
+        $serviceManager->setService(PasswordService::class, $service);
+
+        $service = XMock::of(OpenAMClientInterface::class);
+        $serviceManager->setService(OpenAMClientInterface::class, $service);
+
+        $service = XMock::of(OpenAMClientOptions::class);
+        $serviceManager->setService(OpenAMClientOptions::class, $service);
 
         $plugins = $this->getMock('Zend\Mvc\Controller\ControllerManager');
         $plugins->expects($this->any())

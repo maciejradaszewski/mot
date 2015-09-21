@@ -8,6 +8,8 @@ use Dashboard\Form\ChangePasswordForm;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
+use Dvsa\OpenAM\OpenAMClientInterface;
+use Dvsa\OpenAM\Options\OpenAMClientOptions;
 
 class PasswordControllerFactory implements FactoryInterface
 {
@@ -18,7 +20,11 @@ class PasswordControllerFactory implements FactoryInterface
 
         return new PasswordController(
             $serviceLocator->get(PasswordService::class),
-            new ChangePasswordForm($serviceLocator->get('MotIdentityProvider'))
+            new ChangePasswordForm(
+                $serviceLocator->get('MotIdentityProvider'),
+                $serviceLocator->get(OpenAMClientInterface::class),
+                $serviceLocator->get(OpenAMClientOptions::class)->getRealm()
+                )
             );
     }
 }
