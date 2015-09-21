@@ -16,7 +16,7 @@ public class DuplicateReplacementCertificatePrintPage extends BasePage {
 
     @FindBy(id = "reprint-certificate") private WebElement reprintCertificateButton;
 
-    @FindBy(id = "quit") private WebElement backToUserHome;
+    @FindBy(id = "homepage") private WebElement backToUserHome;
 
     public DuplicateReplacementCertificatePrintPage(WebDriver driver) {
         super(driver);
