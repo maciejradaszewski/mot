@@ -40,7 +40,6 @@ return [
             Controller\SlotTransactionController::class     =>   Controller\SlotTransactionController::class,
             Controller\DvlaVehicleDataController::class => Controller\DvlaVehicleDataController::class,
             Controller\TesterAuthorisationStatusController::class => Controller\TesterAuthorisationStatusController::class,
-            Controller\DocumentController::class            =>  Controller\DocumentController::class,
         ],
     ],
     'router'       => [
@@ -398,15 +397,6 @@ return [
                             ],
                         ],
                     ],
-                    'document' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/document[/:id]/',
-                            'defaults' => [
-                                'controller' => Controller\DocumentController::class
-                            ]
-                        ]
-                    ]
                 ]
             ],
             'cache'       => [
