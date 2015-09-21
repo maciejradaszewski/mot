@@ -9,6 +9,7 @@ use DvsaCommonTest\TestUtils\XMock;
 use DvsaCommon\InputFilter\Account\ChangePasswordInputFilter;
 use Zend\Validator\NotEmpty;
 use PHPUnit_Framework_TestCase;
+use Dvsa\OpenAM\OpenAMClientInterface;
 
 class ChangePasswordFormTest extends PHPUnit_Framework_TestCase
 {
@@ -32,7 +33,7 @@ class ChangePasswordFormTest extends PHPUnit_Framework_TestCase
             ->method("getIdentity")
             ->willReturn($identity);
 
-        $form = new Form($identityProvider);
+        $form = new Form($identityProvider, XMock::of(OpenAMClientInterface::class), "mot");
         $form->setData($data);
 
         $this->assertFalse($form->isValid());

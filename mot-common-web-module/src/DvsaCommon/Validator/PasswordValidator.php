@@ -74,8 +74,8 @@ class PasswordValidator extends AbstractValidator
      * @var array
      */
     protected $messageTemplates = [
-        self::MSG_DIGIT                 => 'must contain %minNumber%, or more, numbers',
-        self::MSG_MIN_CHAR              => 'must be %minChar% or more, characters long',
+        self::MSG_DIGIT                 => 'must contain %minNumber% or more numbers',
+        self::MSG_MIN_CHAR              => 'must be %minChar% or more characters long',
         self::MSG_UPPER_AND_LOWERCASE   => 'must contain both upper and lower case letters',
         self::MSG_MAX_CHAR              => 'must be less than %maxChar% characters long',
         self::MSG_SPECIAL_CHARS         => 'can only contain letters, numbers and the following symbols ( ) ! ? - _ : = "',
