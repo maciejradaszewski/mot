@@ -295,6 +295,7 @@ class TesterService extends AbstractService
             $siteArray['latitude'] = $site->getLatitude();
             $siteArray['longitude'] = $site->getLongitude();
             $siteArray['id'] = $site->getId();
+            $siteArray['address'] = VtsAddressMapper::mapToVtsTitleString($site->getAddress());
             $result[] = $siteArray;
         }
         return $result;

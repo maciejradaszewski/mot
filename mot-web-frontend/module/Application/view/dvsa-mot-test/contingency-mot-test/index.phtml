@@ -17,9 +17,13 @@ $otherReasonsValue        = $dto->getReasonText();
 
 $vts = array();
 @array_filter($loggedInVts, function(&$value, &$key) use (&$vts) {
-    $vts['<b>' . $value['name'] . '</b>, ' . $value['address']] = $value['id'];
+    $vtsDataString = '';
+    $vtsDataString .= ($value['name'] !== '') ? '<b>' . $this->escapeHtml($value['name']) . '</b><br>' : '';
+    $vtsDataString .= ($value['siteNumber'] !== '') ? $this->escapeHtml($value['siteNumber']) : '';
+    $vtsDataString .= ($value['siteNumber'] !== '' && $value['address'] !== '') ? ', ' : '';
+    $vtsDataString .= ($value['address'] !== '') ? $this->escapeHtml($value['address']) : '';
+    $vts[$vtsDataString] = $value['id'];
 });
-
 
 $title = 'Contingency Test Entry';
 

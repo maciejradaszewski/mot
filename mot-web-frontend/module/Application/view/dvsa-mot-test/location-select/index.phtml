@@ -30,7 +30,7 @@ $submitElement = $form->get('submit');
                     <label id="vts-radio-option-<?php echo $this->escapeHtml($vts['id']); ?>">
                         <input type="radio" required="" value="<?php echo $this->escapeHtml($vts['id']); ?>" name="vtsId">
                         <strong><?php echo $this->escapeHtml($vts['name']); ?></strong><br>
-                        <?php echo $this->escapeHtml($vts['address']); ?>
+                        <?php echo $this->escapeHtml($vts['siteNumber']) . ', ' . $this->escapeHtml($vts['address']); ?>
                     </label>
                 </div>
                 <?php endforeach;?>
