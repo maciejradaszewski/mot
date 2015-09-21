@@ -672,11 +672,11 @@ class MotTestRepository extends AbstractMutableRepository
      * Get the odometer history for a given vehicle id
      *
      * @param int $vehicleId
+     * @param \DateTime $dateTo
      * @param int $limit (default = 4)
-     *
      * @return array
      */
-    public function getOdometerHistoryForVehicleId($vehicleId, $limit = 4)
+    public function getOdometerHistoryForVehicleId($vehicleId, \DateTime $dateTo = null, $limit = 4)
     {
         $qb = $this->_em->createQueryBuilder();
 
@@ -697,6 +697,12 @@ class MotTestRepository extends AbstractMutableRepository
             ->andWhere("tt.code IN (:codes)")
             ->orderBy('t.issuedDate', 'DESC')
             ->setMaxResults($limit);
+
+
+        if($dateTo != null) {
+            $qb->andWhere("t.startedDate <= :dateTo")
+                ->setParameter("dateTo", $dateTo->format('Y-m-d H:i:s'));
+        }
 
         $qb->setParameter("vehicleId", $vehicleId)
             ->setParameter("name", MotTestStatusName::PASSED)
