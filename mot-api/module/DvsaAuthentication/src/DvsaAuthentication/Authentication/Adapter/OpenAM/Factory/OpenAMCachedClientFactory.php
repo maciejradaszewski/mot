@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\Cache;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMCachedClient;
 use DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMIdentityAttributesCacheProvider;
+use DvsaCommon\Configuration\MotConfig;
 use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -32,17 +33,9 @@ class OpenAMCachedClientFactory implements FactoryInterface
 
     private function getCacheTimeToLive(ServiceLocatorInterface $serviceLocator)
     {
-        $config = $serviceLocator->get('config');
+        /** @var MotConfig $config */
+        $config = $serviceLocator->get(MotConfig::class);
 
-        $timeToLive = 15;
-
-        if (isset($config['cache'])
-            && isset($config['cache']['open_am_client'])
-            && isset($config['cache']['open_am_client']['ttl'])
-        ) {
-            $timeToLive = $config['cache']['open_am_client']['ttl'];
-        }
-
-        return $timeToLive;
+        return $config->withDefault(15)->get('cache', 'open_am_client', 'ttl');
     }
 }
