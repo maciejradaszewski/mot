@@ -27,8 +27,6 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
 
 ?>
 <form id="siteSearchForm" method="GET" action="<?php echo $this->escapeHtmlAttr($viewModel->getResultPage()); ?>">
-    <?php echo $this->csrfToken(); ?>
-
     <fieldset>
         <?php
         echo $this->partial(
