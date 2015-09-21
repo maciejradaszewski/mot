@@ -11,6 +11,7 @@ use DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMApiTokenBasedAdapter;
 use DvsaAuthentication\Authentication\Adapter\OpenAM\OpenAMCachedClient;
 use DvsaAuthentication\IdentityFactory\CacheableIdentityFactory;
 use DvsaAuthentication\IdentityFactory\DoctrineIdentityFactory;
+use DvsaCommon\Configuration\MotConfig;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\PersonRepository;
 use DvsaAuthentication\Factory\IdentityFactoryFactory;
@@ -64,14 +65,9 @@ class OpenAMApiTokenBasedAdapterFactory implements FactoryInterface
 
     private function isCacheEnabled(ServiceLocatorInterface $serviceLocator)
     {
-        $config = $serviceLocator->get('config');
-        if (isset($config['cache'])
-            && isset($config['cache']['open_am_client'])
-            && isset($config['cache']['open_am_client']['enabled'])
-        ) {
-            return $config['cache']['open_am_client']['enabled'];
-        }
+        /** @var MotConfig $config */
+        $config = $serviceLocator->get(MotConfig::class);
 
-        return false;
+        return $config->withDefault(false)->get('cache', 'open_am_client', 'enabled');
     }
 }

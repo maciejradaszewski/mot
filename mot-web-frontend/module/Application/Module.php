@@ -29,6 +29,7 @@ use Application\Listener\ExpiredPasswordListener;
 use Application\Listener\WebListenerEventsPriorities;
 use Application\Service\ContingencySessionManager;
 use DvsaCommon\Auth\NotLoggedInException;
+use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
 use DvsaCommon\HttpRestJson\Exception\NotFoundException;
@@ -93,16 +94,7 @@ class Module implements
             WebListenerEventsPriorities::DISPATCH_CHANGE_TEMP_PASSWORD
         );
 
-        $config = $e->getApplication()->getServiceManager()->get('config');
-
-
-        if (!array_key_exists('openam.password.expiry.enabled', $config['feature_toggle'])) {
-            throw new \OutOfBoundsException("Configuration is missing a key: ['feature_toggle']['openam.password.expiry.enabled'].");
-        }
-
-        $passwordExpiryEnabled = $config['feature_toggle']['openam.password.expiry.enabled'];
-
-        if ($passwordExpiryEnabled) {
+        if ($this->isPasswordExpiryEnabled($e)) {
             $resetPasswordListener = $e->getApplication()->getServiceManager()->get(ExpiredPasswordListener::class);
             $eventManager->attach(
                 MvcEvent::EVENT_DISPATCH,
@@ -129,6 +121,14 @@ class Module implements
             [$this, 'handleError'],
             WebListenerEventsPriorities::DISPATCH_ERROR_HANDLE_ERROR
         );
+    }
+
+    private function isPasswordExpiryEnabled(EventInterface $e)
+    {
+        /** @var MotConfig $config */
+        $config = $e->getApplication()->getServiceManager()->get(MotConfig::class);
+
+        return $config->get('feature_toggle', 'openam.password.expiry.enabled');
     }
 
     public function getConfig()

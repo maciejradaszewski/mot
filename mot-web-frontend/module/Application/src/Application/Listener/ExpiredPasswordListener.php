@@ -115,10 +115,6 @@ class ExpiredPasswordListener
 
         $expirationDate = $this->openAmClient->getPasswordExpiryDate(new OpenAMLoginDetails($identity->getUsername(), null, $this->realm));
 
-        if (!$this->gracePeriod) {
-            throw new \InvalidArgumentException("'password_expiry_grace_period' is missing from configuration in mot-web-frontend.");
-        }
-
         $expirationDate = $expirationDate->modify("- " . $this->gracePeriod);
 
         return $expirationDate;

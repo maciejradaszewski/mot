@@ -3,6 +3,8 @@
 namespace DvsaMotApi;
 
 use Doctrine\Tests\ORM\Mapping\User;
+use DvsaCommon\Configuration\MotConfig;
+use DvsaCommon\Configuration\MotConfigFactory;
 use DvsaCommonApi\Transaction\ServiceTransactionAwareInitializer;
 use DvsaEntities\Repository\TestItemCategoryRepository;
 use DvsaMotApi\Factory\AmazonS3ServiceFactory;
@@ -144,7 +146,8 @@ class Module implements
                 CertificateStorageService::class => CertificateStorageServiceFactory::class,
                 AwsCredentialsProviderService::class => AwsCredentialsProviderFactory::class,
                 AmazonSDKService::class => AmazonSDKServiceFactory::class,
-                MotTestCertificatesService::class =>MotTestCertificatesServiceFactory::class
+                MotTestCertificatesService::class =>MotTestCertificatesServiceFactory::class,
+                MotConfig::class => MotConfigFactory::class,
             ],
             'invokables' => [
                 'BrakeTestConfigurationValidator' => BrakeTestConfigurationValidator::class,
