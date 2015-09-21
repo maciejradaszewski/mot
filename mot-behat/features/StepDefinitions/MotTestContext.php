@@ -106,11 +106,6 @@ class MotTestContext implements Context, SnippetAcceptingContext
     private $personContext;
 
     /**
-     * @var array
-     */
-    private $motTestNumbers;
-
-    /**
      * @var MotTestTypeCode
      */
     private $MotTestTypeCode;
@@ -177,8 +172,6 @@ class MotTestContext implements Context, SnippetAcceptingContext
 
         if (is_null($vehicleId)) {
             $this->vehicleId  = $this->vehicleContext->createVehicle(['testClass' => $testClass]);
-        } else {
-            $this->vehicleId = $vehicleId;
         }
 
         $this->motTestData = $this->motTest->startNewMotTestWithVehicleId(
@@ -724,22 +717,7 @@ class MotTestContext implements Context, SnippetAcceptingContext
 
             $this->personContext->createTester(["username" => $username]);
             $this->createPassedMotTest($this->personContext->getPersonUserId(), $this->personContext->getPersonToken());
-            $number--;
-        }
-    }
 
-    /**
-     * @Given :number passed MOT tests have been created for the same vehicle
-     */
-    public function passedMotTestsHaveBeenCreatedForTheSameVehicle($number)
-    {
-        $vehicleId = $this->vehicleContext->createVehicle();
-
-        $this->personContext->createTester(["username" => "tester".$this->testSupportHelper->getDataGeneratorHelper()->generateRandomString(10)]);
-
-        while ($number) {
-            $this->createPassedMotTest($this->personContext->getPersonUserId(), $this->personContext->getPersonToken(), $vehicleId);
-            $this->motTestNumbers[]=$this->getMotTestNumber();
             $number--;
         }
     }
@@ -748,7 +726,7 @@ class MotTestContext implements Context, SnippetAcceptingContext
     {
         $this->startMotTest($userId, $token, [], $vehicleId);
         $this->brakeTestResult->addBrakeTestDecelerometerClass3To7($token, $this->getMotTestNumber());
-        $this->odometerReading->addMeterReading($token, $this->getMotTestNumber(), rand(1000,9000), 'km');
+        $this->odometerReading->addNoMeterReadingToTest($token, $this->getMotTestNumber());
         $this->motTest->passed(
             $token,
             $this->getMotTestNumber()
@@ -943,10 +921,5 @@ class MotTestContext implements Context, SnippetAcceptingContext
     public function getMotTestData()
     {
         return $this->statusData->getBody()['data'];
-    }
-
-    public function getMotTestNumbers()
-    {
-        return $this->motTestNumbers;
     }
 }

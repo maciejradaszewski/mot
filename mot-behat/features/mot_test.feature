@@ -160,17 +160,3 @@ Feature: MOT Test
     And the Tester Passes the Mot Test
     When I retrieve recent tests certificate details in the VTS recent test was performed
     Then I can retrieve certificate details for the most recent test from the list
-
-  Scenario: When I print certificate only odometer readings taken before that test should be fetched
-    Given I am logged in as a Tester
-    And 3 passed MOT tests have been created for the same vehicle
-    When I fetch jasper document for test
-    Then document has only odometer readings from tests performed in past
-
-  Scenario: When I print certificate only odometer readings taken before that test should be fetched
-    Given I am logged in as a Tester
-    And 3 passed MOT tests have been created for the same vehicle
-    And jasper documents were not printed
-    And print of created mot tests is issued
-    When I fetch jasper document for test
-    Then document has only odometer readings from tests performed in past
