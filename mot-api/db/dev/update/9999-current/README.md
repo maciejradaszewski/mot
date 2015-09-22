@@ -8,6 +8,8 @@ Please ensure one of following 4 types of tags is applied to the end of the file
 - `NOT-FOR-PRODUCTION` - Adds or updates test data. Used only for the development environment.
 - `PRODUCTION-APPLIED` - Records changes that were made directly to production environment that need reflected into development environments.
 
+Any scripts added to the CURRENT folder that are required for non-dev environments must also be copied into the release folder and added in the correct order to the upgrade runner script.
+
 Examples
 --------
 
