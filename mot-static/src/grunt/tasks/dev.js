@@ -45,7 +45,7 @@ module.exports = function (grunt, config) {
             ]
         );
 
-        // ENVIRONMENT MAINTENANCE TASKS
+        // Environment Maintenance Tasks
         grunt.registerTask('env:mot:updatecheck', 'Disables the DVSA Logger', [
             'shell:env_dvsa_update_check'
         ]);
@@ -60,6 +60,7 @@ module.exports = function (grunt, config) {
             'sshexec:reset_database',
             'sshexec:server_mod_dev',
             'sshexec:doctrine_default_develop_dist',
+            'doctrine:proxy',
             'sshexec:apache_restart'
         ]);
     }
