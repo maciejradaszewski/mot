@@ -20,7 +20,9 @@ public class Register {
     }
 
     public void completeDetails() throws IOException {
-        DetailsPage detailsPage = createAnAccount().details();
+        CreateAnAccountPage createAnAccountPage = new CreateAnAccountPage(pageNavigator.getDriver());
+
+        DetailsPage detailsPage = createAnAccountPage.details();
         detailsPage.enterYourDetaisl();
 
         AddressPage addressPage = detailsPage.clickContinue();

@@ -16,7 +16,7 @@ import uk.gov.dvsa.ui.pages.authorisedexaminer.AedmAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.FinanceAuthorisedExaminerViewPage;
-import uk.gov.dvsa.ui.pages.cpms.GenerateReportPage;
+import uk.gov.dvsa.ui.pages.cpms.*;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 import uk.gov.dvsa.ui.pages.login.LoginPage;
 import uk.gov.dvsa.ui.pages.mot.*;
@@ -173,8 +173,8 @@ public class PageNavigator {
         return new AedmAuthorisedExaminerViewPage(driver);
     }
     
-    public FinanceAuthorisedExaminerViewPage goToFinanceAuthorisedExaminerViewPage(User user, String path, String aeId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(path, aeId));
+    public FinanceAuthorisedExaminerViewPage goToFinanceAuthorisedExaminerViewPage(User user, String aeId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(FinanceAuthorisedExaminerViewPage.PATH, aeId));
         return new FinanceAuthorisedExaminerViewPage(driver);
     }
 
@@ -218,12 +218,6 @@ public class PageNavigator {
 
         return new SpecialNoticePage(driver);
     }
-    
-    public GenerateReportPage goToGenerateReportPage(User user) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, GenerateReportPage.PATH);
-        return new GenerateReportPage(driver);
-        
-    }
 
     public VehicleInformationSearchPage goToVehicleInformationSearchPage(User user) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, VehicleInformationSearchPage.PATH);
@@ -244,6 +238,26 @@ public class PageNavigator {
         new VehicleSearchPage(driver).searchVehicle(vehicle).selectVehicle();
 
         return new DuplicateReplacementCertificatePage(driver);
+    }
+
+    public GenerateReportPage goToGenerateReportPage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, GenerateReportPage.PATH);
+        return new GenerateReportPage(driver);
+    }
+
+    public BuyTestSlotsPage goToBuyTestSlotsPage(User user, String aeId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(BuyTestSlotsPage.PATH, aeId));
+        return new BuyTestSlotsPage(driver);
+    }
+
+    public SlotRefundPage goToSlotRefundPage(User user, String aeId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(SlotRefundPage.PATH, aeId));
+        return new SlotRefundPage(driver);
+    }
+
+    public PurchaseHistoryPage goToPurchaseHistoryPage(User user, String aeId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(PurchaseHistoryPage.PATH, aeId));
+        return new PurchaseHistoryPage(driver);
     }
 
     public AssociateASitePage goToAssociateASitePage(User user, String aeId) throws IOException {
