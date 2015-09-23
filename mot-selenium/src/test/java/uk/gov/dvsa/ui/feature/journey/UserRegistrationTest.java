@@ -16,10 +16,10 @@ public class UserRegistrationTest extends BaseTest {
     @Test(groups = {"BVT", "Regression"}, description = "VM-11472")
     public void createUserAccountSuccessfully() throws IOException {
 
-        //Given I am on the Create Account Page
-        motUI.register.createAnAccount();
+        //Given I am on the Create Account Details Page
+        motUI.register.createAnAccount().details();
 
-        //When I continue to enter my details
+        //When I to enter my details
         motUI.register.completeDetails();
 
         //Then my account is created successfully

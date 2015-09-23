@@ -9,6 +9,7 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.AssertionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.module.NormalTest;
+import uk.gov.dvsa.module.Cpms;
 import uk.gov.dvsa.module.Register;
 import uk.gov.dvsa.module.Retest;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
@@ -29,6 +30,7 @@ public class MotUI {
     public final Retest retest;
     public final NormalTest normalTest;
     public final Register register;
+    public final Cpms cpms;
 
     public MotUI(MotAppDriver driver) {
         this.driver = driver;
@@ -36,6 +38,7 @@ public class MotUI {
         retest = new Retest(pageNavigator);
         register = new Register(pageNavigator);
         normalTest = new NormalTest(pageNavigator);
+        cpms = new Cpms(pageNavigator);
     }
 
     public void searchForVehicle(User user, Vehicle vehicle) throws IOException, URISyntaxException {

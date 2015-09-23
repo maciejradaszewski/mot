@@ -8,88 +8,65 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.ui.BaseTest;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.FinanceAuthorisedExaminerViewPage;
-import uk.gov.dvsa.ui.pages.cpms.BuyTestSlotsPage;
-import uk.gov.dvsa.ui.pages.cpms.CardPaymentConfirmationPage;
-import uk.gov.dvsa.ui.pages.cpms.ChoosePaymentTypePage;
+
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
 public class CpmsPurchaseSlotsTests extends BaseTest {
 
     @Test (groups = {"BVT", "Regression"}, description = "SPMS-37 Purachase slots by card successfully", dataProvider = "createAedmAndAe")
-    public void purchaseSlotsByCardSuccessfully(User aedm, AeDetails aeDetails) throws IOException { 
+    public void purchaseSlotsByCardSuccessfully(User aedm, AeDetails aeDetails) throws IOException {
         
-      //Given I am on Buy test slots page as an Aedm
-      BuyTestSlotsPage buyTestSlotsPage = pageNavigator
-                .goToAuthorisedExaminerPage(aedm, AuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
-                .clickBuySlotsLink();
+        //Given I am on Buy test slots page as an Aedm
+        motUI.cpms.purchaseSlots.navigateToBuyTestSlotsPageAsAedm(aedm, String.valueOf(aeDetails.getId()));
       
-      //When I submit the card payment request with required slots & valid card details
-      CardPaymentConfirmationPage cardPaymentConfirmationPage = buyTestSlotsPage
-              .enterSlotsRequired(50000)
-              .clickCalculateCostButton()
-              .clickContinueToPay()
-              .enterCardDetails()
-              .clickPayNowButton();
+        //When I submit valid card payment details with required slots
+        motUI.cpms.purchaseSlots.submitPaymentDetailsWithRequiredSlots("10000");
       
-      //Then the payment should be successful
-      assertThat("Verifying payment successful message is displayed",
-              cardPaymentConfirmationPage.isPaymentSuccessfulMessageDisplayed(), is(true));
-      assertThat("Payment status message verification",
-              cardPaymentConfirmationPage.getPaymentStatusMessage(), containsString("Payment has been successful"));   
+        //Then the payment should be successful
+        assertThat(motUI.cpms.purchaseSlots.cardPaymentConfirmationPage.isPaymentSuccessfulMessageDisplayed(), is(true));
     }
     
     @Test (groups = {"BVT", "Regression"}, description = "SPMS-37 Purachase slots exceeding maximun balance", dataProvider = "createAedmAndAe")
     public void purchaseSlotsExceedingMaximumBalanceErrorTest(User aedm, AeDetails aeDetails) throws IOException {
         
-      //Given I am on Buy test slots page as an Aedm with positive slot balance
-      pageNavigator.goToAuthorisedExaminerPage(aedm, AuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
-                .clickBuySlotsLink()
-                .enterSlotsRequired(60000)
-                .clickCalculateCostButton()
-                .clickContinueToPay()
-                .enterCardDetails()
-                .clickPayNowButton();
-      
-      BuyTestSlotsPage buyTestSlotsPage = pageNavigator
-              .goToAuthorisedExaminerPage(aedm, AuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
-              .clickBuySlotsLink();
+        //Given The organisation has positive slot balance
+        motUI.cpms.purchaseSlots.userProcessesCardPaymentSuccessfully(aedm, String.valueOf(aeDetails.getId()), "60000");
+
+        //And I am on Buy test slots page
+        motUI.cpms.purchaseSlots.goToBuyTestSlotsPage(aedm, String.valueOf(aeDetails.getId()));
               
-      //When I submit required slots which makes the slot balance exceed the maximum balance
-      BuyTestSlotsPage buyTestSlotsPageWithError = buyTestSlotsPage
-              .enterSlotsRequired(75000)
-              .clickCalculateCostButtonWithExcessSlots();
+        //When I request slots which makes the slot balance exceed the maximum balance
+        motUI.cpms.purchaseSlots.submitSlotsWhichExceedsMaximumSlotBalance("75000");
       
-      //Then the payment should not be processed with validation message
-      assertThat("Verifying validation message for exceeding slot balance",
-              buyTestSlotsPageWithError.isExceedsMaximumSlotBalanceMessageDisplayed(), is(true));   
+        //Then the payment should not be processed and display validation message
+        assertThat(motUI.cpms.purchaseSlots.buyTestSlotsPage.isExceedsMaximumSlotBalanceMessageDisplayed(), is(true));
     }
     
     @Test (groups = {"BVT", "Regression"}, description = "SPMS-264 Finance user processes Card payment", dataProvider = "createFinanceUserAndAe")
-    public void financeUserProcessesCardPayment(User financeUser, AeDetails aeDetails) throws IOException { 
-        
-      //Given I am on Choose payment type page as a Finance user
-        ChoosePaymentTypePage choosePaymentTypePage = pageNavigator
-                .goToFinanceAuthorisedExaminerViewPage(financeUser, FinanceAuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
-                .clickBuySlotsLinkAsFinanceUser();
+    public void financeUserProcessesCardPayment(User financeUser, AeDetails aeDetails) throws IOException {
+
+        //Given I am on Buy test slots page as a Finance user
+        motUI.cpms.purchaseSlots.navigateToBuyTestSlotsPageAsFinanceUser(financeUser, String.valueOf(aeDetails.getId()));
       
-     //When I submit the card payment request with required slots & valid card details
-      CardPaymentConfirmationPage cardPaymentConfirmationPage = choosePaymentTypePage
-              .selectCardPaymentTypeAndSubmit()
-              .enterSlotsRequired(50000)
-              .clickCalculateCostButton()
-              .clickContinueToPay()
-              .enterCardDetails()
-              .clickPayNowButton();
+        //When I submit valid card payment details with required slots
+        motUI.cpms.purchaseSlots.submitPaymentDetailsWithRequiredSlots("10000");
       
-      //Then the payment should be successful
-      assertThat("Verifying payment successful message is displayed",
-              cardPaymentConfirmationPage.isPaymentSuccessfulMessageDisplayed(), is(true));
-      assertThat("Payment status message verification",
-              cardPaymentConfirmationPage.getPaymentStatusMessage(), containsString("Payment has been successful"));
+        //Then the payment should be successful
+        assertThat(motUI.cpms.purchaseSlots.cardPaymentConfirmationPage.isPaymentSuccessfulMessageDisplayed(), is(true));
+    }
+
+    @Test (groups = {"BVT", "Regression"}, description = "SPMS-88 User cancels Card payment", dataProvider = "createAedmAndAe")
+    public void userCancelsCardPayment(User aedm, AeDetails aeDetails) throws IOException {
+
+        //Given I am on Card details page with valid slot purchase request
+        motUI.cpms.purchaseSlots.navigateToCardDetailsPage(aedm, String.valueOf(aeDetails.getId()));
+
+        //When I Cancel the card payment
+        motUI.cpms.purchaseSlots.userCancelsCardPayment();
+
+        //Then I should be navigated to Buy test slots page
+        assertThat(motUI.cpms.purchaseSlots.buyTestSlotsPage.isCalculateCostButtonDisplayed(), is(true));
     }
     
     @DataProvider(name = "createAedmAndAe")
