@@ -1,22 +1,20 @@
 <?php
 
-use UserAdmin\Controller\SecurityQuestionController;
-use UserAdmin\Controller\ChangeQualificationStatusController;
-use UserAdmin\Controller\UserSearchController;
+use UserAdmin\Controller;
 use UserAdmin\Factory\Controller\ResetAccountClaimByPostControllerFactory;
 use UserAdmin\Factory\Controller\SecurityQuestionControllerFactory;
-use UserAdmin\Factory\Controller\ChangeQualificationStatusControllerFactory;
 use UserAdmin\Factory\Controller\UserProfileControllerFactory;
 use UserAdmin\Factory\Controller\EmailAddressControllerFactory;
 use UserAdmin\Factory\Controller\PersonRoleControllerFactory;
 use UserAdmin\Factory\Controller\RecordDemoTestControllerFactory;
 use UserAdmin\Controller\RecordDemoTestController;
 
+
 return [
     'controllers' => [
         'invokables' => [
-            UserSearchController::class => UserSearchController::class,
-            SecurityQuestionController::class => SecurityQuestionController::class,
+            Controller\UserSearchController::class => Controller\UserSearchController::class,
+            Controller\SecurityQuestionController::class => Controller\SecurityQuestionController::class,
         ],
         'factories' => [
             SecurityQuestionControllerFactory::class => SecurityQuestionControllerFactory::class,
@@ -25,7 +23,6 @@ return [
             PersonRoleControllerFactory::class => PersonRoleControllerFactory::class,
             EmailAddressControllerFactory::class => EmailAddressControllerFactory::class,
             RecordDemoTestController::class => RecordDemoTestControllerFactory::class,
-            ChangeQualificationStatusController::class => ChangeQualificationStatusControllerFactory::class,
         ]
     ],
     'view_manager' => [
@@ -49,7 +46,7 @@ return [
                         'options' => [
                             'route' => '/search',
                             'defaults' => [
-                                'controller' => UserSearchController::class,
+                                'controller' => Controller\UserSearchController::class,
                                 'action' => 'index'
                             ],
                         ],
@@ -60,7 +57,7 @@ return [
                         'options' => [
                             'route' => '/results',
                             'defaults' => [
-                                'controller' => UserSearchController::class,
+                                'controller' => Controller\UserSearchController::class,
                                 'action' => 'results',
                             ],
                         ],
@@ -225,30 +222,6 @@ return [
                                     'defaults' => [
                                         'controller' => RecordDemoTestController::class,
                                         'action' => 'recordDemoTest',
-                                    ],
-                                ],
-                            ],
-                            'change-qualification-status' => [
-                                'type' => 'segment',
-                                'options' => [
-                                    'route' => '/change-qualification-status/:vehicleClassGroup',
-                                    'defaults' => [
-                                        'controller' => ChangeQualificationStatusController::class,
-                                        'action' => 'index',
-                                    ],
-                                ],
-                                'may_terminate' => true,
-                                'child_routes' => [
-                                    'confirmation' => [
-                                        'type' => 'segment',
-                                        'options' => [
-                                            'route' => '/confirmation',
-                                            'defaults' => [
-                                                'controller' => ChangeQualificationStatusController::class,
-                                                'action' => 'confirmation',
-                                            ],
-                                        ],
-                                        'may_terminate' => true,
                                     ],
                                 ],
                             ],

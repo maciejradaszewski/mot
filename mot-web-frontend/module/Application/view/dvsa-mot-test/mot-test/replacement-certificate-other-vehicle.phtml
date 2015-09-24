@@ -32,7 +32,7 @@ $this->layout()->setVariable('pageTitle', $buttonAndPageTitle);
         <?php if ($vehicle->displayMakeInputBox()): ?>
             make and
         <?php else: ?>
-            <?php echo $this->escapeHtml($vehicle->getMake()->getName()); ?>
+            <?php echo $vehicle->getMake()->getName(); ?>
         <?php endif; ?>
         model?
     </legend>
@@ -55,9 +55,9 @@ $this->layout()->setVariable('pageTitle', $buttonAndPageTitle);
     <?php else: ?>
         <?php if ($vehicle->isOtherMake()): ?>
             <input type="hidden" name="action" value="updateCustomMakeModel" />
-            <input type="hidden" name="make" value="<?php echo $this->escapeHtml($vehicle->getMake()->getName()); ?>" />
+            <input type="hidden" name="make" value="<?php echo $vehicle->getMake()->getName(); ?>" />
         <?php else: ?>
-            <input type="hidden" name="make" value="<?php echo $this->escapeHtml($vehicle->getMake()->getCode()); ?>" />
+            <input type="hidden" name="make" value="<?php echo $vehicle->getMake()->getCode(); ?>" />
             <input type="hidden" name="action" value="updateMakeCustomModel" />
         <?php endif; ?>
     <?php endif; ?>

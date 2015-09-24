@@ -42,12 +42,12 @@ class TesterService
     private $accountPerson;
 
     /**
-     * @param TestSupportRestClientHelper      $testSupportRestClientHelper
-     * @param NotificationsHelper              $notificationsHelper
-     * @param SitePermissionsHelper            $sitePermissionsHelper
-     * @param AccountService                   $accountService
-     * @param EntityManager                    $entityManager
-     * @param TesterAuthorisationStatusService $testerAuthorisationStatusService
+     * @param TestSupportRestClientHelper $testSupportRestClientHelper
+     * @param NotificationsHelper $notificationsHelper
+     * @param SitePermissionsHelper $sitePermissionsHelper
+     * @param AccountService $accountService
+     * @param EntityManager $entityManager
+     * @param TesterAuthorisationStatusService $entityManager
      */
     public function __construct(
         TestSupportRestClientHelper $testSupportRestClientHelper,
@@ -74,7 +74,6 @@ class TesterService
     public function create(array $data)
     {
         FieldValidation::checkForRequiredFieldsInData(['siteIds'], $data);
-
         TestSupportAccessTokenManager::addSchemeManagerAsRequestorIfNecessary($data);
 
         if (!isset($data['personId'])) {
@@ -86,9 +85,7 @@ class TesterService
             $this->accountPerson = new AccountPerson($data, $dataGeneratorHelper);
             $account = $this->accountService->createAccount(
                 SiteBusinessRoleCode::TESTER,
-                $dataGeneratorHelper,
-                $this->accountPerson
-            );
+                $dataGeneratorHelper, $this->accountPerson);
         } else {
             $account = new Account($data);
         }
@@ -126,22 +123,6 @@ class TesterService
             "multiSiteUser" => (isset($data['siteIds']) && count($data['siteIds']) > 1) ? true : false,
             "dateOfBirth" => $this->accountPerson->getDateOfBirth()
         ]);
-    }
-
-    /**
-     * @param int    $testerId
-     * @param string $group
-     * @param string $statusCode
-     */
-    public function updateTesterQualificationStatus($testerId, $group, $statusCode)
-    {
-        if ($group === 'A and B') {
-            $data = ['A' => $statusCode, 'B' => $statusCode];
-        } else {
-            $data = [$group => $statusCode];
-        }
-
-        $this->testerAuthorisationStatusService->setTesterQualificationStatus($testerId, $data);
     }
 
     private function sendNominationsForTesterAndAcceptThem(Account $account, $data)

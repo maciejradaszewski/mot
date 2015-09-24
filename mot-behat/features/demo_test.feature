@@ -8,11 +8,6 @@ Feature: Demo MOT Test
     When I start a Demo MOT Test
     Then an MOT test number should be allocated
 
-  Scenario: Tester tries to start a Demo MOT Test when they already have one in progress
-    Given I am logged in as a Tester
-    And I have a Demo MOT Test In Progress
-    Then I am unable to start a new Demo MOT test
-
   Scenario Outline: Complete an MOT Test with No Odometer or Reading
     Given I start a Demo MOT test as a Tester
     And the Tester adds an Odometer Reading "<type>"

@@ -10,10 +10,7 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use DvsaCommon\Enum\AuthorisationForTestingMotAtSiteStatusCode;
 use DvsaCommon\Enum\MotTestStatusName;
-use DvsaCommon\Enum\SiteStatusCode;
-use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\SeqNumberService;
@@ -89,7 +86,7 @@ class SiteRepository extends AbstractMutableRepository
         $site = $this->find($id);
 
         if ($site === null) {
-            throw new NotFoundException("Site");
+            throw new NotFoundException("Site not found");
         }
 
         return $site;
@@ -129,7 +126,7 @@ class SiteRepository extends AbstractMutableRepository
     {
         $result = $this->findBy(['siteNumber' => $siteNumber]);
         if (empty($result)) {
-            throw new NotFoundException('Vehicle Testing Station with site number', $siteNumber);
+            throw new NotFoundException('VehicleTestingStation', $siteNumber);
         }
 
         return $result[0];
@@ -380,38 +377,6 @@ class SiteRepository extends AbstractMutableRepository
         return $this->buildFindSites($searchParam)->getResult(AbstractQuery::HYDRATE_SCALAR);
     }
 
-
-    /**
-     * Answers an array containing all Site entities that are "APPROVED" and also
-     * classified within the "assembly" group of tables as being an "Area Office"
-     *
-     *
-     */
-    public function getAllAreaOffices()
-    {
-        // TODO: Somebody replace this with something DECENT please!
-        // We check the length to equal 2 so sub area offices are ignored
-        $sql = sprintf(
-            'SELECT s.id, s.name, s.site_number, substring(s.site_number,1,2) as ao_number
-             FROM site AS s
-             INNER JOIN site_type AS st ON st.id=s.type_id
-             INNER JOIN site_status_lookup `ssl` ON `ssl`.id=s.site_status_id
-             WHERE st.code="%s" AND LENGTH(s.site_number)=2 AND `ssl`.code="%s"
-             ORDER BY s.site_number',
-            SiteTypeCode::AREA_OFFICE, SiteStatusCode::APPROVED);
-
-        $rsm = new Query\ResultSetMapping();
-        $rsm->addScalarResult('id', 'id');
-        $rsm->addScalarResult('site_number', 'siteNumber');
-        $rsm->addScalarResult('name', 'name');
-        $rsm->addScalarResult('ao_number', 'areaOfficeNumber');
-
-        /** @var \Doctrine\ORM\NativeQuery $query */
-        $query = $this->_em->createNativeQuery($sql, $rsm);
-
-        return $query->getResult();
-    }
-
     /**
      * Build the Query to search for a site
      *
@@ -623,21 +588,5 @@ class SiteRepository extends AbstractMutableRepository
         }
 
         return $number;
-    }
-
-    public function getApprovedUnlinkedSite()
-    {
-        $rsm = new Query\ResultSetMapping();
-        $rsm->addScalarResult('site_number', 'site_number');
-
-        $sql = "SELECT site.site_number
-            FROM site
-            WHERE site.organisation_id IS NULL AND site.site_status_id = (SELECT id FROM site_status_lookup WHERE code = :APPROVED)";
-
-        $query = $this->_em
-            ->createNativeQuery($sql, $rsm)
-            ->setParameter(':APPROVED', SiteStatusCode::APPROVED);
-
-        return $query->getResult(AbstractQuery::HYDRATE_SCALAR);
     }
 }

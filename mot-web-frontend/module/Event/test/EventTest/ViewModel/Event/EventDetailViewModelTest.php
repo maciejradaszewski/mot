@@ -146,13 +146,13 @@ class EventDetailViewModelTest extends \PHPUnit_Framework_TestCase
             ->setFamilyName(self::PERSON_FAMILYNAME);
 
         $this->viewModel = new EventDetailViewModel($organisation, $site, $person, null, 'ae', new EventFormDto());
-        $this->assertEquals('AE Event for', $this->viewModel->getTitle());
+        $this->assertEquals('Full Details of AE Event selected for', $this->viewModel->getTitle());
         $this->assertEquals(self::AE_NUMBER . ' - ' . self::AE_NAME, $this->viewModel->getName());
         $this->viewModel->setEventType('site');
-        $this->assertEquals('Site Event for', $this->viewModel->getTitle());
+        $this->assertEquals('Full Details of Site Event selected for', $this->viewModel->getTitle());
         $this->assertEquals(self::SITE_NUMBER . ' - ' . self::SITE_NAME, $this->viewModel->getName());
         $this->viewModel->setEventType('person');
-        $this->assertEquals('Person Event for', $this->viewModel->getTitle());
+        $this->assertEquals('Full Details of Person Event selected for', $this->viewModel->getTitle());
         $this->assertSame(
             self::PERSON_USERNAME . ' - ' .
             self::PERSON_FIRSTNAME . ' ' .

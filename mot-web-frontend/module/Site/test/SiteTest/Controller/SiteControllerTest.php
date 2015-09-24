@@ -37,7 +37,6 @@ use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use Site\Controller\SiteController;
 use Site\Form\VtsContactDetailsUpdateForm;
 use Site\Form\VtsCreateForm;
-use Site\Form\VtsUpdateTestingFacilitiesForm;
 use Site\ViewModel\VehicleTestingStation\VtsFormViewModel;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
@@ -178,12 +177,7 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
             /** @var VtsFormViewModel $module */
             /** @var VtsCreateForm $form */
             $model = $result->getVariable('model');
-
-            if ($model instanceof VtsFormViewModel) {
-                $form = $model->getForm();
-            } else {
-                $form = $result->getVariable('form');
-            }
+            $form = $model->getForm();
 
             if (!empty($expect['viewForm'])) {
                 $expectForm = $expect['viewForm'];
@@ -222,9 +216,6 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
         /** @var VtsCreateForm|MockObj $formVtsCreate */
         $formVtsCreate = XMock::of(VtsCreateForm::class);
         $this->mockMethod($formVtsCreate, 'toDto', null, $this->getVehicleTestingStationDto());
-
-        $formTestingFacilitiesUpdate = new VtsUpdateTestingFacilitiesForm();
-        $formTestingFacilitiesUpdate->fromDto($this->getVehicleTestingStationDto());
 
         return [
             ['get', 'index', ['route' => ['id' => self::SITE_ID]], [], ['viewModel' => true]],
@@ -410,135 +401,6 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
                 'mocks'           => [],
                 'expect'          => [
                     'viewModel' => true,
-                ],
-            ],
-            [
-                'method' => 'get',
-                'action' => 'testingFacilities',
-                'params' => [
-                    'route' => [
-                        'id' => self::SITE_ID,
-                    ],
-                ],
-                'mocks'  => [],
-                'expect' => [
-                    'viewModel' => true,
-                    'viewForm'  => [
-                        'obj'    => $formTestingFacilitiesUpdate,
-                        'isSame' => false,
-                    ],
-                ],
-            ],
-            [
-                'method' => 'get',
-                'action' => 'testingFacilities',
-                'params' => [
-                    'get' => [
-                        SiteController::SESSION_KEY => self::SESSION_KEY,
-                    ],
-                    'route' => [
-                        'id' => self::SITE_ID,
-                    ],
-                ],
-                'mocks'  => [
-                    [
-                        'class'  => 'mockSession',
-                        'method' => 'offsetGet',
-                        'params' => [self::SESSION_KEY],
-                        'result' => $formTestingFacilitiesUpdate,
-                    ],
-                ],
-                'expect' => [
-                    'viewModel' => true,
-                    'viewForm'  => [
-                        'obj'    => $formTestingFacilitiesUpdate,
-                        'isSame' => true,
-                    ],
-                ],
-            ],
-            //  logical block :: update testing facilities confirmation action
-            //  form not in session; redirect to site summary page
-            [
-                'method' => 'get',
-                'action' => 'testingFacilitiesConfirmation',
-                'params' => [
-                    'get' => [
-                        SiteController::SESSION_KEY => self::SESSION_KEY,
-                    ],
-                    'route' => [
-                        'id' => self::SITE_ID,
-                    ],
-                ],
-                'mocks'  => [],
-                'expect' => [
-                    'url' => VehicleTestingStationUrlBuilderWeb::byId(self::SITE_ID),
-                ],
-            ],
-            // form in session; show confirm page
-            [
-                'method' => 'get',
-                'action' => 'testingFacilitiesConfirmation',
-                'params' => [
-                    'get' => [
-                        SiteController::SESSION_KEY => self::SESSION_KEY,
-                    ],
-                    'route' => [
-                        'id' => self::SITE_ID,
-                    ],
-                ],
-                'mocks'  => [
-                    [
-                        'class'  => 'mockSession',
-                        'method' => 'offsetGet',
-                        'params' => [self::SESSION_KEY],
-                        'result' => $formTestingFacilitiesUpdate,
-                    ],
-                ],
-                'expect' => [
-                    'viewModel' => true,
-                    'viewForm'  => [
-                        'obj'    => $formTestingFacilitiesUpdate,
-                        'isSame' => true,
-                    ],
-                ],
-            ],
-            // form in session; post successful; redirect to AE view
-            [
-                'method' => 'post',
-                'action' => 'testingFacilitiesConfirmation',
-                'params' => [
-                    'get' => [
-                        SiteController::SESSION_KEY => self::SESSION_KEY,
-                    ],
-                    'route' => [
-                        'id' => self::SITE_ID,
-                    ],
-                ],
-                'mocks'  => [
-                    [
-                        'class'  => 'mockSession',
-                        'method' => 'offsetGet',
-                        'params' => [self::SESSION_KEY],
-                        'result' => $formTestingFacilitiesUpdate,
-                    ],
-                    [
-                        'class'  => 'mockSession',
-                        'method' => 'offsetUnset',
-                        'params' => [self::SESSION_KEY],
-                        'result' => null,
-                    ],
-                    [
-                        'class'  => 'vehicleTestingStationMapperMock',
-                        'method' => 'updateTestingFacilities',
-                        'params' => [
-                            self::SITE_ID,
-                            $formTestingFacilitiesUpdate->toDto()
-                        ],
-                        'result' => ['id' => self::SITE_ID],
-                    ],
-                ],
-                'expect' => [
-                    'url' => VehicleTestingStationUrlBuilderWeb::byId(self::SITE_ID),
                 ],
             ],
         ];

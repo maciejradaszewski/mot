@@ -2,7 +2,6 @@
 
 namespace DvsaEntities\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use DvsaEntities\EntityTrait\CommonIdentityTrait;
 
@@ -47,18 +46,6 @@ class EventOutcome extends Entity
      * @ORM\Column(name="display_order", type="smallint", nullable=false)
      */
     private $displayOrder;
-
-    /**
-     * @var Event[]
-     *
-     * @ORM\OneToMany(targetEntity="DvsaEntities\Entity\Event", mappedBy="eventOutcome")
-     */
-    private $events;
-
-    public function __construct()
-    {
-        $this->events = new ArrayCollection();
-    }
 
     /**
      * @return string
@@ -118,13 +105,5 @@ class EventOutcome extends Entity
         $this->displayOrder = $displayOrder;
 
         return $this;
-    }
-
-    /**
-     * @return ArrayCollection|Event[]
-     */
-    public function getEvents()
-    {
-        return $this->events;
     }
 }

@@ -12,24 +12,17 @@ public class RecordDemoPageGroupB extends BasePage {
 
     @FindBy(id = "cancel-record-demo-test") private WebElement cancelLink;
 
-    @FindBy(id = "radioStandard2") private WebElement qualifiedRadioButton;
-
     public RecordDemoPageGroupB(WebDriver driver){
         super(driver);
     }
 
-    public QualificationChageConfirmationPage clickConfirm(){
+    public HelpDeskUserProfilePage clickConfirm(){
         confirmButton.click();
-        return new QualificationChageConfirmationPage(driver);
+        return new HelpDeskUserProfilePage(driver);
     }
 
     public HelpDeskUserProfilePage clickCancel(){
         cancelLink.click();
         return new HelpDeskUserProfilePage(driver);
-    }
-
-    public RecordDemoPageGroupA clickQualifiedRadioButton(){
-        qualifiedRadioButton.click();
-        return new RecordDemoPageGroupA(driver);
     }
 }

@@ -175,7 +175,7 @@ public class ReasonForRejection2Test extends BaseTest {
         assertThat("Assert PRS", testSummaryPage.getPrsDetails()
                 .contains(PRSrejection.HORN_CONTROL_INSECURE.reason.reasonDescription), is(true));
 
-        testSummaryPage.enterNewPasscode(Text.TEXT_PASSCODE).clickFinishPrint().clickBackToHomeLink()
+        testSummaryPage.enterNewPasscode(Text.TEXT_PASSCODE).clickFinishPrint().clickDoneButton()
                 .clickLogout();
     }
 

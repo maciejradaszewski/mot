@@ -25,10 +25,3 @@ Feature: Authorised Examiner
     Given I am logged in as a Tester
     When I attempt to remove an Authorised Examiner
     Then the attempt will be forbidden
-
-  @story @VM-2526
-  Scenario: Linking an Authorised Examiner with a Site
-    Given I am logged in as an Area Office User
-    Then I should be able to create a new Authorised Examiner
-    Then I should be able to create a site for linking
-    Then I should be able to link the new AE and site together

@@ -5,7 +5,6 @@ use Dashboard\Controller\NotificationController;
 use Dashboard\Controller\UserStatsController;
 use Dashboard\Factory\Controller\UserHomeControllerFactory;
 use Dashboard\Factory\Controller\SecurityQuestionControllerFactory;
-use Dashboard\Factory\Controller\PasswordControllerFactory;
 
 return [
 
@@ -18,7 +17,6 @@ return [
         'factories'  => [
             UserHomeControllerFactory::class => UserHomeControllerFactory::class,
             SecurityQuestionControllerFactory::class => SecurityQuestionControllerFactory::class,
-            PasswordControllerFactory::class => PasswordControllerFactory::class
         ]
     ],
     'router'       => [
@@ -120,29 +118,7 @@ return [
                                     ],
                                 ],
                             ],
-                            'change-password'              => [
-                                'type'          => 'segment',
-                                'options'       => [
-                                    'route'    => '/change-password',
-                                    'defaults' => [
-                                        'controller' => PasswordControllerFactory::class,
-                                        'action' => 'changePassword'
-                                    ],
-                                ],
-                                'may_terminate' => true,
-                                'child_routes'  => [
-                                    'confirmation' => [
-                                        'type'    => 'segment',
-                                        'options' => [
-                                            'route'    => '/confirmation',
-                                            'defaults' => [
-                                                'action' => 'confirmation',
-                                            ],
-                                        ],
-                                    ],
-                                ],
 
-                            ],
                         ],
                     ],
                     'notification'    => [

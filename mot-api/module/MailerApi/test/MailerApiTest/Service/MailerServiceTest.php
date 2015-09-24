@@ -2,7 +2,6 @@
 
 namespace MailerApiTest\Service;
 
-use MailerApi\Model\Attachment;
 use MailerApi\Validator\MailerValidator;
 use PHPUnit_Framework_TestCase;
 use MailerApi\Service\MailerService;
@@ -10,7 +9,6 @@ use MailerApiTest\Mixin\ServiceManager;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Mail;
 use DvsaCommonTest\TestUtils\XMock;
-use Zend\Mime\Message;
 
 class MailerServiceTest extends PHPUnit_Framework_TestCase
 {
@@ -105,16 +103,13 @@ class MailerServiceTest extends PHPUnit_Framework_TestCase
 
     public function testSendsMessageWithCorrectlySuppliedDetails()
     {
-        $mockMessage = 'Hello, World!';
         $mockMail = XMock::of(
             "\\Zend\\Mail\\Message",
             ['setFrom', 'setBody', 'setSubject', 'addTo']
         );
 
         $mockMail->expects($this->once())->method('setFrom')->with('a unit test');
-        $mockMail->expects($this->once())->method('setBody')->with($this->callback(function($body) use($mockMessage) {
-            return ($body instanceof Message) && ($body->getPartContent(0) == $mockMessage);
-        }));
+        $mockMail->expects($this->once())->method('setBody')->with('Hello, World!');
         $mockMail->expects($this->once())->method('setSubject')->with('test subject');
         $mockMail->expects($this->once())->method('addTo')->with('sean.charles@valtech.co.uk');
 
@@ -136,48 +131,7 @@ class MailerServiceTest extends PHPUnit_Framework_TestCase
             $this->mailerService->send(
                 'sean.charles@valtech.co.uk',
                 'test subject',
-                $mockMessage
-            )
-        );
-    }
-
-    public function testGivenValidDataIsPassed_whenSendingAnEmailWithAnAttachment_shouldWorkCorrectly()
-    {
-        $mockMessage = 'Hello, World!';
-        $mockAttachment = new Attachment("i am attached!", "text/plain", "nope.txt");
-        $mockMail = XMock::of(
-            "\\Zend\\Mail\\Message",
-            ['setFrom', 'setBody', 'setSubject', 'addTo']
-        );
-
-        $mockMail->expects($this->once())->method('setFrom')->with('a unit test');
-        $mockMail->expects($this->once())->method('setBody')->with($this->callback(function($body) use($mockMessage, $mockAttachment) {
-            return ($body instanceof Message) && ($body->getPartContent(0) == $mockMessage)
-            && (base64_decode($body->getPartContent(1)) == $mockAttachment->getContent()); //the second part will be base64 encoded
-        }));
-        $mockMail->expects($this->once())->method('setSubject')->with('test subject');
-        $mockMail->expects($this->once())->method('addTo')->with('dummy@email.com');
-
-        $mockMta = XMock::of("\\Zend\\Mail\\Transport\\Sendmail", ['send']);
-
-        $mockMta->expects($this->once())
-            ->method('send')
-            ->with($mockMail);
-
-        $this->setConfig(['sendingAllowed' => true,
-                'mta-class' => $mockMta,
-                'mail-class' => $mockMail,
-                'sender' => 'a unit test'
-            ]
-        );
-        $this->mailerService = new MailerService($this->sm()->get('Config'), null, $this->mockValidator);
-
-        $this->assertTrue(
-            $this->mailerService->send(
-                'dummy@email.com',
-                'test subject',
-                $mockMessage,
-                $mockAttachment
+                'Hello, World!'
             )
         );
     }

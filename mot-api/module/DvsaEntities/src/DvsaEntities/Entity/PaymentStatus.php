@@ -28,13 +28,6 @@ class PaymentStatus
     private $name;
 
     /**
-     * @var int CPMS code for given status type
-     *
-     * @ORM\Column(name="cpms_code", type="integer", nullable=false)
-     */
-    private $cpmsCode;
-
-    /**
      * @param string $name
      * @return $this
      */
@@ -51,24 +44,5 @@ class PaymentStatus
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCpmsCode()
-    {
-        return $this->cpmsCode;
-    }
-
-    /**
-     * @param int $cpmsCode
-     *
-     * @return $this
-     */
-    public function setCpmsCode($cpmsCode)
-    {
-        $this->cpmsCode = $cpmsCode;
-        return $this;
     }
 }

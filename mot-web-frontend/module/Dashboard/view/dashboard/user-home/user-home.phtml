@@ -1,8 +1,6 @@
 <?php
 
 use Dashboard\Controller\NotificationController;
-use DvsaCommon\Auth\PermissionInSystem;
-use DvsaCommon\Auth\PermissionAtSite;
 
     $this->placeholder('hero')
         ->set($this->partial('primaryAction/' . $dashboard->getHero(), ['dashboard' => $dashboard]));
@@ -13,6 +11,7 @@ use DvsaCommon\Auth\PermissionAtSite;
 <div class="row">
     <div class="col-sm-6">
         <?php echo $this->partial('dashboard/specialNotice', $specialNotice); ?>
+        <?php if ($dashboard->getHero() != 'vehicle-examiner'): ?>
             <?php echo $this->partial(
                 'notification/list',
                 [
@@ -21,23 +20,22 @@ use DvsaCommon\Auth\PermissionAtSite;
                 ]
             );
             ?>
+        <?php endif; ?>
+
     </div>
     <div class="col-sm-6">
-        <?php if ($this->authorisationHelper()->isGrantedAtAnySite(PermissionAtSite::RECENT_CERTIFICATE_PRINT)) : ?>
-            <?php echo $this->partial('dashboard/motActivity', ['jasperAsyncEnabled' => $jasperAsyncEnabled]); ?>
-        <?php endif; ?>        
-        <?php if ($dashboard->getHero() === 'vehicle-examiner'): ?>
+        <?php if ($dashboard->getHero() == 'vehicle-examiner'): ?>
             <?php echo $this->partial('dashboard/veList'); ?>
 
         <?php else: ?>
-            <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::VEHICLE_TESTING_STATION_LIST)): ?>
+            <?php if ($this->authorisationHelper()->isGranted(\DvsaCommon\Auth\PermissionInSystem::VEHICLE_TESTING_STATION_LIST)) : ?>
                 <?php echo $this->partial('dashboard/vtsList'); ?>
             <?php endif; ?>
-            <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::DISPLAY_DVSA_ADMIN_BOX)): ?>
+            <?php if ($this->authorisationHelper()->isGranted(\DvsaCommon\Auth\PermissionInSystem::DISPLAY_DVSA_ADMIN_BOX)) : ?>
                 <?php echo $this->partial('dashboard/dvsaAdminBox'); ?>
             <?php endif; ?>
 
-            <?php if ($dashboard->getHero() === 'finance'): ?>
+            <?php if ($dashboard->getHero() == 'finance'): ?>
                 <?php echo $this->partial('dashboard/financeBox'); ?>
             <?php endif; ?>
 
@@ -55,23 +53,12 @@ use DvsaCommon\Auth\PermissionAtSite;
                 </ul>
             </section>
 
-            <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::DISPLAY_TESTER_STATS_BOX)) : ?>
+            <?php if ($this->authorisationHelper()->isGranted(\DvsaCommon\Auth\PermissionInSystem::DISPLAY_TESTER_STATS_BOX)) : ?>
                 <?php echo $this->partial('dashboard/testerStatsBox'); ?>
             <?php endif; ?>
-
-            <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::MOT_DEMO_TEST_PERFORM)) : ?>
-                <?php echo $this->partial('dashboard/demoTestBox',
-                    [
-                        'hasInProgressDemoTest' => $dashboard->hasDemoTestInProgress(),
-                        'inProgressDemoTestNumber' => $dashboard->getInProgressDemoTestNumber()
-                    ]
-                ); ?>
-            <?php endif; ?>
-
-            <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::DISPLAY_TESTER_CONTINGENCY_BOX)) : ?>
+            <?php if ($this->authorisationHelper()->isGranted(\DvsaCommon\Auth\PermissionInSystem::DISPLAY_TESTER_CONTINGENCY_BOX)) : ?>
                 <?php echo $this->partial('dashboard/testerContingencyBox'); ?>
             <?php endif; ?>
-
         <?php endif; ?>
     </div>
 </div>

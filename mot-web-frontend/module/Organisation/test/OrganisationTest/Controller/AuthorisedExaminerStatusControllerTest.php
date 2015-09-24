@@ -8,7 +8,6 @@ use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Dto\Contact\AddressDto;
-use DvsaCommon\Dto\Common\AuthForAeStatusDto;
 use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
@@ -226,7 +225,7 @@ class AuthorisedExaminerStatusControllerTest extends AbstractFrontendControllerT
                     ],
                     [
                         'class'  => 'mockOrgMapper',
-                        'method' => 'validateStatusAndAO',
+                        'method' => 'validateStatus',
                         'params' => [$formAeStatus->toDto()],
                         'result' => ['id' => self::AE_ID],
                     ],
@@ -463,14 +462,7 @@ class AuthorisedExaminerStatusControllerTest extends AbstractFrontendControllerT
         $orgContactDto->setAddress($orgAddressDto);
 
         $orgDto->setContacts([$orgContactDto]);
-
-        $authForAeAuthDto = new AuthorisedExaminerAuthorisationDto();
-        /** @var AuthForAeStatusDto $status */
-        $status = new AuthForAeStatusDto();
-        $status->setCode('APRVD');
-        $authForAeAuthDto->setStatus($status);
-
-        $orgDto->setAuthorisedExaminerAuthorisation($authForAeAuthDto);
+        $orgDto->setAuthorisedExaminerAuthorisation(new AuthorisedExaminerAuthorisationDto());
 
         return $orgDto;
     }

@@ -7,7 +7,6 @@ use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use DvsaMotTest\Controller\MotTestController;
 use Site\ViewModel\MotTest\MotTestInProgressViewModel;
-use DvsaCommon\Date\DateTimeDisplayFormat;
 
 /**
  * @var \Site\ViewModel\SiteViewModel $viewModel
@@ -24,24 +23,15 @@ $successMessages = $this->layout()->flashMessenger->getSuccessMessages();
 echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
 echo $this->partial('partial/gds/general/system-message', ['messages' => $errorMessages, 'type' => 'failure']);
 ?>
+
+<h3 class="key-value-list__header">Site details</h3>
+
 <?php
 
 $permission = $viewModel->getPermissions();
 $site = $viewModel->getSite();
 $organisation = $site->getOrganisation();
 $contact = $site->getContactByType(\DvsaCommon\Enum\SiteContactTypeCode::BUSINESS);
-?>
-
-<h3 class="key-value-list__header">Site details</h3>
-<?php if ($permission->canChangeSiteDetails()): ?>
-    <a id="change-site-details"
-       class="key-value-list__action"
-       href="<?php echo VehicleTestingStationUrlBuilderWeb::siteDetails($site->getId()) ?>"
-        >Change site details</a>
-<?php endif ?>
-
-<?php
-
 
 $organisationDisplay = '';
 if (isset($organisation)) {
@@ -51,12 +41,6 @@ if (isset($organisation)) {
         $organisationDisplay = $organisation->getName();
     }
 }
-
-$statusField = sprintf(
-    '%s<span class="key-value-list__meta">%s</span>',
-    $this->escapeHtml($siteStatusMap[$site->getStatus()]),
-    $this->escapeHtml(DateTimeDisplayFormat::textDate($site->getStatusChangedOn()))
-);
 
 echo $this->partial(
     'partial/gds/table/table',
@@ -69,7 +53,6 @@ echo $this->partial(
                 'id' => 'site-number',
                 'class' => 'key-value-list__value--numeric',
             ],
-            ['Status', $statusField,  'id' => 'site-status', 'escape' => false],
             ['Classes', implode(',', $site->getTestClasses()), 'id' => 'test-classes'],
             ['Type', $viewModel->getSiteTypes()[$site->getType()], 'id' => 'site-type'],
             [
@@ -115,12 +98,7 @@ echo $this->partial(
 ?>
 
 <h3 class="key-value-list__header">Testing facilities</h3>
-<?php if ($permission->canChangeTestingFacilities()): ?>
-    <a id="change-testing-facilities"
-       class="key-value-list__action"
-       href="<?php echo VehicleTestingStationUrlBuilderWeb::testingFacilities($site->getId()) ?>"
-        >Change testing facilities</a>
-<?php endif ?>
+
 
 <?php
 $facilities = [];
@@ -131,12 +109,8 @@ foreach ($site->getFacilities() as $type => $items) {
     $facilities[$type] = [
         $itemType->getName() . ' (' . $itemType->getCode() . ')',
         count($items),
-        'id' => 'testing-facility-'.strtolower($type),
-        'class' => 'testing-facility-'.strtolower($type),
     ];
 }
-
-krsort($facilities);
 
 echo $this->partial(
     'partial/gds/table/table',

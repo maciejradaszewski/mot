@@ -6,10 +6,11 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionAtSite;
-use DvsaCommon\Auth\AbstractMotAuthorisationService;
+use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApi\Transaction\TransactionAwareInterface;
 use DvsaCommonApi\Transaction\TransactionAwareTrait;
+use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\SiteBusinessRoleMap;
 use NotificationApi\Dto\Notification;
 use NotificationApi\Service\NotificationService;
@@ -19,7 +20,6 @@ use DvsaEntities\Entity\EventPersonMap;
 use DvsaEntities\Entity\EventSiteMap;
 use DvsaEventApi\Service\EventService;
 use DvsaEntities\Repository\SiteBusinessRoleMapRepository;
-use NotificationApi\Service\PositionRemovalNotificationService;
 
 /**
  * Takes care of operations associated with site position
@@ -28,14 +28,11 @@ class SitePositionService implements TransactionAwareInterface
 {
     use TransactionAwareTrait;
 
-    /** @var EntityManager  */
     private $entityManager;
-    /** @var NotificationService  */
     private $notificationService;
     /** @var  EventService $eventService */
     private $eventService;
-    /** @var PositionRemovalNotificationService  */
-    private $positionRemovalNotificationService;
+
 
     /**
      * @var  AbstractMotAuthorisationService $authorisationService
@@ -47,15 +44,13 @@ class SitePositionService implements TransactionAwareInterface
         SiteBusinessRoleMapRepository $siteBusinessRoleMapRepository,
         AuthorisationServiceInterface $authorisationService,
         EntityManager $entityManager,
-        NotificationService $notificationService,
-        PositionRemovalNotificationService $positionRemovalNotificationService
+        NotificationService $notificationService
     ) {
         $this->eventService = $eventService;
         $this->siteBusinessRoleMapRepository = $siteBusinessRoleMapRepository;
         $this->authorisationService = $authorisationService;
         $this->entityManager = $entityManager;
         $this->notificationService = $notificationService;
-        $this->positionRemovalNotificationService = $positionRemovalNotificationService;
     }
 
     /**
@@ -74,7 +69,7 @@ class SitePositionService implements TransactionAwareInterface
     public function remove($siteId, $mapId)
     {
         /** @var SiteBusinessRoleMap $siteRoleMap */
-        $this->authorisationService->assertGrantedAtSite(PermissionAtSite::REMOVE_ROLE_AT_SITE, $siteId);
+        $this->authorisationService->assertGrantedAtSite(PermissionAtSite::NOMINATE_ROLE_AT_SITE, $siteId);
 
         $siteRoleMap = $this->siteBusinessRoleMapRepository->findOneBy([ 'id' => $mapId ]);
 
@@ -91,15 +86,11 @@ class SitePositionService implements TransactionAwareInterface
 
     private function sendRemovalNotification(SiteBusinessRoleMap $roleMap)
     {
-        $siteId = $roleMap->getSite()->getId();
-        $contactText = $this->positionRemovalNotificationService->getSiteRoleRemovalContactText($siteId);
-
         $removalNotification = (new Notification())->setTemplate(Notification::TEMPLATE_SITE_POSITION_REMOVED)
             ->setRecipient($roleMap->getPerson()->getId())
             ->addField("positionName", $roleMap->getSiteBusinessRole()->getName())
             ->addField("siteName", $roleMap->getSite()->getName())
             ->addField("siteOrOrganisationId", $roleMap->getSite()->getSiteNumber())
-            ->addField("contactText", $contactText)
             ->toArray();
 
         $this->notificationService->add($removalNotification);

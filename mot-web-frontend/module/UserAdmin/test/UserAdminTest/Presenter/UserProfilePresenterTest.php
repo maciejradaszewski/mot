@@ -2,44 +2,69 @@
 
 namespace UserAdminTest\Presenter;
 
+use Application\Service\CatalogService;
+use DvsaClient\Entity\TesterAuthorisation;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use DvsaCommon\Dto\Contact\AddressDto;
+use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
+use DvsaCommonTest\TestUtils\XMock;
 use UserAdmin\Presenter\UserProfilePresenter;
+use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
 
 /**
  * Unit tests for UserProfilePresenter
  */
 class UserProfilePresenterTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var UserProfilePresenter $presenter */
+    private $presenter;
+
     public function testDisplayInformation()
     {
-        $presenter = UserProfilePresenterBuilder::of($this)
-            ->withTradeRoles()->noDvsaRoles()->isDvsaUser()->setPersonId(1)->build();
+        $catalogService = XMock::of(CatalogService::class);
+        $catalogMockMethod = $this->buildSiteAndOrganisationCatalog();
 
-        $this->assertEquals(1, $presenter->getPersonId());
-        $this->assertEquals('Username', $presenter->displayUserName());
-        $this->assertEquals('Mrs Harriet Jones', $presenter->displayTitleAndFullName());
-        $this->assertEquals('29 May 1992', $presenter->displayDateOfBirth());
-        $this->assertEquals('Harriet Jones', $presenter->displayFullName());
-        $this->assertEquals('drivingLicenceNumber', $presenter->displayDrivingLicenceNumber());
+        $catalogService->expects($this->atLeastOnce())
+            ->method("getBusinessRoles")
+            ->willReturn($catalogMockMethod);
+
+        $this->presenter = new UserProfilePresenter(
+            $this->buildPersonHelpDeskProfileDto(),
+            new TesterAuthorisationViewModel(
+                1,
+                new TesterAuthorisation(),
+                XMock::of(MotAuthorisationServiceInterface::class)
+            ),
+            $catalogService,
+            true
+        );
+        $this->presenter->setPersonId(1);
+        $this->assertEquals(1, $this->presenter->getPersonId());
+        $this->assertEquals('Username', $this->presenter->displayUserName());
+        $this->assertEquals('Mrs Harriet Jones', $this->presenter->displayTitleAndFullName());
+        $this->assertEquals('29 May 1992', $this->presenter->displayDateOfBirth());
+        $this->assertEquals('Harriet Jones', $this->presenter->displayFullName());
+        $this->assertEquals('drivingLicenceNumber', $this->presenter->displayDrivingLicenceNumber());
         $this->assertEquals(
             'Address line 1, Address line 2, Address line 3, Address line 4, Bristol, Postcode',
-            $presenter->displayAddressLine()
+            $this->presenter->displayAddressLine()
         );
-        $this->assertEquals('Address line 1', $presenter->displayAddressLine1());
-        $this->assertEquals('Address line 2', $presenter->displayAddressLine2());
-        $this->assertEquals('Address line 3', $presenter->displayAddressLine3());
-        $this->assertEquals('Address line 4', $presenter->displayAddressLine4());
-        $this->assertEquals('Postcode', $presenter->displayPostcode());
-        $this->assertEquals('Bristol', $presenter->displayTown());
+        $this->assertEquals('Address line 1', $this->presenter->displayAddressLine1());
+        $this->assertEquals('Address line 2', $this->presenter->displayAddressLine2());
+        $this->assertEquals('Address line 3', $this->presenter->displayAddressLine3());
+        $this->assertEquals('Address line 4', $this->presenter->displayAddressLine4());
+        $this->assertEquals('Postcode', $this->presenter->displayPostcode());
+        $this->assertEquals('Bristol', $this->presenter->displayTown());
         $this->assertEquals(
             'Address line 1, Address line 2, Address line 3, Address line 4, Bristol, Postcode',
-            $presenter->displayFullAddress()
+            $this->presenter->displayFullAddress()
         );
-        $this->assertEquals('dummy@email.com', $presenter->displayEmail());
-        $this->assertEquals('+768-45-4433630', $presenter->displayTelephone());
+        $this->assertEquals('dummy@email.com', $this->presenter->displayEmail());
+        $this->assertEquals('+768-45-4433630', $this->presenter->displayTelephone());
 
-        $this->assertEquals('/event/list/person/1', $presenter->displayEventsHistoryLink());
+        $this->assertEquals('/event/list/person/1', $this->presenter->displayEventsHistoryLink());
 
         $roles = [
             0 => [
@@ -50,103 +75,83 @@ class UserProfilePresenterTest extends \PHPUnit_Framework_TestCase
                 'roles' => ['Tester'],
                 'route' => VehicleTestingStationUrlBuilderWeb::byId(0)
             ],
+    ];
+        $this->assertEquals($roles, $this->presenter->getSiteAndOrganisationRoles());
+        $this->assertEquals('user-admin/user-profile/dvsa-profile.phtml', $this->presenter->getTemplate());
+    }
+
+    public function testGetTemplate()
+    {
+        $catalogService = XMock::of(CatalogService::class);
+
+        $this->presenter = new UserProfilePresenter(
+            $this->buildPersonHelpDeskProfileDto(),
+            new TesterAuthorisationViewModel(1,
+                new TesterAuthorisation(),
+                XMock::of(MotAuthorisationServiceInterface::class)
+            ),
+            $catalogService,
+            false
+        );
+        $this->assertEquals('user-admin/user-profile/unrestricted-profile.phtml', $this->presenter->getTemplate());
+    }
+
+    /**
+     * Generates a mock array of the catalog Site and Organisation response
+     * @return array
+     */
+    private function buildSiteAndOrganisationCatalog()
+    {
+        return [
+                [
+                    'id' => 1,
+                    'code' => 'AEDM',
+                    'name' => 'Authorised Examiner Designated Manager',
+                ],
+                [
+                    'id' => 1,
+                    'code' => 'TESTER',
+                    'name' => 'Tester',
+                ],
         ];
-        $this->assertEquals($roles, $presenter->getSiteAndOrganisationRoles());
-        $this->assertEquals(UserProfilePresenter::DVSA_PROFILE_TEMPLATE, $presenter->getTemplate());
     }
 
-    public function testGetTemplateWhenDefaultSettingsShouldReturnUnrestrictedProfile()
+    private function buildPersonHelpDeskProfileDto()
     {
-        $presenter = UserProfilePresenterBuilder::of($this)->build();
+        $address = (new AddressDto())
+            ->setAddressLine1('Address line 1')
+            ->setAddressLine2('Address line 2')
+            ->setAddressLine3('Address line 3')
+            ->setAddressLine4('Address line 4')
+            ->setTown('Bristol')
+            ->setPostcode('Postcode');
 
-        $this->assertEquals(UserProfilePresenter::UNRESTRICTED_PROFILE_TEMPLATE, $presenter->getTemplate());
-    }
+        $roles = [
+            'system' => [
+                'roles' => ['AE']
+            ],
+            'organisations' => [
+                [
+                    'roles' => ['AEDM']
+                ]
+            ],
+            'sites' => [
+                [
+                    'roles' => ['TESTER']
+                ]
+            ],
+        ];
 
-    public function testGetTemplateWhenIsDvsaUserShouldReturnUnrestrictedDvsaProfile()
-    {
-        $presenter = UserProfilePresenterBuilder::of($this)->isDvsaUser()->build();
-
-        $this->assertEquals(UserProfilePresenter::DVSA_PROFILE_TEMPLATE, $presenter->getTemplate());
-    }
-
-    public function testCanDisplayDvsaRoleSectionWhenNoRolesShouldReturnTrue()
-    {
-        $presenter = UserProfilePresenterBuilder::of($this)->noTradeRoles()->noDvsaRoles()
-            ->userHasPermissionToReadDvsaRoles()->build();
-
-        $this->assertTrue($presenter->canDisplayDvsaRoleSection());
-    }
-
-    public function testCanDisplayDvsaRoleSectionWhenTradeRolesAssignedShouldReturnFalse()
-    {
-        $presenter = UserProfilePresenterBuilder::of($this)->withTradeRoles()->noDvsaRoles()
-            ->userHasPermissionToReadDvsaRoles()->build();
-
-        $this->assertFalse($presenter->canDisplayDvsaRoleSection());
-    }
-
-    public function testCanDisplayDvsaRoleSectionWhenDvsaRolesAssignedShouldReturnTrue()
-    {
-        $presenter = UserProfilePresenterBuilder::of($this)->noTradeRoles()->withDvsaRoles()
-            ->userHasPermissionToReadDvsaRoles()->build();
-
-        $this->assertTrue($presenter->canDisplayDvsaRoleSection());
-    }
-
-    public function testCanDisplayDvsaRoleSectionWhenTradeRolesAndDvsaRolesAssignedShouldReturnTrue()
-    {
-        $presenter = UserProfilePresenterBuilder::of($this)->withTradeRoles()->withDvsaRoles()
-            ->userHasPermissionToReadDvsaRoles()->build();
-
-        $this->assertTrue($presenter->canDisplayDvsaRoleSection());
-    }
-
-    public function testIsManagingOwnRolesShouldReturnTrue()
-    {
-        $presenter = UserProfilePresenterBuilder::of($this)->userIsViewingHisOwnProfilePage(false)->build();
-
-        $this->assertTrue($presenter->isManagingOwnRoles());
-    }
-
-    public function testIsManagingOwnRolesWhenUserSeesHisOwnProfileShouldReturnFalse()
-    {
-        $presenter = UserProfilePresenterBuilder::of($this)->userIsViewingHisOwnProfilePage(true)->build();
-
-        $this->assertFalse($presenter->isManagingOwnRoles());
-    }
-
-    public function testCanManageDvsaRolesWhenUserHasPermissionToManageDvsaRolesShouldReturnTrue()
-    {
-        $presenter = UserProfilePresenterBuilder::of($this)->userHasManageDvsaRolesPermission()->build();
-
-        $this->assertTrue($presenter->canManageDvsaRoles());
-    }
-
-    public function testCanManageDvsaRolesWhenUserHasNotPermissionToManageDvsaRolesShouldReturnFalse()
-    {
-        $presenter = UserProfilePresenterBuilder::of($this)->userHasManageDvsaRolesPermission(false)->build();
-
-        $this->assertFalse($presenter->canManageDvsaRoles());
-    }
-
-    public function testHasDvsaRolesWhenUserHasDvsaRolesShouldReturnTrue()
-    {
-        $presenter = UserProfilePresenterBuilder::of($this)->withDvsaRoles()->build();
-
-        $this->assertTrue($presenter->hasDvsaRoles());
-    }
-
-    public function testCanReadDvsaRolesWhenUserHasPermissionShouldReturnTrue()
-    {
-        $presenter = UserProfilePresenterBuilder::of($this)->userHasPermissionToReadDvsaRoles()->build();
-
-        $this->assertTrue($presenter->canReadDvsaRoles());
-    }
-
-    public function testCanReadDvsaRolesWhenUserHasNotPermissionShouldReturnFalse()
-    {
-        $presenter = UserProfilePresenterBuilder::of($this)->userHasPermissionToReadDvsaRoles(false)->build();
-
-        $this->assertFalse($presenter->canReadDvsaRoles());
+        return (new PersonHelpDeskProfileDto())
+            ->setRoles($roles)
+            ->setUserName('Username')
+            ->setDrivingLicenceNumber('drivingLicenceNumber')
+            ->setTitle('Mrs')
+            ->setFirstName('Harriet')
+            ->setLastName('Jones')
+            ->setDateOfBirth('1992-05-29')
+            ->setAddress($address)
+            ->setEmail('dummy@email.com')
+            ->setTelephone('+768-45-4433630');
     }
 }

@@ -18,7 +18,6 @@ use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\Entity\Message;
 use DvsaEntities\Entity\MessageType;
 use DvsaEntities\Entity\Person;
-use MailerApi\Logic\AbstractMailerLogic;
 use MailerApi\Logic\PasswordReminder;
 use MailerApi\Service\MailerService;
 use Zend\Authentication\AuthenticationService;
@@ -115,7 +114,7 @@ class TokenService extends AbstractService
 
         //  --  Mailer Service  --
         $this->mailerService = $mailerService;
-        $this->mailerConfig = $config[AbstractMailerLogic::CONFIG_KEY];
+        $this->mailerConfig = $config[self::CFG_MAILER];
         $this->helpdeskConfig = $config[self::CFG_HELPDESK];
 
         //  --  config  --
@@ -308,7 +307,7 @@ class TokenService extends AbstractService
 
         $appUrl = ArrayUtils::tryGet(
             $this->mailerConfig,
-            AbstractMailerLogic::CONFIG_KEY_BASE_URL
+            self::CONFIG_KEY_MOT_WEB_FRONTEND_URL
         );
 
         return $appUrl . AccountUrlBuilderWeb::resetPasswordByToken($token);

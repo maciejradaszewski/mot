@@ -13,9 +13,6 @@ class AuthorisedExaminerUrlBuilderWebTest extends \PHPUnit_Framework_TestCase
 {
     const AE_ID = 1;
     const AE_NUMBER = 'A12345';
-    const SITE_NR = 'S00001';
-    const PRINCIPAL_ID = 6666;
-    const AE_SITE_LINK_ID = 999999;
 
     public function test()
     {
@@ -25,11 +22,8 @@ class AuthorisedExaminerUrlBuilderWebTest extends \PHPUnit_Framework_TestCase
         $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::create(), '/authorised-examiner/create');
         $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::createConfirm(), '/authorised-examiner/create/confirmation');
 
-        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::aeEditStatus(self::AE_ID), $base . '/edit-status');
-        $this->checkUrl(
-            AuthorisedExaminerUrlBuilderWeb::aeEditStatusConfirm(self::AE_ID),
-            $base . '/edit-status/confirmation'
-        );
+        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::aeEditStatus(self::AE_ID), '/authorised-examiner/1/edit-status');
+        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::aeEditStatusConfirm(self::AE_ID), '/authorised-examiner/1/edit-status/confirmation');
 
         $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->aeSearch(), $base . '/search');
         $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::aeEdit(self::AE_ID), $base . '/edit');
@@ -44,15 +38,10 @@ class AuthorisedExaminerUrlBuilderWebTest extends \PHPUnit_Framework_TestCase
         $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::roles(self::AE_ID), $base . '/roles');
         $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::principals(self::AE_ID), $base . '/principals');
         $this->checkUrl(
-            AuthorisedExaminerUrlBuilderWeb::principalRemove(self::AE_ID, self::PRINCIPAL_ID),
-            $base . '/' . self::PRINCIPAL_ID . '/remove-principal-confirmation'
+            AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID)->principalRemove(8888),
+            $base . '/8888/remove-principal-confirmation'
         );
 
-        $this->checkUrl(AuthorisedExaminerUrlBuilderWeb::siteLink(self::AE_ID), $base . '/site/link');
-        $this->checkUrl(
-            AuthorisedExaminerUrlBuilderWeb::siteUnlink(self::AE_ID, self::AE_SITE_LINK_ID),
-            $base . '/site/unlink/' . self::AE_SITE_LINK_ID
-        );
     }
 
     private function checkUrl(AuthorisedExaminerUrlBuilderWeb $urlBuilder, $expectUrl)

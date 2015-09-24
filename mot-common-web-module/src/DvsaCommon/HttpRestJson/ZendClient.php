@@ -439,8 +439,7 @@ class ZendClient implements Client
                     }
                 // always throws
                 case 404:
-                    $errMsg = (empty($errors) ? null : $errors[0]['message']);
-                    throw new NotFoundException($resourcePath, $method, $data, $statusCode, $errMsg);
+                    throw new NotFoundException($resourcePath, $method, $data, $statusCode);
 
                 case HttpStatus::HTTP_UNPROCESSABLE_ENTITY: // 422
                     // Error caused by a failed validation pass.
@@ -451,7 +450,7 @@ class ZendClient implements Client
                 default:
                     $errMsg = [];
                     foreach ($errors as $err) {
-                        $errMsg[] = $err['message'];
+                        $errMsg[] = (!empty($err['code']) ? $err['code'] . ', ' : '') . $err['message'];
                     }
 
                     throw new GeneralRestException(

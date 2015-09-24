@@ -14,7 +14,6 @@ use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Entity\OrganisationContactType;
 use DvsaEntities\Entity\OrganisationType;
 use DvsaEntities\Entity\Person;
-use DvsaEntities\Entity\Site;
 use DvsaEventApi\Service\EventService;
 use OrganisationApi\Service\AuthorisedExaminerService;
 use OrganisationApi\Service\Mapper\OrganisationMapper;
@@ -51,8 +50,7 @@ class AuthorisedExaminerServiceFactory implements FactoryInterface
             $serviceLocator->get(XssFilter::class),
             $entityManager->getRepository(AuthorisationForAuthorisedExaminer::class),
             new AuthorisedExaminerValidator(),
-            new DateTimeHolder(),
-            $entityManager->getRepository(Site::class)
+            new DateTimeHolder()
         );
     }
 }

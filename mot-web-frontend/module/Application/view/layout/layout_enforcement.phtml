@@ -70,8 +70,8 @@ if ($this->authorisationHelper()->hasRole(\DvsaCommon\Constants\Role::USER)) {
                 /** @var $vts \Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation */
                 $vts = $this->identityHelper()->getCurrentVts(); ?>
                 <?php if (null !== $vts) : ?>
-                    <span><?php echo $this->escapeHtml($vts->getName()); ?></span>,
-                    <span><?php echo $this->escapeHtml($vts->getAddress()); ?></span>
+                    <span><?php echo $vts->getName(); ?></span>,
+                    <span><?php echo $vts->getAddress(); ?></span>
                     <?php echo $this->locationSelector(); ?>
                 <?php endif; ?>
             </p>

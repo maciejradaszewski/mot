@@ -1,8 +1,9 @@
 package uk.gov.dvsa.ui.feature.journey;
 
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.User;
+import uk.gov.dvsa.helper.CompanyDetailsHelper;
 import uk.gov.dvsa.helper.ContactDetailsHelper;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.AreaOfficerAuthorisedExaminerViewPage;
@@ -17,6 +18,12 @@ import static org.hamcrest.core.Is.is;
 
 public class AuthorisedExaminerTest extends BaseTest {
 
+    @BeforeMethod(alwaysRun = true)
+    public void setup() {
+        CompanyDetailsHelper.setCompanyDetails();
+        ContactDetailsHelper.setContactDetails();
+    }
+
     @Test(groups = {"FeatureToggleCreateAe"}) public void createAuthorisedExaminerSuccessfully()
             throws IOException, URISyntaxException {
 
@@ -26,12 +33,11 @@ public class AuthorisedExaminerTest extends BaseTest {
         CreateAePage createAePage = pageNavigator.gotoCreateAePage(areaOffice1User);
 
         //When I Create an AE using valid business details as correspondence details
-        AeDetails aeDetails = new AeDetails();
         AreaOfficerAuthorisedExaminerViewPage examinerViewPage =
-                createAePage.completeBusinessAndCorrespondenceDetails(aeDetails, false).create();
+                createAePage.completeBusinessAndCorrespondenceDetails(false).create();
 
         //Then the new AE is created with the data provided
-        assertThat(examinerViewPage.verifyNewAeCreated(aeDetails), is(true));
+        assertThat(examinerViewPage.verifyNewAeCreated(), is(true));
     }
 
     @Test(groups = {"FeatureToggleCreateAe"}) public void verifyConfirmAeDetailsPage()
@@ -42,13 +48,12 @@ public class AuthorisedExaminerTest extends BaseTest {
         CreateAePage createAePage = pageNavigator.gotoCreateAePage(areaOffice1User);
 
         //When the the user has entered valid data and clicks the Continue to Summary button
-        AeDetails aeDetails = new AeDetails();
         ConfirmNewAeDetailsPage confirmNewAeDetailsPage =
-                createAePage.completeBusinessAndCorrespondenceDetails(aeDetails, false)
+                createAePage.completeBusinessAndCorrespondenceDetails(false)
                         .clickContinueToSummary();
 
         //Then the data entered is displayed on the confirmation screen
-        confirmNewAeDetailsPage.verifyNewAeDetailsOnConfirmationPage(aeDetails, false);
+        confirmNewAeDetailsPage.verifyNewAeDetailsOnConfirmationPage(false);
     }
 
     @Test(groups = {"FeatureToggleCreateAe"}) public void verifyRegEmailAddressFields()
@@ -59,7 +64,7 @@ public class AuthorisedExaminerTest extends BaseTest {
         CreateAePage createAePage = pageNavigator.gotoCreateAePage(areaOffice1User);
 
         //When the user enters email address and selects 'Email address not provided' option
-        createAePage.enterBusinessEmail(ContactDetailsHelper.getEmail())
+        createAePage.enterBusinessEmail(ContactDetailsHelper.email)
                 .selectBusinessEmailNotProvidedOption();
 
         //Then the email address fields should be empty
@@ -74,9 +79,8 @@ public class AuthorisedExaminerTest extends BaseTest {
         CreateAePage createAePage = pageNavigator.gotoCreateAePage(areaOffice1User);
 
         //When the user enters email address and selects 'Email address not provided' option
-        AeDetails aeDetails = new AeDetails();
         createAePage.selectBusinessDetailsSameAsCorrespondenceDetails(false)
-                .enterCorrespondenceAddress(aeDetails).selectCorrespondenceEmailNotProvided();
+                .enterCorrespondenceAddress().selectCorrespondenceEmailNotProvided();
 
         //Then the email address fields should be empty
         assertThat(createAePage.isCorrespondenceEmailFieldsEmpty(), is(true));

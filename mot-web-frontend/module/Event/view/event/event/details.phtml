@@ -7,54 +7,50 @@ use DvsaCommon\Date\DateTimeDisplayFormat;
  */
 
 ?>
+<div class="row">
+    <div class="col-lg-12">
+        <h1>
+            <small><?php echo $this->escapeHtml($viewModel->getTitle()); ?></small>
+            <span><?php echo $this->escapeHtml($viewModel->getName()); ?></span>
+        </h1>
+        <hr class="hr-thick"/>
+    </div>
+</div>
 <?php
     echo $this->partial('errorMessages', ['getFromFlash' => true, 'isShowHidden' => true]);
     echo $this->partial('infoMessages', ['getFromFlash' => true]);
 ?>
-<table class="key-value-list">
-    <tbody>
-        <tr>
-            <th class="key-value-list__key">Event type</th>
-            <td class="key-value-list__value"><?php echo $this->escapeHtml($viewModel->getEvent()->getType()); ?></td>
-        </tr>
-        <tr>
-            <th class="key-value-list__key">Description</th>
-            <td class="key-value-list__value">
+<div class="row contents">
+    <div class="col-lg-12">
 
-                <?php
-                    $outcome = $this->escapeHtml($viewModel->getEvent()->getEventOutcomeDescription());
-                    $notes = $this->escapeHtml($viewModel->getEvent()->getDescription());
-                ?>
-               <?php
-                    if($outcome!= '') {
-                        echo'<strong>'.$outcome.'<strong>'. '<span class="key-value-list__meta">'.$notes.'</span>';
+        <div class="row module-present-data">
+            <div class="col-sm-4">
+                <h3>Event details</h3>
+            </div>
 
-                    } else {
-                        echo $notes;
-                    }
-                ?>
-            </td>
-        </tr>
-        <tr>
-            <th class="key-value-list__key">Added by</th>
-            <td class="key-value-list__value">
-                <?php echo $this->escapeHtml($viewModel->getEvent()->getAddedByName()); ?>
-            </td>
-        </tr>
-        <tr>
-            <th class="key-value-list__key">Event date</th>
-            <td class="key-value-list__value">
-                <?php echo $this->escapeHtml(DateTimeDisplayFormat::textDate($viewModel->getEvent()->getDate())); ?>
-            </td>
-        </tr>
-    </tbody>
-</table>
+            <dl class="vertical col-sm-4 " >
+                <dt >Event type</dt>
+                <dd  id="event-type"><?php echo $this->escapeHtml($viewModel->getEvent()->getType()); ?></dd>
+            </dl>
 
-<nav class="content-navigation">
+            <dl class="vertical col-sm-4" >
+                <dt >Event date</dt>
+                <dd  id="event-date"><?php echo $this->escapeHtml(DateTimeDisplayFormat::textDateTimeShort($viewModel->getEvent()->getDate())); ?></dd>
+            </dl>
+        </div>
+        <div class="row module-present-data">
+            <dl class="vertical col-sm-8 col-sm-offset-4" >
+                <dt >Description</dt>
+                <dd  id="description"><?php echo $this->escapeHtml($viewModel->getEvent()->getDescription()); ?></dd>
+            </dl>
+        </div>
 
-    <ul class="content-navigation__secondary">
-        <li><a href="<?php echo $viewModel->getGoBackLink(); ?>">Go back</a></li>
-    </ul>
+        <hr class="hr-thin"/>
 
-</nav>
-
+        <div class="row btn-bar">
+            <div class="col-lg-12 btn-bar">
+                <a href="<?php echo $viewModel->getGoBackLink(); ?>">Go back</a>
+            </div>
+        </div>
+    </div>
+</div>

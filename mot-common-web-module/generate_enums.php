@@ -46,7 +46,6 @@ $inputArray = [
     enum('OrganisationContactTypeCode', 'organisation_contact_type', 'name', 'code'),
     enum('PersonAuthType', 'person_auth_type_lookup', 'name', 'code'),
     enum('PhoneContactTypeCode', 'phone_contact_type', 'name', 'code'),
-    enum('PersonContactTypeCode', 'person_contact_type', 'name', 'code'),
     enum('SiteBusinessRoleCode', 'site_business_role', 'name', 'code'),
     enum('SiteContactTypeCode', 'site_contact_type', 'name', 'code'),
     enum('SiteTypeCode', 'site_type', 'name', 'code'),
@@ -55,25 +54,16 @@ $inputArray = [
     enum('VehicleClassCode', 'vehicle_class', 'name', 'code', 'CLASS_'),
     enum('VehicleClassGroupCode', 'vehicle_class_group', 'name', 'code'),
     enum('WeightSourceCode', 'weight_source_lookup', 'name', 'code'),
-    enum('MotTestStatusId', 'mot_test_status', 'name', 'id'),
-    enum('OrganisationSiteStatusCode', 'organisation_site_status', 'name', 'code'),
-    enum('MotTestStatusCode', 'mot_test_status', 'name', 'code'),
 
     // Site Statuses
     enum('SiteStatusCode', 'site_status_lookup', 'name', 'code'),
 
     // Enums which has values that are database names, ideally usages of these would be replaced with the 'code' column.
     enum('EventTypeName', 'event_type_lookup', 'name', 'name'),
-    enum('EventOutcomeCode', 'event_outcome_lookup', 'code', 'code'),
-    enum('EventOutcomeName', 'event_outcome_lookup', 'code', 'name'),
-    enum('EventCategoryCode', 'event_category_lookup', 'name', 'code'),
-    enum('EventCategoryName', 'event_category_lookup', 'name', 'name'),
     enum('CompanyTypeName', 'company_type', 'name', 'name'),
     enum('CompanyTypeCode', 'company_type', 'name', 'code'),
     enum('MotTestStatusName', 'mot_test_status', 'name', 'name'),
-    enum('BusinessRoleName', 'person_system_role', 'name', 'name'),
     enum('ReasonForRejectionTypeName', 'reason_for_rejection_type', 'name', 'name'),
-    enum('OrganisationSiteStatusName', 'organisation_site_status', 'name', 'name'),
 
     // Enums which has values that are database IDs, ideally usages of these would be replaced with the 'code' column.
     enum('CountryOfRegistrationId', 'country_of_registration_lookup', 'name', 'id'),

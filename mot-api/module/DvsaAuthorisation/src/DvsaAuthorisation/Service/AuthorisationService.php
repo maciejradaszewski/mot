@@ -3,7 +3,6 @@
 namespace DvsaAuthorisation\Service;
 
 use DvsaCommon\Auth\AbstractMotAuthorisationService;
-use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\Role;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\Model\PersonAuthorization;
@@ -149,12 +148,12 @@ class AuthorisationService extends AbstractMotAuthorisationService implements Au
 
         if ($this->personIdHasRole($personId, Role::TESTER_ACTIVE)) {
             return self::HERO_TESTER;
-        } else {
-            if ($this->personIdHasRole($personId, Role::TESTER_APPLICANT_INITIAL_TRAINING_REQUIRED)
-                || $this->personIdHasRole($personId, Role::TESTER_APPLICANT_DEMO_TEST_REQUIRED)
-            ) {
-                return self::HERO_TESTER_APPLICANT;
-            }
+        }
+
+        if ($this->personIdHasRole($personId, Role::TESTER_APPLICANT_INITIAL_TRAINING_REQUIRED)
+            || $this->personIdHasRole($personId, Role::TESTER_APPLICANT_DEMO_TEST_REQUIRED)
+        ) {
+            return self::HERO_TESTER_APPLICANT;
         }
 
         if ($personAuthorisation->isVe()) {

@@ -40,40 +40,15 @@ class AuthorisedExaminerValidatorTest extends \PHPUnit_Framework_TestCase
             $this->setExpectedException(BadRequestException::class, 'Validation errors encountered');
         }
 
-        $this->validator->validate($organisation, $this->fakedAreaOfficeList());
-    }
-
-    protected function fakedAreaOfficeList()
-    {
-        return [
-            [
-                "id" => "3000",
-                "name" => "Area Office 01",
-                "siteNumber" => "01FOO",
-                "areaOfficeNumber" => "01"
-            ],
-            [
-                "id" => "3001",
-                "name" => "Area Office 02",
-                "siteNumber" => "02BAR",
-                "areaOfficeNumber" => "02"
-            ]
-        ];
+        $this->validator->validate($organisation);
     }
 
     public function dataProviderTestValidator()
     {
-        $authForAeDto = new AuthorisedExaminerAuthorisationDto();
-        $authForAeDto->setAssignedAreaOffice(1);
-
-        $invalidAuthForAeDto = new AuthorisedExaminerAuthorisationDto();
-        $invalidAuthForAeDto->setAssignedAreaOffice(999);
-
         return [
             // no errors
             [
                 'organisation' => (new OrganisationDto())
-                    ->setAuthorisedExaminerAuthorisation($authForAeDto)
                     ->setContacts(
                         [
                             (new OrganisationContactDto())
@@ -93,7 +68,6 @@ class AuthorisedExaminerValidatorTest extends \PHPUnit_Framework_TestCase
             // Valid No Email
             [
                 'organisation' => (new OrganisationDto())
-                    ->setAuthorisedExaminerAuthorisation($authForAeDto)
                     ->setContacts(
                         [
                             (new OrganisationContactDto())
@@ -113,7 +87,6 @@ class AuthorisedExaminerValidatorTest extends \PHPUnit_Framework_TestCase
             // Error no Name
             [
                 'organisation' => (new OrganisationDto())
-                    ->setAuthorisedExaminerAuthorisation($authForAeDto)
                     ->setContacts(
                         [
                             (new OrganisationContactDto())
@@ -133,7 +106,6 @@ class AuthorisedExaminerValidatorTest extends \PHPUnit_Framework_TestCase
             // Error no Type
             [
                 'organisation' => (new OrganisationDto())
-                    ->setAuthorisedExaminerAuthorisation($authForAeDto)
                     ->setContacts(
                         [
                             (new OrganisationContactDto())
@@ -153,7 +125,6 @@ class AuthorisedExaminerValidatorTest extends \PHPUnit_Framework_TestCase
             // Error no Address
             [
                 'organisation' => (new OrganisationDto())
-                    ->setAuthorisedExaminerAuthorisation($authForAeDto)
                     ->setContacts(
                         [
                             (new OrganisationContactDto())
@@ -169,7 +140,6 @@ class AuthorisedExaminerValidatorTest extends \PHPUnit_Framework_TestCase
             // Error no Telephone
             [
                 'organisation' => (new OrganisationDto())
-                    ->setAuthorisedExaminerAuthorisation($authForAeDto)
                     ->setContacts(
                         [
                             (new OrganisationContactDto())
@@ -189,7 +159,6 @@ class AuthorisedExaminerValidatorTest extends \PHPUnit_Framework_TestCase
             // Error email invalid
             [
                 'organisation' => (new OrganisationDto())
-                    ->setAuthorisedExaminerAuthorisation($authForAeDto)
                     ->setContacts(
                         [
                             (new OrganisationContactDto())
@@ -210,50 +179,6 @@ class AuthorisedExaminerValidatorTest extends \PHPUnit_Framework_TestCase
             // Error Company Registration Number Required
             [
                 'organisation' => (new OrganisationDto())
-                    ->setAuthorisedExaminerAuthorisation($authForAeDto)
-                    ->setContacts(
-                        [
-                            (new OrganisationContactDto())
-                                ->setAddress(
-                                    (new AddressDto())
-                                        ->setAddressLine1('AddressLine1')
-                                        ->setTown('Town')
-                                        ->setPostcode('Postcode')
-                                )
-                                ->setEmails([(new EmailDto())->setIsPrimary(true)->setEmail('invalidEmail')])
-                                ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
-                        ]
-                    )
-                    ->setName(self::AE_NAME)
-                    ->setCompanyType(CompanyTypeCode::COMPANY)
-                    ->setRegisteredCompanyNumber(''),
-                'errors' => true,
-            ],
-            // Area Office number required
-            [
-                'organisation' => (new OrganisationDto())
-                    ->setContacts(
-                        [
-                            (new OrganisationContactDto())
-                                ->setAddress(
-                                    (new AddressDto())
-                                        ->setAddressLine1('AddressLine1')
-                                        ->setTown('Town')
-                                        ->setPostcode('Postcode')
-                                )
-                                ->setEmails([(new EmailDto())->setIsPrimary(true)->setEmail('invalidEmail')])
-                                ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
-                        ]
-                    )
-                    ->setName(self::AE_NAME)
-                    ->setCompanyType(CompanyTypeCode::COMPANY)
-                    ->setRegisteredCompanyNumber(''),
-                'errors' => true,
-            ],
-            // A *valid* Area Office number required
-            [
-                'organisation' => (new OrganisationDto())
-                    ->setAuthorisedExaminerAuthorisation($invalidAuthForAeDto)
                     ->setContacts(
                         [
                             (new OrganisationContactDto())
@@ -285,7 +210,6 @@ class AuthorisedExaminerValidatorTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->validator->validateStatus($ae);
-        $this->validator->failOnErrors();
     }
 
     public function dataProviderTestStatusValidator()

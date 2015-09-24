@@ -1,21 +1,18 @@
 <?php
-/**
- * This file is part of the DVSA MOT Frontend project.
- *
- * @link http://gitlab.clb.npm/mot/mot
- */
 
 namespace Event\ViewModel\Event;
 
-use DvsaClient\Entity\Person;
 use DvsaCommon\Dto\Event\EventDto;
 use DvsaCommon\Dto\Event\EventFormDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaClient\Entity\Person;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
+use DvsaCommon\Utility\ArrayUtils;
 
 /**
- * Class EventDetailViewModel.
+ * Class EventDetailViewModel
+ * @package Event\ViewModel\Event
  */
 class EventDetailViewModel
 {
@@ -33,11 +30,11 @@ class EventDetailViewModel
     private $formModel;
 
     /**
-     * @param OrganisationDto          $organisation
-     * @param VehicleTestingStationDto $site
-     * @param Person                   $person
-     * @param string                   $eventType
-     * @param EventDto                 $event
+     * @param OrganisationDto           $organisation
+     * @param VehicleTestingStationDto  $site
+     * @param Person                    $person
+     * @param string                    $eventType
+     * @param EventDto                  $event
      */
     public function __construct(
         $organisation,
@@ -57,7 +54,7 @@ class EventDetailViewModel
     }
 
     /**
-     * This function return the good value for the go back link of the Event list.
+     * This function return the good value for the go back link of the Event list
      *
      * @return string
      */
@@ -78,19 +75,16 @@ class EventDetailViewModel
                     $this->person->getId(), $this->getEventType()
                 )->toString() . '?' . http_build_query($this->formModel->toArray());
         }
-
         return '';
     }
 
     /**
      * @param OrganisationDto $organisation
-     *
      * @return $this
      */
     public function setOrganisation($organisation)
     {
         $this->organisation = $organisation;
-
         return $this;
     }
 
@@ -112,13 +106,11 @@ class EventDetailViewModel
 
     /**
      * @param VehicleTestingStationDto $site
-     *
      * @return $this
      */
     public function setSite($site)
     {
         $this->site = $site;
-
         return $this;
     }
 
@@ -132,13 +124,11 @@ class EventDetailViewModel
 
     /**
      * @param Person $person
-     *
      * @return $this
      */
     public function setPerson($person)
     {
         $this->person = $person;
-
         return $this;
     }
 
@@ -152,13 +142,11 @@ class EventDetailViewModel
 
     /**
      * @param mixed $eventType
-     *
      * @return $this
      */
     public function setEventType($eventType)
     {
         $this->eventType = $eventType;
-
         return $this;
     }
 
@@ -172,13 +160,11 @@ class EventDetailViewModel
 
     /**
      * @param EventDto $event
-     *
      * @return $this
      */
     public function setEvent($event)
     {
         $this->event = $event;
-
         return $this;
     }
 
@@ -192,13 +178,11 @@ class EventDetailViewModel
 
     /**
      * @param EventFormDto $formModel
-     *
      * @return $this
      */
     public function setFormModel($formModel)
     {
         $this->formModel = $formModel;
-
         return $this;
     }
 
@@ -206,13 +190,12 @@ class EventDetailViewModel
     {
         switch ($this->eventType) {
             case 'ae':
-                return 'AE Event for';
+                return 'Full Details of AE Event selected for';
             case 'site':
-                return 'Site Event for';
+                return 'Full Details of Site Event selected for';
             case 'person':
-                return 'Person Event for';
+                return 'Full Details of Person Event selected for';
         }
-
         return '';
     }
 
@@ -238,7 +221,6 @@ class EventDetailViewModel
                     $this->person->getFullName()
                 );
         }
-
         return '';
     }
 }

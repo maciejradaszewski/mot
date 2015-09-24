@@ -3,7 +3,6 @@
 namespace DashboardTest\Data;
 
 use Dashboard\Data\ApiDashboardResource;
-use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Enum\OrganisationBusinessRoleCode;
 use DvsaCommon\HttpRestJson\Client;
 
@@ -96,9 +95,8 @@ class ApiDashboardResourceTest extends \PHPUnit_Framework_TestCase
             ],
             'notifications'       => [],
             'sites'               => [],
-            'inProgressTestNumber' => '123456789012',
-            'inProgressDemoTestNumber' => '210987654321',
-            'inProgressTestTypeCode' => MotTestTypeCode::NORMAL_TEST
+            'inProgressTestNumber'   => '123456789012',
+            'inProgressTestTypeCode' => 'NT'
         ];
     }
 }

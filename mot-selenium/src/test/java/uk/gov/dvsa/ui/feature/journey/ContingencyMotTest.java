@@ -61,7 +61,7 @@ public class ContingencyMotTest extends BaseTest {
 
         TestCompletePage testCompletePage = testSummaryPage.finishTestAndPrint();
 
-        assertThat(testCompletePage.verifyBackToHomeLinkDisplayed(), is(true));
+        assertThat(testCompletePage.verifyPrintButtonDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "VM-4825,Sprint05,VM-9444 Regression"})

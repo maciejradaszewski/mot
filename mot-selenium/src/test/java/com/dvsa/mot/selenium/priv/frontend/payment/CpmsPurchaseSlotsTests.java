@@ -70,6 +70,19 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 authorisedExaminerOverviewPage.isSlotsAdjustmentLinkVisible(), is(false));
     }
 
+    @Test(groups = {"Regression", "SPMS-88"}) public void purchaseSlotsUserCancelsPaymentTest() {
+        Login aedmLogin = createAedmAndReturnAedmLogin("UserCancelsPayment");
+        BuySlotsPage buySlotsPage = AuthorisedExaminerOverviewPage
+                .navigateHereFromLoginPage(driver, aedmLogin)
+                .clickBuySlotsLink().enterSlotsRequired(Payments.VALID_PAYMENTS.slots)
+                .clickCalculateCostButton().clickPayByCardButton().clickCancelButton();
+
+        assertThat("Verifying RequiredSlots field present", buySlotsPage.isSlotsRequiredVisible(),
+                is(true));
+        assertThat("Verifying CalculateCost button present",
+                buySlotsPage.isCalculateCostButtonVisible(), is(true));
+    }
+
     @Test(groups = {"Regression", "SPMS-47"}) public void transactionHistoryVerificationTest() {
         PaymentConfirmationPage paymentConfirmationPage = loginAsAedmAndPurchaseSlotsByCard();
 

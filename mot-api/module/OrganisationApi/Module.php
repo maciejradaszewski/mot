@@ -21,12 +21,7 @@ use OrganisationApi\Service\OrganisationPositionService;
 use OrganisationApi\Service\OrganisationRoleService;
 use OrganisationApi\Service\OrganisationService;
 use OrganisationApi\Service\OrganisationSlotUsageService;
-use OrganisationApi\Service\SiteLinkService;
 use OrganisationApi\Service\SiteService;
-use OrganisationApi\Service\OrganisationEventService;
-use OrganisationApi\Factory\Service\OrganisationEventServiceFactory;
-use OrganisationApi\Factory\Service as ServiceX;
-use OrganisationApi\Factory\Model as ModelX;
 
 /**
  * Class Module
@@ -48,29 +43,25 @@ class Module
     {
         return [
             'factories'  => [
-                Hydrator::class                           => \OrganisationApi\Factory\HydratorFactory::class,
-                OrganisationService::class                => ServiceX\OrganisationServiceFactory::class,
-                AddressService::class                     => ServiceX\AddressServiceFactory::class,
-                ContactDetailsService::class              => ServiceX\ContactDetailsServiceFactory::class,
-                AuthorisedExaminerService::class          => ServiceX\AuthorisedExaminerServiceFactory::class,
-                AuthorisedExaminerSearchService::class    => ServiceX\AuthorisedExaminerSearchServiceFactory::class,
-                AuthorisedExaminerPrincipalService::class => ServiceX\AuthorisedExaminerPrincipalServiceFactory::class,
-                AuthorisedExaminerSlotService::class      => ServiceX\AuthorisedExaminerSlotServiceFactory::class,
-                AuthorisedExaminerStatusService::class    => ServiceX\AuthorisedExaminerStatusServiceFactory::class,
-                OrganisationPositionService::class        => ServiceX\OrganisationPositionServiceFactory::class,
-                OrganisationSlotUsageService::class       => ServiceX\OrganisationSlotUsageServiceFactory::class,
-                OrganisationRoleService::class            => ServiceX\OrganisationRoleServiceFactory::class,
-                RoleAvailability::class                   => ModelX\RoleAvailabilityFactory::class,
-                NominateRoleService::class                => ServiceX\NominateRoleServiceFactory::class,
-                NominateByRequestOperation::class         => ServiceX\NominateByRequestOperationFactory::class,
-                DirectNominationOperation::class          => ServiceX\DirectNominationOperationFactory::class,
-                OrganisationNominationService::class      => ServiceX\OrganisationNominationServiceFactory::class,
-                NominationVerifier::class                 => ServiceX\NominateVerifierFactory::class,
-                SiteService::class                        => ServiceX\SiteServiceFactory::class,
-                MotTestLogService::class                  => ServiceX\MotTestLogServiceFactory::class,
-                SiteLinkService::class                    => ServiceX\SiteLinkServiceFactory::class,
-                OrganisationEventService::class           => OrganisationEventServiceFactory::class
-
+                Hydrator::class => \OrganisationApi\Factory\HydratorFactory::class,
+                OrganisationService::class => \OrganisationApi\Factory\Service\OrganisationServiceFactory::class,
+                AddressService::class => \OrganisationApi\Factory\Service\AddressServiceFactory::class,
+                ContactDetailsService::class => \OrganisationApi\Factory\Service\ContactDetailsServiceFactory::class,
+                AuthorisedExaminerService::class => \OrganisationApi\Factory\Service\AuthorisedExaminerServiceFactory::class,
+                AuthorisedExaminerStatusService::class => \OrganisationApi\Factory\Service\AuthorisedExaminerStatusServiceFactory::class,
+                AuthorisedExaminerPrincipalService::class => \OrganisationApi\Factory\Service\AuthorisedExaminerPrincipalServiceFactory::class,
+                AuthorisedExaminerSlotService::class => \OrganisationApi\Factory\Service\AuthorisedExaminerSlotServiceFactory::class,
+                OrganisationPositionService::class => \OrganisationApi\Factory\Service\OrganisationPositionServiceFactory::class,
+                OrganisationSlotUsageService::class => \OrganisationApi\Factory\Service\OrganisationSlotUsageServiceFactory::class,
+                OrganisationRoleService::class => \OrganisationApi\Factory\Service\OrganisationRoleServiceFactory::class,
+                RoleAvailability::class => \OrganisationApi\Factory\Model\RoleAvailabilityFactory::class,
+                NominateRoleService::class => \OrganisationApi\Factory\Service\NominateRoleServiceFactory::class,
+                NominateByRequestOperation::class => \OrganisationApi\Factory\Service\NominateByRequestOperationFactory::class,
+                DirectNominationOperation::class => \OrganisationApi\Factory\Service\DirectNominationOperationFactory::class,
+                OrganisationNominationService::class => \OrganisationApi\Factory\Service\OrganisationNominationServiceFactory::class,
+                NominationVerifier::class => \OrganisationApi\Factory\Service\NominateVerifierFactory::class,
+                SiteService::class => \OrganisationApi\Factory\Service\SiteServiceFactory::class,
+                MotTestLogService::class => \OrganisationApi\Factory\Service\MotTestLogServiceFactory::class,
             ],
             'invokables' => [
                 PersonContactMapper::class => PersonContactMapper::class,

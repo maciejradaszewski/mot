@@ -594,10 +594,7 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
     {
         $mapperFactory = XMock::of(MapperFactory::class);
 
-        $this->mockOrgMapper = XMock::of(OrganisationMapper::class, []);
-        $this->mockOrgMapper->expects($this->any())
-            ->method('getAllAreaOffices')
-            ->willReturn($this-> fakedAreaOfficeList());
+        $this->mockOrgMapper = XMock::of(OrganisationMapper::class);
 
         $map = [
             [MapperFactory::ORGANISATION, $this->mockOrgMapper],
@@ -608,24 +605,6 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
             ->will($this->returnValueMap($map));
 
         return $mapperFactory;
-    }
-
-    protected function fakedAreaOfficeList()
-    {
-        return [
-            [
-                "id" => "3000",
-                "name" => "Area Office 01",
-                "siteNumber" => "01FOO",
-                "areaOfficeNumber" => "01"
-            ],
-            [
-                "id" => "3001",
-                "name" => "Area Office 02",
-                "siteNumber" => "02BAR",
-                "areaOfficeNumber" => "02"
-            ]
-        ];
     }
 
     private function getOrganisation()

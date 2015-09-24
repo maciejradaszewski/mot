@@ -2,12 +2,9 @@
 
 namespace OrganisationApi\Service\Mapper;
 
-use DvsaCommon\Date\DateTimeApiFormat;
-use DvsaCommon\Dto\Organisation\OrganisationSiteLinkDto;
 use DvsaCommon\Dto\Site\SiteContactDto;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommonApi\Service\Mapper\AbstractApiMapper;
-use DvsaEntities\Entity\OrganisationSiteMap;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteContact;
 
@@ -50,9 +47,6 @@ class SiteMapper extends AbstractApiMapper
         $contactDtos = $this->mapContacts($site->getContacts());
         $siteDto->setContacts($contactDtos);
 
-        $linkWithAe = $site->getActiveAssociationWithAe();
-        $siteDto->setLinkWithAe($this->mapActiveLinkWithAe($linkWithAe));
-
         return $siteDto;
     }
 
@@ -74,19 +68,5 @@ class SiteMapper extends AbstractApiMapper
         }
 
         return $contactsDtos;
-    }
-
-    private function mapActiveLinkWithAe($linkWithAe)
-    {
-        if (!$linkWithAe instanceof OrganisationSiteMap) {
-            return null;
-        }
-
-        $linkDto = new OrganisationSiteLinkDto();
-        $linkDto
-            ->setId($linkWithAe->getId())
-            ->setStatusChangedOn(DateTimeApiFormat::date($linkWithAe->getStatusChangedOn()));
-
-        return $linkDto;
     }
 }

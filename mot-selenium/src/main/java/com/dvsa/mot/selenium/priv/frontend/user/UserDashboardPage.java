@@ -56,13 +56,11 @@ public class UserDashboardPage extends BasePage {
 
     @FindBy(id = "unread-special-notice-count") private WebElement unReadSpecialNotificationCount;
 
-    @FindBy(id = "action-start-mot-demonstration") private WebElement startMotTrainingMode;
+    //@FindBy(id = "action-start-mot-retest") private WebElement retestPreviousVehicle;
+
+    @FindBy(id = "action-start-mot-training-mode") private WebElement startMotTrainingMode;
 
     @FindBy(id = "action-start-certificate-reissue") private WebElement certificateReIssueLink;
-
-    @FindBy(id = "action-start-mot-demonstration") private WebElement startMotDemonstration;
-
-    @FindBy(id = "action-resume-mot-demonstration") private WebElement resumeMotDemonstration;
 
     @FindBy(id = "action-start-mot-test") private WebElement startMotTestButton;
 
@@ -358,13 +356,8 @@ public class UserDashboardPage extends BasePage {
     }
 
     public VehicleSearchPage startDemoTest() {
-        startMotDemonstration.click();
+        startMotTrainingMode.click();
         return new VehicleSearchPage(driver);
-    }
-
-    public MotTestPage resumeDemoTest() {
-        resumeMotDemonstration.click();
-        return new MotTestPage(driver);
     }
 
     public SiteDetailsPage clickOnSiteLink(Site site) {

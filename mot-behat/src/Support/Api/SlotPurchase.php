@@ -14,8 +14,6 @@ class SlotPurchase extends MotApi
     const END_POINT_ADJUSTMENT_REASON_TYPE = 'slots/amendment-reason/type/%s';
     const END_POINT_REVERSAL               = 'slots/amendment/%s/charge-back';
     const END_POINT_REDIRECTION_DATE       = 'slots/redirection-data';
-    const END_POINT_PAYMENT_REFRESH    = 'slots/payment-refresh/%s';
-    const END_POINT_PAYMENT_DETAILS    = 'slots/report/details/payment/%s';
 
     /**
      * Adjust transaction
@@ -181,42 +179,5 @@ class SlotPurchase extends MotApi
         ];
 
         return $this->sendRequest($token, 'POST', self::END_POINT_REDIRECTION_DATE, $body);
-    }
-
-    /**
-     * @param $token
-     * @return Response
-     */
-    public function getPaymentsToRefresh($token)
-    {
-        return $this->sendRequest($token, 'GET', rtrim(sprintf(self::END_POINT_PAYMENT_REFRESH, ''), '/'));
-    }
-
-    /**
-     * @param $token
-     * @param $receiptReference
-     * @return Response
-     */
-    public function refreshPayment($token, $receiptReference)
-    {
-        return $this->sendRequest(
-            $token,
-            'POST',
-            sprintf(self::END_POINT_PAYMENT_REFRESH, $receiptReference)
-        );
-    }
-
-    /**
-     * @param $token
-     * @param $transactionId
-     * @return Response
-     */
-    public function getPaymentDetails($token, $transactionId)
-    {
-        return $this->sendRequest(
-            $token,
-            'GET',
-            sprintf(self::END_POINT_PAYMENT_DETAILS, $transactionId)
-        );
     }
 }

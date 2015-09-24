@@ -23,10 +23,5 @@ module.exports = function(grunt, config) {
             username:   'vagrant',
             privateKey: getKeyCmd('cd %s && vagrant ssh-config jasper2 | grep IdentityFile | awk \'{print $2}\'')
         });
-        grunt.config('devopenam_config', {
-            host:       '192.168.149.9',
-            username:   'vagrant',
-            privateKey: getKeyCmd('cd %s && vagrant ssh-config devopenam | grep IdentityFile | awk \'{print $2}\'')
-        });
     }
 };

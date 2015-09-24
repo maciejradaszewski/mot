@@ -3,7 +3,6 @@
  * @var \DvsaClient\Entity\Person                    $nominee
  * @var \DvsaCommon\Dto\Organisation\OrganisationDto $authorisedExaminer
  * @var string                                       $roleName
- * @var boolean                                      $displayNotification
  */
 ?>
 
@@ -46,11 +45,9 @@
 
 </div>
 
-<?php if ($displayNotification): ?>
-    <div class="message">
-        <p>A notification will be sent to the user. To make the role active they must accept the role nomination.</p>
-    </div>
-<?php endif; ?>
+<div class="message">
+    <p>A notification will be sent to the user. To make the role active they must accept the role nomination.</p>
+</div>
 
 <form method="POST">
     <nav class="content-navigation">

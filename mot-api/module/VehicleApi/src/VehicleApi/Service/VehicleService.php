@@ -4,7 +4,6 @@ namespace VehicleApi\Service;
 
 use DataCatalogApi\Service\VehicleCatalogService;
 use Doctrine\ORM\EntityRepository;
-use DvsaAuthentication\Service\OtpService;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionInSystem;
@@ -27,6 +26,7 @@ use DvsaEntities\Repository\VehicleRepository;
 use DvsaEntities\Repository\VehicleV5CRepository;
 use DvsaMotApi\Service\CreateMotTestService;
 use DvsaMotApi\Service\MotTestServiceProvider;
+use DvsaAuthentication\Service\OtpService;
 use DvsaMotApi\Service\Validator\VehicleValidator;
 use VehicleApi\Service\Mapper\DvlaVehicleMapper;
 use VehicleApi\Service\Mapper\VehicleMapper;
@@ -162,17 +162,6 @@ class VehicleService
         $motTestData[CreateMotTestService::FIELD_ONE_TIME_PASSWORD] = ArrayUtils::tryGet($data, 'oneTimePassword');
         $motTestData[CreateMotTestService::FIELD_CLIENT_IP] = ArrayUtils::tryGet($data, 'clientIp');
 
-        // Contingency Data
-        $motTestData[CreateMotTestService::FIELD_CONTINGENCY] = ArrayUtils::tryGet(
-            $data,
-            CreateMotTestService::FIELD_CONTINGENCY
-        );
-
-        $motTestData[CreateMotTestService::FIELD_CONTINGENCY_DTO] = ArrayUtils::tryGet(
-            $data,
-            CreateMotTestService::FIELD_CONTINGENCY_DTO
-        );
-
         return $this->motTestServiceProvider->getService()->createMotTest($motTestData);
     }
 
@@ -232,7 +221,7 @@ class VehicleService
         // Logic
         $makeModelName = self::DEFAULT_MAKE_MODEL_NAME;
 
-        $legacyMakeName = $this->vehicleCatalog->getMakeNameByDvlaCode($makeCode);
+        $legacyMakeName  = $this->vehicleCatalog->getMakeNameByDvlaCode($makeCode);
         $legacyModelName = $this->vehicleCatalog->getModelNameByDvlaCode($makeCode, $modelCode);
 
         if (!$dvlaVehicle->getMakeInFull()) {
@@ -243,7 +232,7 @@ class VehicleService
                     $makeName = (!$map->getMake()) ? self::DEFAULT_MAKE_MODEL_NAME : $map->getMake()->getName();
                     $modelName = (!$map->getModel()) ? self::DEFAULT_MAKE_MODEL_NAME : $map->getModel()->getName();
                 } else {
-                    $makeName = $legacyMakeName;
+                    $makeName  = $legacyMakeName;
                     $modelName = $legacyModelName;
                 }
 
@@ -319,12 +308,12 @@ class VehicleService
     }
 
     /**
-     * @param Person $person
+     * @param Person  $person
      * @param Vehicle $vehicle
-     * @param int $vehicleClassCode
-     * @param int $primaryColourCode
-     * @param int $secondaryColourCode
-     * @param string $fuelTypeCode
+     * @param int     $vehicleClassCode
+     * @param int     $primaryColourCode
+     * @param int     $secondaryColourCode
+     * @param string  $fuelTypeCode
      */
     public function logDvlaVehicleImportChanges(
         Person $person,
@@ -350,7 +339,7 @@ class VehicleService
 
     /**
      * @param DvlaVehicle $dvlaVehicle
-     * @param Vehicle $vehicle
+     * @param Vehicle     $vehicle
      */
     private function importWeight(DvlaVehicle $dvlaVehicle, Vehicle $vehicle)
     {

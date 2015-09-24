@@ -2,19 +2,14 @@
 namespace DvsaEntitiesTest\Entity;
 
 use DvsaCommon\Enum\AuthorisationForTestingMotAtSiteStatusCode;
-use DvsaCommon\Enum\OrganisationSiteStatusCode;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
-use DvsaCommonTest\TestUtils\TestCaseTrait;
-use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Address;
 use DvsaEntities\Entity\AuthorisationForAuthorisedExaminer;
 use DvsaEntities\Entity\AuthorisationForTestingMotAtSite;
 use DvsaEntities\Entity\AuthorisationForTestingMotAtSiteStatus;
 use DvsaEntities\Entity\Comment;
-use DvsaEntities\Entity\OrganisationSiteMap;
-use DvsaEntities\Entity\OrganisationSiteStatus;
 use DvsaEntities\Entity\SiteComment;
 use DvsaEntities\Entity\ContactDetail;
 use DvsaEntities\Entity\EnforcementSiteAssessment;
@@ -34,8 +29,6 @@ use PHPUnit_Framework_TestCase;
  */
 class SiteTest extends PHPUnit_Framework_TestCase
 {
-    use TestCaseTrait;
-
     public function testSettersAndGetters()
     {
         $this->markTestSkipped();
@@ -250,32 +243,5 @@ class SiteTest extends PHPUnit_Framework_TestCase
             [$approvedClass2->getVehicleClass(), $approvedClass4->getVehicleClass()],
             $site->getApprovedVehicleClasses()
         );
-    }
-
-    public function testGetActiveAssociationWithAe()
-    {
-        $maps = [
-            (new OrganisationSiteMap())
-                ->setId(99)
-                ->setStatus(
-                    (new OrganisationSiteStatus())->setCode(OrganisationSiteStatusCode::ACTIVE)
-                ),
-            (new OrganisationSiteMap())
-                ->setId(2)
-                ->setStatus(
-                    (new OrganisationSiteStatus())->setCode(OrganisationSiteStatusCode::UNKNOWN)
-                ),
-        ];
-
-        /**
-         * @var Site                $site
-         * @var OrganisationSiteMap $actual
-         */
-        $site = XMock::of(Site::class, ['getAssociationWithAe']);
-        $this->mockMethod($site, 'getAssociationWithAe', $this->once(), $maps);
-
-        $actual = $site->getActiveAssociationWithAe();
-
-        $this->assertEquals(99, $actual->getId());
     }
 }

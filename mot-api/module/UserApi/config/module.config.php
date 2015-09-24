@@ -2,7 +2,6 @@
 
 use UserApi\Application\Controller\AccountController;
 use UserApi\Application\Controller\ApplicationController;
-use UserApi\Application\Controller\UsernameGenerationController;
 use UserApi\Message\Controller\MessageController;
 use UserApi\HelpDesk\Controller\SearchPersonController;
 use UserApi\SpecialNotice\Controller\SpecialNoticeBroadcastController;

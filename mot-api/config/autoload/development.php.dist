@@ -90,12 +90,4 @@ return array(
             ],
         ],
     ],
-    'aws' => [
-        'certificateStorage' => [
-            'region' => 'eu-west-1',
-            'bucket' => 'dev-mot-test',
-            'accessKeyId' => 'AKIAIWOOIW7LVX37MQ6Q',
-            'secretKey' => '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',
-        ],
-    ],
 );

@@ -204,8 +204,6 @@ class SiteService extends AbstractService
         /** @var VehicleTestingStationDto $dto */
         $dto = $this->xssFilter->filter($dto);
 
-        // form for create vts dont have status field
-        $dto->setStatus(SiteStatusCode::APPROVED);
         $this->validator->validate($dto);
 
         if ($dto->isNeedConfirmation() === true) {
@@ -232,7 +230,6 @@ class SiteService extends AbstractService
         }
 
         $site->setStatus($status);
-        $site->setStatusChangedOn(new \DateTime());
 
         $site
             ->setName(empty($dto->getName()) ? $siteNumber : $dto->getName())

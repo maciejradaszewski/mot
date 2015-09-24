@@ -9,13 +9,13 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 class CertificateCreationServiceFactory implements FactoryInterface
 {
-
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         return new CertificateCreationService(
             $serviceLocator->get('MotTestService'),
             $serviceLocator->get('DocumentService'),
-            $serviceLocator->get(DataCatalogService::class)
+            $serviceLocator->get(DataCatalogService::class),
+            $serviceLocator->get('DvsaAuthenticationService')
         );
     }
 }

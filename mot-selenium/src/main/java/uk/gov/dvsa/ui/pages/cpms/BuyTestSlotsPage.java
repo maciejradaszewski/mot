@@ -3,15 +3,13 @@ package uk.gov.dvsa.ui.pages.cpms;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 
 public class BuyTestSlotsPage extends Page {
     private static final String PAGE_TITLE = "Buy test slots";
-    public static final String PATH = "/slots/%s/purchase";
-
+    
     @FindBy(id = "input_slots_number") private WebElement slotsRequired;
     @FindBy(id = "calculateCost") private WebElement calculateCostButton;
     @FindBy(id = "validationError") private WebElement exceedsMaximumBalanceErrorMessage;
@@ -25,24 +23,24 @@ public class BuyTestSlotsPage extends Page {
     protected boolean selfVerify() {
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
-
-    public boolean isCalculateCostButtonDisplayed() {
-        return calculateCostButton.isDisplayed();
+    
+    public BuyTestSlotsPage enterSlotsRequired(int slots) {
+        slotsRequired.sendKeys(Integer.toString(slots));
+        return new BuyTestSlotsPage(driver);
     }
     
-    public OrderSummaryPage enterSlotsRequiredAndCalculateCost(String slots) {
-        slotsRequired.sendKeys(slots);
+    public OrderSummaryPage clickCalculateCostButton() {
         calculateCostButton.click();
         return new OrderSummaryPage(driver);
     }
     
-    public BuyTestSlotsPage enterExcessSlotsAndCalculateCost(String slots) {
-        slotsRequired.sendKeys(slots);
+    public BuyTestSlotsPage clickCalculateCostButtonWithExcessSlots() {
         calculateCostButton.click();
-        return this;
+        return new BuyTestSlotsPage(driver);
     }
     
     public boolean isExceedsMaximumSlotBalanceMessageDisplayed() {
         return exceedsMaximumBalanceErrorMessage.isDisplayed();
     }
+
 }

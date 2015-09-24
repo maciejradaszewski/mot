@@ -33,7 +33,5 @@ public class ProfilePage extends Page{
 
     public boolean isTesterQualificationStatusDisplayed() {
         return qualificationStatus.isDisplayed();
-
     }
-
 }

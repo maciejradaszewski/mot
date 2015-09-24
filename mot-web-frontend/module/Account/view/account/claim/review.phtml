@@ -67,7 +67,7 @@ $helpdeskName = (isset($this->helpdeskCfg['name']) ? $this->helpdeskCfg['name'] 
             <table>
                 <tr>
                     <td>Email address</td>
-                    <td><?php echo $this->escapeHtml($reviewViewModel->getEmail()); ?></td>
+                    <td><?php echo $reviewViewModel->getEmail(); ?></td>
                 </tr>
                 <tr>
                     <td>Password</td>

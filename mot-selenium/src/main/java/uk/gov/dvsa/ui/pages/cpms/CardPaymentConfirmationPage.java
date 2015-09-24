@@ -37,7 +37,6 @@ public class CardPaymentConfirmationPage extends Page {
         viewPaymentDetailsLink.click();
         return new TransactionDetailsPage(driver);
     }
-
     public FinanceAuthorisedExaminerViewPage clickBackToAuthorisedExaminerLink() {
         backToAeLink.click();
         return new FinanceAuthorisedExaminerViewPage(driver);

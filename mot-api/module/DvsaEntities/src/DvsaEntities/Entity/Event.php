@@ -60,8 +60,10 @@ class Event extends Entity
     /**
      * @var \DvsaEntities\Entity\EventOutcome
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\EventOutcome", inversedBy="events")
-     * @ORM\JoinColumn(name="event_outcome_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\EventOutcome")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="event_outcome_id", referencedColumnName="id")
+     * })
      */
     private $eventOutcome;
 
@@ -69,7 +71,9 @@ class Event extends Entity
      * @var \DvsaEntities\Entity\EventType
      *
      * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\EventType")
-     * @ORM\JoinColumn(name="event_type_id", referencedColumnName="id")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="event_type_id", referencedColumnName="id")
+     * })
      */
     private $eventType;
 

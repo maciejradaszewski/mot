@@ -5,7 +5,6 @@ namespace SiteApiTest\Service\Mapper;
 use DvsaCommon\Constants\OrganisationType as OrganisationTypeConst;
 use DvsaCommon\Dto\Site\SiteDto;
 use DvsaCommon\Enum\SiteContactTypeCode;
-use DvsaCommon\Enum\SiteStatusCode;
 use DvsaCommon\Enum\SiteTypeCode;
 use DvsaEntities\Entity\Address;
 use DvsaEntities\Entity\ContactDetail;
@@ -20,7 +19,6 @@ use DvsaEntities\Entity\PhoneContactType;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteComment;
 use DvsaEntities\Entity\SiteContactType;
-use DvsaEntities\Entity\SiteStatus;
 use DvsaEntities\Entity\SiteType;
 use SiteApi\Service\Mapper\SiteMapper;
 
@@ -125,19 +123,12 @@ class SiteMapperTest extends \PHPUnit_Framework_TestCase
             ->setTester((new Person))
             ->setVisitOutcome($visitOutcome);
 
-
-        // -- site status
-        $siteStatus = (new SiteStatus())
-            ->setCode(SiteStatusCode::APPROVED)
-            ->setId(1234);
-
         //  --  bind all    --
         $site = new Site();
         $site
             ->setId(99999)
             ->setSiteNumber('V99999')
             ->setName('UnitTestSite')
-            ->setStatus($siteStatus)
             ->setType((new SiteType())->setCode(SiteTypeCode::AREA_OFFICE))
             ->setContact($contactDetails1, $siteTypeBus)
             ->setContact($contactDetails2, $siteTypeCorr)

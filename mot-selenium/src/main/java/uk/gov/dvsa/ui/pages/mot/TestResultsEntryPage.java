@@ -136,11 +136,6 @@ public class TestResultsEntryPage extends Page {
         return new TestSummaryPage(driver);
     }
 
-    public ReasonForRejectionPage clickAddFRFButton() {
-        AddRFRButton.click();
-        return new ReasonForRejectionPage(driver);
-    }
-
     public TestSummaryPage clickReviewTestButton(){
         reviewTestButton.click();
 

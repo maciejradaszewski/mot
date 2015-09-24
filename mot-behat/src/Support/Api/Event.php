@@ -8,9 +8,6 @@ class Event extends MotApi
     const PATH_PERSON_LIST = 'event/list/person/{personId}';
     const PATH_SITE_LIST = 'event/list/site/{siteId}';
     const PATH_ORGANISATION_LIST = 'event/list/ae/{organisationId}';
-    const PATH_CREATE_EVENT_PERSON = 'person/{id}/event';
-    const PATH_CREATE_EVENT_SITE = 'site/{id}/event';
-    const PATH_CREATE_EVENT_ORGANISATION = 'organisation/{id}/event';
 
     private $params = [
         "dateFrom" => [
@@ -80,33 +77,6 @@ class Event extends MotApi
             $token,
             MotApi::METHOD_GET,
             $path
-        );
-    }
-
-    public function postEvent($token, $category, $id, $data)
-    {
-        $url = null;
-        switch ($category) {
-            case 'NT':
-                $url = self::PATH_CREATE_EVENT_PERSON;
-                break;
-            case 'AE':
-                $url = self::PATH_CREATE_EVENT_ORGANISATION;
-                break;
-            case 'VTS':
-                $url = self::PATH_CREATE_EVENT_SITE;
-                break;
-        }
-        if (null === $url) {
-            throw new \Exception('No valid url, supplied :'.$category);
-        }
-        $path = str_replace("{id}", $id, $url);
-
-        return $this->sendRequest(
-            $token,
-            MotApi::METHOD_POST,
-            $path,
-            $data
         );
     }
     

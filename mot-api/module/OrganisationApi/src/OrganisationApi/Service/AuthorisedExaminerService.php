@@ -11,7 +11,6 @@ use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\EventDescription;
 use DvsaCommon\Date\DateTimeHolder;
-use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode;
@@ -20,7 +19,6 @@ use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\AbstractService;
 use DvsaCommonApi\Service\ContactDetailsService;
-use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\Entity\AuthForAeStatus;
 use DvsaEntities\Entity\AuthorisationForAuthorisedExaminer;
@@ -30,14 +28,12 @@ use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Entity\OrganisationContact;
 use DvsaEntities\Entity\OrganisationContactType;
 use DvsaEntities\Entity\Person;
-use DvsaEntities\Entity\Site;
 use DvsaEntities\Repository\AuthForAeStatusRepository;
 use DvsaEntities\Repository\AuthorisationForAuthorisedExaminerRepository;
 use DvsaEntities\Repository\CompanyTypeRepository;
 use DvsaEntities\Repository\OrganisationContactTypeRepository;
 use DvsaEntities\Repository\OrganisationRepository;
 use DvsaEntities\Repository\OrganisationTypeRepository;
-use DvsaEntities\Repository\SiteRepository;
 use DvsaEntities\Repository\PersonRepository;
 use DvsaEventApi\Service\EventService;
 use OrganisationApi\Service\Mapper\OrganisationMapper;
@@ -79,10 +75,6 @@ class AuthorisedExaminerService extends AbstractService
      * @var OrganisationTypeRepository $organisationTypeRepository
      */
     private $organisationTypeRepository;
-    /**
-     * @var SiteRepository $siteRepository
-     */
-    private $siteRepository;
     /**
      * @var CompanyTypeRepository $companyTypeRepository
      */
@@ -150,8 +142,7 @@ class AuthorisedExaminerService extends AbstractService
         XssFilter $xssFilter,
         AuthorisationForAuthorisedExaminerRepository $authorisationForAuthorisedExaminerRepository,
         AuthorisedExaminerValidator $validator,
-        DateTimeHolder $dateTimeHolder,
-        SiteRepository $siteRepository
+        DateTimeHolder $dateTimeHolder
     ) {
         parent::__construct($entityManager);
 
@@ -164,8 +155,6 @@ class AuthorisedExaminerService extends AbstractService
         $this->organisationTypeRepository = $organisationTypeRepository;
         $this->companyTypeRepository = $companyTypeRepository;
         $this->organisationContactTypeRepository = $organisationContactTypeRepository;
-        $this->siteRepository = $siteRepository;
-
         $this->mapper = $mapper;
         $this->authForAeStatusRepository = $authForAeStatusRepository;
         $this->xssFilter = $xssFilter;
@@ -188,14 +177,14 @@ class AuthorisedExaminerService extends AbstractService
         /** @var OrganisationDto $orgDto */
         $orgDto = $this->xssFilter->filter($orgDto);
 
-        $validAreaOffices = $this->siteRepository->getAllAreaOffices();
-        $this->validator->validate($orgDto, $validAreaOffices);
+        $this->validator->validate($orgDto);
 
         if ($orgDto->isValidateOnly() === true) {
             return null;
         }
 
         $orgEntity = new Organisation();
+
         $this->populateOrganisationFromDto($orgDto, $orgEntity);
 
         //  logical block :: create contact
@@ -217,31 +206,12 @@ class AuthorisedExaminerService extends AbstractService
         /** @var AuthForAeStatus $status */
         $status = $this->authForAeStatusRepository->getByCode(AuthorisationForAuthorisedExaminerStatusCode::APPLIED);
 
-        // Associate the supplied Area Office to the Organisation
-        $authForAe = $orgDto->getAuthorisedExaminerAuthorisation();
-        $addedAO = false;
-
-        if ($authForAe) {
-            $aoNumber = $authForAe->getAssignedAreaOffice();
-            $newAOId = $this->getAreaOfficeIdByNumber($aoNumber);
-            $selectedAO = $this->siteRepository->find($newAOId);
-
-            if ($selectedAO) {
-                $authorisedExaminer = new AuthorisationForAuthorisedExaminer();
-                $authorisedExaminer
-                    ->setValidFrom(new \DateTime())
-                    ->setStatus($status)
-                    ->setOrganisation($orgEntity)
-                    ->setNumber($aeNumber)
-                    ->setAreaOffice($selectedAO);
-                $addedAO = true;
-            }
-        }
-
-        // Ensure the Area Office wiring was installed OK
-        if (false === $addedAO) {
-            throw new NotFoundException('Areao Office Site', $aoNumber);
-        }
+        $authorisedExaminer = new AuthorisationForAuthorisedExaminer();
+        $authorisedExaminer
+            ->setValidFrom(new \DateTime())
+            ->setStatus($status)
+            ->setOrganisation($orgEntity)
+            ->setNumber($aeNumber);
 
         //  logical block :: create event
         $event = $this->eventService->addEvent(
@@ -282,14 +252,8 @@ class AuthorisedExaminerService extends AbstractService
         $this->authService->assertGrantedAtOrganisation(PermissionAtOrganisation::AUTHORISED_EXAMINER_UPDATE, $orgId);
 
         $orgDto = $this->xssFilter->filter($orgDto);
-        $orgEntity = $this->organisationRepository->getAuthorisedExaminer($orgId);
 
-        // If this is *JUST* Contact Details then there is no area office
-        $areaOffice = $orgEntity->getAuthorisedExaminer()->getAreaOffice();
-        $oldAreaOfficeLabel = 'n/a';
-        if ($areaOffice) {
-            $oldAreaOfficeLabel = $areaOffice->getSiteNumber();
-        }
+        $orgEntity = $this->organisationRepository->getAuthorisedExaminer($orgId);
 
         $this->populateOrganisationFromDto($orgDto, $orgEntity);
 
@@ -312,73 +276,12 @@ class AuthorisedExaminerService extends AbstractService
             //  --  set to org --
             $orgEntity->setContact($contactDetails, $contactType);
         }
+
         $this->organisationRepository->save($orgEntity);
 
-        // Check for Area Office update: sometimes we are only doing CONTACT details...
-        /** @var AuthorisedExaminerAuthorisationDto $currentAuthForAe */
-        $currentAuthForAe = $orgDto->getAuthorisedExaminerAuthorisation();
-
-        if ($currentAuthForAe) {
-            // Update the Area Office for this Organisation
-            $aoNumber = $currentAuthForAe->getAssignedAreaOffice();
-            $newAOId = $this->getAreaOfficeIdByNumber($aoNumber);
-            $newAO = $this->siteRepository->find($newAOId);
-
-            if ($newAO) {
-                $authForAe = $orgEntity->getAuthorisedExaminer();
-
-                if (!is_null($authForAe)) {
-                    $orgEntity->getAuthorisedExaminer()->setAreaOffice($newAO);
-                    // Record the change to the AO id for this AE site
-                    $aeEntity = $orgEntity->getAuthorisedExaminer();
-                    $this->siteRepository->save($aeEntity);
-                }
-            }
-        }
-
-
-        // TODO: ** Assembly group map table insertion HERE ***
-
-
-        $this->recordAEUpdateEvent($orgDto, $orgEntity, $oldAreaOfficeLabel);
         return ['id' => $orgEntity->getId()];
     }
 
-    private function recordAEUpdateEvent(OrganisationDto $orgDto , Organisation $orgEntity, $oldAreaOfficeLabel)
-    {
-        $newAreaOfficeLabel = 'n/a';
-        // TODO:: if we have AE supplied, find the SITE_NUMBER of it now
-
-        //  logical block :: create event
-        $event = $this->eventService->addEvent(
-            EventTypeCode::DVSA_ADMINISTRATOR_CREATE_AE,
-            sprintf(
-                EventDescription::DVSA_ADMINISTRATOR_AMEND_AREA_OFFICE,
-                $oldAreaOfficeLabel,
-                $newAreaOfficeLabel,
-                //$orgDto->getAuthorisedExaminerAuthorisation()->getAssignedAreaOfficeLabel(),
-                $orgEntity->getAuthorisedExaminer()->getNumber(),
-                $orgEntity->getAuthorisedExaminer()->getOrganisation()->getName(),
-                $this->getUserName()
-            ),
-            $this->dateTimeHolder->getCurrent(true)
-        );
-
-        $eventMap = (new EventOrganisationMap())
-            ->setEvent($event)
-            ->setOrganisation($orgEntity);
-
-        $this->entityManager->persist($eventMap);
-        $this->entityManager->flush();
-    }
-
-    /**
-     * @param OrganisationDto $dto
-     * @param Organisation $orgEntity
-     *
-     * @return array [ Organisation entity, Site entity (Area Office) ]
-     * @throws NotFoundException
-     */
     private function populateOrganisationFromDto(OrganisationDto $dto, Organisation $orgEntity)
     {
         $val = $dto->getName();
@@ -404,19 +307,6 @@ class AuthorisedExaminerService extends AbstractService
         }
 
         return $orgEntity;
-    }
-
-    private function getAreaOfficeIdByNumber($aoNumber)
-    {
-        $allAreaOffices = $this->siteRepository->getAllAreaOffices();
-        $aoNumber = (int)$aoNumber;
-
-        foreach ($allAreaOffices as $areaOffice) {
-            if ($aoNumber == $areaOffice['areaOfficeNumber']) {
-                return $areaOffice['id'];
-            }
-        }
-        return null;
     }
 
     /**

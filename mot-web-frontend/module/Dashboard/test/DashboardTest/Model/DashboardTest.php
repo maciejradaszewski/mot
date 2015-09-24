@@ -157,21 +157,6 @@ class DashboardTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($dashboard->hasTestInProgress());
     }
 
-    public function test_hasInProgressDemoTest_trueIfInProgressTestIdSet()
-    {
-        $dashboard = new Dashboard(ApiDashboardResourceTest::getTestDataForUser());
-        $this->assertTrue($dashboard->hasDemoTestInProgress());
-    }
-
-    public function test_hasInProgressDemoTest_falseIfInProgressTestIdNotSet()
-    {
-        $testData = ApiDashboardResourceTest::getTestDataForAedm();
-        $testData['inProgressDemoTestNumber'] = null;
-        $dashboard = new Dashboard($testData);
-
-        $this->assertFalse($dashboard->hasDemoTestInProgress());
-    }
-
     private function getSpecialNoticeInput()
     {
         return [

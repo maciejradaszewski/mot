@@ -10,7 +10,6 @@ import uk.gov.dvsa.ui.pages.Page;
 
 public class SlotRefundPage extends Page {
     private static final String PAGE_TITLE = "Slot refund";
-    public static final String PATH = "/slots/%s/refund";
 
     @FindBy(id = "input_slots_number") private WebElement inputSlotsField;
     @FindBy(id = "inputReason") private WebElement inputReason;
@@ -26,8 +25,8 @@ public class SlotRefundPage extends Page {
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
     
-    public SlotRefundPage enterSlotsToBeRefunded(String slots) {
-        inputSlotsField.sendKeys(slots);
+    public SlotRefundPage enterSlotsToBeRefunded(int slots) {
+        inputSlotsField.sendKeys(Integer.toString(slots));
         return this;
     }
     

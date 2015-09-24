@@ -2,10 +2,7 @@
 namespace SiteApiTest\Service;
 
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
-use DvsaCommon\Auth\PermissionAtSite;
-use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
-use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Make;
 use DvsaEntities\Entity\Model;
 use DvsaEntities\Entity\MotTest;
@@ -13,7 +10,6 @@ use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\MotTestRepository;
 use SiteApi\Service\MotTestInProgressService;
 use Zend\Authentication\AuthenticationService;
-use PHPUnit_Framework_MockObject_MockObject as MockObj;
 
 /**
  * Class MotTestInProgressServiceTest
@@ -22,27 +18,18 @@ use PHPUnit_Framework_MockObject_MockObject as MockObj;
  */
 class MotTestInProgressServiceTest extends AbstractServiceTestCase
 {
-    const SITE_ID = 999;
-
     /** @var MotTestRepository */
-    private $mockMotTestRepo;
-    /**
-     * @var  AuthorisationServiceInterface|MockObj
-     */
-    private $mockAuthService;
+    private $motTestRepository;
+
     /** @var MotTestInProgressService */
     private $motTestInProgressService;
 
     public function setUp()
     {
         $this->setUpRepository();
-
-        $this->mockAuthService = $this->getMockAuthorizationService();
-
-        $this->motTestInProgressService = new MotTestInProgressService(
-            $this->mockMotTestRepo,
-            $this->mockAuthService
-        );
+        /** @var AuthorisationServiceInterface $authorizationService */
+        $authorizationService = $this->getMockAuthorizationService();
+        $this->motTestInProgressService = new MotTestInProgressService($this->motTestRepository, $authorizationService);
     }
 
     public function testGetTestInProgressReturnsDto()
@@ -85,87 +72,9 @@ class MotTestInProgressServiceTest extends AbstractServiceTestCase
         $motTest->setNumber(1001);
         $motTest->setRegistration("LAMP101");
 
-        $this->mockMotTestRepo = $this->getMockWithDisabledConstructor(MotTestRepository::class);
-        $this->mockMotTestRepo->expects($this->any())->method('findInProgressTestsForVts')->will(
+        $this->motTestRepository = $this->getMockWithDisabledConstructor(MotTestRepository::class);
+        $this->motTestRepository->expects($this->any())->method('findInProgressTestsForVts')->will(
             $this->returnValue([$motTest])
         );
-    }
-
-
-    /**
-     * @dataProvider dataProviderTestMethodsPermissionsAndResults
-     */
-    public function testGetDataMethodsPermissionsAndResults($method, $params, $repoMocks, $permissions, $expect)
-    {
-        if ($repoMocks !== null) {
-            foreach ($repoMocks as $repo) {
-                $invocation = isset($repo['call']) ? $repo['call'] : $this->once();
-                $result = isset($repo['result']) ? $repo['result'] : null;
-
-                $this->mockMethod(
-                    $this->{$repo['class']}, $repo['method'], $invocation, $result, $repo['params']
-                );
-            }
-        }
-
-        //  --  check permission    --
-        if ($permissions !== null) {
-            $this->assertGrantedAtSite($this->mockAuthService, $permissions, $params['siteId']);
-        }
-
-        //  --  set expected exception  --
-        if (!empty($expect['exception'])) {
-            $exception = $expect['exception'];
-            $this->setExpectedException($exception['class'], $exception['message'], $exception['code']);
-        }
-
-        //  --  call and check result --
-        $actual = XMock::invokeMethod($this->motTestInProgressService, $method, $params);
-
-        $this->assertSame($expect['result'], $actual);
-    }
-
-    public function dataProviderTestMethodsPermissionsAndResults()
-    {
-        $unauthException = [
-            'class'   => UnauthorisedException::class,
-            'message' => 'You not have permissions',
-            'code'    => 0,
-        ];
-
-        return [
-            //  logical block :: siteChangeStatus
-            //  no permission
-            [
-                'method'      => 'getCountForSite',
-                'params'      => [
-                    'siteId' => self::SITE_ID,
-                ],
-                'repo'        => null,
-                'permissions' => [],
-                'expect'      => [
-                    'exception' => $unauthException,
-                ],
-            ],
-            //  success
-            [
-                'method'      => 'getCountForSite',
-                'params'      => [
-                    'siteId' => self::SITE_ID,
-                ],
-                'repo'        => [
-                    [
-                        'class'  => 'mockMotTestRepo',
-                        'method' => 'countInProgressTestsForVts',
-                        'params' => [self::SITE_ID],
-                        'result' => 6666,
-                    ],
-                ],
-                'permissions' => [PermissionAtSite::VIEW_TESTS_IN_PROGRESS_AT_VTS],
-                'expect'      => [
-                    'result' => 6666,
-                ],
-            ],
-        ];
     }
 }

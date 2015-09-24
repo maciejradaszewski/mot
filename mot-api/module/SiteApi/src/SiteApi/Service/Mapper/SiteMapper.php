@@ -15,7 +15,6 @@ use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteComment;
 use DvsaEntities\Entity\SiteContact;
-use DvsaEntities\Entity\SiteStatus;
 use OrganisationApi\Service\Mapper\ContactMapper;
 use OrganisationApi\Service\Mapper\PersonMapper;
 
@@ -52,8 +51,6 @@ class SiteMapper extends AbstractApiMapper
             ->setId($site->getId())
             ->setName($site->getName())
             ->setSiteNumber($site->getSiteNumber())
-            ->setStatus($this->mapSiteStatus($site->getStatus()))
-            ->setStatusChangedOn(DateTimeApiFormat::dateTime($site->getStatusChangedOn()))
 
             ->setIsDualLanguage($site->getDualLanguage())
             ->setIsScottishBankHoliday($site->getScottishBankHoliday())
@@ -189,14 +186,5 @@ class SiteMapper extends AbstractApiMapper
             ->setTester($this->personMapper->toDto($assessment->getTester()));
 
         return $dto;
-    }
-
-    private function mapSiteStatus($siteStatus)
-    {
-        if(!$siteStatus instanceof SiteStatus){
-            return null;
-        }
-
-        return $siteStatus->getCode();
     }
 }

@@ -6,15 +6,18 @@ use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaEntities\Entity\Notification;
 use NotificationApi\Mapper\NotificationMapper;
 
+use \DvsaCommon\Auth\AbstractMotAuthorisationService as AuthorisationService;
+
 /**
  * All data for dashboard
  */
 class DashboardData
 {
+
     /** @var $displayRole string */
     private $hero;
 
-    /** @var $authorisedExaminers AuthorisationForAuthorisedExaminer[] */
+    /** @var $displayRole AuthorisationForAuthorisedExaminer[] */
     private $authorisedExaminers;
 
     /** @var $specialNotice array */
@@ -26,24 +29,19 @@ class DashboardData
     /** @var  $inProgressTestNumber integer */
     private $inProgressTestNumber;
 
-    /** @var string */
-    private $inProgressDemoTestNumber;
-
     /** @var  $inProgressTestTypeCode string */
     private $inProgressTestTypeCode;
 
     /** @var $authorisationService MotAuthorisationServiceInterface */
     private $authorisationService;
 
+
     /**
      * @param AuthorisationForAuthorisedExaminer[] $authorisedExaminers
-     * @param                                      $specialNotice
+     * @param array                                $specialNotice
      * @param Notification[]                       $notifications
-     * @param                                      $inProgressTestNumber
-     * @param                                      $inProgressDemoTestNumber
-     * @param                                      $isTesterQualified
-     * @param                                      $isTesterActive
-     * @param                                      $inProgressTestTypeCode
+     * @param integer                              $inProgressTestNumber
+     * @param integer                              $inProgressTestTypeCode
      * @param MotAuthorisationServiceInterface     $authorisationService
      */
     public function __construct(
@@ -51,9 +49,6 @@ class DashboardData
         $specialNotice,
         $notifications,
         $inProgressTestNumber,
-        $inProgressDemoTestNumber,
-        $isTesterQualified,
-        $isTesterActive,
         $inProgressTestTypeCode,
         MotAuthorisationServiceInterface $authorisationService
     ) {
@@ -61,7 +56,6 @@ class DashboardData
         $this->setSpecialNotice(new SpecialNotice($specialNotice));
         $this->setNotifications($notifications);
         $this->setInProgressTestNumber($inProgressTestNumber);
-        $this->setInProgressDemoTestNumber($inProgressDemoTestNumber);
         $this->setInProgressTestTypeCode($inProgressTestTypeCode);
         $this->authorisationService = $authorisationService;
         $this->setHero($this->authorisationService->getHero());
@@ -91,8 +85,7 @@ class DashboardData
             'specialNotice'          => $this->getSpecialNotice()->toArray(),
             'notifications'          => $notificationExtractedList,
             'inProgressTestNumber'   => $this->inProgressTestNumber,
-            'inProgressTestTypeCode' => $this->inProgressTestTypeCode,
-            'inProgressDemoTestNumber' => $this->inProgressDemoTestNumber,
+            'inProgressTestTypeCode' => $this->inProgressTestTypeCode
         ];
     }
 
@@ -194,25 +187,6 @@ class DashboardData
     public function getInProgressTestNumber()
     {
         return $this->inProgressTestNumber;
-    }
-
-    /**
-     * @param string $testNumber
-     * @return $this
-     */
-    public function setInProgressDemoTestNumber($testNumber)
-    {
-        $this->inProgressDemoTestNumber = $testNumber;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getInProgressDemoTestNumber()
-    {
-        return $this->inProgressDemoTestNumber;
     }
 
     /**

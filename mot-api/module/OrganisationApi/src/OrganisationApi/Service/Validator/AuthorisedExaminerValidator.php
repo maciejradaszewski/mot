@@ -15,13 +15,11 @@ class AuthorisedExaminerValidator extends AbstractValidator
     const FIELD_COMPANY_TYPE = 'companyType';
     const FIELD_REG_NUMBER= 'registeredCompanyNumber';
     const FIELD_STATUS= 'status';
-    const FIELD_AO_NUMBER = 'assignedAreaOffice';
 
     const ERR_ORGANISATION_NAME_REQUIRE = 'A business name must be entered';
     const ERR_COMPANY_TYPE_REQUIRE = 'A business type must be selected';
     const ERR_COMPANY_NUMBER_REQUIRE = 'A company number must be entered';
     const ERR_STATUS = 'A status must be selected';
-    const ERR_AO_NR_REQUIRE = 'An area office must be selected';
 
     /** @var ContactValidator */
     private $contactValidator;
@@ -32,12 +30,7 @@ class AuthorisedExaminerValidator extends AbstractValidator
         $this->contactValidator = new ContactValidator();
     }
 
-    /**
-     * @param OrganisationDto $organisationDto
-     * @param Array $validAreaOffices
-     * @throws \DvsaCommonApi\Service\Exception\BadRequestException
-     */
-    public function validate(OrganisationDto $organisationDto, $validAreaOffices)
+    public function validate(OrganisationDto $organisationDto)
     {
         //  --  Validate contact   --
         /** @var OrganisationContactDto $contactDto */
@@ -45,43 +38,23 @@ class AuthorisedExaminerValidator extends AbstractValidator
             $this->errors = $this->contactValidator->validate($contactDto);
         }
 
-        $this->validateAeDetail($organisationDto, $validAreaOffices);
+        $this->validateAeDetail($organisationDto);
 
         $this->errors->throwIfAnyField();
     }
 
-    private function validateAeDetail(OrganisationDto $organisationDto, $validAreaOffices)
+    private function validateAeDetail(OrganisationDto $organisationDto)
     {
         if ($this->isEmpty($organisationDto->getName())) {
             $this->errors->add(self::ERR_ORGANISATION_NAME_REQUIRE, self::FIELD_ORGANISATION_NAME);
         }
-
         if ($this->isEmpty($organisationDto->getCompanyType())
             || CompanyTypeCode::exists($organisationDto->getCompanyType()) === false) {
             $this->errors->add(self::ERR_COMPANY_TYPE_REQUIRE, self::FIELD_COMPANY_TYPE);
         }
-
-
-        $authForAeDto = $organisationDto->getAuthorisedExaminerAuthorisation();
-        if (is_null($authForAeDto)) {
-            $this->errors->add(self::ERR_AO_NR_REQUIRE, self::FIELD_AO_NUMBER);
-        } else {
-            $this->validateAreaOffice($authForAeDto, $validAreaOffices);
-        }
-
         if ($organisationDto->getCompanyType() === CompanyTypeCode::COMPANY) {
             $this->validateCompanyNumber($organisationDto);
         }
-    }
-
-    private function validateAreaOfficeNumber($intAONumber, $validAreaOffices)
-    {
-        foreach ($validAreaOffices as $areaOffice) {
-            if ((int)$intAONumber == (int)$areaOffice['areaOfficeNumber']) {
-                return;
-            }
-        }
-        $this->errors->add(self::ERR_AO_NR_REQUIRE, self::FIELD_AO_NUMBER);
     }
 
     private function validateCompanyNumber(OrganisationDto $organisationDto)
@@ -103,24 +76,7 @@ class AuthorisedExaminerValidator extends AbstractValidator
         ) {
             $this->errors->add(self::ERR_STATUS, self::FIELD_STATUS);
         }
-        return $this;
-    }
 
-    public function validateAreaOffice(AuthorisedExaminerAuthorisationDto $dto, $validAreaOffices)
-    {
-        $intAONumber = $dto->getAssignedAreaOffice();
-
-        if ($this->isEmpty($intAONumber)) {
-            $this->errors->add(self::ERR_AO_NR_REQUIRE, self::FIELD_AO_NUMBER);
-        } else {
-            $this->validateAreaOfficeNumber($intAONumber, $validAreaOffices);
-        }
-        return $this;
-    }
-
-    public function failOnErrors()
-    {
         $this->errors->throwIfAnyField();
-        return $this;
     }
 }

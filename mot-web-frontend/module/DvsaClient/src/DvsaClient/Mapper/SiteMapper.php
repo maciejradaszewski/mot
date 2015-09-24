@@ -56,14 +56,6 @@ class SiteMapper extends DtoMapper
         return $this->post($url, DtoHydrator::dtoToJson($dto));
     }
 
-    public function validateTestingFacilities($siteId, VehicleTestingStationDto $dto)
-    {
-        $url = VehicleTestingStationUrlBuilder::updateTestingFacilities($siteId);
-        $dto->setIsNeedConfirmation(true);
-
-        return $this->put($url, DtoHydrator::dtoToJson($dto));
-    }
-
     /**
      * @param int $id
      * @param array $data
@@ -92,20 +84,6 @@ class SiteMapper extends DtoMapper
     }
 
     /**
-     * Update testing facilities for specified site
-     *
-     * @param $siteId
-     * @param VehicleTestingStationDto $dto
-     * @return mixed
-     */
-    public function updateTestingFacilities($siteId, VehicleTestingStationDto $dto)
-    {
-        $apiUrl = VehicleTestingStationUrlBuilder::updateTestingFacilities($siteId);
-
-        return $this->client->put($apiUrl, DtoHydrator::dtoToJson($dto));
-    }
-
-    /**
      * @param int $id
      * @param array $data
      */
@@ -123,20 +101,5 @@ class SiteMapper extends DtoMapper
     {
         $apiUrl = VehicleTestingStationUrlBuilder::search();
         return $this->post($apiUrl, $params);
-    }
-
-    public function validateSiteDetails($siteId, VehicleTestingStationDto $siteDetailsDto)
-    {
-        $apiUrl = VehicleTestingStationUrlBuilder::validateSiteDetails($siteId);
-        $siteDetailsDto->setIsNeedConfirmation(true);
-
-        return $this->put($apiUrl, DtoHydrator::dtoToJson($siteDetailsDto));
-    }
-
-    public function updateSiteDetails($siteId, VehicleTestingStationDto $siteDetailsDto)
-    {
-        $apiUrl = VehicleTestingStationUrlBuilder::validateSiteDetails($siteId);
-
-        return $this->put($apiUrl, DtoHydrator::dtoToJson($siteDetailsDto));
     }
 }

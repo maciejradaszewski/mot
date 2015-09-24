@@ -5,7 +5,6 @@ use TestSupport\Controller;
 return [
     'controllers'  => [
         'invokables' => [
-            Controller\FeaturesController::class            => Controller\FeaturesController::class,
             Controller\IndexController::class               => Controller\IndexController::class,
             Controller\ResetController::class               => Controller\ResetController::class,
             Controller\TesterDataController::class          => Controller\TesterDataController::class,
@@ -83,15 +82,6 @@ return [
                             'route'    => '/inactivetester',
                             'defaults' => [
                                 'controller' => Controller\InactiveTesterDataController::class
-                            ],
-                        ],
-                    ],
-                    'featuresSub'          => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/features/:featureName',
-                            'defaults' => [
-                                'controller' => Controller\FeaturesController::class
                             ],
                         ],
                     ],

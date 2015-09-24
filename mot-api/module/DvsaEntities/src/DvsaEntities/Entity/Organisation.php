@@ -343,11 +343,6 @@ class Organisation extends Entity
         return $this->positions;
     }
 
-    public function addPosition(OrganisationBusinessRoleMap $position)
-    {
-        $this->positions->add($position);
-    }
-
     public function addContact(OrganisationContact $contact)
     {
         $contact->setOrganisation($this);

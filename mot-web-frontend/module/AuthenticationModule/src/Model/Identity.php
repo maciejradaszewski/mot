@@ -55,14 +55,6 @@ class Identity implements MotFrontendIdentityInterface
     private $passwordChangeRequired = false;
 
     /**
-     * By default we can assume the password has expired.
-     * It will be verified by ExpiredPasswordListener
-     *
-     * @var bool
-     */
-    private $passwordExpired = true;
-
-    /**
      * @return PersonAuthorization
      * @deprecated will be removed - do not use
      */
@@ -232,17 +224,5 @@ class Identity implements MotFrontendIdentityInterface
 
     public function getUuid(){
         return $this->username;
-    }
-
-    public function hasPasswordExpired()
-    {
-        return $this->passwordExpired;
-    }
-
-    public function setPasswordExpired($passwordExpired)
-    {
-        $this->passwordExpired = $passwordExpired;
-
-        return $this;
     }
 }

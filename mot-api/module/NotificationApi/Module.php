@@ -13,8 +13,6 @@ use NotificationApi\Service\Helper\SiteNominationEventHelper;
 use NotificationApi\Factory\Helper\SiteNominationEventHelperFactory;
 use NotificationApi\Service\Helper\OrganisationNominationEventHelper;
 use NotificationApi\Factory\Helper\OrganisationNominationEventHelperFactory;
-use NotificationApi\Factory\Service\PositionRemovalNotificationServiceFactory;
-use NotificationApi\Service\PositionRemovalNotificationService;
 
 /**
  * Class Module
@@ -39,7 +37,6 @@ class Module
                 NotificationService::class => \NotificationApi\Factory\NotificationServiceFactory::class,
                 SiteNominationEventHelper::class => SiteNominationEventHelperFactory::class,
                 OrganisationNominationEventHelper::class => OrganisationNominationEventHelperFactory::class,
-                PositionRemovalNotificationService::class => PositionRemovalNotificationServiceFactory::class
             ],
             'invokables' => [
 

@@ -5,7 +5,6 @@ namespace DvsaEntities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use DvsaCommon\Enum\AuthorisationForTestingMotAtSiteStatusCode;
-use DvsaCommon\Enum\OrganisationSiteStatusCode;
 use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
@@ -216,26 +215,12 @@ class Site extends Entity
     private $nonWorkingDayCountry;
 
     /**
-     * @var OrganisationSiteMap[]
-     *
-     * @ORM\OneToMany(targetEntity="OrganisationSiteMap", mappedBy="site", fetch="LAZY")
-     */
-    private $associationsWithAe;
-
-    /**
      * @ORM\ManyToOne(targetEntity="SiteStatus")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="site_status_id", referencedColumnName="id")
      * })
      */
     private $status;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="status_changed_on", type="datetime", nullable=true)
-     */
-    private $statusChangedOn;
 
     /**
      * @return \DvsaEntities\Entity\SiteTestingDailySchedule[]
@@ -290,7 +275,6 @@ class Site extends Entity
         $this->siteComments = new ArrayCollection();
         $this->contacts = new ArrayCollection();
         $this->authorisationsForTestingMotAtSite = new ArrayCollection();
-        $this->associationsWithAe = new ArrayCollection();
     }
 
     /**
@@ -604,9 +588,6 @@ class Site extends Entity
         return $this;
     }
 
-    /**
-     * @return SiteFacility[]
-     */
     public function getFacilities()
     {
         return $this->facilities;
@@ -765,16 +746,7 @@ class Site extends Entity
      *
      * @return array
      */
-    public function getApprovedAuthorisationForTestingMotAtSite()
-    {
-        return $this->getAuthorisationForTestingMotAtSiteOfType(AuthorisationForTestingMotAtSiteStatusCode::APPROVED);
-    }
-
-    /**
-     * @param $authId
-     * @return AuthorisationForTestingMotAtSite[]
-     */
-    private function getAuthorisationForTestingMotAtSiteOfType($authId)
+    private function vehicleClassesOfType($authId)
     {
         $qualifiedAuthorisationForTestingMotAtSite = ArrayUtils::filter(
             $this->authorisationsForTestingMotAtSite,
@@ -782,16 +754,6 @@ class Site extends Entity
                 return $authorisationForTestingMotAtSite->getStatus()->getCode() === $authId;
             }
         );
-
-        return $qualifiedAuthorisationForTestingMotAtSite;
-    }
-
-    /**
-     * @return array
-     */
-    private function vehicleClassesOfType($authId)
-    {
-        $qualifiedAuthorisationForTestingMotAtSite = $this->getAuthorisationForTestingMotAtSiteOfType($authId);
 
         return ArrayUtils::map(
             $qualifiedAuthorisationForTestingMotAtSite,
@@ -824,23 +786,6 @@ class Site extends Entity
         return $this;
     }
 
-    public function getAssociationWithAe()
-    {
-        return $this->associationsWithAe;
-    }
-
-    public function getActiveAssociationWithAe()
-    {
-        $maps = ArrayUtils::filter(
-            $this->getAssociationWithAe(),
-            function(OrganisationSiteMap $map) {
-                return $map->getStatus()->getCode() === OrganisationSiteStatusCode::ACTIVE;
-            }
-        );
-
-        return current($maps);
-    }
-
     /**
      * @param SiteStatus $status
      * @return $this
@@ -858,38 +803,4 @@ class Site extends Entity
     {
         return $this->status;
     }
-
-    /**
-     * @param AuthorisationForTestingMotAtSite $toRemove
-     */
-    public function removeAuthorisationForTestingMotAtSite(AuthorisationForTestingMotAtSite $toRemove)
-    {
-        $this->authorisationsForTestingMotAtSite->removeElement($toRemove);
-    }
-
-    /**
-     * Set statusChangedOn
-     *
-     * @param \DateTime $statusChangedOn
-     *
-     * @return Site
-     */
-    public function setStatusChangedOn(\DateTime $statusChangedOn)
-    {
-        $this->statusChangedOn = $statusChangedOn;
-
-        return $this;
-    }
-
-    /**
-     * Get statusChangedOn
-     *
-     * @return \DateTime
-     */
-    public function getStatusChangedOn()
-    {
-        return $this->statusChangedOn;
-    }
-
-
 }

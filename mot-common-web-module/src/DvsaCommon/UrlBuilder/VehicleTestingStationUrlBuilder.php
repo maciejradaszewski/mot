@@ -17,15 +17,12 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
     const PLANNING_PERMISSION = '/planning-permission';
     const PLANS_AND_DIMENSIONS = '/plans-and-dimensions';
     const TESTING_FACILITIES = '/testing-facilities';
-    const SITE_DETAILS = '/site-details';
     const VEHICLE_TESTING_STATION_DETAILS = '/vehicle-testing-station-details';
     const DOCUMENTS = '/documents';
     const STATUS = '/status';
 
     const VTS_BY_ID = 'vehicle-testing-station[/:id]';
     const VTS_TEST_IN_PROGRESS = '/test-in-progress';
-    const VTS_TEST_IN_PROGRESS_COUNT = '/count';
-
     const VTS_DEFAULT_BRAKE_TESTS = '/default-brake-tests';
 
     const VTS_CONTACT = '/contact[/:contactId]';
@@ -42,21 +39,16 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
             self::PLANNING_PERMISSION             => '',
             self::PLANS_AND_DIMENSIONS            => '',
             self::TESTING_FACILITIES              => '',
-            self::SITE_DETAILS                    => '',
             self::VEHICLE_TESTING_STATION_DETAILS => '',
             self::DOCUMENTS                       => '',
             self::STATUS                          => '',
         ],
         self::VTS_BY_ID                                 => [
-            self::VTS_TEST_IN_PROGRESS    => [
-                self::VTS_TEST_IN_PROGRESS_COUNT => '',
-            ],
+            self::VTS_TEST_IN_PROGRESS    => '',
             self::VTS_DEFAULT_BRAKE_TESTS => '',
             self::VTS_CONTACT             => [
                 self::VTS_CONTACT_UPDATE => '',
             ],
-            self::TESTING_FACILITIES => '',
-            self::SITE_DETAILS => '',
         ],
         self::SEARCH                                    => '',
     ];
@@ -131,14 +123,9 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
             ->routeParam('id', $id);
     }
 
-    public static function testInProgress($vtsId)
+    public static function testInProgress($id)
     {
-        return self::vtsById($vtsId)->appendRoutesAndParams(self::VTS_TEST_IN_PROGRESS);
-    }
-
-    public static function testInProgressCount($vtsId)
-    {
-        return self::testInProgress($vtsId)->appendRoutesAndParams(self::VTS_TEST_IN_PROGRESS_COUNT);
+        return self::vtsById($id)->appendRoutesAndParams(self::VTS_TEST_IN_PROGRESS);
     }
 
     public static function defaultBrakeTests($id)
@@ -162,26 +149,5 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
     {
         return self::contact($siteId, $contactId)
             ->appendRoutesAndParams(self::VTS_CONTACT_UPDATE);
-    }
-
-    public static function updateTestingFacilities($siteId)
-    {
-        $url = self::vtsById($siteId)
-            ->appendRoutesAndParams(self::TESTING_FACILITIES);
-
-        return $url;
-    }
-
-    public static function updateSiteDetails($siteId)
-    {
-        $url = self::vtsById($siteId)
-            ->appendRoutesAndParams(self::SITE_DETAILS);
-
-        return $url;
-    }
-
-    public static function validateSiteDetails($siteId)
-    {
-        return self::updateSiteDetails($siteId);
     }
 }

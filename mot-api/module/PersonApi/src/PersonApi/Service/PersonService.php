@@ -8,7 +8,6 @@ use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaAuthorisation\Service\AuthorisationService;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Crypt\Hash\BCryptHashFunction;
-use DvsaCommon\Crypt\Hash\HashFunctionInterface;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaEntities\Repository\PersonRepository;
@@ -67,15 +66,14 @@ class PersonService
      * @param \DvsaAuthorisation\Service\AuthorisationService $authorisationService
      * @param \Zend\Authentication\AuthenticationService
      */
-    public function __construct(
-        PersonRepository $personRepository,
-        PersonMapper $personMapper,
-        OpenAMClientInterface $openamClient,
-        $realm,
-        TesterService $testerService,
-        AuthorisationService $authorisationService,
-        AuthenticationService $authenticationService
-    ) {
+    public function __construct(PersonRepository $personRepository,
+                                PersonMapper $personMapper,
+                                OpenAMClientInterface $openamClient,
+                                $realm,
+                                TesterService $testerService,
+                                AuthorisationService $authorisationService,
+                                AuthenticationService $authenticationService)
+    {
         $this->personRepository = $personRepository;
         $this->personMapper = $personMapper;
         $this->openamClient = $openamClient;

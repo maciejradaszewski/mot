@@ -219,10 +219,7 @@ class PersonDetails
     {
         $email = $entityManager
             ->getRepository(Email::class)
-            ->findOneBy([
-                'contact' => $profileContactDetails,
-                'isPrimary' => true,
-            ]);
+            ->findOneBy(['contact' => $profileContactDetails]);
         $this->email = ($email instanceof Email) ? ($email->getEmail() ?: null) : null;
     }
 

@@ -146,19 +146,6 @@ class VtsService
                 "UPDATE site SET organisation_id = ? WHERE id = ?",
                 [$data['aeId'], $siteId]
             );
-
-            $dataGenerator = DataGeneratorHelper::buildForDifferentiator($data);
-
-            $stmt = $this->em->getConnection()->prepare("
-                INSERT INTO organisation_site_map
-                (organisation_id, site_id, trading_name, status_id, status_changed_on, created_by)
-                VALUES (?, ?, ?, 2, NOW(), (SELECT `id` FROM `person` WHERE `user_reference` = 'Static Data' OR `username` = 'static data'))"
-            );
-
-            $stmt->bindValue(1, $data['aeId']);
-            $stmt->bindValue(2, $siteId);
-            $stmt->bindValue(3, ArrayUtils::tryGet($data, 'siteName', $dataGenerator->siteName()));
-            $stmt->execute();
         }
 
         $openingTimes = [];

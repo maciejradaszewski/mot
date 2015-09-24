@@ -16,7 +16,6 @@ class Session extends MotApi
      * @param string $password
      *
      * @return AuthenticatedUser
-     * @throws Exception
      */
     public function startSession($username, $password)
     {
@@ -36,7 +35,6 @@ class Session extends MotApi
     /**
      * @param string $username
      * @param string $password
-     * @return Response
      */
     private function createNewSession($username, $password)
     {

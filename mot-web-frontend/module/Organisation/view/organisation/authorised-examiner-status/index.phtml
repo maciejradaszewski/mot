@@ -25,7 +25,7 @@ echo $this->partial(
         <?php
         echo $this->partial(
             'partial/gds/form/control-legend',
-            ['id' => 'legendStatusAreaOffice', 'text' => 'Status']
+            ['id' => 'legendStatusAreaOffice', 'text' => 'Status and area office']
         );
         echo $this->partial(
             'partial/gds/form/control-select-group',
@@ -40,29 +40,6 @@ echo $this->partial(
         );
         ?>
     </fieldset>
-
-    <?php
-    echo $this->partial(
-        '/organisation/authorised-examiner/partials/area-office-select',
-        [
-            'value' => $form->getAssignedAreaOffice(),
-            'options' => $form->getAreaOfficeOptions(),
-            'errorMessage' => $form->getError(AeStatusForm::FIELD_AO_NUMBER),
-        ]
-    );
-
-//    // TODO: Currently (27/Aug/15) there exists no way to look up a site entity
-//    // by "area number". 1.16 is due by *next* Tuesday. Deal with it! Putting
-//    // this string here allows us to ->findOneBy(/siteNumber/) in the API.
-//    echo $this->partial(
-//        'partials/form/hidden-element',
-//        [
-//            'name' => 'area-office-label',
-//            'value' => $form->getAssignedAreaOfficeLabel()
-//        ]
-//    )
-    ?>
-
     <?php
     echo $this->partial(
         'partial/gds/form/control-navigation',

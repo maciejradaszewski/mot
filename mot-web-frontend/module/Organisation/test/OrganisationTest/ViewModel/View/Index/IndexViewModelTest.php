@@ -141,17 +141,12 @@ class IndexViewModelTest extends \PHPUnit_Framework_TestCase
 
     public function test_vtsRelatedMethods_shouldReturnTrue()
     {
-        $vts1 = new VehicleTestingStation();
-        $vts2 = new VehicleTestingStation();
-        $orgDto = new OrganisationDto();
-        $viewModel1 = new IndexViewModel($this->viewAuthorisation, $orgDto, [$vts1, $vts2], $this->createPositions(), []);
-        $this->assertFalse($viewModel1->isLastVts($vts1));
-        $this->assertTrue($viewModel1->isLastVts($vts2));
-        $this->assertTrue($viewModel1->shouldViewContactDetailsForVts());
-        $this->assertCount($viewModel1->getNumberOfVehicleTestingStations(), $viewModel1->getVehicleTestingStations());
+        $vts = new VehicleTestingStation();
 
-        $viewModel2 = new IndexViewModel($this->viewAuthorisation, $orgDto, [], $this->createPositions(), []);
-        $this->assertFalse($viewModel2->shouldViewContactDetailsForVts());
+        $viewModel = new IndexViewModel($this->viewAuthorisation, new OrganisationDto(), [$vts], $this->createPositions(), []);
+        $this->assertTrue($viewModel->isLastVts($vts));
+        $this->assertTrue($viewModel->shouldViewContactDetailsForVts());
+        $this->assertCount($viewModel->getNumberOfVehicleTestingStations(), $viewModel->getVehicleTestingStations());
     }
 
     public function test_getPrincipalPersonalContact_shouldReturnPersonalContactOnly()

@@ -2,7 +2,6 @@ package uk.gov.dvsa.ui.pages;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.CompanyDetailsHelper;
 import uk.gov.dvsa.helper.ContactDetailsHelper;
@@ -87,56 +86,49 @@ public class ConfirmNewAeDetailsPage extends Page {
         return new AreaOfficerAuthorisedExaminerViewPage(driver);
     }
 
-    private boolean verifyBusinessDetails(AeDetails aeDetails) {
-        assertThat(getBusinessName(), equalTo(aeDetails.getAeBusinessDetails().getBusinessName()));
-        assertThat(getTradingName(), equalTo(aeDetails.getAeBusinessDetails().getTradingName()));
-        assertThat(getBusinessType(), equalTo(aeDetails.getAeBusinessDetails().getBusinessType()));
-        assertThat(getCompanyNumber(), equalTo(aeDetails.getAeBusinessDetails().getCompanyNumber()));
-
+    public boolean verifyBusinessDetails() {
+        assertThat(getBusinessName(), equalTo(CompanyDetailsHelper.businessName));
+        assertThat(getTradingName(), equalTo(CompanyDetailsHelper.tradingName));
+        assertThat(getBusinessType(), equalTo(CompanyDetailsHelper.businessType));
+        assertThat(getCompanyNumber(), equalTo(CompanyDetailsHelper.companyNumber));
         return true;
     }
 
-    public boolean verifyNewAeDetailsOnConfirmationPage(AeDetails aeDetails, boolean useBusinessDetailsForCorrespondence) {
-        assertThat(verifyBusinessDetails(aeDetails), is(true));
-        assertThat(verifyBusinessAddress(aeDetails), is(true));
-        assertThat(verifyBusinessContact(aeDetails), is(true));
+    public boolean verifyNewAeDetailsOnConfirmationPage(boolean useBusinessDetailsForCorrespondence) {
+        assertThat(verifyBusinessDetails(), is(true));
+        assertThat(verifyBusinessAddress(), is(true));
+        assertThat(verifyBusinessContact(), is(true));
 
         if(!useBusinessDetailsForCorrespondence){
-            assertThat(verifyCorrespondenceAddress(aeDetails), is(true));
-            assertThat(verifyCorrespondenceContact(aeDetails), is(true));
+            assertThat(verifyCorrespondenceAddress(), is(true));
+            assertThat(verifyCorrespondenceContact(), is(true));
         }
         return true;
     }
 
-    public boolean verifyBusinessAddress(AeDetails aeDetails) {
+    public boolean verifyBusinessAddress() {
         assertThat(getRegAddress(),
-                equalTo(aeDetails.getAeContactDetails().getAddress().getLine1() + ", " +
-                        aeDetails.getAeContactDetails().getAddress().getLine2() + ", " +
-                        aeDetails.getAeContactDetails().getAddress().getLine3() + ", " +
-                        aeDetails.getAeContactDetails().getAddress().getCounty() + ", " +
-                        aeDetails.getAeContactDetails().getAddress().getPostcode()));
+                equalTo(ContactDetailsHelper.addressLine1 + ", " + ContactDetailsHelper.addressLine2 + ", " + ContactDetailsHelper.addressLine3
+                        + ", " + ContactDetailsHelper.city + ", " + ContactDetailsHelper.postCode));
         return true;
     }
 
-    public boolean verifyBusinessContact(AeDetails aeDetails) {
-        assertThat(getRegEmail(), equalTo(aeDetails.getAeContactDetails().getEmail()));
-        assertThat(getRegTelephone(), equalTo(aeDetails.getAeContactDetails().getTelephoneNumber()));
+    public boolean verifyBusinessContact() {
+        assertThat(getRegEmail(), equalTo(ContactDetailsHelper.email));
+        assertThat(getRegTelephone(), equalTo(ContactDetailsHelper.phoneNumber));
         return true;
     }
 
-    public boolean verifyCorrespondenceAddress(AeDetails aeDetails) {
+    public boolean verifyCorrespondenceAddress() {
         assertThat(getCorrAddress(),
-                equalTo(aeDetails.getAeContactDetails().getAddress().getLine1() + ", " +
-                        aeDetails.getAeContactDetails().getAddress().getLine2() + ", " +
-                        aeDetails.getAeContactDetails().getAddress().getLine3() + ", " +
-                        aeDetails.getAeContactDetails().getAddress().getCounty() + ", " +
-                        aeDetails.getAeContactDetails().getAddress().getPostcode()));
+                equalTo(ContactDetailsHelper.addressLine1 + ", " + ContactDetailsHelper.addressLine2 + ", " + ContactDetailsHelper.addressLine3 + ", "
+                        + ContactDetailsHelper.city + ", " + ContactDetailsHelper.postCode));
         return true;
     }
 
-    public boolean verifyCorrespondenceContact(AeDetails aeDetails) {
-        assertThat(getCorrEmail(), equalTo(aeDetails.getAeContactDetails().getEmail()));
-        assertThat(getCorrTelephone(), equalTo(aeDetails.getAeContactDetails().getTelephoneNumber()));
+    public boolean verifyCorrespondenceContact() {
+        assertThat(getCorrEmail(), equalTo(ContactDetailsHelper.email));
+        assertThat(getCorrTelephone(), equalTo(ContactDetailsHelper.phoneNumber));
         return true;
     }
 }

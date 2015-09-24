@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class HelpDesk extends BaseTest {
 
-    @Test (groups = {"BVT", "Regression"})
+    @Test
     public void successfullyUpdateAUsersEmailAddress() throws IOException {
         User csco = userData.createCustomerServiceOfficer(false);
         User bob = userData.createAedm(false);

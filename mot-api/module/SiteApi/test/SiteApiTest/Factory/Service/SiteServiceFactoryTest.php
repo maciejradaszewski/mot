@@ -22,9 +22,6 @@ use DvsaEntities\Repository\VehicleClassRepository;
 use DvsaEventApi\Service\EventService;
 use SiteApi\Factory\Service\SiteServiceFactory;
 use SiteApi\Service\SiteService;
-use SiteApi\Service\Validator\SiteDetailsValidator;
-use SiteApi\Service\Validator\SiteValidator;
-use SiteApi\Service\Validator\TestingFacilitiesValidator;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 use DvsaEntities\Repository\SiteStatusRepository;
@@ -48,13 +45,10 @@ class SiteServiceFactoryTest extends AbstractServiceTestCase
         $this->mockMethod($identityProvider, 'getIdentity', null, new MotIdentity(1, 'unitTest'));
         $serviceManager->setService(MotIdentityProviderInterface::class, $identityProvider);
 
-        $serviceManager->setService(SiteDetailsValidator::class, XMock::of(SiteDetailsValidator::class));
-        $serviceManager->setService(TestingFacilitiesValidator::class, XMock::of(TestingFacilitiesValidator::class));
         $serviceManager->setService(ContactDetailsService::class, XMock::of(ContactDetailsService::class));
         $serviceManager->setService(EventService::class, XMock::of(EventService::class));
         $serviceManager->setService(XssFilter::class, XMock::of(XssFilter::class));
         $serviceManager->setService(Hydrator::class, XMock::of(Hydrator::class));
-        $serviceManager->setService(SiteValidator::class, XMock::of(SiteValidator::class));
 
         $this->mockMethod($entityManager, 'getRepository', $this->at(0), XMock::of(SiteTypeRepository::class));
         $this->mockMethod($entityManager, 'getRepository', $this->at(1), XMock::of(SiteRepository::class));
@@ -77,7 +71,6 @@ class SiteServiceFactoryTest extends AbstractServiceTestCase
 
         $factory = new SiteServiceFactory();
 
-        // With the instances do we get the service
         $this->assertInstanceOf(
             SiteService::class,
             $factory->createService($serviceManager)

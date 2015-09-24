@@ -25,12 +25,12 @@ public class CpmsFinancialReportsTest extends BaseTest {
     public void userGeneratesReportSuccessfully() throws IOException {
         
         //Given I am on Generate report page
-        motUI.cpms.reports.goToGenerateReportPage(financeUser);
+        GenerateReportPage generateReportPage = pageNavigator.goToGenerateReportPage(financeUser);
         
         //When I select report type and Submit
-        motUI.cpms.reports.generateFinancialReport("CPMS82FA1F0C");
+        DownloadReportPage downloadReportPage = generateReportPage.selectReportType("CPMS82FA1F0C").clickGenerateReportButton();
         
         //Then The report should be created successfully
-        assertThat(motUI.cpms.reports.downloadReportPage.isBackToGenerateReportLinkDisplayed(), is(true));
+        assertThat(downloadReportPage.isBackToGenerateReportLinkDisplayed(), is(true));
     }
 }

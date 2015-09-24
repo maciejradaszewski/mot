@@ -3,6 +3,7 @@
 namespace DvsaEntities\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use DvsaCommon\Constants\PersonContactType as PersonContactTypeEnum;
 use DvsaEntities\EntityTrait\CommonIdentityTrait;
 use DvsaEntities\Entity\ContactDetail;
 

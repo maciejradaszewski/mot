@@ -17,16 +17,11 @@ class AuthorisedExaminerUrlBuilder extends AbstractUrlBuilder
 
     const AUTHORISED_EXAMINER_PRINCIPAL = '/authorised-examiner-principal[/:principalId]';
     const AUTHORISED_EXAMINER_LIST = '/list';
-    const LIST_AREA_OFFICES = '/area-offices/list';
 
     const MOT_TEST_LOG = '/mot-test-log';
     const MOT_TEST_LOG_SUMMARY = '/summary';
 
     const AUTHORISED_EXAMINER_NUMBER = '/number[/:number]';
-
-    const SITE = '/site[/:siteNumber]';
-    const SITE_LINK = '/link[/:linkId]';
-    const SITE_UNLINKED = '/authorised';
 
     protected $routesStructure
         = [
@@ -37,14 +32,10 @@ class AuthorisedExaminerUrlBuilder extends AbstractUrlBuilder
                     self::SLOT_USAGE => '',
                     self::AUTHORISED_EXAMINER_PRINCIPAL => '',
                     self::AUTHORISED_EXAMINER_LIST => '',
-                    self::LIST_AREA_OFFICES => '',
                     self::MOT_TEST_LOG => [
                         self::MOT_TEST_LOG_SUMMARY => '',
                     ],
-                    self::AUTHORISED_EXAMINER_NUMBER    => '',
-                    self::SITE                          => [
-                        self::SITE_LINK   => '',
-                    ]
+                    self::AUTHORISED_EXAMINER_NUMBER => '',
                 ],
         ];
 
@@ -129,26 +120,8 @@ class AuthorisedExaminerUrlBuilder extends AbstractUrlBuilder
         return $this;
     }
 
-    public static function site($aeId = null)
-    {
-        return self::of($aeId)
-            ->appendRoutesAndParams(self::SITE);
-    }
-
-    public static function siteLink($aeId = null, $linkId = null)
-    {
-        return self::site($aeId)
-            ->appendRoutesAndParams(self::SITE_LINK)
-            ->routeParam('linkId', $linkId);
-    }
-
     public static function status($id)
     {
         return self::of($id)->appendRoutesAndParams(self::STATUS);
-    }
-
-    public static function getAllAreaOffices()
-    {
-        return self::of()->appendRoutesAndParams(self::LIST_AREA_OFFICES);
     }
 }

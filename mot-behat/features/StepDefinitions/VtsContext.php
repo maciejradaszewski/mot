@@ -258,19 +258,20 @@ class VtsContext implements Context
     {
         $testerService = $this->sessionContext->testSupportHelper->getTesterService();
 
-        $this->siteManager1Data = $testerService->create(
-            [
-                'accountClaimRequired' => false,
-                'siteIds' => [1],
-            ]
-        )->data;
+        $this->siteManager1Data        = $testerService->create([
+            'accountClaimRequired' => false,
+            'siteIds'              => [1],
+        ])->data;
 
-        $this->siteManager2Data = $testerService->create(
-            [
-                'accountClaimRequired' => false,
-                'siteIds' => [1],
-            ]
-        )->data;
+        $this->siteManager2Data =  $testerService->create([
+            'accountClaimRequired' => false,
+            'siteIds'              => [1],
+        ])->data;
+
+        $params = [
+            'nomineeId' => $this->siteManager1Data['personId'],
+            'roleCode' => 'SITE-MANAGER'
+        ];
 
         $role = 'SITE-MANAGER';
         $result1 = $this->vehicleTestingStation->nominateToRole(
@@ -280,7 +281,8 @@ class VtsContext implements Context
             $this->sessionContext->getCurrentAccessToken()
         );
 
-        $role = 'SITE-MANAGER';
+        $params['nomineeId'] =  $this->siteManager2Data['personId'];
+
         $result2 = $this->vehicleTestingStation->nominateToRole(
             $this->siteManager2Data['personId'],
             $role,
@@ -297,7 +299,7 @@ class VtsContext implements Context
      */
     public function theSiteManagerRolesShouldBeAssignedSuccessfully()
     {
-        $positionName = 'Site manager';
+        $role = "SITE-MANAGER";
 
         // login as user1
         $this->sessionContext->iMAuthenticatedWithMyUsernameAndPassword(
@@ -306,7 +308,7 @@ class VtsContext implements Context
         );
 
         $notification = $this->notification->getRoleNominationNotification(
-            $positionName,
+            $role,
             $this->siteManager1Data['personId'],
             $this->sessionContext->getCurrentAccessToken()
         );
@@ -320,7 +322,7 @@ class VtsContext implements Context
         );
 
         $notification = $this->notification->getRoleNominationNotification(
-            $positionName,
+            $role,
             $this->siteManager2Data['personId'],
             $this->sessionContext->getCurrentAccessToken()
         );

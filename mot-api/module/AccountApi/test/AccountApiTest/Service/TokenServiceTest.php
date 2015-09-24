@@ -13,6 +13,7 @@ use DvsaCommon\Enum\MessageTypeCode;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Service\Exception\NotFoundException;
+use DvsaCommonApi\Service\Exception\ServiceException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
@@ -26,10 +27,10 @@ use DvsaEntities\Entity\PersonContactType;
 use DvsaEntities\Repository\MessageRepository;
 use DvsaEntities\Repository\MessageTypeRepository;
 use DvsaEntities\Repository\PersonRepository;
-use MailerApi\Logic\AbstractMailerLogic;
 use MailerApi\Service\MailerService;
 use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceManager;
+use DvsaCommon\Constants\PersonContactType as PersonContactTypeEnum;
 use DvsaAuthorisation\Service\AuthorisationService;
 use Zend\Authentication\AuthenticationService;
 
@@ -62,12 +63,15 @@ class TokenServiceTest extends AbstractServiceTestCase
     private $mockDateTimeHolder;
     /** @var OpenAmIdentityService */
     private $mockOpenAmIdentityService;
+
     /** @var  MailerService */
     private $mockMailerService;
     /** @var  ParamObfuscator */
     private $mockObfuscator;
+
     /** @var  AuthenticationService */
     private $authenticationService;
+
     /** @var  AuthorisationService */
     private $authorisationService;
 
@@ -94,10 +98,10 @@ class TokenServiceTest extends AbstractServiceTestCase
         $this->mockConfig = $serviceManager->get('Config');
         $this->mockConfig[TokenService::CFG_PASSWORD_RESET][TokenService::CFG_PASSWORD_RESET_EXPIRE_TIME]
             = self::CFG_EXPIRE_TIME;
-        $this->mockConfig[AbstractMailerLogic::CONFIG_KEY] = [
+        $this->mockConfig[TokenService::CFG_MAILER] = [
             'sendingAllowed' => true,
             'recipient'   => 'sean.charles@valtech.co.uk',
-            AbstractMailerLogic::CONFIG_KEY_BASE_URL => 'http://mot-web-frontend.mot.gov.uk',
+            'mot-web-frontend-url'   => 'http://mot-web-frontend.mot.gov.uk',
         ];
         $this->mockConfig[TokenService::CFG_HELPDESK] = [
             'name' => 'TEST HELPDESK',
@@ -423,6 +427,7 @@ class TokenServiceTest extends AbstractServiceTestCase
         $this->mockMethod(
             $this->mockMessageRepo, 'getHydratedMessageByToken', $this->any(), $message, [self::TOKEN, $onlyValid]
         );
+
 
         $exception = new OpenAmChangePasswordException('test');
 

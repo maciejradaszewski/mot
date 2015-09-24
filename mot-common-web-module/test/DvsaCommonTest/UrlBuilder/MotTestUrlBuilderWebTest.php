@@ -16,7 +16,7 @@ class MotTestUrlBuilderWebTest extends \PHPUnit_Framework_TestCase
         $base = '/mot-test/' . self::MOT_TEST_NR;
         $this->checkUrl(MotTestUrlBuilderWeb::motTest(self::MOT_TEST_NR), $base);
 
-        $this->checkUrl(MotTestUrlBuilderWeb::showResult(self::MOT_TEST_NR), $base . '/test-result');
+        $this->checkUrl(MotTestUrlBuilderWeb::printResult(self::MOT_TEST_NR), $base . '/print-test-result');
         $this->checkUrl(
             MotTestUrlBuilderWeb::printDuplicateResult(self::MOT_TEST_NR), $base . '/print-duplicate-test-result'
         );

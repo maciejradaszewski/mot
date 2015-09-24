@@ -58,7 +58,6 @@ class HelpDeskPersonService
      * @param SearchPersonModel $searchPersonModel
      * @return \DvsaCommon\Dto\Person\SearchPersonResultDto[]
      * @throws TooFewResultsException
-	 * @throws TooManyResultsException
      */
     public function search(SearchPersonModel $searchPersonModel)
     {
@@ -92,11 +91,10 @@ class HelpDeskPersonService
     }
 
     /**
-	 * @param $personId
-	 * @param bool|true $restricted
-	 * @return PersonHelpDeskProfileDto
-	 * @throws \DvsaCommonApi\Service\Exception\NotFoundException
-	 */
+     * @param int $personId
+     *
+     * @return PersonHelpDeskProfileDto
+     */
     public function getPersonProfile($personId, $restricted = true)
     {
         $this->authorisationService->assertGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE);

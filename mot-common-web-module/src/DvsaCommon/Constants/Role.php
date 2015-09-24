@@ -3,7 +3,8 @@
 namespace DvsaCommon\Constants;
 
 /**
- * Class with names of role
+ * Class Role
+ * @package DvsaCommon\Constants
  */
 class Role
 {

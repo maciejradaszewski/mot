@@ -5,22 +5,14 @@ use SiteApi\Controller\EquipmentController;
 use SiteApi\Controller\MotTestInProgressController;
 use SiteApi\Controller\SiteContactController;
 use SiteApi\Controller\SiteController;
-use SiteApi\Controller\SiteEventController;
 use SiteApi\Controller\VehicleTestingStationAuthorisedClassesController;
 use SiteApi\Controller\SitePositionController;
 use SiteApi\Controller\SitePositionValidateController;
 use SiteApi\Controller\SiteRoleController;
 use SiteApi\Controller\SiteSlotUsageController;
 use SiteApi\Controller\SiteTestingDailyScheduleController;
-use SiteApi\Factory\Controller\SiteDetailsControllerFactory;
 use SiteApi\Factory\Controller\SiteSearchControllerFactory;
-use SiteApi\Controller\SiteSearchController;
 use SiteApi\Factory\Controller\SiteControllerFactory;
-use SiteApi\Factory\Controller\MotTestInProgressControllerFactory;
-use SiteApi\Factory\Controller\SiteEventControllerFactory;
-use SiteApi\Controller\SiteTestingFacilitiesController;
-use SiteApi\Factory\Controller\SiteTestingFacilitiesControllerFactory;
-use SiteApi\Controller\SiteDetailsController;
 
 return [
     'controllers' => [
@@ -33,30 +25,17 @@ return [
             EquipmentController::class                => EquipmentController::class,
             SiteTestingDailyScheduleController::class => SiteTestingDailyScheduleController::class,
             DefaultBrakeTestsController::class        => DefaultBrakeTestsController::class,
+            MotTestInProgressController::class        => MotTestInProgressController::class,
             SiteContactController::class              => SiteContactController::class,
-            SitePositionValidateController::class     => SitePositionValidateController::class,
+            SitePositionValidateController::class => SitePositionValidateController::class,
         ],
         'factories' => [
-            SiteSearchController::class => SiteSearchControllerFactory::class,
+            SiteSearchControllerFactory::class => SiteSearchControllerFactory::class,
             SiteController::class              => SiteControllerFactory::class,
-            SiteTestingFacilitiesController::class => SiteTestingFacilitiesControllerFactory::class,
-            SiteDetailsController::class => SiteDetailsControllerFactory::class,
-            MotTestInProgressController::class => MotTestInProgressControllerFactory::class,
-            SiteEventController::class => SiteEventControllerFactory::class
         ],
     ],
     'router'      => [
         'routes' => [
-            'site-manual-event' => [
-                'type' => 'segment',
-                'options' => [
-                    'route' => '/site/:siteId/event',
-                    'defaults' => [
-                        'controller' => SiteEventController::class,
-                    ],
-                ],
-                'may_terminate' => true,
-            ],
             'site-role'               => [
                 'type'    => 'Segment',
                 'options' => [
@@ -171,24 +150,6 @@ return [
                             ]
                         ],
                     ],
-                    'testing-facilities' => [
-                        'type'    => 'segment',
-                        'options' => [
-                            'route'    => '/testing-facilities',
-                            'defaults' => [
-                                'controller' => SiteTestingFacilitiesController::class
-                            ]
-                        ],
-                    ],
-                    'site-details' => [
-                        'type'    => 'segment',
-                        'options' => [
-                            'route'    => '/site-details',
-                            'defaults' => [
-                                'controller' => SiteDetailsController::class
-                            ]
-                        ],
-                    ],
                     'test-in-progress' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -196,20 +157,7 @@ return [
                             'defaults'    => [
                                 'controller' => MotTestInProgressController::class,
                             ],
-                        ],
-                        'may_terminate' => true,
-                        'child_routes'  => [
-                            'update' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route' => '/count',
-                                    'defaults' => [
-                                        'controller' => MotTestInProgressController::class,
-                                        'action'     => 'count',
-                                    ],
-                                ],
-                            ],
-                        ],
+                        ]
                     ],
                     'contact'      => [
                         'type'          => 'Segment',
@@ -242,7 +190,7 @@ return [
                 'options' => [
                     'route'    => '/vehicle-testing-station/search',
                     'defaults' => [
-                        'controller' => SiteSearchController::class,
+                        'controller' => SiteSearchControllerFactory::class,
                     ],
                 ],
             ],

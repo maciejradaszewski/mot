@@ -197,36 +197,6 @@ class PersonRepository extends AbstractMutableRepository
     }
 
     /**
-     * For use in New User Registration
-     * Passes in the letters of the user's username and assigns a number to them based on the la
-     * @param string $username
-     * @return mixed|null
-     */
-    public function getLastUsername($username, $lowerLimit, $upperLimit)
-    {
-        $lowerLimit = $username.$lowerLimit;
-        $upperLimit = $username.$upperLimit;
-        $username = $username . '%';
-
-        // Query set to use Upper and Lower limits from DBA advice
-        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
-        $queryBuilder
-            ->select('MAX(person.username)')
-            ->from(Person::class, 'person')
-            ->where('person.username LIKE :username')
-            ->andWhere('person.username > :lowerLimit')
-            ->andWhere('person.username <= :upperLimit')
-            ->setParameter('username', $username)
-            ->setParameter('lowerLimit' , $lowerLimit)
-            ->setParameter('upperLimit' , $upperLimit)
-            ->setMaxResults(1);
-
-        $result = $queryBuilder->getQuery()->getOneOrNullResult();
-
-        return isset($result['1']) ? $result['1'] : null;
-    }
-
-    /**
      * @param int               $personId
      * @param PersonContactType $contactType
      *

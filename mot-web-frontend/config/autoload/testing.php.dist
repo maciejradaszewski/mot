@@ -67,9 +67,4 @@ return array(
             ],
         ]
     ],
-
-    /*
-     * How much time after password expires user has to reset his password.
-     */
-    'password_expiry_grace_period' => '30 days',
 );

@@ -15,16 +15,8 @@ class AuthorisedExaminerAuthorisationDto extends AbstractDataTransferObject
     private $authorisedExaminerRef;
     private $validFrom;
     private $expiryDate;
-
     /** @var AuthForAeStatusDto */
     private $status;
-
-    /** @var  \DvsaEntities\Entity\Site */
-    private $assignedAreaOffice;
-
-//    /** @var  string */
-//    private $assignedAreaOfficeLabel;
-
 
     /**
      * @param string $authorisedExaminerRef
@@ -101,24 +93,5 @@ class AuthorisedExaminerAuthorisationDto extends AbstractDataTransferObject
     public function getExpiryDate()
     {
         return $this->expiryDate;
-    }
-
-    /**
-     * @return int
-     */
-    public function getAssignedAreaOffice()
-    {
-        return $this->assignedAreaOffice;
-    }
-
-    /**
-     * @param int $assignedAreaOffice
-     * @return $this
-     */
-    public function setAssignedAreaOffice($assignedAreaOffice)
-    {
-        $this->assignedAreaOffice = $assignedAreaOffice;
-
-        return $this;
     }
 }

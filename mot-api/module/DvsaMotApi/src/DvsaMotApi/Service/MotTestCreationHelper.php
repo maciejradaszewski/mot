@@ -43,19 +43,19 @@ class MotTestCreationHelper
     const ONE_TIME_PASSWORD_FIELD    = 'oneTimePassword';
 
     /** @var EntityManager */
-    private $entityManager;
+    protected $entityManager;
     /** @var AuthorisationServiceInterface */
-    private $authService;
+    protected $authService;
     /** @var TesterService */
-    private $testerService;
+    protected $testerService;
     /** @var MotTestRepository */
-    private $motTestRepository;
+    protected $motTestRepository;
     /** @var MotTestValidator */
-    private $motTestValidator;
+    protected $motTestValidator;
     /** @var RetestEligibilityValidator */
-    private $retestEligibilityValidator;
+    protected $retestEligibilityValidator;
     /** @var OtpService */
-    private $otpService;
+    protected $otpService;
 
     public function __construct(
         EntityManager $entityManager,
@@ -144,10 +144,7 @@ class MotTestCreationHelper
             }
         }
 
-        if ($motTestType->getIsDemo()) {
-            $this->authService->assertGranted(PermissionInSystem::MOT_DEMO_TEST_PERFORM);
-            $this->checkTesterHasNoInProgressDemoTest($tester->getId());
-        } else {
+        if (!$motTestType->getIsDemo()) {
             $this->checkForExistingInProgressTest($vehicleId);
             $this->checkTesterHasNoInProgressTest($tester->getId());
         }
@@ -173,7 +170,6 @@ class MotTestCreationHelper
 
         $vts = $motTestType->getIsDemo() ? null : $this->entityManager->find(Site::class, $vtsId);
 
-        /** @var Vehicle $vehicle */
         $vehicle = $this->entityManager->getRepository(Vehicle::class)->get($vehicleId);
 
         $primaryColour   = $primaryColourCode ? $this->getColourByCode($primaryColourCode) : null;
@@ -293,38 +289,28 @@ class MotTestCreationHelper
      *
      * @throws \DvsaCommonApi\Service\Exception\BadRequestException
      */
-    private function checkForExistingInProgressTest($vehicleId)
+    protected function checkForExistingInProgressTest($vehicleId)
     {
         $testExists = $this->motTestRepository->isTestInProgressForVehicle($vehicleId);
         if ($testExists) {
             $exception = BadRequestException::create();
-            $errorMsg  = 'Vehicle already has an in progress test';
+            $errorMsg  = "Vehicle already has an in progress test";
             $exception->addError($errorMsg, '', $errorMsg);
             throw $exception;
         }
     }
 
-    private function checkTesterHasNoInProgressTest($personId)
+    protected function checkTesterHasNoInProgressTest($personId)
     {
         if ($this->motTestRepository->findInProgressTestNumberForPerson($personId)) {
             throw new BadRequestException(
-                'You have a test that is already in progress',
+                "You have a test that is already in progress",
                 BadRequestException::ERROR_CODE_BUSINESS_FAILURE
             );
         }
     }
 
-    private function checkTesterHasNoInProgressDemoTest($personId)
-    {
-        if ($this->motTestRepository->findInProgressDemoTestNumberForPerson($personId)) {
-            throw new BadRequestException(
-                'You have a demo test that is already in progress',
-                BadRequestException::ERROR_CODE_BUSINESS_FAILURE
-            );
-        }
-    }
-
-    private function isVehicleModified(
+    protected function isVehicleModified(
         Vehicle $vehicle,
         VehicleClass $vehicleClass,
         FuelType $fuelType,
@@ -343,14 +329,14 @@ class MotTestCreationHelper
      *
      * @return bool
      */
-    private static function isVehicleClassSame($vehicleClass1, $vehicleClass2)
+    protected static function isVehicleClassSame($vehicleClass1, $vehicleClass2)
     {
         if ($vehicleClass1 == null && $vehicleClass2 == null) {
             return true;
         }
 
         if ($vehicleClass1 != null && $vehicleClass2 != null) {
-            return $vehicleClass1->getCode() === $vehicleClass2->getCode();
+            return $vehicleClass1->getCode() == $vehicleClass2->getCode();
         }
 
         return false;
@@ -362,7 +348,7 @@ class MotTestCreationHelper
      *
      * @return bool
      */
-    private static function isFuelTypeSame($fuelType1, $fuelType2)
+    protected static function isFuelTypeSame($fuelType1, $fuelType2)
     {
         if ($fuelType1 == null && $fuelType2 == null) {
             return true;
@@ -381,7 +367,7 @@ class MotTestCreationHelper
      *
      * @return bool
      */
-    private static function isColourSame($colour1, $colour2)
+    protected static function isColourSame($colour1, $colour2)
     {
         if ($colour1 == null && $colour2 == null) {
             return true;
@@ -413,7 +399,7 @@ class MotTestCreationHelper
         $this->entityManager->persist($motTest);
     }
 
-    private function getColourByCode($code)
+    protected function getColourByCode($code)
     {
         /** @var ColourRepository $colourRepository */
         $colourRepository = $this->entityManager->getRepository(Colour::class);

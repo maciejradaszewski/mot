@@ -8,7 +8,6 @@ use Core\Authorisation\Assertion\WebPerformMotTestAssertion;
 use DvsaCommon\Auth\Assertion\AbandonVehicleTestAssertion;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Auth\PermissionInSystem;
-use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Constants\Network;
 use DvsaCommon\Constants\OdometerReadingResultType;
 use DvsaCommon\Domain\MotTestType;
@@ -190,7 +189,7 @@ class MotTestController extends AbstractDvsaMotTestController
                     return $this->redirect()->toUrl(MotTestUrlBuilderWeb::summary($motTestNumber));
                 }
 
-                return $this->redirect()->toUrl(MotTestUrlBuilderWeb::showResult($motTestNumber));
+                return $this->redirect()->toUrl(MotTestUrlBuilderWeb::printResult($motTestNumber));
             } catch (RestApplicationException $e) {
                 $this->addErrorMessages($e->getDisplayMessages());
             }
@@ -305,7 +304,7 @@ class MotTestController extends AbstractDvsaMotTestController
         if ($request->isPost()) {
             $motTestNumber = (int)$this->params()->fromRoute('motTestNumber', 0);
 
-            $urlFinish = MotTestUrlBuilderWeb::showResult($motTestNumber);
+            $urlFinish = MotTestUrlBuilderWeb::printResult($motTestNumber);
             $prgHelper->setRedirectUrl($urlFinish->toString());
 
             $data = $request->getPost()->toArray();
@@ -572,7 +571,7 @@ class MotTestController extends AbstractDvsaMotTestController
         return $response;
     }
 
-    public function testResultAction()
+    public function printTestResultAction()
     {
         $motTestNumber = $this->params()->fromRoute('motTestNumber', 0);
 
@@ -580,21 +579,14 @@ class MotTestController extends AbstractDvsaMotTestController
 
         $this->layout()->setVariable('hideChangeSiteLink', true);
 
-        $model =  new MotPrintModel(
+        return new MotPrintModel(
             [
-                'motDetails'    => $motDetails,
-                'motTestNumber' => $motTestNumber,
-                'isDuplicate'   => false
+                'motDetails'        => $motDetails,
+                'motTestNumber'     => $motTestNumber,
+                'isDuplicate'       => $this->params('isDuplicate'),
+                'isMotContingency'  => $this->getContingencySessionManager()->isMotContingency(),
             ]
         );
-
-        if (true === $model->isReinspection || !$this->isFeatureEnabled(FeatureToggle::JASPER_ASYNC)) {
-            $model->setTemplate('dvsa-mot-test/mot-test/print-test-result');
-        } else {
-            $this->layout('layout/layout-govuk.phtml');
-        }
-
-        return $model;
     }
 
     public function printDuplicateCertificateResultAction()

@@ -28,7 +28,7 @@ public class RunAClass4Mot {
                 .addMotTest("12345", BrakeTestConfiguration4.enforcement_CASE1(),
                         BrakeTestResults4.enforcement_CASE1(), null, null, null, null)
                 .createCertificate().enterNewPasscode(Text.TEXT_PASSCODE).clickFinishPrint()
-                .clickBackToHomeLink();
+                .clickDoneButton();
     }
 
     public TestSummary runMotTestFailPrint(Login login, Vehicle vehicleInfo){
