@@ -1,16 +1,11 @@
 package uk.gov.dvsa.ui.feature.journey;
 
-import com.dvsa.mot.selenium.datasource.dynamic.AE;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
-import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.EventsHistoryPage;
-import uk.gov.dvsa.ui.pages.dvsamanageroles.UserSearchPage;
-import uk.gov.dvsa.ui.pages.dvsamanageroles.UserSearchProfilePage;
-import uk.gov.dvsa.ui.pages.dvsamanageroles.UserSearchResultsPage;
 import uk.gov.dvsa.ui.pages.events.CreateNewEventPage;
 import uk.gov.dvsa.ui.pages.events.CreateNewEventPageTwo;
 import uk.gov.dvsa.ui.pages.events.NewEventSummaryPage;
