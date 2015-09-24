@@ -1,16 +1,17 @@
 <?php
 namespace DvsaMotTest\NewVehicle\Form\VehicleWizard\Factory;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use DvsaMotTest\NewVehicle\Form\VehicleWizard\CreateVehicleFormWizard;
+use Application\Service\ContingencySessionManager;
+use DvsaCommon\HttpRestJson\Client;
 use DvsaMotTest\NewVehicle\Container\NewVehicleContainer;
+use DvsaMotTest\NewVehicle\Form\VehicleWizard\CreateVehicleFormWizard;
 use DvsaMotTest\NewVehicle\Form\VehicleWizard\SummaryStep;
 use DvsaMotTest\NewVehicle\Form\VehicleWizard\VehicleIdentificationStep;
 use DvsaMotTest\NewVehicle\Form\VehicleWizard\VehicleSpecificationStep;
 use DvsaMotTest\Service\AuthorisedClassesService;
+use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Container;
-use DvsaCommon\HttpRestJson\Client;
 
 class CreateVehicleFormWizardFactory implements FactoryInterface
 {
@@ -24,17 +25,33 @@ class CreateVehicleFormWizardFactory implements FactoryInterface
         $catalogService = $sl->get('CatalogService');
         $authorisedClassesService = $sl->get(AuthorisedClassesService::class);
         $identityProvider = $sl->get('MotIdentityProvider');
+        $contingencySessionManager = $sl->get(ContingencySessionManager::class);
 
         $wizard = new CreateVehicleFormWizard();
 
-        $step1 = new VehicleIdentificationStep($container,$client,$catalogService);
+        $step1 = new VehicleIdentificationStep(
+            $container,
+            $client,
+            $catalogService);
         $wizard->addStep($step1);
 
-        $step2 = new VehicleSpecificationStep($container,$client,$catalogService,$authorisedClassesService,$identityProvider);
+        $step2 = new VehicleSpecificationStep(
+            $container,
+            $client,
+            $catalogService,
+            $authorisedClassesService,
+            $identityProvider
+        );
         $step2->setPrevStep($step1);
         $wizard->addStep($step2);
 
-        $step3 = new SummaryStep($container,$client,$catalogService,$identityProvider);
+        $step3 = new SummaryStep(
+            $container,
+            $client,
+            $catalogService,
+            $identityProvider,
+            $contingencySessionManager
+        );
         $step3->setPrevStep($step2);
         $wizard->addStep($step3);
 

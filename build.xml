@@ -190,21 +190,21 @@
 	<!-- ============================================  -->
 
 	<target name="api-phpunit" description="Run unit tests with PHPUnit">
-		<exec dir="${basedir}/mot-api" executable="phpunit" failonerror="true">
+		<exec dir="${basedir}/mot-api" executable="vendor/bin/phpunit" failonerror="true">
 			<arg value="-c" />
 			<arg path="${basedir}/mot-api/test/phpunit_ci.xml" />
 		</exec>
 	</target>
 
 	<target name="common-phpunit" description="Run unit tests with PHPUnit">
-		<exec dir="${basedir}/mot-common-web-module" executable="phpunit" failonerror="true">
+		<exec dir="${basedir}/mot-common-web-module" executable="vendor/bin/phpunit" failonerror="true">
 			<arg value="-c" />
 			<arg path="${basedir}/mot-common-web-module/test/phpunit_ci.xml" />
 		</exec>
 	</target>
 
 	<target name="frontend-phpunit" description="Run unit tests with PHPUnit">
-		<exec dir="${basedir}/mot-web-frontend" executable="phpunit" failonerror="true">
+		<exec dir="${basedir}/mot-web-frontend" executable="vendor/bin/phpunit" failonerror="true">
 			<arg value="-c" />
 			<arg path="${basedir}/mot-web-frontend/test/phpunit_ci.xml" />
 		</exec>

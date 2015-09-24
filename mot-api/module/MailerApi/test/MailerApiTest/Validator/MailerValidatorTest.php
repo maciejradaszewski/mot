@@ -89,6 +89,45 @@ class MailerValidatorTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testGivenCorrectValuesArePassed_whenValidatingCustomerCertificate_shouldReturnTrue()
+    {
+        $dto = new MailerDto();
+        $dto->setData([
+            "email" => "dummy@email.com",
+            "firstName" => "some name",
+            "familyName" => "familyName",
+            "attachment" => "dummy attachment",
+        ]);
+
+        $this->assertTrue($this->validator->validate($dto, MailerValidator::TYPE_CUSTOMER_CERTIFICATE));
+    }
+
+    /**
+     * @expectedException \DvsaCommonApi\Service\Exception\BadRequestException
+     */
+    public function testGivenEmailIsTooLong_whenValidatingCustomerCertificate_shouldThrowBadRequestException()
+    {
+        $dto = new MailerDto();
+        $dto->setData([
+            "email" => "dumdummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydumm@email.com",
+            "firstName" => "some name",
+            "familyName" => "familyName",
+            "attachment" => "dummy attachment",
+        ]);
+
+        $this->validator->validate($dto, MailerValidator::TYPE_CUSTOMER_CERTIFICATE);
+    }
+
+    /**
+     * @expectedException \DvsaCommonApi\Service\Exception\BadRequestException
+     */
+    public function testGivenNullValuesArePassed_whenValidatingCustomerCertificate_shouldThrowBadRequestException()
+    {
+        $dto = new MailerDto();
+        $dto->setData([]);
+
+        $this->validator->validate($dto, MailerValidator::TYPE_CUSTOMER_CERTIFICATE);
+    }
 
     protected function ensureUserIdGood($id, $with = [])
     {

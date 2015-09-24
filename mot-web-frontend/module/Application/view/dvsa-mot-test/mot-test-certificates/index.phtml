@@ -1,0 +1,18 @@
+<div class="container">
+    <header class="content-header">
+        <h1>
+            <span class="content-header__type">MOT testing</span>
+            <span class="content-header__title">MOT test certificates</span>
+        </h1>
+    </header>
+    <p class="lede">You can print MOT test certificates that have been created in the last 5 days.</p>
+    <p>
+        For <span class="bold-small">older certificates</span> you will need to <a href="<?php echo $this->url('replacement-certificate-vehicle-search'); ?>">print a duplicate
+            certificate.</a>
+    </p>
+    <?php echo $this->partial(
+        'partials/motTestCertificates',
+        ['certificates' => $this->certificates]
+    ); ?>
+
+</div>

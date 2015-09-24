@@ -24,13 +24,15 @@ class OrganisationUrlBuilderTest extends PHPUnit_Framework_TestCase
             OrganisationUrlBuilder::position(self::ORG_ID, $positionId),
             $base . '/position/' . $positionId
         );
-        $this->checkUrl(OrganisationUrlBuilder::sites(self::ORG_ID), $base . '/site');
 
         $urlBuilder = OrganisationUrlBuilder::organisationById(self::ORG_ID);
-        $this->checkUrl($urlBuilder->usage(), $base . '/slot-usage');
+        $this->checkUrl($urlBuilder->usage(), $base . OrganisationUrlBuilder::USAGE);
 
         $urlBuilder = OrganisationUrlBuilder::organisationById(self::ORG_ID);
-        $this->checkUrl($urlBuilder->usage()->periodData(), $base . '/slot-usage/period-data');
+        $this->checkUrl($urlBuilder->usage()->periodData(), $base . OrganisationUrlBuilder::USAGE.OrganisationUrlBuilder::USAGE_PERIOD_DATA);
+
+        $urlBuilder = OrganisationUrlBuilder::organisationById(self::ORG_ID);
+        $this->checkUrl($urlBuilder->createEvent(), $base . OrganisationUrlBuilder::EVENT);
     }
 
     private function checkUrl(OrganisationUrlBuilder $urlBuilder, $expectUrl)

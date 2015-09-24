@@ -121,23 +121,37 @@ class ContactMapper
         $contactDto = $contactDto ? $contactDto : new OrganisationContactDto();
 
         if ($contact->getPhones()) {
-            $phonesDtos = [];
-            foreach ($contact->getPhones() as $phone) {
+            $phones = $contact->getPhones();
+
+            $phones = $contact->getPhones()->toArray();
+            usort($phones, function($a, $b) {
+                return $a->getCreatedOn() < $b->getCreatedOn();
+            });
+
+            $phoneDtos = [];
+            foreach ($phones as $phone) {
                 $phoneDto = new PhoneDto();
                 $phoneDto->setId($phone->getId());
                 $phoneDto->setNumber($phone->getNumber());
                 $phoneDto->setIsPrimary($phone->getIsPrimary());
                 $phoneDto->setContactType($phone->getContactType()->getCode());
 
-                $phonesDtos[] = $phoneDto;
+                $phoneDtos[] = $phoneDto;
             }
 
-            $contactDto->setPhones($phonesDtos);
+            $contactDto->setPhones($phoneDtos);
         }
 
         if ($contact->getEmails()) {
+            $emails = $contact->getEmails();
+
+            $emails = $contact->getEmails()->toArray();
+            usort($emails, function($a, $b) {
+                return $a->getCreatedOn() < $b->getCreatedOn();
+            });
+
             $emailDtos = [];
-            foreach ($contact->getEmails() as $email) {
+            foreach ($emails as $email) {
                 $emailDto = new EmailDto();
                 $emailDto->setId($email->getId());
                 $emailDto->setEmail($email->getEmail());

@@ -12,6 +12,7 @@ import uk.gov.dvsa.ui.pages.Page;
 
 public class ChoosePaymentTypePage extends Page {
     private static final String PAGE_TITLE = "Buy test slots";
+    public static final String PATH = "/slots/%s/add-slots";
     
     @FindBy(id = "startOrder") private WebElement startOrderButton;
 

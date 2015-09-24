@@ -152,7 +152,7 @@ class OrganisationMapperTest extends AbstractMapperTest
             ['data' => $expect]
         );
 
-        $actualDto = $this->mapper->validateStatus($expectDto, self::AE_ID);
+        $actualDto = $this->mapper->validateStatusAndAO($expectDto, self::AE_ID);
 
         $this->assertEquals($expect, $actualDto);
     }

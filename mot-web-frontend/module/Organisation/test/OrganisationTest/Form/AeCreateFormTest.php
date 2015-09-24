@@ -9,6 +9,7 @@ use DvsaClient\ViewModel\PhoneFormModel;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Contact\EmailDto;
 use DvsaCommon\Dto\Contact\PhoneDto;
+use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\CompanyTypeCode;
@@ -101,7 +102,7 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($postData->get(AeCreateForm::FIELD_TRADING_AS), $model->getTradingAs());
         $this->assertEquals($postData->get(AeCreateForm::FIELD_COMPANY_TYPE), $model->getCompanyType());
         $this->assertEquals($postData->get(AeCreateForm::FIELD_REG_NR), $model->getRegisteredCompanyNumber());
-        $this->assertEquals($postData->get(AeCreateForm::FIELD_AO_NR), $model->getAreaOfficeNumber());
+        $this->assertEquals($postData->get(AeCreateForm::FIELD_AO_NR), $model->getAssignedAreaOffice());
 
         $this->assertEquals($expect['isCorrTheSame'], $model->isCorrDetailsTheSame());
     }
@@ -133,46 +134,32 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProviderTestFromDtoMainFields
-     */
-    public function testFromDtoMainFields(OrganisationDto $dto = null)
+    public function testFormSetsDefaultsWhenGivenNullDto()
     {
-        $model = $this->form->fromDto($dto);
-
-        if ($dto === null) {
-            $dto = new OrganisationDto();
-        }
-
-        //  --  logical block :: check main fields
-        $this->assertEquals($dto->getName(), $model->getName());
-        $this->assertEquals($dto->getTradingAs(), $model->getTradingAs());
-        $this->assertEquals($dto->getCompanyType(), $model->getCompanyType());
-        $this->assertEquals($dto->getRegisteredCompanyNumber(), $model->getRegisteredCompanyNumber());
-        $this->assertEquals($dto->getAreaOfficeSite(), $model->getAreaOfficeNumber());
-
-        //  --  logical block :: check
-        $this->assertInstanceOf(AeCreateForm::class, $model);
+        $model = $this->form->fromDto(null);
+        $this->assertTrue($model->isCorrDetailsTheSame());
     }
 
-
-    public function dataProviderTestFromDtoMainFields()
+    public function testFormPopulatesFromDtoAsExpected()
     {
-        return [
-            [
-                'dto' => null,
-            ],
-            [
-                'dto' => (new OrganisationDto())
-                    ->setName('test_OrgName')
-                    ->setTradingAs('test_TradingAs')
-                    ->setCompanyType('test_CompanyType')
-                    ->setRegisteredCompanyNumber('test_RegNr')
-                    ->setAreaOfficeSite('test_AONr'),
-            ],
-        ];
-    }
+        $authForAeDto = new AuthorisedExaminerAuthorisationDto();
+        $authForAeDto->setAssignedAreaOffice(1);
 
+        $orgDto = (new OrganisationDto())
+            ->setName('test_OrgName')
+            ->setTradingAs('test_TradingAs')
+            ->setCompanyType('test_CompanyType')
+            ->setRegisteredCompanyNumber('test_RegNr')
+            ->setAuthorisedExaminerAuthorisation($authForAeDto);
+
+        $model = $this->form->fromDto($orgDto);
+
+        $this->assertEquals($orgDto->getName(), $model->getName());
+        $this->assertEquals($orgDto->getTradingAs(), $model->getTradingAs());
+        $this->assertEquals($orgDto->getCompanyType(), $model->getCompanyType());
+        $this->assertEquals($orgDto->getRegisteredCompanyNumber(), $model->getRegisteredCompanyNumber());
+        $this->assertEquals($orgDto->getAuthorisedExaminerAuthorisation()->getAssignedAreaOffice(), $model->getAssignedAreaOffice());
+    }
 
     /**
      * @dataProvider dataProviderTestFromDtoIsTheSame
@@ -277,6 +264,9 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
         $corrContactDto = clone $busContactDto;
         $corrContactDto->setType(OrganisationContactTypeCode::CORRESPONDENCE);
 
+        $authForAeDto = new AuthorisedExaminerAuthorisationDto();
+        $authForAeDto->setAssignedAreaOffice(1);
+
         return [
             [
                 'postData' => [
@@ -284,7 +274,7 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
                     AeCreateForm::FIELD_TRADING_AS                  => 'test_TradingAs',
                     AeCreateForm::FIELD_COMPANY_TYPE                => 'test_CompanyType',
                     AeCreateForm::FIELD_REG_NR                      => 'test_RegNr',
-                    AeCreateForm::FIELD_AO_NR                       => 'test_AONr',
+                    AeCreateForm::FIELD_AO_NR                       => '1',
                     AeCreateForm::FIELD_IS_CORR_DETAILS_THE_SAME    => 1,
                     OrganisationContactTypeCode::REGISTERED_COMPANY => [
                         AddressFormModel::FIELD_LINE1 => 'test_Addr1',
@@ -297,19 +287,21 @@ class AeCreateFormTest extends \PHPUnit_Framework_TestCase
                     ->setTradingAs('test_TradingAs')
                     ->setCompanyType('test_CompanyType')
                     ->setRegisteredCompanyNumber('test_RegNr')
-                    ->setAreaOfficeSite('test_AONr')
+                    ->setAuthorisedExaminerAuthorisation($authForAeDto)
                     ->setContacts([$busContactDto, $corrContactDto])
             ],
             [
                 'postData' => [
                     AeCreateForm::FIELD_NAME                     => 'test_OrgName',
                     AeCreateForm::FIELD_IS_CORR_DETAILS_THE_SAME => 0,
+                    AeCreateForm::FIELD_AO_NR                    => 1,
                     OrganisationContactTypeCode::CORRESPONDENCE  => [
                         EmailFormModel::FIELD_EMAIL => 'test_Email',
                     ]
                 ],
                 'expect'   => (new OrganisationDto())
                     ->setName('test_OrgName')
+                    ->setAuthorisedExaminerAuthorisation($authForAeDto)
                     ->setContacts(
                         [
                             $this->createContactDetails(OrganisationContactTypeCode::REGISTERED_COMPANY),

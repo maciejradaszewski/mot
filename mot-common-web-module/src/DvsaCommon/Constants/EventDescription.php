@@ -18,9 +18,19 @@ class EventDescription extends BaseEnumeration
     const ROLE_ASSOCIATION_REMOVE_SITE_ORG = '%s role for %s removed from %s (%s)';
     const DVSA_ADMINISTRATOR_CREATE_AE = 'Authorised examiner %s %s created by user %s';
     const DVSA_ADMINISTRATOR_CREATE_SITE = 'Site %s %s created by user %s';
+    const DVSA_ADMINISTRATOR_UPDATE_SITE = '%s has been updated from %s to %s for Site %s %s by user %s';
+    const DVSA_ADMINISTRATOR_AMEND_AREA_OFFICE = 'Area Office has been updated from %s to %s for Authorised Examiner %s %s by user %s';
     const DVSA_ADMINISTRATOR_UPDATE_AE_STATUS = 'Status has been updated from %s to %s for Authorised Examiner %s %s by user %s';
-    const TESTER_QUALIFICATION_STATUS_CHANGE = 'Qualified to test Group %s vehicles following a demonstration test. Recorded by %s';
-    const DVSA_ROLE_ASSOCIATION_REMOVE = 'Removed %s role. Recorded by %s';
+    const TESTER_QUALIFICATION_STATUS_CHANGE =
+        'Qualified to test Group %s vehicles following a demonstration test. Recorded by %s';
+
     const DVSA_ROLE_ASSOCIATION_ASSIGN = 'Assigned %s role. Recorded by %s';
+    const DVSA_ROLE_ASSOCIATION_REMOVE = 'Removed %s role. Recorded by %s';
     const ROLE_NOMINATION_ACCEPT = '%s role for %s - %s added to %s %s';
+
+    const TESTER_QUALIFICATION_STATUS_CHANGE_NEW = 'Tester qualification status for group %s has been changed to %s, by %s';
+    const TESTER_QUALIFICATION_STATUS_CHANGE_UPDATE = 'Tester qualification status for group %s changed from %s to %s, by %s';
+
+    const DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE = 'Site %s %s has been linked to AE %s %s by %s';
+    const AE_UNLINK_SITE = 'Site %s %s has been unlinked from AE %s %s by %s';
 }

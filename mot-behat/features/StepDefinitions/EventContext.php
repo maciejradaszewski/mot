@@ -54,9 +54,25 @@ class EventContext implements Context
     private $siteEvent = [];
 
     /**
+     * Used to store data in preparation for manually creating an event
+     * @var array
+     */
+    private $eventCreationData;
+
+    /**
+     * @var int
+     */
+    private $eventCreationEntityId;
+
+    /**
      * @param Event $event
      */
-    public function __construct(Event $event, Person $person, Session $session, TestSupportHelper $testSupportHelper)
+    public function __construct(
+        Event $event,
+        Person $person,
+        Session $session,
+        TestSupportHelper $testSupportHelper
+    )
     {
         $this->event = $event;
         $this->person = $person;
@@ -76,7 +92,94 @@ class EventContext implements Context
     }
 
     /**
+     * @Given I create an event for a person
+     */
+    public function iCreateAnEventForAPerson()
+    {
+        // We also need to create a person here
+        $this->personContext->theUserExists('User');
+        $this->eventCreationEntityId = $this->personContext->getPersonUserId();
+        $this->eventCreationData['eventCategoryCode'] = 'NT';
+    }
+
+    /**
+     * @Given I create an event for an organisation
+     */
+    public function iCreateAnEventForAnOrganisation()
+    {
+        $this->aeContext->createAE();
+        $ae = $this->aeContext->getAE();
+        $this->eventCreationEntityId = $ae['id'];
+        $this->eventCreationData['eventCategoryCode'] = 'AE';
+    }
+
+    /**
+     * @Given I create an event for a site
+     */
+    public function iCreateAnEventForASite()
+    {
+        $this->vtsContext->createSite();
+        $site = $this->vtsContext->getSite();
+        $this->eventCreationEntityId = $site['id'];
+
+        $this->eventCreationData['eventCategoryCode'] = 'VTS';
+
+    }
+
+    /**
+     * @Given I select the event type :eventTypeCode
+     */
+    public function iSelectTheEventType($eventTypeCode)
+    {
+        $this->eventCreationData['eventTypeCode'] = $eventTypeCode;
+    }
+
+    /**
+     * @Given I supply a valid date
+     */
+    public function iSupplyAValidDate()
+    {
+        $dt = new \DateTime();
+        $this->eventCreationData['eventDate'] = [
+            'day' => $dt->format('d'),
+            'month' => $dt->format('m'),
+            'year' => $dt->format('Y')
+        ];
+    }
+
+    /**
+     * @Given I select the event outcome :eventOutcomeCode
+     */
+    public function iSelectTheEventOutcome($eventOutcomeCode)
+    {
+        $this->eventCreationData['eventOutcomeCode'] = $eventOutcomeCode;
+    }
+
+    /**
+     * @Given I supply a blank description
+     */
+    public function iSupplyABlankDescription()
+    {
+        $this->eventCreationData['eventDescription'] = '';
+    }
+
+    /**
+     * @When I submit the event
+     */
+    public function iSubmitTheEvent()
+    {
+        $reponse = $this->event->postEvent(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->eventCreationData['eventCategoryCode'],
+            $this->eventCreationEntityId,
+            $this->eventCreationData
+        );
+        PHPUnit::assertSame(200, $reponse->getStatusCode());
+    }
+
+    /**
      * @Then a status change event is generated for the user of :eventType
+     * @Then an event is generated for the user of :eventType
      */
     public function aStatusChangeEventIsGeneratedForTheUserOf($eventType)
     {
@@ -191,7 +294,7 @@ class EventContext implements Context
             }
         }
 
-        PHPUnit::assertTrue($found);
+        PHPUnit::assertTrue($found, "Event {$eventType} not found");
     }
 
     private function getPersonDisplayName()

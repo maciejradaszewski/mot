@@ -4,14 +4,14 @@ namespace PersonApi\Service;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use DvsaAuthorisation\Service\AuthorisationService;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Exception\UnauthorisedException;
-use DvsaCommon\Model\PersonAuthorization;
 use DvsaCommonApi\Service\Exception\NotFoundException;
-use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\BusinessRoleStatus;
+use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\PermissionToAssignRoleMap;
 use DvsaEntities\Entity\PersonSystemRole;
 use DvsaEntities\Entity\PersonSystemRoleMap;
@@ -27,7 +27,7 @@ use DvsaMotApi\Helper\RoleNotificationHelper;
 
 class PersonRoleService
 {
-    const ERR_MSG_TRADE_ROLE_OWNER = 'Its not possible to assign an "internal" role to a "trade" role owner';
+    const ERR_MSG_TRADE_ROLE_OWNER = 'It\'s not possible to assign an "internal" role to a "trade" role owner';
     const ERR_MSG_SELF_MANAGEMENT = 'You are not allowed to change your own roles';
 
     const ROLES_ALL = 'all';
@@ -90,12 +90,10 @@ class PersonRoleService
         $this->personSystemRoleRepository = $personSystemRoleRepository;
         $this->personSystemRoleMapRepository = $personSystemRoleMapRepository;
         $this->roleRepository = $roleRepository;
-
         $this->authService = $authService;
         $this->roleEventHelper = $roleEventHelper;
         $this->roleNotificationHelper = $roleNotificationHelper;
     }
-
 
     /**
      * Add the role to the user
@@ -162,12 +160,14 @@ class PersonRoleService
             ->setPersonSystemRole($personSystemRole);
 
         // Set the status to active
+        /** @var BusinessRoleStatus $roleStatus */
         $roleStatus = $this->businessRoleStatusRepository->findOneBy(
             ['code' => BusinessRoleStatusCode::ACTIVE]
         );
-        $personSystemRoleMap->setBusinessRoleStatus($roleStatus);
 
+        $personSystemRoleMap->setBusinessRoleStatus($roleStatus);
         $this->personSystemRoleMapRepository->save($personSystemRoleMap);
+
         return $personSystemRoleMap;
     }
 
@@ -195,7 +195,7 @@ class PersonRoleService
      */
     public function getRoles($personId)
     {
-        $this->authService->assertGranted(PermissionInSystem::MANAGE_DVSA_ROLES);
+        $this->authService->assertGranted(PermissionInSystem::READ_DVSA_ROLES);
         return $this->getPersonAssignedAndAvailableInternalRoleCodes($personId);
     }
 
@@ -308,8 +308,8 @@ class PersonRoleService
     {
         // PersonRepository
         $person = $this->personRepository->find($personId);
-        if(!$person instanceof Person) {
-            throw new NotFoundException('Unable to find person with id '.$personId);
+        if (!$person instanceof Person) {
+            throw new NotFoundException('Unable to find person with id ' . $personId);
         }
         return $person;
     }
@@ -369,7 +369,7 @@ class PersonRoleService
      * Uses the mapping repository to return the relevant permission code
      * @param Role $role
      * @return string
-     * @throws \DvsaEntities\Repository\NotFoundException
+     * @throws NotFoundException
      */
     private function getPermissionCodeFromRole(Role $role)
     {
@@ -380,7 +380,7 @@ class PersonRoleService
      * Uses the mapping repository to return the relevant permission code
      * @param PersonSystemRole $personSystemRole
      * @return string
-     * @throws \DvsaEntities\Repository\NotFoundException
+     * @throws NotFoundException
      */
     public function getPermissionCodeFromPersonSystemRole(PersonSystemRole $personSystemRole)
     {
@@ -416,7 +416,7 @@ class PersonRoleService
     {
         $allTradeRoles = $this->getAllTradeRoleCodes();
         $personRoles = $this->getPersonRoles($personId);
-        $intersect = array_intersect($allTradeRoles,$personRoles);
+        $intersect = array_intersect($allTradeRoles, $personRoles);
 
         return !empty($intersect);
     }

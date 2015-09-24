@@ -10,12 +10,13 @@ class MotTest extends AbstractMotTest
     const PATH = 'mot-test';
     const PATH_GET_CERT = 'mot-test-certificate?number=651157444199';
     const PATH_SEARCH = 'mot-test-search';
+    const PATH_RECENT_CERTIFICATE = 'mot-recent-certificate';
 
     /**
      * @var Person
      */
     private $person;
-    
+
     public function __construct(HttpClient $client, Person $person)
     {
         parent::__construct($client);
@@ -99,7 +100,25 @@ class MotTest extends AbstractMotTest
         return $this->sendRequest(
             $token,
             MotApi::METHOD_GET,
-            self::PATH.'/'.$motTestNumber
+            self::PATH . '/' . $motTestNumber
+        );
+    }
+
+    public function getRecentTestsCertificateDetails($token, $vtsId)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_GET,
+            self::PATH_RECENT_CERTIFICATE . '?vtsId=' . $vtsId
+        );
+    }
+
+    public function getRecentTestCertificateDetails($token, $vtsId)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_GET,
+            self::PATH_RECENT_CERTIFICATE . '/' . $vtsId
         );
     }
 
@@ -140,7 +159,7 @@ class MotTest extends AbstractMotTest
         $defaults = [
             "tester" => 0,
             "dateFrom" => (new \DateTime())->sub(new \DateInterval('P30D'))->getTimestamp(),
-            "dateTo"   => (new \DateTime())->getTimestamp(),
+            "dateTo" => (new \DateTime())->getTimestamp(),
             "format" => "DATA_TABLES",
             "rowCount" => 10,
             "start" => 0,

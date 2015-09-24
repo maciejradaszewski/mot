@@ -31,11 +31,11 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
                 submitted and the following documents have been issued
             </p>
             <p>
-                <ul>
-                    <li>Certificate – VT32</li>
-                </ul>
-                <a id="reprint-certificate" target="_blank" class="btn btn-primary"
-                   href="<?php echo $escUrlPrint; ?>">Print documents</a>
+            <ul>
+                <li>Certificate – VT32</li>
+            </ul>
+            <a id="reprint-certificate" target="_blank" class="btn btn-primary"
+               href="<?php echo $escUrlPrint; ?>">Print documents</a>
             </p>
         </div>
         <div class="col-lg-8">
@@ -49,10 +49,10 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
             <ul>
                 <?php if ($this->isAppeal): ?>
                     <?php if ($this->passedMotTestId) : ?>
-                    <li>The VT20 has been generated</li>
+                        <li>The VT20 has been generated</li>
                     <?php endif; ?>
                     <?php if ($this->failedMotTestId) : ?>
-                    <li>The VT30 has been generated</li>
+                        <li>The VT30 has been generated</li>
                     <?php endif; ?>
                 <?php else: ?>
                     <li>The VT32 has been generated</li>
@@ -112,7 +112,7 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
         </div>
 
         <div class="col-lg-8">
-            <a id="quit" href="<?php echo PersonUrlBuilderWeb::home(); ?>" class="btn btn-link">Back to user home</a>
+            <a id="back-to-home-link" href="<?php echo PersonUrlBuilderWeb::home(); ?>" class="btn btn-link">Back to user home</a>
             <?php if ($this->isMotContingency): ?>
                 <a id="quit" href="<?php echo $this->url('contingency'); ?>"
                    class="btn btn-link">Enter another contingency test</a>

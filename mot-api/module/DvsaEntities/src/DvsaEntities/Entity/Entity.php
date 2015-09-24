@@ -54,7 +54,7 @@ abstract class Entity
     //region getters and setters
 
     /**
-     * @return integer|null
+     * @return Person|null
      */
     public function getCreatedBy()
     {

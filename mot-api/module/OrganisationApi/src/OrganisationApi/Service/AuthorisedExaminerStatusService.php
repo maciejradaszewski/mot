@@ -8,6 +8,7 @@ use DvsaCommon\Auth\MotIdentityInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Constants\EventDescription;
 use DvsaCommon\Date\DateTimeHolder;
+use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\EventTypeCode;
 use DvsaCommonApi\Filter\XssFilter;
@@ -16,6 +17,7 @@ use DvsaEntities\Entity\AuthForAeStatus;
 use DvsaEntities\Entity\EventOrganisationMap;
 use DvsaEntities\Repository\AuthForAeStatusRepository;
 use DvsaEntities\Repository\OrganisationRepository;
+use DvsaEntities\Repository\SiteRepository;
 use DvsaEventApi\Service\EventService;
 use OrganisationApi\Service\Validator\AuthorisedExaminerValidator;
 
@@ -40,6 +42,10 @@ class AuthorisedExaminerStatusService extends AbstractService
      * @var OrganisationRepository
      */
     private $organisationRepository;
+    /**
+     * @var SiteRepository
+     */
+    private $siteRepository;
     /**
      * @var \DvsaCommonApi\Filter\XssFilter
      */
@@ -67,6 +73,7 @@ class AuthorisedExaminerStatusService extends AbstractService
      * @param XssFilter $xssFilter
      * @param AuthorisedExaminerValidator $validator
      * @param DateTimeHolder $dateTimeHolder
+     * @param SiteRepository $siteRepository
      */
     public function __construct(
         EntityManager $entityManager,
@@ -77,7 +84,8 @@ class AuthorisedExaminerStatusService extends AbstractService
         AuthForAeStatusRepository $authForAeStatusRepository,
         XssFilter $xssFilter,
         AuthorisedExaminerValidator $validator,
-        DateTimeHolder $dateTimeHolder
+        DateTimeHolder $dateTimeHolder,
+        SiteRepository $siteRepository
     ) {
         parent::__construct($entityManager);
 
@@ -86,6 +94,7 @@ class AuthorisedExaminerStatusService extends AbstractService
         $this->eventService = $eventService;
         $this->organisationRepository = $organisationRepository;
         $this->authForAeStatusRepository = $authForAeStatusRepository;
+        $this->siteRepository = $siteRepository;
         $this->xssFilter = $xssFilter;
         $this->validator = $validator;
 
@@ -99,7 +108,15 @@ class AuthorisedExaminerStatusService extends AbstractService
         /** @var OrganisationDto $dto */
         $dto = $this->xssFilter->filter($dto);
 
-        $this->validator->validateStatus($dto->getAuthorisedExaminerAuthorisation());
+        $allAreaOffices = $this->siteRepository->getAllAreaOffices();
+        $dtoAuthExaminer = $dto->getAuthorisedExaminerAuthorisation();
+        $this->validator->validateStatus($dtoAuthExaminer);
+        $this->validator->validateAreaOffice(
+            $dtoAuthExaminer,
+            $allAreaOffices
+        );
+
+        $this->validator->failOnErrors();
 
         if ($dto->isValidateOnly() === true) {
             return null;
@@ -114,9 +131,20 @@ class AuthorisedExaminerStatusService extends AbstractService
 
         $oldStatus = $organisation->getAuthorisedExaminer()->getStatus()->getName();
         $authorisedExaminer = $organisation->getAuthorisedExaminer();
-        $authorisedExaminer
-            ->setValidFrom($this->dateTimeHolder->getCurrentDate())
-            ->setStatus($status);
+
+        // Wire in the (possibly) changed Area Office entity
+        /** @var AuthorisedExaminerAuthorisationDto $authForAe */
+        $authForAe = $dto->getAuthorisedExaminerAuthorisation();
+
+        if ($authForAe) {
+            $newAOId = $this->getAreaOfficeIdByNumber($authForAe->getAssignedAreaOffice(), $allAreaOffices);
+            $newAO = $this->siteRepository->find($newAOId);
+
+            $authorisedExaminer
+                ->setValidFrom($this->dateTimeHolder->getCurrentDate())
+                ->setStatus($status)
+                ->setAreaOffice($newAO);
+        }
 
         //  logical block :: create event
         $event = $this->eventService->addEvent(
@@ -142,5 +170,30 @@ class AuthorisedExaminerStatusService extends AbstractService
         $this->entityManager->flush();
 
         return ['id' => $organisation->getId()];
+    }
+
+
+    private function getAreaOfficeIdByNumber($aoNumber, $allAreaOffices)
+    {
+        $aoNumber = (int)$aoNumber;
+
+        foreach ($allAreaOffices as $areaOffice) {
+            if ($aoNumber == $areaOffice['areaOfficeNumber']) {
+                return $areaOffice['id'];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This answers a list of all of the area offices currently active in the system.
+     * The returned structure contains a LIST of PROPERTIES, as the list of Area Office
+     * numbers is not contiguous.
+     *
+     * @return array
+     */
+    public function getAllAreaOffices()
+    {
+        return $this->siteRepository->getAllAreaOffices();
     }
 }

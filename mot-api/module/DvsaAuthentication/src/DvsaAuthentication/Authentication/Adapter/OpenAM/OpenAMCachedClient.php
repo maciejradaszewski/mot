@@ -122,4 +122,12 @@ class OpenAMCachedClient implements OpenAMClientInterface
     {
         $this->openAMClient->validateCredentials($loginDetails);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPasswordExpiryDate(OpenAMLoginDetails $loginDetails)
+    {
+        $this->openAMClient->getPasswordExpiryDate($loginDetails);
+    }
 }

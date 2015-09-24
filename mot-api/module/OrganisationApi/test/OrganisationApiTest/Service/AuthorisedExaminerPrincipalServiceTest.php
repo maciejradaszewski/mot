@@ -1,4 +1,5 @@
 <?php
+
 namespace OrganisationApiTest\Service;
 
 use DvsaAuthorisation\Service\AuthorisationService;
@@ -17,22 +18,17 @@ use OrganisationApi\Service\AuthorisedExaminerPrincipalService;
 use UserApi\Application\Service\AccountService;
 
 /**
- * Class AuthorisedExaminerPrincipalServiceTest
- *
- * @package OrganisationApiTest\Service
+ * Unit tests for AuthorisedExaminerPrincipalService
  */
 class AuthorisedExaminerPrincipalServiceTest extends AbstractServiceTestCase
 {
-    /**
-     * @var AuthorisedExaminerPrincipalService
-     */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AuthorisedExaminerPrincipalService */
     private $authorisedExaminerPrincipalService;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|OrganisationRepository organisationRepository */
     private $organisationRepository;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AccountService accountService */
     private $accountService;
-
-    /**
-     * @var Organisation
-     */
+    /** @var Organisation */
     private $authorisedExaminer;
 
     public function setUp()
@@ -69,10 +65,10 @@ class AuthorisedExaminerPrincipalServiceTest extends AbstractServiceTestCase
         $contactDetail->setAddress($address);
 
         $personalContactType = new \DvsaEntities\Entity\PersonContactType();
-        $personalContactType->setName(PersonContactType::personalContact()->getName());
+        $personalContactType->setName(PersonContactType::PERSONAL);
 
         $workContactType     = new \DvsaEntities\Entity\PersonContactType();
-        $workContactType->setName(PersonContactType::workContact()->getName());
+        $workContactType->setName(PersonContactType::WORK);
 
         $authorisedExaminer = new AuthorisationForAuthorisedExaminer();
 

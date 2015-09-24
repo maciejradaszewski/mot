@@ -1,6 +1,7 @@
 parameters:
     dvsa.argument_resolver.services:
           Dvsa\Mot\Behat\Support\Api\AccountClaim: dvsa.account_claim
+          Dvsa\Mot\Behat\Support\Api\AccountRegistration: dvsa.account_registration
           Dvsa\Mot\Behat\Support\Api\AuthorisedExaminer: dvsa.authorised_examiner
           Dvsa\Mot\Behat\Support\Api\BrakeTestResult: dvsa.brake_test_result
           Dvsa\Mot\Behat\Support\Api\Certificate: dvsa.certificate
@@ -27,7 +28,6 @@ parameters:
           Dvsa\Mot\Behat\Support\Api\Vts: dvsa.vts
           Dvsa\Mot\Behat\Support\History: dvsa.http_client
           Dvsa\Mot\Behat\Support\Helper\TestSupportHelper: dvsa.test_support_helper
-          Dvsa\Mot\Behat\Support\Helper\MotTestTypeHelper: dvsa.mot_test_type_helper
           Dvsa\Mot\Behat\Utility\ArrayAccess: dvsa.array_access
 
 services:

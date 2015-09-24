@@ -132,7 +132,7 @@ class EventViewModelTest extends \PHPUnit_Framework_TestCase
         $organisationDto->setName(self::AE_NAME);
         $this->viewModel = new EventViewModel($organisationDto, [], [], $this->getEventFormModel(), 'ae', self::AE_ID);
         $this->assertSame(
-            'List of AE events found for organisation "' . self::AE_NUMBER . ' - ' . self::AE_NAME . '"',
+            self::AE_NUMBER . ' - ' . self::AE_NAME,
             $this->viewModel->getTitle()
         );
 
@@ -149,7 +149,7 @@ class EventViewModelTest extends \PHPUnit_Framework_TestCase
             self::SITE_ID
         );
         $this->assertSame(
-            'List of Site events found for site "' . self::SITE_NUMBER . ' - ' . self::SITE_NAME . '"',
+            self::SITE_NUMBER . ' - ' . self::SITE_NAME,
             $this->viewModel->getTitle()
         );
 
@@ -160,11 +160,9 @@ class EventViewModelTest extends \PHPUnit_Framework_TestCase
         $person->setFamilyName(self::PERSON_FAMILYNAME);
         $this->viewModel = new EventViewModel(new OrganisationDto(), [], $person, $this->getEventFormModel(), 'person', self::PERSON_ID);
         $this->assertSame(
-            'List of Person events found for user "' .
-            self::PERSON_USERNAME . ' - ' .
             self::PERSON_FIRSTNAME . ' ' .
             self::PERSON_MIDDLENAME . ' ' .
-            self::PERSON_FAMILYNAME . '"',
+            self::PERSON_FAMILYNAME,
             $this->viewModel->getTitle()
         );
 

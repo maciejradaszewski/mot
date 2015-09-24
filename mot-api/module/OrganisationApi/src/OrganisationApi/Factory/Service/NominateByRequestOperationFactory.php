@@ -8,6 +8,7 @@ use OrganisationApi\Model\Operation\NominateByRequestOperation;
 use OrganisationApi\Service\OrganisationNominationService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use NotificationApi\Service\NotificationService;
 
 /**
  * Class NominateByRequestOperationFactory

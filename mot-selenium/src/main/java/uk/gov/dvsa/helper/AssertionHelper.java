@@ -11,4 +11,12 @@ public class AssertionHelper {
         throw new AssertionError("Expected: " + String.format("%s", expectedText)
                 + String.format("\n got: %s", actual));
     }
+
+    public static boolean assertValue(boolean expected, boolean actual) {
+        if (expected == actual){
+            return true;
+        }
+
+        throw new AssertionError("Expected: " + expected + "\n got:" + actual);
+    }
 }

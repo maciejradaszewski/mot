@@ -15,21 +15,32 @@ use DvsaCommon\HttpRestJson\Client;
 use Application\Service\CatalogService;
 use Core\Service\MotFrontendIdentityProviderInterface;
 use Core\Service\RemoteAddress;
+use Application\Service\ContingencySessionManager;
+use DvsaCommon\Utility\DtoHydrator;
 
 class SummaryStep extends AbstractStep implements WizardStep
 {
-    /** @var MotFrontendIdentityProviderInterface */
+    /**
+     * @var MotFrontendIdentityProviderInterface
+     */
     private $identityProvider;
+
+    /**
+     * @var ContingencySessionManager
+     */
+    private $contingencySessionManager;
 
     public function __construct(
         NewVehicleContainer $container,
         Client $client,
         CatalogService $catalogService,
-        MotFrontendIdentityProviderInterface $identityProvider
+        MotFrontendIdentityProviderInterface $identityProvider,
+        ContingencySessionManager $contingencySessionManager
     ) {
         parent::__construct($container, $client, $catalogService);
 
         $this->identityProvider = $identityProvider;
+        $this->contingencySessionManager = $contingencySessionManager;
     }
 
     /**
@@ -60,6 +71,16 @@ class SummaryStep extends AbstractStep implements WizardStep
         $data = $stepsData + $formData ;
         $data['vtsId'] = $this->identityProvider->getIdentity()->getCurrentVts()->getVtsId();
         $data['clientIp'] = RemoteAddress::getIp();
+
+        $contingencySessionManager = $this->contingencySessionManager;
+
+        if ($contingencySessionManager->isMotContingency()) {
+            $contingencySession = $contingencySessionManager->getContingencySession();
+
+            $data['contingencyId'] = $contingencySession['contingencyId'];
+            $data['contingencyDto'] = DtoHydrator::dtoToJson($contingencySession['dto']);
+        }
+
         $apiUrl = VehicleUrlBuilder::vehicle();
 
         return $this->client->postJson($apiUrl, $data);

@@ -2,6 +2,7 @@ package uk.gov.dvsa.ui.pages;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.*;
 
@@ -41,6 +42,7 @@ public class CreateAePage extends Page {
 
     @FindBy(id = "submitAeEdit") private WebElement continueToSummary;
     @FindBy(id = "navigation-link-") private WebElement cancelAndReturnHome;
+    @FindBy(id = "assignedAreaOffice") private WebElement DVSAareaOffice;
 
     public CreateAePage(MotAppDriver driver) {
         super(driver);
@@ -51,54 +53,45 @@ public class CreateAePage extends Page {
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
 
-    public CreateAePage enterBusinessDetails() {
-        return editBusinessName(CompanyDetailsHelper.businessName).editTradingName(CompanyDetailsHelper.tradingName)
-                .selectBusinessType(CompanyDetailsHelper.businessType).editCompanyNumber(
-                        CompanyDetailsHelper.companyNumber);
+    public CreateAePage enterBusinessDetails(AeDetails aeDetails) {
+        return editBusinessName(aeDetails.getAeBusinessDetails().getBusinessName())
+                .editTradingName(aeDetails.getAeBusinessDetails().getTradingName())
+                .selectBusinessType(aeDetails.getAeBusinessDetails().getBusinessType())
+                .editCompanyNumber(aeDetails.getAeBusinessDetails().getCompanyNumber());
     }
 
-    public CreateAePage enterBusinessAddress() {
-        return editBusinessAddressLine1(ContactDetailsHelper.addressLine1).editBusinessAddressLine2(ContactDetailsHelper.addressLine2)
-                .editBusinessAddressLine3(ContactDetailsHelper.addressLine3).editBusinessCity(
-                        ContactDetailsHelper.city)
-                .editBusinessPostCode(ContactDetailsHelper.postCode).editBusinessPhoneNumber(
-                        ContactDetailsHelper.phoneNumber)
-                .enterBusinessEmail(ContactDetailsHelper.email);
+    public CreateAePage enterBusinessAddress(AeDetails aeDetails) {
+        return editBusinessAddressLine1(aeDetails.getAeContactDetails().getAddress().getLine1())
+               .editBusinessAddressLine2(aeDetails.getAeContactDetails().getAddress().getLine2())
+               .editBusinessAddressLine3(aeDetails.getAeContactDetails().getAddress().getLine2())
+               .editBusinessCity(aeDetails.getAeContactDetails().getAddress().getCounty())
+               .editBusinessPostCode(aeDetails.getAeContactDetails().getAddress().getPostcode())
+               .enterBusinessEmail(aeDetails.getAeContactDetails().getEmail())
+                .editBusinessPhoneNumber(aeDetails.getAeContactDetails().getTelephoneNumber());
     }
 
     public CreateAePage enterBusinessEmail(String email) {
         return editBusinessEmail(email).editBusinessEmailConfirmation(email);
     }
 
-    public CreateAePage enterCorrespondenceAddress() {
-        return editCorrespondenceAddressLine1(ContactDetailsHelper.addressLine1).editCorrespondenceAddressLine2(
-                ContactDetailsHelper.addressLine2)
-                .editCorrespondenceAddressLine3(ContactDetailsHelper.addressLine3).editCorrAddressTown(
-                        ContactDetailsHelper.city)
-                .editCorrespondenceAddressPostCode(ContactDetailsHelper.postCode).editCorrespondencePhoneNumber(
-                        ContactDetailsHelper.phoneNumber)
-                .enterCorrespondenceEmail(ContactDetailsHelper.email);
+    public CreateAePage enterCorrespondenceAddress(AeDetails aeDetails) {
+        return editCorrespondenceAddressLine1(aeDetails.getAeContactDetails().getAddress().getLine1()).editCorrespondenceAddressLine2(
+                aeDetails.getAeContactDetails().getAddress().getLine2())
+                .editCorrespondenceAddressLine3(aeDetails.getAeContactDetails().getAddress().getLine3()).editCorrAddressTown(
+                        aeDetails.getAeContactDetails().getAddress().getCounty())
+                .editCorrespondenceAddressPostCode(aeDetails.getAeContactDetails().getAddress().getPostcode()).editCorrespondencePhoneNumber(
+                        aeDetails.getAeContactDetails().getTelephoneNumber())
+                .enterCorrespondenceEmail(aeDetails.getAeContactDetails().getEmail());
     }
 
-    public boolean verifyCorrespondenceDetails() {
-        assertThat(getCorrespondenceAddressLine1(), equalTo(ContactDetailsHelper.addressLine1));
-        assertThat(getCorrespondenceAddressLine2(), equalTo(ContactDetailsHelper.addressLine2));
-        assertThat(getCorrespondenceAddressLine3(), equalTo(ContactDetailsHelper.addressLine3));
-        assertThat(getCorrespondenceTown(), equalTo(ContactDetailsHelper.city));
-        assertThat(getCorrespondencePostCode(), equalTo(ContactDetailsHelper.postCode));
-        assertThat(getCorrespondencePhoneNumber(), equalTo(ContactDetailsHelper.phoneNumber));
-        assertThat(getCorrespondenceEmailAddress(), equalTo(ContactDetailsHelper.email));
-        assertThat(getCorrespondenceEmailConfirmAddress(), equalTo(ContactDetailsHelper.email));
-        return true;
-    }
-
-    public CreateAePage completeBusinessAndCorrespondenceDetails(boolean useBusinessDetailsForCorrespondence){
-        enterBusinessDetails();
-        enterBusinessAddress();
+    public CreateAePage completeBusinessAndCorrespondenceDetails(AeDetails aeDetails, boolean useBusinessDetailsForCorrespondence){
+        enterBusinessDetails(aeDetails);
+        enterBusinessAddress(aeDetails);
+        selectAreaOffice(generateAreaOfficeValue());
 
         if(useBusinessDetailsForCorrespondence){
             selectBusinessDetailsSameAsCorrespondenceDetails(useBusinessDetailsForCorrespondence);
-            enterCorrespondenceAddress();
+            enterCorrespondenceAddress(aeDetails);
         }
 
         return this;
@@ -288,6 +281,17 @@ public class CreateAePage extends Page {
 
     public String getCorrespondenceEmailConfirmAddress() {
         return corrEmailConfirmation.getAttribute("value");
+    }
+
+    private String generateAreaOfficeValue(){
+        int Min=1;
+        int Max =9;
+       return String.valueOf (Min + (int)(Math.random() * ((Max - Min) + 1)));
+    }
+
+    public CreateAePage selectAreaOffice(String areaOfficeValue){
+        FormCompletionHelper.selectFromDropDownByValue(DVSAareaOffice, areaOfficeValue);
+        return this;
     }
 
     public ConfirmNewAeDetailsPage clickContinueToSummary() {

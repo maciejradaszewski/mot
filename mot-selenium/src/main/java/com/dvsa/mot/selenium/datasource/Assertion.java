@@ -219,7 +219,7 @@ public class Assertion {
     //DVSA User search
     public static final Assertion ASSERTION_TESTER_VTS = new Assertion("Popular Garages");
     public static final Assertion ASSERTION_USER_ADDRESS = new Assertion("Address");
-    public static final Assertion ASSERTION_QUALIFICATION_STATUS_GROUP_QUALIFIED = new Assertion("Qualified");
+    public static final Assertion ASSERTION_QUALIFICATION_STATUS_GROUP_QUALIFIED = new Assertion("Qualified\n" +"Change qualification status");
     public static final Assertion ASSERTION_QUALIFICATION_STATUS_GROUP_DEMO_TEST_NEEDED = new Assertion("Demo Test Needed\n" +"Change qualification status");
     public static final Assertion ASSERTION_QUALIFICATION_STATUS_GROUP_DEMO_TEST_NEEDED_NO_PERMISSION = new Assertion("Demo Test Needed");
 

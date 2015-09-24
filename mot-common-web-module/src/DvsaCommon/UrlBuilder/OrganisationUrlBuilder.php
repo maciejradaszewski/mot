@@ -12,17 +12,16 @@ class OrganisationUrlBuilder extends UrlBuilder
 
     const USAGE = '/slot-usage';
     const USAGE_PERIOD_DATA = '/period-data';
-
-    const SITES = '/site';
+    const EVENT = '/event';
 
     protected $routesStructure
         = [
             self::ORGANISATION => [
+                self::EVENT => '',
                 self::POSITION => '',
                 self::USAGE    => [
                     self::USAGE_PERIOD_DATA => '',
                 ],
-                self::SITES    => '',
             ],
         ];
 
@@ -38,6 +37,11 @@ class OrganisationUrlBuilder extends UrlBuilder
             ->routeParam('positionId', $positionId);
     }
 
+    public function createEvent()
+    {
+        return $this->appendRoutesAndParams(self::EVENT);
+    }
+
     public function usage()
     {
         return $this->appendRoutesAndParams(self::USAGE);
@@ -46,15 +50,5 @@ class OrganisationUrlBuilder extends UrlBuilder
     public function periodData()
     {
         return $this->appendRoutesAndParams(self::USAGE_PERIOD_DATA);
-    }
-
-    /**
-     * @param integer $orgId
-     *
-     * @return $this
-     */
-    public static function sites($orgId)
-    {
-        return self::organisationById($orgId)->appendRoutesAndParams(self::SITES);
     }
 }

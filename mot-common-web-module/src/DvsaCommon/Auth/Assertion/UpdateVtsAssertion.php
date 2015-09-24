@@ -47,8 +47,18 @@ class UpdateVtsAssertion
         $canUpdateName = $this->canUpdateName($siteId);
         $canUpdateCorrespondenceDetails = $this->canUpdateCorrespondenceDetails($siteId);
         $canUpdateBusinessDetailsAssertion = $this->canUpdateBusinessDetails($siteId);
+        $canUpdateTestingFacilities = $this->canUpdateTestingFacilities($siteId);
+        $canUpdateSiteDetails = $this->canUpdateSiteDetails($siteId);
 
-        if (!in_array(true, [$canUpdateName, $canUpdateCorrespondenceDetails, $canUpdateBusinessDetailsAssertion])) {
+        $assertionResults = [
+            $canUpdateName,
+            $canUpdateCorrespondenceDetails,
+            $canUpdateBusinessDetailsAssertion,
+            $canUpdateTestingFacilities,
+            $canUpdateSiteDetails
+        ];
+
+        if (!in_array(true, $assertionResults)) {
             throw new UnauthorisedException("Update vts assertion failed");
         }
     }
@@ -104,5 +114,15 @@ class UpdateVtsAssertion
         }
 
         return true;
+    }
+
+    private function canUpdateTestingFacilities($siteId)
+    {
+        return $this->isGrantedAtSite(PermissionAtSite::VTS_UPDATE_TESTING_FACILITIES_DETAILS,$siteId);
+    }
+
+    private function canUpdateSiteDetails($siteId)
+    {
+        return $this->isGrantedAtSite(PermissionAtSite::VTS_UPDATE_SITE_DETAILS,$siteId);
     }
 }

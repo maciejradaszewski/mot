@@ -21,6 +21,7 @@ use Doctrine\ORM\EntityRepository;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use DvsaEventApi\Service\Mapper\EventListMapper;
 use DvsaCommon\Date\DateTimeHolder;
+use DvsaEntities\Repository\EventTypeOutcomeCategoryMapRepository;
 
 class RoleEventHelperTest extends \PHPUnit_Framework_TestCase
 {
@@ -125,6 +126,9 @@ class RoleEventHelperTest extends \PHPUnit_Framework_TestCase
             XMock::of(EntityManager::class),
             XMock::of(EventRepository::class),
             $entityRepository,
+            $entityRepository,
+            $entityRepository,
+            XMock::of(EventTypeOutcomeCategoryMapRepository::class),
             XMock::of(DoctrineObject::class),
             XMock::of(EventListMapper::class)
         );

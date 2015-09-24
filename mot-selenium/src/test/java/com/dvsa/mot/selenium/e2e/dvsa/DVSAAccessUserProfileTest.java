@@ -13,6 +13,7 @@ import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.EventHistoryPage;
 import com.dvsa.mot.selenium.priv.frontend.helpdesk.HelpDeskUserProfilePage;
 import com.dvsa.mot.selenium.priv.frontend.helpdesk.HelpdeskUserResultsPage;
 import com.dvsa.mot.selenium.priv.frontend.helpdesk.HelpdeskUserSearchPage;
+import com.dvsa.mot.selenium.priv.frontend.user.QualificationChageConfirmationPage;
 import com.dvsa.mot.selenium.priv.frontend.user.RecordDemoPageGroupA;
 import com.dvsa.mot.selenium.priv.frontend.user.RecordDemoPageGroupB;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
@@ -86,7 +87,9 @@ public class DVSAAccessUserProfileTest extends BaseTest {
 
         RecordDemoPageGroupA recordDemoPageGroupA =
                 helpDeskUserProfilePageDemoNeededA.clickRecordDemoLinkGroupA();
-        HelpDeskUserProfilePage helpDeskUserProfilePage = recordDemoPageGroupA.clickConfirm();
+        QualificationChageConfirmationPage qualificationChageConfirmationPage = recordDemoPageGroupA.clickQualifiedRadioButton()
+                .clickConfirm();
+        HelpDeskUserProfilePage helpDeskUserProfilePage = qualificationChageConfirmationPage.clickConfirm();
         qualificationStatusDisplayed(helpDeskUserProfilePage,
                 Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_QUALIFIED,
                 Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_DEMO_TEST_NEEDED);
@@ -95,8 +98,9 @@ public class DVSAAccessUserProfileTest extends BaseTest {
 
         RecordDemoPageGroupB recordDemoPageGroupB =
                 helpDeskUserProfilePageDemoNeededB.clickRecordDemoLinkGroupB();
-        HelpDeskUserProfilePage helpDeskUserProfilePageQualified =
-                recordDemoPageGroupB.clickConfirm();
+
+        qualificationChageConfirmationPage = recordDemoPageGroupB.clickQualifiedRadioButton().clickConfirm();
+        HelpDeskUserProfilePage helpDeskUserProfilePageQualified = qualificationChageConfirmationPage.clickConfirm();
         qualificationStatusDisplayed(helpDeskUserProfilePageQualified,
                 Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_QUALIFIED,
                 Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_QUALIFIED);
@@ -107,8 +111,8 @@ public class DVSAAccessUserProfileTest extends BaseTest {
 
         UserDashboardPage userDashboardPage =
                 UserDashboardPage.navigateHereFromLoginPage(driver, personUser.getLogin());
-        userNotificationCheck(userDashboardPage, VehicleClassGroup.A);
         userNotificationCheck(userDashboardPage, VehicleClassGroup.B);
+        userNotificationCheck(userDashboardPage, VehicleClassGroup.A);
     }
 
     @Test(groups = {"Regression", "VM-10519", "VM-10520", "VM-10521"},
@@ -119,8 +123,8 @@ public class DVSAAccessUserProfileTest extends BaseTest {
         HelpDeskUserProfilePage helpDeskUserProfilePageDemoNeededA =
                 userSearch(personUser, vehicleExaminerUser);
         qualificationStatusDisplayed(helpDeskUserProfilePageDemoNeededA,
-                Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_DEMO_TEST_NEEDED_NO_PERMISSION,
-                Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_DEMO_TEST_NEEDED_NO_PERMISSION);
+                Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_DEMO_TEST_NEEDED,
+                Assertion.ASSERTION_QUALIFICATION_STATUS_GROUP_DEMO_TEST_NEEDED);
     }
 
     @Test(groups = {"Regression", "VM-10519", "VM-10520", "VM-10521"},
@@ -140,7 +144,7 @@ public class DVSAAccessUserProfileTest extends BaseTest {
         recordDemoPageGroupB.clickCancel();
     }
 
-    private HelpDeskUserProfilePage userSearch(Person personUser, Login DVSAUser) {
+    public HelpDeskUserProfilePage userSearch(Person personUser, Login DVSAUser) {
         HelpdeskUserResultsPage helpdeskUserResultsPage =
                 HelpdeskUserSearchPage.navigateHereFromLoginPage(driver, DVSAUser)
                         .enterLastName(personUser.getSurname()).search();
@@ -164,10 +168,11 @@ public class DVSAAccessUserProfileTest extends BaseTest {
     private UserDashboardPage userNotificationCheck(UserDashboardPage userDashboardPage,
             VehicleClassGroup vehicleClassGroup) {
         NotificationPage notificationPage = userDashboardPage
-                .clickNotification(String.format("Passed Group %s demonstration test", vehicleClassGroup));
+                .clickNotification("Qualified : Tester Status change");
 
         assertEquals(notificationPage.getNotificationContent(), String.format(
-                "You passed your demonstration test. You are now qualified to test Group %s vehicles.",
+                "Your tester qualification status for group %s has been changed from Demo test needed to Qualified. " +
+                        "If you have any questions about this change please contact your area office.",
                 vehicleClassGroup), "Checks that notification message is correct");
 
         return notificationPage.clickHome();
@@ -192,11 +197,8 @@ public class DVSAAccessUserProfileTest extends BaseTest {
                 "Check to ensure Qualification Status change event date for Group %s is displayed",
                 vehicleClassGroup));
 
-        assertTrue((Utilities.getTimeDifference(eventDateTime.split(",")[1])) <= 5,
-                "Check the time difference of the event created is less than 5 minutes");
-
         String description = String.format(
-                "Qualified to test Group %s vehicles following a demonstration test. Recorded by",
+                "Tester qualification status for group %s changed from Demo test needed",
                 vehicleClassGroup);
 
         assertThat(String.format(

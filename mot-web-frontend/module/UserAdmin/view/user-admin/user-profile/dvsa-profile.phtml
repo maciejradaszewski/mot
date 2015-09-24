@@ -6,6 +6,12 @@ use Dashboard\Controller\UserHomeController;
 /** @var string $passwordResetUrl */
 /** @var string $usernameRecoverUrl */
 
+$errorMessages      = $this->layout()->flashMessenger->getErrorMessages();
+$successMessages    = $this->layout()->flashMessenger->getSuccessMessages();
+
+echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
+echo $this->partial('partial/gds/general/system-message', ['messages' => $errorMessages, 'type' => 'failure']);
+
 ?>
 
 <h3 class="heading-medium">Personal details</h3>
@@ -16,7 +22,7 @@ use Dashboard\Controller\UserHomeController;
             Name
         </th>
         <td id="person-name" class="key-value-list__value">
-            <?php echo $presenter->displayTitleAndFullName() ?>
+            <?php echo $this->escapeHtml($presenter->displayTitleAndFullName()) ?>
         </td>
     </tr>
     <tr>
@@ -24,7 +30,7 @@ use Dashboard\Controller\UserHomeController;
             Username
         </th>
         <td id="person-username" class="key-value-list__value--numeric">
-            <?php echo $presenter->displayUsername(); ?>
+            <?php echo $this->escapeHtml($presenter->displayUsername()); ?>
         </td>
     </tr>
     <tr>
@@ -32,7 +38,7 @@ use Dashboard\Controller\UserHomeController;
             Date of birth
         </th>
         <td id="person-dob" class="key-value-list__value">
-            <?php echo $presenter->displayDateOfBirth(); ?>
+            <?php echo $this->escapeHtml($presenter->displayDateOfBirth()); ?>
         </td>
     </tr>
     <tr>
@@ -40,7 +46,7 @@ use Dashboard\Controller\UserHomeController;
             Driving licence number
         </th>
         <td id="person-driving-licence" class="key-value-list__value--numeric">
-            <?php echo $presenter->displayDrivingLicenceNumber(); ?>
+            <?php echo $this->escapeHtml($presenter->displayDrivingLicenceNumber()); ?>
         </td>
     </tr>
     </tbody>
@@ -78,16 +84,15 @@ use Dashboard\Controller\UserHomeController;
 
 <?php echo $this->partial('user-admin/partials/roles.phtml', ['presenter' => $presenter]) ?>
 <?php echo $this->partial('user-admin/partials/roles-and-associations.phtml', ['presenter' => $presenter]) ?>
-<?php if ($presenter->getTesterAuthorisation()->shouldBeDisplayed()): ?>
-    <?php echo $this->partial(
-            'user-admin/partials/tester-qualification-status.phtml',
-            [
-                'viewModel' => $presenter->getTesterAuthorisation(),
-                'searchQueryParams' => $searchQueryParams,
-            ]
-        )
-    ?>
-<?php endif ?>
+<?php echo $this->partial(
+        'user-admin/partials/tester-qualification-status.phtml',
+        [
+            'viewModel' => $presenter->getTesterAuthorisation(),
+            'searchQueryParams' => $searchQueryParams,
+        ]
+    )
+?>
+
 <?php echo $this->partial('user-admin/partials/event-history.phtml', ['presenter' => $presenter]) ?>
 
 <nav class="content-navigation">
@@ -101,4 +106,3 @@ use Dashboard\Controller\UserHomeController;
         ]
     ); ?>
 </nav>
-

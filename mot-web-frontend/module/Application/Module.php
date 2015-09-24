@@ -24,9 +24,12 @@ use Application\Listener\ChangeTempPasswordListener;
 use Application\Listener\ClaimAccountListener;
 use Application\Listener\Factory\ChangeTempPasswordListenerFactory;
 use Application\Listener\Factory\ClaimAccountListenerFactory;
+use Application\Listener\Factory\ExpiredPasswordListenerFactory;
+use Application\Listener\ExpiredPasswordListener;
 use Application\Listener\WebListenerEventsPriorities;
 use Application\Service\ContingencySessionManager;
 use DvsaCommon\Auth\NotLoggedInException;
+use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
 use DvsaCommon\HttpRestJson\Exception\NotFoundException;
@@ -38,6 +41,7 @@ use DvsaMotTest\Factory\LocationSelectContainerFactory;
 use DvsaMotTest\Factory\Model\VehicleSearchResultFactory;
 use DvsaMotTest\Factory\Service\AuthorisedClassesServiceFactory;
 use DvsaMotTest\Factory\Service\VehicleSearchServiceFactory;
+use DvsaMotTest\Factory\Service\MotTestCertificatesServiceFactory;
 use DvsaMotTest\Mapper\BrakeTestConfigurationClass1And2Mapper;
 use DvsaMotTest\Mapper\BrakeTestConfigurationClass3AndAboveMapper;
 use DvsaMotTest\Model\BrakeTestConfigurationClass1And2Helper;
@@ -58,6 +62,8 @@ use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\SessionManager;
+use DvsaMotTest\Service\CertificatePrintingService;
+use DvsaMotTest\Factory\Service\CertificatePrintingServiceFactory;
 
 /**
  * Class Module.
@@ -88,6 +94,15 @@ class Module implements
             WebListenerEventsPriorities::DISPATCH_CHANGE_TEMP_PASSWORD
         );
 
+        if ($this->isPasswordExpiryEnabled($e)) {
+            $resetPasswordListener = $e->getApplication()->getServiceManager()->get(ExpiredPasswordListener::class);
+            $eventManager->attach(
+                MvcEvent::EVENT_DISPATCH,
+                $resetPasswordListener,
+                WebListenerEventsPriorities::DISPATCH_RESET_EXPIRED_PASSWORD
+            );
+        }
+
         $eventManager->attach(
             MvcEvent::EVENT_RENDER,
             function ($e) {
@@ -106,6 +121,14 @@ class Module implements
             [$this, 'handleError'],
             WebListenerEventsPriorities::DISPATCH_ERROR_HANDLE_ERROR
         );
+    }
+
+    private function isPasswordExpiryEnabled(EventInterface $e)
+    {
+        /** @var MotConfig $config */
+        $config = $e->getApplication()->getServiceManager()->get(MotConfig::class);
+
+        return $config->get('feature_toggle', 'openam.password.expiry.enabled');
     }
 
     public function getConfig()
@@ -131,23 +154,24 @@ class Module implements
                 'ApplicationWideCache'                    => ApplicationWideCacheFactory::class,
                 'MotSession'                              => MotSessionFactory::class,
                 'FileTemplate'                            => FileTemplateFactory::class,
-                'Application\Logger'                      => ApplicationLoggerFactory::class,
                 'LoggedInUserManager'                     => LoggedInUserManagerFactory::class,
                 ApiPersonalDetails::class                 => ApiPersonalDetailsFactory::class,
                 ApiCurrentMotTest::class                  => ApiCurrentMotTestFactory::class,
                 ApiUserSiteCount::class                   => ApiUserSiteCountFactory::class,
-                'AuthorisedExaminerApplication/Logger'    => LoggerFactory::class,
-                'Logger'                                  => LoggerFactory::class,
+                'Logger'                                  => \DvsaApplicationLogger\Factory\LoggerFactory::class,
                 TesterInProgressTestNumberResource::class => TesterInProgressTestNumberResourceFactory::class,
                 BrakeTestResultsResource::class           => BrakeTestResultsResourceFactory::class,
                 ContingencySessionManager::class          => ContingencySessionManagerFactory::class,
                 ClaimAccountListener::class               => ClaimAccountListenerFactory::class,
+                ExpiredPasswordListener::class            => ExpiredPasswordListenerFactory::class,
                 ChangeTempPasswordListener::class         => ChangeTempPasswordListenerFactory::class,
                 'BrakeTestConfigurationContainerHelper'   => BrakeTestConfigurationContainerFactory::class,
                 'LocationSelectContainerHelper'           => LocationSelectContainerFactory::class,
                 AuthorisedClassesService::class           => AuthorisedClassesServiceFactory::class,
                 VehicleSearchResult::class                => VehicleSearchResultFactory::class,
                 VehicleSearchService::class               => VehicleSearchServiceFactory::class,
+                'MotTestCertificatesService'              => MotTestCertificatesServiceFactory::class,
+                CertificatePrintingService::class         => CertificatePrintingServiceFactory::class
             ],
             'aliases'    => [
                 AuthenticationService::class => 'ZendAuthenticationService'

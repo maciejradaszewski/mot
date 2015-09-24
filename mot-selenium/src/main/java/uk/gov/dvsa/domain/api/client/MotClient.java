@@ -46,6 +46,11 @@ public class MotClient {
         return postRequestWithoutToken(request, path);
     }
 
+    public Response getFeature(String path)
+    {
+        return getWithoutToken(path);
+    }
+
     private Response postRequestWithoutToken(String request, String path) {
         return with()
                 .header("Content-Type", "application/json")
@@ -59,5 +64,12 @@ public class MotClient {
                 .header("Content-Type", "application/json")
                 .body(request)
                 .post(endpointUrl + path);
+    }
+
+    private Response getWithoutToken(String path) {
+        return with()
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .get(endpointUrl + path);
     }
 }

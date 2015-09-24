@@ -1,0 +1,100 @@
+<?php
+
+/**
+ * @var \Organisation\ViewModel\AuthorisedExaminer\AeSiteUnlinkModel $model
+ * @var \Organisation\Form\AeUnlinkSiteForm                          $form
+ * @var \DvsaCommon\Dto\Site\SiteDto                                 $site
+ * @var \Zend\Mvc\Controller\Plugin\FlashMessenger                   $flashMessenger
+ */
+
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Dto\Organisation\OrganisationSiteLinkDto;
+use DvsaCommon\Enum\SiteContactTypeCode;
+use Organisation\Form\AeUnlinkSiteForm;
+
+$model = $this->model;
+$site = $model->getSite();
+$form = $model->getForm();
+
+//  show api errors
+$flashMessenger = $this->layout()->flashMessenger;
+echo $this->partial(
+    'partial/gds/general/system-message',
+    ['messages' => $flashMessenger->getErrorMessages(), 'type' => 'failure']
+);
+?>
+
+<h3 class="key-value-list__header">Remove this AE's association with the following site?</h3>
+
+<table class="key-value-list">
+    <tbody>
+    <tr>
+        <th class="key-value-list__key">
+            <?php echo $this->escapeHtml($site->getName()); ?>
+            <span class="key-value-list__meta">
+                <?php
+                $contact = $site->getContactByType(SiteContactTypeCode::BUSINESS);
+
+                echo $this->escapeHtml($contact->getAddress()->getFullAddressString());
+                ?>
+            </span>
+        </th>
+        <td class="key-value-list__value">
+            <?php echo $this->escapeHtml($site->getSiteNumber()); ?>
+            <br>
+            <span class="key-value-list__meta">
+                This association is approved -
+                <strong>
+                    <?php
+                    $linkWithAe = $site->getLinkWithAe();
+                    if ($linkWithAe instanceof OrganisationSiteLinkDto) :
+                        echo $this->escapeHtml(
+                            DateTimeDisplayFormat::textDate($linkWithAe->getStatusChangedOn())
+                        );
+                        ?>
+                    <?php endif;?>
+                </strong>
+            </span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
+<form method="POST">
+    <h3 class="key-value-list__header"></h3>
+    <?php echo $this->csrfToken() ?>
+    <fieldset>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-legend',
+            ['id' => 'assignStatus', 'text' => 'Assign a status']
+        );
+
+        echo $this->partial(
+            'partial/gds/form/control-select-group',
+            [
+                'id'           => AeUnlinkSiteForm::FIELD_STATUS,
+                'label'        => 'Please assign a status for this disassociation',
+                'value'        => $form->getStatus(),
+                'options'      => $form->getStatuses(),
+                'errorMessage' => $form->getError(AeUnlinkSiteForm::FIELD_STATUS),
+            ]
+        );
+        ?>
+    </fieldset>
+
+
+    <?php
+    echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id'         => 'submitAeSiteUnlink',
+            'value'      => 'Confirm and remove this association',
+            'navigation' => [
+                'Cancel and return to AE details' => $model->getCancelUrl(),
+            ],
+        ]
+    );
+    ?>
+</form>

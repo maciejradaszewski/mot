@@ -51,14 +51,14 @@ class OrganisationPositionController extends AbstractDvsaRestfulController imple
     /**
      * Removes organisation position of a person
      *
-     * @param string $siteId
+     * @param string $organisationId
      *
      * @return \Zend\View\Model\JsonModel
      */
-    public function delete($siteId)
+    public function delete($organisationId)
     {
         $organisationPositionId = $this->params()->fromRoute("positionId");
-        $this->getOrganisationPositionService()->remove((int) $siteId, (int) $organisationPositionId);
+        $this->getOrganisationPositionService()->remove((int) $organisationId, (int) $organisationPositionId);
 
         return ApiResponse::jsonOk();
     }

@@ -23,12 +23,15 @@ class PersonUrlBuilder extends AbstractUrlBuilder
     const RESET_PIN = '/reset-pin';
     const RESET_CLAIM_ACCOUNT = '/reset-claim-account';
     const MANAGE_INTERNAL_ROLES = '/roles';
+    const PASSWORD = '/password';
+    const EVENT = '/event';
 
     protected $routesStructure
         = [
             self::PERSON        => [
                 self::BY_ID         => [
                     self::AUTHORISED_EXAMINER            => '',
+                    self::EVENT                          => '',
                     self::RBAC_ROLES                     => '',
                     self::HELP_DESK_PROFILE              => '',
                     self::HELP_DESK_PROFILE_UNRESTRICTED => '',
@@ -38,6 +41,7 @@ class PersonUrlBuilder extends AbstractUrlBuilder
                     self::MANAGE_INTERNAL_ROLES          => [
                         self::BY_REMOVE_ROLE_ID => '',
                     ],
+                    self::PASSWORD                       => '',
                 ],
                 self::BY_IDENTIFIER => '',
             ],
@@ -92,6 +96,14 @@ class PersonUrlBuilder extends AbstractUrlBuilder
     public function rbacRoles()
     {
         return $this->appendRoutesAndParams(self::RBAC_ROLES);
+    }
+
+    /**
+     * @return $this
+     */
+    public function event()
+    {
+        return $this->appendRoutesAndParams(self::EVENT);
     }
 
     /**
@@ -183,5 +195,15 @@ class PersonUrlBuilder extends AbstractUrlBuilder
             ->appendRoutesAndParams(self::MANAGE_INTERNAL_ROLES)
             ->appendRoutesAndParams(self::BY_REMOVE_ROLE_ID)
             ->routeParam('role', $roleId);
+    }
+
+    /**
+     * Return the url to change password
+     * @param $personId
+     * @return $this
+     */
+    public static function personPassword($personId)
+    {
+        return self::byId($personId)->appendRoutesAndParams(self::PASSWORD);
     }
 }

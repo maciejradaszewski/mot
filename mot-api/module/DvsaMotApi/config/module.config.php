@@ -2,6 +2,7 @@
 
 use DvsaMotApi\Controller\CertificatePrintingController;
 use DvsaMotApi\Controller\IdentityDataController;
+use DvsaMotApi\Controller\MotCertificateEmailController;
 use DvsaMotApi\Controller\MotTestController;
 use DvsaMotApi\Controller\MotTestOptionsController;
 use DvsaMotApi\Controller\MotTestSearchController;
@@ -12,6 +13,9 @@ use DvsaMotApi\Controller\ReplacementCertificateDraftController;
 use DvsaMotApi\Controller\RetestController;
 use DvsaMotApi\Controller\TestItemCategoryNameController;
 use DvsaMotApi\Controller\TesterMotTestLogController;
+use DvsaMotApi\Controller\MotCertificatesController;
+
+use DvsaMotApi\Factory\Controller\MotCertificateEmailControllerFactory;
 use DvsaMotApi\Factory\Controller\MotTestStatusControllerFactory;
 use DvsaMotApi\Factory\Controller\TesterControllerFactory;
 use DvsaMotApi\Factory\Controller\UserControllerFactory;
@@ -21,53 +25,13 @@ use DvsaCommon\Validator\UsernameValidator;
 use DvsaMotApi\Controller\DemoTestAssessmentController;
 use DvsaMotApi\Factory\Controller\DemoTestAssessmentControllerFactory;
 use DvsaMotApi\Factory\Controller\ReplacementCertificateDraftControllerFactory;
+use DvsaMotApi\Factory\Controller\MotCertificatesControllerFactory;
+use DvsaMotApi\Factory\CertificatePdfServiceFactory;
+use DvsaMotApi\Controller\MotCertificatePdfController;
+use DvsaMotApi\Factory\Controller\MotCertificatePdfControllerFactory;
 
 return [
-    'controllers'     => [
-        'invokables' => [
-            'DvsaMotApi\Controller\Session' => \DvsaMotApi\Controller\SessionController::class,
-            'DvsaMotApi\Controller\Index' => \DvsaMotApi\Controller\IndexController::class,
-            RetestController::class => RetestController::class,
-            MotTestController::class => MotTestController::class,
-            'DvsaMotApi\Controller\MotTestRefusal' => \DvsaMotApi\Controller\MotTestRefusalController::class,
-            'DvsaMotApi\Controller\DemoTest' => \DvsaMotApi\Controller\DemoTestController::class,
-            'DvsaMotApi\Controller\TesterExpiry' => \DvsaMotApi\Controller\TesterExpiryController::class,
-            'DvsaMotApi\Controller\Vehicle' => \DvsaMotApi\Controller\VehicleController::class,
-            'DvsaMotApi\Controller\TesterSearch' => \DvsaMotApi\Controller\TesterSearchController::class,
-            'DvsaMotApi\Controller\TestItemSelector' => \DvsaMotApi\Controller\TestItemSelectorController::class,
-            TestItemCategoryNameController::class => TestItemCategoryNameController::class,
-            ReasonForRejectionController::class => ReasonForRejectionController::class,
-            'DvsaMotApi\Controller\MotTestOdometer' => \DvsaMotApi\Controller\MotTestOdometerController::class,
-            'DvsaMotApi\Controller\MotTestCompare' => \DvsaMotApi\Controller\MotTestCompareController::class,
-            MotTestSearchController::class => MotTestSearchController::class,
-            'DvsaMotApi\Controller\EnforcementMotTestResult' =>
-                \DvsaMotApi\Controller\EnforcementMotTestResultController::class,
-            'DvsaMotApi\Controller\MotTestReasonForRejection' =>
-                \DvsaMotApi\Controller\MotTestReasonForRejectionController::class,
-            'DvsaMotApi\Controller\MotTestBrakeTestResult' =>
-                \DvsaMotApi\Controller\MotTestBrakeTestResultController::class,
-            'DvsaMotApi\Controller\MotTestBrakeTestConfigurationValidation' =>
-                \DvsaMotApi\Controller\MotTestBrakeTestConfigurationValidationController::class,
-            'DvsaMotApi\Controller\CertChangeDiffTesterReason' =>
-                \DvsaMotApi\Controller\CertChangeDiffTesterReasonController::class,
-            'DvsaMotApi\Controller\InspectionLocation' => \DvsaMotApi\Controller\InspectionLocationController::class,
-            'DvsaMotApi\Controller\ReinspectionReport' => \DvsaMotApi\Controller\ReinspectionReportController::class,
-            CertificatePrintingController::class => CertificatePrintingController::class,
-            MotTestShortSummaryController::class => MotTestShortSummaryController::class,
-            'DvsaMotApi\Controller\EmergencyLogController' => \DvsaMotApi\Controller\EmergencyLogController::class,
-            MotTestOptionsController::class => MotTestOptionsController::class,
-            IdentityDataController::class => IdentityDataController::class,
-        ],
-        'factories' => [
-            'DvsaMotApi\Controller\Tester' => TesterControllerFactory::class,
-            'DvsaMotApi\Controller\User'   => UserControllerFactory::class,
-            MotTestStatusController::class => MotTestStatusControllerFactory::class,
-            DemoTestAssessmentController::class => DemoTestAssessmentControllerFactory::class,
-            TesterMotTestLogController::class => TesterMotTestLogControllerFactory::class,
-            ReplacementCertificateDraftController::class => ReplacementCertificateDraftControllerFactory::class,
-        ]
-    ],
-
+    'controllers' => include 'controllers.config.php',
     UsernameValidator::class => [
         'options' => [
             'max' => Person::FIELD_USERNAME_LENGTH,
@@ -94,6 +58,16 @@ return [
                     'defaults'    => [
                         'controller' => \DvsaMotApi\Controller\CertificatePrintingController::class,
                         'action'     => 'print'
+                    ],
+                ],
+            ],
+            'pdf-certificate-print' => [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/pdf-certificate-print',
+                    'defaults'    => [
+                        'controller' => \DvsaMotApi\Controller\CertificatePrintingController::class,
+                        'action'     => 'getAmazonPdf'
                     ],
                 ],
             ],
@@ -438,6 +412,39 @@ return [
                             ],
                         ]
 
+                    ],
+                ],
+            ],
+            'recent-mot-certificate' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/mot-recent-certificate[/:id]',
+                    'constraints' => [
+                        'id' => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => MotCertificatesController::class
+                    ]
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'pdf-certificate-link' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/pdf-link',
+                            'defaults' => [
+                                'controller' => MotCertificatePdfController::class,
+                            ],
+                        ],
+                    ],
+                    'email-certificate' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/email',
+                            'defaults' => [
+                                'controller' => MotCertificateEmailController::class,
+                            ],
+                        ],
                     ],
                 ],
             ],

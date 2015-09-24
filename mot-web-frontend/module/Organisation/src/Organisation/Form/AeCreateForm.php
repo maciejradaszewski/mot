@@ -5,6 +5,7 @@ namespace Organisation\Form;
 use DvsaClient\ViewModel\AbstractFormModel;
 use DvsaClient\ViewModel\ContactDetailFormModel;
 use DvsaCommon\Dto\Contact\ContactDto;
+use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\CompanyTypeCode;
@@ -26,12 +27,13 @@ class AeCreateForm extends AbstractFormModel
     const ERR_NAME_REQUIRE = 'A business name must be entered';
     const ERR_COMPANY_TYPE_REQUIRE = 'A business type must be selected';
     const ERR_REG_NR_REQUIRE = 'A valid company number must be entered';
+    const ERR_AO_NR_REQUIRE = 'An area office must be selected';
 
     private $organisationName;
     private $tradingAs;
     private $companyType;
     private $registeredCompanyNumber;
-    private $areaOfficeNumber;
+    private $assignedAreaOffice;
 
     private $isCorrDetailsTheSame = true;
 
@@ -66,7 +68,7 @@ class AeCreateForm extends AbstractFormModel
             ->setTradingAs($data->get(self::FIELD_TRADING_AS))
             ->setCompanyType($data->get(self::FIELD_COMPANY_TYPE))
             ->setRegisteredCompanyNumber($data->get(self::FIELD_REG_NR))
-            ->setAreaOfficeNumber($data->get(self::FIELD_AO_NR));
+            ->setAssignedAreaOffice($data->get(self::FIELD_AO_NR));
 
         $this->setIsCorrDetailsTheSame((bool) $data->get(self::FIELD_IS_CORR_DETAILS_THE_SAME) === true);
 
@@ -86,7 +88,11 @@ class AeCreateForm extends AbstractFormModel
         $this->tradingAs = $org->getTradingAs();
         $this->companyType = $org->getCompanyType();
         $this->registeredCompanyNumber = $org->getRegisteredCompanyNumber();
-        $this->setAreaOfficeNumber($org->getAreaOfficeSite());
+
+        $authForAe = $org->getAuthorisedExaminerAuthorisation();
+        if ($authForAe) {
+            $this->setAssignedAreaOffice($authForAe->getAssignedAreaOffice());
+        }
 
         $busContact = $org->getContactByType(OrganisationContactTypeCode::REGISTERED_COMPANY);
         $corrContact = $org->getContactByType(OrganisationContactTypeCode::CORRESPONDENCE);
@@ -128,6 +134,9 @@ class AeCreateForm extends AbstractFormModel
         ];
 
         //  logical block :: assemble dto
+        $authForAeDto = new AuthorisedExaminerAuthorisationDto();
+        $authForAeDto->setAssignedAreaOffice($this->getAssignedAreaOffice());
+
         $aeDto = new OrganisationDto();
         $aeDto
             ->setName($this->getName())
@@ -135,7 +144,7 @@ class AeCreateForm extends AbstractFormModel
             ->setCompanyType($this->getCompanyType())
             ->setTradingAs($this->getTradingAs())
             ->setContacts($contacts)
-            ->setAreaOfficeSite($this->getAreaOfficeNumber());
+            ->setAuthorisedExaminerAuthorisation($authForAeDto);
 
         return $aeDto;
     }
@@ -223,18 +232,18 @@ class AeCreateForm extends AbstractFormModel
     /**
      * @return string
      */
-    public function getAreaOfficeNumber()
+    public function getAssignedAreaOffice()
     {
-        return $this->areaOfficeNumber;
+        return $this->assignedAreaOffice;
     }
 
     /**
-     * @param string $areaOfficeNumber
+     * @param string $assignedAreaOffice
      * @return $this
      */
-    private function setAreaOfficeNumber($areaOfficeNumber)
+    private function setAssignedAreaOffice($assignedAreaOffice)
     {
-        $this->areaOfficeNumber = $areaOfficeNumber;
+        $this->assignedAreaOffice = $assignedAreaOffice;
         return $this;
     }
 

@@ -151,3 +151,12 @@ Feature: MOT Test
     Given I am logged in as a Tester
     And I attempt to create a MOT Test on a vehicle without a manufactured date and first used date
     Then MOT test should be created successfully
+
+  Scenario: Having tested a vehicle, I should have its certificate details available
+    Given I am logged in as a Tester
+    And I start an Mot Test with a Class 4 Vehicle
+    And the Tester adds an Odometer Reading of 1000 mi
+    And the Tester adds a Class 3-7 Decelerometer Brake Test
+    And the Tester Passes the Mot Test
+    When I retrieve recent tests certificate details in the VTS recent test was performed
+    Then I can retrieve certificate details for the most recent test from the list

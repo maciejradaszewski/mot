@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use DvsaAuthorisation\Service\AuthorisationService;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Enum\PersonContactTypeCode;
 use DvsaCommonApi\Service\Exception\DataValidationException;
 use DvsaEntities\Entity\Email;
 use DvsaEntities\Repository\PersonContactRepository;
@@ -18,32 +19,32 @@ class PersonContactService
     /**
      * @var PersonContactRepository
      */
-    protected $personContactRepository;
+    private $personContactRepository;
     /**
      * @var EntityRepository
      */
-    protected $emailRepository;
+    private $emailRepository;
     /**
      * @var PersonContactMapper
      */
-    protected $personContactMapper;
+    private $personContactMapper;
     /**
      * @var PersonalDetailsValidator
      */
-    protected $personalDetailsValidator;
+    private $personalDetailsValidator;
     /**
      * @var AuthenticationService
      */
-    protected $authenticationService;
+    private $authenticationService;
     /**
      * @var AuthorisationService
      */
-    protected $authorisationService;
+    private $authorisationService;
 
     /**
      * @var EntityManager
      */
-    protected $em;
+    private $em;
 
     public function __construct(
         PersonContactRepository $repository,
@@ -71,11 +72,20 @@ class PersonContactService
      */
     public function getForPersonId($personId)
     {
-        $contact = $this->personContactRepository->getHydratedByTypeCode($personId, 'PRSNL');
+        $contact = $this->personContactRepository->getHydratedByTypeCode($personId, PersonContactTypeCode::PERSONAL);
         $dto = $this->personContactMapper->toDto($contact);
+
         return $dto;
     }
 
+    /**
+     * @param int   $personId
+     * @param array $data
+     *
+     * @return \DvsaCommon\Dto\Person\PersonContactDto
+     * @throws DataValidationException
+     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     */
     public function updateEmailForPersonId($personId, $data)
     {
         if ($this->authenticationService->getIdentity()->getUserId() !== $personId) {
@@ -90,7 +100,7 @@ class PersonContactService
             throw $exception;
         }
 
-        $contact = $this->personContactRepository->getHydratedByTypeCode($personId, 'PRSNL');
+        $contact = $this->personContactRepository->getHydratedByTypeCode($personId, PersonContactTypeCode::PERSONAL);
         $contactDetails = $contact->getDetails();
         $emails = $contactDetails->getEmails();
         if ($emails->isEmpty()) {
@@ -108,6 +118,7 @@ class PersonContactService
         }
         $this->em->flush();
         $dto = $this->personContactMapper->toDto($contact);
+
         return $dto;
     }
 }
