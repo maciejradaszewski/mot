@@ -33,7 +33,7 @@ class Notification extends MotApi
         $notifications = $response->getBody()->toArray();
 
         foreach ($notifications['data'] as $notification) {
-            if ($notification['fields']['positionName'] === $role) {
+            if ($notification['fields']['role'] === $role) {
                 return $notification;
             }
         }

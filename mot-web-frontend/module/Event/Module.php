@@ -2,44 +2,22 @@
 
 namespace Event;
 
-use Zend\ModuleManager\Feature\ConfigProviderInterface;
-use Zend\ModuleManager\Feature\ControllerProviderInterface;
-use Zend\ModuleManager\Feature\ServiceProviderInterface;
+use Zend\Loader\ClassMapAutoloader;
+use Zend\Loader\StandardAutoloader;
 
 /**
- * Event Module.
+ * Class Module
+ *
+ * @package Event
  */
-class Module implements
-    ConfigProviderInterface,
-    ServiceProviderInterface,
-    ControllerProviderInterface
+class Module
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConfig()
     {
-        $config = array_merge(
-            include __DIR__ . '/config/routes.config.php',
-            include __DIR__ . '/config/module.config.php'
-        );
-
-        return $config;
+        return include __DIR__ . '/config/module.config.php';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getControllerConfig()
+    public function getAutoloaderConfig()
     {
-        return include __DIR__ . '/config/controllers.config.php';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getServiceConfig()
-    {
-        return include __DIR__ . '/config/services.config.php';
     }
 }

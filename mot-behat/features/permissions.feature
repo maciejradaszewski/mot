@@ -55,27 +55,8 @@ Feature: Permissions
     Then I can view the "<test>" MOT summary
 
   Examples:
-    | test   | status |
-    | demo   | passed |
-    | demo   | failed |
+    | test | status |
+    | demo | passed |
+    | demo | failed |
     | normal | passed |
     | normal | failed |
-
-  @story @VM-10522
-  Scenario Outline: As a user I want to be able to carry out a demo test
-    Given I am logged in as a Tester
-    When I have a Tester Qualification status of "<status>" for group "<group>"
-    And I don't have a demo test already in progress
-    Then I can complete a Demo test for vehicle class "<vehicleClassCode>"
-
-  Examples:
-    | status           | group   | vehicleClassCode |
-    | Demo Test Needed | A       | 2                |
-    | Demo Test Needed | B       | 4                |
-    | Demo Test Needed | A and B | 1                |
-    | Demo Test Needed | A and B | 7                |
-    | Qualified        | A       | 2                |
-    | Qualified        | B       | 5                |
-    | Qualified        | A and B | 2                |
-    | Qualified        | A and B | 4                |
-

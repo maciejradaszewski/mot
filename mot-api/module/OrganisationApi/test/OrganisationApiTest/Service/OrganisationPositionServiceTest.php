@@ -20,7 +20,6 @@ use DvsaEntities\Repository\OrganisationPositionHistoryRepository;
 use DvsaEntities\Repository\OrganisationRepository;
 use NotificationApi\Dto\Notification;
 use NotificationApi\Service\NotificationService;
-use NotificationApi\Service\PositionRemovalNotificationService;
 use OrganisationApi\Service\Mapper\OrganisationPositionMapper;
 use OrganisationApi\Service\OrganisationPositionService;
 use DvsaEntities\Repository\OrganisationBusinessRoleMapRepository;
@@ -37,7 +36,6 @@ class OrganisationPositionServiceTest extends \PHPUnit_Framework_TestCase
     private $identityProvider;
     private $authorisationService;
     private $eventService;
-    private $positionRemovalNotificationService;
 
     public function setUp()
     {
@@ -50,7 +48,6 @@ class OrganisationPositionServiceTest extends \PHPUnit_Framework_TestCase
         $this->identityProvider = XMock::of(IdentityProvider::class);
         $this->authorisationService = XMock::of(AuthorisationService::class);
         $this->eventService = XMock::of(EventService::class);
-        $this->positionRemovalNotificationService = XMock::of(PositionRemovalNotificationService::class);
     }
 
     /**
@@ -67,8 +64,7 @@ class OrganisationPositionServiceTest extends \PHPUnit_Framework_TestCase
             $this->identityProvider,
             $this->authorisationService,
             $this->entityManager,
-            $this->eventService,
-            $this->positionRemovalNotificationService
+            $this->eventService
         );
 
         return $service;

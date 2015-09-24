@@ -40,9 +40,6 @@ class FacilityDto extends AbstractDataTransferObject
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName()
     {
         return $this->name;

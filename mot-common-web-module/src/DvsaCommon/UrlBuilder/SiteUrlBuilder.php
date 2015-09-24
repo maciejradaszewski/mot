@@ -12,12 +12,10 @@ class SiteUrlBuilder extends UrlBuilder
     const USAGE = '/slot-usage';
     const USAGE_PERIOD_DATA = '/period-data';
     const VALIDATE = '/position-validate';
-    const EVENT = '/event';
 
     protected $routesStructure
         = [
             self::SITE => [
-                self::EVENT => '',
                 self::POSITION => '',
                 self::USAGE => [
                     self::USAGE_PERIOD_DATA => '',
@@ -29,11 +27,6 @@ class SiteUrlBuilder extends UrlBuilder
     public static function site($id)
     {
         return (new self())->appendRoutesAndParams(self::SITE)->routeParam('id', $id);
-    }
-
-    public function createEvent()
-    {
-        return $this->appendRoutesAndParams(self::EVENT);
     }
 
     public function position()

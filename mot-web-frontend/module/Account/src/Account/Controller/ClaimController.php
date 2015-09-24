@@ -71,7 +71,6 @@ class ClaimController extends AbstractAuthActionController
         }
 
         $stepData['messages'] = $this->claimValidator->getMessages();
-        $stepData['summaryMessages'] = $this->getSummaryMessages();
         if ($this->flashMessenger()->hasErrorMessages()) {
             $stepData['messages'] = array_merge($stepData['messages'],
                 [array_map('nl2br', $this->flashMessenger()->getErrorMessages())]);
@@ -241,30 +240,5 @@ class ClaimController extends AbstractAuthActionController
         }
 
         return $this->redirect()->toUrl($url);
-    }
-
-    /**
-     * A workaround for our inconsistent validation messages to keep the correct format in the main validator
-     * Claim account will be deprecated or we need to improve at least its validation summary messages
-     * @return array
-     */
-    private function getSummaryMessages()
-    {
-        $genericErrors = $this->claimValidator->getMessages();
-
-        $errorsSummary = [];
-
-        foreach ($genericErrors as $fieldName => $messages) {
-            $errorsSummary[$fieldName] = [];
-            foreach ($messages as $validator => $message) {
-                if ('password' == $fieldName) {
-                    $message = 'Password ' . $message;
-                }
-                $errorsSummary[$fieldName][$validator] = $message;
-            }
-        }
-
-        return $errorsSummary;
-
     }
 }

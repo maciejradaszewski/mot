@@ -17,9 +17,9 @@
 |$tester2       |$motTestNumber1|true          |
 |$tester2       |$motTestNumber2|true          |
 |$siteMng2      |$motTestNumber1|NOT ACCESS    |
-|$siteMng2      |$motTestNumber2|true          |
+|$siteMng2      |$motTestNumber2|NOT ACCESS    |
 |$siteAdmin2    |$motTestNumber1|NOT ACCESS    |
-|$siteAdmin2    |$motTestNumber2|true          |
+|$siteAdmin2    |$motTestNumber2|NOT ACCESS    |
 |ft-Enf-tester  |$motTestNumber1|true          |
 |aedm           |$motTestNumber1|NOT ACCESS    |
 |ae             |$motTestNumber1|NOT ACCESS    |

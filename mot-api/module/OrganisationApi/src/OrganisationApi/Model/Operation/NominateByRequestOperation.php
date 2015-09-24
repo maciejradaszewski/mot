@@ -35,6 +35,8 @@ class NominateByRequestOperation implements NominateOperationInterface
     }
 
     /**
+     * Creates link between Pers
+     *
      * @param Person                      $nominator
      * @param OrganisationBusinessRoleMap $nomination
      *

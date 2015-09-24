@@ -5,8 +5,7 @@ use MotFitnesse\Util\UrlBuilder;
 use DvsaCommon\Enum\ColourCode;
 use MotFitnesse\Util\TestSupportUrlBuilder;
 use DvsaCommon\Enum\CountryOfRegistrationCode;
-use DvsaCommon\Enum\FuelTypeCode;
-
+use \DvsaCommon\Enum\FuelTypeCode;
 /**
  * Calls API for generating new vehicles
  */
@@ -78,7 +77,11 @@ class VehicleTestHelper
             'mot1LegacyId' => $mot1LegacyId,
         ];
 
-        return $this->api->post((new TestSupportUrlBuilder())->vehicleAddV5c(), $inputData);
+        return $this->api->post(
+            (new \MotFitnesse\Util\TestSupportUrlBuilder())
+                ->vehicleAddV5c(),
+            $inputData
+        );
     }
 
     /**
@@ -120,6 +123,10 @@ class VehicleTestHelper
             $data = array_merge($data, $spec);
         }
 
-        return $this->api->post((new TestSupportUrlBuilder())->testSupport()->createDvlaVehicle(), $data);
+        return $this->api->post(
+            (new \MotFitnesse\Util\TestSupportUrlBuilder())->testSupport()->createDvlaVehicle(),
+            $data
+        );
     }
+
 }

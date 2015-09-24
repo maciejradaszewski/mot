@@ -56,9 +56,6 @@ class ContactDto extends AbstractDataTransferObject
         return $this;
     }
 
-    /**
-     * @return AddressDto
-     */
     public function getAddress()
     {
         return $this->address;

@@ -14,6 +14,16 @@ use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 $isAllowEdit = $this->isAllowEdit;
 $motAuthorisations = $this->motAuthorisations;
 
+$fullNameArray = array_filter([
+        $personalDetails->getTitle(),
+        $personalDetails->getFirstName(),
+        $personalDetails->getMiddleName(),
+        $personalDetails->getSurname(),
+    ],
+    'strlen');
+
+$escFullName = $this->escapeHtml(implode(" ",$fullNameArray));
+
 $fullAddressArray = array_filter([
         $personalDetails->getAddressLine1(),
         $personalDetails->getAddressLine2(),
@@ -25,7 +35,7 @@ $fullAddressArray = array_filter([
 $escFullAddress = $this->escapeHtml(implode(", ", $fullAddressArray)) ?: null;
 
 $this->layout()->setVariable('pageSubTitle', $isViewingOwnProfile ? 'Your profile' : 'Profile of');
-$this->layout()->setVariable('pageTitle', $personalDetails->getFullName());
+$this->layout()->setVariable('pageTitle', $escFullName);
 
 echo $this->partial('errorMessages', ['getFromFlash' => true]);
 ?>
@@ -48,7 +58,7 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
                 Name
             </th>
             <td class="key-value-list__value" id="display-name">
-                <?php echo $this->escapeHtml($personalDetails->getFullName()); ?>
+                <?php echo $escFullName; ?>
             </td>
         </tr>
         <tr>

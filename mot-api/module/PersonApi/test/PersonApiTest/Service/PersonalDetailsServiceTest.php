@@ -159,17 +159,13 @@ class PersonDetailsServiceTest extends AbstractServiceTestCase
             ->entityManagerMock
             ->expects($this->atLeastOnce())
             ->method('getRepository')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        [PersonContact::class, $personContactRepository],
-                        [PhoneContactType::class, $phoneContactTypeRepository],
-                        [Phone::class, $phoneRepository],
-                        [Email::class, $emailRepository],
-                        [\DvsaEntities\Entity\PersonContactType::class, $personContactTypeRepository]
-                    ]
-                )
-            );
+            ->will($this->returnValueMap([
+                [PersonContact::class, $personContactRepository],
+                [PhoneContactType::class, $phoneContactTypeRepository],
+                [Phone::class, $phoneRepository],
+                [Email::class, $emailRepository],
+                [\DvsaEntities\Entity\PersonContactType::class, $personContactTypeRepository]
+            ]));
 
         $this->mockIdentity->expects($this->any())
             ->method('getUserId')

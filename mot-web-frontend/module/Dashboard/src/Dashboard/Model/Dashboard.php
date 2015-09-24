@@ -32,9 +32,6 @@ class Dashboard
     /** @var  $inProgressTestId integer */
     private $inProgressTestNumber;
 
-    /** @var $inProgressDemoTestNumber string */
-    private $inProgressDemoTestNumber;
-
     /** @var  $inProgressTestTypeCode string */
     private $inProgressTestTypeCode;
 
@@ -46,7 +43,6 @@ class Dashboard
         $this->setNotifications(Notification::createList(ArrayUtils::get($data, 'notifications')));
         $this->setInProgressTestNumber(ArrayUtils::get($data, 'inProgressTestNumber'));
         $this->setInProgressTestTypeCode(ArrayUtils::get($data, 'inProgressTestTypeCode'));
-        $this->setInProgressDemoTestNumber(ArrayUtils::tryGet($data, 'inProgressDemoTestNumber'));
     }
 
     /**
@@ -263,33 +259,6 @@ class Dashboard
     public function hasTestInProgress()
     {
         return null !== $this->inProgressTestNumber;
-    }
-
-    /**
-     * @param $inProgressTestNumber
-     *
-     * @return $this
-     */
-    public function setInProgressDemoTestNumber($inProgressTestNumber)
-    {
-        $this->inProgressDemoTestNumber = $inProgressTestNumber;
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getInProgressDemoTestNumber()
-    {
-        return $this->inProgressDemoTestNumber;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasDemoTestInProgress()
-    {
-        return null !== $this->inProgressDemoTestNumber;
     }
 
     /**

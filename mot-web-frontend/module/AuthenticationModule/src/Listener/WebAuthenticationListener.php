@@ -81,8 +81,6 @@ class WebAuthenticationListener
         return [
             '@^/(login|logout)$@',
             '@^/forgotten-password(?!/update$)(.*)@',
-            '@^/account/register@',
-            '@^/account/register/(.*)@',
         ];
     }
 }

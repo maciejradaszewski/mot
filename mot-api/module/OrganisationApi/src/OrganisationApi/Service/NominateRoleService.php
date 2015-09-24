@@ -8,7 +8,6 @@ use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Database\Transaction;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
-use DvsaCommon\Enum\RoleCode;
 use DvsaEntities\Entity\OrganisationBusinessRoleMap;
 use DvsaEntities\Entity\OrganisationPositionHistory;
 use DvsaEntities\Entity\Person;
@@ -81,15 +80,11 @@ class NominateRoleService
         $nominator  = $this->getNominator();
         $nomination = $this->getNomination($nomineeId, $roleId, $organisationId);
 
-        $businessRole = $nomination->getOrganisationBusinessRole()->getRole();
-
-        if ($businessRole->getCode() == RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER) {
-            $nominationOperation = $this->assignRoleOperation;
-        } else {
-            $nominationOperation =  $this->nominateOperation;
-        }
-
+        $nominationOperation  = $this->getNominationOperation($nominator);
         $organisationPosition = $nominationOperation->nominate($nominator, $nomination);
+
+//        $historyNomination = OrganisationPositionHistory::fromOrganisationPosition($nomination);
+//        $this->organisationPositionHistoryRepository->persist($historyNomination);
 
         $this->transaction->flush();
 
@@ -113,6 +108,19 @@ class NominateRoleService
             ->setBusinessRoleStatus($status);
 
         return $map;
+    }
+
+    /**
+     * @param Person $nominator
+     *
+     * @return NominateOperationInterface
+     */
+    private function getNominationOperation(Person $nominator)
+    {
+        // DVSA admins can assign roles directly, without asking nominee if they want it.
+        return $this->authorisationService->isGranted(PermissionInSystem::SKIP_NOMINATION_REQUEST)
+            ? $this->assignRoleOperation
+            : $this->nominateOperation;
     }
 
     private function getNominator()

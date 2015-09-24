@@ -30,9 +30,6 @@ use DvsaMotTest\Factory\Controller\TesterMotTestLogControllerFactory;
 use DvsaMotTest\Factory\Controller\VehicleSearchControllerFactory;
 use DvsaMotTest\NewVehicle\Controller\CreateVehicleController;
 use DvsaMotTest\NewVehicle\Controller\Factory\CreateVehicleControllerFactory;
-use DvsaMotTest\Factory\Controller\MotTestCertificatesControllerFactory;
-use DvsaMotTest\Controller\CertificatePrintingController;
-use DvsaMotTest\Factory\Controller\CertificatePrintingControllerFactory;
 
 return [
     'invokables' => [
@@ -49,7 +46,7 @@ return [
         MotTestApiController::class         => MotTestApiController::class,
         ReinspectionReportController::class => ReinspectionReportController::class,
     ],
-    'factories' => [
+    'factories'  => [
         RefuseToTestController::class             => RefuseToTestControllerFactory::class,
         SpecialNoticesController::class           => SpecialNoticesControllerFactory::class,
         VehicleSearchController::class            => VehicleSearchControllerFactory::class,
@@ -58,9 +55,6 @@ return [
         CreateVehicleController::class            => CreateVehicleControllerFactory::class,
         EnforcementMotTestController::class       => EnforcementMotTestControllerFactory::class,
         TesterMotTestLogController::class         => TesterMotTestLogControllerFactory::class,
-        ReplacementCertificateController::class   => ReplacementCertificateControllerFactory::class,
-        CertificatePrintingController::class      => CertificatePrintingControllerFactory::class,
-        ReplacementCertificateController::class   => ReplacementCertificateControllerFactory::class,
-        \DvsaMotTest\Controller\MotTestCertificatesController::class => MotTestCertificatesControllerFactory::class
+        ReplacementCertificateController::class   => ReplacementCertificateControllerFactory::class
     ],
 ];

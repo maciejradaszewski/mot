@@ -13,7 +13,7 @@ public class EventHistoryPage extends BasePage {
 
     public static final String PAGE_TITLE = "EVENTS HISTORY";
 
-    @FindBy(partialLinkText = "Return to the ") private WebElement goBackLink;
+    @FindBy(partialLinkText = "go back") private WebElement goBackLink;
 
     @FindBy(xpath = ".//*[@id='listLogs']/tbody/tr[1]/td[1]/a") private WebElement eventOne;
 
@@ -95,7 +95,7 @@ public class EventHistoryPage extends BasePage {
         return eventsTopHeader.getText();
     }
 
-    public EventDetailsPage clickUserClaimsAccount(){
+    public EventDetailsPage clickUserClaimsAccount(String userName, String fullName){
         WebDriverWait webDriverWait = new WebDriverWait(driver, AJAX_MAXIMUM_TIMEOUT);
 
         webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("listLogs_next")));
@@ -103,7 +103,7 @@ public class EventHistoryPage extends BasePage {
                 .presenceOfElementLocated(By.partialLinkText("User Claims Account")));
 
                 userClaimsAccount.click();
-        return new EventDetailsPage(driver);
+        return new EventDetailsPage(driver, userName, fullName);
     }
 
     public String getDescription(){

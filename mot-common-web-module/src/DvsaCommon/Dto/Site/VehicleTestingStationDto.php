@@ -2,12 +2,10 @@
 
 namespace DvsaCommon\Dto\Site;
 
-use DvsaCommon\Constants\FacilityTypeCode;
 use DvsaCommon\Dto\BrakeTest\BrakeTestTypeDto;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Dto\Equipment\EquipmentDto;
 use DvsaCommon\Dto\Security\RolesMapDto;
-use DvsaCommon\Utility\ArrayUtils;
 
 /**
  * Class VehicleTestingStationDto
@@ -42,6 +40,9 @@ class VehicleTestingStationDto extends SiteDto
 
     /** @var RolesMapDto[] */
     private $positions;
+
+    /** @var  string */
+    private $status;
 
     /** @var  Boolean */
     private $isNeedConfirmation = false;
@@ -218,6 +219,14 @@ class VehicleTestingStationDto extends SiteDto
     }
 
     /**
+     * #TODO Used but never set
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
      * @return boolean
      */
     public function isOptlSelected()
@@ -269,52 +278,5 @@ class VehicleTestingStationDto extends SiteDto
     {
         $this->isNeedConfirmation = $needConfirmation;
         return $this;
-    }
-
-    /**
-     * @param bool|false $mergeAtlAndOptl Count ATL and OPTL as one
-     * @return int
-     */
-    public function getOptlCount($mergeAtlAndOptl = false)
-    {
-        $counts = $this->countFacilitiesByTypeCode();
-
-        if(true === $mergeAtlAndOptl){
-            $atl = ArrayUtils::tryGet($counts, FacilityTypeCode::AUTOMATED_TEST_LANE, 0);
-            $optl = ArrayUtils::tryGet($counts, FacilityTypeCode::ONE_PERSON_TEST_LANE, 0);
-
-            return $atl + $optl;
-        }
-
-        return ArrayUtils::tryGet($counts, FacilityTypeCode::ONE_PERSON_TEST_LANE, 0);
-    }
-
-    /**
-     * @return int
-     */
-    public function getTptlCount()
-    {
-        $counts = $this->countFacilitiesByTypeCode();
-
-        return ArrayUtils::tryGet($counts, FacilityTypeCode::TWO_PERSON_TEST_LANE, 0);
-    }
-
-    /**
-     * Array with counts of facilities grouped by type, indexed by FacilityTypeCode
-     *
-     * @return array
-     */
-    private function countFacilitiesByTypeCode()
-    {
-        $facilities = $this->getFacilities();
-        $counts = [];
-
-        if ($facilities) {
-            foreach ($facilities as $typeCode => $facilityDtoArray) {
-                $counts[$typeCode] = count($facilityDtoArray);
-            }
-        }
-
-        return $counts;
     }
 }

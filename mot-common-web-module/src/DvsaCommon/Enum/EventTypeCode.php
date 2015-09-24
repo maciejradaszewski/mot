@@ -55,14 +55,6 @@ class EventTypeCode
     const DVSA_ADMINISTRATOR_CREATE_AE = 'CAE';
     const DVSA_ADMINISTRATOR_CREATE_SITE = 'CS';
     const UPDATE_AE = 'UAE';
-    const UNLINK_AE_SITE = 'AEULS';
-    const DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE = 'LAES';
-    const DVSA_ADMINISTRATOR_UPDATE_SITE = 'US';
-    const INTELLIGENCE_MARKER = 'INTM';
-    const VTS_COMPLAINT = 'VTSCO';
-    const TESTER_TRAINING_ASSESSMENT = 'NTTA';
-    const NTT_DIRECTED_RETRAINING_CLASSES_12 = 'NTTDA';
-    const NTT_REFRESHER_CLASSES_12 = 'NTTRA';
 
     /**
      * @return array of values for the type EventTypeCode
@@ -115,14 +107,6 @@ class EventTypeCode
             self::DVSA_ADMINISTRATOR_CREATE_AE,
             self::DVSA_ADMINISTRATOR_CREATE_SITE,
             self::UPDATE_AE,
-            self::UNLINK_AE_SITE,
-            self::DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE,
-            self::DVSA_ADMINISTRATOR_UPDATE_SITE,
-            self::INTELLIGENCE_MARKER,
-            self::VTS_COMPLAINT,
-            self::TESTER_TRAINING_ASSESSMENT,
-            self::NTT_DIRECTED_RETRAINING_CLASSES_12,
-            self::NTT_REFRESHER_CLASSES_12,
         ];
     }
 

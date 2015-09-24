@@ -21,9 +21,7 @@ use DvsaEntities\Entity\VehicleClass;
 use DvsaEventApi\Service\EventService;
 use SiteApi\Service\Mapper\SiteBusinessRoleMapMapper;
 use SiteApi\Service\SiteService;
-use SiteApi\Service\Validator\SiteDetailsValidator;
 use SiteApi\Service\Validator\SiteValidator;
-use SiteApi\Service\Validator\TestingFacilitiesValidator;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use DvsaEntities\Entity\SiteStatus;
@@ -64,11 +62,7 @@ class SiteServiceFactory implements FactoryInterface
             new SiteBusinessRoleMapMapper($hydrator),
             $updateVtsAssertion,
             $hydrator,
-            new SiteValidator(
-                null,
-                $serviceLocator->get(TestingFacilitiesValidator::class),
-                $serviceLocator->get(SiteDetailsValidator::class)
-            )
+            new SiteValidator()
         );
     }
 }

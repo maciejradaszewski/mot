@@ -12,6 +12,7 @@ use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilder;
  */
 class MotTestInProgressMapper extends DtoMapper
 {
+
     /**
      * @param $vtsId
      *
@@ -20,12 +21,6 @@ class MotTestInProgressMapper extends DtoMapper
     public function fetchAllForVts($vtsId)
     {
         $url = VehicleTestingStationUrlBuilder::testInProgress($vtsId)->toString();
-        return $this->get($url);
-    }
-
-    public function getCount($vtsId)
-    {
-        $url = VehicleTestingStationUrlBuilder::testInProgressCount($vtsId);
         return $this->get($url);
     }
 }

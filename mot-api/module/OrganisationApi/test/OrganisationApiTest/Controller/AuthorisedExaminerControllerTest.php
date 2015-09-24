@@ -3,14 +3,12 @@
 namespace OrganisationApiTest\Controller;
 
 use DvsaCommon\Dto\Organisation\OrganisationDto;
-use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonApiTest\Controller\AbstractRestfulControllerTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use OrganisationApi\Controller\AuthorisedExaminerController;
 use OrganisationApi\Service\AuthorisedExaminerService;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
-use Zend\Http\PhpEnvironment\Request;
 use Zend\Stdlib\Parameters;
 
 /**
@@ -48,9 +46,7 @@ class AuthorisedExaminerControllerTest extends AbstractRestfulControllerTestCase
         }
 
         //  call
-        $postParams = ArrayUtils::tryGet($params, 'post', []);
-        $putParams = ArrayUtils::tryGet($params, 'put', []);
-        $result = $this->getResultForAction($method, $action, $params['route'], null, $postParams, $putParams);
+        $result = $this->getResultForAction($method, $action, $params['route'], null, $params['post']);
 
         //  check
         $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, $expect['result'], $result);
@@ -71,6 +67,7 @@ class AuthorisedExaminerControllerTest extends AbstractRestfulControllerTestCase
                 'action' => null,
                 'params' => [
                     'route' => ['id' => self::AE_ID],
+                    'post'  => null,
                 ],
                 'mocks'  => [
                     'method' => 'get',
@@ -88,6 +85,7 @@ class AuthorisedExaminerControllerTest extends AbstractRestfulControllerTestCase
                 'action' => 'getAuthorisedExaminerByNumber',
                 'params' => [
                     'route' => ['number' => self::AE_ID],
+                    'post'  => null,
                 ],
                 'mocks'  => [
                     'method' => 'getByNumber',
@@ -101,13 +99,14 @@ class AuthorisedExaminerControllerTest extends AbstractRestfulControllerTestCase
                 ]
             ],
             [
-                'method' => Request::METHOD_PUT,
+                'method' => 'put',
                 'action' => null,
                 'params' => [
                     'route' => [
                         'id' => self::AE_ID,
+                        $jsonOrganisationDto
                     ],
-                    'put' => $jsonOrganisationDto,
+                    'post'  => null,
                 ],
                 'mocks'  => [
                     'method' => 'update',

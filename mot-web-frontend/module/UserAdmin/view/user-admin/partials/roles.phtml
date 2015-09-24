@@ -5,40 +5,35 @@ use \UserAdmin\Presenter\UserProfilePresenter as Presenter;
 
 /** @var Presenter $presenter */
 
-if ($presenter->canDisplayDvsaRoleSection()): ?>
+if ($presenter->canDisplayRoleSection()):
+    $currentInternalRoles = $presenter->getPersonAssignedInternalRoleCodes();
+    ?>
+
     <h3 class="heading-medium">Roles</h3>
 
-    <?php if ($presenter->hasDvsaRoles()): ?>
+    <?php if (false === $presenter->isManagingOwnRoles()): ?>
+        <a href="<?php echo $this->url(PersonRoleController::URL_MANAGE_INTERNAL_ROLE, ['personId' => $presenter->getPersonId()]); ?>"
+            class="key-value-list__action">Manage roles</a>
+    <?php endif ?>
 
-        <table class="key-value-list">
-            <tbody>
-            <?php
-            /** @var array $currentInternalRoles */
-            $currentInternalRoles = $presenter->getPersonAssignedInternalRoleCodes();
 
-            foreach ($currentInternalRoles as $role): ?>
-                <tr>
-                    <th class="key-value-list__key">
-                        <strong><?php echo $this->escapeHtml($role); ?></strong>
-                    </th>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
+    <?php if (!empty($currentInternalRoles)) : ?>
 
-    <?php else : ?>
-        <p>No roles assigned.</p>
-    <?php endif; ?>
+    <table class="key-value-list">
+        <tbody>
 
-    <?php if (true === $presenter->canManageDvsaRoles() && false === $presenter->isManagingOwnRoles()): ?>
-        <p>
-            <a href="<?php echo $this->url(PersonRoleController::URL_MANAGE_INTERNAL_ROLE, ['personId' => $presenter->getPersonId()]); ?>"
-               class="key-value-list__action"
-               id="manage-internal-roles">
-                Manage roles
-            </a>
-        </p>
-    <?php endif; ?>
+        <?php foreach ($currentInternalRoles as $role): ?>
+            <tr>
+                <th class="key-value-list__key">
+                    <strong><?php echo $role; ?></strong>
+                </th>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
 
-<?php endif; ?>
+    <?php
+        endif;
+endif;
+?>
 

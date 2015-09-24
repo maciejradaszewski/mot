@@ -356,8 +356,7 @@ class PersonalDetails
                     $this->getFirstName(),
                     $this->getMiddleName(),
                     $this->getSurname(),
-                ],
-                'strlen'
+                ]
             )
         );
     }

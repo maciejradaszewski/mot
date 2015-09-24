@@ -6,8 +6,11 @@ use DvsaCommon\Dto\AbstractDataTransferObject;
 use DvsaCommon\Dto\Person\PersonDto;
 use DvsaCommon\Dto\Vehicle\CountryDto;
 use DvsaCommon\Dto\Vehicle\FuelTypeDto;
+use DvsaCommon\Dto\Vehicle\MakeDto;
+use DvsaCommon\Dto\Vehicle\ModelDto;
 use DvsaCommon\Dto\Vehicle\VehicleDto;
 use DvsaCommon\Dto\VehicleClassification\VehicleClassDto;
+use DvsaCommon\Utility\ArrayUtils;
 
 class MotTestDto extends AbstractDataTransferObject
 {
@@ -197,8 +200,6 @@ class MotTestDto extends AbstractDataTransferObject
     }
 
     /**
-     * This method returns the ID of the jasper data snapshot row
-     *
      * @return int
      */
     public function getDocument()
@@ -207,7 +208,7 @@ class MotTestDto extends AbstractDataTransferObject
     }
 
     /**
-     * @param int $document The ID of the jasper snapshot data ID
+     * @param int $document
      *
      * @return MotTestDto
      */

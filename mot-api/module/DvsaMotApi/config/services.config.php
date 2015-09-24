@@ -3,11 +3,9 @@
 use DvsaCommonApi\Transaction\ServiceTransactionAwareInitializer;
 use DvsaEntities\Repository\TestItemCategoryRepository;
 use DvsaMotApi\Factory\Service\MotTestOptionsServiceFactory;
-use DvsaMotApi\Factory\Service\MotTestRecentCertificateServiceFactory;
 use DvsaMotApi\Factory\Service\VehicleHistoryServiceFactory;
 use DvsaMotApi\Factory\Service\TesterMotTestLogServiceFactory;
 use DvsaMotApi\Factory\TestItemCategoryRepositoryFactory;
-use DvsaMotApi\Factory\Service\CertificatePdfServiceFactory;
 use DvsaMotApi\Service\CertificateCreationService;
 use DvsaMotApi\Service\EmergencyService;
 use DvsaMotApi\Service\MotTestDateHelper;
@@ -15,7 +13,6 @@ use DvsaMotApi\Service\EmergencyServiceFactory;
 use DvsaMotApi\Service\MotTestDateHelperService;
 use DvsaMotApi\Service\MotTestOptionsService;
 use DvsaMotApi\Service\MotTestReasonForRejectionService;
-use DvsaMotApi\Service\MotTestRecentCertificateService;
 use DvsaMotApi\Service\MotTestStatusChangeNotificationService;
 use DvsaMotApi\Service\TestingOutsideOpeningHoursNotificationService;
 use DvsaMotApi\Service\UserService;
@@ -26,7 +23,6 @@ use DvsaMotApi\Service\VehicleHistoryService;
 use DvsaMotApi\Service\TesterMotTestLogService;
 use DvsaMotApi\Service\CreateMotTestService;
 use DvsaMotApi\Service\DemoTestAssessmentService;
-use DvsaMotApi\Service\CertificatePdfService;
 use DvsaMotApi\Factory\Service\DemoTestAssessmentServiceFactory;
 use DvsaMotApi\Helper\TesterQualificationStatusChangeEventHelper;
 use DvsaMotApi\Factory\Helper\TesterQualificationStatusChangeEventHelperFactory;
@@ -39,7 +35,7 @@ use DvsaMotApi\Factory\Service\Validator\RetestEligibilityValidatorFactory;
 return [
     'invokables' => [
         'BrakeTestConfigurationValidator'                   => BrakeTestConfigurationValidator::class,
-        'BrakeTestResultValidator'                          => BrakeTestResultValidator::class
+        'BrakeTestResultValidator'                          => BrakeTestResultValidator::class,
     ],
     'initializers' => [
         'transactionAware'                                  => ServiceTransactionAwareInitializer::class,
@@ -99,6 +95,6 @@ return [
         TesterQualificationStatusChangeEventHelper::class   => TesterQualificationStatusChangeEventHelperFactory::class,
         TesterMotTestLogService::class                      => TesterMotTestLogServiceFactory::class,
         RoleEventHelper::class                              => RoleEventHelperFactory::class,
-        RoleNotificationHelper::class                       => RoleNotificationHelperFactory::class
+        RoleNotificationHelper::class                       => RoleNotificationHelperFactory::class,
     ],
 ];

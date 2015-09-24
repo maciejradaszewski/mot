@@ -41,16 +41,12 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
     const MOT_TEST_LOG                          = '/mot-test-log';
     const MOT_TEST_LOG_CSV                      = '/csv';
 
-    const SITE = '/site';
-    const SITE_LINK = '/link';
-    const SITE_UNLINK = '/unlink/:linkId';
-
     protected $routesStructure
         = [
             self::MAIN =>
                 [
-                    self::SEARCH                        => '',
-                    self::CREATE                        => [
+                    self::SEARCH         => '',
+                    self::CREATE         => [
                         self::CREATE_AE_CONFIRMATION => '',
                     ],
                     self::EDIT           => '',
@@ -82,10 +78,6 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
                     self::REMOVE_PRINCIPAL_CONFIRMATION => '',
                     self::MOT_TEST_LOG             => [
                         self::MOT_TEST_LOG_CSV => '',
-                    ],
-                    self::SITE                          => [
-                        self::SITE_LINK   => '',
-                        self::SITE_UNLINK => '',
                     ],
                 ],
         ];
@@ -147,11 +139,12 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
         return self::of($id)->appendRoutesAndParams(self::PRINCIPALS);
     }
 
-    public static function principalRemove($aeId, $principalId)
+    public function principalRemove($principalId)
     {
-        return self::of($aeId)
-            ->appendRoutesAndParams(self::REMOVE_PRINCIPAL_CONFIRMATION)
-            ->routeParam('principalId', $principalId);
+        $this->appendRoutesAndParams(self::REMOVE_PRINCIPAL_CONFIRMATION);
+        $this->routeParam('principalId', $principalId);
+
+        return $this;
     }
 
     /**
@@ -177,23 +170,5 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
     public static function slots($aeId)
     {
         return self::of($aeId)->appendRoutesAndParams(self::SLOTS);
-    }
-
-    private static function site($aeId)
-    {
-        return self::of($aeId)
-            ->appendRoutesAndParams(self::SITE);
-    }
-
-    public static function siteLink($aeId)
-    {
-        return self::site($aeId)->appendRoutesAndParams(self::SITE_LINK);
-    }
-
-    public static function siteUnlink($aeId, $linkId)
-    {
-        return self::site($aeId, $linkId)
-            ->appendRoutesAndParams(self::SITE_UNLINK)
-            ->routeParam('linkId', $linkId);
     }
 }

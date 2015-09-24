@@ -1,14 +1,13 @@
 <?php
 
 use DvsaCommon\Date\DateTimeDisplayFormat;
-use DvsaCommon\Dto\Organisation\OrganisationSiteLinkDto;
 use DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
-use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use DvsaCommon\Utility\AddressUtils;
 use Organisation\Controller\RoleController;
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 
 /**
  * @var \Organisation\ViewModel\View\Index\IndexViewModel $viewModel
@@ -18,7 +17,7 @@ use Organisation\Controller\RoleController;
  */
 $authHelper = $this->authorisationHelper();
 
-$orgId = $this->organisationId;
+$organisationId = $this->organisationId;
 ?>
 
 <?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
@@ -128,14 +127,6 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
             ); ?>
         </td>
     </tr>
-    <tr>
-        <th class="key-value-list__key">
-            DVSA area office
-        </th>
-        <td id="ae-disclosure-indicator" class="key-value-list__value">
-            <?php echo $this->escapeHtml($this->aoOfficeLabel); ?>
-        </td>
-    </tr>
 <?php endif; ?>
     </tbody>
 </table>
@@ -144,7 +135,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
     <div class="row">
         <div class="vertical col-sm-4"></div>
         <div class="vertical col-sm-4">
-            <a id="event-history" href="<?php echo EventUrlBuilderWeb::of()->eventList($orgId, 'ae'); ?>"
+            <a id="event-history" href="<?php echo EventUrlBuilderWeb::of()->eventList($organisationId, 'ae'); ?>"
                 >AE events history</a>
         </div>
     </div>
@@ -240,24 +231,20 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
         </tbody>
     </table>
 <?php endif; ?>
-
 <?php if ($viewModel->getViewAuthorisation()->canViewSlotsSection()): ?>
     <?php
     echo $this->partial(
         '/organisation/view/partials/slots-section',
-        ['viewModel' => $viewModel, 'organisationId' => $orgId]
+        ['viewModel' => $viewModel, 'organisationId' => $organisationId]
     );
     ?>
 <?php endif; ?>
-
 <?php if($viewModel->getViewAuthorisation()->canViewPersonnel()) :?>
     <h3 class="key-value-list__header">Roles</h3>
-
     <?php if($viewModel->getViewAuthorisation()->canNominate()): ?>
-        <a id="assign-a-role" href="<?php echo AuthorisedExaminerUrlBuilderWeb::roles($orgId); ?>"
+        <a id="assign-a-role" href="<?php echo AuthorisedExaminerUrlBuilderWeb::roles($organisationId); ?>"
            class="key-value-list__action" id="assign-role">Assign a role</a>
     <?php endif; ?>
-
     <table class="key-value-list">
         <tbody>
         <?php $escUsersWithRolesCount = 0;
@@ -291,7 +278,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                             <a id="remove-role" href="<?php echo $this->url(
                                 RoleController::ROUTE_REMOVE_ROLE,
                                 [
-                                    'id'     => $orgId,
+                                    'id'     => $organisationId,
                                     'roleId' => $pio->getId(),
                                 ]
                             );?>">Remove</a>
@@ -306,10 +293,6 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
 
 <?php if ($viewModel->getViewAuthorisation()->canViewVtsList()): ?>
     <h3 class="key-value-list__header">Vehicle testing stations</h3>
-        <?php if ($viewModel->getViewAuthorisation()->canCreateSiteAssociation()) : ?>
-            <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::siteLink($orgId); ?>" >Add site associations</a>
-        <?php endif; ?>
-
     <table class="key-value-list">
         <tbody>
         <?php
@@ -318,16 +301,12 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
 
         foreach ($viewModel->getVehicleTestingStations() as $vtsIdx => $vts):
             $itemCount++;
-
-            $vtsId = $vts->getId();
-            $siteNumber = $vts->getSiteNumber();
-
-            $vtsElmId = 'vehicle-testing-station-' . ($vtsIdx + 1);
+            $vtsId = 'vehicle-testing-station-' . ($vtsIdx + 1);
             ?>
-            <tr id="<?php echo $this->escapeHtmlAttr($vtsElmId); ?>">
+            <tr id="<?php echo $this->escapeHtmlAttr($vtsId); ?>">
                 <th class="key-value-list__key">
-                    <?php if ($viewModel->getViewAuthorisation()->canViewVts($vtsId)): ?>
-                        <a href="<?php echo VehicleTestingStationUrlBuilderWeb::byId($vtsId); ?>">
+                    <?php if ($viewModel->getViewAuthorisation()->canViewVts($vts->getId())): ?>
+                        <a href="<?php echo VehicleTestingStationUrlBuilderWeb::byId($vts->getId()); ?>">
                             <?php echo $this->escapeHtml($vts->getName()); ?>
                         </a>
                     <?php else: ?>
@@ -335,7 +314,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                     <?php endif; ?>
 
                     <?php if ('inactive' === $vts->getStatus()) : ?>
-                        <span id="<?php echo $this->escapeHtmlAttr($vtsElmId . '-status-label'); ?>"
+                        <span id="<?php echo $this->escapeHtmlAttr($vtsId . '-status-label'); ?>"
                               class="label label-danger">Inactive</span>
                     <?php endif; ?>
 
@@ -350,26 +329,6 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
 
                 <td class="key-value-list__value">
                     <?php echo $this->escapeHtml($vts->getSiteNumber()); ?>
-                    <?php if ($viewModel->getViewAuthorisation()->canRemoveSiteAssociation()) : ?>
-                        <?php
-                        $linkWithAe = $vts->getLinkWithAe();
-                        if ($linkWithAe instanceof OrganisationSiteLinkDto) : ?>
-                            <span class="key-value-list__meta">
-                                This association is approved -
-                                <strong>
-                                    <?php
-                                    echo $this->escapeHtml(
-                                        DateTimeDisplayFormat::textDate($linkWithAe->getStatusChangedOn())
-                                    );
-                                    ?>
-                                    -
-                                    <a href="<?php
-                                        echo AuthorisedExaminerUrlBuilderWeb::siteUnlink($orgId, $linkWithAe->getId());
-                                    ?>">Remove</a>
-                                </strong>
-                            </span>
-                        <?php endif; ?>
-                    <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach ?>
@@ -379,10 +338,8 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
 
 <?php if ($viewModel->canViewAeSection()): ?>
     <h3 class="key-value-list__header">AEP</h3>
-
         <?php if ($viewModel->getViewAuthorisation()->canCreateAuthorisedExaminerPrincipal()): ?>
-            <a id="add-aep" href="<?php echo AuthorisedExaminerUrlBuilderWeb::principals($orgId); ?>"
-               class="key-value-list__action">Add an AEP</a>
+            <a id="add-aep" href="<?php echo AuthorisedExaminerUrlBuilderWeb::principals($organisationId); ?>" class="key-value-list__action">Add an AEP</a>
         <?php endif; ?>
 
             <?php foreach ($viewModel->getPrincipals() as $principalIdx => $principal) :
@@ -429,12 +386,12 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                                 <?php echo $this->escapeHtml($contact->getPrimaryPhoneNumber()); ?>
                             </td>
                         </tr>
-                    <?php if ($viewModel->getViewAuthorisation()->canRemoveAuthorisedExaminerPrincipal()):
-                        $escUrlRemove = AuthorisedExaminerUrlBuilderWeb::principalRemove($orgId, $principal->getId());
-                        ?>
+                    <?php if ($viewModel->getViewAuthorisation()->canRemoveAuthorisedExaminerPrincipal()): ?>
                         <tr>
                             <td colspan="2">
-                                <a id="remove-aep" href="<?php echo $escUrlRemove; ?>">Remove</a>
+                                <a id="remove-aep"
+                                   href="<?php echo AuthorisedExaminerUrlBuilderWeb::of($organisationId)
+                                       ->principalRemove($principal->getId()); ?>">Remove</a>
                             </td>
                         </tr>
                     <?php endif; ?>

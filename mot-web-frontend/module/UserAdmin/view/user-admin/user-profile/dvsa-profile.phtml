@@ -6,12 +6,6 @@ use Dashboard\Controller\UserHomeController;
 /** @var string $passwordResetUrl */
 /** @var string $usernameRecoverUrl */
 
-$errorMessages      = $this->layout()->flashMessenger->getErrorMessages();
-$successMessages    = $this->layout()->flashMessenger->getSuccessMessages();
-
-echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
-echo $this->partial('partial/gds/general/system-message', ['messages' => $errorMessages, 'type' => 'failure']);
-
 ?>
 
 <h3 class="heading-medium">Personal details</h3>
@@ -22,7 +16,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
             Name
         </th>
         <td id="person-name" class="key-value-list__value">
-            <?php echo $this->escapeHtml($presenter->displayTitleAndFullName()) ?>
+            <?php echo $presenter->displayTitleAndFullName() ?>
         </td>
     </tr>
     <tr>
@@ -30,7 +24,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
             Username
         </th>
         <td id="person-username" class="key-value-list__value--numeric">
-            <?php echo $this->escapeHtml($presenter->displayUsername()); ?>
+            <?php echo $presenter->displayUsername(); ?>
         </td>
     </tr>
     <tr>
@@ -38,7 +32,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
             Date of birth
         </th>
         <td id="person-dob" class="key-value-list__value">
-            <?php echo $this->escapeHtml($presenter->displayDateOfBirth()); ?>
+            <?php echo $presenter->displayDateOfBirth(); ?>
         </td>
     </tr>
     <tr>
@@ -46,7 +40,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
             Driving licence number
         </th>
         <td id="person-driving-licence" class="key-value-list__value--numeric">
-            <?php echo $this->escapeHtml($presenter->displayDrivingLicenceNumber()); ?>
+            <?php echo $presenter->displayDrivingLicenceNumber(); ?>
         </td>
     </tr>
     </tbody>
@@ -84,15 +78,16 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
 
 <?php echo $this->partial('user-admin/partials/roles.phtml', ['presenter' => $presenter]) ?>
 <?php echo $this->partial('user-admin/partials/roles-and-associations.phtml', ['presenter' => $presenter]) ?>
-<?php echo $this->partial(
-        'user-admin/partials/tester-qualification-status.phtml',
-        [
-            'viewModel' => $presenter->getTesterAuthorisation(),
-            'searchQueryParams' => $searchQueryParams,
-        ]
-    )
-?>
-
+<?php if ($presenter->getTesterAuthorisation()->shouldBeDisplayed()): ?>
+    <?php echo $this->partial(
+            'user-admin/partials/tester-qualification-status.phtml',
+            [
+                'viewModel' => $presenter->getTesterAuthorisation(),
+                'searchQueryParams' => $searchQueryParams,
+            ]
+        )
+    ?>
+<?php endif ?>
 <?php echo $this->partial('user-admin/partials/event-history.phtml', ['presenter' => $presenter]) ?>
 
 <nav class="content-navigation">
@@ -106,3 +101,4 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
         ]
     ); ?>
 </nav>
+

@@ -189,7 +189,7 @@ public class StartTestConfirmation1Page extends BasePage {
         return submitConfirm().returnToHome().resumeMotTest();
     }
 
-    public MotTestPage confirmDemoTest() {
+    public MotTestPage startDemoTest() {
         return submitDemoConfirm();
     }
 

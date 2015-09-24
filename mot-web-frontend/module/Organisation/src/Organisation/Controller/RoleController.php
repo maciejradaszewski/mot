@@ -4,7 +4,6 @@ namespace Organisation\Controller;
 
 use Core\Controller\AbstractAuthActionController;
 use DvsaCommon\Dto\Organisation\OrganisationPositionDto;
-use DvsaCommon\Enum\OrganisationBusinessRoleName;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
@@ -254,20 +253,13 @@ class RoleController extends AbstractAuthActionController
             }
         }
 
-        $displayNotification = true;
-
-        if ($roleName == OrganisationBusinessRoleName::AUTHORISED_EXAMINER_DESIGNATED_MANAGER) {
-            $displayNotification = false;
-        }
-
         $this->layout('layout/layout-govuk.phtml');
 
         return new ViewModel(
             [
-                'nominee'             => $nominee,
-                'roleName'            => $roleName,
-                'authorisedExaminer'  => $ae,
-                'displayNotification' => $displayNotification
+                'nominee'            => $nominee,
+                'roleName'           => $roleName,
+                'authorisedExaminer' => $ae,
             ]
         );
     }

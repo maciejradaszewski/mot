@@ -237,26 +237,19 @@ class AbstractDvsaRestfulController
      */
     public function onDispatch(MvcEvent $e)
     {
-        $routeMatch = $e->getRouteMatch();
-        if($routeMatch !== null) {
-
-            $this->logEvent(
-                "Received API request to: [" . $routeMatch->getMatchedRouteName() .
-                '] method: [' . $e->getRequest()->getMethod() . '] url: [' . $this->getRequest()->getUriString() . '] content: ' . $e->getRequest()->getContent(),
-                Logger::INFO
-            );
-
-        }
+        $this->logEvent(
+            "Received API request to: [" . $e->getRouteMatch()->getMatchedRouteName() .
+            '] method: [' . $e->getRequest()->getMethod() . '] url: [' . $this->getRequest()->getUriString() . '] content: ' . $e->getRequest()->getContent(),
+            Logger::INFO
+        );
 
         $response = parent::onDispatch($e);
 
-        if($routeMatch !== null) {
-            if ($response instanceof JsonModel) {
-                $this->logEvent("Returning json " . $response->serialize());
-            } else {
-                // We're meant to be always returning JSON, so no reason to end up here
-                $this->logEvent("Returning unknown object");
-            }
+        if ($response instanceof JsonModel) {
+            $this->logEvent("Returning json " . $response->serialize());
+        } else {
+            // We're meant to be always returning JSON, so no reason to end up here
+            $this->logEvent("Returning unknown object");
         }
     }
 

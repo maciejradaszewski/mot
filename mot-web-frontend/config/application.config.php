@@ -1,7 +1,7 @@
 <?php
 
 $env = getenv('APPLICATION_ENV') ? : 'production';
-$mods = require_once('modules.list.php');
+$mods = file('config/modules.list', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
 # The ability to load config files from a system controlled location (puppet)
 # If the APPLICATION_CONFIG_PATH is set then this location is used to read

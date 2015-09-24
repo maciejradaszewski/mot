@@ -4,6 +4,7 @@ namespace PersonApiTest\Service;
 
 use Dvsa\OpenAM\OpenAMClient;
 use DvsaAuthorisation\Service\AuthorisationService;
+use DvsaCommon\Dto\Person\PersonDto;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
@@ -15,12 +16,17 @@ use PersonApi\Service\PersonService;
 use Zend\Authentication\AuthenticationService;
 
 /**
- * Unit tests for PersonService
+ * Class PersonServiceTest.
  */
 class PersonServiceTest extends AbstractServiceTestCase
 {
     const PERSON_ID = 1;
     const LOGIN     = 'aaa';
+
+    /**
+     * @var PersonRepository
+     */
+    private $personRepositoryMock;
 
     public function testGetPerson()
     {
@@ -84,14 +90,9 @@ class PersonServiceTest extends AbstractServiceTestCase
             ->method('getByIdentifier')
             ->willReturn($personMock);
 
-        $service = $this->constructPersonServiceWithMocks(
-            $this->createMocks(
-                [
-                    PersonRepository::class => $personRepositoryMock
-                ],
-                true
-            )
-        );
+        $service = $this->constructPersonServiceWithMocks($this->createMocks([
+            PersonRepository::class => $personRepositoryMock
+        ], true));
 
         $this->assertSame(self::PERSON_ID, $service->assertUsernameIsValidAndHasAnEmail(self::LOGIN));
     }
@@ -110,14 +111,9 @@ class PersonServiceTest extends AbstractServiceTestCase
             ->method('getByIdentifier')
             ->willReturn($person);
 
-        $service = $this->constructPersonServiceWithMocks(
-            $this->createMocks(
-                [
-                    PersonRepository::class => $personRepositoryMock
-                ],
-                true
-            )
-        );
+        $service = $this->constructPersonServiceWithMocks($this->createMocks([
+            PersonRepository::class => $personRepositoryMock
+        ], true));
 
         $this->assertFalse($service->assertUsernameIsValidAndHasAnEmail(self::LOGIN));
     }
@@ -130,14 +126,9 @@ class PersonServiceTest extends AbstractServiceTestCase
             ->method('getSiteCount')
             ->willReturn(1);
 
-        $service = $this->constructPersonServiceWithMocks(
-            $this->createMocks(
-                [
-                    PersonRepository::class => $personRepositoryMock
-                ],
-                true
-            )
-        );
+        $service = $this->constructPersonServiceWithMocks($this->createMocks([
+            PersonRepository::class => $personRepositoryMock
+        ], true));
 
         $this->assertSame(['siteCount' => 1], $service->getPersonSiteCountAsTester(self::PERSON_ID));
     }
@@ -153,14 +144,9 @@ class PersonServiceTest extends AbstractServiceTestCase
             ->method('save')
             ->willReturn(true);
 
-        $service = $this->constructPersonServiceWithMocks(
-            $this->createMocks(
-                [
-                    PersonRepository::class => $personRepositoryMock
-                ],
-                true
-            )
-        );
+        $service = $this->constructPersonServiceWithMocks($this->createMocks([
+            PersonRepository::class => $personRepositoryMock
+        ], true));
 
         $service->regeneratePinForPerson(self::PERSON_ID);
     }
@@ -247,6 +233,7 @@ class PersonServiceTest extends AbstractServiceTestCase
             ->method('getByIdentifier')
             ->with(self::LOGIN)
             ->will($this->returnValue($person));
+
 
         return $personRepositoryMock;
     }

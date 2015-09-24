@@ -137,7 +137,7 @@ public class BrakeTestResultsTest extends BaseTest {
                         resultsDetails);
         Assert.assertEquals(expResult, brakeTestSummaryPage.getResultsMap());
         brakeTestSummaryPage.clickDoneButton().enterOdometerValuesAndSubmit("20900")
-                .createCertificate().clickFinishPrint(Text.TEXT_PASSCODE).clickBackToHomeLink();
+                .createCertificate().clickFinishPrint(Text.TEXT_PASSCODE).clickDoneButton();
     }
 
     @DataProvider(name = "editBrakeTestResultsProvider")

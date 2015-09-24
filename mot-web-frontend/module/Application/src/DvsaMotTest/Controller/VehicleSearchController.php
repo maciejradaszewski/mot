@@ -169,8 +169,6 @@ class VehicleSearchController extends AbstractDvsaMotTestController
      */
     public function demoVehicleSearchAction()
     {
-        $this->getAuthorizationService()->assertGranted(PermissionInSystem::MOT_DEMO_TEST_PERFORM);
-
         return $this->vehicleSearch(self::SEARCH_TYPE_DEMO);
     }
 

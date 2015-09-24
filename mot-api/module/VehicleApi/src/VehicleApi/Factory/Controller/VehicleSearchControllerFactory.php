@@ -1,9 +1,4 @@
 <?php
-/**
- * This file is part of the DVSA MOT API project.
- *
- * @link http://gitlab.clb.npm/mot/mot
- */
 
 namespace VehicleApi\Factory\Controller;
 
@@ -14,9 +9,9 @@ use VehicleApi\Controller\VehicleSearchController;
 use DvsaEntities\DqlBuilder\SearchParam\VehicleSearchParam;
 
 /**
- * Create instance of VehicleSearchController
+ * Create instance of service VehicleSearchController
  *
- * Class VehicleSearchControllerFactory
+ * @package VehicleApi\Factory\Controller
  */
 class VehicleSearchControllerFactory implements FactoryInterface
 {

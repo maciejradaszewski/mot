@@ -17,7 +17,6 @@ class AccountUrlBuilderWeb extends AbstractUrlBuilder
     const EMAIL_NOT_FOUND = '/email-not-found';
 
     const ACCOUNT = '/account';
-    const SIGN_IN = '/';
     const CLAIM = '/claim';
     const CLAIM_EMAIL_AND_PASSWORD = '/confirm-email-and-password';
     const CLAIM_SECURITY_QUESTIONS = '/set-security-question';
@@ -44,7 +43,6 @@ class AccountUrlBuilderWeb extends AbstractUrlBuilder
                     self::CLAIM_RESET => '',
                 ],
             ],
-            self::SIGN_IN => '',
         ];
 
     public function __construct()
@@ -104,11 +102,6 @@ class AccountUrlBuilderWeb extends AbstractUrlBuilder
     public static function account()
     {
         return self::of()->appendRoutesAndParams(self::ACCOUNT);
-    }
-
-    public static function signIn()
-    {
-        return self::of()->appendRoutesAndParams(self::SIGN_IN);
     }
 
     private static function claim()

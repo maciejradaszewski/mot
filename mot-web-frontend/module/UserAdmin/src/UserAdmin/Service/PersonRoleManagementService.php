@@ -64,44 +64,11 @@ class PersonRoleManagementService
 
     /**
      * Checks to see if the user has the relevant permission
-     *
-     * @return bool
+     * @throws UnauthorisedException
      */
     public function userHasPermissionToManagePersonDvsaRoles()
     {
         return $this->authorisationService->isGranted(PermissionInSystem::MANAGE_DVSA_ROLES);
-    }
-
-    /**
-     * @return bool
-     */
-    public function userHasPermissionToReadPersonDvsaRoles()
-    {
-        return $this->authorisationService->isGranted(PermissionInSystem::READ_DVSA_ROLES);
-    }
-
-    /**
-     * @return bool
-     */
-    public function userHasPermissionToResetPassword()
-    {
-        return $this->authorisationService->isGranted(PermissionInSystem::USER_PASSWORD_RESET);
-    }
-
-    /**
-     * @return bool
-     */
-    public function userHasPermissionToRecoveryUsername()
-    {
-        return $this->authorisationService->isGranted(PermissionInSystem::USERNAME_RECOVERY);
-    }
-
-    /**
-     * @return bool
-     */
-    public function userHasPermissionToReclaimUserAccount()
-    {
-        return $this->authorisationService->isGranted(PermissionInSystem::USER_ACCOUNT_RECLAIM);
     }
 
     /**
@@ -111,7 +78,7 @@ class PersonRoleManagementService
      */
     public function forbidManagementOfSelf($personToBeManagedId)
     {
-        if (true === $this->personToManageIsSelf($personToBeManagedId)) {
+        if(true === $this->personToManageIsSelf($personToBeManagedId)) {
             throw new UnauthorisedException('You are not allowed to manage yourself');
         }
     }
@@ -223,7 +190,7 @@ class PersonRoleManagementService
      */
     public function getPersonAssignedInternalRoles($personId)
     {
-        if (false === $this->userHasPermissionToReadPersonDvsaRoles()) {
+        if (!$this->userHasPermissionToManagePersonDvsaRoles()) {
             return [];
         }
 
@@ -235,8 +202,6 @@ class PersonRoleManagementService
             $manageableRoles[$roleCode] = (new DataMappingHelper($personSystemRoles, 'code', $roleCode))
                 ->setReturnKeys(['id', 'name'])
                 ->getValue();
-
-            $manageableRoles[$roleCode]['canManageThisRole'] = $this->canManageThisRole($roleCode);
         }
 
         $manageableRolesAndUrl = array_map(
@@ -254,18 +219,6 @@ class PersonRoleManagementService
         );
 
         return $this->sortRolesByName($manageableRolesAndUrl);
-    }
-
-    /**
-     * @param string $roleCode
-     *
-     * @return bool
-     */
-    private function canManageThisRole($roleCode)
-    {
-        $manageRoleCode = 'MANAGE-ROLE-' . $roleCode;
-
-        return $this->authorisationService->isGranted($manageRoleCode);
     }
 
     /**
@@ -304,21 +257,16 @@ class PersonRoleManagementService
 
     /**
      * @param array $roles
-     *
      * @return array
      */
     private function sortRolesByName($roles)
     {
-        uasort(
-            $roles,
-            function ($a, $b) {
-                if ($a['name'] === $b['name']) {
-                    return 0;
-                }
-
-                return ($a['name'] < $b['name']) ? -1 : 1;
+        uasort($roles, function($a, $b){
+            if ($a['name'] == $b['name']) {
+                return 0;
             }
-        );
+            return ($a['name'] < $b['name']) ? -1 : 1;
+        });
 
         return $roles;
     }

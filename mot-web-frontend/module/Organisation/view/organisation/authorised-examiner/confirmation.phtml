@@ -53,16 +53,6 @@ $corrContact = $form->isCorrDetailsTheSame() ? $form->getBusContactModel() : $fo
             ],
         ]
     );
-
-    echo $this->partial(
-        'partial/gds/table/table',
-        [
-            'head' => 'Area Office',
-            'body' => [
-                ['DVSA area Office', $this->areaOfficeDisplayName, 'id' => 'areaOfficeNumber'],
-            ],
-        ]
-    );
 ?>
 
 <!--Hidden information of the AE for save purpose-->

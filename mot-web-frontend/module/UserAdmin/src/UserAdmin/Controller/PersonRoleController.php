@@ -37,22 +37,18 @@ class PersonRoleController extends AbstractAuthActionController
         $this->personRoleManagementService->forbidManagementOfSelf($this->getPersonIdFromRoute());
         $roleName = $this->getCatalogService()->getPersonSystemRoles()[$this->getPersonSystemRoleIdFromRoute()]['name'];
 
-        if ($this->hasBeenConfirmed()) {
+        if($this->hasBeenConfirmed()) {
             $return = $this->personRoleManagementService->addRole(
-                $this->getPersonIdFromRoute(),
-                $this->getPersonSystemRoleIdFromRoute()
+               $this->getPersonIdFromRoute(),
+               $this->getPersonSystemRoleIdFromRoute()
             );
 
-            if ($return === true) {
+            if($return === true) {
                 $this->addSuccessMessage(sprintf("%s role has been added", $roleName));
             } else {
                 $this->addErrorMessage(sprintf("There has been an error trying to add role %s", $roleName));
             }
-            $this->redirect()->toUrl(
-                UserAdminUrlBuilderWeb::personInternalRoleManagement(
-                    $this->getPersonIdFromRoute()
-                )
-            );
+            $this->redirect()->toUrl(UserAdminUrlBuilderWeb::personInternalRoleManagement($this->getPersonIdFromRoute()));
         } else {
             $this->layout()->setVariables(
                 [
@@ -66,9 +62,7 @@ class PersonRoleController extends AbstractAuthActionController
                 [
                     'roleName' => $roleName,
                     'personName' => $this->getPersonNameForBreadcrumbs(),
-                    'urlManageInternalRoles' => UserAdminUrlBuilderWeb::personInternalRoleManagement(
-                        $this->getPersonIdFromRoute()
-                    ),
+                    'urlManageInternalRoles' => UserAdminUrlBuilderWeb::personInternalRoleManagement($this->getPersonIdFromRoute()),
                 ]
             );
 
@@ -89,8 +83,7 @@ class PersonRoleController extends AbstractAuthActionController
                 $this->getPersonSystemRoleIdFromRoute()
             );
 
-            $roleName = $this->getCatalogService()
-                            ->getPersonSystemRoles()[$this->getPersonSystemRoleIdFromRoute()]['name'];
+            $roleName = $this->getCatalogService()->getPersonSystemRoles()[$this->getPersonSystemRoleIdFromRoute()]['name'];
 
             $this->addSuccessMessage(sprintf("%s has been removed", $roleName));
             $this->redirect()->toUrl(

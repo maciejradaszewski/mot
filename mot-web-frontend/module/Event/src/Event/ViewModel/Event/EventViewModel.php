@@ -1,27 +1,24 @@
 <?php
-/**
- * This file is part of the DVSA MOT Frontend project.
- *
- * @link http://gitlab.clb.npm/mot/mot
- */
 
 namespace Event\ViewModel\Event;
 
 use DvsaClient\Entity\Person;
 use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Dto\Event\EventFormDto;
-use DvsaCommon\Dto\Event\EventListDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\SiteUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
+use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\Dto\Event\EventListDto;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 /**
- * Class EventViewModel.
+ * Class EventViewModel
+ * @package Event\ViewModel\Event
  */
 class EventViewModel
 {
@@ -42,12 +39,12 @@ class EventViewModel
     private $eventType;
 
     /**
-     * @param OrganisationDto          $organisation
-     * @param VehicleTestingStationDto $site
-     * @param Person                   $person
-     * @param EventFormDto             $formModel
-     * @param string                   $eventType
-     * @param int                      $id
+     * @param OrganisationDto           $organisation
+     * @param VehicleTestingStationDto  $site
+     * @param Person                    $person
+     * @param EventFormDto              $formModel
+     * @param string                    $eventType
+     * @param int                       $id
      */
     public function __construct(
         $organisation,
@@ -66,7 +63,7 @@ class EventViewModel
     }
 
     /**
-     * This function return the good value for the link to the event detail.
+     * This function return the good value for the link to the event detail
      *
      * @param int $eventId
      *
@@ -78,7 +75,7 @@ class EventViewModel
     }
 
     /**
-     * This function return the good value for the go back link of the Event list.
+     * This function return the good value for the go back link of the Event list
      *
      * @return string
      */
@@ -92,12 +89,11 @@ class EventViewModel
             case 'person':
                 return UserAdminUrlBuilderWeb::userProfile($this->person->getId());
         }
-
         return '';
     }
 
     /**
-     * This function return the good value for the all link.
+     * This function return the good value for the all link
      *
      * @return string
      */
@@ -112,13 +108,12 @@ class EventViewModel
             case 'person':
                 return EventUrlBuilderWeb::of()->eventList($this->person->getId(), $this->getEventType());
         }
-
         return '';
     }
 
     /**
      * This function return the good title of the Event list page
-     * in function of witch entity we want the list.
+     * in function of witch entity we want the list
      *
      * @return string
      */
@@ -127,104 +122,70 @@ class EventViewModel
         switch ($this->eventType) {
             case 'ae':
                 return sprintf(
-                    '%s - %s',
+                    'List of AE events found for organisation "%s - %s"',
                     $this->organisation->getAuthorisedExaminerAuthorisation()->getAuthorisedExaminerRef(),
                     $this->organisation->getName()
                 );
             case 'site':
                 return sprintf(
-                    '%s - %s',
+                    'List of Site events found for site "%s - %s"',
                     $this->site->getSiteNumber(),
                     $this->site->getName()
                 );
             case 'person':
                 return sprintf(
-                    '%s',
+                    'List of Person events found for user "%s - %s"',
+                    $this->person->getUsername(),
                     $this->person->getFullName()
                 );
         }
-
-        return;
+        return null;
     }
 
     public function parseEventForJson()
     {
         $result = [];
         foreach ($this->getEventList()->getEvents() as $event) {
-
-            $finalDescription = '';
-            $tempDescription = $event->getDescription();
-            $tempOutcome = $event->getEventOutcomeDescription();
-
-            if(!empty($tempOutcome)) {
-
-                $finalDescription = $tempOutcome . '. ' . $tempDescription;
-
-            } else {
-
-                $finalDescription =$tempDescription;
-            }
-
             $result[] = [
                 'type' => [
                     'type' => $event->getType(),
-                    'url'  => $this->getEventDetailLink($event->getId())->toString() . '?' .
+                    'url' => $this->getEventDetailLink($event->getId())->toString() . '?' .
                         http_build_query($this->formModel->toArray()),
                 ],
-                'date'        => DateTimeDisplayFormat::textDateTimeShort($event->getDate()),
-                'description' => $finalDescription,
+                'date' => DateTimeDisplayFormat::textDateTimeShort($event->getDate()),
+                'description' => $event->getDescription(),
             ];
         }
-
         return $result;
     }
 
-    /**
-     * @return ViewModel
-     */
-    public function getViewModel()
-    {
-        return (new ViewModel(
-            [
-                'viewModel' => $this,
-            ]
-        ))->setTemplate('event/event/index.phtml');
-    }
-
-    /**
-     * @return JsonModel
-     */
-    public function getJsonModel()
-    {
-        return new JsonModel(
-            [
-                'data'                 => $this->parseEventForJson(),
-                'iTotalDisplayRecords' => $this->getEventList()->getTotalResult(),
-                'iTotalRecords'        => $this->getEventList()->getTotalResult(),
-                'sEcho'                => $this->getFormModel()->getPageNumber(),
-            ]
-        );
-    }
-
-    /**
-     * @param bool|false $isJson
-     *
-     * @return JsonModel|ViewModel
-     */
     public function getViewOrJson($isJson = false)
     {
-        return ($isJson === true) ? $this->getJsonModel() : $this->getViewModel();
+        if ($isJson === true) {
+            return new JsonModel(
+                [
+                    'data' => $this->parseEventForJson(),
+                    'iTotalDisplayRecords' => $this->getEventList()->getTotalResult(),
+                    'iTotalRecords' => $this->getEventList()->getTotalResult(),
+                    'sEcho' => $this->getFormModel()->getPageNumber()
+                ]
+            );
+        } else {
+            return (new ViewModel(
+                [
+                    'viewModel' => $this
+                ]
+            ))->setTemplate('event/event/index.phtml');
+        }
     }
 
     /**
      * @param OrganisationDto $organisation
-     *
      * @return $this
      */
     public function setOrganisation($organisation)
     {
         $this->organisation = $organisation;
-
         return $this;
     }
 
@@ -246,13 +207,11 @@ class EventViewModel
 
     /**
      * @param VehicleTestingStationDto $site
-     *
      * @return $this
      */
     public function setSite($site)
     {
         $this->site = $site;
-
         return $this;
     }
 
@@ -266,13 +225,11 @@ class EventViewModel
 
     /**
      * @param Person $person
-     *
      * @return $this
      */
     public function setPerson($person)
     {
         $this->person = $person;
-
         return $this;
     }
 
@@ -286,13 +243,11 @@ class EventViewModel
 
     /**
      * @param EventFormDto $formModel
-     *
      * @return $this
      */
     public function setFormModel($formModel)
     {
         $this->formModel = $formModel;
-
         return $this;
     }
 
@@ -306,13 +261,11 @@ class EventViewModel
 
     /**
      * @param mixed $eventType
-     *
      * @return $this
      */
     public function setEventType($eventType)
     {
         $this->eventType = $eventType;
-
         return $this;
     }
 
@@ -326,13 +279,11 @@ class EventViewModel
 
     /**
      * @param EventListDto $eventList
-     *
      * @return $this
      */
     public function setEventList($eventList)
     {
         $this->eventList = $eventList;
-
         return $this;
     }
 
@@ -346,13 +297,11 @@ class EventViewModel
 
     /**
      * @param int $id
-     *
      * @return $this
      */
     public function setId($id)
     {
         $this->id = $id;
-
         return $this;
     }
 }

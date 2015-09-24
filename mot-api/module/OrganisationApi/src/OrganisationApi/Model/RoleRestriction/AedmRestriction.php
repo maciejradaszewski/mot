@@ -1,13 +1,13 @@
 <?php
 namespace OrganisationApi\Model\RoleRestriction;
 
-use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Enum\OrganisationBusinessRoleCode;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Service\Validator\ErrorSchema;
 use DvsaEntities\Entity\OrganisationBusinessRoleMap;
 use DvsaEntities\Entity\Person;
 use OrganisationApi\Model\OrganisationPersonnel;
+use OrganisationApi\Model\RoleRestrictionInterface;
 
 /**
  * Class AedmRestriction
@@ -18,15 +18,6 @@ class AedmRestriction extends AbstractOrganisationRoleRestriction
 {
     const NOT_AE_ERROR          = 'You cannot assign an AEDM to an organisation that is not an Authorised Examiner';
     const SITE_ALREADY_HAS_AEDM = 'There is already an AEDM assigned to this Authorised Examiner';
-
-    /**
-     * @var array
-     */
-    private static $activeStatusCodes = [
-        BusinessRoleStatusCode::ACCEPTED,
-        BusinessRoleStatusCode::ACTIVE,
-        BusinessRoleStatusCode::PENDING,
-    ];
 
     /**
      * Checks if all requirements are met to assign AEDM role to the user in the given organisation.
@@ -56,8 +47,7 @@ class AedmRestriction extends AbstractOrganisationRoleRestriction
     {
         return ArrayUtils::anyMatch(
             $personnel->getPositions(), function (OrganisationBusinessRoleMap $position) {
-                return in_array($position->getBusinessRoleStatus()->getCode(), self::$activeStatusCodes)
-                    && $position->getOrganisationBusinessRole()->getName() == $this->getRole();
+                return $position->getOrganisationBusinessRole()->getName() == $this->getRole();
             }
         );
     }

@@ -102,13 +102,5 @@ class VehicleTestingStationUrlBuilderTest extends \PHPUnit_Framework_TestCase
             $urlVtsPart . '/' . self::VTS_ID . '/contact/' . self::CONTACT_ID .'/update',
             $urlBuilder::contactUpdate(self::VTS_ID, self::CONTACT_ID)->toString()
         );
-        $this->assertEquals(
-            $urlVtsPart . '/' . self::VTS_ID .  '/testing-facilities',
-            $urlBuilder::updateTestingFacilities(self::VTS_ID)
-        );
-        $this->assertEquals(
-            $urlVtsPart . '/' . self::VTS_ID .  '/site-details',
-            $urlBuilder::updateSiteDetails(self::VTS_ID)
-        );
     }
 }

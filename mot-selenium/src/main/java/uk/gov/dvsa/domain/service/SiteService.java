@@ -1,6 +1,5 @@
 package uk.gov.dvsa.domain.service;
 
-import com.google.common.base.Optional;
 import com.jayway.restassured.response.Response;
 import uk.gov.dvsa.domain.api.request.CreateSiteRequest;
 import uk.gov.dvsa.domain.model.Site;
@@ -17,7 +16,7 @@ public class SiteService extends Service {
         super(WebDriverConfigurator.testSupportUrl());
     }
 
-    protected Site createSite(Optional<Integer> aeId, String siteName) throws IOException {
+    protected Site createSite(int aeId, String siteName) throws IOException {
         String request = jsonHandler.convertToString(new CreateSiteRequest(aeId, areaOfficer, siteName));
 
         Response response = motClient.createSite(request, CREATE_PATH);

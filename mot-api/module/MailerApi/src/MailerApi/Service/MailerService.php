@@ -3,13 +3,11 @@
 namespace MailerApi\Service;
 
 use DvsaCommon\Dto\Mailer\MailerDto;
-use MailerApi\Model\Attachment;
 use MailerApi\Validator\MailerValidator;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Mail;
-use Zend\Mime;
 use Zend\Validator\EmailAddress;
 
 /**
@@ -72,13 +70,10 @@ class MailerService
      * @param $recipient string the recipient email(s) to send to.
      * @param $subject   string the subject line of the email.
      * @param $message   string the full email body content.
-     * @param $attachment Attachment
      *
      * @return bool TRUE if the mail was successfully spooled
-     * @throws BadRequestException
-     * @throws \Exception
      */
-    public function send($recipient, $subject, $message, $attachment = null)
+    public function send($recipient, $subject, $message)
     {
         $this->mustBeGiven($recipient, 'recipient')
             ->mustBeGiven($subject, 'subject')
@@ -100,27 +95,9 @@ class MailerService
             }
         }
 
-        $text = new Mime\Part();
-        $text->type = Mime\Mime::TYPE_HTML;
-        $text->charset = 'utf-8';
-        $text->setContent($message);
-
-        $mimeMessage = new Mime\Message();
-        $mimeMessage->addPart($text);
-
-        if(!is_null($attachment)) {
-            $attachmentPart = new Mime\Part($attachment->getContent());
-            $attachmentPart->type = $attachment->getType();
-            $attachmentPart->filename = $attachment->getFilename();
-            $attachmentPart->disposition = Mime\Mime::DISPOSITION_ATTACHMENT;
-            // Setting the encoding is recommended for binary data
-            $attachmentPart->encoding = Mime\Mime::ENCODING_BASE64;
-            $mimeMessage->addPart($attachmentPart);
-        }
-
         // Hint: Chaining is broken by mocked objects, don't "refactor" this please.
         $mail = $this->getMailInstance();
-        $mail->setBody($mimeMessage);
+        $mail->setBody($message);
         $mail->setFrom($mailFrom, $senderName);
         $mail->addTo($actualRecipient);
         $mail->setSubject($subject);

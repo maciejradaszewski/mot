@@ -5,9 +5,7 @@ use Organisation\Controller\AuthorisedExaminerPrincipalController;
 use Organisation\Controller\MotTestLogController;
 use Organisation\Controller\RoleController;
 use Organisation\Controller\SearchController;
-use Organisation\Controller\SiteController;
 use Organisation\Controller\SlotsUsageController;
-use Organisation\Factory\Controller\SiteControllerFactory;
 use Organisation\Factory\Controller\AuthorisedExaminerControllerFactory;
 use Organisation\Factory\Controller\AuthorisedExaminerStatusControllerFactory;
 
@@ -204,36 +202,6 @@ return [
                             ],
                         ],
                     ],
-                    'site'       => [
-                        'type'    => 'segment',
-                        'options' => [
-                            'route'       => '/site',
-                            'defaults'    => [
-                                'controller' => SiteController::class,
-                            ],
-                        ],
-                        'may_terminate' => true,
-                        'child_routes' => [
-                            'link'    => [
-                                'type'    => 'segment',
-                                'options' => [
-                                    'route'       => '/link',
-                                    'defaults'    => [
-                                        'action'     => 'link',
-                                    ],
-                                ],
-                            ],
-                            'unlink'    => [
-                                'type'    => 'segment',
-                                'options' => [
-                                    'route'       => '/unlink[/:linkId]',
-                                    'defaults'    => [
-                                        'action'     => 'unlink',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
                 ],
             ],
         ],
@@ -244,7 +212,6 @@ return [
             SlotsUsageController::class                  => SlotsUsageController::class,
         ],
         'factories' => [
-            SiteController::class                      => SiteControllerFactory::class,
             AuthorisedExaminerControllerFactory::class => AuthorisedExaminerControllerFactory::class,
             AuthorisedExaminerStatusControllerFactory::class => AuthorisedExaminerStatusControllerFactory::class,
         ]

@@ -10,7 +10,6 @@ use DvsaCommon\Constants\OrganisationType as OrganisationTypeConst;
 use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
-use DvsaCommon\Dto\Organisation\AuthorisedExaminerAuthorisationDto;
 use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommon\Enum\EventTypeCode;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
@@ -33,7 +32,6 @@ use DvsaEntities\Entity\OrganisationContact;
 use DvsaEntities\Entity\OrganisationContactType;
 use DvsaEntities\Entity\OrganisationType;
 use DvsaEntities\Entity\Person;
-use DvsaEntities\Entity\Site;
 use DvsaEntities\Repository\AuthForAeStatusRepository;
 use DvsaEntities\Repository\AuthorisationForAuthorisedExaminerRepository;
 use DvsaEntities\Repository\CompanyTypeRepository;
@@ -41,7 +39,6 @@ use DvsaEntities\Repository\OrganisationContactTypeRepository;
 use DvsaEntities\Repository\OrganisationRepository;
 use DvsaEntities\Repository\OrganisationTypeRepository;
 use DvsaEntities\Repository\PersonRepository;
-use DvsaEntities\Repository\SiteRepository;
 use DvsaEventApi\Service\EventService;
 use OrganisationApi\Service\AuthorisedExaminerService;
 use OrganisationApi\Service\Mapper\OrganisationMapper;
@@ -57,7 +54,7 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
 {
     use TestCasePermissionTrait;
 
-    const SITE_ID = 1;
+    const SITE_ID = 9;
     const AE_ID = 8888;
     const AE_REF_NR = 'UT123456';
     const PERSON_ID = 7777;
@@ -74,8 +71,6 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
     private $authorisedExaminerService;
     /** @var  PersonRepository|MockObj */
     private $mockPersonRepo;
-    /** @var  SiteRepository|MockObj */
-    private $mockSiteRepo;
     /** @var  OrganisationRepository|MockObj */
     private $mockOrganisationRepo;
     /** @var  OrganisationTypeRepository|MockObj */
@@ -112,7 +107,6 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
         $this->contactDetailsService = XMock::of(ContactDetailsService::class);
         $this->mockOrganisationRepo = XMock::of(OrganisationRepository::class);
         $this->mockPersonRepo = XMock::of(PersonRepository::class);
-        $this->mockSiteRepo = XMock::of(SiteRepository::class, ['getAllAreaOffices', 'find']);
         $this->mockOrganisationTypeRepo = XMock::of(OrganisationTypeRepository::class, ['findOneByName']);
         $this->mockCompanyTypeRepo = XMock::of(CompanyTypeRepository::class, ['findOneByName', 'getByCode']);
         $this->mockOrgContactTypeRepo = XMock::of(OrganisationContactTypeRepository::class, ['getByCode']);
@@ -121,12 +115,6 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
         $this->mockAuthForAeRepo = XMock::of(AuthorisationForAuthorisedExaminerRepository::class);
         $this->mockEventService = XMock::of(EventService::class);
         $this->validator = XMock::of(AuthorisedExaminerValidator::class);
-
-        $aoList = $this->fakedAreaOfficeList();
-        $this->mockSiteRepo->expects($this->any())
-            ->method('getAllAreaOffices')
-            ->willReturn($aoList);
-
 
         $this->authorisedExaminerService = new AuthorisedExaminerService(
             $this->entityManager,
@@ -147,8 +135,7 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
             $this->mockXssFilter,
             $this->mockAuthForAeRepo,
             $this->validator,
-            new DateTimeHolder(),
-            $this->mockSiteRepo
+            new DateTimeHolder()
         );
 
         $this->mockMethod($this->validator, 'validate', $this->any(), true);
@@ -156,7 +143,6 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
 
         $this->mockMethod($this->mockIdentity, 'getUsername', $this->any(), self::PERSON_ID);
 
-        // Set organisation repository return data
         $this->mockMethod(
             $this->mockOrganisationTypeRepo,
             'findOneByName',
@@ -280,26 +266,15 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
         }
 
         //  logical block :: call
-        $aeAuth = new AuthorisedExaminerAuthorisationDto();
-        $aeAuth->setAssignedAreaOffice(self::SITE_ID);
-
         $orgDto = new OrganisationDto();
         $orgDto
-            ->setAuthorisedExaminerAuthorisation($aeAuth)
             ->setName('unit test')
             ->setRegisteredCompanyNumber('utest reg nr')
             ->setTradingAs('unit trading')
             ->setOrganisationType(OrganisationTypeConst::AUTHORISED_EXAMINER)
+            ->setAreaOfficeSite(self::SITE_ID)
             ->setContacts([$contactDto])
             ->setCompanyType(CompanyTypeCode::COMPANY);
-
-        $site = new Site();
-        $site->setid(self::SITE_ID);
-
-        $this->mockSiteRepo->expects($this->any())
-            ->method('find')
-            ->with("3000")
-            ->willReturn($site);
 
         $actual = $this->authorisedExaminerService->create($orgDto);
 
@@ -312,13 +287,6 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
     {
         $orgId = 99999;
 
-        $aeAuth = new AuthorisedExaminerAuthorisationDto();
-        /** @var \DvsaEntities\Entity\Site $site */
-        $site = new Site();
-        $site->setSiteNumber(self::SITE_ID."BLAH");
-        $ae = new AuthorisationForAuthorisedExaminer();
-        $ae->setAreaOffice($site);
-
         $orgEntity = new Organisation();
         $orgEntity
             ->setId($orgId)
@@ -326,13 +294,10 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
             ->setRegisteredCompanyNumber('utest reg nr')
             ->setTradingAs('unit trading')
             ->setOrganisationType(new OrganisationType())
-            ->setAuthorisedExaminer($ae)
             ->setContact(
                 new ContactDetail(),
                 (new OrganisationContactType())->setCode(OrganisationContactTypeCode::CORRESPONDENCE)
             );
-
-        $ae->setOrganisation($orgEntity);
 
         $orgDto = new OrganisationDto();
         $orgDto
@@ -340,7 +305,6 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
             ->setRegisteredCompanyNumber('utest reg nr')
             ->setTradingAs('unit trading')
             ->setOrganisationType(OrganisationTypeConst::AUTHORISED_EXAMINER)
-            ->setAuthorisedExaminerAuthorisation($aeAuth)
             ->setContacts(
                 [
                     (new OrganisationContactDto())
@@ -362,6 +326,7 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
 
         //  --  call & check    --
         $actual = $this->authorisedExaminerService->update($orgId, $orgDto);
+
         $this->assertSame(['id' => $orgId], $actual);
     }
 
@@ -385,21 +350,21 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
     public static function getData()
     {
         return [
-            "organisationName" => "Name",
-            "tradingAs" => "my name company",
-            "authorisedExaminerReference" => "AE1234556",
-            "companyType" => "Limited Company",
-            "organisationType" => "Examining Body",
-            "registeredCompanyNumber" => "13123123",
-            "addressLine1" => "qqqq",
-            "addressLine2" => "qqqq",
-            "addressLine3" => "Qqqq",
-            "town" => "qqqq",
-            "postcode" => "qqqqq",
-            "email" => "central@isis.com",
-            "emailConfirmation" => "central@isis.com",
-            "phoneNumber" => "1111111111111",
-            "faxNumber" => "2222222222",
+            "organisationName"                 => "Name",
+            "tradingAs"                        => "my name company",
+            "authorisedExaminerReference"      => "AE1234556",
+            "companyType"                      => "Limited Company",
+            "organisationType"                 => "Examining Body",
+            "registeredCompanyNumber"          => "13123123",
+            "addressLine1"                     => "qqqq",
+            "addressLine2"                     => "qqqq",
+            "addressLine3"                     => "Qqqq",
+            "town"                             => "qqqq",
+            "postcode"                         => "qqqqq",
+            "email"                            => "central@isis.com",
+            "emailConfirmation"                => "central@isis.com",
+            "phoneNumber"                      => "1111111111111",
+            "faxNumber"                        => "2222222222",
             AuthorisedExaminerService::FIELD_CORRESPONDENCE_CONTACT_DETAILS_SAME => true,
         ];
     }
@@ -410,16 +375,16 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
             self::getData(),
             [
                 AuthorisedExaminerService::FIELD_CORRESPONDENCE_CONTACT_DETAILS_SAME => false,
-                "correspondenceAddressLine1" => "Perferendis modi quis aut qui",
-                "correspondenceAddressLine2" => "Dolore aut at illum dolorem illum ipsam mol",
-                "correspondenceAddressLine3" => "Exercitationem et tempora sapiente vitae quid",
-                "correspondenceTown" => "Odit quia tempor corrupti quasi Nam ipsum rem do",
-                "correspondencePostcode" => "Quis fugia",
-                "correspondenceEmail" => "wedat@yahoo.com",
-                "correspondenceEmailConfirmation" => "wedat@yahoo.com",
-                "correspondencePhoneNumber" => "+173-78-9018207",
-                "correspondenceFaxNumber" => "+978-77-5435043",
-                "areaOfficeNumber" => 9,
+                "correspondenceAddressLine1"       => "Perferendis modi quis aut qui",
+                "correspondenceAddressLine2"       => "Dolore aut at illum dolorem illum ipsam mol",
+                "correspondenceAddressLine3"       => "Exercitationem et tempora sapiente vitae quid",
+                "correspondenceTown"               => "Odit quia tempor corrupti quasi Nam ipsum rem do",
+                "correspondencePostcode"           => "Quis fugia",
+                "correspondenceEmail"              => "wedat@yahoo.com",
+                "correspondenceEmailConfirmation"  => "wedat@yahoo.com",
+                "correspondencePhoneNumber"        => "+173-78-9018207",
+                "correspondenceFaxNumber"          => "+978-77-5435043",
+                "areaOfficeNumber"                 => 9,
             ]
         );
     }
@@ -484,24 +449,4 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
             ['getAuthorisedExaminersForPerson', [self::PERSON_ID]],
         ];
     }
-
-
-    protected function fakedAreaOfficeList()
-    {
-        return [
-            [
-                "id" => "3000",
-                "name" => "Area Office 01",
-                "siteNumber" => "01FOO",
-                "areaOfficeNumber" => "01"
-            ],
-            [
-                "id" => "3001",
-                "name" => "Area Office 02",
-                "siteNumber" => "02BAR",
-                "areaOfficeNumber" => "02"
-            ]
-        ];
-    }
 }
-

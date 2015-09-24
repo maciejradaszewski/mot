@@ -8,24 +8,24 @@ use OrganisationApi\Service\SiteService;
 
 /**
  * Class SiteController
+ * @package OrganisationApi\Controller
  */
 class SiteController extends AbstractDvsaRestfulController
 {
-    /** @var SiteService */
-    protected $siteService;
-
-    public function __construct(
-        SiteService $siteService
-    ) {
-        $this->siteService = $siteService;
-
-        $this->setIdentifierName('siteNumber');
-    }
-
     public function getList()
     {
-        $organisationId = $this->params('id');
+        $organisationId = $this->params()->fromRoute('organisationId');
 
-        return ApiResponse::jsonOk($this->siteService->getListForOrganisation($organisationId));
+        $service = $this->getSiteService();
+
+        return ApiResponse::jsonOk($service->getListForOrganisation($organisationId));
+    }
+
+    /**
+     * @return SiteService
+     */
+    private function getSiteService()
+    {
+        return $this->getServiceLocator()->get(SiteService::class);
     }
 }

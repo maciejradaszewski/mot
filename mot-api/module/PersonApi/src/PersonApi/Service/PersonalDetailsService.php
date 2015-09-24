@@ -9,17 +9,24 @@ use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Constants\PersonContactType;
+use DvsaCommon\Date\DateUtils;
+use DvsaCommon\Enum\LicenceTypeCode;
 use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\AbstractService;
 use DvsaEntities\Entity\Address;
 use DvsaEntities\Entity\ContactDetail;
+use DvsaEntities\Entity\CountryOfRegistration;
 use DvsaEntities\Entity\Email;
+use DvsaEntities\Entity\Gender;
+use DvsaEntities\Entity\Licence;
+use DvsaEntities\Entity\LicenceType;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\PersonContact;
 use DvsaEntities\Entity\Phone;
 use DvsaEntities\Entity\PhoneContactType;
+use DvsaEntities\Entity\Title;
 use PersonApi\Dto\PersonDetails;
 use PersonApi\Service\Validator\PersonalDetailsValidator;
 
@@ -41,12 +48,12 @@ class PersonalDetailsService extends AbstractService
     /**
      * @var \DvsaAuthorisation\Service\AuthorisationServiceInterface
      */
-    private $authorisationService;
+    protected $authorisationService;
 
     /**
      * @var \DvsaCommonApi\Filter\XssFilter
      */
-    private $xssFilter;
+    protected $xssFilter;
 
     /**
      * @var UserRoleService
@@ -54,12 +61,12 @@ class PersonalDetailsService extends AbstractService
     private $roleService;
 
     /**
-     * @param \Doctrine\ORM\EntityManager                              $entityManager
-     * @param \PersonApi\Service\Validator\PersonalDetailsValidator    $validator
-     * @param \DvsaAuthorisation\Service\AuthorisationServiceInterface $authorisationService
-     * @param \DvsaCommon\Auth\MotIdentityProviderInterface            $identityProvider
-     * @param \DvsaCommonApi\Filter\XssFilter                          $xssFilter
-     * @param \DvsaAuthorisation\Service\UserRoleService               $roleService
+     * @param \Doctrine\ORM\EntityManager                                $entityManager
+     * @param \PersonApi\Service\Validator\PersonalDetailsValidator $validator
+     * @param \DvsaAuthorisation\Service\AuthorisationServiceInterface   $authorisationService
+     * @param \DvsaCommon\Auth\MotIdentityProviderInterface              $identityProvider
+     * @param \DvsaCommonApi\Filter\XssFilter                            $xssFilter
+     * @param \DvsaAuthorisation\Service\UserRoleService                 $roleService
      */
     public function __construct(
         EntityManager $entityManager,
@@ -71,11 +78,11 @@ class PersonalDetailsService extends AbstractService
     ) {
         parent::__construct($entityManager);
 
-        $this->validator = $validator;
+        $this->validator            = $validator;
         $this->authorisationService = $authorisationService;
-        $this->identityProvider = $identityProvider;
-        $this->xssFilter = $xssFilter;
-        $this->roleService = $roleService;
+        $this->identityProvider     = $identityProvider;
+        $this->xssFilter            = $xssFilter;
+        $this->roleService          = $roleService;
     }
 
     /**
@@ -123,8 +130,19 @@ class PersonalDetailsService extends AbstractService
 
         $this->assertViewGranted($person);
 
-        $contact = $this->getContactByPerson($person);
+        $personContactTypeRepository = $this->entityManager->getRepository(\DvsaEntities\Entity\PersonContactType::class);
+        $personContactType = $personContactTypeRepository->findOneBy(['name' => PersonContactType::PERSONAL]);
 
+        /** @var PersonContact $contact */
+        $contact = $this
+            ->entityManager
+            ->getRepository(PersonContact::class)
+            ->findOneBy(
+                [
+                    'person' => $person,
+                    'type' => $personContactType,
+                ]
+            );
         if (null === $contact) {
             $contact = $this->createContactDetailPlaceholder($person);
         }
@@ -132,29 +150,6 @@ class PersonalDetailsService extends AbstractService
         return new PersonDetails(
             $person, $contact->getDetails(), $this->entityManager, $this->getUserRoles($person)
         );
-    }
-
-    /**
-     * @param Person $person
-     *
-     * @return PersonContact
-     */
-    private function getContactByPerson(Person $person)
-    {
-        $personContactTypeRepository = $this->entityManager->getRepository(
-            \DvsaEntities\Entity\PersonContactType::class
-        );
-        $personContactType = $personContactTypeRepository->findOneBy(['name' => PersonContactType::PERSONAL]);
-
-        return $this
-            ->entityManager
-            ->getRepository(PersonContact::class)
-            ->findOneBy(
-                [
-                    'person' => $person,
-                    'type'   => $personContactType,
-                ]
-            );
     }
 
     /**
@@ -175,10 +170,8 @@ class PersonalDetailsService extends AbstractService
         //  ----    check access by site    ----
         foreach ($person->findSites() as $site) {
             if ($this->authorisationService->isGrantedAtSite(
-                PermissionAtSite::VTS_EMPLOYEE_PROFILE_READ,
-                $site->getId()
-            )
-            ) {
+                PermissionAtSite::VTS_EMPLOYEE_PROFILE_READ, $site->getId()
+            )) {
                 return;
             }
         }
@@ -186,10 +179,8 @@ class PersonalDetailsService extends AbstractService
         //  ----    check access in organisation    --
         foreach ($person->findOrganisations() as $organisation) {
             if ($this->authorisationService->isGrantedAtOrganisation(
-                PermissionAtOrganisation::AE_EMPLOYEE_PROFILE_READ,
-                $organisation->getId()
-            )
-            ) {
+                PermissionAtOrganisation::AE_EMPLOYEE_PROFILE_READ, $organisation->getId()
+            )) {
                 return;
             }
         }
@@ -220,6 +211,75 @@ class PersonalDetailsService extends AbstractService
     }
 
     /**
+     * Returns $person->drivingLicence or create a new one (and associate it with person) if there was no object yet.
+     *
+     * @param Person $person
+     *
+     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     *
+     * @return Licence
+     */
+    private function getDrivingLicenceOrCreateEntity(Person $person)
+    {
+        $drivingLicence = $person->getDrivingLicence();
+
+        if (null === $drivingLicence) {
+            $drivingLicence = new Licence();
+            /** @var LicenceType $licenceType */
+            $licenceType = $this->findOneByOrThrowException(
+                LicenceType::class,
+                ['code' => LicenceTypeCode::DRIVING_LICENCE]
+            );
+            $drivingLicence->setLicenceType($licenceType);
+            $person->setDrivingLicence($drivingLicence);
+        }
+
+        return $drivingLicence;
+    }
+
+    /**
+     * Updates Person entity with given data. Returns updated (persisted, NOT flushed) Person entity.
+     *
+     * @param Person $person
+     * @param array  $data
+     *
+     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     * @throws \DvsaCommon\Date\Exception\IncorrectDateFormatException
+     *
+     * @return Person
+     */
+    private function updatePersonalDetails(Person $person, $data)
+    {
+        /** @var Title $title */
+        $title = $this->findOneByOrThrowException(Title::class, ['name' => $data['title']]);
+        /** @var Gender $gender */
+        $gender = $this->findOneByOrThrowException(Gender::class, ['name' => $data['gender']]);
+        /** @var CountryOfRegistration $country */
+        $country = $this->findOneByOrThrowException(
+            CountryOfRegistration::class,
+            ['code' => $data['drivingLicenceRegion']]
+        );
+
+        $drivingLicence = $this->getDrivingLicenceOrCreateEntity($person);
+        $drivingLicence
+            ->setCountry($country)
+            ->setLicenceNumber($data['drivingLicenceNumber']);
+
+        $person
+            ->setFirstName($data['firstName'])
+            ->setMiddleName($data['middleName'])
+            ->setFamilyName($data['surname'])
+            ->setDateOfBirth(DateUtils::toDate($data['dateOfBirth']))
+            ->setTitle($title)
+            ->setGender($gender);
+
+        $this->entityManager->persist($drivingLicence);
+        $this->entityManager->persist($person);
+
+        return $person;
+    }
+
+    /**
      * @param Person $person
      * @param array  $data
      *
@@ -229,11 +289,19 @@ class PersonalDetailsService extends AbstractService
      */
     private function updatePersonalContactDetails(Person $person, $data)
     {
-        $personContact = $this->getContactByPerson($person);
-
+        $personContactTypeRepository = $this->entityManager->getRepository(\DvsaEntities\Entity\PersonContactType::class);
+        $personContactType = $personContactTypeRepository->findOneBy(['name' => PersonContactType::PERSONAL]);
+        /** @var $personContact PersonContact */
+        $personContact = $this
+            ->entityManager
+            ->getRepository(PersonContact::class)
+            ->findOneBy([
+                'person' => $person,
+                'type' => $personContactType,
+            ]);
         if (!$personContact) {
             $contactDetails = $this->createContactDetail();
-            $personContact = $this->createPersonContact($person, $contactDetails);
+            $personContact  = $this->createPersonContact($person, $contactDetails);
         } else {
             $contactDetails = $personContact->getDetails();
         }
@@ -266,11 +334,9 @@ class PersonalDetailsService extends AbstractService
         $email = $this
             ->entityManager
             ->getRepository(Email::class)
-            ->findOneBy(
-                [
-                    'contact' => $personContact->getDetails()
-                ]
-            );
+            ->findOneBy([
+                'contact' => $personContact->getDetails()
+            ]);
         if (!$email) {
             $email = $this->createEmail($contactDetails);
         }
@@ -319,12 +385,10 @@ class PersonalDetailsService extends AbstractService
      */
     private function createContactDetailPlaceholder(Person $person)
     {
-        $contactDetail = new ContactDetail();
-        $personContactTypeRepository = $this->entityManager->getRepository(
-            \DvsaEntities\Entity\PersonContactType::class
-        );
+        $contactDetail     = new ContactDetail();
+        $personContactTypeRepository = $this->entityManager->getRepository(\DvsaEntities\Entity\PersonContactType::class);
         $personContactType = $personContactTypeRepository->findOneBy(['name' => PersonContactType::PERSONAL]);
-        $personContact = new PersonContact($contactDetail, $personContactType, $person);
+        $personContact     = new PersonContact($contactDetail, $personContactType, $person);
 
         return $personContact;
     }
@@ -336,7 +400,7 @@ class PersonalDetailsService extends AbstractService
      */
     private function createContactDetail()
     {
-        $address = new Address();
+        $address       = new Address();
         $contactDetail = new ContactDetail();
         $contactDetail->setAddress();
 
@@ -349,18 +413,16 @@ class PersonalDetailsService extends AbstractService
     /**
      * Creates a personal PersonContactType linking Person and ContactDetail entities.
      *
-     * @param Person        $person
+     * @param Person $person
      * @param ContactDetail $contactDetail
      *
      * @return PersonContactType
      */
     private function createPersonContact(Person $person, ContactDetail $contactDetail)
     {
-        $personContactTypeRepository = $this->entityManager->getRepository(
-            \DvsaEntities\Entity\PersonContactType::class
-        );
+        $personContactTypeRepository = $this->entityManager->getRepository(\DvsaEntities\Entity\PersonContactType::class);
         $personContactType = $personContactTypeRepository->findOneBy(['name' => PersonContactType::PERSONAL]);
-        $personContact = new PersonContact($contactDetail, $personContactType, $person);
+        $personContact     = new PersonContact($contactDetail, $personContactType, $person);
 
         $this->entityManager->persist($personContact);
 

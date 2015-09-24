@@ -3,7 +3,6 @@
 namespace Dvsa\Mot\Behat\Support\Helper;
 
 use TestSupport\Controller\VM10619RoleManagementUpgradeController;
-use TestSupport\Service\CronUserService;
 use TestSupport\Service\CSCOService;
 use TestSupport\Service\CSMService;
 use TestSupport\Service\DVLAManagerService;
@@ -57,7 +56,7 @@ class TestSupportHelper
             case 'Scheme Manager':
                 return $this->getSchemeManagerService();
             case 'Scheme User':
-                return $this->getSchemeUserService();
+                return $this->getUserService();
             case 'DVLA Manager':
                 return $this->getDVLAManagerService();
             case 'DVLA Operative':
@@ -74,8 +73,6 @@ class TestSupportHelper
                 return $this->getCSMService();
             case 'Finance User':
                 return $this->getFinanceUserService();
-            case 'User':
-                return $this->getUserService();
         }
         throw new \Exception("Unknown service for role '{$userRole}'");
     }
@@ -122,11 +119,6 @@ class TestSupportHelper
     public function getAreaOffice2Service()
     {
         return $this->getServiceManager()->get(AreaOffice2Service::class);
-    }
-
-    public function getCronUserService()
-    {
-        return $this->getServiceManager()->get(CronUserService::class);
     }
 
     /**

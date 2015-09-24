@@ -1,6 +1,5 @@
 package uk.gov.dvsa.data;
 
-import com.google.common.base.Optional;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.service.SiteService;
 
@@ -13,14 +12,10 @@ public class SiteData extends SiteService{
     public SiteData() {}
 
     public Site createNewSite(int aeId, String name) throws IOException {
-        return createSite(Optional.of(aeId), name);
+        return createSite(aeId, name);
     }
 
     public Site createSite() throws IOException {
-        return createSite(Optional.of(aeData.createAeWithDefaultValues().getId()), "default");
-    }
-
-    public Site createSiteWithoutAe(String name) throws IOException {
-        return createSite(Optional.<Integer>absent(), name);
+        return createSite(aeData.createAeWithDefaultValues().getId(), "default");
     }
 }

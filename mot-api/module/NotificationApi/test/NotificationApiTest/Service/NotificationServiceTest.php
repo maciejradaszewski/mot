@@ -86,7 +86,7 @@ class NotificationServiceTest extends AbstractServiceTestCase
     {
         $personId = 42;
         /** @var \DvsaEntities\Entity\Person $mockIdentity */
-        $mockIdentity = XMock::of(Person::class, ['getUserId', 'getId']);
+        $mockIdentity = XMock::of('\DvsaEntities\Entity\Person', ['getUserId', 'getId']);
         $mockIdentity->expects($this->once())->method('getUserId')->willReturn($personId);
 
 

@@ -8,13 +8,10 @@ use DvsaCommon\Dto\Contact\PhoneDto;
 use DvsaCommon\Dto\Site\FacilityDto;
 use DvsaCommon\Dto\Site\SiteContactDto;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
-use DvsaCommon\Enum\SiteStatusCode;
 use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
-use SiteApi\Service\Validator\SiteDetailsValidator;
 use SiteApi\Service\Validator\SiteValidator;
-use SiteApi\Service\Validator\TestingFacilitiesValidator;
 
 /**
  * Testing that validator returns correct results.
@@ -28,11 +25,7 @@ class SiteValidatorTest extends AbstractServiceTestCase
 
     public function setUp()
     {
-        $this->validator = new SiteValidator(
-            null,
-            new TestingFacilitiesValidator(),
-            new SiteDetailsValidator()
-        );
+        $this->validator = new SiteValidator();
     }
 
     /**
@@ -68,7 +61,6 @@ class SiteValidatorTest extends AbstractServiceTestCase
                                 ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
                         ]
                     )
-                    ->setStatus(SiteStatusCode::APPROVED)
                     ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
                     ->setName(self::SITE_NAME)
                     ->setTestClasses([1, 2, 3])
@@ -92,38 +84,11 @@ class SiteValidatorTest extends AbstractServiceTestCase
                                 ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
                         ]
                     )
-                    ->setStatus(SiteStatusCode::APPROVED)
                     ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
                     ->setTestClasses([1, 2, 3])
                     ->setFacilities([new FacilityDto()])
                     ->setIsOptlSelected(true)
                     ->setIsTptlSelected(true),
-            ],
-            // no status
-            [
-                'site' => (new VehicleTestingStationDto())
-                    ->setContacts(
-                        [
-                            (new SiteContactDto())
-                                ->setAddress(
-                                    (new AddressDto())
-                                        ->setAddressLine1('AddressLine1')
-                                        ->setAddressLine2('AddressLine2')
-                                        ->setAddressLine3('AddressLine3')
-                                        ->setTown('Town')
-                                        ->setPostcode('Postcode')
-                                )
-                                ->setEmails([(new EmailDto())->setEmailConfirm('dummy@dummy.com')->setIsSupplied(true)->setIsPrimary(true)->setEmail('dummy@dummy.com')])
-                                ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
-                        ]
-                    )
-                    ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
-                    ->setName(self::SITE_NAME)
-                    ->setTestClasses([1, 2, 3])
-                    ->setFacilities([new FacilityDto()])
-                    ->setIsOptlSelected(true)
-                    ->setIsTptlSelected(true),
-                'errors' => true,
             ],
             // Valid No Email
             [
@@ -141,7 +106,6 @@ class SiteValidatorTest extends AbstractServiceTestCase
                                 ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
                         ]
                     )
-                    ->setStatus(SiteStatusCode::APPROVED)
                     ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
                     ->setTestClasses([1, 2, 3])
                     ->setFacilities([new FacilityDto()])
@@ -164,7 +128,6 @@ class SiteValidatorTest extends AbstractServiceTestCase
                                 ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
                         ]
                     )
-                    ->setStatus(SiteStatusCode::APPROVED)
                     ->setTestClasses([1, 2, 3])
                     ->setFacilities([new FacilityDto()])
                     ->setIsOptlSelected(true)
@@ -187,7 +150,6 @@ class SiteValidatorTest extends AbstractServiceTestCase
                                 ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
                         ]
                     )
-                    ->setStatus(SiteStatusCode::APPROVED)
                     ->setType('blue')
                     ->setTestClasses([1, 2, 3])
                     ->setFacilities([new FacilityDto()])
@@ -206,7 +168,6 @@ class SiteValidatorTest extends AbstractServiceTestCase
                                 ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
                         ]
                     )
-                    ->setStatus(SiteStatusCode::APPROVED)
                     ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
                     ->setTestClasses([1, 2, 3])
                     ->setFacilities([new FacilityDto()])
@@ -229,7 +190,6 @@ class SiteValidatorTest extends AbstractServiceTestCase
                                 ->setEmails([(new EmailDto())->setEmailConfirm('dummy@dummy.com')->setIsSupplied(true)->setIsPrimary(true)->setEmail('dummy@dummy.com')])
                         ]
                     )
-                    ->setStatus(SiteStatusCode::APPROVED)
                     ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
                     ->setTestClasses([1, 2, 3])
                     ->setFacilities([new FacilityDto()])
@@ -253,7 +213,6 @@ class SiteValidatorTest extends AbstractServiceTestCase
                                 ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
                         ]
                     )
-                    ->setStatus(SiteStatusCode::APPROVED)
                     ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
                     ->setTestClasses([1, 2, 3])
                     ->setFacilities([new FacilityDto()])
@@ -277,7 +236,6 @@ class SiteValidatorTest extends AbstractServiceTestCase
                                 ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
                         ]
                     )
-                    ->setStatus(SiteStatusCode::APPROVED)
                     ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
                     ->setTestClasses([1, 2, 3])
                     ->setFacilities([new FacilityDto()])
@@ -301,7 +259,6 @@ class SiteValidatorTest extends AbstractServiceTestCase
                                 ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
                         ]
                     )
-                    ->setStatus(SiteStatusCode::APPROVED)
                     ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
                     ->setTestClasses([1, 2, 3])
                     ->setIsOptlSelected(true)
@@ -347,7 +304,6 @@ class SiteValidatorTest extends AbstractServiceTestCase
                                 ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
                         ]
                     )
-                    ->setStatus(SiteStatusCode::APPROVED)
                     ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
                     ->setTestClasses([1, 2, 3])
                     ->setFacilities([new FacilityDto()])
@@ -371,7 +327,6 @@ class SiteValidatorTest extends AbstractServiceTestCase
                                 ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
                         ]
                     )
-                    ->setStatus(SiteStatusCode::APPROVED)
                     ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
                     ->setTestClasses([1, 2, 3])
                     ->setIsOptlSelected(true)

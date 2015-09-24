@@ -50,7 +50,6 @@ class MotPrintModel extends ViewModel
         $passedMotTestNumber = null;
         $failedMotTestNumber = null;
         $abandonedMotTestNumber = null;
-        $abortedMotTestNumber = null;
 
         if (isset($status)) {
             if ($status === MotTestStatusName::PASSED) {

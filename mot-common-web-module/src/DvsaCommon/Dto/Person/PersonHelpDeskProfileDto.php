@@ -322,9 +322,9 @@ class PersonHelpDeskProfileDto
     }
 
     /**
-     * @param array $roles
+     * @param array|null
      *
-     * @return $this
+     * @return PersonHelpDeskProfileDto
      */
     public function setRoles(array $roles = null)
     {

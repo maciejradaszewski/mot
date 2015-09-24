@@ -1,7 +1,6 @@
 <?php
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
-use DvsaCommon\Constants\FeatureToggle;
 
 ?>
 <div class="module-pivot-panel">
@@ -10,7 +9,7 @@ use DvsaCommon\Constants\FeatureToggle;
     </header>
     <p>You can apply for</p>
     <ul>
-        <?php if ($this->isFeatureEnabled(FeatureToggle::AO1_AE_CREATE)): ?>
+        <?php if ($this->isFeatureEnabled(\DvsaCommon\Constants\FeatureToggle::AO1_AE_CREATE)): ?>
             <li>
                 <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::create(); ?>"
                    id="createAuthorisedExaminerLink">
@@ -18,7 +17,7 @@ use DvsaCommon\Constants\FeatureToggle;
                 </a>
             </li>
         <?php endif; ?>
-        <?php if ($this->isFeatureEnabled(FeatureToggle::AO1_SITE_CREATE)): ?>
+        <?php if ($this->isFeatureEnabled(\DvsaCommon\Constants\FeatureToggle::AO1_SITE_CREATE)): ?>
             <li>
                 <a href="<?php echo VehicleTestingStationUrlBuilderWeb::create(); ?>"
                    id="action-create-vts">

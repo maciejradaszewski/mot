@@ -2,25 +2,23 @@ package uk.gov.dvsa.helper;
 
 public class CompanyDetailsHelper {
 
-    public static String getCompanyName() {
+    public static String businessName;
+    public static String tradingName;
+    public static String businessType;
+    public static String companyNumber;
+
+    public static String generateUniqueCompanyName() {
         return RandomDataGenerator.generateRandomString();
     }
 
-    public static String getBusinessName() {
-        return RandomDataGenerator.generateRandomString();
-    }
-
-    public static String getCompanyNumber() {
+    public static String generateUniqueCompanyNumber() {
         return RandomDataGenerator.generateRandomNumber(8,6);
     }
 
-    public static String getTradingName()
-    {
-        return RandomDataGenerator.generateRandomString();
-    }
-
-    public static String getBusinessType()
-    {
-        return CompanyType.Company.getName();
+    public static void setCompanyDetails() {
+        businessName = generateUniqueCompanyName();
+        tradingName = generateUniqueCompanyName();
+        businessType = CompanyType.Company.getName();
+        companyNumber = generateUniqueCompanyNumber();
     }
 }

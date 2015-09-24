@@ -1,9 +1,4 @@
 <?php
-/**
- * This file is part of the DVSA MOT API project.
- *
- * @link http://gitlab.clb.npm/mot/mot
- */
 
 namespace VehicleApi\Factory\Controller;
 
@@ -14,7 +9,6 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Create instance of controller VehicleRetestEligibilityController
- * Class VehicleRetestEligibilityControllerFactory
  */
 class VehicleRetestEligibilityControllerFactory implements FactoryInterface
 {

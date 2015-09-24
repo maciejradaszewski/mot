@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4d1e00ae63b5891eb269921a0edb9d3c",
+    "hash": "a436fa44d10beb7701170d14e9ff5968",
     "packages": [
         {
             "name": "cpms/client",
@@ -529,12 +529,12 @@
             "version": "0.8.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:doctrine/DoctrineORMModule.git",
+                "url": "https://github.com/doctrine/DoctrineORMModule.git",
                 "reference": "31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineORMModule/zipball/473e12ff9b39e2ec00f09bf89758d1fb0bec829e",
+                "url": "https://api.github.com/repos/doctrine/DoctrineORMModule/zipball/31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0",
                 "reference": "31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0",
                 "shasum": ""
             },
@@ -803,11 +803,11 @@
         },
         {
             "name": "dvsa/dvsa-application-logger",
-            "version": "v1.3.0",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/dvsa-application-logger.git",
-                "reference": "34da62e20b980a569bbca4a5d7cf9dbe2810bbd4"
+                "reference": "5978b63ddea888c298ac16df012fa52a7781ea3f"
             },
             "require": {
                 "php": ">=5.5",
@@ -843,7 +843,7 @@
                 "logging",
                 "zf2"
             ],
-            "time": "2015-09-09 11:41:53"
+            "time": "2015-09-01 12:47:09"
         },
         {
             "name": "dvsa/dvsa-doctrine-module",
@@ -951,11 +951,11 @@
         },
         {
             "name": "dvsa/dvsa-openam-client",
-            "version": "v1.9.1",
+            "version": "v1.8.1",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/dvsa-openam-client.git",
-                "reference": "e096a4cf056f73b1031a1ffa82d1af5d74f4f335"
+                "reference": "25856569a5b226a116ca9ca39e9d66fe9f3755da"
             },
             "require": {
                 "php": ">=5.5",
@@ -982,7 +982,7 @@
                 }
             },
             "description": "JSON mapper used to map objects to/from JSON compatible arrays",
-            "time": "2015-09-16 14:19:59"
+            "time": "2015-09-01 14:09:11"
         },
         {
             "name": "dvsa/feature-toggle",
@@ -1062,11 +1062,11 @@
         },
         {
             "name": "dvsa/web-frontend-assets",
-            "version": "v0.6.0",
+            "version": "v0.5.1",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/web-frontend-assets.git",
-                "reference": "b20ce18e1ee231c22927c088d99bdc04a70d0c01"
+                "reference": "13cb2db6238b92ef5363ad10eb7d17e43ffb238e"
             },
             "type": "library",
             "authors": [
@@ -1075,7 +1075,7 @@
                     "email": ""
                 }
             ],
-            "time": "2015-09-14 12:05:17"
+            "time": "2015-08-06 07:39:11"
         },
         {
             "name": "erusev/parsedown",
@@ -1374,11 +1374,11 @@
         },
         {
             "name": "slot-purchase/web-frontend",
-            "version": "v3.6.1",
+            "version": "v3.5.5",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/web-frontend.git",
-                "reference": "f5c7539889bcb63c9a3070fe8cbd131ce795e26a"
+                "reference": "64e0e6c1f0c724bda87b2e69f0a33e72eebdbb16"
             },
             "require": {
                 "cpms/cpms-forms": "1.22.*",
@@ -1412,7 +1412,7 @@
                 "proprietary"
             ],
             "description": "Slot Purchase Frontend",
-            "time": "2015-09-17 13:00:28"
+            "time": "2015-09-01 12:47:56"
         },
         {
             "name": "soflomo/purifier",
@@ -1647,12 +1647,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/ZendPdf.git",
+                "url": "git@github.com:zendframework/ZendPdf.git",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },

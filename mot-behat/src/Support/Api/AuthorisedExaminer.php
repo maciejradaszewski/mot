@@ -21,8 +21,7 @@ class AuthorisedExaminer extends MotApi
 {
     const AE_NAME = 'some ae name';
     const POSITION = '/organisation/{organisation_id}/position';
-    const POSITION_DELETE = '/organisation/{organisation_id}/position/{position_id}';
-    
+
     public function search($token, $aeNumber)
     {
         return $this->client->request(
@@ -34,25 +33,12 @@ class AuthorisedExaminer extends MotApi
         );
     }
 
-    public function getAuthorisedExaminerDetails($token, $aeId)
+    public function getAuthorisedExaminerDetails($token, $userId)
     {
         return $this->client->request(
             new Request(
                 'GET',
-                AuthorisedExaminerUrlBuilder::of($aeId),
-                ['Content-Type' => 'application/json', 'Authorization' => 'Bearer ' . $token]
-            )
-        );
-    }
-
-    public function getAuthorisedExaminerPositions($token, $aeId)
-    {
-        $url = OrganisationUrlBuilder::position($aeId)->toString();
-
-        return $this->client->request(
-            new Request(
-                'GET',
-                $url,
+                AuthorisedExaminerUrlBuilder::of($userId),
                 ['Content-Type' => 'application/json', 'Authorization' => 'Bearer ' . $token]
             )
         );
@@ -60,14 +46,7 @@ class AuthorisedExaminer extends MotApi
 
     public function createAuthorisedExaminer($token)
     {
-        $aeDto = new AuthorisedExaminerAuthorisationDto();
-        $aeDto->setAssignedAreaOffice(1);
-        $statusDto = new AuthForAeStatusDto();
-        $statusDto->setCode("APRVD");
-        $aeDto->setStatus($statusDto);
-
         $dto = (new OrganisationDto())
-            ->setAuthorisedExaminerAuthorisation($aeDto)
             ->setContacts(
                 [
                     (new OrganisationContactDto())
@@ -110,15 +89,15 @@ class AuthorisedExaminer extends MotApi
 
     public function updateStatusAuthorisedExaminer($token, $id, $status)
     {
-        $aeDto = new AuthorisedExaminerAuthorisationDto();
-        $aeDto->setAssignedAreaOffice(1);
-        $statusDto = new AuthForAeStatusDto();
-        $statusDto->setCode($status);
-        $aeDto->setStatus($statusDto);
-
         $dto = (new OrganisationDto())
             ->setId($id)
-            ->setAuthorisedExaminerAuthorisation($aeDto);
+            ->setAuthorisedExaminerAuthorisation(
+                (new AuthorisedExaminerAuthorisationDto())
+                    ->setStatus(
+                        (new AuthForAeStatusDto())
+                            ->setCode($status)
+                    )
+            );
 
         return $this->client->request(
             new Request(
@@ -144,7 +123,7 @@ class AuthorisedExaminer extends MotApi
     public function nominate($userId, $orgRoleName, $orgId, $token)
     {
         $roles = [
-            "Authorised examiner designated manager" => 1,
+            "Authorised examiner delegate manager" => 1,
             "Authorised examiner delegate" => 2
         ];
 
@@ -161,34 +140,8 @@ class AuthorisedExaminer extends MotApi
         return $this->sendRequest(
             $token,
             MotApi::METHOD_POST,
-            OrganisationUrlBuilder::position($orgId),
+            str_replace("{organisation_id}", $orgId, self::POSITION),
             $data
         );
     }
-
-    public function linkAuthorisedExaminerWithSite($token, $aeId, $siteName)
-    {
-        $linkUrl = AuthorisedExaminerUrlBuilder::siteLink($aeId);
-        $request = new Request(
-            'POST',
-            $linkUrl,
-            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer ' . $token],
-            json_encode(['siteNumber' => $siteName])
-        );
-        return $this->client->request($request);
-    }
-
-    public function denominate($orgId, $positionId, $token)
-    {
-        $url = self::POSITION_DELETE;
-        $url = str_replace("{organisation_id}", $orgId, $url);
-        $url = str_replace("{position_id}", $positionId, $url);
-
-        return $this->sendRequest(
-            $token,
-            MotApi::METHOD_DELETE,
-            $url
-        );
-    }
-
 }

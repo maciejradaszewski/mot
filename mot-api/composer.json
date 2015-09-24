@@ -1,100 +1,96 @@
 {
-  "name": "dvsa/mot-api",
-  "description": "API for DVSA MOT modernisation",
-  "require": {
-    "zendframework/zendframework": "~2.4.4",
-    "doctrine/doctrine-module": "~0.8",
-    "doctrine/doctrine-orm-module": "~0.9",
-    "dvsa/dvsa-doctrine-module": "~1.1",
-    "dvsa/dvsa-document-module": "1.3.0",
-    "dvsa/feature-toggle": "~1.0",
-    "dvsa/dvsa-openam-client" : "~1.9.0",
-    "dvsa/scripts": "~2.0.3",
-    "dvsa/dvsa-logger": "~1.1",
-    "dvsa/dvsa-application-logger": "~1.3.0",
-    "soflomo/purifier": "0.1.1",
-    "slot-purchase/backend-api": "3.6.*",
-    "danielstjules/stringy": "~2.0",
-    "aws/aws-sdk-php": "3.2.*"
-  },
-  "autoload" : {
-    "psr-0" : {
-      "DvsaCommon" : "../mot-common-web-module/src",
-      "DvsaCommonTest" : "../mot-common-web-module/test",
-      "DvsaMotApi": "module/DvsaMotApi/src",
-      "AccountApi": "module/AccountApi/src",
-      "CensorApi": "module/CensorApi/src",
-      "DataCatalogApi": "module/DataCatalogApi/src",
-      "DvsaAuthentication": "module/DvsaAuthentication/src",
-      "DvsaAuthorisation": "module/DvsaAuthorisation/src",
-      "DvsaCommonApi": "module/DvsaCommonApi/src",
-      "DvsaElasticSearch": "module/DvsaElasticSearch/src",
-      "DvsaEntities": "module/DvsaEntities/src",
-      "DvsaEventApi": "module/DvsaEventApi/src",
-      "EquipmentApi": "module/EquipmentApi/src",
-      "IntegrationApi": "module/IntegrationApi/src",
-      "MailerApi": "module/MailerApi/src",
-      "NonWorkingDaysApi": "module/NonWorkingDaysApi/src",
-      "NotificationApi": "module/NotificationApi/src",
-      "OrganisationApi": "module/OrganisationApi/src",
-      "PersonApi": "module/PersonApi/src",
-      "PersonApiTest": "module/PersonApi/test",
-      "SiteApi": "module/SiteApi/src",
-      "UserApi": "module/UserApi/src",
-      "VehicleApi": "module/VehicleApi/src"
+    "name": "dvsa/mot-api",
+    "description": "API for DVSA MOT modernisation",
+    "require": {
+        "zendframework/zendframework": "~2.4.4",
+        "doctrine/doctrine-module": "~0.8",
+        "doctrine/doctrine-orm-module": "~0.9",
+        "dvsa/dvsa-doctrine-module": "~1.1",
+        "dvsa/dvsa-document-module": "~1.2",
+        "dvsa/feature-toggle": "~1.0",
+        "dvsa/dvsa-openam-client" : "~1.8.0",
+        "dvsa/scripts": "~2.0.3",
+        "dvsa/dvsa-logger": "~1.1",
+        "dvsa/dvsa-application-logger": "~1.2.0",
+        "soflomo/purifier": "0.1.1",
+        "slot-purchase/backend-api": "3.5.*"
     },
-    "psr-4" : {
-      "Api\\": "src",
-      "Api\\Test\\": "test/src",
-      "Dvsa\\Mot\\AuditApi\\":  "module/AuditApi/src",
-      "Dvsa\\Mot\\AuditApiTest\\": "module/AuditApi/test",
-      "Dvsa\\Mot\\AuditApiIntegrationTest\\": "module/AuditApi/integration-test",
-      "Dvsa\\Mot\\Api\\RegistrationModule\\": "module/RegistrationModule/src",
-      "Dvsa\\Mot\\Api\\RegistrationModuleTest\\": "module/RegistrationModule/test"
+    "autoload" : {
+        "psr-0" : {
+            "DvsaCommon" : "../mot-common-web-module/src",
+            "DvsaCommonTest" : "../mot-common-web-module/test",
+            "DvsaMotApi": "module/DvsaMotApi/src",
+            "AccountApi": "module/AccountApi/src",
+            "CensorApi": "module/CensorApi/src",
+            "DataCatalogApi": "module/DataCatalogApi/src",
+            "DvsaAuthentication": "module/DvsaAuthentication/src",
+            "DvsaAuthorisation": "module/DvsaAuthorisation/src",
+            "DvsaCommonApi": "module/DvsaCommonApi/src",
+            "DvsaElasticSearch": "module/DvsaElasticSearch/src",
+            "DvsaEntities": "module/DvsaEntities/src",
+            "DvsaEventApi": "module/DvsaEventApi/src",
+            "EquipmentApi": "module/EquipmentApi/src",
+            "IntegrationApi": "module/IntegrationApi/src",
+            "MailerApi": "module/MailerApi/src",
+            "NonWorkingDaysApi": "module/NonWorkingDaysApi/src",
+            "NotificationApi": "module/NotificationApi/src",
+            "OrganisationApi": "module/OrganisationApi/src",
+            "PersonApi": "module/PersonApi/src",
+            "PersonApiTest": "module/PersonApi/test",
+            "SiteApi": "module/SiteApi/src",
+            "UserApi": "module/UserApi/src",
+            "VehicleApi": "module/VehicleApi/src"
+        },
+        "psr-4" : {
+            "Api\\": "src",
+            "Api\\Test\\": "test/src",
+            "Dvsa\\Mot\\AuditApi\\":  "module/AuditApi/src",
+            "Dvsa\\Mot\\AuditApiTest\\": "module/AuditApi/test",
+            "Dvsa\\Mot\\AuditApiIntegrationTest\\": "module/AuditApi/integration-test"
+        },
+        "classmap" : [
+            "../mot-common-web-module/Module.php"
+        ]
     },
-    "classmap" : [
-      "../mot-common-web-module/Module.php"
-    ]
-  },
-  "require-dev": {
-    "phpunit/phpunit": "4.3.*",
-    "phpunit/phpunit-mock-objects": "2.3.*",
-    "phpunit/phpcov": "2.0.*"
-  },
-  "scripts": {
-    "post-install-cmd": [
-      "cd .. && ln -fs mot-api/vendor/dvsa/scripts/jenkins Jenkins_Scripts"
-    ]
-  },
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "http://artifacts.mot.npm"
+    "require-dev": {
+        "phpunit/phpunit": "4.3.*",
+        "phpunit/phpunit-mock-objects": "2.3.*",
+        "phpunit/phpcov": "2.0.*"
     },
-    {
-      "url": "git@gitlab.clb.npm:cpms/cpms-forms.git",
-      "type": "git"
+    "scripts": {
+        "post-install-cmd": [
+            "cd .. && ln -fs mot-api/vendor/dvsa/scripts/jenkins Jenkins_Scripts"
+        ]
     },
-    {
-      "url": "git@gitlab.clb.npm:cpms/shared-reports.git",
-      "type": "git"
-    },
-    {
-      "url": "git@gitlab.clb.npm:cpms/cpms-client.git",
-      "type": "git"
-    },
-    {
-      "type": "git",
-      "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git"
-    },
-    {
-      "type": "git",
-      "url": "http://gitlab.clb.npm/mot/dvsa-application-logger.git"
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://artifacts.mot.npm"
+        },
+        {
+            "url": "git@gitlab.clb.npm:cpms/cpms-forms.git",
+            "type": "git"
+        },
+        {
+            "url": "git@gitlab.clb.npm:cpms/shared-reports.git",
+            "type": "git"
+        },
+        {
+            "url": "git@gitlab.clb.npm:cpms/cpms-client.git",
+            "type": "git"
+        },
+        {
+            "type": "git",
+            "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git"
+        },
+        {
+            "type": "git",
+            "url": "http://gitlab.clb.npm/mot/dvsa-application-logger.git"
+        }
+    ],
+    "config" : {
+      "github-oauth" : {
+        "github.com" : "c413da7d946413edba2adadd44beb7a5075a52aa"
+      }
     }
-  ],
-  "config" : {
-    "github-oauth" : {
-      "github.com" : "c413da7d946413edba2adadd44beb7a5075a52aa"
-    }
-  }
 }

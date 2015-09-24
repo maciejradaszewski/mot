@@ -2,15 +2,12 @@
 
 namespace PersonApiTest\Service;
 
-use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\QueryBuilder;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\MotTest;
 use DvsaEntities\Entity\MotTestStatus;
-use DvsaEntities\Entity\MotTestType;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\MotTestRepository;
 use UserApi\Dashboard\Dto\DayStats;
@@ -81,7 +78,7 @@ class UserStatsServiceTest extends AbstractServiceTestCase
 
     private function getArrayOfMotTests()
     {
-        $mtt = new MotTestType();
+        $mtt = new \DvsaEntities\Entity\MotTestType();
         $mtt->setCode(MotTestTypeCode::NORMAL_TEST);
         $motTestPassed = new MotTest();
         $motTestPassed->setStatus($this->createMotTestStatus(MotTestStatusName::PASSED))
@@ -108,7 +105,7 @@ class UserStatsServiceTest extends AbstractServiceTestCase
 
     private function getArrayOfMotTestsWithRetests()
     {
-        $mtt = new MotTestType();
+        $mtt = new \DvsaEntities\Entity\MotTestType();
         $mtt->setCode(MotTestTypeCode::RE_TEST);
         $motTestRetest = new MotTest();
         $motTestRetest->setStatus($this->createMotTestStatus(MotTestStatusName::PASSED))
@@ -123,16 +120,15 @@ class UserStatsServiceTest extends AbstractServiceTestCase
     {
         $person = new Person();
 
-        $mockQuery = $this->getMockBuilder(AbstractQuery::class)
+        $mockQuery = $this->getMockBuilder(\Doctrine\ORM\AbstractQuery::class)
             ->setMethods(['setParameter', 'getResult'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
         $this->setupMockForCalls($mockQuery, 'getResult', $motTests);
 
-        $mockQueryBuilder = $this->getMock(QueryBuilder::class, [], [], '', false);
+        $mockQueryBuilder = $this->getMock(\Doctrine\ORM\QueryBuilder::class, [], [], '', false);
         $this->setupMockForCalls($mockQueryBuilder, 'getQuery', $mockQuery);
 
-        /** @var MotTestRepository $mockRepository */
         $mockRepository = $this->getMockRepository(MotTestRepository::class);
         $this->setupMockForCalls($mockRepository, 'matching', $motTests);
         $this->setupMockForCalls($mockRepository, 'createQueryBuilder', $mockQueryBuilder, 't');
@@ -144,12 +140,6 @@ class UserStatsServiceTest extends AbstractServiceTestCase
         $this->statsService = new UserStatsService($mockEntityManager, $mockRepository);
     }
 
-    /**
-     * @param $name
-     *
-     * @return \PHPUnit_Framework_MockObject_MockObject|MotTestStatus
-     * @throws \Exception
-     */
     private function createMotTestStatus($name)
     {
         $status = XMock::of(MotTestStatus::class);

@@ -64,6 +64,7 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
     /** @var  UserAdminSessionManager|MockObj */
     private $mockUserAdminSessionSrv;
 
+
     public function setUp()
     {
         $sm = Bootstrap::getServiceManager();
@@ -114,8 +115,7 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
                 $this->mockSecurityQuestionSrv,
                 $this->mockUserAdminSessionSrv,
                 XMock::of(TesterGroupAuthorisationMapper::class),
-                XMock::of(MotAuthorisationServiceInterface::class),
-                $this->mockUserAdminSessionSrv
+                XMock::of(MotAuthorisationServiceInterface::class)
             )
         );
 
@@ -146,7 +146,7 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
      *
      * @dataProvider dataProviderTestCanAccessHasRight
      */
-    public function testerQualificationStatusService(
+    public function testCanAccessHasRight(
         $action,
         $params = [],
         $isAuth = true,
@@ -201,6 +201,7 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
             ['profile', [], true, [], true],
             ['securitySettings', [], true, [], true],
             ['securitySettings', [], true, [], true, '/profile/security-question', 'Exception', null, false],
+//            ['edit', [], true, [], true],
         ];
     }
 

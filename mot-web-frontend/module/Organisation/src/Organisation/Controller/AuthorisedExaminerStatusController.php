@@ -5,15 +5,28 @@ namespace Organisation\Controller;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
+use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\FeatureToggle;
+use DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode;
+use DvsaCommon\Enum\CompanyTypeCode;
+use DvsaCommon\Enum\CompanyTypeName;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
+use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
+use DvsaCommon\Utility\AddressUtils;
+use DvsaCommon\Utility\ArrayUtils;
 use DvsaMotTest\Controller\AbstractDvsaMotTestController;
+use Organisation\Authorisation\AuthorisedExaminerViewAuthorisation;
+use Organisation\Form\AeContactDetailsForm;
+use Organisation\Form\AeCreateForm;
 use Organisation\Form\AeStatusForm;
+use Organisation\Presenter\AuthorisedExaminerPresenter;
 use Organisation\ViewModel\AuthorisedExaminer\AeFormStatusViewModel;
 use Organisation\ViewModel\AuthorisedExaminer\AeFormViewModel;
+use Organisation\ViewModel\View\Index\IndexViewModel;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Session\Container;
@@ -94,23 +107,6 @@ class AuthorisedExaminerStatusController extends AbstractDvsaMotTestController
         //  create/get a form
         if (!$form instanceof AeStatusForm) {
             $form = new AeStatusForm();
-
-            // obtain area office number from the site-number label
-            $assignedAO = $organisation->getAuthorisedExaminerAuthorisation()->getAssignedAreaOffice();
-            $aoNumber = -1;
-            $siteNumber = '';
-
-            if ($assignedAO) {
-                $siteNumber = $assignedAO->getSiteNumber();
-                $allAreaOffices   = $this->mapper->Organisation->getAllAreaOffices();
-                $aoNumber = AuthorisedExaminerController::getAONumberFromName($siteNumber, $allAreaOffices);
-            }
-
-            $areaOffices = $this->mapper->Organisation->getAllAreaOffices(true);
-            $form->setAssignedAreaOffice($aoNumber);
-            $form->setAreaOfficeOptions($areaOffices);
-
-            $form->setStatus($organisation->getAuthorisedExaminerAuthorisation()->getStatus()->getCode());
         }
         $form->setFormUrl(
             AuthorisedExaminerUrlBuilderWeb::aeEditStatus($orgId)->queryParam(self::SESSION_KEY, $sessionKey)
@@ -120,9 +116,7 @@ class AuthorisedExaminerStatusController extends AbstractDvsaMotTestController
             $form->fromPost($request->getPost());
 
             try {
-                /** @var \DvsaCommon\Dto\Organisation\OrganisationDto $organisationDto */
-                $organisationDto = $form->toDto();
-                $this->mapper->Organisation->validateStatusAndAO($organisationDto, $orgId);
+                $this->mapper->Organisation->validateStatus($form->toDto(), $orgId);
 
                 $this->session->offsetSet($sessionKey, $form);
 
@@ -184,9 +178,6 @@ class AuthorisedExaminerStatusController extends AbstractDvsaMotTestController
         //  save ae status to db and redirect to ae view page
         if ($request->isPost()) {
             try {
-                // Ensure 'label' reflects the current dropdown entry
-                $actualAONumber = $form->getAssignedAreaOffice();
-//                $form->setAssignedAreaOfficeLabel($actualAONumber);
                 $this->mapper->Organisation->status($form->toDto(), $orgId);
 
                 //  clean session after self
@@ -254,21 +245,5 @@ class AuthorisedExaminerStatusController extends AbstractDvsaMotTestController
         $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
         return $view;
-    }
-
-    /**
-     * Asks the API for the list of Area Offices that a user can select
-     * to be associated as the controlling AO for this AE entity.
-     *
-     * @return array|mixed
-     */
-    protected function getAreaOfficeOptions()
-    {
-        try {
-            return $this->mapper->Organisation->getAllAreaOffices();
-        } catch (RestApplicationException $ve) {
-            $this->addErrorMessages($ve->getDisplayMessages());
-        }
-        return [];
     }
 }

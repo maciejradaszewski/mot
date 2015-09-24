@@ -14,7 +14,6 @@ use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
-use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use DvsaCommon\Utility\AddressUtils;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaMotTest\Controller\AbstractDvsaMotTestController;
@@ -101,25 +100,7 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
         $vm = $this->getIndexViewModel($orgId);
         $presenter = new AuthorisedExaminerPresenter($vm->getOrganisation());
 
-        /** @var \DvsaCommon\Dto\AreaOffice\AreaOfficeDto $aoDto */
-        $aoDto = $vm->getOrganisation()->getAuthorisedExaminerAuthorisation()->getAssignedAreaOffice();
-        $aoDetailsUrl = '#';
-        $aoLabel = '';
-
-        if ($aoDto) {
-            $aoId = $aoDto->getSiteId();
-            $aoNumber = $aoDto->getAoNumber();
-
-            if ($aoId) {
-                $aoDetailsUrl = VehicleTestingStationUrlBuilderWeb::byId(1);
-            }
-            if ($aoNumber) {
-                $aoLabel = $aoNumber;
-            }
-        }
-
         //  logical block :: prepare view model
-
         $viewModel = new ViewModel(
             [
                 'viewModel' => $vm,
@@ -142,9 +123,6 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
                     PermissionAtOrganisation::AE_TEST_LOG, $orgId
                 ),
                 'eventButton' => $this->auth->isGranted(PermissionInSystem::LIST_EVENT_HISTORY),
-
-                'aoOfficeLabel' => $aoLabel,
-                'aoOfficeUrl' => $aoDetailsUrl,
             ]
         );
 
@@ -280,7 +258,6 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
         if (!$form instanceof AeCreateForm) {
             $form = new AeCreateForm();
             $form->setCompanyTypes($this->getCompanyTypes());
-            $form->setAreaOfficeOptions($this->getAreaOfficeOptions(true));
         }
         $form->setFormUrl(AuthorisedExaminerUrlBuilderWeb::create()->queryParam(self::SESSION_KEY, $sessionKey));
 
@@ -362,15 +339,9 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
                 ->queryParam(self::SESSION_KEY, $sessionKey)
         );
 
-        $viewModel = $this->prepareViewModel(
+        return $this->prepareViewModel(
             new ViewModel(['model' => $model]), self::CREATE_CONFIRM_TITLE, self::AE_SUBTITLE, null, self::STEP_TWO
         );
-
-        $viewModel->setVariable(
-            'areaOfficeDisplayName',
-            $form->getAssignedAreaOffice()
-        );
-        return $viewModel;
     }
 
     private function getCompanyTypes()
@@ -379,52 +350,6 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
         unset($companyTypes[CompanyTypeCode::LIMITED_LIABILITY_PARTNERSHIP]);
 
         return ArrayUtils::asortBy($companyTypes);
-    }
-
-
-    /**
-     * Asks the API for the list of Area Offices that a user can select
-     * to be associated as the controlling AO for this AE entity.
-     *
-     * @return array|mixed
-     */
-    protected function getAreaOfficeOptions()
-    {
-        try {
-            return $this->mapper->Organisation->getAllAreaOffices(true);
-        } catch (RestApplicationException $ve) {
-            $this->addErrorMessages($ve->getDisplayMessages());
-        }
-        return [];
-    }
-
-    /**
-     * Given a well-formed string, return the Area Office number, given that the
-     * strings begins with two digits and that the extracted number is one of those
-     * returned from a call to self::getAreaOfficeOptions().
-     *
-     * @param $aoName string contains the label we want to decode
-     * @param $aoOptions array contains all valid AO numbers
-     *
-     * @return int for the area office, -1 indicates a problem with the source name
-     */
-    public static function getAONumberFromName($aoName, $aoOptions)
-    {
-        $result = -1;
-
-        if (strlen($aoName) > 1) {
-            $number = substr($aoName, 0, 2);
-
-            if (ctype_digit($number)) {
-                foreach($aoOptions as $areaOffice) {
-                    if ($number == $areaOffice['areaOfficeNumber']) {
-                        $result = (int)$number;
-                        break;
-                    }
-                }
-            }
-        }
-        return $result;
     }
 
     /**

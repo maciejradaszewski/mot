@@ -23,7 +23,6 @@ use DvsaEventApi\Service\Mapper\EventListMapper;
 use DvsaCommon\Date\DateTimeHolder;
 use DvsaEntities\Repository\EventSiteMapRepository;
 use DvsaEntities\Repository\SiteRepository;
-use DvsaEntities\Repository\EventTypeOutcomeCategoryMapRepository;
 
 class SiteNominationEventHelperTest extends \PHPUnit_Framework_TestCase
 {
@@ -104,9 +103,6 @@ class SiteNominationEventHelperTest extends \PHPUnit_Framework_TestCase
             XMock::of(EntityManager::class),
             XMock::of(EventRepository::class),
             $entityRepository,
-            $entityRepository,
-            $entityRepository,
-            Xmock::of(EventTypeOutcomeCategoryMapRepository::class),
             XMock::of(DoctrineObject::class),
             XMock::of(EventListMapper::class)
         );

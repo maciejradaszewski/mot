@@ -30,14 +30,11 @@ use DvsaEntities\Entity\OrganisationBusinessRole;
 use DvsaEntities\Entity\PersonSystemRole;
 use DvsaEntities\Entity\ReasonForRefusal;
 use DvsaEntities\Entity\SiteBusinessRole;
-use DvsaEntities\Entity\SiteStatus;
 use DvsaEntities\Entity\TransmissionType;
 use DvsaEntities\Entity\VehicleClass;
 use DvsaEntities\Entity\VisitReason;
 use DvsaEntities\Repository\ColourRepository;
 use DvsaEntities\Repository\FuelTypeRepository;
-use DvsaEntities\Repository\SiteStatusRepository;
-use DvsaEntities\Entity\EventTypeOutcomeCategoryMap;
 
 /**
  * Class DataCatalogService
@@ -308,37 +305,6 @@ class DataCatalogService extends AbstractService
         return $this->extractType2EnumValues($items, self::ENUM_TYPE_STANDARD);
     }
 
-    public function getEventTypesWithOutcomes()
-    {
-        $this->authService->assertGranted(PermissionInSystem::DATA_CATALOG_READ);
-        $repo = $this->entityManager->getRepository(EventTypeOutcomeCategoryMap::class);
-        $eventTypeOutcomes = $repo->getEventTypeWithOutcomes();
-        
-        // Mapping the flat result into the structure we desire
-        $i = 0;
-        while ($i < sizeof($eventTypeOutcomes)) {
-            $eventTypeOutcome = $eventTypeOutcomes[$i];
-
-            $typeCode = $eventTypeOutcomes[$i]['typeCode'];
-            $outcomes = [];
-            while ($eventTypeOutcomes[$i]['typeCode'] == $typeCode && $i < count($eventTypeOutcomes)) {
-                $outcomes[] = [
-                    'code' => $eventTypeOutcomes[$i]['outcomeCode'],
-                    'name' => $eventTypeOutcomes[$i]['outcomeName']
-                ];
-                $i++;
-            }
-
-            $eventType = [
-                'code' => $eventTypeOutcome['typeCode'],
-                'name' => $eventTypeOutcome['typeName'],
-                'outcomes' => $outcomes
-            ];
-            $return[$eventTypeOutcome['categoryCode']][] = $eventType;
-        }
-        return $return;
-    }
-
     private function extractType2EnumValues($items, $type = self::ENUM_TYPE_STANDARD)
     {
         $values = [];
@@ -424,16 +390,5 @@ class DataCatalogService extends AbstractService
         }
 
         return $this->extractItems($items);
-    }
-
-    /**
-     * @return array
-     */
-    public function getSiteStatuses()
-    {
-        /** @var SiteStatusRepository $repo */
-        $repo = $this->entityManager->getRepository(SiteStatus::class);
-        $items = $repo->getAll();
-        return $this->extractType2EnumValues($items);
     }
 }

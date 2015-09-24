@@ -3,7 +3,6 @@
 namespace DvsaEntities\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use DvsaCommonApi\Service\Exception\NotFoundException;
 
 class PermissionToAssignRoleMapRepository extends EntityRepository
 {
@@ -14,6 +13,7 @@ class PermissionToAssignRoleMapRepository extends EntityRepository
      */
     public function getPermissionCodeByRoleCode($roleCode)
     {
+
         $qb = $this->createQueryBuilder('ptarm')
             ->select('p.code')
             ->innerJoin("ptarm.permission", "p")

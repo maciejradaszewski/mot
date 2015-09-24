@@ -7,7 +7,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class EnforcementAeEventDetailsPage extends BasePage {
 
-    private static String PAGE_TITLE = "EVENTS\nEVENT DETAILS";
+    private static String PAGE_TITLE = "FULL DETAILS OF AE EVENT SELECTED FOR";
 
     @FindBy(partialLinkText = "Go back")
     private WebElement goBackLink;

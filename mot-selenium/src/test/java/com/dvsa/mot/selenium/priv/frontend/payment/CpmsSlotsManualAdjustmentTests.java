@@ -1,16 +1,11 @@
 package com.dvsa.mot.selenium.priv.frontend.payment;
 
-import com.dvsa.mot.selenium.datasource.Assertion;
 import com.dvsa.mot.selenium.datasource.ChequePayment;
 import com.dvsa.mot.selenium.datasource.Login;
-import com.dvsa.mot.selenium.datasource.Payments;
 import com.dvsa.mot.selenium.framework.BaseTest;
 import com.dvsa.mot.selenium.framework.api.FinanceUserCreationApi;
 import com.dvsa.mot.selenium.framework.api.authorisedexaminer.AeDetails;
 import com.dvsa.mot.selenium.framework.api.authorisedexaminer.AeService;
-import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.DetailsOfAuthorisedExaminerPage;
-import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.SearchForAePage;
-import com.dvsa.mot.selenium.priv.frontend.payment.pages.AdjustmentConfirmationPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.ManualAdjustmentSuccessPage;
 
 import org.testng.annotations.Test;
@@ -32,16 +27,9 @@ public class CpmsSlotsManualAdjustmentTests extends BaseTest {
         Login financeUserLogin = financeUserCreationApi.createFinanceUser().getLogin();
         return financeUserLogin;
     }
-
-    private DetailsOfAuthorisedExaminerPage loginAsFinanceUserAndSearchForAe(Login login, String aeRef) {
-        DetailsOfAuthorisedExaminerPage detailsOfAuthorisedExaminerPage =
-                SearchForAePage.navigateHereFromLoginPage(driver, login)
-                        .searchForAeAndSubmit(aeRef);
-        return detailsOfAuthorisedExaminerPage;
-    }
-
+    
     @Test(groups = {"Regression", "SPMS-80"})
-    public void manualAdjustmentOfTransactionForIncorrectCustomer() {
+    public void manualAdjustmentOfTransactionForWrongAe() {
         String aeRef1 = createAeAndReturnAeReference("ChequePayment");
         String aeRef2 = createAeAndReturnAeReference("ManualAdjustment");
         Login financeUserLogin = createFinanceUserReturnFinanceUserLogin();
@@ -54,7 +42,7 @@ public class CpmsSlotsManualAdjustmentTests extends BaseTest {
     }
     
     @Test(groups = {"Regression", "SPMS-80"})
-    public void manualAdjustmentOfTransactionForIncorrectAmount() {
+    public void manualAdjustmentOfTransactionForInvalidPaymentData() {
         String aeRef = createAeAndReturnAeReference("ChequePayment");
         Login financeUserLogin = createFinanceUserReturnFinanceUserLogin();
         ManualAdjustmentSuccessPage manualAdjustmentSuccessPage = ManualAdjustmentSuccessPage

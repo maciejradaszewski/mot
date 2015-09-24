@@ -11,6 +11,7 @@ use DvsaEntities\Entity\MotTestType;
  */
 class MotTestTypeRepository extends EntityRepository
 {
+
     /**
      * Finds MotTestType by code. Throws NotFoundException if not found
      * @param $code

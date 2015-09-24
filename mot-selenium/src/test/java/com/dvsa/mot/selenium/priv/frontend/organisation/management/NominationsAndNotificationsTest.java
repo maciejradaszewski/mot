@@ -150,6 +150,8 @@ public class NominationsAndNotificationsTest extends BaseTest {
                 "Check the event type displayed");
         assertEquals(helpdeskUserProfilePage.getEventDate().split(",")[0], expectedDate,
                 "Check the date of the event displayed");
+        assertTrue((Utilities.getTimeDifference(helpdeskUserProfilePage.getEventDate().split(",")[1])) <= 5,
+                "Check the time difference of the event created is less than 5 minutes");
     }
 
     @Test(groups = {"Sprint-22", "Regression", "VM-5022", "VM-5024"})

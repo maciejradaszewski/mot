@@ -22,28 +22,18 @@ use DvsaAuthentication\Identity;
 
 class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|PersonContactRepository */
-    private $personContactRepositoryMock;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|PersonContactMapper */
-    private $personContactMapperMock;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository */
-    private $emailRepositoryMock;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|PersonalDetailsValidator */
-    private $personalDetailsValidatorMock;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AuthenticationService */
-    private $authenticationServiceMock;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AuthorisationService */
-    private $authorisationServiceMock;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|Identity */
-    private $identityMock;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManager */
-    private $emMock;
+    protected $personContactRepositoryMock;
+    protected $personContactMapperMock;
+    protected $emailRepositoryMock;
+    protected $personalDetailsValidatorMock;
+    protected $authenticationServiceMock;
+    protected $authorisationServiceMock;
+    protected $identityMock;
+    protected $emMock;
 
     public function setUp()
     {
-        $this->personContactRepositoryMock = XMock::of(
-            PersonContactRepository::class, ['getHydratedByTypeCode', 'persist']
-        );
+        $this->personContactRepositoryMock = XMock::of(PersonContactRepository::class, ['getHydratedByTypeCode', 'persist']);
         $this->personContactMapperMock = XMock::of(PersonContactMapper::class, ['toDto']);
         $this->emailRepositoryMock = XMock::of(EntityRepository::class);
         $this->personalDetailsValidatorMock = XMock::of(PersonalDetailsValidator::class);
@@ -65,7 +55,6 @@ class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
             $this->emMock
         );
     }
-
     public function testGetForPersonIdWithValidIdReturnsDto()
     {
         $contactMock = XMock::of(PersonContact::class);
@@ -125,7 +114,6 @@ class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
         $response = $service->updateEmailForPersonId($personId, ['emails' => ['foo@bar.com']]);
         $this->assertEquals($dtoMock, $response);
     }
-
     public function testupdateEmailForPersonIdWithNoDataThrowsException()
     {
         $personId = 1;
@@ -139,7 +127,6 @@ class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
         $service = $this->createService();
         $service->updateEmailForPersonId($personId, []);
     }
-
     public function testUpdateEmailForPersonIdWithInvalidDataThrowsException()
     {
         $personId = 1;
@@ -156,7 +143,6 @@ class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
         $service = $this->createService();
         $service->updateEmailForPersonId($personId, ['emails' => ['foo@bar']]);
     }
-
     public function testUpdateEmailForPersonIdWithDifferentUserIdThrowsExceptionWithNoPermission()
     {
         $loggedInPersonId = 1;

@@ -66,26 +66,12 @@ class PersonCacheContextFactoryTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'person/42/site-count',
-                CacheContext::configured(
-                    $hashedToken.'_person/42/site-count',
-                    $this->lifeTime,
-                    [
-                        $hashedToken.'_person/42/site-count',
-                        $hashedToken.'_person/42/mot-testing',
-                    ]
-                ),
+                CacheContext::configured($hashedToken.'_person/42/site-count', $this->lifeTime, []),
                 'It configures the person site count cache'
             ],
             [
                 'person/42/mot-testing',
-                CacheContext::configured(
-                    $hashedToken.'_person/42/mot-testing',
-                    $this->lifeTime,
-                    [
-                        $hashedToken.'_person/42/site-count',
-                        $hashedToken.'_person/42/mot-testing',
-                    ]
-                ),
+                CacheContext::configured($hashedToken.'_person/42/mot-testing', $this->lifeTime, []),
                 'It configures the person mot testing cache'
             ],
             [

@@ -12,8 +12,8 @@ use DvsaMotTest\View\ReplacementSiteViewModel;
 <?php $this->placeholder('dashboard-section-header-caption')->captureEnd() ?>
 
 <?php $this->placeholder('dashboard-section-header-value')->captureStart('SET') ?>
-    <h3><strong><?php echo $this->escapeHtml($vts->getName()) ?></strong></h3>
-    <span><?php echo $this->escapeHtml($vts->getPostcode()) ?></span>
+    <h3><strong><?php echo $vts->getName() ?></strong></h3>
+    <span><?php echo $vts->getPostcode()?></span>
 <?php $this->placeholder('dashboard-section-header-value')->captureEnd() ?>
 
 <?php $this->placeholder('dashboard-section-body')->captureStart('SET') ?>
@@ -21,7 +21,9 @@ use DvsaMotTest\View\ReplacementSiteViewModel;
         <div >
             <div class="row">
                 <div class="form-group col-sm-12">
-                    <?php $escSiteNumber = $this->escapeHtmlAttr($vts->getSiteNumber()); ?>
+                    <?php
+                    $escSiteNumber = $this->escapeHtmlAttr($vts->getSiteNumber());
+                    ?>
                     <input id="input-vts" name="vts" class="select2" style="width:100%"
                            data-id="<?php echo $escSiteNumber; ?>"
                            data-label="<?php echo $this->escapeHtmlAttr($vts->getLabel()); ?>"

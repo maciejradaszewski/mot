@@ -17,7 +17,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.Map;
 
 public class TestSummary extends BasePage {
-    @FindBy(id = "back-to-home-link") private WebElement reprintCertificate;
+    @FindBy(id = "reprint-certificate") private WebElement reprintCertificate;
 
     @FindBy(id = "testStatus") private WebElement testStatus;
 

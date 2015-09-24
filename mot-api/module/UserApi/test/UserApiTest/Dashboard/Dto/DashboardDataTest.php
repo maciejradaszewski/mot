@@ -1,10 +1,9 @@
 <?php
-
 namespace UserApiTest\Dashboard\Dto;
 
-use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;
+use DvsaCommonTest\TestUtils\XMock;
 use UserApi\Dashboard\Dto\DashboardData;
 
 /**
@@ -16,9 +15,7 @@ class DashboardDataTest extends AbstractServiceTestCase
     {
         $specialNotice = SpecialNoticeTest::getInputUnreadOverdueDeadline();
         $authorisationMock = AuthorisationServiceMock::grantedAll();
-        $motTestType = MotTestTypeCode::NORMAL_TEST;
-
-        $dashboard = new DashboardData([], $specialNotice, [], 3, 4, true, true, $motTestType, $authorisationMock);
+        $dashboard = new DashboardData([], $specialNotice, [], 3, 'RT', $authorisationMock);
         $this->assertWellFormedData($dashboard->toArray());
     }
 
@@ -34,7 +31,6 @@ class DashboardDataTest extends AbstractServiceTestCase
             && isset($data['notifications'])
             && is_array($data['notifications'])
             && isset($data['inProgressTestNumber'])
-            && isset($data['inProgressDemoTestNumber'])
         );
     }
 }

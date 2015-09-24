@@ -16,7 +16,6 @@ use OrganisationApi\Model\RoleAvailability;
 use OrganisationApi\Model\RoleRestriction\AedRestriction;
 use OrganisationApi\Model\RoleRestrictionsSet;
 use OrganisationApi\Service\OrganisationNominationService;
-use NotificationApi\Service\NotificationService;
 
 /**
  * Class AuthorisedExaminerPrincipalServiceTest
@@ -39,8 +38,6 @@ class NominateOperationTest extends AbstractServiceTestCase
     /** @var  AuthorisationServiceInterface */
     private $authorizationService;
 
-    private $notificationService;
-
     public function setUp()
     {
         parent::__construct();
@@ -55,9 +52,8 @@ class NominateOperationTest extends AbstractServiceTestCase
         $nominationVerifier       = new NominationVerifier($roleAvailability);
         $this->positionRepository = $this->getMockWithDisabledConstructor(\Doctrine\ORM\EntityManager::class);
         $nominationServiceMock    = $this->getMockWithDisabledConstructor(OrganisationNominationService::class);
-        $this->notificationService = XMock::of(NotificationService::class);
         $this->nominateOperation  = new NominateByRequestOperation(
-            $this->positionRepository, $nominationVerifier, $nominationServiceMock, $this->notificationService
+            $this->positionRepository, $nominationVerifier, $nominationServiceMock
         );
     }
 
