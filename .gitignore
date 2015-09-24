@@ -13,7 +13,7 @@ Gemfile.lock
 vendor
 mot-behat-tests/vendor
 *autoload_classmap.php
-
+phpunit.global.bootstrap.php
 tests/postman/collection.json
 tests/postman/results.json
 tests/postman/*/*/response.txt

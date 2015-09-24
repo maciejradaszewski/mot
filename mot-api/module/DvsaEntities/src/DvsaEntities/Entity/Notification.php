@@ -150,6 +150,16 @@ class Notification extends Entity
     }
 
     /**
+     * @param NotificationField $field
+     * @return $this
+     */
+    public function addField(NotificationField $field)
+    {
+        $this->fields->add($field);
+        return $this;
+    }
+
+    /**
      * @return \Doctrine\Common\Collections\Collection
      */
     public function getFields()
@@ -233,4 +243,5 @@ class Notification extends Entity
 
         return $this;
     }
+
 }

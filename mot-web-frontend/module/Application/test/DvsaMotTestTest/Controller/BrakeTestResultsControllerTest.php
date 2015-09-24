@@ -287,16 +287,20 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
         $this->assertRedirectLocation2("/mot-test/$motTestNumber/brake-test-summary");
     }
 
-    public function testBrakeTestResultsPostWithInvalidData()
+    /**
+     * @dataProvider provideVehicleClasses
+     */
+    public function testBrakeTestResultsPostWithInvalidData($vehicleClass)
     {
         $motTestNumber = 1;
         $errorMessage = "Value is required and can't be empty";
 
         $this->routeMatch->setParam('action', 'addBrakeTestResults');
         $this->routeMatch->setParam('motTestNumber', $motTestNumber);
+        $this->request->getPost()->set('vehicleClass', $vehicleClass);
         $this->request->setMethod('post');
 
-        $this->getRestClientMockWithGetMotTest($this->getMotTestDataDto());
+        $this->getRestClientMockWithGetMotTest($this->getMotTestDataDto($vehicleClass));
 
         $this->getBrakeTestResultsResourcesMock()
             ->expects($this->at(0))->method('save')
@@ -311,6 +315,18 @@ class BrakeTestResultsControllerTest extends AbstractDvsaMotTestTestCase
         $this->controller->dispatch($this->request);
         $response = $this->controller->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function provideVehicleClasses()
+    {
+        return [
+            [VehicleClassCode::CLASS_1],
+            [VehicleClassCode::CLASS_2],
+            [VehicleClassCode::CLASS_3],
+            [VehicleClassCode::CLASS_4],
+            [VehicleClassCode::CLASS_5],
+            [VehicleClassCode::CLASS_7],
+        ];
     }
 
     public function testBrakeTestSummaryCanBeAccessedAuthenticatedRequest()

@@ -2,6 +2,7 @@
 
 namespace PersonApi\Service\Validator;
 
+use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommonApi\Service\Validator\AbstractValidator;
 use PersonApi\Service\PersonalAuthorisationForMotTestingService;
 
@@ -13,6 +14,7 @@ use PersonApi\Service\PersonalAuthorisationForMotTestingService;
 class PersonalAuthorisationForMotTestingValidator extends AbstractValidator
 {
     const INVALID_VEHICLE_GROUP = 'Invalid group of vehicle classes';
+    const INVALID_STATUS = 'Invalid authorised status';
 
     private $requiredFields
         = [
@@ -25,6 +27,7 @@ class PersonalAuthorisationForMotTestingValidator extends AbstractValidator
         $this->checkRequiredFields($this->requiredFields, $data);
 
         $this->validateGroupOfVehicle($data);
+        $this->validateResult($data);
 
         $this->errors->throwIfAny();
     }
@@ -43,6 +46,26 @@ class PersonalAuthorisationForMotTestingValidator extends AbstractValidator
             )
         ) {
             $this->errors->add(self::INVALID_VEHICLE_GROUP, 'group');
+        }
+    }
+
+    /**
+     * @param $data
+     */
+    private function validateResult($data)
+    {
+        if (false === in_array(
+                $data['result'],
+                [
+                    AuthorisationForTestingMotStatusCode::UNKNOWN,
+                    AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED,
+                    AuthorisationForTestingMotStatusCode::DEMO_TEST_NEEDED,
+                    AuthorisationForTestingMotStatusCode::QUALIFIED,
+                    AuthorisationForTestingMotStatusCode::SUSPENDED,
+                ]
+            )
+        ) {
+            $this->errors->add(self::INVALID_STATUS, 'group');
         }
     }
 }

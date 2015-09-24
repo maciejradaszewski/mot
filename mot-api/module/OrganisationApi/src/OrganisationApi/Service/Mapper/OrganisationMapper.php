@@ -10,6 +10,7 @@ use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaCommonApi\Service\Mapper\AbstractApiMapper;
 use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Entity\OrganisationContact;
+use DvsaCommon\Dto\AreaOffice\AreaOfficeDto;
 
 /**
  * Class OrganisationMapper
@@ -65,8 +66,25 @@ class OrganisationMapper extends AbstractApiMapper
                     ->setName($aeStatus->getName());
             }
 
+            //The assigned area *is* a Site entity
+            $siteAO = $ae->getAreaOffice();
+            $aoDto = new AreaOfficeDto();
+            if ($siteAO) {
+                $partialSiteNumber = substr($siteAO->getSiteNumber(), 0, 2);
+                $aoNumber = ctype_digit($partialSiteNumber)
+                    ? (int) $partialSiteNumber
+                    : $siteAO->getSiteNumber();
+
+                $aoDto
+                    ->setSiteId($siteAO->getId())
+                    ->setSiteNumber($siteAO->getSiteNumber())
+                    ->setAoNumber($aoNumber)
+                    ->setName($siteAO->getName());
+            }
+
             $aeAuthorisation = new AuthorisedExaminerAuthorisationDto();
             $aeAuthorisation
+                ->setAssignedAreaOffice($aoDto)
                 ->setAuthorisedExaminerRef($ae->getNumber())
                 ->setStatus($statusDto)
                 ->setValidFrom(DateTimeApiFormat::date($ae->getValidFrom()))

@@ -20,6 +20,26 @@ class VehicleTestingStationUrlBuilderWebTest extends \PHPUnit_Framework_TestCase
         $this->checkUrl(VehicleTestingStationUrlBuilderWeb::byId(self::VTS_ID), $base);
         $this->checkUrl(VehicleTestingStationUrlBuilderWeb::edit(self::VTS_ID), $base . '/edit');
         $this->checkUrl(VehicleTestingStationUrlBuilderWeb::contactDetails(self::VTS_ID), $base . '/contact-details');
+
+        $this->checkUrl(
+            VehicleTestingStationUrlBuilderWeb::siteDetails(self::VTS_ID),
+            $base . '/site-details'
+        );
+        $this->checkUrl(
+            VehicleTestingStationUrlBuilderWeb::siteDetailsConfirm(self::VTS_ID),
+            $base . '/site-details/confirmation'
+        );
+
+        $this->checkUrl(
+            VehicleTestingStationUrlBuilderWeb::testingFacilities(self::VTS_ID),
+            $base . '/testing-facilities'
+        );
+        $this->checkUrl(
+            VehicleTestingStationUrlBuilderWeb::testingFacilitiesConfirmation(self::VTS_ID),
+            $base . '/testing-facilities/confirmation'
+        );
+
+
     }
 
     private function checkUrl(AbstractUrlBuilder $urlBuilder, $expectUrl)

@@ -8,6 +8,8 @@ use MotFitnesse\Util\TestShared;
 use MotFitnesse\Util\VehicleUrlBuilder;
 use DvsaCommon\Enum\ColourCode;
 use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\Enum\FuelTypeCode;
+use MotFitnesse\Util\CredentialsProvider;
 
 class Vm2728OneActiveTestPerVehicle
 {
@@ -30,21 +32,22 @@ class Vm2728OneActiveTestPerVehicle
         $currentVehicleId = $this->vehicles[$this->currentVehicle];
 
         $mth = new MotTestHelper($this->getCredentialsProvider());
-        $demoTestType = MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING;
-        $mth->createMotTest(
-            $currentVehicleId,
-            null,
-            $this->siteId,
-            ColourCode::ORANGE,
-            ColourCode::BLACK,
-            true,
-            VehicleClassCode::CLASS_4,
-            'PE',
-            'NORMAL',
-            $demoTestType
-        );
 
         if ($this->startNewTest) {
+
+            $mth->createMotTest(
+                $currentVehicleId,
+                null,
+                $this->siteId,
+                ColourCode::ORANGE,
+                ColourCode::BLACK,
+                true,
+                VehicleClassCode::CLASS_4,
+                FuelTypeCode::PETROL,
+                'NORMAL',
+                MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING
+            );
+
             $this->previousTest = $mth->createMotTest($currentVehicleId, null, $this->siteId)['motTestNumber'];
             $mth->odometerUpdate($this->previousTest);
             $mth->passBrakeTestResults($this->previousTest);
@@ -96,6 +99,6 @@ class Vm2728OneActiveTestPerVehicle
 
     private function getCredentialsProvider()
     {
-        return new \MotFitnesse\Util\CredentialsProvider($this->username, TestShared::PASSWORD);
+        return new CredentialsProvider($this->username, TestShared::PASSWORD);
     }
 }

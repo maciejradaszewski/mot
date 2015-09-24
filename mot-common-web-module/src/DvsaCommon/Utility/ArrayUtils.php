@@ -379,4 +379,14 @@ class ArrayUtils
 
         return true;
     }
+
+    /**
+     * Return all the keys
+     *
+     * @param array $data
+     * @return array
+     */
+    public static function getKeys(array $data) {
+        return array_keys($data);
+    }
 }

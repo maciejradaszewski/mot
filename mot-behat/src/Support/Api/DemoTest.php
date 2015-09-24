@@ -2,8 +2,6 @@
 
 namespace Dvsa\Mot\Behat\Support\Api;
 
-use Dvsa\Mot\Behat\Support\Request;
-
 class DemoTest extends AbstractMotTest
 {
     const PATH = 'mot-demo-test';
@@ -28,5 +26,4 @@ class DemoTest extends AbstractMotTest
 
         return parent::createMotWithParams($token, $params);
     }
-
 }

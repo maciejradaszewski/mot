@@ -402,7 +402,6 @@ class MotTestService extends AbstractSearchService implements TransactionAwareIn
 
     public function updateDocument($motTestNumber, $documentId)
     {
-        $this->authService->assertGranted(PermissionInSystem::MOT_TEST_READ);
         $motTest = $this->getMotTest($motTestNumber);
         $motTest->setDocument($documentId);
         $this->entityManager->persist($motTest);

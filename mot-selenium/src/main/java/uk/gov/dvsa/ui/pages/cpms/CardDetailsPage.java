@@ -34,13 +34,14 @@ public class CardDetailsPage extends Page {
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
     
-    public CardDetailsPage enterCardDetails() {
+    public CardPaymentConfirmationPage enterCardDetailsAndSubmit() {
         cardHolderName.sendKeys(RandomDataGenerator.generateRandomString());
         cardNumber.sendKeys("4006000000000600");
         enterExpiryDate();
         enterStartDate();
         securityCode.sendKeys(RandomDataGenerator.generateRandomNumber(3, hashCode()));
-        return this;
+        payNowButton.click();
+        return new CardPaymentConfirmationPage(driver);
     }
 
     public CardDetailsPage enterExpiryDate() {
@@ -55,14 +56,8 @@ public class CardDetailsPage extends Page {
         return this;
     }
 
-    public CardPaymentConfirmationPage clickPayNowButton() {
-        payNowButton.click();
-        return new CardPaymentConfirmationPage(driver);
-    }
-
     public BuyTestSlotsPage clickCancelButton() {
         cancelButton.click();
         return new BuyTestSlotsPage(driver);
     }
-
 }

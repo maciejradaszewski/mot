@@ -15,6 +15,7 @@ default:
         default:
             contexts:
                 - AccountClaimContext
+                - AccountRegistrationContext
                 - AuthorisedExaminerContext
                 - BrakeTestResultContext
                 - CertificateContext
@@ -27,6 +28,7 @@ default:
                 - MotTestHistoryContext
                 - NotificationsContext
                 - OdometerReadingContext
+                - PasswordContext
                 - PersonContext
                 - ReplacementCertificateContext
                 - SecurityPinContext
@@ -35,10 +37,12 @@ default:
                 - SlotsDirectDebitContext
                 - SlotsInitiateRefundContext
                 - SlotsReportContext
+                - SlotsRefreshPaymentsContext
                 - SpecialNoticeContext
                 - TempPasswordChangeContext
                 - VehicleContext
                 - VtsContext
+                - VtsManagementContext
             filters:
                 tags: "~@functional"
         functional:

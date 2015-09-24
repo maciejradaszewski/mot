@@ -20,6 +20,7 @@ use DvsaEntities\Entity\SitePositionHistory;
 use DvsaEntities\Repository\SiteBusinessRoleMapRepository;
 use NotificationApi\Dto\Notification;
 use NotificationApi\Service\NotificationService;
+use NotificationApi\Service\PositionRemovalNotificationService;
 use SiteApi\Service\SitePositionService;
 use DvsaEventApi\Service\EventService;
 
@@ -38,6 +39,7 @@ class SitePositionServiceTest extends \PHPUnit_Framework_TestCase
     private $siteBusinessRoleMapRepository;
     private $eventService;
     private $entityManager;
+    private $positionRemovalNotificationService;
 
     public function setUp()
     {
@@ -46,6 +48,7 @@ class SitePositionServiceTest extends \PHPUnit_Framework_TestCase
         $this->siteBusinessRoleMapRepository = XMock::of(SiteBusinessRoleMapRepository::class);
         $this->entityManager = XMock::of(EntityManager::class);
         $this->eventService = XMock::of(EventService::class);
+        $this->positionRemovalNotificationService = XMock::of(PositionRemovalNotificationService::class);
     }
 
     private function getServiceWithMockServices($siteBusinessRoleMapMock) {
@@ -54,7 +57,8 @@ class SitePositionServiceTest extends \PHPUnit_Framework_TestCase
             $siteBusinessRoleMapMock,
             $this->authorisationService,
             $this->entityManager,
-            $this->notificationService
+            $this->notificationService,
+            $this->positionRemovalNotificationService
         );
     }
 

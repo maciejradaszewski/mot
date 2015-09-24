@@ -245,7 +245,6 @@ $config = Config::create()
             'concat_with_spaces',
             'double_arrow_multiline_whitespaces',
             'duplicate_semicolon',
-            'empty_return',
             'extra_empty_lines',
             'include',
             'join_function',

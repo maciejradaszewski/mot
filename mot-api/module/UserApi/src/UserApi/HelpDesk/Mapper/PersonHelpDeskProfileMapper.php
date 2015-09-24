@@ -7,6 +7,7 @@ use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommon\Dto\Account\AuthenticationMethodDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaEntities\Entity\AuthenticationMethod;
+use DvsaEntities\Entity\Email;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\PersonContact;
 use DvsaEntities\Mapper\AddressMapper;
@@ -79,10 +80,8 @@ class PersonHelpDeskProfileMapper
      */
     private function mapEmail(PersonContact $contact, PersonHelpDeskProfileDto $dto)
     {
-        foreach ($contact->getDetails()->getEmails() as $email) {
-            $dto->setEmail($email->getEmail());
-            break;
-        }
+        $primaryEmail = $contact->getDetails()->getPrimaryEmail();
+        $dto->setEmail($primaryEmail instanceof Email ? $primaryEmail->getEmail() : null);
     }
 
     /**

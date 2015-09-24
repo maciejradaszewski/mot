@@ -1,0 +1,45 @@
+<form method="post" action="<?php
+echo $this->url(
+    'user_admin/user-profile/change-qualification-status',
+    ['personId' => $testerId, 'vehicleClassGroup' => $group], ['query' => $searchQueryParams]
+);
+?>">
+    <fieldset>
+        <legend class="form-title heading-large" id="example-radio">Testing group <?php echo $this->escapeHtml(
+                $group
+            ); ?> vehicles
+        </legend>
+        <div class="form-group ">
+            <fieldset class="">
+                <legend class="form-label">Qualification status</legend>
+
+                <?php
+                    $index = 0;
+                    foreach($statusLookup as $code => $description):
+                ?>
+                    <label class="block-label <?php if($status === $code) { echo 'selected'; }?>" for="<?php echo 'radioStandard' . $index ?>">
+                        <input type="radio" value="<?php echo $code ?>" name="qualificationStatus" id="<?php echo 'radioStandard' . $index ?>" aria-expanded="false" <?php if($status === $code) { echo 'checked=checked'; }?>>
+                        <?php echo $description?>
+                    </label>
+                    <?php $index++; ?>
+                <?php endforeach ?>
+
+                
+            </fieldset>
+        </div>
+    </fieldset>
+
+    <?php echo $this->csrfToken() ?>
+
+    <nav class="content-navigation">
+        <input id="confirm-record-demo-test" type="submit" class="button" value="Change status"/>
+        <ul class="content-navigation__secondary">
+            <li>
+                <a id="cancel-record-demo-test" href="<?php echo $this->url(
+                    "user_admin/user-profile", ["personId" => $testerId],
+                    ["query" => $searchQueryParams]
+                ) ?>">Cancel and return to user profile</a>
+            </li>
+        </ul>
+    </nav>
+</form>

@@ -19,6 +19,7 @@ use DvsaEntities\Entity\AuthorisationForAuthorisedExaminer;
 use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Repository\AuthForAeStatusRepository;
 use DvsaEntities\Repository\OrganisationRepository;
+use DvsaEntities\Repository\SiteRepository;
 use DvsaEventApi\Service\EventService;
 use OrganisationApi\Service\AuthorisedExaminerStatusService;
 use OrganisationApi\Service\Validator\AuthorisedExaminerValidator;
@@ -58,6 +59,10 @@ class AuthorisedExaminerStatusServiceTest extends AbstractServiceTestCase
      */
     private $organisationRepository;
     /**
+     * @var SiteRepository|MockObj
+     */
+    private $mockSiteRepo;
+    /**
      * @var AuthForAeStatusRepository|MockObj
      */
     private $authForAeStatusRepository;
@@ -85,6 +90,8 @@ class AuthorisedExaminerStatusServiceTest extends AbstractServiceTestCase
         $this->authForAeStatusRepository = XMock::of(AuthForAeStatusRepository::class);
         $this->xssFilter = XMock::of(XssFilter::class, ['filter']);
         $this->validator = XMock::of(AuthorisedExaminerValidator::class);
+        $this->mockSiteRepo = XMock::of(SiteRepository::class, ['getAllAreaOffices', 'find']);
+
 
         $this->service = new AuthorisedExaminerStatusService(
             $this->entityManager,
@@ -95,10 +102,16 @@ class AuthorisedExaminerStatusServiceTest extends AbstractServiceTestCase
             $this->authForAeStatusRepository,
             $this->xssFilter,
             $this->validator,
-            new DateTimeHolder()
+            new DateTimeHolder(),
+            $this->mockSiteRepo
         );
 
-        $this->mockMethod($this->validator, 'validateStatus', $this->any(), true);
+        $aoList = $this->fakedAreaOfficeList();
+        $this->mockSiteRepo->expects($this->any())
+            ->method('getAllAreaOffices')
+            ->willReturn($aoList);
+
+        $this->mockMethod($this->validator, 'validateStatusAndAO', $this->any(), true);
         $this->mockMethod($this->identity, 'getUsername', $this->any(), self::AE_USERNAME);
         $this->mockMethod(
             $this->xssFilter,
@@ -160,4 +173,21 @@ class AuthorisedExaminerStatusServiceTest extends AbstractServiceTestCase
                     )
             );
     }
-}
+
+    protected function fakedAreaOfficeList()
+    {
+        return [
+            [
+                "id" => "3000",
+                "name" => "Area Office 01",
+                "siteNumber" => "01FOO",
+                "areaOfficeNumber" => "01"
+            ],
+            [
+                "id" => "3001",
+                "name" => "Area Office 02",
+                "siteNumber" => "02BAR",
+                "areaOfficeNumber" => "02"
+            ]
+        ];
+    }}

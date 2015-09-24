@@ -4,6 +4,7 @@ use DvsaCommon\HttpRestJson\ZendClient;
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\Obfuscate\ParamEncrypter;
 use DvsaCommon\Obfuscate\ParamObfuscator;
+use TestSupport\Service\FeaturesService;
 use TestSupport\Service\DVLAOperativeService;
 use TestSupport\Service\VM10619RoleManagementUpgradeService;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -19,6 +20,7 @@ use TestSupport\Service\CsmService;
 use TestSupport\Service\DVLAManagerService;
 use TestSupport\Service\AreaOffice1Service;
 use TestSupport\Service\AreaOffice2Service;
+use TestSupport\Service\CronUserService;
 use TestSupport\Service\FinanceUserService;
 use TestSupport\Service\VtsService;
 use TestSupport\Service\AEService;
@@ -84,6 +86,7 @@ return [
                 $tokenManager = $sm->get(TestSupportAccessTokenManager::class);
                 return new SlotTransactionService($sm->get(Client::class), $tokenManager);
             },
+
         // @TODO after mot-common-web-module is part of composer remove the below lines as the module will
         // already have these services registered.
         ParamEncrypter::class              => \DvsaCommon\Obfuscate\Factory\ParamEncrypterFactory::class,
@@ -92,9 +95,10 @@ return [
         CSCOService::class                 => \TestSupport\Factory\CSCOServiceFactory::class,
         CSMService::class                  => \TestSupport\Factory\CSMServiceFactory::class,
         DVLAManagerService::class          => \TestSupport\Factory\DVLAManagerServiceFactory::class,
-        DVLAOperativeService::class          => \TestSupport\Factory\DVLAOperativeServiceFactory::class,
+        DVLAOperativeService::class        => \TestSupport\Factory\DVLAOperativeServiceFactory::class,
         AreaOffice1Service::class          => \TestSupport\Factory\AreaOffice1ServiceFactory::class,
         AreaOffice2Service::class          => \TestSupport\Factory\AreaOffice2ServiceFactory::class,
+        CronUserService::class             => \TestSupport\Factory\CronUserServiceFactory::class,
         FinanceUserService::class          => \TestSupport\Factory\FinanceUserServiceFactory::class,
         UserService::class                 => \TestSupport\Factory\UserServiceFactory::class,
         VtsService::class                  => \TestSupport\Factory\VtsServiceFactory::class,
@@ -103,6 +107,8 @@ return [
         SitePermissionsHelper::class       => \TestSupport\Factory\SitePermissionsHelperFactory::class,
         AEService::class                   => \TestSupport\Factory\AEServiceFactory::class,
         TesterService::class               => \TestSupport\Factory\TesterServiceFactory::class,
+        FeaturesService::class             => \TestSupport\Factory\FeaturesServiceFactory::class,
+        InactiveTesterService::class       =>  \TestSupport\Factory\InactiveTesterServiceFactory::class,
         SchemeManagerService::class        => \TestSupport\Factory\SchemeManagerServiceFactory::class,
         SchemeUserService::class           => \TestSupport\Factory\SchemeUserServiceFactory::class,
         InactiveTesterService::class       => \TestSupport\Factory\InactiveTesterServiceFactory::class,

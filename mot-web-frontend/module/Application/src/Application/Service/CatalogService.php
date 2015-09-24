@@ -2,7 +2,6 @@
 
 namespace Application\Service;
 
-use Doctrine\Entity;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\DtoHydrator;
@@ -67,6 +66,7 @@ class CatalogService
             }
             self::$catalog = $this->appCache->getItem(self::STORAGE_KEY);
         }
+
         return $this;
     }
 
@@ -108,6 +108,7 @@ class CatalogService
                 $cacheCategories[$val['id']] = $val['category'];
             }
         }
+
         return $cacheCategories;
     }
 
@@ -128,12 +129,13 @@ class CatalogService
         if (is_null($scoreCache)) {
             foreach ($this->getCatalog()['scores'] as $e) {
                 $scoreCache [] = [
-                    'id' => $e['id'],
+                    'id'    => $e['id'],
                     'value' => $e['score'],
                     'label' => $e['description'],
                 ];
             }
         }
+
         return $scoreCache;
     }
 
@@ -151,6 +153,7 @@ class CatalogService
                 $cacheOutcomes[$x['id']] = $x['outcome'];
             }
         }
+
         return $cacheOutcomes;
     }
 
@@ -184,6 +187,7 @@ class CatalogService
         foreach ($this->getData()['motTestType'] as $testType) {
             $descriptions[$testType['code']] = $testType['description'];
         }
+
         return $descriptions;
     }
 
@@ -193,6 +197,7 @@ class CatalogService
         foreach ($this->getData()['colours'] as $colour) {
             $colours[$colour['code']] = $colour['name'];
         }
+
         return $colours;
     }
 
@@ -202,6 +207,7 @@ class CatalogService
         foreach ($this->getData()['countryOfRegistration'] as $country) {
             $countries[$country['id']] = $country['name'];
         }
+
         return $countries;
     }
 
@@ -213,6 +219,7 @@ class CatalogService
                 $countries[$country['code']] = $country['name'];
             }
         }
+
         return $countries;
     }
 
@@ -222,6 +229,7 @@ class CatalogService
         foreach ($this->getData()['fuelTypes'] as $type) {
             $types[$type['code']] = $type['name'];
         }
+
         return $types;
     }
 
@@ -234,7 +242,8 @@ class CatalogService
     }
 
     /**
-     * Business Roles added to the catalog
+     * Business Roles added to the catalog.
+     *
      * @return mixed
      */
     public function getBusinessRoles()
@@ -248,6 +257,7 @@ class CatalogService
         foreach ($this->getData()['siteBusinessRole'] as $role) {
             $roles[$role['code']] = $role['name'];
         }
+
         return $roles;
     }
 
@@ -268,6 +278,7 @@ class CatalogService
         foreach ($this->getData()['equipmentModelStatus'] as $status) {
             $statuses[$status['code']] = $status['name'];
         }
+
         return $statuses;
     }
 
@@ -277,6 +288,7 @@ class CatalogService
         foreach ($this->getData()['reasonsForEmptyVRM'] as $reason) {
             $reasons[$reason['code']] = $reason['name'];
         }
+
         return $reasons;
     }
 
@@ -286,11 +298,12 @@ class CatalogService
         foreach ($this->getData()['reasonsForEmptyVIN'] as $reason) {
             $reasons[$reason['code']] = $reason['name'];
         }
+
         return $reasons;
     }
 
     /**
-     * A.K.A. auth_for_testing_mot_status
+     * A.K.A. auth_for_testing_mot_status.
      *
      * @return array
      */
@@ -300,6 +313,32 @@ class CatalogService
         foreach ($this->getData()['qualificationStatus'] as $reason) {
             $reasons[$reason['code']] = $reason['name'];
         }
+
         return $reasons;
+    }
+
+    public function getSiteStatus()
+    {
+        $types = [];
+        foreach ($this->getData()['siteStatus'] as $type) {
+            $types[$type['code']] = $type['name'];
+        }
+
+        return $types;
+    }
+
+    /**
+     * @param $categoryName
+     */
+    public function getEventTypesWithOutcomesForCategory($categoryName)
+    {
+        $categories = isset($this->getData()['eventTypesWithOutcomes']) ?
+            $this->getData()['eventTypesWithOutcomes'] : null;
+
+        if (null === $categories) {
+            return;
+        }
+
+        return isset($categories[$categoryName]) ? $this->getData()['eventTypesWithOutcomes'][$categoryName] : null;
     }
 }

@@ -40,48 +40,19 @@ public class TesterUserJourneyForClaimAccountTest extends BaseTest {
                 userDashboardPage.navigateHereFromLoginPage(driver, Login.LOGIN_ENFTESTER)
                         .clickUserSearch().enterUsername(claimsTesterLogin.username).search()
                         .clickUserName(0).clickEventHistoryLink()
-                        .clickUserClaimsAccount(claimsTesterLogin.username,
-                                claimsTester.getNamesAndSurname());
-
-        assertThat("Assert that the event details page is displayed",
-                eventDetailsPage.getEventType(),
-                is(Assertion.ASSERTION_USER_CLAIMS_ACCOUNT.assertion));
-        assertThat("Assert that the event details page is displayed",
-                eventDetailsPage.getDescription(),
-                is(Assertion.ASSERTION_ACCOUNT_CLAIMED_BY.assertion + claimsTester.login.username));
-
+                        .clickUserClaimsAccount();
         eventDetailsPage.clickLogout();
-
         eventDetailsPage =
                 userDashboardPage.navigateHereFromLoginPage(driver, Login.LOGIN_AREA_OFFICE1)
                         .clickUserSearch().enterUsername(claimsTester.login.username).search()
                         .clickUserName(0).clickEventHistoryLink()
-                        .clickUserClaimsAccount(claimsTesterLogin.username,
-                                claimsTester.getNamesAndSurname());
-
-        assertThat("Assert that the event details page is displayed",
-                eventDetailsPage.getEventType(),
-                is(Assertion.ASSERTION_USER_CLAIMS_ACCOUNT.assertion));
-        assertThat("Assert that the event details page is displayed",
-                eventDetailsPage.getDescription(),
-                is(Assertion.ASSERTION_ACCOUNT_CLAIMED_BY.assertion + claimsTesterLogin.username));
-
+                        .clickUserClaimsAccount();
         eventDetailsPage.clickLogout();
-
         eventDetailsPage =
                 userDashboardPage.navigateHereFromLoginPage(driver, Login.LOGIN_CUSTOMER_SERVICE)
                         .clickUserSearch().enterUsername(claimsTesterLogin.username).search()
                         .clickUserName(0).clickEventHistoryLink()
-                        .clickUserClaimsAccount(claimsTesterLogin.username,
-                                claimsTester.getNamesAndSurname());
-
-        assertThat("Assert that the event details page is displayed",
-                eventDetailsPage.getEventType(),
-                is(Assertion.ASSERTION_USER_CLAIMS_ACCOUNT.assertion));
-        assertThat("Assert that the event details page is displayed",
-                eventDetailsPage.getDescription(),
-                is(Assertion.ASSERTION_ACCOUNT_CLAIMED_BY.assertion + claimsTesterLogin.username));
-
+                        .clickUserClaimsAccount();
         eventDetailsPage.clickLogout();
     }
 }

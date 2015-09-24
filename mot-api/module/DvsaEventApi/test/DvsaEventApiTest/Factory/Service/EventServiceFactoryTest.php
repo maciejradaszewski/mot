@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Repository\EventRepository;
+use DvsaEntities\Repository\EventTypeOutcomeCategoryMapRepository;
 use DvsaEventApi\Factory\Service\EventServiceFactory;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use DvsaEventApi\Service\EventService;
@@ -51,12 +52,22 @@ class EventServiceFactoryTest extends AbstractServiceTestCase
         $this->serviceLocatorMock->expects($this->at(2))
             ->method('get')
             ->willReturn($this->hydratorMock);
+
         $this->entityManagerMock->expects($this->at(0))
             ->method('getRepository')
             ->willReturn($this->eventRepositoryMock);
         $this->entityManagerMock->expects($this->at(1))
             ->method('getRepository')
             ->willReturn($this->eventTypeRepositoryMock);
+        $this->entityManagerMock->expects($this->at(2))
+            ->method('getRepository')
+            ->willReturn(XMock::of(EntityRepository::class));
+        $this->entityManagerMock->expects($this->at(3))
+            ->method('getRepository')
+            ->willReturn(XMock::of(EntityRepository::class));
+        $this->entityManagerMock->expects($this->at(4))
+            ->method('getRepository')
+            ->willReturn(XMock::of(EventTypeOutcomeCategoryMapRepository::class));
 
         $this->assertInstanceOf(
             EventService::class,

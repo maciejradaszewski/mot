@@ -249,6 +249,11 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
             $brakeTestResult = new BrakeTestResultClass1And2ViewModel($configDto, $motTest->getBrakeTestResult());
         }
 
+        if (!$motTest) {
+            /** @var MotTestDto $motTest */
+            $motTest = $this->tryGetMotTestOrAddErrorMessages($motTestNumber);
+        }
+
         $viewModel = new ViewModel(
             [
                 'isMotContingency'       => $this->getContingencySessionManager()->isMotContingency(),

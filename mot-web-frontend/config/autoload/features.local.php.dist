@@ -13,11 +13,24 @@ return [
          */
         'example.feature.toggle' => false,
         'ao1.ae.create'          => true,
+        'ao1.ae.site.link'       => true,
+        'ao1.ae.site.unlink'     => true,
         'ao1.ae.edit'            => true,
         'ao1.site.create'        => true,
+
         /*
          * Enable login and logout using the OpenAM DAS interface.
          */
         'openam.das.enabled' => true,
+        
+        /*
+         * Will force user to enter reset password when it's near to expire.
+         */
+        'openam.password.expiry.enabled' => false,
+
+        /**
+         * Enable Jasper async printing
+         */
+        'jasper.async' => false,
     ]
 ];

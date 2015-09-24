@@ -31,7 +31,8 @@ class UserHomeControllerFactory implements FactoryInterface
             $serviceLocator->get(SecurityQuestionService::class),
             $serviceLocator->get(UserAdminSessionManager::class),
             $serviceLocator->get(TesterGroupAuthorisationMapper::class),
-            $serviceLocator->get('AuthorisationService')
+            $serviceLocator->get('AuthorisationService'),
+            $serviceLocator->get(UserAdminSessionManager::class)
         );
     }
 }

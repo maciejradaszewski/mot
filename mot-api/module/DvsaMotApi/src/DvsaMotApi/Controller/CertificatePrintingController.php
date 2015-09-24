@@ -2,6 +2,7 @@
 
 namespace DvsaMotApi\Controller;
 
+use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Enum\MotTestTypeCode;
@@ -26,6 +27,7 @@ use Zend\XmlRpc\Request;
  */
 class CertificatePrintingController extends AbstractDvsaRestfulController
 {
+
     const MSG_NOT_FOUND = 'Requested MOT id not found';
     const MSG_NO_SERVICE = "%s was not located\n";
 
@@ -50,10 +52,18 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
 
     /** @var MotTestService */
     private $motTestService;
+
     /** @var DocumentService */
     private $documentService;
+
     /** @var ReportService */
     private $reportService;
+
+
+    public function __construct(DocumentService $documentService)
+    {
+        $this->documentService = $documentService;
+    }
 
     public function printByDocIdAction()
     {
@@ -62,7 +72,7 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
         }
 
         $docId = (int)$this->params()->fromRoute('docId', null);
-        $reportName = $this->getDocumentService()->getReportName($docId);
+        $reportName = $this->documentService->getReportName($docId);
 
         if ($docId === 0 || empty($reportName)) {
             return ApiResponse::httpResponse(400);
@@ -101,7 +111,7 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
         return $this->getReportService()->getReport(
             'MOT/' . $certificate . '.pdf',
             [
-                self::JREPORT_PRM_SITE_NR   => $testStation,
+                self::JREPORT_PRM_SITE_NR => $testStation,
                 self::JREPORT_PRM_INSP_AUTH => $inspAuthority,
                 self::JREPORT_PRM_WATERMARK => $this->getInvalidWatermark(),
             ]
@@ -140,9 +150,12 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
          * During migration we haven't populated `jasper_document_variables` table.
          * Before we print out anything we must populate this table and update `mot_test`.`document_id`
          */
+        $certificateService = $this->getCertificateCreationService();
         if ($motTest->getDocument() === null) {
-            $motTest = $this->getCertificateCreationService()
-                ->createFromMotTestNumber($motTest->getMotTestNumber(), $this->getIdentity()->getUserId());
+            $motTest = $certificateService->createFromMotTestNumber(
+                $motTest->getMotTestNumber(),
+                $this->getIdentity()->getUserId()
+            );
         }
 
         //  --  check permission    --
@@ -153,7 +166,7 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
             $motTest,
             null,
             $this->motTestService,
-            $this->getDocumentService()
+            $this->documentService
         );
 
         if (!count($certificates)) {
@@ -181,11 +194,11 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
             $tester = $this->getIdentity()->getPerson()->getDisplayShortName();
 
             $runtimeParameters += [
-                self::JREPORT_PRM_ISSUE_TYPE    => ($isDuplicate ? 'Duplicate' : 'Replacement'),
+                self::JREPORT_PRM_ISSUE_TYPE => ($isDuplicate ? 'Duplicate' : 'Replacement'),
                 self::JREPORT_PRM_ISSUE_TYPE_CY => ($isDuplicate ? 'Dyblyg' : 'Ailddodiad'),
-                self::JREPORT_PRM_ISSUER        => $tester,
-                self::JREPORT_PRM_SITE_NR       => $siteNr,
-                self::JREPORT_PRM_NOW_CY        => datefmt_format_object(
+                self::JREPORT_PRM_ISSUER => $tester,
+                self::JREPORT_PRM_SITE_NR => $siteNr,
+                self::JREPORT_PRM_NOW_CY => datefmt_format_object(
                     DateUtils::nowAsUserDateTime(), 'dd MMMM Y', 'cy_GB'
                 ),
             ];
@@ -197,16 +210,25 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
         // request that matching pass/fail part to be printed here.
         $reportArgs = [];
 
+        $snapshotDocumentId = $motTest->getDocument();
+
         foreach ($certificates as $certificateDetail) {
             $certDocId = ArrayUtils::tryGet($certificateDetail, 'documentId');
 
-            $isDuplicateDoc = ($isDuplicate && $motTest->getDocument() == $certDocId);
-
+            $isDuplicateDoc = ($isDuplicate && $snapshotDocumentId == $certDocId);
             if (!$isDuplicate || $isDuplicateDoc) {
+
+                // Pull in snapshot data and pass it to the certificate creation call
+                $snapshotData = $this->documentService->getSnapshotById($certDocId);
+
+                if (empty($snapshotData)) {
+                    throw new \LogicException('Unable to find certificate json snapshot data for certificate document id: ' . $certDocId);
+                }
+                $runtimeParameters['snapshotData'] = $this->documentService->getSnapshotById($certDocId);
                 $reportArgs[] = [
-                    'documentId'    => $certDocId,
-                    'reportName'    => $this->amendTemplateForContentType($certificateDetail['reportName']),
-                    'runtimeParams' => $runtimeParameters,
+                    'documentId' => $certDocId,
+                    'reportName' => $this->amendTemplateForContentType($certificateDetail['reportName']),
+                    'runtimeParams' => $runtimeParameters
                 ];
 
                 if ($isDuplicateDoc) {
@@ -230,6 +252,7 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
         if ($this->requestIs(self::TYPE_HTML)) {
             $reportName = str_replace('.pdf', '.html', $reportName);
         }
+
         return $reportName;
     }
 
@@ -302,26 +325,19 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
         return $this->reportService;
     }
 
-    private function getDocumentService()
-    {
-        if ($this->documentService === null) {
-            $this->getService('DocumentService', $this->documentService);
-        }
-
-        return $this->documentService;
-    }
-
     /**
      * Checks to see if the current user can print the current certificate
      * in question. If not, then an exception is thrown.
-
      * @param MotTestDto $motTest
      *
      * @throws UnauthorisedException
      */
     private function assertUserCanPrintCertificate(MotTestDto $motTest)
     {
-        if (!$this->motTestService->canPrintCertificateForMotTest($motTest)) {
+        $authorisationService = null;
+        $siteId = ArrayUtils::tryGet($motTest->getVehicleTestingStation(), 'id');
+        $this->getService('DvsaAuthorisationService', $authorisationService);
+        if (!$authorisationService->isGrantedAtSite(PermissionAtSite::CERTIFICATE_PRINT, $siteId)) {
             throw new UnauthorisedException('You are not authorised to print this certificate');
         }
     }

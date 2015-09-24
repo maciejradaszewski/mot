@@ -3,20 +3,17 @@ package uk.gov.dvsa.ui.pages.mot;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import uk.gov.dvsa.domain.model.mot.Fault;
 import uk.gov.dvsa.framework.config.Configurator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.mot.modal.ManualAdvisoryModalPage;
 import uk.gov.dvsa.ui.pages.Page;
+import uk.gov.dvsa.ui.pages.mot.modal.ManualReferenceModalPage;
 import uk.gov.dvsa.ui.pages.mot.modal.PrsLocationModalPage;
 import uk.gov.dvsa.ui.pages.mot.retest.ReTestResultsEntryPage;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class ReasonForRejectionPage extends Page {
@@ -54,9 +51,14 @@ public class ReasonForRejectionPage extends Page {
 
     @FindBy(id = "rfrCount") private WebElement rfrCount;
 
+    @FindBy(css = ".rfr-list.row > li")
+    private List<WebElement> rfrElements;
+
 
     private By prsButtons = By.cssSelector("[data-type='PRS']");
+    private By rfrLink = By.xpath("//*[contains(@href, '#rfr-details-dialog-')]");
     private static final String PAGE_TITLE = "Add PRS, failures and advisories";
+    private String mainWindowHandler;
 
     //Locators not created with Page factory
     By modalTitle = By.className("modal-title");
@@ -112,5 +114,29 @@ public class ReasonForRejectionPage extends Page {
         modalPage.addPrs();
 
         return this;
+    }
+
+    public ReasonForRejectionPage checkRFR() {
+        driver.findElement(searchForRfrField).sendKeys(Fault.HORN_CONTROL_MISSING.getDescription());
+        searchButton.click();
+
+        WebElement firstReference = rfrElements.get(0);
+
+        String referenceId = driver.findElements(prsButtons).get(0).getAttribute("data-rfrid");
+        mainWindowHandler = driver.getWindowHandle();
+        firstReference.findElement(rfrLink).click();
+        ManualReferenceModalPage manualReferenceModalPage = new ManualReferenceModalPage(driver, referenceId);
+        manualReferenceModalPage.clickOnExternalRfrLink();
+        return this;
+    }
+
+    public boolean isNewWindowOpened() {
+        for (String windowHandle : driver.getWindowHandles()) {
+            if (!windowHandle.equals(mainWindowHandler)) {
+                driver.switchTo().window(windowHandle);
+                return driver.getCurrentUrl().contains(driver.getTitle());
+            }
+        }
+        return false;
     }
 }

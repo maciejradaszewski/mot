@@ -172,7 +172,7 @@ class IndexViewModel
 
     public function shouldViewContactDetailsForVts()
     {
-        return 1 === $this->getNumberOfVehicleTestingStations();
+        return $this->getNumberOfVehicleTestingStations() > 0;
     }
 
     /**

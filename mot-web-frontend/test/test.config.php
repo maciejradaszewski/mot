@@ -8,6 +8,7 @@ $config = [
         'Dashboard',
         'DvsaFeature',
         'Dvsa\Mot\Frontend\AuthenticationModule',
+        'Dvsa\Mot\Frontend\RegistrationModule',
         'DvsaCommon',
         'DvsaClient',
         'Event',

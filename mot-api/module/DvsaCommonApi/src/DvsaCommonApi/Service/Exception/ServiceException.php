@@ -21,6 +21,12 @@ class ServiceException extends \Exception
         parent::__construct($message, $statusCode, $previous);
     }
 
+    public function setStatusCode($code)
+    {
+        $this->code = $code;
+        return $this;
+    }
+
     public function getErrors()
     {
         return $this->_errors;
@@ -73,6 +79,8 @@ class ServiceException extends \Exception
         } else {
             $this->_errors[$count] = self::createError($errorMessage, $code, $displayMessage);
         }
+
+        return $this;
     }
 
     public function addErrorField(

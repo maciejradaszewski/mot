@@ -62,8 +62,8 @@ class PersonRoleManagementServiceTest extends TestCase
             $this->identityMock,
             $this->authorisationMock,
             $mockRestClient,
-            $mockCatalogService)
-        )->addRole($personId, $role);
+            $mockCatalogService
+        ))->addRole($personId, $role);
     }
 
     public function testGetPersonManageableInternalRoles()
@@ -76,7 +76,6 @@ class PersonRoleManagementServiceTest extends TestCase
 
     public function testGetPersonAssignedInternalRoles()
     {
-
         $this->assertEquals(
             $this->expectedDataForMockPersonId(PersonRoleManagementService::ROLES_ASSIGNED),
             $this->service->getPersonAssignedInternalRoles(self::PID_AO1)
@@ -92,7 +91,7 @@ class PersonRoleManagementServiceTest extends TestCase
     }
 
     /**
-     * @expectedException DvsaCommon\Exception\UnauthorisedException
+     * @expectedException \DvsaCommon\Exception\UnauthorisedException
      */
     public function testForbidManagementOfSelf()
     {
@@ -110,11 +109,11 @@ class PersonRoleManagementServiceTest extends TestCase
             ->method('getIdentity')
             ->willReturn($mockIdentity);
 
-        $obj = (new PersonRoleManagementService(
+        $obj = new PersonRoleManagementService(
             $mockIdentityProvider,
             $this->authorisationMock,
             $mockRestClient,
-            $mockCatalogService)
+            $mockCatalogService
         );
         $obj->forbidManagementOfSelf($id);
     }
@@ -135,14 +134,45 @@ class PersonRoleManagementServiceTest extends TestCase
             ->method('getIdentity')
             ->willReturn($mockIdentity);
 
-        $obj = (new PersonRoleManagementService(
+        $obj = new PersonRoleManagementService(
             $mockIdentityProvider,
             $this->authorisationMock,
             $mockRestClient,
-            $mockCatalogService)
+            $mockCatalogService
         );
         $this->assertTrue($obj->personToManageIsSelf($id));
         $this->assertFalse($obj->personToManageIsSelf(321));
+    }
+
+    public function testUserHasPermissionToReadPersonDvsaRolesShouldReturnTrue()
+    {
+        $this->assertUserHasPermission('userHasPermissionToReadPersonDvsaRoles');
+    }
+
+    public function testUserHasPermissionToResetPasswordShouldReturnTrue()
+    {
+        $this->assertUserHasPermission('userHasPermissionToResetPassword');
+    }
+
+    public function testUserHasPermissionToRecoveryUsernameShouldReturnTrue()
+    {
+        $this->assertUserHasPermission('userHasPermissionToRecoveryUsername');
+    }
+
+    public function testUserHasPermissionToReclaimUserAccountShouldReturnTrue()
+    {
+        $this->assertUserHasPermission('userHasPermissionToReclaimUserAccount');
+    }
+
+    private function assertUserHasPermission($methodName)
+    {
+        $service = new PersonRoleManagementService(
+            XMock::of(MotIdentityProviderInterface::class),
+            $this->authorisationMock,
+            $this->stubHttpRestJsonClient(),
+            new StubCatalogService()
+        );
+        $this->assertTrue($service->$methodName());
     }
 
     private function stubHttpRestJsonClient()
@@ -235,6 +265,7 @@ class PersonRoleManagementServiceTest extends TestCase
                 'VEHICLE-EXAMINER' => [
                     'id' => 2,
                     'name' => 'Vehicle Examiner',
+                    'canManageThisRole' => true,
                     'url' => [
                         'route' => 'user_admin/user-profile/manage-user-internal-role/remove-internal-role',
                         'params' => [
@@ -246,6 +277,7 @@ class PersonRoleManagementServiceTest extends TestCase
                 'DVSA-AREA-OFFICE-2' => [
                     'id' => 11,
                     'name' => 'DVSA Area Admin 2',
+                    'canManageThisRole' => true,
                     'url' => [
                         'route' => 'user_admin/user-profile/manage-user-internal-role/remove-internal-role',
                         'params' => [

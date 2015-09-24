@@ -1,4 +1,5 @@
 <?php
+
 use Dashboard\Controller\UserHomeController;
 use DvsaCommon\Auth\PermissionInSystem;
 
@@ -27,7 +28,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             Name
         </th>
         <td id="person-name" class="key-value-list__value">
-            <?php echo $presenter->displayTitleAndFullName() ?>
+            <?php echo $this->escapeHtml($presenter->displayTitleAndFullName()); ?>
         </td>
     </tr>
     <tr>
@@ -35,7 +36,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             Username
         </th>
         <td id="person-username" class="key-value-list__value--numeric">
-            <?php echo $presenter->displayUsername(); ?>
+            <?php echo $this->escapeHtml($presenter->displayUsername()); ?>
         </td>
     </tr>
     <tr>
@@ -43,7 +44,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             Date of birth
         </th>
         <td id="person-dob" class="key-value-list__value">
-            <?php echo $presenter->displayDateOfBirth(); ?>
+            <?php echo $this->escapeHtml($presenter->displayDateOfBirth()); ?>
         </td>
     </tr>
     <tr>
@@ -51,7 +52,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             Driving licence number
         </th>
         <td id="person-driving-licence" class="key-value-list__value--numeric">
-            <?php echo $presenter->displayDrivingLicenceNumber(); ?>
+            <?php echo $this->escapeHtml($presenter->displayDrivingLicenceNumber()); ?>
         </td>
     </tr>
     </tbody>
@@ -74,8 +75,15 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
         </th>
         <td id="person-email" class="key-value-list__value">
             <?php echo $this->escapeHtml($presenter->displayEmail()); ?>
-            <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::PROFILE_EDIT_OTHERS_EMAIL_ADDRESS)) : ?>
-            <a class="key-value-list__action" id="email-address-change" href="<?php echo $this->url('user_admin/user-profile/email-change', ['personId' => $presenter->getPersonId()]) ?>" title="Amend user email">Change this</a>
+            <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::PROFILE_EDIT_OTHERS_EMAIL_ADDRESS)): ?>
+            <a class="key-value-list__action"
+               id="email-address-change"
+               href="<?php echo $this->url(
+                   'user_admin/user-profile/email-change', ['personId' => $presenter->getPersonId()]
+               ); ?>"
+               title="Amend user email">
+                Change this
+            </a>
             <?php endif; ?>
         </td>
     </tr>
@@ -99,39 +107,59 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
                 'viewModel' => $presenter->getTesterAuthorisation(),
                 'searchQueryParams' => $searchQueryParams,
             ]
-        )
+        );
     ?>
 <?php endif ?>
 
-<div class="grid-row">
-    <div class="column-third">
-        <h2 class="heading-large">Password<br /><span class="font-large">reset</span></h2>
-        <p>Send password reset by:</p>
-        <a id="reset-password-by-post" class="button" href="<?php echo $this->escapeHtmlAttr($passwordResetUrl); ?>">Reset password via<br/><strong>Post</strong></a>
-    </div>
+<?php if ($presenter->canDisplayResetSection()): ?>
+    <div class="grid-row">
+        <div class="column-third">
+            <h2 class="heading-large">Password<br /><span class="font-large">reset</span></h2>
+            <p>Send password reset by:</p>
+            <a id="reset-password-by-post"
+               class="button"
+               href="<?php echo $this->escapeHtmlAttr($passwordResetUrl); ?>">
+                Reset password via<br/><strong>Post</strong>
+            </a>
+        </div>
 
-    <div class="column-third">
-        <h2 class="heading-large">Username<br /><span class="font-large">recovery</span></h2>
-        <p>Send the username by:</p>
-        <a id="reset-username-by-post" class="button" href="<?php echo $this->escapeHtmlAttr($usernameRecoverUrl); ?>">Recover username via<br/><strong>Post</strong></a>
-    </div>
+        <div class="column-third">
+            <h2 class="heading-large">Username<br /><span class="font-large">recovery</span></h2>
+            <p>Send the username by:</p>
+            <a id="reset-username-by-post"
+               class="button"
+               href="<?php echo $this->escapeHtmlAttr($usernameRecoverUrl); ?>">
+                Recover username via<br/><strong>Post</strong>
+            </a>
+        </div>
 
-    <div class="column-third">
-        <h2 class="heading-large">Account<br /><span class="font-large">reclaim</span></h2>
-        <p>Send reclaim account:</p>
-        <?php if ($isEmail): ?>
-            <a id="reset-to-unclaim-account-by-email" class="button button-warning" href="<?php echo $this->escapeHtmlAttr($resetClaimAccountUrl); ?>">Reclaim account via<br/><strong>Email</strong></a>
-            <p>
-                or
-                <a id="reset-to-unclaim-account-by-post" class="button--link" href="<?php echo $this->escapeHtmlAttr($resetClaimAccountUrlPost); ?>">post</a>
-            </p>
-        <?php else: ?>
-            <a id="reset-to-unclaim-account-by-email" class="button button-warning" href="<?php echo $this->escapeHtmlAttr($resetClaimAccountUrlPost); ?>">Reclaim account via<br/><strong>Post</strong></a>
-        <?php endif; ?>
+        <div class="column-third">
+            <h2 class="heading-large">Account<br /><span class="font-large">reclaim</span></h2>
+            <p>Send reclaim account:</p>
+            <?php if ($isEmail): ?>
+                <a id="reset-to-unclaim-account-by-email"
+                   class="button button-warning"
+                   href="<?php echo $this->escapeHtmlAttr($resetClaimAccountUrl); ?>">
+                    Reclaim account via<br/><strong>Email</strong>
+                </a>
+                <p>
+                    or
+                    <a id="reset-to-unclaim-account-by-post"
+                       class="button--link" href="<?php echo $this->escapeHtmlAttr($resetClaimAccountUrlPost); ?>">
+                        post
+                    </a>
+                </p>
+            <?php else: ?>
+                <a id="reset-to-unclaim-account-by-email"
+                   class="button button-warning"
+                   href="<?php echo $this->escapeHtmlAttr($resetClaimAccountUrlPost); ?>">
+                    Reclaim account via<br/><strong>Post</strong>
+                </a>
+            <?php endif; ?>
+        </div>
     </div>
-</div>
-
-<hr class="hr--thin">
+    <hr class="hr--thin">
+<?php endif; ?>
 
 <?php echo $this->partial('user-admin/partials/event-history.phtml', ['presenter' => $presenter]) ?>
 
@@ -146,4 +174,3 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
         ]
     ); ?>
 </nav>
-

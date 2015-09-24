@@ -10,6 +10,7 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DvsaCommon\Constants\SearchParamConst;
 use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
+use DvsaCommon\Enum\MotTestStatusCode;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommonApi\Model\SearchParam;
@@ -168,6 +169,58 @@ class MotTestRepository extends AbstractMutableRepository
         return empty($resultArray) ? null : $resultArray[0];
     }
 
+
+    /**
+     * Return in progress DEMO test number for the given person
+     * @see findInProgressDemoTestForPerson for different type of demo tests
+     *
+     * @param int $personId
+     * @param boolean $routine To set the demo test type
+     *
+     * @return string|null
+     */
+    public function findInProgressDemoTestNumberForPerson($personId, $routine = false)
+    {
+        $motTest = $this->findInProgressDemoTestForPerson($personId, $routine);
+
+        return is_null($motTest) ? null : $motTest->getNumber();
+    }
+
+    /**
+     * Return in progress Demo test for the given person
+     *
+     * note: there are 2 type of the demo test
+     *          - Demonstration Test following training (DT)
+     *          - Routine Demonstration Test (DR)
+     *       this method will return the "Demonstration Test following training" by default
+     *
+     * @param int $personId
+     * @param boolean $routine To set the demo test type
+     *
+     * @return MotTest|null
+     */
+    public function findInProgressDemoTestForPerson($personId, $routine = false)
+    {
+        $qb = $this
+            ->createQueryBuilder("mt")
+            ->innerJoin("mt.motTestType", "t")
+            ->innerJoin("mt.status", "ts")
+            ->where("mt.tester = :personId")
+            ->andWhere("ts.name = :status")
+            ->andWhere("t.code = :code")
+            ->setParameter("personId", $personId)
+            ->setParameter("status", MotTestStatusName::ACTIVE)
+            ->setParameter(
+                "code",
+                $routine ? MotTestTypeCode::ROUTINE_DEMONSTRATION_TEST : MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING
+            )
+            ->setMaxResults(1);
+
+        $resultArray = $qb->getQuery()->getResult();
+
+        return empty($resultArray) ? null : $resultArray[0];
+    }
+
     private function findInProgressTestDataForVehicle($vehicleId, $selectClause)
     {
         $demoTestTypes = [
@@ -231,6 +284,19 @@ class MotTestRepository extends AbstractMutableRepository
             ->getQuery();
 
         return $query->getResult();
+    }
+
+    public function countInProgressTestsForVts($vtsId)
+    {
+        $qb = $this->createQueryBuilder("mt")
+            ->select('COUNT(mt.id) AS cnt')
+            ->innerJoin("mt.status", 'ts')
+            ->where("ts.code = :STATUS")
+            ->andWhere("mt.vehicleTestingStation = :VTS_ID")
+            ->setParameter(":STATUS", MotTestStatusCode::ACTIVE)
+            ->setParameter(":VTS_ID", $vtsId);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -531,30 +597,25 @@ class MotTestRepository extends AbstractMutableRepository
      */
     public function getLatestMotTestIdByVehicleId($vehicleId, $status = MotTestStatusName::PASSED)
     {
-        // Get the latest completed test date - this is used as a subquery
-        // to prevent possible performance hit by doing ORDER BY
-        $subQuery = $this->createQueryBuilder('t')
-            ->select('MAX(t.completedDate)')
+        $qb = $this
+            ->createQueryBuilder("t")
+            ->select('t.number')
             ->innerJoin("t.motTestType", "tt")
             ->innerJoin("t.status", "ts")
             ->where("t.vehicle = :vehicleId")
             ->andWhere("t.completedDate IS NOT NULL")
             ->andWhere("tt.code NOT IN (:codes)")
-            ->andWhere("ts.name = :status");
-
-        // Get the MOT test number for the latest completed test with status $status for a vehicle
-        $qb = $this->createQueryBuilder("t2");
-
-        $qb->select('t2.number')
-           ->where($qb->expr()->in('t2.completedDate', $subQuery->getDQL()))
-           ->setParameter('vehicleId', $vehicleId)
-           ->setParameter('status', $status)
-           ->setParameter(
+            ->andWhere("ts.name = :status")
+            ->orderBy("t.completedDate", "DESC")
+            ->setParameter('vehicleId', $vehicleId)
+            ->setParameter('status', $status)
+            ->setParameter(
                'codes', [
                 MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING,
                 MotTestTypeCode::ROUTINE_DEMONSTRATION_TEST,
-               ]
-           );
+               ])
+            ->setMaxResults(1);
+        ;
 
         if ($result = $qb->getQuery()->getResult()) {
             return $result[0]['number'];

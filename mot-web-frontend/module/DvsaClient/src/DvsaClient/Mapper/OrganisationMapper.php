@@ -3,6 +3,7 @@
 namespace DvsaClient\Mapper;
 
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Dto\Organisation\SiteDto;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilder;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 use DvsaCommon\Utility\DtoHydrator;
@@ -50,14 +51,12 @@ class OrganisationMapper extends DtoMapper
     public function update($id, OrganisationDto $dto)
     {
         $url = AuthorisedExaminerUrlBuilder::of($id);
-
         return $this->put($url, DtoHydrator::dtoToJson($dto));
     }
 
     public function create(OrganisationDto $dto)
     {
         $url = AuthorisedExaminerUrlBuilder::of();
-
         return $this->post($url, DtoHydrator::dtoToJson($dto));
     }
 
@@ -76,11 +75,38 @@ class OrganisationMapper extends DtoMapper
         return $this->put($url, DtoHydrator::dtoToJson($dto));
     }
 
-    public function validateStatus(OrganisationDto $dto, $id)
+    public function validateStatusAndAO(OrganisationDto $dto, $id)
     {
         $url = AuthorisedExaminerUrlBuilder::status($id);
         $dto->setIsValidateOnly(true);
 
-        return $this->put($url, DtoHydrator::dtoToJson($dto));
+        $data = DtoHydrator::dtoToJson($dto);
+
+        return $this->put($url, $data);
+    }
+
+    /**
+     * Answers a list of sites that are Area Offices. If the flag
+     * 'for select' is true it means we want a K-V array instead of
+     * the raw return data. This K-V list would be expected to be
+     * used for SELECT content so we sort it by value.
+     *
+     * @param bool|false $forSelect
+     * @return Site[]
+     */
+    public function getAllAreaOffices($forSelect = false)
+    {
+        $url = AuthorisedExaminerUrlBuilder::getAllAreaOffices();
+        $data = $this->get($url);
+
+        if ($forSelect) {
+            $areaOptions = [];
+            foreach($data as $ao) {
+                $aoNumber = (int)$ao['areaOfficeNumber'];
+                $areaOptions[$aoNumber] = $ao['areaOfficeNumber'];
+            }
+            return $areaOptions;
+        }
+        return $data;
     }
 }

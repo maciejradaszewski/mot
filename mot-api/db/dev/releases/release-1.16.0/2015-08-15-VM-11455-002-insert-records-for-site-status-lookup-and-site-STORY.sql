@@ -15,7 +15,7 @@ VALUES
 SET @approved_site_status = (SELECT `id` FROM `site_status_lookup` WHERE `code` = 'AV');
 
 -- UPDATE ALL site RECORDS TO HAVE 'approved' STATUS
-UPDATE `site` SET `site_status_id`=@approved_site_status WHERE `id`>0;
+UPDATE `site` SET `site_status_id`=@approved_site_status WHERE `id`>=0;
 
 -- MODIFY site.site_status_id TO NOT NULL, SET KEY
 ALTER TABLE `site`

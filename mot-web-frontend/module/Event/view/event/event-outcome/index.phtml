@@ -1,0 +1,56 @@
+<?php echo $this->partial('partial/forms/errorMessagePageHeader.phtml',['messages' => $errorsSummary]); ?>
+
+<form action="<?php echo $this->escapeHtmlAttr($this->url($routes['OUTCOME'], array('type' => $type, 'id' => $id))); ?>" method="POST" autocomplete="off" novalidate="">
+    <?php echo $this->csrfToken(); ?>
+
+    <fieldset>
+        <legend class="form-title heading-large visuallyhidden">Outcome of the event</legend>
+
+        <div class="form-group<?php if ($outcomeCodeHasError) echo ' has-error' ?>">
+            <label for="selectStandard" class="form-label">
+                Event outcome
+                <?php
+                if ($outcomeCodeHasError) {
+                    echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors['outcomeCode']]);
+                }
+                ?>
+            </label>
+            <select name="outcomeCode" id="outcomeCode" class="form-control">
+                <option value="">Please select</option>
+                <?php
+                foreach ($eventTypeLookup as $key => $item) {
+                    if ($eventType === $item['code']) {
+                        foreach ($item['outcomes'] as $itemOutcome) {
+                            $selected = $itemOutcome['code'] == $outcomeCode ? ' selected' : '';
+                            echo sprintf('<option value="%s"%s>%s</option>', $itemOutcome['code'], $selected, $itemOutcome['name']);
+                        }
+                    }
+                }
+                ?>
+            </select>
+        </div>
+
+        <div class="form-group ">
+            <label for="textareaStandard" class="form-label">
+                Notes (optional)
+                <span class="form-hint">Please enter any supporting information below</span>
+            </label>
+                <textarea type="text" name="notes" id="notes" class="form-control form-control--flex-v"><?php echo $this->escapeHtmlAttr($notes); ?></textarea>
+        </div>
+
+    </fieldset>
+
+
+    <nav class="content-navigation">
+
+        <input type="submit" value="Continue" id="continue" class="button">
+
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo $this->escapeHtmlAttr($this->url($routes['RECORD'], array('type' => $type, 'id' => $id))); ?>" id="back">Back</a>
+            </li>
+        </ul>
+
+    </nav>
+
+</form>

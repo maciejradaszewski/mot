@@ -101,6 +101,7 @@ class SessionContext implements Context
 
     /**
      * @Given /^I am not logged in$/
+     * @Given I am an unregistered user
      */
     public function iAmNotLoggedIn()
     {
@@ -126,6 +127,17 @@ class SessionContext implements Context
         $user               = $areaOffice2Service->create([]);
         $this->currentUser  = $this->session->startSession($user->data['username'], $user->data['password']);
     }
+
+    /**
+     * @Given /^I am logged in as an? Cron User$/
+     */
+    public function iAmLoggedInAsAnCronUser()
+    {
+        $cronUserService = $this->testSupportHelper->getCronUserService();
+        $user               = $cronUserService->create([]);
+        $this->currentUser  = $this->session->startSession($user->data['username'], $user->data['password']);
+    }
+
 
     /**
      * @Given I am logged in as a Finance User
@@ -154,20 +166,6 @@ class SessionContext implements Context
     }
 
     /**
-     * @Given I log in as a Vehicle Examiner
-     * @Given /^I am logged in as an? Vehicle Examiner$/
-     */
-    public function iAmLoggedInAsAVehicleExaminer()
-    {
-        $vehicleExaminerService = $this->testSupportHelper->getVehicleExaminerService();
-        $user                   = $vehicleExaminerService->create([]);
-        $this->currentUser      = $this->session->startSession(
-            $user->data['username'],
-            $user->data['password']
-        );
-    }
-
-    /**
      * @Given I log in as a VM10519User
      * @Given I am logged in as a VM10519User
      */
@@ -180,13 +178,19 @@ class SessionContext implements Context
             $user->data['password']
         );
     }
+
     /**
-     * @Given /^I have the VM10619 user role$/
+     * @Given I log in as a Vehicle Examiner
+     * @Given /^I am logged in as an? Vehicle Examiner$/
      */
-    public function iHaveVM10619UserRole()
+    public function iAmLoggedInAsAVehicleExaminer()
     {
-        $roleManagementUpgradeSvc = $this->testSupportHelper->getVM10619RoleMananagementUpgradeService();
-        $roleManagementUpgradeSvc->create(['personId' => $this->currentUser->getUserId()]);
+        $vehicleExaminerService = $this->testSupportHelper->getVehicleExaminerService();
+        $user                   = $vehicleExaminerService->create([]);
+        $this->currentUser      = $this->session->startSession(
+            $user->data['username'],
+            $user->data['password']
+        );
     }
 
     /**
@@ -216,13 +220,29 @@ class SessionContext implements Context
     }
 
     /**
+     * @Given I am logged in as a Area Office 1
+     */
+    public function iAmLoggedInAsAnAreaOffice1()
+    {
+        $ao1user           = $this->testSupportHelper->getAreaOffice1Service();
+        $user              = $ao1user->create([]);
+        $this->currentUser = $this->session->startSession(
+            $user->data['username'],
+            $user->data['password']
+        );
+    }
+
+    /**
      * @Given /^I am logged in as an? DVLA Manager$/
      */
     public function iAmLoggedInAsADVLAManager()
     {
         $dvlaManagerService = $this->testSupportHelper->getDVLAManagerService();
         $user               = $dvlaManagerService->create([]);
-        $this->currentUser  = $this->session->startSession($user->data['username'], $user->data['password']);
+        $this->currentUser  = $this->session->startSession(
+            $user->data['username'],
+            $user->data['password']
+        );
     }
 
     /**
@@ -358,6 +378,15 @@ class SessionContext implements Context
     }
 
     /**
+     * @Given I am logged in as an Area Office User 2 to new site
+     */
+    public function iAmLoggedInAsAnAreaOfficeUser2ToNewSite()
+    {
+        $this->vtsContext->createSite();
+        $this->iAmLoggedInAsAnAreaOfficeUser2();
+    }
+
+    /**
      * @Given I am logged in as a Site Manager to new site
      */
     public function iAmLoggedInAsASiteManagerToNewSite()
@@ -396,4 +425,5 @@ class SessionContext implements Context
         $user              = $aedmService->create($data);
         $this->currentUser = $this->session->startSession($user->data['username'], $user->data['password']);
     }
+
 }

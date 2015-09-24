@@ -8,10 +8,13 @@ import uk.gov.dvsa.ui.pages.Page;
 
 public class TestCompletePage extends Page {
 
-    @FindBy (id = "reprint-certificate") private WebElement printDocumentsButton;
+    @FindBy (id = "back-to-home-link") private WebElement backToHomeLink;
     @FindBy (id = "refusal-certificate-item") private WebElement refusalMessage;
     @FindBy (id = "compareTestResults") private WebElement compareResultsButton;
     @FindBy (id = "reprintDialog") private WebElement reinspectionMsg;
+    @FindBy (css = "p a[href*='/mot-test-certificates']") private WebElement certificateLink;
+    @FindBy (id = "reprint-certificate") private WebElement printDocumentButton;
+    @FindBy (className = "container") private WebElement testSummaryMessage;
 
     private static final String PAGE_TITLE = "MOT test complete";
     private static final String PAGE_TITLE_REINSPECTION = "MOT reinspection complete";
@@ -31,15 +34,27 @@ public class TestCompletePage extends Page {
         compareResultsButton.click();
     }
 
-    public boolean verifyPrintButtonDisplayed(){
-        return printDocumentsButton.isDisplayed();
-    }
-
-    public boolean isRefusalMessageDisplayed() {
-        return refusalMessage.getText().contains("Refusal certificate for ");
+    public boolean verifyBackToHomeLinkDisplayed(){
+        return backToHomeLink.isDisplayed();
     }
 
     public boolean isReinspectionSuccessfull() {
         return reinspectionMsg.getText().contains(SUCCESSFULL_REINSPECTION_MSG);
+    }
+
+    public String getTestSummaryMessageText() {
+        return testSummaryMessage.getText();
+    }
+
+    public boolean isMotCertificateLinkPresent(){
+        return certificateLink.isDisplayed();
+    }
+    public MotTestCertificatesPage clickCertificateLink(){
+        certificateLink.click();
+        return new MotTestCertificatesPage(driver);
+    }
+
+    public boolean isPrintDocumentButtonDisplayed(){
+        return printDocumentButton.isDisplayed();
     }
 }

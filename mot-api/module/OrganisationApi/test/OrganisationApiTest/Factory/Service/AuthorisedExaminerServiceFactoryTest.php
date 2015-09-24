@@ -16,6 +16,7 @@ use DvsaEntities\Repository\CompanyTypeRepository;
 use DvsaEntities\Repository\OrganisationContactTypeRepository;
 use DvsaEntities\Repository\OrganisationRepository;
 use DvsaEntities\Repository\OrganisationTypeRepository;
+use DvsaEntities\Repository\SiteRepository;
 use DvsaEntities\Repository\PersonRepository;
 use DvsaEventApi\Service\EventService;
 use OrganisationApi\Factory\Service\AuthorisedExaminerServiceFactory;
@@ -53,6 +54,7 @@ class AuthorisedExaminerServiceFactoryTest extends PHPUnit_Framework_TestCase
         $this->mockMethod($entityManager, 'getRepository', $this->at(5), XMock::of(AuthForAeStatusRepository::class));
         $authForAE = XMock::of(AuthorisationForAuthorisedExaminerRepository::class);
         $this->mockMethod($entityManager, 'getRepository', $this->at(6), $authForAE);
+        $this->mockMethod($entityManager, 'getRepository', $this->at(7), XMock::of(SiteRepository::class));
 
         // Create the factory
         $factory = new AuthorisedExaminerServiceFactory();

@@ -1,41 +1,41 @@
 <?php
+/**
+ * This file is part of the DVSA MOT API project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
+
 namespace DvsaEventApi;
 
 use DvsaCommonApi\Transaction\ControllerTransactionAwareInitializer;
 use DvsaCommonApi\Transaction\ServiceTransactionAwareInitializer;
 use DvsaEventApi\Factory\Service\EventServiceFactory;
 use DvsaEventApi\Service\EventService;
-use Zend\EventManager\EventInterface;
-use Zend\Http\Client as HttpClient;
-use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
-use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ControllerProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\ServiceManager\ServiceManager;
 
 /**
- * Zend module containing the main factory for MOT API services
+ * Event module.
  */
 class Module implements
-    AutoloaderProviderInterface,
     ConfigProviderInterface,
     ControllerProviderInterface,
     ServiceProviderInterface
 {
-
     public static $em;
 
-    public function getAutoloaderConfig()
-    {
-    }
-
+    /**
+     * @return mixed
+     */
     public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';
     }
 
+    /**
+     * @return array
+     */
     public function getServiceConfig()
     {
         return [
@@ -46,7 +46,7 @@ class Module implements
             ],
             'initializers' => [
                 'transactionAware' => ServiceTransactionAwareInitializer::class,
-            ]
+            ],
         ];
     }
 
@@ -61,7 +61,7 @@ class Module implements
         return [
             'initializers' => [
                 'transactionAware' => ControllerTransactionAwareInitializer::class,
-            ]
+            ],
         ];
     }
 }

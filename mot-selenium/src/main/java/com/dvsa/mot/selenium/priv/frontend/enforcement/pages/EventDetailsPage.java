@@ -7,18 +7,10 @@ import org.openqa.selenium.support.FindBy;
 
 public class EventDetailsPage extends BasePage {
 
-    public static final String PAGE_TITLE = "FULL DETAILS OF PERSON EVENT SELECTED FOR";
+    public static final String PAGE_TITLE = "EVENTS\nEVENT DETAILS";
 
-    @FindBy(id = "event-type") private WebElement eventType;
-
-    @FindBy(id = "description") private WebElement description;
-
-    public EventDetailsPage(WebDriver driver, String userName, String namesAndSurname){
+    public EventDetailsPage(WebDriver driver){
         super(driver);
-        checkTitle(PAGE_TITLE + "\n" + userName.toUpperCase() + " - " + namesAndSurname.toUpperCase());
+        checkTitle(PAGE_TITLE);
     }
-
-    public String getEventType(){ return eventType.getText();}
-
-    public String getDescription(){return description.getText();}
 }

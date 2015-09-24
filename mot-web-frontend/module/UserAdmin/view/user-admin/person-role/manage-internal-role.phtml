@@ -1,4 +1,5 @@
 <?php
+
 $successMessages  = $this->layout()->flashMessenger->getSuccessMessages();
 $errorMessages    = $this->layout()->flashMessenger->getErrorMessages();
 $messages = $successMessages ?: $errorMessages;
@@ -16,7 +17,12 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $messag
             <?php echo $this->escapeHtmlAttr($role['name']); ?>
         </th>
         <td class="key-value-list__value">
-            <a href="<?php echo $this->url($role['url']['route'], $role['url']['params'])?>"  id="remove-role-<?php echo $this->escapeHtmlAttr($code) ?>">Remove role</a>
+            <?php if ($role['canManageThisRole'] === true): ?>
+            <a href="<?php echo $this->url($role['url']['route'], $role['url']['params'])?>"
+               id="remove-role-<?php echo $this->escapeHtmlAttr($code) ?>">
+                Remove role
+            </a>
+            <?php endif; ?>
         </td>
     </tr>
     <?php endforeach; ?>
@@ -32,7 +38,10 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $messag
             <?php echo $this->escapeHtmlAttr($role['name']); ?>
         </th>
         <td class="key-value-list__value">
-            <a href="<?php echo $this->url($role['url']['route'], $role['url']['params'])?>" id="add-role-<?php echo $this->escapeHtmlAttr($code) ?>">Add role</a>
+            <a href="<?php echo $this->url($role['url']['route'], $role['url']['params'])?>"
+               id="add-role-<?php echo $this->escapeHtmlAttr($code) ?>">
+                Add role
+            </a>
         </td>
     </tr>
     <?php endforeach; ?>

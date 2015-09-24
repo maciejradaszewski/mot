@@ -28,7 +28,7 @@ class OrganisationRepository extends AbstractMutableRepository
         $organisation = $this->find($id);
 
         if ($organisation === null) {
-            throw new NotFoundException('Organisation not found');
+            throw new NotFoundException('Organisation');
         }
 
         return $organisation;

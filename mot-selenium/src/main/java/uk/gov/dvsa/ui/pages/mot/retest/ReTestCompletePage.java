@@ -8,7 +8,7 @@ import uk.gov.dvsa.ui.pages.Page;
 
 public class ReTestCompletePage extends Page {
 
-    @FindBy(id = "reprint-certificate") private WebElement printDocumentsButton;
+    @FindBy(id = "back-to-home-link") private WebElement backToHomeLink;
     @FindBy (id = "refusal-certificate-item") private WebElement refusalMessage;
     @FindBy (id = "compareTestResults") private WebElement compareResultsButton;
     @FindBy (id = "reprintDialog") private WebElement reinspectionMsg;
@@ -31,8 +31,8 @@ public class ReTestCompletePage extends Page {
         compareResultsButton.click();
     }
 
-    public boolean verifyPrintButtonDisplayed(){
-        return printDocumentsButton.isDisplayed();
+    public boolean verifyBackToHomeDisplayed(){
+        return backToHomeLink.isDisplayed();
     }
 
     public boolean isRefusalMessageDisplayed() {

@@ -1,0 +1,35 @@
+<?php
+use DvsaCommon\UrlBuilder\RegistrationUrlBuilderWeb;
+
+?>
+<div class="text">
+
+    <p class="lede">Welcome to the MOT testing service.</p>
+
+    <p>You need to create an account before using the service, this should take no longer than 5 minutes. </p>
+
+    <h2 class="heading-medium">Before you start</h2>
+
+    <p>To create an account we will need the following information:</p>
+    <ul class="list-bullet">
+        <li>Your email address</li>
+        <li>Your address</li>
+    </ul>
+</div>
+
+<form action="#">
+
+    <nav class="content-navigation">
+
+        <a href="<?php echo $this->escapeHtmlAttr(RegistrationUrlBuilderWeb::of()->detailsStep());?>" id="continue"
+           class="button">Continue</a>
+
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="/sign-in" id="signIn">Cancel and return to sign in</a>
+            </li>
+        </ul>
+
+    </nav>
+
+</form>

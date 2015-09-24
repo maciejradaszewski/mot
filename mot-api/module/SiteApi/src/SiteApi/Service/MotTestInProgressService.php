@@ -47,4 +47,16 @@ class MotTestInProgressService implements TransactionAwareInterface
 
         return $dto;
     }
+
+    /**
+     * @param $vtsId
+     *
+     * @return int
+     */
+    public function getCountForSite($vtsId)
+    {
+        $this->authorizationService->assertGrantedAtSite(PermissionAtSite::VIEW_TESTS_IN_PROGRESS_AT_VTS, $vtsId);
+
+        return $this->motTestRepository->countInProgressTestsForVts($vtsId);
+    }
 }

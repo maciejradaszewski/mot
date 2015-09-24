@@ -1,6 +1,7 @@
 <?php
 namespace OrganisationApiTest\Model\Operation;
 
+use Doctrine\ORM\EntityManager;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
@@ -16,6 +17,7 @@ use OrganisationApi\Model\RoleAvailability;
 use OrganisationApi\Model\RoleRestriction\AedRestriction;
 use OrganisationApi\Model\RoleRestrictionsSet;
 use OrganisationApi\Service\OrganisationNominationService;
+use NotificationApi\Service\NotificationService;
 
 /**
  * Class NominateAedTest
@@ -34,6 +36,8 @@ class NominateAedTest extends AbstractServiceTestCase
     /** @var  AuthorisationServiceInterface */
     private $authorizationService;
 
+    private $notificationService;
+
     public function setUp()
     {
         $this->person               = new Person();
@@ -48,8 +52,10 @@ class NominateAedTest extends AbstractServiceTestCase
         $this->positionRepository = $this->getMockWithDisabledConstructor(\Doctrine\ORM\EntityManager::class);
         $nominationServiceMock    = $this->getMockWithDisabledConstructor(OrganisationNominationService::class);
 
+        $this->notificationService = XMock::of(NotificationService::class);
+
         $this->nominateOperation = new NominateByRequestOperation(
-            $this->positionRepository, $nominationVerifier, $nominationServiceMock
+            $this->positionRepository, $nominationVerifier, $nominationServiceMock, $this->notificationService
         );
     }
 

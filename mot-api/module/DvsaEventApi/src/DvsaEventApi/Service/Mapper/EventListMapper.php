@@ -22,12 +22,17 @@ class EventListMapper extends AbstractApiMapper
      */
     public function toDto($event)
     {
+        $addedByName = $event->getCreatedBy() ? $event->getCreatedBy()->getDisplayName() : null;
+        $eventOutcomeDescription = $event->getEventOutcome() ? $event->getEventOutcome()->getDescription() : null;
+
         $dto = new EventDto();
         $dto
             ->setId($event->getId())
             ->setDate(DateTimeApiFormat::dateTime($event->getEventDate()))
             ->setDescription($event->getShortDescription())
-            ->setType($event->getEventType()->getDescription());
+            ->setType($event->getEventType()->getDescription())
+            ->setAddedByName($addedByName)
+            ->setEventOutcomeDescription($eventOutcomeDescription);
 
         return $dto;
     }
