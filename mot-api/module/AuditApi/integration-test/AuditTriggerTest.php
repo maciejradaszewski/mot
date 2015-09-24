@@ -8,6 +8,9 @@ use DvsaAuthentication\Identity;
 use DvsaAuthentication\IdentityProvider;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use Dvsa\Mot\AuditApi\Service\HistoryAuditService;
+use DvsaCommon\Enum\ColourCode;
+use DvsaCommon\Enum\FuelTypeCode;
+use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
@@ -18,6 +21,7 @@ use DvsaMotApi\Service\MotTestService;
 use PHPUnit_Framework_MockObject_MockObject;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use Zend\Authentication\AuthenticationService;
+use Zend\Authentication\AuthenticationServiceInterface;
 
 /**
  * Integration test to assert KDD069-related triggers are effective
@@ -32,10 +36,15 @@ class AuditTriggerTest extends AbstractServiceTestCase
     const SITE_1_ID  = 1;
     const SITE_2_ID  = 2;
 
+    /** @var MotIdentityProviderInterface */
     private $identityProviderMock;
+    /** @var AuthenticationServiceInterface */
     private $authenticationServiceMock;
+    /** @var AuthorisationServiceInterface */
     private $authorisationServiceMock;
+    /** @var Identity */
     private $identity;
+    /** @var MotTestService */
     private $motTestService;
 
     public function setUp()
@@ -47,10 +56,12 @@ class AuditTriggerTest extends AbstractServiceTestCase
             MotIdentityProviderInterface::class,
             $this->identityProviderMock = $this->getIdentityProviderMock()
         );
-        $sm->setService('DvsaAuthenticationService',
+        $sm->setService(
+            'DvsaAuthenticationService',
             $this->authenticationServiceMock = $this->getAuthenticationServiceMock()
         );
-        $sm->setService('DvsaAuthorisationService',
+        $sm->setService(
+            'DvsaAuthorisationService',
             $this->authorisationServiceMock = $this->getAuthorisationServiceMock()
         );
     }
@@ -62,13 +73,13 @@ class AuditTriggerTest extends AbstractServiceTestCase
 
     /**
      * Ensures auditable columns are affected solely by KDD069 strategy
-     * @expectedException \Doctrine\DBAL\Exception\NotNullConstraintViolationException
      */
     public function testSessionVarsEffective()
     {
         $mot = $this->createOrGetMotTest();
-        $this->assertNull($mot->getCreatedBy());
+        $this->assertEquals(self::TESTER1_ID, $mot->getCreatedBy()->getId());
     }
+
     /**
      * Ensures trigger-based auditable columns are correct when an MOT record is inserted
      */
@@ -87,6 +98,7 @@ class AuditTriggerTest extends AbstractServiceTestCase
      */
     public function testMotTestTableUpdate()
     {
+        /** @var Person $person */
         $person = $this->getEntityManager()->getRepository(Person::class)->find(self::TESTER2_ID);
         $this->setKDD069DbSessionVars($person);
 
@@ -107,6 +119,7 @@ class AuditTriggerTest extends AbstractServiceTestCase
      */
     protected function createOrGetMotTest($hardReload = false)
     {
+        /** @var MotTestRepository $motTestRepository */
         $motTestRepository = $this->getEntityManager()->getRepository(MotTest::class);
         $motTest = $motTestRepository->findInProgressTestForVehicle(self::VEHICLE_ID);
         if ($motTest) {
@@ -153,7 +166,7 @@ class AuditTriggerTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return PHPUnit_Framework_MockObject_MockObject|AuthorisationServiceInterface
      */
     protected function getAuthorisationServiceMock()
     {
@@ -163,7 +176,7 @@ class AuditTriggerTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return PHPUnit_Framework_MockObject_MockObject|IdentityProvider
      */
     protected function getIdentityProviderMock()
     {
@@ -174,7 +187,7 @@ class AuditTriggerTest extends AbstractServiceTestCase
     }
 
     /**
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return PHPUnit_Framework_MockObject_MockObject|AuthenticationService
      */
     protected function getAuthenticationServiceMock()
     {
@@ -208,6 +221,7 @@ class AuditTriggerTest extends AbstractServiceTestCase
 
         /** @var EntityManager $em */
         $em = $this->getEntityManager();
+        /** @var Person $tester */
         $tester = $em->getRepository(Person::class)->find(self::TESTER1_ID);
         $this->identity = new Identity($tester);
 
@@ -231,10 +245,10 @@ class AuditTriggerTest extends AbstractServiceTestCase
         return [
             "vehicleId" => self::VEHICLE_ID,
             "vehicleTestingStationId" => self::SITE_1_ID,
-            "primaryColour" => "L",
-            "secondaryColour" => "W",
-            "fuelTypeId" => "PE",
-            "vehicleClassCode" => 4,
+            "primaryColour" => ColourCode::GREY,
+            "secondaryColour" => ColourCode::NOT_STATED,
+            "fuelTypeId" => FuelTypeCode::PETROL,
+            "vehicleClassCode" => VehicleClassCode::CLASS_4,
             "hasRegistration" => true,
             "oneTimePassword" => null
         ];
