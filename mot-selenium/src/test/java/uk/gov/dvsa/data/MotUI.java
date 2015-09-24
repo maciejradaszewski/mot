@@ -8,8 +8,6 @@ import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.AssertionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
-import uk.gov.dvsa.module.NormalTest;
-import uk.gov.dvsa.module.Cpms;
 import uk.gov.dvsa.module.Register;
 import uk.gov.dvsa.module.Retest;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
@@ -28,17 +26,13 @@ public class MotUI {
     private boolean successful = false;
 
     public final Retest retest;
-    public final NormalTest normalTest;
     public final Register register;
-    public final Cpms cpms;
 
     public MotUI(MotAppDriver driver) {
         this.driver = driver;
         pageNavigator.setDriver(driver);
         retest = new Retest(pageNavigator);
         register = new Register(pageNavigator);
-        normalTest = new NormalTest(pageNavigator);
-        cpms = new Cpms(pageNavigator);
     }
 
     public void searchForVehicle(User user, Vehicle vehicle) throws IOException, URISyntaxException {
@@ -50,7 +44,12 @@ public class MotUI {
         return AssertionHelper.compareText(expectedText, actual);
     }
 
-    public void certificatePage(User user) throws IOException {
-        pageNavigator.gotoMotTestCertificatesPage(user);
+    public void duplicateReplacementPage(User user, Vehicle vehicle) throws IOException {
+        pageNavigator.gotoDuplicateCertificatePage(user, vehicle);
+    }
+
+    public void isEditButtonDisplayedFor(String motTestNumber, boolean value) {
+        By editButton = By.id(String.format("edit-%s", motTestNumber));
+        assertThat(PageInteractionHelper.isElementDisplayed(editButton), is(value));
     }
 }

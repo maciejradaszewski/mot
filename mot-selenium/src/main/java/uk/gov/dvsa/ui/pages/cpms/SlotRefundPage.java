@@ -26,8 +26,8 @@ public class SlotRefundPage extends Page {
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
     
-    public SlotRefundPage enterSlotsToBeRefunded(String slots) {
-        inputSlotsField.sendKeys(slots);
+    public SlotRefundPage enterSlotsToBeRefunded(int slots) {
+        inputSlotsField.sendKeys(Integer.toString(slots));
         return this;
     }
     
