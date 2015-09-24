@@ -3,7 +3,6 @@ package uk.gov.dvsa.domain.navigation;
 import org.joda.time.DateTime;
 import org.openqa.selenium.Cookie;
 
-import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.CookieService;
@@ -16,18 +15,14 @@ import uk.gov.dvsa.ui.pages.authorisedexaminer.AedmAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.FinanceAuthorisedExaminerViewPage;
-import uk.gov.dvsa.ui.pages.cpms.*;
+import uk.gov.dvsa.ui.pages.cpms.GenerateReportPage;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
-import uk.gov.dvsa.ui.pages.login.LoginPage;
 import uk.gov.dvsa.ui.pages.mot.*;
 import uk.gov.dvsa.ui.pages.mot.retest.ConfirmVehicleRetestPage;
 import uk.gov.dvsa.ui.pages.mot.retest.ReTestResultsEntryPage;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticeCreationPage;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticePage;
-import uk.gov.dvsa.ui.pages.userregistration.CreateAnAccountPage;
 import uk.gov.dvsa.ui.pages.vehicleinformation.VehicleInformationSearchPage;
-import uk.gov.dvsa.ui.pages.vts.AssociateASitePage;
-import uk.gov.dvsa.ui.pages.vts.ChangeTestingFacilitiesPage;
 import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
 
 import java.io.IOException;
@@ -35,15 +30,10 @@ import java.net.URISyntaxException;
 
 public class PageNavigator {
     private MotAppDriver driver;
-
     private String motTestPath;
 
     public void setDriver(MotAppDriver driver) {
         this.driver = driver;
-    }
-
-    public MotAppDriver getDriver() {
-        return driver;
     }
 
     private Cookie getCookieForUser(User user) throws IOException {
@@ -148,12 +138,6 @@ public class PageNavigator {
         return new HomePage(driver);
     }
 
-    public MotTestCertificatesPage gotoMotTestCertificatesPage(User user) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, MotTestCertificatesPage.path);
-
-        return new MotTestCertificatesPage(driver);
-    }
-
     public ProfilePage gotoProfilePage(User user) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, ProfilePage.path);
 
@@ -173,14 +157,9 @@ public class PageNavigator {
         return new AedmAuthorisedExaminerViewPage(driver);
     }
     
-    public FinanceAuthorisedExaminerViewPage goToFinanceAuthorisedExaminerViewPage(User user, String aeId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(FinanceAuthorisedExaminerViewPage.PATH, aeId));
+    public FinanceAuthorisedExaminerViewPage goToFinanceAuthorisedExaminerViewPage(User user, String path, String aeId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(path, aeId));
         return new FinanceAuthorisedExaminerViewPage(driver);
-    }
-
-    public AuthorisedExaminerViewPage goToAreaOfficeAuthorisedExaminerPage(User user, String aeId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(AreaOfficerAuthorisedExaminerViewPage.PATH, aeId));
-        return new AreaOfficerAuthorisedExaminerViewPage(driver);
     }
 
     public AuthorisedExaminerTestLogPage gotoAETestLogPage(User user, String aeId) throws IOException {
@@ -218,6 +197,12 @@ public class PageNavigator {
 
         return new SpecialNoticePage(driver);
     }
+    
+    public GenerateReportPage goToGenerateReportPage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, GenerateReportPage.PATH);
+        return new GenerateReportPage(driver);
+        
+    }
 
     public VehicleInformationSearchPage goToVehicleInformationSearchPage(User user) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, VehicleInformationSearchPage.PATH);
@@ -238,57 +223,5 @@ public class PageNavigator {
         new VehicleSearchPage(driver).searchVehicle(vehicle).selectVehicle();
 
         return new DuplicateReplacementCertificatePage(driver);
-    }
-
-    public GenerateReportPage goToGenerateReportPage(User user) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, GenerateReportPage.PATH);
-        return new GenerateReportPage(driver);
-    }
-
-    public BuyTestSlotsPage goToBuyTestSlotsPage(User user, String aeId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(BuyTestSlotsPage.PATH, aeId));
-        return new BuyTestSlotsPage(driver);
-    }
-
-    public SlotRefundPage goToSlotRefundPage(User user, String aeId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(SlotRefundPage.PATH, aeId));
-        return new SlotRefundPage(driver);
-    }
-
-    public PurchaseHistoryPage goToPurchaseHistoryPage(User user, String aeId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(PurchaseHistoryPage.PATH, aeId));
-        return new PurchaseHistoryPage(driver);
-    }
-
-    public AssociateASitePage goToAssociateASitePage(User user, String aeId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(AssociateASitePage.PATH, aeId));
-        return new AssociateASitePage(driver);
-    }
-
-    public ChangeTestingFacilitiesPage goToChangeTestingFacilitiesPage(User aoUser, String siteId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(aoUser, String.format(ChangeTestingFacilitiesPage.PATH, siteId) );
-        return new ChangeTestingFacilitiesPage(driver);
-    }
-
-    public CreateAnAccountPage goToCreateAnAccountPage() throws IOException {
-        driver.navigateToPath(CreateAnAccountPage.PATH);
-
-        return new CreateAnAccountPage(driver);
-    }
-
-    public LoginPage goToLoginPage() throws IOException {
-        return new LoginPage(driver);
-    }
-
-    public EventsHistoryPage goToEventsHistoryPage(User user, int aeId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(EventsHistoryPage.AE_PATH, aeId));
-        return new EventsHistoryPage(driver);
-    }
-    public TestCompletePage gotoTestCompletePage(User user, String motTestNumber) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(TestSummaryPage.PATH, motTestNumber));
-        TestSummaryPage summaryPage = new TestSummaryPage(driver);
-        summaryPage.finishTestAndPrint();
-
-        return new TestCompletePage(driver);
     }
 }
