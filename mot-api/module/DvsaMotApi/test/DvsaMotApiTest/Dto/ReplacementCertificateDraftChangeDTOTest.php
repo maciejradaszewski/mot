@@ -17,8 +17,8 @@ class ReplacementCertificateDraftChangeDTOTest extends PHPUnit_Framework_TestCas
         $data = [
             'primaryColour'             => 1,
             'secondaryColour'           => 2,
-            'vin'                       => 'vin',
-            'vrm'                       => 'vrm',
+            'vin'                       => 'VIN',
+            'vrm'                       => 'VRM',
             'expiryDate'                => '2019-12-12',
             'make'                      => 1,
             'model'                     => 2,

@@ -99,10 +99,10 @@ class ReplacementCertificateDraftChangeDTO
             $d->setSecondaryColour($data['secondaryColour']);
         }
         if ($hasKey('vin')) {
-            $d->setVin($data['vin']);
+            $d->setVin(strtoupper($data['vin']));
         }
         if ($hasKey('vrm')) {
-            $d->setVrm($data['vrm']);
+            $d->setVrm(strtoupper($data['vrm']));
         }
         if ($hasKey('countryOfRegistration')) {
             $d->setCountryOfRegistration($data['countryOfRegistration']);
