@@ -50,11 +50,7 @@ use DvsaCommon\Utility\ArrayUtils;
                                             if (count($imrParts) >= 2 ) {
 
                                                 // reference is at least A.B[.C] so we can make a link
-                                                $imrUrl = sprintf(
-                                                    "http://www.motinfo.gov.uk/htdocs/m4s0%s000%s01.htm",
-                                                    $imrParts[0],
-                                                    $imrParts[1]
-                                                );
+                                                $imrUrl = $this->basePath(sprintf('documents/manuals/m4s0%s000%s01.htm', $imrParts[0], $imrParts[1]));
                                                 ?><a href="<?php echo $this->escapeHtmlAttr($imrUrl); ?>" target="manual" id="manual-btn-<?php echo $escRfrId; ?>"
                                                 >View manual reference for <?php echo $this->escapeHtml($rfr['inspectionManualReference']); ?></a>
                                                 <?php

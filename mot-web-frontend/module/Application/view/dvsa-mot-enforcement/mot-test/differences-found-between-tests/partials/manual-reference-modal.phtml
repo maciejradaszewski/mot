@@ -22,7 +22,7 @@ if (strstr($this->inspectionManualReference, '.')) {
             <div class="modal-body">
                 <h4>Reason for Rejection</h4>
                 <p><?php echo $this->escapeHtml($this->inspectionManualDescription); ?></p>
-                <a href="<?php echo "http://www.motinfo.gov.uk/htdocs/m4s0" . $this->escapeHtml($refOne) . "000" . $this->escapeHtml($refTwo) . "01.htm";?>"
+                <a href="<?php echo $this->basePath('documents/manuals/m4s0' . $this->escapeHtml($refOne) . '000' . $this->escapeHtml($refTwo) . '01.htm') ;?>"
                    target="manual" id="manual-btn-<?php echo $this->escapeHtmlAttr($this->rfrId); ?>">View manual reference for
                     <?php echo $this->escapeHtml($this->inspectionManualReference); ?>
                 </a>

@@ -1,56 +1,95 @@
 <?php
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
 
 namespace Application\Controller;
 
 use Core\Controller\AbstractAuthActionController;
+use InvalidArgumentException;
+use OutOfBoundsException;
+use Zend\Http\PhpEnvironment\Request;
 
 /**
- * Controller static page with list of links to GOV websites with manuals, guides and standards
+ * Controller to render a page with a list of links to manuals, guides and standards.
  */
 class ManualsAndGuidesController extends AbstractAuthActionController
 {
     const ROUTE = 'manuals';
-
     const PAGE_TITLE_INDEX_ACTION = 'Manuals and guides';
     const PAGE_SUBTITLE_INDEX_ACTION = 'Resources';
 
+    /**
+     * @var array
+     */
+    private $config;
+
+    /**
+     * @param array $config
+     */
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
+
+    /**
+     * @return array
+     */
     public function indexAction()
     {
         $this->layout()->setVariables([
-            'pageTitle' => self::PAGE_TITLE_INDEX_ACTION,
+            'pageTitle'    => self::PAGE_TITLE_INDEX_ACTION,
             'pageSubTitle' => self::PAGE_SUBTITLE_INDEX_ACTION,
         ]);
 
         return [
-            'resourceLinks' => $this->getResourceLinks(),
+            'resourceLinks' => $this->processDocumentsConfig(),
         ];
     }
 
-    private function getResourceLinks()
+    /**
+     * @return string
+     */
+    public function getBasePath()
     {
-        $resourceLinks = [
-            [
-                "name" => "MOT inspection manual for class 1 and 2 vehicles",
-                "url" => "http://www.motinfo.gov.uk/htdocs/m1i00000001.htm",
-                "help_text" => "Manual for motor bicycle and side car testing",
-            ],
-            [
-                "name" => "MOT inspection manual for class 3, 4, 5, and 7 vehicles",
-                "url" => "http://www.motinfo.gov.uk/htdocs/m4i00000001.htm",
-                "help_text" => "Manual for testing private passenger and light commercial vehicles",
-            ],
-            [
-                "name" => "MOT testing guide",
-                "url" => "http://www.motinfo.gov.uk/htdocs/tgi00000001.htm",
-                "help_text" => "Guidance on how the MOT scheme is run",
-            ],
-            [
-                "name" => "In service exhaust emission standards for road vehicles: 18th edition",
-                "url" => "https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/348035/18th-edition-emissions-book-complete.pdf",
-                "help_text" => "Standards for checking vehicle exhaust emission procedures and limits",
-            ]
-        ];
+        $request = $this->getRequest();
+        if ($request instanceof Request) {
+            return $request->getBasePath();
+        }
 
-        return $resourceLinks;
+        return '/';
+    }
+
+    /**
+     * @return array
+     */
+    private function processDocumentsConfig()
+    {
+        $documents = [];
+
+        foreach (array_keys($this->config) as $k) {
+            foreach (['name', 'url', 'help_text'] as $attr) {
+                if (!isset($this->config[$k][$attr])) {
+                    throw new OutOfBoundsException(sprintf('Attribute "%s" is missing in the documents configuration.',
+                        $attr));
+                }
+
+                if (!is_string($this->config[$k][$attr])) {
+                    throw new InvalidArgumentException(sprintf('Attribute "%s" in the documents configuration should be of string type, got "%s" instead',
+                        $attr, gettype($this->config[$k][$attr])));
+                }
+
+                $documents[$k][$attr] = trim($this->config[$k][$attr]);
+            }
+
+            // Prepend base path if the URL provided is relative. We flag the URL as relative if it starts with '/'.
+            if ($documents[$k]['url'][0] && $documents[$k]['url'][0] === '/') {
+                $documents[$k]['url'] = $this->getBasePath() . ltrim($documents[$k]['url']);
+            }
+        }
+
+        return $documents;
     }
 }
