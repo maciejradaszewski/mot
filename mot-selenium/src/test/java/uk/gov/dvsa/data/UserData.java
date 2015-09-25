@@ -41,4 +41,8 @@ public class UserData extends UserService{
     public User createAreaOfficeOne(String namePrefix) throws IOException {
         return createUserAsAreaOfficeOneUser(namePrefix);
     }
+
+    public User createAreaOfficeTwo(String namePrefix) throws IOException {
+        return createUserAsAreaOfficeTwo(namePrefix);
+    }
 }
