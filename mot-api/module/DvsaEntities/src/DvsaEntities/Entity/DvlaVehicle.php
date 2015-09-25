@@ -246,7 +246,7 @@ class DvlaVehicle implements VehicleInterface
      */
     public function getFirstUsedDate()
     {
-        return $this->isVehicleNewAtFirstRegistration() ?
+        return $this->isVehicleNewAtFirstRegistration() || !$this->getManufactureDate() ?
             $this->getFirstRegistrationDate() : $this->getManufactureDate();
     }
 
