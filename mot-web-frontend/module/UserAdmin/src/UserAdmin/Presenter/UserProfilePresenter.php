@@ -126,6 +126,11 @@ class UserProfilePresenter implements AddressPresenterInterface
         return $this->person->getDrivingLicenceNumber();
     }
 
+    public function displayAuthenticationMethod()
+    {
+        return $this->person->getAuthenticationMethod()->getName();
+    }
+
     /**
      * @return string
      */

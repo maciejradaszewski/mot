@@ -55,6 +55,14 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             <?php echo $this->escapeHtml($presenter->displayDrivingLicenceNumber()); ?>
         </td>
     </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Two-factor authentication method
+        </th>
+        <td id="person-2fa-method" class="key-value-list__value">
+            <?php echo $this->escapeHtml($presenter->displayAuthenticationMethod()); ?>
+        </td>
+    </tr>
     </tbody>
 </table>
 
