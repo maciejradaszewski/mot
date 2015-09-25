@@ -43,12 +43,9 @@ if ($this->failedMotTestId && !$this->passedMotTestId) {
         mark <span class="bold-small"><?php echo $escVrn ?></span> has <?php if($status === MotTestStatusName::ABORTED): ?>been aborted <?php else: ?><span class="bold-small"><?php echo strtolower($status); ?></span> the MOT test <?php endif; ?>.
     </p>
 
+    <p>The test has been saved and the certificate is currently being generated.</p>
     <p>
-        The <?php echo $shortStatus; ?> certificate is currently being generated and
-        <span class="bold-small">can be printed, downloaded </span> <br />
-        <span class="bold-small">or emailed to the customer</span>
-        from the <a href="<?php echo $this->url(MotTestCertificatesController::ROUTE); ?>">MOT test certificates</a>
-        list.
+        You can access and print it from the list of <a href="<?php echo $this->url(MotTestCertificatesController::ROUTE); ?>">MOT test certificates</a>.
     </p>
     <a id="back-to-home-link" href="<?php echo $this->url(UserHomeController::ROUTE); ?>">Back to home</a>
 </div>
