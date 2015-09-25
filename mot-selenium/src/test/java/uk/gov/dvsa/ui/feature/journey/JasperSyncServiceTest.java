@@ -20,15 +20,9 @@ import static org.hamcrest.core.Is.is;
 public class JasperSyncServiceTest extends BaseTest {
     FeaturesService service = new FeaturesService();
 
-    @BeforeMethod(alwaysRun = true)
-    private void isJasperAsyncEnabled() throws IOException {
-        if (service.getToggleValue("jasper.async")) {
-            throw new SkipException("Jasper Async Enabled");
-        }
-    }
-
     @Test(groups = {"BVT", "Regression"}, expectedExceptions = NoSuchElementException.class)
     public void showAsyncHeaderNotShownOnHomePage() throws IOException {
+        isJasperAsyncEnabled();
 
         //When I view my HomePage as a tester
         HomePage homePage = pageNavigator.gotoHomePage(userData.createTester(1));
@@ -42,6 +36,7 @@ public class JasperSyncServiceTest extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"})
     public void printButtonIsDisplayed() throws IOException, URISyntaxException {
+        isJasperAsyncEnabled();
 
         //When I perform an MOT test as a tester
         User tester = userData.createTester(1);
@@ -60,5 +55,11 @@ public class JasperSyncServiceTest extends BaseTest {
         motUI.certificatePage(userData.createTester(1));
 
         //Then I should get a Page not Found Exception
+    }
+
+    private void isJasperAsyncEnabled() throws IOException {
+        if (service.getToggleValue("jasper.async")) {
+            throw new SkipException("Jasper Async Enabled");
+        }
     }
 }
