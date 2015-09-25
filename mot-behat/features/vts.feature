@@ -24,10 +24,14 @@ Feature: VTS
     When I search for a town with no Vehicle Testing Station
     Then the search will return no results
 
-  Scenario: As a DVSA User I want retrieve the information about a VTS
-    Given I am logged in as an Area Office User 2
+  Scenario Outline: As a User I want retrieve the information about a VTS
+    Given I am logged in as <user>
     When I request information about a VTS
     Then the VTS details are returned
+    Examples:
+      | user                  |
+      | an Area Office User 2 |
+      | a DVLA Operative      |
 
   Scenario: As a DVSA User I can add more than one site-manager to a vehicle testing station
     Given I am logged in as an Area Office User
