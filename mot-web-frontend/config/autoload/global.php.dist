@@ -101,4 +101,29 @@ return [
         'openingHrsSaturday' => 'Saturday, 8:00am to 2:00pm',
         'openingHrsSunday' => 'Sunday, closed'
     ],
+    /*
+     * Relative or absolute paths to documents (manuals and guides) linked to in the application.
+     */
+    'documents' => [
+        [
+            'name'      => 'MOT inspection manual for class 1 and 2 vehicles',
+            'url'       => '/documents/manuals/m1i00000001.htm',
+            'help_text' => 'Manual for motor bicycle and side car testing',
+        ],
+        [
+            'name'      => 'MOT inspection manual for class 3, 4, 5, and 7 vehicles',
+            'url'       => '/documents/manuals/m4i00000001.htm',
+            'help_text' => 'Manual for testing private passenger and light commercial vehicles',
+        ],
+        [
+            'name'      => 'MOT testing guide',
+            'url'       => '/documents/manuals/tgi00000001.htm',
+            'help_text' => 'Guidance on how the MOT scheme is run',
+        ],
+        [
+            'name'      => 'In service exhaust emission standards for road vehicles: 18th edition',
+            'url'       => 'https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/348035/18th-edition-emissions-book-complete.pdf',
+            'help_text' => 'Standards for checking vehicle exhaust emission procedures and limits',
+        ]
+    ],
 ];
