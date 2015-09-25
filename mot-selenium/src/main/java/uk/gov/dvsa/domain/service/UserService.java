@@ -15,6 +15,7 @@ public class UserService extends Service {
     private static final String CREATE_AEDM_PATH = "/testsupport/aedm";
     private static final String CREATE_CSCO_PATH = "/testsupport/csco";
     private static final String CREATE_AREA_OFFICE_1_PATH = "/testsupport/areaoffice1";
+    private static final String CREATE_AREA_OFFICE_2_PATH = "/testsupport/areaoffice2";
     private static final String CREATE_VEHICLE_EXAMINER_PATH = "/testsupport/vehicleexaminer";
     private static final String CREATE_FINANCE_USER_PATH = "/testsupport/financeuser";
     private static final String CREATE_SCHEME_USER = "/testsupport/schemeuser";
@@ -61,6 +62,13 @@ public class UserService extends Service {
     public User createUserAsAreaOfficeOneUser(String namePrefix) throws IOException {
         String aoRequest = jsonHandler.convertToString(new CreateAreaOfficeOneRequest(namePrefix, false));
         Response response = motClient.createUser(aoRequest, CREATE_AREA_OFFICE_1_PATH);
+
+        return userResponse(response);
+    }
+
+    public User createUserAsAreaOfficeTwo(String namePrefix) throws IOException {
+        String aoRequest = jsonHandler.convertToString(new CreateAreaOfficeTwoRequest(namePrefix, false));
+        Response response = motClient.createUser(aoRequest, CREATE_AREA_OFFICE_2_PATH);
 
         return userResponse(response);
     }

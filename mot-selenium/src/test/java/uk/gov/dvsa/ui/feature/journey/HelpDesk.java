@@ -1,6 +1,10 @@
 package uk.gov.dvsa.ui.feature.journey;
 
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import uk.gov.dvsa.domain.model.AeDetails;
+import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.helper.RandomDataGenerator;
 import uk.gov.dvsa.ui.BaseTest;
@@ -8,7 +12,21 @@ import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 
 import java.io.IOException;
 
+import static org.testng.Assert.assertTrue;
+
 public class HelpDesk extends BaseTest {
+
+    private User tester;
+    private Site testSite;
+    private AeDetails aeDetails;
+    private String randomName = RandomDataGenerator.generateRandomString(5, System.nanoTime());
+
+    @BeforeMethod(alwaysRun = true)
+    public void setUp() throws IOException {
+        aeDetails = aeData.createAeWithDefaultValues();
+        testSite = siteData.createNewSite(aeDetails.getId(), "Test_Site");
+        tester = userData.createTester(testSite.getId());
+    }
 
     @Test (groups = {"BVT", "Regression"})
     public void successfullyUpdateAUsersEmailAddress() throws IOException {
@@ -25,5 +43,28 @@ public class HelpDesk extends BaseTest {
 
         //Then Bob's email is updated successfully
         helpDeskUserProfilePage.isEmailUpdateSuccessful(email);
+    }
+
+    @Test(groups = {"Regression", "VM-11326"},
+            description = "Test that validates the authorised DVSA user can see authentication method of user",
+            dataProvider = "createDvsaUser")
+    public void testAuthenticationMethodIsDisplayedForDvsaUser(User dvsaUser) throws IOException {
+        isAuthenticationMethodDisplayedForUser(dvsaUser, tester);
+    }
+
+    private void isAuthenticationMethodDisplayedForUser(User dvsaUser, User tester) throws IOException {
+        HelpDeskUserProfilePage helpDeskUserProfilePage =
+                pageNavigator.goToUserHelpDeskProfilePage(dvsaUser, tester.getId());
+        assertTrue(helpDeskUserProfilePage.isPersonAuthenticationMethodIsDisplayed(),
+                "Check that person authentication method is displayed");
+    }
+
+    @DataProvider(name = "createDvsaUser")
+    private Object[][] createDvsaUser() throws IOException {
+        return new Object[][]{{userData.createVehicleExaminer(randomName, false)},
+                {userData.createCustomerServiceOfficer(false)},
+                {userData.createSchemeUser(false)},
+                {userData.createAreaOfficeOne(randomName)},
+                {userData.createAreaOfficeTwo(randomName)}};
     }
 }

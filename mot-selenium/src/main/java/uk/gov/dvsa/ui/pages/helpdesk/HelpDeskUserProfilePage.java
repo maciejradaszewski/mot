@@ -16,6 +16,7 @@ public class HelpDeskUserProfilePage extends Page {
 
     @FindBy (id = "email-address-change") private WebElement changeEmailLink;
     @FindBy (id = "person-email") private WebElement emailAddress;
+    @FindBy(id = "person-2fa-method") private WebElement personAuthenticationMethod;
 
     public HelpDeskUserProfilePage(MotAppDriver driver) {
         super(driver);
@@ -42,8 +43,12 @@ public class HelpDeskUserProfilePage extends Page {
     }
 
     public boolean isEmailUpdateSuccessful(String email) {
-        assertThat("Assert that the users Email was updated successfully",getEmail(),
+        assertThat("Assert that the users Email was updated successfully", getEmail(),
                 containsString(email));
         return true;
+    }
+
+    public boolean isPersonAuthenticationMethodIsDisplayed() {
+        return personAuthenticationMethod.isDisplayed();
     }
 }
