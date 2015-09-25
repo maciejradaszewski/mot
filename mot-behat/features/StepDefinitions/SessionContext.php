@@ -194,6 +194,19 @@ class SessionContext implements Context
     }
 
     /**
+     * @Given /^I am logged in as a DVLA Operative$/
+     */
+    public function iAmLoggedInAsADVLAOperative()
+    {
+        $vehicleExaminerService = $this->testSupportHelper->getDVLAOperativeService();
+        $user                   = $vehicleExaminerService->create([]);
+        $this->currentUser      = $this->session->startSession(
+            $user->data['username'],
+            $user->data['password']
+        );
+    }
+
+    /**
      * @Given /^I am logged in as an? Customer Service Operator$/
      */
     public function iAmLoggedInAsACustomerServiceOperator()
