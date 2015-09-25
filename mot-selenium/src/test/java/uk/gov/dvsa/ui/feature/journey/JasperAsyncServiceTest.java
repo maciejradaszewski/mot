@@ -19,15 +19,9 @@ import static org.hamcrest.core.Is.is;
 public class JasperAsyncServiceTest extends BaseTest {
     FeaturesService service = new FeaturesService();
 
-    @BeforeMethod(alwaysRun = true)
-    private void isJasperAsyncEnabled() throws IOException {
-        if (!service.getToggleValue("jasper.async")) {
-            throw new SkipException("Jasper Async not Enabled");
-        }
-    }
-
     @Test(groups = {"BVT", "Regression"})
     public void showAsyncHeaderOnHomePage() throws IOException {
+        isJasperAsyncEnabled();
 
         //When I view my HomePage as a tester
         HomePage homePage = pageNavigator.gotoHomePage(userData.createTester(1));
@@ -41,6 +35,7 @@ public class JasperAsyncServiceTest extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"})
     public void showAsyncSummaryPageAndCertificateListTest() throws IOException, URISyntaxException {
+        isJasperAsyncEnabled();
 
         //When I perform an MOT test as a tester
         User tester = userData.createTester(1);
@@ -53,5 +48,11 @@ public class JasperAsyncServiceTest extends BaseTest {
 
         //And I can click the Mot certificate Link to the Certificates page.
         motUI.normalTest.certificatePage();
+    }
+
+    private void isJasperAsyncEnabled() throws IOException {
+        if (!service.getToggleValue("jasper.async")) {
+            throw new SkipException("Jasper Async not Enabled");
+        }
     }
 }
