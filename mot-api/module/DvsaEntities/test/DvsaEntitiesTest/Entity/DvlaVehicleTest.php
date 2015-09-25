@@ -44,6 +44,19 @@ class DvlaVehicleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($manufactureDate, $dvlaVehicle->getFirstUsedDate());
     }
 
+
+    public function testGetFirstUsedDateReturnsRegistrationDateIfNotNewAtRegistrationButNoManufactureDateIsAvailable()
+    {
+        $registrationDate = \DateTime::createFromFormat('j-M-Y', '18-May-2015');
+
+        $dvlaVehicle = new DvlaVehicle();
+        $dvlaVehicle
+            ->setNewAtFirstReg(false)
+            ->setFirstRegistrationDate($registrationDate);
+
+        $this->assertEquals($registrationDate, $dvlaVehicle->getFirstUsedDate());
+    }
+
     public function testIsVehicleNewAtFirstRegistrationReturnsBoolean()
     {
         $dvlaVehicle = new DvlaVehicle();
