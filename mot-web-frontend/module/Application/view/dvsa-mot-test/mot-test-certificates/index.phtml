@@ -5,14 +5,24 @@
             <span class="content-header__title">MOT test certificates</span>
         </h1>
     </header>
-    <p class="lede">You can print MOT test certificates that have been created in the last 5 days.</p>
-    <p>
-        For <span class="bold-small">older certificates</span> you will need to <a href="<?php echo $this->url('replacement-certificate-vehicle-search'); ?>">print a duplicate
-            certificate.</a>
-    </p>
+    <?php if(\DvsaCommon\Utility\ArrayUtils::anyMatch($this->certificates, function($cert){
+        return empty($cert->getCertificateStorageKey());
+    })) : ?>
+        <p class="lede">
+            Your certificate is still generating - <span class="bold-medium">please try again in 15mins.</span>
+        </p>
+        <p>If your certificate has not generated after this time you should contact the business service desk on 0330 123 5654.</p>
+    <?php endif; ?>
     <?php echo $this->partial(
         'partials/motTestCertificates',
         ['certificates' => $this->certificates]
     ); ?>
+    <div class="result__actions">
+        <p>You can print MOT test certificates that have been created in the last 5 days.</p>
+        <p>
+            For <span class="bold-small">older certificates</span> you will need to <a href="<?php echo $this->url('replacement-certificate-vehicle-search'); ?>">print a duplicate
+                certificate.</a>
+        </p>
+    </div>
 
 </div>
