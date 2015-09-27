@@ -19,6 +19,10 @@ class AuthenticationMethod
 {
     use CommonIdentityTrait;
 
+    const PIN_CODE = 'PIN';
+
+    const CARD_CODE = 'CARD';
+
     /**
      * @var string
      *
@@ -74,5 +78,21 @@ class AuthenticationMethod
     public function getCode()
     {
         return $this->code;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCard()
+    {
+        return self::CARD_CODE === $this->code;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPin()
+    {
+        return self::PIN_CODE === $this->code;
     }
 }
