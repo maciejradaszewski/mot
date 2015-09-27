@@ -3,6 +3,7 @@
 namespace DvsaAuthenticationTest\Factory;
 
 use Doctrine\ORM\EntityManager;
+use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaAuthentication\Factory\OtpServiceFactory;
 use DvsaAuthentication\Service\OtpService;
 use DvsaEntities\Repository\ConfigurationRepositoryInterface;
@@ -32,6 +33,7 @@ class OtpServiceFactoryTest extends \PHPUnit_Framework_TestCase
             EntityManager::class => $entityManager,
             'DvsaAuthenticationService' => $this->getMock(AuthenticationService::class),
             'ConfigurationRepository' => $this->getMock(ConfigurationRepositoryInterface::class),
+            OpenAMClientInterface::class => $this->getMock(OpenAMClientInterface::class),
         ]);
     }
 

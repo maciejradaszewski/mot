@@ -2,12 +2,15 @@
 
 namespace DvsaAuthentication\Service;
 
+use DvsaEntities\Entity\Person;
+
 interface OtpServiceAdapter
 {
     /**
+     * @param Person $person
      * @param string $token
      *
-     * @throws OtpException if authentication fails
+     * @return bool
      */
-    public function authenticate($token);
+    public function authenticate(Person $person, $token);
 }
