@@ -15,7 +15,7 @@
     <?php endif; ?>
     <?php echo $this->partial(
         'partials/motTestCertificates',
-        ['certificates' => $this->certificates]
+        ['certificates' => $this->certificates, "paginator" => $this->paginator]
     ); ?>
     <div class="result__actions">
         <p>You can print MOT test certificates that have been created in the last 5 days.</p>

@@ -64,3 +64,26 @@ if (0 === count($certificates)): ?>
     ?>
     </tbody>
 </table>
+
+<?php if ($paginator->getItemsCount() && $paginator->getLastPage() !== 1): ?>
+    <ul class="data-paging">
+        <?php if ($paginator->getPrevPage()): ?>
+            <li class="data-paging__prev">
+                <a class="data-paging__link" href="<?php echo  $this->url("mot-test-certificate-list", [], ["query" => ["page" => $paginator->getPrevPage() ]]) ?>">
+                    Previous
+                    <span class="data-paging__page">page</span>
+                    <span class="data-paging__numbers"><?php echo $paginator->getPrevPage()?> of <?php echo $paginator->getLastPage() ?></span>
+                </a>
+            </li>
+        <?php endif; ?>
+        <?php if ($paginator->getNextPage()): ?>
+            <li class="data-paging__next">
+                <a class="data-paging__link" href="<?php echo  $this->url("mot-test-certificate-list", [], ["query" => ["page" => $paginator->getNextPage() ]]) ?>">
+                    Next
+                    <span class="data-paging__page">page</span>
+                    <span class="data-paging__numbers"><?php echo $paginator->getNextPage()?> of <?php echo $paginator->getLastPage() ?></span>
+                </a>
+            </li>
+        <?php endif; ?>
+    </ul>
+<?php endif; ?>

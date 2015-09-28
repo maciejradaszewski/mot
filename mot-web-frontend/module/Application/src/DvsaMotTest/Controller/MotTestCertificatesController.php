@@ -77,13 +77,10 @@ class MotTestCertificatesController extends AbstractDvsaMotTestController
         }
 
         $vtsId = $this->getIdentity()->getCurrentVts()->getVtsId();
-        $certs = $this->certificateService->getMOTCertificates($vtsId);
+        $page = (int) $this->params()->fromQuery('page', 1);
+        $data = $this->certificateService->getMOTCertificates($vtsId, $page);
 
-        return new ViewModel(
-            [
-                'certificates' => $certs
-            ]
-        );
+        return $data;
     }
 
     /**

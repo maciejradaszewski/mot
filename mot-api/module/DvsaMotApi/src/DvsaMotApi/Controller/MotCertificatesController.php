@@ -29,13 +29,16 @@ class MotCertificatesController extends AbstractDvsaRestfulController
     public function getList()
     {
         $vtsId = $this->getRequest()->getQuery('vtsId');
+        $firstResult = (int) $this->getRequest()->getQuery('firstResult', 0);
+        $maxResult = (int) $this->getRequest()->getQuery('maxResult', 0);
+
         if (!ctype_digit($vtsId)) {
             throw new BadRequestException(
                 "You must specify a valid Site Id",
                 BadRequestException::ERROR_CODE_INVALID_DATA
             );
         }
-        $certificates = $this->motTestCertificateService->getCertificatesByVtsId($vtsId);
+        $certificates = $this->motTestCertificateService->getCertificatesByVtsId($vtsId, $firstResult, $maxResult);
 
         return ApiResponse::jsonOk($certificates);
     }

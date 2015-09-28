@@ -1,20 +1,11 @@
 package uk.gov.dvsa.ui.pages.mot;
 
-import com.google.common.base.Function;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
-
-import java.util.concurrent.TimeUnit;
 
 public class MotTestCertificatesPage extends Page {
 
@@ -26,6 +17,7 @@ public class MotTestCertificatesPage extends Page {
     private String emailLinkText = "Email";
     private WebElement emailButton;
     @FindBy (className = "key-value-list") private WebElement recentCertificatesTable;
+    @FindBy (className = "data-paging__link") private WebElement paginationButton;
 
     public MotTestCertificatesPage(MotAppDriver driver) {
         super(driver);
@@ -46,5 +38,9 @@ public class MotTestCertificatesPage extends Page {
                 By.linkText(emailLinkText), waitingPeriodInSeconds, refreshEveryTimeout);
         emailButton.click();
         return new EmailCertificateFormPage(driver);
+    }
+
+    public boolean isPaginationButtonVisible() {
+        return PageInteractionHelper.isElementDisplayed(paginationButton);
     }
 }

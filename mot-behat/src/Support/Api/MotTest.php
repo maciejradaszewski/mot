@@ -106,10 +106,11 @@ class MotTest extends AbstractMotTest
 
     public function getRecentTestsCertificateDetails($token, $vtsId)
     {
+        $query = http_build_query(["vtsId" => $vtsId, "firstResult" => 0, "maxResult" => 20]);
         return $this->sendRequest(
             $token,
             MotApi::METHOD_GET,
-            self::PATH_RECENT_CERTIFICATE . '?vtsId=' . $vtsId
+            self::PATH_RECENT_CERTIFICATE . '?' . $query
         );
     }
 

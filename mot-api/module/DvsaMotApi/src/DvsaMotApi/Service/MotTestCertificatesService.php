@@ -11,7 +11,6 @@ use DvsaCommon\Exception\UnauthorisedException;
 use DvsaEntities\Repository\MotTestRecentCertificateRepository;
 use DvsaMotApi\Service\Mapper\MotTestRecentCertificateMapper;
 use MailerApi\Logic\CustomerCertificateMail;
-use MailerApi\Model\Attachment;
 use MailerApi\Model\PdfAttachment;
 use MailerApi\Service\MailerService;
 
@@ -42,16 +41,27 @@ class MotTestCertificatesService
     }
 
     /**
-     * @param $vtsId
+     * @param int $vtsId
+     * @param int $firstResult
+     * @param int $maxResult
      * @return array
      * @throws UnauthorisedException
      */
-    public function getCertificatesByVtsId($vtsId)
+    public function getCertificatesByVtsId($vtsId, $firstResult, $maxResult)
     {
         $this->auth->assertGrantedAtSite(PermissionAtSite::RECENT_CERTIFICATE_PRINT, $vtsId);
 
+        if ($firstResult < 0) {
+            $firstResult = 0;
+        }
+
+        if ($maxResult < 0) {
+            $maxResult = 0;
+        }
+
         $results = [];
-        $certs = $this->recentCertificatesRepository->findByVtsId($vtsId);
+        $certs = $this->recentCertificatesRepository->findByVtsId($vtsId, $firstResult, $maxResult);
+        $totalItemsCount = $this->recentCertificatesRepository->getTotalCertsCountInVts($vtsId);
 
         if (is_array($certs)) {
             $mapper = new MotTestRecentCertificateMapper();
@@ -60,7 +70,7 @@ class MotTestCertificatesService
             }
         }
 
-        return $results;
+        return ["items" => $results, "totalItemsCount" => $totalItemsCount];
     }
 
     /**

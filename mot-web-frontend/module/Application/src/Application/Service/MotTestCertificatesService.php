@@ -4,6 +4,7 @@ namespace Application\Service;
 
 use Doctrine\Entity;
 use DvsaCommon\UrlBuilder\UrlBuilder;
+use DvsaCommon\Utility\ArrayUtils;
 use Zend\Cache\Storage\StorageInterface;
 
 /**
@@ -16,12 +17,16 @@ class MotTestCertificatesService
      */
     private $restClient;
 
+    private $pageSize;
+
     /**
      * @param restClient $restClient
+     * @param int $pageSize
      */
-    public function __construct($restClient)
+    public function __construct($restClient, $pageSize)
     {
         $this->restClient = $restClient;
+        $this->pageSize = $pageSize;
     }
 
     public function getMOTCertificate($certificateId)
@@ -33,13 +38,27 @@ class MotTestCertificatesService
         return isset($result['data']) ? $result['data'] : [];
     }
 
-    public function getMOTCertificates($vtsId)
+    public function getMOTCertificates($vtsId, $page)
     {
-        $url = (new UrlBuilder())->motTestCertificates($vtsId)->toString();
+        if ($page < 1) {
+            $page = 1;
+        }
+
+        $firstResult = ($page - 1) * $this->pageSize;
+
+        $url = (new UrlBuilder())
+            ->motTestCertificates($vtsId)
+            ->queryParams(["firstResult" => $firstResult, "maxResult" => $this->pageSize])
+            ->toString();
 
         $result = $this->restClient->get($url);
+        $data = isset($result['data']) ? $result['data'] : [];
 
-        return isset($result['data']) ? $result['data'] : [];
+        $certificates = ArrayUtils::tryGet($data, "items", []);
+        $totalItemsCount = ArrayUtils::tryGet($data, "totalItemsCount", 0);
+        $paginator = new PaginatorService($certificates, $totalItemsCount, $page, $this->pageSize);
+
+        return ["certificates" => $certificates, "paginator" => $paginator];
     }
 
     public function getCertificatePdfUrl($motCertificateId)
