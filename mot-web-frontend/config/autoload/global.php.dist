@@ -127,6 +127,6 @@ return [
         ]
     ],
     'recent_certificate_list' => [
-        'page_size' => 10
+        'page_size' => 20
     ]
 ];
