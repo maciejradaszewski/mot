@@ -126,4 +126,7 @@ return [
             'help_text' => 'Standards for checking vehicle exhaust emission procedures and limits',
         ]
     ],
+    'recent_certificate_list' => [
+        'page_size' => 10
+    ]
 ];

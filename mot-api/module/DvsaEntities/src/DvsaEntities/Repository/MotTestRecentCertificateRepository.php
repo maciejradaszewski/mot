@@ -5,6 +5,7 @@ namespace DvsaEntities\Repository;
 use Doctrine\ORM\EntityRepository;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\Entity\MotTestRecentCertificate;
+use DvsaMotApi\Service\Paginator;
 
 /**
  * Retrieve list of PDF MOT Certificates fot a Vehicle testing station
@@ -13,22 +14,48 @@ class MotTestRecentCertificateRepository extends AbstractMutableRepository
 {
     /**
      * @param int $vtsId
-     * @return array
+     * @param int $firstResult
+     * @param int $maxResult
+     * @return mixed
      */
-    public function findByVtsId($vtsId)
+    public function findByVtsId($vtsId, $firstResult, $maxResult)
     {
-        $query =
-            $this->getEntityManager()->createQuery(
-                'SELECT cert
-              FROM DvsaEntities\Entity\MotTestRecentCertificate cert
-                  JOIN cert.status status
-                  LEFT JOIN cert.make make
-                  LEFT JOIN cert.model model
-              WHERE cert.vtsId = :siteId
-              ORDER BY cert.createdOn DESC'
-            )->setParameter('siteId', $vtsId);
+        $qb = $this
+            ->getQB($vtsId)
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResult)
+            ->orderBy("cert.createdOn", "DESC");
 
-        return $query->getResult();
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param int $vtsId
+     * @return int
+     */
+    public function getTotalCertsCountInVts($vtsId)
+    {
+        $qb = $this->getQB($vtsId);
+        return $qb
+            ->select("count(cert.id)")
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @param $vtsId
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    private function getQB($vtsId)
+    {
+        return $this
+            ->createQueryBuilder("cert")
+            ->addSelect(["model", "make"])
+            ->innerJoin("cert.status", " status")
+            ->leftJoin("cert.make", "make")
+            ->leftJoin("cert.model", "model")
+            ->where("cert.vtsId = :siteId")
+            ->setParameter("siteId", $vtsId);
     }
 
     /**

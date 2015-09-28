@@ -3,6 +3,7 @@
 namespace DvsaMotTest\Factory\Service;
 
 use Application\Service\MotTestCertificatesService;
+use DvsaCommon\Configuration\MotConfig;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
@@ -23,9 +24,9 @@ class MotTestCertificatesServiceFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $restClient = $serviceLocator->get(HttpRestJsonClient::class);
+        $config = $serviceLocator->get(MotConfig::class);
+        $pageSize = $config->withDefault(20)->get('recent_certificate_list', 'page_size');
 
-        return new MotTestCertificatesService(
-            $restClient
-        );
+        return new MotTestCertificatesService($restClient, $pageSize);
     }
 }

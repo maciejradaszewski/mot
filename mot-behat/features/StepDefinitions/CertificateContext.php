@@ -111,7 +111,7 @@ class CertificateContext implements Context
     public function certificateDetailsForRecentTestAreAvailable()
     {
         $token = $this->sessionContext->getCurrentAccessToken();
-        $certificateDetailsId = $this->recentTestsCertificateDetails['data'][0]['id'];
+        $certificateDetailsId = $this->recentTestsCertificateDetails['data']['items'][0]['id'];
         $certificateDetailsResponse = $this->motTest->getRecentTestCertificateDetails(
             $token,
             $certificateDetailsId
