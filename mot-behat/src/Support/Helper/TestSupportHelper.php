@@ -12,7 +12,6 @@ use TestSupport\Service\AreaOffice2Service;
 use TestSupport\Service\DVLAOperativeService;
 use TestSupport\Service\FinanceUserService;
 use TestSupport\Service\VM10619RoleManagementUpgradeService;
-use TestSupport\Service\VM9913UserService;
 use TestSupport\Service\VtsService;
 use TestSupport\Service\AEService;
 use TestSupport\Service\TesterService;
@@ -293,11 +292,4 @@ class TestSupportHelper
         return DataGeneratorHelper::buildForDifferentiator($data);
     }
 
-    /**
-     * @return \TestSupport\Service\VM9913UserService
-     */
-    public function getSuperFinanceUserService()
-    {
-        return $this->getServiceManager()->get(VM9913UserService::class);
-    }
 }

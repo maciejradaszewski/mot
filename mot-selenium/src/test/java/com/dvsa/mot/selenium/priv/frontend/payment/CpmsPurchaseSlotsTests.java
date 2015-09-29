@@ -31,7 +31,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
     
     private Login createFinanceUserReturnFinanceUserLogin() {
         FinanceUserCreationApi financeUserCreationApi = new FinanceUserCreationApi();
-        Login financeUserLogin = financeUserCreationApi.createSuperFinanceUser().getLogin();
+        Login financeUserLogin = financeUserCreationApi.createFinanceUser().getLogin();
         return financeUserLogin;
     }
 
