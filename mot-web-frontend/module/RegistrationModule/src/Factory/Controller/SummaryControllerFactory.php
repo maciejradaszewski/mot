@@ -8,6 +8,7 @@
 namespace Dvsa\Mot\Frontend\RegistrationModule\Factory\Controller;
 
 use Dvsa\Mot\Frontend\RegistrationModule\Controller\SummaryController;
+use Dvsa\Mot\Frontend\RegistrationModule\Service\RegisterUserService;
 use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -28,6 +29,18 @@ class SummaryControllerFactory implements FactoryInterface
 
         $stepService = $serviceLocator->get(RegistrationStepService::class);
 
-        return new SummaryController($stepService);
+        $registerUserService = $serviceLocator->get(RegisterUserService::class);
+
+        $config = $serviceLocator->get('Config');
+        $helpDeskConfig = isset($config['helpdesk']) ? $config['helpdesk'] : null;
+        if (!$helpDeskConfig) {
+            throw new RuntimeException('Helpdesk details not found in $config["helpdesk"]');
+        }
+
+        return new SummaryController(
+            $stepService,
+            $registerUserService,
+            $helpDeskConfig
+        );
     }
 }

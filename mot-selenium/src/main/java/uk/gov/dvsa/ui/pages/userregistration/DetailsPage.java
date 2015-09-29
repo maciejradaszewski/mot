@@ -34,11 +34,11 @@ public class DetailsPage extends Page {
         return PageInteractionHelper.verifyTitle(getTitle(), PAGE_TITLE);
     }
 
-    public AddressPage enterDetailsAndSubmitExpectingAddressPage(String name, String surname, String email, String emailTwo) {
+    public AddressPage enterDetailsAndSubmitExpectingAddressPage(String name, String surname, String email) {
         FormCompletionHelper.enterText(firstName, name);
         FormCompletionHelper.enterText(lastName, surname);
         FormCompletionHelper.enterText(emailAddress, email);
-        FormCompletionHelper.enterText(verifyEmailAddress, emailTwo);
+        FormCompletionHelper.enterText(verifyEmailAddress, email);
         continueToNextPage.click();
         return new AddressPage(driver);
     }
@@ -48,11 +48,10 @@ public class DetailsPage extends Page {
         return new AddressPage(driver);
     }
 
-    public DetailsPage enterYourDetaisl()
+    public DetailsPage enterYourDetails(String email, String name, String surname)
     {
-        String email = ContactDetailsHelper.getEmail();
-        FormCompletionHelper.enterText(firstName, ContactDetailsHelper.generateUniqueName());
-        FormCompletionHelper.enterText(lastName, ContactDetailsHelper.generateUniqueName());
+        FormCompletionHelper.enterText(firstName, name);
+        FormCompletionHelper.enterText(lastName, surname);
         FormCompletionHelper.enterText(emailAddress, email);
         FormCompletionHelper.enterText(verifyEmailAddress, email);
 

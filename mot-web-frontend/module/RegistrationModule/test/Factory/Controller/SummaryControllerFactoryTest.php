@@ -7,6 +7,7 @@
 
 namespace Dvsa\Mot\Frontend\RegistrationModuleTest\Factory\Controller;
 
+use Dvsa\Mot\Frontend\RegistrationModule\Service\RegisterUserService;
 use Dvsa\Mot\Frontend\RegistrationModule\Service\RegistrationStepService;
 use Dvsa\MOT\Frontend\RegistrationModule\Controller\SummaryController;
 use Dvsa\Mot\Frontend\RegistrationModule\Factory\Controller\SummaryControllerFactory;
@@ -26,8 +27,16 @@ class SummaryControllerFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $serviceManager = new ServiceManager();
 
-        $service  =  XMock::of(RegistrationStepService::class);
-        $serviceManager->setService(RegistrationStepService::class, $service);
+        $serviceManager->setService(
+            RegistrationStepService::class,
+            XMock::of(RegistrationStepService::class)
+        )->setService(
+            RegisterUserService::class,
+            XMock::of(RegisterUserService::class)
+        )->setService(
+            'Config',
+            ['helpdesk'=>['name' => 'something']]
+        );
 
         $plugins = $this->getMock(ControllerManager::class);
         $plugins->expects($this->any())
