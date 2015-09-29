@@ -19,6 +19,17 @@ return [
                     ],
                 ],
             ],
+            'email-checker' => [
+                'type'    => 'Segment',
+                'options' => [
+                    // for the moment will keep it under the white-listed url
+                    'route'       => '/account/register/check-email',
+                    'defaults'    => [
+                        'controller' => RegistrationController::class,
+                        'action'     => 'checkDuplicatedEmail',
+                    ],
+                ],
+            ],
         ],
     ],
 ];

@@ -14,6 +14,8 @@ public class SummaryPage extends Page {
 
     @FindBy (id = "back") private WebElement cancelAndReturn;
 
+    @FindBy(id = "duplicatedEmailAddress") private WebElement duplicateEmailMessage;
+
     public SummaryPage(MotAppDriver driver){
         super(driver);
         selfVerify();
@@ -27,6 +29,10 @@ public class SummaryPage extends Page {
     public AccountCreatedPage clickCreateYourAccount() {
         createYourAccount.click();
         return new AccountCreatedPage(driver);
+    }
+
+    public boolean emailAlreadyUsedMessage() {
+        return duplicateEmailMessage.isDisplayed();
     }
 
 

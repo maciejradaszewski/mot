@@ -5,6 +5,7 @@ namespace DvsaCommon\UrlBuilder;
 class RegistrationUrlBuilder extends AbstractUrlBuilder
 {
     const MAIN = 'account/register';
+    const CHECK_EMAIL = '/check-email';
 
     /**
      * Keys define the route, we need to set the value of each because of the way AbstractUrlBuilder checks
@@ -13,15 +14,24 @@ class RegistrationUrlBuilder extends AbstractUrlBuilder
      * @var array
      */
     protected $routesStructure = [
-        self::MAIN => ''
+        self::MAIN => [
+            self::CHECK_EMAIL => '',
+        ]
     ];
 
     /**
      * @return $this
      */
-    public function register()
+    public static function register()
     {
-        $this->appendRoutesAndParams(self::MAIN);
-        return $this;
+        return self::of()->appendRoutesAndParams(self::MAIN);
+    }
+
+    /**
+     * @return $this
+     */
+    public static function checkEmail()
+    {
+        return self::register()->appendRoutesAndParams(self::CHECK_EMAIL);
     }
 }

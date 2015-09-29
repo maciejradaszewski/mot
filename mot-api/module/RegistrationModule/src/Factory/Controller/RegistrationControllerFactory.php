@@ -8,6 +8,7 @@
 namespace Dvsa\Mot\Api\RegistrationModule\Factory\Controller;
 
 use Dvsa\Mot\Api\RegistrationModule\Controller\RegistrationController;
+use Dvsa\Mot\Api\RegistrationModule\Service\DuplicatedEmailChecker;
 use Dvsa\Mot\Api\RegistrationModule\Service\RegistrationService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -33,7 +34,13 @@ class RegistrationControllerFactory implements FactoryInterface
         /** @var RegistrationService $registrationService */
         $registrationService = $serviceLocator->get(RegistrationService::class);
 
-        $controller = new RegistrationController($registrationService);
+        /** @var DuplicatedEmailChecker $duplicatedEmailChecker */
+        $duplicatedEmailChecker = $serviceLocator->get(DuplicatedEmailChecker::class);
+
+        $controller = new RegistrationController(
+            $registrationService,
+            $duplicatedEmailChecker
+        );
 
         return $controller;
     }

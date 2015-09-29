@@ -32,6 +32,9 @@ class RegisterUserService
     const STEP_SECURITY_QUESTION_ONE = 'stepSecurityQuestionFirst';
     const STEP_SECURITY_QUESTION_TWO = 'stepSecurityQuestionSecond';
 
+    // TODO: (ABN) duplicating Dvsa\Mot\Api\RegistrationModule\Service\RegistrationController::KEY_EMAIL
+    const KEY_EMAIL = 'email';
+
     /**
      * @var HttpRestJsonClient
      */
@@ -54,7 +57,7 @@ class RegisterUserService
     public function registerUser(array $sessionData)
     {
         $apiData = $this->prepareDataForApi($sessionData);
-        $url = RegistrationUrlBuilder::of()->register();
+        $url = RegistrationUrlBuilder::register();
 
         try {
             $this->jsonClient->post($url, $apiData);
@@ -63,6 +66,28 @@ class RegisterUserService
         } catch (GeneralRestException $e) {
             return false;
         }
+    }
+
+    /**
+     * @param $emailAddress
+     * @return bool
+     */
+    public function isEmailDuplicated($emailAddress)
+    {
+        $url = RegistrationUrlBuilder::checkEmail();
+        $payload = [self::KEY_EMAIL => $emailAddress];
+
+        $response = $this->jsonClient->post($url, $payload);
+
+        if (
+            !is_array($response) ||
+            !array_key_exists('data', $response) ||
+            !array_key_exists('isExists',  $response['data'])
+        ){
+            throw new \LogicException('Expected to receive a valid response from the API containing nesting "date" and "isExists" keys');
+        }
+
+        return $response['data']['isExists'];
     }
 
     /**
