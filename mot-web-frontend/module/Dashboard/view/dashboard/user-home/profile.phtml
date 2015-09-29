@@ -28,6 +28,8 @@ $this->layout()->setVariable('pageSubTitle', $isViewingOwnProfile ? 'Your profil
 $this->layout()->setVariable('pageTitle', $personalDetails->getFullName());
 
 echo $this->partial('errorMessages', ['getFromFlash' => true]);
+
+echo $this->partial('partial/gds/general/system-message', ['messages' =>  $this->layout()->flashMessenger->getSuccessMessages(), 'type' => 'success']);
 ?>
 
 <h3 class="heading-medium">Personal details</h3>
@@ -156,6 +158,14 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
     <h3 class="heading-medium">Account security</h3>
     <table class="key-value-list">
         <tbody>
+            <tr>
+                <th class="key-value-list__key">
+                    Password
+                </th>
+                <td class="key-value-list__value">
+                    <a href="<?php echo $this->url('user-home/profile/change-password') ?>" id="change-password">Change your password</a>
+                </td>
+            </tr>
             <tr>
                 <th class="key-value-list__key">
                     PIN

@@ -2,6 +2,7 @@
 
 namespace Application\View\Helper;
 
+use Core\Service\MotFrontendIdentityProviderInterface;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use Zend\View\Helper\AbstractHelper;
@@ -19,7 +20,7 @@ class IdentityHelper extends AbstractHelper implements MotFrontendIdentityInterf
      */
     protected $identityProvider;
 
-    public function __construct(MotIdentityProviderInterface $identityProvider)
+    public function __construct(MotFrontendIdentityProviderInterface $identityProvider)
     {
         $this->identityProvider = $identityProvider;
         $this->identity         = $identityProvider->getIdentity();
@@ -76,5 +77,10 @@ class IdentityHelper extends AbstractHelper implements MotFrontendIdentityInterf
     public function isAccountClaimRequired()
     {
         return $this->identity->isAccountClaimRequired();
+    }
+
+    public function hasPasswordExpired()
+    {
+        return $this->identity->hasPasswordExpired();
     }
 }

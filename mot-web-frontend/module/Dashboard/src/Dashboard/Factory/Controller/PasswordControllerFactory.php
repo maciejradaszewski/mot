@@ -3,13 +3,14 @@
 namespace Dashboard\Factory\Controller;
 
 use Dashboard\Controller\PasswordController;
-use Dashboard\Service\PasswordService;
 use Dashboard\Form\ChangePasswordForm;
+use Dashboard\Service\PasswordService;
+use Dvsa\OpenAM\OpenAMClientInterface;
+use Dvsa\OpenAM\Options\OpenAMClientOptions;
+use DvsaCommon\Configuration\MotConfig;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
-use Dvsa\OpenAM\OpenAMClientInterface;
-use Dvsa\OpenAM\Options\OpenAMClientOptions;
 
 class PasswordControllerFactory implements FactoryInterface
 {
@@ -24,7 +25,9 @@ class PasswordControllerFactory implements FactoryInterface
                 $serviceLocator->get('MotIdentityProvider'),
                 $serviceLocator->get(OpenAMClientInterface::class),
                 $serviceLocator->get(OpenAMClientOptions::class)->getRealm()
-                )
-            );
+            ),
+            $serviceLocator->get('MotIdentityProvider'),
+            $serviceLocator->get(MotConfig::class)
+        );
     }
 }

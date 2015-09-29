@@ -13,7 +13,7 @@ use Dvsa\OpenAM\Exception\OpenAMClientException;
 class ChangePasswordForm extends PasswordForm
 {
     const FIELD_OLD_PASSWORD = ChangePasswordInputFilter::FIELD_OLD_PASSWORD;
-    const LABEL_OLD_PASSWORD = "Old password";
+    const LABEL_OLD_PASSWORD = "Current password";
 
     private $identityProvider;
     private $client;

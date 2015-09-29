@@ -10,7 +10,6 @@ use Zend\Authentication\AuthenticationService;
  */
 class MotFrontendIdentityProvider implements MotFrontendIdentityProviderInterface
 {
-
     /** @var AuthenticationService $zendAuthenticationService */
     private $zendAuthenticationService;
 

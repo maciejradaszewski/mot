@@ -3,6 +3,7 @@
 namespace DashboardTest\Factory\Controller;
 
 use Doctrine\ORM\EntityManager;
+use DvsaCommon\Configuration\MotConfig;
 use DvsaCommonTest\TestUtils\XMock;
 use Dashboard\Factory\Controller\PasswordControllerFactory;
 use Dashboard\Controller\PasswordController;
@@ -22,12 +23,15 @@ class PasswordControllerFactoryTest extends \PHPUnit_Framework_TestCase
 
         $identity = XMock::of(MotFrontendIdentityInterface::class, ['getUsername']);
         $identityProvider = XMock::of(MotFrontendIdentityProviderInterface::class);
+        $config = new MotConfig([]);
+
         $identityProvider
             ->expects($this->any())
             ->method("getIdentity")
             ->willReturn($identity);
 
         $serviceManager->setService('MotIdentityProvider', $identityProvider);
+        $serviceManager->setService(MotConfig::class, $config);
 
         $service = XMock::of(PasswordService::class);
         $serviceManager->setService(PasswordService::class, $service);

@@ -23,4 +23,6 @@ interface MotFrontendIdentityInterface extends MotIdentityInterface
      * @return \Dvsa\Mot\Frontend\AuthenticationModule\Model\VehicleTestingStation
      */
     public function getCurrentVts();
+
+    public function hasPasswordExpired();
 }

@@ -25,10 +25,6 @@ abstract class AbstractDvsaActionController
      * @var HttpRestJsonClient
      */
     protected $restClient;
-    /**
-     * @var OpenAMClientInterface
-     */
-    protected $openAMClient;
 
     public function isFeatureEnabled($name)
     {
@@ -62,19 +58,6 @@ abstract class AbstractDvsaActionController
         }
 
         return $this->restClient;
-    }
-
-    /**
-     * @return OpenAMClientInterface
-     *
-     * @deprecated Please inject the OpenAMClient into the Controller instead of relying in the ServiceManager.
-     */
-    protected function getOpenAmClient()
-    {
-        if (!$this->openAMClient) {
-            $this->openAMClient = $this->getServiceLocator()->get(OpenAMClientInterface::class);
-        }
-        return $this->openAMClient;
     }
 
     protected function getForm($objectModel)
