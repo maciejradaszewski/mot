@@ -1356,6 +1356,7 @@ class MotTest extends Entity
                 foreach ($testRfr->getReasonForRejection()->getDescriptions() as $rfrDescription) {
                     if ($rfrDescription->getLanguage()->getCode() === LanguageTypeCode::ENGLISH) {
                         $results[$key]['failureText'] = $rfrDescription->getName();
+                        $results[$key]['advisoryText'] = $rfrDescription->getAdvisoryText();
                     }
                 }
                 $results[$key]['inspectionManualReference'] =
