@@ -40,6 +40,8 @@ use TestSupport\Service\InactiveTesterService;
 use TestSupport\Service\TesterAuthorisationStatusService;
 use TestSupport\Factory\TesterAuthorisationStatusServiceFactory;
 use TestSupport\Service\AedmService;
+use TestSupport\Service\VM9913UserService;
+use TestSupport\Factory\VM9913UserServiceFactory;
 
 return [
     'factories' => [
@@ -116,6 +118,7 @@ return [
         VehicleExaminerService::class      => \TestSupport\Factory\VehicleExaminerServiceFactory::class,
         VM10519UserService::class          => \TestSupport\Factory\VM10519UserServiceFactory::class,
         VM10619RoleManagementUpgradeService::class          => \TestSupport\Factory\VM10619RoleManagementUpgradeServiceFactory::class,
+        VM9913UserService::class           => VM9913UserServiceFactory::class,
         TesterAuthorisationStatusService::class => TesterAuthorisationStatusServiceFactory::class,
         AedmService::class                 => \TestSupport\Factory\AedmServiceFactory::class,
     ]

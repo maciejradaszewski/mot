@@ -24,6 +24,7 @@ return [
             Controller\VehicleExaminerDataController::class => Controller\VehicleExaminerDataController::class,
             Controller\VM10519UserDataController::class     => Controller\VM10519UserDataController::class,
             Controller\VM10619RoleManagementUpgradeController::class    => Controller\VM10619RoleManagementUpgradeController::class,
+            Controller\VM9913UserDataController::class      => Controller\VM9913UserDataController::class,
             Controller\AssessorDataController::class        => Controller\AssessorDataController::class,
             Controller\UserDataController::class            => Controller\UserDataController::class,
             Controller\TestSupportMotTestController::class  => Controller\TestSupportMotTestController::class,
@@ -230,6 +231,15 @@ return [
                             'route'    => '/vm10619rolemanagementupgrade',
                             'defaults' => [
                                 'controller' => Controller\VM10619RoleManagementUpgradeController::class
+                            ],
+                        ],
+                    ],
+                    'superFinanceUserSub' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/vm9913user',
+                            'defaults' => [
+                                'controller' => Controller\VM9913UserDataController::class
                             ],
                         ],
                     ],

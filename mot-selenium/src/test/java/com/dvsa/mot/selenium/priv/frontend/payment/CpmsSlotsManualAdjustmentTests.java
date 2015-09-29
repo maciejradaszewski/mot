@@ -29,7 +29,7 @@ public class CpmsSlotsManualAdjustmentTests extends BaseTest {
     
     private Login createFinanceUserReturnFinanceUserLogin() {
         FinanceUserCreationApi financeUserCreationApi = new FinanceUserCreationApi();
-        Login financeUserLogin = financeUserCreationApi.createFinanceUser().getLogin();
+        Login financeUserLogin = financeUserCreationApi.createSuperFinanceUser().getLogin();
         return financeUserLogin;
     }
 
