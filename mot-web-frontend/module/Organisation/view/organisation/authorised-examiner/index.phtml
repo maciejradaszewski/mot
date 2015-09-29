@@ -99,7 +99,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
             Status valid from
         </th>
         <td id="ae-status-valid-from" class="key-value-list__value">
-            <?php echo $this->escapeHtml(DateTimeDisplayFormat::textDate($aeAuth->getValidFrom())) ?: ""; ?>
+            <?php echo $this->escapeHtml(DateTimeDisplayFormat::textDate($aeAuth->getStatusChangedOn())) ?: ""; ?>
         </td>
     </tr>
     <tr>

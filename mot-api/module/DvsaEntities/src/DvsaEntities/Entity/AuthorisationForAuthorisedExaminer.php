@@ -44,6 +44,13 @@ class AuthorisationForAuthorisedExaminer extends Entity
     /**
      * @var \DateTime|null
      *
+     * @ORM\Column(name="status_changed_on", type="datetime", nullable=false)
+     */
+    private $statusChangedOn;
+
+    /**
+     * @var \DateTime|null
+     *
      * @ORM\Column(name="valid_from", type="datetime", nullable=false)
      */
     private $validFrom;
@@ -178,6 +185,26 @@ class AuthorisationForAuthorisedExaminer extends Entity
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * @param \DateTime|null $value
+     *
+     * @return AuthorisationForAuthorisedExaminer
+     */
+    public function setStatusChangedOn(\DateTime $value)
+    {
+        $this->statusChangedOn = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getStatusChangedOn()
+    {
+        return $this->statusChangedOn;
     }
 
     /**

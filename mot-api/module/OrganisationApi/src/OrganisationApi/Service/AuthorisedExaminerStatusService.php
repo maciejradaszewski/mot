@@ -142,6 +142,7 @@ class AuthorisedExaminerStatusService extends AbstractService
 
             $authorisedExaminer
                 ->setValidFrom($this->dateTimeHolder->getCurrentDate())
+                ->setStatusChangedOn($this->dateTimeHolder->getCurrentDate())
                 ->setStatus($status)
                 ->setAreaOffice($newAO);
         }
