@@ -98,6 +98,7 @@ class AddressInputFilterTest extends \PHPUnit_Framework_TestCase
                 'errorMessages' => $this->prepareMessages(
                     [
                         NotEmpty::IS_EMPTY => AddressInputFilter::MSG_ADDRESS_EMPTY,
+                        Regex::NOT_MATCH => AddressInputFilter::MSG_ADDRESS_LINE_CONTAINS_NO_ALPHANUMERIC,
                     ],
                     [],
                     [],
