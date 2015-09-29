@@ -8,7 +8,6 @@ use DvsaCommon\UrlBuilder\RegistrationUrlBuilderWeb;
 
 <?php echo $this->partial('partial/forms/errorMessagePageHeader.phtml',['messages' => $errorsSummary]); ?>
 
-
 <form action="<?php echo $this->escapeHtmlAttr(RegistrationUrlBuilderWeb::of()->addressStep());?>"
       method="post" autocomplete="off" novalidate="">
     <?php echo $this->csrfToken(); ?>
@@ -16,7 +15,7 @@ use DvsaCommon\UrlBuilder\RegistrationUrlBuilderWeb;
     <fieldset>
         <legend class="form-title heading-large" id="newUserAddress">Your address</legend>
 
-        <div class="form-group form-group-compound<?php if ($address1HasError) echo ' has-error' ?>">
+        <div class="form-group form-group-compound<?php if ($address1HasError): ?> has-error<?php endif; ?>">
             <label class="form-label" for="address1">
                 Home address
                 <?php
@@ -28,18 +27,32 @@ use DvsaCommon\UrlBuilder\RegistrationUrlBuilderWeb;
             <input class=" form-control" id="address1" name="address1" type="text" value="<?php echo $this->escapeHtmlAttr($address1) ?>">
         </div>
 
-        <div class="form-group form-group-compound">
-            <label class="form-label- visuallyhidden" for="address2">Address line 2</label>
+        <div class="form-group form-group-compound<?php if ($address2HasError): ?> has-error<?php endif; ?>">
+            <label class="form-label-<?php if (!$address2HasError): ?> visuallyhidden<?php endif; ?>" for="address2">
+                Address line 2
+                <?php
+                if ($address2HasError) {
+                    echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors['address2']]);
+                }
+                ?>
+            </label>
             <input class=" form-control" id="address2" name="address2" type="text" value="<?php echo $this->escapeHtmlAttr($address2) ?>">
         </div>
 
-        <div class="form-group form-group-compound">
-            <label class="form-label- visuallyhidden" for="address3">Address line 3</label>
+        <div class="form-group form-group-compound<?php if ($address3HasError): ?> has-error<?php endif; ?>">
+            <label class="form-label-<?php if (!$address3HasError): ?> visuallyhidden<?php endif; ?>" for="address3">
+                Address line 3
+                <?php
+                if ($address3HasError) {
+                    echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors['address3']]);
+                }
+                ?>
+            </label>
             <input class=" form-control" id="address3" name="address3" type="text"
                    value="<?php echo $this->escapeHtmlAttr($address3) ?>">
         </div>
 
-        <div class="form-group form-group-compound<?php if ($townOrCityHasError) echo ' has-error' ?>">
+        <div class="form-group form-group-compound<?php if ($townOrCityHasError): ?> has-error<?php endif; ?>">
             <label class="form-label" for="townOrCity">Town or city
                 <?php
                 if ($townOrCityHasError) {
@@ -50,7 +63,7 @@ use DvsaCommon\UrlBuilder\RegistrationUrlBuilderWeb;
                 id="townOrCity" name="townOrCity" type="text" value="<?php echo $this->escapeHtmlAttr($townOrCity) ?>">
         </div>
 
-        <div class="form-group form-group-compound<?php if ($postcodeHasError) echo ' has-error' ?>">
+        <div class="form-group form-group-compound<?php if ($postcodeHasError): ?> has-error<?php endif; ?>">
             <label class="form-label" for="postcode">Postcode
                 <?php
                 if ($postcodeHasError) {

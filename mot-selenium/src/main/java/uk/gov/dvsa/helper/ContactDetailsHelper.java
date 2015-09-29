@@ -19,7 +19,7 @@ public class ContactDetailsHelper {
     }
 
     public static String getPostCode() {
-        return RandomDataGenerator.generateRandomString(8, 9);
+        return RandomDataGenerator.generateRandomPostcode(false);
     }
 
     public static String getPhoneNumber() {

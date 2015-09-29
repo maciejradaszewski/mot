@@ -17,7 +17,7 @@ use DvsaCommon\UrlBuilder\RegistrationUrlBuilderWeb;
     <fieldset>
         <legend class="form-title heading-large" id="newUserName">Your name</legend>
 
-        <div class="form-group<?php if ($firstNameHasError) echo ' has-error' ?>">
+        <div class="form-group<?php if ($firstNameHasError): ?> has-error<?php endif; ?>">
             <label for="firstName" class="form-label">
                 First name
                 <?php
@@ -30,15 +30,20 @@ use DvsaCommon\UrlBuilder\RegistrationUrlBuilderWeb;
                    value="<?php echo $this->escapeHtmlAttr($firstName) ?>">
         </div>
 
-        <div class="form-group">
+        <div class="form-group<?php if ($middleNameHasError): ?> has-error<?php endif; ?>">
             <label for="middleName" class="form-label">
                 Middle name (optional)
+                <?php
+                if ($middleNameHasError) {
+                    echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors['middleName']]);
+                }
+                ?>
             </label>
             <input type="text" name="middleName" id="middleName" class="form-control"
                    value="<?php echo $this->escapeHtmlAttr($middleName) ?>">
         </div>
 
-        <div class="form-group<?php if ($lastNameHasError) echo ' has-error' ?>">
+        <div class="form-group<?php if ($lastNameHasError): ?> has-error<?php endif; ?>">
             <label for="lastName" class="form-label">
                 Last name
                 <?php
@@ -57,7 +62,7 @@ use DvsaCommon\UrlBuilder\RegistrationUrlBuilderWeb;
         <legend class="form-title heading-large" id="email">Your email address</legend>
 
 
-        <div class="form-group<?php if ($emailAddressHasError) echo ' has-error' ?>">
+        <div class="form-group<?php if ($emailAddressHasError): ?> has-error<?php endif; ?>">
             <label for="emailAddress" class="form-label">
                 Email address
                 <span class="form-hint">Your User ID will be sent to this address</span>
@@ -72,7 +77,7 @@ use DvsaCommon\UrlBuilder\RegistrationUrlBuilderWeb;
         </div>
 
 
-        <div class="form-group<?php if ($confirmEmailAddressHasError) echo ' has-error' ?>">
+        <div class="form-group<?php if ($confirmEmailAddressHasError): ?> has-error<?php endif; ?>">
             <label for="confirmEmailAddress" class="form-label">
                 Re-type your email address
                 <?php

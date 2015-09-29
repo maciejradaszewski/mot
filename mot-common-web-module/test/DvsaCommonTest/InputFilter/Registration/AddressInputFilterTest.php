@@ -12,6 +12,7 @@ use DvsaCommon\InputFilter\Registration\AddressInputFilter;
 use DvsaCommonTest\Bootstrap;
 use Zend\Validator\NotEmpty;
 use Zend\Validator\StringLength;
+use Zend\Validator\Regex;
 
 class AddressInputFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -51,86 +52,63 @@ class AddressInputFilterTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
+                // Test Invalid Postcode Character
                 'data' => $this->prepareData(
-                    'dummy number',
-                    'dummy street',
-                    'dummy area',
-                    'dummy city',
-                    'dummy code'
-                ),
-                'isValid' => true,
-                'errorMessages' => $this->prepareMessages(
-                    [],
-                    [],
-                    [],
-                    [],
-                    []
-                ),
-            ],
-            [
-                'data' => $this->prepareData(
-                    '',
-                    '',
-                    '',
-                    '',
-                    ''
+                    'Valid Address 1',
+                    'Valid Address 2',
+                    'Valid Address 3',
+                    'Valid City',
+                    'B$8 1ER' // Invalid postcode format
                 ),
                 'isValid' => false,
                 'errorMessages' => $this->prepareMessages(
-                    [NotEmpty::IS_EMPTY => AddressInputFilter::MSG_ADDRESS_EMPTY],
                     [],
                     [],
-                    [NotEmpty::IS_EMPTY => AddressInputFilter::MSG_TOWN_OR_CITY_EMPTY],
-                    [NotEmpty::IS_EMPTY => AddressInputFilter::MSG_POSTCODE_EMPTY]
-                ),
-            ],
-            [
-                'data' => $this->prepareData(
-                    str_repeat('a', AddressInputFilter::LIMIT_ADDRESS_MAX + 1),
-                    str_repeat('a', AddressInputFilter::LIMIT_ADDRESS_MAX + 1),
-                    str_repeat('a', AddressInputFilter::LIMIT_ADDRESS_MAX + 1),
-                    str_repeat('a', AddressInputFilter::LIMIT_ADDRESS_MAX + 1),
-                    str_repeat('a', AddressInputFilter::LIMIT_POSTCODE_MAX + 1)
-                ),
-                'isValid' => false,
-                'errorMessages' => $this->prepareMessages(
+                    [],
+                    [],
                     [
-                        StringLength::TOO_LONG =>
-                            sprintf(AddressInputFilter::MSG_ADDRESS_MAX, AddressInputFilter::LIMIT_ADDRESS_MAX)
-                    ],
-                    [
-                        StringLength::TOO_LONG =>
-                            sprintf(AddressInputFilter::MSG_ADDRESS_MAX, AddressInputFilter::LIMIT_ADDRESS_MAX)
-                    ],
-                    [
-                        StringLength::TOO_LONG =>
-                            sprintf(AddressInputFilter::MSG_ADDRESS_MAX, AddressInputFilter::LIMIT_ADDRESS_MAX)
-                    ],
-                    [
-                        StringLength::TOO_LONG =>
-                            sprintf(AddressInputFilter::MSG_ADDRESS_MAX, AddressInputFilter::LIMIT_ADDRESS_MAX)
-                    ],
-                    [
-                        StringLength::TOO_LONG =>
-                            sprintf(AddressInputFilter::MSG_POSTCODE_MAX, AddressInputFilter::LIMIT_POSTCODE_MAX)
+                        Regex::NOT_MATCH => AddressInputFilter::MSG_POSTCODE_EMPTY,
                     ]
                 ),
             ],
             [
+                // Test Invalid Postcode Format
                 'data' => $this->prepareData(
-                    str_repeat('a', AddressInputFilter::LIMIT_ADDRESS_MAX),
-                    str_repeat('a', AddressInputFilter::LIMIT_ADDRESS_MAX),
-                    str_repeat('a', AddressInputFilter::LIMIT_ADDRESS_MAX),
-                    str_repeat('a', AddressInputFilter::LIMIT_ADDRESS_MAX),
-                    str_repeat('a', AddressInputFilter::LIMIT_POSTCODE_MAX)
+                    'Valid Address 1',
+                    'Valid Address 2',
+                    'Valid Address 3',
+                    'Valid City',
+                    'BSS8 1ER' // Invalid postcode format
                 ),
-                'isValid' => true,
+                'isValid' => false,
                 'errorMessages' => $this->prepareMessages(
                     [],
                     [],
                     [],
                     [],
-                    []
+                    [
+                        Regex::NOT_MATCH => AddressInputFilter::MSG_POSTCODE_EMPTY,
+                    ]
+                ),
+            ],
+            [
+                // Test All Blank Fields
+                'data' => $this->prepareData('', '', '', '', ''),
+                'isValid' => false,
+                'errorMessages' => $this->prepareMessages(
+                    [
+                        NotEmpty::IS_EMPTY => AddressInputFilter::MSG_ADDRESS_EMPTY,
+                    ],
+                    [],
+                    [],
+                    [
+                        NotEmpty::IS_EMPTY => AddressInputFilter::MSG_TOWN_OR_CITY_EMPTY,
+                        Regex::NOT_MATCH => AddressInputFilter::MSG_TOWN_NO_PATTERN_MATCH,
+                    ],
+                    [
+                        NotEmpty::IS_EMPTY => AddressInputFilter::MSG_POSTCODE_EMPTY,
+                        Regex::NOT_MATCH => AddressInputFilter::MSG_POSTCODE_EMPTY,
+                    ]
                 ),
             ],
         ];

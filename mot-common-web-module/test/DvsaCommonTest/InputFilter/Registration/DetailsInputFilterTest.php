@@ -14,6 +14,7 @@ use Zend\Validator\EmailAddress;
 use Zend\Validator\Identical;
 use Zend\Validator\NotEmpty;
 use Zend\Validator\StringLength;
+use Zend\Validator\Regex;
 
 class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -53,9 +54,10 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
+                // Test Valid Data
                 'data' => $this->prepareData(
                     'Joe',
-                    'light',
+                    'Light',
                     'Brown',
                     'some@sample.com',
                     'some@sample.com'
@@ -70,6 +72,7 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
                 ),
             ],
             [
+                // Test Empty Data Set
                 'data' => $this->prepareData(
                     '',
                     '',
@@ -79,62 +82,39 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
                 ),
                 'isValid' => false,
                 'errorMessages' => $this->prepareMessages(
-                    [NotEmpty::IS_EMPTY => DetailsInputFilter::MSG_FIRST_NAME_EMPTY],
+                    [
+                        NotEmpty::IS_EMPTY => DetailsInputFilter::MSG_FIRST_NAME_EMPTY,
+                        Regex::NOT_MATCH => DetailsInputFilter::MSG_NAME_NO_PATTERN_MATCH,
+                    ],
                     [],
-                    [NotEmpty::IS_EMPTY => DetailsInputFilter::MSG_LAST_NAME_EMPTY],
+                    [
+                        NotEmpty::IS_EMPTY => DetailsInputFilter::MSG_LAST_NAME_EMPTY,
+                        Regex::NOT_MATCH => DetailsInputFilter::MSG_NAME_NO_PATTERN_MATCH,
+                    ],
                     [
                         EmailAddress::INVALID_FORMAT => DetailsInputFilter::MSG_EMAIL_INVALID,
-                        NotEmpty::IS_EMPTY => DetailsInputFilter::MSG_EMAIL_INVALID
+                        NotEmpty::IS_EMPTY => DetailsInputFilter::MSG_EMAIL_INVALID,
                     ],
-                    [NotEmpty::IS_EMPTY => DetailsInputFilter::MSG_EMAIL_CONFIRM_EMPTY]
+                    [
+                        NotEmpty::IS_EMPTY => DetailsInputFilter::MSG_EMAIL_CONFIRM_EMPTY,
+                    ]
                 ),
             ],
             [
+                // Test Invalid Name
                 'data' => $this->prepareData(
-                    str_repeat('a', DetailsInputFilter::LIMIT_NAME_MAX + 1),
-                    str_repeat('a', DetailsInputFilter::LIMIT_NAME_MAX + 1),
-                    str_repeat('a', DetailsInputFilter::LIMIT_NAME_MAX + 1),
-                    str_repeat('a', DetailsInputFilter::LIMIT_EMAIL_MAX + 1),
-                    str_repeat('a', DetailsInputFilter::LIMIT_EMAIL_MAX + 1)
+                    'J0£',
+                    'L1ght',
+                    'Br0wn',
+                    'some@sample.com',
+                    'some@sample.com'
                 ),
                 'isValid' => false,
                 'errorMessages' => $this->prepareMessages(
-                    [
-                        StringLength::TOO_LONG =>
-                            sprintf(DetailsInputFilter::MSG_NAME_MAX, DetailsInputFilter::LIMIT_NAME_MAX)
-                    ],
-                    [
-                        StringLength::TOO_LONG =>
-                            sprintf(DetailsInputFilter::MSG_NAME_MAX, DetailsInputFilter::LIMIT_NAME_MAX)
-                    ],
-                    [
-                        StringLength::TOO_LONG =>
-                            sprintf(DetailsInputFilter::MSG_NAME_MAX, DetailsInputFilter::LIMIT_NAME_MAX)
-                    ],
-                    [
-                        StringLength::TOO_LONG =>
-                            sprintf(DetailsInputFilter::MSG_EMAIL_MAX, DetailsInputFilter::LIMIT_EMAIL_MAX),
-                        EmailAddress::INVALID_FORMAT => DetailsInputFilter::MSG_EMAIL_INVALID,
-                    ],
-                    []
-                ),
-            ],
-            [
-                'data' => $this->prepareData(
-                    str_repeat('a', DetailsInputFilter::LIMIT_NAME_MAX),
-                    str_repeat('a', DetailsInputFilter::LIMIT_NAME_MAX),
-                    str_repeat('a', DetailsInputFilter::LIMIT_NAME_MAX),
-                    str_repeat('a', DetailsInputFilter::LIMIT_NAME_MAX),
-                    str_repeat('a', DetailsInputFilter::LIMIT_NAME_MAX)
-                ),
-                'isValid' => false,
-                'errorMessages' => $this->prepareMessages(
+                    [Regex::NOT_MATCH => DetailsInputFilter::MSG_NAME_NO_PATTERN_MATCH],
+                    [Regex::NOT_MATCH => DetailsInputFilter::MSG_NAME_NO_PATTERN_MATCH],
+                    [Regex::NOT_MATCH => DetailsInputFilter::MSG_NAME_NO_PATTERN_MATCH],
                     [],
-                    [],
-                    [],
-                    [
-                        EmailAddress::INVALID_FORMAT => DetailsInputFilter::MSG_EMAIL_INVALID,
-                    ],
                     []
                 ),
             ],
