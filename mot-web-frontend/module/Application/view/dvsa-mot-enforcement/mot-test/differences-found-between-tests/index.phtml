@@ -52,7 +52,13 @@ $this->headTitle('Mot Test Results');
                             $rfr['tester'] = ($rfr['testType'] === MotTestTypeCode::NORMAL_TEST ? "Tester" : "Vehicle Examiner");
                             $rfr['divider'] = $divider;
                             $rfr['description'] = $rfr['name'] . ' ' . $rfr['failureText'];
-                            $rfr['inspectionManualDescription'] = $rfr['name'];
+
+                            if ($rfr['type'] == 'ADVISORY') {
+                                $rfr['description'] = $rfr['name'] . ' ' . $rfr['advisoryText'];
+                            } else {
+                                $rfr['description'] = $rfr['name'] . ' ' . $rfr['failureText'];
+                            }
+
                             $rfr['scores'] = $this->scores;
                             $rfr['pointScores'] = $this->pointScores;
 
