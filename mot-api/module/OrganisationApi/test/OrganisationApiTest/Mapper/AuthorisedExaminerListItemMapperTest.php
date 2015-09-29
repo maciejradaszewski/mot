@@ -37,7 +37,7 @@ class AuthorisedExaminerListItemMapperTest extends \PHPUnit_Framework_TestCase
         $result = $this->mapper->toArray(self::getAuthorisedExaminerEntity());
 
         $this->assertTrue(is_array($result));
-        $this->assertCount(11, $result);
+        $this->assertCount(12, $result);
     }
 
     public function testToDto()
@@ -105,6 +105,7 @@ class AuthorisedExaminerListItemMapperTest extends \PHPUnit_Framework_TestCase
             ->setNumber('AE-5555')
             ->setOrganisation($organisation)
             ->setStatus($status)
+            ->setStatusChangedOn(new \DateTime('2011-12-13'))
             ->setValidFrom(new \DateTime('2011-12-13'))
             ->setExpiryDate(new \DateTime('2014-01-02'));
 

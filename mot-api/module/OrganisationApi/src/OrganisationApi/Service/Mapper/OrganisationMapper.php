@@ -87,6 +87,7 @@ class OrganisationMapper extends AbstractApiMapper
                 ->setAssignedAreaOffice($aoDto)
                 ->setAuthorisedExaminerRef($ae->getNumber())
                 ->setStatus($statusDto)
+                ->setStatusChangedOn(DateTimeApiFormat::date($ae->getStatusChangedOn()))
                 ->setValidFrom(DateTimeApiFormat::date($ae->getValidFrom()))
                 ->setExpiryDate(DateTimeApiFormat::date($ae->getExpiryDate()));
 

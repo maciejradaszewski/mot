@@ -13,6 +13,7 @@ use DvsaCommon\Dto\Common\AuthForAeStatusDto;
 class AuthorisedExaminerAuthorisationDto extends AbstractDataTransferObject
 {
     private $authorisedExaminerRef;
+    private $statusChangedOn;
     private $validFrom;
     private $expiryDate;
 
@@ -63,6 +64,24 @@ class AuthorisedExaminerAuthorisationDto extends AbstractDataTransferObject
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * @param \DateTime $value
+     * @return AuthorisedExaminerAuthorisationDto
+     */
+    public function setStatusChangedOn($value)
+    {
+        $this->statusChangedOn = strtotime($value) > 0 ? $value : null;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getStatusChangedOn()
+    {
+        return $this->statusChangedOn;
     }
 
     /**
