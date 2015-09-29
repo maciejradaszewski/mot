@@ -19,6 +19,7 @@ public class UserService extends Service {
     private static final String CREATE_VEHICLE_EXAMINER_PATH = "/testsupport/vehicleexaminer";
     private static final String CREATE_FINANCE_USER_PATH = "/testsupport/financeuser";
     private static final String CREATE_SCHEME_USER = "/testsupport/schemeuser";
+    private static final String FINANCE__USER = "/testsupport/vm9913User";
     private AuthService authService = new AuthService();
 
     protected UserService() {
@@ -96,6 +97,12 @@ public class UserService extends Service {
     }
 
     protected User createUserAsSchemeUser(boolean accountClaimRequired) throws IOException {
+        String schemeUserRequest = jsonHandler.convertToString(new CreateSchemeUserRequest(accountClaimRequired));
+        Response response = motClient.createUser(schemeUserRequest, CREATE_SCHEME_USER);
+        return userResponse(response);
+    }
+
+    protected User createUserAsSuperFinanceUser(boolean accountClaimRequired) throws IOException {
         String schemeUserRequest = jsonHandler.convertToString(new CreateSchemeUserRequest(accountClaimRequired));
         Response response = motClient.createUser(schemeUserRequest, CREATE_SCHEME_USER);
         return userResponse(response);
