@@ -8,6 +8,7 @@ public class RandomDataGenerator {
 
     private static final String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String numbers = "1234567890";
+    private static final String postcodeIncode = "ABDEFGHJLNPQRSTUWXYZ";
 
     private static String generateRandomString(int length, String characterSet, long seed) {
         Random random = new Random(seed);
@@ -18,6 +19,17 @@ public class RandomDataGenerator {
 
     public static String generateRandomString(int length, long seed) {
         return generateRandomString(length, alphabet, seed);
+    }
+
+    public static String generateRandomPostcode(boolean withWhitespace) {
+        StringBuilder postcodeBuilder = new StringBuilder();
+        postcodeBuilder.append(RandomStringUtils.randomAlphabetic(2).toUpperCase())
+                .append(RandomStringUtils.randomNumeric(1))
+                .append((withWhitespace) ? ' ' : "")
+                .append(RandomStringUtils.randomNumeric(1))
+                .append(generateRandomString(2, postcodeIncode, 0));
+
+        return postcodeBuilder.toString();
     }
 
     public static String generateRandomString() {

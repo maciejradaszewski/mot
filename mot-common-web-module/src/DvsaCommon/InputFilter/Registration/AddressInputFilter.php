@@ -10,6 +10,7 @@ namespace DvsaCommon\InputFilter\Registration;
 use Zend\InputFilter\InputFilter;
 use Zend\Validator\NotEmpty;
 use Zend\Validator\StringLength;
+use Zend\Validator\Regex;
 
 /**
  * (Account registration) Your address' step input filter.
@@ -18,10 +19,12 @@ use Zend\Validator\StringLength;
  */
 class AddressInputFilter extends InputFilter
 {
-    /** To be used by address line 1,2,3 and the "Town and city" field, since have identical criteria */
+    /** To be used by address line 1, 2, 3 since they have identical criteria */
     const LIMIT_ADDRESS_MAX = 50;
-
-    const LIMIT_POSTCODE_MAX = 10;
+    const MSG_ADDRESS_LINE_NO_PATTERN_MATCH = 'must only contain letters, numbers and the symbols \',.-()&/';
+    const MSG_ADDRESS_LINE_CONTAINS_NO_ALPHANUMERIC = 'must contain at least 1 letter or number';
+    const ADDRESS_COMPONENT_MATCH_PATTERN = '/^[\\pL 0-9\'-,.\\(\\)\\/&]*$/u';
+    const ADDRESS_COMPONENT_MATCH_ALPHA_PATTERN = '/[\\pL0-9]+/u';
 
     /** Address line 1 */
     const FIELD_ADDRESS_1 = 'address1';
@@ -37,11 +40,14 @@ class AddressInputFilter extends InputFilter
     /** Town or city */
     const FIELD_TOWN_OR_CITY = 'townOrCity';
     const MSG_TOWN_OR_CITY_EMPTY = 'you must enter a town or city';
+    const MSG_TOWN_NO_PATTERN_MATCH = "must begin with a letter and only contain letters, spaces and the symbols -.,'";
+    const TOWN_MATCH_PATTERN = "/^\\pL[\\pL -.,']*$/u";
 
     /** Postcode */
     const FIELD_POSTCODE = 'postcode';
     const MSG_POSTCODE_EMPTY = 'you must enter a valid postcode';
     const MSG_POSTCODE_MAX = 'must be %d, or less, characters long';
+    const POSTCODE_MATCH_PATTERN = '/^(([a-z]{2}([0-9]{1,2}|[0-9][a-z]))|([a-z]([0-9]{1,2}|[0-9][a-z])))\s?[0-9][abd-hjlnp-uw-z]{2}$/i';
 
     public function init()
     {
@@ -53,7 +59,7 @@ class AddressInputFilter extends InputFilter
     }
 
     /**
-     * Adding validators for the address line 1,2 and 3 field/input.
+     * Adding validators for the address line 1, 2 and 3 field/input.
      *
      * @param string     $fieldName  @see self::FIELD_ADDRESS_*
      * @param bool|false $isRequired (optional)
@@ -72,16 +78,30 @@ class AddressInputFilter extends InputFilter
                         'message' => sprintf(self::MSG_ADDRESS_MAX, self::LIMIT_ADDRESS_MAX),
                     ],
                 ],
+                [
+                    'name' => Regex::class,
+                    'options' => [
+                        'pattern' => self::ADDRESS_COMPONENT_MATCH_PATTERN,
+                        'message' => self::MSG_ADDRESS_LINE_NO_PATTERN_MATCH,
+                    ],
+                ],
+                [
+                    'name' => Regex::class,
+                    'options' => [
+                        'pattern' => self::ADDRESS_COMPONENT_MATCH_ALPHA_PATTERN,
+                        'message' => self::MSG_ADDRESS_LINE_CONTAINS_NO_ALPHANUMERIC,
+                    ],
+                ],
             ],
         ];
 
         if ($isRequired) {
-            $input['validators'][] = [
+            array_unshift($input['validators'], [
                 'name'    => NotEmpty::class,
                 'options' => [
                     'message' => self::MSG_ADDRESS_EMPTY,
                 ],
-            ];
+            ]);
         }
 
         $this->add($input);
@@ -110,6 +130,13 @@ class AddressInputFilter extends InputFilter
                             'message' => sprintf(self::MSG_ADDRESS_MAX, self::LIMIT_ADDRESS_MAX),
                         ],
                     ],
+                    [
+                        'name' => Regex::class,
+                        'options' => [
+                            'pattern' => self::TOWN_MATCH_PATTERN,
+                            'message' => self::MSG_TOWN_NO_PATTERN_MATCH,
+                        ],
+                    ],
                 ],
             ]
         );
@@ -126,15 +153,15 @@ class AddressInputFilter extends InputFilter
                 'required'   => true,
                 'validators' => [
                     [
-                        'name'    => StringLength::class,
+                        'name'    => NotEmpty::class,
                         'options' => [
-                            'max'     => self::LIMIT_POSTCODE_MAX,
-                            'message' => sprintf(self::MSG_POSTCODE_MAX, self::LIMIT_POSTCODE_MAX),
+                            'message' => self::MSG_POSTCODE_EMPTY,
                         ],
                     ],
                     [
-                        'name'    => NotEmpty::class,
+                        'name' => Regex::class,
                         'options' => [
+                            'pattern' => self::POSTCODE_MATCH_PATTERN,
                             'message' => self::MSG_POSTCODE_EMPTY,
                         ],
                     ],

@@ -10,6 +10,7 @@ namespace DvsaCommon\InputFilter\Registration;
 use Zend\InputFilter\InputFilter;
 use Zend\Validator\NotEmpty;
 use Zend\Validator\StringLength;
+use Zend\Validator\Digits;
 
 /**
  * (Account registration) Security question's steps (first and second) input filter.
@@ -23,6 +24,7 @@ abstract class SecurityQuestionAbstractInputFilter extends InputFilter
 
     /** Select a question to answer*/
     const MSG_QUESTION_EMPTY = 'you must choose a question';
+    const MSG_QUESTION_NOT_NUMERIC = 'you must choose a valid question';
 
     /** Your answer*/
     const MSG_ANSWER_EMPTY = 'you must enter a memorable answer';
@@ -48,6 +50,12 @@ abstract class SecurityQuestionAbstractInputFilter extends InputFilter
                         'name'    => NotEmpty::class,
                         'options' => [
                             'message' => self::MSG_QUESTION_EMPTY,
+                        ],
+                    ],
+                    [
+                        'name' => Digits::class,
+                        'options' => [
+                            'message' => self::MSG_QUESTION_NOT_NUMERIC,
                         ],
                     ],
                 ],

@@ -13,6 +13,7 @@ use Zend\Validator\Hostname;
 use Zend\Validator\Identical;
 use Zend\Validator\NotEmpty;
 use Zend\Validator\StringLength;
+use Zend\Validator\Regex;
 
 /**
  * (Account registration) Your details' step input filter.
@@ -29,6 +30,7 @@ class DetailsInputFilter extends InputFilter
     const FIELD_FIRST_NAME = 'firstName';
     const MSG_FIRST_NAME_EMPTY = 'you must enter a first name';
     const MSG_NAME_MAX = 'must be %d, or less, characters long'; # common for all the name related fields
+    const MSG_NAME_NO_PATTERN_MATCH = 'must only contain letters, spaces, hyphens and apostrophes';
 
     /** Middle name */
     const FIELD_MIDDLE_NAME = 'middleName';
@@ -66,26 +68,31 @@ class DetailsInputFilter extends InputFilter
     private function initValidatorsForNames($fieldName, $isRequired = false, $message = null)
     {
         $input = [
-            'name'       => $fieldName,
-            'required'   => $isRequired,
+            'name' => $fieldName,
+            'required' => $isRequired,
             'validators' => [
                 [
-                    'name'    => StringLength::class,
+                    'name' => StringLength::class,
                     'options' => [
-                        'max'     => self::LIMIT_NAME_MAX,
+                        'max' => self::LIMIT_NAME_MAX,
                         'message' => sprintf(self::MSG_NAME_MAX, self::LIMIT_NAME_MAX),
+                    ],
+                ],
+                [
+                    'name' => Regex::class,
+                    'options' => [
+                        'pattern' => "/^\\pL[\\pL \\-']*$/u",
+                        'message' => self::MSG_NAME_NO_PATTERN_MATCH,
                     ],
                 ],
             ],
         ];
 
         if ($isRequired) {
-            $input['validators'][] = [
+            array_unshift($input['validators'], [
                 'name'    => NotEmpty::class,
-                'options' => [
-                    'message' => $message,
-                ],
-            ];
+                'options' => ['message' => $message]
+            ]);
         }
 
         $this->add($input);

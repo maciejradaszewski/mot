@@ -13,6 +13,7 @@ use DvsaCommon\InputFilter\Registration\SecurityQuestionAbstractInputFilter;
 use DvsaCommon\InputFilter\Registration\SecurityQuestionFirstInputFilter;
 use DvsaCommon\InputFilter\Registration\SecurityQuestionSecondInputFilter;
 use DvsaCommonTest\Bootstrap;
+use Zend\Validator\Digits;
 use Zend\Validator\NotEmpty;
 use Zend\Validator\StringLength;
 
@@ -116,8 +117,13 @@ class SecurityQuestionsInputFilterTest extends \PHPUnit_Framework_TestCase
                 ),
                 'isValid' => false,
                 'errorMessages' => $this->prepareMessagesForStep(
-                    [NotEmpty::IS_EMPTY => SecurityQuestionAbstractInputFilter::MSG_QUESTION_EMPTY],
-                    [NotEmpty::IS_EMPTY => SecurityQuestionAbstractInputFilter::MSG_ANSWER_EMPTY]
+                    [
+                        NotEmpty::IS_EMPTY => SecurityQuestionAbstractInputFilter::MSG_QUESTION_EMPTY,
+                        Digits::STRING_EMPTY => SecurityQuestionAbstractInputFilter::MSG_QUESTION_NOT_NUMERIC,
+                    ],
+                    [
+                        NotEmpty::IS_EMPTY => SecurityQuestionAbstractInputFilter::MSG_ANSWER_EMPTY,
+                    ]
                 ),
             ],
             [

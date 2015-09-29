@@ -11,7 +11,7 @@ Feature:
       | <firstName> | <middleName> | <lastName> | <emailAddress> | <confirmEmailAddress> |
     And For the "address" step I input:
       | address1   | address2   | address3   | townOrCity | postcode |
-      | <address1> | <address2> | <address3> | town       | bty123   |
+      | <address1> | <address2> | <address3> | town       | PO57 0DE |
     And I supply valid answers to the security questions
     And I provide a valid password
     When I confirm my details
@@ -20,13 +20,13 @@ Feature:
 
   Examples:
     | firstName | middleName | lastName         | emailAddress        | confirmEmailAddress | address1             | address2    | address3      |
-    | John      |            | Doe              | fake@email.com      | fake@email.com      | 123 address one      |             | address three |
-    | Mary-Anne |            | Smith            | fake123@email.com   | fake123@email.com   | address one          | address two | address three |
+    | John      | James      | Doe              | fake@email.com      | fake@email.com      | 123 address one      |             | address three |
+    | Mary-Anne | Jane       | Smith            | fake123@email.com   | fake123@email.com   | address one          | address two | address three |
     | Jäné      | John       | Doe              | fake-mail@email.com | fake-mail@email.com | address one          | address two | address three |
-    | Jane      |            | Spencer-Campbell | fakemail@email.com  | fakemail@email.com  | address street       | address two | address three |
+    | Jane      | May        | Spencer-Campbell | fakemail@email.com  | fakemail@email.com  | address street       | address two | address three |
     | Jane      | May-Jane   | Smith            | fakemail@email.com  | fakemail@email.com  | 12(a) address street | address two | address three |
-    | Jane      |            | Smith            | fakemail@email.com  | fakemail@email.com  | 12 address street    | address two |               |
-    | Jane      |            | Smith            | fakemail@email.com  | fakemail@email.com  | 12 address street    |             |               |
+    | Jane      | May        | Smith            | fakemail@email.com  | fakemail@email.com  | 12 address street    | address two |               |
+    | Jane      | May        | Smith            | fakemail@email.com  | fakemail@email.com  | 12 address street    |             |               |
 
   @VM-11722 @negative
   Scenario Outline: A user attempts to register an account but supplies invalid or insufficient details
@@ -36,7 +36,7 @@ Feature:
       | <firstName> | <middleName> | <lastName> | <emailAddress> | <confirmEmailAddress> |
     And For the "address" step I input:
       | address1   | address2   | address3   | townOrCity | postcode |
-      | <address1> | <address2> | <address3> | town       | bty123   |
+      | <address1> | <address2> | <address3> | town       | PO57 0DE |
     And I supply valid answers to the security questions
     And I provide a valid password
     When I try to confirm my details
