@@ -11,8 +11,8 @@ class PasswordForm extends Form
     const FIELD_PASSWORD = PasswordInputFilter::FIELD_PASSWORD;
     const FIELD_RETYPE_PASSWORD = PasswordInputFilter::FIELD_PASSWORD_CONFIRM;
 
-    const LABEL_PASSWORD = "Password";
-    const LABEL_RETYPE_PASSWORD = "Confirm password";
+    const LABEL_PASSWORD = "New password";
+    const LABEL_RETYPE_PASSWORD = "Re-type your new password ";
 
     const PASSWORD_MAX_LENGTH = 32;
     const PASSWORD_MIN_LENGTH = 8;
