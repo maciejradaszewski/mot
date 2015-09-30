@@ -20,7 +20,7 @@ class StartTestConfirmationViewModel
     const STRING_RETEST = 'retest';
 
     const START_TEST_CONFIRMATION_ACTION = '/start-test-confirmation';
-    const START_DEMO_CONFIRMATION_ACTION = '/start-demo-confirmation';
+    const START_TRAINING_CONFIRMATION_ACTION = '/start-training-test-confirmation';
 
     /** @var string */
     private $method;
@@ -70,7 +70,8 @@ class StartTestConfirmationViewModel
     }
 
     /**
-     * @param string $method
+     * @param $method
+     * @return $this
      */
     public function setMethod($method)
     {
@@ -96,8 +97,7 @@ class StartTestConfirmationViewModel
     public function isRetest()
     {
         $this->checkMethod();
-
-        return $this->method == MotTestTypeCode::RE_TEST;
+        return $this->method === MotTestTypeCode::RE_TEST;
     }
 
     /**
@@ -106,18 +106,16 @@ class StartTestConfirmationViewModel
     public function isNormalTest()
     {
         $this->checkMethod();
-
-        return $this->method == MotTestTypeCode::NORMAL_TEST;
+        return $this->method === MotTestTypeCode::NORMAL_TEST;
     }
 
     /**
      * @return bool
      */
-    public function isDemoTest()
+    public function isTrainingTest()
     {
         $this->checkMethod();
-
-        return $this->method == MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING;
+        return $this->method === MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING;
     }
 
     /**
@@ -363,7 +361,7 @@ class StartTestConfirmationViewModel
         $safeSource = $this->getSafeSource();
 
         if ($this->getMethod() === MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING) {
-            $actionConfirm = self::START_DEMO_CONFIRMATION_ACTION;
+            $actionConfirm = self::START_TRAINING_CONFIRMATION_ACTION;
         }
 
         $actionConfirm.= '/'. $this->getObfuscatedVehicleId() . '/'

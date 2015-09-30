@@ -322,13 +322,13 @@ return [
                     ],
                 ],
             ],
-            'demo-vehicle-search'                         => [
+            'training-test-vehicle-search'                         => [
                 'type'    => 'segment',
                 'options' => [
-                    'route'    => '/demo-vehicle-search',
+                    'route'    => '/training-test-vehicle-search',
                     'defaults' => [
                         'controller' => MotTest\VehicleSearchController::class,
-                        'action'     => 'demoVehicleSearch',
+                        'action'     => 'trainingTestVehicleSearch',
                     ],
                 ],
             ],
@@ -347,10 +347,10 @@ return [
                     ],
                 ],
             ],
-            'start-demo-confirmation'                     => [
+            'start-training-test-confirmation'                     => [
                 'type'    => 'segment',
                 'options' => [
-                    'route'       => '/start-demo-confirmation[/:id[/:noRegistration[/:source]]]',
+                    'route'       => '/start-training-test-confirmation[/:id[/:noRegistration[/:source]]]',
                     'constraints' => [
                         'id'             => '[0-9a-zA-Z-_]+',   // vehicleId are obfuscated
                         'noRegistration' => '[0-9]+',
@@ -358,7 +358,7 @@ return [
                     ],
                     'defaults'    => [
                         'controller' => MotTest\StartTestConfirmationController::class,
-                        'action'     => 'demo',
+                        'action'     => 'training',
                     ],
                 ],
             ],
@@ -1101,8 +1101,8 @@ return [
                 __DIR__ . '/../view/partials/dashboard/tester-contingency-box.phtml',
             'dashboard/financeBox'                                                       =>
                 __DIR__ . '/../view/partials/dashboard/finance-box.phtml',
-            'dashboard/demoTestBox'                                                       =>
-                __DIR__ . '/../view/partials/dashboard/tester-demo-test-box.phtml',
+            'dashboard/trainingTestBox'                                                       =>
+                __DIR__ . '/../view/partials/dashboard/tester-training-test-box.phtml',
             'dashboard/motActivity'                                                       =>
                 __DIR__ . '/../view/partials/dashboard/mot-activity.phtml',
             'vehicle/history'                                                            =>

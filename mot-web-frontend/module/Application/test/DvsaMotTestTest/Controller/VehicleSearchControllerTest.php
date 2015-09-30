@@ -2,7 +2,6 @@
 
 namespace DvsaMotTestTest\Controller;
 
-use Application\Service\CatalogService;
 use Application\Service\ContingencySessionManager;
 use CoreTest\Service\StubCatalogService;
 use DvsaClient\Mapper\VehicleMapper;

@@ -8,10 +8,9 @@ use DvsaMotTest\Controller\VehicleSearchController;
 $searchType = $this->searchType;
 
 $isRetest = ($searchType === VehicleSearchController::SEARCH_TYPE_RETEST);
-$isDemo = ($searchType === VehicleSearchController::SEARCH_TYPE_DEMO);
+$isTraining = ($searchType === VehicleSearchController::SEARCH_TYPE_TRAINING);
 $isReplCert = ($searchType === VehicleSearchController::SEARCH_TYPE_CERTIFICATE);
 
-//  --  title & header  --
 if (!empty($this->title)) {
     $title = $this->title;
 } else {

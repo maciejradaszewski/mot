@@ -3,13 +3,7 @@
 /** @var \DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultUrlTemplateInterface $urlTemplate */
 /** @var \DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultMessage $searchResultMessage */
 
-use DvsaMotTest\Controller\VehicleSearchController;
-
 $searchType = $this->searchType;
-
-$isRetest = ($searchType === VehicleSearchController::SEARCH_TYPE_RETEST);
-$isDemo = ($searchType === VehicleSearchController::SEARCH_TYPE_DEMO);
-$isReplCert = ($searchType === VehicleSearchController::SEARCH_TYPE_CERTIFICATE);
 
 //  --  title & header  --
 if (!empty($this->title)) {
@@ -19,21 +13,12 @@ if (!empty($this->title)) {
 
     if ($isRetest) {
         $title .= ' - retest';
-    } elseif ($isDemo) {
-        $title =  'DEMO ' . $title;
     }
 }
 $escTitle = $this->escapeHtml($title);
 
-if (!$isRetest && !$isReplCert) {
-    $this->layout()->setVariable('pageSubTitle', 'MOT testing');
-}
-
 $this->headTitle($escTitle);
 
-if ($isReplCert) {
-    $this->layout()->setVariable('pageSubTitle', 'Duplicate or replacement certificate');
-}
 $this->layout()->setVariable('pageTitle', $escTitle);
 
 $noMatches = isset($noMatches) ? $noMatches : false;

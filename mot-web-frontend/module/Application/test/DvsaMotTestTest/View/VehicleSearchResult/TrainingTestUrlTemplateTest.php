@@ -1,0 +1,99 @@
+<?php
+namespace DvsaMotTestTest\View\VehicleSearchResult;
+
+use DvsaCommon\Obfuscate\ParamObfuscator;
+use DvsaCommonTest\TestUtils\XMock;
+use DvsaMotTest\Constants\VehicleSearchSource;
+use DvsaMotTest\Model\VehicleSearchResult;
+use DvsaMotTest\View\VehicleSearchResult\TrainingTestUrlTemplate;
+use Zend\Mvc\Controller\Plugin\Url;
+use InvalidArgumentException;
+
+class TrainingTestUrlTemplateTest extends \PHPUnit_Framework_TestCase
+{
+
+    const VALIDATOR_VEHICLE_REQUIRED = 'Vehicle is required';
+    const VALIDATOR_INVALID_PARAMETER_ERROR = 'Vehicle ID and/or Search parameters are missing';
+
+    /** @var TrainingTestUrlTemplate */
+    private $trainingTestUrlTemplate;
+
+    /** @var bool */
+    private $noRegistration;
+
+    public function setUp()
+    {
+        $urlHelper = new Url();
+        $this->noRegistration = 0;
+
+        $this->trainingTestUrlTemplate = new TrainingTestUrlTemplate($this->noRegistration, $urlHelper);
+    }
+
+    public function testPassingNoVehicleArrayToGetUrlReturnsException()
+    {
+        $this->setExpectedException(InvalidArgumentException::class, self::VALIDATOR_VEHICLE_REQUIRED);
+
+        $this->trainingTestUrlTemplate->getUrl([]);
+    }
+
+    public function testPassingNoRequiredVehicleParametersReturnsException()
+    {
+        $this->setExpectedException(InvalidArgumentException::class, self::VALIDATOR_INVALID_PARAMETER_ERROR);
+
+        $this->trainingTestUrlTemplate->getUrl([ 'invalidKey' ]);
+    }
+
+    public function testPassingOneButNotAllRequiredVehicleParametersReturnsException()
+    {
+        $this->setExpectedException(InvalidArgumentException::class, self::VALIDATOR_INVALID_PARAMETER_ERROR);
+
+        $vehicle = [
+            'id' => '1',
+            'invalidKey' => '2',
+            'searchVrm' => 'test'
+        ];
+
+        $this->trainingTestUrlTemplate->getUrl($vehicle);
+    }
+
+    public function testPassingNoParametersToGetStartMotTestUrlReturnsException()
+    {
+        $this->setExpectedException(InvalidArgumentException::class, self::VALIDATOR_VEHICLE_REQUIRED);
+        $this->getStartMotTestUrl([]);
+    }
+
+    public function testPassingToGetStartMotTestUrlNoRequiredVehicleParametersReturnsException()
+    {
+        $this->setExpectedException(InvalidArgumentException::class, self::VALIDATOR_INVALID_PARAMETER_ERROR);
+        $this->getStartMotTestUrl([ 'invalidKey' ]);
+    }
+
+    public function testPassingOneButNotAllRequiredVehicleParametersToGetStartMotTestUrlReturnsException()
+    {
+        $this->setExpectedException(InvalidArgumentException::class, self::VALIDATOR_INVALID_PARAMETER_ERROR);
+
+        $vehicle = [
+            'id' => '1',
+            'invalidKey' => '2',
+            'searchVrm' => 'test'
+        ];
+
+        $this->getStartMotTestUrl($vehicle);
+    }
+
+    /**
+     * @param array $searchParams
+     * @return string
+     * @throws \Exception
+     */
+    private function getStartMotTestUrl(array $searchParams)
+    {
+        $paramObfuscator = XMock::of(ParamObfuscator::class);
+        $vehicleSearchSource = XMock::of(VehicleSearchSource::class);
+
+        $vehicle = new VehicleSearchResult($paramObfuscator, $vehicleSearchSource);
+
+        return $this->trainingTestUrlTemplate->getStartMotTestUrl($vehicle, $searchParams);
+    }
+
+}

@@ -8,6 +8,7 @@ use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaClient\Entity\TesterAuthorisation;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\Bootstrap;
@@ -28,6 +29,7 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
     private $testerGroupAuthorisationMapper;
     private $personRoleManagementService;
     private $catalogService;
+    private $config;
 
     public function setUp()
     {
@@ -43,6 +45,7 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
             ->willReturn(new TesterAuthorisation());
         $this->personRoleManagementService = XMock::of(PersonRoleManagementService::class);
         $this->catalogService = XMock::of(CatalogService::class);
+        $this->config = XMock::of(MotConfig::class);
 
         $this->setController(
             new UserProfileController(
@@ -50,7 +53,8 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
                 $this->accountAdminServiceMock,
                 $this->testerGroupAuthorisationMapper,
                 $this->personRoleManagementService,
-                $this->catalogService
+                $this->catalogService,
+                $this->config
             )
         );
 
@@ -101,7 +105,13 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
         if (!empty($expect['viewModel'])) {
             $this->assertInstanceOf(ViewModel::class, $result);
             $this->assertResponseStatus(self::HTTP_OK_CODE);
+        }
 
+        if (!empty($expect['viewModelVariables'])) {
+            foreach ($expect['viewModelVariables'] as $variable => $value) {
+                $this->assertArrayHasKey($variable, $result->getVariables());
+                $this->assertSame($result->getVariable($variable), $value);
+            }
         }
 
         if (!empty($expect['flashError'])) {
@@ -119,7 +129,7 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
     public function dataProviderTestActionsResultAndAccess()
     {
         return [
-            //  --  index: access action  --
+            //  --  index: access action, test feature "2FA method display" toggled on  --
             [
                 'method' => 'get',
                 'action' => 'index',
@@ -135,9 +145,48 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
                         'params' => [self::PERSON_ID],
                         'result' => new PersonHelpDeskProfileDto(),
                     ],
+                    [
+                        'class'  => 'config',
+                        'method' => 'get',
+                        'params' => ['feature_toggle', '2fa.method.visible'],
+                        'result' => true,
+                    ],
                 ],
                 'expect' => [
                     'viewModel' => true,
+                    'viewModelVariables' => [
+                        'display2FAMethod' => true,
+                    ],
+                ],
+            ],
+            //  --  index: access action, test feature "2FA method display" toggled off   --
+            [
+                'method' => 'get',
+                'action' => 'index',
+                'params' => [
+                    'route' => [
+                        'personId' => self::PERSON_ID,
+                    ],
+                ],
+                'mocks' => [
+                    [
+                        'class'  => 'accountAdminServiceMock',
+                        'method' => 'getUserProfile',
+                        'params' => [self::PERSON_ID],
+                        'result' => new PersonHelpDeskProfileDto(),
+                    ],
+                    [
+                        'class'  => 'config',
+                        'method' => 'get',
+                        'params' => ['feature_toggle', '2fa.method.visible'],
+                        'result' => false,
+                    ],
+                ],
+                'expect' => [
+                    'viewModel' => true,
+                    'viewModelVariables' => [
+                        'display2FAMethod' => false,
+                    ],
                 ],
             ],
             //  --  passwordReset: access action  --

@@ -250,7 +250,7 @@ class StartTestConfirmationControllerTest extends AbstractDvsaMotTestTestCase
                 'expect' => [],
             ],
             [
-                'action' => 'demo',
+                'action' => 'training',
                 'params' => $paramCommon,
                 'mock'   => [],
                 'expect' => [],
@@ -342,7 +342,7 @@ class StartTestConfirmationControllerTest extends AbstractDvsaMotTestTestCase
                     'exception' => $unauthException,
                 ],
             ],
-            ['get', 'demo', [], $mockGet, ['status' => self::HTTP_OK_CODE]],
+            ['get', 'training', [], $mockGet, ['status' => self::HTTP_OK_CODE]],
             [
                 'post', 'index', [PermissionInSystem::MOT_TEST_START], $mockPost,
                 ['url' => MotTestUrlBuilderWeb::options($motTestNumber)],
@@ -359,8 +359,8 @@ class StartTestConfirmationControllerTest extends AbstractDvsaMotTestTestCase
                 ['url' => MotTestUrlBuilderWeb::options($motTestNumber)],
             ],
             [
-                'post', 'demo', [PermissionInSystem::MOT_TEST_START], $mockPost,
-                ['url' => MotTestUrlBuilderWeb::motTest($motTestNumber)],
+                'post', 'training', [PermissionInSystem::MOT_TEST_START], $mockPost,
+                ['url' => MotTestUrlBuilderWeb::options($motTestNumber)],
             ],
             [
                 'post', 'index', [PermissionInSystem::MOT_TEST_START], $mockCtSess + $mockPost,
@@ -391,7 +391,7 @@ class StartTestConfirmationControllerTest extends AbstractDvsaMotTestTestCase
 
         //  --  mock POST requests  --
         $postIdx = 0;
-        if ($action === 'demo') {
+        if ($action === 'training') {
             $postIdx--;
         }
 

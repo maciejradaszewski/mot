@@ -114,8 +114,10 @@ $expiryDate = DateTimeDisplayFormat::textDate($this->expiryDate);
                                 );
                             } else {
                                 echo $vehicle->getVehicleClass()->getName();
+                                ?>
+                                    <input type="hidden" name="vehicleClass" value="<?php echo $vehicle->getClassCode(); ?>" />
+                                <?php
                             }
-
                             ?>
                         </div>
                     </dd>
@@ -139,6 +141,9 @@ $expiryDate = DateTimeDisplayFormat::textDate($this->expiryDate);
                                 );
                             } else {
                                 echo $vehicle->getFuelType()->getName();
+                                ?>
+                                    <input type="hidden" name="fuelType" value="<?php echo $vehicle->getFuelType()->getCode(); ?>" />
+                                <?php
                             }
                             ?>
                         </div>
@@ -165,6 +170,9 @@ $expiryDate = DateTimeDisplayFormat::textDate($this->expiryDate);
                                 );
                             } else {
                                 echo $vehicle->getColour()->getName();
+                                ?>
+                                    <input type="hidden" name="primaryColour" value="<?php echo $vehicle->getColour()->getCode(); ?>" />
+                                <?php
                             }
                             ?>
                         </div>
@@ -178,20 +186,21 @@ $expiryDate = DateTimeDisplayFormat::textDate($this->expiryDate);
                         <div class="form-group">
                             <?php
                             $colourSec = $vehicle->getColourSecondary();
-                            if (!$this->doNotShowDropDowns) {
-                                if ($colourSec instanceof ColourDto) {
-                                    $secondaryColourId = $colourSec->getCode();
-                                } else {
-                                    $secondaryColourId = ColourCode::NOT_STATED;
-                                }
 
+                            if ($colourSec instanceof ColourDto) {
+                                $secondaryColourCode = $colourSec->getCode();
+                            } else {
+                                $secondaryColourCode = ColourCode::NOT_STATED;
+                            }
+
+                            if (!$this->doNotShowDropDowns) {
                                 echo $this->partial(
                                     'selectElement',
                                     [
                                         'id'      => 'secondary-colour',
                                         'name'    => 'secondaryColour',
                                         'options' => $colours->getSecondaryColours(),
-                                        'value'   => $secondaryColourId
+                                        'value'   => $secondaryColourCode
                                     ]
                                 );
                             } else {
@@ -200,6 +209,9 @@ $expiryDate = DateTimeDisplayFormat::textDate($this->expiryDate);
                                     ? $colourSec->getName()
                                     : $colours->getSecondaryColours()[ColourCode::NOT_STATED]
                                 );
+                                ?>
+                                    <input type="hidden" name="secondaryColour" value="<?php echo $secondaryColourCode; ?>" />
+                                <?php
                             }
                             ?>
                         </div>

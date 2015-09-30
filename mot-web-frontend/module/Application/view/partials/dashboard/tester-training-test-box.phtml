@@ -1,0 +1,30 @@
+<?php
+
+use DvsaCommon\UrlBuilder\MotTestUrlBuilder;
+use DvsaCommon\UrlBuilder\VehicleUrlBuilder;
+
+if ($hasInProgressTrainingTest) {
+    $trainingTestUrl = MotTestUrlBuilder::motTest($inProgressTrainingTestNumber);
+    $trainingTestText = 'Resume training test';
+    $trainingTestId = 'action-resume-mot-demonstration';
+} else {
+    $trainingTestUrl = VehicleUrlBuilder::trainingSearch();
+    $trainingTestText = 'Start training test';
+    $trainingTestId = 'action-start-mot-demonstration';
+}
+?>
+
+<div class="module-pivot-panel">
+    <header class="pivot-panel_header">
+        <h2 class="pivot-panel_title">Training</h2>
+    </header>
+    <p>Practice on any class of vehicle without using slots or recording the outcome.</p>
+    <p>
+        <a href="<?php echo $trainingTestUrl ?>" class="btn btn-primary" id="<?php echo $trainingTestId;?>">
+            <?php echo $trainingTestText ?>
+        </a>
+    </p>
+</div>
+
+
+

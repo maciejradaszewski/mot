@@ -39,7 +39,7 @@ $title = $testName;
 $header = $testName . ' results entry';
 
 $this->headTitle($title);
-$this->layout()->setVariable('pageSubTitle', 'MOT testing');
+$this->layout()->setVariable('pageSubTitle', $motTestTitleViewModel->getTitle($motTest));
 $this->layout()->setVariable('pageTitle', $header);
 
 //  --  js  --

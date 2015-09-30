@@ -6,6 +6,8 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 
+import java.util.NoSuchElementException;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
 
@@ -49,6 +51,12 @@ public class HelpDeskUserProfilePage extends Page {
     }
 
     public boolean isPersonAuthenticationMethodIsDisplayed() {
-        return personAuthenticationMethod.isDisplayed();
+        boolean isElementPresent;
+        try {
+            isElementPresent = personAuthenticationMethod.isDisplayed();
+        } catch (Exception exception) {
+            isElementPresent = false;
+        }
+        return isElementPresent;
     }
 }

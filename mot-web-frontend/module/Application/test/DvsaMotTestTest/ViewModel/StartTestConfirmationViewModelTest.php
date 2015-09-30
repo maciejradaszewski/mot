@@ -49,13 +49,13 @@ class StartTestConfirmationViewModelTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testStartDemoTestActionReturnsStartDemoTestConfirmationActionUrl()
+    public function testStartTrainingTestActionReturnsStartDemoTestConfirmationActionUrl()
     {
         $viewModel = $this->getViewModel();
         $viewModel->setMethod(MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING);
 
         $this->assertEquals(
-            '/start-demo-confirmation/' . self::DUMMY_OBFUSCATED_VEHICLE_ID . '/' . self::DUMMY_NO_REGISTRATION,
+            '/start-training-test-confirmation/' . self::DUMMY_OBFUSCATED_VEHICLE_ID . '/' . self::DUMMY_NO_REGISTRATION,
             $viewModel->getConfirmActionUrl()
         );
     }

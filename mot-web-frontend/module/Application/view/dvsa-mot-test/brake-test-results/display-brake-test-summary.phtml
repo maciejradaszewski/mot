@@ -2,9 +2,13 @@
 
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Enum\VehicleClassCode;
+use DvsaMotTest\View\Model\MotTestTitleModel;
 
 /** @var \DvsaCommon\Dto\Common\MotTestDto $motTest */
 $motTest = $this->motTest ? $this->motTest : new \DvsaCommon\Dto\Common\MotTestDto();
+
+/** @var MotTestTitleModel $motTestTitleViewModel */
+$title = $motTestTitleViewModel->getTitle($motTest);
 
 $motTestNumber = $motTest->getMotTestNumber();
 /** @var \DvsaCommon\Dto\Vehicle\VehicleDto $vehicle */
@@ -20,7 +24,7 @@ $viewOnly = isset($this->viewOnly) ? $this->viewOnly : false;
 
 $title = 'Brake Test Summary';
 $this->headTitle($title);
-$this->layout()->setVariable('pageSubTitle', 'MOT testing');
+$this->layout()->setVariable('pageSubTitle', $title);
 $this->layout()->setVariable('pageTitle', "Brake test results");
 
 $this->placeholder('progressBar')->captureStart();

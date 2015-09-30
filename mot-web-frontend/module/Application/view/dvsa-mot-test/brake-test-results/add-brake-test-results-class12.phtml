@@ -1,16 +1,21 @@
 <?php
 use DvsaMotTest\Model\BrakeTestResultClass1And2ViewModel;
+use DvsaMotTest\View\Model\MotTestTitleModel;
 
 /**
  * @var int $motTestNumber
  * @var DvsaCommon\Dto\Vehicle\VehicleDto $vehicle
  * @var BrakeTestResultClass1And2ViewModel $brakeTestResult
  * @var \DvsaMotTest\Model\BrakeTestConfigurationClass1And2Helper $brakeTestConfiguration
+ * @var MotTestTitleModel $motTestTitleViewModel
  */
+
+/** @var MotTestTitleModel $motTestTitleViewModel */
+$pageSubtTitle = $motTestTitleViewModel->getTitle($motTest);
 
 $title = 'Add Brake Test Results';
 $this->headTitle($title);
-$this->layout()->setVariable('pageSubTitle', 'MOT testing');
+$this->layout()->setVariable('pageSubTitle', $pageSubtTitle);
 $this->layout()->setVariable('pageTitle', "Brake test results");
 
 $isSidecarAttached = $brakeTestConfiguration->isSidecarAttached();

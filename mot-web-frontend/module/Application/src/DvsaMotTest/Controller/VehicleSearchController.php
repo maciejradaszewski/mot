@@ -16,14 +16,9 @@ use DvsaCommon\UrlBuilder\VehicleUrlBuilder;
 use DvsaCommon\UrlBuilder\VehicleUrlBuilderWeb;
 use DvsaCommon\Utility\AddressUtils;
 use DvsaCommon\Utility\ArrayUtils;
-use DvsaMotTest\Constants\VehicleSearchSource;
 use DvsaMotTest\Form\VehicleSearch;
 use DvsaMotTest\Model\VehicleSearchResult;
 use DvsaMotTest\Service\VehicleSearchService;
-use DvsaMotTest\View\VehicleSearchResult\CertificateUrlTemplate;
-use DvsaMotTest\View\VehicleSearchResult\DemoTestUrlTemplate;
-use DvsaMotTest\View\VehicleSearchResult\MotTestUrlTemplate;
-use DvsaMotTest\View\VehicleSearchResult\NoVehiclesFoundMessage;
 use DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultMessage;
 use DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultUrlTemplateInterface;
 use Zend\Form\Element\Hidden;
@@ -60,12 +55,6 @@ class VehicleSearchController extends AbstractDvsaMotTestController
     const PARTIAL_VIN = 'partialVin';
     const NO_VIN = 'noVin';
 
-    const SEARCH_TYPE_STANDARD = 'standard';
-    const SEARCH_TYPE_RETEST = 'retest';
-    const SEARCH_TYPE_CERTIFICATE = 'certificate';
-    const SEARCH_TYPE_DEMO = 'demo';
-    const SEARCH_TYPE_V5C = 'v5c';
-
     const SEARCH_PARAM_MOT_ID = 'id';
     const SEARCH_PARAM_SEARCH_CRITERIA = 'criteria';
     const SEARCH_PARAM_SEARCH_TYPE = 'type';
@@ -73,7 +62,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
     const ROUTE_REPLACEMENT_CERTIFICATE_VEHICLE_SEARCH = 'replacement-certificate-vehicle-search';
     const ROUTE_VEHICLE_SEARCH = 'vehicle-search';
     const ROUTE_VEHICLE_SEARCH_RETEST = 'retest-vehicle-search';
-    const ROUTE_VEHICLE_SEARCH_DEMO = 'demo-vehicle-search';
+    const ROUTE_VEHICLE_SEARCH_TRAINING = 'training-test-vehicle-search';
 
     const PRM_SUBMIT = 'submit';
     const PRM_VIN = 'vin';
@@ -81,41 +70,34 @@ class VehicleSearchController extends AbstractDvsaMotTestController
     const PRM_VIN_TYPE = 'vinType';
     const PRM_TEST_NR = 'testNumber';
 
+    const START_TEST_CONFIRMATION_ROUTE = 'start-test-confirmation';
+    const START_RETEST_CONFIRMATION_ROUTE = 'start-retest-confirmation';
+    const START_TRAINING_CONFIRMATION_ROUTE = 'start-training-confirmation';
+
     /**
      * @var array
      */
-    protected static $VIN_SEARCH_TYPES
+    private static $VIN_SEARCH_TYPES
         = [
             self::FULL_VIN => 'Full vin',
             self::PARTIAL_VIN => 'Partial vin',
             self::NO_VIN => 'No vin',
         ];
 
-    /**
-     * @var VehicleSearchService
-     */
-    protected $vehicleSearchService;
+    /** @var VehicleSearchService */
+    private $vehicleSearchService;
 
-    /**
-     *
-     * @var \DvsaCommon\Obfuscate\ParamObfuscator
-     */
-    protected $paramObfuscator;
+    /** @var \DvsaCommon\Obfuscate\ParamObfuscator */
+    private $paramObfuscator;
 
-    /**
-     * @var CatalogService
-     */
-    protected $catalogService;
+    /** @var CatalogService */
+    private $catalogService;
 
-    /**
-     * @var VehicleSearchResult
-     */
-    protected $vehicleSearchResultModel;
+    /** @var VehicleSearchResult */
+    private $vehicleSearchResultModel;
 
-    /**
-     * @var MapperFactory
-     */
-    protected $mapperFactory;
+    /** @var MapperFactory */
+    private $mapperFactory;
 
     /**
      * @param VehicleSearchService $vehicleSearchService
@@ -143,7 +125,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
     public function vehicleSearchAction()
     {
         $this->assertGranted(PermissionInSystem::MOT_TEST_START);
-        return $this->vehicleSearch(self::SEARCH_TYPE_STANDARD);
+        return $this->vehicleSearch(VehicleSearchService::SEARCH_TYPE_STANDARD);
     }
 
     /**
@@ -161,17 +143,17 @@ class VehicleSearchController extends AbstractDvsaMotTestController
             return $this->redirectToLocationSelectScreen();
         }
 
-        return $this->vehicleSearch(self::SEARCH_TYPE_CERTIFICATE);
+        return $this->vehicleSearch(VehicleSearchService::SEARCH_TYPE_CERTIFICATE);
     }
 
     /**
      * @return \Zend\View\Model\ViewModel
      */
-    public function demoVehicleSearchAction()
+    public function trainingTestVehicleSearchAction()
     {
         $this->getAuthorizationService()->assertGranted(PermissionInSystem::MOT_DEMO_TEST_PERFORM);
 
-        return $this->vehicleSearch(self::SEARCH_TYPE_DEMO);
+        return $this->vehicleSearch(VehicleSearchService::SEARCH_TYPE_TRAINING);
     }
 
     /**
@@ -224,7 +206,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
      *
      * @return \Zend\Http\Response
      */
-    protected function handleDifferentVtsAction($obfuscatedVehicleId, $postParams)
+    private function handleDifferentVtsAction($obfuscatedVehicleId, $postParams)
     {
         $motTestId = ArrayUtils::get($postParams, 'id');
         $motTestNumber = ArrayUtils::get($postParams, 'number');
@@ -242,18 +224,15 @@ class VehicleSearchController extends AbstractDvsaMotTestController
             if ($v5c) {
                 $apiUrl = MotTestUrlBuilder::findByMotTestIdAndV5c($motTestId, $v5c)->toString();
                 $searchCriteria = $v5c;
-                $searchType = self::SEARCH_TYPE_V5C;
             } elseif ($motTestNumber) {
                 $apiUrl = MotTestUrlBuilder::findByMotTestIdAndMotTestNumber($motTestId, $motTestNumber)->toString();
                 $searchCriteria = $motTestNumber;
-                $searchType = self::SEARCH_TYPE_CERTIFICATE;
             }
 
             return $this->handleV5cOrMotTestNumberCall(
                 $obfuscatedVehicleId,
                 $apiUrl,
                 $searchCriteria,
-                $searchType,
                 $motTestId
             );
         }
@@ -265,16 +244,14 @@ class VehicleSearchController extends AbstractDvsaMotTestController
      * @param string $obfuscatedVehicleId
      * @param string $apiUrl
      * @param string $searchCriteria
-     * @param string $searchType
      * @param string $motTestId
      *
      * @return \Zend\Http\Response
      */
-    protected function handleV5cOrMotTestNumberCall(
+    private function handleV5cOrMotTestNumberCall(
         $obfuscatedVehicleId,
         $apiUrl,
         $searchCriteria,
-        $searchType,
         $motTestId
     ) {
         $apiResult = $this->getRestClient()->get($apiUrl);
@@ -288,7 +265,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
             );
         }
 
-        if ($searchType === self::SEARCH_TYPE_V5C) {
+        if ($this->vehicleSearchService->isV5cSearchType()) {
             $this->addErrorMessages('The V5C number is incorrect');
         } else {
             $this->addErrorMessages('The MOT certificate number is incorrect');
@@ -300,7 +277,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
             [
                 'query' => [
                     self::SEARCH_PARAM_SEARCH_CRITERIA => urlencode($searchCriteria),
-                    self::SEARCH_PARAM_SEARCH_TYPE => urlencode($searchType),
+                    self::SEARCH_PARAM_SEARCH_TYPE => urlencode($this->vehicleSearchService->getSearchType()),
                     self::SEARCH_PARAM_MOT_ID => urlencode($motTestId),
                 ],
                 'fragment' => 'show-form-' . $motTestId,
@@ -325,10 +302,12 @@ class VehicleSearchController extends AbstractDvsaMotTestController
             false
         );
         $motId = (int)$this->params()->fromQuery('id', 0);
-        $searchType = $this->params()->fromQuery('type', self::SEARCH_TYPE_V5C);
+        $searchType = $this->params()->fromQuery('type', VehicleSearchService::SEARCH_TYPE_V5C);
         $searchCriteria = urldecode($this->params()->fromQuery('criteria', ''));
         $vin = $this->params()->fromQuery('vin');
         $registration = $this->params()->fromQuery('registration');
+
+        $this->vehicleSearchService->setSearchType($searchType);
 
         /** @var \Zend\Http\Request $request */
         $request = $this->getRequest();
@@ -373,12 +352,17 @@ class VehicleSearchController extends AbstractDvsaMotTestController
     }
 
     /**
-     * @param null $searchType
-     *
+     * @param string $searchType
      * @return \Zend\Http\Response|\Zend\View\Model\ViewModel
      */
-    protected function vehicleSearch($searchType = null)
+    private function vehicleSearch($searchType)
     {
+        if (is_null($searchType)) {
+            throw new \InvalidArgumentException('A search type must be specified');
+        }
+
+        $this->vehicleSearchService->setSearchType($searchType);
+
         /** @var \Zend\Http\Request $request */
         $request = $this->getRequest();
 
@@ -399,7 +383,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
             $ctSessionMng->deleteContingencySession();
         }
 
-        if ($searchType !== self::SEARCH_TYPE_DEMO
+        if (!$this->vehicleSearchService->isTrainingSearchType()
             && $this->getAuthorizationService()->isTester()
             && !$this->getIdentity()->getCurrentVts()
         ) {
@@ -463,10 +447,9 @@ class VehicleSearchController extends AbstractDvsaMotTestController
                 if (!($data[self::PRM_REG] || $data[self::PRM_VIN])) {
                     return $this->returnViewModel(
                         $form,
-                        $searchType,
                         true,
                         true,
-                        $searchType == self::SEARCH_TYPE_STANDARD,
+                        $this->vehicleSearchService->isStandardSearchType(),
                         [],
                         false,
                         null,
@@ -495,13 +478,12 @@ class VehicleSearchController extends AbstractDvsaMotTestController
 
                     return $this->returnViewModel(
                         $form,
-                        $searchType,
                         empty($vehicles),
                         false,
-                        $searchType == self::SEARCH_TYPE_STANDARD,
+                        $this->vehicleSearchService->isStandardSearchType(),
                         $vehicles,
                         false,
-                        $this->getUrlTemplate($searchType, $noRegistration),
+                        $this->vehicleSearchService->getUrlTemplate($searchType, $noRegistration, $this->url()),
                         $this->getVehicleSearchService()->getSearchResultMessage(
                             $data[self::PRM_REG],
                             $data[self::PRM_VIN],
@@ -511,38 +493,16 @@ class VehicleSearchController extends AbstractDvsaMotTestController
                 } catch (RestApplicationException $e) {
                     $this->addErrorMessages($e->getDisplayMessages());
 
-                    return $this->returnViewModel($form, $searchType, false, false, $showCreateButton);
+                    return $this->returnViewModel($form, false, false, $showCreateButton);
                 }
             }
         }
 
-        return $this->returnViewModel($form, $searchType);
-    }
-
-    /**
-     * @param $searchType
-     * @param $noRegistration
-     * @return CertificateUrlTemplate|DemoTestUrlTemplate|MotTestUrlTemplate
-     * @throws \Exception
-     */
-    private function getUrlTemplate($searchType, $noRegistration)
-    {
-        $urlPlugin = $this->url();
-        switch ($searchType) {
-            case self::SEARCH_TYPE_CERTIFICATE:
-                return new CertificateUrlTemplate($this->getAuthorizationService(), $urlPlugin);
-            case self::SEARCH_TYPE_DEMO:
-                return new DemoTestUrlTemplate($noRegistration, $urlPlugin);
-            case self::SEARCH_TYPE_STANDARD:
-                return new MotTestUrlTemplate($noRegistration, $urlPlugin);
-        }
-
-        throw new \Exception("Unknown search type");
+        return $this->returnViewModel($form);
     }
 
     /**
      * @param \Zend\Form\Form $form form object for vehicle search
-     * @param string $searchType one of search types
      * @param bool $noMatches true if there were no matches in previous search
      * @param bool $regError true if reg was not provided, but required
      * @param bool $showCreateButton true to show Create Vehicle button
@@ -554,9 +514,8 @@ class VehicleSearchController extends AbstractDvsaMotTestController
      *
      * @return ViewModel vehicle search view model
      */
-    protected function returnViewModel(
+    private function returnViewModel(
         $form,
-        $searchType,
         $noMatches = false,
         $regError = false,
         $showCreateButton = false,
@@ -566,6 +525,8 @@ class VehicleSearchController extends AbstractDvsaMotTestController
         VehicleSearchResultMessage $searchResultMessage = null
     ) {
         $contingencySession = $this->getContingencySessionManager();
+
+        $this->setPageSubTitle();
 
         $viewModel = new ViewModel(
             [
@@ -578,9 +539,12 @@ class VehicleSearchController extends AbstractDvsaMotTestController
                 'isMotContingency' => $contingencySession->isMotContingency(),
                 'registrationNumberMaxLength' => self::SEARCH_REGISTRATION_NUMBER_MAX_LENGTH,
                 'searchResultMessage' => $searchResultMessage,
-                self::SEARCH_TYPE => $searchType,
+                self::SEARCH_TYPE => $this->vehicleSearchService->getSearchType(),
                 self::VIN_SEARCH_TYPE => self::$VIN_SEARCH_TYPES,
                 'urlTemplate' => $urlTemplate,
+                'isRetest' => $this->vehicleSearchService->isRetestSearchType(),
+                'isTraining' => $this->vehicleSearchService->isTrainingSearchType(),
+                'isReplCert' => $this->vehicleSearchService->isReplacementCertifificateSearchType()
             ]
         );
 
@@ -590,109 +554,30 @@ class VehicleSearchController extends AbstractDvsaMotTestController
     }
 
     /**
-     * @param $searchType
-     * @param $vehicleId
-     * @param $noRegistration
-     * @param $isDvla
-     *
-     * @return \Zend\Http\Response
+     * @return bool
      */
-    protected function redirectTo($searchType, $vehicleId, $noRegistration, $isDvla)
+    private function setPageSubTitle()
     {
-        switch ($searchType) {
-            case self::SEARCH_TYPE_RETEST:
-                return $this->returnRedirectStartRetestConfirmation($vehicleId, $noRegistration);
-            case self::SEARCH_TYPE_CERTIFICATE:
-                return $this->returnRedirectTestHistory($vehicleId);
-            case self::SEARCH_TYPE_DEMO:
-                return $this->returnRedirectStartDemoConfirmation($vehicleId, $noRegistration);
-            default:
-                return $this->redirectToConfirmation($vehicleId, $noRegistration, $isDvla);
+        $isRetestSearchType = $this->vehicleSearchService->isRetestSearchType();
+        $isReplacementCertificateSearchType = $this->vehicleSearchService->isReplacementCertifificateSearchType();
+
+        if (!$isRetestSearchType && !$isReplacementCertificateSearchType) {
+            $this->layout()->setVariable('pageSubTitle', 'MOT testing');
+        }
+
+        if ($this->vehicleSearchService->isTrainingSearchType()) {
+            $this->layout()->setVariable('pageSubTitle', 'Training test');
+        }
+
+        if ($this->vehicleSearchService->isReplacementCertifificateSearchType()) {
+            $this->layout()->setVariable('pageSubTitle', 'Duplicate or replacement certificate');
         }
     }
 
     /**
-     * @param $id
-     * @param $noRegistration
-     * @param $isDvla
-     *
      * @return \Zend\Http\Response
      */
-    protected function redirectToConfirmation($id, $noRegistration, $isDvla)
-    {
-        return $this->redirect()->toRoute(
-            'start-test-confirmation',
-            [
-                'controller' => 'StartTestConfirmation',
-                'action' => 'index',
-                StartTestConfirmationController::ROUTE_PARAM_ID => $id,
-                StartTestConfirmationController::ROUTE_PARAM_NO_REG => $noRegistration,
-                StartTestConfirmationController::ROUTE_PARAM_SOURCE => ($isDvla
-                    ? VehicleSearchSource::DVLA
-                    : VehicleSearchSource::VTR
-                ),
-            ]
-        );
-    }
-
-    /**
-     * @param $id
-     * @param $noRegistration
-     *
-     * @return \Zend\Http\Response
-     */
-    protected function returnRedirectStartRetestConfirmation($id, $noRegistration)
-    {
-        return $this->redirect()->toRoute(
-            'start-retest-confirmation',
-            [
-                'controller' => 'StartTestConfirmation',
-                'action' => 'index',
-                StartTestConfirmationController::ROUTE_PARAM_ID => $id,
-                StartTestConfirmationController::ROUTE_PARAM_NO_REG => $noRegistration,
-            ]
-        );
-    }
-
-    /**
-     * @param $id
-     * @param $noRegistration
-     *
-     * @return \Zend\Http\Response
-     */
-    protected function returnRedirectStartDemoConfirmation($id, $noRegistration)
-    {
-        return $this->redirect()->toRoute(
-            'start-demo-confirmation',
-            [
-                StartTestConfirmationController::ROUTE_PARAM_ID => $id,
-                StartTestConfirmationController::ROUTE_PARAM_NO_REG => $noRegistration,
-            ]
-        );
-    }
-
-    /**
-     * @param $obfuscatedVehicleId
-     *
-     * @return \Zend\Http\Response
-     */
-    protected function returnRedirectTestHistory($obfuscatedVehicleId)
-    {
-        $isDvsaUser = $this->getAuthorizationService()->isGranted(PermissionInSystem::CERTIFICATE_READ_FROM_ANY_SITE);
-
-        if ($isDvsaUser) {
-            $url = VehicleUrlBuilderWeb::historyDvlaMotCertificates($obfuscatedVehicleId);
-        } else {
-            $url = VehicleUrlBuilderWeb::historyMotCertificates($obfuscatedVehicleId);
-        }
-
-        return $this->redirect()->toUrl($url);
-    }
-
-    /**
-     * @return \Zend\Http\Response
-     */
-    protected function redirectToLocationSelectScreen()
+    private function redirectToLocationSelectScreen()
     {
         $routeMatch = $this->getRouteMatch();
         $container = $this->getServiceLocator()->get('LocationSelectContainerHelper');
@@ -709,7 +594,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
     /**
      * @return ContingencySessionManager
      */
-    protected function getContingencySessionManager()
+    private function getContingencySessionManager()
     {
         return $this->serviceLocator->get(ContingencySessionManager::class);
     }

@@ -1,20 +1,19 @@
 <?php
-
 namespace DvsaMotTest\View\VehicleSearchResult;
 
 use DvsaMotTest\Controller\StartTestConfirmationController;
 use DvsaMotTest\Model\VehicleSearchResult;
 use Zend\Mvc\Controller\Plugin\Url;
 
-class MotTestUrlTemplate implements VehicleSearchResultUrlTemplateInterface
+class TrainingTestUrlTemplate implements VehicleSearchResultUrlTemplateInterface
 {
-    /**
-     * @var int
-     */
+
+    const TRAINING_TEST_CONFIRMATION_ROUTE = 'start-training-test-confirmation';
+
+    /** @var int */
     private $noRegistration;
-    /**
-     * @var Url
-     */
+
+    /** @var Url */
     private $urlHelper;
 
     /**
@@ -33,22 +32,21 @@ class MotTestUrlTemplate implements VehicleSearchResultUrlTemplateInterface
      */
     public function getUrl(array $vehicle)
     {
+        $this->validateVehicleArray($vehicle, ['id', 'searchVrm', 'searchVin']);
+
         $vehicleId = $vehicle['id'];
-        $sourceType = $vehicle['source'];
         $vin = $vehicle['vin'];
         $registration = $vehicle['registration'];
-        $helper = $this->urlHelper;
         $searchVrm = $vehicle['searchVrm'];
         $searchVin = $vehicle['searchVin'];
 
+        $helper = $this->urlHelper;
+
         return $helper->fromRoute(
-            'start-test-confirmation',
+            self::TRAINING_TEST_CONFIRMATION_ROUTE,
             [
-                'controller' => 'StartTestConfirmation',
-                'action' => 'index',
                 StartTestConfirmationController::ROUTE_PARAM_ID => $vehicleId,
                 StartTestConfirmationController::ROUTE_PARAM_NO_REG => $this->noRegistration,
-                StartTestConfirmationController::ROUTE_PARAM_SOURCE => $sourceType,
             ],
             [
                 'query' => [
@@ -68,39 +66,52 @@ class MotTestUrlTemplate implements VehicleSearchResultUrlTemplateInterface
      */
     public function getStartMotTestUrl(VehicleSearchResult $vehicle, array $searchParams)
     {
+        if (!$vehicle) {
+            throw new \InvalidArgumentException('Expecting a Vehicle object');
+        }
+
+        $this->validateVehicleArray($searchParams, ['searchVrm', 'searchVin']);
+
         $vehicleId = $vehicle->getId();
-        $sourceType = $vehicle->getSource();
         $vin = $vehicle->getVin();
         $registration = $vehicle->getRegistrationNumber();
-        $helper = $this->urlHelper;
+
         $searchVrm = $searchParams['searchVrm'];
         $searchVin = $searchParams['searchVin'];
 
-        if ($vehicle->isRetest()) {
-            $retest = true;
-        } else {
-            $retest = false;
-        }
+        $helper = $this->urlHelper;
 
         return $helper->fromRoute(
-            'start-test-confirmation',
+            self::TRAINING_TEST_CONFIRMATION_ROUTE,
             [
-                'controller' => 'StartTestConfirmation',
-                'action' => 'index',
                 StartTestConfirmationController::ROUTE_PARAM_ID => $vehicleId,
                 StartTestConfirmationController::ROUTE_PARAM_NO_REG => $this->noRegistration,
-                StartTestConfirmationController::ROUTE_PARAM_SOURCE => $sourceType,
             ],
             [
                 'query' => [
                     'vin' => $vin,
                     'registration' => $registration,
                     'searchVrm' => $searchVrm,
-                    'searchVin' => $searchVin,
-                    'retest' => $retest
+                    'searchVin' => $searchVin
                 ]
             ]
         );
     }
 
+    /**
+     * @param array $vehicle
+     * @param array $keys
+     */
+    private function validateVehicleArray(array $vehicle, array $keys)
+    {
+        if (empty($vehicle)) {
+            throw new \InvalidArgumentException('Vehicle is required');
+        }
+
+        $vehicleKeyComparison = array_diff($keys, array_keys($vehicle));
+
+        if (count($vehicleKeyComparison) > 0) {
+            throw new \InvalidArgumentException('Vehicle ID and/or Search parameters are missing');
+        }
+    }
 }

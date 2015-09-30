@@ -16,7 +16,7 @@ use DvsaMotTest\Model\BrakeTestConfigurationClass3AndAboveHelper as ConfigHelper
 $title = 'Brake test configuration';
 $this->headTitle($title);
 
-$this->layout()->setVariable('pageSubTitle', 'MOT testing');
+$this->layout()->setVariable('pageSubTitle', $motTestTitleViewModel->getTitle($motTest));
 $this->layout()->setVariable('pageTitle', $title);
 
 $this->placeholder('progressBar')->captureStart();

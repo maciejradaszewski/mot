@@ -6,12 +6,16 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
+import uk.gov.dvsa.domain.service.FeaturesService;
 import uk.gov.dvsa.helper.RandomDataGenerator;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 public class HelpDesk extends BaseTest {
@@ -20,6 +24,7 @@ public class HelpDesk extends BaseTest {
     private Site testSite;
     private AeDetails aeDetails;
     private String randomName = RandomDataGenerator.generateRandomString(5, System.nanoTime());
+    FeaturesService service = new FeaturesService();
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() throws IOException {
@@ -55,8 +60,11 @@ public class HelpDesk extends BaseTest {
     private void isAuthenticationMethodDisplayedForUser(User dvsaUser, User tester) throws IOException {
         HelpDeskUserProfilePage helpDeskUserProfilePage =
                 pageNavigator.goToUserHelpDeskProfilePage(dvsaUser, tester.getId());
-        assertTrue(helpDeskUserProfilePage.isPersonAuthenticationMethodIsDisplayed(),
-                "Check that person authentication method is displayed");
+        if (service.getToggleValue("2fa.method.visible")) {
+            assertThat(helpDeskUserProfilePage.isPersonAuthenticationMethodIsDisplayed(), is(true));
+        } else {
+            assertThat(helpDeskUserProfilePage.isPersonAuthenticationMethodIsDisplayed(), is(false));
+        }
     }
 
     @DataProvider(name = "createDvsaUser")
