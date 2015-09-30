@@ -3,12 +3,12 @@
 namespace UserAdmin\Factory\Controller;
 
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
+use DvsaCommon\Configuration\MotConfig;
 use UserAdmin\Controller\UserProfileController;
 use UserAdmin\Service\HelpdeskAccountAdminService;
 use UserAdmin\Service\PersonRoleManagementService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Application\Service\CatalogService;
 
 /**
  * Factory for {@link \UserAdmin\Controller\UserProfileController}
@@ -24,13 +24,17 @@ class UserProfileControllerFactory implements FactoryInterface
         $testerGroupAuthorisationMapper = $appServiceLocator->get(TesterGroupAuthorisationMapper::class);
         $personRoleManagementService = $appServiceLocator->get(PersonRoleManagementService::class);
         $catalogService = $appServiceLocator->get("CatalogService");
+        $config = $appServiceLocator->get(MotConfig::class);
+
+        $config = $appServiceLocator->get(MotConfig::class);
 
         $controller = new UserProfileController(
             $authorisationService,
             $accountAdminService,
             $testerGroupAuthorisationMapper,
             $personRoleManagementService,
-            $catalogService
+            $catalogService,
+            $config
         );
 
         return $controller;

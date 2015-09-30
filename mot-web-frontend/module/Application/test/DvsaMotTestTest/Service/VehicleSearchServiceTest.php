@@ -121,7 +121,7 @@ class VehicleSearchServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->setAuthorisationServiceResponse('isTester', false);
 
-        $response = $this->service->areSlotsNeeded(VehicleSearchService::SEARCH_TYPE_DEMO);
+        $response = $this->service->areSlotsNeeded(VehicleSearchService::SEARCH_TYPE_TRAINING);
         $this->assertFalse($response);
     }
 
@@ -133,20 +133,29 @@ class VehicleSearchServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($response);
     }
 
-    public function testAreSlotsNeededForSearchTypeDemoReturnFalse()
+    public function testAreSlotsNeededForSearchTypeTrainingReturnFalse()
     {
         $this->setAuthorisationServiceResponse('isTester', true);
 
-        $response = $this->service->areSlotsNeeded(VehicleSearchService::SEARCH_TYPE_DEMO);
+        $response = $this->service->areSlotsNeeded(VehicleSearchService::SEARCH_TYPE_TRAINING);
         $this->assertFalse($response);
     }
 
-    public function testAreSlotsNeededForTesterAndNotDemoOrCertificateSearchReturnFalse()
+    public function testAreSlotsNeededForTesterAndNotTrainingOrCertificateSearchReturnFalse()
     {
         $this->setAuthorisationServiceResponse('isTester', false);
 
-        $response = $this->service->areSlotsNeeded(VehicleSearchController::SEARCH_TYPE_STANDARD);
+        $response = $this->service->areSlotsNeeded(VehicleSearchService::SEARCH_TYPE_STANDARD);
         $this->assertFalse($response);
+    }
+
+    public function testVehicleSearchTypeReturnsSearchType()
+    {
+        $this->service->setSearchType(VehicleSearchService::SEARCH_TYPE_CERTIFICATE);
+
+        $result = $this->service->getSearchType();
+
+        $this->assertEquals(VehicleSearchService::SEARCH_TYPE_CERTIFICATE, $result);
     }
 
     private function setAuthorisationServiceResponse($method = 'isTester', $result)

@@ -61,8 +61,7 @@ public class MotDemoTest extends BaseTest {
         //Demo Test started and resuming it after confirming the test
         return UserDashboardPage.navigateHereFromLoginPage(driver, login).
                 startDemoTest().
-                submitSearchWithVinAndReg(vehicle.fullVIN, vehicle.carReg).
-                confirmDemoTest().clickHome().resumeDemoTest()
+                submitSearchWithVinAndReg(vehicle.fullVIN, vehicle.carReg).submitConfirm().returnToHome().resumeDemoTest()
                 .addMotTest("12345", BrakeTestConfiguration4.enforcement_CASE1(),
                         BrakeTestResults4.brakeTestEntry_CASE1(), null, null, null, null).
                         createCertificate().

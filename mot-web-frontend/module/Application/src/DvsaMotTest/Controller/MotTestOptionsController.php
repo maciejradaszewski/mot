@@ -3,6 +3,7 @@
 namespace DvsaMotTest\Controller;
 
 use DvsaCommon\Dto\MotTesting\MotTestOptionsDto;
+use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaMotTest\Presenter\MotTestOptionsPresenter;
 use Zend\View\Model\ViewModel;
@@ -15,7 +16,9 @@ class MotTestOptionsController extends AbstractDvsaMotTestController
 
     const PAGE_TITLE_TEST = 'MOT test started';
     const PAGE_TITLE_RETEST = 'MOT retest started';
-    const PAGE_SUB_TITLE = 'MOT testing';
+
+    const PAGE_SUB_TITLE_TRAINING = 'Training test';
+    const PAGE_SUB_TITLE_TEST = 'MOT testing';
 
     public function motTestOptionsAction()
     {
@@ -34,7 +37,12 @@ class MotTestOptionsController extends AbstractDvsaMotTestController
         }
 
         $this->layout()->setVariable('pageTitle', $pageTitle);
-        $this->layout()->setVariable('pageSubTitle', self::PAGE_SUB_TITLE);
+
+        if ($dto->getMotTestTypeDto()->getCode() === MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING) {
+            $this->layout()->setVariable('pageSubTitle', self::PAGE_SUB_TITLE_TRAINING);
+        } else {
+            $this->layout()->setVariable('pageSubTitle', self::PAGE_SUB_TITLE_TEST);
+        }
 
         $viewModel = new ViewModel(['presenter' => $presenter]);
         $viewModel->setTemplate(self::TEMPLATE_MOT_TEST_OPTIONS);

@@ -3,6 +3,7 @@ use Application\Helper\PrgHelper;
 use Dashboard\Controller\UserHomeController;
 use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaMotTest\Controller\RefuseToTestController;
+use DvsaMotTest\Controller\VehicleSearchController;
 use DvsaMotTest\ViewModel\StartTestConfirmationViewModel;
 
 /**
@@ -23,7 +24,7 @@ if (!empty($this->urlSearch)) {
     $query['contingency'] = 1;
 }
 
-$escUrlDemoSearch = $this->url('demo-vehicle-search', [], ['query' => $query]);
+$escUrlDemoSearch = $this->url(VehicleSearchController::ROUTE_VEHICLE_SEARCH_TRAINING, [], ['query' => $query]);
 
 $title = $this->title;
 $header = $this->header;
@@ -52,7 +53,6 @@ if (!empty($checkExpiryResults)) {
     }
 }
 
-$this->layout()->setVariable('pageSubTitle', 'MOT testing');
 $this->layout()->setVariable('pageTitle', $title);
 $this->headTitle($title);
 
@@ -114,7 +114,7 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
                     'vehicle'        => $vehicleDetails,
                     'expiryDate'     => $expiryDate,
                     'staticData'     => $this->staticData,
-                    'doNotShowDropDowns' => $viewModel->isInProgressTestExists(),
+                    'doNotShowDropDowns' => $viewModel->isInProgressTestExists() || $viewModel->isTrainingTest(),
                 ]
             );
             ?>
@@ -155,7 +155,7 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
                     <h4>Start MOT <?php echo $viewModel->getTestTypeString(); ?></h4>
                 <?php endif ?>
 
-                <?php if ($viewModel->isNormalTest() || $viewModel->isDemoTest()): ?>
+                <?php if ($viewModel->isNormalTest() || $viewModel->isTrainingTest()): ?>
                     <button type="submit" class="btn btn-primary" id="confirm_vehicle_confirmation">
                         Confirm vehicle and start MOT test
                     </button>
@@ -170,7 +170,7 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
                 <nav class="module-content-navigation">
                     <ul class="content-navigation_secondary">
                         <li>
-                            <a href="<?php echo ($viewModel->isDemoTest())? $escUrlDemoSearch : $escUrlSearch; ?>">
+                            <a href="<?php echo ($viewModel->isTrainingTest())? $escUrlDemoSearch : $escUrlSearch; ?>">
                                 Return to Vehicle search
                             </a>
                         </li>

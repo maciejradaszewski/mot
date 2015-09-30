@@ -32,6 +32,7 @@ use DvsaCommon\Utility\ArrayUtils;
 use DvsaMotTest\Model\OdometerReadingViewObject;
 use DvsaMotTest\Model\OdometerUpdate;
 use DvsaMotTest\View\Model\MotPrintModel;
+use DvsaMotTest\View\Model\MotTestTitleModel;
 use Zend\Http\Response;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
@@ -96,6 +97,7 @@ class MotTestController extends AbstractDvsaMotTestController
                 'motTest'          => $motTest,
                 'isDemo'           => $isDemo,
                 'odometerReading'  => $readingVO,
+                'motTestTitleViewModel' => (new MotTestTitleModel())
             ]
         );
     }
@@ -206,7 +208,7 @@ class MotTestController extends AbstractDvsaMotTestController
      *
      * @param $motTestNumber int the reinspection mot test identifier
      */
-    protected function updateSiteLocation($motTestNumber)
+    private function updateSiteLocation($motTestNumber)
     {
         $data = $this->getRequest()->getPost()->toArray();
 
@@ -233,7 +235,7 @@ class MotTestController extends AbstractDvsaMotTestController
      *
      * @param $motTestNumber int the reinspection mot test identifier
      */
-    protected function updateOnePersonTest($motTestNumber)
+    private function updateOnePersonTest($motTestNumber)
     {
         $data = $this->getRequest()->getPost()->toArray();
         $apiUrl = MotTestUrlBuilder::motTest($motTestNumber)->toString();
@@ -274,6 +276,7 @@ class MotTestController extends AbstractDvsaMotTestController
                 'odometerReading'   => $odometerReadingVO,
                 'canTestWithoutOpt' => $this->canTestWithoutOtp() || $isDemo,
                 'brakeTestTypeCode2Name' => $this->getBrakeTestTypeCode2Name(),
+                'motTestTitleViewModel' => (new MotTestTitleModel())
             ]
         ))->setTemplate('dvsa-mot-test/mot-test/display-test-summary');
     }
@@ -378,6 +381,7 @@ class MotTestController extends AbstractDvsaMotTestController
                 'defaultValues'        => $data,
                 'prgHelper'            => $prgHelper,
                 'brakeTestTypeCode2Name' => $this->getBrakeTestTypeCode2Name(),
+                'motTestTitleViewModel' => (new MotTestTitleModel())
             ]
         ))->setTemplate('dvsa-mot-test/mot-test/display-test-summary');
     }
@@ -449,6 +453,7 @@ class MotTestController extends AbstractDvsaMotTestController
                 'otpErrorData'          => $otpErrorData,
                 'canAbandonVehicleTest' => $canAbandonVehicleTest,
                 'prgHelper'             => $prgHelper,
+                'motTestTitleViewModel' => (new MotTestTitleModel())
             ]
         );
     }
@@ -520,6 +525,7 @@ class MotTestController extends AbstractDvsaMotTestController
             [
                 'motTest'      => $motTest,
                 'testDocument' => $testDocument,
+                'motTestTitleViewModel' => (new MotTestTitleModel())
             ]
         );
     }
@@ -663,7 +669,8 @@ class MotTestController extends AbstractDvsaMotTestController
         return new ViewModel(
             [
                 'motTest'            => $motTest,
-                'canAbortTestAtSite' => $this->canAbortTestAtSite($motTest)
+                'canAbortTestAtSite' => $this->canAbortTestAtSite($motTest),
+                'motTestTitleViewModel' => (new MotTestTitleModel())
             ]
         );
     }
@@ -727,6 +734,7 @@ class MotTestController extends AbstractDvsaMotTestController
                 'motTest'          => $motTest,
                 'reasonsForCancel' => $reasonsForCancel,
                 'selectedReasonId' => $selectedReasonId,
+                'motTestTitleViewModel' => (new MotTestTitleModel())
             ]
         ));
     }
@@ -748,7 +756,8 @@ class MotTestController extends AbstractDvsaMotTestController
         return (new ViewModel(
             [
                 'motTest' => $motTest,
-                'success' => $this->params()->fromRoute('success', false)
+                'success' => $this->params()->fromRoute('success', false),
+                'motTestTitleViewModel' => (new MotTestTitleModel())
             ]
         ));
     }
@@ -835,7 +844,7 @@ class MotTestController extends AbstractDvsaMotTestController
      *
      * @return string
      */
-    protected function getClientIp()
+    private function getClientIp()
     {
         $ipAddress = Network::DEFAULT_CLIENT_IP;
         $headers = $this->request->getHeaders();
@@ -847,4 +856,5 @@ class MotTestController extends AbstractDvsaMotTestController
 
         return $ipAddress;
     }
+
 }

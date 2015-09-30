@@ -57,10 +57,10 @@ use DvsaCommon\Auth\PermissionAtSite;
             <?php endif; ?>
 
             <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::MOT_DEMO_TEST_PERFORM)) : ?>
-                <?php echo $this->partial('dashboard/demoTestBox',
+                <?php echo $this->partial('dashboard/trainingTestBox',
                     [
-                        'hasInProgressDemoTest' => $dashboard->hasDemoTestInProgress(),
-                        'inProgressDemoTestNumber' => $dashboard->getInProgressDemoTestNumber()
+                        'hasInProgressTrainingTest' => $dashboard->hasDemoTestInProgress(),
+                        'inProgressTrainingTestNumber' => $dashboard->getInProgressDemoTestNumber()
                     ]
                 ); ?>
             <?php endif; ?>

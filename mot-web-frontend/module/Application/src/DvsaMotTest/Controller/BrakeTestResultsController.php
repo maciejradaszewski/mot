@@ -23,6 +23,7 @@ use DvsaMotTest\Model\BrakeTestConfigurationHelperInterface;
 use DvsaMotTest\Model\BrakeTestResultClass1And2ViewModel;
 use DvsaMotTest\Model\BrakeTestResultClass3AndAboveViewModel;
 use Zend\View\Model\ViewModel;
+use DvsaMotTest\View\Model\MotTestTitleModel;
 
 /**
  * Class BrakeTestResultsController
@@ -96,6 +97,7 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
         $viewModel->setVariable('showVehicleType', $this->displayConfigurationVehicleType($motTest));
         $viewModel->setVariable('configHelper', $configHelper);
         $viewModel->setVariable('brakeTestResult', $brakeTestResult);
+        $viewModel->setVariable('motTestTitleViewModel', (new MotTestTitleModel()));
 
         if ($isVehicleBikeType) {
             $viewModel->setVariable('brakeTestType',
@@ -213,6 +215,8 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
                 'vehicle'                => $vehicle,
                 'brakeTestResult'        => $brakeTestResult,
                 'brakeTestConfiguration' => $brakeTestResult->getBrakeTestConfiguration(),
+                'motTestTitleViewModel' => (new MotTestTitleModel()),
+                'motTest' => $motTest
             ]
         );
         $viewModel->setTemplate(self::TEMPLATE_ADD_CLASS_3_AND_ABOVE);
@@ -261,6 +265,8 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
                 'vehicle'                => $motTest->getVehicle(),
                 'brakeTestResult'        => $brakeTestResult,
                 'brakeTestConfiguration' => $brakeTestResult->getBrakeTestConfiguration(),
+                'motTestTitleViewModel' => (new MotTestTitleModel()),
+                'motTest' => $motTest
             ]
         );
         $viewModel->setTemplate(self::TEMPLATE_ADD_CLASS_1_2);
@@ -288,6 +294,7 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
                 'motTest'                          => $motTest,
                 'showParkingBrakeImbalance'        => $showParkingBrakeImbalance,
                 'showAxleTwoParkingBrakeImbalance' => $showAxleTwoParkingBrakeImbalance,
+                'motTestTitleViewModel' => (new MotTestTitleModel())
             ]
         );
     }

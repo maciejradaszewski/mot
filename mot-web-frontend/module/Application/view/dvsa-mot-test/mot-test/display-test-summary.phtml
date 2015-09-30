@@ -6,6 +6,7 @@ use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaMotTest\Controller\AbstractDvsaMotTestController;
+use DvsaMotTest\View\Model\MotTestTitleModel;
 
 $defaultValues = $this->defaultValues;
 $formErrors = $this->formErrors;
@@ -14,6 +15,8 @@ $formErrors = $this->formErrors;
 $motDetails = $this->motDetails;
 /** @var \DvsaCommon\Dto\Common\MotTestTypeDto $motTestType */
 $motTestType = $motDetails->getTestType();
+/** @var MotTestTitleModel $motTestTitleViewModel */
+$pageSubTitle = $motTestTitleViewModel->getTitle($motDetails);
 
 $pendingDetails = $motDetails->getPendingDetails();
 $pendingStatus = ArrayUtils::tryGet($pendingDetails, 'currentSubmissionStatus');
@@ -41,7 +44,7 @@ $title = $testName . ' Summary';
 $header = $testName . ($isTestActive ? ' summary' : ' result');
 
 $this->headTitle($title);
-$this->layout()->setVariable('pageSubTitle', 'MOT testing');
+$this->layout()->setVariable('pageSubTitle', $pageSubTitle);
 $this->layout()->setVariable('pageTitle', $header);
 
 $this->placeholder('progressBar')->captureStart();

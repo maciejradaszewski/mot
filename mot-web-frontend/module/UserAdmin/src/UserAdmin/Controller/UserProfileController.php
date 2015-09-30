@@ -6,7 +6,7 @@ use Application\Helper\PrgHelper;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
-use DvsaCommon\Constants\Role;
+use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Enum\MessageTypeCode;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
@@ -48,8 +48,15 @@ class UserProfileController extends AbstractDvsaMotTestController
      */
     private $testerGroupAuthorisationMapper;
 
-    /** @var PersonRoleManagementService */
+    /**
+     * @var PersonRoleManagementService
+     */
     private $personRoleManagementService;
+
+    /**
+     * @var MotConfig
+     */
+    private $config;
 
     /**
      * @param MotAuthorisationServiceInterface $authorisationService
@@ -57,19 +64,22 @@ class UserProfileController extends AbstractDvsaMotTestController
      * @param TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper
      * @param PersonRoleManagementService $personRoleManagementService
      * @param CatalogService $catalogService
+     * @param MotConfig $config
      */
     public function __construct(
         MotAuthorisationServiceInterface $authorisationService,
         HelpdeskAccountAdminService $userAccountAdminService,
         TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper,
         PersonRoleManagementService $personRoleManagementService,
-        CatalogService $catalogService
+        CatalogService $catalogService,
+        MotConfig $config
     ) {
         $this->userAccountAdminService = $userAccountAdminService;
         $this->authorisationService = $authorisationService;
         $this->testerGroupAuthorisationMapper = $testerGroupAuthorisationMapper;
         $this->personRoleManagementService = $personRoleManagementService;
         $this->catalogService = $catalogService;
+        $this->config = $config;
     }
 
     /**
@@ -93,7 +103,10 @@ class UserProfileController extends AbstractDvsaMotTestController
         );
         $presenter->setPersonId($personId);
 
+        $display2FAMethod = $this->config->get('feature_toggle', '2fa.method.visible');
+
         $viewModel = $this->createViewModel($personId, $presenter->displayTitleAndFullName(), $presenter, true);
+        $viewModel->setVariable('display2FAMethod', $display2FAMethod);
         $viewModel->setTemplate($presenter->getTemplate());
 
         return $viewModel;

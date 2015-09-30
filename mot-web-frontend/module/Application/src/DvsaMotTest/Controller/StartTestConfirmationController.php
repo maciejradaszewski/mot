@@ -90,7 +90,7 @@ class StartTestConfirmationController extends AbstractDvsaMotTestController
         return $this->commonAction(MotTestTypeCode::RE_TEST);
     }
 
-    public function demoAction()
+    public function trainingAction()
     {
         return $this->commonAction(MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING);
     }
@@ -166,8 +166,7 @@ class StartTestConfirmationController extends AbstractDvsaMotTestController
                 $newMotTestId               = $this->createNewTestFromPost($newTestData);
 
                 $url = (
-                    ($this->method === MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING
-                    || $contingencySessionManager->isMotContingency())
+                    ($contingencySessionManager->isMotContingency())
                     ? MotTestUrlBuilderWeb::motTest($newMotTestId)
                     : MotTestUrlBuilderWeb::options($newMotTestId)
                 );
@@ -343,6 +342,12 @@ class StartTestConfirmationController extends AbstractDvsaMotTestController
             $viewModel->setTemplate('dvsa-mot-test/start-test-confirmation/index.phtml');
         }
 
+        if ($this->method == MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING) {
+            $this->layout()->setVariable('pageSubTitle', 'Training test');
+        } else {
+            $this->layout()->setVariable('pageSubTitle', 'MOT testing');
+        }
+
         return $viewModel;
     }
 
@@ -354,6 +359,9 @@ class StartTestConfirmationController extends AbstractDvsaMotTestController
     protected function createOtpViewModel($otpErrorData)
     {
         $viewModel = $this->createViewModel();
+
+        // Override sub title for the Vehicle Details Changed screen
+        $this->layout()->setVariable('pageSubTitle', null);
 
         $message      = false;
         $shortMessage = false;

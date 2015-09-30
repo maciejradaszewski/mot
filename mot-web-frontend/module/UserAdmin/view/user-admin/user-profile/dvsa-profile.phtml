@@ -49,6 +49,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
             <?php echo $this->escapeHtml($presenter->displayDrivingLicenceNumber()); ?>
         </td>
     </tr>
+    <?php if ($display2FAMethod): ?>
     <tr>
         <th class="key-value-list__key">
             Two-factor authentication method
@@ -57,6 +58,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
             <?php echo $this->escapeHtml($presenter->displayAuthenticationMethod()); ?>
         </td>
     </tr>
+    <?php endif; ?>
     </tbody>
 </table>
 

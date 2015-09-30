@@ -1,6 +1,6 @@
 <?php
 use DvsaMotTest\Controller\VehicleSearchController;
-
+use DvsaMotTest\Service\VehicleSearchService;
 ?>
 
 <h1>Duplicate or replacement certificate</h1>
@@ -12,7 +12,7 @@ $errorSummaryV5C = 'The V5C number you supplied, <strong>%s</strong>, does not m
 $errorSummaryMotCert = 'The MOT certificate number you supplied, <strong>%s</strong>, does not match what we have on record. Check you have typed the number correctly and try again.';
 
 if ($searchParamMotId != 0) {
-    if ($searchParamType == VehicleSearchController::SEARCH_TYPE_V5C) {
+    if ($searchParamType == VehicleSearchService::SEARCH_TYPE_V5C) {
         $escErrorSummary = sprintf($errorSummaryV5C, $this->escapeHtmlAttr($searchParamCriteria));
     } else {
         $escErrorSummary = sprintf($errorSummaryMotCert, $this->escapeHtmlAttr($searchParamCriteria));
@@ -51,7 +51,7 @@ echo $this->partial(
             foreach ($vehicleHistory->getIteratorOnOtherSite() as $item) :
                 /** @var DvsaCommon\Dto\Vehicle\History\VehicleHistoryItemDto $item */
                 $escId = $this->escapeHtmlAttr($item->getId());
-                $v5cErrorState = ($searchParamMotId == $escId && $searchParamType == 'v5c') ? 'has-error' : '';
+                $v5cErrorState = ($searchParamMotId == $escId && $searchParamType == VehicleSearchService::SEARCH_TYPE_V5C) ? 'has-error' : '';
                 $certErrorState = ($searchParamMotId == $escId && $searchParamType == 'certificate') ? 'has-error' : '';
                 ?>
                 <div class="row">

@@ -19,7 +19,7 @@ $title = 'Brake test configuration';
 $vehicle = $motTest->getVehicle();
 $vehicleClass = $vehicle->getClassCode();
 $this->headTitle($title);
-$this->layout()->setVariable('pageSubTitle', 'MOT testing');
+$this->layout()->setVariable('pageSubTitle', $motTestTitleViewModel->getTitle($motTest));
 $this->layout()->setVariable('pageTitle', "Brake test configuration");
 
 $brakeTestResult = $motTest->getBrakeTestResult();

@@ -14,9 +14,13 @@ use DvsaCommon\UrlBuilder\MotTestUrlBuilder;
 use DvsaCommon\UrlBuilder\VehicleUrlBuilder;
 use DvsaMotTest\Constants\VehicleSearchSource;
 use DvsaMotTest\Model\VehicleSearchResult;
+use DvsaMotTest\View\VehicleSearchResult\CertificateUrlTemplate;
+use DvsaMotTest\View\VehicleSearchResult\MotTestUrlTemplate;
+use DvsaMotTest\View\VehicleSearchResult\TrainingTestUrlTemplate;
 use DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultMessage;
 use Zend\Di\Exception\ClassNotFoundException;
-use DvsaCommon\Utility\DtoHydrator;
+use Zend\Mvc\Controller\Plugin\Url;
+use DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultUrlTemplateInterface;
 
 /**
  * Class VehicleSearchService
@@ -24,9 +28,12 @@ use DvsaCommon\Utility\DtoHydrator;
  */
 class VehicleSearchService
 {
-    const SEARCH_TYPE_CERTIFICATE = 'certificate';
-    const SEARCH_TYPE_DEMO = 'demo';
+
     const SEARCH_TYPE_STANDARD = 'standard';
+    const SEARCH_TYPE_RETEST = 'retest';
+    const SEARCH_TYPE_CERTIFICATE = 'certificate';
+    const SEARCH_TYPE_TRAINING = 'training';
+    const SEARCH_TYPE_V5C = 'v5c';
 
     const KEY_FOR_PERSON_APPROVED_CLASSES = 'forPerson';
     const KEY_FOR_VTS_APPROVED_CLASSES = 'forVts';
@@ -52,6 +59,9 @@ class VehicleSearchService
 
     /** @var LazyMotFrontendAuthorisationService */
     private $authorisationService;
+
+    /** @var string */
+    private $searchType;
 
     /**
      * @param Client $restClient
@@ -290,7 +300,7 @@ class VehicleSearchService
             return false;
         }
 
-        if ($searchType === self::SEARCH_TYPE_CERTIFICATE || $searchType === self::SEARCH_TYPE_DEMO) {
+        if ($searchType === self::SEARCH_TYPE_CERTIFICATE || $searchType === self::SEARCH_TYPE_TRAINING) {
             return false;
         }
 
@@ -322,4 +332,80 @@ class VehicleSearchService
         return $vehicleArray;
     }
 
+    /**
+     * @param $noRegistration
+     * @param int $noRegistration
+     * @param Url $urlPlugin
+     * @return VehicleSearchResultUrlTemplateInterface
+     * @throws \Exception
+     */
+    public function getUrlTemplate($noRegistration, $noRegistration, Url $urlPlugin)
+    {
+        switch ($this->getSearchType()) {
+            case VehicleSearchService::SEARCH_TYPE_CERTIFICATE:
+                return new CertificateUrlTemplate($this->authorisationService, $urlPlugin);
+            case VehicleSearchService::SEARCH_TYPE_TRAINING:
+                return new TrainingTestUrlTemplate($noRegistration, $urlPlugin);
+            case VehicleSearchService::SEARCH_TYPE_STANDARD:
+                return new MotTestUrlTemplate($noRegistration, $urlPlugin);
+        }
+
+        throw new \InvalidArgumentException('Unknown search type');
+    }
+
+    /**
+     * @param string $searchType
+     */
+    public function setSearchType($searchType)
+    {
+        $this->searchType = $searchType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSearchType()
+    {
+        return $this->searchType;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isStandardSearchType()
+    {
+        return ($this->getSearchType() === self::SEARCH_TYPE_STANDARD);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRetestSearchType()
+    {
+        return ($this->getSearchType() === self::SEARCH_TYPE_RETEST);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTrainingSearchType()
+    {
+        return ($this->getSearchType() === self::SEARCH_TYPE_TRAINING);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReplacementCertifificateSearchType()
+    {
+        return ($this->getSearchType() === self::SEARCH_TYPE_CERTIFICATE);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isV5cSearchType()
+    {
+        return ($this->getSearchType() === self::SEARCH_TYPE_V5C);
+    }
 }
