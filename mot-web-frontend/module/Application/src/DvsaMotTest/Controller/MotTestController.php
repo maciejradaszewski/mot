@@ -17,6 +17,7 @@ use DvsaCommon\Dto\Common\MotTestTypeDto;
 use DvsaCommon\Dto\Common\ReasonForCancelDto;
 use DvsaCommon\Dto\Person\PersonDto;
 use DvsaCommon\Enum\MotTestStatusName;
+use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\HttpRestJson\Exception\NotFoundException;
 use DvsaCommon\HttpRestJson\Exception\OtpApplicationException;
@@ -587,8 +588,12 @@ class MotTestController extends AbstractDvsaMotTestController
                 'isDuplicate'   => false
             ]
         );
+        /** @var MotTestDto $motDetails */
+        $isDemoMotTest = ($motDetails->getTestType()->getCode() === MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING);
 
-        if (true === $model->isReinspection || !$this->isFeatureEnabled(FeatureToggle::JASPER_ASYNC)) {
+        if (true === $model->isReinspection
+            || $isDemoMotTest
+            || !$this->isFeatureEnabled(FeatureToggle::JASPER_ASYNC)) {
             $model->setTemplate('dvsa-mot-test/mot-test/print-test-result');
         } else {
             $this->layout('layout/layout-govuk.phtml');

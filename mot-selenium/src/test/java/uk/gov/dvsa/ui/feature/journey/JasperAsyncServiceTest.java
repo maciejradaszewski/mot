@@ -9,6 +9,7 @@ import uk.gov.dvsa.domain.service.FeaturesService;
 import uk.gov.dvsa.helper.AssertionHelper;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.HomePage;
+import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -24,13 +25,11 @@ public class JasperAsyncServiceTest extends BaseTest {
         isJasperAsyncEnabled();
 
         //When I view my HomePage as a tester
-        HomePage homePage = pageNavigator.gotoHomePage(userData.createTester(1));
-
-        //Then I should see the "Your VTS activity" Header
-        assertThat(homePage.isVtsActivityLabelDisplayed(), is(true));
+        VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.gotoHomePage(userData.createTester(1))
+                .selectRandomVts();
 
         //And the MOT test certificates Link
-        assertThat(homePage.isMotCertificateListDisplayed(), is(true));
+        assertThat(vehicleTestingStationPage.isMotTestRecentCertificatesLink(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression"})

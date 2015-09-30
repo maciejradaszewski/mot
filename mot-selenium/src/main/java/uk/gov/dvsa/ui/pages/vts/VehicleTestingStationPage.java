@@ -7,6 +7,7 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 import uk.gov.dvsa.ui.pages.RemoveRolePage;
+import uk.gov.dvsa.ui.pages.mot.MotTestCertificatesPage;
 import uk.gov.dvsa.ui.pages.mot.TestShortSummaryPage;
 
 public class VehicleTestingStationPage extends Page {
@@ -27,6 +28,7 @@ public class VehicleTestingStationPage extends Page {
     @FindBy(id = "change-testing-facilities") private WebElement changeTestingFacilitiesLink;
     @FindBy(id = "testing-facility-optl") private WebElement onePersonTestLaneValue;
     @FindBy(id = "testing-facility-tptl") private WebElement twoPersonTestLaneValue;
+    @FindBy(id = "mot-test-recent-certificates-link") private WebElement motTestRecentCertificatesLink;
 
     public VehicleTestingStationPage(MotAppDriver driver) {
         super(driver);
@@ -74,12 +76,20 @@ public class VehicleTestingStationPage extends Page {
         String testerRemoveLink = String.format("#role-assignment-%s-TESTER td a", id);
         WebElement removeTesterRole = driver.findElementByCssSelector(testerRemoveLink);
         removeTesterRole.click();
-
         return new RemoveRolePage(driver);
     }
 
     public void clickOnViewHistoryLink() {
         viewEventHistoryLink.click();
+    }
+
+    public MotTestCertificatesPage clickOnMotTestRecentCertificatesLink() {
+        motTestRecentCertificatesLink.click();
+        return new MotTestCertificatesPage(driver);
+    }
+
+    public boolean isMotTestRecentCertificatesLink() {
+        return motTestRecentCertificatesLink.isDisplayed();
     }
 
     public boolean isTesterDisplayed(String id, String name){
@@ -104,7 +114,6 @@ public class VehicleTestingStationPage extends Page {
 
     public TestShortSummaryPage clickOnActiveTest(String regNum) {
         driver.findElement(By.linkText(regNum)).click();
-
         return new TestShortSummaryPage(driver);
     }
 

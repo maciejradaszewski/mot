@@ -61,4 +61,24 @@ class OrganisationServiceTest extends AbstractServiceTestCase
 
         $this->service->decrementSlotBalance($this->organisation);
     }
+
+    public function testFindOrganisationNameBySiteId_organisationFound() {
+
+        $siteId = 4;
+        $this->mockOrganisationRepo->expects($this->once())->method('findOrganisationNameBySiteId')
+            ->with($siteId)->willReturn((new Organisation)->setName('orgName')->setId(5));
+
+        $result = $this->service->findOrganisationNameBySiteId($siteId);
+        $this->assertEquals(['id' => 5, 'name' => 'orgName'], $result);
+    }
+
+    public function testFindOrganisationNameBySiteId_organisationNotFound() {
+
+        $siteId = 5;
+        $this->mockOrganisationRepo->expects($this->once())->method('findOrganisationNameBySiteId')
+            ->with($siteId)->willReturn(null);
+
+        $result = $this->service->findOrganisationNameBySiteId($siteId);
+        $this->assertEquals([], $result);
+    }
 }

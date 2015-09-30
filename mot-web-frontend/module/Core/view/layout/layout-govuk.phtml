@@ -116,6 +116,14 @@
         <?php endif; ?>
         <!-- END -->
 
+        <?php if (isset($this->sideBarItems) && !empty($this->sideBarItems)): ?>
+
+            <div class="grid-row">
+
+                <div class="column-two-thirds">
+
+        <?php endif; ?>
+
         <!-- Titles -->
         <?php if (isset($this->pageSubTitle) or (isset($this->pageTitle))): ?>
             <?php echo $this->partial(
@@ -154,6 +162,18 @@
                     <?php echo $this->content; // should be escaped in controller ?>
                 </div>
             </div>
+        <?php endif; ?>
+
+        <?php if (isset($this->sideBarItems) && !empty($this->sideBarItems)): ?>
+
+            </div>
+
+            <div class="column-third">
+
+                <?php  echo $this->partial('partial/gds/general/sideBarItems',['sideBarItems' => $this->sideBarItems]); ?>
+
+            </div>
+
         <?php endif; ?>
 
     </div>

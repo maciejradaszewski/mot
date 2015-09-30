@@ -10,6 +10,7 @@ import uk.gov.dvsa.domain.service.FeaturesService;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
+import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -25,13 +26,11 @@ public class JasperSyncServiceTest extends BaseTest {
         isJasperAsyncEnabled();
 
         //When I view my HomePage as a tester
-        HomePage homePage = pageNavigator.gotoHomePage(userData.createTester(1));
-
-        //Then I should NOT see the "Your VTS activity" Header
-        assertThat(homePage.isVtsActivityLabelDisplayed(), is(false));
+        VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.gotoHomePage(userData.createTester(1))
+                .selectRandomVts();
 
         //And I should NOT see the Mot Certificate Link
-        assertThat(homePage.isMotCertificateListDisplayed(), is(false));
+        assertThat(vehicleTestingStationPage.isMotTestRecentCertificatesLink(), is(false));
     }
 
     @Test(groups = {"BVT", "Regression"})

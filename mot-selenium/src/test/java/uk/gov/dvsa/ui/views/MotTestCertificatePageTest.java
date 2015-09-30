@@ -9,7 +9,7 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.FeaturesService;
-import uk.gov.dvsa.helper.ExecutorServiceInitializer;
+import uk.gov.dvsa.ParallelExecutor;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.mot.MotTestCertificatesPage;
 
@@ -25,7 +25,7 @@ public class MotTestCertificatePageTest extends BaseTest {
     private AeDetails aeDetails;
 
     @Test(groups = {"Regression"}, description = "VM-11876")
-    public void PaginationButtonCheck() throws Exception {
+    public void paginationButtonCheck() throws Exception {
         isJasperAsyncEnabled();
         int iterations = 21;
         int threadPool = 5;
@@ -45,16 +45,28 @@ public class MotTestCertificatePageTest extends BaseTest {
         };
 
         //Generate 21 random tests (parallel)
-        ExecutorServiceInitializer executorServiceInitializer = new ExecutorServiceInitializer();
-        executorServiceInitializer.runInParallel(iterations, threadPool, terminationTimeout, task);
+        ParallelExecutor parallelExecutor = new ParallelExecutor();
+        parallelExecutor.runInParallel(iterations, threadPool, terminationTimeout, task);
 
         //Go to Mot Test Certificates Page
         User tester = userData.createTester(site.getId());
-        MotTestCertificatesPage motTestCertificatesPage = pageNavigator.gotoMotTestCertificatesPage(tester);
+        MotTestCertificatesPage motTestCertificatesPage = pageNavigator.gotoHomePage(tester)
+                .selectRandomVts()
+                .clickOnMotTestRecentCertificatesLink();
 
         //check if pagination button is there after 21 tests - supposed to be 
-        assertThat("There supposed to be pagination button",
-                motTestCertificatesPage.isPaginationButtonVisible(), is(true));
+        assertThat("There supposed to be a forward pagination button",
+                motTestCertificatesPage.isPaginationButtonNextVisible(), is(true));
+
+        //click on pagination button and verify if there is back pagination button
+        motTestCertificatesPage.clickOnNextPaginationButton();
+        assertThat("There supposed to be a pagination button",
+                motTestCertificatesPage.isPaginationButtonPrevVisible(), is(true));
+
+        //click on pagination button and verify if there is forward pagination button
+        motTestCertificatesPage.clickOnPrevPaginationButton();
+        assertThat("There supposed to be a pagination button",
+                motTestCertificatesPage.isPaginationButtonNextVisible(), is(true));
     }
 
     private void isJasperAsyncEnabled() throws IOException {

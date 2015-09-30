@@ -2,6 +2,7 @@
 
 namespace Core\Controller;
 
+use Application\Navigation\Breadcrumbs\BreadcrumbsBuilder;
 use DvsaFeature\Exception\FeatureNotAvailableException;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use Zend\Form\Annotation\AnnotationBuilder;
@@ -157,5 +158,13 @@ abstract class AbstractDvsaActionController
     public function getRequest()
     {
         return parent::getRequest();
+    }
+
+    /**
+     * @return BreadcrumbsBuilder
+     */
+    public function getBreadcrumbBuilder()
+    {
+        return $this->serviceLocator->get(BreadcrumbsBuilder::class);
     }
 }

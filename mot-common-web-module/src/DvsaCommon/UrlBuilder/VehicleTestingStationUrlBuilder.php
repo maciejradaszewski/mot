@@ -32,6 +32,8 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
     const VTS_CONTACT_UPDATE = '/update';
 
     const SEARCH = 'vehicle-testing-station/search';
+    const NAME = '/name';
+    const ORGANISATION = '/organisation';
 
     protected $routesStructure = [
         self::VEHICLE_TESTING_STATION_APPLICATION_START => '',
@@ -48,6 +50,10 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
             self::STATUS                          => '',
         ],
         self::VTS_BY_ID                                 => [
+            self::ORGANISATION => [
+                self::NAME => ''
+            ],
+            self::NAME => '',
             self::VTS_TEST_IN_PROGRESS    => [
                 self::VTS_TEST_IN_PROGRESS_COUNT => '',
             ],
@@ -60,6 +66,18 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
         ],
         self::SEARCH                                    => '',
     ];
+
+    public static function vtsName($id)
+    {
+        return (new self())->appendRoutesAndParams(self::VTS_BY_ID)->routeParam('id', $id)
+            ->appendRoutesAndParams(self::NAME);
+    }
+
+    public static function vtsOrganisationName($id)
+    {
+        return (new self())->appendRoutesAndParams(self::VTS_BY_ID)->routeParam('id', $id)
+            ->appendRoutesAndParams(self::ORGANISATION)->appendRoutesAndParams(self::NAME);
+    }
 
     public static function vehicleTestingStationApplicationStart()
     {

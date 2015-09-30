@@ -453,6 +453,15 @@ class SiteService extends AbstractService
         return $this->vtsMapper->toDto($site);
     }
 
+    public function getSiteName($id)
+    {
+        $this->authService->assertGrantedAtSite(PermissionAtSite::VEHICLE_TESTING_STATION_READ, $id);
+
+        /** @var Site $site */
+        $site = $this->repository->get((int)$id);
+        return $site->getName();
+    }
+
     public function getSiteAuthorisedClasses($siteId)
     {
         $approvedVehicleClasses = $this->extractApprovedVehicleClasses($this->getSite($siteId));

@@ -1,5 +1,6 @@
 <?php
 
+use DvsaMotTest\Controller\MotTestCertificatesController;
 use Site\Controller\RoleController;
 use Site\Controller\SiteController;
 use Site\Factory\Controller\RoleControllerFactory;
@@ -53,6 +54,19 @@ return [
                     ],
                     'defaults'    => [
                         'controller' => SiteController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+            'mot-test-certificate-list'    => [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/vehicle-testing-station/:id/mot-test-certificates',
+                    'constraints' => [
+                        'id' => '[0-9]+',
+                    ],
+                    'defaults'    => [
+                        'controller' => MotTestCertificatesController::class,
                         'action'     => 'index',
                     ],
                 ],

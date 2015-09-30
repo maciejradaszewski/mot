@@ -50,7 +50,7 @@ class MotTestRecentCertificateRepository extends AbstractMutableRepository
     {
         return $this
             ->createQueryBuilder("cert")
-            ->addSelect(["model", "make"])
+            ->addSelect(["model", "make", "status"])
             ->innerJoin("cert.status", " status")
             ->leftJoin("cert.make", "make")
             ->leftJoin("cert.model", "model")

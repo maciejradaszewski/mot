@@ -75,6 +75,14 @@ class VtsOverviewPagePermissions
         && $this->personIsEmployee($person);
     }
 
+    public function canViewRecentCertificates()
+    {
+        return $this->authorisationService->isGrantedAtSite(
+            PermissionAtSite::RECENT_CERTIFICATE_PRINT,
+            $this->vts->getId()
+        );
+    }
+
     public function canViewUsername()
     {
         return $this->authorisationService->isGrantedAtSite(

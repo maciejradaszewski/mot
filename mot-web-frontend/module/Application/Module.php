@@ -27,6 +27,14 @@ use Application\Listener\Factory\ClaimAccountListenerFactory;
 use Application\Listener\Factory\ExpiredPasswordListenerFactory;
 use Application\Listener\ExpiredPasswordListener;
 use Application\Listener\WebListenerEventsPriorities;
+use Application\Navigation\Breadcrumbs\BreadcrumbsBuilder;
+use Application\Navigation\Breadcrumbs\Factory\BreadcrumbsBuilderFactory;
+use Application\Navigation\Breadcrumbs\Handler\Factory\OrganisationNameBySiteResolverFactory;
+use Application\Navigation\Breadcrumbs\Handler\Factory\SimpleResolverFactory;
+use Application\Navigation\Breadcrumbs\Handler\Factory\SiteNameResolverFactory;
+use Application\Navigation\Breadcrumbs\Handler\OrganisationNameBySiteResolver;
+use Application\Navigation\Breadcrumbs\Handler\SimpleResolver;
+use Application\Navigation\Breadcrumbs\Handler\SiteNameResolver;
 use Application\Service\ContingencySessionManager;
 use DvsaCommon\Auth\NotLoggedInException;
 use DvsaCommon\Configuration\MotConfig;
@@ -171,7 +179,11 @@ class Module implements
                 VehicleSearchResult::class                => VehicleSearchResultFactory::class,
                 VehicleSearchService::class               => VehicleSearchServiceFactory::class,
                 'MotTestCertificatesService'              => MotTestCertificatesServiceFactory::class,
-                CertificatePrintingService::class         => CertificatePrintingServiceFactory::class
+                CertificatePrintingService::class         => CertificatePrintingServiceFactory::class,
+                BreadcrumbsBuilder::class                 => BreadcrumbsBuilderFactory::class,
+                SimpleResolver::class                     => SimpleResolverFactory::class,
+                SiteNameResolver::class                   => SiteNameResolverFactory::class,
+                OrganisationNameBySiteResolver::class     => OrganisationNameBySiteResolverFactory::class
             ],
             'aliases'    => [
                 AuthenticationService::class => 'ZendAuthenticationService'

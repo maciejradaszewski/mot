@@ -45,7 +45,7 @@ if ($this->failedMotTestId && !$this->passedMotTestId) {
 
     <p>The test has been saved and the certificate is currently being generated.</p>
     <p>
-        You can access and print it from the list of <a href="<?php echo $this->url(MotTestCertificatesController::ROUTE); ?>">MOT test certificates</a>.
+        You can access and print it from the list of <a href="<?php echo $this->url(MotTestCertificatesController::ROUTE, ['id' => $vtsId]); ?>">MOT test certificates</a>.
     </p>
     <a id="back-to-home-link" href="<?php echo $this->url(UserHomeController::ROUTE); ?>">Back to home</a>
 </div>

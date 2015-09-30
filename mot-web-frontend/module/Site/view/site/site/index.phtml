@@ -5,6 +5,7 @@ use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
+use DvsaMotTest\Controller\MotTestCertificatesController;
 use DvsaMotTest\Controller\MotTestController;
 use Site\ViewModel\MotTest\MotTestInProgressViewModel;
 use DvsaCommon\Date\DateTimeDisplayFormat;
@@ -15,7 +16,6 @@ use DvsaCommon\Date\DateTimeDisplayFormat;
  * @var string $escRefPage
  */
 ?>
-
 <?php
 //  --  errors  --
 $errorMessages = $this->layout()->flashMessenger->getErrorMessages();
@@ -58,6 +58,7 @@ $statusField = sprintf(
     $this->escapeHtml(DateTimeDisplayFormat::textDate($site->getStatusChangedOn()))
 );
 
+
 echo $this->partial(
     'partial/gds/table/table',
     [
@@ -81,15 +82,6 @@ echo $this->partial(
     ]
 );
 ?>
-
-<?php if ($permission->canViewEventHistory()): ?>
-    <div class="row">
-        <div class="vertical col-sm-4">
-            <a id="event-history" href="<?php echo EventUrlBuilderWeb::of()->eventList($site->getId(), 'site'); ?>">Site
-                event history</a>
-        </div>
-    </div>
-<?php endif ?>
 
 <h3 class="key-value-list__header">Contact details</h3>
 
@@ -248,35 +240,35 @@ echo $this->partial(
 <?php endif; ?>
 
 <div id="opening-hours">
-<h3 class="key-value-list__header">Testing hours</h3>
-<?php if ($permission->canUpdateTestingSchedule()): ?>
-    <a id="change-testing-hours" class="key-value-list__action"
-       href="<?php echo $this->url('site/edit-opening-hours', ['siteId' => $site->getId()]) ?>">
-        Change testing hours
-    </a>
-<?php endif ?>
-<table class="key-value-list">
-    <tbody>
-    <?php foreach ($site->getSiteTestingSchedule() as $day):
-        $dayName = $viewModel->displayWeekday($day);
-        ?>
+    <h3 class="key-value-list__header">Testing hours</h3>
+    <?php if ($permission->canUpdateTestingSchedule()): ?>
+        <a id="change-testing-hours" class="key-value-list__action"
+           href="<?php echo $this->url('site/edit-opening-hours', ['siteId' => $site->getId()]) ?>">
+            Change testing hours
+        </a>
+    <?php endif ?>
+    <table class="key-value-list">
+        <tbody>
+        <?php foreach ($site->getSiteTestingSchedule() as $day):
+            $dayName = $viewModel->displayWeekday($day);
+            ?>
+            <tr>
+                <th class="key-value-list__key">
+                    <?php echo $this->escapeHtml($dayName); ?>
+                </th>
+                <td id="<?php echo $this->escapeHtmlAttr(strtolower($dayName)); ?>-hours"
+                    class="key-value-list__value--numeric">
+                    <?php echo $this->escapeHtml($viewModel->displayOpeningHours($day)); ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+        <tfoot>
         <tr>
-            <th class="key-value-list__key">
-                <?php echo $this->escapeHtml($dayName); ?>
-            </th>
-            <td id="<?php echo $this->escapeHtmlAttr(strtolower($dayName)); ?>-hours"
-                class="key-value-list__value--numeric">
-                <?php echo $this->escapeHtml($viewModel->displayOpeningHours($day)); ?>
-            </td>
+            <td class="text-secondary" colspan="2">These times do not include bank holidays</td>
         </tr>
-    <?php endforeach; ?>
-    </tbody>
-    <tfoot>
-    <tr>
-        <td class="text-secondary" colspan="2">These times do not include bank holidays</td>
-    </tr>
-    </tfoot>
-</table>
+        </tfoot>
+    </table>
 </div>
 
 <?php if ($permission->canViewTestsInProgress()): ?>

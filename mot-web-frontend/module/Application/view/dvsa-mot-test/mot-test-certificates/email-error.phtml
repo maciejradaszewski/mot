@@ -17,5 +17,6 @@
         Alternatively you can try and use the email service later.
     </p>
 
-    <?php echo $this->partial('partials/mot-certificate-navigation'); ?>
+    <?php echo $this->partial('partials/mot-certificate-navigation', ['vtsId' => $recentCertificateDto->getVtsId()]); ?>
+
 </div>

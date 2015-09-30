@@ -33,7 +33,9 @@ public class VehicleService extends Service {
         vehicleDataMap.put("vin", getRandomVin());
         vehicleDataMap.put("make", vehicleDetails.getId());
         vehicleDataMap.put("makeOther", "");
+        vehicleDataMap.put("makeName", vehicleDetails.getMake());
         vehicleDataMap.put("model", vehicleDetails.getModelId());
+        vehicleDataMap.put("modelName", vehicleDetails.getMakeId());
         vehicleDataMap.put("modelOther", "");
         vehicleDataMap.put("colour", Colour.Black.getId());
         vehicleDataMap.put("secondaryColour", Colour.Yellow.getId());
