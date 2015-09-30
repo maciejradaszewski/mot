@@ -2,6 +2,8 @@ upgradefiles=()
 
 # add files here in intended run order for release
 upgradefiles+=('2015-09-17-VM-11570-add-permission-STORY.sql')
+upgradefiles+=('2015-09-16-VM-11222-update-mot-test-after-update-trigger-STORY.sql')
+upgradefiles+=('2015-09-22-VM-12002-Role-to-training-test-STORY.sql')
 
 for sqlscript in ${upgradefiles[@]}
 do
