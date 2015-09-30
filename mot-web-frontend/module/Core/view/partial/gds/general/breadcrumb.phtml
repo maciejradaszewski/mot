@@ -1,16 +1,33 @@
 <div id="global-breadcrumb" class="header-context">
     <nav role="navigation">
         <ol class="group">
-            <li><a href="/">Home</a></li>
-            <?php foreach ($breadcrumbs as $name => $link): ?>
-                <li>
+            <li id="breadcrumb-0"><a href="/">Home</a></li>
+
+            <?php
+            use DvsaCommon\Utility\ArrayUtils;
+
+            $counter = 1;
+            if(ArrayUtils::isAssoc($breadcrumbs)):
+            foreach ($breadcrumbs as $name => $link): ?>
+                <li id="breadcrumb-<?php echo $counter++ ?>">
                     <?php if (!empty($link)): ?>
                         <a href="<?php echo $this->escapeHtmlAttr($link); ?>"><?php echo $this->escapeHtml($name); ?></a>
                     <?php else: ?>
                         <?php echo $this->escapeHtmlAttr($name); ?>
                     <?php endif; ?>
                 </li>
-            <?php endforeach; ?>
+            <?php endforeach;
+            else :
+            foreach ($breadcrumbs as $pair):
+                foreach ($pair as $name => $link): ?>
+                <li id="breadcrumb-<?php echo $counter++ ?>">
+                    <?php if (!empty($link)): ?>
+                        <a href="<?php echo $this->escapeHtmlAttr($link); ?>"><?php echo $this->escapeHtml($name); ?></a>
+                    <?php else: ?>
+                        <?php echo $this->escapeHtmlAttr($name); ?>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; endforeach; endif;?>
         </ol>
     </nav>
 </div>

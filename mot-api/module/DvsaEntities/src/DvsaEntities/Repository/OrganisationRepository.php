@@ -72,13 +72,34 @@ class OrganisationRepository extends AbstractMutableRepository
         $queryBuilder
             ->select('o')
             ->from(\DvsaEntities\Entity\OrganisationBusinessRoleMap::class, 'obrm')
-            ->join(\DvsaEntities\Entity\Organisation::class, 'o', \Doctrine\ORM\Query\Expr\Join::INNER_JOIN, 'obrm.organisation = o.id')
+            ->join(\DvsaEntities\Entity\Organisation::class, 'o', \Doctrine\ORM\Query\Expr\Join::INNER_JOIN,
+                'obrm.organisation = o.id')
             ->where('obrm.person = :person')
             ->andWhere('obrm.organisationBusinessRole = :role')
             ->andWhere('obrm.businessRoleStatus = :status')
             ->setParameter('person', $person)
             ->setParameter('role', $role)
             ->setParameter('status', $status);
+
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @param $siteId
+     * @return Organisation
+     * @throws NotFoundException
+     */
+    public function findOrganisationNameBySiteId($siteId)
+    {
+        $qb = $this->createQueryBuilder("o")
+            ->select('o, a')
+            ->join('o.sites', 's')
+            ->join('o.authorisedExaminer', 'a')
+            ->where("s.id = :SITE_ID")
+            ->setParameter("SITE_ID", (int)$siteId)
+            ->setMaxResults(1);
+
+        $result = $qb->getQuery()->getResult();
+        return !empty($result) ? $result[0] : null;
     }
 }

@@ -81,6 +81,8 @@ class MotPrintModel extends ViewModel
             $printUrl =  MotTestUrlBuilderWeb::printCertificate($motTestNumber);
         }
 
+        $vtsId =  $motDetails->getVehicleTestingStation() ? $motDetails->getVehicleTestingStation()['id'] : null;
+
         $extraVariables = [
             'passedMotTestId'     => $passedMotTestNumber,
             'failedMotTestId'     => $failedMotTestNumber,
@@ -93,6 +95,7 @@ class MotPrintModel extends ViewModel
             'title'               => $title,
             'vehicleRegistration' => $vehicle->getRegistration(),
             'printRoute'          => $printUrl->toString(),
+            'vtsId'               => $vtsId
         ];
 
         $variables = array_merge($variables, $extraVariables);

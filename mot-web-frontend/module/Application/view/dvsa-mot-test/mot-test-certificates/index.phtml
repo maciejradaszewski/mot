@@ -18,11 +18,14 @@
         ['certificates' => $this->certificates, "paginator" => $this->paginator]
     ); ?>
     <div class="result__actions">
+
         <p>You can print MOT test certificates that have been created in the last 5 days.</p>
+        <?php if($canReplaceCertificate): ?>
         <p>
             For <span class="bold-small">older certificates</span> you will need to <a href="<?php echo $this->url('replacement-certificate-vehicle-search'); ?>">print a duplicate
                 certificate.</a>
         </p>
+        <?php endif; ?>
         <a id="back-to-home-link" href="/">Back to home</a>
     </div>
 

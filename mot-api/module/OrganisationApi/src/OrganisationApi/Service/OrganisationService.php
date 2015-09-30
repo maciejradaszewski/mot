@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManager;
 use DvsaCommonApi\Service\AbstractService;
 use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Repository\OrganisationRepository;
+use DvsaEntities\Repository\OrganisationSiteMapRepository;
 use OrganisationApi\Service\Mapper\OrganisationMapper;
 
 /**
@@ -27,9 +28,27 @@ class OrganisationService extends AbstractService
         OrganisationMapper $mapper
     ) {
         parent::__construct($entityManager);
-        $this->entityManager          = $entityManager;
+        $this->entityManager = $entityManager;
         $this->organisationRepository = $organisationRepository;
-        $this->mapper                 = $mapper;
+        $this->mapper = $mapper;
+    }
+
+    /**
+     * @param $siteId
+     * @return array of organisation id and name
+     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     */
+    public function findOrganisationNameBySiteId($siteId)
+    {
+        $organisation = $this->organisationRepository->findOrganisationNameBySiteId($siteId);
+        if (is_null($organisation)) {
+            return [];
+        }
+
+        return [
+            'id' => $organisation->getId(),
+            'name' => $organisation->getName()
+        ];
     }
 
     /**

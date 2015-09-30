@@ -60,6 +60,12 @@ return [
             'person' => [
                 'lifetime' => 7200
             ],
+            'site-name' => [
+                'lifetime' => 14400
+            ],
+            'organisation-name' => [
+                'lifetime' => 14400
+            ],
         ]
     ],
 

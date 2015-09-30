@@ -7,8 +7,10 @@ use DvsaCommon\HttpRestJson\CachingClient;
 use DvsaCommon\HttpRestJson\CachingClient\Cache;
 use DvsaCommon\HttpRestJson\CachingClient\CacheContextFactory\MotTestCacheContextFactory;
 use DvsaCommon\HttpRestJson\CachingClient\CacheContextFactory\PersonCacheContextFactory;
+use DvsaCommon\HttpRestJson\CachingClient\CacheContextFactory\SiteNameCacheContextFactory;
+use DvsaCommon\HttpRestJson\CachingClient\CacheContextFactory\OrganisationNameCacheContextFactory;
+
 use DvsaCommon\HttpRestJson\CachingClient\ChainedCacheContextFactory;
-use DvsaCommon\HttpRestJson\CachingClient\PatternCacheContextFactory;
 use DvsaCommon\HttpRestJson\ZendClient;
 use Zend\Http\Client as HttpClient;
 use Zend\Http\Client\Adapter\Curl;
@@ -88,6 +90,8 @@ class ClientFactory implements FactoryInterface
         return [
             new MotTestCacheContextFactory($this->getMotTestCacheLifeTime($config)),
             new PersonCacheContextFactory($serviceLocator->get('tokenService'), $this->getPersonCacheLifeTime($config)),
+            new SiteNameCacheContextFactory($this->getSiteNameCacheLifeTime($config)),
+            new OrganisationNameCacheContextFactory($this->getOrganisationNameCacheLifeTime($config))
         ];
     }
 
@@ -98,7 +102,7 @@ class ClientFactory implements FactoryInterface
      */
     private function isCacheEnabled(array $config)
     {
-        return isset($config['rest_client']['cache']['enabled']) ? (bool) $config['rest_client']['cache']['enabled'] : false;
+        return isset($config['rest_client']['cache']['enabled']) ? (bool)$config['rest_client']['cache']['enabled'] : false;
     }
 
     /**
@@ -123,6 +127,20 @@ class ClientFactory implements FactoryInterface
         return isset($config['rest_client']['cache']['person']['lifetime'])
             ? $config['rest_client']['cache']['person']['lifetime']
             : PersonCacheContextFactory::DEFAULT_LIFE_TIME;
+    }
+
+    private function getSiteNameCacheLifeTime($config)
+    {
+        return isset($config['rest_client']['cache']['site-name']['lifetime'])
+            ? $config['rest_client']['cache']['site-name']['lifetime']
+            : SiteNameCacheContextFactory::DEFAULT_LIFE_TIME;
+    }
+
+    private function getOrganisationNameCacheLifeTime($config)
+    {
+        return isset($config['rest_client']['cache']['organisation-name']['lifetime'])
+            ? $config['rest_client']['cache']['organisation-name']['lifetime']
+            : OrganisationNameCacheContextFactory::DEFAULT_LIFE_TIME;
     }
 
     /**

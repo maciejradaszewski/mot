@@ -1,0 +1,55 @@
+<?php
+    $sideBarItems = $this->sideBarItems ?: '';
+?>
+
+<div class="related">
+
+    <?php foreach($sideBarItems as $sideBarItem) { ?>
+
+            <?php if($sideBarItem['type'] == 'statusBox') { ?>
+
+                <ul class="related__status">
+
+                    <?php foreach ($sideBarItem as $statusItem) { ?>
+
+                        <?php if(is_array($statusItem)) { ?>
+                            <li>
+                                <span class="badge<?php echo $statusItem['modifier'] != '' ? '--' . $statusItem['modifier'] : ''; ?>"><?php echo $this->escapeHtml($statusItem['value']); ?></span>
+                                <strong><?php echo $this->escapeHtml($statusItem['key']); ?></strong>
+                            </li>
+
+                        <?php } ?>
+
+                    <?php } ?>
+
+                </ul>
+
+            <?php } ?>
+
+        <?php if ($sideBarItem['type'] == 'linkList') { ?>
+
+            <div class="related__section">
+                <h2 class="related__section-title"><?php echo $this->escapeHtml($sideBarItem['title']); ?></h2>
+
+                <ul class="related__section-links">
+
+                <?php foreach ($sideBarItem['items'] as $element) { ?>
+                <?php foreach ($element as $text => $data) { ?>
+
+                    <li><a id="<?php echo $this->escapeHtmlAttr($data['id']); ?>"
+                           href="<?php echo $this->escapeHtmlAttr($data['href']); ?>">
+                            <?php echo $this->escapeHtml($text); ?>
+                        </a>
+                    </li>
+
+                <?php } } ?>
+
+                </ul>
+
+            </div>
+
+        <?php } ?>
+
+    <?php } ?>
+
+</div>

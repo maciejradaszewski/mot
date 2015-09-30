@@ -45,4 +45,12 @@ public class UserData extends UserService{
     public User createAreaOfficeTwo(String namePrefix) throws IOException {
         return createUserAsAreaOfficeTwo(namePrefix);
     }
+
+    public User createSiteManager(int siteId, boolean accountClaimRequired) throws IOException {
+        return createUserAsSiteManager(siteId, accountClaimRequired);
+    }
+
+    public User createSiteAdmin(int siteId, boolean accountClaimRequired) throws IOException {
+        return createUserAsSiteAdmin(siteId, accountClaimRequired);
+    }
 }

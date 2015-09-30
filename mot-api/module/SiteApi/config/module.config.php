@@ -6,6 +6,8 @@ use SiteApi\Controller\MotTestInProgressController;
 use SiteApi\Controller\SiteContactController;
 use SiteApi\Controller\SiteController;
 use SiteApi\Controller\SiteEventController;
+use SiteApi\Controller\SiteNameController;
+use SiteApi\Controller\SiteOrganisationNameController;
 use SiteApi\Controller\VehicleTestingStationAuthorisedClassesController;
 use SiteApi\Controller\SitePositionController;
 use SiteApi\Controller\SitePositionValidateController;
@@ -13,6 +15,8 @@ use SiteApi\Controller\SiteRoleController;
 use SiteApi\Controller\SiteSlotUsageController;
 use SiteApi\Controller\SiteTestingDailyScheduleController;
 use SiteApi\Factory\Controller\SiteDetailsControllerFactory;
+use SiteApi\Factory\Controller\SiteNameControllerFactory;
+use SiteApi\Factory\Controller\SiteOrganisationNameControllerFactory;
 use SiteApi\Factory\Controller\SiteSearchControllerFactory;
 use SiteApi\Controller\SiteSearchController;
 use SiteApi\Factory\Controller\SiteControllerFactory;
@@ -39,6 +43,8 @@ return [
         'factories' => [
             SiteSearchController::class => SiteSearchControllerFactory::class,
             SiteController::class              => SiteControllerFactory::class,
+            SiteNameController::class   => SiteNameControllerFactory::class,
+            SiteOrganisationNameController::class   => SiteOrganisationNameControllerFactory::class,
             SiteTestingFacilitiesController::class => SiteTestingFacilitiesControllerFactory::class,
             SiteDetailsController::class => SiteDetailsControllerFactory::class,
             MotTestInProgressController::class => MotTestInProgressControllerFactory::class,
@@ -132,6 +138,30 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'vts-organisation-name'           => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'       => '/organisation/name',
+                            'constraints' => [
+                                'id'     => '[0-9]+',
+                            ],
+                            'defaults'    => [
+                                'controller' => SiteOrganisationNameController::class
+                            ],
+                        ],
+                    ],
+                    'vts-name'           => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'       => '/name',
+                            'constraints' => [
+                                'id'     => '[0-9]+',
+                            ],
+                            'defaults'    => [
+                                'controller' => SiteNameController::class,
+                            ],
+                        ],
+                    ],
                     'site-authorised-classes' => [
                         'type' => 'Segment',
                         'options' => [

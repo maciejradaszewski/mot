@@ -23,9 +23,6 @@ use DvsaCommon\Auth\PermissionAtSite;
             ?>
     </div>
     <div class="col-sm-6">
-        <?php if ($this->authorisationHelper()->isGrantedAtAnySite(PermissionAtSite::RECENT_CERTIFICATE_PRINT)) : ?>
-            <?php echo $this->partial('dashboard/motActivity', ['jasperAsyncEnabled' => $jasperAsyncEnabled]); ?>
-        <?php endif; ?>        
         <?php if ($dashboard->getHero() === 'vehicle-examiner'): ?>
             <?php echo $this->partial('dashboard/veList'); ?>
 

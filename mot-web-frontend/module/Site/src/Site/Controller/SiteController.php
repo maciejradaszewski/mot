@@ -164,6 +164,56 @@ class SiteController extends AbstractAuthActionController
             $site->getContactByType(SiteContactTypeCode::BUSINESS)->getAddress()->getFullAddressString()
         );
 
+        $id = (int)$this->params()->fromRoute('id');
+        $eventsLink = '/event/list/site/' . $id;
+        $motCertsLink = '/vehicle-testing-station/' . $id . '/mot-test-certificates';
+
+        $siteStatus = $siteStatusMap[$site->getStatus()];
+        $modifierClass = '';
+        if (strtolower($siteStatus) == 'approved') {
+            $modifierClass = 'success';
+        }
+
+        $relatedLinks = [];
+        $canReadEvents = $this->auth->isGranted(PermissionInSystem::EVENT_READ);
+        if ($canReadEvents) {
+            $relatedLinks [] = ['Events history' => ['id' => 'event-history', 'href' => $eventsLink]];
+        }
+
+        $isJasperAsyncEnabled = $this->isFeatureEnabled(FeatureToggle::JASPER_ASYNC);
+        $canSeeRecentCertificates = $this->auth->isGrantedAtSite(PermissionAtSite::RECENT_CERTIFICATE_PRINT, $id);
+
+        if ($isJasperAsyncEnabled && $canSeeRecentCertificates) {
+            $relatedLinks [] = ['MOT test certificates' => [ 'id' => 'mot-test-recent-certificates-link', 'href' => $motCertsLink]];
+        }
+
+        $related = [];
+        if(!empty($relatedLinks)) {
+            $related = [
+                'type' => 'linkList',
+                'title' => 'Related',
+                'items' =>  $relatedLinks
+            ];
+        }
+
+        $sideBarItems = [
+            [
+                'type' => 'statusBox',
+                'title' => '',
+                'statusItems1' => [
+                    'key' => 'Status',
+                    'value' => $siteStatus,
+                    'modifier' => $modifierClass,
+                ],
+            ],
+        ];
+
+        if (!empty($related)) {
+            array_push($sideBarItems, $related);
+        }
+
+        $this->layout()->setVariable('sideBarItems', $sideBarItems);
+
         $viewModel = new ViewModel(
             [
                 'viewModel'     => $view,
@@ -472,7 +522,7 @@ class SiteController extends AbstractAuthActionController
 
         /** @var VehicleTestingStationDto $vtsDto */
         $vtsDto = $this->mapper->Site->getById($siteId);
-        
+
         //  create new form or get from session when come back from confirmation
         $sessionKey = $request->getQuery(self::SESSION_KEY) ?: uniqid();
         $form = $this->session->offsetGet($sessionKey);
@@ -631,6 +681,7 @@ class SiteController extends AbstractAuthActionController
         $this->layout()->setVariable('pageTitle', $title);
         $this->layout()->setVariable('pageSubTitle', $subtitle);
 
+
         if (!empty($progress)) {
             $this->layout()->setVariable('progress', $progress);
         }
@@ -639,6 +690,7 @@ class SiteController extends AbstractAuthActionController
         $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
         return $template !== null ? $view->setTemplate($template) : $view;
+
     }
 
     public function configureBrakeTestDefaultsAction()

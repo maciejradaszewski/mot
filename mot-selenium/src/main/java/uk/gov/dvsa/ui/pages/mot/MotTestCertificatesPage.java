@@ -7,6 +7,8 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 
+import java.util.List;
+
 public class MotTestCertificatesPage extends Page {
 
     public static final String path = "/mot-test-certificates";
@@ -17,7 +19,8 @@ public class MotTestCertificatesPage extends Page {
     private String emailLinkText = "Email";
     private WebElement emailButton;
     @FindBy (className = "key-value-list") private WebElement recentCertificatesTable;
-    @FindBy (className = "data-paging__link") private WebElement paginationButton;
+    @FindBy (className = "data-paging__prev") private WebElement prevPaginationButton;
+    @FindBy (className = "data-paging__next") private WebElement nextPaginationButton;
 
     public MotTestCertificatesPage(MotAppDriver driver) {
         super(driver);
@@ -40,7 +43,29 @@ public class MotTestCertificatesPage extends Page {
         return new EmailCertificateFormPage(driver);
     }
 
-    public boolean isPaginationButtonVisible() {
-        return PageInteractionHelper.isElementDisplayed(paginationButton);
+    public boolean isPaginationButtonNextVisible() {
+        return PageInteractionHelper.isElementDisplayed(nextPaginationButton);
+    }
+
+    public boolean isPaginationButtonPrevVisible() {
+        return PageInteractionHelper.isElementDisplayed(prevPaginationButton);
+    }
+
+    public boolean isVehicleCorrect(String makeModel, String registration, String testResult) {
+        List<WebElement> listOfElementsInTable = recentCertificatesTable.findElements(By.tagName("td"));
+
+        return ((listOfElementsInTable.get(0).getText().equals(makeModel)) &&
+            (listOfElementsInTable.get(1).getText().equals(registration)) &&
+            (listOfElementsInTable.get(2).getText().equals(testResult)));
+    }
+
+    public MotTestCertificatesPage clickOnPrevPaginationButton() {
+        prevPaginationButton.findElement(By.className("data-paging__link")).click();
+        return new MotTestCertificatesPage(driver);
+    }
+
+    public MotTestCertificatesPage clickOnNextPaginationButton() {
+        nextPaginationButton.findElement(By.className("data-paging__link")).click();
+        return new MotTestCertificatesPage(driver);
     }
 }

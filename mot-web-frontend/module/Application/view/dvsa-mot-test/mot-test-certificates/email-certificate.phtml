@@ -112,6 +112,6 @@ use DvsaCommon\Utility\ArrayUtils;
         </fieldset>
     <?php echo $this->form()->closeTag(); ?>
 
-    <?php echo $this->partial('partials/mot-certificate-navigation'); ?>
+    <?php echo $this->partial('partials/mot-certificate-navigation', ['vtsId' => $recentCertificateDto->getVtsId()]); ?>
 
 </div>

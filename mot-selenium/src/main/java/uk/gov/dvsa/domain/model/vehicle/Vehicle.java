@@ -12,6 +12,7 @@ public class Vehicle {
     private String makeOther;
     private String model;
     private String modelOther;
+    private String makeModel;
     private String colour;
     private String secondaryColour;
     private String dateOfFirstUse;
@@ -50,6 +51,8 @@ public class Vehicle {
     public String getModelOther() {
         return vehicleData.get("modelOther");
     }
+
+    public String getMakeModel() { return vehicleData.get("makeName")+" "+vehicleData.get("modelName"); }
 
     public String getColour() {
         return vehicleData.get("colour");

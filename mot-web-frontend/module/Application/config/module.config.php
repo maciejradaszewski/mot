@@ -1,6 +1,9 @@
 <?php
 
 use Application\Controller as Application;
+use Application\Navigation\Breadcrumbs\Handler\OrganisationNameBySiteResolver;
+use Application\Navigation\Breadcrumbs\Handler\SimpleResolver;
+use Application\Navigation\Breadcrumbs\Handler\SiteNameResolver;
 use Application\View\HelperFactory\AuthorisationHelperFactory;
 use Application\View\HelperFactory\CurrentMotTestFactory;
 use Application\View\HelperFactory\DashboardDataProviderFactory;
@@ -740,16 +743,6 @@ return [
                     ],
                 ],
             ],
-            'mot-test-certificate-list' => [
-                'type'    => 'segment',
-                'options' => [
-                    'route'       => '/mot-test-certificates',
-                    'defaults'    => [
-                        'controller' => MotTest\MotTestCertificatesController::class,
-                        'action'     => 'index',
-                    ],
-                ],
-            ],
             'mot-test-certificate-email'=> [
                 'type'    => 'segment',
                 'options' => [
@@ -759,26 +752,29 @@ return [
                         'action'     => 'emailCertificate',
                     ],
                 ],
-            ],
-            'mot-test-certificate-email-confirmation'=> [
-                'type'    => 'segment',
-                'options' => [
-                    'route'       => '/mot-test-certificate/:certificateId/email/confirmation',
-                    'defaults'    => [
-                        'controller' => MotTest\MotTestCertificatesController::class,
-                        'action'     => 'emailConfirmation',
+                'may_terminate' => true,
+                'child_routes' => [
+                    'confirmation'=> [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'       => '/confirmation',
+                            'defaults'    => [
+                                'controller' => MotTest\MotTestCertificatesController::class,
+                                'action'     => 'emailConfirmation',
+                            ],
+                        ],
                     ],
-                ],
-            ],
-            'mot-test-certificate-email-error'=> [
-                'type'    => 'segment',
-                'options' => [
-                    'route'       => '/mot-test-certificate/:certificateId/email/error',
-                    'defaults'    => [
-                        'controller' => MotTest\MotTestCertificatesController::class,
-                        'action'     => 'emailError',
+                    'error'=> [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'       => '/error',
+                            'defaults'    => [
+                                'controller' => MotTest\MotTestCertificatesController::class,
+                                'action'     => 'emailError',
+                            ],
+                        ],
                     ],
-                ],
+                ]
             ],
             'mot-test-certificate'                        => [
                 'type'    => 'segment',
@@ -1168,6 +1164,13 @@ return [
     'validators' => [
         'invokables' => [
             'SpecialNoticePublishDate' => SpecialNoticePublishDateValidator::class
+        ]
+    ],
+    'breadcrumbs' => [
+        'resolvers' => [
+            'site' => SiteNameResolver::class,
+            'organisationBySite' => OrganisationNameBySiteResolver::class,
+            'simple' => SimpleResolver::class
         ]
     ]
 ];

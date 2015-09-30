@@ -4,26 +4,24 @@ namespace DvsaMotTest\Controller;
 
 use Application\Service\LoggedInUserManager;
 use Application\Service\MotTestCertificatesService;
-use DvsaCommon\Auth\PermissionAtSite;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
+use DvsaCommon\Auth\PermissionAtSite;
+use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Dto\Common\MotTestRecentCertificatesDto;
-use DvsaMotTest\Helper\LocationSelectContainerHelper;
 use DvsaMotTest\Form\EmailCertificateForm;
+use DvsaMotTest\Helper\LocationSelectContainerHelper;
 use Zend\Http\Headers;
-use \Zend\Mvc\Application;
 use Zend\Http\Response;
+use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;
+use Zend\View\Helper\Navigation\Breadcrumbs;
 use Zend\View\Helper\PaginationControl;
 use Zend\View\Model\ViewModel;
 use Zend\View\View;
 
-/**
- * Class MotTestCertificatesController
- *
- * @package DvsaMotTest\Controller
- */
+
 class MotTestCertificatesController extends AbstractDvsaMotTestController
 {
     const ROUTE = 'mot-test-certificate-list';
@@ -56,31 +54,23 @@ class MotTestCertificatesController extends AbstractDvsaMotTestController
     public function indexAction()
     {
         $this->assertFeatureEnabled(FeatureToggle::JASPER_ASYNC);
-
         $this->layout('layout/layout-govuk.phtml');
-
-        if (!$this->getIdentity()->getCurrentVts()) {
-            $tester = $this->loggedInManager->getTesterData();
-            // Avoid redirecting to the LocationSelectionController if the tester has only one associated site.
-            if (count($tester['vtsSites']) == 1) {
-                $this->loggedInManager->changeCurrentLocation($tester['vtsSites'][0]['id']);
-            } else {
-                $this->locationHelper->persistConfig(
-                    [
-                        'route' => $this->applicaton->getMvcEvent()->getRouteMatch()->getMatchedRouteName(),
-                        'params' => []
-                    ]
-                );
-
-                return $this->redirect()->toRoute('location-select');
-            }
-        }
-
-        $vtsId = $this->getIdentity()->getCurrentVts()->getVtsId();
+        $vtsId = $this->params()->fromRoute("id");
         $page = (int) $this->params()->fromQuery('page', 1);
         $data = $this->certificateService->getMOTCertificates($vtsId, $page);
 
-        return $data;
+
+        $this->getBreadcrumbBuilder()->organisationBySiteId($vtsId)->site($vtsId)
+            ->simple('MOT test certificates')
+            ->build();
+
+        $canReplace = $this->authorisationService->isGranted(PermissionInSystem::CERTIFICATE_REPLACEMENT);
+        return array_merge(
+            [
+                'canReplaceCertificate' => $canReplace
+            ], 
+            $data
+        );
     }
 
     /**
@@ -165,13 +155,19 @@ class MotTestCertificatesController extends AbstractDvsaMotTestController
                 ];
 
                 if ($this->certificateService->saveEmailCertificate($certificateId, $data)) {
-                    return $this->redirect()->toRoute('mot-test-certificate-email-confirmation',
+                    return $this->redirect()->toRoute('mot-test-certificate-email/confirmation',
                         ['certificateId' => $certificateId]);
                 }
 
-                return $this->redirect()->toRoute('mot-test-certificate-email-error');
+                return $this->redirect()->toRoute('mot-test-certificate-email/error');
             }
         }
+
+        $vtsId = $recentCertificateDto->getVtsId();
+        $this->getBreadcrumbBuilder()->organisationBySiteId($vtsId)->site($vtsId)
+            ->simple('MOT test certificates', 'mot-test-certificate-list', ['id' => $vtsId])
+            ->simple('Email certificate')
+            ->build();
 
         return [
             'form' => $form,
@@ -197,9 +193,12 @@ class MotTestCertificatesController extends AbstractDvsaMotTestController
         $this->assertFeatureEnabled(FeatureToggle::JASPER_ASYNC);
 
         $this->authorisationService->isGrantedAtAnySite(PermissionAtSite::RECENT_CERTIFICATE_PRINT);
-
         $this->layout('layout/layout-govuk.phtml');
 
-        return [];
+        $certificateId = (int)$this->params('certificateId');
+        /** @var MotTestRecentCertificatesDto $recentCertificateDto */
+        $recentCertificateDto = $this->certificateService->getMOTCertificate($certificateId);
+
+        return ["recentCertificateDto" => $recentCertificateDto];
     }
 }

@@ -389,4 +389,14 @@ class ArrayUtils
     public static function getKeys(array $data) {
         return array_keys($data);
     }
+
+    /**
+     * Checks if array is associative or sequential
+     * @param array $array
+     * @return bool true if array is associative
+     */
+    public static function isAssoc(array $array)
+    {
+        return (bool)count(array_filter(array_keys($array), 'is_string'));
+    }
 }

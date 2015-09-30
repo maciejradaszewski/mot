@@ -1,6 +1,7 @@
 <?php
 
 use OrganisationApi\Controller\AuthorisedExaminerPrincipalController;
+use OrganisationApi\Controller\AuthorisedExaminerNameController;
 use OrganisationApi\Controller\OrganisationPositionController;
 use OrganisationApi\Controller\OrganisationRoleController;
 use OrganisationApi\Controller\OrganisationSlotUsageController;
@@ -10,6 +11,7 @@ use OrganisationApi\Controller\OrganisationEventController;
 use OrganisationApi\Factory\Controller\OrganisationEventControllerFactory;
 use OrganisationApi\Factory\Controller\MotTestLogControllerFactory;
 use OrganisationApi\Factory\Controller\AuthorisedExaminerControllerFactory;
+use OrganisationApi\Factory\Controller\AuthorisedExaminerNameControllerFactory;
 use OrganisationApi\Factory\Controller\SiteControllerFactory;
 use OrganisationApi\Factory\Controller\SiteLinkControllerFactory;
 use OrganisationApi\Factory\Controller\AuthorisedExaminerStatusControllerFactory;
@@ -29,7 +31,7 @@ return [
             AuthorisedExaminerControllerFactory::class => AuthorisedExaminerControllerFactory::class,
             AuthorisedExaminerStatusControllerFactory::class => AuthorisedExaminerStatusControllerFactory::class,
             OrganisationEventController::class               => OrganisationEventControllerFactory::class,
-
+            AuthorisedExaminerNameController::class           => AuthorisedExaminerNameControllerFactory::class
         ],
     ],
     'router'      => [
@@ -67,6 +69,16 @@ return [
                             'route' => '/event',
                             'defaults' => [
                                 'controller' => OrganisationEventController::class,
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'organisation-name' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/name',
+                            'defaults' => [
+                                'controller' => AuthorisedExaminerNameController::class,
                             ],
                         ],
                         'may_terminate' => true,
