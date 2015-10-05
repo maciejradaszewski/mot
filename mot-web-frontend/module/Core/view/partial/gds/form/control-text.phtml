@@ -15,6 +15,7 @@ $tabIdx = (int) $this->tabIndex;
     echo $this->autofocus === true ? ' autofocus' : '';
     echo $tabIdx > 0 ? ' tabindex="'. $this->escapeHtmlAttr($tabIdx) .'"' : '';
     echo !empty($maxLength) ? ' maxlength="'.$this->escapeHtmlAttr($maxLength).'"' : '';
+    echo ($type == 'password') ? ' autocomplete="off"' : '';
     ?>
     value="<?php echo $this->escapeHtmlAttr($this->value); ?>"
     class="form-control

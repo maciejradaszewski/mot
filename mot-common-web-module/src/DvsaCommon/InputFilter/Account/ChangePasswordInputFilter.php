@@ -11,7 +11,7 @@ use Zend\Validator\NotEmpty;
 class ChangePasswordInputFilter extends PasswordInputFilter
 {
     const FIELD_OLD_PASSWORD = 'oldPassword';
-    const MSG_OLD_PASSWORD_EMPTY = 'you must enter an old password';
+    const MSG_OLD_PASSWORD_EMPTY = 'you must enter your current password';
     const MSG_PASSWORD_INVALID = "you must enter a valid password";
 
     public function init()

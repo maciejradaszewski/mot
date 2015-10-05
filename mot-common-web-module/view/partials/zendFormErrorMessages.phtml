@@ -1,0 +1,23 @@
+<?php
+
+/** @var $form Form  */
+
+use Zend\Form\Form;
+
+if($form->getMessages()): ?>
+
+<div class="validation-summary" id="validation-summary-id">
+    <h2>There was a problem with the information you entered:</h2>
+    <ol>
+        <?php foreach($form->getElements() as $element): ?>
+            <?php foreach($element->getMessages() as $message): ?>
+                <li>
+                    <?php echo $this->escapeHtml($element->getLabel()); ?> -
+                    <?php echo $this->escapeHtml($message); ?>
+                </li>
+                <?php break; ?>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+    </ol>
+</div>
+<?php endif; ?>
