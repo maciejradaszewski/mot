@@ -4,6 +4,7 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Dvsa\Mot\Behat\Support\Api\Certificate;
 use Dvsa\Mot\Behat\Support\Api\MotTest;
+use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use PHPUnit_Framework_Assert as PHPUnit;
 use Smalot\PdfParser\Document;
 
@@ -20,6 +21,11 @@ class CertificateContext implements Context
     private $motTest;
 
     /**
+     * @var array
+     */
+    private $motTests;
+
+    /**
      * @var SessionContext
      */
     private $sessionContext;
@@ -32,15 +38,21 @@ class CertificateContext implements Context
     private $certificateResult;
 
     private $recentTestsCertificateDetails;
+    /**
+     * @var TestSupportHelper
+     */
+    private $testSupportHelper;
 
     /**
      * @param Certificate $certificate
      * @param MotTest $motTest
+     * @param TestSupportHelper $testSupportHelper
      */
-    public function __construct(Certificate $certificate, MotTest $motTest)
+    public function __construct(Certificate $certificate, MotTest $motTest, TestSupportHelper $testSupportHelper)
     {
         $this->certificate = $certificate;
         $this->motTest = $motTest;
+        $this->testSupportHelper = $testSupportHelper;
     }
 
     /**
@@ -151,5 +163,93 @@ class CertificateContext implements Context
         } catch (\Exception $ex) {
             throw new \Exception('Unable to parse the MOT certificate. ' . $ex->getMessage());
         }
+    }
+
+    /**
+     * @When I fetch jasper document for test
+     */
+    public function iFetchJasperDocumentForTest()
+    {
+        $motTests = [];
+        foreach($this->motTestContext->getMotTests() as $key => $motTest)
+        {
+            $document = $this->testSupportHelper->getDocumentService()->get($motTest['document'])[0];
+            $motTest['document'] = $document;
+            $motTests[]= $motTest;
+        }
+        $this->motTestContext->setMotTests($motTests);
+    }
+
+    /**
+     * @Then document has only odometer readings from tests performed in past
+     */
+    public function documentHasOnlyOdometerReadingsFromTestsPerformedInPast()
+    {
+        $fullOdometerHistory = [];
+        foreach($this->motTestContext->getMotTests() as $motTest) {
+            $fullOdometerHistory[]= [
+                'startedDate' => $motTest['startedDate'],
+                'odometerReading' => $motTest['odometerReading']
+            ];
+        }
+
+        foreach($this->motTestContext->getMotTests() as $motTest) {
+            $documentContent = json_decode($motTest['document']['document_content'], true);
+            $documentOdometerHistory = $documentContent['OdometerHistory'];
+            $this->validateOdometerHistory($fullOdometerHistory, $documentOdometerHistory, $motTest['startedDate']);
+        }
+    }
+
+    private function validateOdometerHistory($fullOdometerHistory, $documentOdometerHistory, $startedDate)
+    {
+        $expectedOdometerReadings = array_filter($fullOdometerHistory, function($value) use ($startedDate) {
+            $motTestDate = new DateTime($startedDate);
+            $odometerReadingDate = new DateTime($value['startedDate']);
+
+            return $motTestDate >= $odometerReadingDate;
+        });
+
+        $expectedOdometerValues = [];
+        foreach($expectedOdometerReadings as $reading) {
+            $expectedOdometerValues[]= $reading['odometerReading']['value'] . ' ' . $reading['odometerReading']['unit'];
+        }
+
+        $documentOdometerValues = array_reduce(explode("\n", $documentOdometerHistory), function($result, $value) {
+            preg_match('/: ([0-9].*)/', $value, $matches);
+            $result[]=$matches[1];
+
+            return $result;
+        });
+
+        PHPUnit::assertEquals($expectedOdometerValues, $documentOdometerValues);
+    }
+
+    /**
+     * @Given print of created mot tests is issued
+     * @Given print of migrated mot tests is issued
+     */
+    public function printOfCreatedMotTestsIsIssued()
+    {
+        foreach($this->motTestContext->getMotTests() as $motTest) {
+            $this->certificate->requestCertificate($motTest['motTestNumber'], $this->sessionContext->getCurrentAccessToken());
+        }
+
+        $this->motTestContext->refreshMotTests();
+    }
+
+
+    /**
+     * @Given jasper documents were not printed
+     */
+    public function removeJasperDocumentsForMotTests()
+    {
+        $motTests=[];
+        foreach($this->motTestContext->getMotTests() as $motTest)
+        {
+            $this->testSupportHelper->getDocumentService()->delete($motTest['document']);
+            unset($motTest['document']);
+            $motTests[]=$motTest;
+        }
+        $this->motTestContext->setMotTests($motTests);
     }
 }

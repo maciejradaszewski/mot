@@ -227,7 +227,8 @@ class MotTestService extends AbstractSearchService implements TransactionAwareIn
             && $motTest->getStatus() !== MotTestStatusName::ABANDONED){
             $additionalSnapShotData['OdometerReadings'] = (new OdometerReadingMapper())->manyToDtoFromArray(
                 $this->motTestRepository->getOdometerHistoryForVehicleId(
-                    $motTest->getVehicle()->getId()
+                    $motTest->getVehicle()->getId(),
+                    $motTest->getStartedDate()
                 )
             );
         }

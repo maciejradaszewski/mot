@@ -2,6 +2,8 @@
 
 namespace Dvsa\Mot\Behat\Support\Api;
 
+use Dvsa\Mot\Behat\Support\HttpClient;
+
 class Certificate extends MotApi
 {
     const PATH = 'certificate-print/{:motTestNumber}';

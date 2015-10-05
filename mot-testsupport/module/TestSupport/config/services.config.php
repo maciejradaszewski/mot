@@ -4,6 +4,7 @@ use DvsaCommon\HttpRestJson\ZendClient;
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\Obfuscate\ParamEncrypter;
 use DvsaCommon\Obfuscate\ParamObfuscator;
+use TestSupport\Service\DocumentService;
 use TestSupport\Service\FeaturesService;
 use TestSupport\Service\DVLAOperativeService;
 use TestSupport\Service\VM10619RoleManagementUpgradeService;
@@ -118,5 +119,6 @@ return [
         VM10619RoleManagementUpgradeService::class          => \TestSupport\Factory\VM10619RoleManagementUpgradeServiceFactory::class,
         TesterAuthorisationStatusService::class => TesterAuthorisationStatusServiceFactory::class,
         AedmService::class                 => \TestSupport\Factory\AedmServiceFactory::class,
+        DocumentService::class             => \TestSupport\Factory\DocumentServiceFactory::class,
     ]
 ];

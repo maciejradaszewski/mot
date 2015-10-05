@@ -25,6 +25,7 @@ use TestSupport\Service\VM10519UserService;
 use TestSupport\Service\AedmService;
 use TestSupport\Service\AccountDataService;
 use TestSupport\Service\SiteUserDataService;
+use TestSupport\Service\DocumentService;
 use TestSupport\Helper\DataGeneratorHelper;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use Zend\ServiceManager\ServiceManager;
@@ -281,6 +282,14 @@ class TestSupportHelper
     public function getSitePositionService()
     {
         return $this->getServiceManager()->get(SitePositionController::class);
+    }
+
+    /**
+     * @return \TestSupport\Service\DocumentService
+     */
+    public function getDocumentService()
+    {
+        return $this->getServiceManager()->get(DocumentService::class);
     }
 
     /**
