@@ -46,6 +46,11 @@ class MotTestContext implements Context, SnippetAcceptingContext
     private $motTest;
 
     /**
+     * @var array
+     */
+    private $motTests;
+
+    /**
      * @var DemoTest
      */
     private $demoTest;
@@ -106,9 +111,19 @@ class MotTestContext implements Context, SnippetAcceptingContext
     private $personContext;
 
     /**
+     * @var array
+     */
+    private $motTestNumbers;
+
+    /**
      * @var MotTestTypeCode
      */
     private $MotTestTypeCode;
+
+    /**
+     * @var CertificateContext
+     */
+    private $certificateContext;
 
     public function __construct(
         BrakeTestResult $brakeTestResult,
@@ -141,6 +156,7 @@ class MotTestContext implements Context, SnippetAcceptingContext
         $this->vehicleContext = $scope->getEnvironment()->getContext(VehicleContext::class);
         $this->contingencyTestContext = $scope->getEnvironment()->getContext(ContingencyTestContext::class);
         $this->personContext = $scope->getEnvironment()->getContext(PersonContext::class);
+        $this->certificateContext = $scope->getEnvironment()->getContext(CertificateContext::class);
     }
 
     /**
@@ -172,6 +188,8 @@ class MotTestContext implements Context, SnippetAcceptingContext
 
         if (is_null($vehicleId)) {
             $this->vehicleId  = $this->vehicleContext->createVehicle(['testClass' => $testClass]);
+        } else {
+            $this->vehicleId = $vehicleId;
         }
 
         $this->motTestData = $this->motTest->startNewMotTestWithVehicleId(
@@ -717,16 +735,42 @@ class MotTestContext implements Context, SnippetAcceptingContext
 
             $this->personContext->createTester(["username" => $username]);
             $this->createPassedMotTest($this->personContext->getPersonUserId(), $this->personContext->getPersonToken());
-
             $number--;
         }
+    }
+
+    /**
+     * @Given :number passed MOT tests have been created for the same vehicle
+     */
+    public function passedMotTestsHaveBeenCreatedForTheSameVehicle($number)
+    {
+        $vehicleId = $this->vehicleContext->createVehicle();
+
+        $this->personContext->createTester(["username" => "tester".$this->testSupportHelper->getDataGeneratorHelper()->generateRandomString(10)]);
+
+        while ($number) {
+            $this->createPassedMotTest($this->personContext->getPersonUserId(), $this->personContext->getPersonToken(), $vehicleId);
+            $this->motTestNumbers[]=$this->getMotTestNumber();
+            $this->behatWait();
+            $number--;
+        }
+    }
+
+    /**
+     * @Given :number passed MOT tests have been migrated for the same vehicle
+     */
+    public function passedMotTestsHaveBeenMigratedForTheSameVehicle($number)
+    {
+        //We emulate case for migrated mot_tests: mot_tests are created but jasper_documents do not exist
+        $this->passedMotTestsHaveBeenCreatedForTheSameVehicle($number);
+        $this->certificateContext->removeJasperDocumentsForMotTests();
     }
 
     public function createPassedMotTest($userId, $token, $vehicleId = null)
     {
         $this->startMotTest($userId, $token, [], $vehicleId);
         $this->brakeTestResult->addBrakeTestDecelerometerClass3To7($token, $this->getMotTestNumber());
-        $this->odometerReading->addNoMeterReadingToTest($token, $this->getMotTestNumber());
+        $this->odometerReading->addMeterReading($token, $this->getMotTestNumber(), date('Gis'), 'km');
         $this->motTest->passed(
             $token,
             $this->getMotTestNumber()
@@ -921,5 +965,52 @@ class MotTestContext implements Context, SnippetAcceptingContext
     public function getMotTestData()
     {
         return $this->statusData->getBody()['data'];
+    }
+
+    public function getMotTestNumbers()
+    {
+        return $this->motTestNumbers;
+    }
+
+    public function getMotTests()
+    {
+        if (empty($this->motTests)) {
+            $this->motTests = [];
+
+            foreach ($this->getMotTestNumbers() as $motTestNumber) {
+                $motTest = $this->motTest->getMotData($this->sessionContext->getCurrentAccessToken(), $motTestNumber)->getBody()->toArray()['data'];
+                $this->motTests[] = $motTest;
+            }
+        }
+
+        usort($this->motTests, function($a, $b) {
+            return $a['id'] < $b['id'];
+        });
+
+        return $this->motTests;
+    }
+
+    public function setMotTests(array $motTests)
+    {
+        $this->motTests = $motTests;
+    }
+
+    public function refreshMotTests()
+    {
+        $this->motTests=[];
+        return $this->getMotTests();
+    }
+
+    /**
+     * Alternative to sleep: using sleep starves behat process on jenkins (needed to prevent tests being issued in the same second)
+     * @param int $howLong
+     */
+    private function behatWait($howLong = 1)
+    {
+        $then = microtime(true);
+
+        while($then + $howLong > microtime(true)) {
+            echo '.';
+        }
     }
 }
