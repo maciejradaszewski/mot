@@ -2,7 +2,7 @@
 
 use \DvsaCommon\Utility\ArrayUtils;
 $errorMessages = $element->getMessages();
-$errorMessage = ArrayUtils::lastOrNull($errorMessages);
+$errorMessage = ArrayUtils::firstOrNull($errorMessages);
 $params = ["name" => $element->getName(),"label" => $element->getLabel(), "value" => $element->getValue(), "errorMessage" => $errorMessage];
 $params = array_merge($params, $element->getAttributes());
 if ($element->hasAttribute("group") && $element->getAttribute("group") === true):

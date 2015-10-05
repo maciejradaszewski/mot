@@ -7,6 +7,9 @@ use Core\Service\MotFrontendIdentityProviderInterface;
 use Dashboard\Form\ChangePasswordForm;
 use Dashboard\Service\PasswordService;
 use DvsaCommon\Configuration\MotConfig;
+use DvsaCommon\InputFilter\Account\ChangePasswordInputFilter;
+use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\Utility\StringUtils;
 use Zend\Http\Response;
 
 class PasswordController extends AbstractAuthActionController
@@ -69,10 +72,13 @@ class PasswordController extends AbstractAuthActionController
             $form->clearValues();
         }
 
+        $form->obfuscateOldPasswordElementName();
+
         return [
             'form'        => $form,
             'username'    => $this->getIdentity()->getUsername(),
             'cancelRoute' => $hasPasswordExpired ? "logout" : "user-home/profile/byId",
+            'cancelText'  => $hasPasswordExpired ? "Cancel and return to sign in" : "Cancel and return to your profile"
         ];
     }
 

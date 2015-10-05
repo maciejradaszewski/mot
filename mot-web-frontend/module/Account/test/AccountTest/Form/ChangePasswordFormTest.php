@@ -40,7 +40,7 @@ class ChangePasswordFormTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, count($form->getMessages()));
 
-        $msg = $form->getMessages(Form::FIELD_OLD_PASSWORD);
+        $msg = $form->getMessages(ChangePasswordInputFilter::FIELD_OLD_PASSWORD);
         $this->assertEquals(ChangePasswordInputFilter::MSG_OLD_PASSWORD_EMPTY, $msg[NotEmpty::IS_EMPTY]);
     }
 }

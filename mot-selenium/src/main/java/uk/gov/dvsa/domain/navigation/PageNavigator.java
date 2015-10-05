@@ -277,4 +277,9 @@ public class PageNavigator {
 
         return new TestCompletePage(driver);
     }
+
+    public ChangePasswordFromProfilePage goToPasswordChangeFromProfilePage(User user) throws IOException{
+        injectOpenAmCookieAndNavigateToPath(user, String.format(ChangePasswordFromProfilePage.PATH));
+        return new ChangePasswordFromProfilePage(driver);
+    }
 }

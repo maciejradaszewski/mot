@@ -3,6 +3,7 @@ return [
     'view_manager' => [
         'template_map'        => [
             'errorMessages'                       => __DIR__ . '/../view/partials/errorMessages.phtml',
+            'zendFormErrorMessages'               => __DIR__ . '/../view/partials/zendFormErrorMessages.phtml',
             'infoMessages'                        => __DIR__ . '/../view/partials/infoMessages.phtml',
             'validationMessages'                  => __DIR__ . '/../view/partials/validationMessages.phtml',
             'actionNavigator'                     => __DIR__ . '/../view/partials/action-navigator.phtml',
