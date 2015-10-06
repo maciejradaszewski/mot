@@ -184,4 +184,10 @@ return [
             ],
         ],
     ],
+
+    'site_assessment' => [
+        'green' => ['start' => 0, 'end' => 324.10],
+        'amber' => ['start' => 324.11, 'end' => 459.20],
+        'red' => ['start' => 459.21, 'end' => 999.99],
+    ]
 ];

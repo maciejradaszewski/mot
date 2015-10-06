@@ -10,8 +10,10 @@ use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Constants\Role;
+use DvsaCommon\Dto\Site\EnforcementSiteAssessmentDto;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
@@ -20,8 +22,10 @@ use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use Site\Authorization\VtsOverviewPagePermissions;
 use Site\Form\VtsContactDetailsUpdateForm;
 use Site\Form\VtsCreateForm;
+use Site\Form\VtsSiteAssessmentForm;
 use Site\Form\VtsSiteDetailsForm;
 use Site\Form\VtsUpdateTestingFacilitiesForm;
+use Site\Service\RiskAssessmentScoreRagClassifier;
 use Site\ViewModel\SiteViewModel;
 use Site\ViewModel\VehicleTestingStation\VtsFormViewModel;
 use Zend\Http\Request;
@@ -38,6 +42,7 @@ class SiteController extends AbstractAuthActionController
 {
     const SESSION_CNTR_KEY = 'SITE_CREATE_UPDATE';
     const SESSION_KEY = 'data';
+    const SITE_ASSESSMENT_SESSION_KEY = 'SITE_ASSESSMENT';
 
     const CREATE_TITLE = 'Create Site';
     const CREATE_CONFIRM_TITLE = 'Confirm new site details';
@@ -61,6 +66,7 @@ class SiteController extends AbstractAuthActionController
     const SEARCH_RESULT_PARAM = 'q';
 
     const ERR_MSG_INVALID_SITE_ID_OR_NR = 'No Id or Site Number provided';
+    const MSG_ADD_RISK_ASSESSMENT_SUCCESS = 'The site assessment has been updated';
 
     /**
      * @var MotFrontendAuthorisationServiceInterface
@@ -149,6 +155,16 @@ class SiteController extends AbstractAuthActionController
         }
         $refSession->url = false;
 
+        $assessmentDto = $site->getAssessment();
+        if($assessmentDto instanceof EnforcementSiteAssessmentDto){
+            $riskAssessmentScore = $assessmentDto->getSiteAssessmentScore();
+        }
+        else {
+            $riskAssessmentScore = 0;
+        }
+
+        $config = $this->getServiceLocator()->get(MotConfig::class);
+        $ragClassifier = new RiskAssessmentScoreRagClassifier($riskAssessmentScore, $config);
         //  --
         $searchString = null;
         if ($isEnforcementUser) {
@@ -220,6 +236,8 @@ class SiteController extends AbstractAuthActionController
                 'searchString'  => $searchString,
                 'escRefPage'    => $escRefPage,
                 'siteStatusMap' => $siteStatusMap,
+                'ragClassifier' => $ragClassifier,
+                'isVtsRiskEnabled' => $this->isFeatureEnabled(FeatureToggle::VTS_RISK_SCORE)
             ]
         );
 
@@ -755,6 +773,186 @@ class SiteController extends AbstractAuthActionController
     private function getUpdateVtsAssertion()
     {
         return new UpdateVtsAssertion($this->auth);
+    }
+
+    public function riskAssessmentAction()
+    {
+        $this->assertFeatureEnabled(FeatureToggle::VTS_RISK_SCORE);
+
+        $siteId = (int)$this->params()->fromRoute('id');
+        $this->auth->assertGrantedAtSite(PermissionAtSite::VTS_VIEW_SITE_RISK_ASSESSMENT, $siteId);
+
+        $vtsDto = $this->mapper->Site->getById($siteId);
+        /** @var EnforcementSiteAssessmentDto $assessmentDto */
+        $assessmentDto = $vtsDto->getAssessment();
+
+        if(!$assessmentDto){
+            return $this->createHttpNotFoundModel($this->getResponse());
+        }
+
+        $config = $this->getServiceLocator()->get(MotConfig::class);
+        $ragClassifier = new RiskAssessmentScoreRagClassifier($assessmentDto->getSiteAssessmentScore(), $config);
+
+        $permissions = $this->getPermissions($vtsDto);
+        $vtsViewUrl = VehicleTestingStationUrlBuilderWeb::byId($siteId)->toString();
+        $viewModel = new ViewModel(
+            [
+                'siteId' => $siteId,
+                'vtsViewUrl' => $vtsViewUrl,
+                'assessmentDto' => $assessmentDto,
+                'permissions' => $permissions,
+                'ragClassifier' => $ragClassifier
+            ]
+        );
+
+        $breadcrumbs = [
+            $vtsDto->getName() => $vtsViewUrl,
+        ];
+
+        return $this->prepareViewModel(
+            $viewModel,
+            'Site assessment',
+            'Vehicle Testing Station',
+            $breadcrumbs
+        );
+    }
+
+    public function addRiskAssessmentAction()
+    {
+        $this->assertFeatureEnabled(FeatureToggle::VTS_RISK_SCORE);
+
+        $siteId = (int)$this->params()->fromRoute('id');
+        $this->auth->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_SITE_RISK_ASSESSMENT, $siteId);
+
+        /** @var \Zend\Http\Request $request */
+        $request = $this->getRequest();
+        $vtsDto = $this->mapper->Site->getById($siteId);
+
+        $form = $this->session->offsetGet(self::SITE_ASSESSMENT_SESSION_KEY);
+
+        if (!($form instanceof VtsSiteAssessmentForm)) {
+            $form = new VtsSiteAssessmentForm();
+        }
+
+        $form->setFormUrl(
+            VehicleTestingStationUrlBuilderWeb::addSiteRiskAssessment($siteId)
+        );
+
+        if ($request->isPost()) {
+            $form->fromPost($request->getPost());
+            $dto = $form->toDto();
+            $dto->setSiteId($vtsDto->getId());
+
+            try {
+                $dto = $this->mapper->Site->validateSiteAssessment($siteId, $dto);
+
+                if($dto instanceof EnforcementSiteAssessmentDto){
+                    $form = new VtsSiteAssessmentForm();
+                    $form->fromDto($dto);
+                }
+
+                $this->session->offsetSet(self::SITE_ASSESSMENT_SESSION_KEY, $form);
+                $confirmUrl = VehicleTestingStationUrlBuilderWeb::addSiteRiskAssessmentConfirm($siteId);
+
+                return $this->redirect()->toUrl($confirmUrl);
+            } catch (ValidationException $ve) {
+                $form->addErrorsFromApi($ve->getErrors());
+            }
+        }
+
+        $vtsViewUrl = VehicleTestingStationUrlBuilderWeb::byId($siteId)->toString();
+        $cancelUrl  = VehicleTestingStationUrlBuilderWeb::cancelSiteRiskAssessment($siteId)->toString();
+
+        $viewModel = new ViewModel(
+            [
+                'siteId' => $siteId,
+                'vtsViewUrl' =>$vtsViewUrl,
+                'cancelUrl' =>$cancelUrl,
+                'form' => $form,
+            ]
+        );
+
+        $breadcrumbs = [
+            $vtsDto->getName() => $vtsViewUrl,
+        ];
+
+        return $this->prepareViewModel(
+            $viewModel,
+            'Enter site assessment',
+            'Vehicle Testing Station',
+            $breadcrumbs
+        );
+    }
+
+    public function addRiskAssessmentConfirmationAction()
+    {
+        $this->assertFeatureEnabled(FeatureToggle::VTS_RISK_SCORE);
+
+        $siteId = (int)$this->params()->fromRoute('id');
+        $this->auth->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_SITE_RISK_ASSESSMENT, $siteId);
+
+        /** @var \Zend\Http\Request $request */
+        $request = $this->getRequest();
+        $vtsDto = $this->mapper->Site->getById($siteId);
+        $vtsViewUrl = VehicleTestingStationUrlBuilderWeb::byId($siteId)->toString();
+        $cancelUrl = VehicleTestingStationUrlBuilderWeb::addSiteRiskAssessment($siteId)->toString();
+
+        $form = $this->session->offsetGet(self::SITE_ASSESSMENT_SESSION_KEY);
+
+        if (!$form instanceof VtsSiteAssessmentForm) {
+            return $this->redirect()->toUrl($vtsViewUrl);
+        }
+
+        $form->setFormUrl(
+            VehicleTestingStationUrlBuilderWeb::addSiteRiskAssessmentConfirm($siteId)
+        );
+
+        if ($request->isPost()) {
+            try {
+                $dto = $form->toDto();
+                $dto->setSiteId($vtsDto->getId());
+                $this->mapper->Site->updateSiteAssessment($siteId, $dto);
+                $this->session->offsetUnset(self::SITE_ASSESSMENT_SESSION_KEY);
+
+                $this->flashMessenger()->addSuccessMessage(self::MSG_ADD_RISK_ASSESSMENT_SUCCESS);
+                return $this->redirect()->toUrl($vtsViewUrl);
+
+            } catch (RestApplicationException $ve) {
+                $this->addErrorMessages($ve->getDisplayMessages());
+            }
+        }
+
+        $breadcrumbs = [
+            $vtsDto->getName() => $vtsViewUrl,
+        ];
+
+        $config = $this->getServiceLocator()->get(MotConfig::class);
+        $ragClassifier = new RiskAssessmentScoreRagClassifier($form->getSiteAssessmentScore(), $config);
+
+        $viewModel = new ViewModel(
+            [
+                'vtsViewUrl' => $vtsViewUrl,
+                'cancelUrl' => $cancelUrl,
+                'form' => $form,
+                'ragClassifier' => $ragClassifier,
+            ]
+        );
+
+        return $this->prepareViewModel(
+            $viewModel,
+            'Site assessment summary',
+            'Vehicle Testing Station',
+            $breadcrumbs
+        );
+    }
+
+    public function cancelAddRiskAssessmentAction()
+    {
+        $siteId = $this->getSiteIdOrFail();
+        $this->session->offsetUnset(self::SITE_ASSESSMENT_SESSION_KEY);
+
+        $cancelUrl = VehicleTestingStationUrlBuilderWeb::byId($siteId)->toString();
+        return $this->redirect()->toUrl($cancelUrl);
     }
 
     /**

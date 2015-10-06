@@ -55,6 +55,7 @@ class UrlBuilder extends AbstractUrlBuilder
     const CERT_CHANGE_DIFF_TESTER_REASON = '/cert-change-diff-tester-reason';
     const ASSESSMENT_APPLICATION_COMMENT = 'assessment/application/:uuid/comment';
     const VEHICLE_TESTING_STATION = 'vehicle-testing-station[/:id]';
+    const VEHICLE_TESTING_STATION_RISK_ASSESSMENT = '/risk-assessment';
     const APPLICATION_SECTION_STATE = 'application-section-state/:uuid';
     const APPLICATION_LOCK = 'application-lock/:uuid';
     const ACCOUNT = 'user-account';
@@ -155,6 +156,7 @@ class UrlBuilder extends AbstractUrlBuilder
             self::VEHICLE_TESTING_STATION                => [
                 self::SITE_OPENING_HOURS => '',
                 self::AUTHORISED_CLASSES => '',
+                self::VEHICLE_TESTING_STATION_RISK_ASSESSMENT => ''
             ],
             self::APPLICATION_SECTION_STATE              => '',
             self::APPLICATION_LOCK                       => '',
@@ -581,6 +583,11 @@ class UrlBuilder extends AbstractUrlBuilder
     public function siteOpeningHours()
     {
         return $this->appendRoutesAndParams(self::SITE_OPENING_HOURS);
+    }
+
+    public function siteRiskAssessment()
+    {
+        return $this->appendRoutesAndParams(self::VEHICLE_TESTING_STATION_RISK_ASSESSMENT);
     }
 
     public static function vehicleDictionary()

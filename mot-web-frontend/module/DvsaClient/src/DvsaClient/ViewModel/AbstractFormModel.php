@@ -64,4 +64,9 @@ abstract class AbstractFormModel
 
         $params->fromArray(array_filter($params->toArray(), $callback));
     }
+
+    public function getAllErrors()
+    {
+        return $this->errors;
+    }
 }

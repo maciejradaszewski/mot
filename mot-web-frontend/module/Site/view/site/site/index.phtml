@@ -9,13 +9,18 @@ use DvsaMotTest\Controller\MotTestCertificatesController;
 use DvsaMotTest\Controller\MotTestController;
 use Site\ViewModel\MotTest\MotTestInProgressViewModel;
 use DvsaCommon\Date\DateTimeDisplayFormat;
+use Site\Service\RiskAssessmentScoreRagClassifier;
+use DvsaCommon\Dto\Site\EnforcementSiteAssessmentDto;
 
 /**
  * @var \Site\ViewModel\SiteViewModel $viewModel
  * @var string $searchString
  * @var string $escRefPage
+ * @var \DvsaCommon\Dto\Site\SiteDto $site
+ * @var RiskAssessmentScoreRagClassifier $ragClassifier
  */
 ?>
+
 <?php
 //  --  errors  --
 $errorMessages = $this->layout()->flashMessenger->getErrorMessages();
@@ -59,26 +64,63 @@ $statusField = sprintf(
 );
 
 
+/** @var EnforcementSiteAssessmentDto  $assessmentDto */
+$assessmentDto = $site->getAssessment();
+$SiteAssessmentUrl = '';
+$linkValue = '';
+
+if($permission->canChangeRiskAssessment() && is_object($assessmentDto)){
+    $SiteAssessmentUrl = VehicleTestingStationUrlBuilderWeb::viewSiteRiskAssessment($site->getId());
+    $linkValue = 'Site assessment';
+}
+else if($permission->canViewRiskAssessment()){
+    $SiteAssessmentUrl = VehicleTestingStationUrlBuilderWeb::addSiteRiskAssessment($site->getId());
+    $linkValue = 'Add site assessment';
+}
+
+$body = [
+    ['Name', $site->getName(), 'id' => 'site-name'],
+    [
+        'VTS number',
+        $site->getSiteNumber(),
+        'id' => 'site-number',
+        'class' => 'key-value-list__value--numeric',
+    ],
+    ['Status', $statusField,  'id' => 'site-status', 'escape' => false],
+    ['Classes', implode(',', $site->getTestClasses()), 'id' => 'test-classes'],
+    ['Type', $viewModel->getSiteTypes()[$site->getType()], 'id' => 'site-type'],
+    [
+        'Authorised Examiner',
+        $organisationDisplay,
+        'id' => 'authorisedExaminer',
+        'escape' => !$permission->canViewAuthorisedExaminer(),
+    ],
+];
+
+if ($isVtsRiskEnabled) {
+    $riskScoreField = sprintf(
+        '<span id="risk-score-rag-status" class="%s">%s</span><span id="risk-score-value" class="label-value">%.2f</span><br />
+        <a id="site-assessment-action-link" href="%s" class="key-value-list__action--fl">%s</a>',
+        'label-value--'.strtolower($ragClassifier->getRagScore()),
+        $ragClassifier->getRagScore(),
+        $this->escapeHtml($ragClassifier->getScore()),
+        $SiteAssessmentUrl,
+        $linkValue
+    );
+
+    $body[] = [
+        'Site assessment risk score',
+        $riskScoreField,
+        'id' => 'risk-assessment-score',
+        'class' => 'key-value-list__value--numeric',
+        'escape' => false
+    ];
+}
+
 echo $this->partial(
     'partial/gds/table/table',
     [
-        'body' => [
-            ['Name', $site->getName(), 'id' => 'site-name'],
-            [
-                'VTS number',
-                $site->getSiteNumber(),
-                'id' => 'site-number',
-                'class' => 'key-value-list__value--numeric',
-            ],
-            ['Status', $statusField,  'id' => 'site-status', 'escape' => false],
-            ['Classes', implode(',', $site->getTestClasses()), 'id' => 'test-classes'],
-            ['Type', $viewModel->getSiteTypes()[$site->getType()], 'id' => 'site-type'],
-            [
-                'Authorised Examiner',
-                $organisationDisplay,
-                'escape' => !$permission->canViewAuthorisedExaminer(),
-            ],
-        ],
+        'body' => $body,
     ]
 );
 ?>

@@ -11,6 +11,7 @@ use Zend\Mvc\MvcEvent;
 
 error_reporting(E_ALL | E_STRICT);
 date_default_timezone_set("UTC");
+ini_set('memory_limit', '512M');
 
 /**
  * Class Bootstrap

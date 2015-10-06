@@ -5,6 +5,9 @@ $type = (empty($this->type) ? 'text' : $this->type);
 $id = $this->id ?: false;
 $name=  isset($this->name) ? $this->name : $id;
 $tabIdx = (int) $this->tabIndex;
+
+$pattern = !empty($this->pattern) ? $this->pattern : '';
+$patternError = !empty($this->patternErrorMsg) ? $this->patternErrorMsg : '';
 ?>
 
 <input
@@ -15,6 +18,8 @@ $tabIdx = (int) $this->tabIndex;
     echo $this->autofocus === true ? ' autofocus' : '';
     echo $tabIdx > 0 ? ' tabindex="'. $this->escapeHtmlAttr($tabIdx) .'"' : '';
     echo !empty($maxLength) ? ' maxlength="'.$this->escapeHtmlAttr($maxLength).'"' : '';
+    echo !empty($pattern) ? ' pattern="'. $this->escapeHtmlAttr($pattern).'"' : '';
+    echo !empty($pattern) && !empty($patternError) ? 'title="'. $this->escapeHtmlAttr($patternError).'"' : '';
     echo ($type == 'password') ? ' autocomplete="off"' : '';
     ?>
     value="<?php echo $this->escapeHtmlAttr($this->value); ?>"

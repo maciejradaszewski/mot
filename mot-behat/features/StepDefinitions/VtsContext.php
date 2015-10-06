@@ -5,10 +5,12 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Api\Vts;
 use Dvsa\Mot\Behat\Support\Api\Notification;
+use Dvsa\Mot\Behat\Support\Api\AuthorisedExaminer;
 use PHPUnit_Framework_Assert as PHPUnit;
 use DvsaCommon\Dto\Site\SiteListDto;
 use DvsaCommon\Utility\DtoHydrator;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
+use Behat\Gherkin\Node\TableNode;
 
 class VtsContext implements Context
 {
@@ -37,13 +39,26 @@ class VtsContext implements Context
      */
     private $notification;
 
+    /**
+     * @var AuthorisedExaminer
+     */
+    private $authorisedExaminer;
+
     /** @var \SessionContext */
     private $sessionContext;
     private $siteCreate;
     private $resultContext;
 
+    /** @var PersonContext */
+    private $personContext;
+
+    /** @var AuthorisedExaminerContext */
+    private $authorisedExaminerContext;
+
     private $siteManager1Data = null;
     private $siteManager2Data = null;
+
+    private $riskAssessmentData = [];
 
     /**
      * @param Vts $vehicleTestingStation
@@ -52,13 +67,15 @@ class VtsContext implements Context
         Vts $vehicleTestingStation,
         TestSupportHelper $testSupportHelper,
         Session $session,
-        Notification $notification
+        Notification $notification,
+        AuthorisedExaminer $authorisedExaminer
     )
     {
         $this->vehicleTestingStation = $vehicleTestingStation;
         $this->testSupportHelper = $testSupportHelper;
         $this->session = $session;
         $this->notification = $notification;
+        $this->authorisedExaminer = $authorisedExaminer;
     }
 
     /**
@@ -67,6 +84,8 @@ class VtsContext implements Context
     public function gatherContexts(BeforeScenarioScope $scope)
     {
         $this->sessionContext = $scope->getEnvironment()->getContext(\SessionContext::class);
+        $this->personContext = $scope->getEnvironment()->getContext(PersonContext::class);
+        $this->authorisedExaminerContext = $scope->getEnvironment()->getContext(AuthorisedExaminerContext::class);
     }
 
     /**
@@ -338,5 +357,127 @@ class VtsContext implements Context
     public function getSite()
     {
         return $this->siteCreate;
+    }
+
+    /**
+     * @When I attempt to add risk assessment to site with data:
+     */
+    public function iAttemptToAddRiskAssessmentToSiteWithData(TableNode $table)
+    {
+        $hash = $table->getColumnsHash();
+
+        if (count($hash) !== 1) {
+            throw new \InvalidArgumentException(sprintf('Expected a single record but got: %d', count($hash)));
+        }
+
+        $this->riskAssessmentData = $this->prepareRiskAssessmentData($hash[0]);
+        $response = $this->vehicleTestingStation->addRiskAssessment($this->sessionContext->getCurrentAccessToken(), $this->getSite()['id'], $this->riskAssessmentData);
+
+        PHPUnit::assertEquals(200, $response->getStatusCode());
+    }
+
+    private function prepareRiskAssessmentData(array $data)
+    {
+        $this->createSite();
+        $siteId = $this->getSite()['id'];
+        $siteNumber = $this->getSite()["siteNumber"];
+        $dataGeneratorHelper = $this->testSupportHelper->getDataGeneratorHelper();
+        $suffixLength = 10;
+
+        $aedmData = [];
+        if (!empty($data["aeRepresentativesUserId"])) {
+            $username = $data["aeRepresentativesUserId"] . $dataGeneratorHelper->generateRandomString($suffixLength);
+            $aedmData = ["username" => $username];
+        }
+        $this->personContext->createAEDM($aedmData);
+        $aedmUsername = $this->personContext->getPersonUsername();
+
+        $areaOffice1Service = $this->testSupportHelper->getAreaOffice1Service();
+        $ao1user = $areaOffice1Service->create([]);
+        $ao1Session = $this->session->startSession(
+            $ao1user->data['username'],
+            $ao1user->data['password']
+        );
+
+        $this->authorisedExaminer->linkAuthorisedExaminerWithSite(
+            $ao1Session->getAccessToken(),
+            $this->authorisedExaminerContext->getAE()["id"],
+            $siteNumber
+        );
+
+        if (!empty($data["aeRepresentativesUserId"])) {
+            $data["aeRepresentativesUserId"] = $aedmUsername;
+        }
+
+        if (!empty($data["testerUserId"])) {
+            $username = $data["testerUserId"] . $dataGeneratorHelper->generateRandomString($suffixLength);
+            $this->personContext->createTester(["siteIds" => [$siteId] , "username" => $username]);
+            $data["testerUserId"] = $this->personContext->getPersonUsername();
+        }
+
+        if (!empty($data["dvsaExaminersUserId"])) {
+            $username = $data["dvsaExaminersUserId"] . $dataGeneratorHelper->generateRandomString($suffixLength);
+            $vehicleExaminerService = $this->testSupportHelper->getVehicleExaminerService();
+            $examiner = $vehicleExaminerService->create(["username" => $username]);
+            $data["dvsaExaminersUserId"] = $examiner->data["username"];
+        }
+
+        return $data;
+    }
+
+    /**
+     * @Then risk assessment is added to site
+     */
+    public function riskAssessmentIsAddedToSite()
+    {
+        $response = $this->vehicleTestingStation->getRiskAssessment($this->sessionContext->getCurrentAccessToken(), $this->getSite()['id']);
+        $riskAssessment = $response->getBody()->toArray()["data"];
+
+        PHPUnit::assertEquals($this->riskAssessmentData["siteAssessmentScore"], $riskAssessment["siteAssessmentScore"]);
+
+        if (empty($this->riskAssessmentData["aeRepresentativesUserId"])) {
+            PHPUnit::assertEquals($this->riskAssessmentData["aeRepresentativesFullName"], $riskAssessment["aeRepresentativesFullName"]);
+            PHPUnit::assertEquals(null, $riskAssessment["aeRepresentativesUserId"]);
+        } else {
+            PHPUnit::assertEquals($this->riskAssessmentData["aeRepresentativesUserId"], $riskAssessment["aeRepresentativesUserId"]);
+        }
+
+        PHPUnit::assertEquals($this->riskAssessmentData["aeRepresentativesRole"], $riskAssessment["aeRepresentativesRole"]);
+        PHPUnit::assertEquals($this->riskAssessmentData["testerUserId"], $riskAssessment["testerUserId"]);
+
+        if (empty($this->riskAssessmentData["aeRepresentativesUserId"])) {
+            PHPUnit::assertEquals(null, $riskAssessment["aeRepresentativesUserId"]);
+        } else {
+            PHPUnit::assertEquals($this->riskAssessmentData["aeRepresentativesUserId"], $riskAssessment["aeRepresentativesUserId"]);
+        }
+
+        PHPUnit::assertEquals($this->riskAssessmentData["dateOfAssessment"], $riskAssessment["dateOfAssessment"]);
+    }
+
+    /**
+     * @When I attempt to add risk assessment to site with invalid data:
+     */
+    public function iAttemptToAddRiskAssessmentToSiteWithInvalidData(TableNode $table)
+    {
+        $hash = $table->getColumnsHash();
+
+        if (count($hash) !== 1) {
+            throw new \InvalidArgumentException(sprintf('Expected a single record but got: %d', count($hash)));
+        }
+
+        $this->riskAssessmentData = $this->prepareRiskAssessmentData($hash[0]);
+        $response = $this->vehicleTestingStation->addRiskAssessment($this->sessionContext->getCurrentAccessToken(), $this->getSite()['id'], $this->riskAssessmentData);
+
+        PHPUnit::assertEquals(400, $response->getStatusCode());
+    }
+
+    /**
+     * @Then risk assessment is not added to site
+     */
+    public function riskAssessmentIsNotAddedToSite()
+    {
+        $response = $this->vehicleTestingStation->getRiskAssessment($this->sessionContext->getCurrentAccessToken(), $this->getSite()['id']);
+
+        PHPUnit::assertEquals(404, $response->getStatusCode());
     }
 }

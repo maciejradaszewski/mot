@@ -1,0 +1,108 @@
+<?php
+use Site\Service\RiskAssessmentScoreRagClassifier;
+use DvsaCommon\Date\DateTimeDisplayFormat;
+
+/**
+ * @var int $siteId
+ * @var string $vtsViewUrl
+ * @var string $cancelUrl
+ * @var \Site\Form\VtsSiteAssessmentForm $form
+ * @var RiskAssessmentScoreRagClassifier $ragClassifier
+ */
+?>
+
+<?php
+function createFieldWithMetadata($mainValue, $metaValue){
+    return sprintf(
+        '%s<span class="key-value-list__meta">%s</span>',
+        $mainValue,
+        $metaValue
+    );
+}
+
+$riskScoreField = sprintf(
+    '<span id="risk-score-rag-status" class="%s">%s</span><span id="risk-score-value" class="label-value">%.2f</span>',
+    'label-value--'.strtolower($ragClassifier->getRagScore()),
+    $ragClassifier->getRagScore(),
+    $this->escapeHtml($ragClassifier->getScore())
+);
+$aeRepUserId = (empty($form->getAeRepresentativesUserId())) ?
+    "" :
+    'User ID: '. $this->escapeHtml($form->getAeRepresentativesUserId())
+;
+
+echo $this->partial(
+    'partial/gds/table/table',
+    [
+        'body' => [
+            [
+                'Site assessment risk score',
+                $riskScoreField,
+                'id' => 'risk-assessment-score',
+                'class' => 'key-value-list__value',
+                'escape' => false
+            ],
+            [
+                'DVSA examiner',
+                createFieldWithMetadata(
+                    $this->escapeHtml($form->getDvsaExaminersFullName()),
+                    'User ID: '. $this->escapeHtml($form->getDvsaExaminersUserId())
+                ),
+                'id' => 'dvsa-examiner',
+                'class' => 'key-value-list__value',
+                'escape' => false
+            ],
+            [
+                'AE representative',
+                createFieldWithMetadata(
+                    $this->escapeHtml(
+                        $form->getAeRepresentativesFullName() . ', ' . $form->getAeRepresentativesRole()
+                    ),
+                    $aeRepUserId
+                ),
+                'id' => 'ae-representative',
+                'class' => 'key-value-list__value',
+                'escape' => false
+            ],
+            [
+                'Tester',
+                createFieldWithMetadata(
+                    $this->escapeHtml($form->getTesterFullName()),
+                    'User ID: '. $this->escapeHtml($form->getTesterUserId())
+                ),
+                'id' => 'tester',
+                'class' => 'key-value-list__value',
+                'escape' => false
+            ],
+            [
+                'Date of assessment',
+                $this->escapeHtml(DateTimeDisplayFormat::date($form->getDateOfAssessment())),
+                'id' => 'date-of-assessment',
+                'class' => 'key-value-list__value',
+            ],
+        ],
+    ]
+);
+?>
+
+<form method="POST" action="<?php echo $form->getFormUrl(); ?>">
+    <?php
+    echo $this->csrfToken();
+
+    echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id'         => 'submitSiteAssessmentUpdate',
+            'name'       => 'submitSiteAssessmentUpdate',
+            'value'      => 'Update site assessment',
+            'navigation' => [
+                'Back' => $cancelUrl,
+            ],
+        ]
+    );
+    ?>
+</form>
+
+
+
+

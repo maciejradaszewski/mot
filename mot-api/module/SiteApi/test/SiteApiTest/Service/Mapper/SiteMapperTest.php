@@ -118,13 +118,22 @@ class SiteMapperTest extends \PHPUnit_Framework_TestCase
             ->setOrganisationType($orgType);
 
         //  -- site Assessment  --
-        $visitOutcome = new EnforcementVisitOutcome();
-
         $siteAssessment = new EnforcementSiteAssessment();
         $siteAssessment
-            ->setTester((new Person))
-            ->setVisitOutcome($visitOutcome);
-
+            ->setId(1234)
+            ->setTester(
+                (new Person)
+                    ->setFirstName('tester')
+            )
+            ->setRepresentative(
+                (new Person())
+                    ->setFirstName('ae representative')
+            )
+            ->setExaminer(
+                (new Person())
+                    ->setFirstName('DVSA examiner')
+            )
+        ;
 
         // -- site status
         $siteStatus = (new SiteStatus())

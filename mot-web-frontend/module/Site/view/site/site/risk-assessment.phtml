@@ -1,0 +1,107 @@
+<?php
+use Site\Service\RiskAssessmentScoreRagClassifier;
+use DvsaCommon\Dto\Site\EnforcementSiteAssessmentDto;
+use DvsaCommon\Date\DateTimeDisplayFormat;
+
+/**
+ * @var int $siteId
+ * @var string $vtsViewUrl
+ * @var EnforcementSiteAssessmentDto $assessmentDto
+ * @var $permissions \Site\Authorization\VtsOverviewPagePermissions
+ * @var RiskAssessmentScoreRagClassifier $ragClassifier
+ */
+?>
+
+<?php if($permissions->canChangeRiskAssessment()): ?>
+    <a id="site-assessment-action-link" href="<?php echo $this->url('vehicle-testing-station-add-rag-status', ['id' => $siteId])?>" class="key-value-list__action">Enter site assessment</a>
+<?php endif; ?>
+
+<?php
+function createFieldWithMetadata($mainValue, $metaValue){
+    return sprintf(
+        '%s<span class="key-value-list__meta">%s</span>',
+        $mainValue,
+        $metaValue
+    );
+}
+
+$riskScoreField = sprintf(
+    '<span id="risk-score-rag-status" class="%s">%s</span><span id="risk-score-value" class="label-value">%.2f</span>',
+    'label-value--'.strtolower($ragClassifier->getRagScore()),
+    $ragClassifier->getRagScore(),
+    $this->escapeHtml($ragClassifier->getScore())
+);
+
+$aeRepUserId = (empty($assessmentDto->getAeRepresentativesUserId())) ?
+    "" :
+    'User ID: '. $this->escapeHtml($assessmentDto->getAeRepresentativesUserId())
+;
+
+echo $this->partial(
+    'partial/gds/table/table',
+    [
+        'body' => [
+            [
+                'Site assessment risk score',
+                $riskScoreField,
+                'id' => 'risk-assessment-score',
+                'class' => 'key-value-list__value',
+                'escape' => false
+            ],
+            [
+                'DVSA examiner',
+                createFieldWithMetadata(
+                    $this->escapeHtml($assessmentDto->getDvsaExaminersFullName()),
+                    'User ID: '. $this->escapeHtml($assessmentDto->getDvsaExaminersUserId())
+                ),
+                'id' => 'dvsa-examiner',
+                'class' => 'key-value-list__value',
+                'escape' => false
+            ],
+            [
+                'AE representative',
+                createFieldWithMetadata(
+                    $this->escapeHtml(
+                        join(', ',[$assessmentDto->getAeRepresentativesFullName(), $assessmentDto->getAeRepresentativesRole()])
+                    ),
+                    $aeRepUserId
+                ),
+                'id' => 'ae-representative',
+                'class' => 'key-value-list__value',
+                'escape' => false
+            ],
+            [
+                'Tester',
+                createFieldWithMetadata(
+                    $this->escapeHtml($assessmentDto->getTesterFullName()),
+                    'User ID: '. $this->escapeHtml($assessmentDto->getTesterUserId())
+                ),
+                'id' => 'tester',
+                'class' => 'key-value-list__value',
+                'escape' => false
+            ],
+            [
+                'Date of assessment',
+                $this->escapeHtml(DateTimeDisplayFormat::textDate($assessmentDto->getDateOfAssessment())),
+                'id' => 'date-of-assessment',
+                'class' => 'key-value-list__value',
+            ],
+        ],
+    ]
+);
+?>
+
+<nav class="content-navigation">
+    <ul class="content-navigation__secondary">
+        <li>
+            <a href="<?php echo $this->url('vehicle-testing-station', ['id'=>$siteId]); ?>"
+               id="returnDashboard" class="btn btn-primary">
+                Return to VTS overview
+            </a>
+        </li>
+    </ul>
+</nav>
+
+
+
+

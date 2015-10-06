@@ -42,6 +42,11 @@ use Zend\ServiceManager\ServiceManager;
 use DvsaEventApi\Service\EventService;
 use SiteApi\Service\Validator\TestingFacilitiesValidator;
 use SiteApi\Service\Validator\SiteDetailsValidator;
+use SiteApi\Service\EnforcementSiteAssessmentService;
+use SiteApi\Factory\Service\EnforcementSiteAssessmentServiceFactory;
+use SiteApi\Service\Validator\EnforcementSiteAssessmentValidator;
+use SiteApi\Factory\Service\EnforcementSiteAssessmentValidatorFactory;
+use NotificationApi\Service\PositionRemovalNotificationService;
 
 return [
     'factories'  => [
@@ -69,7 +74,7 @@ return [
                     $sm->get('DvsaAuthorisationService'),
                     $entityManager,
                     $sm->get(NotificationService::class),
-                    $sm->get(\NotificationApi\Service\PositionRemovalNotificationService::class)
+                    $sm->get(PositionRemovalNotificationService::class)
                 );
             },
         NominateRoleService::class             =>
@@ -126,14 +131,16 @@ return [
                     $sm->get('DvsaAuthorisationService')
                 );
             },
-        MotTestInProgressService::class        => MotTestInProgressServiceFactory::class,
-        SiteSlotUsageService::class            => SiteSlotUsageServiceFactory::class,
-        SiteContactService::class              => SiteContactServiceFactory::class,
-        SiteSearchService::class               => SiteSearchServiceFactory::class,
-        SiteService::class                     => SiteServiceFactory::class,
-        SiteTestingFacilitiesService::class    => SiteTestingFacilitiesServiceFactory::class,
-        SiteDetailsService::class              => SiteDetailsServiceFactory::class,
-        SiteEventService::class                =>SiteEventServiceFactory::class
+        MotTestInProgressService::class         => MotTestInProgressServiceFactory::class,
+        SiteSlotUsageService::class             => SiteSlotUsageServiceFactory::class,
+        SiteContactService::class               => SiteContactServiceFactory::class,
+        SiteSearchService::class                => SiteSearchServiceFactory::class,
+        SiteService::class                      => SiteServiceFactory::class,
+        SiteTestingFacilitiesService::class     => SiteTestingFacilitiesServiceFactory::class,
+        SiteDetailsService::class               => SiteDetailsServiceFactory::class,
+        SiteEventService::class                 => SiteEventServiceFactory::class,
+        EnforcementSiteAssessmentService::class => EnforcementSiteAssessmentServiceFactory::class,
+        EnforcementSiteAssessmentValidator::class => EnforcementSiteAssessmentValidatorFactory::class,
     ],
     'invokables' => [
         TestingFacilitiesValidator::class => TestingFacilitiesValidator::class,

@@ -4,11 +4,11 @@ namespace SiteApi\Service\Mapper;
 
 use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Dto\Site\EnforcementSiteAssessmentDto;
 use DvsaCommon\Dto\Site\SiteAssessmentDto;
 use DvsaCommon\Dto\Site\SiteCommentDto;
 use DvsaCommon\Dto\Site\SiteContactDto;
 use DvsaCommon\Dto\Site\SiteDto;
-use DvsaCommon\Dto\Site\SiteVisitOutcomeDto;
 use DvsaCommonApi\Service\Mapper\AbstractApiMapper;
 use DvsaEntities\Entity\EnforcementSiteAssessment;
 use DvsaEntities\Entity\Organisation;
@@ -169,24 +169,20 @@ class SiteMapper extends AbstractApiMapper
             return null;
         }
 
-        $visitOutcomeEntity = $assessment->getVisitOutcome();
-
-        $visitOutcomeDto = new SiteVisitOutcomeDto();
-        $visitOutcomeDto
-            ->setId($visitOutcomeEntity->getId())
-            ->setDescription($visitOutcomeEntity->getDescription())
-            ->setPosition($visitOutcomeEntity->getPosition());
-
-        $dto = new SiteAssessmentDto();
+        $dto = new EnforcementSiteAssessmentDto();
+        $representative = $assessment->getRepresentative();
         $dto
             ->setId($assessment->getId())
-            ->setIsAdvisoryIssued((boolean)$assessment->getAdvisoryIssued())
-            ->setRepresentativeName($assessment->getAeRepresentativeName())
-            ->setRepresentativePosition($assessment->getAeRepresentativePosition())
-            ->setScore($assessment->getSiteAssessmentScore())
-            ->setVisitDate(DateTimeApiFormat::dateTime($assessment->getVisitDate()))
-            ->setVisitOutcome($visitOutcomeDto)
-            ->setTester($this->personMapper->toDto($assessment->getTester()));
+            ->setAeRepresentativesFullName($assessment->getAeRepresentativeName())
+            ->setAeRepresentativesUserId(is_object($representative) ? $assessment->getRepresentative()->getUsername() : "")
+            ->setAeRepresentativesRole($assessment->getAeRepresentativePosition())
+            ->setDvsaExaminersUserId($assessment->getExaminer()->getUsername())
+            ->setDvsaExaminersFullName($assessment->getExaminer()->getDisplayName())
+            ->setSiteAssessmentScore($assessment->getSiteAssessmentScore())
+            ->setDateOfAssessment(DateTimeApiFormat::dateTime($assessment->getVisitDate()))
+            ->setTesterUserId($assessment->getTester()->getUsername())
+            ->setTesterFullName($assessment->getTester()->getDisplayName())
+        ;
 
         return $dto;
     }

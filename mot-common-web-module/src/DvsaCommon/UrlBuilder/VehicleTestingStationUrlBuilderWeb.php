@@ -18,6 +18,12 @@ class VehicleTestingStationUrlBuilderWeb extends AbstractUrlBuilder
     const SITE_DETAILS = '/site-details';
     const SITE_DETAILS_CONFIRM = '/confirmation';
 
+    const RISK_ASSESSMENT = '/risk-assessment';
+    const ADD_RISK_ASSESSMENT = '/add-risk-assessment';
+    const CANCEL_ADD_RISK_ASSESSMENT = '/add-risk-assessment/cancel';
+    const ADD_RISK_ASSESSMENT_CONFIRMATION = '/confirmation';
+
+
     const CREATE = '/create';
     const CREATE_CONFIRM = '/confirmation';
 
@@ -34,6 +40,11 @@ class VehicleTestingStationUrlBuilderWeb extends AbstractUrlBuilder
                     self::SITE_DETAILS => [
                         self::SITE_DETAILS_CONFIRM => '',
                     ],
+                    self::RISK_ASSESSMENT => '',
+                    self::ADD_RISK_ASSESSMENT => [
+                        self::ADD_RISK_ASSESSMENT_CONFIRMATION => '',
+                    ],
+                    self::CANCEL_ADD_RISK_ASSESSMENT => '',
                 ],
                 self::CREATE => [
                     self::CREATE_CONFIRM => '',
@@ -94,5 +105,29 @@ class VehicleTestingStationUrlBuilderWeb extends AbstractUrlBuilder
     {
         return self::siteDetails($siteId)
             ->appendRoutesAndParams(self::SITE_DETAILS_CONFIRM);
+    }
+
+    public static function viewSiteRiskAssessment($siteId)
+    {
+        return self::byId($siteId)
+            ->appendRoutesAndParams(self::RISK_ASSESSMENT);
+    }
+
+    public static function addSiteRiskAssessment($siteId)
+    {
+        return self::byId($siteId)->appendRoutesAndParams(self::ADD_RISK_ASSESSMENT);
+    }
+
+    public static function addSiteRiskAssessmentConfirm($siteId)
+    {
+        return self::addSiteRiskAssessment($siteId)
+            ->appendRoutesAndParams(self::ADD_RISK_ASSESSMENT_CONFIRMATION);
+    }
+
+    public static function cancelSiteRiskAssessment($siteId)
+    {
+        return self::byId($siteId)
+            ->appendRoutesAndParams(self::CANCEL_ADD_RISK_ASSESSMENT)
+        ;
     }
 }

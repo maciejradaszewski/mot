@@ -363,6 +363,24 @@ class VtsOverviewPagePermissionsTest extends PHPUnit_Framework_TestCase
                 'method' => 'canChangeSiteDetails',
                 'expected' => true,
             ],
+            [
+                'permission' => [
+                    'method' => 'isGrantedAtSite',
+                    'params' => [PermissionAtSite::VTS_UPDATE_SITE_RISK_ASSESSMENT, self::$SITE_ID],
+                    'result' => true,
+                ],
+                'method' => 'canChangeRiskAssessment',
+                'expected' => true,
+            ],
+            [
+                'permission' => [
+                    'method' => 'isGrantedAtSite',
+                    'params' => [PermissionAtSite::VTS_VIEW_SITE_RISK_ASSESSMENT, self::$SITE_ID],
+                    'result' => true,
+                ],
+                'method' => 'canViewRiskAssessment',
+                'expected' => true,
+            ],
         ];
     }
 

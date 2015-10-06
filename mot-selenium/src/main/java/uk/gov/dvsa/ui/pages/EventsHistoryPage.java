@@ -1,5 +1,6 @@
 package uk.gov.dvsa.ui.pages;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
@@ -17,13 +18,32 @@ public class EventsHistoryPage extends Page {
 
     @FindBy(partialLinkText = "Record an event") private WebElement recordNewEventLink;
 
+    @FindBy(name = "submit") private WebElement applyButton;
+
+    private static final By EVENT_TYPE = By.xpath("//*[@id='listLogs']/tbody/tr/td[1]/a");
+
+    private static final By EVENT_DATE = By.xpath("//*[@id='listLogs']/tbody/tr/td[2]");
+
+    private static final By EVENT_DESCRIPTION = By.xpath("//*[@id='listLogs']/tbody/tr/td[3]");
+
+    private WebElement getEventTypeElement() {
+        return driver.findElement(EVENT_TYPE);
+    }
+
+    private WebElement getEventDateElement() {
+        return driver.findElement(EVENT_DATE);
+    }
+
+    private WebElement getEventDescriptionElement() {
+        return driver.findElement(EVENT_DESCRIPTION);
+    }
+
     public EventsHistoryPage(MotAppDriver driver) {
         super(driver);
         selfVerify();
     }
 
-    @Override
-    protected boolean selfVerify() {
+    @Override protected boolean selfVerify() {
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
 
@@ -40,4 +60,22 @@ public class EventsHistoryPage extends Page {
         recordNewEventLink.click();
         return new CreateNewEventPage(driver);
     }
+
+    public EventsHistoryPage clickApplyButton() {
+        applyButton.click();
+        return this;
+    }
+
+    public String getEventTypeText() {
+        return getEventTypeElement().getText();
+    }
+
+    public String getEventDateText() {
+        return getEventDateElement().getText();
+    }
+
+    public String getEventDescriptionText() {
+        return getEventDescriptionElement().getText();
+    }
+
 }
