@@ -97,6 +97,58 @@ return [
                     ],
                 ],
             ],
+            'vehicle-testing-station-rag-status'             => [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/vehicle-testing-station/:id/risk-assessment',
+                    'constraints' => [
+                        'id' => '[0-9]+',
+                    ],
+                    'defaults'    => [
+                        'controller' => SiteController::class,
+                        'action'     => 'risk-assessment'
+                    ],
+                ],
+            ],
+            'vehicle-testing-station-add-rag-status'             => [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/vehicle-testing-station/:id/add-risk-assessment',
+                    'constraints' => [
+                        'id' => '[0-9]+',
+                    ],
+                    'defaults'    => [
+                        'controller' => SiteController::class,
+                        'action'     => 'add-risk-assessment'
+                    ],
+                ],
+            ],
+            'vehicle-testing-station-cancel-add-rag-status'             => [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/vehicle-testing-station/:id/add-risk-assessment/cancel',
+                    'constraints' => [
+                        'id' => '[0-9]+',
+                    ],
+                    'defaults'    => [
+                        'controller' => SiteController::class,
+                        'action'     => 'cancel-add-risk-assessment'
+                    ],
+                ],
+            ],
+            'vehicle-testing-station-add-rag-status-confirmation'             => [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/vehicle-testing-station/:id/add-risk-assessment/confirmation',
+                    'constraints' => [
+                        'id' => '[0-9]+',
+                    ],
+                    'defaults'    => [
+                        'controller' => SiteController::class,
+                        'action'     => 'add-risk-assessment-confirmation'
+                    ],
+                ],
+            ],
             'vehicle-testing-station-search'             => [
                 'type'    => 'segment',
                 'options' => [

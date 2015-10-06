@@ -182,6 +182,11 @@ ERR_MSG;
         $emConn->beginTransaction();
 
         try {
+            $lastAssessment = $site->getLastSiteAssessment();
+            if (!is_null($lastAssessment) && $lastAssessment->getAeOrganisationId() !== $organisation->getId()) {
+                $site->setLastSiteAssessment(null);
+            }
+
             $site->setOrganisation($organisation);
 
             $map = new OrganisationSiteMap();

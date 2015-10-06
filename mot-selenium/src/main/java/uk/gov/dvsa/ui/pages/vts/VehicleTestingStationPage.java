@@ -5,8 +5,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
-import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.RemoveRolePage;
+import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.mot.MotTestCertificatesPage;
 import uk.gov.dvsa.ui.pages.mot.TestShortSummaryPage;
 
@@ -28,6 +27,14 @@ public class VehicleTestingStationPage extends Page {
     @FindBy(id = "change-testing-facilities") private WebElement changeTestingFacilitiesLink;
     @FindBy(id = "testing-facility-optl") private WebElement onePersonTestLaneValue;
     @FindBy(id = "testing-facility-tptl") private WebElement twoPersonTestLaneValue;
+    @FindBy(id = "risk-assessment-score") private WebElement riskAssesmentscore;
+    @FindBy(id = "site-assessment-action-link") private WebElement addSiteAssessmentLink;
+    @FindBy(id = "risk-assessment-score") private WebElement riskAssessmentScore;
+    @FindBy(id = "validation-message--success") private WebElement validationMessage;
+    @FindBy(linkText = "Site assessment") private WebElement updateRiskAssessment;
+    @FindBy(id = "authorisedExaminer") private WebElement authorisedExaminer;
+    @FindBy(id = "site-number") private WebElement vtsNumber;
+    @FindBy(id = "site-name") private WebElement vtsName;
     @FindBy(id = "mot-test-recent-certificates-link") private WebElement motTestRecentCertificatesLink;
 
     public VehicleTestingStationPage(MotAppDriver driver) {
@@ -35,8 +42,7 @@ public class VehicleTestingStationPage extends Page {
         selfVerify();
     }
 
-    @Override
-    protected boolean selfVerify() {
+    @Override protected boolean selfVerify() {
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
 
@@ -108,8 +114,17 @@ public class VehicleTestingStationPage extends Page {
         return vtsPhoneNumber.isDisplayed();
     }
 
+    public boolean isRiskAssesmentDisplayed() {
+        return riskAssesmentscore.isDisplayed();
+    }
+
+    public boolean isAddSiteAssessmentLinkDisplayed() {
+        return addSiteAssessmentLink.isDisplayed();
+    }
+
     public boolean isActiveMotTestDisplayed(String vehicleRegistrationNumber) {
-        return driver.findElement(By.linkText(vehicleRegistrationNumber)).getText().contains(vehicleRegistrationNumber);
+        return driver.findElement(By.linkText(vehicleRegistrationNumber)).getText()
+                .contains(vehicleRegistrationNumber);
     }
 
     public TestShortSummaryPage clickOnActiveTest(String regNum) {
@@ -129,4 +144,42 @@ public class VehicleTestingStationPage extends Page {
     public String verifyTwoPersonTestLaneValueDisplayed() {
         return twoPersonTestLaneValue.getText();
     }
+
+    public String verifyRiskAssesmentScore() {
+        return riskAssesmentscore.getText();
+    }
+
+    public AddSiteAssessmentPage clickOnAddSiteAssessmentLink() {
+        addSiteAssessmentLink.click();
+        return new AddSiteAssessmentPage(driver);
+    }
+
+    public String getRiskAssessmentScore() {
+        return riskAssesmentscore.getText();
+    }
+
+    public String getValidationMessage() {
+        System.out.println("validationMessage.getText() " + validationMessage.getText());
+        return validationMessage.getText();
+    }
+
+    public boolean isUpdateSiteAssessmentLinkDisplayed() {
+        return updateRiskAssessment.isDisplayed();
+    }
+
+    public SiteAssessmentPage clickOnUpdateSiteAssessmentLink() {
+        updateRiskAssessment.click();
+        return new SiteAssessmentPage(driver);
+    }
+
+    public String getAuthorisedExaminer(){
+        return authorisedExaminer.getText();
+    }
+
+    public String getVtsNumber(){
+    return vtsNumber.getText();}
+
+    public String getVtsName(){
+        return vtsName.getText();}
 }
+

@@ -8,6 +8,7 @@ use DvsaClient\Entity\SiteDailyOpeningHours;
 use DvsaClient\Entity\SitePosition;
 use DvsaClient\Entity\VehicleTestingStation;
 use DvsaCommon\Date\Time;
+use DvsaCommon\Dto\Site\EnforcementSiteAssessmentDto;
 use DvsaCommon\Dto\Site\SiteContactDto;
 use DvsaCommon\Dto\Site\SiteDto;
 use DvsaCommon\Dto\Site\SiteListDto;
@@ -138,5 +139,20 @@ class SiteMapper extends DtoMapper
         $apiUrl = VehicleTestingStationUrlBuilder::validateSiteDetails($siteId);
 
         return $this->put($apiUrl, DtoHydrator::dtoToJson($siteDetailsDto));
+    }
+
+    public function validateSiteAssessment($siteId, EnforcementSiteAssessmentDto $assessmentDto)
+    {
+        $apiUrl = VehicleTestingStationUrlBuilder::validateSiteAssessment($siteId);
+        $assessmentDto->setValidateOnly(true);
+
+        return $this->post($apiUrl, DtoHydrator::dtoToJson($assessmentDto));
+    }
+
+    public function updateSiteAssessment($siteId, EnforcementSiteAssessmentDto $assessmentDto)
+    {
+        $apiUrl = VehicleTestingStationUrlBuilder::updateSiteAssessment($siteId);
+
+        return $this->post($apiUrl, DtoHydrator::dtoToJson($assessmentDto));
     }
 }

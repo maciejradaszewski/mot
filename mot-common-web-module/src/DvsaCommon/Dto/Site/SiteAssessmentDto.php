@@ -25,8 +25,6 @@ class SiteAssessmentDto extends AbstractDataTransferObject
     private $score;
     /** @var  PersonDto */
     private $tester;
-    /** @var  SiteVisitOutcomeDto */
-    private $visitOutcome;
     /** @var  boolean */
     private $isAdvisoryIssued;
     /** @var  string */
@@ -128,25 +126,6 @@ class SiteAssessmentDto extends AbstractDataTransferObject
     public function setTester($tester)
     {
         $this->tester = $tester;
-        return $this;
-    }
-
-    /**
-     * @return SiteVisitOutcomeDto
-     */
-    public function getVisitOutcome()
-    {
-        return $this->visitOutcome;
-    }
-
-    /**
-     * @param SiteVisitOutcomeDto $visitOutcome
-     *
-     * @return $this
-     */
-    public function setVisitOutcome($visitOutcome)
-    {
-        $this->visitOutcome = $visitOutcome;
         return $this;
     }
 

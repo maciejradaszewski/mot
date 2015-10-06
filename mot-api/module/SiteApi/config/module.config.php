@@ -14,12 +14,16 @@ use SiteApi\Controller\SitePositionValidateController;
 use SiteApi\Controller\SiteRoleController;
 use SiteApi\Controller\SiteSlotUsageController;
 use SiteApi\Controller\SiteTestingDailyScheduleController;
+use SiteApi\Controller\EnforcementSiteAssessmentController;
+use SiteApi\Controller\EnforcementSiteAssessmentValidateController;
 use SiteApi\Factory\Controller\SiteDetailsControllerFactory;
 use SiteApi\Factory\Controller\SiteNameControllerFactory;
 use SiteApi\Factory\Controller\SiteOrganisationNameControllerFactory;
 use SiteApi\Factory\Controller\SiteSearchControllerFactory;
 use SiteApi\Controller\SiteSearchController;
 use SiteApi\Factory\Controller\SiteControllerFactory;
+use SiteApi\Factory\Controller\EnforcementSiteAssessmentControllerFactory;
+use SiteApi\Factory\Controller\EnforcementSiteAssessmentValidateControllerFactory;
 use SiteApi\Factory\Controller\MotTestInProgressControllerFactory;
 use SiteApi\Factory\Controller\SiteEventControllerFactory;
 use SiteApi\Controller\SiteTestingFacilitiesController;
@@ -41,14 +45,16 @@ return [
             SitePositionValidateController::class     => SitePositionValidateController::class,
         ],
         'factories' => [
-            SiteSearchController::class => SiteSearchControllerFactory::class,
-            SiteController::class              => SiteControllerFactory::class,
-            SiteNameController::class   => SiteNameControllerFactory::class,
-            SiteOrganisationNameController::class   => SiteOrganisationNameControllerFactory::class,
-            SiteTestingFacilitiesController::class => SiteTestingFacilitiesControllerFactory::class,
-            SiteDetailsController::class => SiteDetailsControllerFactory::class,
-            MotTestInProgressController::class => MotTestInProgressControllerFactory::class,
-            SiteEventController::class => SiteEventControllerFactory::class
+            EnforcementSiteAssessmentController::class          => EnforcementSiteAssessmentControllerFactory::class,
+            EnforcementSiteAssessmentValidateController::class  => EnforcementSiteAssessmentValidateControllerFactory::class,
+            SiteSearchController::class                         => SiteSearchControllerFactory::class,
+            SiteController::class                               => SiteControllerFactory::class,
+            SiteNameController::class                           => SiteNameControllerFactory::class,
+            SiteOrganisationNameController::class               => SiteOrganisationNameControllerFactory::class,
+            SiteTestingFacilitiesController::class              => SiteTestingFacilitiesControllerFactory::class,
+            SiteDetailsController::class                        => SiteDetailsControllerFactory::class,
+            MotTestInProgressController::class                  => MotTestInProgressControllerFactory::class,
+            SiteEventController::class                          => SiteEventControllerFactory::class
         ],
     ],
     'router'      => [
@@ -236,6 +242,27 @@ return [
                                     'defaults' => [
                                         'controller' => MotTestInProgressController::class,
                                         'action'     => 'count',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'risk-assessment'      => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'    => '/risk-assessment',
+                            'defaults' => [
+                                'controller' => EnforcementSiteAssessmentController::class
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'risk-assessment-validate' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route' => '/validate',
+                                    'defaults' => [
+                                        'controller' => EnforcementSiteAssessmentValidateController::class
                                     ],
                                 ],
                             ],

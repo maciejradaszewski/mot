@@ -54,15 +54,16 @@ class EventTypeCode
     const GROUP_B_TESTER_QUALIFICATION = 'GBTQ';
     const DVSA_ADMINISTRATOR_CREATE_AE = 'CAE';
     const DVSA_ADMINISTRATOR_CREATE_SITE = 'CS';
+    const DVSA_ADMINISTRATOR_UPDATE_SITE = 'US';
     const UPDATE_AE = 'UAE';
     const UNLINK_AE_SITE = 'AEULS';
     const DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE = 'LAES';
-    const DVSA_ADMINISTRATOR_UPDATE_SITE = 'US';
     const INTELLIGENCE_MARKER = 'INTM';
     const VTS_COMPLAINT = 'VTSCO';
     const TESTER_TRAINING_ASSESSMENT = 'NTTA';
     const NTT_DIRECTED_RETRAINING_CLASSES_12 = 'NTTDA';
     const NTT_REFRESHER_CLASSES_12 = 'NTTRA';
+    const UPDATE_SITE_ASSESSMENT_RISK_SCORE = 'USARS';
 
     /**
      * @return array of values for the type EventTypeCode
@@ -114,6 +115,7 @@ class EventTypeCode
             self::GROUP_B_TESTER_QUALIFICATION,
             self::DVSA_ADMINISTRATOR_CREATE_AE,
             self::DVSA_ADMINISTRATOR_CREATE_SITE,
+            self::DVSA_ADMINISTRATOR_UPDATE_SITE,
             self::UPDATE_AE,
             self::UNLINK_AE_SITE,
             self::DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE,
@@ -123,6 +125,7 @@ class EventTypeCode
             self::TESTER_TRAINING_ASSESSMENT,
             self::NTT_DIRECTED_RETRAINING_CLASSES_12,
             self::NTT_REFRESHER_CLASSES_12,
+            self::UPDATE_SITE_ASSESSMENT_RISK_SCORE,
         ];
     }
 

@@ -231,6 +231,16 @@ class Site extends Entity
     private $status;
 
     /**
+     * @var SiteRiskAssessment
+     *
+     * @ORM\OneToMany(targetEntity="EnforcementSiteAssessment", fetch="LAZY", mappedBy="site")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="site_id", referencedColumnName="id")
+     * })
+     */
+    private $siteRiskAssessments;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="status_changed_on", type="datetime", nullable=true)
@@ -291,6 +301,7 @@ class Site extends Entity
         $this->contacts = new ArrayCollection();
         $this->authorisationsForTestingMotAtSite = new ArrayCollection();
         $this->associationsWithAe = new ArrayCollection();
+        $this->siteRiskAssessments = new ArrayCollection();
     }
 
     /**
@@ -891,5 +902,20 @@ class Site extends Entity
         return $this->statusChangedOn;
     }
 
+    /**
+     * @return ArrayCollection|SiteRiskAssessment
+     */
+    public function getRiskAssessments()
+    {
+        return $this->siteRiskAssessments;
+    }
+
+    /**
+     * @param EnforcementSiteAssessment $riskAssessment
+     */
+    public function addRiskAssessment(EnforcementSiteAssessment $riskAssessment)
+    {
+        $this->siteRiskAssessments->add($riskAssessment);
+    }
 
 }

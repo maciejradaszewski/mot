@@ -4,6 +4,8 @@ namespace Site;
 
 use Site\Service\SiteSearchService;
 use Site\Factory\Service\SiteSearchServiceFactory;
+use Zend\ModuleManager\Feature\BootstrapListenerInterface;
+use Zend\Mvc\MvcEvent;
 
 /**
  * Class Module

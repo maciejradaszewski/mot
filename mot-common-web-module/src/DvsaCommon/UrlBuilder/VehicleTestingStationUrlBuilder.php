@@ -35,6 +35,9 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
     const NAME = '/name';
     const ORGANISATION = '/organisation';
 
+    const RISK_ASSESSMENT = '/risk-assessment';
+    const RISK_ASSESSMENT_VALIDATE = '/validate';
+
     protected $routesStructure = [
         self::VEHICLE_TESTING_STATION_APPLICATION_START => '',
         self::VEHICLE_TESTING_STATION_APPLICATION       => [
@@ -58,11 +61,14 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
                 self::VTS_TEST_IN_PROGRESS_COUNT => '',
             ],
             self::VTS_DEFAULT_BRAKE_TESTS => '',
-            self::VTS_CONTACT             => [
+            self::VTS_CONTACT => [
                 self::VTS_CONTACT_UPDATE => '',
             ],
             self::TESTING_FACILITIES => '',
             self::SITE_DETAILS => '',
+            self::RISK_ASSESSMENT => [
+                self::RISK_ASSESSMENT_VALIDATE => '',
+            ],
         ],
         self::SEARCH                                    => '',
     ];
@@ -201,5 +207,23 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
     public static function validateSiteDetails($siteId)
     {
         return self::updateSiteDetails($siteId);
+    }
+
+    public static function validateSiteAssessment($siteId)
+    {
+        $url =  self::vtsById($siteId)
+            ->appendRoutesAndParams(self::RISK_ASSESSMENT)
+//            ->appendRoutesAndParams(self::RISK_ASSESSMENT_VALIDATE)
+        ;
+
+        return $url->toString() . self::RISK_ASSESSMENT_VALIDATE;
+    }
+
+    public static function updateSiteAssessment($siteId)
+    {
+        $url = self::vtsById($siteId)
+            ->appendRoutesAndParams(self::RISK_ASSESSMENT);
+
+        return $url;
     }
 }

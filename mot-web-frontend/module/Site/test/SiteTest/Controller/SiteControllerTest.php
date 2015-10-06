@@ -15,6 +15,7 @@ use DvsaClient\ViewModel\EmailFormModel;
 use DvsaClient\ViewModel\PhoneFormModel;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionAtSite;
+use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Constants\FacilityTypeCode;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Contact\EmailDto;
@@ -54,6 +55,8 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
     const SITE_ID = 9;
     const SITE_NR = 'S000001';
     const SITE_NAME = 'Site Name';
+
+    private $config;
 
     /** @var MotFrontendAuthorisationServiceInterface|MockObj $auth */
     private $auth;
@@ -99,6 +102,8 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
 
         $this->mockFeatureToggle = XMock::of(FeatureToggles::class, ['isEnabled']);
         $serviceManager->setService('Feature\FeatureToggles', $this->mockFeatureToggle);
+        $this->mockConfig();
+        $serviceManager->setService(MotConfig::class, $this->config);
 
         $this->identity->expects($this->any())
             ->method('getIdentity')
@@ -727,5 +732,17 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
             ->setContacts([$contact]);
 
         return $siteDto;
+    }
+
+    protected function mockConfig()
+    {
+        $this->config = $this->getMockBuilder(MotConfig::class)->disableOriginalConstructor()->getMock();
+        $returnMap = [
+            ["site_assessment", "green", "start", 0],
+            ["site_assessment", "amber", "start", 324.11],
+            ["site_assessment", "red", "start", 459.21]
+        ];
+
+        $this->config->expects($this->any())->method("get")->will($this->returnValueMap($returnMap));
     }
 }

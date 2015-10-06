@@ -6,6 +6,7 @@ use Dvsa\Mot\Behat\Support\Request;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Contact\EmailDto;
 use DvsaCommon\Dto\Contact\PhoneDto;
+use DvsaCommon\Dto\Site\EnforcementSiteAssessmentDto;
 use DvsaCommon\Dto\Site\SiteContactDto;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\PhoneContactTypeCode;
@@ -25,6 +26,7 @@ class Vts extends MotApi
     const POSITION = 'site/{site_id}/position';
     const TESTING_FACILITIES = 'vehicle-testing-station/{site_id}/testing-facilities';
     const SITE_DETAILS = 'vehicle-testing-station/{site_id}/site-details';
+    const RISK_ASSESMENT = 'vehicle-testing-station/{site_id}/risk-assessment';
 
     public function getVtsDetails($vtsId, $token)
     {
@@ -76,7 +78,7 @@ class Vts extends MotApi
         ];
     }
 
-    public function create($token, $site)
+    public function create($token, $site = [])
     {
         $site = array_merge($this->getDefaults(), $site);
 
@@ -190,5 +192,50 @@ class Vts extends MotApi
             ->setContacts([$contact]);
 
         return $siteDto;
+    }
+
+    public function addRiskAssessment($token, $siteId, $riskAssessment = [])
+    {
+        $defaults = [
+            "id" => null,
+            "siteAssessmentScore" => null,
+            "aeRepresentativesFullName" => null,
+            "aeRepresentativesRole" => null,
+            "aeRepresentativesUserId" => null,
+            "testerUserId" => null,
+            "testerFullName" => null,
+            "dvsaExaminersFullName" => null,
+            "dvsaExaminersUserId" => null,
+            "dateOfAssessment" => null,
+            "siteId" => $siteId,
+            "aeOrganisationId" => null,
+            "validateOnly" => false,
+            "userIsNotAssessor" => false,
+            "_class" => "DvsaCommon\\Dto\\Site\\EnforcementSiteAssessmentDto"
+        ];
+
+        $riskAssessment = array_replace($defaults, $riskAssessment);
+
+        $body = json_encode($riskAssessment);
+
+        return $this->client->request(
+            new Request(
+                'POST',
+                str_replace('{site_id}', $siteId, self::RISK_ASSESMENT),
+                ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
+                $body
+            )
+        );
+    }
+
+    public function getRiskAssessment($token, $siteId)
+    {
+        return $this->client->request(
+            new Request(
+                'GET',
+                str_replace('{site_id}', $siteId, self::RISK_ASSESMENT),
+                ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
+            )
+        );
     }
 }

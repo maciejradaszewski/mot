@@ -15,17 +15,30 @@ if ($value instanceof DateTime) {
     $month = $value->format('m');
     $year  = $value->format('Y');
 }
+
+$cssClass = join(
+    ' ', array_filter(
+        [
+            (isset($this->errorMessage) ? 'has-error' : null),
+            (!empty($this->divModifier) ? $this->divModifier : null),
+        ]
+    )
+);
 ?>
 
-<div class="form-group">
+<div class="form-group <?php echo $this->escapeHtmlAttr($cssClass); ?>">
     <fieldset>
         <legend class="form-label">
             <?php echo $this->escapeHtml($label); ?>
-        </legend>
-        <div class="form-date">
             <?php if($help): ?>
                 <span class="form-hint"><?php echo $this->escapeHtml($help) ?></span>
             <?php endif ?>
+            <?php if (!empty($errorMessage)): ?>
+                <span class="validation-message"><?php echo $this->escapeHtml($errorMessage); ?></span>
+            <?php endif; ?>
+        </legend>
+        <div class="form-date">
+
             <?php echo $this->partial(
                 'partial/forms/inputBox.phtml',
                 [

@@ -1,0 +1,218 @@
+<?php
+
+use Site\Form\VtsSiteAssessmentForm;
+/**
+ * @var int $siteId
+ * @var string $vtsViewUrl
+ * @var string $cancelUrl
+ * @var VtsSiteAssessmentForm $form
+ */
+?>
+
+<form method="POST" action="<?php echo $form->getFormUrl(); ?>">
+    <?php echo $this->csrfToken() ?>
+
+    <?php if($form->hasErrors()): ?>
+        <div class="validation-summary" id="validation-summary-id">
+            <h2 class="heading-medium">There was a problem with the information you entered:</h2>
+            <ol>
+                <?php foreach($form->getAllErrors() as $error): ?>
+                        <?php
+                        $field = $form->getFieldLabel($error['field']);
+                        $errorMsg = $error['displayMessage'];
+                        ?>
+                        <li><?php echo $this->escapeHtml($field); ?> - <?php echo $this->escapeHtml($errorMsg); ?></li>
+                <?php endforeach; ?>
+            </ol>
+        </div>
+    <?php endif; ?>
+        <fieldset>
+            <?php
+            echo $this->partial(
+                'partial/gds/form/control-text-group',
+                [
+                    'id' => VtsSiteAssessmentForm::FIELD_SITE_ASSESSMENT_SCORE,
+                    'label' => 'Site assessment risk score',
+                    'help' => 'RAG status will be assigned automatically',
+                    'title' => VtsSiteAssessmentForm::FIELD_SITE_ASSESSMENT_SCORE,
+                    'value' => $form->getSiteAssessmentScore(),
+                    'errorMessage' => $form->getError(VtsSiteAssessmentForm::FIELD_SITE_ASSESSMENT_SCORE),
+                    'maxLength' => 6,
+                    'autofocus' => true,
+                    'inputModifier' => '1-8',
+                    'pattern' => '\d{1,3}(\.\d{1,2})?',
+                    'patternErrorMsg' => 'Please enter valid number between 0.00 and 999.99',
+                ]
+            );
+            ?>
+        </fieldset>
+    <?php
+    echo $this->partial(
+        'partial/gds/form/control-radio-group',
+        [
+            'inputModifier' => 'inline',
+            'label' => ' Did someone other than you complete the site assessment?',
+            'options' => [
+                [
+                    'divModifier' => 'inline',
+                    'label' => 'user-is-not-assessor',
+                    'inputName' => VtsSiteAssessmentForm::FIELD_USER_IS_NOT_ASSESSOR,
+                    'key' => 'No',
+                    'value' => 'false',
+                    'checked' => $form->getUserIsNotAssessor() != true
+                ],
+                [
+                    'divModifier' => 'inline',
+                    'label' => 'user-is-assessor',
+                    'inputName' => VtsSiteAssessmentForm::FIELD_USER_IS_NOT_ASSESSOR,
+                    'key' => 'Yes',
+                    'value' => 'true',
+                    'dataTarget' => 'examiner-details',
+                    'checked' => $form->getUserIsNotAssessor() == true
+                ]
+            ],
+        ]
+    );
+    ?>
+
+    <div id="examiner-details" class="panel-indent
+        <?php
+        if(
+            !$form->getError(VtsSiteAssessmentForm::FIELD_DVSA_EXAMINERS_USER_ID) &&
+            $form->getUserIsNotAssessor() != true
+        )
+            echo 'js-hidden'
+        ?>
+    ">
+        <div class="form-group">
+            <fieldset>
+                <?php
+                echo $this->partial(
+                    'partial/gds/form/control-text-group',
+                    [
+                        'id' => VtsSiteAssessmentForm::FIELD_DVSA_EXAMINERS_USER_ID,
+                        'label' => 'DVSA examiner\'s User ID',
+                        'title' => 'DVSA examiner\'s User ID',
+                        'value' => $form->getDvsaExaminersUserId(),
+                        'errorMessage' => $form->getError(VtsSiteAssessmentForm::FIELD_DVSA_EXAMINERS_USER_ID),
+                        'maxLength' => 100,
+                        'autofocus' => true,
+                        'name' => VtsSiteAssessmentForm::FIELD_DVSA_EXAMINERS_USER_ID
+                    ]
+                );
+                ?>
+            </fieldset>
+        </div>
+    </div>
+
+        <fieldset>
+            <?php
+            echo $this->partial(
+                'partial/gds/form/control-text-group',
+                [
+                    'id' => VtsSiteAssessmentForm::FIELD_AE_REPRESENTATIVES_USER_ID,
+                    'label' => 'AE representative\'s User ID',
+                    'title' => 'AE representative\'s User ID',
+                    'value' => $form->getAeRepresentativesUserId(),
+                    'errorMessage' => $form->getError(VtsSiteAssessmentForm::FIELD_AE_REPRESENTATIVES_USER_ID),
+                    'maxLength' => 50,
+                    'autofocus' => true,
+                    'name' => VtsSiteAssessmentForm::FIELD_AE_REPRESENTATIVES_USER_ID,
+                    'inputModifier' => '1-8'
+                ]
+            );
+            ?>
+        </fieldset>
+
+        <fieldset>
+            <?php
+            echo $this->partial(
+                'partial/gds/form/control-text-group',
+                [
+                    'id' => VtsSiteAssessmentForm::FIELD_AE_REPRESENTATIVES_FULL_NAME,
+                    'label' => 'AE representative\'s full name (if AE user ID not entered)',
+                    'title' => 'AE representative\'s full name (if AE user ID not entered)',
+                    'value' => $form->getAeRepresentativesFullName(),
+                    'errorMessage' => $form->getError(VtsSiteAssessmentForm::FIELD_AE_REPRESENTATIVES_FULL_NAME),
+                    'maxLength' => 100,
+                    'autofocus' => true,
+                    'name' => VtsSiteAssessmentForm::FIELD_AE_REPRESENTATIVES_FULL_NAME
+                ]
+            );
+            ?>
+        </fieldset>
+
+        <fieldset>
+            <?php
+            echo $this->partial(
+                'partial/gds/form/control-text-group',
+                [
+                    'id' => VtsSiteAssessmentForm::FIELD_AE_REPRESENTATIVES_ROLE,
+                    'label' => 'AE representative\'s role',
+                    'title' => 'AE representative\'s role',
+                    'value' => $form->getAeRepresentativesRole(),
+                    'errorMessage' => $form->getError(VtsSiteAssessmentForm::FIELD_AE_REPRESENTATIVES_ROLE),
+                    'maxLength' => 100,
+                    'autofocus' => true,
+                    'name' => VtsSiteAssessmentForm::FIELD_AE_REPRESENTATIVES_ROLE
+                ]
+            );
+            ?>
+        </fieldset>
+
+        <fieldset>
+            <?php
+            echo $this->partial(
+                'partial/gds/form/control-text-group',
+                [
+                    'id' => VtsSiteAssessmentForm::FIELD_TESTERS_USER_ID,
+                    'label' => 'Tester\'s User ID ',
+                    'title' => 'Tester\'s User ID ',
+                    'value' => $form->getTesterUserId(),
+                    'errorMessage' => $form->getError(VtsSiteAssessmentForm::FIELD_TESTERS_USER_ID),
+                    'maxLength' => 50,
+                    'autofocus' => true,
+                    'name' => VtsSiteAssessmentForm::FIELD_TESTERS_USER_ID,
+                    'inputModifier' => '1-8'
+                ]
+            );
+            ?>
+        </fieldset>
+
+            <?php echo $this->partial(
+                'partial/gds/form/datePickerBox',
+                [
+                    'prefix' => VtsSiteAssessmentForm::FIELD_DATE_OF_ASSESSMENT,
+                    'label' => 'Date of assessment',
+                    'day' => $form->getDayOfAssessment(),
+                    'month' => $form->getMonthOfAssessment(),
+                    'year' => $form->getYearOfAssessment(),
+                    'help' => 'For example, 31 3 1980',
+                    'errorMessage' => $form->getError(VtsSiteAssessmentForm::FIELD_DATE_OF_ASSESSMENT),
+                ]
+            ); ?>
+
+    <nav class="content-navigation">
+        <?php
+        echo $this->partial(
+            'partial/forms/submitElement.phtml',
+            [
+                'id' => 'submit',
+                'label' => 'Continue',
+                'cssClass' => 'button'
+            ]
+        );
+        ?>
+    <ul class="content-navigation__secondary">
+        <li>
+            <a href="<?php echo $cancelUrl ?>"
+               id="returnDashboard" class="btn btn-primary">
+                Cancel and return to site details
+            </a>
+        </li>
+    </ul>
+</nav>
+</form>
+
+
+

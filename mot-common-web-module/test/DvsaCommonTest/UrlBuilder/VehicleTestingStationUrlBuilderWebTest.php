@@ -38,6 +38,22 @@ class VehicleTestingStationUrlBuilderWebTest extends \PHPUnit_Framework_TestCase
             VehicleTestingStationUrlBuilderWeb::testingFacilitiesConfirmation(self::VTS_ID),
             $base . '/testing-facilities/confirmation'
         );
+        $this->checkUrl(
+            VehicleTestingStationUrlBuilderWeb::viewSiteRiskAssessment(self::VTS_ID),
+            $base . '/risk-assessment'
+        );
+        $this->checkUrl(
+            VehicleTestingStationUrlBuilderWeb::addSiteRiskAssessment(self::VTS_ID),
+            $base . '/add-risk-assessment'
+        );
+        $this->checkUrl(
+            VehicleTestingStationUrlBuilderWeb::addSiteRiskAssessmentConfirm(self::VTS_ID),
+            $base . '/add-risk-assessment/confirmation'
+        );
+        $this->checkUrl(
+            VehicleTestingStationUrlBuilderWeb::cancelSiteRiskAssessment(self::VTS_ID),
+            $base . '/add-risk-assessment/cancel'
+        );
 
 
     }

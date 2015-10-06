@@ -984,4 +984,28 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         PHPUnit::assertNull($positionId);
     }
 
+    /**
+     * @param array $data
+     * @throws Exception
+     */
+    public function createAEDM(array $data = [], $aeId = null)
+    {
+        if (is_null($aeId)) {
+            $ae = $this->authorisedExaminerContext->createAE();
+            $aeId = $ae["id"];
+        }
+
+        $aedmService = $this->testSupportHelper->getAedmService();
+
+        $defaults = [
+            "aeIds" => [ $aeId ],
+            "requestor" => [
+                "username" => "schememgt",
+                "password" => "Password1"
+            ]
+        ];
+
+        $data = array_replace($defaults, $data);
+        $this->personLoginData = $aedmService->create($data);
+    }
 }

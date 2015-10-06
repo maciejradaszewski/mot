@@ -36,12 +36,9 @@ class TestSupportRestClientHelper
 
         list($requestorUsername, $requestorPassword) = RequestorParserHelper::parse($data);
 
-        if (isset($this->tokenCache[$requestorUsername])) {
-            $accessToken = $this->tokenCache[$requestorUsername];
-        } else {
-            $accessToken = $this->accessTokenManager->getToken($requestorUsername, $requestorPassword);
-            $this->tokenCache[$requestorUsername] = $accessToken;
-        }
+        // usage of tokenCache was disabled because it was the main reason of behat tests instability on jenkins envs
+        $accessToken = $this->accessTokenManager->getToken($requestorUsername, $requestorPassword);
+        $this->tokenCache[$requestorUsername] = $accessToken;
 
         $this->jsonClient->setAccessToken($accessToken);
         return $this->jsonClient;

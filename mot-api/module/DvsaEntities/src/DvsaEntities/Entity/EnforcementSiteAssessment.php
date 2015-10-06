@@ -1,112 +1,93 @@
 <?php
+
 namespace DvsaEntities\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="enforcement_site_assessment", options={"collate"="utf8_general_ci", "charset"="utf8", "engine"="InnoDB"})
+ * SiteContact
+ *
+ * @ORM\Table(name="enforcement_site_assessment")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\SiteRiskAssessmentRepository")
  */
 class EnforcementSiteAssessment extends Entity
 {
+
     /**
-     * @var int
+     * @var integer
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
 
     /**
+     * @ORM\Column(name="ae_organisation_id", type="integer", nullable=false)
+     */
+    protected $aeOrganisationId;
+
+    /**
+     * @ORM\Column(name="site_assessment_score", type="decimal", precision=2, scale=2, nullable=true)
+     */
+    protected $siteAssessmentScore;
+
+    /**
+     * @ORM\Column(name="ae_representative_name", type="string", nullable=true)
+     */
+    protected $aeRepresentativeName;
+
+    /**
+     * @ORM\Column(name="ae_representative_position", type="string", nullable=false)
+     */
+    protected $aeRepresentativePosition;
+
+    /**
+     * @var Person
+     *
+     * @ORM\OneToOne(targetEntity="Person", fetch="LAZY")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="tester_person_id", referencedColumnName="id")
+     * })
+     */
+    protected $tester;
+
+    /**
+     * @var Person
+     *
+     * @ORM\OneToOne(targetEntity="Person", fetch="LAZY")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="examiner_person_id", referencedColumnName="id")
+     * })
+     */
+    protected $examiner;
+
+    /**
+     * @var Person
+     *
+     * @ORM\OneToOne(targetEntity="Person", fetch="LAZY")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="ae_representative_person_id", referencedColumnName="id")
+     * })
+     */
+    protected $representative;
+
+    /**
+     * @ORM\Column(name="visit_date", type="datetime", nullable=false)
+     */
+    protected $visitDate;
+
+    /**
      * @var Site
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Site", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Site", fetch="LAZY", inversedBy="siteRiskAssessments")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="site_id", referencedColumnName="id")
      * })
      */
-    private $vehicleTestingStation;
+    private $site;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="site_assessment_score", type="decimal", precision=9, scale=2)
-     */
-    private $siteAssessmentScore;
-
-    /**
-     * @var \DvsaEntities\Entity\AuthorisationForAuthorisedExaminer
-     *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\AuthorisationForAuthorisedExaminer", fetch="EAGER")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="authorisation_for_authorised_examiner_id", referencedColumnName="id")
-     * })
-     */
-    private $authorisedExaminer;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="ae_representative_name", type="string", length=100)
-     */
-    private $aeRepresentativeName;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="ae_representative_position", type="string", length=100)
-     */
-    private $aeRepresentativePosition;
-
-    /**
-     * @var \DvsaEntities\Entity\Person
-     *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Person", fetch="EAGER")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="person_id", referencedColumnName="id")
-     * })
-     */
-    private $tester;
-
-    /**
-     * @var \DvsaEntities\Entity\EnforcementVisitOutcome
-     *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\EnforcementVisitOutcome")
-     * @ORM\JoinColumn(name="visit_outcome_id", referencedColumnName="id")
-     */
-    private $visitOutcome;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="advisory_issued", type="boolean")
-     */
-    private $advisoryIssued;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="visit_date", type="datetime", nullable=true)
-     */
-    private $visitDate;
-
-    /**
-     *  set Id
-     *
-     * @param int $id id
-     *
-     * @return EnforcementDecisionScore
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * Get Id
-     *
      * @return int
      */
     public function getId()
@@ -115,46 +96,37 @@ class EnforcementSiteAssessment extends Entity
     }
 
     /**
-     * Set Site
-     *
-     * @param Site $vehicleTestingStation vts
-     *
-     * @return EnforcementSiteAssessment
+     * @param int $id
+     * @return $this
      */
-    public function setVehicleTestingStation($vehicleTestingStation)
+    public function setId($id)
     {
-        $this->vehicleTestingStation = $vehicleTestingStation;
+        $this->id = $id;
 
         return $this;
     }
 
     /**
-     * Get Site
-     *
-     * @return Site
+     * @return mixed
      */
-    public function getVehicleTestingStation()
+    public function getAeOrganisationId()
     {
-        return $this->vehicleTestingStation;
+        return $this->aeOrganisationId;
     }
 
     /**
-     *  set Score
-     *
-     * @param float $siteAssessmentScore score
-     *
-     * @return EnforcementSiteAssessment
+     * @param mixed $aeOrganisationId
+     * @return $this
      */
-    public function setSiteAssessmentScore($siteAssessmentScore)
+    public function setAeOrganisationId($aeOrganisationId)
     {
-        $this->siteAssessmentScore = $siteAssessmentScore;
+        $this->aeOrganisationId = $aeOrganisationId;
+
         return $this;
     }
 
     /**
-     * Get Score
-     *
-     * @return float
+     * @return mixed
      */
     public function getSiteAssessmentScore()
     {
@@ -162,34 +134,27 @@ class EnforcementSiteAssessment extends Entity
     }
 
     /**
-     * Set the associated Authorised Examiner
-     *
-     * @param AuthorisationForAuthorisedExaminer $authorisedExaminer
-     * @return EnforcementSiteAssessment
+     * @param mixed $siteAssessmentScore
+     * @return $this
      */
-    public function setAuthorisedExaminer($authorisedExaminer)
+    public function setSiteAssessmentScore($siteAssessmentScore)
     {
-        $this->authorisedExaminer = $authorisedExaminer;
+        $this->siteAssessmentScore = $siteAssessmentScore;
 
         return $this;
     }
 
     /**
-     * Get the associated Authorised Examiner
-     *
-     * @return AuthorisationForAuthorisedExaminer
+     * @return mixed
      */
-    public function getAuthorisedExaminer()
+    public function getAeRepresentativeName()
     {
-        return $this->authorisedExaminer;
+        return $this->aeRepresentativeName;
     }
 
     /**
-     * Set AE/Representative name
-     *
-     * @param string $aeRepresentativeName aeRepresentativeName
-     *
-     * @return EnforcementSiteAssessment
+     * @param mixed $aeRepresentativeName
+     * @return $this
      */
     public function setAeRepresentativeName($aeRepresentativeName)
     {
@@ -199,21 +164,16 @@ class EnforcementSiteAssessment extends Entity
     }
 
     /**
-     * Get AE/Representative name
-     *
-     * @return string
+     * @return mixed
      */
-    public function getAeRepresentativeName()
+    public function getAeRepresentativePosition()
     {
-        return $this->aeRepresentativeName;
+        return $this->aeRepresentativePosition;
     }
 
     /**
-     * Set AE/Representative name
-     *
-     * @param string $aeRepresentativePosition aeRepresentativePosition
-     *
-     * @return EnforcementSiteAssessment
+     * @param mixed $aeRepresentativePosition
+     * @return $this
      */
     public function setAeRepresentativePosition($aeRepresentativePosition)
     {
@@ -223,33 +183,7 @@ class EnforcementSiteAssessment extends Entity
     }
 
     /**
-     * Get AE/Representative position
-     *
-     * @return string
-     */
-    public function getAeRepresentativePosition()
-    {
-        return $this->aeRepresentativePosition;
-    }
-
-    /**
-     * Set Tester
-     *
-     * @param \DvsaEntities\Entity\Person $tester
-     *
-     * @return EnforcementSiteAssessment
-     */
-    public function setTester(\DvsaEntities\Entity\Person $tester)
-    {
-        $this->tester = $tester;
-
-        return $this;
-    }
-
-    /**
-     * Get Tester
-     *
-     * @return \DvsaEntities\Entity\Person
+     * @return Person
      */
     public function getTester()
     {
@@ -257,52 +191,65 @@ class EnforcementSiteAssessment extends Entity
     }
 
     /**
-     * @param \DvsaEntities\Entity\EnforcementVisitOutcome $visitOutcome
-     *
-     * @return EnforcementSiteAssessment
+     * @param Person $tester
+     * @return $this
      */
-    public function setVisitOutcome($visitOutcome)
+    public function setTester($tester)
     {
-        $this->visitOutcome = $visitOutcome;
+        $this->tester = $tester;
+
         return $this;
     }
 
     /**
-     * @return \DvsaEntities\Entity\EnforcementVisitOutcome
+     * @return Person
      */
-    public function getVisitOutcome()
+    public function getExaminer()
     {
-        return $this->visitOutcome;
+        return $this->examiner;
     }
 
     /**
-     *  set advisoryIssued
-     *
-     * @param int $advisoryIssued advisoryIssued
-     *
-     * @return EnforcementSiteAssessment
+     * @param Person $examiner
+     * @return $this
      */
-    public function setAdvisoryIssued($advisoryIssued)
+    public function setExaminer($examiner)
     {
-        $this->advisoryIssued = $advisoryIssued;
+        $this->examiner = $examiner;
+
         return $this;
     }
 
     /**
-     * Get advisoryIssued
-     *
-     * @return int
+     * @return Person
      */
-    public function getAdvisoryIssued()
+    public function getRepresentative()
     {
-        return $this->advisoryIssued;
+        return $this->representative;
     }
 
     /**
-     * Set visitDate
-     *
-     * @param \DateTime $visitDate
-     * @return EnforcementSiteAssessment
+     * @param Person $representative
+     * @return $this
+     */
+    public function setRepresentative($representative)
+    {
+        $this->representative = $representative;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVisitDate()
+    {
+        return $this->visitDate;
+    }
+
+    /**
+     * @param mixed $visitDate
+     * @return $this
      */
     public function setVisitDate($visitDate)
     {
@@ -312,12 +259,21 @@ class EnforcementSiteAssessment extends Entity
     }
 
     /**
-     * Get visitDate
-     *
-     * @return \DateTime
+     * @return Site
      */
-    public function getVisitDate()
+    public function getSite()
     {
-        return $this->visitDate;
+        return $this->site;
+    }
+
+    /**
+     * @param Site $site
+     * @return $this
+     */
+    public function setSite($site)
+    {
+        $this->site = $site;
+
+        return $this;
     }
 }

@@ -198,4 +198,20 @@ class VtsOverviewPagePermissions
     {
         return $this->authorisationService->isGranted(PermissionInSystem::VEHICLE_TESTING_STATION_SEARCH);
     }
+
+    public function canChangeRiskAssessment()
+    {
+        return $this->authorisationService->isGrantedAtSite(
+            PermissionAtSite::VTS_UPDATE_SITE_RISK_ASSESSMENT,
+            $this->vts->getId()
+        );
+    }
+
+    public function canViewRiskAssessment()
+    {
+        return $this->authorisationService->isGrantedAtSite(
+            PermissionAtSite::VTS_VIEW_SITE_RISK_ASSESSMENT,
+            $this->vts->getId()
+        );
+    }
 }

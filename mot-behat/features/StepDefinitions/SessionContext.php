@@ -41,10 +41,8 @@ class SessionContext implements Context
      */
     private $vtsContext;
 
-    /**
-     * @var authorisedExaminerContext
-     */
-    private $authorisedExaminerContext;
+    /** @var PersonContext */
+    private $personContext;
 
     /**
      * @param AccountClaim       $accountClaim
@@ -66,7 +64,7 @@ class SessionContext implements Context
         $this->accountClaimContext       = $scope->getEnvironment()->getContext(AccountClaimContext::class);
         $this->tempPasswordChangeContext = $scope->getEnvironment()->getContext(TempPasswordChangeContext::class);
         $this->vtsContext = $scope->getEnvironment()->getContext(VtsContext::class);
-        $this->authorisedExaminerContext = $scope->getEnvironment()->getContext(AuthorisedExaminerContext::class);
+        $this->personContext = $scope->getEnvironment()->getContext(PersonContext::class);
     }
 
     /**
@@ -424,19 +422,10 @@ class SessionContext implements Context
      */
     public function iAmLoggedInAsAnAedmToNewOrganisation()
     {
-        $ae = $this->authorisedExaminerContext->createAE();
-        $aeId = $ae["id"];
-        $aedmService = $this->testSupportHelper->getAedmService();
-
-        $data = [
-            "aeIds" => [ $aeId ],
-            "requestor" => [
-                "username" => "schememgt",
-                "password" => "Password1"
-            ]
-        ];
-        $user              = $aedmService->create($data);
-        $this->currentUser = $this->session->startSession($user->data['username'], $user->data['password']);
+        $this->personContext->createAEDM();
+        $this->currentUser = $this->session->startSession($this->personContext->getPersonUsername(),
+            $this->personContext->getPersonPassword()
+        );
     }
 
 }

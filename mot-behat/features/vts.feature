@@ -37,3 +37,30 @@ Feature: VTS
     Given I am logged in as an Area Office User
     When I attempt to assign the role of site manager to more than one user of a vehicle testing station
     Then the site manager roles should be assigned successfully
+
+  Scenario Outline: As a DVSA User I can add rag status to site
+    Given I am logged in as a Scheme Manager
+    When I attempt to add risk assessment to site with data:
+    | siteAssessmentScore   | aeRepresentativesFullName   | aeRepresentativesRole   | aeRepresentativesUserId   | testerUserId   | dvsaExaminersUserId   | dateOfAssessment   |
+    | <siteAssessmentScore> | <aeRepresentativesFullName> | <aeRepresentativesRole> | <aeRepresentativesUserId> | <testerUserId> | <dvsaExaminersUserId> | <dateOfAssessment> |
+    Then risk assessment is added to site
+    Examples:
+      | siteAssessmentScore | aeRepresentativesFullName | aeRepresentativesRole | aeRepresentativesUserId | testerUserId | dvsaExaminersUserId | dateOfAssessment |
+      | 0.01                | John Kowalsky             | Boss                  |                         | tester       | dvsaExaminer        | 2015-09-01       |
+      | 50                  | John Kowalsky             | Boss                  |                         | tester       |                     | 2014-09-01       |
+      | 999.99              |                           | Boss                  |  ae                     | tester       | dvsaExaminer        | 2013-09-01       |
+      | 549.00              | John Kowalsky             | Boss                  |  ae                     | tester       | dvsaExaminer        | 2012-09-01       |
+
+  Scenario Outline: I cannot add rag status to site with invalid data
+    Given I am logged in as a Scheme Manager
+    When I attempt to add risk assessment to site with invalid data:
+      | siteAssessmentScore   | aeRepresentativesFullName   | aeRepresentativesRole   | aeRepresentativesUserId   | testerUserId   | dvsaExaminersUserId   | dateOfAssessment   |
+      | <siteAssessmentScore> | <aeRepresentativesFullName> | <aeRepresentativesRole> | <aeRepresentativesUserId> | <testerUserId> | <dvsaExaminersUserId> | <dateOfAssessment> |
+    Then risk assessment is not added to site
+    Examples:
+      | siteAssessmentScore | aeRepresentativesFullName | aeRepresentativesRole | aeRepresentativesUserId | testerUserId | dvsaExaminersUserId | dateOfAssessment |
+      | -0.01               | John Kowalsky             | Boss                  |                         | tester       | dvsaExaminer        | 2015-09-01       |
+      | 50                  | John Kowalsky             | Boss                  |                         | tester       |                     | 3014-09-01       |
+      | 1000                |                           | Boss                  |  ae                     | tester       | dvsaExaminer        | 2013-09-01       |
+      | 02.03               |                           |                       |  ae                     |              | dvsaExaminer        |                  |
+      |                     |                           |                       |                         | tester       | dvsaExaminer        | 2011-09-01       |
