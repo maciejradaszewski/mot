@@ -69,7 +69,8 @@ public class BreadcrumbViewTest extends BaseTest {
     @Test(groups = {"Regression"}, description = "Breadcrumb is visible in mot test certificates page")
     public void isBreadcrumbVisibleInMotTestCertificatesPage() throws IOException, URISyntaxException {
         //Check if Jasper Async flag is on
-
+        isJasperAsyncEnabled();
+        
         //Given I am logged in as tester & I navigate to the vehicle testing station page
         //& navigate to random Vts
         VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.gotoHomePage(tester)
