@@ -5,7 +5,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
-import uk.gov.dvsa.ui.pages.*;
+import uk.gov.dvsa.ui.pages.AddSiteAssessmentPage;
+import uk.gov.dvsa.ui.pages.Page;
+import uk.gov.dvsa.ui.pages.RemoveRolePage;
+import uk.gov.dvsa.ui.pages.SiteAssessmentPage;
 import uk.gov.dvsa.ui.pages.mot.MotTestCertificatesPage;
 import uk.gov.dvsa.ui.pages.mot.TestShortSummaryPage;
 
@@ -13,6 +16,8 @@ public class VehicleTestingStationPage extends Page {
     public static final String path = "/vehicle-testing-station/%s";
     private static final String PAGE_TITLE = "Vehicle Testing Station";
 
+    @FindBy(className = "content-header__title") private WebElement pageHeader;
+    //    @FindBy(id = "authorised-examiner-link") private WebElement vtsName;
     @FindBy(id = "assign-a-role") private WebElement assignARoleLink;
     @FindBy(css = "div.text") private WebElement getRole;
     @FindBy(id = "validation-message--success") private WebElement validationMessageSuccess;
@@ -59,7 +64,7 @@ public class VehicleTestingStationPage extends Page {
     public String getTesterName(String id) {
         By nameLocator = By.cssSelector(String.format(".key-value-list a[href*='%s']", id));
 
-        if(driver.findElements(nameLocator).isEmpty()) {
+        if (driver.findElements(nameLocator).isEmpty()) {
             return "Tester not found on this page";
         }
 
@@ -78,7 +83,7 @@ public class VehicleTestingStationPage extends Page {
         return phoneNumberValue.getText();
     }
 
-    public RemoveRolePage removeTesterRole(String id){
+    public RemoveRolePage removeTesterRole(String id) {
         String testerRemoveLink = String.format("#role-assignment-%s-TESTER td a", id);
         WebElement removeTesterRole = driver.findElementByCssSelector(testerRemoveLink);
         removeTesterRole.click();
@@ -98,19 +103,19 @@ public class VehicleTestingStationPage extends Page {
         return motTestRecentCertificatesLink.isDisplayed();
     }
 
-    public boolean isTesterDisplayed(String id, String name){
+    public boolean isTesterDisplayed(String id, String name) {
         return getTesterName(id).equals(name);
     }
 
-    public boolean isVtsAddressDisplayed(){
+    public boolean isVtsAddressDisplayed() {
         return vtsAddress.isDisplayed();
     }
 
-    public boolean isVtsEmailDisplayed(){
+    public boolean isVtsEmailDisplayed() {
         return vtsEmail.isDisplayed();
     }
 
-    public boolean isVtsPhoneNumberDisplayed(){
+    public boolean isVtsPhoneNumberDisplayed() {
         return vtsPhoneNumber.isDisplayed();
     }
 
@@ -124,7 +129,7 @@ public class VehicleTestingStationPage extends Page {
 
     public boolean isActiveMotTestDisplayed(String vehicleRegistrationNumber) {
         return driver.findElement(By.linkText(vehicleRegistrationNumber)).getText()
-                .contains(vehicleRegistrationNumber);
+                     .contains(vehicleRegistrationNumber);
     }
 
     public TestShortSummaryPage clickOnActiveTest(String regNum) {
@@ -143,6 +148,11 @@ public class VehicleTestingStationPage extends Page {
 
     public String verifyTwoPersonTestLaneValueDisplayed() {
         return twoPersonTestLaneValue.getText();
+    }
+
+    public String getPageHeader() {
+        System.out.print(pageHeader.getText());
+        return pageHeader.getText();
     }
 
     public String verifyRiskAssesmentScore() {
@@ -172,14 +182,16 @@ public class VehicleTestingStationPage extends Page {
         return new SiteAssessmentPage(driver);
     }
 
-    public String getAuthorisedExaminer(){
+    public String getAuthorisedExaminer() {
         return authorisedExaminer.getText();
     }
 
-    public String getVtsNumber(){
-    return vtsNumber.getText();}
+    public String getVtsNumber() {
+        return vtsNumber.getText();
+    }
 
-    public String getVtsName(){
-        return vtsName.getText();}
+    public String getVtsName() {
+        return vtsName.getText();
+    }
 }
 

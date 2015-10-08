@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.support.PageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
+import uk.gov.dvsa.ui.elements.Breadcrumb;
 import uk.gov.dvsa.ui.pages.exception.PhpInlineErrorVerifier;
 
 public abstract class Page {
@@ -21,6 +22,11 @@ public abstract class Page {
         return driver.findElement(title).getText();
     }
 
-    protected abstract boolean selfVerify();
-}
+    public Breadcrumb getBreadcrumb() { return new Breadcrumb(driver); }
 
+    protected abstract boolean selfVerify();
+
+    @Override public String toString() {
+        return "Page: " + getTitle();
+    }
+}

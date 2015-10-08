@@ -14,6 +14,9 @@ public class VehicleSearchPage extends Page {
 
     public static final String path = "/vehicle-search";
     private static final String PAGE_TITLE = "Find a vehicle";
+    public static final String TRAINING_TEST_PATH = "/training-test-vehicle-search";
+
+    @FindBy(className = "content-header__type") private WebElement pageHeader;
 
     @FindBy(id = "vin-info") private WebElement vinInfo;
 
@@ -135,5 +138,9 @@ public class VehicleSearchPage extends Page {
 
     public  String getSearchResultMessage() {
         return mainMessage.getText();
+    }
+
+    public String getPageHeader() {
+        return pageHeader.getText();
     }
 }

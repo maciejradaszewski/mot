@@ -3,7 +3,6 @@ package uk.gov.dvsa.domain.navigation;
 import org.joda.time.DateTime;
 import org.openqa.selenium.Cookie;
 
-import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.CookieService;
@@ -162,7 +161,6 @@ public class PageNavigator {
 
     public AuthorisedExaminerViewPage goToAuthorisedExaminerPage(User user, String path, String aeId) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, String.format(path, aeId));
-
         return new AedmAuthorisedExaminerViewPage(driver);
     }
 
@@ -260,6 +258,12 @@ public class PageNavigator {
         driver.navigateToPath(CreateAnAccountPage.PATH);
 
         return new CreateAnAccountPage(driver);
+    }
+
+    public VehicleSearchPage goToTrainingTestVehicleSearchPage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.TRAINING_TEST_PATH);
+
+        return new VehicleSearchPage(driver);
     }
 
     public LoginPage goToLoginPage() throws IOException {
