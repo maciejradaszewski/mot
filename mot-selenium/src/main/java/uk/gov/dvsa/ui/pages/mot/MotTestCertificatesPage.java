@@ -12,8 +12,8 @@ import java.util.List;
 public class MotTestCertificatesPage extends Page {
 
     public static final String path = "/mot-test-certificates";
-    private static final String PAGE_TITLE = "MOT testing\n" +
-            "MOT test certificates";
+    public static final String PAGE_TITLE = "MOT testing";
+    public static final String PAGE_HEADER = "MOT test certificates";
     private int waitingPeriodInSeconds = 30;
     private int refreshEveryTimeout = 5;
     private String emailLinkText = "Email";
