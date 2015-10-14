@@ -10,6 +10,7 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.FeaturesService;
+import uk.gov.dvsa.helper.ConfigHelper;
 import uk.gov.dvsa.ui.BaseTest;
 
 import java.io.IOException;
@@ -38,23 +39,14 @@ public class MotTestCertificateForTradeRolesTest extends BaseTest {
 
     @Test(groups = {"Regression","BVT"})
     public void theSameVtsTradeRoleUserSeeCertificateSuccessfully() throws IOException {
-        isJasperAsyncEnabled();
+        ConfigHelper.isJasperAsyncEnabled();
         motApi.createTest(tester, testSite.getId(), vehicle, TestOutcome.PASSED, 14000, DateTime.now());
         verifyVehicle(tester, "tester");
         verifyVehicle(siteManager, "manager");
         verifyVehicle(siteAdmin, "admin");
     }
 
-    private void isJasperAsyncEnabled() throws IOException {
-        if (!service.getToggleValue("jasper.async")) {
-            throw new SkipException("Jasper Async not Enabled");
-        }
-    }
-
     private void verifyVehicle(User user, String userRole) throws IOException {
-
-        String aaa = vehicle.getMakeModel();
-
         Boolean isVehicleCorrect = pageNavigator.gotoHomePage(user)
                 .selectRandomVts()
                 .clickOnMotTestRecentCertificatesLink()

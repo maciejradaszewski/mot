@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.FeaturesService;
+import uk.gov.dvsa.helper.ConfigHelper;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
@@ -23,7 +24,7 @@ public class JasperSyncServiceTest extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"}, expectedExceptions = NoSuchElementException.class)
     public void showAsyncHeaderNotShownOnHomePage() throws IOException {
-        isJasperAsyncEnabled();
+        ConfigHelper.isJasperAsyncEnabled();
 
         //When I view my HomePage as a tester
         VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.gotoHomePage(userData.createTester(1))
@@ -35,7 +36,7 @@ public class JasperSyncServiceTest extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"})
     public void printButtonIsDisplayed() throws IOException, URISyntaxException {
-        isJasperAsyncEnabled();
+        ConfigHelper.isJasperAsyncEnabled();
 
         //When I perform an MOT test as a tester
         User tester = userData.createTester(1);
@@ -54,11 +55,5 @@ public class JasperSyncServiceTest extends BaseTest {
         motUI.certificatePage(userData.createTester(1));
 
         //Then I should get a Page not Found Exception
-    }
-
-    private void isJasperAsyncEnabled() throws IOException {
-        if (service.getToggleValue("jasper.async")) {
-            throw new SkipException("Jasper Async Enabled");
-        }
     }
 }

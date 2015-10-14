@@ -39,7 +39,7 @@ public class ChangePasswordTests extends BaseTest {
         String password = "Password2";
         changePasswordFromProfilePage.enterNewPassword(password);
         changePasswordFromProfilePage.confirmNewPassword(password);
-        profilePage = changePasswordFromProfilePage.clickSubmitButton();
+        profilePage = changePasswordFromProfilePage.clickSubmitButton(ProfilePage.class);
 
         //Then the password is changed and the success message is displayed
         assertThat(profilePage.isSuccessMessageDisplayed(), is(true));
@@ -58,8 +58,7 @@ public class ChangePasswordTests extends BaseTest {
 
     }
 
-    @Test(groups = {
-            "BVT, regression"}, description = "VM-7668, Tester changes password for the same one")
+    @Test(groups = {"BVT, regression"}, description = "VM-7668, Tester changes password for the same one")
     public void testerChangesPasswordForSameOne() throws IOException {
 
         //Given I am logged in as a tester and I am on the password change page
@@ -70,7 +69,7 @@ public class ChangePasswordTests extends BaseTest {
         changePasswordFromProfilePage.enterOldPassword(tester.getPassword());
         changePasswordFromProfilePage.enterNewPassword(tester.getPassword());
         changePasswordFromProfilePage.confirmNewPassword(tester.getPassword());
-        changePasswordFromProfilePage.clickSubmitButtonWhenError();
+        changePasswordFromProfilePage.clickSubmitButton(ChangePasswordFromProfilePage.class);
 
         //Then The error message is displayed
         String error = "New password - password was found in the password history";
@@ -79,8 +78,8 @@ public class ChangePasswordTests extends BaseTest {
                 .equals(String.format(errorMessageBase + error)));
     }
 
-    @Test(groups = {
-            "BVT, regression"}, description = "VM-7668, Tester tries to put new password but does not match with confirm password")
+    @Test(groups = {"BVT, regression"},
+            description = "VM-7668, Tester tries to put new password but does not match with confirm password")
     public void newPasswordAndOldPasswordDoesNotMatch() throws IOException {
 
         //Given I am logged in as a tester and I am on the password change page
@@ -91,7 +90,7 @@ public class ChangePasswordTests extends BaseTest {
         changePasswordFromProfilePage.enterOldPassword(tester.getPassword());
         changePasswordFromProfilePage.enterNewPassword("Password2");
         changePasswordFromProfilePage.confirmNewPassword("Password3");
-        changePasswordFromProfilePage.clickSubmitButtonWhenError();
+        changePasswordFromProfilePage.clickSubmitButton(ChangePasswordFromProfilePage.class);
 
         //Then The error message is displayed
         String error = "Re-type your new password - the passwords you have entered don't match";
@@ -100,8 +99,8 @@ public class ChangePasswordTests extends BaseTest {
                 .equals(String.format(errorMessageBase + error)));
     }
 
-    @Test(groups = {
-            "BVT, regression"}, description = "VM-7668, Tester tries change password that is not according to password policy")
+    @Test(groups = {"BVT, regression"},
+            description = "VM-7668, Tester tries change password that is not according to password policy")
     public void testerTriesToChangePasswordThatValidatesPolicy() throws IOException {
 
         //Given I am logged in as a tester and I am on the password change page
@@ -112,7 +111,7 @@ public class ChangePasswordTests extends BaseTest {
         changePasswordFromProfilePage.enterOldPassword(tester.getPassword());
         changePasswordFromProfilePage.enterNewPassword("pass");
         changePasswordFromProfilePage.confirmNewPassword("pass");
-        changePasswordFromProfilePage.clickSubmitButtonWhenError();
+        changePasswordFromProfilePage.clickSubmitButton(ChangePasswordFromProfilePage.class);
 
         //Then The error message is displayed
         String error1 = "New password - must be 8 or more characters long";
@@ -130,7 +129,7 @@ public class ChangePasswordTests extends BaseTest {
         //When I try put empty old password
         changePasswordFromProfilePage.enterNewPassword("Password1");
         changePasswordFromProfilePage.confirmNewPassword("Password1");
-        changePasswordFromProfilePage.clickSubmitButtonWhenError();
+        changePasswordFromProfilePage.clickSubmitButton(ChangePasswordFromProfilePage.class);
 
         //Then The error message is displayed
         String error = "Current password - you must enter your current password";
@@ -139,8 +138,7 @@ public class ChangePasswordTests extends BaseTest {
                 .equals(String.format(errorMessageBase + error)));
     }
 
-    @Test(groups = {
-            "BVT, regression"}, description = "VM-7668, Tester leaves empty fields and click submit")
+    @Test(groups = {"BVT, regression"}, description = "VM-7668, Tester leaves empty fields and click submit")
     public void testerLeavesEmptyFields() throws IOException {
 
         //Given I am logged in as a tester and I am on the password change page
@@ -148,7 +146,7 @@ public class ChangePasswordTests extends BaseTest {
                 pageNavigator.goToPasswordChangeFromProfilePage(tester);
 
         //When I leave empty fields and click submit
-        changePasswordFromProfilePage.clickSubmitButtonWhenError();
+        changePasswordFromProfilePage.clickSubmitButton(ChangePasswordFromProfilePage.class);
 
         //Then The error message is displayed
         assertThat(changePasswordFromProfilePage.isErrorMessageWindowDisplayed(), is(true));
@@ -159,5 +157,4 @@ public class ChangePasswordTests extends BaseTest {
         Assert.assertTrue(changePasswordFromProfilePage.getErrorMessage()
                 .contains("Current password - you must enter your current password"));
     }
-
 }
