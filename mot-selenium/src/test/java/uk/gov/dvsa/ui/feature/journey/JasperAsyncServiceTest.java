@@ -1,14 +1,13 @@
 package uk.gov.dvsa.ui.feature.journey;
 
 import org.testng.SkipException;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.FeaturesService;
 import uk.gov.dvsa.helper.AssertionHelper;
+import uk.gov.dvsa.helper.ConfigHelper;
 import uk.gov.dvsa.ui.BaseTest;
-import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.io.IOException;
@@ -22,7 +21,7 @@ public class JasperAsyncServiceTest extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"})
     public void showAsyncHeaderOnHomePage() throws IOException {
-        isJasperAsyncEnabled();
+        ConfigHelper.isJasperAsyncEnabled();
 
         //When I view my HomePage as a tester
         VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.gotoHomePage(userData.createTester(1))
@@ -34,7 +33,7 @@ public class JasperAsyncServiceTest extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"})
     public void showAsyncSummaryPageAndCertificateListTest() throws IOException, URISyntaxException {
-        isJasperAsyncEnabled();
+        ConfigHelper.isJasperAsyncEnabled();
 
         //When I perform an MOT test as a tester
         User tester = userData.createTester(1);
@@ -47,11 +46,5 @@ public class JasperAsyncServiceTest extends BaseTest {
 
         //And I can click the Mot certificate Link to the Certificates page.
         motUI.normalTest.certificatePage();
-    }
-
-    private void isJasperAsyncEnabled() throws IOException {
-        if (!service.getToggleValue("jasper.async")) {
-            throw new SkipException("Jasper Async not Enabled");
-        }
     }
 }

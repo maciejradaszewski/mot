@@ -10,6 +10,7 @@ import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.FeaturesService;
 import uk.gov.dvsa.ParallelExecutor;
+import uk.gov.dvsa.helper.ConfigHelper;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.mot.MotTestCertificatesPage;
 
@@ -26,7 +27,7 @@ public class MotTestCertificatePageTest extends BaseTest {
 
     @Test(groups = {"Regression"}, description = "VM-11876")
     public void paginationButtonCheck() throws Exception {
-        isJasperAsyncEnabled();
+        ConfigHelper.isJasperAsyncEnabled();
         int iterations = 21;
         int threadPool = 5;
         int terminationTimeout = 100;
@@ -67,11 +68,5 @@ public class MotTestCertificatePageTest extends BaseTest {
         motTestCertificatesPage.clickOnPrevPaginationButton();
         assertThat("There supposed to be a pagination button",
                 motTestCertificatesPage.isPaginationButtonNextVisible(), is(true));
-    }
-
-    private void isJasperAsyncEnabled() throws IOException {
-        if (!service.getToggleValue("jasper.async")) {
-            throw new SkipException("Jasper Async not Enabled");
-        }
     }
 }

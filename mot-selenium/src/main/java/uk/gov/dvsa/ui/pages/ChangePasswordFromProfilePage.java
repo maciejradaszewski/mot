@@ -2,6 +2,7 @@ package uk.gov.dvsa.ui.pages;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
@@ -47,14 +48,9 @@ public class ChangePasswordFromProfilePage extends Page {
         return new ProfilePage(driver);
     }
 
-    public ProfilePage clickSubmitButton() {
+    public <T extends Page> T clickSubmitButton(Class<T> clazz) {
         submitButton.click();
-        return new ProfilePage(driver);
-    }
-
-    public ChangePasswordFromProfilePage clickSubmitButtonWhenError(){
-        submitButton.click();
-        return this;
+        return MotPageFactory.newPage(driver, clazz);
     }
 
     public boolean isErrorMessageWindowDisplayed() {
@@ -64,6 +60,4 @@ public class ChangePasswordFromProfilePage extends Page {
     public String getErrorMessage() {
         return errorMassagesWindow.getText();
     }
-
-
 }
