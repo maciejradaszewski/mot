@@ -234,6 +234,31 @@ class MotTestContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Then /^I can search for Rfr$/
+     */
+    public function iCanSearchForRfr()
+    {
+        $response = $this->reasonForRejection->search(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getMotTestNumber(),
+            "brake", 0, 2
+        );
+        PHPUnit::assertSame(200, $response->getStatusCode());
+    }
+
+    /**
+     * @Then /^I can list child test items selector$/
+     */
+    public function iCanListChildTestItemSelector()
+    {
+        $response = $this->reasonForRejection->listTestItemSelectors(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getMotTestNumber()
+        );
+        PHPUnit::assertSame(200, $response->getStatusCode());
+    }
+
+    /**
      * @When /^the Tester Fails the Mot Test$/
      */
     public function theTesterFailsTheMotTest()
@@ -1012,5 +1037,44 @@ class MotTestContext implements Context, SnippetAcceptingContext
         while($then + $howLong > microtime(true)) {
             echo '.';
         }
+    }
+
+    /**
+     * @Given /^I can add PRS to test$/
+     */
+    public function iCanAddPRSToTest()
+    {
+        $response = $this->reasonForRejection->addPrs(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getMotTestNumber()
+        );
+
+        PHPUnit::assertSame(200, $response->getStatusCode());
+    }
+
+    /**
+     * @Given /^I can add a Failure to test$/
+     */
+    public function iCanAddAFailureToTest()
+    {
+        $response = $this->reasonForRejection->addFailure(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getMotTestNumber()
+        );
+
+        PHPUnit::assertSame(200, $response->getStatusCode());
+    }
+
+    /**
+     * @Given /^I can edit previously added Rfr$/
+     */
+    public function iCanEditPreviouslyAddedRfr()
+    {
+        $response = $this->reasonForRejection->editRFR(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getMotTestNumber()
+        );
+
+        PHPUnit::assertSame(200, $response->getStatusCode());
     }
 }

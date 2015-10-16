@@ -11,6 +11,7 @@ use TestSupport\Service\AreaOffice1Service;
 use TestSupport\Service\AreaOffice2Service;
 use TestSupport\Service\DVLAOperativeService;
 use TestSupport\Service\FinanceUserService;
+use TestSupport\Service\GVTSTesterService;
 use TestSupport\Service\VM10619RoleManagementUpgradeService;
 use TestSupport\Service\VtsService;
 use TestSupport\Service\AEService;
@@ -77,6 +78,8 @@ class TestSupportHelper
                 return $this->getFinanceUserService();
             case 'User':
                 return $this->getUserService();
+            case 'GVTS Tester':
+                return $this->getGVTSTesterService();
         }
         throw new \Exception("Unknown service for role '{$userRole}'");
     }
@@ -114,6 +117,15 @@ class TestSupportHelper
     public function getFinanceUserService()
     {
         return $this->getServiceManager()->get(FinanceUserService::class);
+    }
+
+    /**
+     * Retrieve GVTSTesterService
+     * @return \TestSupport\Service\GVTSTesterService
+     */
+    public function getGVTSTesterService()
+    {
+        return $this->getServiceManager()->get(GVTSTesterService::class);
     }
 
     /**

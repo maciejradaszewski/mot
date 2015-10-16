@@ -30,4 +30,5 @@ class Role
     const USER = 'USER';
     const VEHICLE_EXAMINER = 'VEHICLE-EXAMINER';
     const FINANCE = 'FINANCE';
+    const GVTS_TESTER = 'GVTS-TESTER';
 }
