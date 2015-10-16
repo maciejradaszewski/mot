@@ -44,7 +44,7 @@ abstract class AbstractMutableRepository extends EntityRepository
     /**
      * @param $entity
      */
-    public function flush($entity)
+    public function flush($entity = null)
     {
         $this->getEntityManager()->flush($entity);
     }

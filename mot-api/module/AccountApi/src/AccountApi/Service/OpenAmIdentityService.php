@@ -5,8 +5,10 @@ namespace AccountApi\Service;
 use AccountApi\Service\Exception\OpenAmChangePasswordException;
 use Dvsa\OpenAM\Model\OpenAMExistingIdentity;
 use Dvsa\OpenAM\Model\OpenAMLoginDetails;
-use Dvsa\OpenAM\OpenAMClient;
+use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaCommonApi\Service\Exception\ServiceException;
+use DvsaEntities\Repository\PersonRepository;
+use PersonApi\Service\PasswordExpiryNotificationService;
 
 /**
  * Wrapper for the OpenAMClient service with administrator credentials to perform password changes and account
@@ -15,7 +17,7 @@ use DvsaCommonApi\Service\Exception\ServiceException;
 class OpenAmIdentityService
 {
     /**
-     * @var OpenAMClient
+     * @var OpenAMClientInterface
      */
     private $openAMClient;
 
@@ -25,13 +27,23 @@ class OpenAmIdentityService
     private $realm;
 
     /**
-     * @param OpenAMClient $openAMClient
-     * @param string       $realm
+     * @var PasswordExpiryNotificationService
      */
-    public function __construct(OpenAMClient $openAMClient, $realm)
-    {
+    private $passwordExpiryNotificationService;
+
+    /**
+     * @param OpenAMClientInterface $openAMClient
+     * @param PasswordExpiryNotificationService $passwordExpiryNotificationService
+     * @param $realm
+     */
+    public function __construct(
+        OpenAMClientInterface $openAMClient,
+        PasswordExpiryNotificationService $passwordExpiryNotificationService,
+        $realm
+    ) {
         $this->openAMClient = $openAMClient;
         $this->realm        = $realm;
+        $this->passwordExpiryNotificationService = $passwordExpiryNotificationService;
     }
 
     /**
@@ -48,6 +60,8 @@ class OpenAmIdentityService
         } catch (\Exception $e) {
             throw new OpenAmChangePasswordException($e->getMessage(), ServiceException::DEFAULT_STATUS_CODE, $e);
         }
+
+        $this->passwordExpiryNotificationService->remove($username);
     }
 
     /**

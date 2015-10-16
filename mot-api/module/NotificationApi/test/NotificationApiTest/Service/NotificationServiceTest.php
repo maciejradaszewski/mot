@@ -2,7 +2,6 @@
 namespace NotificationApiTest\Service;
 
 use Doctrine\ORM\EntityManager;
-use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\MockHandler;
 use DvsaCommonTest\TestUtils\XMock;
@@ -12,6 +11,7 @@ use DvsaEntities\Entity\NotificationTemplateAction;
 use DvsaEntities\Entity\Notification;
 use DvsaEntities\Entity\NotificationTemplate;
 use DvsaEntities\Entity\Person;
+use DvsaEntities\Repository\NotificationRepository;
 use NotificationApi\Service\BusinessLogic\PositionInOrganisationNominationHandler;
 use NotificationApi\Service\NotificationService;
 use NotificationApi\Service\Validator\NotificationValidator;
@@ -36,7 +36,7 @@ class NotificationServiceTest extends AbstractServiceTestCase
         $mocks = $this->prepSoNotificationGetUsesNotificationAndPersonIdValues(999, 123, false);
 
         $notificationService = new NotificationService(
-            $mocks->serviceManager, $mocks->validator
+            $mocks->serviceManager, $mocks->validator, $mocks->notificationRepository
         );
 
         // We are userid: 999 so this should throw an exception
@@ -48,7 +48,7 @@ class NotificationServiceTest extends AbstractServiceTestCase
     {
         $mocks = $this->prepSoNotificationGetUsesNotificationAndPersonIdValues(999, null);
         $notificationService = new NotificationService(
-            $mocks->serviceManager, $mocks->validator
+            $mocks->serviceManager, $mocks->validator, $mocks->notificationRepository
         );
         $notificationService->get(123);
     }
@@ -56,7 +56,7 @@ class NotificationServiceTest extends AbstractServiceTestCase
     public function test_get_notification_works_when_user_can_see_same_id()
     {
         $mocks = $this->prepSoNotificationGetUsesNotificationAndPersonIdValues(42, 42);
-        $notificationService = new NotificationService($mocks->serviceManager, $mocks->validator);
+        $notificationService = new NotificationService($mocks->serviceManager, $mocks->validator, $mocks->notificationRepository);
         $notification = $notificationService->get(42);
         $this->assertEquals(42, $notification->getId());
     }
@@ -65,7 +65,7 @@ class NotificationServiceTest extends AbstractServiceTestCase
     {
         $mocks = $this->prepSoNotificationGetUsesNotificationAndPersonIdValues(123, 123);
         $notificationService = new NotificationService(
-            $mocks->serviceManager, $mocks->validator
+            $mocks->serviceManager, $mocks->validator, $mocks->notificationRepository
         );
         // We are userid: 999 so this should throw an exception
         $notificationService->get(123);
@@ -76,7 +76,7 @@ class NotificationServiceTest extends AbstractServiceTestCase
     {
         $mocks = $this->prepSoNotificationGetUsesNotificationAndPersonIdValues(999, 123);
         $notificationService = new NotificationService(
-            $mocks->serviceManager, $mocks->validator
+            $mocks->serviceManager, $mocks->validator, $mocks->notificationRepository
         );
         // We are userid: 999 so this should throw an exception
         $notificationService->get(123);
@@ -106,25 +106,21 @@ class NotificationServiceTest extends AbstractServiceTestCase
             ->with(EntityManager::class)
             ->willReturn($mockEntityManager);
 
-        $mockRepo = XMock::of(NotificationService::class, ['findBy']);
-        $this->mockAuthorisation($mockServiceManager);
+        $authorisation = $this->mockAuthorisation();
 
-        // now make it return some data when called as expected...
-        $mockEntityManager
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(Notification::class)
-            ->willReturn($mockRepo);
-        $mockRepo->expects($this->once())
-            ->method('findBy')
-            ->with(
-                ['recipient' => $mockIdentity],
-                ['readOn' => 'ASC', 'createdOn' => 'DESC', 'id' => 'DESC']
-            )
+        $mockServiceManager
+            ->expects($this->at(1))
+            ->method('get')
+            ->willReturn($authorisation);
+
+        $repository = XMock::of(NotificationRepository::class);
+        $repository
+            ->expects($this->any())
+            ->method("findAllByPersonId")
             ->willReturn(['blah blah', 'and more blah']);
 
         $mockValidator = $this->getMockWithDisabledConstructor(NotificationValidator::class);
-        $notificationService = new NotificationService($mockServiceManager, $mockValidator);
+        $notificationService = new NotificationService($mockServiceManager, $mockValidator, $repository);
         $result = $notificationService->getAllByPersonId($mockIdentity->getUserId());
         $this->assertEquals(['blah blah', 'and more blah'], $result);
     }
@@ -135,14 +131,8 @@ class NotificationServiceTest extends AbstractServiceTestCase
         $mocks = $this->prepSoNotificationGetUsesNotificationAndPersonIdValues(123, $notificationId);
 
         $notificationService = new NotificationService(
-            $mocks->serviceManager, $mocks->validator
+            $mocks->serviceManager, $mocks->validator, $mocks->notificationRepository
         );
-        $mocks->entityManager->expects($this->once())
-            ->method('persist')
-            ->with($mocks->notification);
-
-        $mocks->entityManager->expects($this->once())
-            ->method('flush');
 
         $mocks->notification->setReadOn(null);
         $notificationService->markAsRead($notificationId);
@@ -158,14 +148,8 @@ class NotificationServiceTest extends AbstractServiceTestCase
         $mocks = $this->prepSoNotificationGetUsesNotificationAndPersonIdValues(123, $notificationId);
 
         $notificationService = new NotificationService(
-            $mocks->serviceManager, $mocks->validator
+            $mocks->serviceManager, $mocks->validator, $mocks->notificationRepository
         );
-        $mocks->entityManager->expects($this->once())
-            ->method('persist')
-            ->with($mocks->notification);
-
-        $mocks->entityManager->expects($this->once())
-            ->method('flush');
 
         $mocks->notification->setReadOn(null);
         $notificationService->markAsRead($notificationId);
@@ -180,7 +164,7 @@ class NotificationServiceTest extends AbstractServiceTestCase
         $mocks = $this->prepSoNotificationGetUsesNotificationAndPersonIdValues(123, $notificationId);
         $mocks->notification = $originalNotification;
         $notificationService = new NotificationService(
-            $mocks->serviceManager, $mocks->validator
+            $mocks->serviceManager, $mocks->validator, $mocks->notificationRepository
         );
         // ensure a second passed to make timestamps stale...
         sleep(1);
@@ -212,7 +196,7 @@ class NotificationServiceTest extends AbstractServiceTestCase
             ],
         ];
 
-        $notificationService = new NotificationService($mockServiceManager, $mockValidator);
+        $notificationService = new NotificationService($mockServiceManager, $mockValidator, XMock::of(NotificationRepository::class));
         /** @var \DvsaEntities\Entity\Person $mockIdentity */
         $mockIdentity = XMock::of('\DvsaEntities\Entity\Person', ['getUserId', 'getId']);
 
@@ -280,7 +264,7 @@ class NotificationServiceTest extends AbstractServiceTestCase
                 )
             );
 
-        $notificationService = new NotificationService($mockServiceManager, $mockValidator);
+        $notificationService = new NotificationService($mockServiceManager, $mockValidator, $mocks->notificationRepository);
 
         $mockEntityManager->expects($this->any())
             ->method('find')
@@ -334,7 +318,7 @@ class NotificationServiceTest extends AbstractServiceTestCase
                 )
             );
 
-        $notificationService = new NotificationService($mockServiceManager, $mockValidator);
+        $notificationService = new NotificationService($mockServiceManager, $mockValidator, $mocks->notificationRepository);
 
         $actionLookup = new NotificationActionLookup();
         $actionLookup->setAction(NotificationActionLookup::ORGANISATION_NOMINATION_ACCEPTED);
@@ -349,47 +333,10 @@ class NotificationServiceTest extends AbstractServiceTestCase
 
         $mocks->notification->setNotificationTemplate($notificationTemplate);
 
-
-        $mockEntityManager->expects($this->any())
-            ->method('find')
-            ->will(
-                $this->returnCallback(
-                    function ($class, $id) use ($mocks) {
-                        switch ($class) {
-                            case Notification::class:
-                                return $mocks->notification;
-                        }
-                        return null;
-                    }
-                )
-            );
-
-
         $notificationService->action(
             $notificationId,
             ['action' => PositionInOrganisationNominationHandler::ACCEPTED]
         );
-    }
-
-    /**
-     * Given a notification ID and a callback, this function
-     */
-    private function createMockedServiceThatReturnsOneEntityById($id, callable $callback = null)
-    {
-        $expectedResult = $this->createNotification();
-
-        $mocks = $this->mockEntityManagerForFindNotificationById(
-            $id,
-            function () use ($expectedResult) {
-                return $this->returnValue($expectedResult);
-            }
-        );
-
-        if (null !== $callback) {
-            $callback($expectedResult, $mocks);
-        }
-
-        return $this->constructNotificationServiceWithMocks($mocks);
     }
 
     /**
@@ -423,7 +370,8 @@ class NotificationServiceTest extends AbstractServiceTestCase
     {
         return new NotificationService(
             $mocks->serviceManager,
-            new NotificationValidator()
+            new NotificationValidator(),
+            $mocks->notificationRepository
         );
     }
 
@@ -477,10 +425,6 @@ class NotificationServiceTest extends AbstractServiceTestCase
 
         // Ensure first call to get() is mocked entity-manager
         $mockEntityManager = $this->getMockEntityManager();
-        $mockServiceManager->expects($this->at(0))
-            ->method('get')
-            ->with(EntityManager::class)
-            ->willReturn($mockEntityManager);
 
         // *This* Person is the USER SESSION (identity) entity
         /** @var \DvsaEntities\Entity\Person $mockIdentity */
@@ -493,7 +437,6 @@ class NotificationServiceTest extends AbstractServiceTestCase
         /** @var \DvsaEntities\Entity\Person $mockRecipient */
         $dataNotification = new Notification();
 
-        $this->mockAuthorisation($mockServiceManager, $authorised);
         // IFF we have a notification ID then we need to set the way for a few calls
         // to be made to the underlying repository etc.
         if ($nid && $authorised === true) {
@@ -505,12 +448,6 @@ class NotificationServiceTest extends AbstractServiceTestCase
             $dataNotification->setId($nid);
             $dataNotification->setRecipient($mockRecipient);
 
-            // ...finding the notification...
-            $mockEntityManager->expects($this->once())
-                ->method('find')
-                ->with(Notification::class, $nid)
-                ->willReturn($dataNotification);
-
             // ... getting the user id to see if they match
             $mockIdentity->expects($this->once())->method('getUserId')->willReturn($pid);
 
@@ -518,13 +455,31 @@ class NotificationServiceTest extends AbstractServiceTestCase
             $mockAuthService->expects($this->once())
                 ->method('getIdentity')
                 ->willReturn($mockIdentity);
-
-            // .. prep the authentication service so it returns out person...
-            $mockServiceManager->expects($this->at(2))
-                ->method('get')
-                ->with('DvsaAuthenticationService')
-                ->willReturn($mockAuthService);
         }
+
+        $mockAuthorisationService = $this->mockAuthorisation($authorised);
+
+        $mockServiceManager->expects($this->any())
+            ->method('get')
+            ->willReturnCallback(function ($serviceName) use ($mockEntityManager, $mockAuthService, $mockAuthorisationService) {
+                    switch ($serviceName) {
+                        case EntityManager::class:
+                            return $mockEntityManager;
+                        case 'DvsaAuthenticationService':
+                            return $mockAuthService;
+                        case 'DvsaAuthorisationService':
+                            return $mockAuthorisationService;
+                        default:
+                            return null;
+                    }
+                }
+            );
+
+        $notificationRepository = XMock::of(NotificationRepository::class);
+        $notificationRepository
+            ->expects($this->any())
+            ->method("get")
+            ->willReturn($dataNotification);
 
         return (Object)[
             'serviceManager' => $mockServiceManager,
@@ -532,16 +487,14 @@ class NotificationServiceTest extends AbstractServiceTestCase
             'validator'      => $mockValidator,
             'authService'    => $mockAuthService,
             'person'         => $mockIdentity,
-            'notification'   => $dataNotification
+            'notification'   => $dataNotification,
+            'notificationRepository' => $notificationRepository
         ];
     }
 
-    private function mockAuthorisation($mockServiceManager, $authorised = true)
+    private function mockAuthorisation($authorised = true)
     {
         $mockAuthorisationService = XMock::of(AuthorisationServiceInterface::class, ['assertGranted']);
-        $mockServiceManager->expects($this->at(1))
-            ->method('get')
-            ->willReturn($mockAuthorisationService);
 
         if ($authorised === true) {
             $mockAuthorisationService->expects($this->any())
@@ -552,5 +505,7 @@ class NotificationServiceTest extends AbstractServiceTestCase
                 ->method('assertGranted')
                 ->willThrowException(new \DvsaCommon\Exception\UnauthorisedException('blah'));
         }
+
+        return $mockAuthorisationService;
     }
 }

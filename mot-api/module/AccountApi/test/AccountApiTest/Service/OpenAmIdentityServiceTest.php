@@ -8,6 +8,7 @@ use Dvsa\OpenAM\Model\OpenAMLoginDetails;
 use Dvsa\OpenAM\OpenAMClient;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
+use PersonApi\Service\PasswordExpiryNotificationService;
 
 class OpenAmIdentityServiceTest extends AbstractServiceTestCase
 {
@@ -29,7 +30,11 @@ class OpenAmIdentityServiceTest extends AbstractServiceTestCase
     protected function setUp()
     {
         $this->mockedOpenAmClient    = XMock::of(OpenAMClient::class, [self::MOCKED_METHOD]);
-        $this->openAmIdentityService = new OpenAmIdentityService($this->mockedOpenAmClient, self::TEST_REALM);
+        $this->openAmIdentityService = new OpenAmIdentityService(
+            $this->mockedOpenAmClient,
+            $this->createPasswordExpiryNotificationService(),
+            self::TEST_REALM
+        );
     }
 
     /**
@@ -46,7 +51,11 @@ class OpenAmIdentityServiceTest extends AbstractServiceTestCase
             ->method('updateIdentity')
             ->will($this->throwException(new OpenAMClientException('Exception message')));
 
-        $openAmIdentityService = new OpenAmIdentityService($openAmClientMock, self::TEST_REALM);
+        $openAmIdentityService = new OpenAmIdentityService(
+            $openAmClientMock,
+            $this->createPasswordExpiryNotificationService(),
+            self::TEST_REALM
+        );
         $openAmIdentityService->changePassword(self::TEST_USERNAME, self::TEST_PASSWORD);
     }
 
@@ -68,8 +77,17 @@ class OpenAmIdentityServiceTest extends AbstractServiceTestCase
             ->method('unlockAccount')
             ->willReturn(true);
 
-        $openAmIdentityService = new OpenAmIdentityService($openAmClientMock, self::TEST_REALM);
+        $openAmIdentityService = new OpenAmIdentityService(
+            $openAmClientMock,
+            $this->createPasswordExpiryNotificationService(),
+            self::TEST_REALM
+        );
 
         $this->assertTrue($openAmIdentityService->unlockAccount(self::TEST_USERNAME));
+    }
+
+    private function createPasswordExpiryNotificationService()
+    {
+        return XMock::of(PasswordExpiryNotificationService::class);
     }
 }

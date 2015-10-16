@@ -14,6 +14,7 @@ use DvsaEntities\Entity\Person;
 use NotificationApi\Dto\Notification as NotificationDto;
 use NotificationApi\Service\BusinessLogic\AbstractNotificationActionHandler;
 use NotificationApi\Service\Validator\NotificationValidator;
+use DvsaEntities\Repository\NotificationRepository;
 use Zend\ServiceManager\ServiceManager;
 
 /**
@@ -33,14 +34,19 @@ class NotificationService extends AbstractService
     /** @var  $authService AuthorisationServiceInterface */
     private $authService;
 
+    /** @var  NotificationRepository */
+    private $notificationRepository;
+
     public function __construct(
         ServiceManager $serviceManager,
-        NotificationValidator $validator
+        NotificationValidator $validator,
+        NotificationRepository $notificationRepository
     ) {
         parent::__construct($serviceManager->get(EntityManager::class));
         $this->validator = $validator;
         $this->serviceManager = $serviceManager;
         $this->authService = $serviceManager->get('DvsaAuthorisationService');
+        $this->notificationRepository = $notificationRepository;
     }
 
     /**
@@ -72,16 +78,13 @@ class NotificationService extends AbstractService
         $notification->setRecipient($person)
                      ->setNotificationTemplate($template);
 
-        $this->entityManager->persist($notification);
-
         foreach ($data['fields'] as $field => $value) {
             $notificationField = new NotificationField();
             $notificationField->setField($field)->setValue($value)->setNotification($notification);
             $notification->addField($notificationField);
-            $this->entityManager->persist($notificationField);
         }
 
-        $this->entityManager->flush();
+        $this->notificationRepository->save($notification);
 
         return $notification->getId();
     }
@@ -96,12 +99,8 @@ class NotificationService extends AbstractService
         $this->authService->assertGranted(PermissionInSystem::NOTIFICATION_DELETE);
         $notification = $this->get($id);
 
-        foreach ($notification->getFields() as $field) {
-            $this->entityManager->remove($field);
-        }
-
-        $this->entityManager->remove($notification);
-        $this->entityManager->flush();
+        $this->notificationRepository->remove($notification);
+        $this->notificationRepository->flush();
 
         return true;
     }
@@ -120,7 +119,7 @@ class NotificationService extends AbstractService
     public function get($id)
     {
         $this->authService->assertGranted(PermissionInSystem::NOTIFICATION_READ);
-        $notification = $this->findOrThrowException(Notification::class, $id, Notification::ENTITY_NAME);
+        $notification = $this->notificationRepository->get($id);
         $service = $this->serviceManager->get('DvsaAuthenticationService');
         $identity = $service->getIdentity();
         $recipientId = $notification->getRecipient();
@@ -151,10 +150,7 @@ class NotificationService extends AbstractService
         $this->authService->assertGranted(PermissionInSystem::NOTIFICATION_READ);
         $person = $this->findOrThrowException(Person::class, $personId, Person::ENTITY_NAME);
 
-        return $this->entityManager->getRepository(Notification::class)->findBy(
-            ['recipient' => $person],
-            ['readOn' => 'ASC', 'createdOn' => 'DESC', 'id' => 'DESC']
-        );
+        return $this->notificationRepository->findAllByPersonId($person->getId());
     }
 
     /**
@@ -170,8 +166,7 @@ class NotificationService extends AbstractService
 
         if (null === $notification->getReadOn()) {
             $notification->setReadOn(new \DateTime());
-            $this->entityManager->persist($notification);
-            $this->entityManager->flush();
+            $this->notificationRepository->save($notification);
         }
 
         return $notification;

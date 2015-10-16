@@ -2,7 +2,9 @@
 
 namespace Account;
 
+use Account\Factory\Service\ExpiredPasswordServiceFactory;
 use Account\Service\ClaimAccountService;
+use Account\Service\ExpiredPasswordService;
 use Account\Service\PasswordResetService;
 use Account\Service\SecurityQuestionService;
 use DvsaCommon\Obfuscate\Factory\ParamObfuscatorFactory;
@@ -33,7 +35,8 @@ class Module
                 ClaimAccountService::class     => \Account\Factory\Service\ClaimAccountServiceFactory::class,
                 PasswordResetService::class    => \Account\Factory\Service\PasswordResetServiceFactory::class,
                 SecurityQuestionService::class => \Account\Factory\Service\SecurityQuestionServiceFactory::class,
-                ParamObfuscatorFactory::class => ParamObfuscatorFactory::class
+                ParamObfuscatorFactory::class => ParamObfuscatorFactory::class,
+                ExpiredPasswordService::class => ExpiredPasswordServiceFactory::class,
             ]
         ];
     }

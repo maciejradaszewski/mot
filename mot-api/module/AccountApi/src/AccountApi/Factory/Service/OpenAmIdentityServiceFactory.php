@@ -5,6 +5,7 @@ namespace AccountApi\Factory\Service;
 use AccountApi\Service\OpenAmIdentityService;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use Dvsa\OpenAM\Options\OpenAMClientOptions;
+use PersonApi\Service\PasswordExpiryNotificationService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -22,8 +23,8 @@ class OpenAmIdentityServiceFactory implements FactoryInterface
     {
         $openAMClient = $serviceLocator->get(OpenAMClientInterface::class);
         $realm        = $serviceLocator->get(OpenAMClientOptions::class)->getRealm();
-        $service      = new OpenAmIdentityService($openAMClient, $realm);
+        $passwordExpiryNotificationService = $serviceLocator->get(PasswordExpiryNotificationService::class);
 
-        return $service;
+        return new OpenAmIdentityService($openAMClient, $passwordExpiryNotificationService, $realm);
     }
 }

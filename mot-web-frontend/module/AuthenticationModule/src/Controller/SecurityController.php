@@ -2,6 +2,7 @@
 
 namespace Dvsa\Mot\Frontend\AuthenticationModule\Controller;
 
+use Account\Service\ExpiredPasswordService;
 use Core\Controller\AbstractDvsaActionController;
 use Dashboard\Controller\UserHomeController;
 use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\OpenAMAuthenticator;
@@ -13,7 +14,6 @@ use Dvsa\Mot\Frontend\AuthenticationModule\Service\WebAuthenticationCookieServic
 use Zend\Authentication\AuthenticationService;
 use Zend\Http\Request;
 use Zend\Session\ManagerInterface;
-use Zend\Session\SessionManager;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -59,14 +59,17 @@ class SecurityController extends AbstractDvsaActionController
      */
     private $sessionManager;
 
+    private $expiredPasswordService;
+
     /**
-     * @param Request                        $request
-     * @param OpenAMAuthenticator            $authenticator
-     * @param GotoUrlService                 $loginGotoService
-     * @param WebAuthenticationCookieService $cookieService
-     * @param IdentitySessionStateService    $identitySessionStateService
-     * @param AuthenticationService          $authenticationService
-     * @param ManagerInterface               $sessionManager
+     * @param Request                               $request
+     * @param OpenAMAuthenticator                   $authenticator
+     * @param GotoUrlService                        $loginGotoService
+     * @param WebAuthenticationCookieService        $cookieService
+     * @param IdentitySessionStateService           $identitySessionStateService
+     * @param AuthenticationService                 $authenticationService
+     * @param ManagerInterface                      $sessionManager
+     * @param ExpiredPasswordService                $expiredPasswordService
      */
     public function __construct(
         Request $request,
@@ -75,7 +78,8 @@ class SecurityController extends AbstractDvsaActionController
         WebAuthenticationCookieService $cookieService,
         IdentitySessionStateService $identitySessionStateService,
         AuthenticationService $authenticationService,
-        ManagerInterface $sessionManager
+        ManagerInterface $sessionManager,
+        ExpiredPasswordService $expiredPasswordService
     ) {
         $this->request = $request;
         $this->authenticator = $authenticator;
@@ -84,6 +88,7 @@ class SecurityController extends AbstractDvsaActionController
         $this->identitySessionStateService = $identitySessionStateService;
         $this->authenticationService = $authenticationService;
         $this->sessionManager = $sessionManager;
+        $this->expiredPasswordService = $expiredPasswordService;
     }
 
     /**
@@ -162,6 +167,8 @@ class SecurityController extends AbstractDvsaActionController
         $this->initializeSessionOnLogon();
         /* @var OpenAMAuthSuccess $result */
         $this->authenticationCookieService->setUpCookie($result->getToken());
+
+        $this->expiredPasswordService->sentExpiredPasswordNotificationIfNeeded($result->getToken(), $username);
 
         $rawGoto = $request->getPost(self::PARAM_GOTO);
         $goto = $this->gotoService->decodeGoto($rawGoto);

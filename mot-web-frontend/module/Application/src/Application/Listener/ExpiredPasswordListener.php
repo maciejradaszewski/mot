@@ -2,9 +2,9 @@
 
 namespace Application\Listener;
 
+use Account\Service\ExpiredPasswordService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
 use Dvsa\OpenAM\Model\OpenAMLoginDetails;
-use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Date\DateTimeHolder;
 use Zend\Log\LoggerInterface;
@@ -25,15 +25,11 @@ class ExpiredPasswordListener
      */
     private $identityProvider;
 
-    private $openAmClient;
-
     private $timeHolder;
 
     private $logger;
 
-    private $realm;
-
-    private $gracePeriod;
+    private $expiredPasswordService;
 
     private $whiteList = [
         'login',
@@ -51,19 +47,15 @@ class ExpiredPasswordListener
 
     public function __construct(
         MotIdentityProviderInterface $identityProvider,
-        OpenAMClientInterface $openAmClient,
         DateTimeHolder $timeHolder,
         LoggerInterface $logger,
-        $realm,
-        $gracePeriod
+        ExpiredPasswordService $expiredPasswordService
     )
     {
         $this->identityProvider = $identityProvider;
-        $this->openAmClient = $openAmClient;
         $this->timeHolder = $timeHolder;
         $this->logger = $logger;
-        $this->realm = $realm;
-        $this->gracePeriod = $gracePeriod;
+        $this->expiredPasswordService = $expiredPasswordService;
     }
 
     public function __invoke(MvcEvent $event)
@@ -86,7 +78,7 @@ class ExpiredPasswordListener
             return;
         }
 
-        $expirationDate = $this->getExpiryDate();
+        $expirationDate = $this->expiredPasswordService->getExpiryDateForCurrentUser();
 
         $now = $this->timeHolder->getCurrent();
 
@@ -107,17 +99,6 @@ class ExpiredPasswordListener
             $response->sendHeaders();
             $event->stopPropagation();
         }
-    }
-
-    private function getExpiryDate()
-    {
-        $identity = $this->identityProvider->getIdentity();
-
-        $expirationDate = $this->openAmClient->getPasswordExpiryDate(new OpenAMLoginDetails($identity->getUsername(), null, $this->realm));
-
-        $expirationDate = $expirationDate->modify("- " . $this->gracePeriod);
-
-        return $expirationDate;
     }
 
     private function isRouteRestricted($routeName)

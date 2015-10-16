@@ -62,4 +62,6 @@ return [
         'openingHrsSaturday' => 'Saturday, 8:00am to 2:00pm',
         'openingHrsSunday' => 'Sunday, closed'
     ],
+    //how many days before password expires notifications are going to be sent
+    'password_expiry_notification_days' => [7, 3, 2, 1],
 ];
