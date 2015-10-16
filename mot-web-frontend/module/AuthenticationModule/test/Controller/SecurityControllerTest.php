@@ -7,6 +7,7 @@
 
 namespace Dvsa\Mot\Frontend\AuthenticationModuleTest\Factory\Controller;
 
+use Account\Service\ExpiredPasswordService;
 use CoreTest\Controller\AbstractLightWebControllerTest;
 use Dashboard\Controller\UserHomeController;
 use Dvsa\Mot\Frontend\AuthenticationModule\Controller\SecurityController;
@@ -257,6 +258,8 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
         $this->authenticationService = XMock::of(AuthenticationService::class);
         $this->request = new Request();
         $this->sessionManager = XMock::of(ManagerInterface::class);
+        $expiryPasswordService = XMock::of(ExpiredPasswordService::class);
+
         $controller = new SecurityController(
             $this->request,
             $this->authenticator,
@@ -264,7 +267,8 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
             $this->cookieService,
             $this->identitySessionStateService,
             $this->authenticationService,
-            $this->sessionManager
+            $this->sessionManager,
+            $expiryPasswordService
         );
 
         return $controller;

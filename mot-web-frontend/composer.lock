@@ -5,7 +5,6 @@
         "This file is @generated automatically"
     ],
     "hash": "acc1c7e761e2d6787cce83dc16243267",
-    "content-hash": "36a91761f83f856111a5784bc9989e34",
     "packages": [
         {
             "name": "cpms/client",
@@ -530,12 +529,12 @@
             "version": "0.8.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:doctrine/DoctrineORMModule.git",
+                "url": "https://github.com/doctrine/DoctrineORMModule.git",
                 "reference": "31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineORMModule/zipball/473e12ff9b39e2ec00f09bf89758d1fb0bec829e",
+                "url": "https://api.github.com/repos/doctrine/DoctrineORMModule/zipball/31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0",
                 "reference": "31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0",
                 "shasum": ""
             },
@@ -952,11 +951,11 @@
         },
         {
             "name": "dvsa/dvsa-openam-client",
-            "version": "v1.9.1",
+            "version": "v1.9.2",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/dvsa-openam-client.git",
-                "reference": "e096a4cf056f73b1031a1ffa82d1af5d74f4f335"
+                "reference": "db0305283b0306ab9e92e1815764a24c93ce61c7"
             },
             "require": {
                 "php": ">=5.5",
@@ -983,7 +982,7 @@
                 }
             },
             "description": "JSON mapper used to map objects to/from JSON compatible arrays",
-            "time": "2015-09-16 14:19:59"
+            "time": "2015-10-13 07:01:27"
         },
         {
             "name": "dvsa/feature-toggle",
@@ -1648,12 +1647,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:zendframework/ZendPdf.git",
+                "url": "https://github.com/zendframework/ZendPdf.git",
                 "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },

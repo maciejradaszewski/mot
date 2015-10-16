@@ -31,6 +31,8 @@ class Notification
     private $action;
     /** @var $fields array */
     private $fields;
+    /** @var $templateId int */
+    private $templateId;
 
     public function __construct($data)
     {
@@ -42,7 +44,8 @@ class Notification
             ->setContent(ArrayUtils::get($data, 'content'))
             ->setSubject(ArrayUtils::get($data, 'subject'))
             ->setUpdatedOn(ArrayUtils::get($data, 'updatedOn'))
-            ->setFields(ArrayUtils::get($data, 'fields'));
+            ->setFields(ArrayUtils::get($data, 'fields'))
+            ->setTemplateId(ArrayUtils::tryGet($data, 'templateId'));
 
         if (!empty($data['readOn'])) {
             $this->setReadOn(ArrayUtils::get($data, 'readOn'));
@@ -316,5 +319,23 @@ class Notification
     public function getActions()
     {
         return $this->actions;
+    }
+
+    /**
+     * @param int $id
+     * @return Notification
+     */
+    public function setTemplateId($id)
+    {
+        $this->templateId = $id;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTemplateId()
+    {
+        return $this->templateId;
     }
 }

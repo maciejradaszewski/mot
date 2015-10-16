@@ -11,7 +11,7 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  * Notification
  *
  * @ORM\Table(name="notification", uniqueConstraints={@ORM\UniqueConstraint(name="id_UNIQUE", columns={"id"})}, indexes={@ORM\Index(name="fk_notification_1", columns={"notification_template_id"}), @ORM\Index(name="fk_notification_2", columns={"recipient_id"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\NotificationRepository")
  */
 class Notification extends Entity
 {
@@ -52,7 +52,8 @@ class Notification extends Entity
      * @ORM\OneToMany(
      *  targetEntity="DvsaEntities\Entity\NotificationField",
      *  mappedBy="notification",
-     *  fetch="EAGER"
+     *  fetch="EAGER",
+     *  cascade={"persist", "remove"}
      * )
      */
     private $fields;

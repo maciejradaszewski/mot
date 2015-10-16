@@ -3,6 +3,7 @@
 use PersonApi\Controller\AuthorisedExaminerController;
 use PersonApi\Controller\DashboardController;
 use PersonApi\Controller\MotTestingAuthorisationController;
+use PersonApi\Controller\PasswordExpiryController;
 use PersonApi\Controller\PersonalDetailsController;
 use PersonApi\Controller\PersonAuthorisationController;
 use PersonApi\Controller\PersonByLoginController;
@@ -34,6 +35,15 @@ return [
                 'defaults'    => [
                     'controller' => PersonalDetailsController::class,
                 ],
+            ]
+        ],
+        'password-expiry-notification' => [
+            'type'    => 'Segment',
+            'options' => [
+                'route'       => '/password-expiry-notification',
+                'defaults'    => [
+                    'controller' => PasswordExpiryController::class,
+                ]
             ]
         ],
         'person'           => [

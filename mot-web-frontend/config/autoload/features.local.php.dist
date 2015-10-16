@@ -28,17 +28,17 @@ return [
          */
         'openam.password.expiry.enabled' => false,
 
-        /**
+        /*
          * Enable Jasper async printing
          */
         'jasper.async' => false,
 
-        /**
+        /*
          * Enable VTS risk score & RAG
          */
         'vts.risk.score' => true,
 
-        /**
+        /*
          * To control displaying the 2FA method row in the admin area
          */
         '2fa.method.visible' => false,

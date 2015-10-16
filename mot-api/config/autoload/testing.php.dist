@@ -114,5 +114,7 @@ return array(
         'green' => ['start' => 0, 'end' => 324.10],
         'amber' => ['start' => 324.11, 'end' => 459.20],
         'red' => ['start' => 459.21, 'end' => 999.99],
-    ]
+    ],
+    //how many days before password expires notifications are going to be sent
+    'password_expiry_notification_days' => [7, 3, 2, 1],
 );

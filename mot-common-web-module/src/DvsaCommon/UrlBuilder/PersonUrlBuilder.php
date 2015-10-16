@@ -21,6 +21,7 @@ class PersonUrlBuilder extends AbstractUrlBuilder
     const PERSON_SEARCH = 'search-person';
     const MOT_TESTING = '/mot-testing';
     const RESET_PIN = '/reset-pin';
+    const PASSWORD_EXPIRY = 'password-expiry-notification';
     const RESET_CLAIM_ACCOUNT = '/reset-claim-account';
     const MANAGE_INTERNAL_ROLES = '/roles';
     const PASSWORD = '/password';
@@ -46,6 +47,7 @@ class PersonUrlBuilder extends AbstractUrlBuilder
                 self::BY_IDENTIFIER => '',
             ],
             self::PERSON_SEARCH => '',
+            self::PASSWORD_EXPIRY => '',
         ];
 
     /**
@@ -161,6 +163,19 @@ class PersonUrlBuilder extends AbstractUrlBuilder
     public static function resetPin($id)
     {
         return self::byId($id)->appendRoutesAndParams(self::RESET_PIN);
+    }
+
+    /**
+     * Return the url to sent out expired password notifications
+     *
+     * @return $this
+     */
+    public static function passwordExpiry()
+    {
+        $urlBuilder = new self();
+
+        return $urlBuilder
+            ->appendRoutesAndParams(self::PASSWORD_EXPIRY);
     }
 
     /**

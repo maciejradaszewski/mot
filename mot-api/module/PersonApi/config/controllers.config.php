@@ -3,6 +3,7 @@
 use PersonApi\Controller\AuthorisedExaminerController;
 use PersonApi\Controller\DashboardController;
 use PersonApi\Controller\MotTestingAuthorisationController;
+use PersonApi\Controller\PasswordExpiryController;
 use PersonApi\Controller\PersonalDetailsController;
 use PersonApi\Controller\PersonAuthorisationController;
 use PersonApi\Controller\PersonByLoginController;
@@ -20,6 +21,7 @@ use PersonApi\Controller\UserStatsController;
 use PersonApi\Factory\Controller\AuthorisedExaminerControllerFactory;
 use PersonApi\Factory\Controller\DashboardControllerFactory;
 use PersonApi\Factory\Controller\MotTestingAuthorisationControllerFactory;
+use PersonApi\Factory\Controller\PasswordExpiryControllerFactory;
 use PersonApi\Factory\Controller\PersonalDetailsControllerFactory;
 use PersonApi\Factory\Controller\PersonAuthorisationControllerFactory;
 use PersonApi\Factory\Controller\PersonByLoginControllerFactory;
@@ -60,5 +62,6 @@ return [
         ResetPinController::class                  => ResetPinControllerFactory::class,
         UserStatsController::class                 => UserStatsControllerFactory::class,
         PasswordController::class                  => PasswordControllerFactory::class,
+        PasswordExpiryController::class            => PasswordExpiryControllerFactory::class,
     ],
 ];

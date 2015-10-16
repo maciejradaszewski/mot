@@ -12,7 +12,11 @@ use Dashboard\Controller\UserHomeController;
 
 <div class="text">
     <p class="lede" id="notification-content">
-        <?php echo $this->escapeHtml($notification->getContent()); ?>
+        <?php if ($notification->getTemplateId() === 24): ?>
+            <?php echo $notification->getContent(); ?>
+        <?php else: ?>
+            <?php echo $this->escapeHtml($notification->getContent()); ?>
+        <?php endif; ?>
     </p>
 </div>
 <div class="text">

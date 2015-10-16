@@ -462,6 +462,12 @@ class DateUtilsTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function testDateRoundUp() {
+        $this->assertEquals(new \DateTime('2014-05-06'), DateUtils::roundUp(new \DateTime('2014-05-06 00:00:00')));
+        $this->assertEquals(new \DateTime('2014-05-07'), DateUtils::roundUp(new \DateTime('2014-05-06 10:11:25')));
+        $this->assertEquals(new \DateTime('2014-05-07'), DateUtils::roundUp(new \DateTime('2014-05-06 23:59:59')));
+    }
+
     public function dataProviderTestToDateTimeFromParts()
     {
         return [

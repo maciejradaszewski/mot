@@ -7,6 +7,7 @@
 
 namespace Dvsa\Mot\Frontend\AuthenticationModuleTest\Listener\Factory;
 
+use Account\Service\ExpiredPasswordService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Controller\SecurityController;
 use Dvsa\Mot\Frontend\AuthenticationModule\Factory\Controller\SecurityControllerFactory;
 use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\OpenAMAuthenticator;
@@ -31,6 +32,7 @@ class SecurityControllerFactoryTest extends \PHPUnit_Framework_TestCase
                 'tokenService' => WebAuthenticationCookieService::class,
                 IdentitySessionStateService::class,
                 'ZendAuthenticationService' => AuthenticationService::class,
+                ExpiredPasswordService::class => ExpiredPasswordService::class,
             ]
         );
     }

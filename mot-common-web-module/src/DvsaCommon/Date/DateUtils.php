@@ -575,4 +575,15 @@ final class DateUtils
         $date = \DateTime::createFromFormat($inputFormat, $input);
         return $date->format($outputFormat);
     }
+
+    public static function roundUp(\DateTime $dateTime)
+    {
+        $date = self::cropTime($dateTime);
+
+        if ($dateTime != $date) {
+            $date = $date->modify('+ 1 day');
+        }
+
+        return $date;
+    }
 }

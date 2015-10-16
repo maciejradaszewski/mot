@@ -2,6 +2,7 @@
 
 namespace Dvsa\Mot\Frontend\AuthenticationModule\Factory\Controller;
 
+use Account\Service\ExpiredPasswordService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Controller\SecurityController;
 use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\OpenAMAuthenticator;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\GotoUrlService;
@@ -29,6 +30,7 @@ class SecurityControllerFactory implements FactoryInterface
         $authenticationCookieService = $serviceLocator->get('tokenService');
         $identitySessionStateService = $serviceLocator->get(IdentitySessionStateService::class);
         $authenticationService = $serviceLocator->get('ZendAuthenticationService');
+        $expiredPasswordService = $serviceLocator->get(ExpiredPasswordService::class);
 
         return new SecurityController(
             $request,
@@ -37,7 +39,8 @@ class SecurityControllerFactory implements FactoryInterface
             $authenticationCookieService,
             $identitySessionStateService,
             $authenticationService,
-            new SessionManager()
+            new SessionManager(),
+            $expiredPasswordService
         );
     }
 }
