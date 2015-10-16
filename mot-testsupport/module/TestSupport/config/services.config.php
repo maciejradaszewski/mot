@@ -7,6 +7,7 @@ use DvsaCommon\Obfuscate\ParamObfuscator;
 use TestSupport\Service\DocumentService;
 use TestSupport\Service\FeaturesService;
 use TestSupport\Service\DVLAOperativeService;
+use TestSupport\Service\GVTSTesterService;
 use TestSupport\Service\VM10619RoleManagementUpgradeService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Doctrine\ORM\EntityManager;
@@ -120,5 +121,6 @@ return [
         TesterAuthorisationStatusService::class => TesterAuthorisationStatusServiceFactory::class,
         AedmService::class                 => \TestSupport\Factory\AedmServiceFactory::class,
         DocumentService::class             => \TestSupport\Factory\DocumentServiceFactory::class,
+        GVTSTesterService::class           => \TestSupport\Factory\GVTSTesterServiceFactory::class
     ]
 ];

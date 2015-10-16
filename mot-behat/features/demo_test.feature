@@ -68,3 +68,27 @@ Feature: Demo MOT Test
     Given I am logged in as an Area Office User
     When I attempt to create a Demo MOT Test
     Then an MOT test number should not be allocated
+
+  @defect
+  Scenario Outline: Being authorised to perform Demo Test, I can interact with reasons for rejection
+    Given I am logged in as a <permitted user>
+    When I start a Demo MOT Test
+    Then I can search for Rfr
+    And I can list child test items selector
+    And I can add PRS to test
+    And I can add a Failure to test
+    And I can edit previously added Rfr
+  Examples:
+    | permitted user            |
+    | Area Office User          |
+    | Area Office User 2        |
+    | Scheme Manager            |
+    | Scheme User               |
+    | Customer Service Manager  |
+    | Customer Service Operator |
+    | Finance User              |
+    | DVLA Manager              |
+    | DVLA Operative            |
+    | GVTSTester                |
+
+

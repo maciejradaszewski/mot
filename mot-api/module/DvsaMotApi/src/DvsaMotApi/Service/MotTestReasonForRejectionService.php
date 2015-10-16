@@ -5,6 +5,7 @@ namespace DvsaMotApi\Service;
 use Doctrine\ORM\EntityManager;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Authorisation\Assertion\ApiPerformMotTestAssertion;
 use DvsaCommonApi\Service\AbstractService;
@@ -58,7 +59,9 @@ class MotTestReasonForRejectionService extends AbstractService
 
         $rfr = $this->createRfrFromData($data, $motTest);
 
-        $this->checkPermissionsForRfr($rfr);
+        if(!$this->isTrainingTest($motTest)) {
+            $this->checkPermissionsForRfr($rfr);
+        }
 
         if ($this->motTestValidator->validateMotTestReasonForRejection($rfr)) {
             $this->entityManager->persist($rfr);
@@ -72,12 +75,18 @@ class MotTestReasonForRejectionService extends AbstractService
 
     public function editReasonForRejection($motTestRfrId, $data)
     {
-        $this->authService->assertGranted(PermissionInSystem::MOT_TEST_PERFORM);
-
         /** @var MotTestReasonForRejection $rfr */
         $rfr = $this->entityManager->find(MotTestReasonForRejection::class, $motTestRfrId);
+        $motTest = $rfr->getMotTest();
 
-        $this->motTestValidator->assertCanBeUpdated($rfr->getMotTest());
+        if($this->isTrainingTest($motTest)){
+            $this->authService->assertGranted(PermissionInSystem::MOT_DEMO_TEST_PERFORM);
+        }
+        else {
+            $this->authService->assertGranted(PermissionInSystem::MOT_TEST_PERFORM);
+        }
+
+        $this->motTestValidator->assertCanBeUpdated($motTest);
 
         $locationLateral = ArrayUtils::tryGet($data, 'locationLateral');
         $locationLongitudinal = ArrayUtils::tryGet($data, 'locationLongitudinal');
@@ -91,7 +100,9 @@ class MotTestReasonForRejectionService extends AbstractService
             ->setComment($comment)
             ->setFailureDangerous($failureDangerous);
 
-        $this->checkPermissionsForRfr($rfr);
+        if(!$this->isTrainingTest($motTest)){
+            $this->checkPermissionsForRfr($rfr);
+        }
 
         if ($this->motTestValidator->validateMotTestReasonForRejection($rfr)) {
             $this->entityManager->persist($rfr);
@@ -164,7 +175,11 @@ class MotTestReasonForRejectionService extends AbstractService
         $this->performMotTestAssertion->assertGranted($rfrToDelete->getMotTest());
         $this->motTestValidator->assertCanBeUpdated($rfrToDelete->getMotTest());
 
-        $this->checkPermissionsForRfr($rfrToDelete);
+        $motTest = $rfrToDelete->getMotTest();
+
+        if(!$this->isTrainingTest($motTest)) {
+            $this->checkPermissionsForRfr($rfrToDelete);
+        }
 
         if ($rfrToDelete->getMotTest()->getNumber() !== (string)$motTestNumber) {
             throw new NotFoundException('Match for Reason for Rejection on Selected Mot Test');
@@ -200,5 +215,12 @@ class MotTestReasonForRejectionService extends AbstractService
                 $this->authService->assertGranted(PermissionInSystem::TESTER_RFR_ITEMS_NOT_TESTED);
             }
         }
+    }
+
+    private function isTrainingTest(MotTest $motTest)
+    {
+        $testTypeCode = $motTest->getMotTestType()->getCode();
+
+        return $testTypeCode == MotTestTypeCode::DEMONSTRATION_TEST_FOLLOWING_TRAINING ? true : false;
     }
 }

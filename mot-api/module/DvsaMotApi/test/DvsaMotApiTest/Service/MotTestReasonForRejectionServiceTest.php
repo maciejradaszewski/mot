@@ -4,6 +4,7 @@ namespace DvsaMotApiTest\Service;
 
 use Doctrine\ORM\EntityManager;
 use DvsaCommon\Constants\OdometerUnit;
+use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommonApi\Authorisation\Assertion\ApiPerformMotTestAssertion;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApi\Service\Exception\NotFoundException;
@@ -19,6 +20,7 @@ use DvsaEntitiesTest\Entity\MotTestReasonForRejectionTest;
 use DvsaMotApi\Service\MotTestReasonForRejectionService;
 use DvsaMotApi\Service\TestItemSelectorService;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
+use SlotPurchaseApi\Entity\MotTestType;
 
 /**
  * Test for check class MotTestReasonForRejectionService
@@ -189,7 +191,13 @@ class MotTestReasonForRejectionServiceTest extends AbstractMotTestServiceTest
         $this->prepareMocks();
 
         $motRfrAdvisory = MotTestReasonForRejectionTest::getTestMotTestReasonForRejection('ADVISORY');
-        $motRfrAdvisory->setMotTest(new MotTest());
+        $motRfrAdvisory->setMotTest(
+            (new MotTest())
+                ->setMotTestType(
+                    (new MotTestType())
+                        ->setCode(MotTestTypeCode::NORMAL_TEST)
+                )
+        );
 
         $mockEntityManager = new MockHandler($this->mockEntityManager, $this, 0);
         $mockEntityManager->find()->will($this->returnValue($motRfrAdvisory));
