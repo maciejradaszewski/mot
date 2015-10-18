@@ -1,19 +1,23 @@
 package uk.gov.dvsa.ui.views;
 
+import org.openqa.selenium.By;
 import org.testng.annotations.Test;
+import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.pages.HomePage;
 
 import java.io.IOException;
+
+import static org.testng.Assert.assertFalse;
 
 public class DashBoardViewTest extends BaseTest {
 
     @Test(groups = {"Regression", "VM_9444"})
-    public void doesNotDisplayRetestLink() throws IOException {
+    public void doesNotDisplayRetestLinkWhenEnteredHomePage() throws IOException {
 
-        //Given I am on the home page as a tester
-        motUI.retest.gotoHomepageAs(userData.createTester(siteData.createSite().getId()));
+        pageNavigator.gotoHomePage(userData.createTester(siteData.createSite().getId()));
 
-        //I expect re-test a previous vehicle link not to be present
-        motUI.retest.verifyRetestLinkNotPresent();
+        boolean startMotRetestPossible = PageInteractionHelper.isElementPresent(By.id("action-start-mot-retest"));
+        assertFalse(startMotRetestPossible);
     }
 }
