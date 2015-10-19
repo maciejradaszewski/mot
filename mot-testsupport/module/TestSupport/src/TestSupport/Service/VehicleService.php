@@ -59,6 +59,17 @@ class VehicleService
         return (int)$this->entityManager->getConnection()->lastInsertId();
     }
 
+    /**
+     * @param string $id
+     * @param array $data
+     */
+    public function update($id, $data)
+    {
+        $this->entityManager->getConnection()->update(
+            'vehicle', $data, ['id' => $id]
+        );
+    }
+
     private function prepare(array $data)
     {
         $vehicleData = [];

@@ -8,12 +8,14 @@ return [
         'TestSupport',
         'DoctrineModule',
         'DoctrineORMModule',
+        'DvsaEntities',
         'DvsaFeature'
     ],
     'module_listener_options' => [
         'module_paths'      => [
             dirname(__DIR__) . '/module',
             dirname(__DIR__) . '/vendor',
+            dirname(__DIR__) . '/../mot-api/modules'
         ],
         'config_glob_paths' => [
             sprintf('%s/{,*.}{global,local}.php', $path)

@@ -18,7 +18,6 @@ use Zend\Authentication\AuthenticationService;
  */
 class ReplacementCertificateUpdater
 {
-
     private $motTestSecurityService;
 
     /** @var AuthorisationServiceInterface $authService */
@@ -106,7 +105,6 @@ class ReplacementCertificateUpdater
                 $motTest->setModel(null);
                 $motTest->setFreeTextModelName($draft->getModelName());
             }
-
 
             $vehicle->setVin($draft->getVin())
                 ->setRegistration($draft->getVrm())

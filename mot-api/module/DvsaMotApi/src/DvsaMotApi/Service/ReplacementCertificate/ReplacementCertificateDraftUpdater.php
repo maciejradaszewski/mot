@@ -208,23 +208,25 @@ class ReplacementCertificateDraftUpdater implements TransactionAwareInterface
             if ($draftChange->isVinSet()) {
                 $draft->setVin($draftChange->getVin());
                 if ($this->canChangeVin($draft, $draftChange)) {
-                    $draft->setIsVinRegistrationChanged(true);
+                    $draft->setIsVinVrmExpiryChanged(true);
                 } else {
-                    $draft->setIsVinRegistrationChanged(false);
+                    $draft->setIsVinVrmExpiryChanged(false);
                 }
             }
 
             if ($draftChange->isVrmSet()) {
                 $draft->setVrm($draftChange->getVrm());
                 if ($this->canChangeVrm($draft, $draftChange)) {
-                    $draft->setIsVinRegistrationChanged(true);
+                    $draft->setIsVinVrmExpiryChanged(true);
                 } else {
-                    $draft->setIsVinRegistrationChanged(false);
+                    $draft->setIsVinVrmExpiryChanged(false);
                 }
             }
 
-            if ($draftChange->isExpiryDateSet()) {
-                $draft->setExpiryDate(DateUtils::toDate($draftChange->getExpiryDate()));
+            if ($draftChange->isExpiryDateSet() &&
+                ($draft->getExpiryDate()->format('Y-m-d') != $draftChange->getExpiryDate())) {
+                    $draft->setIsVinVrmExpiryChanged(true);
+                    $draft->setExpiryDate(DateUtils::toDate($draftChange->getExpiryDate()));
             }
 
             if ($draftChange->isVtsSiteNumberSet()) {

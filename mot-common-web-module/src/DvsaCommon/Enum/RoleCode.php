@@ -42,6 +42,7 @@ class RoleCode
     const VM_10519_USER = 'VM-10519-USER';
     const DVLA_MANAGER = 'DVLA-MANAGER';
     const VM_10619_USER = 'VM-10619-USER';
+    const DVLA_IMPORT = 'DVLA-IMPORT';
 
     /**
      * @return array of values for the type RoleCode
@@ -81,6 +82,7 @@ class RoleCode
             self::VM_10519_USER,
             self::DVLA_MANAGER,
             self::VM_10619_USER,
+            self::DVLA_IMPORT,
         ];
     }
 

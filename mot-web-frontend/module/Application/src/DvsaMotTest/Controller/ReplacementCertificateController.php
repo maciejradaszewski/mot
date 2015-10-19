@@ -72,7 +72,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
 
         if ($this->getRequest()->isPost()) {
             if ($id === null) {
-                return $this->createDraft($this->params()->fromPost('motTestNumber'));
+                return $this->createDraft($motTestNumber);
             }
 
             return $this->updateDraft($id, $motTestNumber);
@@ -302,10 +302,13 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
 
         // if input is not empty, update the draft
         if (!empty($result)) {
-            if ($action == 'updateMake') {
+            if ($action === 'updateMake') {
                 $make = $result['make'];
-                if ($make == self::MAKE_MODEL_OTHER_VALUE) {
-                    return $this->redirect()->toRoute('mot-test/replacement-certificate/other-vehicle', ['id' => $id, 'motTestNumber' => $motTestNumber]);
+                if ($make === self::MAKE_MODEL_OTHER_VALUE) {
+                    return $this->redirect()->toRoute(
+                        'mot-test/replacement-certificate/other-vehicle',
+                        ['id' => $id, 'motTestNumber' => $motTestNumber]
+                    );
                 } else {
                     return $this->redirect()->toRoute(
                         'mot-test/replacement-certificate/select-model',
@@ -314,7 +317,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
                 }
             }
 
-            if ($action == 'updateModel') {
+            if ($action === 'updateModel') {
                 $model = $result['model'];
                 $make = $result['make'];
 
@@ -324,7 +327,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
                     $make = $result['make'];
                 }
 
-                if ($model == self::MAKE_MODEL_OTHER_VALUE) {
+                if ($model === self::MAKE_MODEL_OTHER_VALUE) {
                     return $this->redirect()->toRoute(
                         'mot-test/replacement-certificate/other-vehicle',
                         ['id' => $id, 'makeCode' => $make, 'motTestNumber' => $motTestNumber]
@@ -334,7 +337,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
 
             try {
 
-                if (self::ACTION_UPDATE_ODOMETER == $action) {
+                if (self::ACTION_UPDATE_ODOMETER === $action) {
                     $odometerReadingParams = $result['odometerReading'];
 
                     $odometerForm = $this->getForm(new OdometerUpdate());
@@ -569,7 +572,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
             $vehicleViewModel->setDisplayModelBody(true);
         }
 
-        if ($makeCode == self::MAKE_MODEL_OTHER_VALUE) {
+        if ($makeCode === self::MAKE_MODEL_OTHER_VALUE) {
             $makeCode = null;
         } else {
             $makeCode = $vehicleViewModel->getMake()->getCode();
@@ -610,7 +613,7 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
         }
 
         foreach ($makeList as $make) {
-            if ($makeCode == $make['code']) {
+            if ($makeCode === $make['code']) {
                 $modelView = new ReplacementMakeViewModel($make);
                 return $modelView;
             }
@@ -642,5 +645,4 @@ class ReplacementCertificateController extends AbstractDvsaMotTestController
     {
         return $this->getAuthorizationService()->isGranted(PermissionInSystem::MOT_TEST_WITHOUT_OTP);
     }
-
 }

@@ -19,6 +19,10 @@ class CherishedTransferContext implements Context
     private $brakeTestResult;
     private $odometerReading;
     private $sessionContext;
+    private $motTestContext;
+    private $createdVehicle;
+    private $motTestId;
+    private $vehicleData;
 
     /**
      * @param Session $session
@@ -50,6 +54,113 @@ class CherishedTransferContext implements Context
     public function gatherContexts(BeforeScenarioScope $scope)
     {
         $this->sessionContext = $scope->getEnvironment()->getContext(SessionContext::class);
+        $this->motTestContext = $scope->getEnvironment()->getContext(MotTestContext::class);
+    }
+
+    /**
+     * @Given I have imported a vehicle with registration :registration and vin :vin from DVLA
+     *
+     * @param string $registration
+     * @param string $vin
+     */
+    public function iHaveImportedAVehicleWithRegistrationAndVinFromDvla($registration, $vin)
+    {
+        $dvlaVehicleService = $this->testSupportHelper->getDVLAVehicleService();
+
+        $this->vehicleData = [
+            'registration' => $registration,
+            'vin' => $vin
+        ];
+
+        $dvlaVehicleService->save($this->vehicleData);
+    }
+
+    /**
+     * @Given I have completed an MOT test on the vehicle
+     */
+    public function iHaveCompletedAnMotTestOnAVehicleWithRegistrationAndVin()
+    {
+        $dvlaVehicleService = $this->testSupportHelper->getDVLAVehicleService();
+        $vehicleService = $this->testSupportHelper->getVehicleService();
+
+        // get the vehicle
+        $dvlaVehicle = (int)$this->vehicle->vehicleSearch(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->vehicleData['registration'],
+            $this->vehicleData['vin'],
+            $searchDvla = true
+        )->getBody()['data']['vehicle']['id'];
+
+        // add to the vehicle table
+        $this->createdVehicle = $vehicleService->createWithDefaults($this->vehicleData);
+
+        // update dvla_vehicle entry with vehicleId of entry in vehicle table
+        $dvlaVehicleService->update($dvlaVehicle, ['vehicle_id' => $this->createdVehicle]);
+
+        // MOT the vehicle
+        $this->motTestId = $this->motTest->startNewMotTestWithVehicleId(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->sessionContext->getCurrentUserId(),
+            $this->createdVehicle
+        )->getBody()['data']['motTestNumber'];
+
+        $response = $this->odometerReading->addMeterReading(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->motTestId,
+            1000,
+            'mi'
+        );
+
+        PHPUnit::assertSame(200, $response->getStatusCode());
+
+        $brakeTestResultResponse = $this->brakeTestResult->addBrakeTestDecelerometerClass3To7(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->motTestId
+        );
+
+        PHPUnit::assertEquals(200, $brakeTestResultResponse->getStatusCode());
+
+        // pass the MOT
+        $this->statusData = $this->motTest->passed(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->motTestId
+        );
+    }
+
+    /**
+     * @When I update the vehicle to a new registration of :newRegistration
+     */
+    public function iUpdateTheVehicleWithRegistrationAndVinToANewRegistrationOf($newRegistration)
+    {
+        $dvlaVehicleService = $this->testSupportHelper->getDVLAVehicleService();
+        $vehicleService = $this->testSupportHelper->getVehicleService();
+        $motService = $this->testSupportHelper->getMotService();
+
+        $dvlaVehicleId = $dvlaVehicleService->fetchId(
+            $this->vehicleData['registration'],
+            $this->vehicleData['vin']
+        );
+
+        // update the dvla_vehicle entry
+        $dvlaVehicleService->update($dvlaVehicleId, ['registration' => $newRegistration]);
+
+        // update vehicle entry with new dvla_vehicle entry details
+        $vehicleService->update($this->createdVehicle, ['registration' => $newRegistration]);
+
+        // update latest MOT test with new dvla_vehicle entry details
+        $motService->updateLatest($this->createdVehicle, ['registration' => $newRegistration]);
+    }
+
+    /**
+     * @When I create a cherished transfer replacement MOT certificate
+     */
+    public function createCherishedTransferReplacementCertificate()
+    {
+        // call update API endpoint to generate certificate replacement
+        $this->vehicle->dvlaVehicleUpdated(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->createdVehicle
+        );
     }
 
     /**
@@ -59,6 +170,7 @@ class CherishedTransferContext implements Context
     {
         $vehicleId = $this->completeMotTest();
 
+        // this doesn't generate a replacement certificate, figure out why
         $this->response = $this->vehicle->dvlaVehicleUpdated(
             $this->sessionContext->getCurrentAccessToken(),
             $vehicleId
@@ -82,24 +194,50 @@ class CherishedTransferContext implements Context
     }
 
     /**
+     * @Then a replacement certificate of type :type is created
+     *
+     * @param string $type
+     */
+    public function aReplacementCertificateOfTypeIsCreated($type)
+    {
+        if ($type == 'Transfer') {
+            $certificateCode = 'F';
+        } elseif ($type == 'Replacement') {
+            $certificateCode = 'R';
+        }
+
+        $certificateReplacementService = $this->testSupportHelper->getCertificateReplacementService();
+        $motTestService = $this->testSupportHelper->getMotService();
+
+        $motTest = $motTestService->getLatestTest($this->createdVehicle);
+
+        // get the certificate replacement
+        $certificateType = $certificateReplacementService->getCertificateReplacementType($motTest);
+
+        PHPUnit::assertEquals($certificateType, $certificateCode);
+    }
+
+    /**
+     * Create a vehicle, complete an MOT test for it and return it's id.
+     *
      * @return string
      */
     private function completeMotTest()
     {
         $testerService = $this->testSupportHelper->getTesterService();
-        $tester = $testerService->create([
-            'siteIds' => [1],
-        ]);
+        $tester = $testerService->create(
+            ['siteIds' => [1],]
+        );
 
         $testerSession = $this->session->startSession($tester->data['username'], $tester->data['password']);
         $testerToken = $testerSession->getAccessToken();
 
         // @todo The vehicle service should not have "dual-mode" and returnOriginalId will be removed
         $vehicleData = ['testClass' => 4, 'returnOriginalId' => true];
-        $createdVehicle = $this->vehicle->create($testerToken, $vehicleData);
+        $motTest = $this->vehicle->create($testerToken, $vehicleData);
 
-        $vehicleId = $createdVehicle->getBody()['data']['vehicleId'];
-        $motTestId = $createdVehicle->getBody()['data']['startedMotTestNumber'];
+        $vehicleId = $motTest->getBody()['data']['vehicleId'];
+        $motTestId = $motTest->getBody()['data']['startedMotTestNumber'];
 
         $this->odometerReading->addMeterReading(
             $testerToken,

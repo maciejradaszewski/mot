@@ -2,33 +2,35 @@
 
 namespace Dvsa\Mot\Behat\Support\Helper;
 
-use TestSupport\Controller\VM10619RoleManagementUpgradeController;
+use DvsaCommon\Obfuscate\ParamObfuscator;
+use TestSupport\Helper\DataGeneratorHelper;
+use TestSupport\Service\AccountDataService;
+use TestSupport\Service\AedmService;
+use TestSupport\Service\AEService;
+use TestSupport\Service\AreaOffice1Service;
+use TestSupport\Service\AreaOffice2Service;
+use TestSupport\Service\CertificateReplacementService;
 use TestSupport\Service\CronUserService;
 use TestSupport\Service\CSCOService;
 use TestSupport\Service\CSMService;
+use TestSupport\Service\DocumentService;
 use TestSupport\Service\DVLAManagerService;
-use TestSupport\Service\AreaOffice1Service;
-use TestSupport\Service\AreaOffice2Service;
 use TestSupport\Service\DVLAOperativeService;
+use TestSupport\Service\DvlaVehicleService;
 use TestSupport\Service\FinanceUserService;
 use TestSupport\Service\GVTSTesterService;
-use TestSupport\Service\VM10619RoleManagementUpgradeService;
-use TestSupport\Service\VtsService;
-use TestSupport\Service\AEService;
-use TestSupport\Service\TesterService;
+use TestSupport\Service\MotService;
 use TestSupport\Service\PasswordResetService;
 use TestSupport\Service\SchemeManagerService;
 use TestSupport\Service\SchemeUserService;
-use TestSupport\Service\VehicleService;
-use TestSupport\Service\VehicleExaminerService;
-use TestSupport\Service\UserService;
-use TestSupport\Service\VM10519UserService;
-use TestSupport\Service\AedmService;
-use TestSupport\Service\AccountDataService;
 use TestSupport\Service\SiteUserDataService;
-use TestSupport\Service\DocumentService;
-use TestSupport\Helper\DataGeneratorHelper;
-use DvsaCommon\Obfuscate\ParamObfuscator;
+use TestSupport\Service\TesterService;
+use TestSupport\Service\UserService;
+use TestSupport\Service\VehicleExaminerService;
+use TestSupport\Service\VehicleService;
+use TestSupport\Service\VM10519UserService;
+use TestSupport\Service\VM10619RoleManagementUpgradeService;
+use TestSupport\Service\VtsService;
 use Zend\ServiceManager\ServiceManager;
 
 class TestSupportHelper
@@ -265,6 +267,14 @@ class TestSupportHelper
     }
 
     /**
+     * @return \TestSupport\service\DvlaVehicleService
+     */
+    public function getDVLAVehicleService()
+    {
+        return $this->getServiceManager()->get(DVLAVehicleService::class);
+    }
+
+    /**
      * @return AedmService
      */
     public function getAedmService()
@@ -311,6 +321,22 @@ class TestSupportHelper
     public function getDataGeneratorHelper(array $data = [])
     {
         return DataGeneratorHelper::buildForDifferentiator($data);
+    }
+
+    /**
+     * @return \TestSupport\Service\MotService
+     */
+    public function getMotService()
+    {
+        return $this->getServiceManager()->get(MotService::class);
+    }
+
+    /**
+     * @return \TestSupport\Service\CertificateReplacementService
+     */
+    public function getCertificateReplacementService()
+    {
+        return $this->getServiceManager()->get(CertificateReplacementService::class);
     }
 
 }

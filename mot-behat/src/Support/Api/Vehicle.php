@@ -12,6 +12,8 @@ class Vehicle extends MotApi
     const PATH_ID = 'vehicle/{vehicle_id}';
     const PATH_SEARCH = 'vehicle?reg={vehicle_reg}&vinType=noVin&excludeDvla=true';
     const PATH_SEARCH_WITH_VIN = 'vehicle?reg={vehicle_reg}&vinType=fullVin&vin={vin}&excludeDvla=true';
+    const PATH_SEARCH_WITH_DVLA = 'vehicle?reg={vehicle_reg}&vinType=noVin&excludeDvla=false';
+    const PATH_SEARCH_WITH_VIN_AND_DVLA = 'vehicle?reg={vehicle_reg}&vinType=fullVin&vin={vin}&excludeDvla=false';
 
     private $makeMap = [
         'BMW' => '18807',
@@ -30,29 +32,39 @@ class Vehicle extends MotApi
         'Anto' => '013AA',
     ];
 
+    /**
+     * Create an MOT test using default values merged with $vehicleMerge
+     *
+     * @param string $token
+     * @param array $vehicleMerge
+     * @return \Dvsa\Mot\Behat\Support\Response
+     */
     public function create($token, $vehicleMerge)
     {
-        $vehicleMergeData = array_replace([
-            'colour' => 'C',
-            'countryOfRegistration' => 1,
-            'cylinderCapacity' => 1000,
-            'fuelType' => 'PE',
-            'make' => 'BMW',
-            'model' => 'Mini',
-            'makeOther' => null,
-            'modelOther' => null,
-            'registrationNumber' => self::randomRegNumber(),
-            'secondaryColour' => 'C',
-            'testClass' => 4,
-            'transmissionType' => 2,
-            'vin' => self::randomVin(),
-            'dateOfFirstUse' => '1990-01-01',
-            'dateOfRegistration' => '1980/01/01',
-            'dateOfManufacture' => '1980/01/01',
-            'newAtFirstReg' => 0,
-            'oneTimePassword' => Authentication::ONE_TIME_PASSWORD,
-            'vtsId' => 1,
-        ], $vehicleMerge);
+        $vehicleMergeData = array_replace(
+            [
+                'colour' => 'C',
+                'countryOfRegistration' => 1,
+                'cylinderCapacity' => 1000,
+                'fuelType' => 'PE',
+                'make' => 'BMW',
+                'model' => 'Mini',
+                'makeOther' => null,
+                'modelOther' => null,
+                'registrationNumber' => self::randomRegNumber(),
+                'secondaryColour' => 'C',
+                'testClass' => 4,
+                'transmissionType' => 2,
+                'vin' => self::randomVin(),
+                'dateOfFirstUse' => '1990-01-01',
+                'dateOfRegistration' => '1980/01/01',
+                'dateOfManufacture' => '1980/01/01',
+                'newAtFirstReg' => 0,
+                'oneTimePassword' => Authentication::ONE_TIME_PASSWORD,
+                'vtsId' => 1,
+            ],
+            $vehicleMerge
+        );
 
         $body = $vehicleMergeData;
         $body['make'] = $this->mapMakeToCode($body['make']);
@@ -61,38 +73,76 @@ class Vehicle extends MotApi
         return $this->sendRequest($token, MotApi::METHOD_POST, self::PATH, $body);
     }
 
-    public function getVehicleDetails($token, $vehicle_id)
+    /**
+     * Retrieve the vehicle details associated with the given $vehicleId
+     *
+     * @param string $token
+     * @param string $vehicleId
+     * @return \Dvsa\Mot\Behat\Support\Response
+     */
+    public function getVehicleDetails($token, $vehicleId)
     {
-        return $this->client->request(new Request(
-            'GET',
-            str_replace('{vehicle_id}', $vehicle_id, self::PATH_ID),
-            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
-        ));
+        return $this->client->request(
+            new Request(
+                'GET',
+                str_replace('{vehicle_id}', $vehicleId, self::PATH_ID),
+                ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
+            )
+        );
     }
 
-    public function vehicleSearch($token, $reg, $vin = null)
+    /**
+     * Search for a vehicle with the given details
+     *
+     * @param string           $token
+     * @param string           $reg
+     * @param string|null      $vin
+     * @param bool|false       $searchDvla
+     * @return \Dvsa\Mot\Behat\Support\Response
+     */
+    public function vehicleSearch($token, $reg, $vin = null, $searchDvla = false)
     {
-        if(empty($vin)) {
-            $url = str_replace('{vehicle_reg}', $reg, self::PATH_SEARCH);
+        if (empty($vin)) {
+            if ($searchDvla) {
+                $url = str_replace('{vehicle_reg}', $reg, self::PATH_SEARCH_WITH_DVLA);
+            } else {
+                $url = str_replace('{vehicle_reg}', $reg, self::PATH_SEARCH);
+            }
         } else {
-            $url = str_replace(['{vehicle_reg}', '{vin}'], [$reg, $vin], self::PATH_SEARCH_WITH_VIN);
+            if ($searchDvla) {
+                $url = str_replace(['{vehicle_reg}', '{vin}'], [$reg, $vin], self::PATH_SEARCH_WITH_VIN_AND_DVLA);
+            } else {
+                $url = str_replace(['{vehicle_reg}', '{vin}'], [$reg, $vin], self::PATH_SEARCH_WITH_VIN);
+            }
+
         }
 
-        return $this->client->request(new Request(
-            'GET',
-            $url,
-            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
-        ));
+        return $this->client->request(
+            new Request(
+                'GET',
+                $url,
+                ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token]
+            )
+        );
     }
 
+    /**
+     * Create a certificate_replacement entry for the updated dvla_vehicle details
+     *
+     * @param string $token
+     * @param int    $vehicleId
+     * @return \Dvsa\Mot\Behat\Support\Response
+     */
     public function dvlaVehicleUpdated($token, $vehicleId)
     {
-        return $this->client->request(new Request(
-            'POST',
-            'dvla-vehicle-updated',
-            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
-            json_encode(['vehicleId' => $vehicleId])
-        ));
+        return $this->client->request(
+            new Request(
+                'POST',
+                'dvla-vehicle-updated',
+                ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
+                json_encode(['vehicleId' => $vehicleId])
+            )
+        );
     }
 
     public function randomRegNumber($length = 7)

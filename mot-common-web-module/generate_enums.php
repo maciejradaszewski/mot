@@ -29,6 +29,7 @@ $inputArray = [
     enum('AuthorisationForTestingMotStatusCode', 'auth_for_testing_mot_status', 'name', 'code'),
     enum('BrakeTestTypeCode', 'brake_test_type', 'name', 'code'),
     enum('BusinessRoleStatusCode', 'business_role_status', 'name', 'code'),
+    enum('CertificateTypeCode', 'certificate_type', 'name', 'code'),
     enum('ColourCode', 'colour_lookup', 'name', 'code'),
     enum('CountryCode', 'country_lookup', 'name', 'code'),
     enum('CountryOfRegistrationCode', 'country_of_registration_lookup', 'name', 'code'),

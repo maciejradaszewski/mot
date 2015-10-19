@@ -176,9 +176,9 @@ class ReplacementCertificateDraft extends Entity implements OdometerHolderInterf
     /**
      * @var string
      *
-     * @ORM\Column(name="is_vin_registration_changed", type="integer", length=1, nullable=true)
+     * @ORM\Column(name="is_vin_vrm_expiry_changed", type="integer", length=1, nullable=true)
      */
-    private $isVinRegistrationChanged;
+    private $isVinVrmExpiryChanged;
 
 
     /**
@@ -285,22 +285,22 @@ class ReplacementCertificateDraft extends Entity implements OdometerHolderInterf
     }
 
     /**
-     * @param integer $isVinRegistrationChanged
+     * @param integer $isVinVrmExpiryChanged
      *
      * @return $this
      */
-    public function setIsVinRegistrationChanged($isVinRegistrationChanged)
+    public function setIsVinVrmExpiryChanged($isVinVrmExpiryChanged)
     {
-        $this->isVinRegistrationChanged = $isVinRegistrationChanged;
+        $this->isVinVrmExpiryChanged = $isVinVrmExpiryChanged;
         return $this;
     }
 
     /**
      * @return integer
      */
-    public function getIsVinRegistrationChanged()
+    public function getIsVinVrmExpiryChanged()
     {
-        return $this->isVinRegistrationChanged;
+        return $this->isVinVrmExpiryChanged;
     }
 
     /**

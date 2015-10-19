@@ -39,9 +39,11 @@ class CertificateCreationService
     }
 
     /**
-     * @param $motTestNumber
-     * @param $userId
+     * @param string $motTestNumber
+     * @param int $userId
+     *
      * @return MotTestDto
+     *
      * @throws \DvsaCommonApi\Service\Exception\ForbiddenException
      */
     public function createFromMotTestNumber($motTestNumber, $userId)
@@ -53,6 +55,13 @@ class CertificateCreationService
         );
     }
 
+    /**
+     * @param string      $motTestNumber
+     * @param MotTestDto  $motTestData
+     * @param int         $userId
+     *
+     * @return MotTestDto
+     */
     public function create($motTestNumber, MotTestDto $motTestData, $userId)
     {
         if ($motTestData->getTestType() instanceof MotTestTypeDto
@@ -84,20 +93,26 @@ class CertificateCreationService
         return $motTestData;
     }
 
+    /**
+     * @param MotTestDto $motTestData
+     * @param int        $userId
+     *
+     * @return int|null
+     */
     private function createPrsCertificate(MotTestDto $motTestData, $userId)
     {
-        $motTestNr = $motTestData->getPrsMotTestNumber();
-        if ($motTestNr === null) {
+        $motTestNumber = $motTestData->getPrsMotTestNumber();
+        if ($motTestNumber === null) {
             return null;
         }
 
         $this->createPassCertificate(
-            $motTestNr,
-            $this->motTestService->getMotTestData($motTestNr),
+            $motTestNumber,
+            $this->motTestService->getMotTestData($motTestNumber),
             $userId
         );
 
-        return $motTestNr;
+        return $motTestNumber;
     }
 
     /**
@@ -107,6 +122,12 @@ class CertificateCreationService
      *
      * However, it's quite plausible that you may need to generate a document
      * explicitly; in which case do feel free to make these methods public.
+     *
+     * @param string     $id
+     * @param MotTestDto $data
+     * @param int        $userId
+     *
+     * @return MotTestDto
      */
     private function createPassCertificate($id, MotTestDto $data, $userId)
     {
@@ -124,6 +145,13 @@ class CertificateCreationService
         );
     }
 
+    /**
+     * @param string     $id
+     * @param MotTestDto $data
+     * @param string     $userId
+     *
+     * @return MotTestDto
+     */
     public function createFailCertificate($id, MotTestDto $data, $userId)
     {
         $certificateMapper = new Mapper\MotTestFailureMapper($this->dataCatalogService);
@@ -140,6 +168,13 @@ class CertificateCreationService
         );
     }
 
+    /**
+     * @param string     $id
+     * @param MotTestDto $data
+     * @param int        $userId
+     *
+     * @return MotTestDto
+     */
     private function createVeAdvisoryCertificate($id, MotTestDto $data, $userId)
     {
         $certificateMapper = new Mapper\MotTestAdvisoryNoticeMapper($this->dataCatalogService);
@@ -156,6 +191,16 @@ class CertificateCreationService
         );
     }
 
+    /**
+     * @param string                $motTestNumber
+     * @param MotTestDto            $motTestDto
+     * @param AbstractMotTestMapper $certificateMapper
+     * @param string                $method
+     * @param string                $documentName
+     * @param int                   $userId
+     *
+     * @return MotTestDto
+     */
     private function createCertificate(
         $motTestNumber,
         MotTestDto $data,
@@ -201,6 +246,8 @@ class CertificateCreationService
 
     private function isNormalTest(MotTestDto $data)
     {
-        return $data->getTestType() !== null && ($data->getTestType()->getCode() === MotTestTypeCode::NORMAL_TEST);
+        return ($data->getTestType() !== null)
+        && ($data->getTestType()->getCode() === MotTestTypeCode::NORMAL_TEST);
     }
+
 }

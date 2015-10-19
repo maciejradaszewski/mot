@@ -1,14 +1,15 @@
 <?php
 namespace DvsaEntities;
 
-use DvsaCommonApi\Module\AbstractErrorHandlingModule;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\Loader\ClassMapAutoloader;
+use Zend\Loader\StandardAutoloader;
 
 /**
  * Class Module
  */
-class Module extends AbstractErrorHandlingModule implements AutoloaderProviderInterface, ConfigProviderInterface
+class Module implements AutoloaderProviderInterface, ConfigProviderInterface
 {
     public function getAutoloaderConfig()
     {

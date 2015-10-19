@@ -24,7 +24,6 @@ use Zend\Authentication\AuthenticationService;
  */
 class MotTestSecurityService extends AbstractService
 {
-
     private static $CONFIG_PARAM_ODOMETER_READING_MODIFICATION_WINDOW_LENGTH_IN_DAYS
         = "odometerReadingModificationWindowLengthInDays";
 

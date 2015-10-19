@@ -83,7 +83,7 @@ class ReplacementCertificateDraftCreator
             ->setExpiryDate($motTest->getExpiryDate())
             ->setVehicleTestingStation($motTest->getVehicleTestingStation())
             ->setReplacementReason($replacementReason)
-            ->setIsVinRegistrationChanged(false);
+            ->setIsVinVrmExpiryChanged(false);
 
         return $draft;
     }

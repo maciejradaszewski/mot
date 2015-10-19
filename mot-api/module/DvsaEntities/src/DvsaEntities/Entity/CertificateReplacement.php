@@ -43,6 +43,16 @@ class CertificateReplacement extends Entity
     private $differentTesterReason;
 
     /**
+     * @var \DvsaEntities\Entity\CertificateType
+     *
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\CertificateType")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="certificate_type_id", referencedColumnName="id")
+     * })
+     */
+    private $certificateType;
+
+    /**
      * @var string $replacementReason
      *
      * @ORM\Column(name="reason", type="string", nullable=true)
@@ -52,9 +62,9 @@ class CertificateReplacement extends Entity
     /**
      * @var string
      *
-     * @ORM\Column(name="is_vin_registration_changed", type="integer", length=1, nullable=true)
+     * @ORM\Column(name="is_vin_vrm_expiry_changed", type="integer", length=1, nullable=true)
      */
-    private $isVinRegistrationChanged;
+    private $isVinVrmExpiryChanged;
 
     /**
      * @param \DvsaEntities\Entity\MotTest $motTest
@@ -92,6 +102,24 @@ class CertificateReplacement extends Entity
     public function getMotTestVersion()
     {
         return $this->motTestVersion;
+    }
+
+    /**
+     * @param CertificateType $certificateType
+     * @return $this
+     */
+    public function setCertificateType($certificateType)
+    {
+        $this->certificateType = $certificateType;
+        return $this;
+    }
+
+    /**
+     * @return CertificateType
+     */
+    public function getCertificateType()
+    {
+        return $this->certificateType;
     }
 
     /**
@@ -133,21 +161,21 @@ class CertificateReplacement extends Entity
     }
 
     /**
-     * @param integer $isVinRegistrationChanged
+     * @param integer $isVinVrmExpiryChanged
      *
      * @return $this
      */
-    public function setIsVinRegistrationChanged($isVinRegistrationChanged)
+    public function setIsVinVrmExpiryChanged($isVinVrmExpiryChanged)
     {
-        $this->isVinRegistrationChanged = $isVinRegistrationChanged;
+        $this->isVinVrmExpiryChanged = $isVinVrmExpiryChanged;
         return $this;
     }
 
     /**
      * @return integer
      */
-    public function getIsVinRegistrationChanged()
+    public function getIsVinVrmExpiryChanged()
     {
-        return $this->isVinRegistrationChanged;
+        return $this->isVinVrmExpiryChanged;
     }
 }
