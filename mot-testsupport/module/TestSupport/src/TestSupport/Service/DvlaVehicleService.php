@@ -5,6 +5,7 @@ namespace TestSupport\Service;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Connection;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaEntities\Entity\DvlaVehicle;
 
 class DvlaVehicleService
 {
@@ -65,6 +66,42 @@ class DvlaVehicleService
         $vehicleData['created_by'] = ArrayUtils::tryGet($data, 'created_by', 2);
 
         return $vehicleData;
+    }
+
+    /**
+     * Update the dvla_vehicle entry with the associated $id with $data
+     * @param int $id
+     * @param array $data
+     */
+    public function update($id, $data)
+    {
+        //update vehicle with new data
+        $this->entityManager->getConnection()->update(
+            'dvla_vehicle', $data, ['id' => $id]
+        );
+    }
+
+    /**
+     * @param $registration
+     * @param $vin
+     *
+     * @return int|null
+     */
+    public function fetchId($registration, $vin)
+    {
+        $dql = sprintf('SELECT dv.id FROM %s dv WHERE dv.registration = :registration AND dv.vin = :vin',
+            DvlaVehicle::class);
+
+        $query = $this->entityManager
+            ->createQuery($dql)
+            ->setParameters([
+                'registration' => $registration,
+                'vin' => $vin
+            ]);
+
+        $id = $query->getSingleScalarResult();
+
+        return $id ?: null;
     }
 
 }

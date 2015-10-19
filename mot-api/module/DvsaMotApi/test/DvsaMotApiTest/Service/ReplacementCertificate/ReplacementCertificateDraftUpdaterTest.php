@@ -94,7 +94,12 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $draft->getMotTest()->setVin('123456');
         $draft->getMotTest()->setRegistration('123456');
 
-        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
+        $change = RCOF::partialReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
+        // expiry date must not be set for 'isVinVrmExpiryChanged' to remain false
+        $change->setMake(999 + self::ID_SEED)
+            ->setModel(999 + self::ID_SEED)
+            ->setCountryOfRegistration(999 + self::ID_SEED)
+            ->setVtsSiteNumber("NEW_SITE_NUMBER");
         $change->setVin('123457'); // vin change
         $change->setVrm('123456');
 
@@ -102,7 +107,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
 
         //then
-        $this->assertFalse($updatedDraft->getIsVinRegistrationChanged());
+        $this->assertFalse($updatedDraft->getIsVinVrmExpiryChanged());
     }
 
     public function testSetIsVinRegistrationChanged_isAlwaysFalse_forNoMismatchPermission_Only_VRN_Changed()
@@ -122,7 +127,12 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $draft->getMotTest()->setVin('123456');
         $draft->getMotTest()->setRegistration('123456');
 
-        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
+        $change = RCOF::partialReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
+        // expiry date must not be set for 'isVinVrmExpiryChanged' to remain false
+        $change->setMake(999 + self::ID_SEED)
+            ->setModel(999 + self::ID_SEED)
+            ->setCountryOfRegistration(999 + self::ID_SEED)
+            ->setVtsSiteNumber("NEW_SITE_NUMBER");
         $change->setVin('123456');
         $change->setVrm('123457');
 
@@ -130,7 +140,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
 
         //then
-        $this->assertFalse($updatedDraft->getIsVinRegistrationChanged());
+        $this->assertFalse($updatedDraft->getIsVinVrmExpiryChanged());
     }
 
     public function testUpdate_givenFullRights_and_reasonForDifferentTester_shouldForbidAction()
@@ -211,7 +221,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
 
         $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
 
-        $this->assertEquals(1, $updatedDraft->getIsVinRegistrationChanged());
+        $this->assertEquals(1, $updatedDraft->getIsVinVrmExpiryChanged());
     }
 
     public function testUpdateReplacementCertificateWithUpdatedExpiryDate()
@@ -230,7 +240,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
 
         $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
 
-        $this->assertEquals(1, $updatedDraft->getIsVinRegistrationChanged());
+        $this->assertEquals(1, $updatedDraft->getIsVinVrmExpiryChanged());
     }
 
     public function testUpdateReplacementCertificateWithUpdatedVin()
@@ -246,7 +256,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $draft->setVin('123456');
         $draft->setVrm('123456');
         $draft->setExpiryDate(DateUtils::toDate("2014-01-01"));
-        $draft->setIsVinRegistrationChanged(false);
+        $draft->setIsVinVrmExpiryChanged(false);
 
         $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
         $change->setVin('7891011');
@@ -255,7 +265,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
 
         $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
 
-        $this->assertEquals(1, $updatedDraft->getIsVinRegistrationChanged());
+        $this->assertEquals(1, $updatedDraft->getIsVinVrmExpiryChanged());
     }
 
     public function testUpdateReplacementCertificateWithSameVinAndVrmAndExpiryDateShouldNotUpdateRegistrationChangedStatus()
@@ -272,7 +282,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $draft->setExpiryDate(DateUtils::toDate("2014-01-01"));
         $draft->setVin('123456');
         $draft->setVrm('123456');
-        $draft->setIsVinRegistrationChanged(false);
+        $draft->setIsVinVrmExpiryChanged(false);
 
         $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
         $draft->getMotTest()->setRegistration('123456');
@@ -282,7 +292,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
 
         $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
 
-        $this->assertEquals(0, $updatedDraft->getIsVinRegistrationChanged());
+        $this->assertEquals(0, $updatedDraft->getIsVinVrmExpiryChanged());
     }
 
     public function testUpdateReplacementCertificateWithCustomMakeShouldSetCustomMakeAndMakeIdNullStatus()
@@ -338,7 +348,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('SUPRA UK', $updatedDraft->getModelName());
     }
 
-    public function testChangeInExpiryDateShouldNotAffectIsVinRegistrationChanged()
+    public function testChangeInExpiryDateShouldUpdateIsVinVrmExpiryChanged()
     {
         //given
         $this->returnsOkCheckResult();
@@ -348,7 +358,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         );
 
         $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
-        $draft->getMotTest()->setExpiryDate("2013-12-01");
+        $draft->getMotTest()->setExpiryDate(DateUtils::toDate("2013-12-01"));
         $draft->getMotTest()->setVin('123456');
         $draft->getMotTest()->setRegistration('123456');
 
@@ -361,7 +371,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
 
         //then
-        $this->assertFalse($updatedDraft->getIsVinRegistrationChanged());
+        $this->assertEquals(1, $updatedDraft->getIsVinVrmExpiryChanged());
     }
 
     private function returnsMake(Make $make)

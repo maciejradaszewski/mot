@@ -18,6 +18,8 @@ class DvlaVehicleUpdatedService implements TransactionAwareInterface
 {
     use TransactionAwareTrait;
 
+    const CHERISHED_TRANSFER_REASON = 'DVLA Cherished Transfer';
+
     /**
      * @var MotTestRepository
      */
@@ -62,14 +64,13 @@ class DvlaVehicleUpdatedService implements TransactionAwareInterface
         $changeDto->setVrm($vehicle->getRegistration());
 
         return $this->inTransaction(
-            function () use (&$latestMotTestNumber, &$userId, &$changeDto) {
-                $reason = 'DVLA Cherished Transfer';
+            function () use ($latestMotTestNumber, $userId, $changeDto) {
+                $reason = self::CHERISHED_TRANSFER_REASON;
                 $draftId = $this->replacementCertificateService->createAndUpdateDraft(
                     $latestMotTestNumber, $reason, $changeDto
                 )->getId();
                 $this->replacementCertificateService->applyDraft($draftId, []);
                 $this->replacementCertificateService->createCertificate($latestMotTestNumber, $userId);
-                return true;
             }
         );
     }

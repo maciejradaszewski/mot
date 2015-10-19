@@ -3,22 +3,23 @@
 namespace DvsaMotApiTest\Factory\Service;
 
 use Doctrine\ORM\EntityManager;
+use DvsaAuthentication\Service\OtpService;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
+use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaEntities\Repository\CertificateReplacementRepository;
+use DvsaEntities\Repository\CertificateTypeRepository;
+use DvsaEntities\Repository\MotTestRepository;
+use DvsaEntities\Repository\ReplacementCertificateDraftRepository;
 use DvsaMotApi\Factory\Service\ReplacementCertificateServiceFactory;
 use DvsaMotApi\Service\CertificateCreationService;
-use DvsaAuthentication\Service\OtpService;
+use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateDraftCreator;
+use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateDraftUpdater;
+use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateService;
+use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateUpdater;
 use Zend\Authentication\AuthenticationService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
-use DvsaCommonApiTest\Service\AbstractServiceTestCase;
-use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateService;
-use DvsaEntities\Repository\ReplacementCertificateDraftRepository;
-use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateDraftCreator;
-use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateDraftUpdater;
-use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateUpdater;
-use DvsaEntities\Repository\CertificateReplacementRepository;
-use DvsaEntities\Repository\MotTestRepository;
 
 /**
  * Class ReplacementCertificateServiceFactoryTest
@@ -40,8 +41,14 @@ class ReplacementCertificateServiceFactoryTest extends AbstractServiceTestCase
         $otpService = XMock::of(OtpService::class);
         $certificateCreationService = XMock::of(CertificateCreationService::class);
 
+        $mockEntityManager = $this->getMockEntityManager();
+
         $this->serviceLocator = new ServiceManager();
-        $this->serviceLocator->setService('ReplacementCertificateDraftRepository', $replacementCertificateDraftRepository);
+        $this->serviceLocator->setService(EntityManager::class, $mockEntityManager);
+        $this->serviceLocator->setService(
+            'ReplacementCertificateDraftRepository',
+            $replacementCertificateDraftRepository
+        );
         $this->serviceLocator->setService('DvsaAuthorisationService', $authorisationService);
         $this->serviceLocator->setService('ReplacementCertificateDraftCreator', $replacementCertificateDraftCreator);
         $this->serviceLocator->setService('ReplacementCertificateDraftUpdater', $replacementCertificateDraftUpdater);
