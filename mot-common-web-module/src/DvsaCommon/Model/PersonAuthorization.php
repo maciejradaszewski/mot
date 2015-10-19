@@ -239,6 +239,7 @@ class PersonAuthorization
     {
         return ($this->normalRoles->includesRole(Role::DVSA_AREA_OFFICE_1)
             || $this->normalRoles->includesRole(Role::DVSA_SCHEME_MANAGEMENT)
+            || $this->normalRoles->includesRole(Role::DVLA_MANAGER)
             || $this->normalRoles->includesRole(Role::DVSA_SCHEME_USER)
         );
     }
