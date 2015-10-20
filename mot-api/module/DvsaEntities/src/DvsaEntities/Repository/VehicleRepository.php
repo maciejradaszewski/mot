@@ -55,7 +55,7 @@ class VehicleRepository extends AbstractVehicleRepository
      */
     public function search($vin, $reg, $limit = null)
     {
-        return $this->createExactMatchSearchQueryBuilder('vehicle', $vin, $reg, $limit)
+        return $this->createExactMatchSearchQueryBuilder('vehicle', $vin, $reg, $limit, 'vin', 'registration')
             ->select([
                 'vehicle'
             ])
@@ -71,22 +71,23 @@ class VehicleRepository extends AbstractVehicleRepository
      * @param $limit
      * @return \Doctrine\ORM\QueryBuilder
      */
-    protected function createExactMatchSearchQueryBuilder($alias, $vin, $reg, $limit)
+    protected function createExactMatchSearchQueryBuilder($alias, $vin, $reg, $limit, $vinColumn = 'vinCollapsed',
+                                                          $registrationColumn = 'registrationCollapsed')
     {
         $queryBuilder = $this->createQueryBuilder($alias);
 
-        if (!is_null($vin)) {
+        if (!empty($vin)) {
             $preparedVin = $this->sanitize($vin);
-            $queryBuilder->andWhere('vehicle.vin = :vin');
-            $queryBuilder->setParameter('vin', $preparedVin);
+            $queryBuilder->andWhere("vehicle.{$vinColumn} = :vin");
+            $queryBuilder->setParameter("vin", $preparedVin);
         }
 
-        if (!is_null($reg)) {
-            $queryBuilder->andWhere('vehicle.registration = :reg');
-            $queryBuilder->setParameter('reg', $this->sanitize($reg));
+        if (!empty($reg)) {
+            $queryBuilder->andWhere("vehicle.{$registrationColumn} = :reg");
+            $queryBuilder->setParameter("reg", $this->sanitize($reg));
         }
 
-        if (!is_null($limit)) {
+        if (!empty($limit)) {
             $queryBuilder->setMaxResults($limit);
         }
 
