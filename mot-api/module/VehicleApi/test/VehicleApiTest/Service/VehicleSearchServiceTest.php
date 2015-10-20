@@ -11,6 +11,8 @@ use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaEntities\DataConversion\FuzzySearchConverter;
+use DvsaEntities\DataConversion\SpaceStripConverter;
 use DvsaEntities\DqlBuilder\SearchParam\VehicleSearchParam;
 use DvsaEntities\Entity\BodyType;
 use DvsaEntities\Entity\Colour;
@@ -321,27 +323,6 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
         $service->searchVehicleWithAdditionalData($searchParam);
     }
 
-    public function testSearchWithAdditionalDataWtihSpacesInParametersReturnsSanitizedData()
-    {
-        $searchParam = new VehicleSearchParam('F N Z 6  1  00', 'vin');
-
-        $this->getMockVehicleRepositoryWithResult('searchVehicle', false);
-
-        $service = $this->getMockService();
-        $vehicles = $service->searchVehicleWithAdditionalData($searchParam);
-
-        $this->assertEquals('FNZ6100', $vehicles['searched']['vin']);
-
-        $searchParam = new VehicleSearchParam('F N Z 6  1  00', 'registration');
-
-        $this->getMockVehicleRepositoryWithResult('searchVehicle', false);
-
-        $service = $this->getMockService();
-        $vehicles = $service->searchVehicleWithAdditionalData($searchParam);
-
-        $this->assertEquals('FNZ6100', $vehicles['searched']['registration']);
-    }
-
     public function testSearchWithAdditionalDataWithResultsWithVin()
     {
         // 4 Results
@@ -460,7 +441,9 @@ class VehicleSearchServiceTest extends AbstractServiceTestCase
             $this->mockTesterService,
             $this->getMockVehicleCatalog(),
             $this->paramObfuscator,
-            $this->retestEligibilityValidator
+            $this->retestEligibilityValidator,
+            new FuzzySearchConverter(),
+            new SpaceStripConverter()
         );
     }
 
