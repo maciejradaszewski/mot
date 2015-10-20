@@ -278,15 +278,17 @@ class VehicleContext implements Context
     public function theVehicleRegistrationNumberIsFound($reg, $vin)
     {
         $data = $this->searchedVehicleResponse->getBody()['data'];
-        PHPUnit::assertArrayHasKey('resultType', $data);
-
         if(array_key_exists('vehicle', $data)) {
-            PHPUnit::assertSame($data['vehicle']['registration'], $reg);
-            PHPUnit::assertSame($data['vehicle']['vin'], $vin);
+            PHPUnit::assertSame($data['vehicle']['registration'], PHPUnit::identicalTo(($reg)));
         }
         if(array_key_exists('vehicles', $data)) {
-            PHPUnit::assertSame($data['vehicles'][0]['registration'], $reg);
-            PHPUnit::assertSame($data['vehicles'][0]['vin'], $vin);
+            PHPUnit::assertSame($data['vehicles'][0]['registration'], PHPUnit::identicalTo(($reg)));
+        }
+        if(array_key_exists('vehicle', $data)) {
+            PHPUnit::assertSame($data['vehicle']['vin'], PHPUnit::identicalTo(($vin)));
+        }
+        if(array_key_exists('vehicles', $data)) {
+            PHPUnit::assertSame($data['vehicles'][0]['vin'], PHPUnit::identicalTo(($vin)));
         }
     }
 
@@ -300,7 +302,12 @@ class VehicleContext implements Context
     public function theVehicleRegistrationNumberIsReturned($reg)
     {
         $data = $this->searchedVehicleResponse->getBody()['data'];
-        PHPUnit::assertSame($data['vehicle']['registration'], $reg);
+        if(array_key_exists('vehicle', $data)) {
+            PHPUnit::assertSame($data['vehicle']['registration'], PHPUnit::identicalTo(($reg)));
+        }
+        if(array_key_exists('vehicles', $data)) {
+            PHPUnit::assertSame($data['vehicles'][0]['registration'], PHPUnit::identicalTo(($reg)));
+        }
     }
 
     /**

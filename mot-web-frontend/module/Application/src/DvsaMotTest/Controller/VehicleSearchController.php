@@ -21,7 +21,6 @@ use DvsaMotTest\Model\VehicleSearchResult;
 use DvsaMotTest\Service\VehicleSearchService;
 use DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultMessage;
 use DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultUrlTemplateInterface;
-use Zend\Escaper\Escaper;
 use Zend\Form\Element\Hidden;
 use Zend\Http\Request;
 use Zend\Http\Response;
@@ -426,16 +425,15 @@ class VehicleSearchController extends AbstractDvsaMotTestController
             $form->add($hiddenContingencyField);
         }
 
-        $regEntered = $this->params()->fromQuery(self::PRM_REG, null);
-        $vinEntered = $this->params()->fromQuery(self::PRM_VIN, null);
-        $escaper = new Escaper('utf-8');
+        $reg = $this->params()->fromQuery(self::PRM_REG, null);
+        $vin = $this->params()->fromQuery(self::PRM_VIN, null);
 
-        if (!is_null($regEntered) && !is_null($vinEntered)) {
+        if (!is_null($reg) && !is_null($vin)) {
             $filter = new Alnum();
             $filter->setAllowWhiteSpace(false);
 
-            $vin = $filter->filter($vinEntered);
-            $reg = $filter->filter($regEntered);
+            $vin = $filter->filter($vin);
+            $reg = $filter->filter($reg);
 
             $data = [
                 self::PRM_VIN => strtoupper($vin),
@@ -444,10 +442,9 @@ class VehicleSearchController extends AbstractDvsaMotTestController
             $form->setData($data);
 
             if ($form->isValid()) {
-                $form->setData([self::PRM_VIN => $vinEntered, self::PRM_REG => $regEntered]);
-                $noRegistration = ($reg) ? 0 : 1;
+                $noRegistration = ($data[self::PRM_REG]) ? 0 : 1;
 
-                if (!($reg || $vin)) {
+                if (!($data[self::PRM_REG] || $data[self::PRM_VIN])) {
                     return $this->returnViewModel(
                         $form,
                         true,
@@ -457,8 +454,8 @@ class VehicleSearchController extends AbstractDvsaMotTestController
                         false,
                         null,
                         $this->getVehicleSearchService()->getSearchResultMessage(
-                            $escaper->escapeHtml($regEntered),
-                            $escaper->escapeHtml($vinEntered),
+                            $data[self::PRM_REG],
+                            $data[self::PRM_VIN],
                             0
                         )
                     );
@@ -472,8 +469,8 @@ class VehicleSearchController extends AbstractDvsaMotTestController
                     }
 
                     $vehicles = $this->getVehicleSearchService()->search(
-                        $vin,
-                        $reg,
+                        $data[self::PRM_VIN],
+                        $data[self::PRM_REG],
                         $this->getVehicleSearchService()->shouldSearchInDvlaVehicleList($searchType),
                         $vtsId,
                         $ctSessionMng->isMotContingency()
@@ -488,8 +485,8 @@ class VehicleSearchController extends AbstractDvsaMotTestController
                         false,
                         $this->vehicleSearchService->getUrlTemplate($searchType, $noRegistration, $this->url()),
                         $this->getVehicleSearchService()->getSearchResultMessage(
-                            $escaper->escapeHtml($regEntered),
-                            $escaper->escapeHtml($vinEntered),
+                            $data[self::PRM_REG],
+                            $data[self::PRM_VIN],
                             count($vehicles)
                         )
                     );
