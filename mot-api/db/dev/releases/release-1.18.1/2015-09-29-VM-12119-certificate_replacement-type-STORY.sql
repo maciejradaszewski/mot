@@ -271,7 +271,7 @@ ALTER TABLE `replacement_certificate_draft`
   CHANGE COLUMN `is_vin_registration_changed` `is_vin_vrm_expiry_changed` TINYINT UNSIGNED NOT NULL DEFAULT '0';
 
 ALTER TABLE `replacement_certificate_draft_hist`
-  CHANGE COLUMN `is_vin_registration_changed` `is_vin_vrm_expiry_changed` TINYINT UNSIGNED NOT NULL DEFAULT '0';
+  CHANGE COLUMN `is_vin_registration_changed` `is_vin_vrm_expiry_changed` TINYINT UNSIGNED ;
 
 -- Create triggers for mot.replacement_certificate_draft
 DROP TRIGGER IF EXISTS `tr_replacement_certificate_draft_ai`;
