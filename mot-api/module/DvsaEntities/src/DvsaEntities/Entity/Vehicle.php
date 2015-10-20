@@ -53,20 +53,6 @@ class Vehicle extends Entity implements VehicleInterface
     private $vin;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="registration_collapsed", type="string", length=20, nullable=true)
-     */
-    private $registrationCollapsed;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="vin_collapsed", type="string", length=30, nullable=true)
-     */
-    private $vinCollapsed;
-
-    /**
      * @var integer
      *
      * @ORM\Column(name="empty_vrm_reason_id", type="integer", nullable=true)

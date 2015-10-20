@@ -3,8 +3,6 @@
 namespace VehicleApi\Factory\Service;
 
 use Doctrine\ORM\EntityManager;
-use DvsaEntities\DataConversion\FuzzySearchConverter;
-use DvsaEntities\DataConversion\SpaceStripConverter;
 use DvsaEntities\Entity\DvlaVehicle;
 use DvsaEntities\Entity\DvlaVehicleImportChangeLog;
 use DvsaEntities\Entity\MotTest;
@@ -35,9 +33,7 @@ class VehicleSearchServiceFactory implements FactoryInterface
             $serviceLocator->get('TesterService'),
             $serviceLocator->get('VehicleCatalogService'),
             $serviceLocator->get(ParamObfuscator::class),
-            $serviceLocator->get(RetestEligibilityValidator::class),
-            new FuzzySearchConverter(),
-            new SpaceStripConverter()
+            $serviceLocator->get(RetestEligibilityValidator::class)
         );
     }
 }
