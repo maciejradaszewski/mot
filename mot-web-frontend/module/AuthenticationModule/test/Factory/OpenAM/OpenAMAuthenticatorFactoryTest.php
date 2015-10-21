@@ -5,13 +5,13 @@
  * @link http://gitlab.clb.npm/mot/mot
  */
 
-namespace Dvsa\Mot\Frontend\AuthenticationModuleTest\OpenAM\Factory;
+namespace Dvsa\Mot\Frontend\AuthenticationModuleTest\Factory\OpenAM;
 
-use Dvsa\OpenAM\OpenAMClientInterface;
-use Dvsa\OpenAM\Options\OpenAMClientOptions;
 use Dvsa\Mot\Frontend\AuthenticationModule\Factory\OpenAM\OpenAMAuthenticatorFactory;
 use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\OpenAMAuthenticator;
 use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\Response\OpenAMAuthFailureBuilder;
+use Dvsa\OpenAM\OpenAMClientInterface;
+use Dvsa\OpenAM\Options\OpenAMClientOptions;
 use DvsaCommonTest\TestUtils\ServiceFactoryTestHelper;
 use Zend\Log\LoggerInterface;
 
@@ -26,7 +26,7 @@ class OpenAMAuthenticatorFactoryTest extends \PHPUnit_Framework_TestCase
                 OpenAMClientInterface::class,
                 OpenAMClientOptions::class,
                 OpenAMAuthFailureBuilder::class => function () {
-                    return new OpenAMAuthFailureBuilder([]);
+                    return new OpenAMAuthFailureBuilder(new OpenAMClientOptions(), []);
                 },
                 'Application\Logger' => LoggerInterface::class,
             ]

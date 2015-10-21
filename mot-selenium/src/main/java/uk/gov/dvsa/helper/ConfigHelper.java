@@ -14,4 +14,8 @@ public class ConfigHelper {
             throw new SkipException("Jasper Async not Enabled");
         }
     }
+
+    public static boolean isOpenamDASEnabled() throws IOException {
+        return service.getToggleValue("openam.das.enabled");
+    }
 }

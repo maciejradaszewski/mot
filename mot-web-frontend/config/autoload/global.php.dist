@@ -46,6 +46,11 @@ return [
              */
             'identity_attribute_uuid' => 'entryuuid',
             /*
+             * This setting controls the maximum number of failed authentications a user can have during the lockout
+             * interval before OpenAM locks the users account.
+             */
+            'login_failure_lockout_count' => 5,
+            /*
              * Logout URL to logout of the application through OpenAM. Has a goto parameter that tells OpenAM where to
              * redirect after logout. Web Frontend only.
              */
@@ -66,6 +71,11 @@ return [
              * Base URL of the OpenAM REST API.
              */
             'url' => 'http://openam.mot.gov.uk:8080/secure/',
+            /*
+             * The user will be given a warning when they reach this level of failed authentications during the lockout
+             * interval.
+             */
+            'warn_user_after_n_failures' => 4,
         ],
     ],
     'gaTrackingCode' => '',

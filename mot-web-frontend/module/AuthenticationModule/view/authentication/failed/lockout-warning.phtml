@@ -1,0 +1,20 @@
+<div class="text">
+
+    <p class='lede'><?php echo $this->yourAccountWillBeLockedMessage; ?></p>
+
+    You can <a href="<?php echo $this->url('forgotten-password') ?>">change your password</a> if you have forgotten it. For other sign in related queries you can contact <?php echo $this->helpdesk['name'] ?> on <?php echo $this->helpdesk['phoneNumber'] ?>.
+
+    <p>
+        <?php echo $this->helpdesk['name'] ?> opening hours
+    </p>
+    <p>
+        <?php echo $this->helpdesk['openingHrsWeekdays'] ?><br>
+        <?php echo $this->helpdesk['openingHrsSaturday'] ?><br>
+        <?php echo $this->helpdesk['openingHrsSunday'] ?>
+    </p>
+
+    <p>
+        <a href="<?php echo $this->url($this->loginRoute); ?>">Return to sign in</a>
+    </p>
+
+</div>

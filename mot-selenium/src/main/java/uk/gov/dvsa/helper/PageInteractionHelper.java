@@ -2,10 +2,13 @@ package uk.gov.dvsa.helper;
 
 import com.dvsa.mot.selenium.framework.Utilities;
 import com.google.common.base.Function;
+import org.codehaus.groovy.runtime.dgmimpl.arrays.ObjectArrayGetAtMetaMethod;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.*;
+import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.Configurator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
+import uk.gov.dvsa.ui.pages.Page;
 import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
 
 import java.util.ArrayList;
@@ -164,6 +167,13 @@ public class PageInteractionHelper {
                 return driver.findElement(locator);
             }
         });
+    }
+
+    public static <T extends Page> T refreshPageWhileElementIsVisible(Class<T> clazz, WebElement element) throws InterruptedException {
+        while (element.isDisplayed()) {
+            driver.navigate().refresh();
+        }
+        return MotPageFactory.newPage(driver, clazz);
     }
 
     protected boolean isElementClickable(WebElement element, int timeout) {
