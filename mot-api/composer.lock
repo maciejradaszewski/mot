@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "24bfbf5100d550735dcac68de41cda0e",
+    "hash": "ebea7569d0254a1e086fe9b4c09ed1bc",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1630,11 +1630,11 @@
         },
         {
             "name": "slot-purchase/backend-api",
-            "version": "v3.6.2",
+            "version": "v3.6.4",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git",
-                "reference": "bb8952e13d7071bbfcd30835d9ca0a898caa8540"
+                "reference": "de22c16e7af68903f7dece1a8a2ce81912e1fc95"
             },
             "require": {
                 "cpms/client": "1.22.*",
@@ -1672,7 +1672,7 @@
                 "proprietary"
             ],
             "description": "API for slot purchasing and related features",
-            "time": "2015-09-17 12:49:42"
+            "time": "2015-10-21 11:31:14"
         },
         {
             "name": "soflomo/purifier",
@@ -1907,12 +1907,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/ZendPdf.git",
-                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
+                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
-                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
+                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "shasum": ""
             },
             "require": {
@@ -1940,10 +1940,6 @@
                 "pdf",
                 "zf2"
             ],
-            "support": {
-                "source": "https://github.com/zendframework/ZendPdf/tree/release-2.0.2",
-                "issues": "https://github.com/zendframework/ZendPdf/issues"
-            },
             "time": "2012-11-16 11:16:01"
         },
         {
