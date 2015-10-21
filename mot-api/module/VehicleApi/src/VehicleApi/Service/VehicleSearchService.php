@@ -8,6 +8,7 @@ use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaEntities\DataConversion\AbstractStringConverter;
 use DvsaEntities\DqlBuilder\SearchParam\VehicleSearchParam;
 use DvsaEntities\Entity\Colour;
 use DvsaEntities\Entity\DvlaVehicle;
@@ -21,7 +22,6 @@ use DvsaEntities\Repository\VehicleRepository;
 use DvsaMotApi\Service\TesterService;
 use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 use DvsaCommonApi\Service\Exception\BadRequestException;
-use VehicleApi\Helper\VehicleSearchParams;
 
 /**
  * Class VehicleService.
@@ -47,6 +47,10 @@ class VehicleSearchService
     private $paramObfuscator;
     /** @var RetestEligibilityValidator */
     private $retestEligibilityValidator;
+    /** @var AbstractStringConverter */
+    private $searchStringConverter;
+    /** @var  AbstractStringConverter */
+    private $enforcementSearchStringConverter;
 
     /**
      * @param AuthorisationServiceInterface $authService
@@ -58,6 +62,8 @@ class VehicleSearchService
      * @param VehicleCatalogService $vehicleCatalog
      * @param ParamObfuscator $paramObfuscator
      * @param RetestEligibilityValidator $retestEligibilityValidator
+     * @param AbstractStringConverter $searchStringConverter
+     * @param AbstractStringConverter $enforcementSearchStringConverter
      */
     public function __construct(
         AuthorisationServiceInterface $authService,
@@ -68,7 +74,9 @@ class VehicleSearchService
         TesterService $testerService,
         VehicleCatalogService $vehicleCatalog,
         ParamObfuscator $paramObfuscator,
-        RetestEligibilityValidator $retestEligibilityValidator
+        RetestEligibilityValidator $retestEligibilityValidator,
+        AbstractStringConverter $searchStringConverter,
+        AbstractStringConverter $enforcementSearchStringConverter
     ) {
         $this->vehicleRepository = $vehicleRepository;
         $this->dvlaVehicleRepository = $dvlaVehicleRepository;
@@ -79,6 +87,8 @@ class VehicleSearchService
         $this->paramObfuscator = $paramObfuscator;
         $this->motTestRepository = $motTestRepository;
         $this->retestEligibilityValidator = $retestEligibilityValidator;
+        $this->searchStringConverter = $searchStringConverter;
+        $this->enforcementSearchStringConverter = $enforcementSearchStringConverter;
     }
 
     /**
@@ -98,10 +108,9 @@ class VehicleSearchService
         $vehicles = $this->searchAndExtractVehicle($vin, $reg, $isFullVin, $searchDvla, $limit);
 
         if (empty($vehicles)) {
-            if ($this->paramsNeedStripping($vin, $reg)) {
-                list($vin, $reg) = $this->stripParams($vin, $reg);
+                $vin = $this->searchStringConverter->convert($vin);
+                $reg = $this->searchStringConverter->convert($reg);
                 $vehicles = $this->searchAndExtractVehicle($vin, $reg, $isFullVin, $searchDvla, $limit);
-            }
         } else {
             $exactMatch = true;
         }
@@ -121,14 +130,8 @@ class VehicleSearchService
     {
         $searchParam->process();
 
-        $vin = $searchParam->getVin();
-        $reg = $searchParam->getRegistration();
-
-        if ($this->paramsNeedStripping($vin, $reg)) {
-            list($vin, $reg) = $this->stripParams($vin, $reg);
-            $searchParam->setVin($vin);
-            $searchParam->setRegistration($reg);
-        }
+        $vin = $this->enforcementSearchStringConverter->convert($searchParam->getVin());
+        $reg = $this->enforcementSearchStringConverter->convert($searchParam->getRegistration());
 
         $vehicles = $this->vehicleRepository->search(
             $vin,
@@ -153,7 +156,7 @@ class VehicleSearchService
      * @param Vehicle[] $vehicles
      * @return array
      */
-    public function extractEnforcementVehicles($vehicles)
+    private function extractEnforcementVehicles($vehicles)
     {
         $results = [];
         foreach ($vehicles as $vehicle) {
@@ -179,33 +182,13 @@ class VehicleSearchService
         $vtsId = false,
         $contingencyDto = null
     ) {
-        $isFullVin = true;
-        $vinHasSpaces = false;
-        $regHasSpaces = false;
+        $vin = $this->searchStringConverter->convert($vin);
+        $reg = $this->searchStringConverter->convert($reg);
 
-        if ($vin) {
-            $filteredVin = preg_replace('/\s+/', '', $vin);
-            $isFullVin = strlen($filteredVin) !== 6;
-            $vinHasSpaces = $filteredVin !== $vin;
-        }
-
-        if ($reg) {
-            $filteredReg = preg_replace('/\s+/', '', $reg);
-            $regHasSpaces = $filteredReg !== $reg;
-        }
-
+        $isFullVin = $this->isVinFull($vin);
         $this->authService->assertGranted(PermissionInSystem::VEHICLE_READ);
 
         $vehicles = $this->searchAndExtractVehicle($vin, $reg, $isFullVin, $searchDvla, $limit);
-
-        if(empty($vehicles) && ($vinHasSpaces || $regHasSpaces)) {
-            $vehicles = $this->searchAndExtractVehicle(
-                $vinHasSpaces ? $filteredVin : $vin,
-                $regHasSpaces ? $filteredReg : $reg,
-                $isFullVin,
-                $searchDvla,
-                $limit);
-        }
 
         if (!empty($vehicles)) {
             $vehicles = $this->mergeMotDataToVehicles($vehicles, $vtsId, $contingencyDto);
@@ -288,7 +271,7 @@ class VehicleSearchService
      *
      * @return array
      */
-    public function extractVehicle(Vehicle $v)
+    private function extractVehicle(Vehicle $v)
     {
         $emptyVrmReason = $v->getEmptyVrmReason() ? $v->getEmptyVrmReason()->getCode() : null;
         $emptyVinReason = $v->getEmptyVinReason() ? $v->getEmptyVinReason()->getCode() : null;
@@ -370,7 +353,7 @@ class VehicleSearchService
      *
      * @return array
      */
-    public function extractDvlaVehicle(DvlaVehicle $v)
+    private function extractDvlaVehicle(DvlaVehicle $v)
     {
         $fuelTypeEntity = $this->findFuelTypeByPropulsionCode($v->getFuelType());
         // Search in DVSA make and model tables if no mapping is found
@@ -493,6 +476,16 @@ class VehicleSearchService
         $colour = $this->vehicleCatalog->findColourByCode($code);
 
         return self::extractColour($colour);
+    }
+
+    /**
+     * Chcecks if VIN is full
+     * @param $vin
+     * @return bool
+     */
+    public function isVinFull($vin)
+    {
+        return  (is_string($vin)) && (!empty($vin)) && (strlen($vin) !== 6);
     }
 
     /**
