@@ -89,7 +89,7 @@ class CherishedTransferContext implements Context
             $this->vehicleData['registration'],
             $this->vehicleData['vin'],
             $searchDvla = true
-        )->getBody()['data']['vehicle']['id'];
+        )->getBody()['data']['vehicles'][0]['id'];
 
         // add to the vehicle table
         $this->createdVehicle = $vehicleService->createWithDefaults($this->vehicleData);

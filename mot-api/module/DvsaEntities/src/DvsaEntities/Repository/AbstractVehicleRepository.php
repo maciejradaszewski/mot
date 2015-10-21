@@ -5,8 +5,6 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use DvsaCommonApi\Service\Exception\NotFoundException;
-use DvsaEntities\Entity\MotTest;
-use DvsaMotApi\Helper\FuzzySearchRegexHelper as FuzzyHelper;
 
 /**
  * Class AbstractVehicleRepository.
@@ -72,6 +70,7 @@ abstract class AbstractVehicleRepository extends AbstractMutableRepository
      */
     protected function createSearchQueryBuilder($alias, $vin, $reg, $isFullVin, $limit = null)
     {
+
         $queryBuilder = $this->createQueryBuilder($alias);
 
         $preparedVin = $this->sanitize($vin);
@@ -80,22 +79,22 @@ abstract class AbstractVehicleRepository extends AbstractMutableRepository
         $isRegEmpty = is_null($reg) || $reg === '';
 
         if($isVinEmpty) {
-            $queryBuilder->andWhere('vehicle.vin IS NULL');
+            $queryBuilder->andWhere("vehicle.{$this->getVinColumn()} IS NULL");
         } else {
             if($isFullVin || $isRegEmpty) {
-                $queryBuilder->andWhere('vehicle.vin = :vin');
-                $queryBuilder->setParameter('vin', $preparedVin);
+                $queryBuilder->andWhere("vehicle.{$this->getVinColumn()} = :vin");
+                $queryBuilder->setParameter("vin", $preparedVin);
             } else {
-                $queryBuilder->andWhere('vehicle.vin LIKE :partialVin');
-                $queryBuilder->setParameter('partialVin', '%' . $preparedVin);
+                $queryBuilder->andWhere("vehicle.{$this->getVinColumn()} LIKE :partialVin");
+                $queryBuilder->setParameter("partialVin", "%" . $preparedVin);
             }
         }
 
         if ($isRegEmpty) {
-            $queryBuilder->andWhere('vehicle.registration IS NULL');
+            $queryBuilder->andWhere("vehicle.{$this->getRegistrationColumn()} IS NULL");
         } else {
-            $queryBuilder->andWhere('vehicle.registration = :reg');
-            $queryBuilder->setParameter('reg', $preparedReg);
+            $queryBuilder->andWhere("vehicle.{$this->getRegistrationColumn()} = :reg");
+            $queryBuilder->setParameter("reg", $preparedReg);
         }
 
         if (is_int($limit)) {
@@ -103,5 +102,22 @@ abstract class AbstractVehicleRepository extends AbstractMutableRepository
         }
 
         return $queryBuilder;
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getVinColumn()
+    {
+        return 'vinCollapsed';
+    }
+
+    /**
+     * @return string
+     */
+    protected function getRegistrationColumn()
+    {
+        return 'registrationCollapsed';
     }
 }

@@ -10,10 +10,10 @@ class Vehicle extends MotApi
 {
     const PATH = 'vehicle';
     const PATH_ID = 'vehicle/{vehicle_id}';
-    const PATH_SEARCH = 'vehicle?reg={vehicle_reg}&vinType=noVin&excludeDvla=true';
-    const PATH_SEARCH_WITH_VIN = 'vehicle?reg={vehicle_reg}&vinType=fullVin&vin={vin}&excludeDvla=true';
-    const PATH_SEARCH_WITH_DVLA = 'vehicle?reg={vehicle_reg}&vinType=noVin&excludeDvla=false';
-    const PATH_SEARCH_WITH_VIN_AND_DVLA = 'vehicle?reg={vehicle_reg}&vinType=fullVin&vin={vin}&excludeDvla=false';
+    const PATH_SEARCH = 'vehicle/list?reg={vehicle_reg}&vinType=noVin&excludeDvla=1';
+    const PATH_SEARCH_WITH_VIN = 'vehicle/list?reg={vehicle_reg}&vinType=fullVin&vin={vin}&excludeDvla=1';
+    const PATH_SEARCH_WITH_DVLA = 'vehicle/list?reg={vehicle_reg}&vinType=noVin&excludeDvla=0';
+    const PATH_SEARCH_WITH_VIN_AND_DVLA = 'vehicle/list?reg={vehicle_reg}&vinType=fullVin&vin={vin}&excludeDvla=0';
 
     private $makeMap = [
         'BMW' => '18807',

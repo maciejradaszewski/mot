@@ -32,6 +32,20 @@ class DvlaVehicle implements VehicleInterface
     /**
      * @var string
      *
+     * @ORM\Column(name="registration_collapsed", type="string", length=20, nullable=true)
+     */
+    private $registrationCollapsed;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="vin_collapsed", type="string", length=30, nullable=true)
+     */
+    private $vinCollapsed;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="make_code", type="string", length=5, nullable=false)
      */
     private $makeCode;
