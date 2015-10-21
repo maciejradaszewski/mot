@@ -14,6 +14,7 @@ use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\Response\OpenAMAuthSuccess;
 use Dvsa\OpenAM\Exception\InvalidCredentialsException;
 use Dvsa\OpenAM\Exception\InvalidPasswordException;
 use Dvsa\OpenAM\Exception\OpenAMClientException;
+use Dvsa\OpenAM\Exception\TooManyAuthenticationAttemptsException;
 use Dvsa\OpenAM\Exception\UserInactiveException;
 use Dvsa\OpenAM\Exception\UserLockedException;
 use Dvsa\OpenAM\Model\OpenAMLoginDetails;
@@ -39,7 +40,7 @@ class OpenAMAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $this->logger = XMock::of(Logger::class);
         $this->openAMOptions = new OpenAMClientOptions();
         $this->openAMOptions->setRealm(self::REALM);
-        $this->authFailureBuilder = new OpenAMAuthFailureBuilder([]);
+        $this->authFailureBuilder = new OpenAMAuthFailureBuilder(new OpenAMClientOptions(), []);
     }
 
     public function testAuthenticate_whenUsernameOrPasswordAreNull_expectFailure()
@@ -100,6 +101,10 @@ class OpenAMAuthenticatorTest extends \PHPUnit_Framework_TestCase
                 new OpenAMClientException(''),
                 new OpenAMAuthFailure(OpenAMAuthProperties::CODE_AUTHENTICATION_FAILED, new ViewModel()),
             ],
+            [
+                new TooManyAuthenticationAttemptsException('', 429),
+                new OpenAMAuthFailure(OpenAMAuthProperties::CODE_TOO_MANY_AUTHENTICATION_ATTEMPTS, new ViewModel()),
+            ],
         ];
     }
 
@@ -110,7 +115,8 @@ class OpenAMAuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $username = 'username1';
         $password = 'Password1';
-        $this->openAMClient
+        $this
+            ->openAMClient
             ->expects($this->atLeastOnce())
             ->method('authenticate')
             ->will($this->throwException($exception));

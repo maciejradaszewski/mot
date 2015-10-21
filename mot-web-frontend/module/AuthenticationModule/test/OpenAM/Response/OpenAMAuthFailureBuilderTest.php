@@ -11,6 +11,7 @@ use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\Response\OpenAMAuthFailure;
 use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\Response\OpenAMAuthFailureBuilder;
 use Dvsa\OpenAM\Exception\OpenAMClientException;
 use Dvsa\OpenAM\OpenAMAuthProperties;
+use Dvsa\OpenAM\Options\OpenAMClientOptions;
 
 class OpenAMAuthFailureBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,7 +25,7 @@ class OpenAMAuthFailureBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->builder = new OpenAMAuthFailureBuilder(['name' => 'DVSA Helpdesk']);
+        $this->builder = new OpenAMAuthFailureBuilder(new OpenAMClientOptions(), ['name' => 'DVSA Helpdesk']);
     }
 
     public function testCreateFromCodeReturnsAuthFailureInstance()
