@@ -33,7 +33,7 @@ class MotTestCertificatesServiceTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->repository = XMock::of(MotTestRecentCertificateRepository::class);
-        $this->authorisationService = AuthorisationServiceMock::denyAll();
+        $this->authorisationService = new AuthorisationServiceMock();
         $this->storageService = XMock::of(CertificateStorageService::class, ['getCertificateContent', 'getFriendlyCertificateName']);
         $this->mailerService = XMock::of(MailerService::class, ['send', 'validate']);
     }

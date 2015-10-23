@@ -24,10 +24,18 @@ class TypeCheck
         return false;
     }
 
+
+    public static function assertIsPositiveInteger($number)
+    {
+        if (!self::isPositiveInteger($number)) {
+            throw new \InvalidArgumentException("Positive integer expected" );
+        }
+    }
+
     /**
      * Throws \RuntimeException when passed object (1st arg) is not instance of given class (2nd arg)
      *
-     * @param Object $object
+     * @param $object
      * @param string $class
      *
      * @throws \RuntimeException
@@ -106,7 +114,26 @@ class TypeCheck
                 return get_class($element) != $className;
             }
         )) {
-            throw new \InvalidArgumentException("Expected array of '".$className."'.");
+            throw new \InvalidArgumentException("Expected collection of '" . $className . "'.");
+        }
+    }
+
+    public static function assertCollectionOfScalarValues($collection)
+    {
+        foreach ($collection as $element) {
+            if ($element === null) {
+                throw new \InvalidArgumentException("Expected collection of scalar values. Got null");
+            }
+
+            if (is_object($element)) {
+                throw new \InvalidArgumentException("Expected collection of scalar values."
+                    . "Got object of class '" . get_class($element) . "'"
+                );
+            }
+
+            if (is_array($element)) {
+                throw new \InvalidArgumentException("Expected collection of scalar values. Got array." );
+            }
         }
     }
 }

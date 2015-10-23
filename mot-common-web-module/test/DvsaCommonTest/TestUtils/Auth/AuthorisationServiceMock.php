@@ -16,28 +16,15 @@ final class AuthorisationServiceMock implements MotAuthorisationServiceInterface
     private $siteMap = [];
     private $organisationMap = [];
     private $roles = [];
-    private $acceptAll;
-
-    private function __construct($acceptAll)
-    {
-        $this->acceptAll = $acceptAll;
-    }
-
-    /** @return MotAuthorisationServiceInterface */
-    public static function grantedAll()
-    {
-        return new AuthorisationServiceMock(true);
-    }
-
-    /** @return AuthorisationServiceMock|MotAuthorisationServiceInterface */
-    public static function denyAll()
-    {
-        return new AuthorisationServiceMock(false);
-    }
 
     public function withRole($role)
     {
         $this->roles[] = $role;
+    }
+
+    public function setAllowAll()
+    {
+        return $this;
     }
 
     public function granted($permission)
@@ -61,14 +48,13 @@ final class AuthorisationServiceMock implements MotAuthorisationServiceInterface
 
     public function isGranted($permissionName)
     {
-        return in_array($permissionName, $this->global) ? true : $this->acceptAll;
+        return in_array($permissionName, $this->global);
     }
 
     public function isGrantedAtSite($permissionName, $siteId)
     {
         $idxExists = isset($this->siteMap[$siteId]);
-        return $idxExists && in_array($permissionName, $this->siteMap[$siteId])
-            ? true : $this->acceptAll;
+        return $idxExists && in_array($permissionName, $this->siteMap[$siteId]);
     }
 
     public function isGrantedAtAnySite($permissionName)
@@ -86,8 +72,7 @@ final class AuthorisationServiceMock implements MotAuthorisationServiceInterface
     public function isGrantedAtOrganisation($permissionName, $orgId)
     {
         $idxExists = isset($this->organisationMap[$orgId]);
-        return $idxExists && in_array($permissionName, $this->organisationMap[$orgId])
-            ? true : $this->acceptAll;
+        return $idxExists && in_array($permissionName, $this->organisationMap[$orgId]);
     }
 
     public function assertGranted($permissionName)

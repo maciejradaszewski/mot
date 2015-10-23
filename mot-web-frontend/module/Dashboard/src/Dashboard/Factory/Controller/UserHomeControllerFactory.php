@@ -4,6 +4,7 @@ namespace Dashboard\Factory\Controller;
 
 use Application\Data\ApiPersonalDetails;
 use Account\Service\SecurityQuestionService;
+use Dashboard\Authorisation\ViewTradeRolesAssertion;
 use Dashboard\Controller\UserHomeController;
 use Dashboard\Data\ApiDashboardResource;
 use Dashboard\PersonStore;
@@ -32,7 +33,8 @@ class UserHomeControllerFactory implements FactoryInterface
             $serviceLocator->get(UserAdminSessionManager::class),
             $serviceLocator->get(TesterGroupAuthorisationMapper::class),
             $serviceLocator->get('AuthorisationService'),
-            $serviceLocator->get(UserAdminSessionManager::class)
+            $serviceLocator->get(UserAdminSessionManager::class),
+            $serviceLocator->get(ViewTradeRolesAssertion::class)
         );
     }
 }

@@ -11,6 +11,7 @@ use DvsaCommon\Dto\Person\PersonDto;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;
+use DvsaCommonTest\TestUtils\Auth\GrantAllAuthorisationServiceStub;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaDocument\Service\Document\DocumentService;
 use DvsaEntities\Entity\Person;
@@ -59,7 +60,7 @@ class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
 
         $this->mockedCertificateCreationService = $this->getMockCertificateCreationService();
         $this->mockedDvsaAuthenticationService =  $this->getMockAuthenticationService();
-        $this->mockedAuthService = $this->setMockAuthService(AuthorisationServiceMock::grantedAll());
+        $this->mockedAuthService = $this->setMockAuthService(new GrantAllAuthorisationServiceStub());
 
         $mockLogger = XMock::of(Logger::class);
 
@@ -226,8 +227,6 @@ class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
 
     public function testFailsWhenMotHasNoReportIds()
     {
-        $this->mockedAuthService->granted(PermissionAtSite::CERTIFICATE_PRINT);
-
         $motTestNr = 99999;
         $motTestId = 888;
 
@@ -406,7 +405,7 @@ class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
      */
     public function testUnauthExceptionWhenPrintingWithoutAuthorisation()
     {
-        $this->setMockAuthService(AuthorisationServiceMock::denyAll());
+        $this->setMockAuthService(new AuthorisationServiceMock());
         $motTestDto = self::createMotTestDto();
 
         $this->mockedTestService->expects($this->once())

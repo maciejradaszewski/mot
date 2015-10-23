@@ -3,6 +3,7 @@
 namespace DvsaMotApiTest\Service;
 
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
+use DvsaCommonTest\TestUtils\Auth\GrantAllAuthorisationServiceStub;
 use DvsaCommonTest\TestUtils\TestCasePermissionTrait;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\MotTest;
@@ -64,7 +65,7 @@ class MotTestOptionsServiceTest extends AbstractMotTestServiceTest
 
         $this->setupMockIdentity($this->identityProvider, 230232);
 
-        $this->authorisationService = AuthorisationServiceMock::denyAll();
+        $this->authorisationService = new AuthorisationServiceMock();
         $this->readMotTestAssertion = $this->createAssertion();
 
         $this->setMotTestRepositoryResult('getMotTestByNumber', $motTest);
@@ -78,7 +79,7 @@ class MotTestOptionsServiceTest extends AbstractMotTestServiceTest
 
         $this->setupMockIdentity($this->identityProvider, 20);
 
-        $this->authorisationService = AuthorisationServiceMock::grantedAll();
+        $this->authorisationService = new GrantAllAuthorisationServiceStub();
         $this->readMotTestAssertion = $this->createAssertion();
 
         $this->setMotTestRepositoryResult('getMotTestByNumber', $motTest);

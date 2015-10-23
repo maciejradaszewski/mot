@@ -5,7 +5,9 @@ use Dashboard\Controller\NotificationController;
 use Dashboard\Controller\UserStatsController;
 use Dashboard\Factory\Controller\UserHomeControllerFactory;
 use Dashboard\Factory\Controller\SecurityQuestionControllerFactory;
+use Dashboard\Controller\UserTradeRolesController;
 use Dashboard\Factory\Controller\PasswordControllerFactory;
+use Dashboard\Factory\Controller\UserTradeRolesControllerFactory;
 
 return [
 
@@ -16,9 +18,10 @@ return [
             NotificationController::class   => NotificationController::class
         ],
         'factories'  => [
-            UserHomeControllerFactory::class => UserHomeControllerFactory::class,
+            UserHomeControllerFactory::class         => UserHomeControllerFactory::class,
+            UserTradeRolesController::class          => UserTradeRolesControllerFactory::class,
             SecurityQuestionControllerFactory::class => SecurityQuestionControllerFactory::class,
-            PasswordControllerFactory::class => PasswordControllerFactory::class
+            PasswordControllerFactory::class         => PasswordControllerFactory::class
         ]
     ],
     'router'       => [
@@ -77,6 +80,16 @@ return [
                                 'may_terminate' => true,
 
                                 'child_routes'  => [
+                                    'trade-roles'              => [
+                                        'type'          => 'segment',
+                                        'options'       => [
+                                            'route'       => '/trade-roles',
+                                            'defaults'    => [
+                                                'controller' => UserTradeRolesController::class,
+                                                'action' => 'index',
+                                            ],
+                                        ],
+                                    ],
                                     'mot-testing' => [
                                         'type'    => 'segment',
                                         'options' => [

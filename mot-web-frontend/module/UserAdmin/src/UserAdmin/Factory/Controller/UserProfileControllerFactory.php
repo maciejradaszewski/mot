@@ -2,6 +2,7 @@
 
 namespace UserAdmin\Factory\Controller;
 
+use Dashboard\Authorisation\ViewTradeRolesAssertion;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Configuration\MotConfig;
 use UserAdmin\Controller\UserProfileController;
@@ -26,7 +27,7 @@ class UserProfileControllerFactory implements FactoryInterface
         $catalogService = $appServiceLocator->get("CatalogService");
         $config = $appServiceLocator->get(MotConfig::class);
 
-        $config = $appServiceLocator->get(MotConfig::class);
+        $viewTradeRolesAssertion = $appServiceLocator->get(ViewTradeRolesAssertion::class);
 
         $controller = new UserProfileController(
             $authorisationService,
@@ -34,7 +35,8 @@ class UserProfileControllerFactory implements FactoryInterface
             $testerGroupAuthorisationMapper,
             $personRoleManagementService,
             $catalogService,
-            $config
+            $config,
+            $viewTradeRolesAssertion
         );
 
         return $controller;

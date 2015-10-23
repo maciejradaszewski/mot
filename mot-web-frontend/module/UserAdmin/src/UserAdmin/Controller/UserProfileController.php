@@ -3,6 +3,8 @@
 namespace UserAdmin\Controller;
 
 use Application\Helper\PrgHelper;
+use Dashboard\Authorisation\ViewTradeRolesAssertion;
+use Dashboard\View\Sidebar\ProfileSidebar;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
@@ -58,6 +60,8 @@ class UserProfileController extends AbstractDvsaMotTestController
      */
     private $config;
 
+    private $viewTradeRolesAssertion;
+
     /**
      * @param MotAuthorisationServiceInterface $authorisationService
      * @param HelpdeskAccountAdminService $userAccountAdminService
@@ -65,6 +69,7 @@ class UserProfileController extends AbstractDvsaMotTestController
      * @param PersonRoleManagementService $personRoleManagementService
      * @param CatalogService $catalogService
      * @param MotConfig $config
+     * @param ViewTradeRolesAssertion $viewTradeRolesAssertion
      */
     public function __construct(
         MotAuthorisationServiceInterface $authorisationService,
@@ -72,7 +77,8 @@ class UserProfileController extends AbstractDvsaMotTestController
         TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper,
         PersonRoleManagementService $personRoleManagementService,
         CatalogService $catalogService,
-        MotConfig $config
+        MotConfig $config,
+        ViewTradeRolesAssertion $viewTradeRolesAssertion
     ) {
         $this->userAccountAdminService = $userAccountAdminService;
         $this->authorisationService = $authorisationService;
@@ -80,6 +86,7 @@ class UserProfileController extends AbstractDvsaMotTestController
         $this->personRoleManagementService = $personRoleManagementService;
         $this->catalogService = $catalogService;
         $this->config = $config;
+        $this->viewTradeRolesAssertion = $viewTradeRolesAssertion;
     }
 
     /**
@@ -108,6 +115,10 @@ class UserProfileController extends AbstractDvsaMotTestController
         $viewModel = $this->createViewModel($personId, $presenter->displayTitleAndFullName(), $presenter, true);
         $viewModel->setVariable('display2FAMethod', $display2FAMethod);
         $viewModel->setTemplate($presenter->getTemplate());
+
+        if ($this->viewTradeRolesAssertion->shouldViewLink($personId, $presenter->hasDvsaRoles(), $presenter->hasTradeRoles())) {
+            $this->setSidebar(new ProfileSidebar($personId));
+        }
 
         return $viewModel;
     }

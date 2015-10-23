@@ -6,31 +6,33 @@ use Account\Service\SecurityQuestionService;
 use Application\Data\ApiPersonalDetails;
 use Application\Service\CatalogService;
 use Application\Service\LoggedInUserManager;
+use Core\Authorisation\Assertion\WebAcknowledgeSpecialNoticeAssertion;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
+use CoreTest\TestUtils\Identity\FrontendIdentityProviderStub;
+use Dashboard\Authorisation\ViewTradeRolesAssertion;
 use Dashboard\Controller\UserHomeController;
 use Dashboard\Data\ApiDashboardResource;
 use Dashboard\Model\PersonalDetails;
 use Dashboard\PersonStore;
-use Dvsa\OpenAM\Exception\OpenAMClientException;
-use Dvsa\OpenAM\Exception\OpenAMUnauthorisedException;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use Dvsa\OpenAM\OpenAMClient;
-use Dvsa\OpenAM\OpenAMClientInterface;
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\NotLoggedInException;
+use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Enum\RoleCode;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
-use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\Bootstrap;
-use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
+use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;
 use DvsaCommonTest\TestUtils\XMock;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use UserAdmin\Service\UserAdminSessionManager;
 use Zend\Session\Container;
-use Zend\Stdlib\Parameters;
 use Zend\View\Model\ViewModel;
-use Core\Authorisation\Assertion\WebAcknowledgeSpecialNoticeAssertion;
-use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 
 class UserHomeControllerTest extends AbstractFrontendControllerTestCase
 {
@@ -64,6 +66,12 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
     /** @var  UserAdminSessionManager|MockObj */
     private $mockUserAdminSessionSrv;
 
+    /** @var AuthorisationServiceMock */
+    private $authorisationService;
+
+    /** @var FrontendIdentityProviderStub */
+    private $identityProvider;
+
     public function setUp()
     {
         $sm = Bootstrap::getServiceManager();
@@ -76,9 +84,6 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
         $this->mockMethod($this->mockDashboardSrv, 'get', null, $this->getDashboarhData());
 
         $this->mockPersonalDetailsSrv = XMock::of(ApiPersonalDetails::class);
-        $this->mockMethod(
-            $this->mockPersonalDetailsSrv, 'getPersonalDetailsData', null, $this->getPersonalDetailsData()
-        );
 
         $this->mockPersonStoreSrv = XMock::of(PersonStore::class);
 
@@ -102,6 +107,12 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
             ->method("getPersonSystemRoles")
             ->willReturn($catalogMockSysData);
 
+        $this->authorisationService = new AuthorisationServiceMock();
+
+        $this->identityProvider = new FrontendIdentityProviderStub();
+        $this->identityProvider->setIdentity(new Identity());
+        $this->identityProvider->getIdentity()->setUserId(self::USER_ID);
+
         //  --  create controller instance --
         $this->setController(
             new UserHomeController(
@@ -115,7 +126,8 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
                 $this->mockUserAdminSessionSrv,
                 XMock::of(TesterGroupAuthorisationMapper::class),
                 XMock::of(MotAuthorisationServiceInterface::class),
-                $this->mockUserAdminSessionSrv
+                $this->mockUserAdminSessionSrv,
+                new ViewTradeRolesAssertion($this->authorisationService, $this->identityProvider)
             )
         );
 
@@ -129,7 +141,6 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
 
         $this->setupAuthenticationServiceForIdentity(StubIdentityAdapter::asTester(self::USER_ID));
     }
-
 
     /**
      * Test has user access to page or not with/out auth and permission
@@ -146,7 +157,7 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
      *
      * @dataProvider dataProviderTestCanAccessHasRight
      */
-    public function testerQualificationStatusService(
+    public function testTesterQualificationStatusService(
         $action,
         $params = [],
         $isAuth = true,
@@ -156,7 +167,12 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
         $expectException = 'Exception',
         $expectErrMsg = null,
         $isUserPassSecurity = true
-    ) {
+    )
+    {
+        $this->mockMethod(
+            $this->mockPersonalDetailsSrv, 'getPersonalDetailsData', null, $this->getPersonalDetailsData()
+        );
+
         if (!$isAuth) {
             $this->getAuthenticationServiceMockForFailure();
 
@@ -204,12 +220,96 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
         ];
     }
 
+    /**
+     * @param $hasPermissionToViewOtherProfiles
+     * @param $profileSubjectIsDvsa
+     * @param $profileSubjectHasTradeRoles
+     * @param $isViewingOwnProfile
+     * @param $shouldSeeLink
+     *
+     * @dataProvider dataProviderTestSidebarIsShown
+     */
+    public function testSidebarIsShown($hasPermissionToViewOtherProfiles, $profileSubjectIsDvsa, $profileSubjectHasTradeRoles, $isViewingOwnProfile, $shouldSeeLink)
+    {
+        $this->setUpTestSidebarIsShown($hasPermissionToViewOtherProfiles, $profileSubjectIsDvsa, $profileSubjectHasTradeRoles);
+
+        $this->getResponseForAction('profile', ['id' => $isViewingOwnProfile ? self::USER_ID : 10]);
+
+        if ($shouldSeeLink) {
+            $this->assertNotNull($this->getController()->getSidebar());
+        } else {
+            $this->assertNull($this->getController()->getSidebar());
+        }
+    }
+
+    private function setUpTestSidebarIsShown($hasPermissionToViewOtherProfiles, $profileSubjectIsDvsa, $profileSubjectHasTradeRoles)
+    {
+        $personalDetailsData = $this->getPersonalDetailsData();
+
+        $roles = [
+            'system'        => [
+                'roles' => [RoleCode::USER]
+            ],
+            'organisations' => [],
+            'sites'         => [],
+        ];
+
+        if ($profileSubjectIsDvsa) {
+            $roles['system']['roles'][] = RoleCode::AREA_OFFICE_1;
+        }
+
+        if ($profileSubjectHasTradeRoles) {
+            $roles['organisations'][10] = [
+                'name'    => 'testing',
+                'number'  => 'VTESTING',
+                'address' => '34 Test Road',
+                'roles'   => [RoleCode::AUTHORISED_EXAMINER_DELEGATE],
+            ];
+        }
+
+        $personalDetailsData['roles'] = $roles;
+
+        $this->mockPersonalDetailsSrv
+            ->expects($this->any())
+            ->method('getPersonalDetailsData')
+            ->willReturn($personalDetailsData);
+
+        if ($hasPermissionToViewOtherProfiles) {
+            $this->authorisationService->granted(PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER);
+        }
+    }
+
+    public function dataProviderTestSidebarIsShown()
+    {
+        return [
+            [false, false, false, false, false],
+            [false, false, false, true, true],
+            [false, false, true, false, false],
+            [false, false, true, true, true],
+            [false, true, false, false, false],
+            [false, true, false, true, false],
+            [false, true, true, false, false],
+            [false, true, true, true, true],
+            [true, false, false, false, true],
+            [true, false, false, true, true],
+            [true, false, true, false, true],
+            [true, false, true, true, true],
+            [true, true, false, false, false],
+            [true, true, false, true, false],
+            [true, true, true, false, true],
+            [true, true, true, true, true],
+        ];
+    }
 
     /**
      * @dataProvider dataProviderTestActionsResultAndAccess
      */
     public function testActionsResultAndAccess($method, $action, $params, $mocks, $expect)
     {
+        $this->mockMethod(
+            $this->mockPersonalDetailsSrv, 'getPersonalDetailsData', null, $this->getPersonalDetailsData()
+        );
+
         $result = null;
 
         $session = new Container('prgHelperSession');
@@ -273,11 +373,21 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
     private function buildPersonSystemCatalog()
     {
         return [
-           [
-               'id' => 1,
-               'code' => 'USER',
-               'name' => 'User',
-           ],
+            [
+                'id'   => 1,
+                'code' => 'USER',
+                'name' => 'User',
+            ],
+            [
+                'id'   => 4,
+                'code' => RoleCode::AREA_OFFICE_1,
+                'name' => '',
+            ],
+            [
+                'id'   => 5,
+                'code' => RoleCode::USER,
+                'name' => '',
+            ],
         ];
     }
 
@@ -289,18 +399,22 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
     {
         return [
             [
-                'id' => 1,
+                'id'   => 1,
                 'code' => 'TESTER',
                 'name' => 'Tester',
             ],
             [
-                'id' => 2,
+                'id'   => 2,
                 'code' => 'AEDM',
                 'name' => 'Authorised Examiner Designated Manager',
-            ]
+            ],
+            [
+                'id'   => 3,
+                'code' => RoleCode::AUTHORISED_EXAMINER_DELEGATE,
+                'name' => '',
+            ],
         ];
     }
-
 
     public function dataProviderTestActionsResultAndAccess()
     {
@@ -491,20 +605,20 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
     private function setMockRoles()
     {
         return [
-            'system' => [
-                'roles' => ['USER']
+            'system'        => [
+                'roles' => ['USER'],
             ],
-            'organisations' =>  [[
-                'name' => 'testing',
-                'number' => 'VTESTING',
+            'organisations' => [10 => [
+                'name'    => 'testing',
+                'number'  => 'VTESTING',
                 'address' => '34 Test Road',
-                'roles' => ['AEDM'],
+                'roles'   => ['AEDM'],
             ]],
-            'sites'  =>  [[
-                'name' => 'testing',
-                'number' => 'VTESTING',
+            'sites'         => [20 => [
+                'name'    => 'testing',
+                'number'  => 'VTESTING',
                 'address' => '34 Test Road',
-                'roles' => ['TESTER'],
+                'roles'   => ['TESTER'],
             ]]
         ];
     }
@@ -528,6 +642,10 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
 
     public function testGetAuthenticatedDataResult()
     {
+        $this->mockMethod(
+            $this->mockPersonalDetailsSrv, 'getPersonalDetailsData', null, $this->getPersonalDetailsData()
+        );
+
         $authResult = 'authResult';
         $this->mockMethod(
             $this->mockPersonalDetailsSrv, 'getPersonalAuthorisationForMotTesting', null, $authResult, self::USER_ID
@@ -548,17 +666,15 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
             "countries",
             "roleNiceNameList",
             "canViewUsername",
-            );
+        );
 
-        foreach($arrayKeys as $key) {
+        foreach ($arrayKeys as $key) {
             $this->assertArrayHasKey($key, $actual);
         }
-
 
         //Test will fail if any more keys are added to the returned value
         $count = count($actual);
         $this->assertEquals(count($arrayKeys), $count);
-
 
         $this->assertEquals(new PersonalDetails($this->getPersonalDetailsData()), $actual['personalDetails']);
         //Removed assert due to lack of mocks.
@@ -566,5 +682,13 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
         $this->assertEquals($authResult, $actual['motAuthorisations']);
         $this->assertEquals(true, $actual['isViewingOwnProfile']);
         $this->assertEquals(['uk' => 'ukLong'], $actual['countries']);
+    }
+
+    /**
+     * @return UserHomeController
+     */
+    protected function getController()
+    {
+        return parent::getController();
     }
 }

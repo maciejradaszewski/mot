@@ -7,10 +7,12 @@ use Application\Service\CatalogService;
 use Application\Service\LoggedInUserManager;
 use Core\Authorisation\Assertion\WebAcknowledgeSpecialNoticeAssertion;
 use Core\Controller\AbstractAuthActionController;
+use Dashboard\Authorisation\ViewTradeRolesAssertion;
 use Dashboard\Data\ApiDashboardResource;
 use Dashboard\Model\Dashboard;
 use Dashboard\Model\PersonalDetails;
 use Dashboard\PersonStore;
+use Dashboard\View\Sidebar\ProfileSidebar;
 use Dvsa\OpenAM\Exception\OpenAMClientException;
 use Dvsa\OpenAM\Exception\OpenAMUnauthorisedException;
 use Dvsa\OpenAM\Model\OpenAMLoginDetails;
@@ -19,6 +21,8 @@ use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Enum\CountryOfRegistrationCode;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
+use DvsaCommon\Model\DvsaRole;
+use DvsaCommon\Model\TradeRole;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
@@ -62,6 +66,8 @@ class UserHomeController extends AbstractAuthActionController
     /** @var MotAuthorisationServiceInterface */
     private $authorisationService;
 
+    private $viewTradeRolesAssertion;
+
     public function __construct(
         LoggedInUserManager $loggedIdUserManager,
         ApiPersonalDetails $personalDetailsService,
@@ -73,7 +79,8 @@ class UserHomeController extends AbstractAuthActionController
         UserAdminSessionManager $userAdminSessionManager,
         TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper,
         MotAuthorisationServiceInterface $authorisationService,
-        UserAdminSessionManager $userAdminSessionManager
+        UserAdminSessionManager $userAdminSessionManager,
+        ViewTradeRolesAssertion $canViewTradeRolesAssertion
     ) {
         $this->loggedIdUserManager = $loggedIdUserManager;
         $this->personalDetailsService = $personalDetailsService;
@@ -85,6 +92,7 @@ class UserHomeController extends AbstractAuthActionController
         $this->userAdminSessionManager = $userAdminSessionManager;
         $this->testerGroupAuthorisationMapper = $testerGroupAuthorisationMapper;
         $this->authorisationService = $authorisationService;
+        $this->viewTradeRolesAssertion = $canViewTradeRolesAssertion;
     }
 
     public function userHomeAction()
@@ -123,7 +131,22 @@ class UserHomeController extends AbstractAuthActionController
     {
         $this->userAdminSessionManager->deleteUserAdminSession();
         $this->layout('layout/layout-govuk.phtml');
-        return $this->getAuthenticatedData();
+        $data = $this->getAuthenticatedData();
+
+        /** @var PersonalDetails $personDetails */
+        $personDetails = $data['personalDetails'];
+
+        $profileId = $this->getPersonIdFromRequest();
+
+        $roles = $personDetails->getRoles();
+        $hasInternalRoles = DvsaRole::containDvsaRole($roles);
+        $hasTradeRoles = TradeRole::containsTradeRole($roles);
+
+        if ($this->viewTradeRolesAssertion->shouldViewLink($profileId, $hasInternalRoles, $hasTradeRoles)) {
+            $this->setSidebar(new ProfileSidebar($profileId));
+        }
+
+        return $data;
     }
 
     public function securitySettingsAction()
@@ -234,15 +257,11 @@ class UserHomeController extends AbstractAuthActionController
      */
     private function getAuthenticatedData($personalDetailsData = null)
     {
-        $personId = (int)$this->params()->fromRoute('id', null);
+        $personId = $this->getPersonIdFromRequest();
         $identity = $this->getIdentity();
 
-        if ($personId == 0) {
-            $personId = $identity->getUserId();
-        }
-
         $isAllowEdit = ($personId > 0 && $identity->getUserId() == $personId
-        && $this->getAuthorizationService()->isGranted(PermissionInSystem::PROFILE_EDIT_OWN_CONTACT_DETAILS)
+        && $this->authorisationService->isGranted(PermissionInSystem::PROFILE_EDIT_OWN_CONTACT_DETAILS)
         );
 
         $personalDetailsData = array_merge(
@@ -266,13 +285,25 @@ class UserHomeController extends AbstractAuthActionController
             'isViewingOwnProfile'  => $isViewingOwnProfile,
             'countries'            => $this->getCountries(),
             'canAcknowledge'       => $this->acknowledgeSpecialNoticeAssertion->isGranted($personId),
-            'canRead'              => $this->getAuthorizationService()->isGranted(PermissionInSystem::SPECIAL_NOTICE_READ),
+            'canRead'              => $this->authorisationService->isGranted(PermissionInSystem::SPECIAL_NOTICE_READ),
             'authorisation'        => $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
             'rolesAndAssociations' => $this->getRolesAndAssociations($personalDetails),
             'canViewUsername'      => $canViewUsername,
             'systemRoles'          => $this->getSystemRoles($personalDetails),
             'roleNiceNameList'     => $this->getRoleNiceNameList($personalDetails),
         ];
+    }
+
+    private function getPersonIdFromRequest()
+    {
+        $personId = (int)$this->params()->fromRoute('id', null);
+        $identity = $this->getIdentity();
+
+        if ($personId == 0) {
+            $personId = $identity->getUserId();
+        }
+
+        return $personId;
     }
 
     /**
@@ -284,7 +315,7 @@ class UserHomeController extends AbstractAuthActionController
     private function getSystemRoles(PersonalDetails $personalDetails)
     {
         $roles = [];
-        $systemRoles = $personalDetails->getSystemRoles();
+        $systemRoles = $personalDetails->getDisplayableSystemRoles();
 
         $personSystemRoles = $this->catalogService->getPersonSystemRoles();
 
@@ -307,7 +338,7 @@ class UserHomeController extends AbstractAuthActionController
      */
     private function getRoleNiceNameList(PersonalDetails $personalDetails)
     {
-        $currentUserRoles = $personalDetails->getRoles();
+        $currentUserRoles = $personalDetails->getDisplayableRoles();
         $roles = [];
 
         $allRoles = $this->catalogService->getBusinessRoles();

@@ -1,0 +1,11 @@
+<?php
+/** @var $rolesAndAssociations array */
+
+?>
+
+<?php if ($rolesAndAssociations) : ?>
+    <?php echo $this->partial('dashboard/partials/profile/roles.phtml', [
+            'roles' => $rolesAndAssociations,
+            'backToProfileUrl' => $backToProfileUrl,
+    ]); ?>
+<?php endif; ?>

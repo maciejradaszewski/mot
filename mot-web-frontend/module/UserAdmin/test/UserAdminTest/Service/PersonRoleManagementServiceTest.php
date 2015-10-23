@@ -10,6 +10,7 @@ use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;
+use DvsaCommonTest\TestUtils\Auth\GrantAllAuthorisationServiceStub;
 use DvsaCommonTest\TestUtils\XMock;
 use PHPUnit_Framework_TestCase as TestCase;
 use UserAdmin\Service\PersonRoleManagementService;
@@ -31,7 +32,7 @@ class PersonRoleManagementServiceTest extends TestCase
     public function setUp()
     {
         $this->identityMock = XMock::of(MotIdentityProviderInterface::class);
-        $this->authorisationMock = AuthorisationServiceMock::grantedAll();
+        $this->authorisationMock = new GrantAllAuthorisationServiceStub();
         $mockRestClient = $this->stubHttpRestJsonClient();
         $mockCatalogService = new StubCatalogService();
 

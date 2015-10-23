@@ -29,7 +29,7 @@ class MotTestStatusServiceTest extends \DvsaCommonApiTest\Service\AbstractServic
 
     public function setUp()
     {
-        $this->authorisation = AuthorisationServiceMock::denyAll();
+        $this->authorisation = new AuthorisationServiceMock();
         $this->sut = new MotTestStatusService($this->authorisation);
     }
 

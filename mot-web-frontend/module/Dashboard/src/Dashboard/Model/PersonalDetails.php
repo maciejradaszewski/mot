@@ -102,7 +102,7 @@ class PersonalDetails
     /**
      * @var array
      */
-    private $roles = [];
+    private $displayableRoles = [];
 
     /**
      * @var array
@@ -136,11 +136,9 @@ class PersonalDetails
                 ->setUsername(ArrayUtils::get($data, 'username'))
                 ->setPositions(ArrayUtils::get($data, 'positions'));
 
-            $rolesAndAssociations = ArrayUtils::get($data, 'roles');
-            $this->setRolesAndAssociations($rolesAndAssociations);
+            $this->rolesAndAssociations = ArrayUtils::get($data, 'roles');
 
-            $roles = $this->extractRoleNames();
-            $this->setRoles($roles);
+            $this->displayableRoles = $this->extractDisplayableRoleNames();
         }
     }
 
@@ -165,35 +163,11 @@ class PersonalDetails
     }
 
     /**
-     * @param array $roles
-     *
-     * @return PersonalDetails
-     */
-    public function setRoles(array $roles)
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
-    /**
      * @return array
      */
-    public function getRoles()
+    public function getDisplayableRoles()
     {
-        return $this->roles;
-    }
-
-    /**
-     * @param array $rolesAndAssociations
-     *
-     * @return PersonalDetails
-     */
-    public function setrolesAndAssociations(array $rolesAndAssociations)
-    {
-        $this->rolesAndAssociations = $rolesAndAssociations;
-
-        return $this;
+        return $this->displayableRoles;
     }
 
     /**
@@ -209,7 +183,7 @@ class PersonalDetails
      * from roles as we don't want to display these in the user profile
      * @return array
      */
-    public function getSystemRoles()
+    public function getDisplayableSystemRoles()
     {
         $roles = $this->getRolesAndAssociations();
         $rolesFiltered = [];
@@ -220,6 +194,13 @@ class PersonalDetails
             }
         }
         return $rolesFiltered;
+    }
+
+    public function getSystemRoles()
+    {
+        $roles = $this->getRolesAndAssociations();
+
+        return $roles['system']['roles'];
     }
 
     /**
@@ -625,7 +606,22 @@ class PersonalDetails
     /**
      * @return array
      */
-    private function extractRoleNames()
+    private function extractDisplayableRoleNames()
+    {
+        $roles = $this->getDisplayableSystemRoles();
+        $siteAndOrganisationRoles = $this->getSiteAndOrganisationRoles();
+        foreach ($siteAndOrganisationRoles as $data) {
+            foreach ($data['roles'] as $role) {
+                if (!in_array($role, $roles)) {
+                    $roles[] = $role;
+                }
+            }
+        }
+
+        return $roles;
+    }
+
+    public function getRoles()
     {
         $roles = $this->getSystemRoles();
         $siteAndOrganisationRoles = $this->getSiteAndOrganisationRoles();

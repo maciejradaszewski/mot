@@ -529,7 +529,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
     ) {
         $contingencySession = $this->getContingencySessionManager();
 
-        $this->setPageSubTitle();
+        $this->selectPageSubTitle();
 
         $viewModel = new ViewModel(
             [
@@ -559,7 +559,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
     /**
      * @return bool
      */
-    private function setPageSubTitle()
+    private function selectPageSubTitle()
     {
         $isRetestSearchType = $this->vehicleSearchService->isRetestSearchType();
         $isReplacementCertificateSearchType = $this->vehicleSearchService->isReplacementCertifificateSearchType();

@@ -3,6 +3,7 @@
 namespace Core\Controller;
 
 use Application\Navigation\Breadcrumbs\BreadcrumbsBuilder;
+use Core\View\Sidebar\SidebarInterface;
 use DvsaFeature\Exception\FeatureNotAvailableException;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use Zend\Form\Annotation\AnnotationBuilder;
@@ -166,5 +167,30 @@ abstract class AbstractDvsaActionController
     public function getBreadcrumbBuilder()
     {
         return $this->serviceLocator->get(BreadcrumbsBuilder::class);
+    }
+
+    public function getSidebar()
+    {
+        return $this->layout()->getVariable('sidebar');
+    }
+
+    public function setSidebar(SidebarInterface $sidebar)
+    {
+        $this->layout()->setVariable('sidebar', $sidebar);
+    }
+
+    public function setPageTitle($title)
+    {
+        $this->layout()->setVariable('pageTitle', $title);
+    }
+
+    public function setPageSubTitle($subTitle)
+    {
+        $this->layout()->setVariable('pageSubTitle', $subTitle);
+    }
+
+    public function setPageLede($lede)
+    {
+        $this->layout()->setVariable('pageLede', $lede);
     }
 }

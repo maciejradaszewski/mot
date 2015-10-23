@@ -38,20 +38,6 @@ use DvsaCommon\Auth\PermissionAtSite;
                 <?php echo $this->partial('dashboard/financeBox'); ?>
             <?php endif; ?>
 
-            <section class="module-pivot-panel" id="ae-vts-list">
-                <header class="pivot-panel_header">
-                    <h2 class="pivot-panel_title">Roles</h2>
-                </header>
-                <p>You have the following roles</p>
-                <ul>
-                    <li id="display-role">
-                        <?php echo $this->escapeHtml(
-                            implode(', ', $roleNiceNameList)
-                        ); ?>
-                    </li>
-                </ul>
-            </section>
-
             <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::DISPLAY_TESTER_STATS_BOX)) : ?>
                 <?php echo $this->partial('dashboard/testerStatsBox'); ?>
             <?php endif; ?>

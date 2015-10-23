@@ -79,4 +79,29 @@ class TypeCheckTest extends \PHPUnit_Framework_TestCase
     {
         TypeCheck::assertArray(new \stdClass());
     }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testArrayOfScalarValuesFailsForNull()
+    {
+        TypeCheck::assertCollectionOfScalarValues(['string', null]);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testArrayOfScalarValuesFailsForObject()
+    {
+        TypeCheck::assertCollectionOfScalarValues(['string', new \DateTime()]);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testArrayOfScalarValuesFailsForArray()
+    {
+        TypeCheck::assertCollectionOfScalarValues(['string', ['nested-array']]);
+    }
+
 }

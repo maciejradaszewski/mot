@@ -91,7 +91,7 @@ class ReadMotTestAssertionTest extends \PHPUnit_Framework_TestCase
 
         $this->setupMockIdentity($this->identityProvider, 2100, 'ft-enf-tester');
 
-        $this->authorisationService = AuthorisationServiceMock::denyAll();
+        $this->authorisationService = new AuthorisationServiceMock();
         $this->authorisationService->granted(PermissionInSystem::MOT_DEMO_READ);
 
         $this->assertNull($this->createAssertion()->assertGranted($motTest));
@@ -109,7 +109,7 @@ class ReadMotTestAssertionTest extends \PHPUnit_Framework_TestCase
 
         $this->setupMockIdentity($this->identityProvider, 230232);
 
-        $this->authorisationService = AuthorisationServiceMock::denyAll();
+        $this->authorisationService = new AuthorisationServiceMock();
 
         $this->createAssertion()->assertGranted($motTest);
     }
