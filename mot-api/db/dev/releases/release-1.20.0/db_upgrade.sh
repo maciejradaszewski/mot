@@ -1,5 +1,4 @@
 upgradefiles=()
-upgradefiles+=('2015-10-21-VM-12251-fix-vrms-with-mot-test-in-registration-number-STORY.sql')
 # add files here in intended run order for release
 
 for sqlscript in ${upgradefiles[@]}
