@@ -375,4 +375,9 @@ class UserProfilePresenter implements AddressPresenterInterface
     {
         return count($this->getPersonAssignedInternalRoleCodes()) > 0;
     }
+
+    public function hasTradeRoles()
+    {
+        return count($this->getSiteAndOrganisationRoles());
+    }
 }

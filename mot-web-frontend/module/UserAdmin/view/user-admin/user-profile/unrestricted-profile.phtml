@@ -109,7 +109,6 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
 </table>
 
 <?php echo $this->partial('user-admin/partials/roles.phtml', ['presenter' => $presenter]) ?>
-<?php echo $this->partial('user-admin/partials/roles-and-associations.phtml', ['presenter' => $presenter]) ?>
 <?php if ($presenter->getTesterAuthorisation()->shouldBeDisplayed()): ?>
     <?php echo $this->partial(
             'user-admin/partials/tester-qualification-status.phtml',
@@ -125,7 +124,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
     <div class="grid-row">
         <div class="column-third">
             <h2 class="heading-large">Password<br /><span class="font-large">reset</span></h2>
-            <p>Send password reset by:</p>
+            <p style="height: 50px">Send password reset by:</p>
             <a id="reset-password-by-post"
                class="button"
                href="<?php echo $this->escapeHtmlAttr($passwordResetUrl); ?>">
@@ -135,7 +134,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
 
         <div class="column-third">
             <h2 class="heading-large">Username<br /><span class="font-large">recovery</span></h2>
-            <p>Send the username by:</p>
+            <p style="height: 50px">Send the username by:</p>
             <a id="reset-username-by-post"
                class="button"
                href="<?php echo $this->escapeHtmlAttr($usernameRecoverUrl); ?>">
@@ -145,7 +144,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
 
         <div class="column-third">
             <h2 class="heading-large">Account<br /><span class="font-large">reclaim</span></h2>
-            <p>Send reclaim account:</p>
+            <p style="height: 50px">Send reclaim account:</p>
             <?php if ($isEmail): ?>
                 <a id="reset-to-unclaim-account-by-email"
                    class="button button-warning"

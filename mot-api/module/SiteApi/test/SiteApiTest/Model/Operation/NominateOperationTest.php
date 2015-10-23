@@ -7,7 +7,7 @@ use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
-use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;
+use DvsaCommonTest\TestUtils\Auth\GrantAllAuthorisationServiceStub;
 use DvsaEntities\Entity\BusinessRoleStatus;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\Site;
@@ -48,12 +48,12 @@ class NominateOperationTest extends AbstractServiceTestCase
      */
     private $janitorRole;
 
-    /** @var  AuthorisationServiceMock */
+    /** @var GrantAllAuthorisationServiceStub */
     private $authorizationService;
 
     public function setUp()
     {
-        $this->authorizationService = AuthorisationServiceMock::grantedAll();
+        $this->authorizationService = new GrantAllAuthorisationServiceStub();
 
         $this->janitorRole = new SiteBusinessRole();
         $this->janitorRole->setCode(SiteBusinessRoleCode::SITE_MANAGER);

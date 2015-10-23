@@ -8,6 +8,7 @@ use DvsaAuthorisation\Service\UserRoleService;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionAtSite;
+use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\PersonContactType;
 use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommon\Exception\UnauthorisedException;
@@ -166,6 +167,10 @@ class PersonalDetailsService extends AbstractService
      */
     private function assertViewGranted(Person $person)
     {
+        if ($this->authorisationService->isGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE)) {
+            return;
+        }
+
         $userId = $this->identityProvider->getIdentity()->getUserId();
 
         if ($userId === $person->getId()) {

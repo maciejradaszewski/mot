@@ -5,6 +5,7 @@ namespace UserAdminTest\Controller;
 use Application\Helper\PrgHelper;
 use Application\Service\CatalogService;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
+use Dashboard\Authorisation\ViewTradeRolesAssertion;
 use DvsaClient\Entity\TesterAuthorisation;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
@@ -27,6 +28,7 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
     private $accountAdminServiceMock;
     private $authorisationMock;
     private $testerGroupAuthorisationMapper;
+    /** @var PersonRoleManagementService | \PHPUnit_Framework_MockObject_MockObject */
     private $personRoleManagementService;
     private $catalogService;
     private $config;
@@ -54,7 +56,8 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
                 $this->testerGroupAuthorisationMapper,
                 $this->personRoleManagementService,
                 $this->catalogService,
-                $this->config
+                $this->config,
+                XMock::of(ViewTradeRolesAssertion::class)
             )
         );
 
@@ -92,6 +95,11 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
             $exception = $expect['exception'];
             $this->setExpectedException($exception['class'], $exception['message']);
         }
+
+        $this->personRoleManagementService
+            ->expects($this->any())
+            ->method('getPersonAssignedInternalRoles')
+            ->willReturn([]);
 
         $result = $this->getResultForAction2(
             $method,
@@ -143,7 +151,7 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
                         'class'  => 'accountAdminServiceMock',
                         'method' => 'getUserProfile',
                         'params' => [self::PERSON_ID],
-                        'result' => new PersonHelpDeskProfileDto(),
+                        'result' => $this->createEmptyPersonHelpDeskProfileDto(),
                     ],
                     [
                         'class'  => 'config',
@@ -173,7 +181,7 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
                         'class'  => 'accountAdminServiceMock',
                         'method' => 'getUserProfile',
                         'params' => [self::PERSON_ID],
-                        'result' => new PersonHelpDeskProfileDto(),
+                        'result' => $this->createEmptyPersonHelpDeskProfileDto(),
                     ],
                     [
                         'class'  => 'config',
@@ -204,7 +212,7 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
                         'class'  => 'accountAdminServiceMock',
                         'method' => 'getUserProfile',
                         'params' => [self::PERSON_ID],
-                        'result' => new PersonHelpDeskProfileDto(),
+                        'result' => $this->createEmptyPersonHelpDeskProfileDto(),
                     ],
                 ],
                 'expect' => [
@@ -226,7 +234,7 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
                         'class'  => 'accountAdminServiceMock',
                         'method' => 'getUserProfile',
                         'params' => [self::PERSON_ID],
-                        'result' => new PersonHelpDeskProfileDto(),
+                        'result' => $this->createEmptyPersonHelpDeskProfileDto(),
                     ],
                 ],
                 'expect' => [
@@ -248,7 +256,7 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
                         'class'  => 'accountAdminServiceMock',
                         'method' => 'getUserProfile',
                         'params' => [self::PERSON_ID],
-                        'result' => new PersonHelpDeskProfileDto(),
+                        'result' => $this->createEmptyPersonHelpDeskProfileDto(),
                     ],
                     [
                         'class'  => 'accountAdminServiceMock',
@@ -278,7 +286,7 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
                         'class'  => 'accountAdminServiceMock',
                         'method' => 'getUserProfile',
                         'params' => [self::PERSON_ID],
-                        'result' => new PersonHelpDeskProfileDto(),
+                        'result' => $this->createEmptyPersonHelpDeskProfileDto(),
                     ],
                 ],
                 'expect' => [
@@ -338,5 +346,13 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
                 ],
             ],
         ];
+    }
+
+    private function createEmptyPersonHelpDeskProfileDto()
+    {
+        $dto = new PersonHelpDeskProfileDto();
+        $dto->setRoles(['organisations' => [], 'sites' => []]);
+
+        return $dto;
     }
 }

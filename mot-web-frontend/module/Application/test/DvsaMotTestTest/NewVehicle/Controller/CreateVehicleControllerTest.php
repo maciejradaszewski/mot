@@ -75,7 +75,7 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
         );
         $this->setController($ctrl);
 
-        $this->authorisationMock->granted([PermissionInSystem::VEHICLE_CREATE]);
+        $this->authorisationMock->granted(PermissionInSystem::VEHICLE_CREATE);
     }
 
     private function expectIdentitySet()

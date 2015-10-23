@@ -6,7 +6,7 @@ use Application\View\Helper\DashboardDataProvider;
 use Application\View\HelperFactory\DashboardDataProviderFactory;
 use Dashboard\Data\ApiDashboardResource;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
-use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;
+use DvsaCommonTest\TestUtils\Auth\GrantAllAuthorisationServiceStub;
 use DvsaCommonTest\TestUtils\XMock;
 use Zend\ServiceManager\ServiceManager;
 use Zend\View\HelperPluginManager;
@@ -18,7 +18,7 @@ class DashboardDataProviderFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $identityProviderMock = XMock::of(MotIdentityProviderInterface::class);
         $apiServiceMock = XMock::of(ApiDashboardResource::class);
-        $authServiceMock = AuthorisationServiceMock::grantedAll();
+        $authServiceMock = new GrantAllAuthorisationServiceStub();
 
         $serviceManager = new ServiceManager();
         $serviceManager->setService('MotIdentityProvider', $identityProviderMock);

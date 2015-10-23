@@ -64,11 +64,11 @@ class PersonalDetailsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::DRIVING_LICENCE_BUMBER, $personalDetails->getDrivingLicenceNumber());
         $this->assertEquals(self::REGION, $personalDetails->getDrivingLicenceRegion());
         $this->assertEquals([ self::POSITIONS ], $personalDetails->getPositions());
-        $this->assertCount(2, $personalDetails->getRoles());
-        $this->assertEquals(self::ROLE_AEDM, $personalDetails->getRoles()[0]);
-        $this->assertEquals(self::ROLE_TESTER, $personalDetails->getRoles()[1]);
+        $this->assertCount(2, $personalDetails->getDisplayableRoles());
+        $this->assertEquals(self::ROLE_AEDM, $personalDetails->getDisplayableRoles()[0]);
+        $this->assertEquals(self::ROLE_TESTER, $personalDetails->getDisplayableRoles()[1]);
 
-        $systemRoles = $personalDetails->getSystemRoles();
+        $systemRoles = $personalDetails->getDisplayableSystemRoles();
         $this->assertCount(0, $systemRoles);
 
         $siteAndOrganisationRoles = $personalDetails->getSiteAndOrganisationRoles();

@@ -4,6 +4,7 @@ namespace UserAdminTest\Factory\Controller;
 
 use Application\Service\CatalogService;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
+use Dashboard\Authorisation\ViewTradeRolesAssertion;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Configuration\MotConfig;
 use DvsaCommonTest\TestUtils\XMock;
@@ -37,6 +38,9 @@ class UserProfileControllerFactoryTest extends \PHPUnit_Framework_TestCase
 
         $catalogService = XMock::of(CatalogService::class);
         $serviceManager->setService("CatalogService", $catalogService);
+
+        $viewTradeRolesAssertion = XMock::of(ViewTradeRolesAssertion::class);
+        $serviceManager->setService(ViewTradeRolesAssertion::class, $viewTradeRolesAssertion);
 
         $serviceManager->setService(
             MotConfig::class,

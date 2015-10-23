@@ -5,6 +5,7 @@ db_name=mot_v195_rel4
 
 # add files here in intended run order for release
 upgradefiles+=('2015-10-30-VM-12310-create-db-version-table-STORY.sql')
+upgradefiles+=('2015-10-27-VM-12321-view-trade-roles-page-STORY.sql')
 
 for sqlscript in ${upgradefiles[@]}
 do

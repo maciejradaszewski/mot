@@ -4,7 +4,7 @@ namespace UserApiTest\Dashboard\Dto;
 
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
-use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;
+use DvsaCommonTest\TestUtils\Auth\GrantAllAuthorisationServiceStub;
 use UserApi\Dashboard\Dto\DashboardData;
 
 /**
@@ -15,7 +15,7 @@ class DashboardDataTest extends AbstractServiceTestCase
     public function test_toArray_basicData_shouldBeOk()
     {
         $specialNotice = SpecialNoticeTest::getInputUnreadOverdueDeadline();
-        $authorisationMock = AuthorisationServiceMock::grantedAll();
+        $authorisationMock = new GrantAllAuthorisationServiceStub();
         $motTestType = MotTestTypeCode::NORMAL_TEST;
 
         $dashboard = new DashboardData([], $specialNotice, [], 3, 4, true, true, $motTestType, $authorisationMock);

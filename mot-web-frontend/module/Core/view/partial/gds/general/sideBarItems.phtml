@@ -1,10 +1,16 @@
 <?php
-    $sideBarItems = $this->sideBarItems ?: '';
+use Core\View\Sidebar\GeneralSidebar;
+use DvsaCommon\Utility\TypeCheck;
+
+/** @var $sidebar GeneralSidebar */
+
+TypeCheck::assertInstance($sidebar, GeneralSidebar::class);
+
 ?>
 
 <div class="related">
 
-    <?php foreach($sideBarItems as $sideBarItem) { ?>
+    <?php foreach($sidebar->getSidebarItems() as $sideBarItem) { ?>
 
             <?php if($sideBarItem['type'] == 'statusBox') { ?>
 

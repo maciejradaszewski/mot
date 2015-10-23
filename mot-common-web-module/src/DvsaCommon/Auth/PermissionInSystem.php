@@ -126,6 +126,7 @@ final class PermissionInSystem
     const USERNAME_RECOVERY = 'USERNAME-RECOVERY';
     const USER_ACCOUNT_RECLAIM = 'USER-ACCOUNT-RECLAIM';
     const ALTER_TESTER_AUTHORISATION_STATUS = 'ALTER-TESTER-AUTHORISATION-STATUS';
+    const VIEW_TRADE_ROLES_OF_ANY_USER = 'VIEW-TRADE-ROLES-OF-ANY-USER';
 
     /**
      * @return array
@@ -249,6 +250,7 @@ final class PermissionInSystem
             self::USERNAME_RECOVERY,
             self::USER_ACCOUNT_RECLAIM,
             self::ALTER_TESTER_AUTHORISATION_STATUS,
+            self::VIEW_TRADE_ROLES_OF_ANY_USER,
         ];
     }
 }

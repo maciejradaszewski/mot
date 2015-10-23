@@ -1,5 +1,7 @@
-<?php if ($roles) : ?>
-    <h3 id="roles-internal" class="heading-medium"><?php echo($this->escapeHtml($title)); ?></h3>
+    <?php
+    /** @var $roles array */
+    ?>
+
     <table class="key-value-list">
         <tbody>
         <?php
@@ -20,4 +22,24 @@
         endforeach; ?>
         </tbody>
     </table>
-<?php endif;
+
+    <nav class="content-navigation">
+        <ul class="content-navigation__secondary">
+            <li>
+                <?php /** if javascript is enabled clicking this link triggers window.history.back() */ ?>
+                <a class="history-go-back" href="<?php echo $backToProfileUrl; ?>">Return to user profile</a>
+            </li>
+        </ul>
+    </nav>
+
+    <script type="application/javascript">
+        /**
+         * Searches for all <a> tags with class="history-go-back" and makes them behave like browsers back button
+         */
+        window.addEventListener('load', function() {
+            $('.history-go-back').click(function (e) {
+                window.history.back();
+                e.stopPropagation();
+            });
+        });
+    </script>

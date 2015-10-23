@@ -1,3 +1,11 @@
+<?php
+
+use Core\View\Sidebar\SidebarInterface;
+
+/** @var $sidebar SidebarInterface */
+
+?>
+
 <!DOCTYPE html>
 <!--[if lt IE 9]><html class="lte-ie8" lang="en"><![endif]-->
 <!--[if gt IE 8]><!--><html lang="en"><!--<![endif]-->
@@ -116,7 +124,7 @@
         <?php endif; ?>
         <!-- END -->
 
-        <?php if (isset($this->sideBarItems) && !empty($this->sideBarItems)): ?>
+        <?php if (isset($sidebar) && !empty($sidebar)): ?>
 
             <div class="grid-row">
 
@@ -164,13 +172,13 @@
             </div>
         <?php endif; ?>
 
-        <?php if (isset($this->sideBarItems) && !empty($this->sideBarItems)): ?>
+        <?php if (isset($sidebar) && !empty($sidebar)): ?>
 
             </div>
 
             <div class="column-third">
 
-                <?php  echo $this->partial('partial/gds/general/sideBarItems',['sideBarItems' => $this->sideBarItems]); ?>
+                <?php  echo $this->partial($sidebar->getPartialTemplate(), ['sidebar' => $sidebar]); ?>
 
             </div>
 

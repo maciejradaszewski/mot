@@ -12,6 +12,7 @@ use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;
+use DvsaCommonTest\TestUtils\Auth\GrantAllAuthorisationServiceStub;
 use DvsaCommonTest\TestUtils\XMock;
 use Zend\Log\Writer\Mock;
 
@@ -23,7 +24,7 @@ class DashboardDataProviderTest extends \PHPUnit_Framework_TestCase
     /** @var MotIdentityProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $identityProviderMock;
 
-    /** @var AuthorisationServiceMock|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MotAuthorisationServiceInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $authServiceMock;
 
     /** @var DashboardDataProvider */
@@ -93,8 +94,8 @@ class DashboardDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->apiServiceMock = XMock::of(ApiDashboardResource::class);
 
         $this->authServiceMock = $grantedAll ?
-            AuthorisationServiceMock::grantedAll() :
-            AuthorisationServiceMock::denyAll();
+            new GrantAllAuthorisationServiceStub() :
+            new AuthorisationServiceMock();;
 
         $this->helper = new DashboardDataProvider(
             $this->identityProviderMock,

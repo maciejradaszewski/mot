@@ -5,6 +5,7 @@ namespace Site\Controller;
 use Application\Service\CatalogService;
 use Core\Controller\AbstractAuthActionController;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
+use Core\View\Sidebar\GeneralSidebar;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
@@ -30,7 +31,6 @@ use Site\ViewModel\SiteViewModel;
 use Site\ViewModel\VehicleTestingStation\VtsFormViewModel;
 use Zend\Http\Request;
 use Zend\Session\Container;
-use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -228,7 +228,9 @@ class SiteController extends AbstractAuthActionController
             array_push($sideBarItems, $related);
         }
 
-        $this->layout()->setVariable('sideBarItems', $sideBarItems);
+        $sidebar = new GeneralSidebar($sideBarItems);
+
+        $this->setSidebar($sidebar);
 
         $viewModel = new ViewModel(
             [
