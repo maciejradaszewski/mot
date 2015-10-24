@@ -19,15 +19,12 @@ import java.io.IOException;
 public class OpenAMLockoutWarningTest extends BaseTest {
 
     private User tester;
-    private Site testSite;
-    private AeDetails aeDetails;
-    private int numberOfAttempts = 3;
-    private String randomPassword = RandomDataGenerator.generatePassword(8);
+    private int numberOfAttempts = 4;
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() throws IOException {
-        aeDetails = aeData.createAeWithDefaultValues();
-        testSite = siteData.createNewSite(aeDetails.getId(), "Test_Site");
+        AeDetails aeDetails = aeData.createAeWithDefaultValues();
+        Site testSite = siteData.createNewSite(aeDetails.getId(), "Test_Site");
         tester = userData.createTester(testSite.getId());
     }
 
@@ -36,9 +33,9 @@ public class OpenAMLockoutWarningTest extends BaseTest {
     public void authenticationFailedFor4Times() throws IOException, InterruptedException {
 
         // Given that I am on the Login page
-        LoginPage loginPage = pageNavigator.goToLoginPage().refreshPage();
+        LoginPage loginPage = pageNavigator.goToLoginPage();
 
-        // When I am providing wrong password for 3 times I am being redirected to Authentication failed page
+        // When I provide incorrect password for 4 times
         DisplayMessage message = tryToLoginWithInvalidCredentials(numberOfAttempts, loginPage);
 
         // Then I am redirected to Lockout warning page
@@ -46,7 +43,8 @@ public class OpenAMLockoutWarningTest extends BaseTest {
     }
 
     private DisplayMessage tryToLoginWithInvalidCredentials(int numberOfAttempts, LoginPage loginPage) throws IOException {
-        for (int i = 0; i < numberOfAttempts; i++) {
+        String randomPassword = RandomDataGenerator.generatePassword(8);
+        for (int i = 1; i < numberOfAttempts; i++) {
             AuthenticationFailedPage authenticationFailedPage =
                     loginPage.loginWithGivenCredentials(AuthenticationFailedPage.class, tester.getUsername(), randomPassword);
 

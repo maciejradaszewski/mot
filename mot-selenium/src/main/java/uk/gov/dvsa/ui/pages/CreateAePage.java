@@ -6,9 +6,6 @@ import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.*;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
-
 public class CreateAePage extends Page {
     public static final String path = "/authorised-examiner/create";
     private static final String PAGE_TITLE = "Create Authorised Examiner";
