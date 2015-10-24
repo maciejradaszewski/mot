@@ -22,19 +22,14 @@ import java.util.concurrent.TimeUnit;
 public class PageInteractionHelper {
     protected static final int AJAX_MAXIMUM_TIMEOUT = 5;
 
-    private static PageInteractionHelper pageInstance = null;
     private static MotAppDriver driver;
 
     private PageInteractionHelper(MotAppDriver driver) {
         PageInteractionHelper.driver = driver;
     }
 
-    public static PageInteractionHelper getInstance(MotAppDriver driver){
-        if(pageInstance == null){
-            pageInstance = new PageInteractionHelper(driver);
-        }
-
-        return pageInstance;
+    public static PageInteractionHelper setDriver(MotAppDriver driver){
+        return new PageInteractionHelper(driver);
     }
 
     public static boolean verifyTitle(String actual, String expected) {

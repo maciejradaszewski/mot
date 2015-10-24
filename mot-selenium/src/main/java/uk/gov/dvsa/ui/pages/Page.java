@@ -14,7 +14,7 @@ public abstract class Page {
     public Page(MotAppDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
-        PageInteractionHelper.getInstance(driver);
+        PageInteractionHelper.setDriver(driver);
         PhpInlineErrorVerifier.verifyErrorAtPage(driver, getTitle());
     }
 

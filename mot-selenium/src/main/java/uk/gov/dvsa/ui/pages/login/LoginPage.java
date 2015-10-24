@@ -16,7 +16,6 @@ public class LoginPage extends Page {
     @FindBy(xpath = "//*[contains(@id,'_tid1')]") private WebElement userIdInput;
     @FindBy(xpath = "//*[contains(@id,'_tid2')]") private WebElement userPasswordInput;
     @FindBy(name = "Login.Submit") private WebElement submitButton;
-    @FindBy(id = "global-cookie-message") private WebElement cookieMessage;
 
     public LoginPage(MotAppDriver driver) {
         super(driver);
@@ -26,11 +25,6 @@ public class LoginPage extends Page {
     @Override
     protected boolean selfVerify() {
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE) && createAnAccountLink.isDisplayed();
-    }
-
-    public LoginPage refreshPage() throws InterruptedException {
-        PageInteractionHelper.refreshPageWhileElementIsVisible(LoginPage.class, cookieMessage);
-        return this;
     }
 
     public CreateAnAccountPage clickCreateAnAccountLink() {

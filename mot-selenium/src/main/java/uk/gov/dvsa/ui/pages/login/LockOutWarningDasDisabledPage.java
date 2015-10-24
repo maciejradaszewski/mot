@@ -22,7 +22,7 @@ public class LockOutWarningDasDisabledPage extends Page implements DisplayMessag
 
     @Override
     protected boolean selfVerify() {
-        return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
+        return PageInteractionHelper.verifyTitle(warningMessage.getText(), PAGE_TITLE);
     }
 
     @Override
