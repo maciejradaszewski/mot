@@ -24,12 +24,14 @@ public class ContingencyMotTest extends BaseTest {
     private final String contingencyCode = "12345A";
     private AeDetails aeDetails;
     private Site site;
+    private User siteManager;
 
     @BeforeMethod(alwaysRun = true)
     private void setup() throws IOException {
         aeDetails = aeData.createAeWithDefaultValues();
         site = siteData.createNewSite(aeDetails.getId(), "New_vts");
         tester = userData.createTester(site.getId());
+        siteManager = userData.createSiteManager(site.getId(), true);
         vehicle = vehicleData.getNewVehicle(tester);
     }
 
