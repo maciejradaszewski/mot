@@ -28,6 +28,11 @@ class CustomerService extends MotApi
             $searchString = $searchString.$append.'lastName='.urlencode($searchData['lastName']);
         }
 
+        if (!empty($searchData['email'])) {
+            $append = empty($searchString) ? '' : '&';
+            $searchString = $searchString.$append.'email='.urlencode($searchData['email']);
+        }
+
         if (!empty($searchData['postCode'])) {
             $append = empty($searchString) ? '' : '&';
             $searchString = $searchString.$append.'postcode='.urlencode($searchData['postCode']);

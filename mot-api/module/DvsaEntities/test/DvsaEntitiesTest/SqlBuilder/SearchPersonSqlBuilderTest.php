@@ -19,7 +19,7 @@ class SearchPersonSqlBuilderTest extends AbstractServiceTestCase
         $entityManagerMock = $this->setupEntityManagerMock();
         $sqlBuilder = new SearchPersonSqlBuilder(
             $entityManagerMock,
-            new SearchPersonModel(1, null, null, null, null, null)
+            new SearchPersonModel(1, null, null, null, null, null, null)
         );
         $params = $sqlBuilder->getParams();
 
@@ -32,7 +32,7 @@ class SearchPersonSqlBuilderTest extends AbstractServiceTestCase
         $entityManagerMock = $this->setupEntityManagerMock();
         $sqlBuilder = new SearchPersonSqlBuilder(
             $entityManagerMock,
-            new SearchPersonModel(1, null, null, '2222-10-10', null, null)
+            new SearchPersonModel(1, null, null, '2222-10-10', null, null, null)
         );
         $params = $sqlBuilder->getParams();
 
@@ -46,7 +46,7 @@ class SearchPersonSqlBuilderTest extends AbstractServiceTestCase
         $entityManagerMock = $this->setupEntityManagerMock();
         $sqlBuilder = new SearchPersonSqlBuilder(
             $entityManagerMock,
-            new SearchPersonModel('username', 'First', 'Surname', '2222-10-10', 'Stoke Gifford', 'MY PSC')
+            new SearchPersonModel('username', 'First', 'Surname', '2222-10-10', 'Stoke Gifford', 'MY PSC', null)
         );
         $params = $sqlBuilder->getParams();
 
@@ -64,7 +64,7 @@ class SearchPersonSqlBuilderTest extends AbstractServiceTestCase
         $entityManagerMock = $this->setupEntityManagerMock();
         $sqlBuilder = new SearchPersonSqlBuilder(
             $entityManagerMock,
-            new SearchPersonModel(1, null, null, null, null, null)
+            new SearchPersonModel(1, null, null, null, null, null, null)
         );
         $sql = $sqlBuilder->getSql();
 

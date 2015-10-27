@@ -14,17 +14,20 @@ class SearchPersonModel
     /** @var string */
     private $lastName;
     /** @var string */
+    private $email;
+    /** @var string */
     private $dateOfBirth;
     /** @var string */
     private $town;
     /** @var string */
     private $postcode;
 
-    public function __construct($username, $firstName, $lastName, $dateOfBirth, $town, $postcode)
+    public function __construct($username, $firstName, $lastName, $dateOfBirth, $town, $postcode, $email)
     {
         $this->setUsername($username);
         $this->setFirstName($firstName);
         $this->setLastName($lastName);
+        $this->setEmail($email);
         $this->setDateOfBirth($dateOfBirth);
         $this->setTown($town);
         $this->setPostcode($postcode);
@@ -87,6 +90,24 @@ class SearchPersonModel
     {
         $this->lastName = $lastName;
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     * @return SearchPersonModel
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
         return $this;
     }
 

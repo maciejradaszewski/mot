@@ -322,6 +322,7 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
                 'lastName' => $row['lastName'],
                 'postCode' => $row['postCode'],
                 'dateOfBirth' => $row['dateOfBirth'],
+                'email' => $row['email'],
             ];
 
             $this->customerServiceSearchResponse = $this->customerService->search($this->sessionContext->getCurrentAccessToken(), $this->searchData);

@@ -33,6 +33,7 @@ class UserSearchController extends AbstractDvsaMotTestController
     const PARAM_USERNAME = 'username';
     const PARAM_FIRSTNAME = 'firstName';
     const PARAM_LASTNAME = 'lastName';
+    const PARAM_EMAIL = 'email';
     const PARAM_TOWN = 'town';
     const PARAM_POSTCODE = 'postcode';
     const PARAM_DOB = 'dateOfBirth';
@@ -168,6 +169,7 @@ class UserSearchController extends AbstractDvsaMotTestController
             self::PARAM_USERNAME => $request->getQuery(self::PARAM_USERNAME),
             self::PARAM_FIRSTNAME => $request->getQuery(self::PARAM_FIRSTNAME),
             self::PARAM_LASTNAME => $request->getQuery(self::PARAM_LASTNAME),
+            self::PARAM_EMAIL => $request->getQuery(self::PARAM_EMAIL),
             self::PARAM_DOB => $this->getDobSearchCriteria(),
             self::PARAM_TOWN => $request->getQuery(self::PARAM_TOWN),
             self::PARAM_POSTCODE => $request->getQuery(self::PARAM_POSTCODE)

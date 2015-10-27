@@ -102,6 +102,13 @@ class SearchPersonSqlBuilder
             $this->addParam('lastName', $this->model->getLastName());
         }
 
+        if (null !== $this->model->getEmail()) {
+            $queryBuilder->leftJoin('pc', 'email', 'e', 'e.contact_detail_id = pc.contact_id');
+            $queryBuilder->andWhere('e.email = :email_address');
+            $queryBuilder->andWhere('e.is_primary = 1');
+            $this->addParam('email_address', $this->model->getEmail());
+        }
+
         if (null !== $this->model->getDateOfBirth()) {
             $queryBuilder->andWhere('date_of_birth = :dateOfBirth');
             $this->addParam('dateOfBirth', $this->model->getDateOfBirth());

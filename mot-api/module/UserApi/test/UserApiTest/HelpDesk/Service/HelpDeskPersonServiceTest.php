@@ -73,6 +73,6 @@ class HelpDeskPersonServiceTest extends AbstractServiceTestCase
     private function runTestRepositoryReturnsArray($dataRetrievedFromDb)
     {
         $this->setupServiceWithMocks($dataRetrievedFromDb);
-        $this->assertCount(count($dataRetrievedFromDb), $this->service->search(new SearchPersonModel(1, 2, 3, '1981-04-24', 5, 6)));
+        $this->assertCount(count($dataRetrievedFromDb), $this->service->search(new SearchPersonModel(1, 2, 3, '1981-04-24', 5, 6, null)));
     }
 }

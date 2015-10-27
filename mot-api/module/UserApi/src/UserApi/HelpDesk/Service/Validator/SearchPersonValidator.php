@@ -31,6 +31,7 @@ class SearchPersonValidator extends AbstractValidator
         if ($this->isNullOrEmptyString($model->getUsername())
             && $this->isNullOrEmptyString($model->getFirstName())
             && $this->isNullOrEmptyString($model->getLastName())
+            && $this->isNullOrEmptyString($model->getEmail())
             && $this->isNullOrEmptyString($model->getDateOfBirth())
             && $this->isNullOrEmptyString($model->getPostcode())
             && $this->isNullOrEmptyString($model->getTown())

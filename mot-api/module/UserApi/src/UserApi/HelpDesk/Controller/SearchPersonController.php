@@ -41,7 +41,8 @@ class SearchPersonController extends AbstractDvsaRestfulController
             $this->params()->fromQuery('lastName', null),
             $this->params()->fromQuery('dateOfBirth', null),
             $this->params()->fromQuery('town', null),
-            $this->params()->fromQuery('postcode', null)
+            $this->params()->fromQuery('postcode', null),
+            $this->params()->fromQuery('email', null)
         );
     }
 
