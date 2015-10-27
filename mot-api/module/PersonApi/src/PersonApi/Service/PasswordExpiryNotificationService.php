@@ -8,6 +8,7 @@ use NotificationApi\Dto\Notification;
 use DvsaEntities\Repository\NotificationRepository;
 use DvsaEntities\Repository\PersonRepository;
 use DvsaEntities\Repository\PasswordDetailRepository;
+use DvsaCommon\Database\Transaction;
 
 class PasswordExpiryNotificationService
 {
@@ -17,17 +18,20 @@ class PasswordExpiryNotificationService
     private $notificationService;
     private $notificationRepository;
     private $personRepository;
+    private $transaction;
 
     public function __construct(
         NotificationService $notificationService,
         NotificationRepository $notificationRepository,
         PersonRepository $personRepository,
-        PasswordDetailRepository $passwordDetailRepository
+        PasswordDetailRepository $passwordDetailRepository,
+        Transaction $transaction
     ) {
         $this->notificationService = $notificationService;
         $this->notificationRepository = $notificationRepository;
         $this->personRepository = $personRepository;
         $this->passwordDetail = $passwordDetailRepository;
+        $this->transaction = $transaction;
     }
 
     /**
@@ -45,18 +49,28 @@ class PasswordExpiryNotificationService
             ->addField("expiryDay", $this->getExpiryDay($day))
             ->toArray();
 
-        $notificationId = $this->notificationService->add($data);
+        $this->transaction->begin();
 
-        $passwordDetail = $this->passwordDetail->findByPersonId($person->getId());
-        if (is_null($passwordDetail)) {
-            $passwordDetail = new PasswordDetail();
+        try {
+            $notificationId = $this->notificationService->add($data);
+
+            $passwordDetail = $this->passwordDetail->findByPersonId($person->getId());
+            if (is_null($passwordDetail)) {
+                $passwordDetail = new PasswordDetail();
+            }
+
+            $passwordDetail
+                ->setPerson($person)
+                ->setPasswordNotificationSentDate(new \DateTime());
+
+            $this->passwordDetail->save($passwordDetail);
+
+            $this->transaction->commit();
+        } catch (\Exception $e) {
+            $this->transaction->rollback();
+            throw $e;
         }
 
-        $passwordDetail
-            ->setPerson($person)
-            ->setPasswordNotificationSentDate(new \DateTime());
-
-        $this->passwordDetail->save($passwordDetail);
 
         return $notificationId;
     }

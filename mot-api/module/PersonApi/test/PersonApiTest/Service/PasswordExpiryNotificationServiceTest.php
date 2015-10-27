@@ -11,6 +11,7 @@ use DvsaEntities\Repository\NotificationRepository;
 use PersonApi\Service\PasswordExpiryNotificationService;
 use DvsaEntities\Repository\PersonRepository;
 use DvsaEntities\Repository\PasswordDetailRepository;
+use DvsaCommon\Database\Transaction;
 
 class PasswordExpiryNotificationServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,7 +45,8 @@ class PasswordExpiryNotificationServiceTest extends \PHPUnit_Framework_TestCase
             $this->notificationService,
             XMock::of(NotificationRepository::class),
             $personRepository,
-            XMock::of(PasswordDetailRepository::class)
+            XMock::of(PasswordDetailRepository::class),
+            XMock::of(Transaction::class)
         );
     }
 

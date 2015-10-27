@@ -182,7 +182,11 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
             ->method('decodeGoto')
             ->willReturn(self::VALID_GOTO_URL);
 
-        $this->setController($this->buildController());
+        $expiryPasswordService = XMock::of(ExpiredPasswordService::class);
+        $expiryPasswordService
+            ->expects($this->once())
+            ->method("sentExpiredPasswordNotificationIfNeeded");
+        $this->setController($this->buildController($expiryPasswordService));
 
         $token = 'xifuvdv09RGEgrege';
         $this->authenticator
@@ -200,6 +204,12 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
 
     public function testOnPostLoginAction_whenLoginSuccess_and_invalidGoto_shouldRedirectToGotoUrl()
     {
+        $expiryPasswordService = XMock::of(ExpiredPasswordService::class);
+        $expiryPasswordService
+            ->expects($this->once())
+            ->method("sentExpiredPasswordNotificationIfNeeded");
+        $this->setController($this->buildController($expiryPasswordService));
+
         $token = 'xifuvdv09RGEgrege';
         $this->authenticator->expects($this->once())->method('authenticate')
             ->willReturn(new OpenAMAuthSuccess($token));
@@ -250,15 +260,20 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
         return $this->getMockBuilder(GotoUrlService::class)->disableOriginalConstructor()->getMock();
     }
 
-    private function buildController()
+    private function buildController($expiryPasswordService = null)
     {
-
         $this->cookieService = XMock::of(WebAuthenticationCookieService::class);
         $this->identitySessionStateService = XMock::of(IdentitySessionStateService::class);
         $this->authenticationService = XMock::of(AuthenticationService::class);
         $this->request = new Request();
         $this->sessionManager = XMock::of(ManagerInterface::class);
-        $expiryPasswordService = XMock::of(ExpiredPasswordService::class);
+
+        if (is_null($expiryPasswordService)) {
+            $expiryPasswordService = XMock::of(ExpiredPasswordService::class);
+            $expiryPasswordService
+                ->expects($this->exactly(0))
+                ->method("sentExpiredPasswordNotificationIfNeeded");
+        }
 
         $controller = new SecurityController(
             $this->request,
