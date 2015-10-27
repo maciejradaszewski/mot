@@ -10,6 +10,7 @@ use DvsaEntities\Entity\PasswordDetail;
 use Doctrine\ORM\EntityManager;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use DvsaCommon\Database\Transaction;
 
 class PasswordExpiryNotificationServiceFactory implements FactoryInterface
 {
@@ -21,7 +22,8 @@ class PasswordExpiryNotificationServiceFactory implements FactoryInterface
             $serviceLocator->get(NotificationService::class),
             $entityManager->getRepository(Notification::class),
             $entityManager->getRepository(Person::class),
-            $entityManager->getRepository(PasswordDetail::class)
+            $entityManager->getRepository(PasswordDetail::class),
+            new Transaction($entityManager)
         );
     }
 }

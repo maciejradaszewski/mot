@@ -45,7 +45,7 @@ class Notification
             ->setSubject(ArrayUtils::get($data, 'subject'))
             ->setUpdatedOn(ArrayUtils::get($data, 'updatedOn'))
             ->setFields(ArrayUtils::get($data, 'fields'))
-            ->setTemplateId(ArrayUtils::tryGet($data, 'templateId'));
+            ->setTemplateId(ArrayUtils::get($data, 'templateId'));
 
         if (!empty($data['readOn'])) {
             $this->setReadOn(ArrayUtils::get($data, 'readOn'));

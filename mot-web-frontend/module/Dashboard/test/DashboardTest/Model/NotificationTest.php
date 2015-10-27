@@ -100,7 +100,8 @@ class NotificationTest extends \PHPUnit_Framework_TestCase
             'readOn'    => self::READ_ON,
             'content'   => self::CONTENT,
             'subject'   => self::SUBJECT,
-            'fields' => []
+            'fields' => [],
+            'templateId' => 1
         ];
     }
 
