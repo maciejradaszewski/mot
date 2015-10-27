@@ -31,6 +31,16 @@
                 'value'    => $this->withDefault('')->getValue($lastName),
             ]
         );
+        echo $this->partial(
+            'partial/forms/inputBox.phtml',
+            [
+                'id'       => 'email',
+                'label'    => 'Email address',
+                'classLabel'    => 'form-label',
+                'required' => true,
+                'value'    => $this->withDefault('')->getValue($email),
+            ]
+        );
 
         echo $this->partial(
             'partial/gds/form/datePickerBox.phtml',

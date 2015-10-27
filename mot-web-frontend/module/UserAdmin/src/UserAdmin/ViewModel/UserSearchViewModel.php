@@ -27,6 +27,8 @@ class UserSearchViewModel extends ViewModel
     /** @var string */
     private $searchCriteriaLastName;
     /** @var string */
+    private $searchCriteriaEmail;
+    /** @var string */
     private $searchCriteriaTown;
     /** @var string */
     private $searchCriteriaDob;
@@ -48,6 +50,7 @@ class UserSearchViewModel extends ViewModel
         $this->searchCriteriaUsername = ArrayUtils::tryGet($criteria, UserSearchController::PARAM_USERNAME, '');
         $this->searchCriteriaFirstName = ArrayUtils::tryGet($criteria, UserSearchController::PARAM_FIRSTNAME, '');
         $this->searchCriteriaLastName = ArrayUtils::tryGet($criteria, UserSearchController::PARAM_LASTNAME, '');
+        $this->searchCriteriaEmail = ArrayUtils::tryGet($criteria, UserSearchController::PARAM_EMAIL, '');
         $this->searchCriteriaDob = ArrayUtils::tryGet($criteria, UserSearchController::PARAM_DOB, '');
         $this->searchCriteriaTown = ArrayUtils::tryGet($criteria, UserSearchController::PARAM_TOWN, '');
         $this->searchCriteriaPostcode = ArrayUtils::tryGet($criteria, UserSearchController::PARAM_POSTCODE, '');
@@ -100,6 +103,15 @@ class UserSearchViewModel extends ViewModel
     {
         return $this->searchCriteriaLastName;
     }
+
+    /**
+     * @return string
+     */
+    public function displayEmailSearchCriteria()
+    {
+        return $this->searchCriteriaEmail;
+    }
+
     /**
      * @return string
      */
@@ -174,6 +186,7 @@ class UserSearchViewModel extends ViewModel
                     $this->displayUsernameSearchCriteria(),
                     $this->displayFirstNameSearchCriteria(),
                     $this->displayLastNameSearchCriteria(),
+                    $this->displayEmailSearchCriteria(),
                     $this->displayDobSearchCriteria(),
                     $this->displayTownSearchCriteria(),
                     $this->displayPostcodeSearchCriteria(),
