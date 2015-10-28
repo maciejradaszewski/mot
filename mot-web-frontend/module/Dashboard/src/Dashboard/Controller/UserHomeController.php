@@ -365,8 +365,10 @@ class UserHomeController extends AbstractAuthActionController
 
         $personSiteAndOrganisationRoles = $this->catalogService->getBusinessRoles();
 
-        foreach ($siteAndOrganisationRoles as $id => $siteAndOrganisationRole) {
-            foreach ($siteAndOrganisationRole['roles'] as $role) {
+        foreach ($siteAndOrganisationRoles as $siteAndOrganisation) {
+            $id = $siteAndOrganisation["id"];
+            $data = $siteAndOrganisation["data"];
+            foreach ($data['roles'] as $role) {
                 $niceName = (new DataMappingHelper($personSiteAndOrganisationRoles, 'code', $role))
                     ->setReturnKeys(['name'])
                     ->getValue();
@@ -375,8 +377,8 @@ class UserHomeController extends AbstractAuthActionController
                     $role,
                     $niceName['name'],
                     $id,
-                    $siteAndOrganisationRole["name"],
-                    $siteAndOrganisationRole["address"]
+                    $data["name"],
+                    $data["address"]
                 );
             }
         }

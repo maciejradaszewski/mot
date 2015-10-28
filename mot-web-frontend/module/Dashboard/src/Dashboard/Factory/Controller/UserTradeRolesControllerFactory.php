@@ -2,8 +2,9 @@
 
 namespace Dashboard\Factory\Controller;
 
-use Application\Data\ApiPersonalDetails;
+use Dashboard\Authorisation\ViewTradeRolesAssertion;
 use Dashboard\Controller\UserTradeRolesController;
+use Dashboard\Service\TradeRolesAssociationsService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
@@ -16,9 +17,9 @@ class UserTradeRolesControllerFactory implements FactoryInterface
         $serviceLocator = $controllerManager->getServiceLocator();
 
         return new UserTradeRolesController(
-            $serviceLocator->get(ApiPersonalDetails::class),
-            $serviceLocator->get('CatalogService'),
-            $serviceLocator->get('MotIdentityProvider')
+            $serviceLocator->get('MotIdentityProvider'),
+            $serviceLocator->get(TradeRolesAssociationsService::class),
+            $serviceLocator->get(ViewTradeRolesAssertion::class)
         );
     }
 }
