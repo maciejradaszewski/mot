@@ -24,6 +24,7 @@ default:
                 - EventContext
                 - FeatureContext
                 - MotTestContext
+                - MotTestLogContext
                 - MotTestSearchContext
                 - MotTestHistoryContext
                 - NotificationsContext

@@ -134,8 +134,10 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
     {
         $apiResult = [
             '1' => [
+                'testNumber'    => 1234,
                 'testDateTime'  => '2014-12-10 23:59:59.000000',
                 'emRecDateTime' => '2013-12-11 23:59:59.000000',
+                'vehicleVIN'    => 123456789012345,
                 'vehicleModel'  => '100',
                 'emCode'        => null,
                 'column11'      => 'row1 col1',
@@ -143,8 +145,10 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
                 'column13'      => 'row1 col2',
             ],
             '2' => [
+                'testNumber'    => 1234,
                 'testDateTime'  => '2014-12-10 23:59:59.000000',
                 'emRecDateTime' => '2013-12-11 23:59:59.000000',
+                'vehicleVIN'    => 123456789012345,
                 'vehicleModel'  => 200,
                 'emCode'        => '1',
                 'column21'      => 'row2 col1',
@@ -152,8 +156,10 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
                 'column23'      => 'row2 col2',
             ],
             '3' => [
+                'testNumber'    => 1234,
                 'testDateTime'  => '2014-12-10 23:59:59.000000',
                 'emRecDateTime' => null,
+                'vehicleVIN'    => 123456789012345,
                 'vehicleModel'  => '9-4',
                 'emCode'        => '1',
                 'column21'      => 'row2 col1',
@@ -168,17 +174,23 @@ class MotTestLogControllerTest extends AbstractFrontendControllerTestCase
                 1 => [
                     'testDateTime'  => '10/12/2014 23:59:59',
                     'emRecDateTime' => '11/12/2013 23:59:59',
-                    'vehicleModel'  => '="100"'
+                    'vehicleModel'  => '="100"',
+                    'testNumber'    => '="1234"',
+                    'vehicleVIN'    => '="123456789012345"',
                 ],
                 2 => [
                     'testDateTime'  => '10/12/2014',
                     'emRecDateTime' => '11/12/2013 23:59:59',
-                    'vehicleModel'  => '="200"'
+                    'vehicleModel'  => '="200"',
+                    'testNumber'    => '="1234"',
+                    'vehicleVIN'    => '="123456789012345"',
                 ],
                 3 => [
                     'testDateTime'  => '10/12/2014',
                     'emRecDateTime' => null,
-                    'vehicleModel'  => '="9-4"'
+                    'vehicleModel'  => '="9-4"',
+                    'testNumber'    => '="1234"',
+                    'vehicleVIN'    => '="123456789012345"',
                 ],
             ]
         );

@@ -22,7 +22,8 @@ class AuthorisedExaminer extends MotApi
     const AE_NAME = 'some ae name';
     const POSITION = '/organisation/{organisation_id}/position';
     const POSITION_DELETE = '/organisation/{organisation_id}/position/{position_id}';
-    
+    const TEST_LOGS = 'authorised-examiner/{authorised_examiner_id}/mot-test-log';
+
     public function search($token, $aeNumber)
     {
         return $this->client->request(
@@ -189,6 +190,56 @@ class AuthorisedExaminer extends MotApi
             MotApi::METHOD_DELETE,
             $url
         );
+    }
+
+    public function getTodaysTestLogs($token, $examinerId)
+    {
+        $body = json_encode([
+            'organisationId' => NULL,
+            'siteNr' => NULL,
+            'personId' => NULL,
+            'vehicleId' => NULL,
+            'vehicleRegNr' => NULL,
+            'vehicleVin' => NULL,
+            'dateFromTs' => strtotime('today 01 am'),
+            'dateToTs' => strtotime('tomorrow 01 am'),
+            'status' =>
+                array (
+                    0 => 'ABANDONED',
+                    1 => 'ABORTED',
+                    2 => 'ABORTED_VE',
+                    3 => 'FAILED',
+                    4 => 'PASSED',
+                    5 => 'REFUSED',
+                ),
+            'testType' =>
+                array (
+                    0 => 'NT',
+                    1 => 'PL',
+                    2 => 'PV',
+                    3 => 'RT',
+                ),
+            'format' => 'DATA_CSV',
+            'isSearchRecent' => false,
+            'pageNr' => 1,
+            'rowsCount' => 50000,
+            'searchTerm' => NULL,
+            'sortBy' => 'testDateTime',
+            'sortDirection' => 'DESC',
+            'start' => NULL,
+            'filter' => NULL,
+            'isApiGetData' => true,
+            'isApiGetTotalCount' => false,
+            'isEsEnabled' => NULL,
+            '_class' => 'DvsaCommon\Dto\Search\MotTestSearchParamsDto',
+        ]);
+
+        return $this->client->request(new Request(
+            MotApi::METHOD_POST,
+            str_replace('{authorised_examiner_id}', $examinerId, self::TEST_LOGS),
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
+            $body
+        ));
     }
 
 }

@@ -41,7 +41,9 @@ class MotTestLogController extends AbstractAuthActionController
             'Site Number',
             'Client IP',
             'Test date/time',
+            'Test Number',
             'Registration',
+            'VIN',
             'Make',
             'Model',
             'Class',
@@ -212,7 +214,11 @@ class MotTestLogController extends AbstractAuthActionController
             }
 
             //="formula" hack preventing Excel from converting columns to Date or Number
-            $row['vehicleModel'] = '="'.$row['vehicleModel'].'"';
+            $row['vehicleModel'] = '="' . $row['vehicleModel'] . '"';
+            $row['testNumber'] = '="' . $row['testNumber'] . '"';
+
+            // VIN must use ="<vin>" to prevent Excel truncating numeric VIN longer than 15 digits
+            $row['vehicleVIN'] = '="' . $row['vehicleVIN'] . '"';
 
             fputcsv($csvBuffer, $row);
         }

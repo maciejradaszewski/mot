@@ -645,11 +645,12 @@ class MotTestContext implements Context, SnippetAcceptingContext
 
     /**
      * @Given /^I create (.*) mot tests$/
+     * @Given /^I create an mot test$/
      * @Given /^I have created (.*) mot tests$/
      *
      * @param $number
      */
-    public function ICreateMotTests($number)
+    public function ICreateMotTests($number = 1)
     {
         for ($i=0; $i < $number; $i++) {
             $this->startMotTest($this->sessionContext->getCurrentUserId(), $this->sessionContext->getCurrentAccessToken());
