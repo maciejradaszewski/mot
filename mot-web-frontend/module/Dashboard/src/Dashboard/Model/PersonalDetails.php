@@ -205,7 +205,6 @@ class PersonalDetails
 
     /**
      * Returns an array of all site and organisation roles,
-     * grouped by site/organisation ID
      * @return array
      */
     public function getSiteAndOrganisationRoles()
@@ -214,11 +213,11 @@ class PersonalDetails
         $processedRoles = [];
 
         foreach ($roles['organisations'] as $id => $organisationData) {
-            $processedRoles[$id] = $organisationData;
+            $processedRoles[] = ["id" => $id, "data" => $organisationData];
         }
 
         foreach ($roles['sites'] as $id => $siteData) {
-            $processedRoles[$id] = $siteData;
+            $processedRoles[] = ["id" => $id, "data" => $siteData];
         }
 
         return $processedRoles;
@@ -610,7 +609,8 @@ class PersonalDetails
     {
         $roles = $this->getDisplayableSystemRoles();
         $siteAndOrganisationRoles = $this->getSiteAndOrganisationRoles();
-        foreach ($siteAndOrganisationRoles as $data) {
+        foreach ($siteAndOrganisationRoles as $siteAndOrganisation) {
+            $data = $siteAndOrganisation["data"];
             foreach ($data['roles'] as $role) {
                 if (!in_array($role, $roles)) {
                     $roles[] = $role;
@@ -625,7 +625,8 @@ class PersonalDetails
     {
         $roles = $this->getSystemRoles();
         $siteAndOrganisationRoles = $this->getSiteAndOrganisationRoles();
-        foreach ($siteAndOrganisationRoles as $data) {
+        foreach ($siteAndOrganisationRoles as $siteAndOrganisation) {
+            $data = $siteAndOrganisation["data"];
             foreach ($data['roles'] as $role) {
                 if (!in_array($role, $roles)) {
                     $roles[] = $role;

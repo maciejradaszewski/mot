@@ -73,12 +73,31 @@ class PersonalDetailsTest extends \PHPUnit_Framework_TestCase
 
         $siteAndOrganisationRoles = $personalDetails->getSiteAndOrganisationRoles();
         $this->assertCount(2, $siteAndOrganisationRoles);
-        $this->assertTrue(array_key_exists(self::ORGANISATION_ID, $siteAndOrganisationRoles));
-        $this->assertTrue(array_key_exists(self::SITE_ID, $siteAndOrganisationRoles));
 
-        $organisation = $siteAndOrganisationRoles[self::ORGANISATION_ID];
-        $site = $siteAndOrganisationRoles[self::SITE_ID];
+        $found = false;
+        $organisation = null;
+        foreach ($siteAndOrganisationRoles as $siteAndOrganisation) {
+            $id = $siteAndOrganisation["id"];
+            if ($id === self::ORGANISATION_ID) {
+                $found = true;
+                $organisation = $siteAndOrganisation["data"];
+                break;
+            }
+        }
+        $this->assertTrue($found);
 
+        $found = false;
+        $site = null;
+        foreach ($siteAndOrganisationRoles as $siteAndOrganisation) {
+            $id = $siteAndOrganisation["id"];
+            if ($id === self::SITE_ID) {
+                $found = true;
+                $site = $siteAndOrganisation["data"];
+                break;
+            }
+        }
+        $this->assertTrue($found);
+        
         $this->assertEquals(self::ORGANISATION_NAME, $organisation["name"]);
         $this->assertEquals(self::ORGANISATION_NUMBER, $organisation["number"]);
         $this->assertEquals(self::ORGANISATION_ADDRESS, $organisation["address"]);
