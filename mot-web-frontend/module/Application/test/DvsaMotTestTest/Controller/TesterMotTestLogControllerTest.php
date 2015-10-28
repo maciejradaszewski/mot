@@ -112,8 +112,6 @@ class TesterMotTestLogControllerTest extends AbstractFrontendControllerTestCase
         $this->assertResponseStatus(self::HTTP_OK_CODE);
     }
 
-
-
     /**
      * Test creation of CVS file
      *
@@ -196,33 +194,34 @@ class TesterMotTestLogControllerTest extends AbstractFrontendControllerTestCase
             SearchParamConst::SEARCH_DATE_FROM_QUERY_PARAM => (new \DateTime('2013-12-11'))->getTimestamp(),
             SearchParamConst::SEARCH_DATE_TO_QUERY_PARAM   => (new \DateTime('2014-03-02'))->getTimestamp(),
         ];
+
+        // Turn on output buffering and catch data being written to php://output
+        ob_start();
         $this->getResultForAction2('get', 'downloadCsv', ['id' => self::$testerId], $queryParams);
+        $output = ob_get_clean();
 
-        /** @var Response $response */
+        /** @var $response \Zend\Http\PhpEnvironment\Response */
         $response = $this->getController()->getResponse();
-
         $this->assertResponseStatus(self::HTTP_OK_CODE, $response);
+        $this->assertTrue($response->headersSent());
 
-        // prepare csv content and compare
         $csvBuffer = fopen('php://memory', 'w');
         foreach (([TesterMotTestLogController::$CSV_COLUMNS] + $expectCsvResult) as $line) {
             fputcsv($csvBuffer, $line);
         }
+
         rewind($csvBuffer);
         $expectContent = stream_get_contents($csvBuffer);
         fclose($csvBuffer);
 
-        $this->assertEquals($expectContent, $response->getContent());
-
-        // check headers
-        $fileName = 'test-log-11122013-02032014.csv';
+        $this->assertEquals($expectContent, $output);
 
         $expectHeaders = [
-            'Content-Type'        => 'text/csv; charset=utf-8',
-            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
-            'Cache-Control'       => 'max-age=0, must-revalidate, no-cache, no-store',
-            'Pragma'              => 'no-cache',
-            'Content-Length'      => strlen($expectContent),
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="test-log-11122013-02032014.csv"',
+            'Accept-Ranges' => 'bytes',
+            'Cache-Control' => 'max-age=0, must-revalidate, no-cache, no-store',
+            'Pragma' => 'no-cache',
         ];
 
         $headers = $response->getHeaders();

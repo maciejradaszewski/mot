@@ -106,30 +106,14 @@ if ($dateLinks->findOneBy('active', true)) {
         <?php if ($rowsTotalCount > 0) :
             echo $viewModel->getTable()->renderTable($this);
             echo $viewModel->getTable()->renderFooter($this);
-
-            if ($rowsTotalCount > MotTestLogController::MAX_TESTS_COUNT) :
-                echo $this->partial(
-                    'partial/gds/general/system-message', [
-                        'heading'  => 'Too many records to download a CSV file.',
-                        'messages' => [
-                            sprintf(
-                                'The filter currently spans over %s tests. ' .
-                                'Please narrow the date range and try again.',
-                                $numberFormatter->format(MotTestLogController::MAX_TESTS_COUNT)
-                            ),
-                        ],
-                        'type'     => 'important'
-                    ]
-                );
-            else: ?>
-                <div class="result__actions">
-                    <p>
-                        Download test logs as a
-                        <a class="" href="<?php echo $viewModel->getDownloadUrl(); ?>">CSV (Spreadsheet)</a>
-                        file.
-                    </p>
-                </div>
-            <?php endif; ?>
+        ?>
+        <div class="result__actions">
+            <p>
+                Download test logs as a
+                <a class="" href="<?php echo $viewModel->getDownloadUrl(); ?>">CSV (Spreadsheet)</a>
+                file.
+            </p>
+        </div>
         <?php endif; ?>
     </div>
 

@@ -18,6 +18,8 @@ use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use Organisation\ViewModel\MotTestLog\MotTestLogFormViewModel;
 use Organisation\ViewModel\MotTestLog\MotTestLogViewModel;
+use Zend\Http\Headers;
+use Zend\Http\PhpEnvironment\Response;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -28,46 +30,52 @@ use Zend\View\Model\ViewModel;
 class MotTestLogController extends AbstractAuthActionController
 {
     const TABLE_ROWS_COUNT = 10;
-    const MAX_TESTS_COUNT = 50000;
-
+    const PER_PAGE_COUNT = 10000;
     const DEF_SORT_BY = 'testDateTime';
     const DEF_SORT_DIRECTION = SearchParamConst::SORT_DIRECTION_DESC;
-
-    private static $DATETIME_FORMAT = 'd/m/Y H:i:s';
-    private static $DATETIME_FORMAT_EMERG = 'd/m/Y';
-
-    public static $CSV_COLUMNS
-        = [
-            'Site Number',
-            'Client IP',
-            'Test date/time',
-            'Test Number',
-            'Registration',
-            'VIN',
-            'Make',
-            'Model',
-            'Class',
-            'User Id',
-            'Test type',
-            'Result',
-            'Test Duration',
-            'Tester who recorded test',
-            'Date/time of recording CT test',
-            'Contingency Test Reason',
-            'Contingency Code',
-        ];
-
+    const DATETIME_FORMAT = 'd/m/Y H:i:s';
+    const DATETIME_FORMAT_EMERG = 'd/m/Y';
     const ERR_NO_DATA = 'There are no test logs for the selected date range. Please select a wider date range.';
+
+    public static $CSV_COLUMNS = [
+        'Site Number',
+        'Client IP',
+        'Test date/time',
+        'Test Number',
+        'Registration',
+        'VIN',
+        'Make',
+        'Model',
+        'Class',
+        'User Id',
+        'Test type',
+        'Result',
+        'Test Duration',
+        'Tester who recorded test',
+        'Date/time of recording CT test',
+        'Contingency Test Reason',
+        'Contingency Code',
+    ];
 
     /**
      * @var MotFrontendAuthorisationServiceInterface
      */
     private $authService;
+
     /**
-     * @var  \Zend\Http\Request
+     * @var \Zend\Http\Request
      */
     protected $request;
 
+    /**
+     * @var
+     */
+    protected $csvHandle;
+
+    /**
+     * @param MotFrontendAuthorisationServiceInterface $authService
+     * @param MapperFactory $mapperFactory
+     */
     public function __construct(
         MotFrontendAuthorisationServiceInterface $authService,
         MapperFactory $mapperFactory
@@ -76,13 +84,14 @@ class MotTestLogController extends AbstractAuthActionController
         $this->mapperFactory = $mapperFactory;
     }
 
+    /**
+     * @return \Zend\Http\Response|ViewModel
+     */
     public function indexAction()
     {
         $organisationId = $this->params()->fromRoute('id');
 
-        if (!$this->authService->isGrantedAtOrganisation(
-            PermissionAtOrganisation::AE_TEST_LOG, $organisationId
-        )) {
+        if (!$this->authService->isGrantedAtOrganisation(PermissionAtOrganisation::AE_TEST_LOG, $organisationId)) {
             return $this->redirect()->toUrl(PersonUrlBuilderWeb::home());
         }
 
@@ -130,79 +139,91 @@ class MotTestLogController extends AbstractAuthActionController
             $organisation->getName() => AuthorisedExaminerUrlBuilderWeb::of($organisationId),
             'Test logs' => '',
         ];
-        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
+        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
         $this->layout()->setVariable('pageTitle', $viewModel->getOrganisation()->getName());
         $this->layout()->setVariable('pageSubTitle', 'Test logs of Authorised Examiner');
 
-        return new ViewModel(
-            [
-                'viewModel' => $viewModel,
-            ]
-        );
+        return new ViewModel(['viewModel' => $viewModel]);
     }
 
+    /**
+     * Generate a CSV containing test log entries and stream it to the browser
+     * @return void|Response
+     */
     public function downloadCsvAction()
     {
         $organisationId = $this->params()->fromRoute('id');
 
-        if (!$this->authService->isGrantedAtOrganisation(
-            PermissionAtOrganisation::AE_TEST_LOG, $organisationId
-        )) {
+        if (!$this->authService->isGrantedAtOrganisation(PermissionAtOrganisation::AE_TEST_LOG, $organisationId)) {
             return $this->redirect()->toUrl(PersonUrlBuilderWeb::home());
         }
 
-        //  --  create object with parameters for sending to api   --
         $searchParams = $this->prepareSearchParams();
         $searchParams
             ->setFormat(SearchParamConst::FORMAT_DATA_CSV)
-            ->setRowsCount(self::MAX_TESTS_COUNT)
-            ->setIsApiGetTotalCount(false)
-            ->setIsApiGetData(true);
+            ->setRowsCount(self::PER_PAGE_COUNT)
+            ->setIsApiGetTotalCount(true)
+            ->setIsApiGetData(false);
 
         $apiResult = $this->getLogDataBySearchCriteria($organisationId, $searchParams);
 
-        //  --  define content of csv file  --
-        if ($apiResult->getResultCount() > 0) {
-            $csvBody = $this->prepareCsvBody($apiResult->getData());
-        } else {
-            $csvBody = '';
-        }
+        // Determine the number of pages to retrieve based on total results and per page count
+        $lastPageNumber = ceil($apiResult->getTotalResultCount() / self::PER_PAGE_COUNT);
 
-        //  --  define csv file name     --
+        // Now we want to fetch the data from the API, and not the total count
+        $searchParams->setIsApiGetTotalCount(false)->setIsApiGetData(true);
+
         $fileName = 'test-log-' .
             (new \DateTime('@' . $searchParams->getDateFromTs()))->format('dmY') . '-' .
             (new \DateTime('@' . $searchParams->getDateToTs()))->format('dmY') . '.csv';
 
-        //  --  set response    --
-        /** @var \Zend\Http\Response $response */
-        $response = $this->getResponse();
+        // Prepare the headers and send them
+        $headers = (new Headers)->addHeaders([
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            'Accept-Ranges' => 'bytes',
+            'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
+            'Pragma' => 'no-cache',
+        ]);
 
-        $headers = $response->getHeaders();
-        $headers->clearHeaders()
-            ->addHeaderLine('Content-Type', 'text/csv; charset=utf-8')
-            ->addHeaderLine('Content-Disposition', 'attachment; filename="' . $fileName . '"')
-            ->addHeaderLine('Accept-Ranges', 'bytes')
-            ->addHeaderLine('Content-Length', strlen($csvBody))
-            ->addHeaderLine('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate')
-            ->addHeaderLine('Pragma', 'no-cache');
+        $this->response = new Response;
+        $this->response->setHeaders($headers);
+        $this->response->sendHeaders();
 
-        $response->setContent($csvBody);
+        // Open a file handle for writing to php://output
+        $this->csvHandle = fopen('php://output', 'w');
 
-        return $response;
-    }
-
-    protected function prepareCsvBody($testsData)
-    {
-        $csvBuffer = fopen('php://memory', 'w');
-
+        // Output the CSV column headings
         if (!empty(self::$CSV_COLUMNS)) {
-            fputcsv($csvBuffer, self::$CSV_COLUMNS);
+            fputcsv($this->csvHandle, self::$CSV_COLUMNS);
+            flush();
         }
 
-        foreach ($testsData as $row) {
+        // Grab each page of results and output them
+        for ($i = 1; $i < $lastPageNumber + 1; $i++) {
+            $searchParams->setPageNr($i);
+            $apiResult = $this->getLogDataBySearchCriteria($organisationId, $searchParams);
+            $this->prepareCsvBody($apiResult->getData());
+            flush();
+            set_time_limit(30);
+        }
+
+        fclose($this->csvHandle);
+
+        return $this->response;
+    }
+
+    /**
+     * Open a handle on php://output, iterate the rows and write each to the CSV
+     * @param array $rows
+     * @return void
+     */
+    protected function prepareCsvBody(array $rows)
+    {
+        foreach ($rows as $row) {
             //  --  date time format for emergency test --
-            $testDateFormat = (empty($row['emCode']) ? self::$DATETIME_FORMAT : self::$DATETIME_FORMAT_EMERG);
+            $testDateFormat = (empty($row['emCode']) ? self::DATETIME_FORMAT : self::DATETIME_FORMAT_EMERG);
 
             //  --  convert to local time zone  --
             $row['testDateTime'] = DateUtils::toUserTz(new \DateTime($row['testDateTime']))->format($testDateFormat);
@@ -210,7 +231,7 @@ class MotTestLogController extends AbstractAuthActionController
             $emRecDateTime = $row['emRecDateTime'];
             if ($emRecDateTime !== null) {
                 $row['emRecDateTime'] = DateUtils::toUserTz(new \DateTime($emRecDateTime))
-                    ->format(self::$DATETIME_FORMAT);
+                    ->format(self::DATETIME_FORMAT);
             }
 
             // Only print primary IP address
@@ -226,15 +247,8 @@ class MotTestLogController extends AbstractAuthActionController
             // VIN must use ="<vin>" to prevent Excel truncating numeric VIN longer than 15 digits
             $row['vehicleVIN'] = '="' . $row['vehicleVIN'] . '"';
 
-            fputcsv($csvBuffer, $row);
+            fputcsv($this->csvHandle, $row);
         }
-
-        rewind($csvBuffer);
-        $output = stream_get_contents($csvBuffer);
-
-        fclose($csvBuffer);
-
-        return $output;
     }
 
     /**
@@ -283,6 +297,10 @@ class MotTestLogController extends AbstractAuthActionController
         return null;
     }
 
+    /**
+     * @param MotTestLogFormViewModel $formModel
+     * @return MotTestSearchParamsDto
+     */
     protected function prepareSearchParams(MotTestLogFormViewModel $formModel = null)
     {
         $queryParams = $this->request->getQuery();
@@ -322,8 +340,7 @@ class MotTestLogController extends AbstractAuthActionController
             $dateTo = $queryParams->get(SearchParamConst::SEARCH_DATE_TO_QUERY_PARAM);
         }
 
-        $dto
-            ->setDateFromTs($dateFrom)
+        $dto->setDateFromTs($dateFrom)
             ->setDateToTs($dateTo);
 
         return $dto;
