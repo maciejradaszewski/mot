@@ -11,6 +11,8 @@ use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use Organisation\Controller\MotTestLogController;
 use DvsaMotTest\ViewModel\TesterMotTestLog\TesterMotTestLogViewModel;
 use Zend\View\Model\ViewModel;
+use Zend\Http\Headers;
+use Zend\Http\PhpEnvironment\Response;
 
 /**
  * Class TesterMotTestLogController
@@ -68,55 +70,68 @@ class TesterMotTestLogController extends MotTestLogController
         $this->layout()->setVariable('pageTitle', $this->getIdentity()->getDisplayName());
         $this->layout()->setVariable('pageSubTitle', 'Test logs of Tester');
 
-        return new ViewModel(
-            [
-                'viewModel' => $viewModel,
-            ]
-        );
+        return new ViewModel([
+            'viewModel' => $viewModel,
+        ]);
     }
 
     public function downloadCsvAction()
     {
         $testerId = $this->getIdentity()->getUserId();
 
-        //  --  create object with parameters for sending to api   --
         $searchParams = $this->prepareSearchParams();
         $searchParams
             ->setFormat(SearchParamConst::FORMAT_DATA_CSV)
-            ->setRowsCount(self::MAX_TESTS_COUNT)
-            ->setIsApiGetTotalCount(false)
-            ->setIsApiGetData(true);
+            ->setRowsCount(self::PER_PAGE_COUNT)
+            ->setIsApiGetTotalCount(true)
+            ->setIsApiGetData(false);
 
         $apiResult = $this->getTesterLogDataBySearchCriteria($testerId, $searchParams);
 
-        //  --  define content of csv file  --
-        if ($apiResult->getResultCount() > 0) {
-            $csvBody = $this->prepareCsvBody($apiResult->getData());
-        } else {
-            $csvBody = '';
-        }
+        // Determine the number of pages to retrieve based on total results and per page count
+        $lastPageNumber = ceil($apiResult->getTotalResultCount() / self::PER_PAGE_COUNT);
 
-        //  --  define csv file name     --
+        // Now we want to fetch the data from the API, and not the total count
+        $searchParams->setIsApiGetTotalCount(false)->setIsApiGetData(true);
+
         $fileName = 'test-log-' .
             (new \DateTime('@' . $searchParams->getDateFromTs()))->format('dmY') . '-' .
             (new \DateTime('@' . $searchParams->getDateToTs()))->format('dmY') . '.csv';
 
-        //  --  set response    --
-        /** @var \Zend\Http\Response $response */
-        $response = $this->getResponse();
+        // Prepare the headers and send them
+        $headers = (new Headers)->addHeaders([
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            'Accept-Ranges' => 'bytes',
+            'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
+            'Pragma' => 'no-cache',
+        ]);
 
-        $headers = $response->getHeaders();
-        $headers->clearHeaders()
-            ->addHeaderLine('Content-Type', 'text/csv; charset=utf-8')
-            ->addHeaderLine('Content-Disposition', 'attachment; filename="' . $fileName . '"')
-            ->addHeaderLine('Accept-Ranges', 'bytes')
-            ->addHeaderLine('Content-Length', strlen($csvBody))
-            ->addHeaderLine('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate')
-            ->addHeaderLine('Pragma', 'no-cache');
+        $this->response = new Response;
+        $this->response->setHeaders($headers);
+        $this->response->sendHeaders();
 
-        $response->setContent($csvBody);
+        // Open a file handle for writing to php://output
+        $this->csvHandle = fopen('php://output', 'w');
 
-        return $response;
+        // Output the CSV column headings
+        if (!empty(self::$CSV_COLUMNS)) {
+            fputcsv($this->csvHandle, self::$CSV_COLUMNS);
+            flush();
+        }
+
+        // Grab each page of results and output them
+        for ($i = 1; $i < $lastPageNumber + 1; $i++) {
+            $searchParams->setPageNr($i);
+            $apiResult = $this->getTesterLogDataBySearchCriteria($testerId, $searchParams);
+            $this->prepareCsvBody($apiResult->getData());
+            flush();
+            set_time_limit(30);
+        }
+
+        fclose($this->csvHandle);
+
+        return $this->response;
     }
 
     /**
