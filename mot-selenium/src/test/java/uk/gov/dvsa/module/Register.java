@@ -7,7 +7,7 @@ import uk.gov.dvsa.ui.pages.userregistration.*;
 import java.io.IOException;
 
 public class Register {
-    PageNavigator pageNavigator;
+    private PageNavigator pageNavigator;
     private boolean accountCreated = false;
     private boolean duplicateEmailAddress = false;
 
@@ -64,6 +64,4 @@ public class Register {
     public boolean isEmailDuplicated() {
         return duplicateEmailAddress;
     }
-
-
 }
