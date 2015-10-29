@@ -16,6 +16,9 @@ import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.FinanceAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.cpms.GenerateReportPage;
+import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
+import uk.gov.dvsa.ui.pages.dvsa.UserSearchPage;
+import uk.gov.dvsa.ui.pages.dvsa.UserSearchResultsPage;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 import uk.gov.dvsa.ui.pages.login.LoginPage;
 import uk.gov.dvsa.ui.pages.mot.*;
@@ -235,6 +238,12 @@ public class PageNavigator {
         return new HelpDeskUserProfilePage(driver);
     }
 
+    public UserSearchPage goToUserSearchPage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, UserSearchPage.PATH);
+
+        return new UserSearchPage(driver);
+    }
+
     public DuplicateReplacementCertificatePage gotoDuplicateCertificatePage(User user, Vehicle vehicle) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, String.format("/replacement-certificate-vehicle-search?registration=%s&vin=%s",
                 vehicle.getRegistrationNumber(), vehicle.getVin()));
@@ -285,5 +294,12 @@ public class PageNavigator {
     public ChangePasswordFromProfilePage goToPasswordChangeFromProfilePage(User user) throws IOException{
         injectOpenAmCookieAndNavigateToPath(user, String.format(ChangePasswordFromProfilePage.PATH));
         return new ChangePasswordFromProfilePage(driver);
+    }
+
+    public ManageRolesPage goToManageRolesPageViaUserSearch(User loggedUser, User searchedUser) throws IOException {
+        return goToUserSearchPage(loggedUser).searchForUserByUserName(searchedUser.getUsername())
+                .clickSearchButton(UserSearchResultsPage.class)
+                .chooseUser(0)
+                .clickManageRolesLink();
     }
 }

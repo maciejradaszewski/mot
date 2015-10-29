@@ -1,4 +1,4 @@
-package uk.gov.dvsa.ui.pages.dvsamanageroles;
+package uk.gov.dvsa.ui.pages.dvsa;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -13,6 +13,7 @@ public class UserSearchProfilePage extends Page{
 
     public UserSearchProfilePage(MotAppDriver driver) {
         super(driver);
+        selfVerify();
     }
 
     @Override
@@ -20,9 +21,8 @@ public class UserSearchProfilePage extends Page{
         return PageInteractionHelper.verifyTitle(getTitle(), PAGE_TITLE);
     }
 
-    public ManageRolesPage clickManageRolesLinkExpectingManageRolesPage (){
+    public ManageRolesPage clickManageRolesLink(){
         selectManageRolesLink.click();
         return new ManageRolesPage(driver);
     }
-
 }
