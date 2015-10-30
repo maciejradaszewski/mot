@@ -15,6 +15,7 @@ public class UserSearchResultsPage extends Page {
 
     private static final String PAGE_TITLE = "User search";
     @FindBy(id="results") private WebElement searchResults;
+    @FindBy(id="return_to_user_search") private WebElement backtoUserSearchLink;
 
     public UserSearchResultsPage(MotAppDriver driver) {
         super(driver);
@@ -31,12 +32,21 @@ public class UserSearchResultsPage extends Page {
         return new UserSearchProfilePage(driver);
     }
 
-    public List<String> getUserDetails(User user) {
+    public UserSearchPage clickBackToUserSearch() {
+        backtoUserSearchLink.click();
+        return new UserSearchPage(driver);
+    }
+
+    public List<String> getUserDetails() {
         List<String> userDetails = new ArrayList<>();
         userDetails.add(searchResults.findElement(By.xpath(".//*[@data-element='result-username']")).getText());
         userDetails.add(searchResults.findElement(By.xpath(".//*[@data-element='result-user-address']")).getText());
         userDetails.add(searchResults.findElement(By.xpath(".//*[@data-element='result-user-postcode']")).getText());
         return userDetails;
+    }
+
+    public String getDateOfBirth() {
+        return searchResults.findElement(By.xpath(".//*[@data-element='result-user-dob']")).getText();
     }
 
     private List<WebElement> getResultsList() {

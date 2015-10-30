@@ -297,7 +297,7 @@ public class PageNavigator {
     }
 
     public ManageRolesPage goToManageRolesPageViaUserSearch(User loggedUser, User searchedUser) throws IOException {
-        return goToUserSearchPage(loggedUser).searchForUserByUserName(searchedUser.getUsername())
+        return goToUserSearchPage(loggedUser).searchForUserByUsername(searchedUser.getUsername())
                 .clickSearchButton(UserSearchResultsPage.class)
                 .chooseUser(0)
                 .clickManageRolesLink();

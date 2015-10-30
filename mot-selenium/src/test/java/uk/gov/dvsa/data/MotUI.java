@@ -6,10 +6,7 @@ import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.AssertionHelper;
-import uk.gov.dvsa.module.ManageRoles;
-import uk.gov.dvsa.module.NormalTest;
-import uk.gov.dvsa.module.Register;
-import uk.gov.dvsa.module.Retest;
+import uk.gov.dvsa.module.*;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
 
 import java.io.IOException;
@@ -26,6 +23,7 @@ public class MotUI {
     public final NormalTest normalTest;
     public final Register register;
     public final ManageRoles manageRoles;
+    public final SearchUser searchUser;
 
     public MotUI(MotAppDriver driver) {
         this.driver = driver;
@@ -34,6 +32,7 @@ public class MotUI {
         register = new Register(pageNavigator);
         normalTest = new NormalTest(pageNavigator);
         manageRoles = new ManageRoles(pageNavigator);
+        searchUser = new SearchUser(pageNavigator);
     }
 
     public void searchForVehicle(User user, Vehicle vehicle) throws IOException, URISyntaxException {
