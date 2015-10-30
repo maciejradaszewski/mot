@@ -100,6 +100,12 @@ public class HelpDeskTests extends BaseTest {
                 {Login.LOGIN_SCHEME_MANAGEMENT}, {Login.LOGIN_AREA_OFFICE1}};
     }
 
+    @DataProvider(name = "dvsaUserCanSearchForAUser")
+    public Object[][] dvsaUserCanSearchForAUser() {
+        return new Object[][] {{Login.LOGIN_AREA_OFFICE1}, {Login.LOGIN_ENFTESTER},
+                {Login.LOGIN_ENFTESTER4}};
+    }
+
     @Test(groups = {"VM-7295", "Regression"}, dataProvider = "dvsaUserCanSearchForAUser")
     public void testUserCanClickOnEventsHistoryLink(Login login) {
         EventHistoryPage eventHistoryPage =
