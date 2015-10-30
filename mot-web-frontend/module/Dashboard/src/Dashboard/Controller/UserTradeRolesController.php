@@ -39,8 +39,10 @@ class UserTradeRolesController extends AbstractAuthActionController
 
         $this->setPageTitle('Roles and Associations');
 
+        $personIsViewingOwnProfile = false;
         if ($personId == $this->identityProvider->getIdentity()->getUserId()) {
             $this->setPageSubTitle('Your profile');
+            $personIsViewingOwnProfile = true;
         } else {
             $this->setPageSubTitle('User profile');
         }
@@ -58,6 +60,7 @@ class UserTradeRolesController extends AbstractAuthActionController
         return new ViewModel([
             'rolesAndAssociations' => $rolesAndAssociations,
             'backToProfileUrl' => $profileUrl,
+            'personIsViewingOwnProfile' => $personIsViewingOwnProfile,
         ]);
     }
 }

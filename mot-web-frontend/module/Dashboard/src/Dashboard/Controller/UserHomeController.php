@@ -12,6 +12,7 @@ use Dashboard\Data\ApiDashboardResource;
 use Dashboard\Model\Dashboard;
 use Dashboard\Model\PersonalDetails;
 use Dashboard\PersonStore;
+use Dashboard\Service\TradeRolesAssociationsService;
 use Dashboard\View\Sidebar\ProfileSidebar;
 use Dvsa\OpenAM\Exception\OpenAMClientException;
 use Dvsa\OpenAM\Exception\OpenAMUnauthorisedException;
@@ -67,6 +68,8 @@ class UserHomeController extends AbstractAuthActionController
     private $authorisationService;
 
     private $viewTradeRolesAssertion;
+    /** @var TradeRolesAssociationsService */
+    protected $tradeRolesAssociationsService;
 
     public function __construct(
         LoggedInUserManager $loggedIdUserManager,
@@ -80,7 +83,8 @@ class UserHomeController extends AbstractAuthActionController
         TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper,
         MotAuthorisationServiceInterface $authorisationService,
         UserAdminSessionManager $userAdminSessionManager,
-        ViewTradeRolesAssertion $canViewTradeRolesAssertion
+        ViewTradeRolesAssertion $canViewTradeRolesAssertion,
+        TradeRolesAssociationsService $tradeRolesAssociationsService
     ) {
         $this->loggedIdUserManager = $loggedIdUserManager;
         $this->personalDetailsService = $personalDetailsService;
@@ -93,6 +97,7 @@ class UserHomeController extends AbstractAuthActionController
         $this->testerGroupAuthorisationMapper = $testerGroupAuthorisationMapper;
         $this->authorisationService = $authorisationService;
         $this->viewTradeRolesAssertion = $canViewTradeRolesAssertion;
+        $this->tradeRolesAssociationsService = $tradeRolesAssociationsService;
     }
 
     public function userHomeAction()
@@ -287,7 +292,7 @@ class UserHomeController extends AbstractAuthActionController
             'canAcknowledge'       => $this->acknowledgeSpecialNoticeAssertion->isGranted($personId),
             'canRead'              => $this->authorisationService->isGranted(PermissionInSystem::SPECIAL_NOTICE_READ),
             'authorisation'        => $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
-            'rolesAndAssociations' => $this->getRolesAndAssociations($personalDetails),
+            'rolesAndAssociations' => $this->tradeRolesAssociationsService->getRolesAndAssociations($personId),
             'canViewUsername'      => $canViewUsername,
             'systemRoles'          => $this->getSystemRoles($personalDetails),
             'roleNiceNameList'     => $this->getRoleNiceNameList($personalDetails),
@@ -325,7 +330,7 @@ class UserHomeController extends AbstractAuthActionController
                 ->getValue();
 
             $temp = $temp['name'];
-            $roles[] = $this->createRoleData($systemRole, $temp);
+            $roles[] = $this->createRoleData($systemRole, $temp, 'system');
         }
 
         return $roles;
@@ -354,53 +359,23 @@ class UserHomeController extends AbstractAuthActionController
     }
 
     /**
-     * @param PersonalDetails $personalDetails
-     * @return array
-     * @throws \Exception
-     */
-    private function getRolesAndAssociations(PersonalDetails $personalDetails)
-    {
-        $rolesAndAssociations = [];
-        $siteAndOrganisationRoles = $personalDetails->getSiteAndOrganisationRoles();
-
-        $personSiteAndOrganisationRoles = $this->catalogService->getBusinessRoles();
-
-        foreach ($siteAndOrganisationRoles as $siteAndOrganisation) {
-            $id = $siteAndOrganisation["id"];
-            $data = $siteAndOrganisation["data"];
-            foreach ($data['roles'] as $role) {
-                $niceName = (new DataMappingHelper($personSiteAndOrganisationRoles, 'code', $role))
-                    ->setReturnKeys(['name'])
-                    ->getValue();
-
-                $rolesAndAssociations[] = $this->createRoleData(
-                    $role,
-                    $niceName['name'],
-                    $id,
-                    $data["name"],
-                    $data["address"]
-                );
-            }
-        }
-
-        return $rolesAndAssociations;
-    }
-
-    /**
      * @param int $role
+     * @param $nicename
+     * @param $roletype
      * @param string $id
      * @param string $name
      * @param string $address
      * @return array
      */
-    private function createRoleData($role, $nicename, $id = "", $name = "", $address = "")
+    private function createRoleData($role, $nicename, $roletype, $id = "", $name = "", $address = "")
     {
         return [
             'id'       => $id,
             'role'     => $role,
             'nicename' => $nicename,
             'name'     => $name,
-            'address'  => $address
+            'address'  => $address,
+            'roletype' => $roletype,
         ];
     }
 }

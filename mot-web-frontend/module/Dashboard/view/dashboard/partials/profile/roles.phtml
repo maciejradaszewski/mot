@@ -1,5 +1,10 @@
     <?php
     /** @var $roles array */
+    use Dashboard\Service\TradeRolesAssociationsService;
+    use DvsaCommon\Auth\PermissionAtOrganisation;
+    use DvsaCommon\Auth\PermissionAtSite;
+    use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
+    use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
     ?>
 
     <table class="key-value-list">
@@ -8,7 +13,21 @@
         foreach ($roles as $role) : ?>
             <tr>
                 <th class="key-value-list__key">
-                    <?php echo $this->escapeHtml($role['name']); ?>
+                    <?php if(isset($role['roletype'])
+                        && $role['roletype'] == TradeRolesAssociationsService::ROLETYPE_ORGANISATIONS
+                        && $this->authorisationHelper()->isGrantedAtOrganisation(PermissionAtOrganisation::AUTHORISED_EXAMINER_READ, $role['id'])): ?>
+                        <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::of($role['id']) ?>">
+                            <?php echo $this->escapeHtml($role['name']); ?>
+                        </a>
+                    <?php elseif (isset($role['roletype'])
+                        && $role['roletype'] == TradeRolesAssociationsService::ROLETYPE_SITES
+                        && $this->authorisationHelper()->isGrantedAtSite(PermissionAtSite::VEHICLE_TESTING_STATION_READ, $role['id'])): ?>
+                        <a href="<?php echo VehicleTestingStationUrlBuilderWeb::byId($role['id']) ?>">
+                            <?php echo $this->escapeHtml($role['name']); ?>
+                        </a>
+                    <?php else: ?>
+                        <?php echo $this->escapeHtml($role['name']); ?>
+                    <?php endif ?>
                     <?php if ($role['address']) : ?>
                         <span class="key-value-list__meta"><?php echo $this->escapeHtml($role['address']); ?></span>
                     <?php endif ?>
@@ -22,24 +41,3 @@
         endforeach; ?>
         </tbody>
     </table>
-
-    <nav class="content-navigation">
-        <ul class="content-navigation__secondary">
-            <li>
-                <?php /** if javascript is enabled clicking this link triggers window.history.back() */ ?>
-                <a class="history-go-back" href="<?php echo $backToProfileUrl; ?>">Return to user profile</a>
-            </li>
-        </ul>
-    </nav>
-
-    <script type="application/javascript">
-        /**
-         * Searches for all <a> tags with class="history-go-back" and makes them behave like browsers back button
-         */
-        window.addEventListener('load', function() {
-            $('.history-go-back').click(function (e) {
-                window.history.back();
-                e.stopPropagation();
-            });
-        });
-    </script>

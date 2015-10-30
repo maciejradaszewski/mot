@@ -76,11 +76,11 @@ class PersonalDetailsTest extends \PHPUnit_Framework_TestCase
 
         $found = false;
         $organisation = null;
-        foreach ($siteAndOrganisationRoles as $siteAndOrganisation) {
-            $id = $siteAndOrganisation["id"];
+
+        foreach ($siteAndOrganisationRoles['organisations'] as $id => $siteAndOrganisation) {
             if ($id === self::ORGANISATION_ID) {
                 $found = true;
-                $organisation = $siteAndOrganisation["data"];
+                $organisation = $siteAndOrganisation;
                 break;
             }
         }
@@ -88,11 +88,10 @@ class PersonalDetailsTest extends \PHPUnit_Framework_TestCase
 
         $found = false;
         $site = null;
-        foreach ($siteAndOrganisationRoles as $siteAndOrganisation) {
-            $id = $siteAndOrganisation["id"];
+        foreach ($siteAndOrganisationRoles['sites'] as $id => $siteAndOrganisation) {
             if ($id === self::SITE_ID) {
                 $found = true;
-                $site = $siteAndOrganisation["data"];
+                $site = $siteAndOrganisation;
                 break;
             }
         }

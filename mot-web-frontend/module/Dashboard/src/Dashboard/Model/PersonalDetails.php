@@ -210,17 +210,8 @@ class PersonalDetails
     public function getSiteAndOrganisationRoles()
     {
         $roles = $this->getRolesAndAssociations();
-        $processedRoles = [];
-
-        foreach ($roles['organisations'] as $id => $organisationData) {
-            $processedRoles[] = ["id" => $id, "data" => $organisationData];
-        }
-
-        foreach ($roles['sites'] as $id => $siteData) {
-            $processedRoles[] = ["id" => $id, "data" => $siteData];
-        }
-
-        return $processedRoles;
+        unset($roles['system']);
+        return $roles;
     }
 
     /**
@@ -609,14 +600,16 @@ class PersonalDetails
     {
         $roles = $this->getDisplayableSystemRoles();
         $siteAndOrganisationRoles = $this->getSiteAndOrganisationRoles();
-        foreach ($siteAndOrganisationRoles as $siteAndOrganisation) {
-            $data = $siteAndOrganisation["data"];
-            foreach ($data['roles'] as $role) {
-                if (!in_array($role, $roles)) {
-                    $roles[] = $role;
+        foreach ($siteAndOrganisationRoles as $roleType => $organisationOrSiteRoles) {
+            foreach ($organisationOrSiteRoles as $siteAndOrganisation) {
+                foreach ($siteAndOrganisation['roles'] as $role) {
+                    if (!in_array($role, $roles)) {
+                        $roles[] = $role;
+                    }
                 }
             }
         }
+
 
         return $roles;
     }
@@ -625,15 +618,15 @@ class PersonalDetails
     {
         $roles = $this->getSystemRoles();
         $siteAndOrganisationRoles = $this->getSiteAndOrganisationRoles();
-        foreach ($siteAndOrganisationRoles as $siteAndOrganisation) {
-            $data = $siteAndOrganisation["data"];
-            foreach ($data['roles'] as $role) {
-                if (!in_array($role, $roles)) {
-                    $roles[] = $role;
+        foreach ($siteAndOrganisationRoles as $roleType => $organisationOrSiteRoles) {
+            foreach ($organisationOrSiteRoles as $siteAndOrganisation) {
+                foreach ($siteAndOrganisation['roles'] as $role) {
+                    if (!in_array($role, $roles)) {
+                        $roles[] = $role;
+                    }
                 }
             }
         }
-
         return $roles;
     }
 }
