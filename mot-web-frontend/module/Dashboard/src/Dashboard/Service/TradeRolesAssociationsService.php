@@ -41,15 +41,48 @@ class TradeRolesAssociationsService
 
     private function prepareRolesAndAssociations(PersonalDetails $personalDetails)
     {
-        $rolesAndAssociations = [];
         $siteAndOrganisationRoles = $personalDetails->getSiteAndOrganisationRoles();
-
         $personSiteAndOrganisationRoles = $this->catalogService->getBusinessRoles();
 
-        foreach ($siteAndOrganisationRoles as $siteAndOrganisation) {
-            $id = $siteAndOrganisation["id"];
-            $siteAndOrganisationData = $siteAndOrganisation["data"];
-            foreach ($siteAndOrganisationData['roles'] as $role) {
+        $viewOrganisationRoles = $this->viewRolesAndAssociations(
+            $siteAndOrganisationRoles['organisations'],
+            $personSiteAndOrganisationRoles,
+            self::ROLETYPE_ORGANISATIONS
+        );
+        $viewSiteRoles = $this->viewRolesAndAssociations(
+            $siteAndOrganisationRoles['sites'],
+            $personSiteAndOrganisationRoles,
+            self::ROLETYPE_SITES
+        );
+
+        return array_merge($viewOrganisationRoles, $viewSiteRoles);
+    }
+
+    private function createRoleData($role, $nicename, $roleType, $id = "", $name = "", $address = "")
+    {
+        return [
+            'id'       => $id,
+            'role'     => $role,
+            'nicename' => $nicename,
+            'name'     => $name,
+            'address'  => $address,
+            'roletype' => $roleType,
+        ];
+    }
+
+    /**
+     * @param $siteAndOrganisationRoles
+     * @param $personSiteAndOrganisationRoles
+     * @param int $roleType
+     * @return array
+     * @throws \Exception
+     * @internal param $rolesAndAssociations
+     */
+    protected function viewRolesAndAssociations($siteAndOrganisationRoles, $personSiteAndOrganisationRoles, $roleType)
+    {
+        $rolesAndAssociations = [];
+        foreach ($siteAndOrganisationRoles as $id => $siteAndOrganisation) {
+            foreach ($siteAndOrganisation['roles'] as $role) {
                 $niceName = (new DataMappingHelper($personSiteAndOrganisationRoles, 'code', $role))
                     ->setReturnKeys(['name'])
                     ->getValue();
@@ -57,24 +90,14 @@ class TradeRolesAssociationsService
                 $rolesAndAssociations[] = $this->createRoleData(
                     $role,
                     $niceName['name'],
+                    $roleType,
                     $id,
-                    $siteAndOrganisationData["name"],
-                    $siteAndOrganisationData["address"]
+                    $siteAndOrganisation["name"],
+                    $siteAndOrganisation["address"]
                 );
             }
         }
 
         return $rolesAndAssociations;
-    }
-
-    private function createRoleData($role, $nicename, $id = "", $name = "", $address = "")
-    {
-        return [
-            'id'       => $id,
-            'role'     => $role,
-            'nicename' => $nicename,
-            'name'     => $name,
-            'address'  => $address
-        ];
     }
 }

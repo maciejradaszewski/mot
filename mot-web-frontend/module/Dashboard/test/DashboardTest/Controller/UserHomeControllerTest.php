@@ -14,6 +14,7 @@ use Dashboard\Controller\UserHomeController;
 use Dashboard\Data\ApiDashboardResource;
 use Dashboard\Model\PersonalDetails;
 use Dashboard\PersonStore;
+use Dashboard\Service\TradeRolesAssociationsService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
 use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use Dvsa\OpenAM\OpenAMClient;
@@ -127,7 +128,8 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
                 XMock::of(TesterGroupAuthorisationMapper::class),
                 XMock::of(MotAuthorisationServiceInterface::class),
                 $this->mockUserAdminSessionSrv,
-                new ViewTradeRolesAssertion($this->authorisationService, $this->identityProvider)
+                new ViewTradeRolesAssertion($this->authorisationService, $this->identityProvider),
+                XMock::of(TradeRolesAssociationsService::class)
             )
         );
 

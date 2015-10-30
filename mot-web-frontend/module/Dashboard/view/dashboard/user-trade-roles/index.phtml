@@ -6,6 +6,28 @@
 <?php if ($rolesAndAssociations) : ?>
     <?php echo $this->partial('dashboard/partials/profile/roles.phtml', [
             'roles' => $rolesAndAssociations,
-            'backToProfileUrl' => $backToProfileUrl,
     ]); ?>
 <?php endif; ?>
+
+<nav class="content-navigation">
+    <ul class="content-navigation__secondary">
+        <li>
+            <?php /** if javascript is enabled clicking this link triggers window.history.back() */ ?>
+            <a class="history-go-back" href="<?php echo $backToProfileUrl; ?>">
+                <?php echo $personIsViewingOwnProfile ? 'Return to your profile' : 'Return to user profile';?>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<script type="application/javascript">
+    /**
+     * Searches for all <a> tags with class="history-go-back" and makes them behave like browsers back button
+     */
+    window.addEventListener('load', function() {
+        $('.history-go-back').click(function (e) {
+            window.history.back();
+            e.stopPropagation();
+        });
+    });
+</script>
