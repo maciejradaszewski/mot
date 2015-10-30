@@ -7,10 +7,22 @@ Feature: Special Notices
     When I send a new Special Notice broadcast
     Then I will see the broadcast was successful
 
-  Scenario: Area Office user creates new Special Notice
+  Scenario Outline: Scheme User user creates new internal Special Notice
     Given I am logged in as a Scheme User
-    When I create a Special Notice
-    Then the Special Notice is created
+    And site with dvsa and vts users roles exists
+    And I create a Special Notice with data:
+      | targetRoles    | internalPublishDate   | externalPublishDate |
+      | <target_roles> | <internal_date>       | <external_date>     |
+    And I publish Special Notice
+    When the Special Notice is broadcasted
+    Then users received Special Notice
+    Examples:
+      | target_roles         | internal_date   | external_date   |
+      | DVSA, VTS            | now             | tomorrow        |
+      | DVSA, TESTER-CLASS-1 | now             | now             |
+      | DVSA                 | now             | tomorrow        |
+      | DVSA, TESTER-CLASS-1 | tomorrow        | tomorrow        |
+      | DVSA, TESTER-CLASS-1 | tomorrow        | now             |
 
   Scenario: Tester user attempts to create new Special Notice but does not have authorisation
     Given I am not logged in
