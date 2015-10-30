@@ -195,4 +195,30 @@ class UserSearchViewModel extends ViewModel
             )
         );
     }
+
+    /**
+     * @return array
+     */
+    public function getAdditionalSearchCriteria()
+    {
+        return array_filter(
+            [
+                ArrayUtils::tryGet($this->searchCriteria, UserSearchController::PARAM_EMAIL, ''),
+                ArrayUtils::tryGet($this->searchCriteria, UserSearchController::PARAM_DOB_DAY, ''),
+                ArrayUtils::tryGet($this->searchCriteria, UserSearchController::PARAM_DOB_MONTH, ''),
+                ArrayUtils::tryGet($this->searchCriteria, UserSearchController::PARAM_DOB_YEAR, ''),
+                ArrayUtils::tryGet($this->searchCriteria, UserSearchController::PARAM_TOWN, ''),
+                ArrayUtils::tryGet($this->searchCriteria, UserSearchController::PARAM_POSTCODE, ''),
+            ],
+            'strlen'
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function expandAdditionalSearchCriteria()
+    {
+        return !empty($this->getAdditionalSearchCriteria());
+    }
 }

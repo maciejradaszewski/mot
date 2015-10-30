@@ -31,52 +31,61 @@
                 'value'    => $this->withDefault('')->getValue($lastName),
             ]
         );
-        echo $this->partial(
-            'partial/forms/inputBox.phtml',
-            [
-                'id'       => 'email',
-                'label'    => 'Email address',
-                'classLabel'    => 'form-label',
-                'required' => true,
-                'value'    => $this->withDefault('')->getValue($email),
-            ]
-        );
-
-        echo $this->partial(
-            'partial/gds/form/datePickerBox.phtml',
-            [
-                'label'  => 'Date of birth',
-                'day'    => $this->withDefault('')->getValue($dobDay),
-                'month'  => $this->withDefault('')->getValue($dobMonth),
-                'year'   => $this->withDefault('')->getValue($dobYear),
-                'help'   => 'For example: 02 12 1970',
-            ]
-        );
-
-        if ($userSearchExtended) {
-            echo $this->partial(
-                'partial/forms/inputBox.phtml',
-                [
-                    'id'       => 'town',
-                    'label'    => 'Town',
-                    'classLabel'    => 'form-label',
-                    'required' => true,
-                    'value'    => $this->withDefault('')->getValue($town),
-                ]
-            );
-        }
-
-        echo $this->partial(
-            'partial/forms/inputBox.phtml',
-            [
-                'id'       => 'postcode',
-                'label'    => 'Postcode',
-                'classLabel'    => 'form-label',
-                'required' => true,
-                'value'    => $this->withDefault('')->getValue($postcode),
-            ]
-        );
         ?>
+        <details <?php echo $expandAdditionalSearchCriteria ? 'open="null"' : null ?>>
+            <summary id="show-additonal-search-criteria">
+                Additional search criteria
+            </summary>
+            <div class="panel-indent">
+                <?php
+                echo $this->partial(
+                    'partial/forms/inputBox.phtml',
+                    [
+                        'id'       => 'email',
+                        'label'    => 'Email address',
+                        'classLabel'    => 'form-label',
+                        'required' => true,
+                        'value'    => $this->withDefault('')->getValue($email),
+                    ]
+                );
+
+                echo $this->partial(
+                    'partial/gds/form/datePickerBox.phtml',
+                    [
+                        'label'  => 'Date of birth',
+                        'day'    => $this->withDefault('')->getValue($dobDay),
+                        'month'  => $this->withDefault('')->getValue($dobMonth),
+                        'year'   => $this->withDefault('')->getValue($dobYear),
+                        'help'   => 'For example: 02 12 1970',
+                    ]
+                );
+
+                if ($userSearchExtended) {
+                    echo $this->partial(
+                        'partial/forms/inputBox.phtml',
+                        [
+                            'id'       => 'town',
+                            'label'    => 'Town',
+                            'classLabel'    => 'form-label',
+                            'required' => true,
+                            'value'    => $this->withDefault('')->getValue($town),
+                        ]
+                    );
+                }
+
+                echo $this->partial(
+                    'partial/forms/inputBox.phtml',
+                    [
+                        'id'       => 'postcode',
+                        'label'    => 'Postcode',
+                        'classLabel'    => 'form-label',
+                        'required' => true,
+                        'value'    => $this->withDefault('')->getValue($postcode),
+                    ]
+                );
+                ?>
+            </div>
+        </details>
     </fieldset>
     <div class="form-group">
         <?php
@@ -90,3 +99,15 @@
         ?>
     </div>
 </form>
+<?php
+$this->inlineScript()->captureStart();
+echo <<<JS
+jQuery(document).ready(function() {
+    jQuery("form").submit(function() {
+        jQuery("details").find("input:hidden").attr('disabled', 'disabled');
+        return true;
+    });
+});
+JS;
+$this->inlineScript()->captureEnd();
+?>
