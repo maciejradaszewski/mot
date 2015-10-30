@@ -2,10 +2,13 @@
 
 namespace DvsaEntities\Repository;
 
+use DvsaCommon\Model\DvsaRole;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Enum\OrganisationBusinessRoleCode;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaCommon\Enum\SpecialNoticeAudienceTypeId;
+use Doctrine\DBAL\Connection;
+use DvsaCommon\Utility\ArrayUtils;
 use DvsaEntities\Entity\SpecialNotice;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 /**
@@ -81,10 +84,10 @@ class SpecialNoticeRepository extends AbstractMutableRepository
             ->innerJoin("sn.content", "c")
             ->where("c.isPublished = :isPublished")
             ->andWhere("sn.username = :username")
-            ->andWhere("c.externalPublishDate <= :externalPublishDate")
+            ->andWhere("c.externalPublishDate <= :publishDate OR c.internalPublishDate <= :publishDate")
             ->setParameter("isPublished", 1)
             ->setParameter("username", $username)
-            ->setParameter("externalPublishDate", new \DateTime())
+            ->setParameter("publishDate", new \DateTime())
         ;
 
         return $qb->getQuery()->getResult();
@@ -105,8 +108,8 @@ class SpecialNoticeRepository extends AbstractMutableRepository
             ->where("c.isPublished = :isPublished")
             ->andWhere("sn.username = :username")
             ->andWhere("sn.id = :id")
-            ->andWhere("c.externalPublishDate <= :externalPublishDate")
-            ->setParameter("externalPublishDate", new \DateTime())
+            ->andWhere("c.externalPublishDate <= :publishDate OR c.internalPublishDate <= :publishDate")
+            ->setParameter("publishDate", new \DateTime())
             ->setParameter("username", $username)
             ->setParameter("id", $id)
             ->setParameter("isPublished", 1);
@@ -172,36 +175,24 @@ class SpecialNoticeRepository extends AbstractMutableRepository
             ->getEntityManager()
             ->getConnection();
 
-        $stmt = $conn->prepare($this->getBroadcastQuery());
-        $stmt->execute(['userId' => $userId]);
-        $stmt->closeCursor();
+        $conn->executeQuery(
+            $this->getBroadcastInternalSpecialNoticeQuery(),
+            ["userId" => $userId, "dvsaRoles" => DvsaRole::getDvsaRoles()],
+            ["userId" => \Pdo::PARAM_INT, "dvsaRoles" => Connection::PARAM_STR_ARRAY]
+        );
 
-        $conn->close();
+        $conn->executeQuery(
+            $this->getBroadcastExternalSpecialNoticeQuery(),
+            ["userId" => $userId],
+            ["userId" => \Pdo::PARAM_INT]
+        );
     }
 
-    private function getBroadcastQuery()
+    private function getBroadcastExternalSpecialNoticeQuery()
     {
-        return '
-        INSERT INTO special_notice(username, special_notice_content_id, created_on, created_by)
-        SELECT DISTINCT
-            un_sncid.username,
-            un_sncid.special_notice_content_id,
-            CURRENT_TIMESTAMP,
-            :userId
-        FROM (
-            ' . $this->getBroadcastQueryForTesters() . '
-            UNION ' . $this->getBroadcastQueryForVts() . '
-            UNION ' . $this->getBroadcastQueryForDvsa() . '
-            ) un_sncid
-        LEFT OUTER JOIN special_notice sn
-            ON (un_sncid.username = sn.username
-            AND un_sncid.special_notice_content_id = sn.special_notice_content_id)
-        WHERE
-            sn.username IS NULL
-            AND sn.special_notice_content_id IS NULL
-            AND un_sncid.is_published = 1
-            AND un_sncid.is_deleted = 0
-            AND un_sncid.external_publish_date <= CURRENT_DATE';
+        $fromPart = $this->getBroadcastQueryForTesters() . ' UNION ' . $this->getBroadcastQueryForVts();
+
+        return sprintf($this->getBroadcastSpecialNoticeQuery(), $fromPart, ' AND un_sncid.external_publish_date <= CURRENT_DATE');
     }
 
     private function getBroadcastQueryForTesters()
@@ -287,7 +278,7 @@ class SpecialNoticeRepository extends AbstractMutableRepository
                     snc.id as special_notice_content_id,
                     snc.is_published,
                     snc.is_deleted,
-                    snc.external_publish_date
+                    snc.internal_publish_date
                 FROM
                     special_notice_content snc,
                     special_notice_audience sna,
@@ -303,17 +294,36 @@ class SpecialNoticeRepository extends AbstractMutableRepository
                     AND psrm.person_system_role_id = psr.id
                     AND brs.code = 'AC'
                     AND psr.name in
-                        (
-                        'VEHICLE-EXAMINER',
-                        'DVSA-SCHEME-USER',
-                        'DVSA-SCHEME-MANAGEMENT',
-                        'DVSA-AREA-OFFICE-1',
-                        'DVSA-AREA-OFFICE-2',
-                        'DVLA-OPERATIVE',
-                        'FINANCE',
-                        'CUSTOMER-SERVICE-MANAGER',
-                        'CUSTOMER-SERVICE-CENTRE-OPERATIVE'
-                        )
+                        (:dvsaRoles)
                     ";
     }
+
+    private function getBroadcastInternalSpecialNoticeQuery()
+    {
+        return sprintf($this->getBroadcastSpecialNoticeQuery(), $this->getBroadcastQueryForDvsa(), ' AND un_sncid.internal_publish_date <= CURRENT_DATE');
+    }
+
+    private function getBroadcastSpecialNoticeQuery()
+    {
+        return '
+        INSERT INTO special_notice(username, special_notice_content_id, created_on, created_by)
+        SELECT DISTINCT
+            un_sncid.username,
+            un_sncid.special_notice_content_id,
+            CURRENT_TIMESTAMP,
+            :userId
+        FROM (
+            %s
+            ) un_sncid
+        LEFT OUTER JOIN special_notice sn
+            ON (un_sncid.username = sn.username
+            AND un_sncid.special_notice_content_id = sn.special_notice_content_id)
+        WHERE
+            sn.username IS NULL
+            AND sn.special_notice_content_id IS NULL
+            AND un_sncid.is_published = 1
+            AND un_sncid.is_deleted = 0
+            %s';
+    }
 }
+

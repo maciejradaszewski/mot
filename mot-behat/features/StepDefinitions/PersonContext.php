@@ -810,6 +810,8 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
 
         $tester = $this->testSupportHelper->getTesterService();
         $this->personLoginData = $tester->create($params);
+
+        return $this->personLoginData;
     }
 
     private function nominateToSiteRole($role)

@@ -2,7 +2,7 @@
 
 namespace DvsaCommon\Model;
 
-use DvsaCommon\Constants\Role;
+use DvsaCommon\Enum\RoleCode;
 
 class DvsaRole
 {
@@ -14,14 +14,16 @@ class DvsaRole
     public static function getDvsaRoles()
     {
         return [
-            Role::DVSA_AREA_OFFICE_1,
-            Role::DVSA_AREA_OFFICE_2,
-            Role::VEHICLE_EXAMINER,
-            Role::DVSA_SCHEME_MANAGEMENT,
-            Role::DVSA_SCHEME_USER,
-            Role::FINANCE,
-            Role::CUSTOMER_SERVICE_CENTRE_OPERATIVE,
-            Role::DVLA_OPERATIVE,
+            RoleCode::AREA_OFFICE_1,
+            RoleCode::AREA_OFFICE_2,
+            RoleCode::VEHICLE_EXAMINER,
+            RoleCode::SCHEME_MANAGER,
+            RoleCode::SCHEME_USER,
+            RoleCode::FINANCE_,
+            RoleCode::CUSTOMER_SERVICE_OPERATIVE,
+            RoleCode::DVLA_OPERATIVE,
+            RoleCode::DVLA_MANAGER,
+            RoleCode::CUSTOMER_SERVICE_MANAGER,
         ];
     }
 
