@@ -12,7 +12,6 @@ return [
          * Example feature is disabled by default. Enable it at your own risk.
          */
         'example.feature.toggle' => false,
-        'ao1.ae.create'          => true,
         'ao1.ae.site.link'       => true,
         'ao1.ae.site.unlink'     => true,
         'ao1.ae.edit'            => true,

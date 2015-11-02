@@ -266,8 +266,6 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
      */
     public function createAction()
     {
-        $this->assertFeatureEnabled(FeatureToggle::AO1_AE_CREATE);
-
         $this->auth->assertGranted(PermissionInSystem::AUTHORISED_EXAMINER_CREATE);
 
         /** @var Request $request */
@@ -319,8 +317,6 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
      */
     public function confirmationAction()
     {
-        $this->assertFeatureEnabled(FeatureToggle::AO1_AE_CREATE);
-
         $this->auth->assertGranted(PermissionInSystem::AUTHORISED_EXAMINER_CREATE);
 
         $urlCreate = AuthorisedExaminerUrlBuilderWeb::create();
