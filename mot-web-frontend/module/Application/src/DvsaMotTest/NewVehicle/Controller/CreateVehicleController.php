@@ -2,6 +2,7 @@
 
 namespace DvsaMotTest\NewVehicle\Controller;
 
+use Application\Service\ContingencySessionManager;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\HttpRestJson\Exception\OtpApplicationException;
@@ -32,15 +33,21 @@ class CreateVehicleController extends AbstractDvsaMotTestController
 
     /** @var  CreateVehicleFormWizard */
     private $wizard;
+    /**
+     * @var ContingencySessionManager
+     */
+    private $contingencySessionManager;
 
     public function __construct(
         CreateVehicleFormWizard $wizard,
         MotAuthorisationServiceInterface $authorisationService,
-        Request $request
+        Request $request,
+        ContingencySessionManager $contingencySessionManager
     ) {
         $this->authorisationService = $authorisationService;
         $this->request = $request;
         $this->wizard = $wizard;
+        $this->contingencySessionManager = $contingencySessionManager;
     }
 
     public function onDispatch(MvcEvent $e)
@@ -167,7 +174,12 @@ class CreateVehicleController extends AbstractDvsaMotTestController
 
                 $this->wizard->clear();
 
-                return $this->redirect()->toUrl(MotTestUrlBuilderWeb::options($motTestNumber)->toString());
+                if($this->contingencySessionManager->isMotContingency()) {
+                    return $this->redirect()->toRoute("mot-test", ["motTestNumber" => $motTestNumber]);
+                } else {
+                    return $this->redirect()->toRoute("mot-test/options", ["motTestNumber" => $motTestNumber]);
+                }
+
             } catch (OtpApplicationException $e) {
                 $errorData = $e->getErrorData();
 

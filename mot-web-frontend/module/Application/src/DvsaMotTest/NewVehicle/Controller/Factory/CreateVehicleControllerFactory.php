@@ -2,6 +2,7 @@
 
 namespace DvsaMotTest\NewVehicle\Controller\Factory;
 
+use Application\Service\ContingencySessionManager;
 use DvsaMotTest\NewVehicle\Form\VehicleWizard\CreateVehicleFormWizard;
 use DvsaMotTest\NewVehicle\Controller\CreateVehicleController;
 use Zend\ServiceManager\FactoryInterface;
@@ -26,7 +27,8 @@ class CreateVehicleControllerFactory implements FactoryInterface
         return new CreateVehicleController(
             $sl->get(CreateVehicleFormWizard::class),
             $authService,
-            $request
+            $request,
+            $sl->get(ContingencySessionManager::class)
         );
     }
 }
