@@ -10,14 +10,12 @@ use DvsaCommon\Constants\FeatureToggle;
     </header>
     <p>You can apply for</p>
     <ul>
-        <?php if ($this->isFeatureEnabled(FeatureToggle::AO1_AE_CREATE)): ?>
-            <li>
-                <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::create(); ?>"
-                   id="createAuthorisedExaminerLink">
-                    Create AE
-                </a>
-            </li>
-        <?php endif; ?>
+        <li>
+            <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::create(); ?>"
+               id="createAuthorisedExaminerLink">
+                Create AE
+            </a>
+        </li>
         <?php if ($this->isFeatureEnabled(FeatureToggle::AO1_SITE_CREATE)): ?>
             <li>
                 <a href="<?php echo VehicleTestingStationUrlBuilderWeb::create(); ?>"
