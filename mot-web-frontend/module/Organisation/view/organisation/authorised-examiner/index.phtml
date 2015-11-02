@@ -404,6 +404,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                     <tbody>
                         <?php
                         $contact = $viewModel->getPrincipalPersonalContact($principalIdx);
+                        if (isset($contact)) :
                         ?>
                         <tr>
                             <th class="key-value-list__key">
@@ -429,6 +430,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                                 <?php echo $this->escapeHtml($contact->getPrimaryPhoneNumber()); ?>
                             </td>
                         </tr>
+                        <?php endif; ?>
                     <?php if ($viewModel->getViewAuthorisation()->canRemoveAuthorisedExaminerPrincipal()):
                         $escUrlRemove = AuthorisedExaminerUrlBuilderWeb::principalRemove($orgId, $principal->getId());
                         ?>
