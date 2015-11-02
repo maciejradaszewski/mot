@@ -17,7 +17,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class ClaimUserAccount extends BaseTest {
+public class ClaimUserAccountTests extends BaseTest {
 
     @DataProvider(name = "createTester")
     public Object[][] createTesterAndVehicle() throws IOException {

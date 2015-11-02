@@ -9,7 +9,9 @@ import uk.gov.dvsa.ui.pages.Page;
 public class UserSearchProfilePage extends Page{
 
     private static final String PAGE_TITLE = "User profile";
+
     @FindBy(id = "manage-internal-roles") private WebElement selectManageRolesLink;
+    @FindBy(id="roles-and-associations-link") private WebElement rolesAndAssociationsLink;
 
     public UserSearchProfilePage(MotAppDriver driver) {
         super(driver);
@@ -24,5 +26,10 @@ public class UserSearchProfilePage extends Page{
     public ManageRolesPage clickManageRolesLink(){
         selectManageRolesLink.click();
         return new ManageRolesPage(driver);
+    }
+
+    public RolesAndAssociationsPage clickRolesAndAssociationsLink() {
+        rolesAndAssociationsLink.click();
+        return new RolesAndAssociationsPage(driver);
     }
 }

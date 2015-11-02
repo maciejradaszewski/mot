@@ -16,7 +16,7 @@ import uk.gov.dvsa.ui.pages.login.LoginPage;
 
 import java.io.IOException;
 
-public class OpenAMLockoutWarningTest extends BaseTest {
+public class OpenAMLockoutWarningTests extends BaseTest {
 
     private User tester;
     private int numberOfAttempts = 4;

@@ -60,9 +60,6 @@ public class DVSAAccessUserProfileTest extends BaseTest {
                 "Check that the the driver's licence is displayed for tester");
         assertEquals(helpDeskUserProfilePage.getTelephoneNumber(), personUser.getTelNo(),
                 "Check that the telephone number is displayed");
-        assertEquals(helpDeskUserProfilePage.getTesterAssociation(),
-                Assertion.ASSERTION_TESTER_VTS.assertion,
-                "check that the correct VTS is displayed for tester role");
         assertEquals(helpDeskUserProfilePage.getAddress(), personUser.getAddress(),
                 "Check that the home address is displayed");
         assertFalse(helpDeskUserProfilePage.isPasswordResetDisplayed(),

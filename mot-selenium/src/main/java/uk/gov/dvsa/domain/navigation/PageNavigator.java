@@ -2,7 +2,6 @@ package uk.gov.dvsa.domain.navigation;
 
 import org.joda.time.DateTime;
 import org.openqa.selenium.Cookie;
-
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.CookieService;
@@ -10,15 +9,9 @@ import uk.gov.dvsa.framework.config.Configurator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.accountclaim.AccountClaimPage;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.AeSlotsUsagePage;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.AedmAuthorisedExaminerViewPage;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.FinanceAuthorisedExaminerViewPage;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.*;
 import uk.gov.dvsa.ui.pages.cpms.GenerateReportPage;
-import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
-import uk.gov.dvsa.ui.pages.dvsa.UserSearchPage;
-import uk.gov.dvsa.ui.pages.dvsa.UserSearchResultsPage;
+import uk.gov.dvsa.ui.pages.dvsa.*;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 import uk.gov.dvsa.ui.pages.login.LoginPage;
 import uk.gov.dvsa.ui.pages.mot.*;
@@ -297,9 +290,17 @@ public class PageNavigator {
     }
 
     public ManageRolesPage goToManageRolesPageViaUserSearch(User loggedUser, User searchedUser) throws IOException {
+        return goToUserSearchedProfilePageViaUserSearch(loggedUser, searchedUser).clickManageRolesLink();
+    }
+
+    public UserSearchProfilePage goToUserSearchedProfilePageViaUserSearch(User loggedUser, User searchedUser) throws IOException {
         return goToUserSearchPage(loggedUser).searchForUserByUsername(searchedUser.getUsername())
                 .clickSearchButton(UserSearchResultsPage.class)
-                .chooseUser(0)
-                .clickManageRolesLink();
+                .chooseUser(0);
+    }
+
+    public SiteSearchPage goToSiteSearchPage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(SiteSearchPage.PATH));
+        return new SiteSearchPage(driver);
     }
 }

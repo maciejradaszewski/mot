@@ -23,7 +23,7 @@ public class UserSearchPage extends Page {
     @FindBy(id = "date1-year") private WebElement yearInputField;
     @FindBy(id = "validation-summary-message") private WebElement noResultsMessage;
     @FindBy(id = "validation-message--failure") private WebElement errorMessage;
-    @FindBy(css = ".button") private WebElement searchButton;
+    @FindBy(id = "search-button") private WebElement searchButton;
     @FindBy(id = "show-additonal-search-criteria") private WebElement additionalSearchCriteriaLink;
 
     public UserSearchPage(MotAppDriver driver) {

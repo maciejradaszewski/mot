@@ -12,7 +12,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class UserRegistrationTest extends BaseTest {
+public class UserRegistrationTests extends BaseTest {
 
     private final String name = ContactDetailsHelper.generateUniqueName();
     private final String surname = ContactDetailsHelper.generateUniqueName();

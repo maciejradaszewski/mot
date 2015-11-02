@@ -10,7 +10,7 @@ import java.io.IOException;
 
 import static org.testng.Assert.assertFalse;
 
-public class DashBoardViewTest extends BaseTest {
+public class DashBoardViewTests extends BaseTest {
 
     @Test(groups = {"Regression", "VM_9444"})
     public void doesNotDisplayRetestLinkWhenEnteredHomePage() throws IOException {

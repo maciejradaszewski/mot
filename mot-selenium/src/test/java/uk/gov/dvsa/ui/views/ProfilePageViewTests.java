@@ -13,14 +13,14 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class ProfilePageViewTest extends BaseTest {
+public class ProfilePageViewTests extends BaseTest {
 
     private User tester;
 
     @BeforeClass(alwaysRun = true)
     private void setup() throws IOException {
         AeDetails aeDetails = aeData.createAeWithDefaultValues();
-        Site site = siteData.createNewSite(aeDetails.getId(), "default-site");
+        Site site = siteData.createNewSite(aeDetails.getId(), "Test_Site");
         tester = userData.createTester(site.getId());
     }
 
@@ -32,5 +32,20 @@ public class ProfilePageViewTest extends BaseTest {
 
         //Then I should be able to see the qualification status
         assertThat(profilePage.isTesterQualificationStatusDisplayed(), is(true));
+    }
+
+    @Test(groups = {"BVT", "Regression", "VM-12321"},
+            description = "Verifies that trade user can check own roles via roles and associations link " +
+                    "on it's own profile page")
+    public void tradeUserCanViewHisOwnRolesAndAssociations() throws IOException {
+
+        //Given I'm on the Your Profile Details page
+        ProfilePage profilePage = pageNavigator.gotoProfilePage(tester);
+
+        //When I click on Roles and Associations link
+        profilePage.clickRolesAndAssociationsLink();
+
+        //Then roles should be displayed
+        assertThat(motUI.manageRoles.isRolesTableContainsValidTesterData(), is(true));
     }
 }
