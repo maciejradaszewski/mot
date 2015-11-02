@@ -70,7 +70,8 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
         $ctrl = new CreateVehicleController(
             $this->wizard,
             $this->authorisationMock,
-            $this->request
+            $this->request,
+            $this->contingencySessionManager
         );
         $this->setController($ctrl);
 
@@ -157,7 +158,10 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
         $this->assertNotNull($vm->getVariables()['sectionTwoData']);
     }
 
-    public function testConfirm_givenSubmittedConfirmation_shouldRedirect()
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testConfirm_givenSubmittedConfirmation_shouldRedirect($isMotContingency)
     {
         $motTestNumber = '121212';
         $expectedData = [
@@ -191,10 +195,26 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
         $this->client->expects($this->any())->method('postJson')
             ->willReturn($expectedData);
 
-        $this->expectRedirectToUrl(MotTestUrlBuilderWeb::options($motTestNumber)->toString());
+        $this
+            ->contingencySessionManager
+            ->expects($this->any())
+            ->method("isMotContingency")
+            ->willReturn($isMotContingency);
+
+        if ($isMotContingency) {
+            $route = "mot-test";
+        } else {
+            $route = "mot-test/options";
+        }
+
+        $this->expectRedirect($route, ["motTestNumber" => $motTestNumber]);
 
         $this->sut()->confirmAction();
+    }
 
+    public function dataProvider()
+    {
+        return [[false], [true]];
     }
 
     public function testAddStepTwo_givenEnteredTheStep_shouldReturnForm()
