@@ -5,10 +5,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
-import uk.gov.dvsa.ui.pages.AddSiteAssessmentPage;
-import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.RemoveRolePage;
-import uk.gov.dvsa.ui.pages.SiteAssessmentPage;
+import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.mot.MotTestCertificatesPage;
 import uk.gov.dvsa.ui.pages.mot.TestShortSummaryPage;
 
@@ -192,6 +189,11 @@ public class VehicleTestingStationPage extends Page {
 
     public String getVtsName() {
         return vtsName.getText();
+    }
+
+    public ProfileOfPage chooseAssignedToVtsUser(String userId) {
+        driver.findElement(By.cssSelector(String.format(".key-value-list a[href*='%s']", userId))).click();
+        return new ProfileOfPage(driver);
     }
 }
 

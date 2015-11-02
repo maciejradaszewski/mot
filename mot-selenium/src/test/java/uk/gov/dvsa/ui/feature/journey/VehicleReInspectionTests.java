@@ -27,7 +27,7 @@ import static uk.gov.dvsa.domain.model.mot.ReinspectionScoreCategory.INSPECTION_
 import static uk.gov.dvsa.domain.model.mot.ReinspectionTestScore.DISREGARDED;
 
 
-public class VehicleReInspectionTest extends BaseTest {
+public class VehicleReInspectionTests extends BaseTest {
 
     private User vehicleExaminer;
     private User tester;

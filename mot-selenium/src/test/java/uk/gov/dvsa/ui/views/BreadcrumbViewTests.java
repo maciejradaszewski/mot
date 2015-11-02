@@ -19,7 +19,7 @@ import java.net.URISyntaxException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.gov.dvsa.matcher.BreadcrumbMatcher.hasBreadcrumbElements;
 
-public class BreadcrumbViewTest extends BaseTest {
+public class BreadcrumbViewTests extends BaseTest {
 
     private Vehicle vehicle;
     private User tester;

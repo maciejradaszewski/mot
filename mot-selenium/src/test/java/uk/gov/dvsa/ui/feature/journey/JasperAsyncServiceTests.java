@@ -1,16 +1,13 @@
 package uk.gov.dvsa.ui.feature.journey;
 
-import org.openqa.selenium.NoSuchElementException;
 import org.testng.SkipException;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.FeaturesService;
+import uk.gov.dvsa.helper.AssertionHelper;
 import uk.gov.dvsa.helper.ConfigHelper;
 import uk.gov.dvsa.ui.BaseTest;
-import uk.gov.dvsa.ui.pages.HomePage;
-import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.io.IOException;
@@ -19,23 +16,23 @@ import java.net.URISyntaxException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class JasperSyncServiceTest extends BaseTest {
+public class JasperAsyncServiceTests extends BaseTest {
     FeaturesService service = new FeaturesService();
 
-    @Test(groups = {"BVT", "Regression"}, expectedExceptions = NoSuchElementException.class)
-    public void showAsyncHeaderNotShownOnHomePage() throws IOException {
+    @Test(groups = {"BVT", "Regression"})
+    public void showAsyncHeaderOnHomePage() throws IOException {
         ConfigHelper.isJasperAsyncEnabled();
 
         //When I view my HomePage as a tester
         VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.gotoHomePage(userData.createTester(1))
                 .selectRandomVts();
 
-        //And I should NOT see the Mot Certificate Link
-        assertThat(vehicleTestingStationPage.isMotTestRecentCertificatesLink(), is(false));
+        //And the MOT test certificates Link
+        assertThat(vehicleTestingStationPage.isMotTestRecentCertificatesLink(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression"})
-    public void printButtonIsDisplayed() throws IOException, URISyntaxException {
+    public void showAsyncSummaryPageAndCertificateListTest() throws IOException, URISyntaxException {
         ConfigHelper.isJasperAsyncEnabled();
 
         //When I perform an MOT test as a tester
@@ -44,16 +41,10 @@ public class JasperSyncServiceTest extends BaseTest {
 
         motUI.normalTest.conductTestPass(tester, vehicle);
 
-        //Then I should see the Print Button
-        assertThat(motUI.normalTest.isPrintButtonDisplayed(), is((true)));
-    }
+        //Then I should see the Mot Certificate Link on the test complete page
+        AssertionHelper.assertValue(motUI.normalTest.isMotCertificateLinkDisplayed(), true);
 
-    @Test(groups = {"BVT", "Regression"}, expectedExceptions = PageInstanceNotFoundException.class)
-    public void returnPageNotFoundForCertificateLink() throws IOException, URISyntaxException {
-
-        //When I navigate to the mot certificate page
-        motUI.certificatePage(userData.createTester(1));
-
-        //Then I should get a Page not Found Exception
+        //And I can click the Mot certificate Link to the Certificates page.
+        motUI.normalTest.certificatePage();
     }
 }

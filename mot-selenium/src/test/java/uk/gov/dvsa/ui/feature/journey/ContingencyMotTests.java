@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class ContingencyMotTest extends BaseTest {
+public class ContingencyMotTests extends BaseTest {
     private User tester;
     private Vehicle vehicle;
     private final String contingencyCode = "12345A";

@@ -14,7 +14,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class AedmRoleAssociationTest extends BaseTest {
+public class AedmRoleAssociationTests extends BaseTest {
 
     private User aedm;
     private User tester;

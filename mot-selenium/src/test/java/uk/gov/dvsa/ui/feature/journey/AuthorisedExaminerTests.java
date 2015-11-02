@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class AuthorisedExaminerTest extends BaseTest {
+public class AuthorisedExaminerTests extends BaseTest {
 
     @Test(groups = {"FeatureToggleCreateAe"}) public void createAuthorisedExaminerSuccessfully()
             throws IOException, URISyntaxException {

@@ -3,11 +3,16 @@ package uk.gov.dvsa.ui.feature.journey;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import uk.gov.dvsa.domain.model.AeDetails;
+import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.helper.RandomDataGenerator;
 import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
 import uk.gov.dvsa.ui.pages.dvsa.UserSearchPage;
+import uk.gov.dvsa.ui.pages.dvsa.UserSearchProfilePage;
 import uk.gov.dvsa.ui.pages.dvsa.UserSearchResultsPage;
+import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.io.IOException;
 
@@ -15,17 +20,23 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.StringContains.containsString;
 
-public class DVSAManagingUserRoles extends BaseTest {
+public class DVSAManagingUserRolesTests extends BaseTest {
 
     private User vehicleExaminer;
     private User areaOffice1User;
     private User csco;
+    private User tester;
+    private AeDetails aeDetails;
+    private Site site;
 
     @BeforeClass(alwaysRun = true)
     private void setup() throws IOException {
+        aeDetails = aeData.createAeWithDefaultValues();
+        site = siteData.createNewSite(aeDetails.getId(), "Test_Site");
         areaOffice1User = userData.createAreaOfficeOne("AreaOfficer");
         vehicleExaminer = userData.createVehicleExaminer("ft-Enf-", false);
         csco = userData.createCustomerServiceOfficer(false);
+        tester = userData.createTester(site.getId());
     }
 
     @Test(groups = {"BVT", "Regression"})
@@ -176,6 +187,52 @@ public class DVSAManagingUserRoles extends BaseTest {
 
         //Then I should see the Search button
         assertThat(motUI.searchUser.isSearchButtonDisplayed(), is(true));
+    }
+
+    @Test(groups = {"BVT", "Regression", "VM-12321"},
+            description = "Verifies that authorised user can check user roles via roles and associations link " +
+                    "on user profile page")
+    public void dvsaUserCanViewAeAssociationSuccessfully() throws IOException {
+
+        //Given that I am on User search profile page as an authorised DVSA user
+        UserSearchProfilePage userSearchProfilePage = pageNavigator.goToUserSearchedProfilePageViaUserSearch(areaOffice1User, tester);
+
+        //When I click on Roles and Associations link
+        userSearchProfilePage.clickRolesAndAssociationsLink();
+
+        //Then roles should be displayed
+        assertThat(motUI.manageRoles.isRolesTableContainsValidTesterData(), is(true));
+    }
+
+    @Test(groups = {"BVT", "Regression", "VM-12321"},
+            description = "Verifies that authorised DVSA user can check roles via roles and associations link " +
+                    "of trade user")
+    public void dvsaUserCanViewTradeUsersRolesAndAssociations() throws IOException {
+
+        //Given I'm on the Site search page as an authorised DVSA user
+        pageNavigator.goToSiteSearchPage(areaOffice1User);
+
+        //When I click on an assigned user from vts details page
+        motUI.searchSite.searchForSiteBySiteId(site.getSiteNumber(), VehicleTestingStationPage.class).chooseAssignedToVtsUser(tester.getId());
+
+        //Then Roles and Associations link should be displayed
+        assertThat(motUI.manageRoles.isRolesAndAssociationsLinkDisplayedOnProfileOfPage(), is(true));
+    }
+
+    @Test(groups = {"BVT", "Regression", "VM-12321"},
+            description = "Verifies that authorised user can navigate back from roles and associations page " +
+                    "to user user profile page via link")
+    public void dvsaUserCanNavigateBackFromViewAeAssociationPageViaLink() throws IOException {
+
+        //Given that I am on User search profile page as an authorised DVSA user
+        RolesAndAssociationsPage rolesAndAssociationsPage = pageNavigator.goToUserSearchedProfilePageViaUserSearch(areaOffice1User, tester)
+                .clickRolesAndAssociationsLink();
+
+        //When I click on Roles and Associations link
+        UserSearchProfilePage userSearchProfilePage = rolesAndAssociationsPage.clickReturnToUserProfile();
+
+        //Then roles should be displayed
+        assertThat(userSearchProfilePage.selfVerify(), is(true));
     }
 
     @DataProvider(name = "dvsaUserCanSearchForAUser")

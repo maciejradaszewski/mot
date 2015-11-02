@@ -20,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
-public class VehicleSearchPageViewTest extends BaseTest {
+public class VehicleSearchPageViewTests extends BaseTest {
 
     private User tester;
     private Vehicle vehicle;

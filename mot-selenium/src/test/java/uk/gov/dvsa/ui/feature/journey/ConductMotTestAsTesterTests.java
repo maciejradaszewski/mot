@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class ConductMotTestAsTester extends BaseTest {
+public class ConductMotTestAsTesterTests extends BaseTest {
 
     private Site site;
     private AeDetails aeDetails;

@@ -18,7 +18,7 @@ import java.io.IOException;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class MotTestCertificateForTradeRolesTest extends BaseTest {
+public class MotTestCertificateForTradeRolesTests extends BaseTest {
     FeaturesService service = new FeaturesService();
     private Site testSite;
     private AeDetails aeDetails;

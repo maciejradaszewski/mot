@@ -15,7 +15,7 @@ import java.util.Random;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class EditSiteDetailsTest extends BaseTest {
+public class EditSiteDetailsTests extends BaseTest {
 
    private String onePersonTestLane;
    private String twoPersonTestLane;

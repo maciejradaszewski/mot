@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class AedmManagesMotAccount extends BaseTest {
+public class AedmManagesMotAccountTests extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"},
             description = "VM9855 - Journey 2 - AEDM Manages Mot Account", dataProvider = "createAedmAndAe")

@@ -21,7 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class PerformTesterFunction extends BaseTest {
+public class PerformTesterFunctionTests extends BaseTest {
     private User tester;
     private Site testSite;
     private AeDetails aeDetails;

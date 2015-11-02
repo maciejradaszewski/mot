@@ -18,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-public class HelpDesk extends BaseTest {
+public class HelpDeskTests extends BaseTest {
 
     private User tester;
     private Site testSite;

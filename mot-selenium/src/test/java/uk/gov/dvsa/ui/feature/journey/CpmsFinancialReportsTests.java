@@ -12,7 +12,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class CpmsFinancialReportsTest extends BaseTest {
+public class CpmsFinancialReportsTests extends BaseTest {
     
     private User financeUser;
     

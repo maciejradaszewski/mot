@@ -4,6 +4,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
+import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
 
 public class ProfilePage extends Page {
 
@@ -14,6 +15,7 @@ public class ProfilePage extends Page {
     @FindBy(id = "tester-qualification-status") private WebElement qualificationStatus;
     @FindBy(id = "change-password") private WebElement changePasswordLink;
     @FindBy(id = "validation-message--success") private WebElement messageSuccess;
+    @FindBy(id="roles-and-associations-link") private WebElement rolesAndAssociationsLink;
 
     public ProfilePage(MotAppDriver driver) {
         super(driver);
@@ -42,6 +44,11 @@ public class ProfilePage extends Page {
         return new ChangePasswordFromProfilePage(driver);
     }
 
+    public RolesAndAssociationsPage clickRolesAndAssociationsLink() {
+        rolesAndAssociationsLink.click();
+        return new RolesAndAssociationsPage(driver);
+    }
+
     public boolean isSuccessMessageDisplayed(){
         return messageSuccess.isDisplayed();
     }
@@ -49,5 +56,4 @@ public class ProfilePage extends Page {
     public String getMessageSuccess(){
        return  messageSuccess.getText();
     }
-
 }

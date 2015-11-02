@@ -9,7 +9,7 @@ import uk.gov.dvsa.ui.pages.vehicleinformation.VehicleInformationSearchPage;
 
 import java.io.IOException;
 
-public class VehicleInformationViewTest extends BaseTest {
+public class VehicleInformationViewTests extends BaseTest {
 
     @Test (groups = {"BVT", "Regression"})
     public void viewVehicleInformationSuccessfully() throws IOException{

@@ -15,7 +15,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class ManualEventTest extends BaseTest {
+public class ManualEventTests extends BaseTest {
 
     private User dvsaUser;
     private AeDetails ae;

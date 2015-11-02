@@ -116,42 +116,6 @@ public class HelpDeskTests extends BaseTest {
                 "Check if event history table page is displayed");
     }
 
-    @Test(groups = {"VM-8049", "Regression"}, dataProvider = "dvsaUserCanSearchForAUser")
-    public void testDvsaUserCanViewVtsAssociationSuccessfully(Login login) {
-        UserDashboardPage userDashboardPage =
-                UserDashboardPage.navigateHereFromLoginPage(driver, login);
-        userDashboardPage.clickUserSearch().enterUsername("tester1").search().clickUserName(0)
-                .getVehicleTestingStationPage();
-        SiteDetailsPage siteDetailsPage = new SiteDetailsPage(driver);
-
-        assertThat("Vehicle Testing Station page is displayed",
-                siteDetailsPage.checkChangeOpeningHoursLinkExists(), is(true));
-    }
-
-    @Test(groups = {"VM-8049", "Regression"}, dataProvider = "dvsaUserCanSearchForAUser")
-    public void testDvsaUserCanViewAeAssociationSuccessfully(Login login) {
-
-        AuthorisedExaminerFullDetailsPage authorisedExaminerFullDetailsPage =
-                UserDashboardPage.navigateHereFromLoginPage(driver, login).clickUserSearch()
-                        .enterUsername("aedm").search().clickUserName(0)
-                        .getAuthorisedExaminerPage();
-
-        assertThat("Full Details of Authorised Examiner page is displayed",
-                authorisedExaminerFullDetailsPage.checkSearchAgainLinkExists(), is(true));
-    }
-
-    @Test(groups = {"VM-8049", "Regression"})
-    public void testCscoUserCanViewVtsAssociationSuccessfully() {
-        UserDashboardPage userDashboardPage =
-                UserDashboardPage.navigateHereFromLoginPage(driver, Login.LOGIN_CUSTOMER_SERVICE);
-        userDashboardPage.clickUserSearch().enterUsername("tester1").search().clickUserName(0);
-        SiteDetailsPage siteDetailsPage =
-                new HelpDeskUserProfilePage(driver).getVehicleTestingStationPage();
-
-        assertThat("Vehicle Testing Station page is displayed without change opening hours link",
-                siteDetailsPage.checkChangeOpeningHoursLinkExists(), is(false));
-    }
-
     @Test(groups = {"VM-9084", "Regression"})
     public void testCSCOCanSearchForUsersWithUnclaimedAccounts() {
         Login unclaimedAccountUser = createTester(true);

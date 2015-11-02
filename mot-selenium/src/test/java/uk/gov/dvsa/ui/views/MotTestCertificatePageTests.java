@@ -20,7 +20,7 @@ import java.util.concurrent.Callable;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class MotTestCertificatePageTest extends BaseTest {
+public class MotTestCertificatePageTests extends BaseTest {
     FeaturesService service = new FeaturesService();
     private Site site;
     private AeDetails aeDetails;
