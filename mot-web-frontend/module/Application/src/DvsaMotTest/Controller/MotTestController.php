@@ -426,7 +426,7 @@ class MotTestController extends AbstractDvsaMotTestController
 
             try {
                 $data = $request->getPost()->toArray();
-
+                $data['clientIp'] = $this->getClientIp();
                 $selectedReasonId = ArrayUtils::tryGet($data, 'reasonForCancelId');
                 $cancelComment = ArrayUtils::tryGet($data, 'cancelComment');
 
@@ -702,6 +702,7 @@ class MotTestController extends AbstractDvsaMotTestController
                 $motTestNumber = $this->params()->fromRoute('motTestNumber');
                 $selectedReasonId = ArrayUtils::tryGet($data, 'reasonForCancelId');
                 $data['status'] = MotTestStatusName::ABORTED;
+                $data['clientIp'] = $this->getClientIp();
 
                 $apiUrl = MotTestUrlBuilder::motTestStatus($motTestNumber)->toString();
                 $this->getRestClient()->post($apiUrl, $data);
