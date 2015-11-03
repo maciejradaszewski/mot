@@ -78,7 +78,6 @@ class AuthorisedExaminerStatusController extends AbstractDvsaMotTestController
      */
     public function indexAction()
     {
-        $this->assertFeatureEnabled(FeatureToggle::AO1_AE_EDIT_STATUS);
         $this->auth->assertGranted(PermissionInSystem::AUTHORISED_EXAMINER_STATUS_UPDATE);
 
         $orgId = $this->params('id');
@@ -161,7 +160,6 @@ class AuthorisedExaminerStatusController extends AbstractDvsaMotTestController
      */
     public function confirmationAction()
     {
-        $this->assertFeatureEnabled(FeatureToggle::AO1_AE_EDIT_STATUS);
         $this->auth->assertGranted(PermissionInSystem::AUTHORISED_EXAMINER_STATUS_UPDATE);
 
         $orgId = $this->params('id');
