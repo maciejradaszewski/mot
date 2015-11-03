@@ -414,7 +414,8 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
 
         $expectedRestPostData = [
             'status'          => $status,
-            'reasonForCancel' => $reasonForCancel
+            'reasonForCancel' => $reasonForCancel,
+            'clientIp' => '0.0.0.0',
         ];
 
         $restClientMock = $this->getRestClientMockForServiceManager();
@@ -449,6 +450,7 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
             'status'          => $status,
             'reasonForCancel' => $reasonForCancel,
             'oneTimePassword' => $oneTimePassword,
+            'clientIp' => '0.0.0.0',
         ];
 
         $restClientMock = $this->getRestClientMockForServiceManager();
@@ -484,6 +486,7 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
             'status'            => $status,
             'reasonForCancelId' => $reasonForCancel,
             'oneTimePassword'   => $oneTimePassword,
+            'clientIp' => '0.0.0.0'
         ];
 
         $restClientMock = $this->getRestClientMockForServiceManager();

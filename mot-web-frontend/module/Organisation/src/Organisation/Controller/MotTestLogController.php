@@ -213,6 +213,12 @@ class MotTestLogController extends AbstractAuthActionController
                     ->format(self::$DATETIME_FORMAT);
             }
 
+            // Only print primary IP address
+            if (isset($row['clientIp'])) {
+                $ips = explode(", ", $row['clientIp']);
+                $row['clientIp'] = $ips[0];
+            }
+
             //="formula" hack preventing Excel from converting columns to Date or Number
             $row['vehicleModel'] = '="' . $row['vehicleModel'] . '"';
             $row['testNumber'] = '="' . $row['testNumber'] . '"';
