@@ -27,11 +27,9 @@ $successMessages = $this->layout()->flashMessenger->getSuccessMessages();
 echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
 ?>
 <h3 class="key-value-list__header">Business details</h3>
-<?php if ($this->isFeatureEnabled(\DvsaCommon\Constants\FeatureToggle::AO1_AE_EDIT_STATUS)): ?>
-    <?php if ($viewModel->getViewAuthorisation()->canUpdateAE()): ?>
-        <a id="change-status-and-area-office" href="<?php echo $this->escapeHtmlAttr($presenter->getChangeStatusUrl()); ?>"
-           class="key-value-list__action">Change status & area office</a>
-    <?php endif; ?>
+<?php if ($viewModel->getViewAuthorisation()->canUpdateAE()): ?>
+    <a id="change-status-and-area-office" href="<?php echo $this->escapeHtmlAttr($presenter->getChangeStatusUrl()); ?>"
+       class="key-value-list__action">Change status & area office</a>
 <?php endif; ?>
 <table class="key-value-list">
     <tbody>

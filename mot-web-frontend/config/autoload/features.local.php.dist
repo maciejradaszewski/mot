@@ -14,7 +14,6 @@ return [
         'example.feature.toggle' => false,
         'ao1.ae.site.link'       => true,
         'ao1.ae.site.unlink'     => true,
-        'ao1.ae.edit'            => true,
         'ao1.site.create'        => true,
 
         /*

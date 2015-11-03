@@ -360,35 +360,6 @@ class AuthorisedExaminerStatusControllerTest extends AbstractFrontendControllerT
     }
 
     /**
-     * @dataProvider dataProviderTestNoAccessFeatureDisabled
-     */
-    public function testNoAccessFeatureDisabled($action, $feature)
-    {
-        //  logical block :: mock
-        //  turn off features
-        $this->mockMethod($this->mockFeatureToggle, 'isEnabled', $this->once(), false, [$feature]);
-
-        //  set expected exception
-        $this->setExpectedException(
-            FeatureNotAvailableException::class,
-            'Feature "' . $feature . '" is either disabled or not available in the current application configuration.'
-        );
-
-        $this->getResultForAction($action);
-    }
-
-    public function dataProviderTestNoAccessFeatureDisabled()
-    {
-        return [
-            [
-                'action'  => 'index',
-                'feature' => FeatureToggle::AO1_AE_EDIT_STATUS,
-            ],
-            ['confirmation', FeatureToggle::AO1_AE_EDIT_STATUS],
-        ];
-    }
-
-    /**
      * @dataProvider dataProviderTestNoAccessNoPerm
      */
     public function testHaveNoAccessNoPerm($action, $params)
