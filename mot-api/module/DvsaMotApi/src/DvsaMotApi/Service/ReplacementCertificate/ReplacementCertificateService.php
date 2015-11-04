@@ -201,7 +201,9 @@ class ReplacementCertificateService implements TransactionAwareInterface
                     ->setMotTestVersion($draft->getMotTestVersion())
                     ->setReasonForDifferentTester($draft->getReasonForDifferentTester())
                     ->setReplacementReason($draft->getReplacementReason())
-                    ->setIsVinVrmExpiryChanged($draft->getIsVinVrmExpiryChanged());
+                    ->setIsVinVrmExpiryChanged($draft->getIsVinVrmExpiryChanged())
+                    ->includeInMismatchFile($draft->includeInMismatchFile())
+                    ->includeInPassFile($draft->includeInPassFile());
 
                 /** @var CertificateTypeRepository $certTypeRepo */
                 $certTypeRepo = $this->entityManager->getRepository(CertificateType::class);

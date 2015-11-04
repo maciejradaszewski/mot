@@ -174,11 +174,25 @@ class ReplacementCertificateDraft extends Entity implements OdometerHolderInterf
     private $motTestVersion;
 
     /**
-     * @var string
+     * @var boolean
      *
-     * @ORM\Column(name="is_vin_vrm_expiry_changed", type="integer", length=1, nullable=true)
+     * @ORM\Column(name="is_vin_vrm_expiry_changed", type="boolean", length=1, nullable=true)
      */
     private $isVinVrmExpiryChanged;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="include_in_mismatch_file", type="boolean", length=1, nullable=true)
+     */
+    private $includeInMismatchFile;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="include_in_passes_file", type="boolean", length=1, nullable=true)
+     */
+    private $includeInPassFile;
 
 
     /**
@@ -285,7 +299,7 @@ class ReplacementCertificateDraft extends Entity implements OdometerHolderInterf
     }
 
     /**
-     * @param integer $isVinVrmExpiryChanged
+     * @param boolean $isVinVrmExpiryChanged
      *
      * @return $this
      */
@@ -301,6 +315,60 @@ class ReplacementCertificateDraft extends Entity implements OdometerHolderInterf
     public function getIsVinVrmExpiryChanged()
     {
         return $this->isVinVrmExpiryChanged;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isVinVrmExpiryChangedIsTrue()
+    {
+        return isset($this->isVinVrmExpiryChanged) && $this->isVinVrmExpiryChanged == true;
+    }
+
+    /**
+     * @param boolean $includeInMismatch
+     * @return $this
+     */
+    public function setIncludeInMismatchFile($includeInMismatch)
+    {
+        $this->includeInMismatchFile = $includeInMismatch;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function includeInMismatchFile()
+    {
+        return $this->includeInMismatchFile;
+    }
+
+    public function includeInMismatchFileIsTrue()
+    {
+        return isset($this->includeInMismatchFile) && $this->includeInMismatchFile == true;
+    }
+
+    /**
+     * @param boolean $includeInPass
+     * @return $this
+     */
+    public function setIncludeInPassFile($includeInPass)
+    {
+        $this->includeInPassFile = $includeInPass;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function includeInPassFile()
+    {
+        return $this->includeInPassFile;
+    }
+
+    public function includeInPassFileIsTrue()
+    {
+        return isset($this->includeInPassFile) && $this->includeInPassFile == true;
     }
 
     /**

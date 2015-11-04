@@ -76,6 +76,21 @@ class ReplacementCertificateDraftChangeDTO
      */
     private $reasonForDifferentTester;
 
+    /**
+     * @var boolean $isVinVrmExpiryChanged
+     */
+    private $isVinVrmExpiryChanged;
+
+    /**
+     * @var boolean $includeInMismatchFile
+     */
+    private $includeInMismatchFile;
+
+    /**
+     * @var boolean $includeInPassFile
+     */
+    private $includeInPassFile;
+
     public static function create()
     {
         return new static();
@@ -139,6 +154,15 @@ class ReplacementCertificateDraftChangeDTO
         }
         if ($hasKey('customModel')) {
             $d->setCustomModel($data['customModel']);
+        }
+        if ($hasKey('isVinVrmExpiryChanged')) {
+            $d->setIsVinVrmExpiryChanged($data['isVinVrmExpiryChanged']);
+        }
+        if ($hasKey('includeInMismatchFile')) {
+            $d->setIncludeInMismatchFile($data['includeInMismatchFile']);
+        }
+        if ($hasKey('includeInPassFile')) {
+            $d->setIncludeInPassFile($data['includeInPassFile']);
         }
         return $d;
     }
@@ -549,4 +573,57 @@ class ReplacementCertificateDraftChangeDTO
         $this->changedMap[$property] = true;
     }
 
+    /**
+     * @param boolean $vinVrmExpiryChanged
+     * @return $this
+     */
+    public function setIsVinVrmExpiryChanged($vinVrmExpiryChanged)
+    {
+        $this->isVinVrmExpiryChanged = $vinVrmExpiryChanged;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isVinVrmExpiryChanged()
+    {
+        return $this->isVinVrmExpiryChanged;
+    }
+
+    /**
+     * @param boolean $includeInMismatch
+     * @return $this
+     */
+    public function setIncludeInMismatchFile($includeInMismatch)
+    {
+        $this->includeInMismatchFile = $includeInMismatch;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function includeInMismatchFile()
+    {
+        return $this->includeInMismatchFile;
+    }
+
+    /**
+     * @param boolean $includeInPassFile
+     * @return $this
+     */
+    public function setIncludeInPassFile($includeInPassFile)
+    {
+        $this->includeInPassFile = $includeInPassFile;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function includeInPassFile()
+    {
+        return $this->includeInPassFile;
+    }
 }

@@ -53,7 +53,7 @@ class ReplacementCertificateObjectsFactory
             ->setVin("NEW_VIN")
             ->setVrm("NEW_VRM")
             ->setVtsSiteNumber("NEW_SITE_NUMBER")
-            ->setExpiryDate("2999-01-01");
+            ->setExpiryDate("2014-05-01");
     }
 
     /**

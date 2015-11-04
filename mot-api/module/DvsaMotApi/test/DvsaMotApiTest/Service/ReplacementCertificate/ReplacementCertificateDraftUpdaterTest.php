@@ -77,22 +77,511 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testSetIsVinRegistrationChanged_isAlwaysFalse_forNoMismatchPermission_Only_VIN_Changed()
+    public function testSetIncludeInMismatchFile_isAlwaysFalse_forDVLAChangePermission_Only_VRM_Changed()
     {
         //given
         $this->returnsOkCheckResult();
 
         $this->permissionsGranted(
             [
-                PermissionInSystem::CERTIFICATE_REPLACEMENT_NO_MISMATCH_ON_VIN_AND_VRN_CHANGE,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_DVLA_CHANGE,
                 PermissionInSystem::CERTIFICATE_REPLACEMENT,
                 PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
             ]
         );
 
+        $vin = '123456';
+        $vrm = '123456';
+
         $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
-        $draft->getMotTest()->setVin('123456');
-        $draft->getMotTest()->setRegistration('123456');
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin($vin);
+        $change->setVrm('123457'); // vrm change
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertFalse($updatedDraft->includeInMismatchFile());
+    }
+
+    public function testSetIncludeInPassFile_isAlwaysFalse_forDVLAChangePermission_Only_Vin_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_DVLA_CHANGE,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin('654321'); // vin change
+        $change->setVrm($vrm);
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertFalse($updatedDraft->includeInPassFile());
+    }
+
+    public function testSetIncludeInMismatchFile_isAlwaysFalse_forDVLAChangePermission_Only_Vin_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_DVLA_CHANGE,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin('654321'); // vin change
+        $change->setVrm($vrm);
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertFalse($updatedDraft->includeInMismatchFile());
+    }
+
+    public function testSetIncludeInPassFile_isAlwaysTrue_forDVLAChangePermission_Only_Vin_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_DVLA_CHANGE,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin($vin);
+        $change->setVrm('123457'); // vrm change
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertTrue($updatedDraft->includeInPassFile());
+    }
+
+    public function testSetIncludeInMismatchFile_isAlwaysFalse_forDVLAChangePermission_Only_Make_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_DVLA_CHANGE,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)
+            ->setMake("18800")
+            ->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin($vin);
+        $change->setVrm($vrm); // vrm change
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertFalse($updatedDraft->includeInMismatchFile());
+    }
+
+    public function testSetIncludeInPassFile_isAlwaysFalse_forDVLAChangePermission_Only_Make_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_DVLA_CHANGE,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)
+            ->setMake("18800")
+            ->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin($vin);
+        $change->setVrm($vrm);
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertFalse($updatedDraft->includeInPassFile());
+    }
+
+    public function testSetIncludeInMismatchFile_isAlwaysTrue_forDVSAuser_Only_VRM_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)
+            ->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin($vin);
+        $change->setVrm(strrev($vrm)); // vrm change
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertTrue($updatedDraft->includeInMismatchFile());
+    }
+
+    public function testSetIncludeInPassFile_isAlwaysTrue_forDVSAUser_Only_VRM_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)
+            ->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin($vin);
+        $change->setVrm(strrev($vrm)); // vrm change
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertTrue($updatedDraft->includeInPassFile());
+    }
+
+    public function testSetIncludeInMismatchFile_isAlwaysTrue_forDVSAUser_Only_Vin_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)
+            ->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin(strrev($vin)); //vin change
+        $change->setVrm($vrm);
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertTrue($updatedDraft->includeInMismatchFile());
+    }
+
+    public function testSetIncludeInPassFile_isAlwaysFalse_forDVSAUser_Only_Vin_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)
+            ->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin(strrev($vin)); //vin change
+        $change->setVrm($vrm);
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertFalse($updatedDraft->includeInPassFile());
+    }
+
+    public function testSetIncludeInMismatchFile_isAlwaysFalse_forDVSAUser_Only_Expiry_changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)
+            ->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin($vin);
+        $change->setVrm($vrm);
+        $change->setExpiryDate('2015-02-01');
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertFalse($updatedDraft->includeInMismatchFile());
+    }
+
+    public function testSetIncludeInPassFile_isAlwaysTrue_forDVSAUser_Only_Expiry_changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)
+            ->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin($vin);
+        $change->setVrm($vrm);
+        $change->setExpiryDate('2015-02-01');
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertTrue($updatedDraft->includeInPassFile());
+    }
+
+    public function testSetIncludeInMismatchFile_isAlwaysFalse_forDVSAUser_Only_Make_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)
+            ->setMake("18800")
+            ->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin($vin);
+        $change->setVrm($vrm); // vrm change
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertFalse($updatedDraft->includeInMismatchFile());
+    }
+
+    public function testSetIncludeInPassFile_isAlwaysFalse_forDVSAUser_Only_Make_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
+
+        $change = RCOF::fullReplacementCertificateDraftChange(self::ID_SEED)
+            ->setMake("18800")
+            ->setReasonForReplacement("NEW_REASON");
+
+        $change->setVin($vin);
+        $change->setVrm($vrm); // vrm change
+
+        //when
+        $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
+
+        //then
+        $this->assertFalse($updatedDraft->includeInPassFile());
+    }
+
+    public function testSetIsVinVrmExpiryChanged_isAlwaysTrue_forDVLAChangePermission_Only_VIN_Changed()
+    {
+        //given
+        $this->returnsOkCheckResult();
+
+        $this->permissionsGranted(
+            [
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_DVLA_CHANGE,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
+            ]
+        );
+
+        $vin = '123456';
+        $vrm = '123456';
+
+        $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
 
         $change = RCOF::partialReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
         // expiry date must not be set for 'isVinVrmExpiryChanged' to remain false
@@ -101,16 +590,16 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
             ->setCountryOfRegistration(999 + self::ID_SEED)
             ->setVtsSiteNumber("NEW_SITE_NUMBER");
         $change->setVin('123457'); // vin change
-        $change->setVrm('123456');
+        $change->setVrm($vrm);
 
         //when
         $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
 
         //then
-        $this->assertFalse($updatedDraft->getIsVinVrmExpiryChanged());
+        $this->assertTrue($updatedDraft->getIsVinVrmExpiryChanged());
     }
 
-    public function testSetIsVinRegistrationChanged_isAlwaysFalse_forNoMismatchPermission_Only_VRN_Changed()
+    public function testSetIsVinVrmExpiryChanged_isAlwaysFalse_forDVLAChangePermission_Only_VRM_Changed()
     {
         //given
         $this->returnsOkCheckResult();
@@ -119,13 +608,18 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
             [
                 PermissionInSystem::CERTIFICATE_REPLACEMENT,
                 PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS,
-                PermissionInSystem::CERTIFICATE_REPLACEMENT_NO_MISMATCH_ON_VIN_AND_VRN_CHANGE,
+                PermissionInSystem::CERTIFICATE_REPLACEMENT_DVLA_CHANGE,
             ]
         );
 
+        $vin = '123456';
+        $vrm = '123456';
+
         $draft = RCOF::replacementCertificateDraft()->setReplacementReason("REASON");
-        $draft->getMotTest()->setVin('123456');
-        $draft->getMotTest()->setRegistration('123456');
+        $draft->getMotTest()->setVin($vin);
+        $draft->setVin($vin);
+        $draft->getMotTest()->setRegistration($vrm);
+        $draft->setVrm($vrm);
 
         $change = RCOF::partialReplacementCertificateDraftChange(self::ID_SEED)->setReasonForReplacement("NEW_REASON");
         // expiry date must not be set for 'isVinVrmExpiryChanged' to remain false
@@ -133,14 +627,14 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
             ->setModel(999 + self::ID_SEED)
             ->setCountryOfRegistration(999 + self::ID_SEED)
             ->setVtsSiteNumber("NEW_SITE_NUMBER");
-        $change->setVin('123456');
+        $change->setVin($vin);
         $change->setVrm('123457');
 
         //when
         $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
 
         //then
-        $this->assertFalse($updatedDraft->getIsVinVrmExpiryChanged());
+        $this->assertTrue($updatedDraft->getIsVinVrmExpiryChanged());
     }
 
     public function testUpdate_givenFullRights_and_reasonForDifferentTester_shouldForbidAction()
@@ -265,7 +759,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
 
         $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
 
-        $this->assertEquals(1, $updatedDraft->getIsVinVrmExpiryChanged());
+        $this->assertTrue($updatedDraft->getIsVinVrmExpiryChanged());
     }
 
     public function testUpdateReplacementCertificateWithSameVinAndVrmAndExpiryDateShouldNotUpdateRegistrationChangedStatus()
