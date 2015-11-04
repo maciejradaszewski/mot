@@ -129,7 +129,7 @@ class ReplacementCertificateDraftUpdater implements TransactionAwareInterface
             $draft->setSecondaryColour($colour);
         }
 
-        $draft = $this->applyChangesSpecialFields($draft, $draftChange);
+        $this->applyChangesSpecialFields($draft, $draftChange);
 
         if ($draftChange->isReasonForDifferentTesterSet()) {
             $reasonForDifferentTesterNotAllowed = false;
@@ -156,8 +156,6 @@ class ReplacementCertificateDraftUpdater implements TransactionAwareInterface
     /**
      * @param ReplacementCertificateDraft          $draft
      * @param ReplacementCertificateDraftChangeDTO $draftChange
-     *
-     * @return ReplacementCertificateDraft
      */
     private function applyChangesSpecialFields(
         ReplacementCertificateDraft $draft,
@@ -168,78 +166,173 @@ class ReplacementCertificateDraftUpdater implements TransactionAwareInterface
                 PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS
             );
 
-            if ($draftChange->isCustomMakeSet()) {
-                $draft->setMake(null);
-                $draft->setMakeName($draftChange->getCustomMake());
-            }
+            $this->performMismatchChanges($draft, $draftChange);
+            $this->performNonMismatchChanges($draft, $draftChange);
+        }
+    }
 
-            if ($draftChange->isCustomModelSet()) {
-                $draft->setModelName($draftChange->getCustomModel());
-                $draft->setModel(null);
-            }
+    /**
+     * Perform changes from the ReplacementCertificateDraftChangeDTO which will
+     * cause a mismatch or pass to be sent to DVLA
+     *
+     * @param ReplacementCertificateDraft          $draft
+     * @param ReplacementCertificateDraftChangeDTO $updates
+     * @return ReplacementCertificateDraft
+     * @throws \DvsaCommon\Date\Exception\IncorrectDateFormatException
+     */
+    private function performMismatchChanges(
+        ReplacementCertificateDraft $draft,
+        ReplacementCertificateDraftChangeDTO $updates
+    ) {
+        $this->setMismatchAndPassFlags($draft, $updates);
 
-            if ($draftChange->isMakeSet() && !$draftChange->isCustomMakeSet()) {
-                $draft->setMake($this->vehicleCatalog->getMake($draftChange->getMake()));
-                $draft->setModelName(null);
-                $draft->setMakeName(null);
-                $draft->setModel(null);
-            }
-            if ($draftChange->isMakeSet() && $draftChange->isCustomModelSet()) {
-                $draft->setMake($this->vehicleCatalog->getMake($draftChange->getMake()));
-                $draft->setModelName($draftChange->getCustomModel());
-                $draft->setMakeName(null);
-                $draft->setModel(null);
-            }
-            if ($draftChange->isModelSet() && !$draftChange->isCustomModelSet()) {
-                $draft->setModel(
-                    $this->vehicleCatalog->getModel(
-                        $draftChange->getMake(), $draftChange->getModel()
-                    )
-                );
-            }
-            if ($draftChange->isCountryOfRegistrationSet()) {
-                $draft->setCountryOfRegistration(
-                    $this->vehicleCatalog->getCountryOfRegistration(
-                        $draftChange->getCountryOfRegistration()
-                    )
-                );
-            }
+        $vrmChanged = $this->vrmHasChanged($draft, $updates);
+        $vinChanged = $this->vinHasChanged($draft, $updates);
+        $dateChanged = $this->dateHasChanged($draft, $updates);
 
-            if ($draftChange->isVinSet()) {
-                $draft->setVin($draftChange->getVin());
-                if ($this->canChangeVin($draft, $draftChange)) {
-                    $draft->setIsVinVrmExpiryChanged(true);
-                } else {
-                    $draft->setIsVinVrmExpiryChanged(false);
-                }
-            }
-
-            if ($draftChange->isVrmSet()) {
-                $draft->setVrm($draftChange->getVrm());
-                if ($this->canChangeVrm($draft, $draftChange)) {
-                    $draft->setIsVinVrmExpiryChanged(true);
-                } else {
-                    $draft->setIsVinVrmExpiryChanged(false);
-                }
-            }
-
-            if ($draftChange->isExpiryDateSet() &&
-                ($draft->getExpiryDate()->format('Y-m-d') != $draftChange->getExpiryDate())) {
-                    $draft->setIsVinVrmExpiryChanged(true);
-                    $draft->setExpiryDate(DateUtils::toDate($draftChange->getExpiryDate()));
-            }
-
-            if ($draftChange->isVtsSiteNumberSet()) {
-                $draft->setVehicleTestingStation(
-                    $this->vtsRepository->getBySiteNumber($draftChange->getVtsSiteNumber())
-                );
-            }
-            if ($draftChange->isReasonForReplacementSet()) {
-                $draft->setReplacementReason($draftChange->getReasonForReplacement());
-            }
+        if ($vrmChanged || $vinChanged || $dateChanged) {
+            $draft->setIsVinVrmExpiryChanged(true);
+        } elseif (!$draft->isVinVrmExpiryChangedIsTrue()) {
+            $draft->setIsVinVrmExpiryChanged(false);
         }
 
-        return $draft;
+        if ($vinChanged) {
+            $draft->setVin($updates->getVin());
+        }
+
+        if ($vrmChanged) {
+            $draft->setVrm($updates->getVrm());
+        }
+
+        if ($dateChanged) {
+            $draft->setExpiryDate(DateUtils::toDate($updates->getExpiryDate()));
+        }
+    }
+
+    /**
+     * Set the flags to indicate whether the record should be sent to DVLA in the Batch Export mismatch and/or pass file
+     *
+     * @param ReplacementCertificateDraft          $draft
+     * @param ReplacementCertificateDraftChangeDTO $updates
+     * @return ReplacementCertificateDraft
+     */
+    private function setMismatchAndPassFlags(
+        ReplacementCertificateDraft $draft,
+        ReplacementCertificateDraftChangeDTO $updates
+    ) {
+        // refactor into comparison functions in ReplacementCertificateDraftChangeDto
+        $vrmChanged = $this->vrmHasChanged($draft, $updates);
+        $vinChanged = $this->vinHasChanged($draft, $updates);
+        $dateChanged = $this->dateHasChanged($draft, $updates);
+
+        // criteria outlined at:
+        // https://jira.i-env.net/browse/VM-12328?focusedCommentId=61392&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-61392
+        if ($this->changedByDVLA()) {
+            // makes the assumption that batch import will never be able to
+            //update expiry date of replacement certificate
+            if ($vrmChanged || $dateChanged) {
+                $draft->setIncludeInPassFile(true);
+            } elseif (!$draft->includeInPassFileIsTrue()) {
+                $draft->setIncludeInPassFile(false);
+            }
+
+            if (!$draft->includeInMismatchFileIsTrue()) {
+                $draft->setIncludeInMismatchFile(false);
+            }
+        } else {
+            if ($vrmChanged) {
+                $draft->setIncludeInPassFile(true);
+                $draft->setIncludeInMismatchFile(true);
+            }
+            if ($vinChanged) {
+                $draft->setIncludeInMismatchFile(true);
+            }
+            if ($dateChanged) {
+                $draft->setIncludeInPassFile(true);
+            }
+
+            if (!$draft->includeInMismatchFileIsTrue()) {
+                $draft->setIncludeInMismatchFile(false);
+            }
+            if (!$draft->includeInPassFileIsTrue()) {
+                $draft->setIncludeInPassFile(false);
+            }
+        }
+    }
+
+    /**
+     * Perform all changes to the vehicle which will not trigger a mismatch to be sent to DVLA
+     *
+     * @param ReplacementCertificateDraft          $draft
+     * @param ReplacementCertificateDraftChangeDTO $updates
+     * @return ReplacementCertificateDraft
+     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     */
+    private function performNonMismatchChanges(
+        ReplacementCertificateDraft $draft,
+        ReplacementCertificateDraftChangeDTO $updates
+    ) {
+
+        $this->performMakeModelChanges($draft, $updates);
+
+        if ($updates->isCountryOfRegistrationSet()) {
+            $draft->setCountryOfRegistration(
+                $this->vehicleCatalog->getCountryOfRegistration(
+                    $updates->getCountryOfRegistration()
+                )
+            );
+        }
+
+        if ($updates->isVtsSiteNumberSet()) {
+            $draft->setVehicleTestingStation(
+                $this->vtsRepository->getBySiteNumber($updates->getVtsSiteNumber())
+            );
+        }
+        if ($updates->isReasonForReplacementSet()) {
+            $draft->setReplacementReason($updates->getReasonForReplacement());
+        }
+    }
+
+    /**
+     * Perform all changes in the ReplacementCertificateDraftChangeDTO to do with make and model
+     *
+     * @param ReplacementCertificateDraft          $draft
+     * @param ReplacementCertificateDraftChangeDTO $updates
+     * @return ReplacementCertificateDraft
+     */
+    private function performMakeModelChanges(
+        ReplacementCertificateDraft $draft,
+        ReplacementCertificateDraftChangeDTO $updates
+    ) {
+        if ($updates->isCustomMakeSet()) {
+            $draft->setMake(null);
+            $draft->setMakeName($updates->getCustomMake());
+        }
+
+        if ($updates->isCustomModelSet()) {
+            $draft->setModelName($updates->getCustomModel());
+            $draft->setModel(null);
+        }
+
+        if ($updates->isMakeSet() && !$updates->isCustomMakeSet()) {
+            $draft->setMake($this->vehicleCatalog->getMake($updates->getMake()));
+            $draft->setModelName(null);
+            $draft->setMakeName(null);
+            $draft->setModel(null);
+        }
+        if ($updates->isMakeSet() && $updates->isCustomModelSet()) {
+            $draft->setMake($this->vehicleCatalog->getMake($updates->getMake()));
+            $draft->setModelName($updates->getCustomModel());
+            $draft->setMakeName(null);
+            $draft->setModel(null);
+        }
+        if ($updates->isModelSet() && !$updates->isCustomModelSet()) {
+            $draft->setModel(
+                $this->vehicleCatalog->getModel(
+                    $updates->getMake(), $updates->getModel()
+                )
+            );
+        }
     }
 
     /**
@@ -262,27 +355,61 @@ class ReplacementCertificateDraftUpdater implements TransactionAwareInterface
     }
 
     /**
-     * @param ReplacementCertificateDraft $draft
-     * @param ReplacementCertificateDraftChangeDTO $draftChange
+     * Return if changes are being made by a DVLA user
+     *
      * @return bool
      */
-    private function canChangeVin($draft,$draftChange)
+    private function changedByDVLA()
     {
-        return $draft->getMotTest()->getVin() !== $draftChange->getVin() &&
-            !$this->authorizationService->isGranted(
-                PermissionInSystem::CERTIFICATE_REPLACEMENT_NO_MISMATCH_ON_VIN_AND_VRN_CHANGE);
+        return $this->authorizationService->isGranted(
+            PermissionInSystem::CERTIFICATE_REPLACEMENT_DVLA_CHANGE
+        );
     }
 
     /**
-     * @param ReplacementCertificateDraft $draft
-     * @param ReplacementCertificateDraftChangeDTO $draftChange
+     * Returns whether the vrm in the draft change is different to that of the original
+     * ReplacementCertificate
+     *
+     * @param ReplacementCertificateDraft          $draft
+     * @param ReplacementCertificateDraftChangeDTO $updated
      * @return bool
      */
-    private function canChangeVrm($draft,$draftChange)
-    {
-        return $draft->getMotTest()->getRegistration() !== $draftChange->getVrm() &&
-            !$this->authorizationService->isGranted(
-                PermissionInSystem::CERTIFICATE_REPLACEMENT_NO_MISMATCH_ON_VIN_AND_VRN_CHANGE
-            );
+    private function vrmHasChanged(
+        ReplacementCertificateDraft $draft,
+        ReplacementCertificateDraftChangeDTO $updated
+    ) {
+        return $updated->isVrmSet() && strcmp($draft->getVrm(), $updated->getVrm()) != 0;
+    }
+
+    /**
+     * Returns whether the vin in the draft change is different to that of the original
+     * ReplacementCertificate
+     *
+     * @param ReplacementCertificateDraft          $draft
+     * @param ReplacementCertificateDraftChangeDTO $updated
+     * @return bool
+     */
+    private function vinHasChanged(
+        ReplacementCertificateDraft $draft,
+        ReplacementCertificateDraftChangeDTO $updated
+    ) {
+        return $updated->isVinSet() && strcmp($draft->getVin(), $updated->getVin()) != 0;
+    }
+
+    /**
+     * Returns whether the expiry date in the draft change is different to that of the original
+     * ReplacementCertificate
+     *
+     * @param ReplacementCertificateDraft          $draft
+     * @param ReplacementCertificateDraftChangeDTO $updated
+     * @return bool
+     */
+    private function dateHasChanged(
+        ReplacementCertificateDraft $draft,
+        ReplacementCertificateDraftChangeDTO $updated
+    ) {
+
+        return $updated->isExpiryDateSet() &&
+        strcmp($draft->getExpiryDate()->format('Y-m-d'), $updated->getExpiryDate()) != 0;
     }
 }

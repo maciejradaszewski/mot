@@ -60,31 +60,34 @@ class ReplacementCertificateDraftMappingHelper
 
             $json = array_merge(
                 $json, [
-                 'make'                  => [
+                    'make'                  => [
                     "id"   => $draft->getMake() ? $draft->getMake()->getId() : "",
                     "code" => $draft->getMake() ? $draft->getMake()->getCode() : "",
                     "name" => self::getMakeName($draft),
-                 ],
-                 'model'                 => [
-                     "id"   => $draft->getModel() ? $draft->getModel()->getId() : "",
-                     "code" => $draft->getModel() ? $draft->getModel()->getCode() : "",
-                     "name" => self::getModelName($draft),
-                 ],
-                 'customMake' => $draft->getMakeName(),
-                 'customModel' => $draft->getModelName(),
-                 'countryOfRegistration' => [
-                     "id"   => $draft->getCountryOfRegistration()->getId(),
-                     "name" => $draft->getCountryOfRegistration()->getName()
-                 ],
-                 'reasonForReplacement'  => $draft->getReplacementReason(),
-                 'vin'                   => $draft->getVin(),
-                 'vrm'                   => $draft->getVrm(),
-                 'vts'                   => [
-                     "id"         => $vts->getId(),
-                     "siteNumber" => $vts->getSiteNumber(),
-                     "name"       => $vts->getName(),
-                     "address"    => $address,
-                 ]
+                    ],
+                    'model'                 => [
+                        "id"   => $draft->getModel() ? $draft->getModel()->getId() : "",
+                        "code" => $draft->getModel() ? $draft->getModel()->getCode() : "",
+                        "name" => self::getModelName($draft),
+                    ],
+                    'customMake' => $draft->getMakeName(),
+                    'customModel' => $draft->getModelName(),
+                    'countryOfRegistration' => [
+                        "id"   => $draft->getCountryOfRegistration()->getId(),
+                        "name" => $draft->getCountryOfRegistration()->getName()
+                    ],
+                    'reasonForReplacement'  => $draft->getReplacementReason(),
+                    'vin'                   => $draft->getVin(),
+                    'vrm'                   => $draft->getVrm(),
+                    'vts'                   => [
+                        "id"         => $vts->getId(),
+                        "siteNumber" => $vts->getSiteNumber(),
+                        "name"       => $vts->getName(),
+                        "address"    => $address,
+                    ],
+                    'isVinVrmExpiryChanged' => $draft->getIsVinVrmExpiryChanged(),
+                    'includeInMismatchFile' => $draft->includeInMismatchFile(),
+                    'includeInPassFile'     => $draft->includeInPassFile()
                 ]
             );
         }

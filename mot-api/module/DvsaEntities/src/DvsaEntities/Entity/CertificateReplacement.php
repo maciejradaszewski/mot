@@ -60,11 +60,25 @@ class CertificateReplacement extends Entity
     private $replacementReason;
 
     /**
-     * @var string
+     * @var boolean
      *
-     * @ORM\Column(name="is_vin_vrm_expiry_changed", type="integer", length=1, nullable=true)
+     * @ORM\Column(name="is_vin_vrm_expiry_changed", type="boolean", length=1, nullable=true)
      */
     private $isVinVrmExpiryChanged;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="include_in_mismatch_file", type="boolean", length=1, nullable=true)
+     */
+    private $includeInMismatchFile;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="include_in_passes_file", type="boolean", length=1, nullable=true)
+     */
+    private $includeInPassFile;
 
     /**
      * @param \DvsaEntities\Entity\MotTest $motTest
@@ -161,13 +175,33 @@ class CertificateReplacement extends Entity
     }
 
     /**
-     * @param integer $isVinVrmExpiryChanged
+     * @param boolean $isVinVrmExpiryChanged
      *
      * @return $this
      */
     public function setIsVinVrmExpiryChanged($isVinVrmExpiryChanged)
     {
         $this->isVinVrmExpiryChanged = $isVinVrmExpiryChanged;
+        return $this;
+    }
+
+    /**
+     * @param boolean $includeInMismatch
+     * @return $this
+     */
+    public function includeInMismatchFile($includeInMismatch)
+    {
+        $this->includeInMismatchFile = $includeInMismatch;
+        return $this;
+    }
+
+    /**
+     * @param boolean $includeInPass
+     * @return $this
+     */
+    public function includeInPassFile($includeInPass)
+    {
+        $this->includeInPassFile = $includeInPass;
         return $this;
     }
 
