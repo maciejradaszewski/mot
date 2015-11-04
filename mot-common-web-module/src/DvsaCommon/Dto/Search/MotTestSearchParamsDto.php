@@ -14,6 +14,8 @@ class MotTestSearchParamsDto extends SearchParamsDto
 {
     /** @var int */
     private $organisationId;
+    /** @var int */
+    private $siteId;
     /** @var string */
     private $siteNr;
     /** @var int */
@@ -51,6 +53,24 @@ class MotTestSearchParamsDto extends SearchParamsDto
     {
         $this->organisationId = $organisationId;
 
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSiteId()
+    {
+        return $this->siteId;
+    }
+
+    /**
+     * @param int $siteId
+     * @return $this
+     */
+    public function setSiteId($siteId)
+    {
+        $this->siteId = $siteId;
         return $this;
     }
 

@@ -23,7 +23,7 @@ class MotTestLogControllerTest extends AbstractRestfulControllerTestCase
 {
     const CONTENT_TYPE_JSON =  'application/json; charset=utf-8';
 
-    protected static $AE_ID = 1;
+    const AE_ID = 1;
 
     /**
      * @var MotTestLogService|MockObj
@@ -120,14 +120,14 @@ class MotTestLogControllerTest extends AbstractRestfulControllerTestCase
                 'action'        => 'summary',
                 'params'        => [
                     'route' => [
-                        'id' => self::$AE_ID,
+                        'id' => self::AE_ID,
                     ],
                 ],
                 'mocks' => [
                     [
                         'class'  => 'mockMotTestLogSrv',
                         'method' => 'getMotTestLogSummaryForOrganisation',
-                        'params' => self::$AE_ID,
+                        'params' => self::AE_ID,
                         'result' => $dto,
                     ]
                 ],
@@ -161,7 +161,7 @@ class MotTestLogControllerTest extends AbstractRestfulControllerTestCase
                 'action'        => 'logData',
                 'params'        => [
                     'route' => [
-                        'id' => self::$AE_ID,
+                        'id' => self::AE_ID,
                         ],
                     'postContent' => DtoHydrator::dtoToJson(new MotTestSearchParamsDto()),
                 ],

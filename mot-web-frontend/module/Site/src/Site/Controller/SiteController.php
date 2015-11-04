@@ -9,16 +9,19 @@ use Core\View\Sidebar\GeneralSidebar;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
+use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Constants\Role;
 use DvsaCommon\Dto\Site\EnforcementSiteAssessmentDto;
+use DvsaCommon\Dto\Site\SiteDto;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
+use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use Site\Authorization\VtsOverviewPagePermissions;
 use Site\Form\VtsContactDetailsUpdateForm;
@@ -183,6 +186,7 @@ class SiteController extends AbstractAuthActionController
         $id = (int)$this->params()->fromRoute('id');
         $eventsLink = '/event/list/site/' . $id;
         $motCertsLink = '/vehicle-testing-station/' . $id . '/mot-test-certificates';
+        $viewTestLogsLink = VehicleTestingStationUrlBuilderWeb::motTestLog($id)->toString();
 
         $siteStatus = $siteStatusMap[$site->getStatus()];
         $modifierClass = '';
@@ -196,6 +200,10 @@ class SiteController extends AbstractAuthActionController
             $relatedLinks [] = ['Events history' => ['id' => 'event-history', 'href' => $eventsLink]];
         }
 
+        $canViewTestLogs = $this->auth->isGrantedAtSite(PermissionAtSite::VTS_TEST_LOGS, $vtsId);
+        if($canViewTestLogs){
+            $relatedLinks[] = ['Test logs' => ['id' => 'test-logs', 'href' => $viewTestLogsLink]];
+        }
         $isJasperAsyncEnabled = $this->isFeatureEnabled(FeatureToggle::JASPER_ASYNC);
         $canSeeRecentCertificates = $this->auth->isGrantedAtSite(PermissionAtSite::RECENT_CERTIFICATE_PRINT, $id);
 
@@ -243,7 +251,10 @@ class SiteController extends AbstractAuthActionController
             ]
         );
 
-        return $this->prepareViewModel($viewModel, $site->getName(), 'Vehicle Testing Station');
+        $breadcrumbs = [];
+        $breadcrumbs = $this->prependBreadcrumbsWithAeLink($site,$breadcrumbs);
+
+        return $this->prepareViewModel($viewModel, $site->getName(), 'Vehicle Testing Station',$breadcrumbs);
     }
 
     public function createAction()
@@ -389,6 +400,7 @@ class SiteController extends AbstractAuthActionController
         $breadcrumbs = [
             $form->getVtsDto()->getName() => $vtsViewUrl,
         ];
+        $breadcrumbs = $this->prependBreadcrumbsWithAeLink($form->getVtsDto(), $breadcrumbs);
 
         $subTitle = self::EDIT_SUBTITLE . ' - ' . $form->getVtsDto()->getSiteNumber();
 
@@ -451,6 +463,7 @@ class SiteController extends AbstractAuthActionController
         $breadcrumbs = [
             $form->getVtsDto()->getName() => $vtsViewUrl,
         ];
+        $breadcrumbs = $this->prependBreadcrumbsWithAeLink($form->getVtsDto(), $breadcrumbs);
 
         $subTitle = self::EDIT_SUBTITLE . ' - ' . $form->getVtsDto()->getSiteNumber();
 
@@ -505,6 +518,7 @@ class SiteController extends AbstractAuthActionController
         $breadcrumbs = [
             $vtsDto->getName() => $vtsViewUrl,
         ];
+        $breadcrumbs = $this->prependBreadcrumbsWithAeLink($vtsDto, $breadcrumbs);
 
         $form->setFormUrl(VehicleTestingStationUrlBuilderWeb::testingFacilitiesConfirmation($siteId)
             ->queryParam(self::SESSION_KEY, $sessionKey));
@@ -590,6 +604,7 @@ class SiteController extends AbstractAuthActionController
         $breadcrumbs = [
             $form->getVtsDto()->getName() => $vtsViewUrl,
         ];
+        $breadcrumbs = $this->prependBreadcrumbsWithAeLink($form->getVtsDto(), $breadcrumbs);
 
         $this->layout()->setVariable(
             'pageTertiaryTitle',
@@ -642,6 +657,7 @@ class SiteController extends AbstractAuthActionController
         $breadcrumbs = [
             $vtsDto->getName() => $vtsViewUrl,
         ];
+        $breadcrumbs = $this->prependBreadcrumbsWithAeLink($vtsDto, $breadcrumbs);
 
         $form->setFormUrl(VehicleTestingStationUrlBuilderWeb::siteDetailsConfirm($siteId)
             ->queryParam(self::SESSION_KEY, $sessionKey));
@@ -810,6 +826,7 @@ class SiteController extends AbstractAuthActionController
         $breadcrumbs = [
             $vtsDto->getName() => $vtsViewUrl,
         ];
+        $breadcrumbs = $this->prependBreadcrumbsWithAeLink($vtsDto, $breadcrumbs);
 
         return $this->prepareViewModel(
             $viewModel,
@@ -877,6 +894,8 @@ class SiteController extends AbstractAuthActionController
         $breadcrumbs = [
             $vtsDto->getName() => $vtsViewUrl,
         ];
+        $breadcrumbs = $this->prependBreadcrumbsWithAeLink($vtsDto, $breadcrumbs);
+
 
         return $this->prepareViewModel(
             $viewModel,
@@ -927,6 +946,7 @@ class SiteController extends AbstractAuthActionController
         $breadcrumbs = [
             $vtsDto->getName() => $vtsViewUrl,
         ];
+        $breadcrumbs = $this->prependBreadcrumbsWithAeLink($vtsDto, $breadcrumbs);
 
         $config = $this->getServiceLocator()->get(MotConfig::class);
         $ragClassifier = new RiskAssessmentScoreRagClassifier($form->getSiteAssessmentScore(), $config);
@@ -968,5 +988,36 @@ class SiteController extends AbstractAuthActionController
             throw new \Exception(self::ERR_MSG_INVALID_SITE_ID_OR_NR);
         }
         return $siteId;
+    }
+
+
+
+    /**
+     * @param SiteDto $site
+     * @param array $breadcrumbs
+     * @return array
+     */
+    private function prependBreadcrumbsWithAeLink(SiteDto $site, &$breadcrumbs)
+    {
+        $org = $site->getOrganisation();
+
+        if ($org) {
+            $canVisitAePage = $this->canAccessAePage($org->getId());
+
+            if($canVisitAePage) {
+                $aeBreadcrumb = [$org->getName() => AuthorisedExaminerUrlBuilderWeb::of($org->getId())->toString()];
+                $breadcrumbs = $aeBreadcrumb + $breadcrumbs;
+            }
+        }
+
+        return $breadcrumbs;
+    }
+
+    private function canAccessAePage($orgId)
+    {
+        return
+            $this->auth->isGranted(PermissionInSystem::AUTHORISED_EXAMINER_READ_FULL) ||
+            $this->auth->isGrantedAtOrganisation(PermissionAtOrganisation::AUTHORISED_EXAMINER_READ, $orgId);
+        ;
     }
 }

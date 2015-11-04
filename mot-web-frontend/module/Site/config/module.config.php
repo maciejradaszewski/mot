@@ -1,12 +1,14 @@
 <?php
 
 use DvsaMotTest\Controller\MotTestCertificatesController;
+use Site\Controller\MotTestLogController;
 use Site\Controller\RoleController;
 use Site\Controller\SiteController;
-use Site\Factory\Controller\RoleControllerFactory;
 use Site\Controller\SiteTestingDailyScheduleController;
-use Site\Factory\Controller\SiteSearchControllerFactory;
+use Site\Factory\Controller\MotTestLogControllerFactory;
+use Site\Factory\Controller\RoleControllerFactory;
 use Site\Factory\Controller\SiteControllerFactory;
+use Site\Factory\Controller\SiteSearchControllerFactory;
 
 return [
     'router'       => [
@@ -37,8 +39,7 @@ return [
             'vehicle-testing-station-confirm-nomination' => [
                 'type'    => 'segment',
                 'options' => [
-                    'route'    =>
-                        '/vehicle-testing-station/:vehicleTestingStationId/:nomineeId/confirm-nomination/:roleCode',
+                    'route'    => '/vehicle-testing-station/:vehicleTestingStationId/:nomineeId/confirm-nomination/:roleCode',
                     'defaults' => [
                         'controller' => RoleController::class,
                         'action'     => 'confirmNomination',
@@ -106,7 +107,7 @@ return [
                     ],
                     'defaults'    => [
                         'controller' => SiteController::class,
-                        'action'     => 'risk-assessment'
+                        'action'     => 'risk-assessment',
                     ],
                 ],
             ],
@@ -119,7 +120,7 @@ return [
                     ],
                     'defaults'    => [
                         'controller' => SiteController::class,
-                        'action'     => 'add-risk-assessment'
+                        'action'     => 'add-risk-assessment',
                     ],
                 ],
             ],
@@ -132,7 +133,7 @@ return [
                     ],
                     'defaults'    => [
                         'controller' => SiteController::class,
-                        'action'     => 'cancel-add-risk-assessment'
+                        'action'     => 'cancel-add-risk-assessment',
                     ],
                 ],
             ],
@@ -145,7 +146,7 @@ return [
                     ],
                     'defaults'    => [
                         'controller' => SiteController::class,
-                        'action'     => 'add-risk-assessment-confirmation'
+                        'action'     => 'add-risk-assessment-confirmation',
                     ],
                 ],
             ],
@@ -219,7 +220,7 @@ return [
                             'defaults' => [
                                 'id'         => '[0-9]+',
                                 'controller' => SiteController::class,
-                                'action'     => 'configureBrakeTestDefaults'
+                                'action'     => 'configureBrakeTestDefaults',
                             ],
                         ],
                     ],
@@ -231,7 +232,7 @@ return [
                                 'siteId'     => '[0-9]+',
                                 'positionId' => '[0-9]+',
                                 'controller' => RoleController::class,
-                                'action'     => 'remove'
+                                'action'     => 'remove',
                             ],
                         ],
                     ],
@@ -242,7 +243,7 @@ return [
                             'defaults' => [
                                 'siteId'     => '[0-9]+',
                                 'controller' => SiteTestingDailyScheduleController::class,
-                                'action'     => 'edit'
+                                'action'     => 'edit',
                             ],
                         ],
                     ],
@@ -253,7 +254,7 @@ return [
                             'defaults' => [
                                 'siteId'     => '[0-9]+',
                                 'controller' => SiteController::class,
-                                'action'     => 'testingFacilities'
+                                'action'     => 'testingFacilities',
                             ],
                         ],
                         'may_terminate' => true,
@@ -277,7 +278,7 @@ return [
                             'defaults' => [
                                 'siteId'     => '[0-9]+',
                                 'controller' => SiteController::class,
-                                'action'     => 'siteDetails'
+                                'action'     => 'siteDetails',
                             ],
                         ],
                         'may_terminate' => true,
@@ -294,6 +295,31 @@ return [
                             ],
                         ],
                     ],
+                    'mot-test-log'       => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'       => '/:id/mot-test-log',
+                            'defaults'    => [
+                                'id'         => '[0-9]+',
+                                'controller' => MotTestLogController::class,
+                                'action'     => 'index',
+
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'download'    => [
+                                'type'    => 'segment',
+                                'options' => [
+                                    'route'       => '/csv',
+                                    'defaults'    => [
+                                        'controller' => MotTestLogController::class,
+                                        'action'     => 'downloadCsv',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -303,6 +329,7 @@ return [
             SiteTestingDailyScheduleController::class => SiteTestingDailyScheduleController::class,
         ],
         'factories'  => [
+            MotTestLogController::class            => MotTestLogControllerFactory::class,
             RoleController::class                  => RoleControllerFactory::class,
             SiteSearchControllerFactory::class     => SiteSearchControllerFactory::class,
             SiteController::class                  => SiteControllerFactory::class,
@@ -313,10 +340,8 @@ return [
             __DIR__ . '/../view',
         ],
         'template_map'        => [
-            'siteRiskAndScore'           =>
-                __DIR__ . '/../view/site/vehicle-testing-station/partials/siteRiskAndScore.phtml',
-            'brakeTestConfiguration'     =>
-                __DIR__ . '/../view/site/vehicle-testing-station/partials/brakeTestConfiguration.phtml',
+            'siteRiskAndScore'           => __DIR__ . '/../view/site/vehicle-testing-station/partials/siteRiskAndScore.phtml',
+            'brakeTestConfiguration'     => __DIR__ . '/../view/site/vehicle-testing-station/partials/brakeTestConfiguration.phtml',
         ],
     ],
 ];

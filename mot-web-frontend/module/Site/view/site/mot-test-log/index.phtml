@@ -1,0 +1,211 @@
+<?php
+
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use Site\Controller\MotTestLogController;
+use Site\ViewModel\MotTestLog\MotTestLogFormViewModel;
+use Site\ViewModel\MotTestLog\MotTestLogViewModel;
+use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
+
+/**
+ * @var MotTestLogViewModel                                        $viewModel
+ * @var \DvsaCommon\Dto\Site\SiteDto                               $site
+ * @var \DvsaCommon\Dto\Site\MotTestLogSummaryDto                  $logSummary
+ * @var \Site\ViewModel\MotTestLog\MotTestLogFormViewModel         $formModel
+ * @var \DvsaClient\ViewModel\DateTimeViewModel                    $dateFrom
+ * @var \DvsaClient\ViewModel\DateTimeViewModel                    $dateTo
+ * @var \Report\Table\Table                                        $table
+ */
+
+$this->headScript()->appendFile('/js/partials/date-group.js');
+$this->headScript()->appendFile('/js/organisation/mot-test-log.js');
+
+$viewModel = $this->viewModel;
+
+$site = $viewModel->getSite();
+$logSummary = $viewModel->getMotTestLogSummary();
+$dateLinks = $viewModel->getFilterBuilder()->getTimePeriodNavigation($this);
+
+//  logical block: get form parameters   --
+$formModel = $viewModel->getFormModel();
+$dateFrom = $formModel->getDateFrom();
+$dateTo = $formModel->getDateTo();
+
+$numberFormatter = (new NumberFormatter('en_GB', NumberFormatter::DECIMAL));
+
+//  logical blocks: define dates interval in showing block
+if ($dateLinks->findOneBy('active', true)) {
+    $topLineLabel = $dateLinks->findOneBy('active', true)->getLabel();
+} else {
+    $topLineLabel = join(
+        ' ', [
+            'from', DateTimeDisplayFormat::date($dateFrom->getDate()),
+            'to', DateTimeDisplayFormat::date($dateTo->getDate()),
+        ]
+    );
+}
+?>
+
+<div class="grid-row">
+    <div class="column-third">
+        <strong class="heading-medium">Total tests</strong>
+    </div>
+    <div class="column-two-thirds">
+        <div class="column-quarter">
+            <strong class="heading-large" id="todayCount">
+                <?php echo $this->escapeHtml($numberFormatter->format($logSummary->getToday())); ?>
+            </strong><br>
+            <span class="small">Today</span>
+        </div>
+        <div class="column-quarter">
+            <strong class="heading-large" id="last-week-count">
+                <?php echo $this->escapeHtml($numberFormatter->format($logSummary->getWeek())); ?>
+            </strong><br>
+            <span class="small">Last week<br>(Mon-Sun)</span>
+        </div>
+        <div class="column-quarter">
+            <strong class="heading-large" id="last-month-count">
+                <?php echo $this->escapeHtml($numberFormatter->format($logSummary->getMonth())); ?>
+            </strong><br>
+            <span class="small">
+                Last month<br>
+                (<?php echo $this->escapeHtml(date('M Y', strtotime('first day of previous month'))); ?>)
+            </span>
+        </div>
+        <div class="column-quarter">
+            <strong class="heading-large" id="last-year-count">
+                <?php echo $this->escapeHtml($numberFormatter->format($logSummary->getYear())); ?>
+            </strong><br>
+            <span class="small">Last 365 days<br>(inc. today)</span>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<div class="layout-filter-data">
+    <div class="layout-filter-data__results">
+        <?php
+        $rowsTotalCount = $viewModel->getTable()->getRowsTotalCount();
+
+        if ($rowsTotalCount > 0) {
+            echo $this->partial(
+                'report/top-line', [
+                    'text'        => '<strong>%s</strong> tests performed <strong>%s</strong>',
+                    'itemsNumber' => $rowsTotalCount,
+                    'range'       => $topLineLabel
+                ]
+            );
+        }
+
+        $errorMessages      = $this->layout()->flashMessenger->getErrorMessages();
+        echo $this->partial(
+            'partial/gds/general/system-message', ['messages' => $errorMessages, 'type' => 'failure']
+        );
+        ?>
+
+        <?php if ($rowsTotalCount > 0) :
+            echo $viewModel->getTable()->renderTable($this);
+            echo $viewModel->getTable()->renderFooter($this);
+
+            if ($rowsTotalCount > MotTestLogController::MAX_TESTS_COUNT) :
+                echo $this->partial(
+                    'partial/gds/general/system-message', [
+                        'heading'  => 'Too many records to download a CSV file.',
+                        'messages' => [
+                            sprintf(
+                                'The filter currently spans over %s tests. ' .
+                                'Please narrow the date range and try again.',
+                                $numberFormatter->format(MotTestLogController::MAX_TESTS_COUNT)
+                            ),
+                        ],
+                        'type'     => 'important'
+                    ]
+                );
+            else: ?>
+                <div class="result__actions">
+                    <p>
+                        Download test logs as a
+                        <a class="" href="<?php echo $viewModel->getDownloadUrl(); ?>">CSV (Spreadsheet)</a>
+                        file.
+                    </p>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="layout-filter-data__filters">
+        <h2 class="filter__group-heading">Filters</h2>
+
+        <form id="customDateSearch" action="" method="GET" name="customDateSearch" class="form-vertical">
+            <?php echo $this->csrfToken() ?>
+
+            <div class="filter">
+                <h3 class="filter__heading">Performed</h3>
+
+                <div class="filter__content">
+                    <?php echo $this->partial(
+                        'filter/view/helper/ranges-helper.phtml', ['navigation' => $dateLinks]
+                    ); ?>
+                </div>
+
+                <h3 class="filter__heading">Custom date range</h3>
+
+                <div class="filter__content">
+                    <div class="form-group custom-date-range" id="dateRangeFields">
+                        <fieldset>
+                            <?php
+                            echo $this->partial(
+                                'partials/form/date-group.phtml',
+                                [
+                                    'legend'       => 'From',
+                                    'fieldKey'     => MotTestLogFormViewModel::FLD_DATE_FROM,
+                                    'valueDay'     => $dateFrom->getDay(),
+                                    'valueMonth'   => $dateFrom->getMonth(),
+                                    'valueYear'    => $dateFrom->getYear(),
+                                    'errorMessage' => $formModel->getError(MotTestLogFormViewModel::FLD_DATE_FROM),
+                                ]
+                            );
+                            ?>
+                        </fieldset>
+                    </div>
+
+                    <div class="form-group custom-date-range" id="dateRangeFields">
+                        <fieldset>
+                            <?php
+                            echo $this->partial(
+                                'partials/form/date-group.phtml',
+                                [
+                                    'legend'       => 'To',
+                                    'fieldKey'     => MotTestLogFormViewModel::FLD_DATE_TO,
+                                    'valueDay'     => $dateTo->getDay(),
+                                    'valueMonth'   => $dateTo->getMonth(),
+                                    'valueYear'    => $dateTo->getYear(),
+                                    'errorMessage' => $formModel->getError(MotTestLogFormViewModel::FLD_DATE_TO),
+                                ]
+                            );
+                            ?>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <span class="filter__help">For example, <strong>21 11 2014</strong></span>
+            </div>
+
+            <div class="filter__actions">
+                <button id="btn_search" class="button" type="submit">Update result</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<nav class="content-navigation">
+    <?php echo $this->partial(
+        'partial/gds/form/control-navigation-secondary',
+        [
+            'navigation' => [
+                'Return to Vehicle Testing Station' => VehicleTestingStationUrlBuilderWeb::byId($site->getId())
+            ]
+        ]
+    ); ?>
+</nav>

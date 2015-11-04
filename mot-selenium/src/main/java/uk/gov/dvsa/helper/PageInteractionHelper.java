@@ -1,8 +1,6 @@
 package uk.gov.dvsa.helper;
 
-import com.dvsa.mot.selenium.framework.Utilities;
 import com.google.common.base.Function;
-import org.codehaus.groovy.runtime.dgmimpl.arrays.ObjectArrayGetAtMetaMethod;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.*;
 import uk.gov.dvsa.domain.navigation.MotPageFactory;
@@ -11,7 +9,6 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.ui.pages.Page;
 import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

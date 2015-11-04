@@ -37,6 +37,8 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
 
     const RISK_ASSESSMENT = '/risk-assessment';
     const RISK_ASSESSMENT_VALIDATE = '/validate';
+    const MOT_TEST_LOG = '/mot-test-log';
+    const MOT_TEST_LOG_SUMMARY = '/summary';
 
     protected $routesStructure = [
         self::VEHICLE_TESTING_STATION_APPLICATION_START => '',
@@ -69,6 +71,9 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
             self::RISK_ASSESSMENT => [
                 self::RISK_ASSESSMENT_VALIDATE => '',
             ],
+            self::MOT_TEST_LOG => [
+                self::MOT_TEST_LOG_SUMMARY => '',
+            ],
         ],
         self::SEARCH                                    => '',
     ];
@@ -97,6 +102,16 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
         $urlBuilder = new VehicleTestingStationUrlBuilder();
 
         return $urlBuilder->appendRoutesAndParams(self::VEHICLE_TESTING_STATION_APPLICATION);
+    }
+
+    public static function motTestLog($siteId)
+    {
+        return self::vtsById($siteId)->appendRoutesAndParams(self::MOT_TEST_LOG);
+    }
+
+    public static function motTestLogSummary($siteId)
+    {
+        return self::motTestLog($siteId)->appendRoutesAndParams(self::MOT_TEST_LOG_SUMMARY);
     }
 
     public function applicantDetails()

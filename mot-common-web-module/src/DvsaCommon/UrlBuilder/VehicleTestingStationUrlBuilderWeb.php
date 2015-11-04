@@ -3,7 +3,7 @@
 namespace DvsaCommon\UrlBuilder;
 
 /**
- * Url Builder for web for VehicleTestingStation
+ * Url Builder for web for VehicleTestingStation.
  */
 class VehicleTestingStationUrlBuilderWeb extends AbstractUrlBuilder
 {
@@ -23,28 +23,32 @@ class VehicleTestingStationUrlBuilderWeb extends AbstractUrlBuilder
     const CANCEL_ADD_RISK_ASSESSMENT = '/add-risk-assessment/cancel';
     const ADD_RISK_ASSESSMENT_CONFIRMATION = '/confirmation';
 
-
     const CREATE = '/create';
     const CREATE_CONFIRM = '/confirmation';
 
+    const MOT_TEST_LOG                          = '/mot-test-log';
+    const MOT_TEST_LOG_CSV                      = '/csv';
 
     protected $routesStructure
         = [
             self::MAIN   => [
                 self::BY_ID          => [
-                    self::EDIT            => '',
-                    self::CONTACT_DETAILS => '',
+                    self::EDIT               => '',
+                    self::CONTACT_DETAILS    => '',
                     self::TESTING_FACILITIES => [
                         self::TESTING_FACILITIES_CONFIRM => '',
                     ],
                     self::SITE_DETAILS => [
                         self::SITE_DETAILS_CONFIRM => '',
                     ],
-                    self::RISK_ASSESSMENT => '',
+                    self::RISK_ASSESSMENT     => '',
                     self::ADD_RISK_ASSESSMENT => [
                         self::ADD_RISK_ASSESSMENT_CONFIRMATION => '',
                     ],
                     self::CANCEL_ADD_RISK_ASSESSMENT => '',
+                    self::MOT_TEST_LOG               => [
+                        self::MOT_TEST_LOG_CSV => '',
+                    ],
                 ],
                 self::CREATE => [
                     self::CREATE_CONFIRM => '',
@@ -127,7 +131,26 @@ class VehicleTestingStationUrlBuilderWeb extends AbstractUrlBuilder
     public static function cancelSiteRiskAssessment($siteId)
     {
         return self::byId($siteId)
-            ->appendRoutesAndParams(self::CANCEL_ADD_RISK_ASSESSMENT)
-        ;
+            ->appendRoutesAndParams(self::CANCEL_ADD_RISK_ASSESSMENT);
+    }
+
+    /**
+     * @param int $siteId
+     *
+     * @return $this
+     */
+    public static function motTestLog($siteId)
+    {
+        return self::byId($siteId)->appendRoutesAndParams(self::MOT_TEST_LOG);
+    }
+
+    /**
+     * @param int $siteId
+     *
+     * @return $this
+     */
+    public static function motTestLogDownloadCsv($siteId)
+    {
+        return self::motTestLog($siteId)->appendRoutesAndParams(self::MOT_TEST_LOG_CSV);
     }
 }

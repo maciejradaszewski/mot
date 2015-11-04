@@ -9,3 +9,10 @@ Feature: MOT Logs
     And I am logged in as an Area Office User
     When I download my test logs for today
     Then I will see the correct MOT Test Log Data
+
+  Scenario:
+    Given I am logged in as a Tester
+    And I create an mot test
+    And I am logged in as an Area Office User
+    When I download that site's test logs for today
+    Then I will see the correct MOT Test Log Data

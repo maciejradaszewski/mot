@@ -23,6 +23,7 @@ import uk.gov.dvsa.ui.pages.userregistration.CreateAnAccountPage;
 import uk.gov.dvsa.ui.pages.vehicleinformation.VehicleInformationSearchPage;
 import uk.gov.dvsa.ui.pages.vts.AssociateASitePage;
 import uk.gov.dvsa.ui.pages.vts.ChangeTestingFacilitiesPage;
+import uk.gov.dvsa.ui.pages.vts.SiteTestLogPage;
 import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
 
 import java.io.IOException;
@@ -302,5 +303,11 @@ public class PageNavigator {
     public SiteSearchPage goToSiteSearchPage(User user) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, String.format(SiteSearchPage.PATH));
         return new SiteSearchPage(driver);
+    }
+
+    public SiteTestLogPage gotoSiteTestLogPage(User user, String siteId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(SiteTestLogPage.PATH, siteId));
+
+        return new SiteTestLogPage(driver);
     }
 }

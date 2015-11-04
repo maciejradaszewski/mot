@@ -9,11 +9,14 @@ import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.mot.MotTestCertificatesPage;
 import uk.gov.dvsa.ui.pages.mot.TestShortSummaryPage;
 
+import java.util.List;
+
 public class VehicleTestingStationPage extends Page {
     public static final String path = "/vehicle-testing-station/%s";
     private static final String PAGE_TITLE = "Vehicle Testing Station";
 
     @FindBy(className = "content-header__title") private WebElement pageHeader;
+    @FindBy(className = "group") private WebElement breadCrumbList;
     //    @FindBy(id = "authorised-examiner-link") private WebElement vtsName;
     @FindBy(id = "assign-a-role") private WebElement assignARoleLink;
     @FindBy(css = "div.text") private WebElement getRole;
@@ -148,8 +151,7 @@ public class VehicleTestingStationPage extends Page {
     }
 
     public String getPageHeader() {
-        System.out.print(pageHeader.getText());
-        return pageHeader.getText();
+        return breadCrumbList.getText();
     }
 
     public String verifyRiskAssesmentScore() {

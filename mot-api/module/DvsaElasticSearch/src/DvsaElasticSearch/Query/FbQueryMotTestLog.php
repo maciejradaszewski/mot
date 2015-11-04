@@ -13,7 +13,7 @@ use DvsaEntities\DqlBuilder\SearchParam\MotTestSearchParam;
 class FbQueryMotTestLog implements IFbQuery
 {
     /**
-     * @param MotTestSearchParam $searchParams
+     * @param SearchParam $searchParams
      *
      * @return SearchResultDto
      */

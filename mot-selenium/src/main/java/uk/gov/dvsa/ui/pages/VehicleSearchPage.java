@@ -17,6 +17,8 @@ public class VehicleSearchPage extends Page {
     public static final String TRAINING_TEST_PATH = "/training-test-vehicle-search";
 
     @FindBy(className = "content-header__type") private WebElement pageHeader;
+    @FindBy(className = "group") private WebElement breadCrumbList;
+
 
     @FindBy(id = "vin-info") private WebElement vinInfo;
 
@@ -141,6 +143,6 @@ public class VehicleSearchPage extends Page {
     }
 
     public String getPageHeader() {
-        return pageHeader.getText();
+        return breadCrumbList.getText();
     }
 }

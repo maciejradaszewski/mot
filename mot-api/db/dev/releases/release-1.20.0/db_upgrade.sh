@@ -7,6 +7,8 @@ db_name=mot_v195_rel4
 upgradefiles+=('2015-10-30-VM-12310-create-db-version-table-STORY.sql')
 upgradefiles+=('2015-10-27-VM-12321-view-trade-roles-page-STORY.sql')
 
+upgradefiles+=('2015-10-30-VM-12280-create-and-assign-VTS-test-logs-permission.sql')
+
 for sqlscript in ${upgradefiles[@]}
 do
   # run sql script via mysql client, time execution and capture error code

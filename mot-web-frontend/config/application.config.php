@@ -39,7 +39,7 @@ return [
         // provided by modules themselves. Paths may use GLOB_BRACE notation.
         'config_glob_paths' => [
             'config/static/*.php',
-            sprintf('%s/{,*.}{global,local,%s}.php', $path, $env)
+            sprintf('%s/{,*.}{global,local,%s,vagrant}.php', $path, $env)
         ],
 
         // Indicates if the configuration cache should be used or not.
