@@ -1,34 +1,36 @@
 <?php
 
 use SiteApi\Controller\DefaultBrakeTestsController;
+use SiteApi\Controller\EnforcementSiteAssessmentController;
+use SiteApi\Controller\EnforcementSiteAssessmentValidateController;
 use SiteApi\Controller\EquipmentController;
 use SiteApi\Controller\MotTestInProgressController;
+use SiteApi\Controller\MotTestLogController;
 use SiteApi\Controller\SiteContactController;
 use SiteApi\Controller\SiteController;
+use SiteApi\Controller\SiteDetailsController;
 use SiteApi\Controller\SiteEventController;
 use SiteApi\Controller\SiteNameController;
 use SiteApi\Controller\SiteOrganisationNameController;
-use SiteApi\Controller\VehicleTestingStationAuthorisedClassesController;
 use SiteApi\Controller\SitePositionController;
 use SiteApi\Controller\SitePositionValidateController;
 use SiteApi\Controller\SiteRoleController;
+use SiteApi\Controller\SiteSearchController;
 use SiteApi\Controller\SiteSlotUsageController;
 use SiteApi\Controller\SiteTestingDailyScheduleController;
-use SiteApi\Controller\EnforcementSiteAssessmentController;
-use SiteApi\Controller\EnforcementSiteAssessmentValidateController;
-use SiteApi\Factory\Controller\SiteDetailsControllerFactory;
-use SiteApi\Factory\Controller\SiteNameControllerFactory;
-use SiteApi\Factory\Controller\SiteOrganisationNameControllerFactory;
-use SiteApi\Factory\Controller\SiteSearchControllerFactory;
-use SiteApi\Controller\SiteSearchController;
-use SiteApi\Factory\Controller\SiteControllerFactory;
+use SiteApi\Controller\SiteTestingFacilitiesController;
+use SiteApi\Controller\VehicleTestingStationAuthorisedClassesController;
 use SiteApi\Factory\Controller\EnforcementSiteAssessmentControllerFactory;
 use SiteApi\Factory\Controller\EnforcementSiteAssessmentValidateControllerFactory;
 use SiteApi\Factory\Controller\MotTestInProgressControllerFactory;
+use SiteApi\Factory\Controller\MotTestLogControllerFactory;
+use SiteApi\Factory\Controller\SiteControllerFactory;
+use SiteApi\Factory\Controller\SiteDetailsControllerFactory;
 use SiteApi\Factory\Controller\SiteEventControllerFactory;
-use SiteApi\Controller\SiteTestingFacilitiesController;
+use SiteApi\Factory\Controller\SiteNameControllerFactory;
+use SiteApi\Factory\Controller\SiteOrganisationNameControllerFactory;
+use SiteApi\Factory\Controller\SiteSearchControllerFactory;
 use SiteApi\Factory\Controller\SiteTestingFacilitiesControllerFactory;
-use SiteApi\Controller\SiteDetailsController;
 
 return [
     'controllers' => [
@@ -47,6 +49,7 @@ return [
         'factories' => [
             EnforcementSiteAssessmentController::class          => EnforcementSiteAssessmentControllerFactory::class,
             EnforcementSiteAssessmentValidateController::class  => EnforcementSiteAssessmentValidateControllerFactory::class,
+            MotTestLogController::class                         => MotTestLogControllerFactory::class,
             SiteSearchController::class                         => SiteSearchControllerFactory::class,
             SiteController::class                               => SiteControllerFactory::class,
             SiteNameController::class                           => SiteNameControllerFactory::class,
@@ -287,6 +290,29 @@ return [
                                     'route' => '/update',
                                     'defaults' => [
                                         'controller' => SiteContactController::class,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'mot-test-log' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/mot-test-log',
+                            'defaults' => [
+                                'controller' => MotTestLogController::class,
+                                'action'     => 'logData',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'summary' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/summary',
+                                    'defaults' => [
+                                        'controller' => MotTestLogController::class,
+                                        'action'     => 'summary',
                                     ],
                                 ],
                             ],

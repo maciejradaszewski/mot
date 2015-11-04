@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
+use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaElasticSearch\Query\FbQueryMotTest;
@@ -84,6 +85,23 @@ class ElasticSearchService
     {
         $this->authService->assertGrantedAtOrganisation(
             PermissionAtOrganisation::MOT_TEST_LIST_AT_AE, $params->getOrganisationId()
+        );
+
+        return SuperSearchQuery::execute($params, new FbQueryMotTestLog());
+    }
+
+    /**
+     * Search for a site's MOT test logs.
+     *
+     * @param MotTestSearchParam $params
+     *
+     * @return array
+     * @throws \UnexpectedValueException
+     */
+    public function findSiteTestsLog(MotTestSearchParam $params)
+    {
+        $this->authService->assertGrantedAtSite(
+            PermissionAtSite::VTS_TEST_LOGS, $params->getSiteId()
         );
 
         return SuperSearchQuery::execute($params, new FbQueryMotTestLog());

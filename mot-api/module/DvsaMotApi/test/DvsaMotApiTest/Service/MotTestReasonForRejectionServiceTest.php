@@ -2,7 +2,6 @@
 
 namespace DvsaMotApiTest\Service;
 
-use Doctrine\ORM\EntityManager;
 use DvsaCommon\Constants\OdometerUnit;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommonApi\Authorisation\Assertion\ApiPerformMotTestAssertion;
@@ -13,28 +12,30 @@ use DvsaCommonTest\TestUtils\MockHandler;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\MotTest;
 use DvsaEntities\Entity\MotTestReasonForRejection;
+use DvsaEntities\Entity\MotTestType;
 use DvsaEntities\Entity\OdometerReading;
-use DvsaEntities\Entity\TestItemSelector;
 use DvsaEntities\Entity\ReasonForRejection;
+use DvsaEntities\Entity\TestItemSelector;
 use DvsaEntitiesTest\Entity\MotTestReasonForRejectionTest;
 use DvsaMotApi\Service\MotTestReasonForRejectionService;
 use DvsaMotApi\Service\TestItemSelectorService;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
-use SlotPurchaseApi\Entity\MotTestType;
 
 /**
- * Test for check class MotTestReasonForRejectionService
- *
- * @package DvsaMotApiTest\Service
+ * Test for check class MotTestReasonForRejectionService.
  */
 class MotTestReasonForRejectionServiceTest extends AbstractMotTestServiceTest
 {
     const MOT_TEST_NUMBER = "123456789012";
 
-    /** @var TestItemSelectorService|MockObj */
+    /**
+     * @var TestItemSelectorService|MockObj
+     */
     private $mockTestItemSelectorService;
 
-    /** @var ApiPerformMotTestAssertion */
+    /**
+     * @var ApiPerformMotTestAssertion
+     */
     private $mockPerformMotTestAssertion;
 
     public function setUp()
@@ -112,7 +113,7 @@ class MotTestReasonForRejectionServiceTest extends AbstractMotTestServiceTest
 
     public function testAddReasonForRejectionThrowsRequiredFieldExceptionForMissingFields()
     {
-        $data = array();
+        $data = [];
 
         $motTest = self::getTestMotTestEntity();
         $motTest
@@ -141,10 +142,10 @@ class MotTestReasonForRejectionServiceTest extends AbstractMotTestServiceTest
     {
         $rfrId = 666;
 
-        $data = array(
+        $data = [
             'rfrId' => $rfrId,
-            'type'  => 'FAIL'
-        );
+            'type'  => 'FAIL',
+        ];
 
         $motTest = self::getTestMotTestEntity();
         $motTest->setId(1);
@@ -190,14 +191,9 @@ class MotTestReasonForRejectionServiceTest extends AbstractMotTestServiceTest
 
         $this->prepareMocks();
 
+        $motTest = (new MotTest())->setMotTestType((new MotTestType())->setCode(MotTestTypeCode::NORMAL_TEST));
         $motRfrAdvisory = MotTestReasonForRejectionTest::getTestMotTestReasonForRejection('ADVISORY');
-        $motRfrAdvisory->setMotTest(
-            (new MotTest())
-                ->setMotTestType(
-                    (new MotTestType())
-                        ->setCode(MotTestTypeCode::NORMAL_TEST)
-                )
-        );
+        $motRfrAdvisory->setMotTest($motTest);
 
         $mockEntityManager = new MockHandler($this->mockEntityManager, $this, 0);
         $mockEntityManager->find()->will($this->returnValue($motRfrAdvisory));
@@ -243,7 +239,7 @@ class MotTestReasonForRejectionServiceTest extends AbstractMotTestServiceTest
         $rfrId = 754;
 
         $motTest = self::getTestMotTestEntity();
-        XMock::mockClassField($motTest, 'number', (string)$motTestNumber);
+        XMock::mockClassField($motTest, 'number', (string) $motTestNumber);
 
         $motRfrFail = MotTestReasonForRejectionTest::getTestMotTestReasonForRejection('FAIL');
         $motRfrFail->setMotTest($motTest);

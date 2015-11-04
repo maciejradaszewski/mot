@@ -7,46 +7,48 @@ use DvsaEntities\Entity\BrakeTestType;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteBusinessRoleMap;
 use DvsaEntities\Entity\SiteTestingDailySchedule;
+use DvsaEventApi\Service\EventService;
 use DvsaMotApi\Service\Validator\BrakeTestConfigurationValidator;
 use NotificationApi\Service\NotificationService;
+use NotificationApi\Service\PositionRemovalNotificationService;
 use SiteApi\Factory\Model\NominationVerifierFactory;
+use SiteApi\Factory\Service\EnforcementSiteAssessmentServiceFactory;
+use SiteApi\Factory\Service\EnforcementSiteAssessmentValidatorFactory;
 use SiteApi\Factory\Service\MotTestInProgressServiceFactory;
+use SiteApi\Factory\Service\MotTestLogServiceFactory;
 use SiteApi\Factory\Service\SiteContactServiceFactory;
 use SiteApi\Factory\Service\SiteDetailsServiceFactory;
+use SiteApi\Factory\Service\SiteEventServiceFactory;
 use SiteApi\Factory\Service\SiteSearchServiceFactory;
 use SiteApi\Factory\Service\SiteServiceFactory;
 use SiteApi\Factory\Service\SiteSlotUsageServiceFactory;
+use SiteApi\Factory\Service\SiteTestingFacilitiesServiceFactory;
 use SiteApi\Model\NominationVerifier;
 use SiteApi\Model\Operation\NominateOperation;
 use SiteApi\Service\DefaultBrakeTestsService;
+use SiteApi\Service\EnforcementSiteAssessmentService;
 use SiteApi\Service\EquipmentService;
 use SiteApi\Service\Mapper\SiteBusinessRoleMapper;
 use SiteApi\Service\MotTestInProgressService;
+use SiteApi\Service\MotTestLogService;
 use SiteApi\Service\NominateRoleService;
 use SiteApi\Service\SiteBusinessRoleService;
 use SiteApi\Service\SiteContactService;
 use SiteApi\Service\SiteDetailsService;
+use SiteApi\Service\SiteEventService;
 use SiteApi\Service\SiteNominationService;
 use SiteApi\Service\SitePositionService;
 use SiteApi\Service\SiteSearchService;
 use SiteApi\Service\SiteService;
-use SiteApi\Service\SiteEventService;
 use SiteApi\Service\SiteSlotUsageService;
 use SiteApi\Service\SiteTestingDailyScheduleService;
 use SiteApi\Service\SiteTestingFacilitiesService;
+use SiteApi\Service\Validator\EnforcementSiteAssessmentValidator;
+use SiteApi\Service\Validator\SiteDetailsValidator;
 use SiteApi\Service\Validator\SiteTestingDailyScheduleValidator;
-use SiteApi\Factory\Service\SiteTestingFacilitiesServiceFactory;
-use SiteApi\Factory\Service\SiteEventServiceFactory;
+use SiteApi\Service\Validator\TestingFacilitiesValidator;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
-use DvsaEventApi\Service\EventService;
-use SiteApi\Service\Validator\TestingFacilitiesValidator;
-use SiteApi\Service\Validator\SiteDetailsValidator;
-use SiteApi\Service\EnforcementSiteAssessmentService;
-use SiteApi\Factory\Service\EnforcementSiteAssessmentServiceFactory;
-use SiteApi\Service\Validator\EnforcementSiteAssessmentValidator;
-use SiteApi\Factory\Service\EnforcementSiteAssessmentValidatorFactory;
-use NotificationApi\Service\PositionRemovalNotificationService;
 
 return [
     'factories'  => [
@@ -141,6 +143,7 @@ return [
         SiteEventService::class                 => SiteEventServiceFactory::class,
         EnforcementSiteAssessmentService::class => EnforcementSiteAssessmentServiceFactory::class,
         EnforcementSiteAssessmentValidator::class => EnforcementSiteAssessmentValidatorFactory::class,
+        MotTestLogService::class                => MotTestLogServiceFactory::class,
     ],
     'invokables' => [
         TestingFacilitiesValidator::class => TestingFacilitiesValidator::class,

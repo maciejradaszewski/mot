@@ -5,6 +5,7 @@ namespace DvsaClient\Mapper;
 use DvsaCommon\Dto\Search\MotTestSearchParamsDto;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilder;
 use DvsaCommon\UrlBuilder\TesterUrlBuilder;
+use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilder;
 use DvsaCommon\Utility\DtoHydrator;
 
 /**
@@ -20,6 +21,18 @@ class MotTestLogMapper extends DtoMapper
     public function getSummary($orgId)
     {
         $apiUrl = AuthorisedExaminerUrlBuilder::motTestLogSummary($orgId);
+
+        return $this->get($apiUrl);
+    }
+
+    /**
+     * @param $siteId
+     *
+     * @return \DvsaCommon\Dto\Search\MotTestSearchParamsDto
+     */
+    public function getSiteSummary($siteId)
+    {
+        $apiUrl = VehicleTestingStationUrlBuilder::motTestLogSummary($siteId);
 
         return $this->get($apiUrl);
     }
@@ -46,6 +59,19 @@ class MotTestLogMapper extends DtoMapper
         $apiUrl = AuthorisedExaminerUrlBuilder::motTestLog($orgId)->toString();
 
         return $this->post($apiUrl, DtoHydrator::dtoToJson($data));
+    }
+
+    /**
+     * @param int                       $siteId
+     * @param MotTestSearchParamsDto    $searchParams
+     *
+     * @return \DvsaCommon\Dto\Search\MotTestSearchParamsDto
+     */
+    public function getSiteData($siteId, $searchParams)
+    {
+        $apiUrl = VehicleTestingStationUrlBuilder::motTestLog($siteId)->toString();
+
+        return $this->post($apiUrl, DtoHydrator::dtoToJson($searchParams));
     }
 
     /**

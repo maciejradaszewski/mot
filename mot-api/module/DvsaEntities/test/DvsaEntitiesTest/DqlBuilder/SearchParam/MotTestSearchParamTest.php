@@ -81,8 +81,9 @@ class MotTestSearchParamTest extends AbstractServiceTestCase
 
         $values = $params->toArray();
 
-        $this->assertCount(15, $values);
+        $this->assertCount(16, $values);
         $this->assertEquals('V1234', $values['siteNumber']);
+        $this->assertEquals(0, $values['siteId']);
         $this->assertEquals(null, $values['testerId']);
         $this->assertEquals(0, $values['sortColumnId']);
         $this->assertEquals('testDate', $values['sortColumnName']);
@@ -100,7 +101,8 @@ class MotTestSearchParamTest extends AbstractServiceTestCase
 
         $values = $params->toArray();
 
-        $this->assertCount(15, $values);
+        $this->assertCount(16, $values);
+        $this->assertEquals(0, $values['siteId']);
         $this->assertEquals(null, $values['siteNumber']);
         $this->assertEquals('105', $values['testerId']);
         $this->assertEquals(0, $values['sortColumnId']);

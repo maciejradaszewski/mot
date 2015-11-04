@@ -1,12 +1,7 @@
 package uk.gov.dvsa.helper;
 
-import com.dvsa.mot.selenium.datasource.braketest.BrakeTestResultsPageField;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-
-import java.util.Map;
 
 public class FormCompletionHelper {
 

@@ -31,6 +31,7 @@ class PermissionAtSite
     const RECENT_CERTIFICATE_PRINT = 'RECENT-CERTIFICATE-PRINT';
     const VTS_VIEW_SITE_RISK_ASSESSMENT = 'VTS-VIEW-SITE-RISK-ASSESSMENT';
     const VTS_UPDATE_SITE_RISK_ASSESSMENT = 'VTS-UPDATE-SITE-RISK-ASSESSMENT';
+    const VTS_TEST_LOGS = 'VTS-TEST-LOGS';
 
     public static function all()
     {
@@ -60,6 +61,7 @@ class PermissionAtSite
             self::RECENT_CERTIFICATE_PRINT,
             self::VTS_VIEW_SITE_RISK_ASSESSMENT,
             self::VTS_UPDATE_SITE_RISK_ASSESSMENT,
+            self::VTS_TEST_LOGS,
         ];
     }
 }

@@ -192,10 +192,11 @@ class AuthorisedExaminer extends MotApi
         );
     }
 
-    public function getTodaysTestLogs($token, $examinerId)
+    public function getTodaysTestLogs($token, $examinerId, $siteId = null)
     {
         $body = json_encode([
             'organisationId' => NULL,
+            'siteId' => $siteId,
             'siteNr' => NULL,
             'personId' => NULL,
             'vehicleId' => NULL,
@@ -241,5 +242,4 @@ class AuthorisedExaminer extends MotApi
             $body
         ));
     }
-
 }

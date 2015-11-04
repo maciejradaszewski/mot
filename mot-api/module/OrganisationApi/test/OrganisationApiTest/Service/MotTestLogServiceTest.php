@@ -19,11 +19,11 @@ use PHPUnit_Framework_MockObject_MockObject as MockObj;
  */
 class MotTestLogServiceTest extends AbstractServiceTestCase
 {
-    private static $AE_ID = 1;
-    private static $YEAR  = '1024';
-    private static $MONTH = '256';
-    private static $WEEK  = '12';
-    private static $DAY   = '2';
+    const AE_ID = 1;
+    const YEAR  = '1024';
+    const MONTH = '256';
+    const WEEK  = '12';
+    const DAY   = '2';
 
     /** @var MotTestLogService */
     private $motTestLogService;
@@ -56,25 +56,25 @@ class MotTestLogServiceTest extends AbstractServiceTestCase
 
         $this->mockMotRepo->expects($this->any())
             ->method('getCountOfMotTestsSummary')
-            ->with(self::$AE_ID)
+            ->with(self::AE_ID)
             ->willReturn($this->getMotTestByAe());
 
-        $result = $this->motTestLogService->getMotTestLogSummaryForOrganisation(self::$AE_ID);
+        $result = $this->motTestLogService->getMotTestLogSummaryForOrganisation(self::AE_ID);
 
         $this->assertInstanceOf(MotTestLogSummaryDto::class, $result);
-        $this->assertEquals(self::$YEAR, $result->getYear());
-        $this->assertEquals(self::$MONTH, $result->getMonth());
-        $this->assertEquals(self::$WEEK, $result->getWeek());
-        $this->assertEquals(self::$DAY, $result->getToday());
+        $this->assertEquals(self::YEAR, $result->getYear());
+        $this->assertEquals(self::MONTH, $result->getMonth());
+        $this->assertEquals(self::WEEK, $result->getWeek());
+        $this->assertEquals(self::DAY, $result->getToday());
     }
 
     protected function getMotTestByAe()
     {
         return [
-            'year'  => self::$YEAR,
-            'month' => self::$MONTH,
-            'week'  => self::$WEEK,
-            'today' => self::$DAY,
+            'year'  => self::YEAR,
+            'month' => self::MONTH,
+            'week'  => self::WEEK,
+            'today' => self::DAY,
         ];
     }
 }

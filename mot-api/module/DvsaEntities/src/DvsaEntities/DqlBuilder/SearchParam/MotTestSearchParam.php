@@ -41,6 +41,7 @@ class MotTestSearchParam extends SearchParam
         "10" => "tester.username" // person
     ];
 
+    protected $siteId = null;
     protected $siteNumber = null;
     protected $testerId = null;
     protected $vehicleId = null;
@@ -91,18 +92,19 @@ class MotTestSearchParam extends SearchParam
     protected function validateInputs()
     {
         $hasOrganisationId = $this->getOrganisationId() > 0;
+        $hasSiteId         = (int)$this->getSiteId() > 0;
         $hasSiteNumber     = strlen($this->getSiteNumber()) > 0;
         $hasTesterId       = (int)$this->getTesterId() > 0;
         $hasVehicleId      = (int)$this->getVehicleId() > 0;
         $hasVrm            = strlen($this->getRegistration()) > 0;
         $hasVin            = strlen($this->getVin()) > 0;
 
-        if (!($hasOrganisationId | $hasTesterId | $hasSiteNumber | $hasVrm | $hasVin | $hasVehicleId)) {
+        if (!($hasOrganisationId | $hasTesterId | $hasSiteId | $hasSiteNumber | $hasVrm | $hasVin | $hasVehicleId)) {
             throw new \UnexpectedValueException(
                 'Invalid search. One of site number, tester, vehicle, vrm or vin id must be passed.'
             );
         }
-        if ($this->checkIfMultipleInputs([$hasOrganisationId, $hasSiteNumber, $hasTesterId, $hasVehicleId, $hasVrm, $hasVin]) > 1) {
+        if ($this->checkIfMultipleInputs([$hasOrganisationId, $hasSiteId, $hasSiteNumber, $hasTesterId, $hasVehicleId, $hasVrm, $hasVin]) > 1) {
             throw new \UnexpectedValueException(
                 'Invalid search. Only one of site number, tester, vehicle, vrm or vin id must be passed.'
             );
@@ -111,6 +113,9 @@ class MotTestSearchParam extends SearchParam
 
     protected function validateSearch()
     {
+        if (strlen($this->getSiteId()) > 0 && strlen($this->sanitizeWords($this->getSiteId())) == 0) {
+            throw new \UnexpectedValueException('No results found for that site');
+        }
         if (strlen($this->getSiteNumber()) > 0 && strlen($this->sanitizeWords($this->getSiteNumber())) == 0) {
             throw new \UnexpectedValueException('No results found for that site');
         }
@@ -152,6 +157,7 @@ class MotTestSearchParam extends SearchParam
     {
         return [
             "format"          => $this->getFormat(),
+            "siteId"          => $this->getSiteId(),
             "siteNumber"      => $this->getSiteNumber(),
             "testerId"        => $this->getTesterId(),
             "searchRecent"    => $this->getSearchRecent(),
@@ -209,6 +215,24 @@ class MotTestSearchParam extends SearchParam
         }
 
         throw new \InvalidArgumentException('Unknown sort column: ' . $this->getSortColumnId());
+    }
+
+    /**
+     * @param $siteId
+     * @return $this
+     */
+    public function setSiteId($siteId)
+    {
+        $this->siteId = $siteId;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getSiteId()
+    {
+        return $this->siteId;
     }
 
     /**
@@ -457,6 +481,7 @@ class MotTestSearchParam extends SearchParam
 
         parent::fromDto($dto);
 
+        $this->setSiteId($dto->getSiteId());
         $this->setSiteNumber($dto->getSiteNr());
         $this->setTesterId($dto->getPersonId());
         $this->setVehicleId($dto->getVehicleId());
@@ -495,6 +520,7 @@ class MotTestSearchParam extends SearchParam
 
         parent::toDto($dto);
 
+        $dto->setSiteId($this->getSiteId());
         $dto->setSiteNr($this->getSiteNumber());
         $dto->setPersonId($this->getTesterId());
         $dto->setVehicleId($this->getVehicleId());
