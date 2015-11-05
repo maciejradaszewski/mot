@@ -259,8 +259,6 @@ class SiteController extends AbstractAuthActionController
 
     public function createAction()
     {
-        $this->assertFeatureEnabled(FeatureToggle::AO1_SITE_CREATE);
-
         $this->auth->assertGranted(PermissionInSystem::VEHICLE_TESTING_STATION_CREATE);
 
         /** @var Request $request */
@@ -304,8 +302,6 @@ class SiteController extends AbstractAuthActionController
 
     public function confirmationAction()
     {
-        $this->assertFeatureEnabled(FeatureToggle::AO1_SITE_CREATE);
-
         $this->auth->assertGranted(PermissionInSystem::VEHICLE_TESTING_STATION_CREATE);
 
         $urlCreate = VehicleTestingStationUrlBuilderWeb::create();

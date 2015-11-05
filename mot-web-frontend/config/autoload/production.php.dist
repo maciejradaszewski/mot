@@ -125,7 +125,6 @@ return array(
          */
         'example.feature.toggle' => false,
         'ao1.ae.create'          => true,
-        'ao1.site.create'        => true,
     ],
 
     //production.php

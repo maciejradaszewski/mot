@@ -16,13 +16,11 @@ use DvsaCommon\Constants\FeatureToggle;
                 Create AE
             </a>
         </li>
-        <?php if ($this->isFeatureEnabled(FeatureToggle::AO1_SITE_CREATE)): ?>
-            <li>
-                <a href="<?php echo VehicleTestingStationUrlBuilderWeb::create(); ?>"
-                   id="action-create-vts">
-                    Create Site
-                </a>
-            </li>
-        <?php endif; ?>
+        <li>
+            <a href="<?php echo VehicleTestingStationUrlBuilderWeb::create(); ?>"
+               id="action-create-vts">
+                Create Site
+            </a>
+        </li>
     </ul>
 </div>

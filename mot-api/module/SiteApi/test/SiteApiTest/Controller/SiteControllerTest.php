@@ -8,8 +8,6 @@ use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApiTest\Controller\AbstractRestfulControllerTestCase;
 use DvsaCommonTest\TestUtils\XMock;
-use DvsaFeature\FeatureToggles;
-use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use SiteApi\Controller\SiteController;
 use SiteApi\Service\SiteService;
 use Zend\Http\Header\ContentType;
@@ -38,12 +36,8 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
 
         parent::setUp();
 
-        $mockFeatureToggle = XMock::of(FeatureToggles::class, ['isEnabled']);
-        $this->mockMethod($mockFeatureToggle, 'isEnabled', $this->any(), true);
-
         /** @var \Zend\ServiceManager\ServiceManager $serviceManager */
         $serviceManager = $this->getController()->getServiceLocator();
-        $serviceManager->setService('Feature\FeatureToggles', $mockFeatureToggle);
     }
 
     /**

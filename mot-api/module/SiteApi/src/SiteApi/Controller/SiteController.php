@@ -39,8 +39,6 @@ class SiteController extends AbstractDvsaRestfulController
 
     public function create($data)
     {
-        $this->assertFeatureEnabled(FeatureToggle::AO1_SITE_CREATE);
-
         /** @var VehicleTestingStationDto $dto */
         $dto    = DtoHydrator::jsonToDto($data);
         $result = $this->service->create($dto);
