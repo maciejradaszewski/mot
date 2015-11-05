@@ -12,6 +12,5 @@ return [
          * Example feature is disabled by default. Enable it at your own risk.
          */
         'example.feature.toggle' => false,
-        'ao1.site.create'        => true,
     ]
 ];

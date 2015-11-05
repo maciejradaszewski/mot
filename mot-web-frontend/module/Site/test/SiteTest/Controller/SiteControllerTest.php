@@ -33,8 +33,6 @@ use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
-use DvsaFeature\FeatureToggles;
-use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use Site\Controller\SiteController;
 use Site\Form\VtsContactDetailsUpdateForm;
 use Site\Form\VtsCreateForm;
@@ -72,10 +70,6 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
      * @var Container
      */
     private $mockSession;
-    /**
-     * @var FeatureToggles|MockObj
-     */
-    private $mockFeatureToggle;
 
     protected function setUp()
     {
@@ -100,8 +94,6 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
 
         parent::setUp();
 
-        $this->mockFeatureToggle = XMock::of(FeatureToggles::class, ['isEnabled']);
-        $serviceManager->setService('Feature\FeatureToggles', $this->mockFeatureToggle);
         $this->mockConfig();
         $serviceManager->setService(MotConfig::class, $this->config);
 
@@ -146,8 +138,6 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
 
         //  logical block :: mock
         //  enable any feature
-        $this->mockMethod($this->mockFeatureToggle, 'isEnabled', $this->any(), true);
-
         //  mocking methods
         if ($mocks !== null) {
             foreach ($mocks as $mock) {
