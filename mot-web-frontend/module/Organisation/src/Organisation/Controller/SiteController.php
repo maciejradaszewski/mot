@@ -100,8 +100,6 @@ class SiteController extends AbstractDvsaMotTestController
 
     public function unlinkAction()
     {
-        $this->assertFeatureEnabled(FeatureToggle::AO1_AE_SITE_UNLINK);
-
         $linkId = $this->params('linkId');
 
         //  logical block :: get data from api
