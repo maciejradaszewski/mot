@@ -7,7 +7,6 @@ namespace DvsaCommon\Constants;
  */
 class FeatureToggle
 {
-    const AO1_AE_SITE_LINK = 'ao1.ae.site.link';
     const AO1_AE_SITE_UNLINK = 'ao1.ae.site.unlink';
     const JASPER_ASYNC = 'jasper.async';
     const VTS_RISK_SCORE = 'vts.risk.score';

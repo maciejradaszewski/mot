@@ -51,8 +51,6 @@ class SiteController extends AbstractDvsaMotTestController
      */
     public function linkAction()
     {
-        $this->assertFeatureEnabled(FeatureToggle::AO1_AE_SITE_LINK);
-
         $orgId = $this->params('id');
 
         $this->auth->assertGrantedAtOrganisation(PermissionAtOrganisation::AE_SITE_LINK, $orgId);
