@@ -1,0 +1,20 @@
+<table class="key-value-list">
+    <tbody>
+    <?php
+    foreach ($roles as $role) : ?>
+        <tr>
+            <th class="key-value-list__key">
+                <?php echo $this->escapeHtml($role['name']); ?>
+                <?php if ($role['address']) : ?>
+                    <span class="key-value-list__meta"><?php echo $this->escapeHtml($role['address']); ?></span>
+                <?php endif ?>
+            </th>
+            <td class="key-value-list__value" <?php echo
+            ( $this->escapeHtml($role['id']) ? ' id="role-' . $this->escapeHtml($role["role"]) . '-' .
+                $this->escapeHtml($role['id']) . '"' : 'id="role-' . $this->escapeHtml($role["role"]) .'"');
+            ?>><?php echo $this->escapeHtml($role["nicename"]); ?></td>
+        </tr>
+        <?php
+    endforeach; ?>
+    </tbody>
+</table>

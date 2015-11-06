@@ -5,8 +5,9 @@ namespace Dashboard\Controller;
 use Core\Controller\AbstractAuthActionController;
 use Core\Service\MotFrontendIdentityProviderInterface;
 use Dashboard\Authorisation\ViewTradeRolesAssertion;
-use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+use Dashboard\ViewModel\UserTradeRolesViewModel;
 use Dashboard\Service\TradeRolesAssociationsService;
+use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use Zend\View\Model\ViewModel;
 
 class UserTradeRolesController extends AbstractAuthActionController
@@ -17,15 +18,22 @@ class UserTradeRolesController extends AbstractAuthActionController
 
     private $viewTradeRolesAssertion;
 
+    /**
+     * @var AuthorisationServiceInterface
+     */
+    private $authorisationService;
+
     public function __construct(
         MotFrontendIdentityProviderInterface $identityProvider,
         TradeRolesAssociationsService $tradeRolesAssociationsService,
-        ViewTradeRolesAssertion $viewTradeRolesAssertion
+        ViewTradeRolesAssertion $viewTradeRolesAssertion,
+        AuthorisationServiceInterface $authorisationService
     )
     {
         $this->identityProvider = $identityProvider;
         $this->tradeRolesAssociationsService = $tradeRolesAssociationsService;
         $this->viewTradeRolesAssertion = $viewTradeRolesAssertion;
+        $this->authorisationService = $authorisationService;
     }
 
     public function indexAction()
@@ -35,7 +43,6 @@ class UserTradeRolesController extends AbstractAuthActionController
         $this->viewTradeRolesAssertion->assertGratedViewProfileTradeRolesPage($personId);
 
         $rolesAndAssociations = $this->tradeRolesAssociationsService->getRolesAndAssociations($personId);
-        $profileUrl = PersonUrlBuilderWeb::profile((int)$this->params()->fromRoute('id'));
 
         $this->setPageTitle('Roles and Associations');
 
@@ -57,10 +64,13 @@ class UserTradeRolesController extends AbstractAuthActionController
 
         $this->layout('layout/layout-govuk.phtml');
 
-        return new ViewModel([
-            'rolesAndAssociations' => $rolesAndAssociations,
-            'backToProfileUrl' => $profileUrl,
-            'personIsViewingOwnProfile' => $personIsViewingOwnProfile,
-        ]);
+        $vm = new UserTradeRolesViewModel($this->authorisationService);
+        $vm->setRolesAndAssociations($rolesAndAssociations);
+        $vm->setPersonId((int)$this->params()->fromRoute('id'));
+        $vm->setPersonIsViewingOwnProfile($personIsViewingOwnProfile);
+
+        return [
+            'userTradeRolesViewModel' => $vm,
+        ];
     }
 }

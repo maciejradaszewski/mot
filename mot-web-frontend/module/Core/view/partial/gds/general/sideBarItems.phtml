@@ -1,8 +1,10 @@
 <?php
-use Core\View\Sidebar\GeneralSidebar;
+use Core\ViewModel\Sidebar\GeneralSidebar;
+use Core\ViewModel\Sidebar\GeneralSidebarLinkList;
+use Core\ViewModel\Sidebar\GeneralSidebarStatusBox;
 use DvsaCommon\Utility\TypeCheck;
 
-/** @var $sidebar GeneralSidebar */
+/** @var $sidebar \Core\ViewModel\Sidebar\GeneralSidebar */
 
 TypeCheck::assertInstance($sidebar, GeneralSidebar::class);
 
@@ -10,52 +12,44 @@ TypeCheck::assertInstance($sidebar, GeneralSidebar::class);
 
 <div class="related">
 
-    <?php foreach($sidebar->getSidebarItems() as $sideBarItem) { ?>
+    <?php foreach($sidebar->getSidebarItems() as $sideBarItem) : ?>
 
-            <?php if($sideBarItem['type'] == 'statusBox') { ?>
+            <?php if($sideBarItem instanceof GeneralSidebarStatusBox): ?>
 
                 <ul class="related__status">
 
-                    <?php foreach ($sideBarItem as $statusItem) { ?>
-
-                        <?php if(is_array($statusItem)) { ?>
+                    <?php foreach ($sideBarItem->getItems() as $statusItem): ?>
                             <li>
-                                <span class="badge<?php echo $statusItem['modifier'] != '' ? '--' . $statusItem['modifier'] : ''; ?>"><?php echo $this->escapeHtml($statusItem['value']); ?></span>
-                                <strong><?php echo $this->escapeHtml($statusItem['key']); ?></strong>
+                                <span class="badge<?php echo $statusItem->getModifier() != '' ? '--' . $statusItem->getModifier() : ''; ?>"><?php echo $this->escapeHtml($statusItem->getValue()); ?></span>
+                                <strong><?php echo $this->escapeHtml($statusItem->getKey()); ?></strong>
                             </li>
-
-                        <?php } ?>
-
-                    <?php } ?>
+                    <?php endforeach; ?>
 
                 </ul>
 
-            <?php } ?>
+            <?php endif; ?>
 
-        <?php if ($sideBarItem['type'] == 'linkList') { ?>
-
+        <?php if ($sideBarItem instanceof GeneralSidebarLinkList): ?>
             <div class="related__section">
-                <h2 class="related__section-title"><?php echo $this->escapeHtml($sideBarItem['title']); ?></h2>
+                <h2 class="related__section-title"><?php echo $this->escapeHtml($sideBarItem->getTitle()); ?></h2>
 
                 <ul class="related__section-links">
 
-                <?php foreach ($sideBarItem['items'] as $element) { ?>
-                <?php foreach ($element as $text => $data) { ?>
-
-                    <li><a id="<?php echo $this->escapeHtmlAttr($data['id']); ?>"
-                           href="<?php echo $this->escapeHtmlAttr($data['href']); ?>">
-                            <?php echo $this->escapeHtml($text); ?>
+                <?php foreach ($sideBarItem->getLinks() as $link): ?>
+                    <li>
+                        <a id="<?php echo $this->escapeHtmlAttr($link->getHtmlId()); ?>"
+                           href="<?php echo $this->escapeHtmlAttr($link->getUrl()); ?>">
+                            <?php echo $this->escapeHtml($link->getText()); ?>
                         </a>
                     </li>
 
-                <?php } } ?>
+                <?php endforeach; ?>
 
                 </ul>
-
             </div>
 
-        <?php } ?>
+        <?php endif; ?>
 
-    <?php } ?>
+    <?php endforeach; ?>
 
 </div>

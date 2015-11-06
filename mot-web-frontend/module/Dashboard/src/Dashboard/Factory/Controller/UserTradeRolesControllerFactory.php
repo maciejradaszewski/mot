@@ -19,7 +19,8 @@ class UserTradeRolesControllerFactory implements FactoryInterface
         return new UserTradeRolesController(
             $serviceLocator->get('MotIdentityProvider'),
             $serviceLocator->get(TradeRolesAssociationsService::class),
-            $serviceLocator->get(ViewTradeRolesAssertion::class)
+            $serviceLocator->get(ViewTradeRolesAssertion::class),
+            $serviceLocator->get('AuthorisationService')
         );
     }
 }

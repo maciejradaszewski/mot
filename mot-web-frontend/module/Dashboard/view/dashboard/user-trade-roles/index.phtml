@@ -1,11 +1,11 @@
 <?php
-/** @var $rolesAndAssociations array */
-
+    use Dashboard\ViewModel\UserTradeRolesViewModel;
+    /** @var $userTradeRolesViewModel UserTradeRolesViewModel array */
 ?>
 
-<?php if ($rolesAndAssociations) : ?>
-    <?php echo $this->partial('dashboard/partials/profile/roles.phtml', [
-            'roles' => $rolesAndAssociations,
+<?php if ($userTradeRolesViewModel->getRolesAndAssociations()) : ?>
+    <?php echo $this->partial('dashboard/partials/profile/user-trade-roles.phtml', [
+            'userTradeRolesViewModel' => $userTradeRolesViewModel,
     ]); ?>
 <?php endif; ?>
 
@@ -13,8 +13,9 @@
     <ul class="content-navigation__secondary">
         <li>
             <?php /** if javascript is enabled clicking this link triggers window.history.back() */ ?>
-            <a class="history-go-back" onclick="window.history.back();return false;" href="<?php echo $backToProfileUrl; ?>">
-                <?php echo $personIsViewingOwnProfile ? 'Return to your profile' : 'Return to user profile';?>
+            <a class="history-go-back" onclick="window.history.back();return false;"
+               href="<?php echo $this->url('user-home/profile/byId', ['id' => $userTradeRolesViewModel->getPersonId()]); ?>">
+                <?php echo $userTradeRolesViewModel->getPersonIsViewingOwnProfile() ? 'Return to your profile' : 'Return to user profile';?>
             </a>
         </li>
     </ul>

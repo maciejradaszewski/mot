@@ -192,7 +192,7 @@ public class DVSAManagingUserRolesTests extends BaseTest {
     @Test(groups = {"BVT", "Regression", "VM-12321"},
             description = "Verifies that authorised user can check user roles via roles and associations link " +
                     "on user profile page")
-    public void dvsaUserCanViewAeAssociationSuccessfully() throws IOException {
+    public void dvsaUserCanViewTradesUserRolesAndAssociationsFromUserSearch() throws IOException {
 
         //Given that I am on User search profile page as an authorised DVSA user
         UserSearchProfilePage userSearchProfilePage = pageNavigator.goToUserSearchedProfilePageViaUserSearch(areaOffice1User, tester);
@@ -222,16 +222,16 @@ public class DVSAManagingUserRolesTests extends BaseTest {
     @Test(groups = {"BVT", "Regression", "VM-12321"},
             description = "Verifies that authorised user can navigate back from roles and associations page " +
                     "to user user profile page via link")
-    public void dvsaUserCanNavigateBackFromViewAeAssociationPageViaLink() throws IOException {
+    public void dvsaUserNavigatesBackFromRolesAndAssociationsPageViaLink() throws IOException {
 
-        //Given that I am on User search profile page as an authorised DVSA user
+        //Given that I am on User roles and associations page as an authorised DVSA user
         RolesAndAssociationsPage rolesAndAssociationsPage = pageNavigator.goToUserSearchedProfilePageViaUserSearch(areaOffice1User, tester)
                 .clickRolesAndAssociationsLink();
 
-        //When I click on Roles and Associations link
+        //When I click on Return to user profile link
         UserSearchProfilePage userSearchProfilePage = rolesAndAssociationsPage.clickReturnToUserProfile();
 
-        //Then roles should be displayed
+        //Then User profile should be displayed
         assertThat(userSearchProfilePage.selfVerify(), is(true));
     }
 

@@ -3,6 +3,7 @@ namespace Dashboard\Controller;
 
 use Account\Service\SecurityQuestionService;
 use Application\Data\ApiPersonalDetails;
+use Application\Helper\DataMappingHelper;
 use Application\Service\CatalogService;
 use Application\Service\LoggedInUserManager;
 use Core\Authorisation\Assertion\WebAcknowledgeSpecialNoticeAssertion;
@@ -13,10 +14,9 @@ use Dashboard\Model\Dashboard;
 use Dashboard\Model\PersonalDetails;
 use Dashboard\PersonStore;
 use Dashboard\Service\TradeRolesAssociationsService;
-use Dashboard\View\Sidebar\ProfileSidebar;
-use Dvsa\OpenAM\Exception\OpenAMClientException;
-use Dvsa\OpenAM\Exception\OpenAMUnauthorisedException;
-use Dvsa\OpenAM\Model\OpenAMLoginDetails;
+use Dashboard\ViewModel\Sidebar\ProfileSidebar;
+use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Enum\CountryOfRegistrationCode;
@@ -26,12 +26,7 @@ use DvsaCommon\Model\DvsaRole;
 use DvsaCommon\Model\TradeRole;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
-use DvsaCommon\Auth\MotAuthorisationServiceInterface;
-use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use UserAdmin\Service\UserAdminSessionManager;
-use Zend\Http\Request;
-use Zend\View\Model\ViewModel;
-use Application\Helper\DataMappingHelper;
 
 /**
  * Controller for dashboard
