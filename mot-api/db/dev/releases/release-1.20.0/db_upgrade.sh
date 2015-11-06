@@ -6,10 +6,10 @@ db_name=mot_v195_rel4
 # add files here in intended run order for release
 upgradefiles+=('2015-10-30-VM-12310-create-db-version-table-STORY.sql');
 upgradefiles+=('2015-10-27-VM-12321-view-trade-roles-page-STORY.sql');
-upgradefiles+=('2015-10-30-VM-12280-create-and-assign-VTS-test-logs-permission.sql')
-upgradefiles+=('2015-10-27-VM-12328-certificate-replacement-additional-columns-only.sql');
-upgradefiles+=('2015-10-30-VM-12328-replacement-certificate-draft-and-permissions-update.sql');
-upgradefiles+=('2015-10-27-VM-12328-populate-mismatch-and-pass-flags.sql');
+upgradefiles+=('2015-10-30-VM-12280-create-and-assign-VTS-test-logs-permission-STORY.sql')
+upgradefiles+=('2015-10-27-VM-12328-certificate-replacement-additional-columns-only-STORY.sql');
+upgradefiles+=('2015-10-30-VM-12328-replacement-certificate-draft-and-permissions-update-STORY.sql');
+upgradefiles+=('2015-10-27-VM-12328-populate-mismatch-and-pass-flags-STORY.sql');
 upgradefiles+=('2015-10-30-VM-12003-allow-user-with-tester-qualification-status-of-initial-training-required-to-do-a-training-test-STORY.sql');
 
 for sqlscript in ${upgradefiles[@]}
