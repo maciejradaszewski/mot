@@ -5,7 +5,11 @@ namespace Site\Controller;
 use Application\Service\CatalogService;
 use Core\Controller\AbstractAuthActionController;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
-use Core\View\Sidebar\GeneralSidebar;
+use Core\ViewModel\Sidebar\GeneralSidebar;
+use Core\ViewModel\Sidebar\GeneralSidebarLink;
+use Core\ViewModel\Sidebar\GeneralSidebarLinkList;
+use Core\ViewModel\Sidebar\GeneralSidebarStatusBox;
+use Core\ViewModel\Sidebar\GeneralSidebarStatusItem;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
@@ -30,6 +34,7 @@ use Site\Form\VtsSiteAssessmentForm;
 use Site\Form\VtsSiteDetailsForm;
 use Site\Form\VtsUpdateTestingFacilitiesForm;
 use Site\Service\RiskAssessmentScoreRagClassifier;
+use Site\ViewModel\Sidebar\VtsOverviewSidebar;
 use Site\ViewModel\SiteViewModel;
 use Site\ViewModel\VehicleTestingStation\VtsFormViewModel;
 use Zend\Http\Request;
@@ -184,60 +189,15 @@ class SiteController extends AbstractAuthActionController
         );
 
         $id = (int)$this->params()->fromRoute('id');
-        $eventsLink = '/event/list/site/' . $id;
-        $motCertsLink = '/vehicle-testing-station/' . $id . '/mot-test-certificates';
-        $viewTestLogsLink = VehicleTestingStationUrlBuilderWeb::motTestLog($id)->toString();
 
         $siteStatus = $siteStatusMap[$site->getStatus()];
-        $modifierClass = '';
-        if (strtolower($siteStatus) == 'approved') {
-            $modifierClass = 'success';
-        }
-
-        $relatedLinks = [];
         $canReadEvents = $this->auth->isGranted(PermissionInSystem::EVENT_READ);
-        if ($canReadEvents) {
-            $relatedLinks [] = ['Events history' => ['id' => 'event-history', 'href' => $eventsLink]];
-        }
-
         $canViewTestLogs = $this->auth->isGrantedAtSite(PermissionAtSite::VTS_TEST_LOGS, $vtsId);
-        if($canViewTestLogs){
-            $relatedLinks[] = ['Test logs' => ['id' => 'test-logs', 'href' => $viewTestLogsLink]];
-        }
         $isJasperAsyncEnabled = $this->isFeatureEnabled(FeatureToggle::JASPER_ASYNC);
-        $canSeeRecentCertificates = $this->auth->isGrantedAtSite(PermissionAtSite::RECENT_CERTIFICATE_PRINT, $id);
+        $permittedToReadCertificates = $this->auth->isGrantedAtSite(PermissionAtSite::RECENT_CERTIFICATE_PRINT, $id);
+        $canSeeRecentCertificates = $permittedToReadCertificates && $isJasperAsyncEnabled;
 
-        if ($isJasperAsyncEnabled && $canSeeRecentCertificates) {
-            $relatedLinks [] = ['MOT test certificates' => [ 'id' => 'mot-test-recent-certificates-link', 'href' => $motCertsLink]];
-        }
-
-        $related = [];
-        if(!empty($relatedLinks)) {
-            $related = [
-                'type' => 'linkList',
-                'title' => 'Related',
-                'items' =>  $relatedLinks
-            ];
-        }
-
-        $sideBarItems = [
-            [
-                'type' => 'statusBox',
-                'title' => '',
-                'statusItems1' => [
-                    'key' => 'Status',
-                    'value' => $siteStatus,
-                    'modifier' => $modifierClass,
-                ],
-            ],
-        ];
-
-        if (!empty($related)) {
-            array_push($sideBarItems, $related);
-        }
-
-        $sidebar = new GeneralSidebar($sideBarItems);
-
+        $sidebar = new VtsOverviewSidebar($id, $siteStatus, $canReadEvents, $canSeeRecentCertificates, $canViewTestLogs);
         $this->setSidebar($sidebar);
 
         $viewModel = new ViewModel(

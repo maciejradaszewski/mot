@@ -3,8 +3,9 @@
 namespace UserAdmin\Controller;
 
 use Application\Helper\PrgHelper;
+use Application\Service\CatalogService;
 use Dashboard\Authorisation\ViewTradeRolesAssertion;
-use Dashboard\View\Sidebar\ProfileSidebar;
+use Dashboard\ViewModel\Sidebar\ProfileSidebar;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
@@ -18,7 +19,6 @@ use UserAdmin\Service\HelpdeskAccountAdminService;
 use UserAdmin\Service\PersonRoleManagementService;
 use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
 use Zend\View\Model\ViewModel;
-use Application\Service\CatalogService;
 
 /**
  * Class UserProfileController

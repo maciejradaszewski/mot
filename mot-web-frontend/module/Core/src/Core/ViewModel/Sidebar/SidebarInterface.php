@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\View\Sidebar;
+namespace Core\ViewModel\Sidebar;
 
 interface SidebarInterface
 {

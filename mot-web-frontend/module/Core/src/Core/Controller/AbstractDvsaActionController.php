@@ -3,17 +3,15 @@
 namespace Core\Controller;
 
 use Application\Navigation\Breadcrumbs\BreadcrumbsBuilder;
-use Core\View\Sidebar\SidebarInterface;
+use Core\ViewModel\Sidebar\SidebarInterface;
+use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
+use DvsaCommon\Utility\ArrayUtils;
 use DvsaFeature\Exception\FeatureNotAvailableException;
-use Dvsa\OpenAM\OpenAMClientInterface;
 use Zend\Form\Annotation\AnnotationBuilder;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
-use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
-use DvsaCommon\Utility\ArrayUtils;
 
 abstract class AbstractDvsaActionController
     extends AbstractActionController

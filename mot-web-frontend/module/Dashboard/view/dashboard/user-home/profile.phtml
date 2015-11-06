@@ -114,7 +114,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' =>  $this-
 
 <?php if ($systemRoles) : ?>
     <h3 id="roles-internal" class="heading-medium"><?php echo($this->escapeHtml("Roles")); ?></h3>
-    <?php echo $this->partial('dashboard/partials/profile/roles.phtml', [ 'roles' => $systemRoles]) ?>
+    <?php echo $this->partial('dashboard/partials/profile/system-roles.phtml', [ 'roles' => $systemRoles]) ?>
 <?php endif; ?>
 
 <?php if(!$rolesAndAssociations && !$systemRoles) : ?>

@@ -31,7 +31,7 @@ public class TradeManagingUserRolesTests extends BaseTest {
     @Test(groups = {"BVT", "Regression", "VM-12321"},
             description = "Verifies that trade user cant check roles via roles and associations link " +
                     "of other trade user")
-    public void tradeUserCantViewAeAssociationOfOtherTradeUser() throws IOException {
+    public void tradeUserCantViewTradeUsersRolesAndAssociations() throws IOException {
 
         //Given I'm on the Vts details page
         VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.gotoHomePage(siteManager).selectRandomVts();
