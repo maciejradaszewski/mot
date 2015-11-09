@@ -2,15 +2,15 @@
 
 namespace DvsaCommonTest\Utility;
 
+use DvsaCommon\Dto\JsonUnserializable;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonTest\TestUtils\SampleDto;
 use DvsaCommonTest\TestUtils\SampleDtoWithNestedValues;
+use JsonSerializable;
 use PHPUnit_Framework_TestCase;
 
 /**
- * Class DtoHydratorTest
- *
- * @package DvsaCommonTest\Utility
+ * Class DtoHydratorTest.
  */
 class DtoHydratorTest extends PHPUnit_Framework_TestCase
 {
@@ -88,6 +88,31 @@ class DtoHydratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($dtoList, $hydratedDtoList);
     }
 
+    public function testJsonSerializableDtoCreatesJsonEncodableString()
+    {
+        $dto = new JsonSerializableDto();
+        $dto->setProperty('value');
+
+        $hydrator = new DtoHydrator();
+        $data = $hydrator->dtoToJson($dto);
+        $this->assertEquals('value', $data['property']);
+        $this->assertEquals(JsonSerializableDto::class, $data['_class']);
+    }
+
+    public function testJsonUnserializableDtoIsInitialised()
+    {
+        $data = [
+            'property' => 'value',
+            '_class'   => JsonUnserializableDto::class,
+        ];
+
+        $hydrator = new DtoHydrator();
+        /** @var $dto JsonUnserializableDto */
+        $dto = $hydrator->jsonToDto($data);
+        $this->assertInstanceOf(JsonUnserializableDto::class, $dto);
+        $this->assertEquals('value', $dto->getProperty());
+    }
+
     private function extractAndHydrate($dto)
     {
         return $this->hydrate($this->extract($dto));
@@ -105,5 +130,35 @@ class DtoHydratorTest extends PHPUnit_Framework_TestCase
         $hydrator = new DtoHydrator(); // creating new hydrator on each call is done on purpose
 
         return $hydrator->doHydration($jsonArray);
+    }
+}
+
+class JsonSerializableDto implements JsonSerializable
+{
+    private $property;
+
+    public function setProperty($value)
+    {
+        $this->property = $value;
+    }
+
+    public function jsonSerialize()
+    {
+        return ['property' => $this->property];
+    }
+}
+
+class JsonUnserializableDto implements JsonUnserializable
+{
+    private $property;
+
+    public function getProperty()
+    {
+        return $this->property;
+    }
+
+    public function jsonUnserialize(array $data)
+    {
+        $this->property = $data['property'];
     }
 }

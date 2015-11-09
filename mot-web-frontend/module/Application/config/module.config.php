@@ -29,26 +29,6 @@ return [
     'controllers' => require __DIR__ . '/controllers.config.php',
     'router'                     => [
         'routes' => [
-            'contingency'                                 => [
-                'type'    => 'segment',
-                'options' => [
-                    'route'    => '/contingency',
-                    'defaults' => [
-                        'controller' => MotTest\ContingencyMotTestController::class,
-                        'action'     => 'index',
-                    ],
-                ],
-            ],
-            'contingency-error'                           => [
-                'type'    => 'segment',
-                'options' => [
-                    'route'    => '/contingency-error',
-                    'defaults' => [
-                        'controller' => MotTest\ContingencyMotTestController::class,
-                        'action'     => 'error',
-                    ],
-                ],
-            ],
             'forms'                                       => [
                 'type'          => 'segment',
                 'options'       => [

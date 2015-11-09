@@ -1,18 +1,10 @@
-<?php
-
-$title = 'Contingency Test Error';
-$this->headTitle($title);
-
-$escUrlContingency = $this->url('contingency');
-?>
-
 <h1>A Contingency error has occurred</h1>
 
 <div class="info-notice">
     <br />
     <p>
     You are entering results of a Contingency Test without having first completed a Contingency Test form.<br/>
-    Please follow the link to <a href="<?php echo $escUrlContingency; ?>">Record Contingency Test</a>
+    Please follow the link to <a href="<?php echo $this->url('contingency'); ?>">Record contingency test</a>
     </p>
     <br />
 </div>

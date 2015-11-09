@@ -1,6 +1,7 @@
 <?php
 
 use DvsaMotApi\Controller\CertificatePrintingController;
+use DvsaMotApi\Controller\ContingencyTestController;
 use DvsaMotApi\Controller\IdentityDataController;
 use DvsaMotApi\Controller\MotCertificateEmailController;
 use DvsaMotApi\Controller\MotTestController;
@@ -44,7 +45,7 @@ return [
                 'options' => [
                     'route'       => '/emergency-log',
                     'defaults'    => [
-                        'controller' => \DvsaMotApi\Controller\EmergencyLogController::class,
+                        'controller' => ContingencyTestController::class,
                     ],
                 ],
             ],

@@ -4,14 +4,14 @@ namespace DvsaCommon\Utility;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use DvsaCommon\Dto\AbstractDataTransferObject;
+use DvsaCommon\Dto\JsonUnserializable;
+use JsonSerializable;
 use Zend\Stdlib\Hydrator\ClassMethods;
 
 /**
  * Hydrates dto objects to array and back.
  *
- * Class DtoHydrator
- *
- * @package DvsaCommon\Utility
+ * Class DtoHydrator.
  */
 class DtoHydrator
 {
@@ -19,6 +19,9 @@ class DtoHydrator
 
     private $classMethods;
 
+    /**
+     * DtoHydrator constructor.
+     */
     public function __construct()
     {
         $this->classMethods = new ClassMethods(false);
@@ -36,19 +39,43 @@ class DtoHydrator
         return self::$instance;
     }
 
+    /**
+     * @param $dto
+     *
+     * @return array
+     */
     public static function dtoToJson($dto)
     {
+        if ($dto instanceof JsonSerializable) {
+            return array_merge($dto->jsonSerialize(), ['_class' => get_class($dto)]);
+        }
+
         return self::of()->extract($dto);
     }
 
     /**
-     * @return \DvsaCommon\Dto\AbstractDataTransferObject
+     * @param mixed $json
+     *
+     * @return JsonUnserializable|AbstractDataTransferObject
      */
     public static function jsonToDto($json)
     {
-        return self::of()->doHydration($json);
-    }
+        if (is_array($json) && isset($json['_class']) && in_array(JsonUnserializable::class, class_implements($json['_class']))) {
+            /** @var JsonUnserializable $dto */
+            $dto = new $json['_class']();
+            $dto->jsonUnserialize($json);
 
+            return $dto;
+        }
+
+         return self::of()->doHydration($json);
+     }
+
+    /**
+     * @param mixed $dto
+     *
+     * @return array
+     */
     public function extract($dto)
     {
         if (is_array($dto)) {
@@ -67,6 +94,11 @@ class DtoHydrator
         return $dto;
     }
 
+    /**
+     * @param $object
+     *
+     * @return array
+     */
     private function extractObject($object)
     {
         $extractedData = $this->classMethods->extract($object);
@@ -83,6 +115,11 @@ class DtoHydrator
         return $extractedData;
     }
 
+    /**
+     * @param array $array
+     *
+     * @return array
+     */
     private function extractArray(array $array)
     {
         return ArrayUtils::map(

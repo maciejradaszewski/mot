@@ -28,10 +28,10 @@ class VehicleCertificateExpiryControllerTest extends AbstractMotApiControllerTes
 
     public function testGteFunctionsWithGivenContingencyDate()
     {
-        $contingencyDate =  '2010-10-10T10:10:11Z';
+        $contingencyDatetime =  '2010-10-10T10:10:11Z';
         $this->certExpServiceMock->expects($this->once())
             ->method('getExpiryDetailsForVehicle')
-            ->with(42, true, DateUtils::toDateTime($contingencyDate));
+            ->with(42, true, DateUtils::toDateTime($contingencyDatetime));
         
         /** @var \HttpResponse|\Zend\Stdlib\ResponseInterface $result */
         $result = $this->getResultForAction(
@@ -39,7 +39,7 @@ class VehicleCertificateExpiryControllerTest extends AbstractMotApiControllerTes
             null,
             ['id' => 42, 'isDvla' => true],
             [
-                VehicleCertificateExpiryController::FIELD_CONTINGENCY_DATE => $contingencyDate
+                VehicleCertificateExpiryController::FIELD_CONTINGENCY_DATETIME => $contingencyDatetime
             ],
             []
         );

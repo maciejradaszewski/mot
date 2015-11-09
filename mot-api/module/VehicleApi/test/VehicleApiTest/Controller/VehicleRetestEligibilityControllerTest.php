@@ -2,7 +2,7 @@
 
 namespace VehicleApiTest\Controller;
 
-use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
+use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 use DvsaMotApiTest\Controller\AbstractMotApiControllerTestCase;
@@ -10,7 +10,7 @@ use VehicleApi\Controller\VehicleRetestEligibilityController;
 use Zend\Http\Request;
 
 /**
- * Unit tests for VehicleRetestEligibilityController
+ * Unit tests for VehicleRetestEligibilityController.
  */
 class VehicleRetestEligibilityControllerTest extends AbstractMotApiControllerTestCase
 {
@@ -41,7 +41,7 @@ class VehicleRetestEligibilityControllerTest extends AbstractMotApiControllerTes
             $this->request->getPost()->set(
                 VehicleRetestEligibilityController::FIELD_CONTINGENCY_DTO,
                 [
-                    "_class" => ContingencyMotTestDto::class
+                    "_class" => ContingencyTestDto::class,
                 ]
             );
         }
@@ -51,15 +51,16 @@ class VehicleRetestEligibilityControllerTest extends AbstractMotApiControllerTes
             null,
             [
                 VehicleRetestEligibilityController::FIELD_VEHICLE_ID => 3,
-                VehicleRetestEligibilityController::FIELD_SITE_ID    => 1
+                VehicleRetestEligibilityController::FIELD_SITE_ID    => 1,
             ]
         );
         $this->assertResponseStatusAndResult(self::HTTP_OK_CODE, ['data' => ['isEligible' => true]], $result);
     }
 
     /**
-     * @return RetestEligibilityValidator|\PHPUnit_Framework_MockObject_MockObject
      * @throws \Exception
+     *
+     * @return RetestEligibilityValidator|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createRetestEligibilityValidatorMockService()
     {

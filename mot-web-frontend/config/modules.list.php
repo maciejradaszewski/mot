@@ -8,6 +8,7 @@ return [
     'DvsaFeature',
     'Dvsa\Mot\Frontend\AuthenticationModule',
     'Dvsa\Mot\Frontend\RegistrationModule',
+    'Dvsa\Mot\Frontend\MotTestModule',
     'Dashboard',
     'UserAdmin',
     'DvsaClient',

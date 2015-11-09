@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b18552af6e42a1d3abfc4b0452bf6d6f",
+    "hash": "9ac48d77e08423b4b2e0112e26698cd4",
+    "content-hash": "3507585edfb8eaac28feff353f542414",
     "packages": [
         {
             "name": "cpms/client",
@@ -1062,11 +1063,11 @@
         },
         {
             "name": "dvsa/web-frontend-assets",
-            "version": "v0.6.2",
+            "version": "v0.7.3",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/web-frontend-assets.git",
-                "reference": "1d03265cd538b326f9c76504e16410d356c0379a"
+                "reference": "cf851c1966fd7f6679a4ba5f7c6102ac8dc52dde"
             },
             "type": "library",
             "authors": [
@@ -1075,7 +1076,7 @@
                     "email": ""
                 }
             ],
-            "time": "2015-09-28 13:40:48"
+            "time": "2015-11-12 12:19:40"
         },
         {
             "name": "erusev/parsedown",
@@ -1647,12 +1648,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:zendframework/ZendPdf.git",
+                "url": "https://github.com/zendframework/ZendPdf.git",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },
