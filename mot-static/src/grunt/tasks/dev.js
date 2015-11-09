@@ -57,6 +57,7 @@ module.exports = function (grunt, config) {
             'sshexec:apache_restart', // reset DB requires a clean class cache, hence reset happens twice
             'shell:composer',
             'shell:config_reload',
+            'sshexec:mysql_proc_fix',
             'sshexec:reset_database',
             'sshexec:server_mod_dev',
             'sshexec:doctrine_default_develop_dist',
