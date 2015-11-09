@@ -5,7 +5,9 @@ namespace DvsaMotTest\Service;
 use Application\Service\CatalogService;
 use Application\Service\ContingencySessionManager;
 use Core\Service\LazyMotFrontendAuthorisationService;
+use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Dto\Common\MotTestDto;
+use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommon\Dto\Vehicle\VehicleDto;
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\HttpRestJson\Exception\NotFoundException;
@@ -18,17 +20,14 @@ use DvsaMotTest\View\VehicleSearchResult\CertificateUrlTemplate;
 use DvsaMotTest\View\VehicleSearchResult\MotTestUrlTemplate;
 use DvsaMotTest\View\VehicleSearchResult\TrainingTestUrlTemplate;
 use DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultMessage;
-use Zend\Di\Exception\ClassNotFoundException;
-use Zend\Mvc\Controller\Plugin\Url;
 use DvsaMotTest\View\VehicleSearchResult\VehicleSearchResultUrlTemplateInterface;
+use Zend\Mvc\Controller\Plugin\Url;
 
 /**
- * Class VehicleSearchService
- * @package DvsaMotTest\Service
+ * VehicleSearch Service.
  */
 class VehicleSearchService
 {
-
     const SEARCH_TYPE_STANDARD = 'standard';
     const SEARCH_TYPE_RETEST = 'retest';
     const SEARCH_TYPE_CERTIFICATE = 'certificate';
@@ -64,11 +63,11 @@ class VehicleSearchService
     private $searchType;
 
     /**
-     * @param Client $restClient
-     * @param ParamObfuscator $paramObfuscator
-     * @param ContingencySessionManager $contingencySessionManager
-     * @param VehicleSearchResult $vehicleSearchResult
-     * @param CatalogService $dataCatalogService
+     * @param Client                              $restClient
+     * @param ParamObfuscator                     $paramObfuscator
+     * @param ContingencySessionManager           $contingencySessionManager
+     * @param VehicleSearchResult                 $vehicleSearchResult
+     * @param CatalogService                      $dataCatalogService
      * @param LazyMotFrontendAuthorisationService $authorisationService
      */
     public function __construct(
@@ -91,25 +90,25 @@ class VehicleSearchService
      * @param $vin
      * @param $vrm
      * @param bool $searchDvla
+     *
      * @return array
      */
     public function search($vin, $vrm, $searchDvla = false, $vtsId = false, $isContingency = false)
     {
         $apiUrl = VehicleUrlBuilder::vehicleList();
         $params = [
-            'reg' => $vrm,
-            'vin' => $vin,
+            'reg'         => $vrm,
+            'vin'         => $vin,
             'excludeDvla' => !$searchDvla,
-            'vtsId' => $vtsId
+            'vtsId'       => $vtsId,
         ];
 
         if ($isContingency) {
             if ($this->contingencySessionManager->isMotContingency()) {
                 $contingencySession = $this->contingencySessionManager->getContingencySession();
-
-                $params += [
-                    'contingencyDate' => $contingencySession['dto']->getPerformedAt(),
-                ];
+                /** @var ContingencyTestDto $contingencyTestDto */
+                $contingencyTestDto = $contingencySession['dto'];
+                $params += ['contingencyDatetime' => $contingencyTestDto->getPerformedAt()->format(DateUtils::DATETIME_FORMAT)];
             }
         }
 
@@ -139,7 +138,8 @@ class VehicleSearchService
     /**
      * @param string|null $vrm
      * @param string|null $vin
-     * @param int|null $numberOfFoundVehicles
+     * @param int|null    $numberOfFoundVehicles
+     *
      * @return VehicleSearchResultMessage
      */
     public function getSearchResultMessage($vrm, $vin, $numberOfFoundVehicles)
@@ -235,7 +235,7 @@ class VehicleSearchService
 
     /**
      * Get Vehicle Data by MotTest Number.
-     * If there are any REST errors, we want to know.  Only catching NotFoundException
+     * If there are any REST errors, we want to know.  Only catching NotFoundException.
      *
      * @param string $motTestNumber
      *
@@ -263,7 +263,7 @@ class VehicleSearchService
     }
 
     /**
-     * Get Vehicle Data by MotTest Number When Trying a Re-test
+     * Get Vehicle Data by MotTest Number When Trying a Re-test.
      *
      * @param string $motTestNumber
      *
@@ -282,6 +282,7 @@ class VehicleSearchService
 
     /**
      * @param $searchType
+     *
      * @return bool
      */
     public function shouldSearchInDvlaVehicleList($searchType)
@@ -291,6 +292,7 @@ class VehicleSearchService
 
     /**
      * @param $searchType
+     *
      * @return bool
      */
     public function areSlotsNeeded($searchType)
@@ -309,6 +311,7 @@ class VehicleSearchService
 
     /**
      * @param array $vehicleArray
+     *
      * @return array
      */
     public function obfuscateIdAndAddSourceToVehicleArray(array $vehicleArray)
@@ -336,8 +339,10 @@ class VehicleSearchService
      * @param $noRegistration
      * @param int $noRegistration
      * @param Url $urlPlugin
-     * @return VehicleSearchResultUrlTemplateInterface
+     *
      * @throws \Exception
+     *
+     * @return VehicleSearchResultUrlTemplateInterface
      */
     public function getUrlTemplate($noRegistration, $noRegistration, Url $urlPlugin)
     {

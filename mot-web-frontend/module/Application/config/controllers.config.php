@@ -12,7 +12,6 @@ use DvsaMotEnforcement\Factory\MotTestSearchControllerFactory as EnforcementMotT
 use DvsaMotEnforcementApi\Controller\MotTestApiController;
 use DvsaMotTest\Controller\BrakeTestResultsController;
 use DvsaMotTest\Controller\CertificatePrintingController;
-use DvsaMotTest\Controller\ContingencyMotTestController;
 use DvsaMotTest\Controller\LocationSelectController;
 use DvsaMotTest\Controller\MotTestCertificatesController;
 use DvsaMotTest\Controller\MotTestController;
@@ -46,7 +45,6 @@ return [
         VehicleDictionaryController::class  => VehicleDictionaryController::class,
         BrakeTestResultsController::class   => BrakeTestResultsController::class,
         TestItemSelectorController::class   => TestItemSelectorController::class,
-        ContingencyMotTestController::class => ContingencyMotTestController::class,
         MotTestApiController::class         => MotTestApiController::class,
         ReinspectionReportController::class => ReinspectionReportController::class,
     ],

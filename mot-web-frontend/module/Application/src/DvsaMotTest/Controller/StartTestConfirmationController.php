@@ -10,7 +10,7 @@ use DvsaCommon\Auth\Assertion\RefuseToTestAssertion;
 use DvsaCommon\Auth\PermissionInSystem;
 use Core\Service\RemoteAddress;
 use DvsaCommon\Dto\Common\ColourDto;
-use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
+use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommon\Dto\Vehicle\AbstractVehicleDto;
 use DvsaCommon\Dto\Vehicle\VehicleParamDto;
 use DvsaCommon\Dto\VehicleClassification\VehicleClassDto;
@@ -439,10 +439,10 @@ class StartTestConfirmationController extends AbstractDvsaMotTestController
 
         $contingencySessionManager = $this->getContingencySessionManager();
         if ($contingencySessionManager->isMotContingency() === true) {
-            /** @var ContingencyMotTestDto $contingency */
+            /** @var ContingencyTestDto $contingency */
             $contingency = $contingencySessionManager->getContingencySession()['dto'];
 
-            if ($contingency instanceof ContingencyMotTestDto) {
+            if ($contingency instanceof ContingencyTestDto) {
                 $apiUrl->queryParam('contingencyDate', $contingency->getPerformedAt() . 'T00:00:00Z');
             }
         }

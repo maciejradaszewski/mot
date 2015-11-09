@@ -9,7 +9,7 @@ use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Constants\Role;
 use DvsaCommon\Date\DateUtils;
-use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
+use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Enum\ReasonForRejectionTypeName;
 use DvsaCommonApi\Service\Exception\BadRequestException;
@@ -91,7 +91,7 @@ class MotTestCreationHelper
      * @param $oneTimePassword
      * @param $contingencyId
      * @param $clientIp
-     * @param \DvsaCommon\Dto\MotTesting\ContingencyMotTestDto $contingencyDto
+     * @param \DvsaCommon\Dto\MotTesting\ContingencyTestDto $contingencyDto
      *
      * @throws \DvsaCommonApi\Service\Exception\BadRequestException
      * @throws \DvsaCommonApi\Service\Exception\NotFoundException
@@ -118,7 +118,7 @@ class MotTestCreationHelper
         $oneTimePassword,
         $contingencyId,
         $clientIp,
-        ContingencyMotTestDto $contingencyDto = null
+        ContingencyTestDto $contingencyDto = null
     ) {
         $isVehicleExaminer = $this->authService->personHasRole($tester, Role::VEHICLE_EXAMINER);
 
@@ -217,8 +217,8 @@ class MotTestCreationHelper
             $motTest->setFreeTextMakeName($vehicle->getMakeName());
         }
 
-        if ($contingencyDto instanceof ContingencyMotTestDto) {
-            $motTest->setStartedDate(DateUtils::toDateTime($contingencyDto->getPerformedAt() . 'T00:00:00Z'));
+        if ($contingencyDto instanceof ContingencyTestDto) {
+            $motTest->setStartedDate(DateUtils::toDateTime($contingencyDto->getPerformedAt()->format(DateUtils::DATETIME_FORMAT)));
 
             /** @var \DvsaEntities\Entity\EmergencyLog $contingency */
             $contingency = $this->entityManager

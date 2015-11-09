@@ -5,6 +5,7 @@
         "This file is @generated automatically"
     ],
     "hash": "444279d02128cd47f71983c486fd91cd",
+    "content-hash": "d6b6f2d4b157e1b3ef021575f7bdcece",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -442,12 +443,12 @@
             "version": "0.8.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:doctrine/DoctrineORMModule.git",
+                "url": "https://github.com/doctrine/DoctrineORMModule.git",
                 "reference": "31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineORMModule/zipball/473e12ff9b39e2ec00f09bf89758d1fb0bec829e",
+                "url": "https://api.github.com/repos/doctrine/DoctrineORMModule/zipball/31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0",
                 "reference": "31a0a0aefd424ca2eaecc0303c4bb0d959b1f2c0",
                 "shasum": ""
             },
@@ -847,12 +848,12 @@
             "target-dir": "Symfony/Component/Console",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Console.git",
+                "url": "https://github.com/symfony/console.git",
                 "reference": "61b13c27c9258e97009249d4ef193c964bf346b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/61b13c27c9258e97009249d4ef193c964bf346b7",
+                "url": "https://api.github.com/repos/symfony/console/zipball/61b13c27c9258e97009249d4ef193c964bf346b7",
                 "reference": "61b13c27c9258e97009249d4ef193c964bf346b7",
                 "shasum": ""
             },

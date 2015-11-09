@@ -4,7 +4,7 @@ namespace DvsaMotApi\Service\Validator\RetestEligibility;
 
 use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommon\Date\DateUtils as DU;
-use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
+use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\Entity\MotTest;
@@ -43,7 +43,7 @@ class RetestEligibilityValidator
      *
      * @param int $vehicleId database identifier of vehicle
      * @param int $vtsId database identifier of Vehicle Testing Station
-     * @param ContingencyMotTestDto $contingencyDto
+     * @param ContingencyTestDto $contingencyDto
      *
      * @return int  Retest granted code, or throw exception
      * @throws BadRequestException
@@ -119,7 +119,7 @@ class RetestEligibilityValidator
         }
 
         $lastTestCompletedDate = DU::cropTime($test->getCompletedDate());
-        $queryDate = ($contingencyDto instanceof ContingencyMotTestDto
+        $queryDate = ($contingencyDto instanceof ContingencyTestDto
             ? DU::cropTime(new \DateTime($contingencyDto->getPerformedAt() . ' 00:00:00'))
             : $this->dateTime->getCurrentDate()
         );

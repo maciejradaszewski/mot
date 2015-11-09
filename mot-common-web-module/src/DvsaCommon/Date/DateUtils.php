@@ -3,20 +3,20 @@
 namespace DvsaCommon\Date;
 
 use DvsaCommon\Date\Exception\DateException;
-use DvsaCommon\Date\Exception\DateTimeErrorException;
 use DvsaCommon\Date\Exception\IncorrectDateFormatException;
 use DvsaCommon\Date\Exception\NonexistentDateException;
 use DvsaCommon\Date\Exception\NonexistentDateTimeException;
 use DvsaCommon\Utility\TypeCheck;
 
 /**
- * Util class for date operations
+ * Util class for date operations.
  *
  * Use it instead of raw \DateTime class (which is very doggy)
  */
 final class DateUtils
 {
     const FORMAT_ISO_WITH_TIME = 'Y-m-d H:i:s';
+    const DATETIME_FORMAT = 'Y-m-d\TH:i:s\Z';
 
     private static $FORMAT_DATETIME_DESC = 'yyyy-mm-ddThh:mm:ss(Z|+hh:mm)';
     private static $FORMAT_DATE_DESC = 'yyyy-mm-dd';
@@ -24,20 +24,18 @@ final class DateUtils
     private static $FORMAT_ISO8601TZ = '/^(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})(T(?P<hour>\d{2}):(?P<min>\d{2}):(?P<sec>\d{2})(?:Z|(?:[+-]\d{2}(:(\d{2}))?)))?$/';
     private static $FORMAT_ISO8601_DATE = '/^(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})$/';
 
-
     const FIRST_OF_THIS_MONTH = 'first day of this month';
 
-
     /**
-     * Returns next calendar day with optional crop of time
+     * Returns next calendar day with optional crop of time.
      *
      * @param \DateTime $date
-     *      the date you want to have the next day of
+     *                                the date you want to have the next day of
      * @param bool      $preserveTime
-     *      flag true|false whether to crop time part of the timestamp
+     *                                flag true|false whether to crop time part of the timestamp
      *
      * @return \DateTime
-     *      the next calendar day
+     *                   the next calendar day
      */
     public static function nextDay(\DateTime $date, $preserveTime = true)
     {
@@ -51,23 +49,22 @@ final class DateUtils
     }
 
     /**
-     * Returns the first day of the current month
+     * Returns the first day of the current month.
      *
      * @return \DateTime
-     *      the first day of the month
+     *                   the first day of the month
      */
     public static function firstOfThisMonth()
     {
-        return self::cropTime((new \DateTime)->modify(self::FIRST_OF_THIS_MONTH));
+        return self::cropTime((new \DateTime())->modify(self::FIRST_OF_THIS_MONTH));
     }
 
     /**
-     *
      * @param \DateTime $dateTime
-     *      timestamp
+     *                            timestamp
      *
      * @return \DateTime
-     *      timestamp with time part reset
+     *                   timestamp with time part reset
      */
     public static function cropTime(\DateTime $dateTime)
     {
@@ -78,7 +75,7 @@ final class DateUtils
     }
 
     /**
-     * Returns information if a given DateTime is a weekend
+     * Returns information if a given DateTime is a weekend.
      *
      * @param \DateTime $dateTime
      *
@@ -95,8 +92,9 @@ final class DateUtils
      * @param $value
      * @param $length
      *
-     * @return string
      * @throws Exception\IncorrectDateFormatException
+     *
+     * @return string
      */
     private static function parseNumericString($value, $length)
     {
@@ -108,7 +106,7 @@ final class DateUtils
     }
 
     /**
-     * Checks if a date (without time) is in the future
+     * Checks if a date (without time) is in the future.
      *
      * @param \DateTime $dateTime
      *
@@ -120,7 +118,7 @@ final class DateUtils
     }
 
     /**
-     * checks if $date is between $startDate and $endDate
+     * checks if $date is between $startDate and $endDate.
      *
      * @param \DateTime $date
      * @param \DateTime $startDate
@@ -135,11 +133,12 @@ final class DateUtils
         if ($startDate > $endDate) {
             throw new DateException('Start date cannot be greater than end date');
         }
+
         return ($date >= $startDate && $date <= $endDate);
     }
 
     /**
-     * checks if $date is between $startDate and $endDate
+     * checks if $date is between $startDate and $endDate.
      *
      * @param \DateTime $date
      * @param \DateTime $startDate
@@ -154,6 +153,7 @@ final class DateUtils
         if (self::compareDates($startDate, $endDate) > 0) {
             throw new DateException('Start date cannot be greater than end date');
         }
+
         return self::compareDates($date, $startDate) >= 0 && self::compareDates($date, $endDate) <= 0;
     }
 
@@ -175,7 +175,7 @@ final class DateUtils
     }
 
     /**
-     * Gets the absolute number of seconds between two DateTimes
+     * Gets the absolute number of seconds between two DateTimes.
      *
      * @param \DateTime $datetime1
      * @param \DateTime $datetime2
@@ -190,7 +190,7 @@ final class DateUtils
     }
 
     /**
-     * Provided with a number of seconds, calculates the right number of years, days etc and creates a DateInterval
+     * Provided with a number of seconds, calculates the right number of years, days etc and creates a DateInterval.
      *
      * @param $seconds
      *
@@ -258,10 +258,10 @@ final class DateUtils
      * @param $month
      * @param $year
      *
-     * @return bool
-     *
      * @throws Exception\NonexistentDateException
      * @throws Exception\IncorrectDateFormatException
+     *
+     * @return bool
      */
     public static function validateDateByParts($day, $month, $year)
     {
@@ -349,7 +349,7 @@ final class DateUtils
     }
 
     /**
-     * Converts \DateTime to user timezone
+     * Converts \DateTime to user timezone.
      *
      * @param \DateTime $dateTime
      *
@@ -358,12 +358,12 @@ final class DateUtils
     public static function toUserTz(\DateTime $dateTime)
     {
         $dateTimeCopy = clone $dateTime;
+
         return $dateTimeCopy->setTimezone(new \DateTimeZone(self::$USER_TZ));
     }
 
-
     /**
-     * Converts DateTime to timestamp including timezone offset
+     * Converts DateTime to timestamp including timezone offset.
      *
      * @param \DateTime $dateTime
      *
@@ -385,7 +385,7 @@ final class DateUtils
     }
 
     /**
-     * Returns current date
+     * Returns current date.
      *
      * @return \DateTime
      */
@@ -395,17 +395,17 @@ final class DateUtils
     }
 
     /**
-     * Returns current date and time in user timezone
+     * Returns current date and time in user timezone.
      *
      * @return \DateTime
      */
     public static function nowAsUserDateTime()
     {
-        return self::toUserTz(new \DateTime);
+        return self::toUserTz(new \DateTime());
     }
 
     /**
-     * Converts datetime to UTC timezone
+     * Converts datetime to UTC timezone.
      *
      * @param \DateTime $dateTime
      *
@@ -414,11 +414,12 @@ final class DateUtils
     public static function toUtc(\DateTime $dateTime)
     {
         $dateTimeCopy = clone $dateTime;
+
         return $dateTimeCopy->setTimezone(new \DateTimeZone('UTC'));
     }
 
     /**
-     * Return true if input has valid date format YYYY-MM-DD
+     * Return true if input has valid date format YYYY-MM-DD.
      *
      * @param $strDate
      *
@@ -431,17 +432,19 @@ final class DateUtils
         } catch (DateException $e) {
             return false;
         }
+
         return true;
     }
 
     /**
-     * Parses string input (see $FORMAT_DATE_DESC) to DateTime object
+     * Parses string input (see $FORMAT_DATE_DESC) to DateTime object.
      *
      * @param string $input
      *
-     * @return \DateTime
      * @throws \DvsaCommon\Date\Exception\IncorrectDateFormatException
      * @throws \DvsaCommon\Date\Exception\NonexistentDateException
+     *
+     * @return \DateTime
      */
     public static function toDate($input)
     {
@@ -452,6 +455,7 @@ final class DateUtils
             throw new IncorrectDateFormatException(self::$FORMAT_DATE_DESC, $input);
         }
         self::checkDate($m['year'], $m['month'], $m['day']);
+
         return self::strDateAsDate($input);
     }
 
@@ -487,15 +491,16 @@ final class DateUtils
     }
 
     /**
-     * Parses string input (see $FORMAT_DATETIME_DESC) to DateTime object
+     * Parses string input (see $FORMAT_DATETIME_DESC) to DateTime object.
      *
      * @param string  $input
      * @param boolean $strict
      *
-     * @return \DateTime
      * @throws \DvsaCommon\Date\Exception\IncorrectDateFormatException
      * @throws \DvsaCommon\Date\Exception\NonexistentDateException
      * @throws \DvsaCommon\Date\Exception\NonexistentDateTimeException
+     *
+     * @return \DateTime
      */
     public static function toDateTime($input, $strict = true)
     {
@@ -513,6 +518,7 @@ final class DateUtils
             if (intval($hour) > 24 || intval($min) > 59 || intval($sec) > 59) {
                 throw new NonexistentDateTimeException("$year-$month-$day $hour:$min:$sec");
             }
+
             return DateUtils::toUtc(new \DateTime($input));
         } elseif (!$strict) {
             return self::strDateAsDate($input);
@@ -536,9 +542,8 @@ final class DateUtils
         }
     }
 
-
     /**
-     * Calculate timestamp delta between 2 dates
+     * Calculate timestamp delta between 2 dates.
      *
      * @param \DateTime $dateTo
      * @param \DateTime $dateFrom
@@ -550,9 +555,8 @@ final class DateUtils
         return DateUtils::toUserTzTimestamp($dateTo) - DateUtils::toUserTzTimestamp($dateFrom);
     }
 
-
     /**
-     * Checks if a date (without time) is in the past
+     * Checks if a date (without time) is in the past.
      *
      * @param \DateTime $dateTime
      *
@@ -564,15 +568,18 @@ final class DateUtils
     }
 
     /**
-     * Accepts date in one format and returns in another
+     * Accepts date in one format and returns in another.
+     *
      * @param string $input
      * @param string $inputFormat
      * @param string $outputFormat
+     *
      * @return string
      */
     public static function changeFormat($input, $inputFormat, $outputFormat)
     {
         $date = \DateTime::createFromFormat($inputFormat, $input);
+
         return $date->format($outputFormat);
     }
 

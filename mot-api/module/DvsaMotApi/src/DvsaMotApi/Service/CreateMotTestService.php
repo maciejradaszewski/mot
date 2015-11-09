@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use DvsaAuthentication\Service\OtpService;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
-use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
+use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Transaction\TransactionAwareInterface;
 use DvsaCommonApi\Transaction\TransactionAwareTrait;
@@ -185,7 +185,7 @@ class CreateMotTestService implements TransactionAwareInterface
      * @param bool                       $flagPrivate
      * @param string|null                $oneTimePassword
      * @param int|null                   $contingencyId
-     * @param ContingencyMotTestDto|null $contingencyDto
+     * @param ContingencyTestDto|null $contingencyDto
      *
      * @return MotTest
      */
@@ -206,7 +206,7 @@ class CreateMotTestService implements TransactionAwareInterface
         $flagPrivate = false,
         $oneTimePassword = null,
         $contingencyId = null,
-        ContingencyMotTestDto $contingencyDto = null
+        ContingencyTestDto $contingencyDto = null
     )
     {
         return $this->inTransaction(

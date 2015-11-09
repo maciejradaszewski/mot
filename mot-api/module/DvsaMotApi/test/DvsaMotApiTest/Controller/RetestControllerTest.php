@@ -106,7 +106,7 @@ class RetestControllerTest extends AbstractMotApiControllerTestCase
         $this->request->getPost()->set('hasRegistration', true);
         $this->request->getPost()->set('contingencyId', 3);
         $this->request->getPost()->set('contingencyDto', [
-            "_class" => "DvsaCommon\\Dto\\MotTesting\\ContingencyMotTestDto"
+            "_class" => "DvsaCommon\\Dto\\MotTesting\\ContingencyTestDto"
         ]);
 
         $motTest = new MotTest();

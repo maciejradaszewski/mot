@@ -13,7 +13,7 @@ use DvsaMotApi\Service\CertificateExpiryService;
  */
 class VehicleCertificateExpiryController extends AbstractDvsaRestfulController
 {
-    const FIELD_CONTINGENCY_DATE = 'contingencyDate';
+    const FIELD_CONTINGENCY_DATETIME = 'contingencyDatetime';
 
     /**
      * @param mixed $id
@@ -25,12 +25,12 @@ class VehicleCertificateExpiryController extends AbstractDvsaRestfulController
 
         /** @var CertificateExpiryService $certificateExpiryService */
         $certificateExpiryService = $this->getServiceLocator()->get('CertificateExpiryService');
-        $contingencyDate = ArrayUtils::tryGet($this->getRequest()->getQuery()->toArray(), self::FIELD_CONTINGENCY_DATE);
+        $contingencyDatetime = ArrayUtils::tryGet($this->getRequest()->getQuery()->toArray(), self::FIELD_CONTINGENCY_DATETIME);
 
-        if ($contingencyDate !== null) {
-            $contingencyDate = DateUtils::toDateTime($contingencyDate);
+        if ($contingencyDatetime !== null) {
+            $contingencyDatetime = DateUtils::toDateTime($contingencyDatetime);
         }
-        $checkResult = $certificateExpiryService->getExpiryDetailsForVehicle($vehicleId, $isDvla, $contingencyDate);
+        $checkResult = $certificateExpiryService->getExpiryDetailsForVehicle($vehicleId, $isDvla, $contingencyDatetime);
 
         return ApiResponse::jsonOk(['checkResult' => $checkResult]);
     }

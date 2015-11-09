@@ -542,7 +542,7 @@ class MotTestControllerTest extends AbstractMotApiControllerTestCase
         $this->request->getPost()->set('contingencyId', 3);
         $this->request->getPost()->set(
             'contingencyDto', [
-                "_class" => "DvsaCommon\\Dto\\MotTesting\\ContingencyMotTestDto"
+                "_class" => "DvsaCommon\\Dto\\MotTesting\\ContingencyTestDto"
             ]
         );
         $result = $this->getResultForAction('post');

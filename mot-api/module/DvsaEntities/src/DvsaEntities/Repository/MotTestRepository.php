@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DvsaCommon\Constants\SearchParamConst;
-use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
+use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommon\Enum\MotTestStatusCode;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
@@ -70,12 +70,10 @@ class MotTestRepository extends AbstractMutableRepository
             ->setParameter("code", MotTestTypeCode::NORMAL_TEST)
             ->setMaxResults(1);
 
-        if ($contingencyDto instanceof ContingencyMotTestDto) {
+        if ($contingencyDto instanceof ContingencyTestDto) {
             $qb
-                ->andWhere("mt.completedDate <= :contingencyDate")
-                // Time changed to 23:59:59, because if normal test and CT test have a same date, and because
-                // normal test has a TIME, the query can't find a normal test, because NT DateTime >= CT Date + 00:00:00
-                ->setParameter("contingencyDate", $contingencyDto->getPerformedAt() . ' 23:59:59');
+                ->andWhere('mt.completedDate <= :contingencyDatetime')
+                ->setParameter('contingencyDatetime', $contingencyDto->getPerformedAt());
         }
 
         $resultArray = $qb->getQuery()->getResult();
@@ -1481,7 +1479,6 @@ class MotTestRepository extends AbstractMutableRepository
 
         return $result !== null;
     }
-
 
     /**
      * @param $vehicleId

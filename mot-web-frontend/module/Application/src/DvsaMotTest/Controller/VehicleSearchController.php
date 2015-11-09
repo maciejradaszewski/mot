@@ -29,11 +29,10 @@ use Zend\I18n\Filter\Alnum;
 use Zend\View\Model\ViewModel;
 
 /**
- * Class VehicleSearchController.
+ * VehicleSearch Controller.
  */
 class VehicleSearchController extends AbstractDvsaMotTestController
 {
-
     const CONTINGENCY_FORM_NOT_RECORDED = 'The contingency test form has not been filled in.';
     const PARTIAL_VIN_NO_REG_ERROR = 'Please complete the registration number field.';
     const NO_VIN_AND_NO_REG_ERROR = 'You must enter the registration mark and VIN to search for a vehicle.';
@@ -126,6 +125,7 @@ class VehicleSearchController extends AbstractDvsaMotTestController
     public function vehicleSearchAction()
     {
         $this->assertGranted(PermissionInSystem::MOT_TEST_START);
+
         return $this->vehicleSearch(VehicleSearchService::SEARCH_TYPE_STANDARD);
     }
 

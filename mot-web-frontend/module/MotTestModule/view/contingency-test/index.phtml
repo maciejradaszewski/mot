@@ -1,0 +1,180 @@
+<?php
+
+/** @var $contingencyReasonCode  array */
+/** @var $dto                    \DvsaCommon\Dto\MotTesting\ContingencyTestDto */
+/** @var $sites                  array */
+/** @var $contingencyReasonCodes array */
+/** @var $validationSummary      array|null */
+/** @var $inlineMessages         array|null */
+
+
+echo $this->partial(
+    'motTestProgress', [
+        'currentStep'      => -1,
+        'title'            => $this->pageTitle,
+        'isMotContingency' => true,
+    ]
+);
+
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+echo $this->partial('infoMessages', ['getFromFlash' => true]);
+?>
+
+<?php if (!empty($validationSummary)): ?>
+<div class="validation-summary">
+    <ol><?php foreach ($validationSummary as $validationSummaryMessage): ?>
+        <li><?php echo $validationSummaryMessage; ?></li>
+    <?php endforeach ?></ol>
+</div>
+<?php endif ?>
+
+<form action="<?php echo $this->url('contingency') ?>" method="POST" autocomplete="off" xmlns="http://www.w3.org/1999/html">
+    <?php echo $this->csrfToken() ?>
+    <fieldset>
+        <legend class="visuallyhidden">Contingency test details</legend>
+
+        <?php if (count($sites) > 1): ?>
+            <div class="form-group">
+                <fieldset>
+                    <legend class="form-label">
+                        Location where the test was performed
+                        <?php if ($inlineMessages['site']): ?><span class="validation-message"><?php echo $inlineMessages['site']; ?></span> <?php endif ?>
+                    </legend>
+
+                    <?php foreach ($sites as $site): ?>
+                        <label class="block-label" for="site-<?php echo($site['id'])?>">
+                            <input type="radio" value="<?php echo $this->escapeHtmlAttr($site['id']); ?>" name="site_id"
+                                   id="site-<?php echo $this->escapeHtmlAttr($site['id']); ?>"
+                                   <?php if ($dto->getSiteId() == $site['id']): ?>checked="checked"<?php endif ?>>
+                            <?php echo $this->escapeHtml($site['name']); ?>
+                            <span class="block-label__meta"><?php echo $this->escapeHtml($site['siteNumber']); ?>, <?php echo $this->escapeHtml($site['address']); ?></span>
+                        </label>
+                    <?php endforeach ?>
+                </fieldset>
+            </div>
+        <?php elseif (count($sites) == 1): ?>
+            <?php $site = array_pop($sites); ?>
+            <input type="hidden" name="site_id" id="site-<?php echo $this->escapeHtmlAttr($site['id']); ?>"
+                   value="<?php echo $this->escapeHtmlAttr($site['id']); ?>">
+        <?php else: ?>
+            <input type="hidden" name="site_id" id="site-0" value="0">
+        <?php endif ?>
+
+        <div class="form-group">
+            <fieldset>
+                <legend class="form-label">
+                    Date the test was performed
+                </legend>
+                <div class="form-date">
+                    <span class="form-hint">For example, 25 03 2015</span>
+                    <?php if ($inlineMessages['date']): ?><span class="validation-message"><?php echo $inlineMessages['date']; ?></span> <?php endif ?>
+
+                    <div class="form-group form-group-day">
+                        <label for="contingency_date-day">Day</label>
+                        <input type="text" name="performed_at_day" value="<?php echo $this->escapeHtmlAttr($dto->getPerformedAtDay()) ?>" id="contingency_date-day" class="form-control">
+                    </div>
+                    <div class="form-group form-group-month">
+                        <label for="contingency_date-month">Month</label>
+                        <input type="text" name="performed_at_month" value="<?php echo $this->escapeHtmlAttr($dto->getPerformedAtMonth()) ?>" id="contingency_date-month" class="form-control">
+                    </div>
+                    <div class="form-group form-group-year">
+                        <label for="contingency_date-year">Year</label>
+                        <input type="text" name="performed_at_year" value="<?php echo $this->escapeHtmlAttr($dto->getPerformedAtYear()) ?>" id="contingency_date-year" class="form-control">
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="form-group">
+            <fieldset>
+                <legend class="form-label">
+                    Time the test was performed
+                </legend>
+                <div class="form-time">
+
+                    <span class="form-hint">For example, 8:30am or 5:50pm (for midday use 12:00pm)</span>
+                    <?php if ($inlineMessages['time']): ?><span class="validation-message"><?php echo $inlineMessages['time']; ?></span> <?php endif ?>
+
+                    <div class="form-group form-group-hour">
+                        <label for="contingency_time-hour" class="visuallyhidden">Hours</label>
+                        <input type="text" name="performed_at_hour"
+                               value="<?php echo $this->escapeHtmlAttr($dto->getPerformedAtHour()) ?>"
+                               id="contingency_time-hour" class="form-control">
+                    </div>
+                    <div class="form-group form-group form-group-delimeter">
+                        :
+                    </div>
+                    <div class="form-group form-group-minutes">
+                        <label for="contingency_time-minutes" class="visuallyhidden">Minutes</label>
+                        <input type="text" name="performed_at_minute"
+                               value="<?php echo $this->escapeHtmlAttr($dto->getPerformedAtMinute()) ?>"
+                               id="contingency_time-minutes" class="form-control">
+                    </div>
+                    <div class="form-group form-group-ampm">
+                        <label for="contingency_time-ampm" class="visuallyhidden">am or pm</label>
+                        <select name="performed_at_am_pm" id="contingency_time-ampm" class="form-control">
+                            <option value="am" <?php if ('am' === strtolower($dto->getPerformedAtAmPm())): echo 'selected="selected"'; endif; ?>>am</option>
+                            <option value="pm" <?php if ('pm' === strtolower($dto->getPerformedAtAmPm())): echo 'selected="selected"'; endif; ?>>pm</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="form-group">
+            <fieldset>
+                <legend class="form-label">
+                    Reason for contingency testing
+                    <?php if ($inlineMessages['reason']): ?><span class="validation-message"><?php echo $inlineMessages['reason']; ?></span> <?php endif ?>
+                </legend>
+                <label class="block-label"
+                       for="contingency-reason__system-outage">
+                    <input type="radio" name="reason_code"
+                           value="<?php echo $this->escapeHtmlAttr($contingencyReasonCodes['systemOutage']); ?>"
+                           id="contingency-reason__system-outage"
+                           <?php if ($dto->getReasonCode() == $contingencyReasonCodes['systemOutage']): ?>checked="checked"<?php endif ?>>
+                    System outage
+                </label>
+                <label class="block-label"
+                       for="contingency-reason__communication-problem">
+                    <input type="radio" name="reason_code"
+                           value="<?php echo $this->escapeHtmlAttr($contingencyReasonCodes['communicationProblem']); ?>"
+                           id="contingency-reason__communication-problem"
+                           <?php if ($dto->getReasonCode() == $contingencyReasonCodes['communicationProblem']): ?>checked="checked"<?php endif ?>>
+                    Communication problem
+                </label>
+                <label class="block-label"
+                       for="contingency-reason__other"
+                       data-target="target-other-reason">
+                    <input type="radio" name="reason_code"
+                           value="<?php echo $this->escapeHtmlAttr($contingencyReasonCodes['other']); ?>"
+                           id="contingency-reason__other"
+                           <?php if ($dto->getReasonCode() == $contingencyReasonCodes['other']): ?>checked="checked"<?php endif ?>>
+                    Other
+                </label>
+            </fieldset>
+        </div>
+        <div id="target-other-reason" class="panel-indent js-hidden">
+            <label for="other-reason" class="form-label">
+                If other, please enter a reason
+                <?php if ($inlineMessages['otherReasonText']): ?><span class="validation-message"><?php echo $inlineMessages['otherReasonText']; ?></span> <?php endif ?>
+            </label>
+            <textarea type="text" name="other_reason_text" id="other-reason" class="form-control"><?php echo $this->escapeHtml($dto->getOtherReasonText()); ?></textarea>
+        </div>
+
+        <div class="form-group gutter-top">
+            <label for="contingency_code" class="form-label">
+                Contingency code
+                <?php if ($inlineMessages['contingencyCode']): ?><span class="validation-message"><?php echo $inlineMessages['contingencyCode']; ?></span> <?php endif ?>
+            </label>
+            <input type="text" name="contingency_code" id="contingency_code" class="form-control form-control-1-8" value="<?php echo $this->escapeHtmlAttr($dto->getContingencyCode()) ?>">
+        </div>
+    </fieldset>
+
+    <nav class="content-navigation">
+        <input type="submit" value="Confirm contingency test" class="button" id="confirm_ct_button" />
+        <ul class="content-navigation__secondary">
+            <li><a href="<?php echo $this->url('user-home') ?>">Cancel and return home</a></li>
+        </ul>
+    </nav>
+</form>

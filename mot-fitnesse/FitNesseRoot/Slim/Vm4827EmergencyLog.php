@@ -1,6 +1,6 @@
 <?php
 
-use DvsaCommon\Dto\MotTesting\ContingencyMotTestDto;
+use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use MotFitnesse\Util\UrlBuilder;
 use MotFitnesse\Util\TestShared;
 
@@ -107,7 +107,7 @@ class Vm4827EmergencyLog
             'dateMonth'       => $testDate->format('m'),
             'dateDay'         => $testDate->format('d'),
             'reasonCode'      => $this->reasonCode,
-            '_class'          => ContingencyMotTestDto::class,
+            '_class'          => ContingencyTestDto::class,
         ];
 
         if ('empty' == $this->reasonText) {
