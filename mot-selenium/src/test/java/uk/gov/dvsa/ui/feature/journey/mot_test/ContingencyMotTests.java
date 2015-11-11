@@ -1,4 +1,4 @@
-package uk.gov.dvsa.ui.feature.journey;
+package uk.gov.dvsa.ui.feature.journey.mot_test;
 
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeMethod;
@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
+import uk.gov.dvsa.domain.model.mot.DateRange;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.ui.BaseTest;
@@ -37,34 +38,15 @@ public class ContingencyMotTests extends BaseTest {
     }
 
     @Test(groups = {"BVT", "Regression", "VM-4825,Sprint05,VM-9444 Regression"})
-    public void conductTestSuccessfully() throws IOException, URISyntaxException {
+    public void recordContingencyTestSuccessfully() throws IOException, URISyntaxException {
+        //Given I am the Record Contingency Page
+        motUI.contingency.testPage(tester);
 
-        //Given I am on the Test Contingency Test Entry page
-        ContingencyTestEntryPage contingencyTestEntryPage = pageNavigator.gotoContingencyTestEntryPage(tester);
+        //When I enter valid Contingency Test details
+        motUI.contingency.enterTest(contingencyCode, DateTime.now(), vehicle);
 
-        //When I complete contingency test form and provide the contingency code
-        VehicleSearchPage vehicleSearchPage = contingencyTestEntryPage.
-                fillContingencyTestFormAndConfirm(contingencyCode, DateTime.now());
-
-        //I can proceed with the Mot test
-        StartTestConfirmationPage startTestConfirmationPage =
-                vehicleSearchPage.searchVehicle(vehicle).selectVehicleForTest();
-
-        TestResultsEntryPage testResultsEntryPage =
-                startTestConfirmationPage.clickStartMotTestWhenConductingContingencyTest();
-
-        //And when I complete all Brake test Values with passing data
-        testResultsEntryPage.completeTestDetailsWithPassValues();
-
-        //Then I should see a fail on the test result page
-        assertThat(testResultsEntryPage.isPassNoticeDisplayed(), is(true));
-
-        //Then I should be able to complete the Test Successfully
-        TestSummaryPage testSummaryPage = testResultsEntryPage.clickReviewTestButton();
-
-        TestCompletePage testCompletePage = testSummaryPage.finishTestAndPrint();
-
-        assertThat(testCompletePage.verifyBackToHomeLinkDisplayed(), is(true));
+        //Then it Contingency is entered successfully
+        assertThat(motUI.contingency.isTestSaveSuccessful(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "VM-4825,Sprint05,VM-9444 Regression"})

@@ -98,7 +98,7 @@ public class PageNavigator {
     }
 
     public ContingencyTestEntryPage gotoContingencyTestEntryPage(User user) throws URISyntaxException, IOException {
-        injectOpenAmCookieAndNavigateToPath(user, ContingencyTestEntryPage.path);
+        injectOpenAmCookieAndNavigateToPath(user, ContingencyTestEntryPage.PATH);
 
 
 
@@ -106,7 +106,7 @@ public class PageNavigator {
     }
 
     public ReTestResultsEntryPage gotoContigencyReTestResultsEntryPage(User user, String contingencyCode, Vehicle vehicle) throws URISyntaxException, IOException {
-        injectOpenAmCookieAndNavigateToPath(user, ContingencyTestEntryPage.path);
+        injectOpenAmCookieAndNavigateToPath(user, ContingencyTestEntryPage.PATH);
 
         ContingencyTestEntryPage testEntryPage = PageLocator.getContingencyTestEntryPage(driver);
         testEntryPage.fillContingencyTestFormAndConfirm(contingencyCode, DateTime.now());

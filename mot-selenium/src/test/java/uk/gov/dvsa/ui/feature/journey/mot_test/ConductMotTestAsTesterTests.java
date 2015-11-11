@@ -1,4 +1,4 @@
-package uk.gov.dvsa.ui.feature.journey;
+package uk.gov.dvsa.ui.feature.journey.mot_test;
 
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeMethod;
