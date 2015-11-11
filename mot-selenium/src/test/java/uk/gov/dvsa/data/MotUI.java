@@ -26,7 +26,6 @@ public class MotUI {
     public final SearchUser searchUser;
     public final SearchSite searchSite;
     public final Vts vts;
-    
     public final DuplicateReplacementCertificate duplicateReplacementCertificate;
     public final ContingencyTest contingencyTest;
 
@@ -41,7 +40,7 @@ public class MotUI {
         searchSite = new SearchSite(pageNavigator);
         duplicateReplacementCertificate = new DuplicateReplacementCertificate(pageNavigator);
         vts = new Vts(pageNavigator);
-        contingencyTest = new ContingencyTest(pageNavigator);
+        contingency = new Contingency(pageNavigator);
     }
 
     public void startTestConfirmationPage(User user, Vehicle vehicle) throws IOException, URISyntaxException {

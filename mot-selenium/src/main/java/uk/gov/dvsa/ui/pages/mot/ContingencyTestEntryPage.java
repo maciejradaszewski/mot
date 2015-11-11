@@ -1,25 +1,33 @@
 package uk.gov.dvsa.ui.pages.mot;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeFieldType;
+import org.joda.time.ReadableDateTime;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
+import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
 
+import static uk.gov.dvsa.helper.FormCompletionHelper.*;
+
 public class ContingencyTestEntryPage extends Page {
 
-    public static final String path = "/contingency";
-    private static final String PAGE_TITLE = "Contingency Test Entry";
+    public static final String PATH = "/contingency";
+    private static final String PAGE_TITLE = "Record contingency test";
 
-    @FindBy(id = "ct-code") private WebElement contingencyCodeInput;
+    @FindBy(id = "contingency_code") private WebElement contingencyCodeInput;
     @FindBy(id = "radio-test-type-group-labelnormal-test") private WebElement contingencyTestTypeNormalTest;
-    @FindBy(id = "radioOptionRadio-reason-groupCP") private WebElement reasonForContingencyTestCommunicationProblems;
+    @FindBy(id = "contingency-reason__communication-problem") private WebElement reasonForContingencyTestCommunicationProblems;
     @FindBy(id = "confirm_ct_button") private WebElement confirmContingencyTestDetailsButton;
-    @FindBy(id = "dateTestDay") private WebElement dateTestDay;
-    @FindBy(id = "dateTestMonth") private WebElement dateTestMonth;
-    @FindBy(id = "dateTestYear") private WebElement dateTestYear;
+    @FindBy(id = "contingency_time-hour") private WebElement timeHour;
+    @FindBy(id = "contingency_time-minutes") private WebElement timeMinutes;
+    @FindBy(id = "contingency_time-ampm") private WebElement dropDownAmPm;
+    @FindBy(id = "contingency_date-day") private WebElement dateTestDay;
+    @FindBy(id = "contingency_date-month") private WebElement dateTestMonth;
+    @FindBy(id = "contingency_date-year") private WebElement dateTestYear;
 
     public ContingencyTestEntryPage(MotAppDriver driver) {
         super(driver);
@@ -66,8 +74,17 @@ public class ContingencyTestEntryPage extends Page {
         fillContingencyCode(code)
                 .selectReasonForContingencyTestCommunicationProblems()
                 .fillDateContingencyTestPerformed(date)
+                .fillTimeOfTest(date)
                 .clickConfirmContingencyTestDetailsButton();
 
         return new VehicleSearchPage(driver);
+    }
+
+    private ContingencyTestEntryPage fillTimeOfTest(DateTime date) {
+        enterText(timeHour, date.toString("hh"));
+        enterText(timeMinutes, String.valueOf(date.toString("mm")));
+        selectFromDropDownByVisibleText(dropDownAmPm, date.toString("a").toLowerCase());
+
+        return this;
     }
 }
