@@ -11,6 +11,7 @@ upgradefiles+=('2015-10-27-VM-12328-certificate-replacement-additional-columns-o
 upgradefiles+=('2015-10-30-VM-12328-replacement-certificate-draft-and-permissions-update-STORY.sql');
 upgradefiles+=('2015-10-27-VM-12328-populate-mismatch-and-pass-flags-STORY.sql');
 upgradefiles+=('2015-10-30-VM-12003-allow-user-with-tester-qualification-status-of-initial-training-required-to-do-a-training-test-STORY.sql');
+upgradefiles+=('2015-11-05-BL-225-update-configuration-for-cron-STORY.sql');
 
 for sqlscript in ${upgradefiles[@]}
 do

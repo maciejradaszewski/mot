@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ebea7569d0254a1e086fe9b4c09ed1bc",
+    "hash": "9ebde3b9730867f6f10c3a323f2175f1",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1630,11 +1630,11 @@
         },
         {
             "name": "slot-purchase/backend-api",
-            "version": "v3.6.4",
+            "version": "v3.6.5",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git",
-                "reference": "de22c16e7af68903f7dece1a8a2ce81912e1fc95"
+                "reference": "dc2cd6fac724b8405315eaee7c68c465743cc447"
             },
             "require": {
                 "cpms/client": "1.22.*",
@@ -1672,7 +1672,7 @@
                 "proprietary"
             ],
             "description": "API for slot purchasing and related features",
-            "time": "2015-10-21 11:31:14"
+            "time": "2015-11-10 14:06:15"
         },
         {
             "name": "soflomo/purifier",
