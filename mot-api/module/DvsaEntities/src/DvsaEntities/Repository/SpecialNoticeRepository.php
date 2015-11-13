@@ -212,6 +212,7 @@ class SpecialNoticeRepository extends AbstractMutableRepository
                     person p
                 WHERE
                     snc.id = sna.special_notice_content_id
+                    AND p.username IS NOT NULL
                     AND sna.vehicle_class_id = aftm.vehicle_class_id
                     AND aftm.status_id = aftms.id
                     AND aftm.person_id = p.id
@@ -237,6 +238,7 @@ class SpecialNoticeRepository extends AbstractMutableRepository
                     person p
                 WHERE
                     snc.id = sna.special_notice_content_id
+                    AND p.username IS NOT NULL
                     AND sbrm.person_id = p.id
                     AND sbrm.site_business_role_id = sbr.id
                     AND sbrm.status_id = brs.id
@@ -260,6 +262,7 @@ class SpecialNoticeRepository extends AbstractMutableRepository
                     person p
                 WHERE
                     snc.id = sna.special_notice_content_id
+                    AND p.username IS NOT NULL
                     AND obrm.person_id = p.id
                     AND obrm.status_id = obr.id
                     AND sna.special_notice_audience_type_id = " . SpecialNoticeAudienceTypeId::VTS_AUDIENCE . "
@@ -288,6 +291,7 @@ class SpecialNoticeRepository extends AbstractMutableRepository
                     person p
                 WHERE
                     snc.id = sna.special_notice_content_id
+                    AND p.username IS NOT NULL
                     AND psrm.person_id = p.id
                     AND sna.special_notice_audience_type_id = " . SpecialNoticeAudienceTypeId::DVSA_AUDIENCE . "
                     AND psrm.status_id = brs.id
