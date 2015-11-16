@@ -386,7 +386,7 @@ public class DuplicateReplacementCertificateTest extends BaseTest {
                 .isReplacementCertificateEditButtonDisplayed(testNumber), is(false));
     }
 
-    @Test(groups = {"VM-7785", "VM-10120", "Regression"})
+//    @Test(groups = {"VM-7785", "VM-10120", "Regression"})
     public void testManuallyEnterMakeAndModel() throws IOException {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_ASTRA_2010);
         String testNumber = createMotTest(login, defaultSite, vehicle, 872033, TestOutcome.FAILED);
