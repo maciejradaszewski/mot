@@ -1,4 +1,4 @@
-package uk.gov.dvsa.ui.views;
+package uk.gov.dvsa.ui.views.site;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

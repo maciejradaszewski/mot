@@ -28,6 +28,7 @@ public class MotUI {
     public final TestLog testLog;
     public final SearchUser searchUser;
     public final SearchSite searchSite;
+    public final Vts vts;
     
     public MotUI(MotAppDriver driver) {
         pageNavigator.setDriver(driver);
@@ -38,6 +39,7 @@ public class MotUI {
         manageRoles = new ManageRoles(pageNavigator);
         searchUser = new SearchUser(pageNavigator);
         searchSite = new SearchSite(pageNavigator);
+        vts = new Vts(pageNavigator);
     }
 
     public void searchForVehicle(User user, Vehicle vehicle) throws IOException, URISyntaxException {
