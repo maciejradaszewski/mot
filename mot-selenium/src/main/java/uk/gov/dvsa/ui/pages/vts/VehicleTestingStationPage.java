@@ -9,8 +9,6 @@ import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.mot.MotTestCertificatesPage;
 import uk.gov.dvsa.ui.pages.mot.TestShortSummaryPage;
 
-import java.util.List;
-
 public class VehicleTestingStationPage extends Page {
     public static final String path = "/vehicle-testing-station/%s";
     private static final String PAGE_TITLE = "Vehicle Testing Station";
@@ -41,6 +39,7 @@ public class VehicleTestingStationPage extends Page {
     @FindBy(id = "site-number") private WebElement vtsNumber;
     @FindBy(id = "site-name") private WebElement vtsName;
     @FindBy(id = "mot-test-recent-certificates-link") private WebElement motTestRecentCertificatesLink;
+    @FindBy(id = "change-site-details") private WebElement changeSiteDetailsLink;
 
     public VehicleTestingStationPage(MotAppDriver driver) {
         super(driver);
@@ -196,6 +195,11 @@ public class VehicleTestingStationPage extends Page {
     public ProfileOfPage chooseAssignedToVtsUser(String userId) {
         driver.findElement(By.cssSelector(String.format(".key-value-list a[href*='%s']", userId))).click();
         return new ProfileOfPage(driver);
+    }
+
+    public ChangeSiteDetailsPage clickOnChangeSiteDetailsLink() {
+        changeSiteDetailsLink.click();
+        return new ChangeSiteDetailsPage(driver);
     }
 }
 

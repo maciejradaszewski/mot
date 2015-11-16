@@ -21,10 +21,7 @@ import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticeCreationPage;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticePage;
 import uk.gov.dvsa.ui.pages.userregistration.CreateAnAccountPage;
 import uk.gov.dvsa.ui.pages.vehicleinformation.VehicleInformationSearchPage;
-import uk.gov.dvsa.ui.pages.vts.AssociateASitePage;
-import uk.gov.dvsa.ui.pages.vts.ChangeTestingFacilitiesPage;
-import uk.gov.dvsa.ui.pages.vts.SiteTestLogPage;
-import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
+import uk.gov.dvsa.ui.pages.vts.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -267,6 +264,18 @@ public class PageNavigator {
         injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.TRAINING_TEST_PATH);
 
         return new VehicleSearchPage(driver);
+    }
+
+    public VtsSearchForAVtsPage goToVtsSearchPage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, VtsSearchForAVtsPage.path);
+
+        return new VtsSearchForAVtsPage(driver);
+    }
+
+    public VehicleTestingStationPage goToVtsPage(User user, String vtsId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(VehicleTestingStationPage.path, vtsId));
+
+        return new VehicleTestingStationPage(driver);
     }
 
     public LoginPage goToLoginPage() throws IOException {

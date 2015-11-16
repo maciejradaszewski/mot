@@ -1,4 +1,4 @@
-package uk.gov.dvsa.ui.views;
+package uk.gov.dvsa.ui.views.site;
 
 import org.joda.time.DateTime;
 import org.testng.annotations.DataProvider;
