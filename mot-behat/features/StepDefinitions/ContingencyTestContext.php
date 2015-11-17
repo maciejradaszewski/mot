@@ -63,7 +63,7 @@ class ContingencyTestContext implements Context
      */
     public function iCreateANewContingencyTest()
     {
-        $this->createContingencyCode($this->dailyContingencyCode, 'PI');
+        $this->createContingencyCode($this->dailyContingencyCode, 'SO');
     }
 
     /**
@@ -71,7 +71,7 @@ class ContingencyTestContext implements Context
      */
     public function iAttemptToCreateANewContingencyTest()
     {
-        $this->createContingencyCode($this->dailyContingencyCode, 'PI');
+        $this->createContingencyCode($this->dailyContingencyCode, 'SO');
     }
 
     /**
@@ -79,7 +79,7 @@ class ContingencyTestContext implements Context
      */
     public function iAttemptToCreateANewContingencyTestWithA($contingencyCode)
     {
-        $this->createContingencyCode($contingencyCode, 'PI');
+        $this->createContingencyCode($contingencyCode, 'SO');
     }
 
     /**
@@ -111,7 +111,7 @@ class ContingencyTestContext implements Context
      * @param string $contingencyCode
      * @param string $reasonCode
      */
-    public function createContingencyCode($contingencyCode = Authentication::CONTINGENCY_CODE_DEFAULT, $reasonCode = 'PI')
+    public function createContingencyCode($contingencyCode = Authentication::CONTINGENCY_CODE_DEFAULT, $reasonCode = 'SO')
     {
         $this->contingencyData = [
             'contingencyCode' => $contingencyCode,

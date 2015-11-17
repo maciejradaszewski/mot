@@ -104,4 +104,17 @@ class FeatureContext implements Context
 
         PHPUnit::assertEquals(400, $response->getStatusCode(), 'Did not receive 400 Bad Request response');
     }
+
+
+    /**
+     * @Then /^I should receive an Unprocessable Entity response$/
+     *
+     * @deprecated this is only temporarly here and will be removed as soon as scenarios are reworded to not include implementation details
+     */
+    public function iShouldReceiveAnUnprocessableEntityResponse()
+    {
+        $response = $this->history->getLastResponse();
+
+        PHPUnit::assertEquals(422, $response->getStatusCode(), 'Did not receive 422 Unprocessable Entity response');
+    }
 }
