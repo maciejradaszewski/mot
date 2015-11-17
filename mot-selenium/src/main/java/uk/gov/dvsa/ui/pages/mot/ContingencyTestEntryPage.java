@@ -1,17 +1,18 @@
 package uk.gov.dvsa.ui.pages.mot;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeFieldType;
-import org.joda.time.ReadableDateTime;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
-import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
 
-import static uk.gov.dvsa.helper.FormCompletionHelper.*;
+import java.util.List;
+
+import static uk.gov.dvsa.helper.FormCompletionHelper.enterText;
+import static uk.gov.dvsa.helper.FormCompletionHelper.selectFromDropDownByVisibleText;
 
 public class ContingencyTestEntryPage extends Page {
 
@@ -57,7 +58,7 @@ public class ContingencyTestEntryPage extends Page {
         return this;
     }
 
-    private ContingencyTestEntryPage clickConfirmContingencyTestDetailsButton() {
+    public ContingencyTestEntryPage clickConfirmContingencyTestDetailsButton() {
         confirmContingencyTestDetailsButton.click();
 
         return this;
@@ -86,5 +87,14 @@ public class ContingencyTestEntryPage extends Page {
         selectFromDropDownByVisibleText(dropDownAmPm, date.toString("a").toLowerCase());
 
         return this;
+    }
+
+    public String getValidationText(String element){
+        String elementId = String.format("%s__validation-message", element);
+        return driver.findElement(By.id(elementId)).getText();
+    }
+
+    public List<WebElement> getValidationList(){
+        return driver.findElements(By.cssSelector("ol#validation_summary_list li"));
     }
 }

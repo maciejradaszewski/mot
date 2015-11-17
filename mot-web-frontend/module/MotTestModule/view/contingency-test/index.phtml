@@ -22,7 +22,7 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
 
 <?php if (!empty($validationSummary)): ?>
 <div class="validation-summary">
-    <ol><?php foreach ($validationSummary as $validationSummaryMessage): ?>
+    <ol id="validation_summary_list"><?php foreach ($validationSummary as $validationSummaryMessage): ?>
         <li><?php echo $validationSummaryMessage; ?></li>
     <?php endforeach ?></ol>
 </div>
