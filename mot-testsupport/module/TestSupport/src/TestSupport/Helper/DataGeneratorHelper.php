@@ -85,6 +85,11 @@ class DataGeneratorHelper
         return 'D' . $this->differentiator;
     }
 
+    public function drivingLicenceRegion()
+    {
+        return 'GB';
+    }
+
     public function phoneNumber()
     {
         return '01-' . rand(1000000000, 9999999999);

@@ -121,9 +121,34 @@ class UserProfilePresenter implements AddressPresenterInterface
         return implode(' ', [$this->person->getFirstName(), $this->person->getLastName()]);
     }
 
+    /**
+     * @return bool
+     */
+    public function hasDrivingLicenceNumber()
+    {
+        return $this->person->getDrivingLicenceNumber() != '';
+    }
+
+    /**
+     * @return string
+     */
     public function displayDrivingLicenceNumber()
     {
         return $this->person->getDrivingLicenceNumber();
+    }
+
+    /**
+     * @return string
+     */
+    public function displayDrivingLicenceRegion()
+    {
+        $code = $this->person->getDrivingLicenceRegionCode();
+
+        if ($code == 'NU') {
+            return $this->person->getDrivingLicenceRegion();
+        }
+
+        return $code;
     }
 
     public function displayAuthenticationMethod()
@@ -376,8 +401,30 @@ class UserProfilePresenter implements AddressPresenterInterface
         return count($this->getPersonAssignedInternalRoleCodes()) > 0;
     }
 
+    /**
+     * @return bool
+     */
+    public function canDisplayDrivingLicence()
+    {
+        return !$this->hasDvsaRoles() &&
+               !$this->personRoleManagementService->personToManageIsSelf($this->getPersonId());
+    }
+
+    /**
+     * @return bool
+     */
+    public function canDisplayEditDrivingLicenceLink()
+    {
+        return $this->isDvsaUser === true;
+    }
+
     public function hasTradeRoles()
     {
         return count($this->getSiteAndOrganisationRoles());
+    }
+
+    public function isDvsaUser()
+    {
+        return $this->isDvsaUser;
     }
 }

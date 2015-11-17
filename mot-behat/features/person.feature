@@ -52,24 +52,24 @@ Feature: Person
     When I update my email address to <email>
     Then my email address will not be updated
 
-  Examples:
-    | email |
-    | .     |
-    | .com  |
-    | com   |
-    | @     |
+    Examples:
+      | email |
+      | .     |
+      | .com  |
+      | com   |
+      | @     |
 
   Scenario Outline: Email validation is enforced on User Profile for Tester
     Given I am logged in as a Tester
     When I update my email address to <email>
     Then my email address will not be updated
 
-  Examples:
-    | email |
-    | .     |
-    | .com  |
-    | com   |
-    | @     |
+    Examples:
+      | email |
+      | .     |
+      | .com  |
+      | com   |
+      | @     |
 
   @wip
   Scenario: AE record contains Data Disclosure
@@ -83,3 +83,27 @@ Feature: Person
     When I review my test logs
     Then 2 test logs should show today in summary section
     And My test logs should return 2 detailed records
+
+  Scenario: An Area Office User can add a licence to a tester's profile
+    Given I am logged in as an Area Office User
+    And I have selected a user who needs to have a licence added to their profile
+    When I add a licence 'smith711215jb9az' to the user's profile
+    Then their licence should match 'SMITH711215JB9AZ'
+
+  Scenario: An Area Office User can edit a licence on a tester's profile
+    Given I am logged in as an Area Office User
+    And I have selected a user who needs to have their licence edited
+    When I update the licence to 'SMITH711215JB9AZ'
+    Then their licence should match 'SMITH711215JB9AZ'
+
+  Scenario: An Area Office User cannot add an invalid licence to a tester's profile
+    Given I am logged in as an Area Office User
+    And I have selected a user who needs to have a licence added to their profile
+    When I add a licence 'IAMINVALID' to the user's profile
+    Then the user should not have a licence associated with their account
+
+  Scenario: An Area Office User cannot update a tester's licence to invalid data
+    Given I am logged in as an Area Office User
+    And I have selected a user who needs to have their licence edited
+    When I update the licence to 'IAMINVALID'
+    Then their licence should not match 'IAMINVALID'

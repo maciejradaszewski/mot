@@ -8,6 +8,7 @@ class CustomerService extends MotApi
 {
     const PATH = 'search-person?';
     const PATH_PROFILE = 'person/{userId}/help-desk-profile-unrestricted';
+    const PATH_UPDATE_LICENCE = 'person/{userId}/driving-licence';
 
     public function search($token, $searchData)
     {
@@ -56,6 +57,16 @@ class CustomerService extends MotApi
             'GET',
             str_replace('{userId}', $userId, self::PATH_PROFILE),
             ['Authorization' => 'Bearer '.$token]
+        ));
+    }
+
+    public function updateLicence($token, $userId, $licenceDetails)
+    {
+        return $this->client->request(new Request(
+            'POST',
+            str_replace('{userId}', $userId, self::PATH_UPDATE_LICENCE),
+            ['Authorization' => 'Bearer ' . $token, 'Content-Type' => 'application/json'],
+            $licenceDetails
         ));
     }
 }

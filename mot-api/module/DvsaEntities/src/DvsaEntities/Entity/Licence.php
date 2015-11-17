@@ -4,7 +4,6 @@ namespace DvsaEntities\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use DvsaEntities\EntityTrait\CommonIdentityTrait;
-use DvsaEntities\Entity\CountryOfRegistration;
 
 /**
  * Licence
@@ -24,10 +23,10 @@ class Licence extends Entity
     private $licenceNumber;
 
     /**
-     * @var CountryOfRegistration
+     * @var LicenceCountry
      *
-     * @ORM\ManyToOne(targetEntity="CountryOfRegistration")
-     * @ORM\JoinColumn(name="country_lookup_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="LicenceCountry")
+     * @ORM\JoinColumn(name="licence_country_id", referencedColumnName="id", nullable=true)
      */
     private $country;
 
@@ -56,11 +55,11 @@ class Licence extends Entity
     private $licenceType;
 
     /**
-     * @param CountryOfRegistration $country
+     * @param LicenceCountry $country
      *
      * @return Licence
      */
-    public function setCountry(CountryOfRegistration $country)
+    public function setCountry(LicenceCountry $country)
     {
         $this->country = $country;
 
@@ -69,10 +68,12 @@ class Licence extends Entity
 
     /**
      * @param \DateTime $expiryDate
+     * @return $this
      */
     public function setExpiryDate($expiryDate)
     {
         $this->expiryDate = $expiryDate;
+        return $this;
     }
 
     /**
@@ -89,26 +90,46 @@ class Licence extends Entity
 
     /**
      * @param LicenceType $licenceType
+     * @return $this
      */
     public function setLicenceType($licenceType)
     {
         $this->licenceType = $licenceType;
+        return $this;
     }
 
     /**
      * @param \DateTime $validFrom
+     * @return $this
      */
     public function setValidFrom($validFrom)
     {
         $this->validFrom = $validFrom;
+        return $this;
     }
 
     /**
-     * @return CountryOfRegistration
+     * @return string
      */
     public function getCountry()
     {
-        return $this->country;
+        return $this->country->getName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountryCode()
+    {
+        return $this->country->getCode();
+    }
+
+    /**
+     * @return boolean
+     */
+    public function hasCountry()
+    {
+        return null !== $this->country;
     }
 
     /**

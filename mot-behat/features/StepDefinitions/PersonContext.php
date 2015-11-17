@@ -16,6 +16,7 @@ use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use PHPUnit_Framework_Assert as PHPUnit;
+use Behat\Behat\Tester\Exception\PendingException;
 
 class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingContext
 {
@@ -546,7 +547,7 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     /**
      * @When I change a user's group :group tester qualification status from :status to Qualified
      */
-    public function iChangeAUserSGroupTesterQualificationStatusFromToQualified($group, $status)
+    public function iChangeAUsersGroupTesterQualificationStatusFromToQualified($group, $status)
     {
         $statusCode = $this->getAuthorisationForTestingMotStatusCode($status);
 
@@ -564,10 +565,6 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
             $group,
             $this->getPersonUserId()
         );
-    }
-
-    public function iCreateAUserWithData($data) {
-
     }
 
     private function getAuthorisationForTestingMotStatusCode($status)
@@ -706,6 +703,103 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         $rolesAssigned = $rbacResponse->getBody()->toArray();
         $rolesAssigned = $rolesAssigned['data']['normal']['roles'];
         PHPUnit::assertFalse(in_array($role, $rolesAssigned), sprintf("Role %s has been assigned", $role));
+    }
+
+    /**
+     * @Given I have selected a user who needs to have a licence added to their profile
+     */
+    public function selectUserWithoutLicence()
+    {
+        $tester = $this->testSupportHelper->getTesterService();
+
+        // duplicated from $this->createTester due to PHP 5.5 not supporting array constants
+        $defaults = [
+            'siteIds' => [1],
+            "qualifications"=> [
+                "A"=> $this->getAuthorisationForTestingMotStatusCode("Qualified"),
+                "B"=> $this->getAuthorisationForTestingMotStatusCode("Qualified")
+            ]
+        ];
+
+        $this->personLoginData = $tester->createWithoutLicence($defaults);
+    }
+
+    /**
+     * @Given /^I have selected a user who needs to have their licence edited$/
+     */
+
+    public function selectUserWithLicence()
+    {
+        $this->createTester();
+    }
+
+    /**
+     * @When I add a licence :licenceNumber to the user's profile
+     * @When I update the licence to :licenceNumber
+     * @var string $licenceNumber
+     */
+    public function updateUserLicenceTo($licenceNumber)
+    {
+        $testerId = $this->personLoginData->data['personId'];
+
+        // create JSON to send to endpoint
+        $licenceDetails = '{"drivingLicenceNumber": "' . $licenceNumber . '", "drivingLicenceRegion": "';
+        $licenceDetails .= \DvsaCommon\Enum\LicenceCountryCode::GREAT_BRITAIN_ENGLAND_SCOTLAND_AND_WALES . '"}';
+
+        $response = $this->customerService->updateLicence(
+            $this->sessionContext->getCurrentAccessToken(),
+            $testerId,
+            $licenceDetails
+        );
+
+        PHPUnit::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * @Then their licence should match :licenceNumber
+     * @var string $licenceNumber
+     */
+    public function licenceNumbersMatch($licenceNumber)
+    {
+        $testerId = $this->personLoginData->data['personId'];
+
+        $testerDetails = $this->customerService->helpDeskProfile(
+            $this->sessionContext->getCurrentAccessToken(),
+            $testerId
+        );
+
+        PHPUnit::assertEquals($licenceNumber, $testerDetails->getBody()['data']['drivingLicence']);
+    }
+
+    /**
+     * @Then the user should not have a licence associated with their account
+     */
+    public function licenceDoesNotExist()
+    {
+        $testerId = $this->personLoginData->data['personId'];
+
+        $testerDetails = $this->customerService->helpDeskProfile(
+            $this->sessionContext->getCurrentAccessToken(),
+            $testerId
+        );
+
+        PHPUnit::assertEquals('', $testerDetails->getBody()['data']['drivingLicence']);
+    }
+
+    /**
+     * @Then their licence should not match :licenceNumber
+     * @var string $licenceNumber
+     */
+    public function theirLicenceShouldNotMatch($licenceNumber)
+    {
+        $testerId = $this->personLoginData->data['personId'];
+
+        $testerDetails = $this->customerService->helpDeskProfile(
+            $this->sessionContext->getCurrentAccessToken(),
+            $testerId
+        );
+
+        PHPUnit::assertNotEquals($licenceNumber, $testerDetails->getBody()['data']['drivingLicence']);
     }
 
     /**

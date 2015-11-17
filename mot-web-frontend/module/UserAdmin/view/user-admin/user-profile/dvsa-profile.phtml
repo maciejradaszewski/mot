@@ -1,5 +1,7 @@
 <?php
+
 use Dashboard\Controller\UserHomeController;
+use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 
 /** @var \UserAdmin\Presenter\UserProfilePresenter $presenter */
 /** @var string $searchResultsUrl */
@@ -41,14 +43,32 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
             <?php echo $this->escapeHtml($presenter->displayDateOfBirth()); ?>
         </td>
     </tr>
+    <?php if ($presenter->canDisplayDrivingLicence()) : ?>
     <tr>
         <th class="key-value-list__key">
             Driving licence number
         </th>
         <td id="person-driving-licence" class="key-value-list__value--numeric">
-            <?php echo $this->escapeHtml($presenter->displayDrivingLicenceNumber()); ?>
+            <span id="person-driving-licence-number">
+                <?php if ($presenter->hasDrivingLicenceNumber()): ?>
+                    <?php echo $this->escapeHtml($presenter->displayDrivingLicenceNumber()); ?>
+                <?php else: ?>
+                    None recorded
+                <?php endif; ?>
+            </span>
+            <?php if ($presenter->hasDrivingLicenceNumber()): ?>
+            <span id="person-driving-licence-region" class="key-value-list__meta">
+                <?php echo $this->escapeHtml($presenter->displayDrivingLicenceRegion()); ?>
+            </span>
+            <?php endif; ?>
+            <?php if ($presenter->canDisplayEditDrivingLicenceLink()): ?>
+                <span class="key-value-list__meta">
+                    <a id="add-edit-driving-licence-link" href="<?php echo UserAdminUrlBuilderWeb::drivingLicenceChange($presenter->getPersonId()) ?>">Change</a>
+                </span>
+            <?php endif; ?>
         </td>
     </tr>
+    <?php endif; ?>
     <?php if ($display2FAMethod): ?>
     <tr>
         <th class="key-value-list__key">

@@ -3,6 +3,7 @@
 namespace TestSupport\Model;
 
 
+use DvsaCommon\Enum\LicenceCountryCode;
 use DvsaCommon\Utility\ArrayUtils;
 use TestSupport\Helper\DataGeneratorHelper;
 use TestSupport\Helper\RequestorParserHelper;
@@ -20,11 +21,17 @@ class AccountPerson {
     private $dateOfBirth;
     private $accountClaimRequired;
     private $securityQuestionsRequired;
+    private $drivingLicenceNumber;
+    private $drivingLicenceRegion;
 
     private $creatorUsername;
     private $creatorPassword;
 
 
+    /**
+     * @param array               $data
+     * @param DataGeneratorHelper $dataGeneratorHelper
+     */
     public function __construct(array $data, DataGeneratorHelper $dataGeneratorHelper)
     {
         list($this->creatorUsername,  $this->creatorPassword) = RequestorParserHelper::parse($data);
@@ -42,6 +49,16 @@ class AccountPerson {
         $this->passwordChangeRequired = ArrayUtils::tryGet($data, 'passwordChangeRequired', false);
         $this->addressLine2 = ArrayUtils::tryGet($data, 'addressLine2', $dataGeneratorHelper->addressLine2());
         $this->securityQuestionsRequired = ArrayUtils::tryGet($data, 'securityQuestionsRequired', false);
+        $this->drivingLicenceNumber = ArrayUtils::tryGet(
+            $data,
+            'drivingLicenceNumber',
+            $dataGeneratorHelper->drivingLicenceNumber()
+        );
+        $this->drivingLicenceRegion = ArrayUtils::tryGet(
+            $data,
+            'drivingLicenceRegion',
+            LicenceCountryCode::GREAT_BRITAIN_ENGLAND_SCOTLAND_AND_WALES
+        );
     }
 
     public function getAddressLine1()
@@ -92,6 +109,16 @@ class AccountPerson {
     public function getCreatorPassword()
     {
         return $this->creatorPassword;
+    }
+
+    public function getDrivingLicenceNumber()
+    {
+        return $this->drivingLicenceNumber;
+    }
+
+    public function getDrivingLicenceRegion()
+    {
+        return $this->drivingLicenceRegion;
     }
 
     /**

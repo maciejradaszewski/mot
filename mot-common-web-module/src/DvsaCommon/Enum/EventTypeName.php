@@ -63,6 +63,7 @@ class EventTypeName
     const TESTER_TRAINING_ASSESSMENT = 'Tester training assessment';
     const NTT_DIRECTED_RETRAINING_CLASSES_12 = 'NTT Directed Retraining: classes 1,2';
     const NTT_REFRESHER_CLASSES_12 = 'NTT Refresher: classes 1,2';
+    const UPDATE_SITE_ASSESSMENT_RISK_SCORE = 'Update site assessment risk score';
 
     /**
      * @return array of values for the type EventTypeName
@@ -123,6 +124,7 @@ class EventTypeName
             self::TESTER_TRAINING_ASSESSMENT,
             self::NTT_DIRECTED_RETRAINING_CLASSES_12,
             self::NTT_REFRESHER_CLASSES_12,
+            self::UPDATE_SITE_ASSESSMENT_RISK_SCORE,
         ];
     }
 

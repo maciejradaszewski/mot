@@ -70,7 +70,8 @@ class AccountDataService
             "postcode" => $this->accountPerson->getPostcode(),
             "phoneNumber" => $this->accountPerson->getPhoneNumber(),
             "emailAddress" => $this->accountPerson->getEmailAddress(),
-            "dateOfBirth" => $this->accountPerson->getDateOfBirth()
+            "dateOfBirth" => $this->accountPerson->getDateOfBirth(),
+            "drivingLicenceNumber" => $this->accountPerson->getDrivingLicenceNumber(),
         ]);
     }
 

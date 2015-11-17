@@ -1,0 +1,82 @@
+<?php
+
+use DvsaCommon\Enum\LicenceCountryCode;
+use UserAdmin\Presenter\DrivingLicenceSummaryPresenter;
+
+/** @var \UserAdmin\Presenter\UserProfilePresenter $presenter  */
+
+/** @var DrivingLicenceSummaryPresenter $drivingLicencePresenter */
+$drivingLicencePresenter = new DrivingLicenceSummaryPresenter;
+
+$errorMessages = $this->layout()->flashMessenger->getErrorMessages();
+echo $this->partial('partial/forms/errorMessagePageHeader.phtml',['messages' => $errorMessages]);
+
+?>
+
+<form method="POST">
+    <?php echo $this->csrfToken(); ?>
+    <fieldset>
+        <?php
+
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id' => 'drivingLicenceNumber',
+                'name' => 'drivingLicenceNumber',
+                'errorMessage' => isset($errors['drivingLicenceNumber']) ? $errors['drivingLicenceNumber'] : null,
+                'label' => 'Driving licence number',
+                'value' => $drivingLicenceNumber,
+                'type' => 'text'
+            ]
+        );
+
+        ?>
+    </fieldset>
+    <fieldset>
+        <?php
+
+        echo $this->partial(
+            'partial/gds/form/control-radio-group',
+            [
+                'name' => 'drivingLicenceRegions',
+                'errorMessage' => isset($errors['drivingLicenceRegion']) ? $errors['drivingLicenceRegion'] : null,
+                'label' => 'Issuing country',
+                'splitLastOption' => true,
+                'options' => [
+                    [
+                        'inputName' => 'drivingLicenceRegion',
+                        'value' => LicenceCountryCode::GREAT_BRITAIN_ENGLAND_SCOTLAND_AND_WALES,
+                        'checked' => $drivingLicenceRegion == LicenceCountryCode::GREAT_BRITAIN_ENGLAND_SCOTLAND_AND_WALES || $drivingLicenceRegion == '',
+                        'key' => $drivingLicencePresenter->getCountryDescriptionByCode(LicenceCountryCode::GREAT_BRITAIN_ENGLAND_SCOTLAND_AND_WALES),
+                    ],
+                    [
+                        'inputName' => 'drivingLicenceRegion',
+                        'value' => LicenceCountryCode::NORTHERN_IRELAND,
+                        'checked' => $drivingLicenceRegion == LicenceCountryCode::NORTHERN_IRELAND,
+                        'key' => $drivingLicencePresenter->getCountryDescriptionByCode(LicenceCountryCode::NORTHERN_IRELAND),
+                    ],
+                    [
+                        'inputName' => 'drivingLicenceRegion',
+                        'value' => LicenceCountryCode::NON_UNITED_KINGDOM,
+                        'checked' => $drivingLicenceRegion == LicenceCountryCode::NON_UNITED_KINGDOM,
+                        'key' => $drivingLicencePresenter->getCountryDescriptionByCode(LicenceCountryCode::NON_UNITED_KINGDOM),
+                    ],
+                ],
+            ]
+        );
+
+        ?>
+    </fieldset>
+    <?php echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id' => 'submitDrivingLicence',
+            'value' => 'Change driving licence number',
+        ]
+    ); ?>
+</form>
+<ul class="content-navigation__secondary">
+    <li>
+        <a href="<?php echo $this->url('user_admin/user-profile', ['personId' => $presenter->getPersonId()]); ?>">Cancel and return to user profile</a>
+    </li>
+</ul>

@@ -4,9 +4,11 @@ namespace TestSupport\Service;
 
 use Doctrine\ORM\EntityManager;
 use DvsaCommon\Enum\CountryOfRegistrationCode;
+use DvsaCommon\Enum\LicenceCountryCode;
 use DvsaCommon\Enum\PersonAuthType;
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\UrlBuilder\UrlBuilder;
+use DvsaEntities\Repository\LicenceCountryRepository;
 use TestSupport\Helper\DataGeneratorHelper;
 use TestSupport\Helper\TestSupportAccessTokenManager;
 use TestSupport\Model\Account;
@@ -43,13 +45,12 @@ class AccountService
     }
 
     /**
-     * @param string              $role
      * @param DataGeneratorHelper $dataGeneratorHelper
      * @param AccountPerson       $accountPerson
-     *
+     * @param boolean             $addLicence
      * @return Account
      */
-    public function createAccount($role, DataGeneratorHelper $dataGeneratorHelper, AccountPerson $accountPerson)
+    public function createAccount($role, DataGeneratorHelper $dataGeneratorHelper, AccountPerson $accountPerson, $addLicence = true)
     {
         $password = "Password1";
         $username = $accountPerson->getUsername();
@@ -60,15 +61,13 @@ class AccountService
         $accessToken = $this->tokenManager->getToken('schememgt', 'Password1');
         $this->restClient->setAccessToken($accessToken);
 
-        $result = $this->restClient->post(UrlBuilder::of()->account()->toString(), [
+        $personDetails = [
             'username' => $username,
             'title' => 'Mr',
             'firstName' => $accountPerson->getFirstName(),
             'middleName'=> $accountPerson->getMiddleName(),
             'surname' => $accountPerson->getSurname(),
             'gender' => 'Male',
-            'drivingLicenceNumber' => $dataGeneratorHelper->drivingLicenceNumber(),
-            'drivingLicenceRegion' => CountryOfRegistrationCode::GB_UK_ENG_CYM_SCO_UK_GREAT_BRITAIN,
             'addressLine1' => $accountPerson->getAddressLine1(),
             'addressLine2' => $accountPerson->getAddressLine2(),
             'town' => 'Ipswich',
@@ -83,7 +82,17 @@ class AccountService
             'passwordChangeRequired' => $accountPerson->isPasswordChangeRequired(),
             'pin' => '123456',
             'authenticationMethod' => PersonAuthType::PIN
-        ]);
+        ];
+
+        if ($addLicence) {
+            $personDetails['drivingLicenceNumber'] = $dataGeneratorHelper->drivingLicenceNumber();
+            $personDetails['drivingLicenceRegion'] = LicenceCountryCode::GREAT_BRITAIN_ENGLAND_SCOTLAND_AND_WALES;
+        } else {
+            $personDetails['drivingLicenceNumber'] = '';
+            $personDetails['drivingLicenceRegion'] = '';
+        }
+
+        $result = $this->restClient->post(UrlBuilder::of()->account()->toString(), $personDetails);
 
         if ($accountPerson->isSecurityQuestionsRequired()) {
             foreach ([1, 2] as $questionId) {

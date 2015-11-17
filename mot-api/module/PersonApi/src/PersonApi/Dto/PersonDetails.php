@@ -8,9 +8,9 @@ use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommonApi\Service\EntityHelperService;
 use DvsaEntities\Entity\Address;
 use DvsaEntities\Entity\ContactDetail;
-use DvsaEntities\Entity\CountryOfRegistration;
 use DvsaEntities\Entity\Email;
 use DvsaEntities\Entity\Licence;
+use DvsaEntities\Entity\LicenceCountry;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\Phone;
 use DvsaEntities\Entity\PhoneContactType;
@@ -158,9 +158,8 @@ class PersonDetails
         if ($licence instanceof Licence) {
             $this->drivingLicenceNumber = $licence->getLicenceNumber();
 
-            $country = $licence->getCountry();
-            if ($country instanceof CountryOfRegistration) {
-                $this->drivingLicenceRegion = $country->getCode();
+            if ($licence->hasCountry()) {
+                $this->drivingLicenceRegion = $licence->getCountryCode();
             }
         }
 

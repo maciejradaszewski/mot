@@ -19,6 +19,7 @@ use PersonApi\Controller\PersonSiteCountController;
 use PersonApi\Controller\PersonTradeRoleController;
 use PersonApi\Controller\ResetClaimAccountController;
 use PersonApi\Controller\ResetPinController;
+use PersonApi\Controller\UpdateLicenceDetailsController;
 use PersonApi\Controller\UserStatsController;
 use PersonApi\Factory\Controller\AuthorisedExaminerControllerFactory;
 use PersonApi\Factory\Controller\DashboardControllerFactory;
@@ -40,11 +41,13 @@ use PersonApi\Factory\Controller\PersonTradeRoleControllerFactory;
 use PersonApi\Factory\Controller\ResetClaimAccountControllerFactory;
 use PersonApi\Factory\Controller\ResetPinControllerFactory;
 use PersonApi\Factory\Controller\UserStatsControllerFactory;
+use PersonApi\Factory\Controller\UpdateLicenceDetailsControllerFactory;
 
 return [
     'factories' => [
         AuthorisedExaminerController::class        => AuthorisedExaminerControllerFactory::class,
         DashboardController::class                 => DashboardControllerFactory::class,
+        UpdateLicenceDetailsController::class      => UpdateLicenceDetailsControllerFactory::class,
         MotTestingAuthorisationController::class   => MotTestingAuthorisationControllerFactory::class,
         PersonalDetailsController::class           => PersonalDetailsControllerFactory::class,
         PersonAuthorisationController::class       => PersonAuthorisationControllerFactory::class,

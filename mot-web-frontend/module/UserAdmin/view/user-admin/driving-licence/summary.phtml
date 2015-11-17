@@ -1,0 +1,44 @@
+<?php
+
+use UserAdmin\Presenter\DrivingLicenceSummaryPresenter;
+/** @var DrivingLicenceSummaryPresenter $presenter */
+
+$backButtonUrl = $this->url('user_admin/user-profile/driving-licence-change', ['personId' => $presenter->getPersonId()]);
+
+?>
+<div class="text">
+    <p class="lede">Please check that the details below are correct.</p>
+</div>
+<table class="key-value-list">
+    <tbody>
+    <tr>
+        <th scope="col" class="key-value-list__key">Driving licence number</th>
+        <td scope="col" id="drivingLicenceNumber" class="key-value-list__value">
+            <?php echo strtoupper($drivingLicenceNumber) ?>
+        </td>
+    </tr>
+    <tr>
+        <th scope="col" class="key-value-list__key">Issuing country</th>
+        <td scope="col" id="drivingLicenceRegion" class="key-value-list__value">
+            <?php echo $presenter->getCountryDescriptionByCode($drivingLicenceRegion) ?>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<nav class="content-navigation">
+    <form method="POST">
+        <?php echo $this->csrfToken(); ?>
+        <?php echo $this->partial(
+            'partial/gds/form/control-navigation',
+            [
+                'id' => 'submitDrivingLicence',
+                'value' => 'Change driving licence',
+            ]
+        ); ?>
+    </form>
+    <ul class="content-navigation__secondary">
+        <li>
+            <a href="<?php echo $backButtonUrl; ?>">Back</a>
+        </li>
+    </ul>
+</nav>

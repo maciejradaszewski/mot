@@ -78,7 +78,17 @@ class PersonHelpDeskProfileDto
     /**
      * @var string
      */
-    private $drivingLicence;
+    private $drivingLicenceNumber;
+
+    /**
+     * @var string
+     */
+    private $drivingLicenceRegion;
+
+    /**
+     * @var string
+     */
+    private $drivingLicenceRegionCode;
 
     /**
      * @var string
@@ -107,6 +117,8 @@ class PersonHelpDeskProfileDto
             ->setAddress(AddressDto::fromArray($data))
             ->setRoles(ArrayUtils::get($data, 'roles'))
             ->setDrivingLicenceNumber(ArrayUtils::get($data, 'drivingLicence'))
+            ->setDrivingLicenceRegion(ArrayUtils::tryGet($data, 'drivingLicenceRegion', ''))
+            ->setDrivingLicenceRegionCode(ArrayUtils::tryGet($data, 'drivingLicenceRegionCode', ''))
             ->setAuthenticationMethod(AuthenticationMethodDto::fromArray(ArrayUtils::get($data, 'authenticationMethod')));
 
         return $dto;
@@ -137,6 +149,8 @@ class PersonHelpDeskProfileDto
             'telephone'             => $this->getTelephone(),
             'roles'                 => $this->getRoles(),
             'drivingLicence'        => $this->getDrivingLicenceNumber(),
+            'drivingLicenceRegion'  => $this->getDrivingLicenceRegion(),
+            'drivingLicenceRegionCode' => $this->getDrivingLicenceRegionCode(),
             'authenticationMethod'  => $authenticationMethod,
         ];
     }
@@ -342,13 +356,13 @@ class PersonHelpDeskProfileDto
     }
 
     /**
-     * @param $number
+     * @param string $number
      *
      * @return $this
      */
     public function setDrivingLicenceNumber($number)
     {
-        $this->drivingLicence = $number;
+        $this->drivingLicenceNumber = $number;
 
         return $this;
     }
@@ -358,7 +372,44 @@ class PersonHelpDeskProfileDto
      */
     public function getDrivingLicenceNumber()
     {
-        return $this->drivingLicence;
+        return $this->drivingLicenceNumber;
+    }
+
+    /**
+     * @param string $country
+     * @return $this
+     */
+    public function setDrivingLicenceRegion($country)
+    {
+        $this->drivingLicenceRegion = $country;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDrivingLicenceRegion()
+    {
+        return $this->drivingLicenceRegion;
+    }
+
+    /**
+     * @param string $countryCode
+     * @return $this
+     */
+    public function setDrivingLicenceRegionCode($countryCode)
+    {
+        $this->drivingLicenceRegionCode = $countryCode;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDrivingLicenceRegionCode()
+    {
+        return $this->drivingLicenceRegionCode;
     }
 
     /**

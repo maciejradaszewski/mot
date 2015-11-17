@@ -11,7 +11,6 @@ use DvsaCommon\Constants\Role;
 use DvsaCommon\Crypt\Hash\BCryptHashFunction;
 use DvsaCommon\Crypt\Hash\HashFunctionInterface;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
-use DvsaCommon\Enum\CountryOfRegistrationCode;
 use DvsaCommon\Enum\LicenceTypeCode;
 use DvsaCommon\Enum\PersonAuthType;
 use DvsaCommon\Utility\ArrayUtils;
@@ -20,15 +19,14 @@ use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\Exception\UserExistsException;
 use DvsaEntities\Entity\AuthenticationMethod;
 use DvsaEntities\Entity\BusinessRoleStatus;
-use DvsaEntities\Entity\CountryOfRegistration;
 use DvsaEntities\Entity\Licence;
+use DvsaEntities\Entity\LicenceCountry;
 use DvsaEntities\Entity\LicenceType;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\PersonSystemRole;
 use DvsaEntities\Entity\PersonSystemRoleMap;
 use DvsaEntities\Mapper\PersonMapper;
 use DvsaEntities\Repository\AuthenticationMethodRepository;
-use DvsaEntities\Repository\CountryOfRegistrationRepository;
 use DvsaEntities\Repository\LicenceTypeRepository;
 use PersonApi\Service\BasePersonService;
 use UserApi\Application\Service\Exception\DuplicatedUserException;
@@ -109,7 +107,7 @@ class AccountService extends BasePersonService
                 }
 
                 $this->createOpenAmIdentity($data);
-                $person = $this->createPersonEntity($data, $username);
+                $person = $this->createPersonEntity($data);
                 $this->persistAndFlush($person);
 
                 $this->addSystemRole($person, Role::USER);
@@ -162,7 +160,7 @@ class AccountService extends BasePersonService
         $licence = new Licence();
         $licence->setLicenceType($this->getDrivingLicenceTypeEntity());
         $licence->setLicenceNumber(ArrayUtils::get($data, 'drivingLicenceNumber'));
-        $licence->setCountry($this->getCountryByCodeOrReturnUnknown(ArrayUtils::get($data, 'drivingLicenceRegion')));
+        $licence->setCountry($this->getCountryByCode(ArrayUtils::get($data, 'drivingLicenceRegion')));
 
         $this->persistAndFlush($licence);
 
@@ -193,20 +191,14 @@ class AccountService extends BasePersonService
     /**
      * @param string $code
      *
-     * @throws NotFoundException
-     *
-     * @return CountryOfRegistration
+     * @return LicenceCountry
      */
-    private function getCountryByCodeOrReturnUnknown($code)
+    private function getCountryByCode($code)
     {
-        /** @var CountryOfRegistrationRepository $countryRepo */
-        $countryRepo = $country = $this->entityManager->getRepository(CountryOfRegistration::class);
+        /** @var LicenceCountryRepository $countryRepo */
+        $countryRepo = $this->entityManager->getRepository(LicenceCountry::class);
 
-        try {
-            $country = $countryRepo->getByCode($code);
-        } catch (NotFoundException $e) {
-            $country = $countryRepo->getByCode(CountryOfRegistrationCode::NOT_KNOWN);
-        }
+        $country = $countryRepo->getByCode($code);
 
         return $country;
     }
