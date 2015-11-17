@@ -8,4 +8,14 @@ namespace DvsaCommon\HttpRestJson\Exception;
  */
 class ValidationException extends RestApplicationException
 {
+    /**
+     * @return array
+     */
+    public function getValidationMessages()
+    {
+        $errors = $this->getErrors();
+
+        return isset($errors['problem']['validation_messages']) ?
+            ['problem']['validation_messages'] : [];
+    }
 }
