@@ -3,15 +3,15 @@
 namespace DvsaMotApiTest\Controller;
 
 use DvsaAuthentication\Identity;
-use DvsaCommon\Auth\PermissionAtSite;
+use DvsaCommon\Auth\AbstractMotAuthorisationService;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Dto\Common\MotTestTypeDto;
 use DvsaCommon\Dto\Person\PersonDto;
 use DvsaCommon\Enum\MotTestTypeCode;
+use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;
-use DvsaCommonTest\TestUtils\Auth\GrantAllAuthorisationServiceStub;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaDocument\Service\Document\DocumentService;
 use DvsaEntities\Entity\Person;
@@ -40,7 +40,7 @@ class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
     private $mockedReportService;
     /** @var DocumentService|MockObj */
     private $mockedDocumentService;
-    /** @var AuthorisationServiceMock */
+    /** @var AbstractMotAuthorisationService */
     private $mockedAuthService;
     /** @var CertificateCreationService|MockObj */
     private $mockedCertificateCreationService;
@@ -50,8 +50,7 @@ class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
     protected function setUp()
     {
         $this->mockedDocumentService = XMock::of(DocumentService::class);
-
-        $this->controller = new CertificatePrintingController($this->mockedDocumentService);
+        $this->controller = $this->createController();
 
         parent::setUp();
 
@@ -60,12 +59,37 @@ class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
 
         $this->mockedCertificateCreationService = $this->getMockCertificateCreationService();
         $this->mockedDvsaAuthenticationService =  $this->getMockAuthenticationService();
-        $this->mockedAuthService = $this->setMockAuthService(new GrantAllAuthorisationServiceStub());
 
         $mockLogger = XMock::of(Logger::class);
 
+        $config = [
+            "pdf" => [
+                'invalidWatermarkText' => 'NOT VALID',
+                'invalidWatermark' => true
+            ]
+        ];
         $this->serviceManager->setService('Application/Logger', $mockLogger);
+        $this->serviceManager->setService('config', $config);
     }
+
+    private function createController()
+    {
+        $authorisationService = Xmock::of(AbstractMotAuthorisationService::class);
+        $authorisationService
+            ->method("getRolesAsArray")
+            ->willReturn([SiteBusinessRoleCode::TESTER]);
+
+        $authorisationService
+            ->method("isGrantedAtSite")
+            ->willReturnCallback(function ($permission, $vtsId) {
+                return $vtsId === self::SITE_ID;
+            });
+
+        $this->mockedAuthService = $authorisationService;
+
+        return new CertificatePrintingController($this->mockedDocumentService, $this->mockedAuthService);
+    }
+
 
     private function getMockReportService()
     {
@@ -272,7 +296,7 @@ class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
         $motTestDto
             ->setId($motTestId)
             ->setMotTestNumber($motTestNr)
-            ->setVehicleTestingStation(['siteNumber' => $siteNr])
+            ->setVehicleTestingStation(['id'=>self::SITE_ID, 'siteNumber' => $siteNr, "dualLanguage" => true])
             ->setDocument($jasperDocumentId)
             ->setTester(
                 (new PersonDto())
@@ -325,17 +349,33 @@ class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
             ->method('getStatusCode')
             ->willReturn(self::HTTP_OK_CODE);
 
+        $date = DateUtils::nowAsUserDateTime()->format("d F Y");
+        $issuerInfo = sprintf(
+            CertificatePrintingController::ISSUER_INFO_ENG,
+            "Duplicate",
+            $sessionPerson->getDisplayShortName(),
+            "at VTS " . $siteOtherNr,
+            $date
+        );
+
+        $date = datefmt_format_object(
+            DateUtils::nowAsUserDateTime(), 'dd MMMM Y', 'cy_GB'
+        );
+        $issuerInfo .= " / " . sprintf(
+            CertificatePrintingController::ISSUER_INFO_WEL,
+            "Dyblyg",
+            $sessionPerson->getDisplayShortName(),
+            "o GPC " . $siteOtherNr,
+            $date
+            );
+
         $reportArgs = [
             [
                 'documentId'    => $jasperDocumentId,
                 'reportName'    => $jasperReportName,
                 'runtimeParams' => [
-                    'IssueType'   => 'Duplicate',
-                    'IssueTypeCy' => 'Dyblyg',
-                    'Issuer'      => 'S. J. Smith',
-                    'Vts'         => $siteOtherNr,
-                    'NowCy'       => datefmt_format_object(DateUtils::nowAsUserDateTime(), 'dd MMMM Y', 'cy_GB'),
                     'Watermark'   => 'NOT VALID',
+                    CertificatePrintingController::JREPORT_PRM_ISSUER => $issuerInfo,
                     'snapshotData' => ['TestNumber' => $motTestNr]
                 ]
             ]
@@ -407,6 +447,7 @@ class CertificatePrintingControllerTest extends AbstractMotApiControllerTestCase
     {
         $this->setMockAuthService(new AuthorisationServiceMock());
         $motTestDto = self::createMotTestDto();
+        $motTestDto->setVehicleTestingStation(["id" => 123321]);
 
         $this->mockedTestService->expects($this->once())
             ->method('getMotTestData')

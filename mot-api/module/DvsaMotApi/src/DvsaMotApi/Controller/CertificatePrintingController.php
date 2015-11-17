@@ -2,11 +2,13 @@
 
 namespace DvsaMotApi\Controller;
 
+use DvsaCommon\Auth\AbstractMotAuthorisationService;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Exception\UnauthorisedException;
+use DvsaCommon\Model\DvsaRole;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApi\Model\ApiResponse;
@@ -38,12 +40,13 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
 
     //  --  Jasper report parameters    --
     const JREPORT_PRM_WATERMARK = 'Watermark';
-    const JREPORT_PRM_ISSUE_TYPE = 'IssueType';
-    const JREPORT_PRM_ISSUE_TYPE_CY = 'IssueTypeCy';
-    const JREPORT_PRM_ISSUER = 'Issuer';
+    const JREPORT_PRM_ISSUER = 'IssuerInfo';
     const JREPORT_PRM_SITE_NR = 'Vts';
-    const JREPORT_PRM_NOW_CY = 'NowCy';
     const JREPORT_PRM_INSP_AUTH = 'InspectionAuthority';
+
+    const ISSUER_INFO_ENG = "%s certificate issued by %s %s on %s";
+    const ISSUER_INFO_WEL = "%s wedi ei gyhoeddi gan %s %s ar %s";
+    const ISSUER_DVSA_INFO_WEL = "Anfonwyd %s gan %s ar ran y DVSA ar %s";
 
     //  --  Url query parameters --
     const QUERY_PRM_SITE_NR = 'siteNr';
@@ -59,10 +62,16 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
     /** @var ReportService */
     private $reportService;
 
+    /** @var AbstractMotAuthorisationService  */
+    private $authorisationService;
 
-    public function __construct(DocumentService $documentService)
+    public function __construct(
+        DocumentService $documentService,
+        AbstractMotAuthorisationService $authorisationService
+    )
     {
         $this->documentService = $documentService;
+        $this->authorisationService = $authorisationService;
     }
 
     public function printByDocIdAction()
@@ -191,16 +200,8 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
 
             // @NOTE VM-2805 specifies that a duplicate always trumps replacement in
             // terms of the text printed on the cert
-            $tester = $this->getIdentity()->getPerson()->getDisplayShortName();
-
             $runtimeParameters += [
-                self::JREPORT_PRM_ISSUE_TYPE => ($isDuplicate ? 'Duplicate' : 'Replacement'),
-                self::JREPORT_PRM_ISSUE_TYPE_CY => ($isDuplicate ? 'Dyblyg' : 'Ailddodiad'),
-                self::JREPORT_PRM_ISSUER => $tester,
-                self::JREPORT_PRM_SITE_NR => $siteNr,
-                self::JREPORT_PRM_NOW_CY => datefmt_format_object(
-                    DateUtils::nowAsUserDateTime(), 'dd MMMM Y', 'cy_GB'
-                ),
+                self::JREPORT_PRM_ISSUER => $this->getIssuerInfo($siteNr, $isDuplicate, CertificateCreationService::isRequiresDualLanguage($motTest)),
             ];
         }
 
@@ -239,6 +240,68 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
 
         //  --  return report data  --
         return $this->getReportService()->getMergedPdfReports($reportArgs);
+    }
+
+    private function getIssuerInfo($siteNr, $isDuplicate, $isRequiresDualLanguage = false)
+    {
+        $person = $this->getIdentity()->getPerson();
+        $roles = $this->authorisationService->getRolesAsArray($person->getId());
+
+        $hasDvsaRole = false;
+        foreach ($roles as $role) {
+            if (DvsaRole::isDvsaRole($role)) {
+                $hasDvsaRole = true;
+                break;
+            }
+        }
+        $advisoryInformation = $this->getEnglishVersion($siteNr, $isDuplicate, $hasDvsaRole);
+
+        if ($isRequiresDualLanguage) {
+            $advisoryInformation .= " / " . $this->getWelshVersion($siteNr, $isDuplicate, $hasDvsaRole);
+        }
+
+        return $advisoryInformation;
+    }
+
+    private function getEnglishVersion($siteNr, $isDuplicate, $hasDvsaRole = false)
+    {
+        $type = "Replacement";
+        if ($isDuplicate) {
+            $type = "Duplicate";
+        }
+
+        $date = DateUtils::nowAsUserDateTime();
+        $tester = $this->getIdentity()->getPerson()->getDisplayShortName();
+
+        if ($hasDvsaRole) {
+            $vts = "on behalf of DVSA";
+        } else {
+            $vts = "at VTS " . $siteNr;
+        }
+
+        return sprintf(self::ISSUER_INFO_ENG, $type, $tester, $vts, $date->format("d F Y"));
+    }
+
+    private function getWelshVersion($siteNr, $isDuplicate, $hasDvsaRole = false)
+    {
+        $date = datefmt_format_object(
+            DateUtils::nowAsUserDateTime(), 'dd MMMM Y', 'cy_GB'
+        );
+        $tester = $this->getIdentity()->getPerson()->getDisplayShortName();
+
+        if ($hasDvsaRole && $isDuplicate) {
+            return sprintf(self::ISSUER_DVSA_INFO_WEL, "copi o'r dystysgrif", $tester,  $date);
+        } elseif ($hasDvsaRole) {
+            return sprintf(self::ISSUER_DVSA_INFO_WEL, "tystysgrif gyfnewid", $tester,  $date);
+        }
+
+        $type = "Ailddodiad";
+        if ($isDuplicate) {
+            $type = "Dyblyg";
+        }
+        
+        $vts = "o GPC " . $siteNr;
+        return sprintf(self::ISSUER_INFO_WEL, $type, $tester, $vts, $date);
     }
 
     /**
@@ -334,10 +397,8 @@ class CertificatePrintingController extends AbstractDvsaRestfulController
      */
     private function assertUserCanPrintCertificate(MotTestDto $motTest)
     {
-        $authorisationService = null;
         $siteId = ArrayUtils::tryGet($motTest->getVehicleTestingStation(), 'id');
-        $this->getService('DvsaAuthorisationService', $authorisationService);
-        if (!$authorisationService->isGrantedAtSite(PermissionAtSite::CERTIFICATE_PRINT, $siteId)) {
+        if (!$this->authorisationService->isGrantedAtSite(PermissionAtSite::CERTIFICATE_PRINT, $siteId)) {
             throw new UnauthorisedException('You are not authorised to print this certificate');
         }
     }
