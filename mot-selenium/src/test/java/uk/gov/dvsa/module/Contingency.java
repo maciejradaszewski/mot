@@ -4,7 +4,6 @@ import org.joda.time.DateTime;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
-import uk.gov.dvsa.ui.pages.Page;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
 import uk.gov.dvsa.ui.pages.mot.*;
 
@@ -46,5 +45,17 @@ public class Contingency {
 
     public boolean isTestSaveSuccessful() {
         return successful;
+    }
+
+    public void startTest() {
+        contingencyPage.clickConfirmContingencyTestDetailsButton();
+    }
+
+    public String getValidationMessage(String elementPrefix){
+        return contingencyPage.getValidationText(elementPrefix);
+    }
+
+    public int getValidationListSize() {
+        return contingencyPage.getValidationList().size();
     }
 }
