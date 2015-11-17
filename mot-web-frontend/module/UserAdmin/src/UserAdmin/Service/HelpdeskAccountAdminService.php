@@ -86,4 +86,14 @@ class HelpdeskAccountAdminService
     {
         return $this->userAdminMapper->updateEmail($personId, $email);
     }
+
+    /**
+     * @param $licenceNumber
+     * @param $licenceRegion
+     * @return mixed|string
+     */
+    public function updateDrivingLicence($personId, $licenceNumber, $licenceRegion)
+    {
+        return $this->userAdminMapper->updateDrivingLicence($personId, $licenceNumber, $licenceRegion);
+    }
 }

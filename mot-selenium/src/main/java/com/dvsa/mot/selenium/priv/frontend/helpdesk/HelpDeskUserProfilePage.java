@@ -35,7 +35,7 @@ public class HelpDeskUserProfilePage extends BasePage {
 
     @FindBy(id = "person-telephone") private WebElement telephone;
 
-    @FindBy(id = "person-driving-licence") private WebElement licenceNUm;
+    @FindBy(id = "person-driving-licence-number") private WebElement licenceNUm;
 
     @FindBy(css = ".key-value-list__key>a") private WebElement roleAssociation;
 

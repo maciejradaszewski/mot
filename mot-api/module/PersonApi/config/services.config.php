@@ -31,11 +31,14 @@ use PersonApi\Factory\Service\PasswordServiceFactory;
 use PersonApi\Service\PasswordService;
 use PersonApi\Service\PasswordExpiryNotificationService;
 use PersonApi\Factory\Service\PasswordExpiryNotificationServiceFactory;
+use PersonApi\Service\LicenceDetailsService;
+use PersonApi\Factory\Service\LicenceDetailsServiceFactory;
 
 return [
     'factories'  => [
         BasePersonService::class                         => BasePersonServiceFactory::class,
         BasePersonValidator::class                       => BasePersonValidatorFactory::class,
+        LicenceDetailsService::class                     => LicenceDetailsServiceFactory::class,
         PersonalAuthorisationForMotTestingService::class => PersonalAuthorisationForMotTestingServiceFactory::class,
         PersonalDetailsService::class                    => PersonalDetailsServiceFactory::class,
         PersonService::class                             => PersonServiceFactory::class,

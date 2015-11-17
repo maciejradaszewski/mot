@@ -2,12 +2,19 @@
     <fieldset class="<?php echo (!empty($inputModifier) ? $this->escapeHtmlAttr($inputModifier) : ''); ?>">
         <legend class="form-label<?php echo (!empty($labelModifier) ? $this->escapeHtmlAttr($labelModifier) : ''); ?>">
             <?php echo $this->escapeHtml($label); ?>
+            <?php if (!empty($errorMessage)): ?>
+                <span class="validation-message"><?php echo $this->escapeHtml($errorMessage); ?></span>
+            <?php endif; ?>
             <?php if (!empty($labelHint)): ?>
                 <span class="form-hint"><?php echo $this->escapeHtmlAttr($labelHint); ?></span>
             <?php endif; ?>
         </legend>
 
-        <?php foreach ($options as $option): ?>
+        <?php $lastOption = count($options) - 1 ?>
+        <?php foreach ($options as $k => $option): ?>
+            <?php if ($k == $lastOption && isset($splitLastOption) && $splitLastOption): ?>
+                <p class="form-block">or</p>
+            <?php endif; ?>
             <?php echo $this->partial(
                 'partial/gds/form/control-radio',
                 $option

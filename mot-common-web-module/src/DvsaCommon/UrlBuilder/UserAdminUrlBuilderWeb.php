@@ -12,6 +12,8 @@ class UserAdminUrlBuilderWeb extends AbstractUrlBuilder
     const EMAIL_CHANGE      = '/email';
     const USER_RESULTS      = '/results';
     const USER_PROFILE      = '/user-profile/:personId';
+    const USER_PROFILE_DRIVING_LICENCE = '/driving-licence';
+    const USER_PROFILE_DRIVING_LICENCE_SUMMARY = '/summary';
     const SECURITY_QUESTION = '/security-question/:questionId';
     const CLAIM_ACCOUNT     = '/claim-reset';
     const CLAIM_ACCOUNT_POST = '/claim-reset/post';
@@ -43,6 +45,9 @@ class UserAdminUrlBuilderWeb extends AbstractUrlBuilder
                         self::USERNAME_RECOVER => '',
                         self::USERNAME_RECOVER_OK => '',
                         self::EMAIL_CHANGE => '',
+                        self::USER_PROFILE_DRIVING_LICENCE => [
+                            self::USER_PROFILE_DRIVING_LICENCE_SUMMARY => '',
+                        ],
                         self::USER_INTERNAL_ROLE_MANAGEMENT => [
                             self::ADD_INTERNAL_ROLE => '',
                             self::REMOVE_INTERNAL_ROLE => '',
@@ -84,6 +89,18 @@ class UserAdminUrlBuilderWeb extends AbstractUrlBuilder
     {
         return self::of()->appendRoutesAndParams(self::USER_PROFILE)
             ->routeParam('personId', $personId);
+    }
+
+    public static function drivingLicenceChange($personId)
+    {
+        return self::userProfile($personId)
+            ->appendRoutesAndParams(self::USER_PROFILE_DRIVING_LICENCE);
+    }
+
+    public static function drivingLicenceChangeSummary($personId)
+    {
+        return self::drivingLicenceChange($personId)
+            ->appendRoutesAndParams(self::USER_PROFILE_DRIVING_LICENCE_SUMMARY);
     }
 
     public static function userProfileSecurityQuestion($personId, $questionId)

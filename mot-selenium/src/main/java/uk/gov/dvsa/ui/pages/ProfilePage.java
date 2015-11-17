@@ -6,7 +6,7 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
 
-public class ProfilePage extends Page {
+public class ProfilePage extends AbstractProfilePage {
 
     public static final String path = "/profile";
 

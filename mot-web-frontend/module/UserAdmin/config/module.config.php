@@ -10,6 +10,7 @@ use UserAdmin\Factory\Controller\UserProfileControllerFactory;
 use UserAdmin\Factory\Controller\EmailAddressControllerFactory;
 use UserAdmin\Factory\Controller\PersonRoleControllerFactory;
 use UserAdmin\Factory\Controller\RecordDemoTestControllerFactory;
+use UserAdmin\Factory\Controller\DrivingLicenceControllerFactory;
 use UserAdmin\Controller\RecordDemoTestController;
 
 return [
@@ -26,6 +27,7 @@ return [
             EmailAddressControllerFactory::class => EmailAddressControllerFactory::class,
             RecordDemoTestController::class => RecordDemoTestControllerFactory::class,
             ChangeQualificationStatusController::class => ChangeQualificationStatusControllerFactory::class,
+            DrivingLicenceControllerFactory::class => DrivingLicenceControllerFactory::class,
         ]
     ],
     'view_manager' => [
@@ -151,6 +153,29 @@ return [
                                     'defaults' => [
                                         'controller' => EmailAddressControllerFactory::class,
                                         'action' => 'index'
+                                    ],
+                                ],
+                            ],
+                            'driving-licence-change' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/driving-licence',
+                                    'defaults' => [
+                                        'controller' => DrivingLicenceControllerFactory::class,
+                                        'action' => 'index'
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'summary' => [
+                                        'type' => 'Segment',
+                                        'options' => [
+                                            'route' => '/summary',
+                                            'defaults' => [
+                                                'controller' => DrivingLicenceControllerFactory::class,
+                                                'action' => 'summary'
+                                            ],
+                                        ],
                                     ],
                                 ],
                             ],

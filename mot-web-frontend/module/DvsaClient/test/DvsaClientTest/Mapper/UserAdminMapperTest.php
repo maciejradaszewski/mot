@@ -6,6 +6,7 @@ use DvsaClient\Mapper\UserAdminMapper;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Dto\Person\SearchPersonResultDto;
 use DvsaCommon\Dto\Security\SecurityQuestionDto;
+use DvsaCommon\Enum\LicenceCountryCode;
 use DvsaCommon\HttpRestJson\Client;
 
 /**
@@ -75,6 +76,7 @@ class UserAdminMapperTest extends \PHPUnit_Framework_TestCase
             'addressLine4' => '',
             'roles' => [],
             'drivingLicence' => '',
+            'drivingLicenceRegion' => '',
             'authenticationMethod' => [],
         ];
         $this->client->expects($this->any())
@@ -116,7 +118,7 @@ class UserAdminMapperTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testTesetClaimAccount()
+    public function testResetClaimAccount()
     {
         $this->client->expects($this->any())
             ->method('get')

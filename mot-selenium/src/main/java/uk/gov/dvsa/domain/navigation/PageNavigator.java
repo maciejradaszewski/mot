@@ -10,6 +10,7 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.accountclaim.AccountClaimPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.*;
+import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 import uk.gov.dvsa.ui.pages.cpms.GenerateReportPage;
 import uk.gov.dvsa.ui.pages.dvsa.*;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
@@ -318,5 +319,10 @@ public class PageNavigator {
         injectOpenAmCookieAndNavigateToPath(user, String.format(SiteTestLogPage.PATH, siteId));
 
         return new SiteTestLogPage(driver);
+    }
+
+    public ChangeDrivingLicencePage goToChangeDrivingLicencePage(User user, String userId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(ChangeDrivingLicencePage.PATH, userId));
+        return new ChangeDrivingLicencePage(driver);
     }
 }

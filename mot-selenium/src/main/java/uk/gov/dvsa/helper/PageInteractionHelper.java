@@ -252,7 +252,7 @@ public class PageInteractionHelper {
      * driver, else see JavascriptExecutor
      * @see org.openqa.selenium.JavascriptExecutor
      */
-    protected static Object executeJavascript(String script, Object... args) {
+    public static Object executeJavascript(String script, Object... args) {
         if (driver instanceof JavascriptExecutor) {
             return driver.executeScript(script, args);
         } else {

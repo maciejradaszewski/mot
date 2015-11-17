@@ -98,4 +98,22 @@ class UserAdminMapper extends DtoMapper
         $url = UserAdminUrlBuilder::personContact($personId);
         return $this->client->patch($url, ["emails" => [$email]]);
     }
+
+    /**
+     * @param $personId
+     * @param $licenceNumber
+     * @param $licenceRegion
+     * @return mixed|string
+     */
+    public function updateDrivingLicence($personId, $licenceNumber, $licenceRegion)
+    {
+        $url = UserAdminUrlBuilder::licenceDetails($personId);
+
+        return $this->client->post(
+            $url, [
+                "drivingLicenceNumber" => $licenceNumber,
+                "drivingLicenceRegion" => $licenceRegion,
+            ]
+        );
+    }
 }

@@ -127,6 +127,7 @@ final class PermissionInSystem
     const USER_ACCOUNT_RECLAIM = 'USER-ACCOUNT-RECLAIM';
     const ALTER_TESTER_AUTHORISATION_STATUS = 'ALTER-TESTER-AUTHORISATION-STATUS';
     const VIEW_TRADE_ROLES_OF_ANY_USER = 'VIEW-TRADE-ROLES-OF-ANY-USER';
+    const ADD_EDIT_DRIVING_LICENCE = 'ADD-EDIT-DRIVING-LICENCE';
 
     /**
      * @return array
@@ -251,6 +252,7 @@ final class PermissionInSystem
             self::USER_ACCOUNT_RECLAIM,
             self::ALTER_TESTER_AUTHORISATION_STATUS,
             self::VIEW_TRADE_ROLES_OF_ANY_USER,
+            self::ADD_EDIT_DRIVING_LICENCE,
         ];
     }
 }

@@ -54,10 +54,10 @@ class EventTypeCode
     const GROUP_B_TESTER_QUALIFICATION = 'GBTQ';
     const DVSA_ADMINISTRATOR_CREATE_AE = 'CAE';
     const DVSA_ADMINISTRATOR_CREATE_SITE = 'CS';
-    const DVSA_ADMINISTRATOR_UPDATE_SITE = 'US';
     const UPDATE_AE = 'UAE';
     const UNLINK_AE_SITE = 'AEULS';
     const DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE = 'LAES';
+    const DVSA_ADMINISTRATOR_UPDATE_SITE = 'US';
     const INTELLIGENCE_MARKER = 'INTM';
     const VTS_COMPLAINT = 'VTSCO';
     const TESTER_TRAINING_ASSESSMENT = 'NTTA';
@@ -115,7 +115,6 @@ class EventTypeCode
             self::GROUP_B_TESTER_QUALIFICATION,
             self::DVSA_ADMINISTRATOR_CREATE_AE,
             self::DVSA_ADMINISTRATOR_CREATE_SITE,
-            self::DVSA_ADMINISTRATOR_UPDATE_SITE,
             self::UPDATE_AE,
             self::UNLINK_AE_SITE,
             self::DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE,

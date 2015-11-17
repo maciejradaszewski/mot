@@ -8,6 +8,8 @@ use UserAdmin\Factory\UserAdminSessionManagerFactory;
 use UserAdmin\Service\HelpdeskAccountAdminService;
 use UserAdmin\Service\UserAdminSessionManager;
 use UserAdmin\Service\PersonRoleManagementService;
+use UserAdmin\Service\UserAdminSessionService;
+use UserAdmin\Factory\Service\UserAdminSessionServiceFactory;
 
 /**
  * Class Module.
@@ -30,6 +32,7 @@ class Module
                 UserAdminSessionManager::class => UserAdminSessionManagerFactory::class,
                 HelpdeskAccountAdminService::class => HelpdeskAccountAdminServiceFactory::class,
                 PersonRoleManagementService::class => PersonRoleManagementServiceFactory::class,
+                UserAdminSessionService::class => UserAdminSessionServiceFactory::class,
             ],
         ];
     }

@@ -34,6 +34,8 @@ class PersonHelpDeskProfileMapper
      */
     public function fromPersonEntityToDto(Person $person)
     {
+        $drivingLicence = $person->getDrivingLicence();
+
         $dto = new PersonHelpDeskProfileDto();
 
         $dto->setTitle($person->getTitle() && $person->getTitle()->getId() ? $person->getTitle()->getName() : '');
@@ -42,10 +44,21 @@ class PersonHelpDeskProfileMapper
         $dto->setMiddleName($person->getMiddleName());
         $dto->setLastName($person->getFamilyName());
         $dto->setDateOfBirth(DateTimeApiFormat::date($person->getDateOfBirth()));
-        if ($person->getDrivingLicence() !== null) {
-            $dto->setDrivingLicenceNumber($person->getDrivingLicence()->getLicenceNumber());
+        if ($drivingLicence !== null) {
+            $dto->setDrivingLicenceNumber($drivingLicence->getLicenceNumber());
+
+
+            if ($drivingLicence->hasCountry()) {
+                $dto->setDrivingLicenceRegion($drivingLicence->getCountry());
+                $dto->setDrivingLicenceRegionCode($drivingLicence->getCountryCode());
+            } else {
+                $dto->setDrivingLicenceRegion('');
+                $dto->setDrivingLicenceRegionCode('');
+            }
         } else {
             $dto->setDrivingLicenceNumber('');
+            $dto->setDrivingLicenceRegion('');
+            $dto->setDrivingLicenceRegionCode('');
         }
         $this->mapPersonalAddress($person, $dto);
 

@@ -20,7 +20,10 @@ public class User {
     private String phoneNumber;
     private String emailAddress;
     private String dateOfBirth;
+    private String drivingLicenceNumber;
+    private String drivingLicenceRegion;
     private boolean multiSiteUser;
+    private final String DEFAULT_TITLE = "Mr";
 
     public User() {
     }
@@ -79,7 +82,18 @@ public class User {
     }
 
     public String getTitle() {
+        if (title == null) {
+            return DEFAULT_TITLE;
+        }
         return title;
+    }
+
+    public String getDrivingLicenceNumber() {
+        return drivingLicenceNumber;
+    }
+
+    public String getDrivingLicenceRegion() {
+        return drivingLicenceRegion;
     }
 
     public boolean isManyVtsTester() {
@@ -123,6 +137,7 @@ public class User {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", emailAddress='" + emailAddress + '\'' +
                 ", dateOfBirth='" + dateOfBirth + '\'' +
+                ", drivingLicenceNumber='" + drivingLicenceNumber + '\'' +
                 '}';
     }
 }

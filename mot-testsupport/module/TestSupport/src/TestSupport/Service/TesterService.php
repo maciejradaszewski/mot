@@ -68,10 +68,11 @@ class TesterService
     /**
      * Create a tester with the data supplied
      *
-     * @param array $data
+     * @param array   $data
+     * @param boolean $addLicence
      * @return JsonModel
      */
-    public function create(array $data)
+    public function create(array $data, $addLicence = true)
     {
         FieldValidation::checkForRequiredFieldsInData(['siteIds'], $data);
 
@@ -87,7 +88,8 @@ class TesterService
             $account = $this->accountService->createAccount(
                 SiteBusinessRoleCode::TESTER,
                 $dataGeneratorHelper,
-                $this->accountPerson
+                $this->accountPerson,
+                $addLicence
             );
         } else {
             $account = new Account($data);
@@ -124,7 +126,8 @@ class TesterService
             "phoneNumber" => $this->accountPerson->getPhoneNumber(),
             "emailAddress" => $this->accountPerson->getEmailAddress(),
             "multiSiteUser" => (isset($data['siteIds']) && count($data['siteIds']) > 1) ? true : false,
-            "dateOfBirth" => $this->accountPerson->getDateOfBirth()
+            "dateOfBirth" => $this->accountPerson->getDateOfBirth(),
+            "drivingLicenceNumber" => $this->accountPerson->getDrivingLicenceNumber(),
         ]);
     }
 
@@ -154,5 +157,16 @@ class TesterService
             $notifications,
             self::SITE_POSITION_NOTIFICATION_ID
         );
+    }
+
+    /**
+     * @param array $testerDetails
+     * @return JsonModel
+     */
+    public function createWithoutLicence(array $testerDetails = [])
+    {
+        $tester = $this->create($testerDetails, false);
+
+        return $tester;
     }
 }

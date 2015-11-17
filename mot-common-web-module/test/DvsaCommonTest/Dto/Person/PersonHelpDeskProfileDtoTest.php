@@ -5,6 +5,7 @@ namespace DvsaCommonTest\Dto\Person;
 use DvsaCommon\Dto\Account\AuthenticationMethodDto;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
+use DvsaCommon\Enum\LicenceCountryCode;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
 
 /**
@@ -57,6 +58,8 @@ class PersonHelpDeskProfileDtoTest extends \PHPUnit_Framework_TestCase
             ->setEmail('dummy@email.com')
             ->setRoles([SiteBusinessRoleCode::TESTER])
             ->setDrivingLicenceNumber('1234567890')
+            ->setDrivingLicenceRegion(LicenceCountryCode::GREAT_BRITAIN_ENGLAND_SCOTLAND_AND_WALES)
+            ->setDrivingLicenceRegionCode('GB')
             ->setAuthenticationMethod(
                 (new AuthenticationMethodDto())
                     ->setName("Pin")
@@ -85,6 +88,8 @@ class PersonHelpDeskProfileDtoTest extends \PHPUnit_Framework_TestCase
                 SiteBusinessRoleCode::TESTER,
             ],
             'drivingLicence' => '1234567890',
+            'drivingLicenceRegion' => LicenceCountryCode::GREAT_BRITAIN_ENGLAND_SCOTLAND_AND_WALES,
+            'drivingLicenceRegionCode' => 'GB',
             'authenticationMethod' => [
                 'name' => 'Pin',
                 'code' => 'PIN',

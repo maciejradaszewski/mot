@@ -39,6 +39,7 @@ $inputArray = [
     enum('EventTypeCode', 'event_type_lookup', 'name', 'code'),
     enum('FuelTypeCode', 'fuel_type', 'name', 'code'),
     enum('LanguageTypeCode', 'language_type', 'name', 'code'),
+    enum('LicenceCountryCode', 'licence_country_lookup', 'name', 'code'),
     enum('LicenceTypeCode', 'licence_type', 'name', 'code'),
     enum('MessageTypeCode', 'message_type', 'name', 'code'),
     enum('MotTestTypeCode', 'mot_test_type', 'description', 'code'),
