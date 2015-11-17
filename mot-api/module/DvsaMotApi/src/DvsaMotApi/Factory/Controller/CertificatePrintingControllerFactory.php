@@ -26,6 +26,6 @@ class CertificatePrintingControllerFactory implements FactoryInterface
         /* @var DocumentService $documentService */
         $documentService = $serviceLocator->get('DocumentService');
 
-        return new CertificatePrintingController($documentService);
+        return new CertificatePrintingController($documentService, $serviceLocator->get('DvsaAuthorisationService'));
     }
 }
