@@ -38,7 +38,7 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
                 <fieldset>
                     <legend class="form-label">
                         Location where the test was performed
-                        <?php if (isset($inlineMessages['site'])): ?><span class="validation-message"><?php echo $inlineMessages['site']; ?></span> <?php endif; ?>
+                        <?php if (isset($inlineMessages['site'])): ?><span id="site__validation-message" class="validation-message"><?php echo $inlineMessages['site']; ?></span> <?php endif; ?>
                     </legend>
 
                     <?php foreach ($sites as $site): ?>
@@ -67,7 +67,7 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
                 </legend>
                 <div class="form-date">
                     <span class="form-hint">For example, 25 03 2015</span>
-                    <?php if (isset($inlineMessages['date'])): ?><span class="validation-message"><?php echo $inlineMessages['date']; ?></span> <?php endif; ?>
+                    <?php if (isset($inlineMessages['date'])): ?><span id="date__validation-message" class="validation-message"><?php echo $inlineMessages['date']; ?></span> <?php endif; ?>
 
                     <div class="form-group form-group-day">
                         <label for="contingency_date-day">Day</label>
@@ -93,7 +93,7 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
                 <div class="form-time">
 
                     <span class="form-hint">For example, 8:30am or 5:50pm (for midday use 12:00pm)</span>
-                    <?php if (isset($inlineMessages['time'])): ?><span class="validation-message"><?php echo $inlineMessages['time']; ?></span> <?php endif; ?>
+                    <?php if (isset($inlineMessages['time'])): ?><span id="time__validation-message" class="validation-message"><?php echo $inlineMessages['time']; ?></span> <?php endif; ?>
 
                     <div class="form-group form-group-hour">
                         <label for="contingency_time-hour" class="visuallyhidden">Hours</label>
@@ -125,7 +125,7 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
             <fieldset>
                 <legend class="form-label">
                     Reason for contingency testing
-                    <?php if (isset($inlineMessages['reason'])): ?><span class="validation-message"><?php echo $inlineMessages['reason']; ?></span> <?php endif; ?>
+                    <?php if (isset($inlineMessages['reason'])): ?><span id="reason__validation-message" class="validation-message"><?php echo $inlineMessages['reason']; ?></span> <?php endif; ?>
                 </legend>
                 <label class="block-label"
                        for="contingency-reason__system-outage">
@@ -157,7 +157,7 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
         <div id="target-other-reason" class="panel-indent js-hidden">
             <label for="other-reason" class="form-label">
                 If other, please enter a reason
-                <?php if (isset($inlineMessages['otherReasonText'])): ?><span class="validation-message"><?php echo $inlineMessages['otherReasonText']; ?></span> <?php endif; ?>
+                <?php if (isset($inlineMessages['otherReasonText'])): ?><span id="other-reason__validation-message" class="validation-message"><?php echo $inlineMessages['otherReasonText']; ?></span> <?php endif; ?>
             </label>
             <textarea type="text" name="other_reason_text" id="other-reason" class="form-control"><?php echo $this->escapeHtml($dto->getOtherReasonText()); ?></textarea>
         </div>
@@ -165,7 +165,7 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
         <div class="form-group gutter-top">
             <label for="contingency_code" class="form-label">
                 Contingency code
-                <?php if (isset($inlineMessages['contingencyCode'])): ?><span class="validation-message"><?php echo $inlineMessages['contingencyCode']; ?></span> <?php endif; ?>
+                <?php if (isset($inlineMessages['contingencyCode'])): ?><span id="contingency-code__validation-message" class="validation-message"><?php echo $inlineMessages['contingencyCode']; ?></span> <?php endif; ?>
             </label>
             <input type="text" name="contingency_code" id="contingency_code" class="form-control form-control-1-8" value="<?php echo $this->escapeHtmlAttr($dto->getContingencyCode()) ?>">
         </div>
