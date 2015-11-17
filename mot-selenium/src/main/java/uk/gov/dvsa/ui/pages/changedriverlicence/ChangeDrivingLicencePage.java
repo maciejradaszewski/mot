@@ -11,8 +11,8 @@ import uk.gov.dvsa.ui.pages.ProfilePage;
 
 public class ChangeDrivingLicencePage extends Page {
 
-    public static final String PATH = "/user-admin/user-profile/%s/driving-licence";
     private static final String PAGE_TITLE = "User profile\nChange driving licence";
+    public static final String PATH = "/user-admin/user-profile/%s/driving-licence";
 
     @FindBy(linkText = "Review driving licence") private WebElement reviewDrivingLicenceButton;
     @FindBy(linkText = "Cancel and return to user profile") private WebElement backToUserProfileLink;
@@ -22,6 +22,7 @@ public class ChangeDrivingLicencePage extends Page {
     @FindBy(id = "drivingLicenceRegionNI") private WebElement nIDrivingLicenceRadioButton;
     @FindBy(id = "drivingLicenceRegionNU") private WebElement nonUkDrivingLicenceRadioButton;
     @FindBy(id = "validation-summary-id") private WebElement validationSummary;
+    @FindBy(id = "delete-driving-licence") private WebElement deleteDrivingLicence;
 
     public ChangeDrivingLicencePage(MotAppDriver driver) {
         super(driver);
@@ -46,6 +47,12 @@ public class ChangeDrivingLicencePage extends Page {
     public ProfilePage clickBackToUserProfileLink() {
         backToUserProfileLink.click();
         return new ProfilePage(driver);
+    }
+
+    public RemoveDriverLicencePage clickRemoveDrivingLicenceLink()
+    {
+        deleteDrivingLicence.click();
+        return new RemoveDriverLicencePage(driver);
     }
 
     public ChangeDrivingLicencePage enterDriverLicenceNumber(String number) {

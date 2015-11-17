@@ -13,6 +13,7 @@ class UserAdminUrlBuilderWeb extends AbstractUrlBuilder
     const USER_RESULTS      = '/results';
     const USER_PROFILE      = '/user-profile/:personId';
     const USER_PROFILE_DRIVING_LICENCE = '/driving-licence';
+    const USER_PROFILE_DRIVING_LICENCE_DELETE = '/delete';
     const USER_PROFILE_DRIVING_LICENCE_SUMMARY = '/summary';
     const SECURITY_QUESTION = '/security-question/:questionId';
     const CLAIM_ACCOUNT     = '/claim-reset';
@@ -46,6 +47,7 @@ class UserAdminUrlBuilderWeb extends AbstractUrlBuilder
                         self::USERNAME_RECOVER_OK => '',
                         self::EMAIL_CHANGE => '',
                         self::USER_PROFILE_DRIVING_LICENCE => [
+                            self::USER_PROFILE_DRIVING_LICENCE_DELETE => '',
                             self::USER_PROFILE_DRIVING_LICENCE_SUMMARY => '',
                         ],
                         self::USER_INTERNAL_ROLE_MANAGEMENT => [
@@ -95,6 +97,11 @@ class UserAdminUrlBuilderWeb extends AbstractUrlBuilder
     {
         return self::userProfile($personId)
             ->appendRoutesAndParams(self::USER_PROFILE_DRIVING_LICENCE);
+    }
+
+    public static function drivingLicenceDelete($personId)
+    {
+        return self::drivingLicenceChange($personId)->appendRoutesAndParams(self::USER_PROFILE_DRIVING_LICENCE_DELETE);
     }
 
     public static function drivingLicenceChangeSummary($personId)

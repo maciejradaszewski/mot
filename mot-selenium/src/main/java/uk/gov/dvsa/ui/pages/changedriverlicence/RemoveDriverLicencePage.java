@@ -5,11 +5,12 @@ import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
+import uk.gov.dvsa.ui.pages.dvsa.UserSearchProfilePage;
 
 public class RemoveDriverLicencePage extends Page {
 
     private static final String PAGE_TITLE = "Remove driving licence";
-    @FindBy(linkText = "Remove driving licence") private WebElement removeDrivingLicenceButton;
+    @FindBy(id = "removeDrivingLicence") private WebElement removeDrivingLicenceButton;
     @FindBy(linkText = "Back") private WebElement backLink;
     @FindBy(className = "message--important") private WebElement warningMessage;
 
@@ -27,8 +28,9 @@ public class RemoveDriverLicencePage extends Page {
         backLink.click();
     }
 
-    public void clickRemoveDrivingLicenceButton() {
+    public UserSearchProfilePage clickRemoveDrivingLicenceButton() {
         removeDrivingLicenceButton.click();
+        return new UserSearchProfilePage(driver);
     }
 
     public String getWarningMessage() {

@@ -1,0 +1,51 @@
+<?php
+
+use UserAdmin\Presenter\DrivingLicenceSummaryPresenter;
+/** @var DrivingLicenceSummaryPresenter $presenter */
+
+?>
+<div class="text">
+    <p class="lede">Are you sure you want to remove <?php echo $fullName?>'s driving licence?</p>
+</div>
+<table class="key-value-list">
+    <tbody>
+    <tr>
+        <th scope="col" class="key-value-list__key">User</th>
+        <td scope="col" id="userFullName" class="key-value-list__value">
+            <?php echo $title . ' ' . $fullName?>
+        </td>
+    </tr>
+    <tr>
+        <th scope="col" class="key-value-list__key">Driving Licence</th>
+        <td class="key-value-list__value">
+            <?php echo $drivingLicenceNumber ?>
+            <br>
+            <span class="key-value-list__meta">
+                <?php echo $presenter->getCountryDescriptionByCode($drivingLicenceRegion) . ' licence' ?>
+            </span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div class="message--important">
+    <h3 class="message__heading">Important</h3>
+    <p>MOT testing qualifications can't be changed without a valid driving licence.</p>
+</div>
+<nav class="content-navigation">
+    <form method="post">
+        <?php echo $this->csrfToken(); ?>
+        <?php echo $this->partial(
+            'partial/gds/form/control-navigation',
+            [
+                'class' => 'button-warning',
+                'id' => 'removeDrivingLicence',
+                'value' => 'Remove driving licence',
+            ]
+        ); ?>
+    </form>
+    <ul class="content-navigation__secondary">
+        <li>
+            <a href="<?php echo $backButtonUrl; ?>">Back</a>
+        </li>
+    </ul>
+</nav>

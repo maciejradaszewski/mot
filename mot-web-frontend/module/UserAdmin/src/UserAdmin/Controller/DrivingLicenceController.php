@@ -28,7 +28,11 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
     const PAGE_SUBTITLE = 'User profile';
     const MSG_DRIVING_LICENCE_CHANGED_SUCCESSFULLY = 'Driving licence has been changed successfully.';
     const MSG_DRIVING_LICENCE_CHANGED_FAILURE = 'Driving licence could not be changed. Please try again.';
+    const MSG_DRIVING_LICENCE_REMOVE_SUCCESSFUL = 'Driving licence has been successfully removed.';
+    const MSG_DRIVING_LICENCE_REMOVE_FAILURE = 'Driving licence could not be removed. Please try again.';
     const SESSION_STORAGE_KEY_PREFIX = 'CHANGE_PERSON_DRIVING_LICENCE';
+
+    const DRIVING_LICENCE_DELETE_TEMPLATE = 'user-admin/driving-licence/delete.phtml';
 
     /**
      * @var HelpdeskAccountAdminService
@@ -193,6 +197,79 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
             'drivingLicenceNumber' => $data['drivingLicenceNumber'],
             'drivingLicenceRegion' => $data['drivingLicenceRegion'],
         ]);
+    }
+
+    public function deleteAction()
+    {
+        $personId = $this->params()->fromRoute('personId');
+        $profile = $this->accountAdminService->getUserProfile($personId);
+        $presenter = $this->createPresenter($personId);
+
+        if ($presenter->hasDvsaRoles()) {
+            throw new UnauthorisedException('DVSA cannot modify a DVSA user\'s driving licence');
+        }
+
+        if ($profile->getDrivingLicenceNumber() === '') {
+            // Redirect to the user profile if no licence is associated with account
+            $redirectUrl = UserAdminUrlBuilderWeb::of()->userProfile($personId);
+            return $this->redirect()->toUrl($redirectUrl);
+        }
+
+        $personId = $this->params()->fromRoute('personId');
+        $request = $this->getRequest();
+        $profile = $this->accountAdminService->getUserProfile($personId);
+
+        if ($data = $this->sessionService->load(self::SESSION_STORAGE_KEY_PREFIX . $personId)) {
+            // If we've come from the summary window, we want to load the licence data stored in the session
+            $drivingLicenceNumber = $data['drivingLicenceNumber'];
+            $drivingLicenceRegion = $data['drivingLicenceRegion'];
+        } else {
+            // Otherwise load the licence data from the user profile
+            $drivingLicenceNumber = $profile->getDrivingLicenceNumber();
+            $drivingLicenceRegion = $profile->getDrivingLicenceRegionCode();
+        }
+
+        if ($request->isPost()) {
+            try {
+                $this->accountAdminService->deleteDrivingLicence($personId);
+                $this->sessionService->save(self::SESSION_STORAGE_KEY_PREFIX . $personId, null);
+                $this->flashMessenger()->addSuccessMessage(self::MSG_DRIVING_LICENCE_REMOVE_SUCCESSFUL);
+            } catch (Exception $e) {
+                $this->flashMessenger()->addErrorMessage(self::MSG_DRIVING_LICENCE_REMOVE_FAILURE);
+            }
+
+            // Redirect to the user profile on success or failure and display a relevant message
+            $redirectUrl = UserAdminUrlBuilderWeb::of()->userProfile($personId);
+            return $this->redirect()->toUrl($redirectUrl);
+        }
+
+        $this->layout('layout/layout-govuk.phtml');
+        $this->layout()->setVariable('pageTitle', 'Remove driving licence');
+        $this->layout()->setVariable('pageSubTitle', self::PAGE_SUBTITLE);
+
+        $presenter = $this->createPresenter($personId);
+
+        $this->layout()->setVariable(
+            'breadcrumbs',
+            [
+                'breadcrumbs' => [
+                    $presenter->displayTitleAndFullName() => UserAdminUrlBuilderWeb::of()->userProfile($personId),
+                    'Change driving licence' => '',
+                ]
+            ]
+        );
+
+        return new ViewModel(
+            [
+                'presenter' => new DrivingLicenceSummaryPresenter,
+                'drivingLicenceNumber' => $drivingLicenceNumber,
+                'drivingLicenceRegion' => $drivingLicenceRegion,
+                'backButtonUrl' => UserAdminUrlBuilderWeb::of()->drivingLicenceChange($personId),
+                'fullName' => $profile->getFirstName() . ' ' . $profile->getMiddleName() . ' ' . $profile->getLastName(),
+                'title' => $profile->getTitle()
+            ],
+            ['template' => self::DRIVING_LICENCE_DELETE_TEMPLATE]
+        );
     }
 
     /**

@@ -88,12 +88,22 @@ class HelpdeskAccountAdminService
     }
 
     /**
-     * @param $licenceNumber
-     * @param $licenceRegion
+     * @param int    $personId
+     * @param string $licenceNumber
+     * @param string $licenceRegion
      * @return mixed|string
      */
     public function updateDrivingLicence($personId, $licenceNumber, $licenceRegion)
     {
         return $this->userAdminMapper->updateDrivingLicence($personId, $licenceNumber, $licenceRegion);
+    }
+
+    /**
+     * @param $personId
+     * @return mixed|string
+     */
+    public function deleteDrivingLicence($personId)
+    {
+        return $this->userAdminMapper->deleteDrivingLicence($personId);
     }
 }
