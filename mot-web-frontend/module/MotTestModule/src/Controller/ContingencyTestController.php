@@ -78,12 +78,12 @@ class ContingencyTestController extends AbstractDvsaMotTestController
 
             try {
                 // Validate our POST data
+                $dto = $this->dtoFromRequest($data);
                 $validationResult = $this->contingencyTestValidator->validate($data);
                 if (false === $validationResult->isValid()) {
                     throw new ValidationException($validationResult);
                 }
 
-                $dto = $this->dtoFromRequest($data);
                 $apiUrl = UrlBuilder::contingency()->toString();
 
                 $apiResult = $this->getRestClient()->post($apiUrl, DtoHydrator::dtoToJson($dto));

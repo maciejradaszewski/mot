@@ -94,7 +94,7 @@ class ContingencyTestValidator extends CommonContingencyTestValidator
         /*
          * "must be a valid contingency code"
          */
-        $validCode = new Callback(function ($data) {
+        $validCode = new ContingencyCodeValidator(function ($data) {
             $this->emergencyLog = $this->emergencyService->getEmergencyLog($data['contingencyCode']);
 
             return $this->emergencyLog instanceof EmergencyLog;

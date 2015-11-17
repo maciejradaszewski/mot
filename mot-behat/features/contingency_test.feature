@@ -18,10 +18,8 @@ Feature: Contingency Test
   Examples:
     | reason |
     | CP     |
-    | PI     |
     | OT     |
     | CP     |
-    | PI     |
     | OT     |
 
   Scenario: Unauthenticated Tester attempts to submit Contingency test details
@@ -32,7 +30,7 @@ Feature: Contingency Test
   Scenario Outline: Tester attempts to submit Contingency test details with invalid contingency code
     Given I am logged in as a Tester
     When I attempt to create a new contingency test with a <contingencyCode>
-    Then I should receive a Bad Request response
+    Then I should receive an Unprocessable Entity response
 
   Examples:
     | contingencyCode |
