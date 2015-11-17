@@ -123,6 +123,11 @@ class OrganisationBusinessRole extends Entity
         return $this->shortName;
     }
 
+    public function getCode()
+    {
+        return $this->shortName;
+    }
+
     /**
      * Set role
      *

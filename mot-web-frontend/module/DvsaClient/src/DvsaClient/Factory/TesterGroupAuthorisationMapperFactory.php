@@ -12,7 +12,7 @@ class TesterGroupAuthorisationMapperFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var MapperFactory $mapperFactory */
+        /** @var MapperFactoryFactory $mapperFactory */
         $mapperFactory = $serviceLocator->get(Factory::class);
         /** @var CatalogService $catalog */
         $catalog = $serviceLocator->get('CatalogService');

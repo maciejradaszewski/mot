@@ -64,8 +64,6 @@ class OrganisationPositionMapperTest extends AbstractMapperTest
             ['data' => true]
         );
 
-        $actual = $this->mapper->deletePosition(self::ORG_ID, self::POSTION_ID);
-
-        $this->assertTrue($actual);
+        $this->mapper->deletePosition(self::ORG_ID, self::POSTION_ID);
     }
 }

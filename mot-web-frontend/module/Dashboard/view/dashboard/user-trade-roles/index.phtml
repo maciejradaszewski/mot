@@ -3,7 +3,14 @@
     /** @var $userTradeRolesViewModel UserTradeRolesViewModel array */
 ?>
 
-<?php if ($userTradeRolesViewModel->getRolesAndAssociations()) : ?>
+<?php
+
+echo $this->partial('partial/gds/general/system-message', ['messages' => $this->layout()->flashMessenger->getSuccessMessages(), 'type' => 'success']);
+echo $this->partial('partial/gds/general/system-message', ['messages' => $this->layout()->flashMessenger->getErrorMessages(), 'type' => 'failure']);
+
+?>
+
+<?php if ($userTradeRolesViewModel->getTradeRoles()) : ?>
     <?php echo $this->partial('dashboard/partials/profile/user-trade-roles.phtml', [
             'userTradeRolesViewModel' => $userTradeRolesViewModel,
     ]); ?>
@@ -13,8 +20,8 @@
     <ul class="content-navigation__secondary">
         <li>
             <?php /** if javascript is enabled clicking this link triggers window.history.back() */ ?>
-            <a class="history-go-back" onclick="window.history.back();return false;"
-               href="<?php echo $this->url('user-home/profile/byId', ['id' => $userTradeRolesViewModel->getPersonId()]); ?>">
+            <a class="history-go-back" <?php echo $userTradeRolesViewModel->getPersonIsViewingOwnProfile() ? null : 'onclick="window.history.back();return false;"'; ?>
+               href="<?php echo $this->url('user-home/profile/byId'); ?>">
                 <?php echo $userTradeRolesViewModel->getPersonIsViewingOwnProfile() ? 'Return to your profile' : 'Return to user profile';?>
             </a>
         </li>

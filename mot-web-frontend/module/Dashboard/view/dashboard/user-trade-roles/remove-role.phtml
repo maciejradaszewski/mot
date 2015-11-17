@@ -1,0 +1,33 @@
+<?php
+/**
+ * @var $viewModel \DashBoard\ViewModel\RemoveRoleViewModel
+ */
+?>
+
+<div class="text">
+    <p class="lede">
+        Please confirm that you want to remove the role of <?php echo $this->escapeHtml($viewModel->getRoleName()); ?>
+        at <?php echo $this->escapeHtml($viewModel->getEntityName()); ?>
+    </p>
+</div>
+
+<form action="<?php
+echo $this->url(
+    null,
+    ['id' => $viewModel->getPersonId(), 'positionId' => $viewModel->getPositionId(), 'entityId' => $viewModel->getEntityId()]
+);
+?>" method="post">
+    <?php echo $this->csrfToken(); ?>
+    <nav class="content-navigation">
+
+        <input type="submit" name="submit" id="confirm" class="button" value="Confirm">
+
+        <ul class="content-navigation__secondary">
+            <li>
+                <a id="cancel-and-return-to-profile" href="<?php echo $this->url('user-home/profile/byId/trade-roles', [ 'id' => $viewModel->getPersonId()]); ?>">
+                    Cancel and return to roles and associations
+                </a>
+            </li>
+        </ul>
+    </nav>
+</form>

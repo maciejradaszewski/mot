@@ -10,6 +10,7 @@ use DvsaEntities\Entity\OrganisationBusinessRoleMap;
 use DvsaEntities\Entity\OrganisationPositionHistory;
 use NotificationApi\Service\NotificationService;
 use NotificationApi\Service\PositionRemovalNotificationService;
+use NotificationApi\Service\UserOrganisationNotificationService;
 use OrganisationApi\Service\Mapper\OrganisationPositionMapper;
 use OrganisationApi\Service\OrganisationPositionService;
 use Zend\ServiceManager\FactoryInterface;
@@ -27,12 +28,12 @@ class OrganisationPositionServiceFactory implements FactoryInterface
             $entityManager->getRepository(OrganisationBusinessRoleMap::class),
             $entityManager->getRepository(OrganisationPositionHistory::class),
             new OrganisationPositionMapper($serviceLocator->get(Hydrator::class)),
-            $serviceLocator->get(NotificationService::class),
             $serviceLocator->get(MotIdentityProviderInterface::class),
             $serviceLocator->get('DvsaAuthorisationService'),
             $entityManager,
             $serviceLocator->get(EventService::class),
-            $serviceLocator->get(PositionRemovalNotificationService::class)
+            $serviceLocator->get(PositionRemovalNotificationService::class),
+            $serviceLocator->get(UserOrganisationNotificationService::class)
         );
     }
 }

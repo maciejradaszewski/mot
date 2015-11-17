@@ -222,7 +222,7 @@ class RoleController extends AbstractAuthActionController
 
         if ($this->getRequest()->isPost()) {
             try {
-                $mapperFactory->SitePosition->delete($siteId, $positionId);
+                $mapperFactory->SitePosition->deletePosition($siteId, $positionId);
                 $this->addSuccessMessage(
                     'You have removed the role of ' . $roleCodeNameMap[$position->getRole()->getCode()]
                     . ' from ' . $position->getPerson()->getFullName()

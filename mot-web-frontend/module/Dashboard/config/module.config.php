@@ -99,6 +99,34 @@ return [
                                             ],
                                         ],
                                     ],
+                                    'remove-ae-role' => [
+                                        'type'    => 'segment',
+                                        'options' => [
+                                            'route'    => '/remove-ae-role/:entityId/:positionId',
+                                            'constraints' => [
+                                                'entityId'   => '[0-9]+',
+                                                'positionId' => '[0-9]+',
+                                            ],
+                                            'defaults' => [
+                                                'controller' => UserTradeRolesController::class,
+                                                'action' => 'removeAeRole'
+                                            ]
+                                        ]
+                                    ],
+                                    'remove-vts-role' => [
+                                        'type'    => 'segment',
+                                        'options' => [
+                                            'route'    => '/remove-vts-role/:entityId/:positionId',
+                                            'constraints' => [
+                                                'entityId'   => '[0-9]+',
+                                                'positionId' => '[0-9]+',
+                                            ],
+                                            'defaults' => [
+                                                'controller' => UserTradeRolesController::class,
+                                                'action' => 'removeVtsRole'
+                                            ]
+                                        ]
+                                    ],
                                 ],
                             ],
                             'edit'              => [

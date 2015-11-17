@@ -1,0 +1,39 @@
+<?php
+
+namespace Core\Catalog\BusinessRole;
+
+use Application\Service\CatalogService;
+use DvsaCommon\Utility\ArrayUtils;
+
+class BusinessRoleCatalog
+{
+    private $roles;
+
+    public function __construct(CatalogService $catalog)
+    {
+        $this->roles = $this->buildRolesFromCatalog($catalog);
+    }
+
+    public function getByCode($code)
+    {
+        return $this->roles[$code];
+    }
+
+    /**
+     * @param CatalogService $catalog
+     * @return BusinessRole[]
+     */
+    private function buildRolesFromCatalog(CatalogService $catalog)
+    {
+        return ArrayUtils::mapWithKeys($catalog->getBusinessRoles(),
+            function ($key, array $roleAsArray) {
+                return $roleAsArray['code'];
+            }, function ($key, array $roleAsArray) {
+                return new BusinessRole(
+                    $roleAsArray['code'],
+                    $roleAsArray['name'],
+                    $roleAsArray['role']
+                );
+            });
+    }
+}

@@ -13,12 +13,11 @@ use PersonApi\Controller\PersonCurrentMotTestController;
 use PersonApi\Controller\PersonProfileRestrictedController;
 use PersonApi\Controller\PersonProfileUnrestrictedController;
 use PersonApi\Controller\PersonRoleController;
-use PersonApi\Controller\PersonTradeRoleController;
 use PersonApi\Controller\PersonSiteCountController;
+use PersonApi\Controller\PersonTradeRoleController;
 use PersonApi\Controller\ResetClaimAccountController;
 use PersonApi\Controller\ResetPinController;
 use PersonApi\Controller\UserStatsController;
-use PersonApi\Service\PersonRoleService;
 use PersonApi\Controller\PersonEventController;
 use PersonApi\Controller\PasswordController;
 use UserApi\SpecialNotice\Controller\SpecialNoticeController;
@@ -75,6 +74,16 @@ return [
                         'route' => '/event',
                         'defaults' => [
                             'controller' => PersonEventController::class,
+                        ],
+                    ],
+                    'may_terminate' => true,
+                ],
+                'trade-role' => [
+                    'type' => 'segment',
+                    'options' => [
+                        'route' => '/trade-role',
+                        'defaults' => [
+                            'controller' => PersonTradeRoleController::class,
                         ],
                     ],
                     'may_terminate' => true,

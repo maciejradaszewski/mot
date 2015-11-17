@@ -28,6 +28,7 @@ class Notification
 	const TEMPLATE_TESTER_STATUS_CHANGE = 20;
     const TEMPLATE_TESTER_STATUS_CHANGE_NEW = 22;
     const TEMPLATE_PASSWORD_EXPIRY = 24;
+    const TEMPLATE_USER_REMOVED_OWN_ROLE = 25;
 
     /** @var $template int */
     private $template;

@@ -32,21 +32,21 @@ public class AedmManagesMotAccountTests extends BaseTest {
 
         //Given I am on the Authorised Examiner Change Contact Details Page
         AuthorisedExaminerChangeDetailsPage authorisedExaminerChangeDetailsPage = pageNavigator
-            .goToAuthorisedExaminerPage(aedm, AuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
-            .clickChangeContactDetailsLink();
+                .goToAuthorisedExaminerPage(aedm, AuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
+                .clickChangeContactDetailsLink();
 
         //When I Change the Authorised Examiner Correspondence Details
         AuthorisedExaminerViewPage authorisedExaminerPage =
-            authorisedExaminerChangeDetailsPage.fillOutMinimumContactDetails(
-                    aeContactDetails).saveContactDetailChanges();
+                authorisedExaminerChangeDetailsPage.fillOutMinimumContactDetails(
+                        aeContactDetails).saveContactDetailChanges();
 
         //Then the Contact Details Should be Successfully changed
         assertThat("The correspondence email has been updated correctly",
-            aeContactDetails.getEmail(), is(authorisedExaminerPage.getCorrespondenceEmailText()));
+                aeContactDetails.getEmail(), is(authorisedExaminerPage.getCorrespondenceEmailText()));
 
         assertThat("The correspondence phone has been updated correctly",
-            aeContactDetails.getTelephoneNumber(),
-            is(authorisedExaminerPage.getCorrespondenceTelephoneText())
+                aeContactDetails.getTelephoneNumber(),
+                is(authorisedExaminerPage.getCorrespondenceTelephoneText())
         );
     }
 
@@ -91,7 +91,7 @@ public class AedmManagesMotAccountTests extends BaseTest {
 
         //Given I perform an MOT test for my selected Authorised Examiner
         motApi.createTest(tester, site.getId(),
-                        vehicleData.getNewVehicle(tester), TestOutcome.PASSED, 14000, DateTime.now());
+                vehicleData.getNewVehicle(tester), TestOutcome.PASSED, 14000, DateTime.now());
 
 
         //When I navigate to the Slots usage Page
@@ -134,9 +134,7 @@ public class AedmManagesMotAccountTests extends BaseTest {
         vehicleTestingStationPage.removeTesterRole(tester.getId()).confirmRemoveRole();
 
         //Then the tester should no longer be associated to Vts
-        assertThat(vehicleTestingStationPage.isTesterDisplayed(
-                tester.getId(), tester.getNamesAndSurname()), is(false)
-        );
+        assertThat(vehicleTestingStationPage.isTesterDisplayed(tester.getId()), is(false));
     }
 
     @DataProvider(name = "createAedmAndAe")

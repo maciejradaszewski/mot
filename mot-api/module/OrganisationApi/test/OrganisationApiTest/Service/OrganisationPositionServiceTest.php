@@ -5,6 +5,7 @@ namespace OrganisationApiTest\Service;
 use Doctrine\ORM\EntityManager;
 use DvsaAuthentication\IdentityProvider;
 use DvsaAuthorisation\Service\AuthorisationService;
+use DvsaCommon\Auth\MotIdentityInterface;
 use DvsaCommon\Enum\OrganisationBusinessRoleCode;
 use DvsaCommonApiTest\Transaction\TestTransactionExecutor;
 use DvsaCommonTest\TestUtils\ArgCapture;
@@ -21,6 +22,7 @@ use DvsaEntities\Repository\OrganisationRepository;
 use NotificationApi\Dto\Notification;
 use NotificationApi\Service\NotificationService;
 use NotificationApi\Service\PositionRemovalNotificationService;
+use NotificationApi\Service\UserOrganisationNotificationService;
 use OrganisationApi\Service\Mapper\OrganisationPositionMapper;
 use OrganisationApi\Service\OrganisationPositionService;
 use DvsaEntities\Repository\OrganisationBusinessRoleMapRepository;
@@ -29,6 +31,7 @@ use DvsaEventApi\Service\EventService;
 
 class OrganisationPositionServiceTest extends \PHPUnit_Framework_TestCase
 {
+    protected $userOrganisationNotificationService;
     private $organisationPositionRepository;
     private $positionHistoryRepository;
     private $organisationRepository;
@@ -38,6 +41,10 @@ class OrganisationPositionServiceTest extends \PHPUnit_Framework_TestCase
     private $authorisationService;
     private $eventService;
     private $positionRemovalNotificationService;
+    private $entityManager;
+
+    /** @var OrganisationPositionService */
+    private $organisationPositionService;
 
     public function setUp()
     {
@@ -47,28 +54,38 @@ class OrganisationPositionServiceTest extends \PHPUnit_Framework_TestCase
         $this->organisationPositionMapper = XMock::of(OrganisationPositionMapper::class);
         $this->notificationService = XMock::of(NotificationService::class);
         $this->entityManager = XMock::of(EntityManager::class);
+
         $this->identityProvider = XMock::of(IdentityProvider::class);
+        $identityMock = XMock::of(MotIdentityInterface::class);
+        $identityMock->expects($this->any())->method('getUserId')->willReturn(9898998);
+        $this->identityProvider->expects($this->any())->method('getIdentity')->willReturn($identityMock);
+
         $this->authorisationService = XMock::of(AuthorisationService::class);
         $this->eventService = XMock::of(EventService::class);
         $this->positionRemovalNotificationService = XMock::of(PositionRemovalNotificationService::class);
+        $this->userOrganisationNotificationService = new UserOrganisationNotificationService(
+            $this->notificationService,
+            $this->positionRemovalNotificationService
+        );
+        $this->organisationPositionService = $this->buildService();
     }
 
     /**
      * @return OrganisationPositionService
      */
-    private function service($organisationPositionRepository)
+    private function buildService()
     {
         $service = new OrganisationPositionService(
             $this->organisationRepository,
-            $organisationPositionRepository,
+            $this->organisationPositionRepository,
             $this->positionHistoryRepository,
             $this->organisationPositionMapper,
-            $this->notificationService,
             $this->identityProvider,
             $this->authorisationService,
             $this->entityManager,
             $this->eventService,
-            $this->positionRemovalNotificationService
+            $this->positionRemovalNotificationService,
+            $this->userOrganisationNotificationService
         );
 
         return $service;
@@ -84,11 +101,11 @@ class OrganisationPositionServiceTest extends \PHPUnit_Framework_TestCase
         $notificationPromise = $this->notificationSent();
 
         $this->organisationPositionRepository->expects($this->any())
-                                             ->method('get')
+                                             ->method('find')
                                              ->with($positionId)
                                              ->willReturn($position);
 
-        $this->service($this->organisationPositionRepository)->remove($orgId, $positionId);
+        $this->organisationPositionService->remove($orgId, $positionId);
 
         /** @var array $notification */
         $notification = $notificationPromise->get();
@@ -106,12 +123,12 @@ class OrganisationPositionServiceTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(NotFoundException::class);
 
         $this->organisationPositionRepository->expects($this->any())
-                                             ->method('get')
+                                             ->method('find')
                                              ->with($positionId)
                                              ->willReturn($organisationPosition);
 
-        $service = $this->service($this->organisationPositionRepository);
-        $service->remove($orgId + 1, $positionId);
+        $service = $this->buildService();
+        $this->organisationPositionService->remove($orgId + 1, $positionId);
 
         $this->assertFalse(TestTransactionExecutor::isFlushed($service));
     }
@@ -119,7 +136,7 @@ class OrganisationPositionServiceTest extends \PHPUnit_Framework_TestCase
     private function returnsPosition($positionId, $position)
     {
         $this->organisationPositionRepository->expects($this->atLeastOnce())
-            ->method('get')->with($positionId)->will($this->returnValue($position));
+            ->method('find')->with($positionId)->will($this->returnValue($position));
     }
 
     private function notificationSent()
