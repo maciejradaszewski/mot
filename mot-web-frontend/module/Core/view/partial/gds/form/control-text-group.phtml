@@ -42,7 +42,7 @@ $cssClass = join(
         [
             'id'            => $id,
             'name'          => $name,
-            'value'         => $value,
+            'value'         => $this->escapeHTML($value),
             'inputModifier' => $inputModifier,
             'type'          => $type,
             'maxLength'     => isset($maxLength) ? $maxLength : '',
