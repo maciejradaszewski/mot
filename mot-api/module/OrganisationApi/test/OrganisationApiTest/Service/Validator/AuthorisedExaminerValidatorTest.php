@@ -229,6 +229,50 @@ class AuthorisedExaminerValidatorTest extends \PHPUnit_Framework_TestCase
                     ->setRegisteredCompanyNumber(''),
                 'errors' => true,
             ],
+            // Error Invalid Company Registration Number
+            [
+                'organisation' => (new OrganisationDto())
+                    ->setAuthorisedExaminerAuthorisation($authForAeDto)
+                    ->setContacts(
+                        [
+                            (new OrganisationContactDto())
+                                ->setAddress(
+                                    (new AddressDto())
+                                        ->setAddressLine1('AddressLine1')
+                                        ->setTown('Town')
+                                        ->setPostcode('Postcode')
+                                )
+                                ->setEmails([(new EmailDto())->setIsPrimary(true)->setEmail('invalidEmail')])
+                                ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
+                        ]
+                    )
+                    ->setName(self::AE_NAME)
+                    ->setCompanyType(CompanyTypeCode::COMPANY)
+                    ->setRegisteredCompanyNumber('AAA1111'),
+                'errors' => true,
+            ],
+            // Error Company Number wrong length
+            [
+                'organisation' => (new OrganisationDto())
+                    ->setAuthorisedExaminerAuthorisation($authForAeDto)
+                    ->setContacts(
+                        [
+                            (new OrganisationContactDto())
+                                ->setAddress(
+                                    (new AddressDto())
+                                        ->setAddressLine1('AddressLine1')
+                                        ->setTown('Town')
+                                        ->setPostcode('Postcode')
+                                )
+                                ->setEmails([(new EmailDto())->setIsPrimary(true)->setEmail('invalidEmail')])
+                                ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
+                        ]
+                    )
+                    ->setName(self::AE_NAME)
+                    ->setCompanyType(CompanyTypeCode::COMPANY)
+                    ->setRegisteredCompanyNumber('123456'),
+                'errors' => true,
+            ],
             // Area Office number required
             [
                 'organisation' => (new OrganisationDto())

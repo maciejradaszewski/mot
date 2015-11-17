@@ -17,11 +17,15 @@ class AuthorisedExaminerValidator extends AbstractValidator
     const FIELD_STATUS= 'status';
     const FIELD_AO_NUMBER = 'assignedAreaOffice';
 
-    const ERR_ORGANISATION_NAME_REQUIRE = 'A business name must be entered';
-    const ERR_COMPANY_TYPE_REQUIRE = 'A business type must be selected';
-    const ERR_COMPANY_NUMBER_REQUIRE = 'A company number must be entered';
-    const ERR_STATUS = 'A status must be selected';
-    const ERR_AO_NR_REQUIRE = 'An area office must be selected';
+    const REG_NUMBER_PATTERN = '/^([0-9]{8}|[A-Z]{2}[0-9]{6})$/';
+
+    const ERR_ORGANISATION_NAME_REQUIRE = 'You must enter a business name';
+    const ERR_COMPANY_TYPE_REQUIRE = 'You must choose a business type';
+    const ERR_COMPANY_NUMBER_REQUIRE = 'You must enter a company number';
+    const ERR_COMPANY_NUMBER_WRONG_LENGTH = 'Must be 8 characters long';
+    const ERR_COMPANY_NUMBER_NO_PATTERN_MATCH = 'Must be a valid company number, in the format AA123456 or 12345678';
+    const ERR_STATUS = 'You must choose a status';
+    const ERR_AO_NR_REQUIRE = 'You must choose an area office';
 
     /** @var ContactValidator */
     private $contactValidator;
@@ -68,10 +72,7 @@ class AuthorisedExaminerValidator extends AbstractValidator
         } else {
             $this->validateAreaOffice($authForAeDto, $validAreaOffices);
         }
-
-        if ($organisationDto->getCompanyType() === CompanyTypeCode::COMPANY) {
-            $this->validateCompanyNumber($organisationDto);
-        }
+        $this->validateCompanyNumber($organisationDto);
     }
 
     private function validateAreaOfficeNumber($intAONumber, $validAreaOffices)
@@ -89,8 +90,15 @@ class AuthorisedExaminerValidator extends AbstractValidator
         /**
          * If Business Type is "Company" then it needs to be verified not empty
          */
-        if ($this->isEmpty($organisationDto->getRegisteredCompanyNumber())) {
+        if ($organisationDto->getCompanyType() === CompanyTypeCode::COMPANY
+            && $this->isEmpty($organisationDto->getRegisteredCompanyNumber())) {
             $this->errors->add(self::ERR_COMPANY_NUMBER_REQUIRE, self::FIELD_REG_NUMBER);
+        } elseif(!$this->isEmpty($organisationDto->getRegisteredCompanyNumber())
+            && 8 !== strlen($organisationDto->getRegisteredCompanyNumber())) {
+            $this->errors->add(self::ERR_COMPANY_NUMBER_WRONG_LENGTH, self::FIELD_REG_NUMBER);
+        } elseif (!$this->isEmpty($organisationDto->getRegisteredCompanyNumber())
+            && 0 === preg_match(self::REG_NUMBER_PATTERN, $organisationDto->getRegisteredCompanyNumber())) {
+            $this->errors->add(self::ERR_COMPANY_NUMBER_NO_PATTERN_MATCH, self::FIELD_REG_NUMBER);
         }
     }
 
