@@ -3,6 +3,7 @@
 use PersonApi\Controller\AuthorisedExaminerController;
 use PersonApi\Controller\DashboardController;
 use PersonApi\Controller\MotTestingAuthorisationController;
+use PersonApi\Controller\PasswordController;
 use PersonApi\Controller\PasswordExpiryController;
 use PersonApi\Controller\PersonalDetailsController;
 use PersonApi\Controller\PersonAuthorisationController;
@@ -10,17 +11,19 @@ use PersonApi\Controller\PersonByLoginController;
 use PersonApi\Controller\PersonContactController;
 use PersonApi\Controller\PersonController;
 use PersonApi\Controller\PersonCurrentMotTestController;
+use PersonApi\Controller\PersonEventController;
 use PersonApi\Controller\PersonProfileRestrictedController;
 use PersonApi\Controller\PersonProfileUnrestrictedController;
 use PersonApi\Controller\PersonRoleController;
-use PersonApi\Controller\PersonTradeRoleController;
 use PersonApi\Controller\PersonSiteCountController;
+use PersonApi\Controller\PersonTradeRoleController;
 use PersonApi\Controller\ResetClaimAccountController;
 use PersonApi\Controller\ResetPinController;
 use PersonApi\Controller\UserStatsController;
 use PersonApi\Factory\Controller\AuthorisedExaminerControllerFactory;
 use PersonApi\Factory\Controller\DashboardControllerFactory;
 use PersonApi\Factory\Controller\MotTestingAuthorisationControllerFactory;
+use PersonApi\Factory\Controller\PasswordControllerFactory;
 use PersonApi\Factory\Controller\PasswordExpiryControllerFactory;
 use PersonApi\Factory\Controller\PersonalDetailsControllerFactory;
 use PersonApi\Factory\Controller\PersonAuthorisationControllerFactory;
@@ -28,19 +31,15 @@ use PersonApi\Factory\Controller\PersonByLoginControllerFactory;
 use PersonApi\Factory\Controller\PersonContactControllerFactory;
 use PersonApi\Factory\Controller\PersonControllerFactory;
 use PersonApi\Factory\Controller\PersonCurrentMotTestControllerFactory;
+use PersonApi\Factory\Controller\PersonEventControllerFactory;
 use PersonApi\Factory\Controller\PersonProfileRestrictedControllerFactory;
 use PersonApi\Factory\Controller\PersonProfileUnrestrictedControllerFactory;
 use PersonApi\Factory\Controller\PersonRoleControllerFactory;
-use PersonApi\Factory\Controller\PersonTradeRoleControllerFactory;
 use PersonApi\Factory\Controller\PersonSiteCountControllerFactory;
+use PersonApi\Factory\Controller\PersonTradeRoleControllerFactory;
 use PersonApi\Factory\Controller\ResetClaimAccountControllerFactory;
 use PersonApi\Factory\Controller\ResetPinControllerFactory;
 use PersonApi\Factory\Controller\UserStatsControllerFactory;
-use PersonApi\Controller\PasswordController;
-use PersonApi\Factory\Controller\PasswordControllerFactory;
-use PersonApi\Controller\PersonEventController;
-use PersonApi\Factory\Controller\PersonEventControllerFactory;
-
 
 return [
     'factories' => [
@@ -63,5 +62,6 @@ return [
         UserStatsController::class                 => UserStatsControllerFactory::class,
         PasswordController::class                  => PasswordControllerFactory::class,
         PasswordExpiryController::class            => PasswordExpiryControllerFactory::class,
+        PersonTradeRoleController::class          => PersonTradeRoleControllerFactory::class,
     ],
 ];

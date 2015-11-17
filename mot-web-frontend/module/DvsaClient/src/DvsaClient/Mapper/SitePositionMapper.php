@@ -8,7 +8,7 @@ use DvsaCommon\UrlBuilder\SiteUrlBuilder;
 /**
  * Class SitePositionMapper
  */
-class SitePositionMapper extends Mapper
+class SitePositionMapper extends Mapper implements BusinessPositionMapperInterface
 {
 
     /**
@@ -44,7 +44,7 @@ class SitePositionMapper extends Mapper
      * @param int $siteId
      * @param int $positionId
      */
-    public function delete($siteId, $positionId)
+    public function deletePosition($siteId, $positionId)
     {
         $url = SiteUrlBuilder::site($siteId)->position()->routeParam('positionId', $positionId)->toString();
         $this->client->delete($url);

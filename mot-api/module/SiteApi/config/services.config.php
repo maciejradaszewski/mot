@@ -1,6 +1,7 @@
 <?php
 
 use Doctrine\ORM\EntityManager;
+use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Database\Transaction;
 use DvsaCommon\Utility\Hydrator;
 use DvsaEntities\Entity\BrakeTestType;
@@ -11,6 +12,7 @@ use DvsaEventApi\Service\EventService;
 use DvsaMotApi\Service\Validator\BrakeTestConfigurationValidator;
 use NotificationApi\Service\NotificationService;
 use NotificationApi\Service\PositionRemovalNotificationService;
+use NotificationApi\Service\UserOrganisationNotificationService;
 use SiteApi\Factory\Model\NominationVerifierFactory;
 use SiteApi\Factory\Service\EnforcementSiteAssessmentServiceFactory;
 use SiteApi\Factory\Service\EnforcementSiteAssessmentValidatorFactory;
@@ -76,7 +78,9 @@ return [
                     $sm->get('DvsaAuthorisationService'),
                     $entityManager,
                     $sm->get(NotificationService::class),
-                    $sm->get(PositionRemovalNotificationService::class)
+                    $sm->get(MotIdentityProviderInterface::class),
+                    $sm->get('MotTestRepository'),
+                    $sm->get(UserOrganisationNotificationService::class)
                 );
             },
         NominateRoleService::class             =>

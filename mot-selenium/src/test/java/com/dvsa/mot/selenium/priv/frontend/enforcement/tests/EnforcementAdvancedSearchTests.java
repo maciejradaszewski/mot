@@ -184,18 +184,6 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
 
     }
 
-    @Test(groups = {"VM-2799", "VM-3154", "Sprint24", "Enf", "Regression"})
-    public void verifyUserRoles() {
-        EnforcementHomePage homePage =
-                EnforcementHomePage.navigateHereFromLoginPage(driver, Login.LOGIN_ENFTESTER);
-        homePage.clickMyProfile();
-
-        // If the DB Table 'organisation_business_role' table's 'name' column is updated this test should be updated.
-        Assert.assertTrue(homePage.getDisplayRole().contains("Vehicle examiner"));
-
-        Assert.assertFalse(homePage.getDisplayRole().contains("Tester"));
-    }
-
     @Test(groups = {"VM-3734", "Sprint26", "Enf"}) public void verifyAESearchResultsForVE() {
 
         EnforcementHomePage homePage =

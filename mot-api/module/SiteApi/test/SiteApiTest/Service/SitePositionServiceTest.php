@@ -3,26 +3,28 @@
 namespace SiteApiTest\Service;
 
 use Doctrine\ORM\EntityManager;
-use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaCommonApi\Service\Exception\BadRequestException;
+use DvsaCommonApiTest\Stub\ApiIdentityProviderStub;
 use DvsaCommonApiTest\Transaction\TestTransactionExecutor;
 use DvsaCommonTest\TestUtils\ArgCapture;
-use DvsaCommonTest\TestUtils\MockRepositoryHelper;
+use DvsaCommonTest\TestUtils\Auth\GrantAllAuthorisationServiceStub;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\BusinessRoleStatus;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteBusinessRole;
 use DvsaEntities\Entity\SiteBusinessRoleMap;
-use DvsaEntities\Entity\SitePositionHistory;
+use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\SiteBusinessRoleMapRepository;
 use NotificationApi\Dto\Notification;
 use NotificationApi\Service\NotificationService;
 use NotificationApi\Service\PositionRemovalNotificationService;
+use NotificationApi\Service\UserOrganisationNotificationService;
 use SiteApi\Service\SitePositionService;
 use DvsaEventApi\Service\EventService;
+use DvsaAuthentication\Identity;
 
 /**
  * Class SitePositionServiceTest
@@ -31,6 +33,7 @@ use DvsaEventApi\Service\EventService;
  */
 class SitePositionServiceTest extends \PHPUnit_Framework_TestCase
 {
+    protected $userOrganisationNotificationService;
     /**
      * @var  AbstractMotAuthorisationService $authorisationService
      */
@@ -40,15 +43,25 @@ class SitePositionServiceTest extends \PHPUnit_Framework_TestCase
     private $eventService;
     private $entityManager;
     private $positionRemovalNotificationService;
+    /** @var ApiIdentityProviderStub */
+    private $identityProvider;
 
     public function setUp()
     {
-        $this->authorisationService = XMock::of(AuthorisationServiceInterface::class);
+        $this->authorisationService = new GrantAllAuthorisationServiceStub();
         $this->notificationService = XMock::of(NotificationService::class);
         $this->siteBusinessRoleMapRepository = XMock::of(SiteBusinessRoleMapRepository::class);
         $this->entityManager = XMock::of(EntityManager::class);
         $this->eventService = XMock::of(EventService::class);
         $this->positionRemovalNotificationService = XMock::of(PositionRemovalNotificationService::class);
+        $this->identityProvider = new ApiIdentityProviderStub();
+
+        $this->identityProvider->setIdentity(new Identity(new Person()));
+
+        $this->userOrganisationNotificationService = new UserOrganisationNotificationService(
+            $this->notificationService,
+            $this->positionRemovalNotificationService
+        );
     }
 
     private function getServiceWithMockServices($siteBusinessRoleMapMock) {
@@ -58,7 +71,9 @@ class SitePositionServiceTest extends \PHPUnit_Framework_TestCase
             $this->authorisationService,
             $this->entityManager,
             $this->notificationService,
-            $this->positionRemovalNotificationService
+            $this->identityProvider,
+            XMock::of(MotTestRepository::class),
+            $this->userOrganisationNotificationService
         );
     }
 

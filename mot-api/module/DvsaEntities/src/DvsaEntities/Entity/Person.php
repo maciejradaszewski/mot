@@ -5,6 +5,7 @@ namespace DvsaEntities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use DvsaCommon\Constants\PersonContactType;
+use DvsaCommon\Formatting\PersonFullNameFormatter;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Utility\ArrayUtils;
@@ -371,7 +372,8 @@ class Person extends Entity
 
     public function getDisplayName()
     {
-        return join(' ', array_filter([$this->getFirstName(), $this->getMiddleName(), $this->getFamilyName()]));
+        return (new PersonFullNameFormatter())
+            ->format($this->getFirstName(), $this->getMiddleName(), $this->getFamilyName());
     }
 
     public function getDisplayShortName()

@@ -136,4 +136,11 @@ class TypeCheck
             }
         }
     }
+
+    public static function assertInArray($argument, $allowedValues)
+    {
+        if (!in_array($argument, $allowedValues)) {
+            throw new \InvalidArgumentException('Unexpected argument value');
+        }
+    }
 }

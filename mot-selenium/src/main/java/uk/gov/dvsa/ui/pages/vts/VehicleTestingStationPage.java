@@ -15,7 +15,6 @@ public class VehicleTestingStationPage extends Page {
 
     @FindBy(className = "content-header__title") private WebElement pageHeader;
     @FindBy(className = "group") private WebElement breadCrumbList;
-    //    @FindBy(id = "authorised-examiner-link") private WebElement vtsName;
     @FindBy(id = "assign-a-role") private WebElement assignARoleLink;
     @FindBy(css = "div.text") private WebElement getRole;
     @FindBy(id = "validation-message--success") private WebElement validationMessageSuccess;
@@ -82,11 +81,9 @@ public class VehicleTestingStationPage extends Page {
         return phoneNumberValue.getText();
     }
 
-    public RemoveRolePage removeTesterRole(String id) {
-        String testerRemoveLink = String.format("#role-assignment-%s-TESTER td a", id);
-        WebElement removeTesterRole = driver.findElementByCssSelector(testerRemoveLink);
-        removeTesterRole.click();
-        return new RemoveRolePage(driver);
+    public RemoveARolePage removeTesterRole(String id) {
+        driver.findElement(By.cssSelector(String.format("#role-assignment-%s-TESTER td a", id))).click();
+        return new RemoveARolePage(driver);
     }
 
     public void clickOnViewHistoryLink() {
@@ -102,8 +99,8 @@ public class VehicleTestingStationPage extends Page {
         return motTestRecentCertificatesLink.isDisplayed();
     }
 
-    public boolean isTesterDisplayed(String id, String name) {
-        return getTesterName(id).equals(name);
+    public boolean isTesterDisplayed(String id) {
+        return !driver.findElements(By.cssSelector(String.format("a[href*='%s']", id))).isEmpty();
     }
 
     public boolean isVtsAddressDisplayed() {
@@ -128,7 +125,7 @@ public class VehicleTestingStationPage extends Page {
 
     public boolean isActiveMotTestDisplayed(String vehicleRegistrationNumber) {
         return driver.findElement(By.linkText(vehicleRegistrationNumber)).getText()
-                     .contains(vehicleRegistrationNumber);
+                .contains(vehicleRegistrationNumber);
     }
 
     public TestShortSummaryPage clickOnActiveTest(String regNum) {
@@ -193,7 +190,7 @@ public class VehicleTestingStationPage extends Page {
     }
 
     public ProfileOfPage chooseAssignedToVtsUser(String userId) {
-        driver.findElement(By.cssSelector(String.format(".key-value-list a[href*='%s']", userId))).click();
+        driver.findElement(By.cssSelector(String.format("a[href*='%s']", userId))).click();
         return new ProfileOfPage(driver);
     }
 
@@ -202,4 +199,3 @@ public class VehicleTestingStationPage extends Page {
         return new ChangeSiteDetailsPage(driver);
     }
 }
-

@@ -28,7 +28,7 @@ class SitePositionMapperTest extends AbstractMapperTest
 
     public function testDelete()
     {
-        $this->mapper->delete(1, 1);
+        $this->mapper->deletePosition(1, 1);
     }
 
     public function testGetList()

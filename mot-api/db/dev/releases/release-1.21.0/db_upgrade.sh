@@ -4,8 +4,7 @@ version=1.21.0
 db_name=mot_v195_rel4
 
 # add files here in intended run order for release
-# example:
-# upgradefiles+=('2015-10-27-VM-12321-view-trade-roles-page-STORY.sql')
+upgradefiles+=('2015-11-06-BL-95-disassociate-own-trade-role-notification-template.sql');
 
 
 

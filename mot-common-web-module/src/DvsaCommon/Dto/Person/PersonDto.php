@@ -2,6 +2,7 @@
 
 namespace DvsaCommon\Dto\Person;
 
+use DvsaCommon\Formatting\PersonFullNameFormatter;
 use DvsaCommon\Dto\AbstractDataTransferObject;
 use DvsaCommon\Dto\Contact\ContactDto;
 
@@ -198,7 +199,8 @@ class PersonDto extends AbstractDataTransferObject
      */
     public function getFullName()
     {
-        return join(' ', array_filter([$this->getFirstName(), $this->getMiddleName(), $this->getFamilyName()]));
+        return (new PersonFullNameFormatter())
+            ->format($this->getFirstName(),$this->getMiddleName(),$this->getFamilyName());
     }
 
     /**

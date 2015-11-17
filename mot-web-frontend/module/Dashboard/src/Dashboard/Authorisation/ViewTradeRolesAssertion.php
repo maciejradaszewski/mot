@@ -62,4 +62,11 @@ class ViewTradeRolesAssertion
             throw new UnauthorisedException("Not authorised to view trade roles.");
         }
     }
+
+    public function assertGrantedViewRemoveRolePage($profilePersonId)
+    {
+        if (!$this->isUserViewingHisOwnProfile($profilePersonId)) {
+            throw new UnauthorisedException("Not authorised to view trade roles.");
+        }
+    }
 }

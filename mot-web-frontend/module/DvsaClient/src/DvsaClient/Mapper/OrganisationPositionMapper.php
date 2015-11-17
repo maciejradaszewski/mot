@@ -10,7 +10,7 @@ use DvsaCommon\UrlBuilder\OrganisationUrlBuilder;
  *
  * @package DvsaClient\Mapper
  */
-class OrganisationPositionMapper extends DtoMapper
+class OrganisationPositionMapper extends DtoMapper implements BusinessPositionMapperInterface
 {
     /**
      * @param $organisationId
@@ -45,6 +45,6 @@ class OrganisationPositionMapper extends DtoMapper
     {
         $urlBuilder = OrganisationUrlBuilder::position($organisationId, $positionId);
 
-        return parent::delete($urlBuilder->toString());
+        parent::delete($urlBuilder->toString());
     }
 }

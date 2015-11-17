@@ -3,23 +3,21 @@
 
 namespace Dashboard\ViewModel;
 
-
+use Core\Catalog\BusinessRole\BusinessRole;
+use Core\Catalog\BusinessRole\BusinessRoleCatalog;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
-use Dashboard\Service\TradeRolesAssociationsService;
+use Dashboard\Controller\UserTradeRolesController;
+use DvsaCommon\ApiClient\Person\PersonTradeRoles\Dto\PersonTradeRoleDto;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionAtSite;
+use DvsaCommon\Enum\OrganisationBusinessRoleCode;
+use DvsaCommon\Enum\SiteBusinessRoleCode;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
-use Zend\View\Model\ViewModel;
+use Zend\View\Helper\Url;
 
 class UserTradeRolesViewModel
 {
-
-    /**
-     * @var array
-     */
-    protected $rolesAndAssociations;
-
     /**
      * @var int
      */
@@ -35,34 +33,52 @@ class UserTradeRolesViewModel
      */
     protected $authorisationService;
 
+    private $tradeRoles;
+
+    private $businessRoleCatalog;
+
+    private $urlHelper;
+
     /**
      * @param MotFrontendAuthorisationServiceInterface $authorisationService
+     * @param PersonTradeRoleDto[] $tradeRoles
+     * @param BusinessRoleCatalog $businessRoleCatalog
+     * @param Url $urlHelper
      */
-    public function __construct(MotFrontendAuthorisationServiceInterface $authorisationService)
+    public function __construct(MotFrontendAuthorisationServiceInterface $authorisationService,
+                                array $tradeRoles,
+                                BusinessRoleCatalog $businessRoleCatalog,
+                                Url $urlHelper
+    )
     {
         $this->authorisationService = $authorisationService;
+        $this->tradeRoles = $tradeRoles;
+        $this->businessRoleCatalog = $businessRoleCatalog;
+        $this->urlHelper = $urlHelper;
     }
 
     /**
      * Decides if we should display role as a link - checks permission to view site/organisation
-     * @param $roletype
-     * @param $placeId
+     * @param PersonTradeRoleDto $personTradeRole
      * @return bool
      */
-    public function shouldDisplayLink($roletype, $placeId)
+    public function shouldDisplayLink(PersonTradeRoleDto $personTradeRole)
     {
-        switch ($roletype){
-            case TradeRolesAssociationsService::ROLETYPE_ORGANISATIONS: {
+        $roleType = $this->businessRoleCatalog->getByCode($personTradeRole->getRoleCode())->getType();
+        $workplaceId = $personTradeRole->getWorkplaceId();
+
+        switch ($roleType) {
+            case BusinessRole::ORGANISATION_TYPE: {
                 return $this->authorisationService->isGrantedAtOrganisation(
-                    PermissionAtOrganisation::AUTHORISED_EXAMINER_READ, $placeId
+                    PermissionAtOrganisation::AUTHORISED_EXAMINER_READ, $workplaceId
                 );
             }
-            case TradeRolesAssociationsService::ROLETYPE_SITES : {
+            case BusinessRole::SITE_TYPE: {
                 return $this->authorisationService->isGrantedAtSite(
-                    PermissionAtSite::VEHICLE_TESTING_STATION_READ, $placeId
+                    PermissionAtSite::VEHICLE_TESTING_STATION_READ, $workplaceId
                 );
             }
-            default:{
+            default: {
                 throw new \InvalidArgumentException('Role type not recognized');
             }
         }
@@ -70,31 +86,63 @@ class UserTradeRolesViewModel
 
     /**
      * Generates URL for
-     * @param string $roletype
-     * @param int $userId
+     * @param PersonTradeRoleDto $personTradeRole
      * @return string|VehicleTestingStationUrlBuilderWeb|AuthorisedExaminerUrlBuilderWeb
      */
-    public function getUrlForRole($roletype, $userId)
+    public function getUrlForRole(PersonTradeRoleDto $personTradeRole)
     {
-        switch ($roletype){
-            case TradeRolesAssociationsService::ROLETYPE_ORGANISATIONS: {
-                return AuthorisedExaminerUrlBuilderWeb::of($userId);
+        $roleType = $this->businessRoleCatalog->getByCode($personTradeRole->getRoleCode())->getType();
+
+        switch ($roleType) {
+            case BusinessRole::ORGANISATION_TYPE: {
+                return AuthorisedExaminerUrlBuilderWeb::of($personTradeRole->getWorkplaceId());
             }
-            case TradeRolesAssociationsService::ROLETYPE_SITES : {
-                return VehicleTestingStationUrlBuilderWeb::byId($userId);
+            case BusinessRole::SITE_TYPE: {
+                return VehicleTestingStationUrlBuilderWeb::byId($personTradeRole->getWorkplaceId());
             }
-            default:{
+            default: {
                 throw new \InvalidArgumentException('Role type not recognized');
             }
         }
     }
 
     /**
-     * @param array $rolesAndAssociations
+     * Generates URL for removing trade role
+     * @param PersonTradeRoleDto $personTradeRole
+     * @return string|VehicleTestingStationUrlBuilderWeb|AuthorisedExaminerUrlBuilderWeb
      */
-    public function setRolesAndAssociations($rolesAndAssociations)
+    public function getUrlForRemoveRole(PersonTradeRoleDto $personTradeRole)
     {
-        $this->rolesAndAssociations = $rolesAndAssociations;
+        $roleType = $this->businessRoleCatalog->getByCode($personTradeRole->getRoleCode())->getType();
+
+        switch ($roleType) {
+            case BusinessRole::ORGANISATION_TYPE:
+                $route = UserTradeRolesController::ROUTE_REMOVE_AE_ROLE;
+                break;
+            case BusinessRole::SITE_TYPE:
+                $route = UserTradeRolesController::ROUTE_REMOVE_VTS_ROLE;
+                break;
+
+            default: {
+                throw new \InvalidArgumentException('Role type not recognized');
+            }
+        }
+
+        return $this->urlHelper->__invoke($route, [
+            'id' => $this->personId,
+            'positionId' => $personTradeRole->getPositionId(),
+            'entityId' => $personTradeRole->getWorkplaceId(),
+        ]);
+    }
+
+    public function canBeRemoved(PersonTradeRoleDto $tradeRole)
+    {
+        return $this->personIsViewingOwnProfile && $tradeRole->getRoleCode() != 'AEDM';
+    }
+
+    public function getTradeRoleNameByCode($roleCode)
+    {
+        return $this->businessRoleCatalog->getByCode($roleCode)->getName();
     }
 
     /**
@@ -114,14 +162,6 @@ class UserTradeRolesViewModel
     }
 
     /**
-     * @return array
-     */
-    public function getRolesAndAssociations()
-    {
-        return $this->rolesAndAssociations;
-    }
-
-    /**
      * @return int
      */
     public function getPersonId()
@@ -135,5 +175,10 @@ class UserTradeRolesViewModel
     public function getPersonIsViewingOwnProfile()
     {
         return $this->personIsViewingOwnProfile;
+    }
+
+    public function getTradeRoles()
+    {
+        return $this->tradeRoles;
     }
 }

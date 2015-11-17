@@ -3,7 +3,9 @@
 namespace DvsaCommonApi\Controller;
 
 use DataCatalogApi\Service\DataCatalogService;
+use DvsaCommon\DtoSerialization\DtoReflectiveSerializer;
 use DvsaCommon\Http\HttpStatus;
+use DvsaCommonApi\Model\ApiResponse;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\Exception\UnauthenticatedException;
 use Zend\Http\Response;
@@ -499,5 +501,20 @@ class AbstractDvsaRestfulController
         if ($doLog) {
             $this->getLogger()->log($level, $message);
         }
+    }
+
+    protected function returnDto($dto)
+    {
+        $dtoSerializer = $this->getDtoSerializer();
+
+        return ApiResponse::jsonOk($dtoSerializer->serialize($dto));
+    }
+
+    /**
+     * @return DtoReflectiveSerializer
+     */
+    private function getDtoSerializer()
+    {
+        return $this->getServiceLocator()->get(DtoReflectiveSerializer::class);
     }
 }
