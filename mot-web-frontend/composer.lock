@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5573d9b645779f3c36ebe3af96402c1c",
-    "content-hash": "ded0cf7685e66cf00dddd00098fa9b61",
+    "hash": "b18552af6e42a1d3abfc4b0452bf6d6f",
     "packages": [
         {
             "name": "cpms/client",
@@ -1375,11 +1374,11 @@
         },
         {
             "name": "slot-purchase/web-frontend",
-            "version": "v3.6.1",
+            "version": "v3.6.2",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/web-frontend.git",
-                "reference": "f5c7539889bcb63c9a3070fe8cbd131ce795e26a"
+                "reference": "1df937a259e9acf8fc6a31b93dcbd22d05830cb3"
             },
             "require": {
                 "cpms/cpms-forms": "1.22.*",
@@ -1413,7 +1412,7 @@
                 "proprietary"
             ],
             "description": "Slot Purchase Frontend",
-            "time": "2015-09-17 13:00:28"
+            "time": "2015-11-09 16:31:42"
         },
         {
             "name": "soflomo/purifier",
@@ -1648,12 +1647,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/ZendPdf.git",
+                "url": "git@github.com:zendframework/ZendPdf.git",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },
@@ -2871,7 +2870,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZFTool/zipball/cb980c5c6fc139ec45d9c87ad0af1250af691c5c",
+                "url": "https://api.github.com/repos/zendframework/ZFTool/zipball/840c3eecd58454396983d84d1da293813af484af",
                 "reference": "8bab848834bfc48fef2f4b3e874ddd3760fb9e0d",
                 "shasum": ""
             },
