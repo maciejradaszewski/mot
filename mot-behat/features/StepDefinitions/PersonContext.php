@@ -725,7 +725,7 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     }
 
     /**
-     * @Given /^I have selected a user who needs to have their licence edited$/
+     * @Given /^I have selected a user who needs to have their licence deleted|edited$/
      */
 
     public function selectUserWithLicence()
@@ -788,7 +788,6 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
 
     /**
      * @Then their licence should not match :licenceNumber
-     * @var string $licenceNumber
      */
     public function theirLicenceShouldNotMatch($licenceNumber)
     {
@@ -800,6 +799,21 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         );
 
         PHPUnit::assertNotEquals($licenceNumber, $testerDetails->getBody()['data']['drivingLicence']);
+    }
+
+    /**
+     * @When I delete the user's licence
+     */
+    public function removeUserLicence()
+    {
+        $testerId = $this->personLoginData->data['personId'];
+
+        $response = $this->customerService->deleteLicence(
+            $this->sessionContext->getCurrentAccessToken(),
+            $testerId
+        );
+
+        PHPUnit::assertEquals(200, $response->getStatusCode());
     }
 
     /**

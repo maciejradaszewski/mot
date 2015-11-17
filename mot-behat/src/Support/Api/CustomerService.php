@@ -69,4 +69,13 @@ class CustomerService extends MotApi
             $licenceDetails
         ));
     }
+
+    public function deleteLicence($token, $userId)
+    {
+        return $this->client->request(new Request(
+            'DELETE',
+            str_replace('{userId}', $userId, self::PATH_UPDATE_LICENCE),
+            ['Authorization' => 'Bearer ' . $token]
+        ));
+    }
 }

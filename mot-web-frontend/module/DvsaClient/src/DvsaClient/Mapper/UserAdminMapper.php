@@ -116,4 +116,15 @@ class UserAdminMapper extends DtoMapper
             ]
         );
     }
+
+    /**
+     * @param int $personId
+     * @return mixed|string
+     */
+    public function deleteDrivingLicence($personId)
+    {
+        $url = UserAdminUrlBuilder::licenceDetails($personId);
+
+        return $this->client->delete($url);
+    }
 }

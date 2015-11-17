@@ -11,6 +11,7 @@ import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.Page;
 import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
+import uk.gov.dvsa.ui.pages.changedriverlicence.RemoveDriverLicencePage;
 import uk.gov.dvsa.ui.pages.changedriverlicence.ReviewDrivingLicencePage;
 import uk.gov.dvsa.ui.pages.dvsa.UserSearchPage;
 import uk.gov.dvsa.ui.pages.dvsa.UserSearchProfilePage;
@@ -119,6 +120,22 @@ public class DrivingLicenceTest extends BaseTest {
 
         // And a success message is displayed
         assertThat(postChangeProfilePage.getMessageSuccess(), containsString(DRIVING_LICENCE_CHANGE_SUCCESS));
+    }
+
+    @Test(groups = {"BVT", "Regression"},
+            description = "Test that DVSA user can remove non-DVSA user driving licence")
+    public void dvsaUserCanRemoveNonDvsaUserDrivingLicence() throws IOException {
+        // Given that I'm on a non-DVSA user profile as authorised DVSA user
+        UserSearchProfilePage profilePage = searchForUserAndViewProfile(areaOffice1User, tester);
+
+        // And the users driving licence number is displayed
+        assertThat(profilePage.getDrivingLicenceForPerson(), is(tester.getDrivingLicenceNumber()));
+
+        // When I remove the users driving licence
+        UserSearchProfilePage postDeleteDrivingLicenceProfilePage = removeDrivingLicence(profilePage);
+
+        // Then no driving licence will be recorded for the user
+        assertThat(postDeleteDrivingLicenceProfilePage.getDrivingLicenceForPerson(), is("None recorded"));
     }
 
     @Test(groups = {"BVT", "Regression"},
@@ -252,6 +269,13 @@ public class DrivingLicenceTest extends BaseTest {
                 .searchForUserByUsername(searchedUser.getUsername())
                 .clickSearchButton(UserSearchResultsPage.class);
         return userSearchResultsPage.chooseUser(0);
+    }
+
+    private UserSearchProfilePage removeDrivingLicence(UserSearchProfilePage profilePage)
+    {
+        ChangeDrivingLicencePage changeDrivingLicencePage = profilePage.clickChangeDrivingLicenceLink();
+        RemoveDriverLicencePage removeDriverLicencePage = changeDrivingLicencePage.clickRemoveDrivingLicenceLink();
+        return removeDriverLicencePage.clickRemoveDrivingLicenceButton();
     }
 
     private <T extends Page> T fillAndSubmitNewDriverLicenceDetails(UserSearchProfilePage page, String number, String country, Class<T> clazz) {

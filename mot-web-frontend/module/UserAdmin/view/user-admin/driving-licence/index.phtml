@@ -2,8 +2,9 @@
 
 use DvsaCommon\Enum\LicenceCountryCode;
 use UserAdmin\Presenter\DrivingLicenceSummaryPresenter;
+use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 
-/** @var \UserAdmin\Presenter\UserProfilePresenter $presenter  */
+/** @var \UserAdmin\Presenter\UserProfilePresenter $presenter */
 
 /** @var DrivingLicenceSummaryPresenter $drivingLicencePresenter */
 $drivingLicencePresenter = new DrivingLicenceSummaryPresenter;
@@ -79,4 +80,9 @@ echo $this->partial('partial/forms/errorMessagePageHeader.phtml',['messages' => 
     <li>
         <a href="<?php echo $this->url('user_admin/user-profile', ['personId' => $presenter->getPersonId()]); ?>">Cancel and return to user profile</a>
     </li>
+    <?php if ($drivingLicenceNumber): ?>
+    <li>
+        <a id="delete-driving-licence" href="<?php echo UserAdminUrlBuilderWeb::drivingLicenceDelete($presenter->getPersonId()); ?>">Remove driving licence</a>
+    </li>
+    <?php endif; ?>
 </ul>

@@ -177,6 +177,16 @@ return [
                                             ],
                                         ],
                                     ],
+                                    'delete' => [
+                                        'type' => 'Segment',
+                                        'options' => [
+                                            'route' => '/delete',
+                                            'defaults' => [
+                                                'controller' => DrivingLicenceControllerFactory::class,
+                                                'action' => 'delete'
+                                            ],
+                                        ],
+                                    ],
                                 ],
                             ],
                             'username-recover' => [

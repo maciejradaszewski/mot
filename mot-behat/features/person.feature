@@ -107,3 +107,9 @@ Feature: Person
     And I have selected a user who needs to have their licence edited
     When I update the licence to 'IAMINVALID'
     Then their licence should not match 'IAMINVALID'
+
+  Scenario: An Area Office User can delete a licence on a tester's profile
+    Given I am logged in as an Area Office User
+    And I have selected a user who needs to have their licence deleted
+    When I delete the user's licence
+    Then the user should not have a licence associated with their account

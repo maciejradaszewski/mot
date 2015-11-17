@@ -10,7 +10,6 @@ use DvsaCommonApi\Service\Exception\InvalidFieldValueException;
 use DvsaEntities\Entity\Licence;
 use DvsaEntities\Entity\LicenceCountry;
 use DvsaEntities\Entity\LicenceType;
-use PersonApi\Dto\LicenceDetails;
 
 class LicenceDetailsService extends AbstractService
 {
@@ -88,6 +87,19 @@ class LicenceDetailsService extends AbstractService
         $this->entityManager->flush();
 
         return $licence;
+    }
+
+    /**
+     * Delete the licence associated with user $personId
+     *
+     * @param int $personId
+     */
+    public function delete($personId)
+    {
+        $person = $this->findPerson($personId);
+        $person->setDrivingLicence(null);
+
+        $this->entityManager->flush();
     }
 
     /**
