@@ -167,8 +167,24 @@ class CommonContingencyTestValidator implements GroupValidator
 
         /*
          * "must be less than 3 months ago"
+         *
+         * If the time provided is not valid mark this check as valid (given we have validated the date before).
          */
         $lessThanThreeMonths = new Callback(function ($data) {
+            if (!isset($data['performedAtHour'])
+                || false === (new StringLength(['min' => 1, 'max' => 2]))->isValid($data['performedAtHour'])) {
+                return true;
+            }
+
+            if (!isset($data['performedAtMinute'])
+                || false === (new StringLength(['min' => 2, 'max' => 2]))->isValid($data['performedAtMinute'])) {
+                return true;
+            }
+
+            if (!isset($data['performedAtAmPm']) || !in_array($data['performedAtAmPm'], ['am', 'pm'])) {
+                return true;
+            }
+
             $threeMonthsAgo = new DateTimeImmutable('-3 months');
             $testDatetime = DateTimeImmutable::createFromFormat('Y-m-d g:ia', sprintf('%s-%s-%s %s:%s%s',
                 $data['performedAtYear'], $data['performedAtMonth'], $data['performedAtDay'],
@@ -220,6 +236,10 @@ class CommonContingencyTestValidator implements GroupValidator
             }
 
             if (false === (new StringLength(['min' => 2, 'max' => 2]))->isValid($data['performedAtMinute'])) {
+                return false;
+            }
+
+            if (!isset($data['performedAtAmPm']) || !in_array($data['performedAtAmPm'], ['am', 'pm'])) {
                 return false;
             }
 

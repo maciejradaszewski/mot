@@ -232,10 +232,10 @@ class MotTestCreationHelper
                 ->setEmergencyLog($contingency)
                 ->setEmergencyReasonLookup($contingencyReason);
 
-            if (!empty($contingencyDto->getReasonText())) {
+            if (!empty($contingencyDto->getOtherReasonText())) {
                 $comment = new Comment();
                 $comment
-                    ->setComment($contingencyDto->getReasonText())
+                    ->setComment($contingencyDto->getOtherReasonText())
                     ->setCommentAuthor($tester);
 
                 $motTest->setEmergencyReasonComment($comment);

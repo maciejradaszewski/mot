@@ -17,6 +17,7 @@ use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommon\Enum\EmergencyReasonCode;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
+use DvsaCommon\HttpRestJson\Exception\ValidationException as ApiValidationException;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\DtoHydrator;
@@ -97,6 +98,9 @@ class ContingencyTestController extends AbstractDvsaMotTestController
                 $contingencySessionManager->createContingencySession($dto, $apiResult['data']['emergencyLogId']);
 
                 return $this->redirect()->toRoute('vehicle-search', [], ['query' => ['contingency' => 1]]);
+            } catch (ApiValidationException $e) {
+                $inlineMessages = $e->getValidationMessages();
+                $validationSummary = $this->getValidationSummary($inlineMessages);
             } catch (ValidationException $e) {
                 $inlineMessages = $e->getInlineMessages();
                 $validationSummary = $this->getValidationSummary($e->getInlineMessages());
@@ -138,7 +142,7 @@ class ContingencyTestController extends AbstractDvsaMotTestController
     protected function dtoFromRequest(array $data)
     {
         $dto = new ContingencyTestDto();
-        $dto->setSiteId(trim($data['site_id']));
+        $dto->setSiteId(ArrayUtils::tryGet($data, 'site_id'));
         $dto->setPerformedAt(DateTimeImmutable::createFromFormat('Y-m-d g:ia', sprintf('%s-%s-%s %s:%s%s',
             trim($data['performed_at_year']), trim($data['performed_at_month']), trim($data['performed_at_day']),
             trim($data['performed_at_hour']), trim($data['performed_at_minute']), trim($data['performed_at_am_pm']))));

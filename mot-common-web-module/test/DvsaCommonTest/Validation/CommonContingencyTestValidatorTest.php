@@ -127,7 +127,15 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
                     'performed_at_hour'   => $threeMonthsAgo->format('g'),
                     'performed_at_minute' => $threeMonthsAgo->format('i'),
                     'performed_at_am_pm'  => $threeMonthsAgo->format('a'),
-            ], false, 'must be less than 3 months ago',
+                ], false, 'must be less than 3 months ago',
+            ],
+            // PASS: Date valid but time not provided
+            [
+                'date', [
+                    'performed_at_year'   => $now->format('Y'),
+                    'performed_at_month'  => $now->format('m'),
+                    'performed_at_day'    => $now->format('d'),
+                ], true,
             ],
             // PASS
             [
