@@ -82,6 +82,20 @@ Feature: Contingency Test
     Then the MOT Test Status is "PASSED"
     And the Contingency Test is Logged
 
+  Scenario Outline: Tester Completes a Contingency expecting a specific response
+    Given I am logged in as a Tester
+    When I record a Contingency Test with <date> at <time>
+    Then I should receive the response code <code>
+    And I should receive a validation error "<key>" "<message>"
+
+  Examples:
+    | date                | time     | code | key  | message                        |
+    | today               | now      | 200  |      |                                |
+    | -1 day              | now      | 200  |      |                                |
+    | -3 months +1 minute | now      | 200  |      |                                |
+    | -3 months -1 minute | now      | 422  | date | must be less than 3 months ago |
+    | +1 days             | now      | 422  | date | must not be in the future      |
+
   Scenario: Tester Completes a Contingency - FAILED MOT Test
     Given I am logged in as a Tester
     And I start a Contingency MOT test

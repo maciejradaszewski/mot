@@ -584,6 +584,42 @@ class MotTestContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @When /^I record a Contingency Test with (.*) at ([0-9]{2}:[0-9]{2}:[0-9]{2}|now)$/
+     * @param $date
+     * @param $time
+     */
+    public function iStartAContingencyMOTTestOnDateAtTime($date, $time)
+    {
+        $dateTime = new DateTime();
+
+        if ($date != 'today') {
+            $dateTime->modify($date);
+        }
+
+        if ($time != 'now') {
+            $timeParts = explode(':', $time);
+            $dateTime->setTime($timeParts[0], $timeParts[1], $timeParts[2]);
+        }
+
+        $testClass = 4;
+        $vehicleId = $this->vehicleContext->createVehicle(['testClass' => $testClass]);
+
+        $this->contingencyTestContext->createContingencyCode(Authentication::CONTINGENCY_CODE_DEFAULT, 'SO', $dateTime);
+
+        try {
+            $emergencyLogId = $this->contingencyTestContext->getEmergencyLogId();
+            $this->motTestData = $this->contingencyTest->startContingencyTestOnDateAtTime(
+                $this->sessionContext->getCurrentAccessToken(),
+                $emergencyLogId,
+                $vehicleId,
+                $testClass,
+                $dateTime
+            );
+        } catch (\LogicException $e) {
+        }
+    }
+
+    /**
      * @Given /^the Contingency Test is Logged$/
      */
     public function theContingencyTestIsLogged()

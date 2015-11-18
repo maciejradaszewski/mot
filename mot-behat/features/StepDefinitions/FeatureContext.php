@@ -117,4 +117,45 @@ class FeatureContext implements Context
 
         PHPUnit::assertEquals(422, $response->getStatusCode(), 'Did not receive 422 Unprocessable Entity response');
     }
+
+    /**
+     * @Then /^I should receive a validation error "(.*)" "(.*)"$/
+     */
+    public function iShouldReceiveAValidationError($key, $message)
+    {
+        $response = $this->history->getLastResponse();
+
+        if (!empty($key) && !empty($message)) {
+            try {
+                $returnedMessage = $response->getBody()
+                    ->offsetGet('errors')
+                    ->offsetGet('problem')
+                    ->offsetGet('validation_messages')
+                    ->offsetGet($key);
+
+                PHPUnit::assertEquals($message, $returnedMessage);
+            } catch (\LogicException $e) {
+                PHPUnit::fail('Validation message with key ' . $key . ' not found in response');
+            }
+        }
+    }
+
+    /**
+     * @Then I should receive a Success response
+     */
+    public function iShouldReceiveASuccessResponse()
+    {
+        $response = $this->history->getLastResponse();
+        PHPUnit::assertEquals(200, $response->getStatusCode(), 'Did not receive 200 OK response');
+    }
+
+    /**
+     * @Then /^I should receive the response code ([0-9]+)$/
+     * @param $code
+     */
+    public function iShouldReceiveTheResponseCode($code)
+    {
+        $responseCode = $this->history->getLastResponse()->getStatusCode();
+        PHPUnit::assertEquals($code, $responseCode, 'Did not receive ' . $code . ' response code');
+    }
 }
