@@ -388,7 +388,7 @@ class AuthorisedExaminerService extends AbstractService
 
         $val = $dto->getRegisteredCompanyNumber();
         if ($val !== null) {
-            $orgEntity->setRegisteredCompanyNumber($val);
+            $orgEntity->setRegisteredCompanyNumber(strtoupper($val));
         }
 
         $val = $dto->getTradingAs();

@@ -17,7 +17,7 @@ class AuthorisedExaminerValidator extends AbstractValidator
     const FIELD_STATUS= 'status';
     const FIELD_AO_NUMBER = 'assignedAreaOffice';
 
-    const REG_NUMBER_PATTERN = '/^([0-9]{8}|[A-Z]{2}[0-9]{6})$/';
+    const REG_NUMBER_PATTERN = '/^([0-9]{8}|[a-zA-Z]{2}[0-9]{6})$/';
 
     const ERR_ORGANISATION_NAME_REQUIRE = 'You must enter a business name';
     const ERR_COMPANY_TYPE_REQUIRE = 'You must choose a business type';

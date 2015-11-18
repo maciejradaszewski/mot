@@ -25,7 +25,7 @@ $corrContact = $form->isCorrDetailsTheSame() ? $form->getBusContactModel() : $fo
                 ['Business name', $form->getName(), 'id' => 'businessName'],
                 ['Trading name', $form->getTradingAs(), 'id' => 'tradingName'],
                 ['Business type', $form->getCompanyTypes()[$form->getCompanyType()], 'id' => 'businessType'],
-                ['Company number (optional if not Ltd.)', $form->getRegisteredCompanyNumber(), 'id' => 'companyNumber'],
+                ['Company number (optional if not Ltd.)', strtoupper($form->getRegisteredCompanyNumber()), 'id' => 'companyNumber'],
             ],
         ]
     );
