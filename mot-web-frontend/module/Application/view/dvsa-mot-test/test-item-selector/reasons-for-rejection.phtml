@@ -25,8 +25,13 @@ echo $this->partial('testItemSelectorSearch', ['motTestNumber' => $motTestNumber
 <?php echo $this->partial('errorMessages', ['getFromFlash' => true]); ?>
 <?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
 
-<?php echo $this->partial('rfrList', ['motTestNumber'           => $motTestNumber,
-                                           'reasonsForRejection' => $reasonsForRejection]); ?>
+<?php echo $this->partial('rfrList',
+    [
+        'motTestNumber' => $motTestNumber,
+        'reasonsForRejection' => $reasonsForRejection,
+        'vehicleClassCode' => $motTestDetails->getVehicleClass()->getCode()
+    ]
+); ?>
 
 <div class="row">
     <div class="col-lg-12 btn-bar">
