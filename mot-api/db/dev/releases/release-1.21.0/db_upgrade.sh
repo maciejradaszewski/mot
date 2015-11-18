@@ -5,9 +5,8 @@ db_name=mot_v195_rel4
 
 # add files here in intended run order for release
 upgradefiles+=('2015-11-06-BL-95-disassociate-own-trade-role-notification-template.sql');
-
-
-
+upgradefiles+=('2015-10-16-VM-1352-add-edit-licence-country-lookup-STORY.sql');
+upgradefiles+=('2015-11-12-VM-1352-add-edit-driving-licence-permission-STORY.sql');
 
 for sqlscript in ${upgradefiles[@]}
 do
