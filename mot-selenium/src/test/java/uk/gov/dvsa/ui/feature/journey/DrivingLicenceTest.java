@@ -1,6 +1,7 @@
 package uk.gov.dvsa.ui.feature.journey;
 
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
@@ -20,6 +21,7 @@ import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
 
 import java.io.IOException;
 
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringContains.containsString;
@@ -34,8 +36,8 @@ public class DrivingLicenceTest extends BaseTest {
     private User schemeManager;
 
     private static final String DRIVING_LICENCE_CHANGE_SUCCESS = "Driving licence has been changed successfully.";
-    private static final String DRIVING_LICENCE_WRONG_NI_FORMAT = "must be a valid Northern Irish licence";
-    private static final String DRIVING_LICENCE_WRONG_GB_FORMAT = "must be a valid GB licence";
+    private static final String DRIVING_LICENCE_WRONG_NI_FORMAT = "Driving licence - must be a valid Northern Ireland driving licence";
+    private static final String DRIVING_LICENCE_WRONG_GB_FORMAT = "Driving licence - must be a valid Great Britain driving licence";
     private static final String DRIVING_LICENCE_EMPTY = "you must enter a driving licence number";
     private static final String ISSUING_COUNTRY_INVALID = "you must choose an issuing country";
 
@@ -44,7 +46,7 @@ public class DrivingLicenceTest extends BaseTest {
     private static final String DRIVING_LICENCE_REGION_TEXT_NI = "NI";
     private static final String DRIVING_LICENCE_REGION_TEXT_NU = "Non-United Kingdom";
 
-    @BeforeClass(alwaysRun = true)
+    @BeforeMethod(alwaysRun = true)
     private void setup() throws IOException {
         AeDetails aeDetails = aeData.createAeWithDefaultValues();
         Site testSite = siteData.createNewSite(aeDetails.getId(), "Test_Site");
@@ -149,7 +151,7 @@ public class DrivingLicenceTest extends BaseTest {
         ChangeDrivingLicencePage changeDrivingLicencePage = fillAndSubmitNewDriverLicenceDetails(profilePage, number, country, ChangeDrivingLicencePage.class);
 
         // Then a validation error is displayed
-        assertThat(changeDrivingLicencePage.getValidationSummary(), containsString(error));
+        assertThat(equalsIgnoreCase(changeDrivingLicencePage.getValidationSummary(), error), is(true));
     }
 
     @Test(groups = {"BVT", "Regression"},
@@ -197,13 +199,13 @@ public class DrivingLicenceTest extends BaseTest {
     }
 
     @DataProvider
-    private Object[][] dvsaUserExpectsDrivingLicenceSection() {
+    private Object[][] dvsaUserExpectsDrivingLicenceSection() throws IOException {
         return new Object[][] {
-                {areaOffice1User, true},
-                {areaOffice2User, true},
-                {vehicleExaminerUser, true},
-                {cscoUser, false},
-                {schemeManager, false},
+                {userData.createAreaOfficeOne("AreaOfficerOne"), true},
+                {userData.createAreaOfficeTwo("AreaOfficerTwo"), true},
+                {userData.createVehicleExaminer("VehicleExaminer", false), true},
+                {userData.createCustomerServiceOfficer(false), false},
+                {userData.createSchemeUser(false), false},
         };
     }
 

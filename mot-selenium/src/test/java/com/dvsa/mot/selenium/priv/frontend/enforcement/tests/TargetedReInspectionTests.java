@@ -29,7 +29,7 @@ public class TargetedReInspectionTests extends BaseTest {
     }
 
     @Test(groups = {"VM-1327", "Sprint14", "Enf", "VM-2952", "Sprint25", "Enf", "VM-3125",
-            "Sprint24", "Regression"}) public void noDocumeintationIfReInspectionHasNoDifferences()
+            "Sprint24", "Regression"}) public void noDocumentationIfReInspectionHasNoDifferences()
             throws IOException {
         Login login = createTester();
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
