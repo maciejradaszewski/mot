@@ -143,7 +143,7 @@ class ContingencyTestController extends AbstractDvsaMotTestController
     {
         $dto = new ContingencyTestDto();
         $dto->setSiteId(ArrayUtils::tryGet($data, 'site_id'));
-        $dto->setPerformedAt(DateTimeImmutable::createFromFormat('Y-m-d g:ia', sprintf('%s-%s-%s %s:%s%s',
+        $dto->setPerformedAt(DateTimeImmutable::createFromFormat('Y-m-d g:ia', sprintf('%d-%02d-%02d %d:%02d%s',
             trim($data['performed_at_year']), trim($data['performed_at_month']), trim($data['performed_at_day']),
             trim($data['performed_at_hour']), trim($data['performed_at_minute']), trim($data['performed_at_am_pm']))));
         $dto->setReasonCode(ArrayUtils::tryGet($data, 'reason_code'));

@@ -88,6 +88,7 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
     {
         $now = new DateTimeImmutable();
         $threeMonthsAgo = new DateTimeImmutable('-3 months');
+        $future = new DateTimeImmutable('+1 day');
 
         return [
             // FAIL: Date not provided
@@ -128,6 +129,17 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
                     'performed_at_minute' => $threeMonthsAgo->format('i'),
                     'performed_at_am_pm'  => $threeMonthsAgo->format('a'),
                 ], false, 'must be less than 3 months ago',
+            ],
+            // FAIL: Date in the future
+            [
+                'date', [
+                    'performed_at_year'   => $future->format('Y'),
+                    'performed_at_month'  => $future->format('m'),
+                    'performed_at_day'    => $future->format('d'),
+                    'performed_at_hour'   => $future->format('g'),
+                    'performed_at_minute' => $future->format('i'),
+                    'performed_at_am_pm'  => $future->format('a'),
+                ], false, CommonContingencyTestValidator::MESSAGE_DATE_NOT_IN_THE_FUTURE,
             ],
             // PASS: Date valid but time not provided
             [
