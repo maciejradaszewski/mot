@@ -21,12 +21,13 @@ use Zend\Validator\ValidatorInterface;
  */
 class CommonContingencyTestValidator implements GroupValidator
 {
-    const FIELDSET_SITE              = 'site';
-    const FIELDSET_DATE              = 'date';
-    const FIELDSET_TIME              = 'time';
-    const FIELDSET_REASON            = 'reason';
-    const FIELDSET_OTHER_REASON_TEXT = 'otherReasonText';
-    const FIELDSET_CONTINGENCY_CODE  = 'contingencyCode';
+    const FIELDSET_SITE                  = 'site';
+    const FIELDSET_DATE                  = 'date';
+    const FIELDSET_TIME                  = 'time';
+    const FIELDSET_REASON                = 'reason';
+    const FIELDSET_OTHER_REASON_TEXT     = 'otherReasonText';
+    const FIELDSET_CONTINGENCY_CODE      = 'contingencyCode';
+    const MESSAGE_DATE_NOT_IN_THE_FUTURE = 'must not be in the future';
 
     /**
      * @var ValidatorInterface[]
@@ -198,10 +199,44 @@ class CommonContingencyTestValidator implements GroupValidator
         });
         $lessThanThreeMonths->setMessage('must be less than 3 months ago');
 
+        /*
+         * "must not be in the future"
+         *
+         * If the time provided is not valid mark this check as valid (given we have validated the date before).
+         */
+        $notInTheFuture = new Callback(function ($data) {
+            if (!isset($data['performedAtHour'])
+                || false === (new StringLength(['min' => 1, 'max' => 2]))->isValid($data['performedAtHour'])) {
+                return true;
+            }
+
+            if (!isset($data['performedAtMinute'])
+                || false === (new StringLength(['min' => 2, 'max' => 2]))->isValid($data['performedAtMinute'])) {
+                return true;
+            }
+
+            if (!isset($data['performedAtAmPm']) || !in_array($data['performedAtAmPm'], ['am', 'pm'])) {
+                return true;
+            }
+
+            $now = new DateTimeImmutable();
+            $testDatetime = DateTimeImmutable::createFromFormat('Y-m-d g:ia', sprintf('%s-%s-%s %s:%s%s',
+                $data['performedAtYear'], $data['performedAtMonth'], $data['performedAtDay'],
+                $data['performedAtHour'], $data['performedAtMinute'], $data['performedAtAmPm']));
+
+            if (!$testDatetime) {
+                return false;
+            }
+
+            return $testDatetime->getTimestamp() <= $now->getTimestamp();
+        });
+        $notInTheFuture->setMessage(self::MESSAGE_DATE_NOT_IN_THE_FUTURE);
+
         $date = new ValidatorChain();
         $date->attach($dateMustExist, true);
         $date->attach($validDate, true);
         $date->attach($lessThanThreeMonths, true);
+        $date->attach($notInTheFuture, true);
 
         return $date;
     }

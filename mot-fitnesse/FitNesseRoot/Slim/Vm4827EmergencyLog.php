@@ -7,12 +7,10 @@ use MotFitnesse\Util\TestShared;
 class Vm4827EmergencyLog
 {
     protected $emergencyCode;
-    protected $testerId;
-    protected $testerCode;
     protected $testDate;
     protected $site;
     protected $reasonCode;
-    protected $reasonText;
+    protected $otherReasonText;
     protected $response;
 
     protected $username = 'tester1';
@@ -35,11 +33,11 @@ class Vm4827EmergencyLog
     }
 
     /**
-     * @param mixed $reasonText
+     * @param mixed $otherReasonText
      */
-    public function setReasonText($reasonText)
+    public function setOtherReasonText($otherReasonText)
     {
-        $this->reasonText = $reasonText;
+        $this->otherReasonText = $otherReasonText;
     }
 
     /**
@@ -48,22 +46,6 @@ class Vm4827EmergencyLog
     public function setTestSite($site)
     {
         $this->site = $site;
-    }
-
-    /**
-     * @param mixed $testerId
-     */
-    public function setTesterId($testerId)
-    {
-        $this->testerId = $testerId;
-    }
-
-    /**
-     * @param mixed $testerCode
-     */
-    public function setTesterCode($testerCode)
-    {
-        $this->testerCode = $testerCode;
     }
 
     /**
@@ -98,20 +80,20 @@ class Vm4827EmergencyLog
 
         $postArray
             = [
-            'testerCode'      => $this->testerCode,
-            'testedByWhom'    => $this->testerId,
-            'siteId'          => $this->site,
-            'contingencyCode' => $this->emergencyCode,
-            'performedAt'     => $testDate->format('Y-m-d'),
-            'dateYear'        => $testDate->format('Y'),
-            'dateMonth'       => $testDate->format('m'),
-            'dateDay'         => $testDate->format('d'),
-            'reasonCode'      => $this->reasonCode,
-            '_class'          => ContingencyTestDto::class,
+            'siteId'            => $this->site,
+            'contingencyCode'   => $this->emergencyCode,
+            'performedAtYear'   => $testDate->format('Y'),
+            'performedAtMonth'  => $testDate->format('m'),
+            'performedAtDay'    => $testDate->format('d'),
+            'performedAtHour'   => $testDate->format('g'),
+            'performedAtMinute' => $testDate->format('i'),
+            'performedAtAmPm'   => $testDate->format('a'),
+            'reasonCode'        => $this->reasonCode,
+            '_class'            => ContingencyTestDto::class,
         ];
 
-        if ('empty' == $this->reasonText) {
-            $postArray['reasonText'] =$this->reasonText;
+        if ('empty' == $this->otherReasonText) {
+            $postArray['otherotherReasonText'] =$this->otherReasonText;
         }
 
         $this->response = TestShared::execCurlFormPostForJsonFromUrlBuilder(
