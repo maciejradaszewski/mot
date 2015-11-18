@@ -25,36 +25,34 @@ use DvsaCommon\Auth\PermissionAtSite;
     <div class="col-sm-6">
         <?php if ($dashboard->getHero() === 'vehicle-examiner'): ?>
             <?php echo $this->partial('dashboard/veList'); ?>
+        <?php endif; ?>
 
-        <?php else: ?>
-            <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::VEHICLE_TESTING_STATION_LIST)): ?>
-                <?php echo $this->partial('dashboard/vtsList'); ?>
-            <?php endif; ?>
-            <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::DISPLAY_DVSA_ADMIN_BOX)): ?>
-                <?php echo $this->partial('dashboard/dvsaAdminBox'); ?>
-            <?php endif; ?>
+        <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::VEHICLE_TESTING_STATION_LIST)): ?>
+            <?php echo $this->partial('dashboard/vtsList'); ?>
+        <?php endif; ?>
+        <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::DISPLAY_DVSA_ADMIN_BOX)): ?>
+            <?php echo $this->partial('dashboard/dvsaAdminBox'); ?>
+        <?php endif; ?>
 
-            <?php if ($dashboard->getHero() === 'finance'): ?>
-                <?php echo $this->partial('dashboard/financeBox'); ?>
-            <?php endif; ?>
+        <?php if ($dashboard->getHero() === 'finance'): ?>
+            <?php echo $this->partial('dashboard/financeBox'); ?>
+        <?php endif; ?>
 
-            <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::DISPLAY_TESTER_STATS_BOX)) : ?>
-                <?php echo $this->partial('dashboard/testerStatsBox'); ?>
-            <?php endif; ?>
+        <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::DISPLAY_TESTER_STATS_BOX)) : ?>
+            <?php echo $this->partial('dashboard/testerStatsBox'); ?>
+        <?php endif; ?>
 
-            <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::MOT_DEMO_TEST_PERFORM)) : ?>
-                <?php echo $this->partial('dashboard/trainingTestBox',
-                    [
-                        'hasInProgressTrainingTest' => $dashboard->hasDemoTestInProgress(),
-                        'inProgressTrainingTestNumber' => $dashboard->getInProgressDemoTestNumber()
-                    ]
-                ); ?>
-            <?php endif; ?>
+        <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::MOT_DEMO_TEST_PERFORM)) : ?>
+            <?php echo $this->partial('dashboard/trainingTestBox',
+                [
+                    'hasInProgressTrainingTest' => $dashboard->hasDemoTestInProgress(),
+                    'inProgressTrainingTestNumber' => $dashboard->getInProgressDemoTestNumber()
+                ]
+            ); ?>
+        <?php endif; ?>
 
-            <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::DISPLAY_TESTER_CONTINGENCY_BOX)) : ?>
-                <?php echo $this->partial('dashboard/testerContingencyBox'); ?>
-            <?php endif; ?>
-
+        <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::DISPLAY_TESTER_CONTINGENCY_BOX)) : ?>
+            <?php echo $this->partial('dashboard/testerContingencyBox'); ?>
         <?php endif; ?>
     </div>
 </div>
