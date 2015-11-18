@@ -111,8 +111,11 @@ class ContingencyTestContext implements Context
      * @param string $contingencyCode
      * @param string $reasonCode
      */
-    public function createContingencyCode($contingencyCode = Authentication::CONTINGENCY_CODE_DEFAULT, $reasonCode = 'SO')
-    {
+    public function createContingencyCode(
+        $contingencyCode = Authentication::CONTINGENCY_CODE_DEFAULT,
+        $reasonCode = 'SO',
+        DateTime $dateTime = null
+    ) {
         $this->contingencyData = [
             'contingencyCode' => $contingencyCode,
             'reasonCode' => $reasonCode,
@@ -121,7 +124,8 @@ class ContingencyTestContext implements Context
         $this->createContingencyCodeIdResponse = $this->contingencyTest->getContingencyCodeID(
             $this->sessionContext->getCurrentAccessTokenOrNull(),
             $this->contingencyData['contingencyCode'],
-            $this->contingencyData['reasonCode']
+            $this->contingencyData['reasonCode'],
+            $dateTime
         );
     }
 
