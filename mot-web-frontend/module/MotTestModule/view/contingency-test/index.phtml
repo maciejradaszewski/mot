@@ -1,11 +1,12 @@
 <?php
 
 /** @var $contingencyReasonCode  array */
-/** @var $dto                    \DvsaCommon\Dto\MotTesting\ContingencyTestDto */
+/** @var $params                 \Dvsa\Mot\Frontend\MotTestModule\Parameters\ContingencyTestParameters */
 /** @var $sites                  array */
 /** @var $contingencyReasonCodes array */
 /** @var $validationSummary      array|null */
 /** @var $inlineMessages         array|null */
+
 
 
 echo $this->partial(
@@ -38,14 +39,16 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
                 <fieldset>
                     <legend class="form-label">
                         Location where the test was performed
-                        <?php if (isset($inlineMessages['site'])): ?><span id="site__validation-message" class="validation-message"><?php echo $inlineMessages['site']; ?></span> <?php endif; ?>
+                        <?php if (isset($inlineMessages['site'])): ?>
+                            <span id="site__validation-message" class="validation-message"><?php echo $inlineMessages['site']; ?></span>
+                        <?php endif; ?>
                     </legend>
 
                     <?php foreach ($sites as $site): ?>
                         <label class="block-label" for="site-<?php echo($site['id'])?>">
                             <input type="radio" value="<?php echo $this->escapeHtmlAttr($site['id']); ?>" name="site_id"
                                    id="site-<?php echo $this->escapeHtmlAttr($site['id']); ?>"
-                                   <?php if ($dto->getSiteId() == $site['id']): ?>checked="checked"<?php endif; ?>>
+                                   <?php if ($params->get('site_id') == $site['id']): ?>checked="checked"<?php endif; ?>>
                             <?php echo $this->escapeHtml($site['name']); ?>
                             <span class="block-label__meta"><?php echo $this->escapeHtml($site['siteNumber']); ?>, <?php echo $this->escapeHtml($site['address']); ?></span>
                         </label>
@@ -71,15 +74,15 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
 
                     <div class="form-group form-group-day">
                         <label for="contingency_date-day">Day</label>
-                        <input type="text" name="performed_at_day" value="<?php echo $this->escapeHtmlAttr($dto->getPerformedAtDay()) ?>" id="contingency_date-day" class="form-control">
+                        <input type="text" name="performed_at_day" value="<?php echo $this->escapeHtmlAttr($params->get('performed_at_day')) ?>" id="contingency_date-day" class="form-control">
                     </div>
                     <div class="form-group form-group-month">
                         <label for="contingency_date-month">Month</label>
-                        <input type="text" name="performed_at_month" value="<?php echo $this->escapeHtmlAttr($dto->getPerformedAtMonth()) ?>" id="contingency_date-month" class="form-control">
+                        <input type="text" name="performed_at_month" value="<?php echo $this->escapeHtmlAttr($params->get('performed_at_month')) ?>" id="contingency_date-month" class="form-control">
                     </div>
                     <div class="form-group form-group-year">
                         <label for="contingency_date-year">Year</label>
-                        <input type="text" name="performed_at_year" value="<?php echo $this->escapeHtmlAttr($dto->getPerformedAtYear()) ?>" id="contingency_date-year" class="form-control">
+                        <input type="text" name="performed_at_year" value="<?php echo $this->escapeHtmlAttr($params->get('performed_at_year')) ?>" id="contingency_date-year" class="form-control">
                     </div>
                 </div>
             </fieldset>
@@ -98,7 +101,7 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
                     <div class="form-group form-group-hour">
                         <label for="contingency_time-hour" class="visuallyhidden">Hours</label>
                         <input type="text" name="performed_at_hour"
-                               value="<?php echo $this->escapeHtmlAttr($dto->getPerformedAtHour()) ?>"
+                               value="<?php echo $this->escapeHtmlAttr($params->get('performed_at_hour')) ?>"
                                id="contingency_time-hour" class="form-control">
                     </div>
                     <div class="form-group form-group form-group-delimeter">
@@ -107,14 +110,14 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
                     <div class="form-group form-group-minutes">
                         <label for="contingency_time-minutes" class="visuallyhidden">Minutes</label>
                         <input type="text" name="performed_at_minute"
-                               value="<?php echo $this->escapeHtmlAttr($dto->getPerformedAtMinute()) ?>"
+                               value="<?php echo $this->escapeHtmlAttr($params->get('performed_at_minute')) ?>"
                                id="contingency_time-minutes" class="form-control">
                     </div>
                     <div class="form-group form-group-ampm">
                         <label for="contingency_time-ampm" class="visuallyhidden">am or pm</label>
                         <select name="performed_at_am_pm" id="contingency_time-ampm" class="form-control">
-                            <option value="am" <?php if ('am' === strtolower($dto->getPerformedAtAmPm())): echo 'selected="selected"'; endif; ?>>am</option>
-                            <option value="pm" <?php if ('pm' === strtolower($dto->getPerformedAtAmPm())): echo 'selected="selected"'; endif; ?>>pm</option>
+                            <option value="am" <?php if ('am' === strtolower($params->get('performed_at_am_pm'))): echo 'selected="selected"'; endif; ?>>am</option>
+                            <option value="pm" <?php if ('pm' === strtolower($params->get('performed_at_am_pm'))): echo 'selected="selected"'; endif; ?>>pm</option>
                         </select>
                     </div>
                 </div>
@@ -132,7 +135,7 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
                     <input type="radio" name="reason_code"
                            value="<?php echo $this->escapeHtmlAttr($contingencyReasonCodes['systemOutage']); ?>"
                            id="contingency-reason__system-outage"
-                           <?php if ($dto->getReasonCode() == $contingencyReasonCodes['systemOutage']): ?>checked="checked"<?php endif; ?>>
+                           <?php if ($params->get('reason_code') == $contingencyReasonCodes['systemOutage']): ?>checked="checked"<?php endif; ?>>
                     System outage
                 </label>
                 <label class="block-label"
@@ -140,7 +143,7 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
                     <input type="radio" name="reason_code"
                            value="<?php echo $this->escapeHtmlAttr($contingencyReasonCodes['communicationProblem']); ?>"
                            id="contingency-reason__communication-problem"
-                           <?php if ($dto->getReasonCode() == $contingencyReasonCodes['communicationProblem']): ?>checked="checked"<?php endif; ?>>
+                           <?php if ($params->get('reason_code') == $contingencyReasonCodes['communicationProblem']): ?>checked="checked"<?php endif; ?>>
                     Communication problem
                 </label>
                 <label class="block-label"
@@ -149,17 +152,18 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
                     <input type="radio" name="reason_code"
                            value="<?php echo $this->escapeHtmlAttr($contingencyReasonCodes['other']); ?>"
                            id="contingency-reason__other"
-                           <?php if ($dto->getReasonCode() == $contingencyReasonCodes['other']): ?>checked="checked"<?php endif; ?>>
+                           <?php if ($params->get('reason_code') == $contingencyReasonCodes['other']): ?>checked="checked"<?php endif; ?>>
                     Other
                 </label>
             </fieldset>
         </div>
-        <div id="target-other-reason" class="panel-indent js-hidden">
+        <div id="target-other-reason" class="panel-indent
+            <?php if ($params->get('reason_code') != $contingencyReasonCodes['other']): ?>js-hidden<?php endif; ?>">
             <label for="other-reason" class="form-label">
                 If other, please enter a reason
                 <?php if (isset($inlineMessages['otherReasonText'])): ?><span id="other-reason__validation-message" class="validation-message"><?php echo $inlineMessages['otherReasonText']; ?></span> <?php endif; ?>
             </label>
-            <textarea type="text" name="other_reason_text" id="other-reason" class="form-control"><?php echo $this->escapeHtml($dto->getOtherReasonText()); ?></textarea>
+            <textarea type="text" name="other_reason_text" id="other-reason" class="form-control"><?php echo $this->escapeHtml($params->get('other_reason_text')); ?></textarea>
         </div>
 
         <div class="form-group gutter-top">
@@ -167,7 +171,7 @@ echo $this->partial('infoMessages', ['getFromFlash' => true]);
                 Contingency code
                 <?php if (isset($inlineMessages['contingencyCode'])): ?><span id="contingency-code__validation-message" class="validation-message"><?php echo $inlineMessages['contingencyCode']; ?></span> <?php endif; ?>
             </label>
-            <input type="text" name="contingency_code" id="contingency_code" class="form-control form-control-1-8" value="<?php echo $this->escapeHtmlAttr($dto->getContingencyCode()) ?>">
+            <input type="text" name="contingency_code" id="contingency_code" class="form-control form-control-1-8" value="<?php echo $this->escapeHtmlAttr($params->get('contingency_code')) ?>">
         </div>
     </fieldset>
 

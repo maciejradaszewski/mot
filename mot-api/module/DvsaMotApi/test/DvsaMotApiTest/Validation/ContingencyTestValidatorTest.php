@@ -68,9 +68,10 @@ class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
 
         $result = $validator->validate(['siteId' => '123']);
         $messages = $result->getFlattenedMessages();
-        $this->assertArrayHasKey('site', $messages);
-        $this->assertNotEmpty($messages['site']);
-        $this->assertEquals('must be a valid site', $messages['site']);
+        $this->assertArrayHasKey(ContingencyTestValidator::FIELDSET_SITE, $messages);
+        $this->assertNotEmpty($messages[ContingencyTestValidator::FIELDSET_SITE]);
+        $this->assertEquals(ContingencyTestValidator::MESSAGE_MUST_BE_VALID_SITE,
+            $messages[ContingencyTestValidator::FIELDSET_SITE]);
         $this->assertFalse($result->isValid());
     }
 
@@ -87,7 +88,7 @@ class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
         $result = $validator->validate(['contingencyCode' => '12345A']);
         $messages = $result->getFlattenedMessages();
 
-        $this->assertArrayNotHasKey('contingencyCode', $messages);
+        $this->assertArrayNotHasKey(ContingencyTestValidator::FIELDSET_CONTINGENCY_CODE, $messages);
     }
 
     public function testWithInvalidContingencyCode()
@@ -102,9 +103,9 @@ class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
 
         $result = $validator->validate(['contingencyCode' => '12345A']);
         $messages = $result->getFlattenedMessages();
-        $this->assertArrayHasKey('contingencyCode', $messages);
-        $this->assertNotEmpty($messages['contingencyCode']);
-        $this->assertEquals('must be a valid contingency code', $messages['contingencyCode']);
+        $this->assertArrayHasKey(ContingencyTestValidator::FIELDSET_CONTINGENCY_CODE, $messages);
+        $this->assertNotEmpty($messages[ContingencyTestValidator::FIELDSET_CONTINGENCY_CODE]);
+        $this->assertEquals(ContingencyTestValidator::MESSAGE_MUST_BE_VALID_CONTINGENCY_CODE, $messages['contingencyCode']);
         $this->assertFalse($result->isValid());
     }
 }

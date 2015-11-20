@@ -16,6 +16,6 @@ class ValidationException extends RestApplicationException
         $errors = $this->getErrors();
 
         return isset($errors['problem']['validation_messages']) ?
-            ['problem']['validation_messages'] : [];
+            $errors['problem']['validation_messages'] : [];
     }
 }

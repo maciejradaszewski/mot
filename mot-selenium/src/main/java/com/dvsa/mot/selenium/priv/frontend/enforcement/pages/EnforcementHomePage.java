@@ -25,7 +25,7 @@ public class EnforcementHomePage extends BasePage {
 
     @FindBy(partialLinkText = "vehicle information") private WebElement vehicleInformation;
 
-    @FindBy(partialLinkText = "Record Contingency Test") private WebElement contingencyTest;
+    @FindBy(partialLinkText = "Record contingency test") private WebElement contingencyTest;
 
     @FindBy(id = "action-start-user-search") private WebElement userSearch;
 

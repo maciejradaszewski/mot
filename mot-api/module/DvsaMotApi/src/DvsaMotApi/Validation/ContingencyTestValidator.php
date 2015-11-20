@@ -19,6 +19,9 @@ use Zend\Validator\Callback;
  */
 class ContingencyTestValidator extends CommonContingencyTestValidator
 {
+    const MESSAGE_MUST_BE_VALID_SITE             = 'must be a valid site';
+    const MESSAGE_MUST_BE_VALID_CONTINGENCY_CODE = 'must be a valid contingency code';
+
     /**
      * @var EmergencyService
      */

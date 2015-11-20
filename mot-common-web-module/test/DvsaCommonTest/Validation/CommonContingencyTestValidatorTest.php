@@ -61,24 +61,24 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
      */
     public function siteDataProvider()
     {
-        return [
+        return $this->prependFieldsetToDataProvider(CommonContingencyTestValidator::FIELDSET_SITE, [
             // FAIL: Site id is missing
             [
-                'site', ['site_id' => null], false, 'you must choose a site',
+                ['site_id' => null], false, CommonContingencyTestValidator::MESSAGE_MUST_CHOOSE_A_SITE,
             ],
             // FAIL: Site id is empty
             [
-                'site', ['site_id' => ''], false, 'you must choose a site',
+                ['site_id' => ''], false, CommonContingencyTestValidator::MESSAGE_MUST_CHOOSE_A_SITE,
             ],
             // FAIL: Site id not numeric
             [
-                'site', ['site_id' => '123ABC'], false, 'you must choose a site',
+                ['site_id' => '123ABC'], false, CommonContingencyTestValidator::MESSAGE_MUST_CHOOSE_A_SITE,
             ],
             // PASS
             [
-                'site', ['site_id' => '123'], true,
+                ['site_id' => '123'], true,
             ],
-        ];
+        ]);
     }
 
     /**
@@ -90,49 +90,57 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
         $threeMonthsAgo = new DateTimeImmutable('-3 months');
         $future = new DateTimeImmutable('+1 day');
 
-        return [
+        return $this->prependFieldsetToDataProvider(CommonContingencyTestValidator::FIELDSET_DATE, [
             // FAIL: Date not provided
             [
-                'date', [], false, 'you must enter a date',
+                [], false, CommonContingencyTestValidator::MESSAGE_MUST_ENTER_A_DATE,
             ],
             // FAIL: Date fields are null
             [
-                'date', [
+                [
                     'performed_at_year'  => null,
                     'performed_at_month' => null,
                     'performed_at_day'   => null,
-                ], false, 'you must enter a date',
+                ], false, CommonContingencyTestValidator::MESSAGE_MUST_ENTER_A_DATE,
             ],
             // FAIL: Date fields are empty
             [
-                'date', [
+                [
                     'performed_at_year'  => '',
                     'performed_at_month' => '',
                     'performed_at_day'   => '',
-                ], false, 'you must enter a date',
+                ], false, CommonContingencyTestValidator::MESSAGE_MUST_ENTER_A_DATE,
             ],
-            // FAIL: Date fields don't match format Y-m-d
+            // FAIL: Date fields don't match format Y-m-d (wrong year format)
             [
-                'date', [
+                [
                     'performed_at_year'  => '15',
                     'performed_at_month' => '11',
                     'performed_at_day'   => '16',
-                ], false, 'must be a valid date',
+                ], false, CommonContingencyTestValidator::MESSAGE_MUST_BE_VALID_DATE,
+            ],
+            // FAIL: Date fields don't match format Y-m-d (day without leading zero)
+            [
+                [
+                    'performed_at_year'  => '2015',
+                    'performed_at_month' => '11',
+                    'performed_at_day'   => '1',
+                ], false, CommonContingencyTestValidator::MESSAGE_MUST_BE_VALID_DATE,
             ],
             // FAIL: Older that 3 months ago
             [
-                'date', [
+                [
                     'performed_at_year'   => $threeMonthsAgo->format('Y'),
                     'performed_at_month'  => $threeMonthsAgo->format('m'),
                     'performed_at_day'    => $threeMonthsAgo->format('d'),
                     'performed_at_hour'   => $threeMonthsAgo->format('g'),
                     'performed_at_minute' => $threeMonthsAgo->format('i'),
                     'performed_at_am_pm'  => $threeMonthsAgo->format('a'),
-                ], false, 'must be less than 3 months ago',
+                ], false, CommonContingencyTestValidator::MESSAGE_MUST_BE_LESS_THAN_3_MONTHS,
             ],
             // FAIL: Date in the future
             [
-                'date', [
+                [
                     'performed_at_year'   => $future->format('Y'),
                     'performed_at_month'  => $future->format('m'),
                     'performed_at_day'    => $future->format('d'),
@@ -143,15 +151,37 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
             ],
             // PASS: Date valid but time not provided
             [
-                'date', [
+                [
                     'performed_at_year'   => $now->format('Y'),
                     'performed_at_month'  => $now->format('m'),
                     'performed_at_day'    => $now->format('d'),
                 ], true,
             ],
+            // PASS: Date valid but time not valid (part 1)
+            [
+                [
+                    'performed_at_year'   => $now->format('Y'),
+                    'performed_at_month'  => $now->format('m'),
+                    'performed_at_day'    => $now->format('d'),
+                    'performed_at_hour'   => 'A',
+                    'performed_at_minute' => 'B',
+                    'performed_at_am_pm'  => 'C',
+                ], true,
+            ],
+            // PASS: Date valid but time not valid (part 2)
+            [
+                [
+                    'performed_at_year'   => $now->format('Y'),
+                    'performed_at_month'  => $now->format('m'),
+                    'performed_at_day'    => $now->format('d'),
+                    'performed_at_hour'   => '23',
+                    'performed_at_minute' => '01',
+                    'performed_at_am_pm'  => 'am',
+                ], true,
+            ],
             // PASS
             [
-                'date', [
+                [
                     'performed_at_year'   => $now->format('Y'),
                     'performed_at_month'  => $now->format('m'),
                     'performed_at_day'    => $now->format('d'),
@@ -160,7 +190,7 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
                     'performed_at_am_pm'  => $now->format('a'),
                 ], true,
             ],
-        ];
+        ]);
     }
 
     /**
@@ -170,38 +200,54 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
     {
         $now = new DateTimeImmutable();
 
-        return [
+        return $this->prependFieldsetToDataProvider(CommonContingencyTestValidator::FIELDSET_TIME, [
             // FAIL: Time not provided
             [
-                'time', [], false, 'you must enter a time',
+                [], false, CommonContingencyTestValidator::MESSAGE_MUST_ENTER_A_TIME,
             ],
             // FAIL: Time fields are null
             [
-                'time', [
+                [
                     'performed_at_year'  => null,
                     'performed_at_month' => null,
                     'performed_at_day'   => null,
-                ], false, 'you must enter a time',
+                ], false, CommonContingencyTestValidator::MESSAGE_MUST_ENTER_A_TIME,
             ],
             // FAIL: Time fields are empty
             [
-                'time', [
+                [
                     'performed_at_hour'   => '',
                     'performed_at_minute' => '',
                     'performed_at_am_pm'  => '',
-                ], false, 'you must enter a time',
+                ], false, CommonContingencyTestValidator::MESSAGE_MUST_ENTER_A_TIME,
             ],
-            // FAIL: Time fields don't match format g:ia
+            // FAIL: Time fields don't match format g:ia (part 1)
             [
-                'time', [
+                [
                     'performed_at_hour'   => '17',
                     'performed_at_minute' => '57',
                     'performed_at_am_pm'  => 'pm',
-                ], false, 'must be a valid time',
+                ], false, CommonContingencyTestValidator::MESSAGE_MUST_BE_VALID_TIME,
+            ],
+            // FAIL: Time fields don't match format g:ia (part 2)
+            [
+                [
+                    'performed_at_hour'   => '00',
+                    'performed_at_minute' => '01',
+                    'performed_at_am_pm'  => 'pm',
+                ], false, CommonContingencyTestValidator::MESSAGE_MUST_BE_VALID_TIME,
+            ],
+            // FAIL: Time fields don't match format g:ia (part 3)
+            [
+                [
+                    'performed_at_hour'   => '00',
+                    'performed_at_minute' => '01',
+                    'performed_at_am_pm'  => 'am',
+                ], false, CommonContingencyTestValidator::MESSAGE_MUST_BE_VALID_TIME,
             ],
             // PASS
             [
-                'time', [
+                [
                     'performed_at_year'   => $now->format('Y'),
                     'performed_at_month'  => $now->format('m'),
                     'performed_at_day'    => $now->format('d'),
@@ -210,7 +256,7 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
                     'performed_at_am_pm'  => $now->format('a'),
                 ], true,
             ],
-        ];
+        ]);
     }
 
     /**
@@ -218,35 +264,35 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
      */
     public function reasonDataProvider()
     {
-        return [
+        return $this->prependFieldsetToDataProvider(CommonContingencyTestValidator::FIELDSET_REASON, [
             // FAIL: Reason is missing
             [
-                'reason', [], false, 'you must choose a reason',
+                [], false, CommonContingencyTestValidator::MESSAGE_MUST_CHOOSE_A_REASON,
             ],
             // FAIL: Reason is null
             [
-                'reason', ['reason_code' => null], false, 'you must choose a reason',
+                ['reason_code' => null], false, CommonContingencyTestValidator::MESSAGE_MUST_CHOOSE_A_REASON,
             ],
             // FAIL: Reason is empty
             [
-                'reason', ['reason_code' => ''], false, 'you must choose a reason',
+                ['reason_code' => ''], false, CommonContingencyTestValidator::MESSAGE_MUST_CHOOSE_A_REASON,
             ],
             // FAIL: Reason not a valid code
             [
-                'reason', ['reason_code' => 'XX'], false, 'you must choose a reason',
+                ['reason_code' => 'XX'], false, CommonContingencyTestValidator::MESSAGE_MUST_CHOOSE_A_REASON,
             ],
             // PASS
             [
-                'reason', ['reason_code' => EmergencyReasonCode::COMMUNICATION_PROBLEM], true, ],
+                ['reason_code' => EmergencyReasonCode::COMMUNICATION_PROBLEM], true, ],
             // PASS
             [
-                'reason', ['reason_code' => EmergencyReasonCode::SYSTEM_OUTAGE], true,
+                ['reason_code' => EmergencyReasonCode::SYSTEM_OUTAGE], true,
             ],
             // PASS
             [
-                'reason', ['reason_code' => EmergencyReasonCode::OTHER], true,
+                ['reason_code' => EmergencyReasonCode::OTHER], true,
             ],
-        ];
+        ]);
     }
 
     /**
@@ -254,56 +300,56 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
      */
     public function otherReasonDataProvider()
     {
-        return [
+        return $this->prependFieldsetToDataProvider(CommonContingencyTestValidator::FIELDSET_OTHER_REASON_TEXT, [
             // FAIL: Other reason text is empty (and reason code is OT)
             [
-                'otherReasonText', [
+                [
                     'reason_code'       => EmergencyReasonCode::OTHER,
                     'other_reason_text' => null,
                 ], false, 'you must enter a reason',
             ],
             // FAIL: Other reason text is empty (and reason code is OT)
             [
-                'otherReasonText', [
+                [
                     'reason_code'       => EmergencyReasonCode::OTHER,
                     'other_reason_text' => '',
                 ], false, 'you must enter a reason',
             ],
             // FAIL: Other reason text is less than 6 characters (and reason code is OT)
             [
-                'otherReasonText', [
+                [
                     'reason_code'       => EmergencyReasonCode::OTHER,
                     'other_reason_text' => '12345',
                 ], false, 'must be longer than 5 characters',
             ],
             // PASS: Other reason text is more than 5 characters (and reason code is OT)
             [
-                'otherReasonText', [
+                [
                     'reason_code'       => EmergencyReasonCode::OTHER,
                     'other_reason_text' => '123456',
                 ], true,
             ],
             // PASS: Other reason text missing (and reason code not OT)
             [
-                'otherReasonText', [
+                [
                     'reason_code'       => EmergencyReasonCode::COMMUNICATION_PROBLEM,
                 ], true,
             ],
             // PASS: Other reason text null (and reason code not OT)
             [
-                'otherReasonText', [
+                [
                     'reason_code'       => EmergencyReasonCode::COMMUNICATION_PROBLEM,
                     'other_reason_text' => null,
                 ], true,
             ],
             // PASS: Other reason text empty (and reason code not OT)
             [
-                'otherReasonText', [
+                [
                     'reason_code'       => EmergencyReasonCode::COMMUNICATION_PROBLEM,
                     'other_reason_text' => '',
-            ], true,
+                ], true,
             ],
-        ];
+        ]);
     }
 
     /**
@@ -311,19 +357,34 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
      */
     public function contingencyCodeDataProvider()
     {
-        return [
+        return $this->prependFieldsetToDataProvider(CommonContingencyTestValidator::FIELDSET_CONTINGENCY_CODE, [
             // FAIL: contingency code is missing
             [
-                'contingencyCode', ['contingency_code' => null], false, 'you must enter a contingency code',
+                ['contingency_code' => null], false, CommonContingencyTestValidator::MESSAGE_MUST_ENTER_CONTINGENCY_CODE,
             ],
             // FAIL: contingency code is empty
             [
-                'contingencyCode', ['contingency_code' => ''], false, 'you must enter a contingency code',
+                ['contingency_code' => ''], false, CommonContingencyTestValidator::MESSAGE_MUST_ENTER_CONTINGENCY_CODE,
             ],
             // PASS
             [
-                'contingencyCode', ['contingency_code' => '12345A'], true,
+                ['contingency_code' => '12345A'], true,
             ],
-        ];
+        ]);
+    }
+
+    /**
+     * @param string $fieldset
+     * @param array  $dataset
+     *
+     * @return array
+     */
+    private function prependFieldsetToDataProvider($fieldset, array $dataset)
+    {
+        foreach (array_keys($dataset) as $k) {
+            array_unshift($dataset[$k], $fieldset);
+        }
+
+        return $dataset;
     }
 }

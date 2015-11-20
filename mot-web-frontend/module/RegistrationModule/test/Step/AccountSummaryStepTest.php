@@ -60,23 +60,4 @@ class AccountSummaryStepTest extends \PHPUnit_Framework_TestCase
 
         $step->load();
     }
-
-    /**
-     * Test extracting values into an array
-     *  - There are currently no getters and setters on this step, so no
-     *    values should be returned.
-     */
-    public function testToArray()
-    {
-        $this->markTestSkipped('Skipped, We are moving the private functions to a helper class, that will be tested.');
-        $session = XMock::of(RegistrationSessionService::class);
-        $session->expects($this->once())
-            ->method('toArray')
-            ->willReturn('');
-        $step = new AccountSummaryStep($session);
-
-        $values = $step->toArray();
-
-        $this->assertEquals([], $values);
-    }
 }

@@ -11,6 +11,7 @@ use Application\Service\ContingencySessionManager;
 use Application\Service\LoggedInUserManager;
 use Dashboard\Controller\UserHomeController;
 use DateTimeImmutable;
+use Dvsa\Mot\Frontend\MotTestModule\Parameters\ContingencyTestParameters;
 use Dvsa\Mot\Frontend\MotTestModule\Validation\ContingencyTestValidator;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
@@ -69,23 +70,22 @@ class ContingencyTestController extends AbstractDvsaMotTestController
         $loggedInManager = $this->getServiceLocator()->get('LoggedInUserManager');
         $loggedInVts     = $loggedInManager->getAllVts();
 
-        $dto = new ContingencyTestDto();
+        $parameters = new ContingencyTestParameters();
         $validationSummary = null;
         $inlineMessages = null;
 
         if ($request->isPost()) {
-            $data = $this->getRequest()->getPost()->getArrayCopy();
+            $parameters->fromArray($request->getPost()->toArray());
 
             try {
                 // Validate our POST data
-                $dto = $this->dtoFromRequest($data);
-                $validationResult = $this->contingencyTestValidator->validate($data);
+                $validationResult = $this->contingencyTestValidator->validate((array) $parameters);
                 if (false === $validationResult->isValid()) {
                     throw new ValidationException($validationResult);
                 }
 
                 $apiUrl = UrlBuilder::contingency()->toString();
-
+                $dto = ContingencyTestDto::fromParameters($parameters);
                 $apiResult = $this->getRestClient()->post($apiUrl, DtoHydrator::dtoToJson($dto));
 
                 $currentVts = $this->getIdentity()->getCurrentVts();
@@ -114,7 +114,7 @@ class ContingencyTestController extends AbstractDvsaMotTestController
         $this->enableGdsLayout('Record contingency test', 'MOT testing');
 
         return $this->createViewModel('contingency-test/index.phtml', [
-            'dto'                    => $dto,
+            'params'                 => $parameters,
             'sites'                  => $loggedInVts,
             'contingencyReasonCodes' => $this->getContingencyReasonCodes(),
             'inlineMessages'         => $inlineMessages,
@@ -130,27 +130,6 @@ class ContingencyTestController extends AbstractDvsaMotTestController
         $this->enableGdsLayout('Contingency test error', 'MOT testing');
 
         return $this->createViewModel('contingency-test/error.phtml', []);
-    }
-
-    /**
-     * Extracts a DTO from the request data.
-     *
-     * @param array $data
-     *
-     * @return ContingencyTestDto
-     */
-    protected function dtoFromRequest(array $data)
-    {
-        $dto = new ContingencyTestDto();
-        $dto->setSiteId(ArrayUtils::tryGet($data, 'site_id'));
-        $dto->setPerformedAt(DateTimeImmutable::createFromFormat('Y-m-d g:ia', sprintf('%d-%02d-%02d %d:%02d%s',
-            trim($data['performed_at_year']), trim($data['performed_at_month']), trim($data['performed_at_day']),
-            trim($data['performed_at_hour']), trim($data['performed_at_minute']), trim($data['performed_at_am_pm']))));
-        $dto->setReasonCode(ArrayUtils::tryGet($data, 'reason_code'));
-        $dto->setOtherReasonText(ArrayUtils::tryGet($data, 'other_reason_text'));
-        $dto->setContingencyCode(trim($data['contingency_code']));
-
-        return $dto;
     }
 
     /**

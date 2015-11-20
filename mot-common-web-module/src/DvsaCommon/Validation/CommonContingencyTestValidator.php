@@ -21,13 +21,23 @@ use Zend\Validator\ValidatorInterface;
  */
 class CommonContingencyTestValidator implements GroupValidator
 {
-    const FIELDSET_SITE                  = 'site';
-    const FIELDSET_DATE                  = 'date';
-    const FIELDSET_TIME                  = 'time';
-    const FIELDSET_REASON                = 'reason';
-    const FIELDSET_OTHER_REASON_TEXT     = 'otherReasonText';
-    const FIELDSET_CONTINGENCY_CODE      = 'contingencyCode';
-    const MESSAGE_DATE_NOT_IN_THE_FUTURE = 'must not be in the future';
+    const FIELDSET_SITE                       = 'site';
+    const FIELDSET_DATE                       = 'date';
+    const FIELDSET_TIME                       = 'time';
+    const FIELDSET_REASON                     = 'reason';
+    const FIELDSET_OTHER_REASON_TEXT          = 'otherReasonText';
+    const FIELDSET_CONTINGENCY_CODE           = 'contingencyCode';
+    const MESSAGE_DATE_NOT_IN_THE_FUTURE      = 'must not be in the future';
+    const MESSAGE_MUST_CHOOSE_A_SITE          = 'you must choose a site';
+    const MESSAGE_MUST_ENTER_A_DATE           = 'you must enter a date';
+    const MESSAGE_MUST_BE_VALID_DATE          = 'must be a valid date';
+    const MESSAGE_MUST_BE_LESS_THAN_3_MONTHS  = 'must be less than 3 months ago';
+    const MESSAGE_MUST_CHOOSE_A_REASON        = 'you must choose a reason';
+    const MESSAGE_MUST_ENTER_A_TIME           = 'you must enter a time';
+    const MESSAGE_MUST_BE_VALID_TIME          = 'must be a valid time';
+    const MESSAGE_MUST_ENTER_A_REASON         = 'you must enter a reason';
+    const MESSAGE_MUST_BE_LONGER_THAN_5_CHARS = 'must be longer than 5 characters';
+    const MESSAGE_MUST_ENTER_CONTINGENCY_CODE = 'you must enter a contingency code';
 
     /**
      * @var ValidatorInterface[]
@@ -75,11 +85,33 @@ class CommonContingencyTestValidator implements GroupValidator
         $messages = [];
         $data = $this->processData($data);
 
+        $isTimeValid = true;
         foreach ($this->validators as $name => $validator) {
-            if (false === $validator->isValid($data)) {
-                $messages[$name] = $validator->getMessages();
+            if (true === $validator->isValid($data)) {
+                continue;
+            }
+
+            $messages[$name] = $validator->getMessages();
+
+            if (self::FIELDSET_TIME === $name) {
+                $isTimeValid = false;
             }
         }
+
+        // Remove date failed validation messages that are dependent on the time when the time itself isn't valid
+        if (false === $isTimeValid && isset($messages[self::FIELDSET_DATE])) {
+            foreach (array_keys($messages[self::FIELDSET_DATE]) as $k) {
+                if ($messages[self::FIELDSET_DATE][$k] === self::MESSAGE_DATE_NOT_IN_THE_FUTURE ||
+                    $messages[self::FIELDSET_DATE][$k] === self::MESSAGE_MUST_BE_LESS_THAN_3_MONTHS) {
+                    unset($messages[self::FIELDSET_DATE][$k]);
+                }
+            }
+
+            if (empty($messages[self::FIELDSET_DATE])) {
+                unset($messages[self::FIELDSET_DATE]);
+            }
+        }
+
 
         $valid = empty($messages);
 
@@ -116,7 +148,7 @@ class CommonContingencyTestValidator implements GroupValidator
 
             return (new StringLength(['min' => 1]))->isValid($data['siteId']) && (new Digits())->isValid($data['siteId']);
         });
-        $site->setMessage('you must choose a site');
+        $site->setMessage(self::MESSAGE_MUST_CHOOSE_A_SITE);
 
         $validatorChain = new ValidatorChain();
         $validatorChain->attach($site, true);
@@ -143,7 +175,7 @@ class CommonContingencyTestValidator implements GroupValidator
                 && $stringLengthValidator->isValid($data['performedAtMonth'])
                 && $stringLengthValidator->isValid($data['performedAtDay']);
         });
-        $dateMustExist->setMessage('you must enter a date');
+        $dateMustExist->setMessage(self::MESSAGE_MUST_ENTER_A_DATE);
 
         /*
          * "must be a valid date"
@@ -164,28 +196,12 @@ class CommonContingencyTestValidator implements GroupValidator
             return (new Date(['format' => 'Y-m-d']))->isValid(sprintf('%s-%s-%s',
                 $data['performedAtYear'], $data['performedAtMonth'], $data['performedAtDay']));
         });
-        $validDate->setMessage('must be a valid date');
+        $validDate->setMessage(self::MESSAGE_MUST_BE_VALID_DATE);
 
         /*
          * "must be less than 3 months ago"
-         *
-         * If the time provided is not valid mark this check as valid (given we have validated the date before).
          */
         $lessThanThreeMonths = new Callback(function ($data) {
-            if (!isset($data['performedAtHour'])
-                || false === (new StringLength(['min' => 1, 'max' => 2]))->isValid($data['performedAtHour'])) {
-                return true;
-            }
-
-            if (!isset($data['performedAtMinute'])
-                || false === (new StringLength(['min' => 2, 'max' => 2]))->isValid($data['performedAtMinute'])) {
-                return true;
-            }
-
-            if (!isset($data['performedAtAmPm']) || !in_array($data['performedAtAmPm'], ['am', 'pm'])) {
-                return true;
-            }
-
             $threeMonthsAgo = new DateTimeImmutable('-3 months');
             $testDatetime = DateTimeImmutable::createFromFormat('Y-m-d g:ia', sprintf('%s-%s-%s %s:%s%s',
                 $data['performedAtYear'], $data['performedAtMonth'], $data['performedAtDay'],
@@ -197,28 +213,12 @@ class CommonContingencyTestValidator implements GroupValidator
 
             return $testDatetime->getTimestamp() > $threeMonthsAgo->getTimestamp();
         });
-        $lessThanThreeMonths->setMessage('must be less than 3 months ago');
+        $lessThanThreeMonths->setMessage(self::MESSAGE_MUST_BE_LESS_THAN_3_MONTHS);
 
         /*
          * "must not be in the future"
-         *
-         * If the time provided is not valid mark this check as valid (given we have validated the date before).
          */
         $notInTheFuture = new Callback(function ($data) {
-            if (!isset($data['performedAtHour'])
-                || false === (new StringLength(['min' => 1, 'max' => 2]))->isValid($data['performedAtHour'])) {
-                return true;
-            }
-
-            if (!isset($data['performedAtMinute'])
-                || false === (new StringLength(['min' => 2, 'max' => 2]))->isValid($data['performedAtMinute'])) {
-                return true;
-            }
-
-            if (!isset($data['performedAtAmPm']) || !in_array($data['performedAtAmPm'], ['am', 'pm'])) {
-                return true;
-            }
-
             $now = new DateTimeImmutable();
             $testDatetime = DateTimeImmutable::createFromFormat('Y-m-d g:ia', sprintf('%s-%s-%s %s:%s%s',
                 $data['performedAtYear'], $data['performedAtMonth'], $data['performedAtDay'],
@@ -260,13 +260,14 @@ class CommonContingencyTestValidator implements GroupValidator
             && $stringLengthValidator->isValid($data['performedAtMinute'])
             && $stringLengthValidator->isValid($data['performedAtAmPm']);
         });
-        $timeMustExist->setMessage('you must enter a time');
+        $timeMustExist->setMessage(self::MESSAGE_MUST_ENTER_A_TIME);
 
         /*
          * "must be a valid time"
          */
         $validTime = new Callback(function ($data) {
-            if (false === (new StringLength(['min' => 1, 'max' => 2]))->isValid($data['performedAtHour'])) {
+            if ((false === (new StringLength(['min' => 1, 'max' => 2]))->isValid($data['performedAtHour'])) ||
+                0 == intval($data['performedAtHour'])) {
                 return false;
             }
 
@@ -282,7 +283,7 @@ class CommonContingencyTestValidator implements GroupValidator
                 $data['performedAtHour'], $data['performedAtMinute'], $data['performedAtAmPm']));
 
         });
-        $validTime->setMessage('must be a valid time');
+        $validTime->setMessage(self::MESSAGE_MUST_BE_VALID_TIME);
 
         $time = new ValidatorChain();
         $time->attach($timeMustExist, true);
@@ -315,7 +316,7 @@ class CommonContingencyTestValidator implements GroupValidator
 
             return true;
         });
-        $reason->setMessage('you must choose a reason');
+        $reason->setMessage(self::MESSAGE_MUST_CHOOSE_A_REASON);
 
         return $reason;
     }
@@ -339,7 +340,7 @@ class CommonContingencyTestValidator implements GroupValidator
 
             return true;
         });
-        $notEmptyCallback->setMessage('you must enter a reason');
+        $notEmptyCallback->setMessage(self::MESSAGE_MUST_ENTER_A_REASON);
 
         /*
          * "must be longer than 5 characters"
@@ -355,7 +356,7 @@ class CommonContingencyTestValidator implements GroupValidator
 
             return true;
         });
-        $minLengthCallback->setMessage('must be longer than 5 characters');
+        $minLengthCallback->setMessage(self::MESSAGE_MUST_BE_LONGER_THAN_5_CHARS);
 
         $otherReasonText = new ValidatorChain();
         $otherReasonText->attach($notEmptyCallback, true);
@@ -379,7 +380,7 @@ class CommonContingencyTestValidator implements GroupValidator
 
             return (new StringLength(['min' => 1]))->isValid($data['contingencyCode']);
         });
-        $notEmpty->setMessage('you must enter a contingency code');
+        $notEmpty->setMessage(self::MESSAGE_MUST_ENTER_CONTINGENCY_CODE);
 
         $contingencyCode = new ValidatorChain();
         $contingencyCode->attach($notEmpty, true);
