@@ -78,8 +78,7 @@ class Vm4827EmergencyLog
             $testDate->modify($this->testDate);
         }
 
-        $postArray
-            = [
+        $postArray = [
             'siteId'            => $this->site,
             'contingencyCode'   => $this->emergencyCode,
             'performedAtYear'   => $testDate->format('Y'),
@@ -93,7 +92,7 @@ class Vm4827EmergencyLog
         ];
 
         if ('empty' == $this->otherReasonText) {
-            $postArray['otherotherReasonText'] =$this->otherReasonText;
+            $postArray['otherReasonText'] = $this->otherReasonText;
         }
 
         $this->response = TestShared::execCurlFormPostForJsonFromUrlBuilder(
@@ -106,10 +105,7 @@ class Vm4827EmergencyLog
 
         $lastInfo = TestShared::$lastInfo;
 
-        if ($lastInfo['http_code'] == 200) {
-            return "pass";
-        }
-        return "fail";
+        return (200 === $lastInfo['http_code']) ? 'pass' : 'fail';
     }
 
 }

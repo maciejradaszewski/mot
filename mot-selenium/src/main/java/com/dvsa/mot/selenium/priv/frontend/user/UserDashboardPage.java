@@ -93,7 +93,7 @@ public class UserDashboardPage extends BasePage {
     @FindBy(id = "action-view-performance-dashboard") private WebElement
             actionViewPerformanceDashboard;
 
-    @FindBy(partialLinkText = "Record Contingency Test") private WebElement contingencyLink;
+    @FindBy(partialLinkText = "Record contingency test") private WebElement contingencyLink;
 
     @FindBy(partialLinkText = "Example AE Inc.") private WebElement aeDetailsLink;
 

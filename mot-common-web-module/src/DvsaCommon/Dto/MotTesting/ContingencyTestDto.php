@@ -8,6 +8,7 @@
 namespace DvsaCommon\Dto\MotTesting;
 
 use DateTimeImmutable;
+use Dvsa\Mot\Frontend\MotTestModule\Parameters\ContingencyTestParameters;
 use DvsaCommon\Dto\AbstractDataTransferObject;
 use DvsaCommon\Dto\JsonUnserializable;
 use JsonSerializable;
@@ -202,6 +203,26 @@ class ContingencyTestDto extends AbstractDataTransferObject implements JsonSeria
     public function getContingencyCode()
     {
         return $this->contingencyCode;
+    }
+
+    /**
+     * @param ContingencyTestParameters $parameters
+     * 
+     * @return ContingencyTestDto
+     */
+    public static function fromParameters(ContingencyTestParameters $parameters)
+    {
+        $dto = new self();
+        $dto->setSiteId($parameters->get('site_id'));
+        $dto->setPerformedAt(DateTimeImmutable::createFromFormat('Y-m-d g:ia', sprintf('%s-%s-%s %s:%s%s',
+            trim($parameters->get('performed_at_year')), trim($parameters->get('performed_at_month')),
+            trim($parameters->get('performed_at_day')), trim($parameters->get('performed_at_hour')),
+            trim($parameters->get('performed_at_minute')), trim($parameters->get('performed_at_am_pm')))));
+        $dto->setReasonCode($parameters->get('reason_code'));
+        $dto->setOtherReasonText($parameters->get('other_reason_text'));
+        $dto->setContingencyCode(trim($parameters->get('contingency_code')));
+
+        return $dto;
     }
 
     /**

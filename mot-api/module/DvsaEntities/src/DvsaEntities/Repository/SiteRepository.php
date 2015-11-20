@@ -520,7 +520,7 @@ class SiteRepository extends AbstractMutableRepository
                 LEFT JOIN phone p ON (p.contact_detail_id = cd.id)
                 LEFT JOIN phone_contact_type pct ON (p.phone_contact_type_id = pct.id)
                 LEFT JOIN auth_for_testing_mot_at_site site_auth ON (site.id = site_auth.site_id)
-                LEFT JOIN auth_for_testing_mot_at_site_status site_status ON site_auth.status_id = site_status.id
+                LEFT JOIN site_status_lookup site_status ON site.site_status_id = site_status.id
                 LEFT JOIN vehicle_class vc ON site_auth.vehicle_class_id = vc.id
                 LEFT JOIN site_type st ON site.type_id = st.id
             WHERE sct.code = :BUSINESS";
