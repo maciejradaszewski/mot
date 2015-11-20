@@ -25,14 +25,15 @@ class IntegrationOpenInterface
         $this->date = $value;
     }
 
-    public function beginTable() {
+    public function beginTable()
+    {
 
         $this->testSupportHelper = new TestSupportHelper();
         $this->setupTester();
 
         $vehicleTestHelper = new VehicleTestHelper(FitMotApiClient::create($this->testerUsername, $this->testerPassword));
 
-        $vehicleTestHelper->generateVehicle($this->vehicleSpecManufacturedPre1960());
+        $vehicleTestHelper->generateDvlaVehicle($this->vehicleSpecManufacturedPre1960());
     }
 
     public function found()
@@ -64,8 +65,9 @@ class IntegrationOpenInterface
 
     private function vehicleSpecManufacturedPre1960() {
         return [
-            'registrationNumber'    => 'VIN239',
-            'dateOfManufacture'     => '1059-01-01',
+            'registration'            => 'VIN239',
+            'manufacture_date'        => '1959-01-01',
+            'first_registration_date' => '1959-01-01'
         ];
     }
 

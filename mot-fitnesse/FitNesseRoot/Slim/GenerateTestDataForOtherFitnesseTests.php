@@ -341,12 +341,27 @@ class GenerateTestDataForOtherFitnesseTests
             if (!isset($this->vehicleData['vin'])) {
                 $this->vehicleData['vin'] = VehicleHelper::generateVin();
             }
-
             if (!isset($this->vehicleData['registrationNumber'])) {
                 $this->vehicleData['registrationNumber'] = VehicleHelper::generateVrm();
             }
+            if (isset($this->vehicleData['dateOfManufacture'])) {
+                $this->dvlaVehicleData['manufacture_date'] = $this->vehicleData['dateOfManufacture'];
+            }
+            if (isset($this->vehicleData['firstRegistrationDate'])) {
+                $this->dvlaVehicleData['first_registration_date'] = $this->vehicleData['firstRegistrationDate'];
+            }
+
+            $this->dvlaVehicleData['vin'] = $this->vehicleData['vin'];
+            $this->dvlaVehicleData['registration'] = $this->vehicleData['registrationNumber'];
 
             $this->vehicleId = $vehicleTestHelper->generateVehicle($this->vehicleData);
+            $vehicleTestHelper->generateDvlaVehicle($this->dvlaVehicleData);
+
+            // reset manufacture and registration dates between vehicle creations
+            $this->vehicleData['dateOfManufacture'] = null;
+            $this->vehicleData['firstRegistrationDate'] = null;
+            $this->dvlaVehicleData['first_registration_date'] = null;
+            $this->dvlaVehicleData['manufacture_date'] = null;
         }
 
         return $this->vehicleId;
