@@ -5,6 +5,9 @@ namespace MotTestResultTest\Service\Service;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaEntities\Entity\Colour;
 use DvsaEntities\Entity\ContactDetail;
+use DvsaEntities\Entity\DvlaMake;
+use DvsaEntities\Entity\DvlaModel;
+use DvsaEntities\Entity\DvlaVehicle;
 use DvsaEntities\Entity\Make;
 use DvsaEntities\Entity\Model;
 use DvsaEntities\Entity\MotTest;
@@ -39,7 +42,7 @@ class OpenInterfaceMotTestServiceTest extends AbstractServiceTestCase
     public function test_givenMotTestNotFound_throwAnException()
     {
         //given
-        $this->mockRepository->expects($this->once())
+        $this->mockRepository->expects($this->any())
             ->method('findLatestMotTestForVrm')
             ->will($this->returnValue(null));
 
@@ -55,13 +58,13 @@ class OpenInterfaceMotTestServiceTest extends AbstractServiceTestCase
      */
     public function test_givenPassMotTestNotFoundButFailFound_throwAnException()
     {
-        $this->mockRepository->expects($this->at(1))
+        $this->mockRepository->expects($this->at(0))
             ->method('findLatestMotTestForVrm')
             ->will($this->returnValue(null));
         $this->mockRepository->expects($this->once())
            ->method('findVehicleByVrm')
-           ->will($this->returnValue($this->getMockVehicle()));
-        $this->mockRepository->expects($this->at(2))
+           ->will($this->returnValue($this->getMockDvlaVehicle()));
+        $this->mockRepository->expects($this->at(1))
             ->method('findLatestMotTestForVrm')
             ->will($this->returnValue($this->prepareMotTest()));
 
@@ -116,6 +119,15 @@ class OpenInterfaceMotTestServiceTest extends AbstractServiceTestCase
         $this->mockRepository->expects($this->once())
             ->method('findVehicleByVrm')
             ->will($this->returnValue($this->getMockPre1960Vehicle()));
+        $this->mockRepository->expects($this->exactly(2))
+            ->method('findColourByCode')
+            ->will($this->returnValue($this->getMockColour()));
+        $this->mockRepository->expects($this->once())
+            ->method('findDvlaMakeByCode')
+            ->will($this->returnValue($this->getDvlaMake()));
+        $this->mockRepository->expects($this->once())
+            ->method('findDvlaModelByMakeCodeModelCode')
+            ->will($this->returnValue($this->getDvlaModel()));
 
         //when
         $result = $this->underTest->getPassMotTestForVehicleIssuedBefore(self::VRM);
@@ -135,9 +147,22 @@ class OpenInterfaceMotTestServiceTest extends AbstractServiceTestCase
             ->setColour((new Colour())->setCode("P")->setName("Black"))
             ->setSecondaryColour((new Colour())->setCode("W")->setName("Not Stated"));
     }
+
+    private function getMockDvlaVehicle()
+    {
+        return (new DvlaVehicle())
+            ->setId(1)
+            ->setRegistration("GGG455")
+            ->setMake((new Make())->setName("FORD"))
+            ->setModel((new Model())->setName("MONDEO"))
+            ->setPrimaryColour('P')
+            ->setSecondaryColour('P')
+            ->setMakeCode('FORD')
+            ->setModelCode('MONDEO');
+    }
     private function getMockPre1960Vehicle()
     {
-        $vehicle = $this->getMockVehicle();
+        $vehicle = $this->getMockDvlaVehicle();
         $vehicle->setManufactureDate((new \DateTime())->setDate(1959, 01, 01));
 
         return $vehicle;
@@ -186,8 +211,8 @@ class OpenInterfaceMotTestServiceTest extends AbstractServiceTestCase
             "model" => "MONDEO",
             "colourCode1" => "P",
             "colour1" => "Black",
-            "colourCode2" => "W",
-            "colour2" => "Not Stated",
+            "colourCode2" => "P",
+            "colour2" => "Black",
             "odometer" => 1960,
             "odometerUnit" => "M",
             "testNumber" => "196019601960",
@@ -216,6 +241,25 @@ class OpenInterfaceMotTestServiceTest extends AbstractServiceTestCase
             "vtsNumber" => "V1234",
             "vtsTelNo" => "+768-45-4433630"
         ];
+    }
+
+    private function getMockColour()
+    {
+        return (new Colour())
+            ->setCode('P')
+            ->setName('Black');
+    }
+
+    private function getDvlaMake()
+    {
+        return (new DvlaMake())
+            ->setName('FORD');
+    }
+
+    private function getDvlaModel()
+    {
+        return (new DvlaModel())
+            ->setName('MONDEO');
     }
 
 }

@@ -7,6 +7,10 @@ use Doctrine\ORM\EntityManager;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaEntities\Entity\MotTest;
 use DvsaEntities\Entity\Vehicle;
+use DvsaEntities\Entity\DvlaVehicle;
+use DvsaEntities\Entity\Colour;
+use DvsaEntities\Entity\DvlaMake;
+use DvsaEntities\Entity\DvlaModel;
 
 /**
  * Class OpenInterfaceMotTestRepository
@@ -67,12 +71,45 @@ class OpenInterfaceMotTestRepository
     }
 
     /**
-     * @return Vehicle
+     * @return DvlaVehicle
      */
     public function findVehicleByVrm($vrm)
     {
-        $vehicle = $this->entityManager->getRepository(Vehicle::class)->findOneByRegistration($vrm);
+        $vehicle = $this->entityManager->getRepository(DvlaVehicle::class)->findOneByRegistration($vrm);
 
         return $vehicle;
+    }
+
+    /**
+     * @return Colour
+     */
+    public function findColourByCode($code)
+    {
+        $colour = $this->entityManager->getRepository(Colour::class)->findOneByCode($code);
+
+        return $colour;
+    }
+
+    /**
+     * @return DvlaMake
+     */
+    public function findDvlaMakeByCode($code)
+    {
+        $dvlaMake = $this->entityManager->getRepository(DvlaMake::class)->findOneByCode($code);
+
+        return $dvlaMake;
+    }
+
+    /**
+     * @param $make_code
+     * @param $model_code
+     *
+     * @return DvlaModel|null
+     */
+    public function findDvlaModelByMakeCodeModelCode($make_code, $model_code)
+    {
+        $dvlaModel = $this->entityManager->getRepository(DvlaModel::class)->findByMakeCodeModelCode($make_code, $model_code);
+
+        return $dvlaModel;
     }
 }

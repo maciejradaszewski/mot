@@ -67,7 +67,7 @@ class DataGeneratorHelper
 
     public function firstName()
     {
-        return 'FakeTest';
+        return substr($this->differentiator . 'FakeTest', 0, 45);
     }
 
     public function surname()

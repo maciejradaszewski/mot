@@ -12,7 +12,7 @@ use DvsaCommon\Enum\FuelTypeCode;
  */
 class VehicleTestHelper
 {
-    private static $lastGenSuffix = "1AAAA";
+    private static $lastGenSuffix = "1AAA";
 
     private $api;
 
@@ -109,6 +109,7 @@ class VehicleTestHelper
             'engine_capacity' => '6590',
             'seating_capacity' => '5',
             'manufacture_date' => '2015-01-01',
+            'first_registration_date' => '2015-01-01',
             'is_seriously_damaged' => '0',
             'recent_v5_document_number' => '12312312312',
             'is_vehicle_new_at_first_registration' => '1',

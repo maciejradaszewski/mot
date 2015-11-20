@@ -2,8 +2,8 @@
 
 namespace IntegrationApi\OpenInterface\Mapper;
 
+use DvsaEntities\Entity\DvlaVehicle;
 use DvsaEntities\Entity\MotTest;
-use DvsaEntities\Entity\Vehicle;
 use IntegrationApi\MotTestCommon\Mapper\AbstractMotTestMapper;
 
 /**
@@ -34,19 +34,33 @@ class OpenInterfaceMotTestMapper extends AbstractMotTestMapper
         ];
     }
 
-    public function pre1960VehicleWithNoMotTestToArray(Vehicle $vehicle) {
+    /**
+     * @param DvlaVehicle $vehicle
+     * @param string|null $primaryColourName
+     * @param string|null $secondaryColourName
+     * @param string|null $dvlaMakeName
+     * @param string|null $dvlaModelName
+     * @return array
+     */
+    public function pre1960VehicleWithNoMotTestToArray(
+        DvlaVehicle $vehicle,
+        $primaryColourName,
+        $secondaryColourName,
+        $dvlaMakeName,
+        $dvlaModelName
+    ) {
 
-        $colour = $vehicle->getColour();
+        $colour = $vehicle->getPrimaryColour();
         $colour2 = $vehicle->getSecondaryColour();
 
         return [
             'vrm'          => $vehicle->getRegistration(),
-            'make'         => $vehicle->getMakeName(),
-            'model'        => $vehicle->getModelName(),
-            'colourCode1'  => null === $colour ? null : $colour->getCode(),
-            'colour1'      => null === $colour ? null : $colour->getName(),
-            'colourCode2'  => null === $colour2 ? null : $colour2->getCode(),
-            'colour2'      => null === $colour2 ? null : $colour2->getName(),
+            'make'         => $dvlaMakeName,
+            'model'        => $dvlaModelName,
+            'colourCode1'  => $colour,
+            'colour1'      => $primaryColourName,
+            'colourCode2'  => $colour2,
+            'colour2'      => $secondaryColourName,
             'odometer'     => 1960,
             'odometerUnit' => 'M',
             'testNumber'   => '196019601960',

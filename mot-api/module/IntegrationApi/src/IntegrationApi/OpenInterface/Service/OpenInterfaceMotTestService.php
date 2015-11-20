@@ -7,8 +7,7 @@ use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\Exception\ServiceException;
-use DvsaEntities\Entity\MotTest;
-use DvsaEntities\Entity\Vehicle;
+use DvsaEntities\Entity\DvlaVehicle;
 use IntegrationApi\OpenInterface\Mapper\OpenInterfaceMotTestMapper;
 use IntegrationApi\OpenInterface\Repository\OpenInterfaceMotTestRepository;
 use IntegrationApi\OpenInterface\Validator\OpenInterfaceMotTestRequestValidator;
@@ -61,15 +60,54 @@ class OpenInterfaceMotTestService
             ]
         );
 
-        if ($passedMotTest == null || $passedMotTest->isExpired()) {
+        if ($passedMotTest === null || $passedMotTest->isExpired()) {
             $vehicle = $this->repository->findVehicleByVrm($vrm);
 
-            if(!is_a($vehicle, Vehicle::class)) {
-                throw new NotFoundException("Vehicle with VRM: " . $vrm);
-            }
+            $primaryColour = null;
+            $secondaryColour = null;
+            $dvlaMakeName = null;
+            $dvlaModelName = null;
 
-            if ($this->isVehiclePre1960($vehicle)) {
-                return $this->mapper->pre1960VehicleWithNoMotTestToArray($vehicle);
+            if (null !== $vehicle && $this->isVehiclePre1960($vehicle)) {
+                $colourCode = $vehicle->getPrimaryColour();
+                if ($colourCode !== null) {
+                    $colour = $this->repository->findColourByCode($colourCode);
+                    if ($colour !== null) {
+                        $primaryColour = $colour->GetName();
+                    }
+                }
+
+                $colourCode = $vehicle->getSecondaryColour();
+                if ($colourCode !== null) {
+                    $colour = $this->repository->findColourByCode($colourCode);
+                    if ($colour !== null) {
+                        $secondaryColour = $colour->GetName();
+                    }
+                }
+
+                $dvlaMakeCode  = $vehicle->getMakeCode();
+                if ($dvlaMakeCode !== null) {
+                    $dvlaMake = $this->repository->findDvlaMakeByCode($dvlaMakeCode);
+                    if ($dvlaMake !== null) {
+                        $dvlaMakeName = $dvlaMake->GetName();
+                    }
+
+                    $dvlaModelCode  = $vehicle->getModelCode();
+                    if ($dvlaModelCode !== null) {
+                        $dvlaModel = $this->repository->findDvlaModelByMakeCodeModelCode($dvlaMakeCode, $dvlaModelCode);
+                        if ($dvlaModel !== null) {
+                            $dvlaModelName = $dvlaModel->GetName();
+                        }
+                    }
+                }
+
+                return $this->mapper->pre1960VehicleWithNoMotTestToArray(
+                    $vehicle,
+                    $primaryColour,
+                    $secondaryColour,
+                    $dvlaMakeName,
+                    $dvlaModelName
+                );
             }
         }
 
@@ -96,7 +134,11 @@ class OpenInterfaceMotTestService
         throw new NotFoundException("MOT test");
     }
 
-    private function isVehiclePre1960(Vehicle $vehicle)
+    /**
+     * @param DvlaVehicle $vehicle
+     * @return boolean
+     */
+    private function isVehiclePre1960(DvlaVehicle $vehicle)
     {
         return ($vehicle->getManufactureDate() && $vehicle->getManufactureDate()->format('Y') < self::PRE_1960_DATE)
         || ($vehicle->getFirstRegistrationDate() && $vehicle->getFirstRegistrationDate()->format('Y') < self::PRE_1960_DATE);
