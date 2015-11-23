@@ -10,13 +10,14 @@ import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 
 public class StartTestConfirmationPage extends Page {
-    public final String path = "/start-test-confirmation/";
+    public static final String path = "/start-test-confirmation/";
     private final String PAGE_TITLE = "MOT testing";
     private static final String PAGE_TITLE_TRAINING = "Training test\n" +
             "Confirm vehicle for test";
 
     @FindBy(id = "confirm_vehicle_confirmation") private WebElement confirmButton;
     @FindBy(id = "retest_vehicle_confirmation") private WebElement retestvehicleconfirmation;
+    @FindBy(id = "vehicleWeight") private WebElement vehicleWeight;
     @FindBy(id = "fuel-type-select") private WebElement fuelType;
     @FindBy(id = "vehicle-class-select") private WebElement vehicleClass;
     @FindBy(id = "primary-colour") @CacheLookup private WebElement primaryColor;
@@ -62,5 +63,9 @@ public class StartTestConfirmationPage extends Page {
 
     public boolean isTesterOnReTestConfirmationPage() {
         return getTitle().contentEquals("Confirm vehicle for retest");
+    }
+
+    public String getVehicleWeight() {
+        return vehicleWeight.getText();
     }
 }

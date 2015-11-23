@@ -56,6 +56,13 @@ public class PageNavigator {
         return new VehicleSearchPage(driver);
     }
 
+    public StartTestConfirmationPage goToStartTestConfimationPage(User user, Vehicle vehicle) throws URISyntaxException, IOException {
+        injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.path);
+
+        VehicleSearchPage vehicleSearchPage = PageLocator.getVehicleSearchPage(driver).searchVehicle(vehicle);
+        return vehicleSearchPage.selectVehicleForTest();
+    }
+
     public TestResultsEntryPage gotoTestResultsEntryPage(User user, Vehicle vehicle) throws URISyntaxException, IOException {
         injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.path);
 
@@ -335,6 +342,10 @@ public class PageNavigator {
     public ChangeDrivingLicencePage goToChangeDrivingLicencePage(User user, String userId) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, String.format(ChangeDrivingLicencePage.PATH, userId));
         return new ChangeDrivingLicencePage(driver);
+    }
+
+    public StartTestConfirmationPage goToStartTestConfirmationPage(User user, Vehicle vehicle) throws IOException, URISyntaxException {
+        return gotoVehicleSearchPage(user).searchVehicle(vehicle).selectVehicleForTest();
     }
 
     public ReasonToCancelTestPage gotoReasonToCancelTestPage(User user) throws IOException {

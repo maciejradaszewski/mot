@@ -22,6 +22,7 @@ public class Vehicle {
     private String cylinderCapacity;
     private String transmissionType;
     private String bodyType;
+    private String weight;
 
     public Vehicle(Map<String, String> vehicleData, String vehicleId) {
         this.vehicleData = vehicleData;
@@ -92,5 +93,9 @@ public class Vehicle {
 
     public String getVehicleId() {
         return vehicleId;
+    }
+
+    public String getWeight() {
+        return vehicleData.get("weight");
     }
 }

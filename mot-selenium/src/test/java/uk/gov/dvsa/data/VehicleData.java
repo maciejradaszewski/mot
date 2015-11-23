@@ -13,4 +13,7 @@ public class VehicleData extends VehicleService {
     public Vehicle getNewVehicle(User tester) throws IOException {
         return createVehicle(tester);
     }
+    public Vehicle getNewVehicle(User tester, Integer vehicleWeight) throws IOException {
+        return createVehicle(vehicleWeight, tester);
+    }
 }
