@@ -22,10 +22,14 @@ public class VehicleService extends Service {
     }
 
     protected Vehicle createVehicle(User user) throws IOException {
-        return createVehicle(VehicleClass.four, user);
+        return createVehicle(VehicleClass.four, user, null);
     }
 
-    protected Vehicle createVehicle(VehicleClass vehicleClass, User user) throws IOException {
+    protected Vehicle createVehicle(Integer vehicleWeight, User user) throws IOException {
+        return createVehicle(VehicleClass.four, user, vehicleWeight);
+    }
+
+    protected Vehicle createVehicle(VehicleClass vehicleClass, User user, Integer vehicleWeight) throws IOException {
         Map<String, String> vehicleDataMap = new HashMap<>();
         VehicleDetails vehicleDetails = VehicleDetails.MercedesBenz_300D;
 
@@ -52,9 +56,10 @@ public class VehicleService extends Service {
         vehicleDataMap.put("bodyType", BodyType.Hatchback.getCode());
         vehicleDataMap.put("oneTimePassword", oneTimePassword);
         vehicleDataMap.put("returnOriginalId", String.valueOf(true));
+        vehicleDataMap.put("weight", null == vehicleWeight ? null : Integer.toString(vehicleWeight));
 
         String vehicleRequest = jsonHandler.convertToString(vehicleDataMap);
-
+        
         Response response = motClient.createVehicle(
                 vehicleRequest, CREATE_PATH, authService.createSessionTokenForUser(user));
 

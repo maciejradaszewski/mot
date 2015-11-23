@@ -8,6 +8,7 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.AssertionHelper;
 import uk.gov.dvsa.module.*;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
+import uk.gov.dvsa.ui.pages.mot.StartTestConfirmationPage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -41,6 +42,11 @@ public class MotUI {
         duplicateReplacementCertificate = new DuplicateReplacementCertificate(pageNavigator);
         vts = new Vts(pageNavigator);
         contingencyTest = new ContingencyTest(pageNavigator);
+    }
+
+    public void startTestConfirmationPage(User user, Vehicle vehicle) throws IOException, URISyntaxException {
+        StartTestConfirmationPage startTestConfirmationPage = pageNavigator.goToStartTestConfirmationPage(user, vehicle);
+        expectedText = startTestConfirmationPage.getVehicleWeight();
     }
 
     public void searchForVehicle(User user, Vehicle vehicle) throws IOException, URISyntaxException {

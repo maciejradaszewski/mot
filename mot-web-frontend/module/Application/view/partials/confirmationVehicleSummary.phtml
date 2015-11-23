@@ -9,7 +9,7 @@ use DvsaMotTest\Model\VehicleClass;
 $colours = ArrayUtils::tryGet($this->staticData, 'colours', []);
 $fuelTypes = ArrayUtils::tryGet($this->staticData, 'fuelTypes', []);
 
-/** @var \DvsaCommon\Dto\Vehicle\AbstractVehicleDto $vehicle */
+/** @var \DvsaCommon\Dto\Vehicle\VehicleDto $vehicle */
 $vehicle = $this->vehicle;
 
 
@@ -67,6 +67,13 @@ $expiryDate = DateTimeDisplayFormat::textDate($this->expiryDate);
                                 $transmissionType
                                 ? ['Transmission', $transmissionType, 'id' => 'vehicleTransmission']
                                 : null
+                            ),
+                            (
+                                method_exists($vehicle, 'getWeight')
+                                    ?  null === $vehicle->getWeight()
+                                        ? ['Vehicle weight', 'Unknown', 'id' => 'vehicleWeight']
+                                        : ['Vehicle weight', $vehicle->getWeight() . ' kg', 'id' => 'vehicleWeight']
+                                    : null
                             ),
                             ($expiryDate ? ['MOT expiry date', $expiryDate, 'id' => 'motExpiryDate'] : null)
                         ]

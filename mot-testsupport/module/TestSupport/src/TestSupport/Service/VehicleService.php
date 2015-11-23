@@ -102,6 +102,8 @@ class VehicleService
         $secondaryColour = ArrayUtils::tryGet($data, 'secondaryColour');
         $vehicleData["secondary_colour_id"] = $this->fetchId("colour_lookup", $secondaryColour);
 
+        $vehicleData["weight"] = ArrayUtils::tryGet($data, "weight");
+
         $fuelType = ArrayUtils::tryGet($data, 'fuelType');
         $vehicleData["fuel_type_id"] = $this->fetchId("fuel_type", $fuelType);
 
