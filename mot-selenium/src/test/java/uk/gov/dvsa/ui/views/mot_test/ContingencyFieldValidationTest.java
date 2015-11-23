@@ -16,7 +16,7 @@ import static org.hamcrest.core.Is.is;
 public class ContingencyFieldValidationTest extends BaseTest {
     User tester;
 
-    @BeforeClass
+    @BeforeClass(alwaysRun = true)
     void setupUser() throws IOException, URISyntaxException {
         tester = userData.createTester(siteData.createSite().getId());
     }
