@@ -9,6 +9,7 @@ use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\Assertion\RefuseToTestAssertion;
 use DvsaCommon\Auth\PermissionInSystem;
 use Core\Service\RemoteAddress;
+use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Dto\Common\ColourDto;
 use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommon\Dto\Vehicle\AbstractVehicleDto;
@@ -429,7 +430,7 @@ class StartTestConfirmationController extends AbstractDvsaMotTestController
     }
 
     /**
-     * @param bool $isDvlaVehicle
+     * @return null|mixed
      */
     protected function getCheckExpiryResults()
     {
@@ -440,12 +441,14 @@ class StartTestConfirmationController extends AbstractDvsaMotTestController
         $contingencySessionManager = $this->getContingencySessionManager();
         if ($contingencySessionManager->isMotContingency() === true) {
             /** @var ContingencyTestDto $contingency */
-            $contingency = $contingencySessionManager->getContingencySession()['dto'];
+            $contingencyTestDto = $contingencySessionManager->getContingencySession()['dto'];
 
-            if ($contingency instanceof ContingencyTestDto) {
-                $apiUrl->queryParam('contingencyDate', $contingency->getPerformedAt() . 'T00:00:00Z');
+            if ($contingencyTestDto instanceof ContingencyTestDto) {
+                $apiUrl->queryParam('contingencyDatetime',
+                    $contingencyTestDto->getPerformedAt()->format(DateUtils::DATETIME_FORMAT));
             }
         }
+
         $apiResult = $this->getRestClient()->get($apiUrl);
 
         if (!empty($apiResult['data']['checkResult'])) {

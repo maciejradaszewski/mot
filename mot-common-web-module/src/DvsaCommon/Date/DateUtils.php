@@ -2,6 +2,8 @@
 
 namespace DvsaCommon\Date;
 
+use DateTime;
+use DateTimeInterface;
 use DvsaCommon\Date\Exception\DateException;
 use DvsaCommon\Date\Exception\IncorrectDateFormatException;
 use DvsaCommon\Date\Exception\NonexistentDateException;
@@ -60,15 +62,19 @@ final class DateUtils
     }
 
     /**
-     * @param \DateTime $dateTime
-     *                            timestamp
+     * @param DateTimeInterface $datetime timestamp
      *
-     * @return \DateTime
-     *                   timestamp with time part reset
+     * @return DateTime timestamp with time part reset
      */
-    public static function cropTime(\DateTime $dateTime)
+    public static function cropTime(DateTimeInterface $datetime)
     {
-        $newDateTime = clone $dateTime;
+        if ($datetime instanceof DateTime) {
+            $newDateTime = clone $datetime;
+        } else {
+            $newDateTime = DateTime::createFromFormat(DateTime::ISO8601, $datetime->format(DateTime::ISO8601),
+                $datetime->getTimezone());
+        }
+
         $newDateTime->setTime(0, 0, 0);
 
         return $newDateTime;

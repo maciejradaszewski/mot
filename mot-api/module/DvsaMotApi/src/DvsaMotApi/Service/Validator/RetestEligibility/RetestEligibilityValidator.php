@@ -68,6 +68,18 @@ class RetestEligibilityValidator
     }
 
     /**
+     * @param DateTimeHolder $dateTimeHolder
+     *
+     * @return $this
+     */
+    public function setDateTimeHolder(DateTimeHolder $dateTimeHolder)
+    {
+        $this->dateTime = $dateTimeHolder;
+
+        return $this;
+    }
+
+    /**
      * @param $vehicleId
      * @param $vtsId
      * @param $contingencyDto
@@ -107,9 +119,10 @@ class RetestEligibilityValidator
     /**
      * @param MotTest $test
      * @param $contingencyDto
-     * @return bool
      *
      * @throws NotFoundException
+     *
+     * @return bool
      */
     private function isWithinTenWorkingDays(MotTest $test, $contingencyDto = null)
     {
@@ -119,10 +132,9 @@ class RetestEligibilityValidator
         }
 
         $lastTestCompletedDate = DU::cropTime($test->getCompletedDate());
-        $queryDate = ($contingencyDto instanceof ContingencyTestDto
-            ? DU::cropTime(new \DateTime($contingencyDto->getPerformedAt() . ' 00:00:00'))
-            : $this->dateTime->getCurrentDate()
-        );
+        $queryDate = ($contingencyDto instanceof ContingencyTestDto)
+            ? DU::cropTime($contingencyDto->getPerformedAt())
+            : $this->dateTime->getCurrentDate();
 
         $countryCode = $country->getCountry()->getCode();
         $nthWorkingDayDate = $this->nonWorkingDaysHelper->calculateNthWorkingDayAfter(
@@ -130,14 +142,9 @@ class RetestEligibilityValidator
             self::RETEST_WORKING_DAYS_PERIOD,
             $countryCode
         );
+
         $dayDiff = intval(DU::getDaysDifference($nthWorkingDayDate, $queryDate));
+
         return $dayDiff <= 0;
-
-    }
-
-    public function setDateTimeHolder(DateTimeHolder $dateTimeHolder)
-    {
-        $this->dateTime = $dateTimeHolder;
-        return $this;
     }
 }

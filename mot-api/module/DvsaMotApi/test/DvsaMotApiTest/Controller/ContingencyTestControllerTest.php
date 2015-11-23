@@ -7,7 +7,7 @@
 
 namespace DvsaMotApiTest\Controller;
 
-use DateTimeImmutable;
+use DateTime;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
@@ -134,7 +134,7 @@ class ContingencyTestControllerTest extends AbstractMotApiControllerTestCase
         $dto = new ContingencyTestDto();
 
         $dto->setSiteId(1);
-        $dto->setPerformedAt(new DateTimeImmutable());
+        $dto->setPerformedAt(new DateTime());
         $dto->setReasonCode('OT');
         $dto->setOtherReasonText('this is some text');
         $dto->setContingencyCode('12345A');
@@ -166,7 +166,7 @@ class ContingencyTestControllerTest extends AbstractMotApiControllerTestCase
         $dto = new ContingencyTestDto();
 
         $dto->setSiteId(1);
-        $dto->setPerformedAt(new DateTimeImmutable());
+        $dto->setPerformedAt(new DateTime());
         $dto->setReasonCode('OT');
         $dto->setOtherReasonText('this is some text');
         $dto->setContingencyCode('12345A'); // Corresponds to ID 3

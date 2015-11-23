@@ -4,8 +4,8 @@ namespace VehicleApi\Controller;
 
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Utility\ArrayUtils;
-use DvsaCommonApi\Model\ApiResponse;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
+use DvsaCommonApi\Model\ApiResponse;
 use DvsaMotApi\Service\CertificateExpiryService;
 
 /**
@@ -16,7 +16,8 @@ class VehicleCertificateExpiryController extends AbstractDvsaRestfulController
     const FIELD_CONTINGENCY_DATETIME = 'contingencyDatetime';
 
     /**
-     * @param mixed $id
+     * @param mixed $vehicleId
+     *
      * @return \Zend\View\Model\JsonModel
      */
     public function get($vehicleId)

@@ -7,7 +7,7 @@
 
 namespace DvsaCommon\Dto\MotTesting;
 
-use DateTimeImmutable;
+use DateTime;
 use Dvsa\Mot\Frontend\MotTestModule\Parameters\ContingencyTestParameters;
 use DvsaCommon\Dto\AbstractDataTransferObject;
 use DvsaCommon\Dto\JsonUnserializable;
@@ -26,7 +26,7 @@ class ContingencyTestDto extends AbstractDataTransferObject implements JsonSeria
     private $siteId;
 
     /**
-     * @var DateTimeImmutable
+     * @var DateTime
      */
     private $performedAt;
 
@@ -66,11 +66,11 @@ class ContingencyTestDto extends AbstractDataTransferObject implements JsonSeria
     }
 
     /**
-     * @param DateTimeImmutable|null $performedAt
+     * @param DateTime|null $performedAt
      *
      * @return $this
      */
-    public function setPerformedAt(DateTimeImmutable $performedAt = null)
+    public function setPerformedAt(DateTime $performedAt = null)
     {
         $this->performedAt = $performedAt;
 
@@ -78,7 +78,7 @@ class ContingencyTestDto extends AbstractDataTransferObject implements JsonSeria
     }
 
     /**
-     * @return DateTimeImmutable|null
+     * @return DateTime|null
      */
     public function getPerformedAt()
     {
@@ -207,14 +207,14 @@ class ContingencyTestDto extends AbstractDataTransferObject implements JsonSeria
 
     /**
      * @param ContingencyTestParameters $parameters
-     * 
+     *
      * @return ContingencyTestDto
      */
     public static function fromParameters(ContingencyTestParameters $parameters)
     {
         $dto = new self();
         $dto->setSiteId($parameters->get('site_id'));
-        $dto->setPerformedAt(DateTimeImmutable::createFromFormat('Y-m-d g:ia', sprintf('%s-%s-%s %s:%s%s',
+        $dto->setPerformedAt(DateTime::createFromFormat('Y-m-d g:ia', sprintf('%s-%s-%s %s:%s%s',
             trim($parameters->get('performed_at_year')), trim($parameters->get('performed_at_month')),
             trim($parameters->get('performed_at_day')), trim($parameters->get('performed_at_hour')),
             trim($parameters->get('performed_at_minute')), trim($parameters->get('performed_at_am_pm')))));
@@ -252,7 +252,7 @@ class ContingencyTestDto extends AbstractDataTransferObject implements JsonSeria
         $this->setSiteId(isset($data['siteId']) ? $data['siteId'] : null);
         if (isset($data['performedAtYear']) && isset($data['performedAtMonth']) && isset($data['performedAtDay'])
             && isset($data['performedAtHour']) && isset($data['performedAtMinute']) && isset($data['performedAtAmPm'])) {
-            $this->setPerformedAt(DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, sprintf('%s-%s-%s %s:%s%s',
+            $this->setPerformedAt(DateTime::createFromFormat(self::DATETIME_FORMAT, sprintf('%s-%s-%s %s:%s%s',
                 $data['performedAtYear'], $data['performedAtMonth'], $data['performedAtDay'],
                 $data['performedAtHour'], $data['performedAtMinute'], $data['performedAtAmPm'])));
         } else {
