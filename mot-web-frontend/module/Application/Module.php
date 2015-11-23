@@ -1,4 +1,5 @@
 <?php
+
 namespace Application;
 
 use Application\Data\ApiCurrentMotTest;
@@ -59,7 +60,7 @@ use DvsaMotTest\Service\AuthorisedClassesService;
 use DvsaMotTest\Service\VehicleSearchService;
 use Zend\Authentication\AuthenticationService;
 use Zend\EventManager\EventInterface;
-use Zend\Http\Request;
+use Zend\Http\Request as HttpRequest;
 use Zend\Log\Logger;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
@@ -84,8 +85,15 @@ class Module implements
 {
     const APPLICATION_SESSION = 'applicationSession';
 
+    /**
+     * {@inheritdoc}
+     */
     public function onBootstrap(EventInterface $e)
     {
+        if (!($e instanceof MvcEvent) || !($e->getRequest() instanceof HttpRequest)) {
+            return;
+        }
+
         $eventManager = $e->getApplication()->getEventManager();
 
         $claimAccountListener = $e->getApplication()->getServiceManager()->get(ClaimAccountListener::class);

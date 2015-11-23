@@ -7,7 +7,7 @@
 
 namespace DvsaCommon\Validation;
 
-use DateTimeImmutable;
+use DateTime;
 use DvsaCommon\Enum\EmergencyReasonCode;
 use Zend\Validator\Callback;
 use Zend\Validator\Date;
@@ -112,7 +112,6 @@ class CommonContingencyTestValidator implements GroupValidator
             }
         }
 
-
         $valid = empty($messages);
 
         return new ValidationResult($valid, $messages);
@@ -202,8 +201,8 @@ class CommonContingencyTestValidator implements GroupValidator
          * "must be less than 3 months ago"
          */
         $lessThanThreeMonths = new Callback(function ($data) {
-            $threeMonthsAgo = new DateTimeImmutable('-3 months');
-            $testDatetime = DateTimeImmutable::createFromFormat('Y-m-d g:ia', sprintf('%s-%s-%s %s:%s%s',
+            $threeMonthsAgo = new DateTime('-3 months');
+            $testDatetime = DateTime::createFromFormat('Y-m-d g:ia', sprintf('%s-%s-%s %s:%s%s',
                 $data['performedAtYear'], $data['performedAtMonth'], $data['performedAtDay'],
                 $data['performedAtHour'], $data['performedAtMinute'], $data['performedAtAmPm']));
 
@@ -219,8 +218,8 @@ class CommonContingencyTestValidator implements GroupValidator
          * "must not be in the future"
          */
         $notInTheFuture = new Callback(function ($data) {
-            $now = new DateTimeImmutable();
-            $testDatetime = DateTimeImmutable::createFromFormat('Y-m-d g:ia', sprintf('%s-%s-%s %s:%s%s',
+            $now = new DateTime();
+            $testDatetime = DateTime::createFromFormat('Y-m-d g:ia', sprintf('%s-%s-%s %s:%s%s',
                 $data['performedAtYear'], $data['performedAtMonth'], $data['performedAtDay'],
                 $data['performedAtHour'], $data['performedAtMinute'], $data['performedAtAmPm']));
 

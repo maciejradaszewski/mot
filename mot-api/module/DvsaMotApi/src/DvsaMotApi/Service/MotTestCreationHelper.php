@@ -218,7 +218,7 @@ class MotTestCreationHelper
         }
 
         if ($contingencyDto instanceof ContingencyTestDto) {
-            $motTest->setStartedDate(DateUtils::toDateTime($contingencyDto->getPerformedAt()->format(DateUtils::DATETIME_FORMAT)));
+            $motTest->setStartedDate($contingencyDto->getPerformedAt());
 
             /** @var \DvsaEntities\Entity\EmergencyLog $contingency */
             $contingency = $this->entityManager

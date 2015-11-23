@@ -7,7 +7,7 @@
 
 namespace DvsaCommonTest\Validation;
 
-use DateTimeImmutable;
+use DateTime;
 use DvsaCommon\Enum\EmergencyReasonCode;
 use DvsaCommon\Validation\CommonContingencyTestValidator;
 use DvsaCommon\Validation\ValidationResult;
@@ -86,9 +86,9 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
      */
     public function dateDataProvider()
     {
-        $now = new DateTimeImmutable();
-        $threeMonthsAgo = new DateTimeImmutable('-3 months');
-        $future = new DateTimeImmutable('+1 day');
+        $now = new DateTime();
+        $threeMonthsAgo = new DateTime('-3 months');
+        $future = new DateTime('+1 day');
 
         return $this->prependFieldsetToDataProvider(CommonContingencyTestValidator::FIELDSET_DATE, [
             // FAIL: Date not provided
@@ -198,7 +198,7 @@ class CommonContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
      */
     public function timeDataProvider()
     {
-        $now = new DateTimeImmutable();
+        $now = new DateTime();
 
         return $this->prependFieldsetToDataProvider(CommonContingencyTestValidator::FIELDSET_TIME, [
             // FAIL: Time not provided

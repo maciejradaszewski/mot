@@ -7,7 +7,7 @@
 
 namespace DvsaCommonTest\Dto\MotTesting;
 
-use DateTimeImmutable;
+use DateTime;
 use DvsaCommon\Dto\JsonUnserializable;
 use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommonTest\Dto\AbstractDtoTester;
@@ -35,8 +35,8 @@ class ContingencyTestDtoTest extends AbstractDtoTester
     {
         $dto = new ContingencyTestDto();
 
-        /** @var DateTimeImmutable|bool $datetime */
-        $datetime = DateTimeImmutable::createFromFormat(ContingencyTestDto::DATETIME_FORMAT,
+        /** @var DateTime|bool $datetime */
+        $datetime = DateTime::createFromFormat(ContingencyTestDto::DATETIME_FORMAT,
             sprintf('%s-%s-%s %s:%s%s', $year, $month, $day, $hour, $minute, $amPm));
 
         if (false == $isValid) {
@@ -45,7 +45,7 @@ class ContingencyTestDtoTest extends AbstractDtoTester
             return;
         }
 
-        $this->assertInstanceOf(DateTimeImmutable::class, $datetime);
+        $this->assertInstanceOf(DateTime::class, $datetime);
         $dto->setPerformedAt($datetime);
         $this->assertEquals($year, $dto->getPerformedAtYear());
         $this->assertEquals($month, $dto->getPerformedAtMonth());
@@ -72,7 +72,7 @@ class ContingencyTestDtoTest extends AbstractDtoTester
     {
         $dto = new ContingencyTestDto();
         $dto->setSiteId('1');
-        $dto->setPerformedAt(DateTimeImmutable::createFromFormat(ContingencyTestDto::DATETIME_FORMAT,
+        $dto->setPerformedAt(DateTime::createFromFormat(ContingencyTestDto::DATETIME_FORMAT,
             '2015-04-22 8:20pm'));
         $dto->setReasonCode('OT');
         $dto->setOtherReasonText('Because reasons');
