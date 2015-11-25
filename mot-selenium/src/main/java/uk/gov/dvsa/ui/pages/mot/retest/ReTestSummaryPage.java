@@ -22,16 +22,13 @@ public class ReTestSummaryPage extends Page {
     }
 
     @FindBy(id = "confirm_test_result") private WebElement finishTestButton;
-
     @FindBy(id = "oneTimePassword") private WebElement pinInputField;
-
     @FindBy(id = "testStatus") private WebElement testStatus;
-
     @FindBy(id = "confirm_test_result") private WebElement finishAndPrintButton;
-
     @FindBy(id = "start_inspection_button") private WebElement startReinspectionButton;
-
     @FindBy(id = "motTestType") private WebElement testTypePrompt;
+    @FindBy(id = "declarationStatement") private WebElement declarationElement;
+
 
     public ReTestSummaryPage(MotAppDriver driver) {
         super(driver);
@@ -72,5 +69,13 @@ public class ReTestSummaryPage extends Page {
 
     public boolean isFailedNoticeDisplayed() {
         return testStatus.getText().contains(FAIL_MSG);
+    }
+
+    public boolean isDeclarationTextDisplayed() {
+        return declarationElement.isDisplayed();
+    }
+
+    public String getDeclarationText() {
+        return declarationElement.getText();
     }
 }

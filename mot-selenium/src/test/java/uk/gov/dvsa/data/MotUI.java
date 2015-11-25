@@ -6,10 +6,6 @@ import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.AssertionHelper;
-import uk.gov.dvsa.module.ManageRoles;
-import uk.gov.dvsa.module.NormalTest;
-import uk.gov.dvsa.module.Register;
-import uk.gov.dvsa.module.Retest;
 import uk.gov.dvsa.module.*;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
 
@@ -30,6 +26,9 @@ public class MotUI {
     public final SearchSite searchSite;
     public final Vts vts;
     
+    public final DuplicateReplacementCertificate duplicateReplacementCertificate;
+    public final ContingencyTest contingencyTest;
+
     public MotUI(MotAppDriver driver) {
         pageNavigator.setDriver(driver);
         retest = new Retest(pageNavigator);
@@ -39,7 +38,9 @@ public class MotUI {
         manageRoles = new ManageRoles(pageNavigator);
         searchUser = new SearchUser(pageNavigator);
         searchSite = new SearchSite(pageNavigator);
+        duplicateReplacementCertificate = new DuplicateReplacementCertificate(pageNavigator);
         vts = new Vts(pageNavigator);
+        contingencyTest = new ContingencyTest(pageNavigator);
     }
 
     public void searchForVehicle(User user, Vehicle vehicle) throws IOException, URISyntaxException {

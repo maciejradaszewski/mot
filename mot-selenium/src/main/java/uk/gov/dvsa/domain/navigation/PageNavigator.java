@@ -16,6 +16,8 @@ import uk.gov.dvsa.ui.pages.dvsa.*;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 import uk.gov.dvsa.ui.pages.login.LoginPage;
 import uk.gov.dvsa.ui.pages.mot.*;
+import uk.gov.dvsa.ui.pages.mot.createvehiclerecord.CreateNewVehicleRecordIdentificationPage;
+import uk.gov.dvsa.ui.pages.mot.duplicatereplacementcertificates.DuplicateReplacementCertificateTestHistoryPage;
 import uk.gov.dvsa.ui.pages.mot.retest.ConfirmVehicleRetestPage;
 import uk.gov.dvsa.ui.pages.mot.retest.ReTestResultsEntryPage;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticeCreationPage;
@@ -23,6 +25,11 @@ import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticePage;
 import uk.gov.dvsa.ui.pages.userregistration.CreateAnAccountPage;
 import uk.gov.dvsa.ui.pages.vehicleinformation.VehicleInformationSearchPage;
 import uk.gov.dvsa.ui.pages.vts.*;
+import uk.gov.dvsa.ui.pages.vts.AssociateASitePage;
+import uk.gov.dvsa.ui.pages.vts.ChangeTestingFacilitiesPage;
+import uk.gov.dvsa.ui.pages.vts.SiteTestLogPage;
+import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
+import uk.gov.dvsa.ui.pages.mot.ReasonToCancelTestPage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -85,6 +92,8 @@ public class PageNavigator {
 
     public ContingencyTestEntryPage gotoContingencyTestEntryPage(User user) throws URISyntaxException, IOException {
         injectOpenAmCookieAndNavigateToPath(user, ContingencyTestEntryPage.path);
+
+
 
         return new ContingencyTestEntryPage(driver);
     }
@@ -236,15 +245,6 @@ public class PageNavigator {
         return new UserSearchPage(driver);
     }
 
-    public DuplicateReplacementCertificatePage gotoDuplicateCertificatePage(User user, Vehicle vehicle) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format("/replacement-certificate-vehicle-search?registration=%s&vin=%s",
-                vehicle.getRegistrationNumber(), vehicle.getVin()));
-
-        new VehicleSearchPage(driver).searchVehicle(vehicle).selectVehicle();
-
-        return new DuplicateReplacementCertificatePage(driver);
-    }
-
     public AssociateASitePage goToAssociateASitePage(User user, String aeId) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, String.format(AssociateASitePage.PATH, aeId));
         return new AssociateASitePage(driver);
@@ -263,8 +263,19 @@ public class PageNavigator {
 
     public VehicleSearchPage goToTrainingTestVehicleSearchPage(User user) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.TRAINING_TEST_PATH);
-
         return new VehicleSearchPage(driver);
+    }
+
+    public TestResultsEntryPage gotoTrainingTestResultsEntryPage(User user, Vehicle vehicle) throws IOException, URISyntaxException {
+        injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.TRAINING_TEST_PATH);
+
+        VehicleSearchPage vehicleSearchPage = new VehicleSearchPage(driver).searchVehicle(vehicle);
+        StartTestConfirmationPage testConfirmationPage = vehicleSearchPage.selectVehicleForTest();
+        TestOptionsPage testOptionsPage =  testConfirmationPage.clickStartMotTest();
+
+        driver.navigateToPath(testOptionsPage.getMotTestPath());
+
+        return new TestResultsEntryPage(driver);
     }
 
     public VtsSearchForAVtsPage goToVtsSearchPage(User user) throws IOException {
@@ -325,4 +336,40 @@ public class PageNavigator {
         injectOpenAmCookieAndNavigateToPath(user, String.format(ChangeDrivingLicencePage.PATH, userId));
         return new ChangeDrivingLicencePage(driver);
     }
+
+    public ReasonToCancelTestPage gotoReasonToCancelTestPage(User user) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(ReasonToCancelTestPage.PATH));
+        return new ReasonToCancelTestPage(driver);
+    }
+
+    public CreateNewVehicleRecordIdentificationPage gotoCreateNewVehicleRecordIdentificationPage(User user) throws IOException {
+
+        injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.path);
+
+        VehicleSearchPage vehicleSearchPage = PageLocator.getVehicleSearchPage(driver);
+        vehicleSearchPage.searchVehicle();
+        CreateNewVehicleRecordIdentificationPage createNewVehicleRecordIdentificationPage = vehicleSearchPage.createNewVehicle();
+        return new CreateNewVehicleRecordIdentificationPage(driver);
+
+    }
+
+    public DuplicateReplacementCertificateTestHistoryPage gotoDuplicateReplacementCertificateTestHistoryPage(User user, Vehicle vehicle) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format("/replacement-certificate-vehicle-search?registration=%s&vin=%s",
+                vehicle.getRegistrationNumber(), vehicle.getVin()));
+
+        new VehicleSearchPage(driver).searchVehicle(vehicle).selectVehicle();
+
+        return new DuplicateReplacementCertificateTestHistoryPage(driver);
+    }
+
+    public RefuseToTestPage gotoRefuseToTestPage(User user, Vehicle vehicle)  throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.path);
+
+        VehicleSearchPage vehicleSearchPage = PageLocator.getVehicleSearchPage(driver).searchVehicle(vehicle);;
+        StartTestConfirmationPage testConfirmationPage = vehicleSearchPage.selectVehicleForTest();
+        RefuseToTestPage refuseToTestPage = testConfirmationPage.refuseToTestVehicle();
+
+        return new RefuseToTestPage(driver);
+    }
+
 }

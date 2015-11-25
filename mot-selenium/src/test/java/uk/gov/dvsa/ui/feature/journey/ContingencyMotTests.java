@@ -9,6 +9,7 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.ui.BaseTest;
+
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
 import uk.gov.dvsa.ui.pages.mot.*;
 
@@ -79,5 +80,19 @@ public class ContingencyMotTests extends BaseTest {
 
         //Then the retest is successful
         motUI.retest.verifyRetestIsSuccessful();
+    }
+
+    @Test
+    public void endOfContingencyDeclarationStatement() throws IOException, URISyntaxException {
+
+        //Given I am an Mot tester
+        User tester = userData.createTester(1);
+        Vehicle vehicle = vehicleData.getNewVehicle(tester);
+
+        //When I complete a contingency test and view the summary page
+        motUI.contingencyTest.conductContingencyTest(tester, vehicle);
+
+        //Then I should be presented with the declaration statement
+        assertThat(motUI.contingencyTest.isDeclarationStatementDisplayed(), is(true));
     }
 }

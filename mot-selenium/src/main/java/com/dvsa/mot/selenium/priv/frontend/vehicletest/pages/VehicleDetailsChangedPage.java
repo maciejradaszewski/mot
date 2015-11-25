@@ -33,5 +33,4 @@ public class VehicleDetailsChangedPage extends BasePage {
         confirmButton.click();
         return new MotTestStartedPage(driver);
     }
-
 }
