@@ -50,7 +50,6 @@ public class CreateNewVehicleRecordVehicleIdentificationPage extends BasePage {
     @FindBy(id = "emptyVinReason") private WebElement emptyVinReason;
 
 
-
     public CreateNewVehicleRecordVehicleIdentificationPage(WebDriver driver) {
         super(driver);
         checkTitle(PAGE_TITLE);
@@ -293,4 +292,5 @@ public class CreateNewVehicleRecordVehicleIdentificationPage extends BasePage {
     public boolean isErrorMessageDisplayed() {
         return ValidationSummary.isValidationSummaryDisplayed(driver);
     }
+
 }

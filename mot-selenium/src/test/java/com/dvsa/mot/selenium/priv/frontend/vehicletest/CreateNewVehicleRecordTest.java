@@ -235,6 +235,4 @@ public class CreateNewVehicleRecordTest extends BaseTest {
                 motTestStartedPage.isSignOutButtonDisplayed(), is(true));
         motTestStartedPage.clickLogout();
     }
-
-
 }

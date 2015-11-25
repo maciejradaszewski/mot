@@ -176,4 +176,5 @@ public class CreateNewVehicleRecordVehicleSpecificationPage extends BasePage {
     public boolean isErrorMessageDisplayed() {
         return ValidationSummary.isValidationSummaryDisplayed(driver);
     }
+
 }

@@ -50,18 +50,16 @@ public class UserRegistrationTests extends BaseTest {
         assertThat(motUI.register.isEmailDuplicated(), is(true));
     }
 
-    @Test(groups = {"BVT", "Regression"}, description = "VM-11472",
-            enabled = false, expectedExceptions = NoSuchElementException.class)
+    @Test(groups = {"BVT", "Regression"}, description = "VM-11472")
     public void checkCreateAccountLinkExists() throws IOException {
 
-        //Go to the main login page
+        //Given I am on the Home Page
         LoginPage loginPage = pageNavigator.goToLoginPage();
 
-        //Ensure the create account link exists by clicking on this link
+        //When I click the create Account Link
         CreateAnAccountPage createAnAccountPage = loginPage.clickCreateAnAccountLink();
 
-        //Verify that the page returned is the create an account page
-        assertThat(createAnAccountPage.selfVerify(), is(true));
+        //Then I should be on the create account page
+        assertThat(createAnAccountPage.isContinueButtonDisplayed(), is(true));
     }
-
 }

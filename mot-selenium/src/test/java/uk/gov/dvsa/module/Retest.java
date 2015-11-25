@@ -12,12 +12,18 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.core.Is.is;
 
 public class Retest {
 
     PageNavigator pageNavigator = null;
     private boolean successful = false;
+    private boolean declarationSuccessful = false;
+
+    private static final String DECLARATION_STATEMENT = "I confirm that this MOT transaction has been conducted in accordance with " +
+            "the conditions of authorisation which includes compliance with the MOT testing guide, the requirements for " +
+            "authorisation, the appropriate MOT Inspection Manual and any other instructions issued by DVSA.";
 
     public Retest(PageNavigator pageNavigator)
     {
@@ -29,6 +35,11 @@ public class Retest {
         resultsEntryPage.completeTestDetailsWithPassValues();
 
         ReTestSummaryPage summaryPage = resultsEntryPage.clickReviewTestButton();
+
+        if (summaryPage.isDeclarationTextDisplayed()) {
+            assertThat(summaryPage.getDeclarationText(), equalToIgnoringCase(DECLARATION_STATEMENT));
+            declarationSuccessful = true;
+        }
 
         ReTestCompletePage testCompletePage = summaryPage.finishTestAndPrint();
 
@@ -71,5 +82,9 @@ public class Retest {
 
     public void verifyRetestLinkNotPresent(){
         assertThat(successful, is(false));
+    }
+
+    public boolean isDeclarationStatementDisplayed() {
+        return declarationSuccessful;
     }
 }

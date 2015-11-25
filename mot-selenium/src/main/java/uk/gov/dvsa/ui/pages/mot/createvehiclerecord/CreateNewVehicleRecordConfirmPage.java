@@ -1,72 +1,53 @@
-package com.dvsa.mot.selenium.priv.frontend.vehicletest.pages;
+package uk.gov.dvsa.ui.pages.mot.createvehiclerecord;
 
-import com.dvsa.mot.selenium.datasource.Login;
-import com.dvsa.mot.selenium.datasource.Vehicle;
-import com.dvsa.mot.selenium.framework.BasePage;
-import com.dvsa.mot.selenium.framework.util.validation.ValidationSummary;
-import org.openqa.selenium.WebDriver;
+
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
+import uk.gov.dvsa.helper.PageInteractionHelper;
+import uk.gov.dvsa.ui.pages.Page;
 
-public class NewVehicleRecordConfirmPage extends BasePage {
+public class CreateNewVehicleRecordConfirmPage extends Page {
 
-    public static final String PAGE_TITLE = "CONFIRM NEW VEHICLE RECORD";
+    public static final String PAGE_TITLE = "Confirm new vehicle record";
+    public static final String PATH = "/vehicle-step/confirm";
 
     @FindBy(id = "registrationNumber") private WebElement registrationNumber;
-
     @FindBy(id = "VIN") private WebElement vin;
-
     @FindBy(id = "emptyVrmReason") private WebElement emptyVrmReason;
-
     @FindBy(id = "emptyVinReason") private WebElement emptyVinReason;
-
     @FindBy(id = "make") private WebElement make;
-
     @FindBy(id = "countryOfRegistration") private WebElement countryOfRegistration;
-
     @FindBy(id = "transmissionType") private WebElement transmissionType;
-
     @FindBy(id = "dateOfFirstUse") private WebElement dateOfFirstUse;
-
-    @FindBy(id = "vehicle-identification-change-this") private WebElement
-            vehicleIdentificationChangeThis;
-
+    @FindBy(id = "vehicle-identification-change-this") private WebElement vehicleIdentificationChangeThis;
     @FindBy(id = "model") private WebElement model;
-
     @FindBy(id = "fuelType") private WebElement fuelType;
-
     @FindBy(id = "vehicleClass") private WebElement vehicleClass;
-
     @FindBy(id = "cylinderCapacity") private WebElement cylinderCapacity;
-
-    @FindBy(id = "vehicle-specification-change-this") private WebElement
-            vehicleSpecificationChangeDetails;
-
+    @FindBy(id = "vehicle-specification-change-this") private WebElement vehicleSpecificationChangeDetails;
     @FindBy(id = "colour") private WebElement primaryColour;
-
     @FindBy(id = "secondaryColour") private WebElement secondaryColour;
-
     @FindBy(id = "confirm_test_result") private WebElement startMOTTest;
-
     @FindBy(id = "oneTimePassword") private WebElement oneTimePassword;
-
     @FindBy(id = "otpErrorMessage") private WebElement otpErrorMessage;
-
     @FindBy(id = "otpErrorMessageDescription") private WebElement otpErrorMessageDescription;
-
     @FindBy(id = "back-link") private WebElement backLink;
+    @FindBy(id = "declarationStatement") private WebElement declarationElement;
 
-    public NewVehicleRecordConfirmPage(WebDriver driver) {
+
+    public CreateNewVehicleRecordConfirmPage(MotAppDriver driver) {
         super(driver);
-        checkTitle(PAGE_TITLE);
+        selfVerify();
     }
 
-    public static NewVehicleRecordConfirmPage navigateHereFromLoginPage(WebDriver driver,
-            Login login, Vehicle vehicle) {
-        return CreateNewVehicleRecordVehicleSpecificationPage
-                .navigateHereFromLoginPage(driver, login, vehicle)
-                .enterVehicleDetailsAndSubmit(vehicle);
+    @Override
+    protected boolean selfVerify() {
+        return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
+
+
+    public String getDeclarationStatement() { return declarationElement.getText(); }
 
     public String getRegistrationNumber() {
         return registrationNumber.getText();
@@ -100,11 +81,6 @@ public class NewVehicleRecordConfirmPage extends BasePage {
         return dateOfFirstUse.getText();
     }
 
-    public CreateNewVehicleRecordVehicleIdentificationPage changeVehicleIdentificationDetails() {
-        vehicleIdentificationChangeThis.click();
-        return new CreateNewVehicleRecordVehicleIdentificationPage(driver);
-    }
-
     public String getModel() {
         return model.getText();
     }
@@ -121,11 +97,6 @@ public class NewVehicleRecordConfirmPage extends BasePage {
         return cylinderCapacity.getText();
     }
 
-    public CreateNewVehicleRecordVehicleSpecificationPage changeVehicleSpecificationDetails() {
-        vehicleSpecificationChangeDetails.click();
-        return new CreateNewVehicleRecordVehicleSpecificationPage(driver);
-    }
-
     public String getColour() {
         return primaryColour.getText();
     }
@@ -134,28 +105,11 @@ public class NewVehicleRecordConfirmPage extends BasePage {
         return secondaryColour.getText();
     }
 
-    public MotTestStartedPage saveVehicleRecord(String oneTimePassword) {
-        enterOneTimePassword(oneTimePassword);
-        startMOTTest.click();
-        return new MotTestStartedPage(driver);
+    public boolean isDeclarationTextDisplayed() {
+        return declarationElement.isDisplayed();
     }
 
-    public NewVehicleRecordConfirmPage confirmAndSaveExpectingError(String oneTimePassword) {
-        enterOneTimePassword(oneTimePassword);
-        startMOTTest.click();
-        return new NewVehicleRecordConfirmPage(driver);
-    }
-
-    public NewVehicleRecordConfirmPage enterOneTimePassword(String otp) {
-        oneTimePassword.sendKeys(otp);
-        return this;
-    }
-
-    public CreateNewVehicleRecordVehicleSpecificationPage clickOnBackLink() {
-        backLink.click();
-        return new CreateNewVehicleRecordVehicleSpecificationPage(driver);
-    }
-    public boolean isErrorMessageDisplayed(){
-        return  ValidationSummary.isValidationSummaryDisplayed(driver);
+    public String getDeclarationText() {
+        return declarationElement.getText();
     }
 }

@@ -1,6 +1,7 @@
 package uk.gov.dvsa.ui.pages.mot;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
@@ -22,16 +23,12 @@ public class TestSummaryPage extends Page {
     }
 
     @FindBy(id = "confirm_test_result") private WebElement finishTestButton;
-
     @FindBy(id = "oneTimePassword") private WebElement pinInputField;
-
     @FindBy(id = "testStatus") private WebElement testStatus;
-
     @FindBy(id = "confirm_test_result") private WebElement finishAndPrintButton;
-
     @FindBy(id = "start_inspection_button") private WebElement startReinspectionButton;
-
     @FindBy(id = "motTestType") private WebElement testTypePrompt;
+    @FindBy(id = "declarationStatement") private WebElement declarationElement;
 
     public TestSummaryPage(MotAppDriver driver) {
         super(driver);
@@ -72,6 +69,24 @@ public class TestSummaryPage extends Page {
 
     public boolean isFailedNoticeDisplayed() {
         return testStatus.getText().contains(FAIL_MSG);
+    }
+
+    public boolean isDeclarationTextDisplayed() {
+        return declarationElement.isDisplayed();
+    }
+
+    public String getDeclarationText() {
+        return declarationElement.getText();
+    }
+
+    public boolean isDeclarationElementPresentInDom() throws NoSuchElementException {
+        try {
+            driver.findElement(By.id("declarationElement"));
+            return true;
+        }
+        catch (NoSuchElementException e){
+            return false;
+        }
     }
 }
 

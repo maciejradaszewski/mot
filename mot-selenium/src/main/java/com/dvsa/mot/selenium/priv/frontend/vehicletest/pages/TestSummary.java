@@ -228,4 +228,5 @@ public class TestSummary extends BasePage {
     public boolean isErrorMessageDisplayed() {
         return ValidationSummary.isValidationSummaryDisplayed(driver);
     }
+
 }

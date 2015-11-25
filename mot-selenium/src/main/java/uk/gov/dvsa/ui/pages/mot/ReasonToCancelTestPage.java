@@ -2,44 +2,32 @@ package uk.gov.dvsa.ui.pages.mot;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
-import uk.gov.dvsa.domain.model.mot.CancelTestReason;
 import uk.gov.dvsa.domain.model.User;
+import uk.gov.dvsa.domain.model.mot.CancelTestReason;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 
 public class ReasonToCancelTestPage extends Page {
     @FindBy(id = "reasonForCancel13") private WebElement reasonAccidentOrIllness;
-
     @FindBy(id = "reasonForCancel25") private WebElement reasonAbortedByVE;
-
     @FindBy(id = "reasonForCancel28") private WebElement reasonVehicleRegisteredError;
-
     @FindBy(id = "reasonForCancel12") private WebElement reasonTestEquipmentIssue;
-
     @FindBy(id = "reasonForCancel5") private WebElement reasonVTSincident;
-
     @FindBy(id = "reasonForCancel6") private WebElement reasonIncorrectLocation;
-
     @FindBy(id = "reasonForCancel21") private WebElement reasonDangerousOrCauseDamage;
-
     @FindBy(id = "oneTimePassword") private WebElement enterYourPinField;
-
+    @FindBy(id = "declarationStatement") private WebElement declarationElement;
     @FindBy(id = "mot_test_cancel_confirm") private WebElement confirmAndCancelTestButton;
-
     @FindBy(id = "returnToMotTest") private WebElement returnToMotTest;
-
     @FindBy(id = "cancelComment") private WebElement cancelComment;
 
     private static final String PAGE_TITLE = "Reasons to cancel test";
-    private MotAppDriver driver;
+    public static final String PATH = "mot-test/%s/cancel";
 
     public ReasonToCancelTestPage(MotAppDriver driver) {
         super(driver);
         selfVerify();
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
     }
 
     @Override
@@ -47,14 +35,12 @@ public class ReasonToCancelTestPage extends Page {
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
 
-    public ReasonToCancelTestPage enterReason(CancelTestReason reason){
+    public void enterReason(CancelTestReason reason){
         selectReason(reason);
         if (reason.equals(CancelTestReason.DANGEROUS_OR_CAUSE_DAMAGE)) {
             enterCancelComment(reason.getDescription());
             enterUserPin(driver.getCurrentUser());
         }
-
-        return this;
     }
 
     public void clickConfirmAndCancelTest(){
@@ -65,7 +51,7 @@ public class ReasonToCancelTestPage extends Page {
         enterYourPinField.sendKeys(currentUser.getPin());
     }
 
-    public ReasonToCancelTestPage selectReason(CancelTestReason reason) {
+    public void selectReason(CancelTestReason reason) {
         switch (reason) {
             case ACCIDENT_OR_ILLNESS:
                 selectReasonAccidentOrIllness();
@@ -91,47 +77,45 @@ public class ReasonToCancelTestPage extends Page {
             default:
                 break;
         }
-
-        return this;
     }
 
-    private ReasonToCancelTestPage selectReasonAccidentOrIllness() {
+    private void selectReasonAccidentOrIllness() {
         reasonAccidentOrIllness.click();
-        return this;
     }
 
-    private ReasonToCancelTestPage selectReasonAbortedByVE() {
+    private void selectReasonAbortedByVE() {
         reasonAbortedByVE.click();
-        return this;
     }
 
-    private ReasonToCancelTestPage selectReasonVehicleRegisteredError() {
+    private void selectReasonVehicleRegisteredError() {
         reasonVehicleRegisteredError.click();
-        return this;
     }
 
-    private ReasonToCancelTestPage selectReasonTestEquipmentIssue() {
+    private void selectReasonTestEquipmentIssue() {
         reasonTestEquipmentIssue.click();
-        return this;
     }
 
-    private ReasonToCancelTestPage selectReasonIncorrectLocation() {
+    private void selectReasonIncorrectLocation() {
         reasonIncorrectLocation.click();
-        return this;
     }
 
-    private ReasonToCancelTestPage selectReasonVTSincident() {
+    private void selectReasonVTSincident() {
         reasonVTSincident.click();
-        return this;
     }
 
-    private ReasonToCancelTestPage selectReasonDangerousOrCauseDamage() {
+    private void selectReasonDangerousOrCauseDamage() {
         reasonDangerousOrCauseDamage.click();
-        return this;
     }
 
-    private ReasonToCancelTestPage enterCancelComment(String comment) {
+    private void enterCancelComment(String comment) {
         cancelComment.sendKeys(comment);
-        return this;
+    }
+
+    public boolean isDeclarationTextDisplayed() {
+        return declarationElement.isDisplayed();
+    }
+
+    public String getDeclarationText() {
+        return declarationElement.getText();
     }
 }
