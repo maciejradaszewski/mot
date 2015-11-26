@@ -166,8 +166,10 @@ class SitePositionService implements TransactionAwareInterface
         $event = $this->eventService->addEvent(
             EventTypeCode::ROLE_ASSOCIATION_CHANGE,
             sprintf(
-                EventDescription::ROLE_ASSOCIATION_REMOVE,
+                EventDescription::ROLE_SELF_ASSOCIATION_REMOVE_SITE_ORG,
                 $siteRoleMap->getSiteBusinessRole()->getName(),
+                $siteRoleMap->getPerson()->getDisplayName(),
+                $siteRoleMap->getPerson()->getUsername(),
                 $siteRoleMap->getSite()->getName(),
                 $siteRoleMap->getSite()->getSiteNumber()
             ),
@@ -184,9 +186,10 @@ class SitePositionService implements TransactionAwareInterface
         $event = $this->eventService->addEvent(
             EventTypeCode::ROLE_ASSOCIATION_CHANGE,
             sprintf(
-                EventDescription::ROLE_ASSOCIATION_REMOVE_SITE_ORG,
+                EventDescription::ROLE_SELF_ASSOCIATION_REMOVE_SITE_ORG,
                 $siteRoleMap->getSiteBusinessRole()->getName(),
                 $siteRoleMap->getPerson()->getDisplayName(),
+                $siteRoleMap->getPerson()->getUsername(),
                 $siteRoleMap->getSite()->getName(),
                 $siteRoleMap->getSite()->getSiteNumber()
             ),

@@ -7,6 +7,7 @@ use Dashboard\ViewModel\UserTradeRolesViewModel;
     <table class="key-value-list" id="user-trade-roles-table">
         <tbody>
         <?php
+        $i = 0;
         foreach ($userTradeRolesViewModel->getTradeRoles() as $personTradeRole) : ?>
             <tr>
                 <th class="key-value-list__key">
@@ -22,12 +23,13 @@ use Dashboard\ViewModel\UserTradeRolesViewModel;
                     <?php endif ?>
                 </th>
                 <td class="key-value-list__value" <?php echo
-                (' id="role-' . $this->escapeHtml($personTradeRole->getRoleCode()) . '-' . $this->escapeHtml($personTradeRole->getWorkplaceId()) . '"' );
+                (' id="role-' . $this->escapeHtmlAttr($personTradeRole->getRoleCode()) . '-' . $this->escapeHtmlAttr($personTradeRole->getWorkplaceId()) . '"' );
                 ?>>
                     <?php echo $this->escapeHtml($userTradeRolesViewModel->getTradeRoleNameByCode($personTradeRole->getRoleCode())); ?></td>
                 <td>
                     <?php if ($userTradeRolesViewModel->canBeRemoved($personTradeRole)): ?>
-                        <a href="<?php echo $userTradeRolesViewModel->getUrlForRemoveRole($personTradeRole, $this->url) ?>">Remove</a>
+                        <a href="<?php echo $userTradeRolesViewModel->getUrlForRemoveRole($personTradeRole, $this->url) ?>"
+                        id="remove-role-link-<?php echo $i++ ?>">Remove</a>
                     <?php endif ?>
                 </td>
             </tr>

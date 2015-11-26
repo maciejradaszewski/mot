@@ -147,6 +147,18 @@ class UserOrganisationNotificationServiceTest extends \PHPUnit_Framework_TestCas
         $org->setAuthorisedExaminer($authExaminer);
         $org->addPosition($siteBusinessRoleMap);
 
+        foreach (RoleCode::getAll() as $roleCode) {
+            if(RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER == $roleName){
+                continue;
+            }
+            $roleTmp = new Role();
+            $roleTmp->setCode($roleCode);
+            $roleMap = (new OrganisationBusinessRoleMap());
+            $roleMap->setPerson((new Person())->setId(rand(100000,2000000))->setFirstName($roleCode));
+            $roleMap->setOrganisationBusinessRole((new OrganisationBusinessRole())->setRole($roleTmp));
+            $org->addPosition($roleMap);
+        }
+
         $organisationBusinessRole = new OrganisationBusinessRole();
         $organisationBusinessRole->setName($roleName);
 
@@ -168,7 +180,7 @@ class UserOrganisationNotificationServiceTest extends \PHPUnit_Framework_TestCas
         return $map;
     }
 
-    private function createMySitePosition($roleCode, $notificationRecipientId, $sitePositionCode)
+    private function createMySitePosition($roleCode, $notificationRecipientId = 0, $sitePositionCode = '', $withoutSiteManager = false)
     {
         $this->me = new Person();
         $this->me->setId($this->myId);
@@ -194,6 +206,18 @@ class UserOrganisationNotificationServiceTest extends \PHPUnit_Framework_TestCas
         $org->setAuthorisedExaminer($authExaminer);
 
         $vts->setOrganisation($org);
+
+        foreach (RoleCode::getAll() as $roleName) {
+            if(($withoutSiteManager && $roleName == RoleCode::SITE_MANAGER) || RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER == $roleName){
+                continue;
+            }
+            $roleTmp = new SiteBusinessRole();
+            $roleTmp->setCode($roleName);
+            $siteBusinessRoleMap = (new SiteBusinessRoleMap());
+            $siteBusinessRoleMap->setPerson((new Person())->setId(rand(100000,200000))->setFirstName($roleName));
+            $positions->add($siteBusinessRoleMap->setSiteBusinessRole($roleTmp));
+        }
+
         $vts->setPositions($positions);
 
         $role = new SiteBusinessRole();
@@ -266,7 +290,8 @@ class UserOrganisationNotificationServiceTest extends \PHPUnit_Framework_TestCas
                 $this->createMySitePosition(
                     SiteBusinessRoleCode::SITE_MANAGER,
                     $notificationRecipient,
-                    ''
+                    '',
+                    true
                 ),
                 self::AEDM_PERSON_ID,
             ],
@@ -274,7 +299,8 @@ class UserOrganisationNotificationServiceTest extends \PHPUnit_Framework_TestCas
                 $this->createMySitePosition(
                     SiteBusinessRoleCode::TESTER,
                     $notificationRecipient,
-                    ''
+                    '',
+                    true
                 ),
                 self::AEDM_PERSON_ID,
             ],
@@ -282,7 +308,8 @@ class UserOrganisationNotificationServiceTest extends \PHPUnit_Framework_TestCas
                 $this->createMySitePosition(
                     SiteBusinessRoleCode::SITE_ADMIN,
                     $notificationRecipient,
-                    ''
+                    '',
+                    true
                 ),
                 self::AEDM_PERSON_ID,
             ],

@@ -327,11 +327,11 @@ class RemoveOwnSitePositionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, $this->submitEventSpy->invocationCount());
 
         $params = $this->submitEventSpy->paramsForInvocation(0);
-        $expectedContent = sprintf(EventDescription::ROLE_ASSOCIATION_REMOVE, null, null, null, null);
+        $expectedContent = sprintf(EventDescription::ROLE_SELF_ASSOCIATION_REMOVE_SITE_ORG, null, null, null, null, null);
         $this->assertEquals($params[1], $expectedContent);
 
         $paramsSite = $this->submitEventSpy->paramsForInvocation(1);
-        $expectedSiteContent = sprintf(EventDescription::ROLE_ASSOCIATION_REMOVE_SITE_ORG, null, null, null, null);
+        $expectedSiteContent = sprintf(EventDescription::ROLE_SELF_ASSOCIATION_REMOVE_SITE_ORG, null, null, null, null, null);
         $this->assertEquals($paramsSite[1], $expectedSiteContent);
     }
 

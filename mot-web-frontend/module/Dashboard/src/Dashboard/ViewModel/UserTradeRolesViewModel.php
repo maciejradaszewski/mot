@@ -37,7 +37,11 @@ class UserTradeRolesViewModel
 
     private $businessRoleCatalog;
 
+    /** @var Url */
     private $urlHelper;
+
+    const ROUTE_SITE = 'vehicle-testing-station';
+    const ROUTE_ORGANISATION = 'authorised-examiner';
 
     /**
      * @param MotFrontendAuthorisationServiceInterface $authorisationService
@@ -95,10 +99,10 @@ class UserTradeRolesViewModel
 
         switch ($roleType) {
             case BusinessRole::ORGANISATION_TYPE: {
-                return AuthorisedExaminerUrlBuilderWeb::of($personTradeRole->getWorkplaceId());
+                return $this->urlHelper->__invoke(self::ROUTE_ORGANISATION, ['id' => $personTradeRole->getWorkplaceId()]);
             }
             case BusinessRole::SITE_TYPE: {
-                return VehicleTestingStationUrlBuilderWeb::byId($personTradeRole->getWorkplaceId());
+                return $this->urlHelper->__invoke(self::ROUTE_SITE, ['id' => $personTradeRole->getWorkplaceId()]);
             }
             default: {
                 throw new \InvalidArgumentException('Role type not recognized');

@@ -5,6 +5,7 @@ namespace OrganisationApiTest\Service;
 use Doctrine\ORM\EntityManager;
 use DvsaAuthentication\Identity;
 use DvsaCommon\Auth\MotIdentityInterface;
+use DvsaCommon\Constants\EventDescription;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\Enum\OrganisationBusinessRoleCode;
 use DvsaCommon\Enum\RoleCode;
@@ -36,6 +37,8 @@ use OrganisationApi\Service\OrganisationPositionService;
 class RemoveOwnOrganisationPositionServiceTest extends \PHPUnit_Framework_TestCase
 {
     protected $userOrganisationNotificationService;
+    protected $submitEventSpy;
+    const AE_NUMBER = 'AE123';
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     private $organisationPositionRepository;
     private $positionHistoryRepository;
@@ -78,6 +81,8 @@ class RemoveOwnOrganisationPositionServiceTest extends \PHPUnit_Framework_TestCa
             $this->notificationService,
             $this->positionRemovalNotificationService
         );
+
+        $this->submitEventSpy = new MethodSpy($this->eventService, 'addEvent');
         $this->organisationPositionService = $this->buildService();
     }
 
@@ -132,8 +137,8 @@ class RemoveOwnOrganisationPositionServiceTest extends \PHPUnit_Framework_TestCa
         $notification = $notificationPromise->get();
         $this->assertEquals(Notification::TEMPLATE_USER_REMOVED_OWN_ROLE, $notification['template']);
         $this->assertEquals($notificationRecipient, $notification['recipient']);
-        //AND event is sent todo
-
+        //AND event is sent
+        $this->assertEventsWereSent();
     }
 
     public function testRemoveOwnPositionFailsWhenPositionDoesNotExist()
@@ -161,7 +166,8 @@ class RemoveOwnOrganisationPositionServiceTest extends \PHPUnit_Framework_TestCa
         // AND no notifications are sent
         $this->notificationService->expects($this->never())->method("add");
 
-        // AND no events are sent todo
+        // AND no events are sent
+        $this->assertEventsWereNotSent();
     }
 
     public function testRemoveOwnAedmPositionFails()
@@ -192,8 +198,8 @@ class RemoveOwnOrganisationPositionServiceTest extends \PHPUnit_Framework_TestCa
         // AND no notifications are sent
         $this->notificationService->expects($this->never())->method("add");
 
-        // AND no events are sent todo
-
+        // AND no events are sent
+        $this->assertEventsWereNotSent();
     }
 
     private function createMyOrganisationPosition($roleName, $notificationRecipientId = 0, $sitePositionCode = '')
@@ -206,7 +212,7 @@ class RemoveOwnOrganisationPositionServiceTest extends \PHPUnit_Framework_TestCa
         $siteBusinessRoleMap->setPerson((new Person())->setId($notificationRecipientId));
         $siteBusinessRoleMap->setOrganisationBusinessRole((new OrganisationBusinessRole())->setRole($role));
 
-        $authExaminer = (new AuthorisationForAuthorisedExaminer)->setNumber('AE123');
+        $authExaminer = (new AuthorisationForAuthorisedExaminer)->setNumber(self::AE_NUMBER);
 
         $org = (new Organisation())->setId($this->myAeId);
         $org->setAuthorisedExaminer($authExaminer);
@@ -242,4 +248,21 @@ class RemoveOwnOrganisationPositionServiceTest extends \PHPUnit_Framework_TestCa
         return $capNotification;
     }
 
+    private function assertEventsWereSent()
+    {
+        $this->assertEquals(2, $this->submitEventSpy->invocationCount());
+
+        $params = $this->submitEventSpy->paramsForInvocation(0);
+        $expectedContent = sprintf(EventDescription::ROLE_SELF_ASSOCIATION_REMOVE_SITE_ORG, null, null, null, null, self::AE_NUMBER);
+        $this->assertEquals($params[1], $expectedContent);
+
+        $paramsSite = $this->submitEventSpy->paramsForInvocation(1);
+        $expectedSiteContent = sprintf(EventDescription::ROLE_SELF_ASSOCIATION_REMOVE_SITE_ORG, null, null, null,null, self::AE_NUMBER);
+        $this->assertEquals($paramsSite[1], $expectedSiteContent);
+    }
+
+    private function assertEventsWereNotSent()
+    {
+        $this->assertEquals(0, $this->submitEventSpy->invocationCount());
+    }
 }

@@ -4,5 +4,5 @@ namespace DvsaClient\Mapper;
 
 interface BusinessPositionMapperInterface
 {
-    public function deletePosition($organisationId, $positionId);
+    public function deletePosition($workplaceId, $positionId);
 }
