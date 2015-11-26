@@ -56,6 +56,21 @@ class VtsManagementContext implements Context
     protected $siteStatus;
 
     /**
+     * @var MotTestContext
+     */
+    protected $motTestContext;
+
+    /**
+     * @var VehicleContext
+     */
+    protected $vehicleContext;
+
+    /**
+     * @var VtsContext
+     */
+    protected $vtsContext;
+
+    /**
      * @param TestSupportHelper $testSupportHelper
      * @param Session $session
      */
@@ -72,6 +87,9 @@ class VtsManagementContext implements Context
     public function gatherContexts(BeforeScenarioScope $scope)
     {
         $this->sessionContext = $scope->getEnvironment()->getContext(\SessionContext::class);
+        $this->motTestContext = $scope->getEnvironment()->getContext(\MotTestContext::class);
+        $this->vehicleContext = $scope->getEnvironment()->getContext(\VehicleContext::class);
+        $this->vtsContext = $scope->getEnvironment()->getContext(\VtsContext::class);
     }
 
     /**
@@ -124,6 +142,20 @@ class VtsManagementContext implements Context
         PHPUnit::assertArrayHasKey('OPTL', $facilities);
         PHPUnit::assertCount($this->testingFacilitiesData['TPTL'], $facilities['TPTL']);
         PHPUnit::assertCount($this->testingFacilitiesData['OPTL'], $facilities['OPTL']);
+    }
+
+    /**
+     * @Then site testing classes shoud be removed
+     */
+    public function siteTestingClassesShoudBeRemoved()
+    {
+        PHPUnit::assertEquals(200, $this->response->getStatusCode());
+        $expectedBody = [
+            'data' => [
+                'success' => true,
+            ],
+        ];
+        PHPUnit::assertSame($expectedBody, $this->response->getBody()->toArray());
     }
 
     /**
@@ -248,6 +280,18 @@ class VtsManagementContext implements Context
         $this->updateSiteDetails('EX');
     }
 
+     /**
+     * @When I remove all test classes
+     */
+    public function iRemoveAllTestClasses()
+    {
+        $this->response = $this->vehicleTestingStation->removeAllTestClasses(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->siteCreate['id']
+        );
+    }
+
+
     protected function updateSiteDetails($siteStatus)
     {
         $this->siteStatus = $siteStatus;
@@ -293,5 +337,34 @@ class VtsManagementContext implements Context
          * @var VehicleTestingStationDto $vtsDto
          */
          return \DvsaCommon\Utility\DtoHydrator::of()->doHydration($response->getBody()->toArray()['data']);
+    }
+
+    /**
+     * @Given I log in as a tester assigned to newly created site with no test classes
+     */
+    public function iAmLoggedInAsATesterAssignedToSiteWithNoTestClasses()
+    {
+        $this->sessionContext->iAmLoggedInAsATesterAssignedToSites([$this->vtsContext->getSite()['id']]);
+    }
+
+    /**
+     * @When /^I try to start MOT test$/
+     */
+    public function iTryToStartMOTTest()
+    {
+        $this->vehicleContext->createVehicle();
+        $this->motTestContext->startMotTest(
+            $this->sessionContext->getCurrentUserId(),
+            $this->sessionContext->getCurrentAccessToken()
+        );
+    }
+
+    /**
+     * @Then /^I am not permitted to do this$/
+     */
+    public function iAmNotPermittedToDoThis()
+    {
+        $data = $this->motTestContext->getRawMotTestData()->getBody();
+        PHPUnit::assertArrayHasKey('errors', $data);
     }
 }

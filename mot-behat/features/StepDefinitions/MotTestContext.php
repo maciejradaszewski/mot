@@ -993,6 +993,14 @@ class MotTestContext implements Context, SnippetAcceptingContext
         return $this->statusData->getBody()['data'];
     }
 
+    /**
+     * @return \Dvsa\Mot\Behat\Support\Response
+     */
+    public function getRawMotTestData()
+    {
+        return $this->motTestData;
+    }
+
     public function getMotTestNumbers()
     {
         return $this->motTestNumbers;

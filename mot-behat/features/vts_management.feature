@@ -49,3 +49,18 @@ Feature: Vehicle Testing Station management
       | Rejected              |
       | Retracted             |
       | Extinct               |
+
+  @BL-102
+  Scenario: Permitted user can remove all test classes from a site
+    Given I am logged in as an Area Office User
+    And a "Popular Garage" vehicle testing site exists
+    When I remove all test classes
+    Then site testing classes shoud be removed
+
+  @BL-102
+  Scenario: Cannot start MOT test if site has no testing classes
+    Given I am logged in as an Area Office User to new site
+    And I remove all test classes
+    And I log in as a tester assigned to newly created site with no test classes
+    When I try to start MOT test
+    Then I am not permitted to do this

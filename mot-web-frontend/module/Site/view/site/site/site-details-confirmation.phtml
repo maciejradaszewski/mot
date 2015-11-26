@@ -34,7 +34,7 @@ echo $this->partial(
         'body' => [
             ['Trading name', $form->getName()],
             ['Status', $statusField,  'id' => 'site-status', 'escape' => false],
-            ['Vehicle test classes', implode(', ',$form->getClasses())],
+            ['Vehicle test classes', empty($form->getClasses()) ? 'None' : implode(', ',$form->getClasses())],
         ],
     ]
 );

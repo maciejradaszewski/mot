@@ -76,6 +76,14 @@ class SessionContext implements Context
     }
 
     /**
+     * @param array $siteIds
+     */
+    public function iAmLoggedInAsATesterAssignedToSites($siteIds)
+    {
+        $this->currentUser = $this->session->logInAsTester($this->testSupportHelper, $siteIds);
+    }
+
+    /**
      * @Given I am logged in as a Special Notice broadcast user
      */
     public function iAmLoggedInAsASpecialNoticeBroadcastUser()

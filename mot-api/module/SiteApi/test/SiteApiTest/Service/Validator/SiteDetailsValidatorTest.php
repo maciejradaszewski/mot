@@ -79,6 +79,20 @@ class SiteDetailsValidatorTest extends \PHPUnit_Framework_TestCase
               "siteName" => "test name",
               "testClasses" => ["1", "2", "4", "7"],
             ],
+            // no test classes
+            [
+                "siteTypeCode" => SiteTypeCode::VEHICLE_TESTING_STATION,
+                "siteStatusCode" => SiteStatusCode::APPROVED,
+                "siteName" => "test name",
+                "testClasses" => [],
+            ],
+            // no test classes
+            [
+                "siteTypeCode" => SiteTypeCode::VEHICLE_TESTING_STATION,
+                "siteStatusCode" => SiteStatusCode::APPROVED,
+                "siteName" => "test name",
+                "testClasses" => null,
+            ],
         ];
     }
 
@@ -105,20 +119,6 @@ class SiteDetailsValidatorTest extends \PHPUnit_Framework_TestCase
                 "siteStatusCode" => null,
                 "siteName" => "test name",
                 "testClasses" => ["1", "2", "4", "7"],
-            ],
-            // no test classes
-            [
-                "siteTypeCode" => SiteTypeCode::VEHICLE_TESTING_STATION,
-                "siteStatusCode" => SiteStatusCode::APPROVED,
-                "siteName" => "test name",
-                "testClasses" => [],
-            ],
-            // no test classes
-            [
-                "siteTypeCode" => SiteTypeCode::VEHICLE_TESTING_STATION,
-                "siteStatusCode" => SiteStatusCode::APPROVED,
-                "siteName" => "test name",
-                "testClasses" => null,
             ],
         ];
     }
