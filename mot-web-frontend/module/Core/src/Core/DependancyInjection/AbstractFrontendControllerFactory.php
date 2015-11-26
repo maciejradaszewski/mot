@@ -42,7 +42,7 @@ abstract class AbstractFrontendControllerFactory implements FactoryInterface
             $deserializer = $this->serviceLocator->get(DtoReflectiveDeserializer::class);
             return new $class($httpClient, $deserializer);
         } else {
-            throw new \InvalidArgumentException("Expected name of a class extending " . AbstractApiResource::class);
+            throw new \InvalidArgumentException("First argument of method ".self::class. '::'. "getApiResource is expected to be a name of a class extending " . AbstractApiResource::class);
         }
     }
 }

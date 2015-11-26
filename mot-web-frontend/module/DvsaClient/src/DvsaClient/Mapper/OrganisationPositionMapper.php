@@ -38,12 +38,12 @@ class OrganisationPositionMapper extends DtoMapper implements BusinessPositionMa
     /**
      * Removes position in organisation from a person
      *
-     * @param $organisationId
+     * @param $workplaceId
      * @param $positionId
      */
-    public function deletePosition($organisationId, $positionId)
+    public function deletePosition($workplaceId, $positionId)
     {
-        $urlBuilder = OrganisationUrlBuilder::position($organisationId, $positionId);
+        $urlBuilder = OrganisationUrlBuilder::position($workplaceId, $positionId);
 
         parent::delete($urlBuilder->toString());
     }

@@ -157,8 +157,10 @@ class OrganisationPositionService implements TransactionAwareInterface
         $event = $this->eventService->addEvent(
             EventTypeCode::ROLE_ASSOCIATION_CHANGE,
             sprintf(
-                EventDescription::ROLE_ASSOCIATION_REMOVE,
+                EventDescription::ROLE_SELF_ASSOCIATION_REMOVE_SITE_ORG,
                 $orgRoleMap->getOrganisationBusinessRole()->getFullName(),
+                $orgRoleMap->getPerson()->getDisplayName(),
+                $orgRoleMap->getPerson()->getUsername(),
                 $orgRoleMap->getOrganisation()->getName(),
                 $orgRoleMap->getOrganisation()->getAuthorisedExaminer()->getNumber()
             ),
@@ -175,9 +177,10 @@ class OrganisationPositionService implements TransactionAwareInterface
         $event = $this->eventService->addEvent(
             EventTypeCode::ROLE_ASSOCIATION_CHANGE,
             sprintf(
-                EventDescription::ROLE_ASSOCIATION_REMOVE_SITE_ORG,
+                EventDescription::ROLE_SELF_ASSOCIATION_REMOVE_SITE_ORG,
                 $orgRoleMap->getOrganisationBusinessRole()->getFullName(),
                 $orgRoleMap->getPerson()->getDisplayName(),
+                $orgRoleMap->getPerson()->getUsername(),
                 $orgRoleMap->getOrganisation()->getName(),
                 $orgRoleMap->getOrganisation()->getAuthorisedExaminer()->getNumber()
             ),
