@@ -56,13 +56,15 @@ class Session extends MotApi
     /**
      * High level function to allow logging in as a tester
      * @param TestSupportHelper $helper
+     * @param array $siteIds
      * @return string Returned token
+     * @throws Exception
      */
-    public function logInAsTester(TestSupportHelper $helper)
+    public function logInAsTester(TestSupportHelper $helper, $siteIds = [1])
     {
         $testerService = $helper->getTesterService();
         $tester = $testerService->create([
-            'siteIds' => [1],
+            'siteIds' => $siteIds,
         ]);
 
         return $this->startSession($tester->data['username'], $tester->data['password']);

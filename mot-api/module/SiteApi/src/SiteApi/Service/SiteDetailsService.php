@@ -181,13 +181,15 @@ class SiteDetailsService
     private function updateClasses(Site $site, VehicleTestingStationDto $dto, array & $diff)
     {
         $oldClasses = $site->getApprovedVehicleClasses();
-        $new = $dto->getTestClasses();
+        $new = (array) $dto->getTestClasses();
 
-        if(!empty($new) && $this->isTestClassesModified($oldClasses, $new)) {
+        if($this->isTestClassesModified($oldClasses, $new)) {
 
             $oldEntities = $site->getApprovedAuthorisationForTestingMotAtSite();
-            $stringifyOldClasses = implode(', ', $this->transformClassEntitiesToClassCodesArray($oldClasses));
-            $stringifyNewClasses = implode(', ', $new);
+            $stringifyOldClasses = $this->replaceEmptyTextWithNone(
+                implode(', ', $this->transformClassEntitiesToClassCodesArray($oldClasses))
+            );
+            $stringifyNewClasses = $this->replaceEmptyTextWithNone(implode(', ', $new));
 
             $this->removeTestClasses($site, $oldEntities);
             $this->createAuthorisationForTestingMotAtSite(
@@ -340,6 +342,20 @@ class SiteDetailsService
         );
 
         return $classCodeArray;
+    }
+
+    /**
+     * Returns original text, or "none" if passed text was empty
+     * @param string $text
+     * @return string
+     */
+    protected function replaceEmptyTextWithNone($text)
+    {
+        if(empty($text)){
+            $text = 'none';
+        }
+
+        return $text;
     }
 
 }

@@ -87,7 +87,7 @@ $body = [
         'class' => 'key-value-list__value--numeric',
     ],
     ['Status', $statusField,  'id' => 'site-status', 'escape' => false],
-    ['Classes', implode(',', $site->getTestClasses()), 'id' => 'test-classes'],
+    ['Classes', !empty($site->getTestClasses()) ? implode(',', $site->getTestClasses()) : 'None', 'id' => 'test-classes'],
     ['Type', $viewModel->getSiteTypes()[$site->getType()], 'id' => 'site-type'],
     [
         'Authorised Examiner',

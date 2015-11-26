@@ -238,4 +238,9 @@ class Vts extends MotApi
             )
         );
     }
+
+    public function removeAllTestClasses($token, $siteId)
+    {
+        return $this->updateSiteDetails($token, $siteId, ['classes' => []]);
+    }
 }

@@ -37,19 +37,7 @@ class SiteDetailsValidator extends AbstractValidator
             $this->validateStatus($siteDto);
         }
 
-        $this->validateClasses($siteDto);
-
         $this->errors->throwIfAnyField();
-    }
-
-    /**
-     * @param VehicleTestingStationDto $siteDto
-     */
-    public function validateClasses(VehicleTestingStationDto $siteDto)
-    {
-        if (empty($siteDto->getTestClasses())) {
-            $this->errors->add(self::ERR_VEHICLE_CLASS_REQUIRE, self::FIELD_VEHICLE_CLASS);
-        }
     }
 
     /**
