@@ -6,6 +6,8 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 
+import java.net.URISyntaxException;
+
 public class ConfirmVehicleRetestPage extends Page{
 
     private static final String PAGE_TITLE = "Confirm vehicle for retest";
@@ -26,9 +28,8 @@ public class ConfirmVehicleRetestPage extends Page{
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
 
-    public ReTestOptionsPage startRetest(){
+    public ReTestOptionsPage startRetest() throws URISyntaxException {
         startRetestButton.click();
-
         return new ReTestOptionsPage(driver);
     }
 

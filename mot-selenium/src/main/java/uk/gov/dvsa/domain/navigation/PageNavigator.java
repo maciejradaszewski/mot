@@ -37,14 +37,16 @@ import java.net.URISyntaxException;
 public class PageNavigator {
     private MotAppDriver driver;
 
-    private String motTestPath;
-
     public void setDriver(MotAppDriver driver) {
         this.driver = driver;
     }
 
     public MotAppDriver getDriver() {
         return driver;
+    }
+
+    public void navigateToPath(String path){
+        driver.navigateToPath(path);
     }
 
     private Cookie getCookieForUser(User user) throws IOException {
@@ -70,7 +72,7 @@ public class PageNavigator {
         StartTestConfirmationPage testConfirmationPage = vehicleSearchPage.selectVehicleForTest();
         TestOptionsPage testOptionsPage =  testConfirmationPage.clickStartMotTest();
 
-        driver.navigateToPath(testOptionsPage.getMotTestPath());
+        navigateToPath(testOptionsPage.getMotTestPath());
 
         return new TestResultsEntryPage(driver);
     }
@@ -79,7 +81,7 @@ public class PageNavigator {
         injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.path);
 
         ConfirmVehicleRetestPage vehicleRetestPage = searchForVehicleForRetest(vehicle);
-        driver.navigateToPath(vehicleRetestPage.startRetest().getMotTestPath());
+        navigateToPath(vehicleRetestPage.startRetest().getMotTestPath());
 
         return new ReTestResultsEntryPage(driver);
     }
@@ -149,7 +151,7 @@ public class PageNavigator {
     private void injectOpenAmCookieAndNavigateToPath(User user, String path) throws IOException {
         driver.setUser(user);
         driver.manage().addCookie(getCookieForUser(user));
-        driver.navigateToPath(path);
+        navigateToPath(path);
     }
 
     public HomePage gotoHomePage(User user) throws IOException {
@@ -263,7 +265,7 @@ public class PageNavigator {
     }
 
     public CreateAnAccountPage goToCreateAnAccountPage() throws IOException {
-        driver.navigateToPath(CreateAnAccountPage.PATH);
+        navigateToPath(CreateAnAccountPage.PATH);
 
         return new CreateAnAccountPage(driver);
     }
@@ -280,7 +282,7 @@ public class PageNavigator {
         StartTestConfirmationPage testConfirmationPage = vehicleSearchPage.selectVehicleForTest();
         TestOptionsPage testOptionsPage =  testConfirmationPage.clickStartMotTest();
 
-        driver.navigateToPath(testOptionsPage.getMotTestPath());
+        navigateToPath(testOptionsPage.getMotTestPath());
 
         return new TestResultsEntryPage(driver);
     }

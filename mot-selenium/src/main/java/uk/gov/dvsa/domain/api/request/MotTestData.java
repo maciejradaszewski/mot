@@ -26,7 +26,7 @@ import java.util.List;
 
         public MotTestData(TestOutcome outcome, int mileage, DateTime issuedDate) {
             this(outcome, mileage, issuedDate, issuedDate,
-                    issuedDate.plusMinutes((40)),
+                    issuedDate.plusMinutes((1)),
                     issuedDate.plus(Period.years(1).minusDays(1)));
         }
 

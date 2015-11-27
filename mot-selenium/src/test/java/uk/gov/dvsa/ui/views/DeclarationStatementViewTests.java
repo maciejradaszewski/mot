@@ -94,14 +94,24 @@ public class DeclarationStatementViewTests extends BaseTest {
     @Test (groups = {"BVT", "Regression"})
     public void statementShouldNotBeDisplayedOnTestRefusal() throws IOException, URISyntaxException {
 
-        //Given I have started an MOT test
-        User tester = userData.createTester(1);
-        Vehicle vehicle = vehicleData.getNewVehicle(tester);
-
-        //When I refuse to test a vehicle
+        //Given I refuse to test a vehicle
         motUI.normalTest.refuseToTestVehicle(tester, vehicle, ReasonForVehicleRefusal.INSPECTION_MAY_BE_DANGEROUS);
 
-        //I should Not be presented with the declaration statement
+        //Then I should Not be presented with the declaration statement
         assertThat(motUI.normalTest.isDeclarationStatementDisplayed(), is(false));
     }
+
+    @Test
+    public void displayStatementAtContingencySummaryPage() throws IOException, URISyntaxException {
+
+        //Given I start a contingency test
+        motUI.contingency.testPage(tester);
+
+        //When I complete a contingency test and view the summary page
+        motUI.contingency.recordTest("12345A", DateTime.now(), vehicle);
+
+        //Then I should be presented with the declaration statement
+        assertThat(motUI.contingency.isDeclarationStatementDisplayed(), is(true));
+    }
 }
+
