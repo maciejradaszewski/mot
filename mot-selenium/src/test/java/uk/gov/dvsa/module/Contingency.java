@@ -6,15 +6,28 @@ import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
 import uk.gov.dvsa.ui.pages.mot.*;
+import uk.gov.dvsa.ui.pages.mot.retest.ConfirmVehicleRetestPage;
+import uk.gov.dvsa.ui.pages.mot.retest.ReTestCompletePage;
+import uk.gov.dvsa.ui.pages.mot.retest.ReTestResultsEntryPage;
+import uk.gov.dvsa.ui.pages.mot.retest.ReTestSummaryPage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 
 public class Contingency {
 
     PageNavigator pageNavigator = null;
     private ContingencyTestEntryPage contingencyPage;
     private boolean successful = false;
+    private boolean declarationStatement = false;
+
+    private static final String DECLARATION_STATEMENT = "I confirm that this MOT transaction has been conducted in accordance with " +
+            "the conditions of authorisation which includes compliance with the MOT testing guide, the requirements for " +
+            "authorisation, the appropriate MOT Inspection Manual and any other instructions issued by DVSA.";
+
 
     public Contingency(PageNavigator pageNavigator)
     {
@@ -25,7 +38,7 @@ public class Contingency {
         return contingencyPage = pageNavigator.gotoContingencyTestEntryPage(user);
     }
 
-    public void enterTest(String code, DateTime datetime, Vehicle vehicle) {
+    public void recordTest(String code, DateTime datetime, Vehicle vehicle) {
         VehicleSearchPage vehicleSearchPage = contingencyPage.fillContingencyTestFormAndConfirm(code, datetime);
 
         StartTestConfirmationPage startTestConfirmationPage =
@@ -38,9 +51,37 @@ public class Contingency {
 
         TestSummaryPage testSummaryPage = testResultsEntryPage.clickReviewTestButton();
 
-        TestCompletePage testCompletePage = testSummaryPage.finishTestAndPrint();
+        if (testSummaryPage.isDeclarationTextDisplayed()) {
+            assertThat(testSummaryPage.getDeclarationText(), equalToIgnoringCase(DECLARATION_STATEMENT));
+            declarationStatement = true;
+        }
 
+        TestCompletePage testCompletePage = testSummaryPage.finishTestAndPrint();
         successful = testCompletePage.verifyBackToHomeLinkDisplayed();
+    }
+
+    public void recordReTest(String code, DateTime datetime, Vehicle vehicle) throws IOException, URISyntaxException {
+        VehicleSearchPage vehicleSearchPage = contingencyPage.fillContingencyTestFormAndConfirm(code, datetime);
+
+        ConfirmVehicleRetestPage retestPage =
+                vehicleSearchPage.searchVehicle(vehicle).selectVehicleForRetest();
+
+        ReTestResultsEntryPage resultsEntryPage = retestPage.startContigencyRetest();
+                resultsEntryPage.completeTestDetailsWithPassValues();
+
+        ReTestSummaryPage summaryPage = resultsEntryPage.clickReviewTestButton();
+
+        if (summaryPage.isDeclarationTextDisplayed()) {
+            assertThat(summaryPage.getDeclarationText(), equalToIgnoringCase(DECLARATION_STATEMENT));
+            declarationStatement = true;
+        }
+
+        ReTestCompletePage testCompletePage = summaryPage.finishTestAndPrint();
+        successful = testCompletePage.verifyBackToHomeDisplayed();
+    }
+
+    public boolean isDeclarationStatementDisplayed() {
+        return declarationStatement;
     }
 
     public boolean isTestSaveSuccessful() {

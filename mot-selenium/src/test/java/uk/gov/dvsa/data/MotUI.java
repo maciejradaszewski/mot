@@ -27,7 +27,7 @@ public class MotUI {
     public final SearchSite searchSite;
     public final Vts vts;
     public final DuplicateReplacementCertificate duplicateReplacementCertificate;
-    public final ContingencyTest contingencyTest;
+    public final Contingency contingency;
 
     public MotUI(MotAppDriver driver) {
         pageNavigator.setDriver(driver);

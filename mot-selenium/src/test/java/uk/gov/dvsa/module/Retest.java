@@ -57,27 +57,8 @@ public class Retest {
         successful = testCompletePage.isRefusalMessageDisplayed();
     }
 
-    public void conductContingencyRetest(User tester, String contingencyCode, Vehicle vehicle) throws IOException, URISyntaxException {
-
-        ReTestResultsEntryPage resultsEntryPage = pageNavigator.gotoContigencyReTestResultsEntryPage(tester, contingencyCode, vehicle);
-
-        resultsEntryPage.completeTestDetailsWithPassValues();
-
-        ReTestSummaryPage summaryPage = resultsEntryPage.clickReviewTestButton();
-
-        ReTestCompletePage testCompletePage = summaryPage.finishTestAndPrint();
-
-        successful = testCompletePage.verifyBackToHomeDisplayed();
-    }
-
     public void verifyRetestIsSuccessful() {
         assertThat(successful, is(true));
-    }
-
-    public void gotoHomepageAs(User user) throws IOException {
-        HomePage homePage = pageNavigator.gotoHomePage(user);
-
-        successful = homePage.isRetestPreviousVehicleLinkPresent();
     }
 
     public void verifyRetestLinkNotPresent(){
