@@ -48,4 +48,8 @@ fi
 
 echo "$(date) Done resetting DB"
 
-cd ../../authentication && ./reset_users.sh
+# Do not run the reset users script on the dev Vagrant environment.
+if [ `hostname` != "dev.dev.dvsa" ] ; then
+  cd ../../authentication && ./reset_users.sh
+  echo "$(date) Done resetting users"
+fi
