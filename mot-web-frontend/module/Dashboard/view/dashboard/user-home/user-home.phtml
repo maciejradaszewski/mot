@@ -34,7 +34,7 @@ use DvsaCommon\Auth\PermissionAtSite;
             <?php echo $this->partial('dashboard/dvsaAdminBox'); ?>
         <?php endif; ?>
 
-        <?php if ($dashboard->getHero() === 'finance'): ?>
+        <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::SLOTS_REPORTS_GENERATE)): ?>
             <?php echo $this->partial('dashboard/financeBox'); ?>
         <?php endif; ?>
 
