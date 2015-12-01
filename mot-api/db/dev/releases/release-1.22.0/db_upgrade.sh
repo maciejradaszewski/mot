@@ -1,7 +1,10 @@
 upgradefiles=()
 mysqladmin_password=PASSWORDGOESHERE
-version=1.21.0
+version=1.22.0
 db_name=mot_v195_rel4
+
+upgradefiles+=('2015-12-01-BL-437-slot-balance-report-STORY.sql');
+upgradefiles+=('2015-12-01-BL-437-slot_balance_finance_report_sp.sql');
 
 # add files here in intended run order for release
 
