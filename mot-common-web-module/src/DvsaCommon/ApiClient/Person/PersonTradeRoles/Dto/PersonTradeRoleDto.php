@@ -11,6 +11,8 @@ class PersonTradeRoleDto implements ReflectiveDtoInterface
     private $workplaceId;
     private $roleCode;
     private $address;
+    private $aeId;
+    private $number;
 
     public function getPositionId()
     {
@@ -64,6 +66,42 @@ class PersonTradeRoleDto implements ReflectiveDtoInterface
     public function setAddress($address)
     {
         $this->address = $address;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAeId()
+    {
+        return $this->aeId;
+    }
+
+    /**
+     * @param string $aeId
+     * @return PersonTradeRoleDto
+     */
+    public function setAeId($aeId)
+    {
+        $this->aeId = $aeId;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNumber()
+    {
+        return $this->number;
+    }
+
+    /**
+     * @param string $number
+     * @return PersonTradeRoleDto
+     */
+    public function setNumber($number)
+    {
+        $this->number = $number;
         return $this;
     }
 }

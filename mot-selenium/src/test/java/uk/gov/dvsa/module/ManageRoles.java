@@ -58,8 +58,8 @@ public class ManageRoles {
     public boolean isRolesTableContainsValidTesterData() {
         RolesAndAssociationsPage rolesAndAssociationsPage = getRolesAndAssociationsPage();
         List<String> roleValues = rolesAndAssociationsPage.getRoleValues();
-        boolean vtsAddress = roleValues.get(0).contains("Flat Test_Site Lord House, Boston, BT2 4RR");
-        boolean role = roleValues.get(1).equals("Tester");
+        boolean role = roleValues.get(0).equals("Tester");
+        boolean vtsAddress = roleValues.get(1).contains("Flat Test_Site Lord House, Boston, BT2 4RR");
         return vtsAddress && role;
     }
 

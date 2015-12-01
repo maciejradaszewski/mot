@@ -35,12 +35,18 @@ class PersonTradeRoleService
             $contact = $position->getOrganisation()->getContactByType(OrganisationContactTypeCode::REGISTERED_COMPANY);
             $address = $contact ? $contact->getDetails()->getAddress() : null;
             $addressAsString = $address ? (new AddressFormatter())->format($address) : '';
+            $ae = $position->getOrganisation()->getAuthorisedExaminer();
+            $organisation = $position->getOrganisation();
+            $organisationNumber = $organisation->getRegisteredCompanyNumber();
+            $organisationNumber = !is_null($organisationNumber) ? $organisationNumber : $organisation->getName();
 
             $positionDto = new PersonTradeRoleDto();
             $positionDto->setPositionId($position->getId())
                 ->setWorkplaceId($position->getOrganisation()->getId())
                 ->setWorkplaceName($position->getOrganisation()->getName())
                 ->setRoleCode($position->getOrganisationBusinessRole()->getCode())
+                ->setAeId(!is_null($ae) ? $ae->getNumber() : $organisationNumber)
+                ->setNumber($position->getOrganisation()->getAuthorisedExaminer()->getNumber())
                 ->setAddress($addressAsString);
 
             return $positionDto;
@@ -50,12 +56,19 @@ class PersonTradeRoleService
             $contact = $position->getSite()->getContactByType(SiteContactTypeCode::BUSINESS);
             $address = $contact ? $contact->getDetails()->getAddress() : null;
             $addressAsString = $address ? (new AddressFormatter())->format($address) : '';
+            $ae = $position->getSite()->getAuthorisedExaminer();
+            $organisation = $position->getSite()->getOrganisation();
+            $organisationNumber = $organisation->getRegisteredCompanyNumber();
+            $organisationNumber = !is_null($organisationNumber) ? $organisationNumber : $organisation->getName();
+
 
             $positionDto = new PersonTradeRoleDto();
             $positionDto->setPositionId($position->getId())
                 ->setWorkplaceId($position->getSite()->getId())
                 ->setWorkplaceName($position->getSite()->getName())
                 ->setRoleCode($position->getSiteBusinessRole()->getCode())
+                ->setAeId(!is_null($ae) ? $ae->getNumber() : $organisationNumber)
+                ->setNumber($position->getSite()->getSiteNumber())
                 ->setAddress($addressAsString);
 
             return $positionDto;

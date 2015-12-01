@@ -6,6 +6,7 @@ use Core\Catalog\EnumCatalog;
 use Core\DependancyInjection\AbstractFrontendControllerFactory;
 use Dashboard\Authorisation\ViewTradeRolesAssertion;
 use Dashboard\Controller\UserTradeRolesController;
+use Dashboard\Service\PersonTradeRoleSorterService;
 use Dashboard\Service\TradeRolesAssociationsService;
 use DvsaClient\MapperFactory;
 use DvsaCommon\ApiClient\Person\PersonTradeRoles\PersonTradeRolesApiResource;
@@ -31,7 +32,8 @@ class UserTradeRolesControllerFactory extends AbstractFrontendControllerFactory
             $mapperFactory->SitePosition,
             $this->getApiResource(PersonTradeRolesApiResource::class),
             $serviceLocator->get(EnumCatalog::class),
-            $serviceLocator->get('AuthorisationService')
+            $serviceLocator->get('AuthorisationService'),
+            $serviceLocator->get(PersonTradeRoleSorterService::class)
         );
     }
 }

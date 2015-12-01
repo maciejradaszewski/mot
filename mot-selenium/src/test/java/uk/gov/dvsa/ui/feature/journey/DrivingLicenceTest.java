@@ -34,6 +34,8 @@ public class DrivingLicenceTest extends BaseTest {
     private User cscoUser;
     private User tester;
     private User schemeManager;
+    private Site testSite;
+    private AeDetails aeDetails;
 
     private static final String DRIVING_LICENCE_CHANGE_SUCCESS = "Driving licence has been changed successfully.";
     private static final String DRIVING_LICENCE_WRONG_NI_FORMAT = "Driving licence - must be a valid Northern Ireland driving licence";
@@ -46,10 +48,10 @@ public class DrivingLicenceTest extends BaseTest {
     private static final String DRIVING_LICENCE_REGION_TEXT_NI = "NI";
     private static final String DRIVING_LICENCE_REGION_TEXT_NU = "Non-United Kingdom";
 
-    @BeforeMethod(alwaysRun = true)
+    @BeforeClass(alwaysRun = true)
     private void setup() throws IOException {
-        AeDetails aeDetails = aeData.createAeWithDefaultValues();
-        Site testSite = siteData.createNewSite(aeDetails.getId(), "Test_Site");
+        aeDetails = aeData.createAeWithDefaultValues();
+        testSite = siteData.createNewSite(aeDetails.getId(), "Test_Site");
         areaOffice1User = userData.createAreaOfficeOne("AreaOfficerOne");
         areaOffice2User = userData.createAreaOfficeTwo("AreaOfficerTwo");
         vehicleExaminerUser = userData.createVehicleExaminer("VehicleExaminer", false);
@@ -127,6 +129,8 @@ public class DrivingLicenceTest extends BaseTest {
     @Test(groups = {"BVT", "Regression"},
             description = "Test that DVSA user can remove non-DVSA user driving licence")
     public void dvsaUserCanRemoveNonDvsaUserDrivingLicence() throws IOException {
+        tester = userData.createTester(testSite.getId());
+
         // Given that I'm on a non-DVSA user profile as authorised DVSA user
         UserSearchProfilePage profilePage = searchForUserAndViewProfile(areaOffice1User, tester);
 
@@ -199,13 +203,12 @@ public class DrivingLicenceTest extends BaseTest {
     }
 
     @DataProvider
-    private Object[][] dvsaUserExpectsDrivingLicenceSection() throws IOException {
+    private Object[][] dvsaUserExpectsDrivingLicenceSection() {
         return new Object[][] {
-                {userData.createAreaOfficeOne("AreaOfficerOne"), true},
-                {userData.createAreaOfficeTwo("AreaOfficerTwo"), true},
-                {userData.createVehicleExaminer("VehicleExaminer", false), true},
-                {userData.createCustomerServiceOfficer(false), false},
-                {userData.createSchemeUser(false), false},
+                {areaOffice1User, true},
+                {vehicleExaminerUser, true},
+                {cscoUser, false},
+                {schemeManager, false},
         };
     }
 
@@ -213,7 +216,6 @@ public class DrivingLicenceTest extends BaseTest {
     private Object[][] userCantSeeDrivingLicenceSection() {
         return new Object[][] {
                 {areaOffice1User},
-                {areaOffice2User},
                 {vehicleExaminerUser},
                 {cscoUser},
                 {schemeManager},
@@ -226,13 +228,9 @@ public class DrivingLicenceTest extends BaseTest {
         return new Object[][] {
                 {areaOffice1User, areaOffice2User},
                 {areaOffice1User, cscoUser},
-                {areaOffice2User, areaOffice1User},
-                {areaOffice2User, cscoUser},
                 {cscoUser, areaOffice1User},
-                {cscoUser, areaOffice2User},
                 {cscoUser, schemeManager},
                 {schemeManager, areaOffice1User},
-                {schemeManager, areaOffice2User},
                 {schemeManager, cscoUser},
         };
     }
