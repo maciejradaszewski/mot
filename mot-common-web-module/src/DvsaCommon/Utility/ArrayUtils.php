@@ -399,4 +399,9 @@ class ArrayUtils
     {
         return (bool)count(array_filter(array_keys($array), 'is_string'));
     }
+
+    public static function joinNonEmpty($glue, $pieces)
+    {
+        return join($glue, array_filter($pieces));
+    }
 }

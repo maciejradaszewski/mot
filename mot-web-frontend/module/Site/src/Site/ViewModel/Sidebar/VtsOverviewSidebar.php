@@ -2,48 +2,144 @@
 
 namespace Site\ViewModel\Sidebar;
 
+use Core\Service\MotFrontendAuthorisationServiceInterface;
 use Core\ViewModel\Sidebar\GeneralSidebar;
 use Core\ViewModel\Sidebar\GeneralSidebarLink;
 use Core\ViewModel\Sidebar\GeneralSidebarLinkList;
 use Core\ViewModel\Sidebar\GeneralSidebarStatusBox;
 use Core\ViewModel\Sidebar\GeneralSidebarStatusItem;
+use Core\ViewModel\Sidebar\SidebarBadge;
+use DvsaCommon\Auth\PermissionAtSite;
+use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\FeatureToggle;
+use DvsaCommon\Enum\SiteStatusCode;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
+use DvsaFeature\FeatureToggles;
+use Site\Service\RiskAssessmentScoreRagClassifier;
 
 class VtsOverviewSidebar extends GeneralSidebar
 {
-    public function __construct($siteId, $siteStatus, $canReadEvents, $canSeeRecentCertificates, $canViewTestLogs)
+    private $authorisationService;
+
+    private $vtsId;
+
+    private $featureToggles;
+
+    private $hasBeenAssessed;
+
+    private $siteStatusCatalog;
+
+    public function __construct(
+        MotFrontendAuthorisationServiceInterface $authorisationService,
+        FeatureToggles $featureToggles,
+        $siteStatusCatalog,
+        $vtsId,
+        $siteStatusCode,
+        $hasBeenAssessed,
+        RiskAssessmentScoreRagClassifier $ragClassifier,
+        $activeMotTestCount
+    )
     {
-        $this->addStatusBox($siteStatus);
-        $this->resolveLinks($siteId, $canReadEvents, $canSeeRecentCertificates, $canViewTestLogs);
+        $this->authorisationService = $authorisationService;
+        $this->featureToggles = $featureToggles;
+        $this->vtsId = $vtsId;
+        $this->hasBeenAssessed = $hasBeenAssessed;
+        $this->siteStatusCatalog = $siteStatusCatalog;
+
+        $this->addStatusBox($siteStatusCode, $activeMotTestCount, $ragClassifier);
+        $this->resolveLinks();
     }
 
-    private function addStatusBox($siteStatus)
+    private function addStatusBox($siteStatus, $activeMotTestCount, RiskAssessmentScoreRagClassifier $ragClassifier)
     {
         $statusBox = new GeneralSidebarStatusBox();
-        $modifierClass = '';
-        if (strtolower($siteStatus) == 'approved') {
-            $modifierClass = 'success';
+        $badge = $this->badgeForVtsStatus($siteStatus);
+
+        $statusItem = new GeneralSidebarStatusItem('', 'Status', $this->siteStatusCatalog[$siteStatus], $badge);
+        $statusBox->addItem($statusItem);
+
+        if ($this->isVtsRiskEnabled()) {
+            $scoreItem = new VtsOverviewRagStatus($ragClassifier);
+
+            $statusBox->addItem($scoreItem);
         }
 
-        $statusItem = new GeneralSidebarStatusItem('Status', $siteStatus, $modifierClass);
-        $statusBox->addItem($statusItem);
+        if ($this->canViewTestInProgress()) {
+            $activeTestsBadge = $activeMotTestCount ? SidebarBadge::info() : SidebarBadge::normal();
+            $testsItem = new GeneralSidebarStatusItem('', 'Active MOT tests', $activeMotTestCount, $activeTestsBadge);
+
+            $statusBox->addItem($testsItem);
+        }
 
         $this->addItem($statusBox);
     }
 
-    private function resolveLinks($siteId, $canReadEvents, $canSeeRecentCertificates, $canViewTestLogs)
+    private function isVtsRiskEnabled()
+    {
+        return $this->featureToggles->isEnabled(FeatureToggle::VTS_RISK_SCORE);
+    }
+
+    private function canViewTestInProgress()
+    {
+        return $this->authorisationService->isGrantedAtSite(PermissionAtSite::VIEW_TESTS_IN_PROGRESS_AT_VTS, $this->vtsId);
+    }
+
+    private function canViewTestLogs()
+    {
+        return $this->authorisationService->isGrantedAtSite(PermissionAtSite::VTS_TEST_LOGS, $this->vtsId);
+    }
+
+    private function canReadEvents()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::EVENT_READ);
+    }
+
+    private function canSeeRecentCertificates()
+    {
+        $isJasperAsyncEnabled = $this->featureToggles->isEnabled(FeatureToggle::JASPER_ASYNC);
+        $permittedToReadCertificates = $this->authorisationService->isGrantedAtSite(PermissionAtSite::RECENT_CERTIFICATE_PRINT, $this->vtsId);
+        return $permittedToReadCertificates && $isJasperAsyncEnabled;
+    }
+
+    private function canViewRiskAssessment()
+    {
+        return $this->authorisationService->isGrantedAtSite(
+            PermissionAtSite::VTS_VIEW_SITE_RISK_ASSESSMENT,
+            $this->vtsId
+        );
+    }
+
+    private function canChangeRiskAssessment()
+    {
+        return $this->authorisationService->isGrantedAtSite(
+            PermissionAtSite::VTS_UPDATE_SITE_RISK_ASSESSMENT,
+            $this->vtsId
+        );
+    }
+
+    private function canAssessSite()
+    {
+        return $this->canChangeRiskAssessment()
+        || ($this->canViewRiskAssessment());
+    }
+
+    private function resolveLinks()
     {
         $relatedLinks = new GeneralSidebarLinkList('Related');
-        if ($canReadEvents) {
-            $relatedLinks->addLink($this->createEventsHistoryLink($siteId));
+        if ($this->canReadEvents()) {
+            $relatedLinks->addLink($this->createEventsHistoryLink());
         }
 
-        if ($canViewTestLogs) {
-            $relatedLinks->addLink($this->createTestLogsLink($siteId));
+        if ($this->canViewTestLogs()) {
+            $relatedLinks->addLink($this->createTestLogsLink());
         }
 
-        if ($canSeeRecentCertificates) {
-            $relatedLinks->addLink($this->createRecentCertificatesLink($siteId));
+        if ($this->canSeeRecentCertificates()) {
+            $relatedLinks->addLink($this->createRecentCertificatesLink());
+        }
+
+        if ($this->canAssessSite()) {
+            $relatedLinks->addLink($this->createSiteAssessmentLink());
         }
 
         if (!$relatedLinks->isEmpty()) {
@@ -51,22 +147,59 @@ class VtsOverviewSidebar extends GeneralSidebar
         }
     }
 
-    private function createEventsHistoryLink($siteId)
+    private function createEventsHistoryLink()
     {
-        $eventsUrl = '/event/list/site/' . $siteId;
+        $eventsUrl = '/event/list/site/' . $this->vtsId;
         return new GeneralSidebarLink('event-history', 'Events history', $eventsUrl);
     }
 
-    private function createRecentCertificatesLink($siteId)
+    private function createRecentCertificatesLink()
     {
-        $motCertsUrl = '/vehicle-testing-station/' . $siteId . '/mot-test-certificates';
+        $motCertsUrl = '/vehicle-testing-station/' . $this->vtsId . '/mot-test-certificates';
         return new GeneralSidebarLink('mot-test-recent-certificates-link', 'MOT test certificates', $motCertsUrl);
     }
 
-    private function createTestLogsLink($siteId)
+    private function createTestLogsLink()
     {
-        $viewTestLogsUrl = VehicleTestingStationUrlBuilderWeb::motTestLog($siteId)->toString();
+        $viewTestLogsUrl = VehicleTestingStationUrlBuilderWeb::motTestLog($this->vtsId)->toString();
 
         return new GeneralSidebarLink('test-logs', 'Test logs', $viewTestLogsUrl);
+    }
+
+    private function createSiteAssessmentLink()
+    {
+        if($this->canChangeRiskAssessment() && $this->hasBeenAssessed) {
+            $siteAssessmentUrl = VehicleTestingStationUrlBuilderWeb::viewSiteRiskAssessment($this->vtsId);
+            $linkValue = 'Site assessment';
+        }
+        elseif ($this->canViewRiskAssessment()){
+            $siteAssessmentUrl = VehicleTestingStationUrlBuilderWeb::addSiteRiskAssessment($this->vtsId);
+            $linkValue = 'Add site assessment';
+        } else {
+            throw new \Exception("Cannot build url for person without permission to use it.");
+        }
+
+        return new GeneralSidebarLink('site-assessment-action-link', $linkValue, $siteAssessmentUrl);
+    }
+
+    private function badgeForVtsStatus($status)
+    {
+        switch ($status) {
+            case SiteStatusCode::APPLIED:
+                return SidebarBadge::normal();
+            case SiteStatusCode::APPROVED:
+                return SidebarBadge::success();
+            case SiteStatusCode::EXTINCT:
+                return SidebarBadge::alert();
+            case SiteStatusCode::LAPSED:
+                return SidebarBadge::normal();
+            case SiteStatusCode::REJECTED:
+                return SidebarBadge::alert();
+            case SiteStatusCode::RETRACTED:
+                return SidebarBadge::normal();
+            default:
+                return SidebarBadge::normal();
+        }
+
     }
 }

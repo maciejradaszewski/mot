@@ -1,0 +1,26 @@
+<?php
+
+$head = $this->head ?: '';
+$body = $this->body ?: '';
+
+?>
+<table class="table-summary">
+    <?php
+    echo $this->partial(
+        'partial/gds/gds-table/head',
+        [
+            'head' => $head,
+        ]
+    );
+
+
+    if (!empty($body)) {
+        echo $this->partial(
+            'partial/gds/gds-table/body',
+            [
+                'body' => $body
+            ]
+        );
+    }
+    ?>
+</table>

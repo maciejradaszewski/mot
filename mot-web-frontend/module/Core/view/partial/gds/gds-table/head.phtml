@@ -1,0 +1,18 @@
+<?php
+
+$head = $this->head ?: '';
+
+?>
+<thead>
+    <tr>
+        <?php
+        echo $this->partial(
+            'partial/gds/gds-table/th',
+            [
+                'colspan' => 2,
+                'value'   => $head,
+            ]
+        );
+        ?>
+    </tr>
+</thead>

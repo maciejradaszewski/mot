@@ -7,6 +7,7 @@ use Core\ViewModel\Sidebar\SidebarInterface;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaFeature\Exception\FeatureNotAvailableException;
+use DvsaFeature\FeatureToggles;
 use Zend\Form\Annotation\AnnotationBuilder;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -28,10 +29,18 @@ abstract class AbstractDvsaActionController
 
     public function isFeatureEnabled($name)
     {
+        return $this->getFeatureToggles()
+            ->isEnabled($name);
+    }
+
+    /**
+     * @return FeatureToggles
+     */
+    protected function getFeatureToggles()
+    {
         return $this
             ->getServiceLocator()
-            ->get('Feature\FeatureToggles')
-            ->isEnabled($name);
+            ->get('Feature\FeatureToggles');
     }
 
     public function assertFeatureEnabled($name)
