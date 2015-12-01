@@ -38,7 +38,7 @@ $hasInProgressTest = $this->dashboardDataProvider()->hasTestInProgress();
                             </a>
                         <?php elseif (!empty($testersCurrentVts) && !$hasSlots) : ?>
                             <p>No slots available, please purchase test slots</p>
-                        <?php else : ?>
+                        <?php elseif ($canPerformTest) : ?>
                             <a href="<?php echo $this->url('vehicle-search'); ?>"
                                class="btn btn-primary btn-lg"
                                id="action-start-mot-test">Start MOT test
@@ -53,7 +53,7 @@ $hasInProgressTest = $this->dashboardDataProvider()->hasTestInProgress();
                                    id="action-start-certificate-reissue">replacement/duplicate certificate</a>
                             </li>
                         <?php endif; ?>
-                        <?php if ($isTestingEnabled) : ?>
+                        <?php if ($isTestingEnabled && $canPerformTest) : ?>
                             <li>
                                 <a href="<?php echo $this->url('forms'); ?>" id="mot-forms">MOT forms</a>
                             </li>

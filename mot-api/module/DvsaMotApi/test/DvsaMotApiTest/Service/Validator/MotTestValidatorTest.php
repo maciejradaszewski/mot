@@ -29,6 +29,7 @@ use DvsaEntitiesTest\Entity\SiteTest;
 use DvsaMotApi\Service\Validator\MotTestValidator;
 use DvsaMotApiTest\Factory\MotTestObjectsFactory;
 use PHPUnit_Framework_TestCase;
+use UserApi\SpecialNotice\Service\SpecialNoticeService;
 
 /**
  * Class MotTestValidatorTest
@@ -45,6 +46,9 @@ class MotTestValidatorTest extends PHPUnit_Framework_TestCase
     /** @var  MotIdentityProviderInterface $motIdentityProvider */
     private $motIdentityProvider;
 
+    /** @var  SpecialNoticeService */
+    private $specialNoticeService;
+
     const PROFANITY_DETECTED = true;
     const PROFANITY_NOT_DETECTED = false;
 
@@ -60,10 +64,13 @@ class MotTestValidatorTest extends PHPUnit_Framework_TestCase
             ->method('getIdentity')
             ->will($this->returnValue(new MotIdentity(self::LOGGED_IN_USER_ID, null)));
 
+        $this->specialNoticeService = XMock::of(SpecialNoticeService::class);
+
         $this->motTestValidator = new MotTestValidator(
             $this->censorServiceMock,
             $this->motAuthorizationService,
-            $this->motIdentityProvider
+            $this->motIdentityProvider,
+            $this->specialNoticeService
         );
         parent::setUp();
     }
@@ -417,6 +424,20 @@ class MotTestValidatorTest extends PHPUnit_Framework_TestCase
 
         $this->setIsVehicleExaminer(true);
 
+        $this->motTestValidator->validateNewMotTest($motTest);
+    }
+
+    /**
+     * @expectedException        \DvsaCommonApi\Service\Exception\ForbiddenException
+     */
+    public function testValidateNewMotTestThrowsForbiddenIfTesterNotAcknowledgingTheSpecialNotice()
+    {
+        $this->specialNoticeService
+            ->expects($this->any())
+            ->method("countOverdueSpecialNoticesForClass")
+            ->willReturn(1);
+
+        $motTest = $this->setupMotTest(new Person(), new Vehicle(), new Site());
         $this->motTestValidator->validateNewMotTest($motTest);
     }
 

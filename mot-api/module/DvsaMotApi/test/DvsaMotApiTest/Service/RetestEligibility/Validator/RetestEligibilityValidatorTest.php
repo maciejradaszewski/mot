@@ -17,6 +17,7 @@ use DvsaEntities\Entity\MotTestStatus;
 use DvsaEntities\Entity\NonWorkingDayCountry;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteContactType;
+use DvsaEntities\Entity\VehicleClass;
 use DvsaEntities\Repository\MotTestRepository;
 use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityCheckCode;
 use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
@@ -24,6 +25,7 @@ use NonWorkingDaysApi\Constants\CountryCode;
 use NonWorkingDaysApi\NonWorkingDaysHelper;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use DvsaCommonApi\Service\Exception\NotFoundException;
+use UserApi\SpecialNotice\Service\SpecialNoticeService;
 
 /**
  * Class RetestEligibilityValidatorTest
@@ -45,6 +47,8 @@ class RetestEligibilityValidatorTest extends \PHPUnit_Framework_TestCase
 
     private $dateTimeHolder;
 
+    /** @var SpecialNoticeService */
+    private $specialNoticeService;
 
     public function setUp()
     {
@@ -55,6 +59,7 @@ class RetestEligibilityValidatorTest extends \PHPUnit_Framework_TestCase
         $this->setUpNonWorkingDaysHelper(
             $this->any(), DateUtils::toDate("2014-01-10"), DateUtils::toDate("2014-01-10"), true
         );
+        $this->specialNoticeService = XMock::of(SpecialNoticeService::class);
     }
 
     public function testCheckVehicleIsEligibleForRetest()
@@ -94,6 +99,10 @@ class RetestEligibilityValidatorTest extends \PHPUnit_Framework_TestCase
 
         $site->setNonWorkingDayCountry($this->exampleNonWorkingDayCountry());
 
+        $vehicleClass = new VehicleClass();
+        $vehicleClass->setId(1);
+        $vehicleClass->setCode("1");
+
         $motTest = new MotTest();
         $motTest
             ->setId(4)
@@ -101,7 +110,9 @@ class RetestEligibilityValidatorTest extends \PHPUnit_Framework_TestCase
             ->setStatus(
                 $this->mockMotTestStatus($status ?: MotTestStatusName::FAILED)
             )
-            ->setVehicleTestingStation($site);
+            ->setVehicleTestingStation($site)
+            ->setVehicleClass($vehicleClass)
+        ;
 
         return $motTest;
     }
@@ -311,7 +322,6 @@ class RetestEligibilityValidatorTest extends \PHPUnit_Framework_TestCase
         return $status;
     }
 
-
     /**
      * @param $isWithinPeriod
      * @param $expects
@@ -319,12 +329,10 @@ class RetestEligibilityValidatorTest extends \PHPUnit_Framework_TestCase
      */
     private function createRetestEligibilityValidator()
     {
-        $mockParamObfuscator = XMock::of(ParamObfuscator::class);
-
         return (new RetestEligibilityValidator(
             $this->nonWorkingDaysHelper,
             $this->motTestRepository,
-            $mockParamObfuscator
+            $this->specialNoticeService
         ))->setDateTimeHolder($this->dateTimeHolder);
     }
 

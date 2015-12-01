@@ -4,6 +4,7 @@ namespace DvsaMotTest\Controller;
 
 use Application\Service\CatalogService;
 use Application\Service\ContingencySessionManager;
+use DvsaMotTest\Service\OverdueSpecialNoticeAssertion;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Dto\Vehicle\History\VehicleHistoryDto;
@@ -12,6 +13,7 @@ use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\UrlBuilder\MotTestUrlBuilder;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaCommon\UrlBuilder\VehicleUrlBuilder;
 use DvsaCommon\UrlBuilder\VehicleUrlBuilderWeb;
 use DvsaCommon\Utility\AddressUtils;
@@ -27,6 +29,7 @@ use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\I18n\Filter\Alnum;
 use Zend\View\Model\ViewModel;
+use DvsaCommon\HttpRestJson\Client;
 
 /**
  * VehicleSearch Controller.
@@ -99,6 +102,9 @@ class VehicleSearchController extends AbstractDvsaMotTestController
     /** @var MapperFactory */
     private $mapperFactory;
 
+    /** @var Client */
+    private $client;
+
     /**
      * @param VehicleSearchService $vehicleSearchService
      * @param ParamObfuscator $paramObfuscator
@@ -110,13 +116,15 @@ class VehicleSearchController extends AbstractDvsaMotTestController
         ParamObfuscator $paramObfuscator,
         CatalogService $catalogService,
         VehicleSearchResult $vehicleSearchResultModel,
-        MapperFactory $mapperFactory
+        MapperFactory $mapperFactory,
+        Client $client
     ) {
         $this->paramObfuscator = $paramObfuscator;
         $this->catalogService = $catalogService;
         $this->vehicleSearchResultModel = $vehicleSearchResultModel;
         $this->vehicleSearchService = $vehicleSearchService;
         $this->mapperFactory = $mapperFactory;
+        $this->client = $client;
     }
 
     /**
@@ -362,6 +370,20 @@ class VehicleSearchController extends AbstractDvsaMotTestController
             throw new \InvalidArgumentException('A search type must be specified');
         }
 
+        $loggedInUserManager = $this->getServiceLocator()->get('LoggedInUserManager');
+        $tester = $loggedInUserManager->getTesterData();
+
+        if ($this->getAuthorizationService()->isTester() && in_array($searchType, [
+                    VehicleSearchService::SEARCH_TYPE_STANDARD, VehicleSearchService::SEARCH_TYPE_RETEST
+                ])) {
+            $authorisationsForTestingMot = (!is_null($tester["authorisationsForTestingMot"]))? $tester["authorisationsForTestingMot"]: [];
+            $url = (new UrlBuilder())->specialNoticeOverdue()->toString();
+            $overdueSpecialNotices = $this->client->get($url)["data"];
+
+            $overdueSpecialNotices = new OverdueSpecialNoticeAssertion($overdueSpecialNotices, $authorisationsForTestingMot);
+            $overdueSpecialNotices->assertPerformTest();
+        }
+
         $this->vehicleSearchService->setSearchType($searchType);
 
         /** @var \Zend\Http\Request $request */
@@ -388,8 +410,8 @@ class VehicleSearchController extends AbstractDvsaMotTestController
             && $this->getAuthorizationService()->isTester()
             && !$this->getIdentity()->getCurrentVts()
         ) {
-            $loggedInUserManager = $this->getServiceLocator()->get('LoggedInUserManager');
-            $tester = $loggedInUserManager->getTesterData();
+
+
             // Avoid redirecting to the LocationSelectionController if the tester has only one associated site.
             if (count($tester['vtsSites']) == 1) {
                 $loggedInUserManager->changeCurrentLocation($tester['vtsSites'][0]['id']);

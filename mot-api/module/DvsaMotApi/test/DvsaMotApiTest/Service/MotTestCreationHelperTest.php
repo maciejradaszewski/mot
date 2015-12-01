@@ -4,11 +4,17 @@ namespace DvsaMotApiTest\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use DvsaCommon\Enum\ReasonForRejectionTypeName;
+use DvsaCommonApi\Service\Exception\ForbiddenException;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
+use DvsaCommonTest\TestUtils\MethodSpy;
+use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Language;
 use DvsaEntities\Entity\MotTest;
 use DvsaEntities\Entity\MotTestReasonForRejection;
+use DvsaEntities\Entity\MotTestType;
+use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\ReasonForRejection;
+use DvsaEntities\Repository\MotTestTypeRepository;
 use DvsaMotApi\Service\MotTestCreationHelper;
 use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 
@@ -17,6 +23,53 @@ use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
  */
 class MotTestCreationHelperTest extends AbstractServiceTestCase
 {
+    /** @var  MotTestCreationHelper */
+    private $motTestCreationHelper;
+    private $mockTesterService;
+
+    public function setUp()
+    {
+        $motTestServiceTest = new MotTestServiceTest();
+        $mocks              = $motTestServiceTest->getMocksForMotTestService();
+
+        $this->mockTesterService = $mocks['mockTesterService'];
+
+        $mockAuthService = $mocks['mockAuthService'];
+        $mockAuthService->expects($this->any())
+            ->method('personHasRole')
+            ->willReturn(false);
+
+        $mockEntityManager     = $mocks['mockEntityManager'];
+
+        $mockMotTestType = Xmock::of(MotTestType::class);
+        $mockMotTestType->expects($this->any())
+            ->method('getIsDemo')
+            ->willReturn(false);
+
+        $mockMotTestTypeRepository = Xmock::of(MotTestTypeRepository::class, ['findOneByCode']);
+        $mockMotTestTypeRepository->expects($this->any())
+            ->method('findOneByCode')
+            ->willReturn($mockMotTestType);
+
+        $mockEntityManager->expects($this->any())
+            ->method('persist')
+            ->will($this->returnValue(null));
+
+        $mockEntityManager->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($mockMotTestTypeRepository);
+
+        $this->motTestCreationHelper = new MotTestCreationHelper(
+            $mockEntityManager,
+            $mocks['mockAuthService'],
+            $this->mockTesterService,
+            null,
+            $mocks['mockMotTestValidator'],
+            $motTestServiceTest->getMockWithDisabledConstructor(RetestEligibilityValidator::class),
+            $mocks['mockOtpService']
+        );
+    }
+
     public function testSaveRfrsForRetest()
     {
         //given
@@ -42,26 +95,8 @@ class MotTestCreationHelperTest extends AbstractServiceTestCase
 
         $motTestNew = new MotTest();
 
-        $motTestServiceTest = new MotTestServiceTest();
-        $mocks              = $motTestServiceTest->getMocksForMotTestService();
-
-        $mockEntityManager     = $mocks['mockEntityManager'];
-        $motTestCreationHelper = new MotTestCreationHelper(
-            $mockEntityManager,
-            $mocks['mockAuthService'],
-            $mocks['mockTesterService'],
-            null,
-            $mocks['mockMotTestValidator'],
-            $motTestServiceTest->getMockWithDisabledConstructor(RetestEligibilityValidator::class),
-            $mocks['mockOtpService']
-        );
-
-        $mockEntityManager->expects($this->any())
-            ->method('persist')
-            ->will($this->returnValue(null));
-
         //when
-        $motTestCreationHelper->saveRfrsForRetest($motTestOrig, $motTestNew);
+        $this->motTestCreationHelper->saveRfrsForRetest($motTestOrig, $motTestNew);
 
         /** @var MotTestReasonForRejection[] $retestReasons */
         $retestReasons = $motTestNew->getMotTestReasonForRejections();
@@ -98,5 +133,16 @@ class MotTestCreationHelperTest extends AbstractServiceTestCase
         $motTestRfr->setReasonForRejection($rfr);
 
         return $motTestRfr;
+    }
+
+    public function testCreateMotTestWithNotAllowedClasses()
+    {
+        $testerMock = Xmock::of(Person::class);
+        $testerMock->expects($this->any())
+            ->method('isTester')
+            ->willReturn(true);
+
+        $this->setExpectedException(ForbiddenException::class);
+        $this->motTestCreationHelper->createMotTest($testerMock, 1, 1, 1, 1, 1, 1, true, 1, 1, 1, false, 1, null, '127.0.0.1', null);
     }
 }

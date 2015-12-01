@@ -17,6 +17,7 @@ use DvsaCommonApi\Service\Validator\AbstractValidator;
 use DvsaEntities\Entity\MotTest;
 use DvsaEntities\Entity\MotTestReasonForRejection;
 use DvsaEntities\Entity\VehicleClass;
+use UserApi\SpecialNotice\Service\SpecialNoticeService;
 use Zend\Authentication\AuthenticationService;
 
 /**
@@ -30,6 +31,7 @@ class MotTestValidator extends AbstractValidator
     const ERROR_MSG_OUT_OF_SLOTS = 'You do not have slots to perform an MOT Test';
     const ERROR_MSG_INVALID_TESTER = 'You cannot make changes to this test';
     const ERROR_MSG_NOT_VALID_TO_TEST_VEHICLE_CLASS = 'You are not authorised to test a class %s vehicle';
+    const ERROR_MSG_OVERDUE_SPECIAL_NOTICES = 'You are not authorised to test a class %s vehicle. Test status will become active when unacknowledged notices have been read and confirmed';
     const ERROR_MSG_NOT_VALID_SITE_TO_TEST_VEHICLE_CLASS = 'Your Site is not authorised to test class %s vehicles';
     const ERROR_MSG_NOT_FOUND_SITE_FOR_TESTER = 'Site not found for Tester';
     const ERROR_MSG_NOT_FOUND_FUEL_TYPE = 'Fuel Type not found';
@@ -48,15 +50,20 @@ class MotTestValidator extends AbstractValidator
     /** @var AuthenticationService $motIdentityProvider */
     private $motIdentityProvider;
 
+    /** @var SpecialNoticeService */
+    private $specialNoticeService;
+
     public function __construct(
         CensorService $censorService,
         AuthorisationServiceInterface $authorizationService,
-        AuthenticationService $motIdentityProvider
+        AuthenticationService $motIdentityProvider,
+        SpecialNoticeService $specialNoticeService
     ) {
         $this->censorService = $censorService;
         parent::__construct();
         $this->authorizationService = $authorizationService;
         $this->motIdentityProvider = $motIdentityProvider;
+        $this->specialNoticeService = $specialNoticeService;
     }
 
     public function validateNewMotTest(MotTest $motTest)

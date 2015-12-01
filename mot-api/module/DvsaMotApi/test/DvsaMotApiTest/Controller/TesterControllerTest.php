@@ -53,10 +53,6 @@ class TesterControllerTest extends AbstractMotApiControllerTestCase
             ->getMock();
         $testerServiceMock
             ->expects($this->once())
-            ->method('verifyAndApplyTesterIsActiveByUserId')
-            ->will($this->returnValue([]));
-        $testerServiceMock
-            ->expects($this->once())
             ->method('getTesterDataByUserId')
             ->will($this->returnValue([]));
 
@@ -77,10 +73,6 @@ class TesterControllerTest extends AbstractMotApiControllerTestCase
             ->getMockBuilder(TesterService::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $testerServiceMock
-            ->expects($this->once())
-            ->method('verifyAndApplyTesterIsActiveByTesterId')
-            ->will($this->returnValue([]));
         $testerServiceMock
             ->expects($this->once())
             ->method('getTesterData')

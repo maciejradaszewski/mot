@@ -2,6 +2,7 @@
 
 namespace DvsaEntities\Repository;
 
+use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommon\Model\DvsaRole;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Enum\OrganisationBusinessRoleCode;
@@ -91,6 +92,39 @@ class SpecialNoticeRepository extends AbstractMutableRepository
         ;
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function getAmountOfOverdueSpecialNoticesForClasses($username)
+    {
+        $qb = $this
+            ->createQueryBuilder("sn")
+            ->select("a.vehicleClassId AS vehicleClass", "COUNT(sn.id) as amount")
+            ->innerJoin("sn.content", "c")
+            ->innerJoin("c.audience", "a")
+            ->where("c.isPublished = :isPublished")
+            ->andWhere("sn.username = :username")
+            ->andWhere("c.expiryDate <= :expiryDate")
+            ->andWhere("sn.isAcknowledged = :isAcknowledged")
+            ->andWhere("sn.isDeleted = :isDeleted")
+            ->groupBy("a.vehicleClassId")
+            ->setParameter("isPublished", 1)
+            ->setParameter("username", $username)
+            ->setParameter("expiryDate", new \DateTime())
+            ->setParameter("isAcknowledged", 0)
+            ->setParameter("isDeleted", 0)
+        ;
+
+        $results = $qb->getQuery()->getScalarResult();
+
+        $codes = VehicleClassCode::getAll();
+        $default = array_combine($codes, array_fill(0, count($codes), 0));
+
+        $data = [];
+        foreach ($results as $result) {
+            $data[$result["vehicleClass"]] = $result["amount"];
+        }
+
+        return array_replace($default, $data);
     }
 
     /**

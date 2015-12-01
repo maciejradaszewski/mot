@@ -20,6 +20,9 @@ class DashboardData
     /** @var $specialNotice array */
     private $specialNotice;
 
+    /** @var $overdueSpecialNotices array */
+    private $overdueSpecialNotices;
+
     /** @var $notifications Notification[] */
     private $notifications;
 
@@ -38,6 +41,7 @@ class DashboardData
     /**
      * @param AuthorisationForAuthorisedExaminer[] $authorisedExaminers
      * @param                                      $specialNotice
+     * @param                                      $overdueSpecialNotices
      * @param Notification[]                       $notifications
      * @param                                      $inProgressTestNumber
      * @param                                      $inProgressDemoTestNumber
@@ -49,6 +53,7 @@ class DashboardData
     public function __construct(
         $authorisedExaminers,
         $specialNotice,
+        $overdueSpecialNotices,
         $notifications,
         $inProgressTestNumber,
         $inProgressDemoTestNumber,
@@ -59,6 +64,7 @@ class DashboardData
     ) {
         $this->setAuthorisedExaminers($authorisedExaminers);
         $this->setSpecialNotice(new SpecialNotice($specialNotice));
+        $this->setOverdueSpecialNotices($overdueSpecialNotices);
         $this->setNotifications($notifications);
         $this->setInProgressTestNumber($inProgressTestNumber);
         $this->setInProgressDemoTestNumber($inProgressDemoTestNumber);
@@ -89,6 +95,7 @@ class DashboardData
             'hero'                   => $this->getHero(),
             'authorisedExaminers'    => $authorisedExaminers,
             'specialNotice'          => $this->getSpecialNotice()->toArray(),
+            'overdueSpecialNotices'  => $this->overdueSpecialNotices,
             'notifications'          => $notificationExtractedList,
             'inProgressTestNumber'   => $this->inProgressTestNumber,
             'inProgressTestTypeCode' => $this->inProgressTestTypeCode,
@@ -154,6 +161,25 @@ class DashboardData
     public function getSpecialNotice()
     {
         return $this->specialNotice;
+    }
+
+    /**
+     * @param array $overdueSpecialNotices
+     * @return DashboardData
+     */
+    public function setOverdueSpecialNotices(array $overdueSpecialNotices)
+    {
+        $this->overdueSpecialNotices = $overdueSpecialNotices;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOverdueSpecialNotices()
+    {
+        return $this->overdueSpecialNotices;
     }
 
     /**

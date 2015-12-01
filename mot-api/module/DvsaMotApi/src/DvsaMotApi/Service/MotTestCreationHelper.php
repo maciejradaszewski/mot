@@ -13,6 +13,7 @@ use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Enum\ReasonForRejectionTypeName;
 use DvsaCommonApi\Service\Exception\BadRequestException;
+use DvsaCommonApi\Service\Exception\ForbiddenException;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\Entity\Colour;
 use DvsaEntities\Entity\Comment;
@@ -41,6 +42,7 @@ class MotTestCreationHelper
 {
     const COMMENT_EMERGENCY_LOG_TYPE = 'EMERGENCY_LOG';
     const ONE_TIME_PASSWORD_FIELD    = 'oneTimePassword';
+    const ERROR_MSG_OVERDUE_SPECIAL_NOTICES = 'Your test status is inactive due to overdue acknowledgement of special notice(s). Your test status will become active when overdue special notices have been acknowledged.';
 
     /** @var EntityManager */
     private $entityManager;
@@ -138,7 +140,7 @@ class MotTestCreationHelper
 
         if (!$isVehicleExaminer && !$motTestType->getIsDemo()) {
             if ($tester->isTester()) {
-                $this->testerService->verifyAndApplyTesterIsActive($tester);
+                $this->checkTesterIsAllowedToTestClass($vehicleClassCode);
             } else {
                 throw new NotFoundException('Tester with personId', $tester->getId());
             }
@@ -321,6 +323,13 @@ class MotTestCreationHelper
                 'You have a demo test that is already in progress',
                 BadRequestException::ERROR_CODE_BUSINESS_FAILURE
             );
+        }
+    }
+
+    private function checkTesterIsAllowedToTestClass($vehicleClassCode)
+    {
+        if($this->testerService->verifyTesterAllowedToTestClass($vehicleClassCode) == false) {
+            throw new ForbiddenException(self::ERROR_MSG_OVERDUE_SPECIAL_NOTICES);
         }
     }
 

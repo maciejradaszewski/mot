@@ -36,7 +36,6 @@ class SpecialNoticeController extends AbstractDvsaRestfulController
             $id = $this->params()->fromRoute('snId', null);
 
             $testerService = $this->getServiceLocator()->get('TesterService');
-            $testerService->verifyAndApplyTesterIsActiveByUserId($this->getUserId());
 
             $specialNoticeService = $this->getServiceLocator()->get(SpecialNoticeService::class);
             $specialNoticeService->markAcknowledged($id);

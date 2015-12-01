@@ -7,6 +7,7 @@ use DvsaCommon\Date\DateUtils as DU;
 use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApi\Service\Exception\NotFoundException;
+use DvsaCommonApi\Service\Exception\ForbiddenException;
 use DvsaEntities\Entity\MotTest;
 use DvsaEntities\Repository\MotTestRepository;
 use NonWorkingDaysApi\NonWorkingDaysHelper;
@@ -17,6 +18,7 @@ use NonWorkingDaysApi\NonWorkingDaysHelper;
 class RetestEligibilityValidator
 {
     const RETEST_WORKING_DAYS_PERIOD = 10;
+
     /** @var NonWorkingDaysHelper */
     private $nonWorkingDaysHelper;
     /** @var MotTestRepository $motTestRepository */
@@ -85,6 +87,8 @@ class RetestEligibilityValidator
      * @param $contingencyDto
      *
      * @return array
+     * @throws ForbiddenException
+     * @throws NotFoundException
      */
     private function validateVehicleForRetest($vehicleId, $vtsId, $contingencyDto = null)
     {
