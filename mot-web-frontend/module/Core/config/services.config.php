@@ -12,6 +12,7 @@ use Core\Factory\WebAcknowledgeSpecialNoticeAssertionFactory;
 use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Configuration\MotConfigFactory;
 use DvsaCommon\DtoSerialization\DtoReflectiveDeserializer;
+use DvsaCommon\Factory\AutoWire\AutoWireFactory;
 use DvsaMotTest\NewVehicle\Form\VehicleWizard\CreateVehicleFormWizard;
 use DvsaMotTest\NewVehicle\Form\VehicleWizard\Factory\CreateVehicleFormWizardFactory;
 
@@ -25,5 +26,8 @@ return [
         MotConfig::class => MotConfigFactory::class,
         DtoReflectiveDeserializer::class => DtoReflectiveDeserializerFactory::class,
         EnumCatalog::class => EnumCatalogFactory::class,
-    ]
+    ],
+    'abstract_factories' => [
+        AutoWireFactory::class,
+    ],
 ];
