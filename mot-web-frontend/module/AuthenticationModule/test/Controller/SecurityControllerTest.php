@@ -13,22 +13,23 @@ use Dashboard\Controller\UserHomeController;
 use Dvsa\Mot\Frontend\AuthenticationModule\Controller\SecurityController;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\IdentitySessionState;
 use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\OpenAMAuthenticator;
+use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\Response\OpenAMAuthenticationResponse;
 use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\Response\OpenAMAuthFailure;
 use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\Response\OpenAMAuthSuccess;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\GotoUrlService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\IdentitySessionStateService;
+use Dvsa\Mot\Frontend\AuthenticationModule\Service\LoginCsrfCookieService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\WebAuthenticationCookieService;
-use Dvsa\Mot\Frontend\AuthenticationModule\Service\GotoUrlValidatorService;
 use Dvsa\OpenAM\OpenAMAuthProperties;
 use DvsaCommonTest\TestUtils\XMock;
 use Zend\Authentication\AuthenticationService;
 use Zend\Http\Request;
+use Zend\Http\Response;
 use Zend\Session\ManagerInterface;
 use Zend\Stdlib\Parameters;
 use Zend\View\Model\ViewModel;
 
-/**
- */
+
 class SecurityControllerTest extends AbstractLightWebControllerTest
 {
     const VALID_GOTO_URL = 'http://goto.url.com/url';
@@ -50,8 +51,14 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
     /** @var AuthenticationService $authenticationService */
     private $authenticationService;
 
+    /** @var  LoginCsrfCookieService $loginCsrfCookieService */
+    private $loginCsrfCookieService;
+
     /** @var  Request */
     private $request;
+
+    /** @var  Response */
+    private $response;
 
     private $sessionManager;
 
@@ -69,6 +76,7 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
     public function testOnGetLoginAction_notAuthenticated()
     {
         $this->identitySessionState(new IdentitySessionState(false, false));
+        $this->loginCsrfCookieService->expects($this->once())->method('addCsrfCookie');
 
         $vm = $this->getController()->onGetLoginAction();
         $this->assertEquals('', $vm->getVariables['goto']);
@@ -142,9 +150,7 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
         $viewModel = (new ViewModel())->setTemplate('authentication/failed/default');
         $authResponse = new OpenAMAuthFailure(OpenAMAuthProperties::CODE_AUTHENTICATION_FAILED, $viewModel);
 
-        $this->authenticator
-            ->expects($this->once())->method('authenticate')
-            ->willReturn($authResponse);
+        $this->authenticationResponse($authResponse);
         $this->expectSessionIdRegenerated(false);
         $this->expectAuthCookieWasNotSetUp();
 
@@ -158,10 +164,7 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
         $viewModel = (new ViewModel())->setTemplate('authentication/failed/default');
         $authResponse = new OpenAMAuthFailure(OpenAMAuthProperties::CODE_AUTHENTICATION_FAILED, $viewModel);
 
-        $this->authenticator
-            ->expects($this->once())->method('authenticate')
-            ->willReturn($authResponse);
-
+        $this->authenticationResponse($authResponse);
         $this->expectSessionIdRegenerated(false);
         $this->expectAuthCookieWasNotSetUp();
 
@@ -189,16 +192,44 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
         $this->setController($this->buildController($expiryPasswordService));
 
         $token = 'xifuvdv09RGEgrege';
-        $this->authenticator
-            ->expects($this->once())
-            ->method('authenticate')
-            ->willReturn(new OpenAMAuthSuccess($token));
+        $this->authenticationResponse(new OpenAMAuthSuccess($token));
 
         $this->withGotoUrlAsPostParam($this->gotoService->encodeGoto(self::VALID_GOTO_URL));
         $this->expectSessionIdRegenerated(true);
         $this->expectAuthCookieWasSetUp($token);
 
         $this->expectRedirectToUrl(self::VALID_GOTO_URL);
+        $this->getController()->onPostLoginAction();
+    }
+
+    public function testOnPostLoginAction_givenLoginSuccess_and_passedCsrfValidation_shouldRedirectToUserHome()
+    {
+
+        $expiryPasswordService = XMock::of(ExpiredPasswordService::class);
+        $expiryPasswordService
+            ->expects($this->once())
+            ->method("sentExpiredPasswordNotificationIfNeeded");
+        $this->setController($this->buildController($expiryPasswordService));
+
+        $token = 'xifuvdv09RGEgrege';
+        $this->authenticationResponse(new OpenAMAuthSuccess($token));
+
+        $this->loginCsrfCookieService->expects($this->once())->method('validate')->with($this->request)
+            ->willReturn(true);
+
+        $this->expectRedirect(UserHomeController::ROUTE);
+
+        $this->getController()->onPostLoginAction();
+    }
+
+    public function testOnPostLoginAction_givenLoginSuccess_and_failedCsrfValidation_shouldRedirectToLoginPage()
+    {
+        $token = 'xifuvdv09RGEgrege';
+        $this->authenticationResponse(new OpenAMAuthSuccess($token));
+        $this->loginCsrfCookieService->expects($this->once())->method('validate')->with($this->request)
+            ->willReturn(false);
+        $this->expectRedirect(SecurityController::ROUTE_LOGIN_GET);
+
         $this->getController()->onPostLoginAction();
     }
 
@@ -211,13 +242,18 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
         $this->setController($this->buildController($expiryPasswordService));
 
         $token = 'xifuvdv09RGEgrege';
-        $this->authenticator->expects($this->once())->method('authenticate')
-            ->willReturn(new OpenAMAuthSuccess($token));
+        $this->authenticationResponse(new OpenAMAuthSuccess($token));
         $this->expectSessionIdRegenerated(true);
         $this->expectAuthCookieWasSetUp($token);
 
         $this->expectRedirect(UserHomeController::ROUTE);
         $this->getController()->onPostLoginAction();
+    }
+
+    private function authenticationResponse(OpenAMAuthenticationResponse $response)
+    {
+        $this->authenticator->expects($this->once())->method('authenticate')
+            ->willReturn($response);
     }
 
     private function identitySessionState(IdentitySessionState $sessionState)
@@ -265,7 +301,9 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
         $this->cookieService = XMock::of(WebAuthenticationCookieService::class);
         $this->identitySessionStateService = XMock::of(IdentitySessionStateService::class);
         $this->authenticationService = XMock::of(AuthenticationService::class);
+        $this->loginCsrfCookieService = XMock::of(LoginCsrfCookieService::class);
         $this->request = new Request();
+        $this->response = new Response();
         $this->sessionManager = XMock::of(ManagerInterface::class);
 
         if (is_null($expiryPasswordService)) {
@@ -277,13 +315,15 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
 
         $controller = new SecurityController(
             $this->request,
+            $this->response,
             $this->authenticator,
             $this->gotoService,
             $this->cookieService,
             $this->identitySessionStateService,
             $this->authenticationService,
             $this->sessionManager,
-            $expiryPasswordService
+            $expiryPasswordService,
+            $this->loginCsrfCookieService
         );
 
         return $controller;

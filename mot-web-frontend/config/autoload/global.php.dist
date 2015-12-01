@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'csrf' => [
+        'cookie' => [
+            'secure' => false,
+        ]
+    ],
     'dvsa_authentication' => [
         'openAM' => [
             /*

@@ -7,6 +7,7 @@ use Dvsa\Mot\Frontend\AuthenticationModule\Factory\OpenAM\OpenAMAuthenticatorFac
 use Dvsa\Mot\Frontend\AuthenticationModule\Factory\OpenAM\Response\OpenAMAuthFailureBuilderFactory;
 use Dvsa\Mot\Frontend\AuthenticationModule\Factory\Service\GotoUrlServiceFactory;
 use Dvsa\Mot\Frontend\AuthenticationModule\Factory\Service\IdentitySessionStateServiceFactory;
+use Dvsa\Mot\Frontend\AuthenticationModule\Factory\Service\LoginCsrfCookieServiceFactory;
 use Dvsa\Mot\Frontend\AuthenticationModule\Factory\Service\WebAuthenticationCookieServiceFactory;
 use Dvsa\Mot\Frontend\AuthenticationModule\Factory\Service\WebLogoutServiceFactory;
 use Dvsa\Mot\Frontend\AuthenticationModule\Listener\WebAuthenticationListener;
@@ -14,6 +15,7 @@ use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\OpenAMAuthenticator;
 use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\Response\OpenAMAuthFailureBuilder;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\GotoUrlService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\IdentitySessionStateService;
+use Dvsa\Mot\Frontend\AuthenticationModule\Service\LoginCsrfCookieService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\WebLogoutService;
 use Zend\Authentication\AuthenticationService as ZendAuthenticationService;
 use Zend\Cache\Service\StorageCacheAbstractServiceFactory;
@@ -33,6 +35,7 @@ return [
         GotoUrlService::class              => GotoUrlServiceFactory::class,
         GotoUrlValidatorService::class     => GotoUrlValidatorServiceFactory::class,
         IdentitySessionStateService::class => IdentitySessionStateServiceFactory::class,
+        LoginCsrfCookieService::class      => LoginCsrfCookieServiceFactory::class
     ],
     'abstract_factories' => [
         StorageCacheAbstractServiceFactory::class,

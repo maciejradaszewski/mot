@@ -25,7 +25,7 @@ class CsrfValidatingListener
 
     public function validate(MvcEvent $evt)
     {
-        if ($evt->getError()) {
+        if ($evt->getError() || $evt->getRouteMatch()->getMatchedRouteName() == 'login') {
             return;
         }
 
