@@ -10,9 +10,11 @@ use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\Response\OpenAMAuthFailure;
 use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\Response\OpenAMAuthSuccess;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\GotoUrlService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\IdentitySessionStateService;
+use Dvsa\Mot\Frontend\AuthenticationModule\Service\LoginCsrfCookieService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\WebAuthenticationCookieService;
 use Zend\Authentication\AuthenticationService;
 use Zend\Http\Request;
+use Zend\Http\Response;
 use Zend\Session\ManagerInterface;
 use Zend\View\Model\ViewModel;
 
@@ -61,27 +63,35 @@ class SecurityController extends AbstractDvsaActionController
 
     private $expiredPasswordService;
 
+    private $loginCsrfCookieService;
+
     /**
-     * @param Request                               $request
-     * @param OpenAMAuthenticator                   $authenticator
-     * @param GotoUrlService                        $loginGotoService
-     * @param WebAuthenticationCookieService        $cookieService
-     * @param IdentitySessionStateService           $identitySessionStateService
-     * @param AuthenticationService                 $authenticationService
-     * @param ManagerInterface                      $sessionManager
-     * @param ExpiredPasswordService                $expiredPasswordService
+     * @param Request $request
+     * @param Response $response
+     * @param OpenAMAuthenticator $authenticator
+     * @param GotoUrlService $loginGotoService
+     * @param WebAuthenticationCookieService $cookieService
+     * @param IdentitySessionStateService $identitySessionStateService
+     * @param AuthenticationService $authenticationService
+     * @param ManagerInterface $sessionManager
+     * @param ExpiredPasswordService $expiredPasswordService
+     * @param LoginCsrfCookieService $loginCsrfCookieService
      */
     public function __construct(
         Request $request,
+        Response $response,
         OpenAMAuthenticator $authenticator,
         GotoUrlService $loginGotoService,
         WebAuthenticationCookieService $cookieService,
         IdentitySessionStateService $identitySessionStateService,
         AuthenticationService $authenticationService,
         ManagerInterface $sessionManager,
-        ExpiredPasswordService $expiredPasswordService
-    ) {
+        ExpiredPasswordService $expiredPasswordService,
+        LoginCsrfCookieService $loginCsrfCookieService
+    )
+    {
         $this->request = $request;
+        $this->response = $response;
         $this->authenticator = $authenticator;
         $this->gotoService = $loginGotoService;
         $this->authenticationCookieService = $cookieService;
@@ -89,6 +99,7 @@ class SecurityController extends AbstractDvsaActionController
         $this->authenticationService = $authenticationService;
         $this->sessionManager = $sessionManager;
         $this->expiredPasswordService = $expiredPasswordService;
+        $this->loginCsrfCookieService = $loginCsrfCookieService;
     }
 
     /**
@@ -136,14 +147,15 @@ class SecurityController extends AbstractDvsaActionController
             }
         } else {
             $goto = $this->gotoService->encodeGoto($rawGoto);
-
+            $csrfToken = $this->loginCsrfCookieService->addCsrfCookie($this->response);
             return (
             new ViewModel(
                 [
                     'forgottenPasswordRoute' => self::ROUTE_FORGOTTEN_PASSWORD,
-                    'gotoUrl'                => $goto,
-                    'loginCheckRoute'        => self::ROUTE_LOGIN_GET,
-                    'pageTitle'              => self::PAGE_TITLE,
+                    'gotoUrl' => $goto,
+                    'loginCheckRoute' => self::ROUTE_LOGIN_GET,
+                    'pageTitle' => self::PAGE_TITLE,
+                    'csrfToken' => $csrfToken
                 ]
             )
             )->setTemplate('authentication/login');
@@ -165,6 +177,10 @@ class SecurityController extends AbstractDvsaActionController
             return $result->getViewModel();
         }
         $this->initializeSessionOnLogon();
+        $isCsrfTokenValid = $this->loginCsrfCookieService->validate($this->request);
+        if (false === $isCsrfTokenValid) {
+            return $this->redirect()->toRoute(self::ROUTE_LOGIN_GET);
+        }
         /* @var OpenAMAuthSuccess $result */
         $this->authenticationCookieService->setUpCookie($result->getToken());
 

@@ -13,6 +13,7 @@ use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Router\RouteMatch;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Session\Container;
 use Zend\Stdlib\Parameters;
@@ -47,6 +48,7 @@ class CsrfValidatingListenerTest extends \PHPUnit_Framework_TestCase
         if ($tokenInPayload) {
             $request->setPost(new Parameters([CsrfConstants::REQ_TOKEN => $tokenInPayload]));
         }
+        $mvcEvent->setRouteMatch(new RouteMatch([]));
 
         $sm->setService("Request", $request);
         $sm->setService("Response", new Response());
@@ -61,6 +63,20 @@ class CsrfValidatingListenerTest extends \PHPUnit_Framework_TestCase
 
         $listener = new CsrfValidatingListener();
         $mvcEvent = $this->buildMvcEvent(true);
+        $listener->validate($mvcEvent);
+    }
+
+
+    public function testValidate_givenLoginRoutePosted_shouldPass()
+    {
+        $listener = new CsrfValidatingListener();
+        $mvcEvent = $this->buildMvcEvent(true);
+        $routeMatch = new RouteMatch([]);
+        $routeMatch->setMatchedRouteName('login');
+        $mvcEvent->setRouteMatch($routeMatch);
+        $r = new Request();
+        $r->setMethod('POST');
+        $mvcEvent->setRequest($r);
         $listener->validate($mvcEvent);
     }
 

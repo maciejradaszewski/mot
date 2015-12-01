@@ -1,4 +1,5 @@
 <?php
+use Csrf\CsrfConstants;
 $this->headScript()->appendFile('/assets/javascripts/authentication.js');
 ?>
 <div id="signIn" class="grid-row">
@@ -19,7 +20,7 @@ $this->headScript()->appendFile('/assets/javascripts/authentication.js');
                         </label>
                         <input type="hidden" id="goto" name="goto" value="<?php echo $this->escapeHtmlAttr($this->gotoUrl) ?>"/>
                         <input class="form-control" type="password" name="IDToken2" id="IDToken2" value="" maxlength="100" autocomplete="off" tabindex="2" />
-                        <?php echo $this->csrfToken(); ?>
+                        <input type="hidden" name="<?php echo CsrfConstants::REQ_TOKEN; ?>" value="<?php echo $csrfToken; ?>">
                     </div>
                 </fieldset>
                 <nav class="module-content-navigation">
