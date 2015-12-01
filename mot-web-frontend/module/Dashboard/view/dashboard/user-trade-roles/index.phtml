@@ -9,22 +9,25 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $this->
 echo $this->partial('partial/gds/general/system-message', ['messages' => $this->layout()->flashMessenger->getErrorMessages(), 'type' => 'failure']);
 
 ?>
+<div class="grid-row">
+    <div class="column-two-thirds" id="trade-roles-table">
+    <?php if ($userTradeRolesViewModel->getTradeRoles()) : ?>
+        <?php echo $this->partial('dashboard/partials/profile/user-trade-roles.phtml', [
+                'userTradeRolesViewModel' => $userTradeRolesViewModel,
+        ]); ?>
+    <?php endif; ?>
 
-<?php if ($userTradeRolesViewModel->getTradeRoles()) : ?>
-    <?php echo $this->partial('dashboard/partials/profile/user-trade-roles.phtml', [
-            'userTradeRolesViewModel' => $userTradeRolesViewModel,
-    ]); ?>
-<?php endif; ?>
-
-<nav class="content-navigation">
-    <ul class="content-navigation__secondary">
-        <li>
-            <?php /** if javascript is enabled clicking this link triggers window.history.back() */ ?>
-            <a class="history-go-back" <?php echo $userTradeRolesViewModel->getPersonIsViewingOwnProfile() ? '' : 'onclick="window.history.back();return false;"'; ?>
-               href="<?php echo $this->url('user-home/profile/byId'); ?>">
-                <?php echo $userTradeRolesViewModel->getPersonIsViewingOwnProfile() ? 'Return to your profile' : 'Return to user profile';?>
-            </a>
-        </li>
-    </ul>
-</nav>
+    <nav class="content-navigation">
+        <ul class="content-navigation__secondary">
+            <li>
+                <?php /** if javascript is enabled clicking this link triggers window.history.back() */ ?>
+                <a class="history-go-back" <?php echo $userTradeRolesViewModel->getPersonIsViewingOwnProfile() ? null : 'onclick="window.history.back();return false;"'; ?>
+                   href="<?php echo $this->url('user-home/profile/byId'); ?>">
+                    <?php echo $userTradeRolesViewModel->getPersonIsViewingOwnProfile() ? 'Return to your profile' : 'Return to user profile';?>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    </div>
+</div>
 

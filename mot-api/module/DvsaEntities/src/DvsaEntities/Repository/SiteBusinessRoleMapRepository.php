@@ -14,10 +14,10 @@ class SiteBusinessRoleMapRepository extends EntityRepository
     {
         $qb = $this
             ->createQueryBuilder("srbm")
+            ->addSelect(['p', 'br', 'st', 'site', 's_cnt', 'cnt_detail', 'addr'])
             ->innerJoin("srbm.person", "p")
             ->innerJoin("srbm.businessRoleStatus", "st")
             ->innerJoin("srbm.siteBusinessRole", "br")
-            ->innerJoin("srbm.businessRoleStatus", "rs")
             ->innerJoin("srbm.site", "site")
             ->leftJoin("site.contacts", "s_cnt")
             ->leftJoin("s_cnt.contactDetail", "cnt_detail")

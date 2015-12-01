@@ -24,10 +24,10 @@ class OrganisationBusinessRoleMapRepository extends EntityRepository
     {
         $qb = $this
             ->createQueryBuilder("orbm")
+            ->addSelect(['p', 'st', 'br', 'org', 'o_cnt', 'cnt_detail', 'addr'])
             ->innerJoin("orbm.person", "p")
             ->innerJoin("orbm.businessRoleStatus", "st")
             ->innerJoin("orbm.organisationBusinessRole", "br")
-            ->innerJoin("orbm.businessRoleStatus", "rs")
             ->innerJoin("orbm.organisation", "org")
             ->leftJoin("org.contacts", "o_cnt")
             ->leftJoin("o_cnt.contactDetails", "cnt_detail")

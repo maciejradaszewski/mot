@@ -10,8 +10,7 @@ use Dashboard\Controller\UserTradeRolesController;
 use DvsaCommon\ApiClient\Person\PersonTradeRoles\Dto\PersonTradeRoleDto;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionAtSite;
-use DvsaCommon\Enum\OrganisationBusinessRoleCode;
-use DvsaCommon\Enum\SiteBusinessRoleCode;
+use DvsaCommon\Model\OrganisationBusinessRoleCode as OrganisationRoleCode;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use Zend\View\Helper\Url;
@@ -141,7 +140,7 @@ class UserTradeRolesViewModel
 
     public function canBeRemoved(PersonTradeRoleDto $tradeRole)
     {
-        return $this->personIsViewingOwnProfile && $tradeRole->getRoleCode() != 'AEDM';
+        return $this->personIsViewingOwnProfile && $tradeRole->getRoleCode() != OrganisationRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER;
     }
 
     public function getTradeRoleNameByCode($roleCode)
@@ -184,5 +183,9 @@ class UserTradeRolesViewModel
     public function getTradeRoles()
     {
         return $this->tradeRoles;
+    }
+
+    public function isRoleTypeSite(PersonTradeRoleDto $position){
+        return $this->businessRoleCatalog->getByCode($position->getRoleCode())->getType() == BusinessRole::SITE_TYPE;
     }
 }

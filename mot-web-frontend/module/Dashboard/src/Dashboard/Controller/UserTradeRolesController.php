@@ -9,6 +9,7 @@ use Core\Service\MotAuthorizationRefresherInterface;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
 use Core\Service\MotFrontendIdentityProviderInterface;
 use Dashboard\Authorisation\ViewTradeRolesAssertion;
+use Dashboard\Service\PersonTradeRoleSorterService;
 use Dashboard\Service\TradeRolesAssociationsService;
 use Dashboard\ViewModel\RemoveRoleViewModel;
 use Dashboard\ViewModel\UserTradeRolesViewModel;
@@ -18,6 +19,7 @@ use DvsaClient\Mapper\OrganisationPositionMapper;
 use DvsaClient\Mapper\SitePositionMapper;
 use DvsaCommon\ApiClient\Person\PersonTradeRoles\Dto\PersonTradeRoleDto;
 use DvsaCommon\ApiClient\Person\PersonTradeRoles\PersonTradeRolesApiResource;
+use DvsaCommon\Enum\RoleCode;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\Utility\ArrayUtils;
 use Zend\View\Model\ViewModel;
@@ -38,6 +40,11 @@ class UserTradeRolesController extends AbstractAuthActionController
     private $catalog;
     private $authorisationRefresher;
 
+    /**
+     * @var PersonTradeRoleSorterService
+     */
+    private $personTradeRoleSorter;
+
     public function __construct(
         MotFrontendIdentityProviderInterface $identityProvider,
         TradeRolesAssociationsService $tradeRolesAssociationsService,
@@ -47,7 +54,8 @@ class UserTradeRolesController extends AbstractAuthActionController
         SitePositionMapper $sitePositionMapper,
         PersonTradeRolesApiResource $personTradeRolesApiResource,
         EnumCatalog $catalog,
-        MotAuthorizationRefresherInterface $authorisationRefresher
+        MotAuthorizationRefresherInterface $authorisationRefresher,
+        PersonTradeRoleSorterService $personTradeRoleSorter
     )
     {
         $this->identityProvider = $identityProvider;
@@ -59,6 +67,7 @@ class UserTradeRolesController extends AbstractAuthActionController
         $this->personTradeRolesApiResource = $personTradeRolesApiResource;
         $this->catalog = $catalog;
         $this->authorisationRefresher = $authorisationRefresher;
+        $this->personTradeRoleSorter = $personTradeRoleSorter;
     }
 
     public function indexAction()
@@ -92,7 +101,9 @@ class UserTradeRolesController extends AbstractAuthActionController
         $urlHelper = $this->getServiceLocator()->get('ViewHelperManager')->get('url');
 
         $vm = new UserTradeRolesViewModel($this->authorisationService,
-            $tradeRoles, $this->catalog->businessRole(), $urlHelper
+            $this->personTradeRoleSorter->sortTradeRoles($tradeRoles),
+            $this->catalog->businessRole(),
+            $urlHelper
         );
         $vm->setPersonId((int)$this->params()->fromRoute('id'));
         $vm->setPersonIsViewingOwnProfile($personIsViewingOwnProfile);

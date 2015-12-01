@@ -2,6 +2,7 @@ package uk.gov.dvsa.ui.feature.journey;
 
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
@@ -36,7 +37,7 @@ public class VehicleReInspectionTests extends BaseTest {
     private String testSiteNumber;
     private String testSiteId;
 
-    @BeforeClass(alwaysRun = true)
+    @BeforeMethod(alwaysRun = true)
     private void setup() throws IOException {
         vehicleExaminer = userData.createVehicleExaminer("ft-Enf-", false);
         AeDetails aeDetails = aeData.createNewAe("VeReinspectionTest", 8);

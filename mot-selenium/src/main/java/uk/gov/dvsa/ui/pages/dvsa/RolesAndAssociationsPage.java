@@ -15,7 +15,7 @@ public class RolesAndAssociationsPage extends Page{
 
     private static final String PAGE_TITLE = "Roles and Associations";
 
-    @FindBy(id = "user-trade-roles-table") private WebElement rolesTableElement;
+    @FindBy(id = "trade-roles-table") private WebElement rolesTableElement;
     @FindBy(className = "history-go-back") private WebElement returnToUserProfileLink;
     @FindBy(id = "validation-message--success") private WebElement successMessage;
     @FindBy(id = "validation-message--failure") private WebElement failureMessage;
@@ -33,8 +33,8 @@ public class RolesAndAssociationsPage extends Page{
 
     public List<String> getRoleValues() {
         List<String> roleValues = new ArrayList<>();
-        roleValues.add(rolesTableElement.findElement(By.className("key-value-list__key")).getText());
-        roleValues.add(rolesTableElement.findElement(By.className("key-value-list__value")).getText());
+        roleValues.add(rolesTableElement.findElement(By.className("matched-records__value")).getText());
+        roleValues.add(rolesTableElement.findElement(By.className("entity-header__tertiary")).getText());
         return roleValues;
     }
 
