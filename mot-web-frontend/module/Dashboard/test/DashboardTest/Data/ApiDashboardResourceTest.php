@@ -5,6 +5,7 @@ namespace DashboardTest\Data;
 use Dashboard\Data\ApiDashboardResource;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Enum\OrganisationBusinessRoleCode;
+use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommon\HttpRestJson\Client;
 
 /**
@@ -94,6 +95,7 @@ class ApiDashboardResourceTest extends \PHPUnit_Framework_TestCase
                 'daysLeftToView' => isset($data['daysLeftToView']) ? $data['daysLeftToView'] : 3,
                 'overdueCount'   => isset($data['overdueCount']) ? $data['overdueCount'] : 0,
             ],
+            "overdueSpecialNotices" => array_combine(VehicleClassCode::getAll(), array_fill(0, count(VehicleClassCode::getAll()), 0)),
             'notifications'       => [],
             'sites'               => [],
             'inProgressTestNumber' => '123456789012',

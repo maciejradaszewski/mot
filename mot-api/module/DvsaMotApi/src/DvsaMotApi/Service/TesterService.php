@@ -135,53 +135,14 @@ class TesterService extends AbstractService
         return $p->isQualifiedTester();
     }
 
-    public function verifyAndApplyTesterIsActiveByTesterId($testerId)
+    public function verifyTesterAllowedToTestClass($class)
     {
-        $tester = $this->getTesterById($testerId);
+        $countOverdueSpecialNotices = $this->specialNoticeService->countOverdueSpecialNoticesForClass($class);
 
-        return $this->verifyAndApplyTesterIsActive($tester);
-    }
-
-    public function verifyAndApplyTesterIsActiveByUserId($personId)
-    {
-        $tester = $this->getTesterByUserId($personId);
-
-        return $this->verifyAndApplyTesterIsActive($tester);
-    }
-
-    /**
-     * @param Person $tester
-     *
-     * @return bool true if TESTER-ACTIVE role was changed
-     */
-    public function verifyAndApplyTesterIsActive(Person &$tester)
-    {
-        $person             = $tester;
-        $previouslyIsActive = $this->isTesterActiveByUser($person);
-        $isActive           = !$this->specialNoticeService->isUserOverdue($person);
-        if ($isActive !== $previouslyIsActive) {
-            //VM-10375 - Changed the system to not update Tester authorisations
-            //           based on previous states and SN in order to maintain
-            //           the migrated state.  
-//            /** @var AuthorisationForTestingMotRepository $repository */
-//            $repository = $this->entityManager->getRepository(AuthorisationForTestingMot::class);
-//            if ($isActive) {
-//                //MAKE them active
-//                $repository->activateSuspendedAuthorisationsForPerson($person);
-//            } else {
-//                //Make them inactive
-//                $repository->suspendQualifiedAuthorisationsForPerson($person);
-//            }
-//            $this->entityManager->persist($person);
-//            $this->entityManager->flush();
-//
-//            //Flush the roles
-//            $this->authService->flushAuthorisationCache();
-
-            return true;
+        if ($countOverdueSpecialNotices > 0) {
+            return false;
         }
-
-        return false;
+        return true;
     }
 
     public function isTesterActiveByUser(Person $person)

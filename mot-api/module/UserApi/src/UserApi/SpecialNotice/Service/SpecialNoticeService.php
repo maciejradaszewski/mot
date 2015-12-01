@@ -14,7 +14,6 @@ use DvsaEntities\Entity\AuthorisationForTestingMot;
 use DvsaEntities\Entity\SpecialNotice;
 use DvsaEntities\Entity\SpecialNoticeAudience;
 use DvsaEntities\Entity\SpecialNoticeContent;
-use DvsaMotApi\Service\RoleRefreshService;
 use UserApi\SpecialNotice\Data\SpecialNoticeAudienceMapper;
 use UserApi\SpecialNotice\Service\Validator\SpecialNoticeValidator;
 use Zend\Authentication\AuthenticationService;
@@ -371,29 +370,8 @@ class SpecialNoticeService extends AbstractService
         $specialNotice->setIsAcknowledged(true);
         $personRepository = $this->entityManager->getRepository(Person::class);
         $person = $personRepository->findOneBy(['username' => $specialNotice->getUsername()]);
-        $previouslyIsActive = $this->authService->personHasRole(
-            $person,
-            'TESTER-ACTIVE'
-        );
-        $isActive = !$this->isUserOverdue($person);
-        //TODO check the business logic of this.  Need to toggle their Auth for MOT status???
-        if ($isActive !== $previouslyIsActive) {
-            $repository = $this->entityManager->getRepository(AuthorisationForTestingMot::class);
-            if ($isActive) {
-                //MAKE them active
-                $repository->activateSuspendedAuthorisationsForPerson($person);
-            } else {
-                //Make them inactive
-                $repository->suspendQualifiedAuthorisationsForPerson($person);
-            }
-            $this->entityManager->persist($person);
-            $this->entityManager->flush();
 
-            //Flush the roles
-            $this->authService->flushAuthorisationCache();
-            return true;
-        }
-
+        $this->entityManager->persist($person);
         $this->entityManager->flush();
     }
 
@@ -453,5 +431,26 @@ class SpecialNoticeService extends AbstractService
     {
         $this->specialNoticeRepository->removeEntities($specialNoticeContent->getAudience());
         $specialNoticeContent->clearSpecialNoticeAudience();
+    }
+
+    /**
+     * @return array
+     */
+    public function getAmountOfOverdueSpecialNoticesForClasses()
+    {
+        $this->authService->assertGranted(PermissionInSystem::SPECIAL_NOTICE_READ_CURRENT);
+
+        $username = $this->motIdentityProvider->getIdentity()->getUsername();
+        return $this->specialNoticeRepository->getAmountOfOverdueSpecialNoticesForClasses($username);
+    }
+
+    /**
+     * @param $vehicleClass
+     * @return int
+     */
+    public function countOverdueSpecialNoticesForClass($vehicleClass)
+    {
+        $overdueSpecialNotices = $this->getAmountOfOverdueSpecialNoticesForClasses();
+        return $overdueSpecialNotices[$vehicleClass];
     }
 }

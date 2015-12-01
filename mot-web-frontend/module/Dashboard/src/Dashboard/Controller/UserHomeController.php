@@ -11,6 +11,7 @@ use Core\Controller\AbstractAuthActionController;
 use Dashboard\Authorisation\ViewTradeRolesAssertion;
 use Dashboard\Data\ApiDashboardResource;
 use Dashboard\Model\Dashboard;
+use DvsaMotTest\Service\OverdueSpecialNoticeAssertion;
 use Dashboard\Model\PersonalDetails;
 use Dashboard\PersonStore;
 use Dashboard\Service\TradeRolesAssociationsService;
@@ -112,6 +113,16 @@ class UserHomeController extends AbstractAuthActionController
                 'canAcknowledge' => $authenticatedData['canAcknowledge']
             ]
         );
+        
+        $canPerformTest = true;
+        if ($this->getAuthorizationService()->isTester()) {
+            $loggedInUserManager = $this->getServiceLocator()->get('LoggedInUserManager');
+            $tester = $loggedInUserManager->getTesterData();
+            $authorisationsForTestingMot = (!is_null($tester["authorisationsForTestingMot"]))? $tester["authorisationsForTestingMot"]: [];
+
+            $overdueSpecialNoticeAssertion = new OverdueSpecialNoticeAssertion($dashboard->getOverdueSpecialNotices(), $authorisationsForTestingMot);
+            $canPerformTest = $overdueSpecialNoticeAssertion->canPerformTest();
+        }
 
         $return = array_merge(
             [
@@ -120,7 +131,8 @@ class UserHomeController extends AbstractAuthActionController
             ],
             $authenticatedData,
             [
-                'specialNotice' => $specialNotice
+                'specialNotice' => $specialNotice,
+                'canPerformTest' => $canPerformTest
             ]
         );
 

@@ -11,6 +11,7 @@ use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 use NonWorkingDaysApi\NonWorkingDaysHelper;
 use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use UserApi\SpecialNotice\Service\SpecialNoticeService;
 
 /**
  * Class ClaimServiceFactoryTest

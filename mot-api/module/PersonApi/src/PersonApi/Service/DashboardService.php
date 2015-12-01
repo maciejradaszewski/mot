@@ -77,6 +77,7 @@ class DashboardService extends AbstractService
 
         $dtoAeList = $this->getAuthorisedExaminersByPerson($person);
         $specialNotice = $this->specialNoticeService->specialNoticeSummaryForUser($person->getUsername());
+        $overdueSpecialNotice = $this->specialNoticeService->getAmountOfOverdueSpecialNoticesForClasses();
         $notifications = $this->notificationService->getAllByPersonId($personId);
         $inProgressTest = $this->testerService->findInProgressTestForTester($personId);
         $inProgressDemoTestNumber = $this->testerService->findInProgressDemoTestNumberForTester($personId);
@@ -86,6 +87,7 @@ class DashboardService extends AbstractService
         $dashboard = new DashboardData(
             $dtoAeList,
             $specialNotice,
+            $overdueSpecialNotice,
             $notifications,
             $inProgressTest !== null ? $inProgressTest->getNumber() : null,
             $inProgressDemoTestNumber,

@@ -23,6 +23,7 @@ use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\NotLoggedInException;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Enum\RoleCode;
+use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
@@ -635,6 +636,7 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
                 'unreadCount'    => null,
                 'overdueCount'   => null,
             ],
+            'overdueSpecialNotices' => array_combine(VehicleClassCode::getAll(), array_fill(0, count(VehicleClassCode::getAll()), 0)),
             'notifications'          => [],
             'inProgressTestNumber'   => null,
             'inProgressTestTypeCode' => null,

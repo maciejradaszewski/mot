@@ -83,66 +83,6 @@ class TesterServiceTest extends AbstractServiceTestCase
         $this->assertEquals($expectedTesterData, $testerService->getTesterDataByUserId($personId));
     }
 
-    /**
-     * This is the data provided for the test
-     *
-     * @dataProvider testerVerifyIsActiveData
-     */
-    public function testVerifyAndApplyTesterIsActive($isTesterPreviouslyActive, $isTesterOverdue)
-    {
-        $this->markTestSkipped();
-        //given
-        $personId = 1;
-        $vts = $this->getTestVts();
-
-        $mocks = $this->getMocksForTesterService();
-        $tester = $this->getTestTester($vts, $mocks['mockAuthorisationService'], $isTesterPreviouslyActive);
-
-        $this->setupMockForSingleCall($mocks['mockRepository'], 'find', $tester, $personId);
-        $mocks['mockSpecialNoticesService']
-            ->expects($this->once())
-            ->method('isUserOverdue')
-            ->with($tester)
-            ->will($this->returnValue($isTesterOverdue));
-        $isActive = !$isTesterOverdue;
-        if ($isActive !== $isTesterPreviouslyActive) {
-            $mocks['mockEntityManagerHandler']
-                ->next('persist')
-                ->with($tester);
-            $mocks['mockEntityManagerHandler']
-                ->next('flush');
-        }
-
-        $testerService = $this->constructTesterServiceWithMocks($mocks);
-        //when then
-        $this->assertEquals(
-            $isActive !== $isTesterPreviouslyActive,
-            $testerService->verifyAndApplyTesterIsActiveByUserId($personId)
-        ); //test if function returns true upon actually making changes any role
-    }
-
-    public static function testerVerifyIsActiveData()
-    {
-        return [
-            [
-                'previouslyActive' => true,
-                'overdue' => false,
-            ],
-            [
-                'previouslyActive' => false,
-                'overdue' => false,
-            ],
-            [
-                'previouslyActive' => true,
-                'overdue' => true,
-            ],
-            [
-                'previouslyActive' => false,
-                'overdue' => true,
-            ],
-        ];
-    }
-
     public function getHydratorTesterReturnData($username)
     {
         return [

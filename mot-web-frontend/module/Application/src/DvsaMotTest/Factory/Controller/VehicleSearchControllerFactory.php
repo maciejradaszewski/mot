@@ -9,6 +9,7 @@ use DvsaMotTest\Service\VehicleSearchService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use DvsaClient\MapperFactory;
+use DvsaCommon\HttpRestJson\Client;
 
 /**
  * Create VehicleSearchController.
@@ -29,9 +30,10 @@ class VehicleSearchControllerFactory implements FactoryInterface
         $catalogService = $serviceLocator->get('CatalogService');
         $vehicleSearchModel = $serviceLocator->get(VehicleSearchResult::class);
         $mapperFactory = $serviceLocator->get(MapperFactory::class);
+        $client = $serviceLocator->get(Client::class);
 
         return new VehicleSearchController(
-            $vehicleSearchService, $paramObfuscator, $catalogService, $vehicleSearchModel, $mapperFactory
+            $vehicleSearchService, $paramObfuscator, $catalogService, $vehicleSearchModel, $mapperFactory, $client
         );
     }
 }

@@ -26,6 +26,9 @@ class Dashboard
     /** @var $specialNotice SpecialNotice */
     private $specialNotice;
 
+    /** @var $overdueSpecialNotices array */
+    private $overdueSpecialNotices;
+
     /** @var $notifications array */
     private $notifications;
 
@@ -43,6 +46,7 @@ class Dashboard
         $this->setHero(ArrayUtils::get($data, 'hero'));
         $this->setAuthorisedExaminers(AuthorisedExaminer::getList(ArrayUtils::get($data, 'authorisedExaminers')));
         $this->setSpecialNotice(new SpecialNotice(ArrayUtils::get($data, 'specialNotice')));
+        $this->setOverdueSpecialNotices(ArrayUtils::get($data, 'overdueSpecialNotices'));
         $this->setNotifications(Notification::createList(ArrayUtils::get($data, 'notifications')));
         $this->setInProgressTestNumber(ArrayUtils::get($data, 'inProgressTestNumber'));
         $this->setInProgressTestTypeCode(ArrayUtils::get($data, 'inProgressTestTypeCode'));
@@ -209,6 +213,24 @@ class Dashboard
     public function getSpecialNotice()
     {
         return $this->specialNotice;
+    }
+
+    /**
+     * @param array $overdueSpecialNotices
+     * @return Dashboard
+     */
+    public function setOverdueSpecialNotices(array $overdueSpecialNotices)
+    {
+        $this->overdueSpecialNotices = $overdueSpecialNotices;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOverdueSpecialNotices()
+    {
+        return $this->overdueSpecialNotices;
     }
 
     /**

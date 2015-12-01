@@ -8,6 +8,8 @@ use UserApi\HelpDesk\Controller\SearchPersonController;
 use UserApi\SpecialNotice\Controller\SpecialNoticeBroadcastController;
 use UserApi\SpecialNotice\Controller\SpecialNoticeContentController;
 use UserApi\SpecialNotice\Controller\SpecialNoticeController;
+use UserApi\SpecialNotice\Controller\SpecialNoticeOverdueController;
+use UserApi\Factory\SpecialNoticeOverdueControllerFactory;
 
 return [
     'controllers' => [
@@ -20,6 +22,9 @@ return [
             SearchPersonController::class            => SearchPersonController::class,
             MessageController::class                 => MessageController::class,
         ],
+        'factories' => [
+            SpecialNoticeOverdueController::class    => SpecialNoticeOverdueControllerFactory::class,
+        ]
     ],
     'router'      => [
         'routes' => [
@@ -91,6 +96,15 @@ return [
                     'defaults' => [
                         'controller' => SpecialNoticeBroadcastController::class,
                     ],
+                ],
+            ],
+            'special-notice-overdue'                 => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/special-notice-overdue',
+                    'defaults' => [
+                        'controller' => SpecialNoticeOverdueController::class
+                    ]
                 ],
             ],
             'message'    => [

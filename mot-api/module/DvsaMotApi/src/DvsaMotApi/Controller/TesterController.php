@@ -30,7 +30,6 @@ class TesterController extends AbstractDvsaRestfulController
 
     public function get($id)
     {
-        $this->testerService->verifyAndApplyTesterIsActiveByTesterId($id);
         $testerData = $this->testerService->getTesterData($id);
 
         return ApiResponse::jsonOk($testerData);
@@ -43,7 +42,6 @@ class TesterController extends AbstractDvsaRestfulController
 
         $testerData = null;
         if ($userId) {
-            $this->testerService->verifyAndApplyTesterIsActiveByUserId($userId);
             $testerData = $this->testerService->getTesterDataByUserId($userId);
         } elseif ($certificateNumber) {
             $testerData = $this->testerService->findTesterDataByCertificateNumber($certificateNumber);

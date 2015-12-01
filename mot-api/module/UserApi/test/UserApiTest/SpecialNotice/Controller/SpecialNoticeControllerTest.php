@@ -32,8 +32,6 @@ class SpecialNoticeControllerTest extends AbstractRestfulControllerTestCase
             ->with($specialNoticeId);
 
         $testerServiceMock = \DvsaCommonTest\TestUtils\XMock::of(\DvsaMotApi\Service\TesterService::class);
-        $testerServiceMock->expects($this->once())
-            ->method('verifyAndApplyTesterIsActiveByUserId');
 
         $serviceManager = Bootstrap::getServiceManager();
         $serviceManager->setAllowOverride(true);

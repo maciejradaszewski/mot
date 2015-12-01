@@ -10,6 +10,8 @@ use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Dto\Vehicle\History\VehicleHistoryDto;
 use DvsaCommon\Dto\Vehicle\VehicleDto;
+use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
+use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommon\Obfuscate\EncryptionKey;
 use DvsaCommon\Obfuscate\ParamEncoder;
 use DvsaCommon\Obfuscate\ParamEncrypter;
@@ -21,6 +23,8 @@ use DvsaMotTest\Constants\VehicleSearchSource;
 use DvsaMotTest\Controller\VehicleSearchController;
 use DvsaMotTest\Model\VehicleSearchResult;
 use DvsaMotTest\Service\VehicleSearchService;
+use Application\Service\LoggedInUserManager;
+use DvsaCommon\HttpRestJson\Client;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
 
 /**
@@ -59,13 +63,38 @@ class VehicleSearchControllerTest extends AbstractVehicleSearchControllerTest
         $mockMapperFactory = $this->getMapperFactoryMock();
         $serviceManager->setService(MapperFactory::class, $mockMapperFactory);
 
+        $authorisationsForTestingMot = [];
+        foreach (VehicleClassCode::getAll() as $code) {
+            $authorisationsForTestingMot[] = [
+                "vehicleClassCode" => $code,
+                "statusCode" => AuthorisationForTestingMotStatusCode::QUALIFIED
+            ];
+        }
+        $testerData = ["authorisationsForTestingMot" => $authorisationsForTestingMot];
+
+        $LoggedInUserManager = XMock::of(LoggedInUserManager::class);
+        $LoggedInUserManager
+            ->expects($this->any())
+            ->method("getTesterData")
+            ->willReturn($testerData);
+
+        $serviceManager->setService("LoggedInUserManager", $LoggedInUserManager);
+
+        $overdueSecurityNotices = ["data" => array_fill(0, count(VehicleClassCode::getAll()), 0)];
+        $client = XMock::of(Client::class);
+        $client
+            ->expects($this->any())
+            ->method("get")
+            ->willReturn($overdueSecurityNotices);
+
         $this->setController(
             new VehicleSearchController(
                 $this->mockVehicleSearchService,
                 $this->createParamObfuscator(),
                 new StubCatalogService(),
                 $this->createVehicleSearchResultModel(),
-                $mockMapperFactory
+                $mockMapperFactory,
+                $client
             )
         );
 

@@ -37,6 +37,7 @@ class UrlBuilder extends AbstractUrlBuilder
     const SPECIAL_NOTICE = 'person/:id/special-notice[/:snId]';
     const SPECIAL_NOTICE_CONTENT = 'special-notice-content[/:id]';
     const SPECIAL_NOTICE_CONTENT_PUBLISH = 'special-notice-content/:id/publish';
+    const SPECIAL_NOTICE_OVERDUE = "special-notice-overdue";
     const MOT_TEST = 'mot-test[/:motTestNumber]';
     const MOT_TEST_SHORT_SUMMARY = '/short-summary';
     const MOT_TEST_CERTIFICATE = 'mot-test-certificate';
@@ -131,6 +132,7 @@ class UrlBuilder extends AbstractUrlBuilder
             self::SPECIAL_NOTICE                         => '',
             self::SPECIAL_NOTICE_CONTENT                 => '',
             self::SPECIAL_NOTICE_CONTENT_PUBLISH         => '',
+            self::SPECIAL_NOTICE_OVERDUE                 => '',
             self::MOT_TEST_CERTIFICATE                   => '',
             self::MOT_CERTIFICATE_LIST                   => '',
             self::MOT_CERTIFICATE_EMAIL                  => '',
@@ -328,6 +330,11 @@ class UrlBuilder extends AbstractUrlBuilder
     public function specialNoticeContentPublish()
     {
         return $this->appendRoutesAndParams(self::SPECIAL_NOTICE_CONTENT_PUBLISH);
+    }
+
+    public function specialNoticeOverdue()
+    {
+        return $this->appendRoutesAndParams(self::SPECIAL_NOTICE_OVERDUE);
     }
 
     /**
