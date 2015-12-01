@@ -4,6 +4,7 @@ namespace Core\Catalog\BusinessRole;
 
 use Application\Service\CatalogService;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\Utility\Lazy;
 
 class BusinessRoleCatalog
 {
@@ -11,12 +12,18 @@ class BusinessRoleCatalog
 
     public function __construct(CatalogService $catalog)
     {
-        $this->roles = $this->buildRolesFromCatalog($catalog);
+        $this->roles = new Lazy(function () use ($catalog) {
+            return $this->buildRolesFromCatalog($catalog);
+        });
     }
 
+    /**
+     * @param $code
+     * @return BusinessRole
+     */
     public function getByCode($code)
     {
-        return $this->roles[$code];
+        return $this->roles->value()[$code];
     }
 
     /**

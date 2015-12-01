@@ -6,13 +6,17 @@ class GeneralSidebarStatusItem
 {
     private $key;
     private $value;
-    private $modifier;
+    private $badge;
+    private $secondaryText;
+    private $htmlId;
 
-    function __construct($key, $value, $modifier)
+    public function __construct($htmlId, $key, $value, SidebarBadge $badge, $secondaryText = null)
     {
         $this->key = $key;
         $this->value = $value;
-        $this->modifier = $modifier;
+        $this->badge = $badge;
+        $this->secondaryText = $secondaryText;
+        $this->htmlId = $htmlId;
     }
 
     public function getKey()
@@ -25,8 +29,33 @@ class GeneralSidebarStatusItem
         return $this->value;
     }
 
-    public function getModifier()
+    public function getSecondaryText()
     {
-        return $this->modifier;
+        return $this->secondaryText;
+    }
+
+    public function getHtmlId()
+    {
+        return $this->htmlId;
+    }
+
+    public function escapeKey()
+    {
+        return true;
+    }
+
+    public function escapeValue()
+    {
+        return true;
+    }
+
+    public function escapeSecondaryText()
+    {
+        return true;
+    }
+
+    public function getBadge()
+    {
+        return $this->badge;
     }
 }

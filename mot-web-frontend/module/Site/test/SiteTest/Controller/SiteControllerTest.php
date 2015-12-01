@@ -3,6 +3,7 @@
 namespace SiteTest\Controller;
 
 use Application\Service\CatalogService;
+use Core\Catalog\BusinessRole\BusinessRoleCatalog;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
@@ -84,9 +85,12 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
         $this->identityInterface = XMock::of(MotFrontendIdentityInterface::class);
         $this->mockSession = XMock::of(Container::class);
 
+        /** @var BusinessRoleCatalog|\PHPUnit_Framework_MockObject_MockObject $businessRoleCatalog */
+        $businessRoleCatalog = XMock::of(BusinessRoleCatalog::class);
+
         $this->setController(
             new SiteController(
-                $this->auth, $this->mapper, $this->identity, $this->catalog, $this->mockSession
+                $this->auth, $this->mapper, $this->identity, $this->catalog, $this->mockSession, $businessRoleCatalog
             )
         );
 

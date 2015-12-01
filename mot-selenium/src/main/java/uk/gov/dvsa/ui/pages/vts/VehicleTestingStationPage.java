@@ -12,6 +12,8 @@ import uk.gov.dvsa.ui.pages.mot.TestShortSummaryPage;
 public class VehicleTestingStationPage extends Page {
     public static final String path = "/vehicle-testing-station/%s";
     private static final String PAGE_TITLE = "Vehicle Testing Station";
+    
+    private static final String SITE_ASSESSMENT_LINK_ID = "site-assessment-action-link";
 
     @FindBy(className = "content-header__title") private WebElement pageHeader;
     @FindBy(className = "group") private WebElement breadCrumbList;
@@ -30,7 +32,7 @@ public class VehicleTestingStationPage extends Page {
     @FindBy(id = "testing-facility-optl") private WebElement onePersonTestLaneValue;
     @FindBy(id = "testing-facility-tptl") private WebElement twoPersonTestLaneValue;
     @FindBy(id = "risk-assessment-score") private WebElement riskAssesmentscore;
-    @FindBy(id = "site-assessment-action-link") private WebElement addSiteAssessmentLink;
+    @FindBy(id = SITE_ASSESSMENT_LINK_ID) private WebElement addSiteAssessmentLink;
     @FindBy(id = "risk-assessment-score") private WebElement riskAssessmentScore;
     @FindBy(id = "validation-message--success") private WebElement validationMessage;
     @FindBy(linkText = "Site assessment") private WebElement updateRiskAssessment;
@@ -60,7 +62,7 @@ public class VehicleTestingStationPage extends Page {
     }
 
     public String getTesterName(String id) {
-        By nameLocator = By.cssSelector(String.format(".key-value-list a[href*='%s']", id));
+        By nameLocator = By.cssSelector(String.format(".table-summary a[href*='%s']", id));
 
         if (driver.findElements(nameLocator).isEmpty()) {
             return "Tester not found on this page";
@@ -120,6 +122,10 @@ public class VehicleTestingStationPage extends Page {
     }
 
     public boolean isAddSiteAssessmentLinkDisplayed() {
+        if (driver.findElements(By.id(SITE_ASSESSMENT_LINK_ID)).isEmpty()) {
+            return false;
+        }
+
         return addSiteAssessmentLink.isDisplayed();
     }
 

@@ -3,13 +3,9 @@
 namespace Site\Controller;
 
 use Application\Service\CatalogService;
+use Core\Catalog\BusinessRole\BusinessRoleCatalog;
 use Core\Controller\AbstractAuthActionController;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
-use Core\ViewModel\Sidebar\GeneralSidebar;
-use Core\ViewModel\Sidebar\GeneralSidebarLink;
-use Core\ViewModel\Sidebar\GeneralSidebarLinkList;
-use Core\ViewModel\Sidebar\GeneralSidebarStatusBox;
-use Core\ViewModel\Sidebar\GeneralSidebarStatusItem;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
@@ -97,25 +93,31 @@ class SiteController extends AbstractAuthActionController
      */
     private $session;
 
+    private $businessRoleCatalog;
+
     /**
      * @param MotFrontendAuthorisationServiceInterface $auth
      * @param MapperFactory                            $mapper
      * @param MotIdentityProviderInterface             $identity
      * @param CatalogService                           $catalog
      * @param Container                                $session
+     * @param BusinessRoleCatalog                      $businessRoleCatalog
+     *
      */
     public function __construct(
         MotFrontendAuthorisationServiceInterface $auth,
         MapperFactory $mapper,
         MotIdentityProviderInterface $identity,
         CatalogService $catalog,
-        Container $session
+        Container $session,
+        BusinessRoleCatalog $businessRoleCatalog
     ) {
         $this->auth = $auth;
         $this->mapper = $mapper;
         $this->identity = $identity;
         $this->catalog = $catalog;
         $this->session = $session;
+        $this->businessRoleCatalog = $businessRoleCatalog;
     }
 
     /**
@@ -144,6 +146,7 @@ class SiteController extends AbstractAuthActionController
 
         //  --  prepare view data   --
         $equipment = $this->mapper->Equipment->fetchAllForVts($site->getId());
+
         $testInProgress = ($permissions->canViewTestsInProgress()
             ? $this->mapper->MotTestInProgress->fetchAllForVts($site->getId())
             : []
@@ -188,17 +191,9 @@ class SiteController extends AbstractAuthActionController
             $site->getContactByType(SiteContactTypeCode::BUSINESS)->getAddress()->getFullAddressString()
         );
 
-        $id = (int)$this->params()->fromRoute('id');
-
-        $siteStatus = $siteStatusMap[$site->getStatus()];
-        $canReadEvents = $this->auth->isGranted(PermissionInSystem::EVENT_READ);
-        $canViewTestLogs = $this->auth->isGrantedAtSite(PermissionAtSite::VTS_TEST_LOGS, $vtsId);
-        $isJasperAsyncEnabled = $this->isFeatureEnabled(FeatureToggle::JASPER_ASYNC);
-        $permittedToReadCertificates = $this->auth->isGrantedAtSite(PermissionAtSite::RECENT_CERTIFICATE_PRINT, $id);
-        $canSeeRecentCertificates = $permittedToReadCertificates && $isJasperAsyncEnabled;
-
-        $sidebar = new VtsOverviewSidebar($id, $siteStatus, $canReadEvents, $canSeeRecentCertificates, $canViewTestLogs);
-        $this->setSidebar($sidebar);
+        $this->setUpIndexSidebar(
+            $site->getStatus(), $testInProgress, is_object($site->getAssessment()), $ragClassifier
+        );
 
         $viewModel = new ViewModel(
             [
@@ -207,7 +202,8 @@ class SiteController extends AbstractAuthActionController
                 'escRefPage'    => $escRefPage,
                 'siteStatusMap' => $siteStatusMap,
                 'ragClassifier' => $ragClassifier,
-                'isVtsRiskEnabled' => $this->isFeatureEnabled(FeatureToggle::VTS_RISK_SCORE)
+                'isVtsRiskEnabled' => $this->isFeatureEnabled(FeatureToggle::VTS_RISK_SCORE),
+                'businessRoleCatalog' => $this->businessRoleCatalog,
             ]
         );
 
@@ -215,6 +211,26 @@ class SiteController extends AbstractAuthActionController
         $breadcrumbs = $this->prependBreadcrumbsWithAeLink($site,$breadcrumbs);
 
         return $this->prepareViewModel($viewModel, $site->getName(), 'Vehicle Testing Station',$breadcrumbs);
+    }
+
+    private function setUpIndexSidebar($siteStatusCode, $testsInProgress, $hasBeenAssessed, RiskAssessmentScoreRagClassifier $ragClassifier)
+    {
+        $vtsId = (int)$this->params()->fromRoute('id');
+
+        $activeTestsCount = count($testsInProgress);
+
+        $sidebar = new VtsOverviewSidebar(
+            $this->auth,
+            $this->getFeatureToggles(),
+            $this->catalog->getSiteStatus(),
+            $vtsId,
+            $siteStatusCode,
+            $hasBeenAssessed,
+            $ragClassifier,
+            $activeTestsCount
+        );
+
+        $this->setSidebar($sidebar);
     }
 
     public function createAction()

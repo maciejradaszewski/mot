@@ -2,6 +2,7 @@
 
 namespace Site\Factory\Controller;
 
+use Core\Catalog\EnumCatalog;
 use DvsaClient\MapperFactory;
 use Site\Controller\SiteController;
 use Zend\ServiceManager\FactoryInterface;
@@ -22,13 +23,16 @@ class SiteControllerFactory implements FactoryInterface
     {
         /* @var ServiceLocatorInterface $serviceLocator */
         $serviceLocator = $controllerManager->getServiceLocator();
+        /** @var EnumCatalog $enumCatalog */
+        $enumCatalog = $serviceLocator->get(EnumCatalog::class);
 
         return new SiteController(
             $serviceLocator->get('AuthorisationService'),
             $serviceLocator->get(MapperFactory::class),
             $serviceLocator->get('MotIdentityProvider'),
             $serviceLocator->get('CatalogService'),
-            new Container(SiteController::SESSION_CNTR_KEY)
+            new Container(SiteController::SESSION_CNTR_KEY),
+            $enumCatalog->businessRole()
         );
     }
 }

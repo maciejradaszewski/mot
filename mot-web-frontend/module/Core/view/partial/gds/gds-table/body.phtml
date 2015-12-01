@@ -1,0 +1,38 @@
+<?php
+
+use DvsaCommon\Utility\ArrayUtils;
+
+$body = $this->body ?: '';
+
+?>
+<tbody>
+    <?php if (!empty($body) && is_array($body)): ?>
+        <?php foreach ($body as $item): ?>
+            <tr>
+                <?php
+                    $id = ArrayUtils::tryGet($item, 'id');
+                    $class = 'table-summary__value ' . ArrayUtils::tryGet($item, 'class', '');
+                    $escape = (ArrayUtils::tryGet($item, 'escape') !== false);
+
+                    echo $this->partial(
+                        'partial/gds/gds-table/th',
+                        [
+                            'class' => 'table-summary__key',
+                            'value' => (isset($item['label']) ? $item['label'] : $item[0]),
+                        ]
+                    );
+
+                    echo $this->partial(
+                        'partial/gds/gds-table/td',
+                        [
+                            'id'      => $id,
+                            'class'   => $class,
+                            'value'   => (isset($item['value']) ? $item['value'] : $item[1]),
+                            'escape'  => $escape,
+                        ]
+                    );
+                ?>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</tbody>
