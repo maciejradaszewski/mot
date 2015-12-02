@@ -26,3 +26,4 @@ function config_reload {
 
 config_reload ./mot-api/config/autoload/
 config_reload ./mot-web-frontend/config/autoload/
+config_reload ./mot-testsupport/config/autoload/
