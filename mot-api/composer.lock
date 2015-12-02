@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9ebde3b9730867f6f10c3a323f2175f1",
+    "hash": "0a1e24ca8f620311aa9713c183b4b43f",
+    "content-hash": "1e098433db1b05aece3ac4df784d530f",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1221,15 +1222,15 @@
         },
         {
             "name": "dvsa/scripts",
-            "version": "v2.0.3",
+            "version": "v2.0.4",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/dvsa-scripts.git",
-                "reference": "936bd13932b4f121150ff78ee23b7438b46cb3a9"
+                "reference": "ffe9afe4d3783324a122ca40a30541a6ca898dd7"
             },
             "type": "library",
             "description": "Shared facility for developer tools, shell scripts, jenkins scripts and anything infrastructure related",
-            "time": "2015-08-05 13:44:00"
+            "time": "2015-12-02 09:21:46"
         },
         {
             "name": "ezyang/htmlpurifier",

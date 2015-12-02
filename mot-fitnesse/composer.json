@@ -4,7 +4,7 @@
     "require": {
         "zendframework/zendpdf": "2.0.2",
         "zendframework/zend-log": "2.3.*",
-        "dvsa/scripts": "dev-master"
+        "dvsa/scripts": "2.0.4"
     },
     "repositories": [
         {
