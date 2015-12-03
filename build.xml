@@ -105,6 +105,8 @@
           <arg value="dump-autoload" />
           <arg value="-o" />
       </exec>
+      <exec dir="${basedir}" executable="${basedir}/mot-static/src/scripts/reload_config_files_from_dist.sh" failonerror="false">
+      </exec>
   </target>
 
   <target name="fitnesse-composer" description="Install composer">
