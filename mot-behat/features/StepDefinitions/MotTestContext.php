@@ -16,6 +16,7 @@ use Dvsa\Mot\Behat\Support\Api\Vehicle;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use Dvsa\Mot\Behat\Support\Response;
 use DvsaCommon\Enum\MotTestTypeCode;
+use Dvsa\Mot\Behat\Support\History;
 use PHPUnit_Framework_Assert as PHPUnit;
 
 class MotTestContext implements Context, SnippetAcceptingContext
@@ -121,6 +122,11 @@ class MotTestContext implements Context, SnippetAcceptingContext
     private $MotTestTypeCode;
 
     /**
+     * @var History
+     */
+    private $history;
+
+    /**
      * @var CertificateContext
      */
     private $certificateContext;
@@ -134,7 +140,8 @@ class MotTestContext implements Context, SnippetAcceptingContext
         ReasonForRejection $reasonForRejection,
         Session $session,
         TestSupportHelper $testSupportHelper,
-        Vehicle $vehicle
+        Vehicle $vehicle,
+        History $history
     ) {
         $this->brakeTestResult = $brakeTestResult;
         $this->motTest = $motTest;
@@ -145,6 +152,7 @@ class MotTestContext implements Context, SnippetAcceptingContext
         $this->session = $session;
         $this->testSupportHelper = $testSupportHelper;
         $this->vehicle = $vehicle;
+        $this->history = $history;
     }
 
     /**
@@ -1117,7 +1125,8 @@ class MotTestContext implements Context, SnippetAcceptingContext
     {
         $response = $this->reasonForRejection->editRFR(
             $this->sessionContext->getCurrentAccessToken(),
-            $this->getMotTestNumber()
+            $this->getMotTestNumber(),
+            $this->history->getLastResponse()->getBody()['data']
         );
 
         PHPUnit::assertSame(200, $response->getStatusCode());
