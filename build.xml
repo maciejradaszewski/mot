@@ -302,6 +302,7 @@
 
   <target name="mot-behat" description="Run all mot-behat ant jobs">
       <antcall target="testsupport-composer" />
+      <antcall target="common-composer" />
       <antcall target="api-composer" />
       <antcall target="behat-composer" />
       <antcall target="reset-db" />
