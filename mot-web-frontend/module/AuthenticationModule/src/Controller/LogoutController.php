@@ -23,25 +23,11 @@ class LogoutController extends AbstractActionController
     private $logoutService;
 
     /**
-     * @var bool
-     */
-    private $logoutWithDas;
-
-    /**
-     * @var bool
-     */
-    private $dasLogoutUrl;
-
-    /**
      * @param WebLogoutService $logoutService
-     * @param bool|false       $logoutWithDas
-     * @param null             $dasLogoutUrl
      */
-    public function __construct(WebLogoutService $logoutService, $logoutWithDas = false, $dasLogoutUrl = null)
+    public function __construct(WebLogoutService $logoutService)
     {
         $this->logoutService = $logoutService;
-        $this->logoutWithDas = $logoutWithDas;
-        $this->dasLogoutUrl = $dasLogoutUrl;
     }
 
     /**
@@ -50,12 +36,6 @@ class LogoutController extends AbstractActionController
     public function logoutAction()
     {
         $this->logoutService->logout();
-
-        // When using the DAS redirect to the OpenAM logout URL
-        if (true === $this->logoutWithDas) {
-            return (null !== $this->dasLogoutUrl) ?
-                $this->redirect()->toUrl($this->dasLogoutUrl) : $this->redirect()->toRoute('user-home');
-        }
 
         return $this->redirect()->toRoute('login');
     }

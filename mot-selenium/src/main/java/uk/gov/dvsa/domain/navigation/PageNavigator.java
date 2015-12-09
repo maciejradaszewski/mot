@@ -25,11 +25,6 @@ import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticePage;
 import uk.gov.dvsa.ui.pages.userregistration.CreateAnAccountPage;
 import uk.gov.dvsa.ui.pages.vehicleinformation.VehicleInformationSearchPage;
 import uk.gov.dvsa.ui.pages.vts.*;
-import uk.gov.dvsa.ui.pages.vts.AssociateASitePage;
-import uk.gov.dvsa.ui.pages.vts.ChangeTestingFacilitiesPage;
-import uk.gov.dvsa.ui.pages.vts.SiteTestLogPage;
-import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
-import uk.gov.dvsa.ui.pages.mot.ReasonToCancelTestPage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -131,7 +126,7 @@ public class PageNavigator {
     }
 
     public VtsChangeContactDetailsPage gotoVtsChangeContactDetailsPage(User user, String siteId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(VtsChangeContactDetailsPage.PATH,siteId));
+        injectOpenAmCookieAndNavigateToPath(user, String.format(VtsChangeContactDetailsPage.PATH, siteId));
 
         return new VtsChangeContactDetailsPage(driver);
     }
@@ -300,6 +295,7 @@ public class PageNavigator {
     }
 
     public LoginPage goToLoginPage() throws IOException {
+        driver.loadBaseUrl();
         return new LoginPage(driver);
     }
 
