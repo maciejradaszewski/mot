@@ -13,8 +13,6 @@ use Dvsa\Mot\Frontend\AuthenticationModule\Service\WebLogoutService;
 
 class LogoutControllerTest  extends AbstractLightWebControllerTest
 {
-    const DAS_LOGOUT_URL = 'http://openam.mot.gov.uk:8080/secureLogin/UI/Logout?&goto=http%3A%2F%2Fmot-web-frontend.mot.gov.uk%2F';
-
     /**
      * @var WebLogoutService
      */
@@ -30,23 +28,11 @@ class LogoutControllerTest  extends AbstractLightWebControllerTest
             ->getMock();
     }
 
-    public function testWithDasDisabled()
+    public function testRedirect()
     {
-        $logoutWithDas = false;
-        $dasLogoutUrl = null;
-        $this->setController(new LogoutController($this->logoutService, $logoutWithDas, $dasLogoutUrl));
+        $this->setController(new LogoutController($this->logoutService));
 
         $this->expectRedirect('login');
-        $this->getController()->logoutAction();
-    }
-
-    public function testWithDasEnabled()
-    {
-        $logoutWithDas = true;
-        $dasLogoutUrl = self::DAS_LOGOUT_URL;
-        $this->setController(new LogoutController($this->logoutService, $logoutWithDas, $dasLogoutUrl));
-
-        $this->expectRedirectToUrl(self::DAS_LOGOUT_URL);
         $this->getController()->logoutAction();
     }
 }

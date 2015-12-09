@@ -61,12 +61,13 @@
 			<arg value="--no-interaction" />
 			<arg value="--prefer-dist" />
 			<arg value="-o" />
-		</exec>
+        </exec>
         <exec dir="${basedir}/mot-api" executable="composer" failonerror="true">
             <arg value="dump-autoload" />
             <arg value="-o" />
         </exec>
-	</target>
+        <antcall target="reload_config_files"/>
+    </target>
 
 	<target name="common-composer" description="Install composer">
 		<exec dir="${basedir}/mot-common-web-module" executable="composer" failonerror="true">
@@ -88,13 +89,12 @@
 			<arg value="--prefer-dist" />
 			<arg value="-o" />
 		</exec>
-        <exec dir="${basedir}/mot-web-frontend" executable="composer" failonerror="true">
-            <arg value="dump-autoload" />
-            <arg value="-o" />
-        </exec>
-      <exec dir="${basedir}" executable="${basedir}/mot-static/src/scripts/reload_config_files_from_dist.sh" failonerror="false">
-	</exec>
+        <antcall target="reload_config_files"/>
 	</target>
+    <target name="reload_config_files" description="Reload config files from dist">
+        <exec dir="${basedir}" executable="${basedir}/mot-static/src/scripts/reload_config_files_from_dist.sh" failonerror="false">
+        </exec>
+    </target>
 
   <target name="testsupport-composer" description="Install composer">
     <exec dir="${basedir}/mot-testsupport" executable="composer" failonerror="true">

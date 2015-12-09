@@ -4,20 +4,19 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d773f1af467afe6ae529b59de8fc1401",
-    "content-hash": "7070d5385a6db167ce1dc85d6e57d9aa",
+    "hash": "c191fa5e11280090cb36135cad774b64",
     "packages": [
         {
             "name": "dvsa/scripts",
-            "version": "v2.0.4",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/dvsa-scripts.git",
-                "reference": "ffe9afe4d3783324a122ca40a30541a6ca898dd7"
+                "reference": "c67c9c2bf9e5283a48b42e3e32b30b859747756a"
             },
             "type": "library",
             "description": "Shared facility for developer tools, shell scripts, jenkins scripts and anything infrastructure related",
-            "time": "2015-12-02 09:21:46"
+            "time": "2015-06-03 10:23:14"
         },
         {
             "name": "zendframework/zend-log",
@@ -273,7 +272,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "dvsa/scripts": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

@@ -11,6 +11,7 @@ import uk.gov.dvsa.ui.pages.userregistration.CreateAnAccountPage;
 public class LoginPage extends Page {
 
     private static final String PAGE_TITLE = "MOT testing service";
+    public static final String PATH = "/";
 
     @FindBy(partialLinkText = "create an account") private WebElement createAnAccountLink;
     @FindBy(xpath = "//*[contains(@id,'_tid1')]") private WebElement userIdInput;
@@ -32,7 +33,7 @@ public class LoginPage extends Page {
         return new CreateAnAccountPage(driver);
     }
 
-    public <T extends Page>T loginWithGivenCredentials(Class<T> clazz, String userName, String password) {
+    public <T extends Page>T login(Class<T> clazz, String userName, String password) {
         userIdInput.sendKeys(userName);
         userPasswordInput.sendKeys(password);
         submitButton.click();
