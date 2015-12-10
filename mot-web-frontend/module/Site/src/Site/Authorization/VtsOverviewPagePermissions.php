@@ -179,9 +179,7 @@ class VtsOverviewPagePermissions
 
     public function canChangeDetails()
     {
-        $assertions = new UpdateVtsAssertion($this->authorisationService);
-
-        return $assertions->isGranted($this->vts->getId());
+        return $this->isGranted(PermissionAtSite::VTS_UPDATE_BUSINESS_DETAILS);
     }
 
     public function canChangeTestingFacilities()
@@ -211,6 +209,19 @@ class VtsOverviewPagePermissions
     {
         return $this->authorisationService->isGrantedAtSite(
             PermissionAtSite::VTS_VIEW_SITE_RISK_ASSESSMENT,
+            $this->vts->getId()
+        );
+    }
+
+    public function canViewCountry()
+    {
+        return $this->isGranted(PermissionAtSite::VTS_VIEW_CONTACT_DETAILS_COUNTRY);
+    }
+
+    public function canViewVtsType()
+    {
+        return $this->authorisationService->isGrantedAtSite(
+            PermissionAtSite::VTS_DETAILS_VIEW_TYPE,
             $this->vts->getId()
         );
     }

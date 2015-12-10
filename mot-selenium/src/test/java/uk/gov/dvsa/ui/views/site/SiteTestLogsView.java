@@ -56,11 +56,12 @@ public class SiteTestLogsView extends BaseTest {
     @Test(groups = {"BVT", "Regression"}, expectedExceptions = PageInstanceNotFoundException.class)
     public void nonPermittedUserCannotViewTestLogs() throws IOException {
 
-        //Given I am a SchemeUser
-        User schemeUser = userData.createSchemeUser(false);
+        //Given I am a tester
+        Site site = siteData.createSite();
+        User tester = userData.createTester(site.getId());
 
         //When I attempt to view the VTS Test Logs
-        motUI.testLog.siteLogPage(schemeUser, String.valueOf(siteData.createSite().getId()));
+        motUI.testLog.siteLogPage(tester, String.valueOf(site.getId()));
 
         //Then I am not able to view the Test log
         assertThat(motUI.testLog.isDisplayed(), is(false));

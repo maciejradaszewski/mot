@@ -1,12 +1,15 @@
 upgradefiles=()
 mysqladmin_password=PASSWORDGOESHERE
-version=1.22.0
+version=1.23.0
 db_name=mot_v195_rel4
 
 # add files here in intended run order for release
+upgradefiles+=('2015-12-07-BL-416-content-details-site-related-permissions-STORY.sql');
+upgradefiles+=('2015-12-07-BL-414-site-permissions-related-STORY.sql');
+upgradefiles+=('2015-12-07-BL-415-site-details-granular-permissions-STORY.sql');
+upgradefiles+=('2015-12-07-BL-418-permission-for-VTS-overview-permissions-STORY.sql');
 
-
-
+# add files here in intended run order for release
 
 for sqlscript in ${upgradefiles[@]}
 do
