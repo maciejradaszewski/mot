@@ -15,7 +15,7 @@ return [
         'module_paths'      => [
             dirname(__DIR__) . '/module',
             dirname(__DIR__) . '/vendor',
-            dirname(__DIR__) . '/../mot-api/modules'
+            dirname(__DIR__) . '/../mot-api/module'
         ],
         'config_glob_paths' => [
             sprintf('%s/{,*.}{global,local}.php', $path)
