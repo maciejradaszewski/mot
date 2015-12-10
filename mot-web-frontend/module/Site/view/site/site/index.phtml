@@ -66,13 +66,17 @@ $body = [
         'id' => 'site-number',
     ],
     ['Classes', !empty($site->getTestClasses()) ? implode(',', $site->getTestClasses()) : 'None', 'id' => 'test-classes'],
-    ['Type', $viewModel->getSiteTypes()[$site->getType()], 'id' => 'site-type'],
-    [
-        'Authorised Examiner',
-        $organisationDisplay,
-        'id' => 'authorisedExaminer',
-        'escape' => !$permission->canViewAuthorisedExaminer(),
-    ],
+];
+
+if($permission->canViewVtsType()){
+    $body[] = ['Type', $viewModel->getSiteTypes()[$site->getType()], 'id' => 'site-type'];
+}
+
+$body[] = [
+    'Authorised Examiner',
+    $organisationDisplay,
+    'id' => 'authorisedExaminer',
+    'escape' => !$permission->canViewAuthorisedExaminer(),
 ];
 
 echo $this->partial(
@@ -93,19 +97,20 @@ echo $this->partial(
 </h3>
 
 <?php
+$contactDetails[] = ['Address', (new AddressFormatter())->escapedDtoToMultiLine($contact->getAddress()), 'id' => 'site-address', 'escape' => false];
+if ($permission->canViewCountry()) {
+    $contactDetails[] = ['Country', $viewModel->getCountryToggle(), 'id' => 'site-country'];
+}
+$contactDetails[] = ['Email', $contact->getPrimaryEmailAddress(), 'id' => 'email'];
+$contactDetails[] = ['Telephone', $contact->getPrimaryPhoneNumber(), 'id' => 'phone-number'];
+
 echo $this->partial(
     'partial/gds/gds-table/table',
     [
-        'body' => [
-            ['Address', (new AddressFormatter())->escapedDtoToMultiLine($contact->getAddress()), 'id' => 'site-address', 'escape' => false],
-            ['Country', $viewModel->getCountryToggle(), 'id' => 'site-country'],
-            ['Email', $contact->getPrimaryEmailAddress(), 'id' => 'email'],
-            ['Telephone', $contact->getPrimaryPhoneNumber(), 'id' => 'phone-number'],
-        ],
+        'body' => $contactDetails,
     ]
 );
 ?>
-
 
 <h3 class="summary-heading">Roles
     <?php if ($permission->canNominateRole()): ?>
