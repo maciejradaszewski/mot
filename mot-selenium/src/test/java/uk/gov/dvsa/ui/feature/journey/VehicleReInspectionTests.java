@@ -10,9 +10,12 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.MotTest;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
+import uk.gov.dvsa.domain.shared.role.DvsaRoles;
+import uk.gov.dvsa.domain.shared.role.RoleManager;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.AssessmentDetailsConfirmationPage;
 import uk.gov.dvsa.ui.pages.EventsHistoryPage;
+import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.mot.TestCompletePage;
 import uk.gov.dvsa.ui.pages.mot.TestShortSummaryPage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
@@ -116,5 +119,28 @@ public class VehicleReInspectionTests extends BaseTest {
                 vehicleReinspectionWorkflow().abortActiveTestOnVtsPage(testVehicleRegistration);
 
         assertThat(testShortSummaryPage.isTestAbortedSuccessfull(), is(true));
+    }
+
+    @Test(groups = {"BVT", "Regression"}, description = "BL-101")
+    public void userWithVeAndA01RolesCanResumeReInspection() throws IOException {
+
+        //Given I am a User with a AO1 and VE Role
+        User ao1PlusVe = userData.createAreaOfficeOne("AO1PlusVE");
+        RoleManager.addRole(ao1PlusVe.getId(), DvsaRoles.VEHICLE_EXAMINER);
+
+        //When I start a reInspection test
+        MotTest motTest = motApi.createTest(tester, Integer.valueOf(testSiteId), vehicle,
+                TestOutcome.PASSED, 123456, DateTime.now());
+
+        vehicleReinspectionWorkflow()
+                .searchFotMotTest(ao1PlusVe, REGISTRATION.getValue(),
+                        vehicle.getRegistrationNumber(), motTest.getMotTestNumber())
+                .clickStartReinspectionButton();
+
+        //And Return to the homepage
+        HomePage homePage = pageNavigator.gotoHomePage(ao1PlusVe);
+
+        //Then I should see the [Resume ReInspection] button
+        assertThat(homePage.isResumeMotTestDisplayed(), is(true));
     }
 }

@@ -1,3 +1,9 @@
+<?php
+use DvsaCommon\Auth\PermissionInSystem;
+
+$hasInProgressTest = $this->dashboardDataProvider()->hasTestInProgress();
+?>
+
 <section class="module-hero">
     <div class="container">
         <div class="row">
@@ -9,6 +15,16 @@
                 <p>DVSA administrator view</p>
             </div>
             <div class="col-md-4 hero-actions">
+                <?php if ($hasInProgressTest && $this->authorisationHelper()->isGranted(PermissionInSystem::MOT_TEST_REINSPECTION_PERFORM)) : ?>
+                    <a href="<?php echo $this->url(
+                        'mot-test',
+                        ['motTestNumber' => $this->dashboardDataProvider()->getInProgressTestNumber()]
+                    ); ?>"
+                       class="btn btn-primary btn-lg"
+                       id="action-resume-mot-test">Resume Reinspection
+                        <span class="fa fa-chevron-right"> </span>
+                    </a>
+                <?php endif; ?>
                 <h2>Advanced searches</h2>
                 <?php echo $this->partial('primaryAction/links', ['dashboard' => $dashboard]); ?>
             </div>

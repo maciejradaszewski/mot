@@ -101,4 +101,17 @@ class AccountDataService
         $stmt->bindValue(2, $role);
         $stmt->execute();
     }
+
+    public function removeRole($personId, $role)
+    {
+        $stmt = $this->entityManager->getConnection()->prepare("
+            DELETE FROM person_system_role_map
+            WHERE `person_id` = ?
+            AND `person_system_role_id` = (SELECT `id` FROM `person_system_role` WHERE `name` = ?)
+        ");
+
+        $stmt->bindValue(1, $personId);
+        $stmt->bindValue(2, $role);
+        $stmt->execute();
+    }
 }

@@ -41,6 +41,7 @@ return [
             Controller\DvlaVehicleDataController::class => Controller\DvlaVehicleDataController::class,
             Controller\TesterAuthorisationStatusController::class => Controller\TesterAuthorisationStatusController::class,
             Controller\DocumentController::class            =>  Controller\DocumentController::class,
+            Controller\PersonRoleController::class            =>  Controller\PersonRoleController::class,
         ],
     ],
     'router'       => [
@@ -406,6 +407,41 @@ return [
                                 'controller' => Controller\DocumentController::class
                             ]
                         ]
+                    ],
+                    'person'           => [
+                        'type'          => 'segment',
+                        'options'       => [
+                            'route'       => '/person/:id',
+                            'constraints' => [
+                                'id' => '[0-9]+'
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'add_role' => [
+                                'verb'    => 'put',
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/role/:role',
+                                    'defaults'    => [
+                                        'controller' => Controller\PersonRoleController::class,
+                                    ],
+                                ]
+                            ],
+                            'delete_role' => [
+                                'verb'    => 'delete',
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/roles/:role',
+                                    'constraints' => [
+                                        'role' => '[A-Z0-9-]+',
+                                    ],
+                                    'defaults'    => [
+                                        'controller' => Controller\PersonRoleController::class,
+                                    ],
+                                ]
+                            ],
+                        ],
                     ]
                 ]
             ],

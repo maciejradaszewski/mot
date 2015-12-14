@@ -11,6 +11,8 @@ import uk.gov.dvsa.domain.workflow.VehicleReInspectionWorkflow;
 import uk.gov.dvsa.framework.config.Configurator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.framework.config.webdriver.WebDriverConfigurator;
+import uk.gov.dvsa.shared.MotApi;
+import uk.gov.dvsa.shared.MotUI;
 
 import java.util.Date;
 
