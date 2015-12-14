@@ -1,4 +1,4 @@
-package uk.gov.dvsa.data;
+package uk.gov.dvsa.shared;
 
 import org.openqa.selenium.NoSuchElementException;
 import uk.gov.dvsa.domain.model.User;

@@ -46,6 +46,12 @@ public class MotClient {
         return postRequestWithoutToken(request, path);
     }
 
+    public Response addRoleToUser(String resourceUrl) {
+        return with()
+                .header("Content-Type", "application/json")
+                .put(endpointUrl + resourceUrl);
+    }
+
     public Response getFeature(String path)
     {
         return getWithoutToken(path);

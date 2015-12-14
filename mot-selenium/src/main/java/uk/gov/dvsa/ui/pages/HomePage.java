@@ -94,6 +94,11 @@ public class HomePage extends Page {
     public boolean isRetestPreviousVehicleLinkPresent() {
         return PageInteractionHelper.isElementPresent(startMotRetest);
     }
+
+    public boolean isResumeMotTestDisplayed() {
+        return PageInteractionHelper.isElementDisplayed(resumeMotTestButton);
+    }
+
     public boolean isNotificationMessageDisplayed() {
         return notificationMessage.isDisplayed();
     }
