@@ -8,7 +8,7 @@ This test will call the Session method on the API to simulate a login. Note that
 !*** Result codes:
 
  * 1 - Successful login
- * -1 - Unknown user
+ * 0 - Incorrect username
  * -3 - Wrong password
 
 *!
@@ -16,4 +16,4 @@ This test will call the Session method on the API to simulate a login. Note that
 |Username  |Password     |Info about account              |Result?|
 |tester1   |wrongpassword|Correct username, wrong password|-3     |
 |tester1   |Password1    |Correct credentials             |1      |
-|notatester|Password1    |Incorrect username              |-3     |
+|notatester|Password1    |Incorrect username              |0    |
