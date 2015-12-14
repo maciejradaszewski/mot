@@ -40,7 +40,8 @@ module.exports = function(grunt) {
         buildDateTime:      grunt.template.today("dddd, mmmm dS, yyyy, h:MM:ss TT"),
         ENV_DEVELOPMENT:    'development',
         ENV_PRODUCTION:     'production',
-        environment:        grunt.option('env') || process.env.GRUNT_ENV || 'development'
+        environment:        grunt.option('env') || process.env.GRUNT_ENV || 'development',
+        legacy:             grunt.option('legacy') || false
     });
 
     mot.initialiseGrunt(grunt);
