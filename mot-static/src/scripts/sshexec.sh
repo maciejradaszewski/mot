@@ -57,6 +57,12 @@ function mot__delete_doctrine_cache_folders() {
 
 # Generates Doctrine proxies.
 function mot__doctrine_proxy_gen() {
+    echo "Generating Doctrine Proxies..."
+    file=${workspace}/mot-api/config/autoload/doctrine.development.php
+    if [ ! -f ${file} ]; then
+        cp ${file}.dist ${file}
+    fi
+    sed -i 's/localhost/mysql/g' ${file}
     ${workspace}/mot-api/vendor/dvsa/scripts/jenkins/generate-proxies.sh
 }
 

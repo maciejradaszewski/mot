@@ -1,6 +1,6 @@
-module.exports = function(grunt) {
+module.exports = function(grunt, config) {
     grunt.config('mysql_config', {
-        user: 'root',
+        user: config.legacy === false ? 'motdbuser' : 'root',
         password: 'password',
         host: 'localhost',
         database: 'mot',

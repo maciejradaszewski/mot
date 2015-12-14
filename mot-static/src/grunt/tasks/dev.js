@@ -6,6 +6,9 @@
  */
 module.exports = function (grunt, config) {
     if (config.environment === config.ENV_DEVELOPMENT) {
+        function isTaskForAws(){
+            return config.legacy === false;
+        }
         grunt.registerTask('dev:optimise', 'Switches the environment into optimised mode',
             [
                 'sshexec:reset_database',
@@ -13,16 +16,16 @@ module.exports = function (grunt, config) {
                 'sshexec:doctrine_optimised_develop_dist',
                 'sshexec:server_mod_prod',
                 'doctrine:proxy',
-                'sshexec:apache_restart'
+                isTaskForAws() ? 'apache:restart:all' : 'sshexec:apache_restart'
             ]
         );
         grunt.registerTask('dev:std', 'Switches the environment into standard development mode',
             [
-                'sshexec:apache_restart', // reset DB requires a clean class cache, hence reset happens twice
+                isTaskForAws() ? 'apache:restart:all' : 'sshexec:apache_restart', // reset DB requires a clean class cache, hence reset happens twice
                 'sshexec:reset_database',
                 'sshexec:server_mod_dev',
                 'sshexec:doctrine_default_develop_dist',
-                'sshexec:apache_restart'
+                isTaskForAws() ? 'apache:restart:all' : 'sshexec:apache_restart'
             ]
         );
         grunt.registerTask('dev:create_dvsa_logger_db', 'Creates the DVSA Logger database',
@@ -34,14 +37,14 @@ module.exports = function (grunt, config) {
             [
                 'sshexec:enable_dvsa_logger_api',
                 'sshexec:enable_dvsa_logger_web',
-                'sshexec:apache_restart'
+                isTaskForAws() ? 'apache:restart:all' : 'sshexec:apache_restart'
             ]
         );
         grunt.registerTask('dev:dvsa_logger_disable', 'Disables the DVSA Logger',
             [
                 'sshexec:disable_dvsa_logger_api',
                 'sshexec:disable_dvsa_logger_web',
-                'sshexec:apache_restart'
+                isTaskForAws() ? 'apache:restart:all' : 'sshexec:apache_restart'
             ]
         );
 
@@ -54,7 +57,7 @@ module.exports = function (grunt, config) {
         ]);
         grunt.registerTask('switch:branch', 'Runs common tasks after switching branches',
         [
-            'sshexec:apache_restart', // reset DB requires a clean class cache, hence reset happens twice
+            isTaskForAws() ? 'apache:restart:all' : 'sshexec:apache_restart', // reset DB requires a clean class cache, hence reset happens twice
             'shell:composer',
             'shell:config_reload',
             'sshexec:mysql_proc_fix',
@@ -62,7 +65,7 @@ module.exports = function (grunt, config) {
             'sshexec:server_mod_dev',
             'sshexec:doctrine_default_develop_dist',
             'doctrine:proxy',
-            'sshexec:apache_restart'
+            isTaskForAws() ? 'apache:restart:all' : 'sshexec:apache_restart'
         ]);
     }
 };
