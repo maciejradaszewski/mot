@@ -24,6 +24,7 @@ public class OrderSummaryPage extends Page {
     
     public CardDetailsPage clickContinueToPay() {
         continueButton.click();
+        driver.switchTo().alert().accept();
         return new CardDetailsPage(driver);
     }
 }
