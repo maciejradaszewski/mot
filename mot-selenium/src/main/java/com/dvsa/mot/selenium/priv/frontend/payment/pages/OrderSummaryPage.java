@@ -27,7 +27,9 @@ public class OrderSummaryPage extends BasePage {
     }
 
     public CardDetailsPage clickPayByCardButton() {
+
         payByCardButton.click();
+        driver.switchTo().alert().accept();
         return new CardDetailsPage(driver);
     }
 
