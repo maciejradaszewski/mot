@@ -24,7 +24,11 @@ public class OrderSummaryPage extends Page {
     
     public CardDetailsPage clickContinueToPay() {
         continueButton.click();
-        driver.switchTo().alert().accept();
+        try {
+            driver.switchTo().alert().accept();
+        } catch (Exception exception) {
+            System.out.println("Alert is not present " + exception.getMessage());
+        }
         return new CardDetailsPage(driver);
     }
 }
