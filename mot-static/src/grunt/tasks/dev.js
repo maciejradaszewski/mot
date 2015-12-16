@@ -21,6 +21,7 @@ module.exports = function (grunt, config) {
         );
         grunt.registerTask('dev:std', 'Switches the environment into standard development mode',
             [
+                'sshexec:fix_db_configs',
                 isTaskForAws() ? 'apache:restart:all' : 'sshexec:apache_restart', // reset DB requires a clean class cache, hence reset happens twice
                 'sshexec:reset_database',
                 'sshexec:server_mod_dev',
@@ -60,6 +61,7 @@ module.exports = function (grunt, config) {
             isTaskForAws() ? 'apache:restart:all' : 'sshexec:apache_restart', // reset DB requires a clean class cache, hence reset happens twice
             'shell:composer',
             'shell:config_reload',
+            'sshexec:fix_db_configs',
             'sshexec:mysql_proc_fix',
             'sshexec:reset_database',
             'sshexec:server_mod_dev',

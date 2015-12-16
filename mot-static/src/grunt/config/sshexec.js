@@ -92,6 +92,29 @@ module.exports = function(grunt, config) {
                     return 'sudo service <%= service_config.httpdServiceName %> restart';
                 }
             },
+            fix_db_configs: {
+                command: function() {
+                    if(isTaskForAws()){
+                        return [
+                            //temp. fix for testsupport config - remove if https://gitlab.motdev.org.uk/webops/mot-vagrant/issues/45 is resolved
+                            'file=<%= vagrant_config.workspace %>/mot-testsupport/config/autoload/global.php',
+                            'if [ ! -f ${file} ]; then ' +
+                                'cp ${file}.dist ${file}; ' +
+                            'fi',
+                            "sed -i 's/localhost/mysql/g' ${file}",
+
+                            // temp fix for proxy generation - remove if https://gitlab.motdev.org.uk/webops/mot-vagrant/issues/45 is resolved
+                            'file=<%= vagrant_config.workspace %>/mot-api/config/autoload/doctrine.development.php',
+                            'if [ ! -f ${file} ]; then ' +
+                                'cp ${file}.dist ${file}; ' +
+                            'fi',
+                            "sed -i 's/localhost/mysql/g' ${file}",
+                        ].join(' && ');;
+                    }
+                    return "";
+                }
+            },
+
             reset_database: {
                 options: {
                     host: isTaskForAws() ? '<%= dev_config.host %>' : '<%= vagrant_config.host %>',
