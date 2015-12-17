@@ -233,7 +233,7 @@ $finder = DefaultFinder::create()
     ->in([
         'mot-api',
         'mot-common-web-module',
-        'mot-devtools',
+        'mot-web-frontend',
     ]);
 
 // CS issues to fix
