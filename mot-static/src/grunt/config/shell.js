@@ -1,20 +1,6 @@
-/**
- * Run the newman binary from the command line directly instead of going through the grunt
- * plugins, which seems to lose some of the testing capability.
- *
- * I have raised this issue with the newman team but have had no response yet.. Running Newman.execute
- * does NOT give the same impact as running the binary so we write a simple wrapper for the moment
- * to provide command line API testing of our postman collection.
- *
- *
- * @param grunt
- * @param config
- */
+
 module.exports = function(grunt, config) {
     grunt.config('shell', {
-        newman: {
-            command: "./node_modules/newman/bin/newman -c ./tests/postman/collection.json -n 1 -o ./tests/postman/results.json"
-        },
         jasper_remove: {
             command: "curl --user jasperadmin:jasperadmin -v -XDELETE http://jasper:8080/jasperserver/rest/resource/MOT >/dev/null 2>&1"
         },
