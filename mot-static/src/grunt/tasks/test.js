@@ -5,9 +5,6 @@
  * @param config
  */
 module.exports = function(grunt, config) {
-    grunt.registerTask('test', 'Test our entire system', ['test:php', 'test:api', 'test:js']);
-    grunt.registerTask('test:api', 'Test the api via postman', ['build_postman_collection', 'shell:newman']);
-    grunt.registerTask('test:js', 'Test our javascript modules and BDD classes', ['build:js', 'express:casper:stop', 'express:casper', 'casper:test']);
 
     if (config.environment === config.ENV_DEVELOPMENT) {
         grunt.registerTask('test:php', 'Test PHP via phpunit within the VM', ['test:php:api','test:php:api:db:verification','test:php:common','test:php:frontend']);
