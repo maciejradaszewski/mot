@@ -12,5 +12,11 @@ return [
          * Example feature is disabled by default. Enable it at your own risk.
          */
         'example.feature.toggle' => false,
+
+        /*
+         * Enable extend timeframe for contingency tests from 3 months to infinity (<= today).
+         * Value synchronized in API/WFE
+         */
+        'infinity.contingency' => true,
     ]
 ];

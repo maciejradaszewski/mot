@@ -37,13 +37,15 @@ class ContingencyTestValidator extends CommonContingencyTestValidator
      *
      * @param EmergencyService $emergencyService
      * @param SiteService      $siteService
+     * @param bool             $isInfinityContingencyOn
      */
-    public function __construct(EmergencyService $emergencyService, SiteService $siteService)
+    public function __construct(EmergencyService $emergencyService, SiteService $siteService, $isInfinityContingencyOn)
     {
         $this->emergencyService = $emergencyService;
         $this->siteService = $siteService;
+        $this->isInfinityContingencyOn = $isInfinityContingencyOn;
 
-        parent::__construct();
+        parent::__construct($isInfinityContingencyOn);
     }
 
     /**

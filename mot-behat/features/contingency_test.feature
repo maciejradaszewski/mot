@@ -93,7 +93,8 @@ Feature: Contingency Test
     | today               | now      | 200  |      |                                |
     | -1 day              | now      | 200  |      |                                |
     | -3 months +1 minute | now      | 200  |      |                                |
-    | -3 months -1 minute | now      | 422  | date | must be less than 3 months ago |
+#    temporary timeframe extended to infinity
+#    | -3 months -1 minute | now      | 422  | date | must be less than 3 months ago |
     | +1 days             | now      | 422  | date | must not be in the future      |
 
   Scenario: Tester Completes a Contingency - FAILED MOT Test
