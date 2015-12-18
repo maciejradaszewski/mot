@@ -57,7 +57,7 @@ class MotTestRepository extends AbstractMutableRepository
      *
      * @return MotTest
      */
-    public function findLastNormalTest($vehicleId, $contingencyDto = null)
+    public function findLastNormalTest($vehicleId, $contingencyDto = null, $vtsId = null)
     {
         $qb = $this
             ->createQueryBuilder("mt")
@@ -76,9 +76,47 @@ class MotTestRepository extends AbstractMutableRepository
                 ->setParameter('contingencyDatetime', $contingencyDto->getPerformedAt());
         }
 
+        if ($vtsId !== null) {
+            $qb
+                ->andWhere("mt.vehicleTestingStation = :vtsId")
+                ->setParameter("vtsId", $vtsId);
+        }
+
         $resultArray = $qb->getQuery()->getResult();
 
         return empty($resultArray) ? null : $resultArray[0];
+    }
+
+    /**
+     * @param int $vehicleId
+     * @param \DateTime $from
+     * @param $contingencyDto
+     * @return int
+     */
+    public function countNotCancelledTests($vehicleId, \DateTime $from, $contingencyDto = null)
+    {
+        $qb = $this
+            ->createQueryBuilder("mt")
+            ->select("count(mt.id) AS amount")
+            ->innerJoin("mt.vehicle", "v")
+            ->innerJoin("mt.motTestType", "t")
+            ->innerJoin("mt.status", "s")
+            ->where("v.id = :vehicleId")
+            ->andWhere("t.code = :motTestTypeCode")
+            ->andWhere("s.code NOT IN (:motTestStatusCode)")
+            ->andWhere("mt.completedDate > :completedDate")
+            ->setParameter("vehicleId", $vehicleId)
+            ->setParameter("motTestTypeCode", MotTestTypeCode::NORMAL_TEST)
+            ->setParameter("motTestStatusCode", [MotTestStatusCode::ABANDONED, MotTestStatusCode::ABORTED, MotTestStatusCode::ABORTED_VE])
+            ->setParameter("completedDate", $from);
+
+        if ($contingencyDto instanceof ContingencyTestDto) {
+            $qb
+                ->andWhere('mt.completedDate <= :contingencyDatetime')
+                ->setParameter('contingencyDatetime', $contingencyDto->getPerformedAt());
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
