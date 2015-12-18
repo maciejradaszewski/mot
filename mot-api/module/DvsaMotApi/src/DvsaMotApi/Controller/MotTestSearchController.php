@@ -60,6 +60,7 @@ class MotTestSearchController extends AbstractDvsaRestfulController
             $organisationId = $request->getQuery(SearchParamConst::ORGANISATION_ID);
             $testerId = $request->getQuery(SearchParamConst::SEARCH_TESTER_ID_QUERY_PARAM);
             $siteNumber = $request->getQuery(searchParamConst::SEARCH_SITE_NUMBER_QUERY_PARAM);
+            $testNumber = $request->getQuery(SearchParamConst::SEARCH_TEST_NUMBER_QUERY_PARAM);
             $searchRecent = $request->getQuery(searchParamConst::SEARCH_SEARCH_RECENT_QUERY_PARAM);
             $vrm = $request->getQuery(searchParamConst::SEARCH_VRM_QUERY_PARAM);
             $vin = $request->getQuery(searchParamConst::SEARCH_VIN_QUERY_PARAM);
@@ -75,6 +76,7 @@ class MotTestSearchController extends AbstractDvsaRestfulController
             $searchParams
                 ->setOrganisationId($organisationId)
                 ->setSiteNumber($siteNumber)
+                ->setTestNumber($testNumber)
                 ->setTesterId($testerId)
                 ->setSearchRecent($searchRecent)
                 ->setVehicleId($vehicleId)

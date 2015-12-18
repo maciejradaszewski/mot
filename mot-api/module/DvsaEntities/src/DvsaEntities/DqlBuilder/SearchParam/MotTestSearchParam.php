@@ -25,7 +25,8 @@ class MotTestSearchParam extends SearchParam
         "7" => "model",
         "8" => "testType",
         "9" => "siteNumber",
-        "10" => "testerUsername"
+        "10" => "testerUsername",
+        "11" => "testNumber",
     ];
 
     static public $dbSortByColumns = [
@@ -38,7 +39,8 @@ class MotTestSearchParam extends SearchParam
         "7" => "model.name", // model
         "8" => "testType.description", // mot_test_type
         "9" => "site.siteNumber", // site
-        "10" => "tester.username" // person
+        "10" => "tester.username", // person
+        "11" => "test.number", // test number
     ];
 
     protected $siteId = null;
@@ -55,6 +57,8 @@ class MotTestSearchParam extends SearchParam
     protected $status = null;
     /** @var string[] */
     protected $testType = null;
+    /** @var string[] */
+    protected $testNumber = null;
 
     protected $searchRecent = false;
     protected $searchFilter = null;
@@ -98,13 +102,14 @@ class MotTestSearchParam extends SearchParam
         $hasVehicleId      = (int)$this->getVehicleId() > 0;
         $hasVrm            = strlen($this->getRegistration()) > 0;
         $hasVin            = strlen($this->getVin()) > 0;
+        $hasTestNumber     = strlen($this->getTestNumber()) > 0;
 
-        if (!($hasOrganisationId | $hasTesterId | $hasSiteId | $hasSiteNumber | $hasVrm | $hasVin | $hasVehicleId)) {
+        if (!($hasOrganisationId | $hasTesterId | $hasSiteId | $hasSiteNumber | $hasVrm | $hasVin | $hasVehicleId | $hasTestNumber)) {
             throw new \UnexpectedValueException(
                 'Invalid search. One of site number, tester, vehicle, vrm or vin id must be passed.'
             );
         }
-        if ($this->checkIfMultipleInputs([$hasOrganisationId, $hasSiteId, $hasSiteNumber, $hasTesterId, $hasVehicleId, $hasVrm, $hasVin]) > 1) {
+        if ($this->checkIfMultipleInputs([$hasOrganisationId, $hasSiteId, $hasSiteNumber, $hasTesterId, $hasVehicleId, $hasVrm, $hasVin, $hasTestNumber]) > 1) {
             throw new \UnexpectedValueException(
                 'Invalid search. Only one of site number, tester, vehicle, vrm or vin id must be passed.'
             );
@@ -130,6 +135,9 @@ class MotTestSearchParam extends SearchParam
         }
         if (strlen($this->getVin()) > 0 && strlen($this->sanitizeWords($this->getVin())) == 0) {
             throw new \UnexpectedValueException('No results found for that vehicle');
+        }
+        if (strlen($this->getTestNumber()) > 0 && strlen($this->sanitizeWords($this->getTestNumber())) == 0) {
+            throw new \UnexpectedValueException('No results found for that test number');
         }
     }
 
@@ -159,6 +167,7 @@ class MotTestSearchParam extends SearchParam
             "format"          => $this->getFormat(),
             "siteId"          => $this->getSiteId(),
             "siteNumber"      => $this->getSiteNumber(),
+            "testNumber"      => $this->getTestNumber(),
             "testerId"        => $this->getTesterId(),
             "searchRecent"    => $this->getSearchRecent(),
             "registration"    => $this->getRegistration(),
@@ -467,6 +476,24 @@ class MotTestSearchParam extends SearchParam
     }
 
     /**
+     * @return \string[]
+     */
+    public function getTestNumber()
+    {
+        return $this->testNumber;
+    }
+
+    /**
+     * @param \string[] $testNumber
+     * @return MotTestSearchParam
+     */
+    public function setTestNumber($testNumber)
+    {
+        $this->testNumber = $testNumber;
+        return $this;
+    }
+
+    /**
      * @param MotTestSearchParamsDto $dto
      *
      * @return $this
@@ -490,6 +517,7 @@ class MotTestSearchParam extends SearchParam
         $this->setOrganisationId($dto->getOrganisationId());
         $this->setStatus($dto->getStatus());
         $this->setTestType($dto->getTestType());
+        $this->setTestNumber($dto->getTestNumber());
 
         $dateTs = (int) $dto->getDateFromTs();
         if ($dateTs) {
@@ -538,6 +566,7 @@ class MotTestSearchParam extends SearchParam
         $dto->setOrganisationId($this->getOrganisationId());
         $dto->setStatus($this->getStatus());
         $dto->setTestType($this->getTestType());
+        $dto->setTestNumber($this->getTestNumber());
 
         $dto->setIsSearchRecent($this->getSearchRecent());
         $dto->setFilter($this->getSearchFilter());

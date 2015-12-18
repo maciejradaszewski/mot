@@ -34,6 +34,8 @@ class MotTestSearchParamsDto extends SearchParamsDto
     private $status = [];
     /** @var string[] */
     private $testType = [];
+    /** @var string[] */
+    private $testNumber;
 
 
     /**
@@ -267,5 +269,23 @@ class MotTestSearchParamsDto extends SearchParamsDto
         );
 
         return $params;
+    }
+
+    /**
+     * @return \string[]
+     */
+    public function getTestNumber()
+    {
+        return $this->testNumber;
+    }
+
+    /**
+     * @param \string[] $testNumber
+     * @return MotTestSearchParamsDto
+     */
+    public function setTestNumber($testNumber)
+    {
+        $this->testNumber = $testNumber;
+        return $this;
     }
 }

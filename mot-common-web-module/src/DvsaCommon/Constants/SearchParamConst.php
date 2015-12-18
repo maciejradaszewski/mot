@@ -44,4 +44,5 @@ class SearchParamConst
 
     const DEF_ROWS_COUNT = 10;
     const DEF_PAGE_NR = 1;
+    const SEARCH_TEST_NUMBER_QUERY_PARAM = 'testNumber';
 }

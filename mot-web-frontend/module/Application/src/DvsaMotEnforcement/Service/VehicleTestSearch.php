@@ -158,6 +158,27 @@ class VehicleTestSearch
     }
 
     /**
+     * Searches for given MOT test number, and returns information if that test exists
+     * @param MotTestSearchParamsDto $params
+     * @return bool
+     */
+    public function checkIfMotTestExists(MotTestSearchParamsDto $params)
+    {
+        $apiResult = $this->restClient->getWithParams(
+            MotTestUrlBuilder::search()->toString(),
+            [
+                SearchParamConst::SEARCH_TEST_NUMBER_QUERY_PARAM => $params->getTestNumber(),
+                SearchParamConst::FORMAT => SearchParamConst::FORMAT_DATA_TABLES,
+            ]
+        );
+
+        /** @var \DvsaCommon\Dto\Search\SearchResultDto $result */
+        $result = DtoHydrator::jsonToDto($apiResult['data']);
+
+        return $result->getResultCount() == 1;
+    }
+
+    /**
      * Retrieve the correct search term from the query.
      * In case we search for a tester,
      * we verify that we have the correct tester Id

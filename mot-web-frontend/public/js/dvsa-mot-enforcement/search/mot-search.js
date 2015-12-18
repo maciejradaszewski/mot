@@ -79,7 +79,7 @@ $(document).ready(function () {
         wrapper: 'li'
     });
 
-    if(selectedElement == 0 || selectedElement == 3 || selectedElement == 4)
+    if(selectedElement == 0 || selectedElement == 3 || selectedElement == 4 || selectedElement == 5)
         dateRangeFields.hide();
     else
         dateValidators(true);
@@ -97,6 +97,9 @@ $(document).ready(function () {
             break;
         case 4: // VIN/Chassis
             textBox.attr('placeholder', 'eg. WV1ZZZ8ZH6H091596');
+            break;
+        case 5: // VIN/Chassis
+            textBox.attr('placeholder', 'eg. 999999999014');
             break;
     }
 
@@ -135,6 +138,13 @@ $(document).ready(function () {
                 textBox.attr('placeholder', 'eg. WV1ZZZ8ZH6H091596');
                 textBox.unbind();
                 formSearch.attr('action',  postUrls.vin);
+                dateRangeFields.hide('slow');
+                dateValidators(false);
+                break;
+            case 5: // MOT test number
+                textBox.attr('placeholder', 'eg. 999999999014');
+                textBox.unbind();
+                formSearch.attr('action',  postUrls.testNumber);
                 dateRangeFields.hide('slow');
                 dateValidators(false);
                 break;

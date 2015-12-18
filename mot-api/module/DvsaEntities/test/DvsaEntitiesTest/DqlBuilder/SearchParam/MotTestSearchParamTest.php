@@ -46,11 +46,13 @@ class MotTestSearchParamTest extends AbstractServiceTestCase
             ->setDateFrom(new \DateTime('2014-03-02'))
             ->setDateTo(new \DateTime('2013-02-0'))
             ->setRowCount(10)
+            ->setTestNumber('999999999990134')
             ->setStart(50);
 
         $this->assertInstanceOf(MotTestSearchParam::class, $params);
 
         $this->assertEquals('V1234', $params->getSiteNumber());
+        $this->assertEquals('999999999990134', $params->getTestNumber());
         $this->assertEquals(2, $params->getSortColumnId());
         $this->assertEquals('status', $params->getSortColumnName());
         $this->assertEquals('ASC', $params->getSortDirection());
@@ -81,10 +83,11 @@ class MotTestSearchParamTest extends AbstractServiceTestCase
 
         $values = $params->toArray();
 
-        $this->assertCount(16, $values);
+        $this->assertCount(17, $values);
         $this->assertEquals('V1234', $values['siteNumber']);
         $this->assertEquals(0, $values['siteId']);
         $this->assertEquals(null, $values['testerId']);
+        $this->assertEquals(null, $values['testNumber']);
         $this->assertEquals(0, $values['sortColumnId']);
         $this->assertEquals('testDate', $values['sortColumnName']);
         $this->assertEquals(SearchParamConst::SORT_DIRECTION_DESC, $values['sortDirection']);
@@ -101,9 +104,10 @@ class MotTestSearchParamTest extends AbstractServiceTestCase
 
         $values = $params->toArray();
 
-        $this->assertCount(16, $values);
+        $this->assertCount(17, $values);
         $this->assertEquals(0, $values['siteId']);
         $this->assertEquals(null, $values['siteNumber']);
+        $this->assertEquals(null, $values['testNumber']);
         $this->assertEquals('105', $values['testerId']);
         $this->assertEquals(0, $values['sortColumnId']);
         $this->assertEquals('testDate', $values['sortColumnName']);
@@ -127,7 +131,8 @@ class MotTestSearchParamTest extends AbstractServiceTestCase
             "7" => "model", // model
             "8" => "testType", // testType
             "9" => "siteNumber", // vts
-            "10" => "testerUsername" // tester -> user
+            "10" => "testerUsername", // tester -> user
+            "11" => "testNumber",
         ];
 
         foreach ($searchColumns as $id => $name) {
@@ -151,6 +156,7 @@ class MotTestSearchParamTest extends AbstractServiceTestCase
             ->setOrganisationId(999)
             ->setPersonId(8888)
             ->setSiteNr('V5555')
+            ->setTestNumber('99999999999999013')
             ->setStatus([MotTestStatusName::ABANDONED, MotTestStatusName::PASSED])
             ->setTestType([MotTestTypeCode::MOT_COMPLIANCE_SURVEY, MotTestTypeCode::NON_MOT_TEST])
             ->setVehicleId(7777)
@@ -162,6 +168,7 @@ class MotTestSearchParamTest extends AbstractServiceTestCase
 
         $this->assertEquals($dto->getOrganisationId(), $obj->getOrganisationId());
         $this->assertEquals($dto->getSiteNr(), $obj->getSiteNumber());
+        $this->assertEquals($dto->getTestNumber(), $obj->getTestNumber());
         $this->assertEquals($dto->getPersonId(), $obj->getTesterId());
         $this->assertEquals($dto->getVehicleId(), $obj->getVehicleId());
         $this->assertEquals($dto->getVehicleRegNr(), $obj->getRegistration());
@@ -180,6 +187,7 @@ class MotTestSearchParamTest extends AbstractServiceTestCase
             ->setStatus([MotTestStatusName::ABANDONED, MotTestStatusName::PASSED])
             ->setTesterId(9999)
             ->setTestType([MotTestTypeCode::MOT_COMPLIANCE_SURVEY])
+            ->setTestNumber('99999999999999013')
             ->setVehicleId(8888)
             ->setRegistration('AAA BBB2')
             ->setVin('ABCD1234')
@@ -201,6 +209,7 @@ class MotTestSearchParamTest extends AbstractServiceTestCase
         $this->assertEquals($dto->getDateToTs(), $obj->getDateTo()->getTimestamp());
         $this->assertEquals($dto->getStatus(), $obj->getStatus());
         $this->assertEquals($dto->getTestType(), $obj->getTestType());
+        $this->assertEquals($dto->getTestNumber(), $obj->getTestNumber());
     }
 
     public function testGetRepository()
