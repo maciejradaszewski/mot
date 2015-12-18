@@ -10,6 +10,8 @@ use Organisation\Controller\SlotsUsageController;
 use Organisation\Factory\Controller\SiteControllerFactory;
 use Organisation\Factory\Controller\AuthorisedExaminerControllerFactory;
 use Organisation\Factory\Controller\AuthorisedExaminerStatusControllerFactory;
+use SlotPurchase\Service\DirectDebitService;
+use SlotPurchase\Service\Factory\DirectDebitServiceFactory;
 
 return [
     UsernameValidator::class => [
@@ -248,6 +250,11 @@ return [
             AuthorisedExaminerControllerFactory::class => AuthorisedExaminerControllerFactory::class,
             AuthorisedExaminerStatusControllerFactory::class => AuthorisedExaminerStatusControllerFactory::class,
         ]
+    ],
+    'services'      => [
+        'factories' => [
+            DirectDebitService::class                   => DirectDebitServiceFactory::class,
+        ],
     ],
     'view_manager'   => [
         'template_map'        => [

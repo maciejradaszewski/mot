@@ -37,6 +37,8 @@ class MotTestLogController extends AbstractAuthActionController
     const DATETIME_FORMAT_EMERG = 'd/m/Y';
     const ERR_NO_DATA = 'There are no test logs for the selected date range. Please select a wider date range.';
 
+    const ROUTE_INDEX = 'authorised-examiner/mot-test-log';
+
     public static $CSV_COLUMNS = [
         'Site Number',
         'Client IP',

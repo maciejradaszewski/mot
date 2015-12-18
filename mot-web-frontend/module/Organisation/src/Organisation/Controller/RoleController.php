@@ -27,6 +27,7 @@ class RoleController extends AbstractAuthActionController
 
     const ROUTE_LIST_USER_ROLES = 'authorised-examiner/list-user-roles';
     const ROUTE_REMOVE_ROLE     = 'authorised-examiner/remove-role';
+    const ROUTE_ROLES           = 'authorised-examiner/roles';
 
     /**
      * @var \HTMLPurifier

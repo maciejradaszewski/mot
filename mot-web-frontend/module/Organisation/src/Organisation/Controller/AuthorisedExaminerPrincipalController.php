@@ -21,6 +21,8 @@ use DvsaCommon\Auth\PermissionAtOrganisation;
  */
 class AuthorisedExaminerPrincipalController extends AbstractAuthActionController
 {
+    const ROUTE_INDEX = 'authorised-examiner/principals';
+    const ROUTE_REMOVE_CONFIRMATION = 'authorised-examiner/remove-principal-confirmation';
     use OrganisationServicesTrait;
 
     /**

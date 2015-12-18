@@ -4,6 +4,7 @@ namespace Organisation\Factory\Controller;
 
 use DvsaClient\MapperFactory;
 use Organisation\Controller\AuthorisedExaminerController;
+use SlotPurchase\Service\DirectDebitService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Container;
@@ -27,7 +28,8 @@ class AuthorisedExaminerControllerFactory implements FactoryInterface
             $serviceLocator->get('AuthorisationService'),
             $serviceLocator->get(MapperFactory::class),
             $serviceLocator->get('MotIdentityProvider'),
-            new Container(AuthorisedExaminerController::SESSION_CNTR_KEY)
+            new Container(AuthorisedExaminerController::SESSION_CNTR_KEY),
+            $serviceLocator->get(DirectDebitService::class)
         );
     }
 }

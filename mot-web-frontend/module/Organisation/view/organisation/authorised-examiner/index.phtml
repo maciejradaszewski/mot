@@ -1,14 +1,12 @@
 <?php
 
+use Dashboard\Controller\UserHomeController;
 use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Dto\Organisation\OrganisationSiteLinkDto;
-use DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode;
-use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
-use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
-use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
-use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use DvsaCommon\Utility\AddressUtils;
+use Organisation\Controller\AuthorisedExaminerPrincipalController;
 use Organisation\Controller\RoleController;
+use Organisation\Controller\SiteController;
 
 /**
  * @var \Organisation\ViewModel\View\Index\IndexViewModel $viewModel
@@ -17,7 +15,7 @@ use Organisation\Controller\RoleController;
  * @var \DvsaCommon\Dto\Organisation\OrganisationDto $organisation
  */
 $authHelper = $this->authorisationHelper();
-
+$withdrawalDate = $this->withdrawalDate;
 $orgId = $this->organisationId;
 ?>
 
@@ -26,244 +24,149 @@ $orgId = $this->organisationId;
 $successMessages = $this->layout()->flashMessenger->getSuccessMessages();
 echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
 ?>
-<h3 class="key-value-list__header">Business details</h3>
+<h3 class="summary-heading">
+    Business details
 <?php if ($viewModel->getViewAuthorisation()->canUpdateAE()): ?>
-    <a id="change-status-and-area-office" href="<?php echo $this->escapeHtmlAttr($presenter->getChangeStatusUrl()); ?>"
-       class="key-value-list__action">Change status & area office</a>
+    <span class="summary-heading__action">
+        <a href="<?php echo $this->escapeHtmlAttr($presenter->getChangeStatusUrl()); ?>">
+            Change status & area office
+        </a>
+    </span>
 <?php endif; ?>
-<table class="key-value-list">
+</h3>
+
+<table class="table-summary">
     <tbody>
     <tr>
-        <th class="key-value-list__key">
-            AE name
+        <th class="table-summary__key">
+            Name
         </th>
-        <td id="ae-name" class="key-value-list__value">
+        <td id="ae-name" class="table-summary__value">
             <?php echo $this->escapeHtml($presenter->getName()); ?>
         </td>
     </tr>
     <tr>
-        <th class="key-value-list__key">
-            AE number
+        <th class="table-summary__key">
+            Business type
         </th>
-        <td id="ae-number" class="key-value-list__value--numeric">
-            <?php echo $this->escapeHtml($presenter->getNumber()); ?>
+
+        <td id="ae-type" class="table-summary__value">
+            <?php echo $this->escapeHtml($presenter->getCompanyType()); ?>
+            <span class="table-summary__meta" id="ae-company-number">
+                <?php echo $this->escapeHtml($presenter->getCompanyNumber()); ?>
+            </span>
         </td>
     </tr>
     <tr>
-        <th class="key-value-list__key">
-            Trading name
+        <th class="table-summary__key">
+            Trading as
         </th>
-        <td id="ae-tradename" class="key-value-list__value">
+
+        <td id="ae-tradename" class="table-summary__value">
             <?php echo $this->escapeHtml($presenter->getTradingName()); ?>
         </td>
     </tr>
     <tr>
-        <th class="key-value-list__key">
-            Business type
+        <th id="ae-number" class="table-summary__key">
+            AE ID
         </th>
-        <td id="ae-type" class="key-value-list__value">
-            <?php echo $this->escapeHtml($presenter->getCompanyType()); ?>
-        </td>
-    </tr>
-    <tr>
-        <th class="key-value-list__key">
-            Company number
-        </th>
-        <td id="ae-company-number" class="key-value-list__value--numeric">
-            <?php echo $this->escapeHtml($presenter->getCompanyNumber()); ?>
-        </td>
-    </tr>
-<?php if ($viewModel->getViewAuthorisation()->canViewAeStatus()):
 
-    $aeAuth = $organisation->getAuthorisedExaminerAuthorisation();
-    $aeAuthStatus = $aeAuth->getStatus();
-    if (AuthorisationForAuthorisedExaminerStatusCode::WITHDRAWN === $aeAuthStatus->getCode()
-        && !empty($aeAuth->getExpiryDate())) {
-        $withdrawalDate = DateTimeDisplayFormat::textDate($aeAuth->getExpiryDate());
-    } else {
-        $withdrawalDate = "N/A";
-    }
-
-?>  <tr>
-        <th class="key-value-list__key">
-            Status
-        </th>
-        <td id="ae-auth-status" class="key-value-list__value">
-            <?php echo $this->escapeHtml($aeAuthStatus->getName()); ?>
+        <td class="table-summary__value">
+            <?php echo $this->escapeHtml($presenter->getNumber()); ?>
         </td>
     </tr>
+<?php if ($viewModel->getViewAuthorisation()->canViewAeStatus()): ?>
     <tr>
-        <th class="key-value-list__key">
-            Status valid from
-        </th>
-        <td id="ae-status-valid-from" class="key-value-list__value">
-            <?php echo $this->escapeHtml(DateTimeDisplayFormat::textDate($aeAuth->getStatusChangedOn())) ?: ""; ?>
-        </td>
-    </tr>
-    <tr>
-        <th class="key-value-list__key">
+        <th class="table-summary__key">
             AE Appeal status
         </th>
-        <td id="ae-appeal-status" class="key-value-list__value">
+
+        <td id="ae-auth-status" class="table-summary__value">
             <?php echo "N/A"; /* @todo will be implemented in future */ ?>
         </td>
     </tr>
     <tr>
-        <th class="key-value-list__key">
+        <th class="table-summary__key">
             AE Withdrawal date
         </th>
-        <td id="ae-withdraw-date" class="key-value-list__value">
-            <?php echo $this->escapeHtml($withdrawalDate); ?>
+
+        <td id="ae-withdraw-date" class="table-summary__value">
+            <?php echo $withdrawalDate ? $this->escapeHtml($withdrawalDate) : 'N/A'; //@todo add to presenter ?>
         </td>
     </tr>
     <tr>
-        <th class="key-value-list__key">
-            Data disclosure indicator
-        </th>
-        <td id="ae-disclosure-indicator" class="key-value-list__value">
-            <?php echo $this->escapeHtml(
-                ($organisation->getDataMayBeDisclosed()) ? 'May be disclosed' : 'May not be disclosed'
-            ); ?>
-        </td>
-    </tr>
-    <tr>
-        <th class="key-value-list__key">
+        <th class="table-summary__key">
             DVSA area office
         </th>
-        <td id="ae-disclosure-indicator" class="key-value-list__value">
-            <?php echo $this->escapeHtml($this->aoOfficeLabel); ?>
+
+        <td id="ae-dvsa-area-office" class="table-summary__value">
+            <?php echo $this->aoOfficeLabel ? $this->escapeHtml($this->aoOfficeLabel) : 'N/A'; ?>
         </td>
     </tr>
 <?php endif; ?>
     </tbody>
 </table>
 
-<?php if ($this->eventButton): ?>
-    <div class="row">
-        <div class="vertical col-sm-4"></div>
-        <div class="vertical col-sm-4">
-            <a id="event-history" href="<?php echo EventUrlBuilderWeb::of()->eventList($orgId, 'ae'); ?>"
-                >AE events history</a>
-        </div>
-    </div>
-<?php endif; ?>
+<h3 class="summary-heading">
+    Contact details
+    <?php if($viewModel->getViewAuthorisation()->canUpdateAE()): ?>
+        <span class="summary-heading__action">
+            <a id="change-contact-details" href="<?php echo $this->escapeHtmlAttr($presenter->getChangeDetailsUrl()); ?>">
+                Change contact details
+            </a>
+        </span>
+    <?php endif; ?>
+</h3>
 
-<h3 class="key-value-list__header">Contact details</h3>
-<?php if ($viewModel->getViewAuthorisation()->canUpdateAE()): ?>
-    <a id="change-contact-details" href="<?php echo $this->escapeHtmlAttr($presenter->getChangeDetailsUrl()); ?>"
-        class="key-value-list__action">Change contact details</a>
-<?php endif; ?>
 <?php $contactDetail = $organisation->getRegisteredCompanyContactDetail(); ?>
 <?php if($contactDetail): ?>
-    <table class="key-value-list">
-        <thead>
-        <tr>
-            <th colspan="2">Registered office</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th class="key-value-list__key">
-                Address
-            </th>
-            <td id="reg_AE_address" class="key-value-list__value">
-                <?php echo ($this->escapeHtml(AddressUtils::stringify($contactDetail->getAddress())) ?: 'N/A') ?>
-            </td>
-        </tr>
-        <tr>
-            <th class="key-value-list__key">
-                Email
-            </th>
-            <td id="reg_email" class="key-value-list__value">
-                <?php $email = $contactDetail->getPrimaryEmailAddress(); ?>
-                <?php if ($email): ?>
-                    <a href="mailto:<?php echo $this->escapeHtmlAttr($email) ?>"
-                        ><?php echo $this->escapeHtml($email); ?></a>
-                <?php else: ?>
-                    N/A
-                <?php endif; ?>
-            </td>
-        </tr>
-        <tr>
-            <th class="key-value-list__key">
-                Telephone
-            </th>
-            <td id = "reg_telephone" class="key-value-list__value--numeric">
-                <?php echo $this->escapeHtml(($contactDetail->getPrimaryPhoneNumber()) ?: 'N/A'); ?>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <?php echo $this->partial('/organisation/authorised-examiner/partials/contact-detail', [
+        'title' => 'Registered office',
+        'contactDetail' => $contactDetail,
+        //@todo: add more convention, less configuration and update ids in selenium tests
+        'ids' => [
+            'address' => 'reg_AE_address',
+            'email' => 'reg_email',
+            'phone' => 'reg_telephone',
+        ],
+    ]); ?>
 <?php endif; ?>
 
-<?php //todo maybe use partial for contact details ?>
 <?php $correspondenceDetail = $organisation->getCorrespondenceContactDetail(); ?>
 <?php if($correspondenceDetail): ?>
-    <table class="key-value-list">
-        <thead>
-        <tr>
-            <th colspan="2">Correspondence</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th class="key-value-list__key">
-                Address
-            </th>
-            <td id="cor_address" class="key-value-list__value">
-                <?php echo ($this->escapeHtml(AddressUtils::stringify($correspondenceDetail->getAddress())) ?: 'N/A') ?>
-            </td>
-        </tr>
-        <tr>
-            <th class="key-value-list__key">
-                Email
-            </th>
-            <td id="cor_email" class="key-value-list__value">
-                <?php $email = $correspondenceDetail->getPrimaryEmailAddress(); ?>
-                <?php if ($email): ?>
-                    <a href="mailto:<?php echo $this->escapeHtmlAttr($email); ?>"><?php echo $this->escapeHtml($email); ?></a>
-                <?php else: ?>
-                    N/A
-                <?php endif; ?>
-            </td>
-        </tr>
-        <tr>
-            <th class="key-value-list__key">
-                Telephone
-            </th>
-            <td id="cor_phone" class="key-value-list__value--numeric">
-                <?php echo ($this->escapeHtml($correspondenceDetail->getPrimaryPhoneNumber()) ?: 'N/A'); ?>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-<?php endif; ?>
-
-<?php if ($viewModel->getViewAuthorisation()->canViewSlotsSection()): ?>
-    <?php
-    echo $this->partial(
-        '/organisation/view/partials/slots-section',
-        ['viewModel' => $viewModel, 'organisationId' => $orgId]
-    );
-    ?>
+    <?php echo $this->partial('/organisation/authorised-examiner/partials/contact-detail', [
+        'title' => 'Correspondence',
+        'contactDetail' => $correspondenceDetail,
+        //@todo: add more convention, less configuration and update ids in selenium tests
+        'ids' => [
+            'address' => 'cor_address',
+            'email' => 'cor_email',
+            'phone' => 'cor_phone'
+        ],
+    ]); ?>
 <?php endif; ?>
 
 <?php if($viewModel->getViewAuthorisation()->canViewPersonnel()) :?>
-    <h3 class="key-value-list__header">Roles</h3>
+    <h3 class="summary-heading">
+        Roles
+        <?php if($viewModel->getViewAuthorisation()->canNominate()): ?>
+            <span class="summary-heading__action">
+                <a href="<?php echo $this->url(RoleController::ROUTE_ROLES, ['id' => $orgId]); ?>" id="assign-a-role">
+                    Assign a role
+                </a>
+            </span>
+        <?php endif; ?>
+    </h3>
 
-    <?php if($viewModel->getViewAuthorisation()->canNominate()): ?>
-        <a id="assign-a-role" href="<?php echo AuthorisedExaminerUrlBuilderWeb::roles($orgId); ?>"
-           class="key-value-list__action" id="assign-role">Assign a role</a>
-    <?php endif; ?>
-
-    <table class="key-value-list">
+    <table class="table-summary">
         <tbody>
         <?php $escUsersWithRolesCount = 0;
         foreach ($viewModel->getEmployees() as $employee): ?>
+            <?php foreach ($employee->getPositions() as $pio): ?>
             <tr id="authorised-examiner-designated-manager-<?php echo $escUsersWithRolesCount++; ?>">
-                <th class="key-value-list__key">
+                <th class="table-summary__key">
                     <?php if ($viewModel->getViewAuthorisation()->canViewProfile($employee->getPerson())): ?>
-                        <a href="<?php echo PersonUrlBuilderWeb::profile($employee->getPerson()->getId()); ?>">
+                        <a href="<?php echo $this->url(UserHomeController::ROUTE_PROFILE, ['id' => $employee->getPerson()->getId()]); ?>">
                             <?php echo $this->escapeHtml($employee->getPerson()->getFullname()); ?>
                             <?php if ($viewModel->getViewAuthorisation()->canViewUsername()):
                                 echo "(" . $this->escapeHtml($employee->getPerson()->getUsername()) . ")";
@@ -276,8 +179,9 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                         endif; ?>
                     <?php endif; ?>
                 </th>
-                <td class="key-value-list__value">
-                    <?php foreach ($employee->getPositions() as $pio): ?>
+
+                <td class="table-summary__value">
+
                         <div id="role-assignment-<?php echo $this->escapeHtmlAttr($employee->getPerson()->getId() . "-" . $pio->getRole()); ?>" class="text">
                             <?php echo $this->escapeHtml($pio->getRole()); ?>
                             <?php if ($pio->isPending()): ?>
@@ -286,163 +190,147 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                             <?php endif; ?>
                         </div>
                         <?php if (($pio->isActive() || $pio->isPending()) && $viewModel->getViewAuthorisation()->canRemovePosition($pio)) : ?>
-                            <a id="remove-role" href="<?php echo $this->url(
+
+                            <a id="remove-role" class="table-summary__action" href="<?php echo $this->url(
                                 RoleController::ROUTE_REMOVE_ROLE,
                                 [
                                     'id'     => $orgId,
                                     'roleId' => $pio->getId(),
                                 ]
-                            );?>">Remove</a>
+                            );?>">Remove
+                            <span class="visuallyhidden">
+                                <?php echo $this->escapeHtml($employee->getPerson()->getFullname()) ?>
+                            </span>
+                            </a>
                         <?php endif ?>
-                    <?php endforeach ?>
+
                 </td>
+
             </tr>
-        <?php endforeach ?>
+            <?php endforeach ?>
+        <?php endforeach; ?>
         </tbody>
     </table>
-<?php endif ?>
+<?php endif; ?>
 
 <?php if ($viewModel->getViewAuthorisation()->canViewVtsList()): ?>
-    <h3 class="key-value-list__header">Vehicle testing stations</h3>
+    <h3 class="summary-heading">
+        Vehicle Testing Stations
         <?php if ($viewModel->getViewAuthorisation()->canCreateSiteAssociation()) : ?>
-            <a href="<?php echo AuthorisedExaminerUrlBuilderWeb::siteLink($orgId); ?>" >Add site associations</a>
+            <span class="summary-heading__action">
+                <a href="<?php echo $this->url(SiteController::ROUTE_LINK, ['id' =>$orgId]); ?>" >Add site associations</a>
+            </span>
         <?php endif; ?>
+    </h3>
 
-    <table class="key-value-list">
+    <table class="table-summary">
         <tbody>
         <?php
         $itemCount = 0;
         $totalItems = count($viewModel->getVehicleTestingStations());
 
         foreach ($viewModel->getVehicleTestingStations() as $vtsIdx => $vts):
-            $itemCount++;
+        $itemCount++;
 
-            $vtsId = $vts->getId();
-            $siteNumber = $vts->getSiteNumber();
+        $vtsId = $vts->getId();
+        $siteNumber = $vts->getSiteNumber();
 
-            $vtsElmId = 'vehicle-testing-station-' . ($vtsIdx + 1);
-            ?>
-            <tr id="<?php echo $this->escapeHtmlAttr($vtsElmId); ?>">
-                <th class="key-value-list__key">
-                    <?php if ($viewModel->getViewAuthorisation()->canViewVts($vtsId)): ?>
-                        <a href="<?php echo VehicleTestingStationUrlBuilderWeb::byId($vtsId); ?>">
-                            <?php echo $this->escapeHtml($vts->getName()); ?>
-                        </a>
-                    <?php else: ?>
+        $vtsElementId = 'vehicle-testing-station-' . ($vtsIdx + 1);
+        ?>
+        <tr id="<?php echo $this->escapeHtmlAttr($vtsElementId); ?>">
+            <th class="table-summary__key">
+
+                <?php if ($viewModel->getViewAuthorisation()->canViewVts($vtsId)): ?>
+                    <a href="<?php echo $this->url(SiteController::ROUTE_INDEX, ['id' => $vtsId]); ?>">
                         <?php echo $this->escapeHtml($vts->getName()); ?>
-                    <?php endif; ?>
+                    </a>
+                <?php else: ?>
+                    <?php echo $this->escapeHtml($vts->getName()); ?>
+                <?php endif; ?>
 
-                    <?php if ('inactive' === $vts->getStatus()) : ?>
-                        <span id="<?php echo $this->escapeHtmlAttr($vtsElmId . '-status-label'); ?>"
-                              class="label label-danger">Inactive</span>
-                    <?php endif; ?>
-
-                    <?php if ($viewModel->shouldViewContactDetailsForVts() && $vts->getContacts()) : ?>
-                        <span class="key-value-list__meta">
+                <?php if ($viewModel->shouldViewContactDetailsForVts() && $vts->getContacts()) : ?>
+                    <span class="table-summary__meta">
                             <?php echo $this->escapeHtml(
                                 AddressUtils::stringify($vts->getContacts()[0]->getAddress())
                             ); ?>
                         </span>
-                    <?php endif; ?>
-                </th>
+                <?php endif; ?>
+            </th>
 
-                <td class="key-value-list__value">
-                    <?php echo $this->escapeHtml($vts->getSiteNumber()); ?>
-                    <?php if ($viewModel->getViewAuthorisation()->canRemoveSiteAssociation()) : ?>
-                        <?php
-                        $linkWithAe = $vts->getLinkWithAe();
-                        if ($linkWithAe instanceof OrganisationSiteLinkDto) : ?>
-                            <span class="key-value-list__meta">
-                                This association is approved -
-                                <strong>
-                                    <?php
-                                    echo $this->escapeHtml(
-                                        DateTimeDisplayFormat::textDate($linkWithAe->getStatusChangedOn())
-                                    );
-                                    ?>
-                                    -
-                                    <a href="<?php
-                                        echo AuthorisedExaminerUrlBuilderWeb::siteUnlink($orgId, $linkWithAe->getId());
-                                    ?>">Remove</a>
-                                </strong>
-                            </span>
-                        <?php endif; ?>
+            <td class="table-summary__value">
+                <?php echo $this->escapeHtml($vts->getSiteNumber()); ?>
+                <?php if ($viewModel->getViewAuthorisation()->canRemoveSiteAssociation()) : ?>
+                    <?php
+                    $linkWithAe = $vts->getLinkWithAe();
+                    if ($linkWithAe instanceof OrganisationSiteLinkDto) : ?>
+                        <span class="key-value-list__meta">
+                            <a href="<?php echo $this->url(SiteController::ROUTE_UNLINK, [
+                                'id' => $orgId,
+                                'linkId' => $linkWithAe->getId()
+                            ]);
+                            ?>" class="table-summary__action">
+                                Remove
+                                <span class="visuallyhidden"> <?php echo $this->escapeHtml($vts->getName()); ?></span>
+                            </a>
+                        </span>
                     <?php endif; ?>
-                </td>
-            </tr>
-        <?php endforeach ?>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <?php endforeach; ?>
         </tbody>
     </table>
 <?php endif; ?>
 
 <?php if ($viewModel->canViewAeSection()): ?>
-    <h3 class="key-value-list__header">AEP</h3>
-
+    <h3 class="summary-heading">
+        Authorised Examiner Principles
         <?php if ($viewModel->getViewAuthorisation()->canCreateAuthorisedExaminerPrincipal()): ?>
-            <a id="add-aep" href="<?php echo AuthorisedExaminerUrlBuilderWeb::principals($orgId); ?>"
-               class="key-value-list__action">Add an AEP</a>
+            <span class="summary-heading__action">
+                <a id="add-aep" href="<?php echo $this->url(AuthorisedExaminerPrincipalController::ROUTE_INDEX, ['id' => $orgId]); ?>">
+                    Add an AEP
+                </a>
+            </span>
         <?php endif; ?>
+    </h3>
 
+    <table class="table-summary">
+        <tbody>
             <?php foreach ($viewModel->getPrincipals() as $principalIdx => $principal) :
                 $escPrincipalKey = (int)$principalIdx + 1;
-                ?>
-                <table id="<?php echo 'authorised-examiner-principal-' . $escPrincipalKey; ?>">
-                    <thead>
-                        <tr>
-                            <th colspan="2">
-                                <?php echo $this->escapeHtml($principal->getFullName()); ?>
-                                <a href="#authorised-examiner-principals"
-                                   id="toggle-aep-address-<?php echo $escPrincipalKey; ?>"
-                                   data-toggle="collapse"
-                                   data-target="#authorised-examiner-principal-<?php echo $escPrincipalKey; ?>-addresses"
-                                   class="address-toggle" style="display:none">more <i class="fa fa-caret-down"></i></a>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $contact = $viewModel->getPrincipalPersonalContact($principalIdx);
-                        if (isset($contact)) :
-                        ?>
-                        <tr>
-                            <th class="key-value-list__key">
-                                Address
-                            </th>
-                            <td class="key-value-list__value">
-                                <?php echo $this->escapeHtml(AddressUtils::stringify($contact->getAddress())); ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="key-value-list__key">
-                                E-mail
-                            </th>
-                            <td id="value_AE_email" class="key-value-list__value">
-                                <?php echo $this->escapeHtml($contact->getPrimaryEmailAddress()); ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="key-value-list__key">
-                                Telephone
-                            </th>
-                            <td class="key-value-list__value">
-                                <?php echo $this->escapeHtml($contact->getPrimaryPhoneNumber()); ?>
-                            </td>
-                        </tr>
-                        <?php endif; ?>
-                    <?php if ($viewModel->getViewAuthorisation()->canRemoveAuthorisedExaminerPrincipal()):
-                        $escUrlRemove = AuthorisedExaminerUrlBuilderWeb::principalRemove($orgId, $principal->getId());
-                        ?>
-                        <tr>
-                            <td colspan="2">
-                                <a id="remove-aep" href="<?php echo $escUrlRemove; ?>">Remove</a>
-                            </td>
-                        </tr>
-                    <?php endif; ?>
-                    </tbody>
-                </table>
-                <br/>
-            <?php endforeach; ?>
+                $contact = $viewModel->getPrincipalPersonalContact($principalIdx);
+            ?>
+                <tr id="<?php echo 'authorised-examiner-principal-' . $escPrincipalKey; ?>">
+                    <th class="table-summary__key">
+                        <?php echo $this->escapeHtml($principal->getFullName()); ?>
 
+                        <?php if (isset($contact)): ?>
+                            <span class="table-summary__meta">
+                                <?php echo $this->escapeHtml(AddressUtils::stringify($contact->getAddress())); ?>
+                            </span>
+                        <?php endif; ?>
+                    </th>
+
+                    <td class="table-summary__value">
+                        <?php if (isset($contact)): ?>
+                            <?php echo $this->escapeHtml($contact->getPrimaryEmailAddress()); ?>
+                            <br>
+                            <?php echo $this->escapeHtml($contact->getPrimaryPhoneNumber()); ?>
+                            <br>
+                            <?php if($viewModel->getViewAuthorisation()->canRemoveAuthorisedExaminerPrincipal()):
+                                $escUrlRemove = $this->url(AuthorisedExaminerPrincipalController::ROUTE_REMOVE_CONFIRMATION, [
+                                    'id' => $orgId,
+                                    'principalId' => $principal->getId()
+                                ]); ?>
+                                <br>
+                                <a id="remove-aep" href="<?php echo $escUrlRemove; ?>">Remove</a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 <?php endif; ?>
 
 <?php echo $this->partial('/organisation/authorised-examiner/partials/index-buttons', ['urlBack' => $this->urlBack]); ?>

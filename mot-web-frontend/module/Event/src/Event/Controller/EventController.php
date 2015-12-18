@@ -37,6 +37,10 @@ class EventController extends AbstractAuthActionController
     const DATE_BEFORE = '01-01-1900';
     const DATE_FORMAT = 'd-m-Y';
 
+    const ROUTE_LIST = 'event-list';
+
+    const TYPE_AE = 'ae';
+
     /**
      * This is the common action who allow us to get the information needed
      * and build the view.

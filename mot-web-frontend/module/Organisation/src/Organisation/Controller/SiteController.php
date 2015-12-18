@@ -29,6 +29,10 @@ class SiteController extends AbstractDvsaMotTestController
 
     const ERR_ORG_SITE_LINK_NOT_FOUND = "Association between Authorised Examiner and Site not found";
 
+    const ROUTE_INDEX = 'vehicle-testing-station';
+    const ROUTE_LINK = 'authorised-examiner/site/link';
+    const ROUTE_UNLINK = 'authorised-examiner/site/unlink';
+
     /**
      * @var MotFrontendAuthorisationServiceInterface
      */

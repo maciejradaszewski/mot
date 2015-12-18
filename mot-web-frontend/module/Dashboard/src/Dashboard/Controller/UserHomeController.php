@@ -35,6 +35,7 @@ use UserAdmin\Service\UserAdminSessionManager;
 class UserHomeController extends AbstractAuthActionController
 {
     const ROUTE = 'user-home';
+    const ROUTE_PROFILE = 'user-home/profile/byId';
 
     const PAGE_TITLE    = 'Reset PIN';
     const PAGE_SUBTITLE = 'MOT Testing Service';
