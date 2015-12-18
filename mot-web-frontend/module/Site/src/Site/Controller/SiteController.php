@@ -72,6 +72,8 @@ class SiteController extends AbstractAuthActionController
     const ERR_MSG_INVALID_SITE_ID_OR_NR = 'No Id or Site Number provided';
     const MSG_ADD_RISK_ASSESSMENT_SUCCESS = 'The site assessment has been updated';
 
+    const ROUTE_INDEX = 'vehicle-testing-station';
+
     /**
      * @var MotFrontendAuthorisationServiceInterface
      */

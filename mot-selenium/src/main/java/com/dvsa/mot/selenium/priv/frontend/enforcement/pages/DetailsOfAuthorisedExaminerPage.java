@@ -11,7 +11,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class DetailsOfAuthorisedExaminerPage extends BasePage {
 
-    private static String PAGE_TITLE = "FULL DETAILS OF AUTHORISED EXAMINER";
+    private static String PAGE_TITLE = "AUTHORISED EXAMINER";
 
     @FindBy(id = "event-history")
     private WebElement aeEventsHistoryLink;

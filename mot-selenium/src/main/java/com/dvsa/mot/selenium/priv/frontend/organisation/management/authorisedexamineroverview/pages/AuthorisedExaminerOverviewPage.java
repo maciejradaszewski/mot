@@ -76,7 +76,7 @@ public class AuthorisedExaminerOverviewPage extends BasePage {
 
     @FindBy(id = "remove-role") private WebElement removeRoleLink;
 
-    @FindBy(id = "slot-count") private WebElement numberOfSlots;
+    @FindBy(css = "#slot-count span") private WebElement numberOfSlots;
 
     @FindBy(id = "authorisedExaminerHeader") private WebElement headerOfAE;
 

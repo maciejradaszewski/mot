@@ -129,10 +129,11 @@ public class UpdateContactDetailsTests extends BaseTest {
                 equalTo(businessDetails.phoneNo));
 
         //verify changed correspondence address
+        String expectedAddress = business.busAddress.getLine1() + ", " + business.busAddress.getLine2()
+                + ", " + business.busAddress.getLine3() + ", " + business.busAddress
+                .getTown() + ", " + business.busAddress.getPostcode();
         assertThat("correct address", authorisedExaminerOverviewPage.getCorrespondenceAddress().
-                contains(business.busAddress.getLine1() + ", " + business.busAddress.getLine2()
-                        + ", " + business.busAddress.getLine3() + ", " + business.busAddress
-                        .getTown() + ", " + business.busAddress.getPostcode()));
+                contains(expectedAddress));
 
         //return to home page
         authorisedExaminerOverviewPage.returnHomeButton().openVtsDetails();
@@ -202,7 +203,7 @@ public class UpdateContactDetailsTests extends BaseTest {
 
         //Verify page title for DVSA user AE page
         assertThat(" Verify AE Details ", authorisedExaminerFullDetailsPage.getAeNameDetails(),
-                equalTo("Full Details of Authorised Examiner\n" + aeDetails.getAeName()));
+                equalTo("Authorised Examiner\n" + aeDetails.getAeName()));
 
         //verify AE Business details elements
         authorisedExaminerFullDetailsPage.verifyAePageElementsDVSAUsers();

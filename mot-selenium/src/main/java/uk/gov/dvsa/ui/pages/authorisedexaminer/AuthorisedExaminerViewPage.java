@@ -76,12 +76,8 @@ public abstract class AuthorisedExaminerViewPage extends Page {
         return aeTradeName.getText();
     }
 
-    public String getAeType() {
+    public String getBusinessTypeWithCompanyNumber() {
         return aeType.getText();
-    }
-
-    public String getAeCompanyNumber() {
-        return aeCompanyNumber.getText();
     }
 
     public String getAeRegAddress() {
@@ -111,8 +107,8 @@ public abstract class AuthorisedExaminerViewPage extends Page {
     private boolean verifyNewAeBusinessDetails(AeDetails aeDetails) {
         assertThat(getAeName(), equalTo(aeDetails.getAeBusinessDetails().getBusinessName()));
         assertThat(getAeTradeName(), equalTo(aeDetails.getAeBusinessDetails().getTradingName()));
-        assertThat(getAeType(), equalTo(aeDetails.getAeBusinessDetails().getBusinessType()));
-        assertThat(getAeCompanyNumber(), equalTo(aeDetails.getAeBusinessDetails().getCompanyNumber()));
+        assertThat(getBusinessTypeWithCompanyNumber(), equalTo(aeDetails.getAeBusinessDetails().getBusinessType()
+                + "\n" + aeDetails.getAeBusinessDetails().getCompanyNumber()));
         return true;
     }
 

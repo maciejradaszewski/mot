@@ -238,4 +238,25 @@ class AuthorisedExaminerViewAuthorisation
             }
         );
     }
+
+    public function canViewEventHistory()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::LIST_EVENT_HISTORY);
+    }
+
+    public function canSetupDirectDebit()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::SLOTS_PAYMENT_DIRECT_DEBIT,
+            $this->authorisedExaminerId
+        );
+    }
+
+    public function canManageDirectDebit()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::SLOTS_MANAGE_DIRECT_DEBIT,
+            $this->authorisedExaminerId
+        );
+    }
 }

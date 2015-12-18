@@ -14,7 +14,7 @@ import org.openqa.selenium.support.FindBy;
  */
 public class AuthorisedExaminerFullDetailsPage extends BasePage {
 
-    private static final String PAGE_TITLE = "FULL DETAILS OF AUTHORISED EXAMINER";
+    private static final String PAGE_TITLE = "AUTHORISED EXAMINER";
 
     @FindBy(xpath = ".//h1") private WebElement aeDetails;
 
@@ -24,13 +24,11 @@ public class AuthorisedExaminerFullDetailsPage extends BasePage {
 
     @FindBy(id = "ae-number") private WebElement veAeNumber;
 
-    @FindBy(id = "ae-status-valid-from") private WebElement veAeStatusValidFrom;
+    @FindBy(css = "#ae-status .text-secondary") private WebElement veAeStatusValidFrom;
 
     @FindBy(id = "ae-tradename") private WebElement veAeTradeName;
 
     @FindBy(id = "ae-type") private WebElement veAeType;
-
-    @FindBy(id = "ae-disclosure-indicator") private WebElement veAeDisclosureIndicator;
 
     @FindBy(id = "value_AE_name") private WebElement aeName;
 
@@ -67,8 +65,7 @@ public class AuthorisedExaminerFullDetailsPage extends BasePage {
 
     public boolean verifyAePageElementsDVSAUsers() {
         WebElement[] elements =
-                {veAeName, veAeStatus, veAeNumber, veAeStatusValidFrom, veAeTradeName, veAeType,
-                        veAeDisclosureIndicator};
+                {veAeName, veAeStatus, veAeNumber, veAeStatusValidFrom, veAeTradeName, veAeType};
         return ElementDisplayUtils.elementsDisplayed(elements);
     }
 

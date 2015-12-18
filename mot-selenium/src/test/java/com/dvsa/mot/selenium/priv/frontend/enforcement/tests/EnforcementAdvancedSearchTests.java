@@ -197,7 +197,7 @@ public class EnforcementAdvancedSearchTests extends BaseTest {
         AuthorisedExaminerFullDetailsPage authorisedExaminerFullDetailsPage =
                 new AuthorisedExaminerFullDetailsPage(driver);
         Assert.assertEquals(authorisedExaminerFullDetailsPage.getAeNameDetails(),
-                "Full Details of Authorised Examiner\n" + aeDetails.getAeName(),
+                "Authorised Examiner\n" + aeDetails.getAeName(),
                 " Verify AE Details ");
     }
 

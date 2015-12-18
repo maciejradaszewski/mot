@@ -26,9 +26,9 @@ public enum PageTitles {
             + "LIST OF AE EVENTS FOUND FOR ORGANISATION \"AE1438 - CITY FIXES LTD"),
     EVENT_FULL_DETAILS_PAGE("Full Details of AE Event selected for"),
     ORGANISATION_DETAILS_PAGE("AE-1438 - City and Guilds"),
-    EVENT_FULL_DETAILS_OF_AE("Full Details of Authorised Examiner"),
+    EVENT_FULL_DETAILS_OF_AE("Authorised Examiner"),
     EVENT_SEARCH_AE("Search for AE"),
-    AUTHORISED_EXAMINER_FULL_DETAILS("Full Details of Authorised Examiner\n"
+    AUTHORISED_EXAMINER_FULL_DETAILS("Authorised Examiner\n"
             + " City Fixes Ltd"),
     UPDATE_PROFILE_DETAILS_TITLE("CHANGE DETAILS"),
     PERSONAL_PROFILE_TITLE("YOUR PROFILE"),

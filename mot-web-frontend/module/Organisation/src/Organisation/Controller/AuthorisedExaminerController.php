@@ -7,7 +7,6 @@ use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionInSystem;
-use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommon\Enum\CompanyTypeName;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
@@ -23,10 +22,15 @@ use Organisation\Form\AeContactDetailsForm;
 use Organisation\Form\AeCreateForm;
 use Organisation\Presenter\AuthorisedExaminerPresenter;
 use Organisation\ViewModel\AuthorisedExaminer\AeFormViewModel;
+use Organisation\ViewModel\Sidebar\AeOverviewSidebar;
 use Organisation\ViewModel\View\Index\IndexViewModel;
+use SlotPurchase\Service\DirectDebitService;
 use Zend\Http\Request;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
+use ZendPdf\Action\Trans;
+
+use Zend\Mvc\Controller\Plugin\Url;
 
 /**
  * Class AuthorisedExaminerController
@@ -39,7 +43,6 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
     const SESSION_KEY = 'data';
 
     const AE_SUBTITLE = 'AE management';
-    const INDEX_TITLE_FULL = 'Full Details of Authorised Examiner';
     const INDEX_TITLE = 'Authorised Examiner';
 
     const CREATE_TITLE = 'Create Authorised Examiner';
@@ -70,23 +73,30 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
      * @var Container
      */
     private $session;
+    /**
+     * @var DirectDebitService
+     */
+    private $directDebitService;
 
     /**
      * @param MotFrontendAuthorisationServiceInterface $auth
-     * @param MapperFactory                            $mapper
-     * @param MotIdentityProviderInterface             $identity
-     * @param Container                                $session
+     * @param MapperFactory $mapper
+     * @param MotIdentityProviderInterface $identity
+     * @param Container $session
+     * @param DirectDebitService $directDebitService
      */
     public function __construct(
         MotFrontendAuthorisationServiceInterface $auth,
         MapperFactory $mapper,
         MotIdentityProviderInterface $identity,
-        Container $session
+        Container $session,
+        $directDebitService
     ) {
         $this->auth = $auth;
         $this->mapper = $mapper;
         $this->identity = $identity;
         $this->session = $session;
+        $this->directDebitService = $directDebitService;
     }
 
     public function indexAction()
@@ -152,14 +162,11 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
             $vm->getOrganisation()->getRegisteredCompanyContactDetail()->getAddress()
         );
 
-        if ($this->auth->isGranted(PermissionInSystem::AUTHORISED_EXAMINER_READ_FULL)) {
-            $title = self::INDEX_TITLE_FULL;
-        } else {
-            $title = self::INDEX_TITLE;
-        }
         $this->layout()->setVariable('pageTertiaryTitle', $addressInLine);
 
-        return $this->prepareViewModel($viewModel, $vm->getOrganisation()->getName(), $title);
+        $this->setUpIndexSidebar($vm->getOrganisation());
+
+        return $this->prepareViewModel($viewModel, $vm->getOrganisation()->getName(), self::INDEX_TITLE);
     }
 
     private function getBackButton($orgId)
@@ -456,5 +463,18 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
         $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
         return $template !== null ? $view->setTemplate($template) : $view;
+    }
+
+    private function setUpIndexSidebar($organisation)
+    {
+        $authorisationForView = $this->getAuthorisationForView($organisation->getId());
+        $sidebar = new AeOverviewSidebar(
+            $organisation,
+            $authorisationForView,
+            $this->url(),
+            $this->directDebitService
+        );
+
+        $this->setSidebar($sidebar);
     }
 }

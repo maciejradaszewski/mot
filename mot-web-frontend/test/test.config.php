@@ -13,6 +13,7 @@ $config = [
         'DvsaCommon',
         'DvsaClient',
         'Event',
+        'SlotPurchase',
         'Organisation',
         'Session',
         'Site',

@@ -1,7 +1,9 @@
 <?php
 use Core\ViewModel\Sidebar\GeneralSidebar;
+use Core\ViewModel\Sidebar\GeneralSidebarLink;
 use Core\ViewModel\Sidebar\GeneralSidebarLinkList;
 use Core\ViewModel\Sidebar\GeneralSidebarStatusBox;
+use Core\ViewModel\Sidebar\SidebarButton;
 use DvsaCommon\Utility\TypeCheck;
 
 /** @var $sidebar \Core\ViewModel\Sidebar\GeneralSidebar */
@@ -49,10 +51,13 @@ TypeCheck::assertInstance($sidebar, GeneralSidebar::class);
 
                     <?php foreach ($sideBarItem->getLinks() as $link): ?>
                         <li>
-                            <a id="<?php echo $this->escapeHtmlAttr($link->getHtmlId()); ?>"
-                               href="<?php echo $this->escapeHtmlAttr($link->getUrl()); ?>">
-                                <?php echo $this->escapeHtml($link->getText()); ?>
-                            </a>
+                            <?php
+                                if($link instanceof SidebarButton) {
+                                    echo $this->partial('/partial/gds/general/sidebar/button', ['button' => $link]);
+                                } elseif($link instanceof GeneralSidebarLink) {
+                                    echo $this->partial('/partial/gds/general/sidebar/general-link', ['link' => $link]);
+                                }
+                            ?>
                         </li>
 
                     <?php endforeach; ?>
