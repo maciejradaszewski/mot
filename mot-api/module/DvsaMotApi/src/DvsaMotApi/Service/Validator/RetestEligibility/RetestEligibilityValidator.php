@@ -99,18 +99,29 @@ class RetestEligibilityValidator
             return [RetestEligibilityCheckCode::RETEST_REJECTED_ORIGINAL_NEVER_PERFORMED];
         }
 
-        if ($lastTest->isCancelled()) {
+        $isDifferentVts = intval($lastTest->getVehicleTestingStation()->getId()) !== intval($vtsId);
+
+        if ($lastTest->isCancelled() && $isDifferentVts) {
+            $lastTest = $this->motTestRepository->findLastNormalTest($vehicleId, $contingencyDto, $vtsId);
+            if (!$lastTest->isFailed()) {
+                return [RetestEligibilityCheckCode::RETEST_REJECTED_ORIGINAL_WAS_NOT_FAILED];
+            }
+
+            $count = $this->motTestRepository->countNotCancelledTests($vehicleId, $lastTest->getCompletedDate(), $contingencyDto);
+
+            if ($count > 0) {
+                return [RetestEligibilityCheckCode::RETEST_REJECTED_ORIGINAL_PERFORMED_AT_A_DIFFERENT_VTS];
+            }
+        } elseif ($lastTest->isCancelled()) {
             return [RetestEligibilityCheckCode::RETEST_REJECTED_ORIGINAL_CANCELLED];
         } elseif (!$lastTest->isFailed()) {
             return [RetestEligibilityCheckCode::RETEST_REJECTED_ORIGINAL_WAS_NOT_FAILED];
+        } elseif ($isDifferentVts) {
+            $resultCodes[] = RetestEligibilityCheckCode::RETEST_REJECTED_ORIGINAL_PERFORMED_AT_A_DIFFERENT_VTS;
         }
 
         if (false === $this->isWithinTenWorkingDays($lastTest, $contingencyDto)) {
             $resultCodes[] = RetestEligibilityCheckCode::RETEST_REJECTED_ORIGINAL_PERFORMED_MORE_THAN_10_WORKING_DAYS;
-        }
-
-        if (intval($lastTest->getVehicleTestingStation()->getId()) !== intval($vtsId)) {
-            $resultCodes[] = RetestEligibilityCheckCode::RETEST_REJECTED_ORIGINAL_PERFORMED_AT_A_DIFFERENT_VTS;
         }
 
         $reTest = $this->motTestRepository->findRetestForMotTest($lastTest->getNumber());

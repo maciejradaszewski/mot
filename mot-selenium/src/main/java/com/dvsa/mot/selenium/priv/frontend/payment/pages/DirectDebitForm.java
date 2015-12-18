@@ -15,9 +15,9 @@ public class DirectDebitForm extends BasePage {
 
     @FindBy(id = "customer_email") private WebElement customerEmail;
 
-    @FindBy(id = "account_number_field") private WebElement accountNo;
+    @FindBy(id = "customer_bank_accounts_account_number") private WebElement accountNo;
 
-    @FindBy(id = "branch_code_field") private WebElement branchCode;
+    @FindBy(id = "customer_bank_accounts_branch_code") private WebElement branchCode;
 
     @FindBy(id = "customer_address_line1") private WebElement customerAddressLine1;
 
@@ -27,7 +27,9 @@ public class DirectDebitForm extends BasePage {
 
     @FindBy(id = "customer_postal_code") private WebElement customerPostCode;
 
-    @FindBy(xpath = "//div[1]/div[6]/div/button") private WebElement continueButton;
+    @FindBy(xpath = "//div[2]/button[text()='enter your address manually']") private WebElement enterAddressManuallyButton;
+
+    @FindBy(xpath = "//button[contains(.,'Set up Direct Debit')]") private WebElement continueButton;
 
     @FindBy(id = "confirm-limit") private WebElement confirmButton;
 
@@ -49,6 +51,7 @@ public class DirectDebitForm extends BasePage {
     }
 
     public DirectDebitForm enterCustomerAddress(Address address) {
+        enterAddressManuallyButton.click();
         customerAddressLine1.sendKeys(address.line1);
         customerAddressLine2.sendKeys(address.line2);
         customerCity.sendKeys(address.town);
