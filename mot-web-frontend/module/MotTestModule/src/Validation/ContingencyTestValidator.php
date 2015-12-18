@@ -14,4 +14,7 @@ use DvsaCommon\Validation\CommonContingencyTestValidator;
  */
 class ContingencyTestValidator extends CommonContingencyTestValidator
 {
+    public function __construct($infinityContingencyFlag) {
+        parent::__construct($infinityContingencyFlag);
+    }
 }

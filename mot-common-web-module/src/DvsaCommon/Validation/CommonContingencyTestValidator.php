@@ -44,13 +44,18 @@ class CommonContingencyTestValidator implements GroupValidator
      */
     protected $validators;
 
+    /** @var  bool */
+    protected $isInfinityContingencyOn;
+
     /**
      * CommonContingencyTestValidator constructor.
      *
+     * @param bool                 $isInfinityContingencyOn
      * @param ValidatorInterface[] $validators
      */
-    public function __construct(array $validators = [])
+    public function __construct($isInfinityContingencyOn = false, array $validators = [])
     {
+        $this->isInfinityContingencyOn = $isInfinityContingencyOn;
         $validators = array_merge($this->getDefaultValidators(), $validators);
 
         foreach ($validators as $name => $validator) {
@@ -234,7 +239,11 @@ class CommonContingencyTestValidator implements GroupValidator
         $date = new ValidatorChain();
         $date->attach($dateMustExist, true);
         $date->attach($validDate, true);
-        $date->attach($lessThanThreeMonths, true);
+
+
+        if (!$this->isInfinityContingencyOn) {
+            $date->attach($lessThanThreeMonths, true);
+        }
         $date->attach($notInTheFuture, true);
 
         return $date;

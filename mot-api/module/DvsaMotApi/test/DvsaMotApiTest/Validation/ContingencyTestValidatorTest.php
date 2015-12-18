@@ -40,7 +40,10 @@ class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
             ->getMock();
     }
 
-    public function testSiteWithValidSite()
+    /**
+     * @dataProvider dataProviderTestParams
+     */
+    public function testSiteWithValidSite($params)
     {
         $this
             ->siteService
@@ -48,7 +51,7 @@ class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
             ->method('getSite')
             ->willReturn(new stdClass());
 
-        $validator = new ContingencyTestValidator($this->emergencyService, $this->siteService);
+        $validator = new ContingencyTestValidator($this->emergencyService, $this->siteService, $params['isInfinityContingencyOn']);
 
         $result = $validator->validate(['siteId' => '123']);
         $messages = $result->getFlattenedMessages();
@@ -56,7 +59,10 @@ class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
         $this->assertArrayNotHasKey('site', $messages);
     }
 
-    public function testWithInvalidSite()
+    /**
+     * @dataProvider dataProviderTestParams
+     */
+    public function testWithInvalidSite($params)
     {
         $this
             ->siteService
@@ -64,7 +70,7 @@ class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
             ->method('getSite')
             ->will($this->throwException(new Exception()));
 
-        $validator = new ContingencyTestValidator($this->emergencyService, $this->siteService);
+        $validator = new ContingencyTestValidator($this->emergencyService, $this->siteService, $params['isInfinityContingencyOn']);
 
         $result = $validator->validate(['siteId' => '123']);
         $messages = $result->getFlattenedMessages();
@@ -75,7 +81,10 @@ class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($result->isValid());
     }
 
-    public function testWithValidContingencyCode()
+    /**
+     * @dataProvider dataProviderTestParams
+     */
+    public function testWithValidContingencyCode($params)
     {
         $this
             ->emergencyService
@@ -83,7 +92,7 @@ class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
             ->method('getEmergencyLog')
             ->willReturn(new EmergencyLog());
 
-        $validator = new ContingencyTestValidator($this->emergencyService, $this->siteService);
+        $validator = new ContingencyTestValidator($this->emergencyService, $this->siteService, $params['isInfinityContingencyOn']);
 
         $result = $validator->validate(['contingencyCode' => '12345A']);
         $messages = $result->getFlattenedMessages();
@@ -91,7 +100,10 @@ class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
         $this->assertArrayNotHasKey(ContingencyTestValidator::FIELDSET_CONTINGENCY_CODE, $messages);
     }
 
-    public function testWithInvalidContingencyCode()
+    /**
+     * @dataProvider dataProviderTestParams
+     */
+    public function testWithInvalidContingencyCode($params)
     {
         $this
             ->emergencyService
@@ -99,7 +111,7 @@ class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
             ->method('getEmergencyLog')
             ->willReturn(null);
 
-        $validator = new ContingencyTestValidator($this->emergencyService, $this->siteService);
+        $validator = new ContingencyTestValidator($this->emergencyService, $this->siteService, $params['isInfinityContingencyOn']);
 
         $result = $validator->validate(['contingencyCode' => '12345A']);
         $messages = $result->getFlattenedMessages();
@@ -107,5 +119,26 @@ class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
         $this->assertNotEmpty($messages[ContingencyTestValidator::FIELDSET_CONTINGENCY_CODE]);
         $this->assertEquals(ContingencyTestValidator::MESSAGE_MUST_BE_VALID_CONTINGENCY_CODE, $messages['contingencyCode']);
         $this->assertFalse($result->isValid());
+    }
+
+
+
+    public function dataProviderTestParams()
+    {
+
+        return [
+            // 3 months timeframe in CommonContingency is OFF
+            [
+                'params' => [
+                    'isInfinityContingencyOn' => true,
+                ],
+            ],
+            // 3 months timeframe in CommonContingency is ON
+            [
+                'params' => [
+                    'isInfinityContingencyOn' => false,
+                ],
+            ],
+        ];
     }
 }

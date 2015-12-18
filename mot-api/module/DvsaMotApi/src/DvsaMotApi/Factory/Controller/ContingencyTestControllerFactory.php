@@ -7,6 +7,8 @@
 
 namespace  DvsaMotApi\Factory\Controller;
 
+use DvsaCommon\Constants\FeatureToggle;
+use DvsaFeature\FeatureToggles;
 use DvsaMotApi\Controller\ContingencyTestController;
 use DvsaMotApi\Service\EmergencyService;
 use DvsaMotApi\Validation\ContingencyTestValidator;
@@ -14,6 +16,8 @@ use SiteApi\Service\SiteService;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Mvc\Controller\AbstractActionController;
+
 
 /**
  * Factory for ContingencyTestController instances.
@@ -35,7 +39,14 @@ class ContingencyTestControllerFactory implements FactoryInterface
         /** @var SiteService $siteService */
         $siteService = $serviceLocator->get(SiteService::class);
 
-        $contingencyTestValidator = new ContingencyTestValidator($emergencyService, $siteService);
+        /** @var FeatureToggles $featureToggle */
+        $featureToggle = $serviceLocator->get('Feature\FeatureToggles');
+
+        /** @var bool isInfinityContingencyOn */
+        $isInfinityContingencyOn = $featureToggle->isEnabled(FeatureToggle::INFINITY_CONTINGENCY);
+
+
+        $contingencyTestValidator = new ContingencyTestValidator($emergencyService, $siteService, $isInfinityContingencyOn);
 
         return new ContingencyTestController($contingencyTestValidator);
     }
