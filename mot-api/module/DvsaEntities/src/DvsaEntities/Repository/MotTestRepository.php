@@ -1447,6 +1447,10 @@ class MotTestRepository extends AbstractMutableRepository
             $qb->andwhere('test.vehicle = :VEHICLE_ID')
                 ->setParameter('VEHICLE_ID', $searchParam->getVehicleId());
         }
+        if ($searchParam->getTestNumber()) {
+            $qb->andwhere('test.number = :TEST_NUMBER')
+                ->setParameter('TEST_NUMBER', $searchParam->getTestNumber());
+        }
 
         return $qb;
     }

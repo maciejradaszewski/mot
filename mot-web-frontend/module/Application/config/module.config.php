@@ -830,6 +830,16 @@ return [
                             ],
                         ],
                     ],
+                    'testNumber'     => [
+                        'type'    => 'literal',
+                        'options' => [
+                            'route'    => '/testNumber',
+                            'defaults' => [
+                                'controller' => EnforcementMotTestSearchController::class,
+                                'action'     => 'motTestSearchByMotTestNumber',
+                            ],
+                        ],
+                    ],
                     'vin'     => [
                         'type'    => 'literal',
                         'options' => [

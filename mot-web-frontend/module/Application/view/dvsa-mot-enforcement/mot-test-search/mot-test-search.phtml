@@ -15,7 +15,8 @@ $this->headScript()->appendFile('/js/dvsa-mot-enforcement/search/mot-search.js')
         'vtsDate': '<?php echo $this->url('mot-test-search/vtsDate'); ?>',
         'tester': '<?php echo $this->url('mot-test-search/tester'); ?>',
         'vrm': '<?php echo $this->url('mot-test-search/vrm'); ?>',
-        'vin': '<?php echo $this->url('mot-test-search/vin'); ?>'
+        'vin': '<?php echo $this->url('mot-test-search/vin'); ?>',
+        'testNumber': '<?php echo $this->url('mot-test-search/testNumber'); ?>'
     };
 </script>
 
@@ -40,7 +41,8 @@ $this->headScript()->appendFile('/js/dvsa-mot-enforcement/search/mot-search.js')
                         'vtsDate' => 'Site (by date range)',
                         'tester' => 'Tester (by date range)',
                         'vrm' => 'Registration (comparison available)',
-                        'vin' => 'VIN/Chassis (comparison available)'
+                        'vin' => 'VIN/Chassis (comparison available)',
+                        'testNumber' => 'MOT test number'
                     ]
                 ]
             );

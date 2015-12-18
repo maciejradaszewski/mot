@@ -33,10 +33,11 @@ class MotTestSearchController extends AbstractAuthActionController
     const INVALID_SEARCH_TERM_MSG    = 'Please enter a valid search';
 
     const SITE_NUMBER_NOT_FOUND_MSG = 'No results found for that site';
+    const TEST_NOT_FOUND_MSG        = 'No results found for that site';
     const TESTER_NOT_FOUND_MSG      = 'No results found for that tester';
     const DATE_FORMAT_ERROR         = 'Date Range format invalid';
+    const MOT_TEST_NOT_FOUND        = 'No result found for that test number';
 
-    const MOT_TEST_NOT_FOUND = 'Mot Test not found';
 
     const NO_RESULT_FOUND_FOR_VEHICLE = 'No results found for this vehicle';
 
@@ -275,6 +276,56 @@ class MotTestSearchController extends AbstractAuthActionController
         $view->setTemplate('dvsa-mot-enforcement/mot-test-search/mot-test-search-by-vin-or-vrm.phtml');
 
         return $view;
+    }
+
+    /**
+     * This will find MOT tests given a complete Vehicle Registration Mark string Or a Vin/Chassis string.
+     *
+     * @return ViewModel
+     */
+    public function motTestSearchByMotTestNumberAction()
+    {
+        $this->layout('layout/layout_enforcement');
+        $this->assertGranted(PermissionInSystem::DVSA_SITE_SEARCH);
+
+        $vehicleTestSearchService = new VehicleTestSearch(
+            $this->params(),
+            $this->paramObfuscator,
+            $this->getServiceLocator(),
+            $this->getRestClient()
+        );
+
+        if (!$vehicleTestSearchService->isSearchTermValid()) {
+            $this->addErrorMessages(self::INVALID_SEARCH_TERM_MSG);
+
+            return $vehicleTestSearchService->prepareRouteQueryForRedirect('mot-test-search', $this);
+        }
+
+        $testNumber = $vehicleTestSearchService->getSearchTermValid();
+
+        $searchParamsDto = new MotTestSearchParamsDto();
+        $searchParamsDto
+            ->setTestNumber($testNumber)
+            ->setFormat(SearchParamConst::FORMAT_DATA_TABLES)
+            ->setSortDirection(SearchParamConst::SORT_DIRECTION_DESC)
+            ->setRowsCount(1);
+
+        try {
+            $testExists = $vehicleTestSearchService->checkIfMotTestExists($searchParamsDto);
+        } catch (RestApplicationException $e)
+        {
+            $testExists = false;
+        }
+
+        if (($testExists) !== false) {
+            return $this->redirect()->toRoute(
+                'enforcement-view-mot-test',
+                ['motTestNumber' => intval($searchParamsDto->getTestNumber())]
+            );
+        }
+
+        $this->addErrorMessages(self::MOT_TEST_NOT_FOUND);
+        return $vehicleTestSearchService->prepareRouteQueryForRedirect('mot-test-search', $this);
     }
 
     /**
