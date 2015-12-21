@@ -9,8 +9,8 @@ use Core\ViewModel\Sidebar\GeneralSidebarStatusItem;
 use Core\ViewModel\Sidebar\SidebarBadge;
 use Core\ViewModel\Sidebar\SidebarButton;
 use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode;
-use DvsaEntities\Entity\Organisation;
 use Event\Controller\EventController;
 use Organisation\Authorisation\AuthorisedExaminerViewAuthorisation;
 use Organisation\Controller\MotTestLogController;
@@ -26,6 +26,7 @@ use Zend\Mvc\Controller\Plugin\Url;
 
 class AeOverviewSidebar extends GeneralSidebar{
 
+    /** @var GeneralSidebarLinkList[] */
     private $linkLists = [];
     /**
      * @var AuthorisedExaminerViewAuthorisation
@@ -38,7 +39,7 @@ class AeOverviewSidebar extends GeneralSidebar{
      */
     private $organisationId;
 
-    /** @var Organisation */
+    /** @var OrganisationDto */
     private $organisation;
 
     /**
@@ -49,7 +50,7 @@ class AeOverviewSidebar extends GeneralSidebar{
      * @internal param $organisationId
      */
     public function __construct(
-        $organisation,
+        OrganisationDto $organisation,
         AuthorisedExaminerViewAuthorisation $authorisationForView,
         Url $url,
         DirectDebitService $directDebitService
@@ -84,7 +85,7 @@ class AeOverviewSidebar extends GeneralSidebar{
 
         if($this->authorisationForView->canViewSlotBalance()) {
             $statusBox->addItem(new GeneralSidebarStatusItem("slot-count", "Slots",
-                $this->organisation->getSlotBalance(), SidebarBadge::info()));
+                number_format($this->organisation->getSlotBalance(), 0, '.', ','), SidebarBadge::info()));
         }
 
         $this->addItem($statusBox);
@@ -168,6 +169,7 @@ class AeOverviewSidebar extends GeneralSidebar{
                 return $link;
             }
         }
+        return null;
     }
 
     private function buildSlotsLinks()
