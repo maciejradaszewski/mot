@@ -14,6 +14,7 @@ use Exception;
 use PHPUnit_Framework_TestCase;
 use SiteApi\Service\SiteService;
 use stdClass;
+use DateTime;
 
 class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
 {
@@ -119,6 +120,34 @@ class ContingencyTestValidatorTest extends PHPUnit_Framework_TestCase
         $this->assertNotEmpty($messages[ContingencyTestValidator::FIELDSET_CONTINGENCY_CODE]);
         $this->assertEquals(ContingencyTestValidator::MESSAGE_MUST_BE_VALID_CONTINGENCY_CODE, $messages['contingencyCode']);
         $this->assertFalse($result->isValid());
+    }
+
+    /**
+     * @dataProvider dataProviderTestParams
+     */
+    public function testInfinityContingency($params)
+    {
+
+        $validator = new ContingencyTestValidator($this->emergencyService, $this->siteService, $params['isInfinityContingencyOn']);
+
+        $dateTime = new DateTime('-3 months -1 minute');
+        $result = $validator->validate([
+            'siteId' => '123',
+            'contingencyCode' => '12345A',
+            'reasonCode' => 'SO',
+            'performedAtHour' => $dateTime->format('g'),
+            'performedAtMinute' => $dateTime->format('i'),
+            'performedAtAmPm' => $dateTime->format('a'),
+            'performedAtYear' => $dateTime->format('Y'),
+            'performedAtMonth' => $dateTime->format('m'),
+            'performedAtDay' => $dateTime->format('d')]);
+        $messages = $result->getFlattenedMessages();
+        if ($params['isInfinityContingencyOn']) {
+            $this->assertArrayNotHasKey(ContingencyTestValidator::FIELDSET_DATE, $messages);
+        } else {
+            $this->assertEquals(ContingencyTestValidator::MESSAGE_MUST_BE_LESS_THAN_3_MONTHS, $messages['date']);
+            $this->assertFalse($result->isValid());
+        }
     }
 
 
