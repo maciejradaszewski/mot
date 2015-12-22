@@ -182,7 +182,7 @@ public class AuthorisedExaminerOverviewPage extends BasePage {
     }
 
     public boolean isSlotsZeroOrMoreAvailable() {
-        return (Integer.parseInt(numberOfSlots.getText()) >= 0);
+        return (Integer.parseInt(numberOfSlots.getText().replace(",", "")) >= 0);
     }
 
     public boolean removeAnAep(String firstName, String lastName) {

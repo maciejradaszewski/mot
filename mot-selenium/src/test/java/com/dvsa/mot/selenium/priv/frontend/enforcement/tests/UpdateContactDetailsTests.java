@@ -129,9 +129,9 @@ public class UpdateContactDetailsTests extends BaseTest {
                 equalTo(businessDetails.phoneNo));
 
         //verify changed correspondence address
-        String expectedAddress = business.busAddress.getLine1() + ", " + business.busAddress.getLine2()
-                + ", " + business.busAddress.getLine3() + ", " + business.busAddress
-                .getTown() + ", " + business.busAddress.getPostcode();
+        String expectedAddress = business.busAddress.getLine1() + ",\n" + business.busAddress.getLine2()
+                + ",\n" + business.busAddress.getLine3() + ",\n" + business.busAddress
+                .getTown() + ",\n" + business.busAddress.getPostcode();
         assertThat("correct address", authorisedExaminerOverviewPage.getCorrespondenceAddress().
                 contains(expectedAddress));
 
@@ -233,9 +233,9 @@ public class UpdateContactDetailsTests extends BaseTest {
 
         //verify changed correspondence address
         Assert.assertTrue(authorisedExaminerFullDetailsPage.getCorrAddress().
-                        contains(business.busAddress.getLine1() + ", " + business.busAddress
-                                .getLine2() + ", " + business.busAddress.getLine3() + ", "
-                                + business.busAddress.getTown() + ", " + business.busAddress
+                        contains(business.busAddress.getLine1() + ",\n" + business.busAddress
+                                .getLine2() + ",\n" + business.busAddress.getLine3() + ",\n"
+                                + business.busAddress.getTown() + ",\n" + business.busAddress
                                 .getPostcode()), "Incorrect address");
 
         //click search again/return home link on AE pages And Search for VTS, update contact details and check for no email address tick box

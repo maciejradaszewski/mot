@@ -24,66 +24,77 @@ use SlotPurchase\Controller\Report\TransactionHistoryController;
 use SlotPurchase\Service\DirectDebitService;
 use Zend\Mvc\Controller\Plugin\Url;
 
-class AeOverviewSidebar extends GeneralSidebar{
-
-    /** @var GeneralSidebarLinkList[] */
-    private $linkLists = [];
+class AeOverviewSidebar extends GeneralSidebar
+{
     /**
      * @var AuthorisedExaminerViewAuthorisation
      */
     private $authorisationForView;
 
-    private $url;
     /**
-     * @var
+     * @var string
      */
-    private $organisationId;
+    private $url;
 
     /** @var OrganisationDto */
     private $organisation;
 
-    /**
-     * @param $organisation
-     * @param AuthorisedExaminerViewAuthorisation $authorisationForView
-     * @param Url $url
-     * @param DirectDebitService $directDebitService
-     * @internal param $organisationId
-     */
+    /** @var  GeneralSidebarLinkList */
+    private $relatedLinks;
+
+    /** @var  GeneralSidebarLinkList */
+    private $slotsLinks;
+
     public function __construct(
         OrganisationDto $organisation,
         AuthorisedExaminerViewAuthorisation $authorisationForView,
         Url $url,
         DirectDebitService $directDebitService
-    )
-    {
+    ) {
         $this->directDebitService = $directDebitService;
         $this->url = $url;
         $this->authorisationForView = $authorisationForView;
         $this->organisation = $organisation;
-        $this->organisationId = $organisation->getId();
 
-        $this->resolveLinks();
+        $this->setUp();
+    }
+
+    private function setUp()
+    {
+        $this->buildStatusBox();
+        $this->buildBuySlotsSection();
+
+        $slotsLinks = $this->buildSlotsLinks();
+        if(!empty($slotsLinks)) {
+            $this->addItem($slotsLinks);
+        }
+
+        $relatedLinks = $this->buildRelatedLinks();
+        if (!empty($relatedLinks)) {
+            $this->addItem($relatedLinks);
+        }
     }
 
     private function buildStatusBox()
     {
         $statusBox = new GeneralSidebarStatusBox();
 
-        if($this->authorisationForView->canViewAeStatus()) {
+        if ($this->authorisationForView->canViewAeStatus()) {
             $aeAuth = $this->organisation->getAuthorisedExaminerAuthorisation();
             $aeAuthStatus = $aeAuth->getStatus();
             if (AuthorisationForAuthorisedExaminerStatusCode::WITHDRAWN === $aeAuthStatus->getCode()
-                && !empty($aeAuth->getExpiryDate())) {
+                && !empty($aeAuth->getExpiryDate())
+            ) {
                 $withdrawalDate = DateTimeDisplayFormat::textDate($aeAuth->getExpiryDate());
             } else {
                 $withdrawalDate = "N/A";
             }
 
             $statusBox->addItem(new GeneralSidebarStatusItem("ae-status", "Status", $aeAuthStatus->getName(),
-                SidebarBadge::success(), $withdrawalDate ));
+                SidebarBadge::success(), $withdrawalDate));
         }
 
-        if($this->authorisationForView->canViewSlotBalance()) {
+        if ($this->authorisationForView->canViewSlotBalance()) {
             $statusBox->addItem(new GeneralSidebarStatusItem("slot-count", "Slots",
                 number_format($this->organisation->getSlotBalance(), 0, '.', ','), SidebarBadge::info()));
         }
@@ -91,139 +102,144 @@ class AeOverviewSidebar extends GeneralSidebar{
         $this->addItem($statusBox);
     }
 
-    private function resolveLinks()
-    {
-        $this->buildStatusBox();
-        $this->buildBuySlotsSection();
-        $this->buildSlotsLinks();
-        $this->buildRelatedLinks();
-    }
-
-    public function addSlotsLink($htmlId, $title, $url)
-    {
-        $this->addLinkToList("Slots", $htmlId, $title, $url);
-        return $this;
-    }
-
-    public function addRelatedLink($htmlId, $title, $url)
-    {
-        $this->addLinkToList("Related", $htmlId, $title, $url);
-        return $this;
-    }
-
-    private function addLinkToList($list, $htmlId, $title, $url)
-    {
-        if(!array_key_exists($list, $this->linkLists)) {
-            $this->linkLists[$list] = new GeneralSidebarLinkList($list);
-            $this->addItem($this->linkLists[$list]);
-        }
-
-        $this->linkLists[$list]->addLink(new GeneralSidebarLink($htmlId, $title, $url));
-    }
-
     private function buildBuySlotsSection()
     {
-        $list = new GeneralSidebarLinkList(null);
+        $list = new GeneralSidebarLinkList('');
 
-        if($this->authorisationForView->canSettlePayment()) {
+        if ($this->authorisationForView->canSettlePayment()) {
             $url = $this->url->fromRoute(FinancePurchaseController::ROUTE_NAME_PURCHASE_TYPE,
-                ['organisationId' => $this->organisationId]);
-        } elseif($this->authorisationForView->canBuySlots()) {
+                ['organisationId' => $this->organisation->getId()]);
+        } elseif ($this->authorisationForView->canBuySlots()) {
             $url = $this->url->fromRoute(AbstractJourneyController::ROUTE_NAME_START,
-                ['organisationId' => $this->organisationId]);
+                ['organisationId' => $this->organisation->getId()]);
         }
 
-        if(!empty($url)) {
+        if (!empty($url)) {
             $list->addLink(new SidebarButton("add-slots", "Buy slots", $url));
         }
 
         $directDebitLink = $this->buildDirectDebitLink();
 
-        if($directDebitLink) {
+        if ($directDebitLink) {
             $list->addLink($directDebitLink);
         }
 
-        if(!empty($list->getLinks())) {
+        if (!empty($list->getLinks())) {
             $this->addItem($list);
         }
     }
 
     private function buildDirectDebitLink()
     {
-        if(!$this->directDebitService->isMandateSetupInProgress($this->organisationId)) {
-            if($this->directDebitService->isMandateSetup($this->organisationId)) {
-                if($this->authorisationForView->canManageDirectDebit()) {
+        if (!$this->directDebitService->isMandateSetupInProgress($this->organisation->getId())) {
+            if ($this->directDebitService->isMandateSetup($this->organisation->getId())) {
+                if ($this->authorisationForView->canManageDirectDebit()) {
                     $link = new GeneralSidebarLink('manageDirectDebit', 'Manage Direct Debit',
                         $this->url->fromRoute(AbstractDirectDebitController::ROUTE_NAME_MANAGE, [
-                            'organisationId' => $this->organisationId
+                            'organisationId' => $this->organisation->getId()
                         ]));
                 }
-            } elseif($this->authorisationForView->canSetupDirectDebit()) {
+            } elseif ($this->authorisationForView->canSetupDirectDebit()) {
                 $link = new GeneralSidebarLink('setupDirectDebit', 'Setup Direct Debit',
                     $this->url->fromRoute(AbstractDirectDebitController::ROUTE_NAME_START, [
-                        'organisationId' => $this->organisationId
+                        'organisationId' => $this->organisation->getId()
                     ]));
             }
 
-            if(!empty($link)) {
+            if (!empty($link)) {
                 return $link;
             }
         }
+
         return null;
     }
 
     private function buildSlotsLinks()
     {
-        if($this->authorisationForView->canViewTransactionHistory()) {
-            $this->addSlotsLink("transaction-history",
-                "Transaction history",
-                $this->url->fromRoute(TransactionHistoryController::ROUTE_NAME,
-                    ['organisationId' => $this->organisationId])
+        if ($this->authorisationForView->canViewTransactionHistory()) {
+            $this->getSlotsLinks()->addLink(
+                new GeneralSidebarLink("transaction-history",
+                    "Transaction history",
+                    $this->url->fromRoute(TransactionHistoryController::ROUTE_NAME,
+                        ['organisationId' => $this->organisation->getId()])
+                )
             );
         }
 
-        if($this->authorisationForView->canViewSlotUsage()) {
-            $this->addSlotsLink("slot-usage",
-                "Slot usage",
-                $this->url->fromRoute(SlotUsageController::ROUTE_NAME,
-                    ['organisationId' => $this->organisationId])
+        if ($this->authorisationForView->canViewSlotUsage()) {
+            $this->getSlotsLinks()->addLink(
+                new GeneralSidebarLink("slot-usage",
+                    "Slot usage",
+                    $this->url->fromRoute(SlotUsageController::ROUTE_NAME,
+                        ['organisationId' => $this->organisation->getId()])
+                )
             );
         }
 
-        if($this->authorisationForView->canAdjustSlotBalance()) {
-            $this->addSlotsLink("slot-adjustment",
-                "Slot adjustment",
-                $this->url->fromRoute(AdjustmentController::ROUTE_NAME_START,
-                    ['organisationId' => $this->organisationId])
+        if ($this->authorisationForView->canAdjustSlotBalance()) {
+            $this->getSlotsLinks()->addLink(
+                new GeneralSidebarLink("slot-adjustment",
+                    "Slot adjustment",
+                    $this->url->fromRoute(AdjustmentController::ROUTE_NAME_START,
+                        ['organisationId' => $this->organisation->getId()])
+                )
             );
         }
 
-        if($this->authorisationForView->canRefund()) {
-            $this->addSlotsLink("slots-refund",
-                "Refund slots",
-                $this->url->fromRoute(RefundController::ROUTE_NAME,
-                    ['organisationId' => $this->organisationId])
+        if ($this->authorisationForView->canRefund()) {
+            $this->getSlotsLinks()->addLink(
+                new GeneralSidebarLink("slots-refund",
+                    "Refund slots",
+                    $this->url->fromRoute(RefundController::ROUTE_NAME,
+                        ['organisationId' => $this->organisation->getId()])
+                )
             );
         }
+
+        return $this->slotsLinks;
     }
 
     private function buildRelatedLinks()
     {
-        if($this->authorisationForView->canViewTestLogs()) {
-            $this->addRelatedLink("test-log",
-                "Test logs",
-                $this->url->fromRoute(MotTestLogController::ROUTE_INDEX, ['id' => $this->organisationId])
+        if ($this->authorisationForView->canViewTestLogs()) {
+            $this->getRelatedLinks()->addLink(
+                new GeneralSidebarLink("test-log",
+                    "Test logs",
+                    $this->url->fromRoute(MotTestLogController::ROUTE_INDEX, ['id' => $this->organisation->getId()])
+                )
             );
         }
 
-        if($this->authorisationForView->canViewEventHistory()) {
-            $this->addRelatedLink("event-history",
-                "Event history",
-                $this->url->fromRoute(EventController::ROUTE_LIST, [
-                    'id' => $this->organisationId,
-                    'type' => EventController::TYPE_AE,
-                ])
+        if ($this->authorisationForView->canViewEventHistory()) {
+            $this->getRelatedLinks()->addLink(
+                new GeneralSidebarLink("event-history",
+                    "Event history",
+                    $this->url->fromRoute(EventController::ROUTE_LIST, [
+                        'id' => $this->organisation->getId(),
+                        'type' => EventController::TYPE_AE,
+                    ])
+                )
             );
         }
+
+        return $this->relatedLinks;
+    }
+
+    private function getRelatedLinks()
+    {
+        if (empty($this->relatedLinks)) {
+            $this->relatedLinks = new GeneralSidebarLinkList("Related");
+        }
+
+        return $this->relatedLinks;
+    }
+
+    private function getSlotsLinks()
+    {
+        if (empty($this->slotsLinks)) {
+            $this->slotsLinks = new GeneralSidebarLinkList("Slots");
+        }
+
+        return $this->slotsLinks;
     }
 }

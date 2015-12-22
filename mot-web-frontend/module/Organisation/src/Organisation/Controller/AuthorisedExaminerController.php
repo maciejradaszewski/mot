@@ -28,8 +28,6 @@ use SlotPurchase\Service\DirectDebitService;
 use Zend\Http\Request;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
-use ZendPdf\Action\Trans;
-
 use Zend\Mvc\Controller\Plugin\Url;
 
 /**
@@ -78,19 +76,12 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
      */
     private $directDebitService;
 
-    /**
-     * @param MotFrontendAuthorisationServiceInterface $auth
-     * @param MapperFactory $mapper
-     * @param MotIdentityProviderInterface $identity
-     * @param Container $session
-     * @param DirectDebitService $directDebitService
-     */
     public function __construct(
         MotFrontendAuthorisationServiceInterface $auth,
         MapperFactory $mapper,
         MotIdentityProviderInterface $identity,
         Container $session,
-        $directDebitService
+        DirectDebitService $directDebitService
     ) {
         $this->auth = $auth;
         $this->mapper = $mapper;
