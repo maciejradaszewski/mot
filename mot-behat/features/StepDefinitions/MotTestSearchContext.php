@@ -111,6 +111,10 @@ class MotTestSearchContext implements Context
             case "registration":
                 $params["vrm"] = "ABCD123";
                 break;
+                break;
+            case "testNumber":
+                $params["testNumber"] = $this->motTestContext->getMotTestNumber();
+                break;
         }
 
         $this->searchResponse = $this->motTest->searchMotTestHistory(
