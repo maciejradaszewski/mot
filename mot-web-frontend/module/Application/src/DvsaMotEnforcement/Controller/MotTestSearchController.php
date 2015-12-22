@@ -38,6 +38,8 @@ class MotTestSearchController extends AbstractAuthActionController
     const DATE_FORMAT_ERROR         = 'Date Range format invalid';
     const MOT_TEST_NOT_FOUND        = 'No result found for that test number';
 
+    const SEARCH_TYPE_TEST_NUMBER = 'testNumber';
+
 
     const NO_RESULT_FOUND_FOR_VEHICLE = 'No results found for this vehicle';
 
@@ -305,27 +307,22 @@ class MotTestSearchController extends AbstractAuthActionController
 
         $searchParamsDto = new MotTestSearchParamsDto();
         $searchParamsDto
-            ->setTestNumber($testNumber)
-            ->setFormat(SearchParamConst::FORMAT_DATA_TABLES)
-            ->setSortDirection(SearchParamConst::SORT_DIRECTION_DESC)
-            ->setRowsCount(1);
+            ->setTestNumber(intval($testNumber))
+            ->setFormat(SearchParamConst::FORMAT_DATA_TABLES);
 
-        try {
-            $testExists = $vehicleTestSearchService->checkIfMotTestExists($searchParamsDto);
-        } catch (RestApplicationException $e)
-        {
-            $testExists = false;
-        }
-
-        if (($testExists) !== false) {
+        if ($vehicleTestSearchService->checkIfMotTestExists($searchParamsDto)) {
             return $this->redirect()->toRoute(
                 'enforcement-view-mot-test',
-                ['motTestNumber' => intval($searchParamsDto->getTestNumber())]
+                ['motTestNumber' => $searchParamsDto->getTestNumber()],
+                ['query' => [
+                    'type' => static::SEARCH_TYPE_TEST_NUMBER,
+                ]]
             );
+        } else {
+            $this->addErrorMessages(self::MOT_TEST_NOT_FOUND);
+            return $vehicleTestSearchService->prepareRouteQueryForRedirect('mot-test-search', $this);
         }
 
-        $this->addErrorMessages(self::MOT_TEST_NOT_FOUND);
-        return $vehicleTestSearchService->prepareRouteQueryForRedirect('mot-test-search', $this);
     }
 
     /**

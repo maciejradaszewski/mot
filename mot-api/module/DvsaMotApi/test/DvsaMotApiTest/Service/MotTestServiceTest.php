@@ -85,25 +85,6 @@ class MotTestServiceTest extends AbstractMotTestServiceTest
         $motTestService->getMotTestData(self::MOT_TEST_NUMBER);
     }
 
-    /**
-     * @expectedException \DvsaCommonApi\Service\Exception\ForbiddenException
-     */
-    public function testGetMotTestDataThrowsForbiddenException()
-    {
-        $motTest = new MotTest();
-        $motTest->setEmergencyLog(null);
-        $motTest->setStartedDate(new \DateTime('now'));
-        $motTest->setIssuedDate((new \DateTime('now'))->sub(new \DateInterval('P1D')));
-
-        $mocks = $this->getMocksForMotTestService(null, false);
-        $this->mockMethod($this->mockAuthService, 'isGranted', null, false);
-        $this->mockGetMotTestByTestNumber($this->mockMotTestRepository, $motTest);
-
-        $motTestService = $this->constructMotTestServiceWithMocks($mocks);
-
-        $motTestService->getMotTestData(self::MOT_TEST_NUMBER);
-    }
-
     public function testGetMotTestDataWithEmergencyNoException()
     {
         $motTest = new MotTest();
@@ -1146,39 +1127,7 @@ class MotTestServiceTest extends AbstractMotTestServiceTest
         $this->assertEquals($isMotTestOwner, $service->canPrintCertificateForMotTest($motTestDto));
     }
 
-    public function testIssuedDateLessMaxHistoryDate()
-    {
-        $motTestNr = '123456789';
-
-        $motTest = new MotTest();
-        $motTest->setIssuedDate(new \DateTime('20000101'));
-
-        //  --  mock    --
-        $this->getMocksForMotTestService(null, true);
-
-        $this->mockAuthService = XMock::of(AuthorisationServiceInterface::class);
-        $this->mockAuthService->expects($this->any())
-            ->method('isGranted')
-            ->with(PermissionInSystem::FULL_VEHICLE_MOT_TEST_HISTORY_VIEW)
-            ->willReturn(false);
-
-        $this->mockMotTestRepository->expects($this->once())
-            ->method('getMotTestByNumber')
-            ->with($motTestNr)
-            ->willReturn($motTest);
-
-        $motTestService = $this->constructMotTestServiceWithMocks();
-
-        //  -- call & check --
-        $currDate = $this->dateTimeHolder->getCurrentDate();
-        $this->setExpectedException(
-            ForbiddenException::class,
-            'The issue date of this MOT Test is before ' . DateTimeDisplayFormat::date($currDate)
-        );
-
-        $motTestService->getMotTestData($motTestNr);
-    }
-
+   
     public function dataProviderTestPrintCertCheckIfUserHasPermissionAtSite()
     {
         return [
