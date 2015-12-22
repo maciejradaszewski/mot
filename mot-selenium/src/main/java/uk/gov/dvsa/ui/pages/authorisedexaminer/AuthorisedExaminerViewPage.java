@@ -114,10 +114,10 @@ public abstract class AuthorisedExaminerViewPage extends Page {
 
     public boolean verifyNewAeAddressDetails(AeDetails aeDetails) {
         assertThat(getAeRegAddress(),
-                equalTo(aeDetails.getAeContactDetails().getAddress().getLine1() + ", " +
-                        aeDetails.getAeContactDetails().getAddress().getLine2() + ", " +
-                        aeDetails.getAeContactDetails().getAddress().getLine3() + ", " +
-                        aeDetails.getAeContactDetails().getAddress().getTown()  + ", " +
+                equalTo(aeDetails.getAeContactDetails().getAddress().getLine1() + ",\n" +
+                        aeDetails.getAeContactDetails().getAddress().getLine2() + ",\n" +
+                        aeDetails.getAeContactDetails().getAddress().getLine3() + ",\n" +
+                        aeDetails.getAeContactDetails().getAddress().getTown()  + ",\n" +
                         aeDetails.getAeContactDetails().getAddress().getPostcode()));
         return true;
     }
