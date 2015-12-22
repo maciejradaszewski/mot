@@ -168,7 +168,7 @@ class VehicleTestSearch
             MotTestUrlBuilder::search()->toString(),
             [
                 SearchParamConst::SEARCH_TEST_NUMBER_QUERY_PARAM => $params->getTestNumber(),
-                SearchParamConst::FORMAT => SearchParamConst::FORMAT_DATA_TABLES,
+                SearchParamConst::FORMAT => $params->getFormat(),
             ]
         );
 

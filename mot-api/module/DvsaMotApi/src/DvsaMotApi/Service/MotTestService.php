@@ -120,22 +120,6 @@ class MotTestService extends AbstractSearchService implements TransactionAwareIn
 
         $this->readMotTestAssertion->assertGranted($motTest);
 
-        $startDate = null;
-        if (!$this->authService->isGranted(PermissionInSystem::FULL_VEHICLE_MOT_TEST_HISTORY_VIEW)) {
-            $maxHistoryLength = (int) $this->configurationRepository->getValue(
-                self::CONFIG_PARAM_MAX_VISIBLE_VEHICLE_TEST_HISTORY_IN_MONTHS
-            );
-            $startDate = DateUtils::subtractCalendarMonths($this->dateTimeHolder->getCurrentDate(), $maxHistoryLength);
-        }
-
-        $motIssueDate = $motTest->getIssuedDate();
-        if ($this->isIssueDateBeforeStartDate($startDate, $motIssueDate)) {
-            throw new ForbiddenException(
-                'The issue date of this MOT Test is before ' .
-                DateTimeDisplayFormat::date(DateUtils::toUserTz($startDate))
-            );
-        }
-
         return $motTest;
     }
 

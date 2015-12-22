@@ -5,6 +5,7 @@ use DvsaCommon\Domain\MotTestType;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaMotEnforcement\Controller\MotTestSearchController;
 use DvsaMotTest\Controller\AbstractDvsaMotTestController;
 use DvsaCommon\Auth\PermissionInSystem;
 
@@ -46,7 +47,11 @@ $isReinspection = MotTestType::isReinspection($motTestType->getCode());
 if (!empty($this->vehicleId)) {
     $escapedBackUrl = $this->url('vehicle/detail/history', ['id' => $this->vehicleId], ['query' => $this->summaryParams]);
 } else {
-    $escapedBackUrl = $this->url('mot-test-search/' . $this->searchType, [], ['query' => $this->summaryParams]);
+    $baseUrl = 'mot-test-search';
+    if($this->searchType !== MotTestSearchController::SEARCH_TYPE_TEST_NUMBER) {
+        $baseUrl = $baseUrl . '/' . $this->searchType;
+    }
+    $escapedBackUrl = $this->url($baseUrl, [], ['query' => $this->summaryParams]);
 }
 
 //  --  title and header    --
