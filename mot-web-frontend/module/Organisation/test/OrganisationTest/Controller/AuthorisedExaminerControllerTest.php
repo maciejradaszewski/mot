@@ -72,6 +72,11 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
      */
     private $mockFeatureToggle;
 
+    /**
+     * @var DirectDebitService|MockObj
+     */
+    private $mockDirectDebitService;
+
     public function setUp()
     {
         $serviceManager = Bootstrap::getServiceManager();
@@ -82,12 +87,12 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
         $this->mockIdentity = XMock::of(MotIdentityProviderInterface::class);
         $this->mockMapperFactory = $this->getMapperFactory();
         $this->mockSession = XMock::of(Container::class);
-        //$this->mockDirectDebitService = Xmock::of(DirectDebitService::class);
+        $this->mockDirectDebitService = Xmock::of(DirectDebitService::class);
 
         $this->setController(
             new AuthorisedExaminerController(
                 $this->mockAuth, $this->mockMapperFactory, $this->mockIdentity, $this->mockSession,
-                null
+                $this->mockDirectDebitService
             )
         );
 
