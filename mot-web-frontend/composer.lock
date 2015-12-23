@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "41298f460bdae5e44f7e9f0a27a8d2b9",
-    "content-hash": "7ff66fad0960de64194cc4ee17989caf",
+    "hash": "b9db3f30ff8bd0c5f6da827506768392",
+    "content-hash": "6d2ddad2e2bf558d232ebe735522b4f5",
     "packages": [
         {
             "name": "cpms/client",
@@ -1375,11 +1375,11 @@
         },
         {
             "name": "slot-purchase/web-frontend",
-            "version": "v3.6.2",
+            "version": "v3.6.3",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/web-frontend.git",
-                "reference": "1df937a259e9acf8fc6a31b93dcbd22d05830cb3"
+                "reference": "1c776bfce21768a16972e6859dc1567c08baf1b6"
             },
             "require": {
                 "cpms/cpms-forms": "1.22.*",
@@ -1413,7 +1413,7 @@
                 "proprietary"
             ],
             "description": "Slot Purchase Frontend",
-            "time": "2015-11-09 16:31:42"
+            "time": "2015-12-01 11:45:39"
         },
         {
             "name": "soflomo/purifier",
@@ -1648,12 +1648,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:zendframework/ZendPdf.git",
-                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0"
+                "url": "https://github.com/zendframework/ZendPdf.git",
+                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },
@@ -1673,7 +1673,6 @@
                     "ZendPdf\\": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1683,6 +1682,10 @@
                 "pdf",
                 "zf2"
             ],
+            "support": {
+                "source": "https://github.com/zendframework/ZendPdf/tree/release-2.0.2",
+                "issues": "https://github.com/zendframework/ZendPdf/issues"
+            },
             "time": "2012-11-16 11:16:01"
         },
         {

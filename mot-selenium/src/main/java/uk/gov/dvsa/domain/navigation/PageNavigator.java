@@ -44,6 +44,11 @@ public class PageNavigator {
         driver.navigateToPath(path);
     }
 
+    public <T extends Page> T navigateToPage(User user, String path, Class<T> clazz) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, path);
+        return MotPageFactory.newPage(driver, clazz);
+    }
+
     private Cookie getCookieForUser(User user) throws IOException {
         return CookieService.generateOpenAmLoginCookie(user);
     }

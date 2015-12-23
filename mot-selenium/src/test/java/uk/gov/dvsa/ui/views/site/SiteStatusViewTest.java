@@ -20,17 +20,17 @@ public class SiteStatusViewTest extends BaseTest {
     @Test
     public void updateVtsStatusSuccessfully() throws IOException {
         //Given I am on the VTS Details Page as Area Officer 2
-        motUI.vts.vtsPage(areaOffice2User, "1");
+        motUI.site.gotoPage(areaOffice2User, "1");
 
         //And I change the status of a VTS
-        String newStatus = motUI.vts.changeVtsStatus(Status.REJECTED);
+        String newStatus = motUI.site.changeStatus(Status.REJECTED);
 
         //Then the VTS status is updated
-        motUI.vts.vtsSearchPage(areaOffice2User);
-        motUI.vts.searchForAVtsByNumber("V1234");
+        motUI.site.vtsSearchPage(areaOffice2User);
+        motUI.site.searchById("V1234");
 
         assertThat("The VTS status change is reflected in the results page",
-                motUI.vts.getVtsStatus(),
+                motUI.site.getStatus(),
                 is(newStatus));
     }
 }

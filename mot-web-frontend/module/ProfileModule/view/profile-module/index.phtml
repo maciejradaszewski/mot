@@ -1,0 +1,160 @@
+<?php
+
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+
+/**
+ * @var \Dashboard\Model\PersonalDetails       $personalDetails
+ * @var array                                  $motAuthorisations
+ * @var MotAuthorisationServiceInterface       $authorisationService
+ * @var array                                  $systemRoles
+ * @var                                        $tradeRolesAndAssociations
+ * @var bool                                   $isViewingOwnProfile
+ */
+
+$motAuthorisations = $this->motAuthorisations;
+$fullAddressArray = array_filter([
+    $personalDetails->getAddressLine1(),
+    $personalDetails->getAddressLine2(),
+    $personalDetails->getAddressLine3(),
+    $personalDetails->getTown(),
+    $personalDetails->getPostcode(),
+],
+    'strlen');
+$escFullAddress = $this->escapeHtml(implode(", ", $fullAddressArray)) ?: null;
+
+$this->layout()->setVariable('pageSubTitle', $isViewingOwnProfile ? 'Your profile' : 'Profile of');
+$this->layout()->setVariable('pageTitle', $personalDetails->getFullName());
+
+echo $this->partial('errorMessages', ['getFromFlash' => true]);
+
+echo $this->partial('partial/gds/general/system-message', ['messages' =>  $this->layout()->flashMessenger->getSuccessMessages(), 'type' => 'success']);
+
+?>
+
+<?php
+$this->layout()->setVariable('pageSubTitle', $isViewingOwnProfile ? 'Your profile' : 'User profile');
+$this->layout()->setVariable('pageTitle', $personalDetails->getFullName());
+//?>
+<h3 class="summary-heading">Personal details</h3>
+<table class="table-summary" id="personal_details">
+    <tbody>
+    <tr>
+        <th class="table-summary__key">
+            Name
+        </th>
+        <td class="table-summary__value" id="display-name">
+            <?php echo $this->escapeHtml($personalDetails->getFullName()); ?>
+        </td>
+    </tr>
+        <tr>
+            <th class="table-summary__key">
+                User ID
+            </th>
+            <td class="table-summary__value" id="display-username">
+                <?php echo $this->escapeHtml($personalDetails->getUsername()); ?>
+            </td>
+        </tr>
+    <tr>
+        <th class="table-summary__key">
+            Date of birth
+        </th>
+        <td class="table-summary__value" id="dateOfBirth">
+            <?php echo !empty($personalDetails->getDateOfBirth()) ? DateTimeDisplayFormat::textDate($personalDetails->getDateOfBirth())
+                : '<span class="table-summary__meta">Unknown</span>'; ?>
+        </td>
+    </tr>
+    <?php if (empty($systemRoles) && !$isViewingOwnProfile) : ?>
+    <tr>
+        <th class="table-summary__key">
+            Driving licence
+        </th>
+        <td class="table-summary__value" id="drivingLicence">
+            <?php
+            echo !empty($personalDetails->getDrivingLicenceNumber())
+                    ? $this->escapeHtml($personalDetails->getDrivingLicenceNumber())
+                        . '<br>'
+                        . '<span class="table-summary__meta">' .  $this->escapeHtml($personalDetails->getDrivingLicenceRegion()) .' licence</span>'
+                    : '<span class="table-summary__meta">Unknown</span>'; ?>
+            <?php if ($authorisationService->isGranted(\DvsaCommon\Auth\PermissionInSystem::ADD_EDIT_DRIVING_LICENCE)) :
+                    echo '<a href="/user-admin/user-profile/' . $personalDetails->getId() . '/driving-licence" class="table-summary__action">Change<span class="visuallyhidden"> Driving licence </span></a>';
+                 endif
+            ?>
+        </td>
+    </tr>
+    <?php endif ?>
+    </tbody>
+</table>
+
+<h3 class="heading-medium">Contact details</h3>
+<table class="table-summary__key" id="contact_details">
+    <tbody>
+    <tr>
+        <th class="table-summary__key">
+            Email
+        </th>
+        <td class="table-summary__value" id="email-address">
+            <?php echo !empty($personalDetails->getEmail()) ? $this->escapeHtml($personalDetails->getEmail())
+                : '<span class="table-summary__meta">Unknown</span>'; ?>
+
+            <?php if ($authorisationService->isGranted(\DvsaCommon\Auth\PermissionInSystem::PROFILE_EDIT_OTHERS_EMAIL_ADDRESS)) :
+                     echo '<a href="/user-admin/user-profile/' . $personalDetails->getId() . '/email" class="table-summary__action">Change<span class="visuallyhidden"> Email</span></a>';
+                 endif
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="table-summary__key">
+            Address
+        </th>
+        <td class="table-summary__value" id="full-address">
+            <?php if (!empty($fullAddressArray)) : ?>
+                <?php echo !empty($personalDetails->getAddressLine1()) ? $personalDetails->getAddressLine1() . ', <br>'
+                    : ''; ?>
+                <?php echo !empty($personalDetails->getAddressLine2()) ? $personalDetails->getAddressLine2() . ', <br>'
+                    : ''; ?>
+                <?php echo !empty($personalDetails->getAddressLine3()) ? $personalDetails->getAddressLine3() . ', <br>'
+                    : ''; ?>
+                <?php echo !empty($personalDetails->getPostcode()) ? $personalDetails->getPostcode() . '<br>'
+                    : ''; ?>
+            <?php else :
+                echo '<span class="table-summary__meta">Unknown</span>';
+            endif;
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="table-summary__key">
+            Telephone
+        </th>
+        <td class="table-summary__value" id="telephone-number">
+            <?php echo !empty($personalDetails->getPhoneNumber()) ? $this->escapeHtml($personalDetails->getPhoneNumber())
+                : '<span class="table-summary__meta">Unknown</span>';
+            $personalDetails->getRoles() ?>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<?php  if (!empty($systemRoles)) : ?>
+
+<h3 class="heading-medium">Roles</h3>
+<table class="table-summary__key" id="dvsa_roles">
+    <tbody>
+    <?php foreach ($systemRoles as $role) : ?>
+        <tr>
+            <th class="table-summary__key" id="role"> <?php echo $role["nicename"]; ?> </th>
+    </tbody>
+    <?php endforeach ?>
+</table>
+
+<?php endif ?>
+
+<nav class="content-navigation">
+    <ul class="content-navigation__secondary">
+        <li>
+            <a href="<?php echo $this->escapeHtmlAttr($this->url(\Dvsa\Mot\Frontend\ProfileModule\Controller\PersonProfileController::ROUTE));?>">Return Home</a>
+        </li>
+    </ul>
+</nav>
+

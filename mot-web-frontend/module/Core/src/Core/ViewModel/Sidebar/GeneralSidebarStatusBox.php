@@ -6,6 +6,7 @@ class GeneralSidebarStatusBox implements GeneralSidebarItemInterface
 {
     /** @var GeneralSidebarStatusItem[] */
     private $items = [];
+    private $id;
 
     public function getItems()
     {
@@ -15,5 +16,15 @@ class GeneralSidebarStatusBox implements GeneralSidebarItemInterface
     public function addItem(GeneralSidebarStatusItem $item)
     {
         $this->items[] = $item;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 }

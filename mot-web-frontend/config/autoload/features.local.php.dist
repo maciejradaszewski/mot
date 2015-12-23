@@ -22,6 +22,13 @@ return [
          * Enable VTS risk score & RAG.
          */
         'vts.risk.score' => true,
+       /*
+
+       /*
+        *Enable new person profile layout
+        */
+
+        'new_person_profile' => true,
 
         /*
          * To control displaying the 2FA method row in the admin area.

@@ -25,7 +25,7 @@ public class MotUI {
     public final TestLog testLog;
     public final SearchUser searchUser;
     public final SearchSite searchSite;
-    public final Vts vts;
+    public final Site site;
     public final DuplicateReplacementCertificate duplicateReplacementCertificate;
     public final Contingency contingency;
 
@@ -39,7 +39,7 @@ public class MotUI {
         searchUser = new SearchUser(pageNavigator);
         searchSite = new SearchSite(pageNavigator);
         duplicateReplacementCertificate = new DuplicateReplacementCertificate(pageNavigator);
-        vts = new Vts(pageNavigator);
+        site = new Site(pageNavigator);
         contingency = new Contingency(pageNavigator);
     }
 

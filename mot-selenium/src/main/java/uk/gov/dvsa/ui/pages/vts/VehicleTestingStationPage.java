@@ -31,7 +31,8 @@ public class VehicleTestingStationPage extends Page {
     @FindBy(id = "change-testing-facilities") private WebElement changeTestingFacilitiesLink;
     @FindBy(id = "testing-facility-optl") private WebElement onePersonTestLaneValue;
     @FindBy(id = "testing-facility-tptl") private WebElement twoPersonTestLaneValue;
-    @FindBy(id = "risk-assessment-score") private WebElement riskAssesmentscore;
+    @FindBy(css = "#risk-assessment-score span.text-secondary") private WebElement riskAssesmentscore;
+    @FindBy(css = "#risk-assessment-score span.badge") private WebElement riskAssesmentColor;
     @FindBy(id = SITE_ASSESSMENT_LINK_ID) private WebElement addSiteAssessmentLink;
     @FindBy(id = "risk-assessment-score") private WebElement riskAssessmentScore;
     @FindBy(id = "validation-message--success") private WebElement validationMessage;
@@ -105,15 +106,15 @@ public class VehicleTestingStationPage extends Page {
         return !driver.findElements(By.cssSelector(String.format("a[href*='%s']", id))).isEmpty();
     }
 
-    public boolean isVtsAddressDisplayed() {
+    public boolean isAddressDisplayed() {
         return vtsAddress.isDisplayed();
     }
 
-    public boolean isVtsEmailDisplayed() {
+    public boolean isEmailDisplayed() {
         return vtsEmail.isDisplayed();
     }
 
-    public boolean isVtsPhoneNumberDisplayed() {
+    public boolean isPhoneNumberDisplayed() {
         return vtsPhoneNumber.isDisplayed();
     }
 
@@ -203,5 +204,10 @@ public class VehicleTestingStationPage extends Page {
     public ChangeSiteDetailsPage clickOnChangeSiteDetailsLink() {
         changeSiteDetailsLink.click();
         return new ChangeSiteDetailsPage(driver);
+    }
+
+    public String getSiteAssessmentColour(String colourBadgeType) {
+        String selector = String.format("#risk-assessment-score span.badge--%s", colourBadgeType);
+        return driver.findElementByCssSelector(selector).getText();
     }
 }

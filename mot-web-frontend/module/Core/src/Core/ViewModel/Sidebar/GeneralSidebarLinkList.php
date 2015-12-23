@@ -7,6 +7,7 @@ use DvsaCommon\Utility\TypeCheck;
 class GeneralSidebarLinkList implements GeneralSidebarItemInterface
 {
     private $title;
+    private $id;
 
     /** @var GeneralSidebarLink[] */
     private $links;
@@ -35,5 +36,15 @@ class GeneralSidebarLinkList implements GeneralSidebarItemInterface
     public function isEmpty()
     {
         return $this->links ? false : true;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 }
