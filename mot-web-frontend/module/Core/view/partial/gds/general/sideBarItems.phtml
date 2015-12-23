@@ -1,9 +1,7 @@
 <?php
 use Core\ViewModel\Sidebar\GeneralSidebar;
-use Core\ViewModel\Sidebar\GeneralSidebarLink;
 use Core\ViewModel\Sidebar\GeneralSidebarLinkList;
 use Core\ViewModel\Sidebar\GeneralSidebarStatusBox;
-use Core\ViewModel\Sidebar\SidebarButton;
 use DvsaCommon\Utility\TypeCheck;
 
 /** @var $sidebar \Core\ViewModel\Sidebar\GeneralSidebar */
@@ -18,7 +16,7 @@ TypeCheck::assertInstance($sidebar, GeneralSidebar::class);
 
         <?php if ($sideBarItem instanceof GeneralSidebarStatusBox): ?>
 
-            <ul class="related__status">
+            <ul class="related__status" <?php if (!empty($sideBarItem->getId())) {echo 'id="' . $sideBarItem->getId() . '"';}?>>
 
                 <?php foreach ($sideBarItem->getItems() as $statusItem): ?>
                     <li <?php echo ($statusItem->getHtmlId() ? 'id="' . $this->escapeHtmlAttr($statusItem->getHtmlId()). '"' : '') ?>>
@@ -44,21 +42,21 @@ TypeCheck::assertInstance($sidebar, GeneralSidebar::class);
         <?php endif; ?>
 
         <?php if ($sideBarItem instanceof GeneralSidebarLinkList): ?>
-            <div class="related__section">
+            <div class="related__section" <?php if (!empty($sideBarItem->getId())) {echo 'id="' . $sideBarItem->getId() . '"';}?>>
                 <h2 class="related__section-title"><?php echo $this->escapeHtml($sideBarItem->getTitle()); ?></h2>
 
                 <ul class="related__section-links">
-
+                    
                     <?php foreach ($sideBarItem->getLinks() as $link): ?>
                         <li>
-                            <?php
-                                if($link instanceof SidebarButton) {
-                                    echo $this->partial('/partial/gds/general/sidebar/button', ['button' => $link]);
-                                } elseif($link instanceof GeneralSidebarLink) {
-                                    echo $this->partial('/partial/gds/general/sidebar/general-link', ['link' => $link]);
-                                }
-                            ?>
+                            <?php echo $link->getPrecedingText() ?>
+                            <a class="<?php echo $this->escapeHtmlAttr($link->getModifier()) ?>"
+                                id="<?php echo $this->escapeHtmlAttr($link->getHtmlId()); ?>"
+                               href="<?php echo $this->escapeHtmlAttr($link->getUrl()); ?>">
+                                <?php echo $this->escapeHtml($link->getText()); ?>
+                            </a>
                         </li>
+
 
                     <?php endforeach; ?>
 

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c83e0a98b557047bac6bc5b3a0c49127",
-    "content-hash": "6bd8c755dccdff4d7b2574b95bdc7dfb",
+    "hash": "268e4926ecc0d1f70d081b27529b9cd2",
+    "content-hash": "dd362f6fecbc65139e75ceb3408dc048",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1631,11 +1631,11 @@
         },
         {
             "name": "slot-purchase/backend-api",
-            "version": "v3.6.5",
+            "version": "v3.6.6",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git",
-                "reference": "dc2cd6fac724b8405315eaee7c68c465743cc447"
+                "reference": "51d25c923a185255e5318c5012193367066f58c6"
             },
             "require": {
                 "cpms/client": "1.22.*",
@@ -1673,7 +1673,7 @@
                 "proprietary"
             ],
             "description": "API for slot purchasing and related features",
-            "time": "2015-11-10 14:06:15"
+            "time": "2015-11-30 14:49:41"
         },
         {
             "name": "soflomo/purifier",
@@ -1908,7 +1908,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/ZendPdf.git",
-                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0"
+                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",

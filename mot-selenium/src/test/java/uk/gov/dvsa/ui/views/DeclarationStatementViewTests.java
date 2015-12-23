@@ -113,5 +113,28 @@ public class DeclarationStatementViewTests extends BaseTest {
         //Then I should be presented with the declaration statement
         assertThat(motUI.contingency.isDeclarationStatementDisplayed(), is(true));
     }
+
+    @Test
+    public void displayStatementAtCreateNewVehicleRecord() throws IOException, URISyntaxException {
+
+        //When I create a new vehicle record within a test
+        motUI.normalTest.createNewVehicleRecord(tester, vehicle);
+
+        //Then I should be presented with the declaration statement
+        assertThat(motUI.normalTest.isDeclarationStatementDisplayed(), is(true));
+    }
+
+    @Test
+    public void replacementCertificateDeclarationStatement() throws IOException, URISyntaxException {
+
+        //Given I have completed an Mot Test
+        motUI.normalTest.conductTestPass(tester, vehicle);
+
+        //When I create a replacement test certificate
+        motUI.duplicateReplacementCertificate.createReplacementCertificate(tester, vehicle);
+
+        //Then I should be presented with the declaration statement on the review page
+        assertThat(motUI.duplicateReplacementCertificate.isDeclarationStatementDisplayed(), is(true));
+    }
 }
 

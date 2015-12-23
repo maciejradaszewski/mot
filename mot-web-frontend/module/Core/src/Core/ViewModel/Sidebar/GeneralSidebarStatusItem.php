@@ -58,4 +58,9 @@ class GeneralSidebarStatusItem
     {
         return $this->badge;
     }
+
+    public function getSecondary()
+    {
+        return $this->secondary;
+    }
 }

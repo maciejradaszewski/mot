@@ -20,6 +20,10 @@ public class SiteData extends SiteService{
         return createSite(Optional.of(aeData.createAeWithDefaultValues().getId()), "default");
     }
 
+    public Site createSite(String name) throws IOException {
+        return createSite(Optional.of(aeData.createAeWithDefaultValues().getId()), name);
+    }
+
     public Site createSiteWithoutAe(String name) throws IOException {
         return createSite(Optional.<Integer>absent(), name);
     }

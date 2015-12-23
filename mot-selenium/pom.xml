@@ -103,57 +103,7 @@
         <testngFile>bvt.xml</testngFile>
       </properties>
     </profile>
-    <profile>
-      <!-- run all mot tests -->
-      <id>full_run</id>
-      <properties>
-        <testngFile>jenkins_mot_all_tests.xml</testngFile>
-      </properties>
-    </profile>
-    <!-- Test sets by package -->
-    <profile>
-      <id>slice_a</id>
-      <properties>
-        <testngFile>jenkins_slice_a_tests.xml</testngFile>
-      </properties>
-    </profile>
-    <profile>
-      <id>not_slice_a</id>
-      <properties>
-        <testngFile>jenkins_not_slice_a_tests.xml</testngFile>
-      </properties>
-    </profile>
-    <profile>
-      <id>braketest</id>
-      <properties>
-        <testngFile>testng/byPackage/braketest.xml</testngFile>
-      </properties>
-    </profile>
-    <profile>
-      <id>end2end</id>
-      <properties>
-        <testngFile>testng/byPackage/end2end.xml</testngFile>
-      </properties>
-    </profile>
-    <profile>
-      <id>enforcement</id>
-      <properties>
-        <testngFile>testng/byPackage/enforcement.xml</testngFile>
-      </properties>
-    </profile>
-    <profile>
-      <id>vehicletest</id>
-      <properties>
-        <testngFile>testng/byPackage/vehicletest.xml</testngFile>
-      </properties>
-    </profile>
-    <profile>
-      <id>others</id>
-      <properties>
-        <testngFile>testng/byPackage/others.xml</testngFile>
-      </properties>
-    </profile>
-  </profiles>
+      </profiles>
   <build>
     <plugins>
       <plugin>

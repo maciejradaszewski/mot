@@ -7,6 +7,8 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.events.CreateNewEventPage;
 
+import java.util.List;
+
 public class EventsHistoryPage extends Page {
     public static final String PATH = "/event/list/site/%s";
     public static final String AE_PATH = "/event/list/ae/%s";
@@ -54,6 +56,10 @@ public class EventsHistoryPage extends Page {
 
     public boolean isListOfEventsDisplayed() {
         return listOfEventsTable.isDisplayed();
+    }
+
+    public int getEventHistoryTableSize(){
+        return driver.findElements(By.cssSelector("#listLogs tbody>tr")).size();
     }
 
     public CreateNewEventPage clickRecordNewEvent() {
