@@ -216,8 +216,8 @@ class OpenInterfaceMotTestServiceTest extends AbstractServiceTestCase
             "odometer" => 1960,
             "odometerUnit" => "M",
             "testNumber" => "196019601960",
-            "testDate" => "2015-01-01",
-            "expiryDate" => "2016-01-01",
+            "testDate" => date('Y-01-01'),
+            "expiryDate" => (date('Y') + 1) . '-01-01',
             "vtsNumber" => "PRE1960",
             "vtsTelNo" => "PRE1960"
         ];
