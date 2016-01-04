@@ -299,7 +299,7 @@ class SpecialNoticeServiceTest extends AbstractServiceTestCase
         $result = $this->sut->createSpecialNotice($noticeData);
 
         // then
-        $this->assertEquals("4-2015", $result['issueNumber']);
+        $this->assertEquals(date("4-Y"), $result['issueNumber']);
         $this->assertEquals($externalPublishDate->format('Y-m-d'), $result['issueDate']);
     }
 
