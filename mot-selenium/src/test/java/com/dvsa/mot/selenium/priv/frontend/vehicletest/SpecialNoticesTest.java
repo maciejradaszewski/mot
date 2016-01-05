@@ -212,7 +212,7 @@ public class SpecialNoticesTest extends BaseTest {
     public void testUserWhoCannotCreateSpecialNotices() {
 
         SpecialNoticesPage specialNoticesPage =
-                SpecialNoticesPage.navigateHereFromLoginPageAsTesterUser(driver, Login.LOGIN_AEDM);
+                SpecialNoticesPage.navigateHereFromLoginPageAsTesterUser(driver, Login.LOGIN_AREA_OFFICE1);
 
         assertThat("Create Special notice link present",
                 specialNoticesPage.isCreateSpecialNoticeLinkNotPresent(), is(false));

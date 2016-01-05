@@ -2,6 +2,7 @@
 
 namespace DvsaMotTest\Factory\Controller;
 
+use Application\Data\ApiPersonalDetails;
 use DvsaMotTest\Controller\SpecialNoticesController;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -23,6 +24,10 @@ class SpecialNoticesControllerFactory implements FactoryInterface
         $serviceLocator = $controllerManager->getServiceLocator();
         $markdown       = $serviceLocator->get('MaglMarkdown\MarkdownService');
 
-        return new SpecialNoticesController($markdown, $serviceLocator->get(WebAcknowledgeSpecialNoticeAssertion::class));
+        return new SpecialNoticesController(
+            $markdown,
+            $serviceLocator->get(WebAcknowledgeSpecialNoticeAssertion::class),
+            $serviceLocator->get(ApiPersonalDetails::class)
+        );
     }
 }

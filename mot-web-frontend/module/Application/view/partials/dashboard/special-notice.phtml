@@ -3,10 +3,13 @@
 $unreadCount = isset($unreadCount) ? $unreadCount : 0;
 $daysLeftToView = isset($daysLeftToView) ? $daysLeftToView : 0;
 $overdueCount = isset($overdueCount) ? $overdueCount : 0;
+$canRecieveSpecialNotice = isset($canRecieveSpecialNotice) ? $canRecieveSpecialNotice : false;
 
 $escViewLink = $canRead ? $this->url('special-notices/all') : $this->url('special-notices');
 
+if($canRecieveSpecialNotice):
 ?>
+
 <section class="module-pivot-panel" id="special-notice-list">
     <header class="pivot-panel_header">
         <h2 class="pivot-panel_title">
@@ -14,7 +17,7 @@ $escViewLink = $canRead ? $this->url('special-notices/all') : $this->url('specia
         </h2>
     </header>
     <a href="<?php echo $escViewLink; ?>" class="mailbox-status">
-        <span id="unread-special-notice-link"class="mega-number">
+        <span id="unread-special-notice-link" class="mega-number">
             <strong class="number"><?php echo intval($unreadCount); ?></strong>
             <span class="super-text">
                 unread 
@@ -35,3 +38,4 @@ $escViewLink = $canRead ? $this->url('special-notices/all') : $this->url('specia
     </a>
     <?php endif; ?>
 </section>
+<?php endif;?>
