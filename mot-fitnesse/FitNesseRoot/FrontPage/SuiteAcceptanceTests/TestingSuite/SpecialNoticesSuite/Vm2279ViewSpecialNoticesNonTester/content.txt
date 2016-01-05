@@ -5,7 +5,6 @@ View Special Notices Non Tester
 
 !|Vm 2279 View Special Notices Non Tester                                                                                                                                           |
 |Username       |All Externally Published?|Includes Draft Notices?|Information On Result                                                                                            |
-|aedm           |Yes                      |No                     |VTS Roles who cannot create special notices can only see those currently active                                  |
 |schemeuser     |No                       |Yes                    |DVSA Roles who can create special notices can see all including those that haven't been published or are in draft|
 |schememgt      |Yes                      |No                     |DVSA Roles who cannot create special notices can only see those currently active                                 |
 |areaoffice1user|Yes                      |No                     |DVSA Roles who cannot create special notices can only see those currently active                                 |

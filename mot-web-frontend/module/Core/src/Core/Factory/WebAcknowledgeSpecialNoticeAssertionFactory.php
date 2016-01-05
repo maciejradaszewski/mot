@@ -15,8 +15,7 @@ class WebAcknowledgeSpecialNoticeAssertionFactory implements FactoryInterface
         return new WebAcknowledgeSpecialNoticeAssertion(
             new AcknowledgeSpecialNoticeAssertion(
                 $serviceLocator->get('AuthorisationService')
-            ),
-            $serviceLocator->get(ApiPersonalDetails::class)
+            )
         );
     }
 }

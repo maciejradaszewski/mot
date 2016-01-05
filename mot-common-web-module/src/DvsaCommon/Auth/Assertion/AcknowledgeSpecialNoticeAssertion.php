@@ -22,13 +22,12 @@ class AcknowledgeSpecialNoticeAssertion
     }
 
     /**
-     * @param array $authorisationForMotTesting
      * @return bool
      */
-    public function isGranted(array $authorisationForMotTesting)
+    public function isGranted()
     {
         try {
-            $this->assertGranted($authorisationForMotTesting);
+            $this->assertGranted();
         } catch (UnauthorisedException $exception) {
             return false;
         }
@@ -37,30 +36,13 @@ class AcknowledgeSpecialNoticeAssertion
     }
 
     /**
-     * @param array $authorisationForMotTesting
      * @throws UnauthorisedException
      */
-    public function assertGranted(array $authorisationForMotTesting)
+    public function assertGranted()
     {
         $hasAcknowledgePermission = $this->authorisationService->isGranted(PermissionInSystem::SPECIAL_NOTICE_ACKNOWLEDGE);
-        if (!$hasAcknowledgePermission || !$this->hasAuthorisation($authorisationForMotTesting)) {
+        if (!$hasAcknowledgePermission ) {
             throw new UnauthorisedException('Acknowledge special notice assertion failed.');
         }
-    }
-
-    /**
-     * A person is has at least one authorisation in any status is considered to be a "tester"
-     * @param array $authorisationForMotTesting
-     * @return bool
-     */
-    private function hasAuthorisation(array $authorisationForMotTesting)
-    {
-        foreach ($authorisationForMotTesting as $status) {
-            if (!is_null($status)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

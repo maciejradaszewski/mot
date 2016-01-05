@@ -2,6 +2,7 @@
 
 namespace DvsaMotTest\Controller;
 
+use Application\Data\ApiPersonalDetails;
 use Core\Authorisation\Assertion\WebAcknowledgeSpecialNoticeAssertion;
 use Core\Controller\AbstractAuthActionController;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
@@ -56,13 +57,23 @@ class SpecialNoticesController extends AbstractAuthActionController
     private $acknowledgeSpecialNoticeAssertion;
 
     /**
+     * @var ApiPersonalDetails
+     */
+    private $apiPersonalDetails;
+
+    /**
      * @param Markdown                             $markdown
      * @param WebAcknowledgeSpecialNoticeAssertion $acknowledgeSpecialNoticeAssertion
      */
-    public function __construct(Markdown $markdown, WebAcknowledgeSpecialNoticeAssertion $acknowledgeSpecialNoticeAssertion)
+    public function __construct(
+        Markdown $markdown,
+        WebAcknowledgeSpecialNoticeAssertion $acknowledgeSpecialNoticeAssertion,
+        ApiPersonalDetails $apiPersonalDetails
+    )
     {
         $this->markdown                          = $markdown;
         $this->acknowledgeSpecialNoticeAssertion = $acknowledgeSpecialNoticeAssertion;
+        $this->apiPersonalDetails                = $apiPersonalDetails;
     }
 
     /**
@@ -121,9 +132,10 @@ class SpecialNoticesController extends AbstractAuthActionController
                 'specialNotices'       => $specialNoticesData,
                 'daysLeftToViewUnread' => $daysLeftToViewUnread,
                 'config'               => $this->getConfig(),
-                'canAcknowledge'       => $this->acknowledgeSpecialNoticeAssertion->isGranted($userId),
+                'canAcknowledge'       => $this->acknowledgeSpecialNoticeAssertion->isGranted(),
                 'canRemove'            => $this->getAuthorizationService()->isGranted(PermissionInSystem::SPECIAL_NOTICE_REMOVE),
                 'canUpdate'            => $this->getAuthorizationService()->isGranted(PermissionInSystem::SPECIAL_NOTICE_UPDATE),
+                'isTester'             => $this->checkIfUserIsTester(),
             ]
         );
     }
@@ -181,7 +193,7 @@ class SpecialNoticesController extends AbstractAuthActionController
      */
     public function acknowledgeSpecialNoticeAction()
     {
-        $this->acknowledgeSpecialNoticeAssertion->assertGranted($this->getIdentity()->getUserId());
+        $this->acknowledgeSpecialNoticeAssertion->assertGranted();
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -266,7 +278,7 @@ class SpecialNoticesController extends AbstractAuthActionController
                 'specialNotices' => $specialNoticesData,
                 'removed'        => $removed,
                 'config'         => $this->getConfig(),
-                'canAcknowledge' => $this->acknowledgeSpecialNoticeAssertion->isGranted($this->getIdentity()->getUserId()),
+                'canAcknowledge' => $this->acknowledgeSpecialNoticeAssertion->isGranted(),
                 'canRemove'      => $this->getAuthorizationService()->isGranted(PermissionInSystem::SPECIAL_NOTICE_REMOVE),
                 'canUpdate'      => $this->getAuthorizationService()->isGranted(PermissionInSystem::SPECIAL_NOTICE_UPDATE),
             ]
@@ -548,5 +560,25 @@ class SpecialNoticesController extends AbstractAuthActionController
         }
 
         return true;
+    }
+
+    /**
+     * A person is has at least one authorisation in any status is considered to be a "tester"
+     * @return bool
+     */
+    protected function checkIfUserIsTester()
+    {
+        $authorisationClasses = $this->apiPersonalDetails->getPersonalAuthorisationForMotTesting($this->getIdentity()->getUserId());
+        if(!is_array($authorisationClasses)){
+            return false;
+        }
+
+        foreach ($authorisationClasses as $class) {
+            if(!is_null($class)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -292,7 +292,9 @@ class SpecialNoticeService extends AbstractService
 
     public function getAllCurrentSpecialNotices()
     {
-        $this->authService->assertGranted(PermissionInSystem::SPECIAL_NOTICE_READ_CURRENT);
+        if($this->authService->assertGranted(PermissionInSystem::SPECIAL_NOTICE_READ_CURRENT)){
+            return [];
+        }
         return array_map([$this, 'extractContent'], $this->specialNoticeRepository->getAllCurrentSpecialNotices());
     }
 
@@ -438,7 +440,9 @@ class SpecialNoticeService extends AbstractService
      */
     public function getAmountOfOverdueSpecialNoticesForClasses()
     {
-        $this->authService->assertGranted(PermissionInSystem::SPECIAL_NOTICE_READ_CURRENT);
+        if(!$this->authService->isGranted(PermissionInSystem::SPECIAL_NOTICE_READ_CURRENT)){
+            return [];
+        }
 
         $username = $this->motIdentityProvider->getIdentity()->getUsername();
         return $this->specialNoticeRepository->getAmountOfOverdueSpecialNoticesForClasses($username);

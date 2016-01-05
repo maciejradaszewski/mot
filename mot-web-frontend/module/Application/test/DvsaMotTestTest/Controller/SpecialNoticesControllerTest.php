@@ -2,6 +2,7 @@
 
 namespace DvsaMotTestTest\Controller;
 
+use Application\Data\ApiPersonalDetails;
 use Core\Service\LazyMotFrontendAuthorisationService;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\UrlBuilder\UrlBuilder;
@@ -25,7 +26,11 @@ class SpecialNoticesControllerTest extends AbstractDvsaMotTestTestCase
         $serviceManager = Bootstrap::getServiceManager();
 
         $markdown = $serviceManager->get('MaglMarkdown\MarkdownService');
-        $controller = new SpecialNoticesController($markdown, XMock::of(WebAcknowledgeSpecialNoticeAssertion::class));
+        $controller = new SpecialNoticesController(
+            $markdown,
+            XMock::of(WebAcknowledgeSpecialNoticeAssertion::class),
+            XMock::of(ApiPersonalDetails::class)
+        );
 
         $this->setServiceManager($serviceManager);
         $this->setController($controller);

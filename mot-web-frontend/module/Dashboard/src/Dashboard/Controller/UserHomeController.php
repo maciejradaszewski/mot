@@ -111,7 +111,8 @@ class UserHomeController extends AbstractAuthActionController
             $dashboard->getSpecialNotice()->toArray(),
             [
                 'canRead' => $authenticatedData['canRead'],
-                'canAcknowledge' => $authenticatedData['canAcknowledge']
+                'canAcknowledge' => $authenticatedData['canAcknowledge'],
+                'canRecieveSpecialNotice'  => $authenticatedData['canRecieveSpecialNotice'],
             ]
         );
         
@@ -297,13 +298,14 @@ class UserHomeController extends AbstractAuthActionController
             'motAuthorisations'    => $authorisations,
             'isViewingOwnProfile'  => $isViewingOwnProfile,
             'countries'            => $this->getCountries(),
-            'canAcknowledge'       => $this->acknowledgeSpecialNoticeAssertion->isGranted($personId),
+            'canAcknowledge'       => $this->acknowledgeSpecialNoticeAssertion->isGranted(),
             'canRead'              => $this->authorisationService->isGranted(PermissionInSystem::SPECIAL_NOTICE_READ),
             'authorisation'        => $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
             'rolesAndAssociations' => $this->tradeRolesAssociationsService->getRolesAndAssociations($personId),
             'canViewUsername'      => $canViewUsername,
             'systemRoles'          => $this->getSystemRoles($personalDetails),
             'roleNiceNameList'     => $this->getRoleNiceNameList($personalDetails),
+            'canRecieveSpecialNotice' => $this->authorisationService->isGranted(PermissionInSystem::SPECIAL_NOTICE_READ_CURRENT)
         ];
     }
 

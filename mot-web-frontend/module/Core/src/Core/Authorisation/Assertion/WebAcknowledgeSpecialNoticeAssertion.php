@@ -3,7 +3,6 @@
 namespace Core\Authorisation\Assertion;
 
 use DvsaCommon\Auth\Assertion\AcknowledgeSpecialNoticeAssertion;
-use Application\Data\ApiPersonalDetails;
 
 class WebAcknowledgeSpecialNoticeAssertion
 {
@@ -13,44 +12,27 @@ class WebAcknowledgeSpecialNoticeAssertion
     private $assertion;
 
     /**
-     * @var ApiPersonalDetails
-     */
-    private $apiPersonalDetails;
-
-    /**
      * @param AcknowledgeSpecialNoticeAssertion $assertion
-     * @param ApiPersonalDetails $apiPersonalDetails
      */
-    public function __construct(AcknowledgeSpecialNoticeAssertion $assertion, ApiPersonalDetails $apiPersonalDetails)
+    public function __construct(AcknowledgeSpecialNoticeAssertion $assertion)
     {
         $this->assertion = $assertion;
-        $this->apiPersonalDetails = $apiPersonalDetails;
     }
 
     /**
-     * @param int $personId
      * @return bool
      */
-    public function isGranted($personId)
+    public function isGranted()
     {
-        return $this->assertion->isGranted($this->getAuthorisation($personId));
+        return $this->assertion->isGranted();
     }
 
     /**
-     * @param int $personId
      * @throws \DvsaCommon\Exception\UnauthorisedException
      */
-    public function assertGranted($personId)
+    public function assertGranted()
     {
-        $this->assertion->assertGranted($this->getAuthorisation($personId));
+        $this->assertion->assertGranted();
     }
 
-    /**
-     * @param int $personId
-     * @return array
-     */
-    private function getAuthorisation($personId)
-    {
-        return $this->apiPersonalDetails->getPersonalAuthorisationForMotTesting($personId);
-    }
 }

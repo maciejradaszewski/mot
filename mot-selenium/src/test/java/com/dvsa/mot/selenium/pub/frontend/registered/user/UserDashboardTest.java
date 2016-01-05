@@ -105,15 +105,6 @@ public class UserDashboardTest extends BaseTest {
         userDashboard.clickLogout();
     }
 
-    @Test(groups = {"VM-4565", "Regression", "W-Sprint3"})
-    public void testLoginAsDVLACentralOperativeAndVerifyLinks() {
-        UserDashboardPage userDashboard = UserDashboardPage
-                .navigateHereFromLoginPage(driver, Login.LOGIN_DVLA_CENTRAL_OPERATIVE);
-        assertThat(" View all Special notices link present and clickable",
-                userDashboard.isViewAllForSpecialNoticesLinkClickable(), is(true));
-        userDashboard.clickLogout();
-    }
-
     @Test(groups = {"VM-4791", "Regression"})
     public void testVerifyCookieLinkClickableInTheFooter() {
         UserDashboardPage userDashboardPage = LoginPage.loginAs(driver, login);

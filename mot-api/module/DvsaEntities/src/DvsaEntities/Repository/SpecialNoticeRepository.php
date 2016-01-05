@@ -211,7 +211,7 @@ class SpecialNoticeRepository extends AbstractMutableRepository
 
         $conn->executeQuery(
             $this->getBroadcastInternalSpecialNoticeQuery(),
-            ["userId" => $userId, "dvsaRoles" => DvsaRole::getDvsaRoles()],
+            ["userId" => $userId, "dvsaRoles" => DvsaRole::getSpecialNoticeRecipientsRoles()],
             ["userId" => \Pdo::PARAM_INT, "dvsaRoles" => Connection::PARAM_STR_ARRAY]
         );
 
