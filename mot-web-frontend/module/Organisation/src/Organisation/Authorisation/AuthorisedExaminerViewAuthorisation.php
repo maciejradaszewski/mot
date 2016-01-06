@@ -180,8 +180,8 @@ class AuthorisedExaminerViewAuthorisation
 
     public function canAdjustSlotBalance()
     {
-        return $this->authorisationService->isGrantedAtOrganisation(
-            PermissionAtOrganisation::SLOTS_ADJUSTMENT, $this->authorisedExaminerId
+        return $this->authorisationService->isGranted(
+            PermissionInSystem::SLOTS_ADJUSTMENT
         );
     }
 
