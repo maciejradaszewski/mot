@@ -1,15 +1,13 @@
 package uk.gov.dvsa.ui.pages.vts;
 
+import org.joda.time.DateTime;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import uk.gov.dvsa.domain.model.mot.DateRange;
-import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.enums.DateRangeFilter;
-import uk.gov.dvsa.ui.pages.Page;
 import uk.gov.dvsa.ui.pages.mot.TestLogPage;
 
 import java.util.List;
@@ -51,14 +49,14 @@ public class SiteTestLogPage extends TestLogPage {
        return checkNoSuchElementErrorIsThrownAndReturnTrue(filter);
     }
 
-    public void enterCustomDateRange(DateRange range1, DateRange range2){
-        FormCompletionHelper.enterText(dateFromDay, range1.getStringDay());
-        FormCompletionHelper.enterText(dateFromMonth, range1.getStringMonth());
-        FormCompletionHelper.enterText(dateToYear, range1.getStringYear());
+    public void enterCustomDateRange(DateTime firstDate, DateTime secondDate){
+        FormCompletionHelper.enterText(dateFromDay, secondDate.dayOfMonth().getAsString());
+        FormCompletionHelper.enterText(dateFromMonth, secondDate.monthOfYear().getAsString());
+        FormCompletionHelper.enterText(dateFromYear, secondDate.year().getAsString());
 
-        FormCompletionHelper.enterText(dateToDay, range2.getStringDay());
-        FormCompletionHelper.enterText(dateToMonth, range2.getStringMonth());
-        FormCompletionHelper.enterText(dateToYear, range2.getStringYear());
+        FormCompletionHelper.enterText(dateToDay, firstDate.dayOfMonth().getAsString());
+        FormCompletionHelper.enterText(dateToMonth, firstDate.monthOfYear().getAsString());
+        FormCompletionHelper.enterText(dateToYear, firstDate.year().getAsString());
 
         updateResultsButton.click();
     }

@@ -71,26 +71,26 @@ public class SiteTestLogsView extends BaseTest {
     @Test(groups = {"BVT", "Regression"})
     public void permittedUserCanViewCustomDateRange() throws IOException {
 
-        //Given I performed 2 Mot tests 2 months today, on the 2nd and 10th
+        //Given I performed 2 Mot tests within 30 days
         AeDetails aeDetails = aeData.createAeWithDefaultValues();
         Site testSite = siteData.createNewSite(aeDetails.getId(), "My_Site");
         User tester = userData.createTester(testSite.getId());
 
-        DateRange date_2nd = new DateRange(02, DateTime.now().getMonthOfYear() - 2, DateTime.now().getYear());
-        DateRange date_30th = new DateRange(30,  DateTime.now().getMonthOfYear() - 2, DateTime.now().getYear());
+        DateTime firstTestDate = DateTime.now().withDayOfMonth(2);
+        DateTime secondTestDate = DateTime.now().minusDays(30);
 
-        motApi.createTest(tester, testSite.getId(), vehicleData.getNewVehicle(tester), TestOutcome.PASSED, 123456,
-                DateTime.now().withDate(date_2nd.getIntYear(), date_2nd.getIntMonth(), date_2nd.getIntDay()));
+        motApi.createTest(tester, testSite.getId(), vehicleData.getNewVehicle(tester),
+                TestOutcome.PASSED, 123456, firstTestDate);
 
-        motApi.createTest(tester, testSite.getId(), vehicleData.getNewVehicle(tester), TestOutcome.PASSED, 123456,
-                DateTime.now().withDate(date_30th.getIntYear(), date_30th.getIntMonth(), date_30th.getIntDay()));
+        motApi.createTest(tester, testSite.getId(), vehicleData.getNewVehicle(tester),
+                TestOutcome.PASSED, 123456, secondTestDate);
 
 
         // When I go to the VTS Test Log page as <permitted user>
         motUI.testLog.siteLogPage(userData.createAreaOfficeOne("AreaOfficer"), String.valueOf(testSite.getId()));
 
         //When I search with a date range
-        motUI.testLog.selectDateRange(date_2nd, date_30th);
+        motUI.testLog.selectDateRange(firstTestDate, secondTestDate);
 
         //Then the data table should be displayed containing only 2 Mot test
         assertThat("The Correct number of Mot is returned", motUI.testLog.getNumberOfMotTestInTable(), is(2));

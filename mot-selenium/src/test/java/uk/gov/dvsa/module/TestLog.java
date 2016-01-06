@@ -1,7 +1,7 @@
 package uk.gov.dvsa.module;
 
+import org.joda.time.DateTime;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.domain.model.mot.DateRange;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.helper.enums.DateRangeFilter;
 import uk.gov.dvsa.ui.pages.vts.SiteTestLogPage;
@@ -33,8 +33,8 @@ public class TestLog {
         return testLogPage.isSelected(filter);
     }
 
-    public void selectDateRange(DateRange range1, DateRange range2) {
-        testLogPage.enterCustomDateRange(range1, range2);
+    public void selectDateRange(DateTime firstDate, DateTime secondDate) {
+        testLogPage.enterCustomDateRange(firstDate, secondDate);
     }
 
     public int getNumberOfMotTestInTable(){
