@@ -136,8 +136,8 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
                 'canSetDirectDebit' => $this->auth->isGrantedAtOrganisation(
                     PermissionAtOrganisation::SLOTS_PAYMENT_DIRECT_DEBIT, $orgId
                 ),
-                'canAdjust' => $this->auth->isGrantedAtOrganisation(
-                    PermissionAtOrganisation::SLOTS_ADJUSTMENT, $orgId
+                'canAdjust' => $this->auth->isGranted(
+                    PermissionInSystem::SLOTS_ADJUSTMENT
                 ),
                 'testLogButton' => $this->auth->isGrantedAtOrganisation(
                     PermissionAtOrganisation::AE_TEST_LOG, $orgId

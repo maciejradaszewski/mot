@@ -8,6 +8,8 @@ upgradefiles+=('2015-12-07-BL-416-content-details-site-related-permissions-STORY
 upgradefiles+=('2015-12-07-BL-414-site-permissions-related-STORY.sql');
 upgradefiles+=('2015-12-07-BL-415-site-details-granular-permissions-STORY.sql');
 upgradefiles+=('2015-12-07-BL-418-permission-for-VTS-overview-permissions-STORY.sql');
+upgradefiles+=('2015-12-10-BL-304-non-financial-manual-adjustments-payment-type-STORY.sql');
+upgradefiles+=('2015-12-10-BL-304-non-financial-manual-adjustments-STORY.sql');
 upgradefiles+=('2015-12-29-BL-236-vts-and-dvsa-roles-unable-to-acknowledge-special-notices-STORY.sql');
 
 # add files here in intended run order for release

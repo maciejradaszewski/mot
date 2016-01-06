@@ -219,8 +219,8 @@ class AuthorisedExaminerViewAuthorisationTest extends \PHPUnit_Framework_TestCas
     public function testCanAdjustSlotBalance()
     {
         $this->authMock->expects($this->once())
-            ->method('isGrantedAtOrganisation')
-            ->with(PermissionAtOrganisation::SLOTS_ADJUSTMENT, self::ID)
+            ->method('isGranted')
+            ->with(PermissionInSystem::SLOTS_ADJUSTMENT)
             ->willReturn(true);
 
         $this->assertTrue($this->auth->canAdjustSlotBalance());

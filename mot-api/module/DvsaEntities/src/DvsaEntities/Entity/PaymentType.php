@@ -45,6 +45,13 @@ class PaymentType extends Entity
     private $isAdjustable;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", nullable=false)
+     */
+    private $code;
+
+    /**
      * @return bool
      */
     public function getIsAdjustable()
@@ -126,5 +133,20 @@ class PaymentType extends Entity
     public function getDisplayOrder()
     {
         return $this->displayOrder;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
     }
 }

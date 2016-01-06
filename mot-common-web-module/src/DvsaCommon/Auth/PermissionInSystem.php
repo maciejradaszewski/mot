@@ -94,6 +94,7 @@ final class PermissionInSystem
     const SLOTS_TRANSACTION_READ_FULL = 'SLOTS-TRANSACTION-READ-FULL';
     const SLOTS_CHARGEBACK = 'SLOTS-CHARGEBACK';
     const SLOTS_TXN_ADJUSTMENT = 'SLOTS-TXN-ADJUSTMENT';
+    const SLOTS_ADJUSTMENT = 'SLOTS-ADJUSTMENT';
     const SLOTS_REFUND = 'SLOTS-REFUND';
     const SLOTS_REPORTS_GENERATE = 'SLOTS-REPORTS-GENERATE';
     const SLOTS_REPORTS_DOWNLOAD = 'SLOTS-REPORTS-DOWNLOAD';
@@ -219,7 +220,7 @@ final class PermissionInSystem
             self::SLOTS_CHARGEBACK,
             self::SLOTS_TXN_ADJUSTMENT,
             self::SLOTS_REFUND,
-            self::SLOTS_TXN_ADJUSTMENT,
+            self::SLOTS_ADJUSTMENT,
             self::SLOTS_REPORTS_GENERATE,
             self::SLOTS_REPORTS_DOWNLOAD,
             self::SLOTS_DIRECT_DEBIT_SEARCH,
