@@ -140,6 +140,10 @@ public class UserService extends Service {
     }
 
     private User userResponse(Response response) throws IOException {
+        if(response.statusCode() != 200){
+            throw new IllegalStateException("Server error: could not create user");
+        }
+
         return jsonHandler.hydrateObject(
                 jsonHandler.convertToString(response.body().path("data")), User.class);
     }

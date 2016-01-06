@@ -105,7 +105,7 @@ class DataGeneratorHelper
         return (is_null($role)) ? 'user-' : strtolower($role) . '-';
     }
 
-    public function generateRandomString($length = 2) {
+    public function generateRandomString($length = 5) {
         return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
     }
 }
