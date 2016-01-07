@@ -9,7 +9,7 @@ $config = [
         'DvsaFeature',
         'Dvsa\Mot\Frontend\AuthenticationModule',
         'Dvsa\Mot\Frontend\MotTestModule',
-        'Dvsa\Mot\Frontend\ProfileModule',
+        'Dvsa\Mot\Frontend\PersonModule',
         'Dvsa\Mot\Frontend\RegistrationModule',
         'DvsaCommon',
         'DvsaClient',

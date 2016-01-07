@@ -2,8 +2,7 @@ package uk.gov.dvsa.module;
 
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
-import uk.gov.dvsa.ui.pages.ProfileOfPage;
-import uk.gov.dvsa.ui.pages.RemoveRolePage;
+import uk.gov.dvsa.ui.pages.profile.ProfileOfPage;
 import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;

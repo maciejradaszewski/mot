@@ -47,8 +47,8 @@
             "Dvsa\\Mot\\Frontend\\RegistrationModuleTest\\": "module/RegistrationModule/test",
             "Dvsa\\Mot\\Frontend\\MotTestModule\\": "module/MotTestModule/src",
             "Dvsa\\Mot\\Frontend\\MotTestModuleTest\\": "module/MotTestModule/test",
-            "Dvsa\\Mot\\Frontend\\ProfileModule\\": "module/ProfileModule/src",
-            "Dvsa\\Mot\\Frontend\\ProfileModuleTest\\": "module/ProfileModule/test",
+            "Dvsa\\Mot\\Frontend\\PersonModule\\": "module/PersonModule/src",
+            "Dvsa\\Mot\\Frontend\\PersonModuleTest\\": "module/PersonModule/test",
             "Dvsa\\Mot\\FrontendTest\\": "test/src"
         },
         "classmap" : [

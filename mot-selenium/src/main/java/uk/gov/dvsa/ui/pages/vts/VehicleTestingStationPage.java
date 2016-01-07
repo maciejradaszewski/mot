@@ -8,6 +8,7 @@ import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.mot.MotTestCertificatesPage;
 import uk.gov.dvsa.ui.pages.mot.TestShortSummaryPage;
+import uk.gov.dvsa.ui.pages.profile.ProfileOfPage;
 
 public class VehicleTestingStationPage extends Page {
     public static final String path = "/vehicle-testing-station/%s";
