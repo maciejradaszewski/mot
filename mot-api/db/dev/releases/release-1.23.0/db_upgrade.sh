@@ -11,6 +11,7 @@ upgradefiles+=('2015-12-07-BL-418-permission-for-VTS-overview-permissions-STORY.
 upgradefiles+=('2015-12-10-BL-304-non-financial-manual-adjustments-payment-type-STORY.sql');
 upgradefiles+=('2015-12-10-BL-304-non-financial-manual-adjustments-STORY.sql');
 upgradefiles+=('2015-12-29-BL-236-vts-and-dvsa-roles-unable-to-acknowledge-special-notices-STORY.sql');
+upgradefiles+=('2016-01-04-BL-448-new-person-profile-permissions-STORY.sql');
 
 # add files here in intended run order for release
 

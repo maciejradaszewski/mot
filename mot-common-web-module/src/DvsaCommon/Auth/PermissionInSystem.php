@@ -129,6 +129,9 @@ final class PermissionInSystem
     const ALTER_TESTER_AUTHORISATION_STATUS = 'ALTER-TESTER-AUTHORISATION-STATUS';
     const VIEW_TRADE_ROLES_OF_ANY_USER = 'VIEW-TRADE-ROLES-OF-ANY-USER';
     const ADD_EDIT_DRIVING_LICENCE = 'ADD-EDIT-DRIVING-LICENCE';
+    const VIEW_DRIVING_LICENCE = 'VIEW-DRIVING-LICENCE';
+    const VIEW_DATE_OF_BIRTH = 'VIEW-DATE-OF-BIRTH';
+    const MANAGE_USER_ACCOUNTS = 'MANAGE-USER-ACCOUNTS';
 
     /**
      * @return array
@@ -254,6 +257,9 @@ final class PermissionInSystem
             self::ALTER_TESTER_AUTHORISATION_STATUS,
             self::VIEW_TRADE_ROLES_OF_ANY_USER,
             self::ADD_EDIT_DRIVING_LICENCE,
+            self::VIEW_DRIVING_LICENCE,
+            self::VIEW_DATE_OF_BIRTH,
+            self::MANAGE_USER_ACCOUNTS,
         ];
     }
 }

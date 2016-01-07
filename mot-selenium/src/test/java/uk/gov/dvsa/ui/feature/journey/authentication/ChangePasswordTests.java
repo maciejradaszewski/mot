@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.ChangePasswordFromProfilePage;
-import uk.gov.dvsa.ui.pages.ProfilePage;
+import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

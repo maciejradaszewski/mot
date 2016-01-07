@@ -241,7 +241,6 @@ $config = Config::create()
     ->level(FixerInterface::PSR2_LEVEL)
     ->fixers(
         [
-            'align_double_arrow',
             'concat_with_spaces',
             'double_arrow_multiline_whitespaces',
             'duplicate_semicolon',

@@ -25,6 +25,11 @@ class TesterGroupAuthorisationMapper
         $this->catalog = $catalog;
     }
 
+    /**
+     * @param $testerId
+     *
+     * @return TesterAuthorisation
+     */
     public function getAuthorisation($testerId)
     {
         $vehicleClassAuthorisations = $this->testerAuthorisationMapper->getTesterQualificationStatus($testerId);
@@ -34,7 +39,8 @@ class TesterGroupAuthorisationMapper
         return $this->groupAuthorisations($vehicleClassAuthorisations);
     }
 
-    private function cleanResponse($vehicleClassAuthorisations) {
+    private function cleanResponse($vehicleClassAuthorisations)
+    {
         return ArrayUtils::mapWithKeys($vehicleClassAuthorisations,
             function ($key, $value) { return substr($key, 5); },
             function ($key, $value) { return $value; }
@@ -45,7 +51,7 @@ class TesterGroupAuthorisationMapper
     {
         $groupedQualification = [
             VehicleClassGroupCode::BIKES    => [],
-            VehicleClassGroupCode::CARS_ETC => []
+            VehicleClassGroupCode::CARS_ETC => [],
         ];
 
         foreach ($vehicleClassAuthorisations as $class => $status) {

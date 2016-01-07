@@ -1,0 +1,385 @@
+<?php
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
+
+namespace Dvsa\Mot\Frontend\PersonModule\Security;
+
+use Dashboard\Model\PersonalDetails;
+use DoctrineORMModule\Proxy\__CG__\DvsaEntities\Entity\Role;
+use DvsaClient\Entity\TesterAuthorisation;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use DvsaCommon\Auth\MotIdentityProviderInterface;
+use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
+use DvsaCommon\Enum\RoleCode;
+use InvalidArgumentException;
+use PersonApi\Dto\PersonDetails;
+
+/**
+ * Class PersonProfileGuard.
+ */
+class PersonProfileGuard
+{
+    // The context in which the user is viewing the profile.
+    const AE_CONTEXT = 'ae';
+    const NO_CONTEXT = 'none';
+    const USER_SEARCH_CONTEXT = 'user-search';
+    const VTS_CONTEXT = 'vts';
+    const YOUR_PROFILE_CONTEXT = 'your-profile';
+
+    /**
+     * @var MotAuthorisationServiceInterface
+     */
+    private $authorisationService;
+
+    /**
+     * @var MotIdentityProviderInterface
+     */
+    private $identityProvider;
+
+    /**
+     * @var int
+     */
+    private $loggedInPersonId;
+
+    /**
+     * @var PersonDetails
+     */
+    private $targetPersonDetails;
+
+    /**
+     * @var TesterAuthorisation
+     */
+    private $testerAuthorisation;
+
+    /**
+     * @var array
+     */
+    private $tradeRolesAndAssociations;
+
+    /**
+     * @var string
+     */
+    private $context;
+
+    /**
+     * @var array
+     */
+    private $targetPersonRoles;
+
+    /**
+     * PersonProfileGuard constructor.
+     *
+     * @param MotAuthorisationServiceInterface $authorisationService
+     * @param MotIdentityProviderInterface     $identityProvider
+     * @param PersonalDetails                  $targetPersonDetails
+     * @param TesterAuthorisation              $testerAuthorisation
+     * @param array                            $tradeRolesAndAssociations
+     * @param string                           $context                   The context in which we are viewing the profile. Could be AE, VE
+     *                                                                    or User Search.
+     */
+    public function __construct(MotAuthorisationServiceInterface $authorisationService,
+                                MotIdentityProviderInterface $identityProvider, PersonalDetails $targetPersonDetails,
+                                TesterAuthorisation $testerAuthorisation, array $tradeRolesAndAssociations,
+                                $context)
+    {
+        $this->authorisationService = $authorisationService;
+        $this->identityProvider = $identityProvider;
+        $this->targetPersonDetails = $targetPersonDetails;
+        $this->testerAuthorisation = $testerAuthorisation;
+        $this->tradeRolesAndAssociations = $tradeRolesAndAssociations;
+
+        $availableContexts = $this->getAvailableContexts();
+        if (!in_array($context, $availableContexts)) {
+            throw new InvalidArgumentException(sprintf('Invalid context "%s". These are the valid ones: "%s"',
+                $context, implode('", "', $availableContexts)));
+        }
+        $this->context = $context;
+    }
+
+    /**
+     * The user is viewing himself in the "Your Profile" page context.
+     *
+     * @return bool
+     */
+    public function isViewingOwnProfile()
+    {
+        return self::YOUR_PROFILE_CONTEXT === $this->context;
+    }
+
+    /**
+     * The user is viewing himself in any context.
+     *
+     * @return bool
+     */
+    public function isViewingHimself()
+    {
+        return (int) $this->getLoggedInPersonId() === (int) $this->targetPersonDetails->getId();
+    }
+
+    /**
+     * View Date Of Birth.
+     *
+     * Rule: When SM, SU, AO1, AO2, VE, CSM, CSCO View AEDM, AED, SITE-M, SITE-A, TESTER, NO-ROLES.
+     *
+     * @return bool
+     */
+    public function canViewDateOfBirth()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::VIEW_DATE_OF_BIRTH)
+            && $this->targetUserHasNoneOrAnyRoleOf([
+                RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
+                RoleCode::AUTHORISED_EXAMINER_DELEGATE,
+                RoleCode::SITE_MANAGER,
+                RoleCode::SITE_ADMIN,
+                RoleCode::TESTER,
+        ]);
+    }
+
+    /**
+     * View Driving licence.
+     *
+     * Rule: When SM, SU, AO1, AO2, VE, CSM, CSCO View AEDM, AED, SITE-M, SITE-A, TESTER, NO-ROLES.
+     *
+     * @return bool
+     */
+    public function canViewDrivingLicence()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::VIEW_DRIVING_LICENCE)
+            && $this->targetUserHasNoneOrAnyRoleOf([
+                RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
+                RoleCode::AUTHORISED_EXAMINER_DELEGATE,
+                RoleCode::SITE_MANAGER,
+                RoleCode::SITE_ADMIN,
+                RoleCode::TESTER,
+        ]);
+    }
+
+    /**
+     * Change Driving licence.
+     *
+     * Rule: When SM, SU, AO1, AO2, VE View AEDM, AED, SITE-M, SITE-A, TESTER, NO-ROLES.
+     *
+     * @return bool
+     */
+    public function canChangeDrivingLicence()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::ADD_EDIT_DRIVING_LICENCE)
+            && $this->targetUserHasNoneOrAnyRoleOf([
+                RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
+                RoleCode::AUTHORISED_EXAMINER_DELEGATE,
+                RoleCode::SITE_MANAGER,
+                RoleCode::SITE_ADMIN,
+                RoleCode::TESTER,
+        ]);
+    }
+
+    /**
+     * Change Email.
+     *
+     * Rule: When ANYONE View ’Your profile’ OR When SM, SU, A01, A02, VE, CSM, CSCO View ANYONE.
+     *
+     * @return bool
+     */
+    public function canChangeEmailAddress()
+    {
+        return $this->isViewingOwnProfile()
+            || $this->authorisationService->isGranted(PermissionInSystem::PROFILE_EDIT_OTHERS_EMAIL_ADDRESS);
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldDisplayGroupAStatus()
+    {
+        return null !== $this->testerAuthorisation->getGroupAStatus()->getCode()
+            && AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED != $this->testerAuthorisation->getGroupAStatus()->getCode();
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldDisplayGroupBStatus()
+    {
+        return null !== $this->testerAuthorisation->getGroupBStatus()->getCode()
+            && AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED != $this->testerAuthorisation->getGroupBStatus()->getCode();
+    }
+
+    /**
+     * @return bool
+     */
+    public function canResetAccount()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::USER_ACCOUNT_RECLAIM);
+    }
+
+    /**
+     * @return bool
+     */
+    public function canSendUserIdByPost()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::USERNAME_RECOVERY);
+    }
+
+    /**
+     * @return bool
+     */
+    public function canSendPasswordResetByPost()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::USER_PASSWORD_RESET);
+    }
+
+    /**
+     * @return bool
+     */
+    public function canViewTradeRoles()
+    {
+        return ((!empty($this->tradeRolesAndAssociations)
+                && $this->isViewingOwnProfile()
+            )
+            || ($this->authorisationService->isGranted(PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER)
+                && $this->targetUserHasNoneOrAnyRoleOf([
+                                                        RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
+                                                        RoleCode::AUTHORISED_EXAMINER_DELEGATE,
+                                                        RoleCode::SITE_MANAGER,
+                                                        RoleCode::SITE_ADMIN,
+                                                        RoleCode::TESTER,
+                                                       ])
+            )
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldDisplayTradeRoles()
+    {
+        return $this->canViewTradeRoles() && !empty($this->tradeRolesAndAssociations);
+    }
+
+    /**
+     * @return bool
+     */
+    public function canManageDvsaRoles()
+    {
+        return (!($this->authorisationService->isGranted(PermissionInSystem::MANAGE_DVSA_ROLES)
+                && $this->isViewingHimself())
+            &&  ($this->authorisationService->isGranted(PermissionInSystem::MANAGE_DVSA_ROLES)
+                && ($this->targetUserHasNoneOrAnyRoleOf([
+                                                         RoleCode::SCHEME_MANAGER,
+                                                         RoleCode::SCHEME_USER,
+                                                         RoleCode::AREA_OFFICE_1,
+                                                         RoleCode::AREA_OFFICE_2,
+                                                         RoleCode::VEHICLE_EXAMINER,
+                                                         RoleCode::CUSTOMER_SERVICE_MANAGER,
+                                                         RoleCode::CUSTOMER_SERVICE_OPERATIVE,
+                                                         RoleCode::DVLA_MANAGER,
+                                                         RoleCode::DVLA_OPERATIVE,
+                                                         RoleCode::FINANCE_,
+                                                         RoleCode::SCHEME_MANAGER,
+                                                        ])
+                )
+            )
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function canChangeTesterQualificationStatus()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS)
+                && ($this->targetUserHasNoneOrAnyRoleOf([
+                                                         RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
+                                                         RoleCode::AUTHORISED_EXAMINER_DELEGATE,
+                                                         RoleCode::SITE_MANAGER,
+                                                         RoleCode::SITE_ADMIN,
+                                                         RoleCode::TESTER
+                                                        ])
+                    || (!in_array($this->testerAuthorisation->getGroupAStatus()->getCode(), [AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, null])
+                            && !in_array($this->testerAuthorisation->getGroupBStatus()->getCode(), [AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, null]))
+                   );
+    }
+
+    /**
+     * @return bool
+     */
+    public function canViewEventHistory()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::LIST_EVENT_HISTORY);
+    }
+
+    /**
+     * @return bool
+     */
+    public function canViewAccountSecurity()
+    {
+        return $this->isViewingOwnProfile() && $this->context === self::YOUR_PROFILE_CONTEXT;
+    }
+
+    /**
+     * return bool.
+     */
+    public function canViewAccountManagement()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::MANAGE_USER_ACCOUNTS)
+            && ($this->isViewingOwnProfile() && $this->context !== self::YOUR_PROFILE_CONTEXT
+                || !$this->isViewingOwnProfile());
+    }
+
+    /**
+     * @return int
+     */
+    private function getLoggedInPersonId()
+    {
+        if (null === $this->loggedInPersonId) {
+            $this->loggedInPersonId = $this->identityProvider->getIdentity()->getUserId();
+        }
+
+        return $this->loggedInPersonId;
+    }
+
+    /**
+     * @return array
+     */
+    private function getAvailableContexts()
+    {
+        return [self::AE_CONTEXT, self::NO_CONTEXT, self::USER_SEARCH_CONTEXT, self::VTS_CONTEXT,
+            self::YOUR_PROFILE_CONTEXT, ];
+    }
+
+    /**
+     * @return array
+     */
+    private function getTargetPersonRoles()
+    {
+        if (null === $this->targetPersonRoles) {
+            $this->targetPersonRoles = $this->targetPersonDetails->getRoles();
+        }
+
+        return $this->targetPersonRoles;
+    }
+
+    /**
+     * @param array $roles
+     *
+     * @return bool
+     */
+    private function targetUserHasAnyRoleOf(array $roles)
+    {
+        return !empty(array_intersect($roles, $this->getTargetPersonRoles()));
+    }
+
+    /**
+     * @param array $roles
+     *
+     * @return bool
+     */
+    private function targetUserHasNoneOrAnyRoleOf(array $roles)
+    {
+        return empty($this->getTargetPersonRoles()) || $this->targetUserHasAnyRoleOf($roles);
+    }
+}

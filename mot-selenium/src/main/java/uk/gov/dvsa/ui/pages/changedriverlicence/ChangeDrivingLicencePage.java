@@ -7,7 +7,7 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.ProfilePage;
+import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 
 public class ChangeDrivingLicencePage extends Page {
 

@@ -20,6 +20,7 @@ import uk.gov.dvsa.ui.pages.mot.createvehiclerecord.CreateNewVehicleRecordIdenti
 import uk.gov.dvsa.ui.pages.mot.duplicatereplacementcertificates.DuplicateReplacementCertificateTestHistoryPage;
 import uk.gov.dvsa.ui.pages.mot.retest.ConfirmVehicleRetestPage;
 import uk.gov.dvsa.ui.pages.mot.retest.ReTestResultsEntryPage;
+import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticeCreationPage;
 import uk.gov.dvsa.ui.pages.specialnotices.SpecialNoticePage;
 import uk.gov.dvsa.ui.pages.userregistration.CreateAnAccountPage;

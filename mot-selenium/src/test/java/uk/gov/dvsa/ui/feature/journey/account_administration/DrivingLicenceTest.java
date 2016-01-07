@@ -1,7 +1,6 @@
 package uk.gov.dvsa.ui.feature.journey.account_administration;
 
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
@@ -10,7 +9,7 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.ProfilePage;
+import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 import uk.gov.dvsa.ui.pages.changedriverlicence.RemoveDriverLicencePage;
 import uk.gov.dvsa.ui.pages.changedriverlicence.ReviewDrivingLicencePage;
