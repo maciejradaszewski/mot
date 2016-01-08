@@ -3,7 +3,9 @@
 namespace DvsaCommon\UrlBuilder;
 
 /**
- * Url Builder for web for the Events
+ * Url Builder for web for the Events.
+ *
+ * @deprecated Use the route name directly instead, while using the URL generator helper.
  */
 class EventUrlBuilderWeb extends AbstractUrlBuilder
 {

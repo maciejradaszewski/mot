@@ -3,7 +3,9 @@
 namespace DvsaCommon\UrlBuilder;
 
 /**
- * Url Builder for web for the User Admin pages
+ * Url Builder for web for the User Admin pages.
+ *
+ * @deprecated Use the route name directly instead, while using the URL generator helper.
  */
 class UserAdminUrlBuilderWeb extends AbstractUrlBuilder
 {

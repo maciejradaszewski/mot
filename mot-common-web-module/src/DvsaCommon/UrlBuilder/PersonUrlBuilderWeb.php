@@ -3,7 +3,9 @@
 namespace DvsaCommon\UrlBuilder;
 
 /**
- * Web urls builder for UserHome routes
+ * Web urls builder for UserHome routes.
+ *
+ * @deprecated Use the route name directly instead, while using the URL generator helper.
  */
 class PersonUrlBuilderWeb extends AbstractUrlBuilder
 {
