@@ -16,7 +16,6 @@ return [
     'Site',
     'Equipment',
     'Session',
-    'Dvsa\TransitionGroup',
     'Vehicle',
     'Account',
     'Event',

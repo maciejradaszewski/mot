@@ -4,7 +4,6 @@
         "zendframework/zendframework": "~2.4.4",
         "doctrine/common": "v2.4.1",
         "doctrine/cache": "~1.4",
-        "dvsa/transition-group": "dev-master",
         "dvsa/feature-toggle": "~1.0",
         "dvsa/dvsa-document-module": "dev-develop",
         "dvsa/scripts": "~2.0.3",
