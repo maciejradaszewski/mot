@@ -3,7 +3,9 @@
 namespace DvsaCommon\UrlBuilder;
 
 /**
- * Url Builder for web for Site
+ * Url Builder for web for Site.
+ *
+ * @deprecated Use the route name directly instead, while using the URL generator helper.
  */
 class SiteUrlBuilderWeb extends AbstractUrlBuilder
 {

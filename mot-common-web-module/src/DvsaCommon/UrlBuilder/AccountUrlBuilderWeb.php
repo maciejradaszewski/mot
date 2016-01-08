@@ -3,8 +3,9 @@
 namespace DvsaCommon\UrlBuilder;
 
 /**
- * Class AccountUrlBuilderWeb
- * @package DvsaCommon\UrlBuilder
+ * Class AccountUrlBuilderWeb.
+ *
+ * @deprecated Use the route name directly instead, while using the URL generator helper.
  */
 class AccountUrlBuilderWeb extends AbstractUrlBuilder
 {

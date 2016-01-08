@@ -2,6 +2,11 @@
 
 namespace DvsaCommon\UrlBuilder;
 
+/**
+ * Class RegistrationUrlBuilderWeb.
+ *
+ * @deprecated Use the route name directly instead, while using the URL generator helper.
+ */
 class RegistrationUrlBuilderWeb extends AbstractUrlBuilder
 {
     const MAIN = '/account/register';

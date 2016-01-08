@@ -3,7 +3,9 @@
 namespace DvsaCommon\UrlBuilder;
 
 /**
- * Url builder for mot test
+ * Url builder for mot test.
+ *
+ * @deprecated Use the route name directly instead, while using the URL generator helper.
  */
 class MotTestUrlBuilderWeb extends AbstractUrlBuilder
 {
