@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7b8d75d8a2dfa0647e2dc9ddea0a3c77",
-    "content-hash": "d822f6088b653f2b88ede52af7d1a589",
+    "hash": "cf506cd1e3a6d2f42918c78007bbcee3",
+    "content-hash": "af8c1852f1570408bca10537a59d645e",
     "packages": [
         {
             "name": "cpms/client",
@@ -1027,41 +1027,6 @@
             "time": "2015-08-05 13:44:00"
         },
         {
-            "name": "dvsa/transition-group",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "http://gitlab.clb.npm/sc/transitiongroup.git",
-                "reference": "a1a7ce2e15a8af8b2ae0a3f8918e8e4a3df2d0f5"
-            },
-            "dist": {
-                "type": "tar",
-                "url": "http://satis.inf.mgt.mtpdvsa/dist/dvsa-transition-group-dev-master-a15457.tar",
-                "reference": "a1a7ce2e15a8af8b2ae0a3f8918e8e4a3df2d0f5",
-                "shasum": "25f062a8d188cd96d74e914c7d856b434b85c145"
-            },
-            "require": {
-                "doctrine/doctrine-orm-module": "~0.8.0",
-                "zendframework/zendframework": "~2.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Dvsa\\TransitionGroup\\": "src/"
-                }
-            },
-            "authors": [
-                {
-                    "name": "Chris Riley",
-                    "email": "chris.riley@valtech.co.uk"
-                }
-            ],
-            "time": "2014-07-25 11:25:41"
-        },
-        {
             "name": "dvsa/web-frontend-assets",
             "version": "v0.7.5",
             "source": {
@@ -1648,12 +1613,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:zendframework/ZendPdf.git",
-                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0"
+                "url": "https://github.com/zendframework/ZendPdf.git",
+                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },
@@ -2919,7 +2884,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "dvsa/transition-group": 20,
         "dvsa/dvsa-document-module": 20,
         "zendframework/zftool": 20,
         "zendframework/zend-developer-tools": 20
