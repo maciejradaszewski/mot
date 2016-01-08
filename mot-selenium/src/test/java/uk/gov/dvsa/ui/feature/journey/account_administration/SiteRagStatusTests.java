@@ -10,6 +10,7 @@ import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.vts.AssessmentInfo;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public class SiteRagStatusTests extends BaseTest {
     }
 
     @Test(groups = {"BVT", "Regression"}, description = "VM-11544, Journey 1", dataProvider = "assessmentValues")
-    void addSiteAssessmentScore(AssessmentInfo aInfo) throws IOException {
+    void addSiteAssessmentScore(AssessmentInfo aInfo) throws IOException, URISyntaxException {
 
         //Given I am on the Enter Site Assessment Page as VE
         motUI.site.gotoAssessment(vehicleExaminer, String.valueOf(bobBangers.getId()));
@@ -74,7 +75,7 @@ public class SiteRagStatusTests extends BaseTest {
     }
 
     @Test(groups = {"BVT", "Regression"}, description = "VM-11544, Journey 1")
-    void verifyEventsCreated() throws IOException {
+    void verifyEventsCreated() throws IOException, URISyntaxException {
 
         //Given I have an assessment added to a VTS
         motUI.site.gotoAssessment(vehicleExaminer, String.valueOf(bobBangers.getId()));

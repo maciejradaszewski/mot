@@ -31,11 +31,11 @@ public class SpecialNoticeTests extends BaseTest {
     }
 
     @Test (groups = {"BVT", "Regression"})
-    public void createAndBroadcastSpecialNotice() throws IOException{
+    public void createAndBroadcastSpecialNotice() throws Exception{
 
-        //Given that I am on the create special notices page as a scheme user
+        //Given that I am logged as a Scheme user and I am on the create special notices page
         SpecialNoticeCreationPage specialNoticeCreationPage =
-            pageNavigator.goToSpecialNoticeCreationPage(schemeUser);
+            pageNavigator.goToPage(schemeUser, SpecialNoticeCreationPage.PATH, SpecialNoticeCreationPage.class);
 
         //When I create and publish a Special Notice
         SpecialNoticeAdminPage specialNoticeAdminPage =
@@ -46,7 +46,8 @@ public class SpecialNoticeTests extends BaseTest {
         specialNoticeAdminPage.broadcastNotice(recipient.getUsername(), specialNoticeTitle);
 
         //Then the recipient should be able to read the Special Notice
-        SpecialNoticePage specialNoticePage = pageNavigator.goToSpecialNoticesPage(recipient);
+        SpecialNoticePage specialNoticePage = pageNavigator.goToPage(recipient, SpecialNoticePage.PATH,
+                SpecialNoticePage.class);
         assertThat("The recipient can successfully see the special notice",
             specialNoticePage.checkSpecialNoticeListForTitle(specialNoticeTitle), is(true));
     }

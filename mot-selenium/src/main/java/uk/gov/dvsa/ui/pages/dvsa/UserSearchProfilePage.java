@@ -10,6 +10,7 @@ import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 public class UserSearchProfilePage extends AbstractProfilePage {
 
     private static final String PAGE_TITLE = "User profile";
+    public static final String PATH = "/user-admin/search";
 
     @FindBy(id = "manage-internal-roles") private WebElement selectManageRolesLink;
     @FindBy(id = "person-driving-licence") private WebElement personDrivingLicence;

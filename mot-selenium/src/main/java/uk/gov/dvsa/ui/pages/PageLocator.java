@@ -6,9 +6,9 @@ import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.braketest.BrakeTestConfigurationPage;
 import uk.gov.dvsa.ui.pages.mot.*;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
-import uk.gov.dvsa.ui.pages.vts.VtsChooseARolePage;
-import uk.gov.dvsa.ui.pages.vts.VtsSearchForAUserPage;
-import uk.gov.dvsa.ui.pages.vts.VtsSummaryAndConfirmationPage;
+import uk.gov.dvsa.ui.pages.vts.ChooseARolePage;
+import uk.gov.dvsa.ui.pages.vts.SearchForAUserPage;
+import uk.gov.dvsa.ui.pages.vts.SummaryAndConfirmationPage;
 
 public abstract class PageLocator {
 
@@ -16,20 +16,20 @@ public abstract class PageLocator {
         return new VehicleSearchPage(driver);
     }
 
-    public static VtsSearchForAUserPage getVtsSearchForAUserPage(MotAppDriver driver) {
-        return new VtsSearchForAUserPage(driver);
+    public static SearchForAUserPage getVtsSearchForAUserPage(MotAppDriver driver) {
+        return new SearchForAUserPage(driver);
     }
 
     public static BrakeTestConfigurationPage getBrakeTestConfigurationPage(MotAppDriver driver) {
         return new BrakeTestConfigurationPage(driver);
     }
 
-    public static VtsChooseARolePage getVtsChooseARolePage(MotAppDriver driver) {
-        return new VtsChooseARolePage(driver);
+    public static ChooseARolePage getVtsChooseARolePage(MotAppDriver driver) {
+        return new ChooseARolePage(driver);
     }
 
-    public static VtsSummaryAndConfirmationPage getVtsSummaryAndConfirmationPage(MotAppDriver driver) {
-        return new VtsSummaryAndConfirmationPage(driver);
+    public static SummaryAndConfirmationPage getVtsSummaryAndConfirmationPage(MotAppDriver driver) {
+        return new SummaryAndConfirmationPage(driver);
     }
     
     public static MotTestSearchPage getMotTestSearchPage(MotAppDriver driver) {

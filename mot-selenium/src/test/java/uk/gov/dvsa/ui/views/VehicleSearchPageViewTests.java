@@ -38,7 +38,7 @@ public class VehicleSearchPageViewTests extends BaseTest {
     public void breadCrumbTrailIsDisplayed() throws IOException, URISyntaxException {
 
         //Given I'm on the vehicle search page
-        VehicleSearchPage vehicleSearchPage = pageNavigator.gotoVehicleSearchPage(tester);
+        VehicleSearchPage vehicleSearchPage = pageNavigator.goToPage(tester, VehicleSearchPage.PATH, VehicleSearchPage.class);
 
         //I Expect the BreadCrumb to contain Mot Testing
         assertThat("Mot Testing Crumb Trail not displayed properly",
@@ -50,7 +50,7 @@ public class VehicleSearchPageViewTests extends BaseTest {
     public void validationMessageIsDisplayedForInvalidRegOrVin() throws IOException, URISyntaxException {
 
         //Given I'm on vehicle search page
-        VehicleSearchPage vehicleSearchPage = pageNavigator.gotoVehicleSearchPage(tester);
+        VehicleSearchPage vehicleSearchPage = pageNavigator.goToPage(tester, VehicleSearchPage.PATH, VehicleSearchPage.class);
 
         //When I search for vehicle without registration and VIN
         vehicleSearchPage.searchVehicle("", "");
@@ -68,7 +68,7 @@ public class VehicleSearchPageViewTests extends BaseTest {
     public void validRegAndVinReturnsCorrectVehicle() throws IOException, URISyntaxException {
 
         //Given I'm on vehicle search page
-        VehicleSearchPage vehicleSearchPage = pageNavigator.gotoVehicleSearchPage(tester);
+        VehicleSearchPage vehicleSearchPage = pageNavigator.goToPage(tester, VehicleSearchPage.PATH, VehicleSearchPage.class);
 
         //When I search for a vehicle with correct VIN and registration number
         vehicleSearchPage.searchVehicle(vehicle.getRegistrationNumber(), vehicle.getVin());
@@ -92,10 +92,10 @@ public class VehicleSearchPageViewTests extends BaseTest {
         motApi.createTest(tester, site.getId(), vehicle, TestOutcome.FAILED, 12345, DateTime.now());
 
         //When I search for this vehicle
-        motUI.searchForVehicle(tester, vehicle);
+        motUI.retest.searchForVehicle(tester, vehicle);
 
         //Then text for "Re-Test" is present on the page
-        motUI.isTextPresent("For retest");
+        motUI.retest.isTextPresent("For retest");
     }
 
     @Test(groups = {"Regression", "VM-1854"}, expectedExceptions = NoSuchElementException.class)
@@ -105,9 +105,9 @@ public class VehicleSearchPageViewTests extends BaseTest {
         motApi.createTest(tester, site.getId(), vehicle, TestOutcome.FAILED, 12000, DateTime.now().minusDays(20));
 
         //When I search for and locate the vehicle
-        motUI.searchForVehicle(tester, vehicle);
+        motUI.retest.searchForVehicle(tester, vehicle);
 
         //Then I should not the text for "For retest" on the result
-        motUI.isTextPresent("For retest");
+        motUI.retest.isTextPresent("For retest");
     }
 }

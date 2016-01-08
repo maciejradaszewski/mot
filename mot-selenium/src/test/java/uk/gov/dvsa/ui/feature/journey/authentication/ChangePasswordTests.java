@@ -25,10 +25,10 @@ public class ChangePasswordTests extends BaseTest {
     }
 
     @Test(groups = {"BVT, regression"}, description = "VM-7668, Tester is changing password")
-    public void testerChangesPassword() throws IOException {
+    public void testerChangesPassword() throws Exception {
 
         //Given I am logged as a tester and I am on my profile page
-        ProfilePage profilePage = pageNavigator.gotoProfilePage(tester);
+        ProfilePage profilePage = pageNavigator.goToPage(tester, ProfilePage.PATH, ProfilePage.class);
 
         //And I click change password link
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
@@ -47,11 +47,11 @@ public class ChangePasswordTests extends BaseTest {
     }
 
     @Test(groups = {"BVT, regression"}, description = "VM-7668, Tester cancels password change")
-    public void testerCancelsPasswordChange() throws IOException {
+    public void testerCancelsPasswordChange() throws Exception {
 
         //Given I am logged in as a tester and I am on the password change page
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
-                pageNavigator.goToPasswordChangeFromProfilePage(tester);
+                pageNavigator.goToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
 
         //Then I click cancel link and I am back to the profile page
         ProfilePage profilePage = changePasswordFromProfilePage.clickCancelLink();
@@ -59,11 +59,11 @@ public class ChangePasswordTests extends BaseTest {
     }
 
     @Test(groups = {"BVT, regression"}, description = "VM-7668, Tester changes password for the same one")
-    public void testerChangesPasswordForSameOne() throws IOException {
+    public void testerChangesPasswordForSameOne() throws Exception {
 
         //Given I am logged in as a tester and I am on the password change page
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
-                pageNavigator.goToPasswordChangeFromProfilePage(tester);
+                pageNavigator.goToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
 
         //When I try to change password same as the old password
         changePasswordFromProfilePage.enterOldPassword(tester.getPassword());
@@ -80,11 +80,11 @@ public class ChangePasswordTests extends BaseTest {
 
     @Test(groups = {"BVT, regression"},
             description = "VM-7668, Tester tries to put new password but does not match with confirm password")
-    public void newPasswordAndOldPasswordDoesNotMatch() throws IOException {
+    public void newPasswordAndOldPasswordDoesNotMatch() throws Exception {
 
         //Given I am logged in as a tester and I am on the password change page
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
-                pageNavigator.goToPasswordChangeFromProfilePage(tester);
+                pageNavigator.goToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
 
         //When I try to type new password that does not match with confirmed password
         changePasswordFromProfilePage.enterOldPassword(tester.getPassword());
@@ -101,11 +101,11 @@ public class ChangePasswordTests extends BaseTest {
 
     @Test(groups = {"BVT, regression"},
             description = "VM-7668, Tester tries change password that is not according to password policy")
-    public void testerTriesToChangePasswordThatValidatesPolicy() throws IOException {
+    public void testerTriesToChangePasswordThatValidatesPolicy() throws Exception {
 
         //Given I am logged in as a tester and I am on the password change page
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
-                pageNavigator.goToPasswordChangeFromProfilePage(tester);
+                pageNavigator.goToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
 
         //When I try to change password for the password that does not match password policy
         changePasswordFromProfilePage.enterOldPassword(tester.getPassword());
@@ -120,11 +120,11 @@ public class ChangePasswordTests extends BaseTest {
     }
 
     @Test(groups = {"BVT, regression"}, description = "VM-7668, Tester types invalid old password")
-    public void testerPutsInvalidOldPassword() throws IOException {
+    public void testerPutsInvalidOldPassword() throws Exception {
 
         //Given I am logged in as a tester and I am on the password change page
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
-                pageNavigator.goToPasswordChangeFromProfilePage(tester);
+                pageNavigator.goToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
 
         //When I try put empty old password
         changePasswordFromProfilePage.enterNewPassword("Password1");
@@ -139,11 +139,11 @@ public class ChangePasswordTests extends BaseTest {
     }
 
     @Test(groups = {"BVT, regression"}, description = "VM-7668, Tester leaves empty fields and click submit")
-    public void testerLeavesEmptyFields() throws IOException {
+    public void testerLeavesEmptyFields() throws Exception {
 
         //Given I am logged in as a tester and I am on the password change page
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
-                pageNavigator.goToPasswordChangeFromProfilePage(tester);
+                pageNavigator.goToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
 
         //When I leave empty fields and click submit
         changePasswordFromProfilePage.clickSubmitButton(ChangePasswordFromProfilePage.class);

@@ -15,6 +15,7 @@ public class VehicleSearchPage extends BasePage {
 
     protected PageTitles pageTitles;
     private final String DEFAULT_TITLE = pageTitles.VEHICLE_SEARCH_PAGE.getPageTitle();
+    public static final String PATH = "/vehicle-search";
 
     @FindBy(id = "vin-info") private WebElement vinInfo;
 

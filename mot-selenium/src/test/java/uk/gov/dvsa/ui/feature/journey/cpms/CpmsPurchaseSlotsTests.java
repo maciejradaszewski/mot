@@ -1,18 +1,20 @@
 package uk.gov.dvsa.ui.feature.journey.cpms;
 
-import java.io.IOException;
-
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.AedmAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.FinanceAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.cpms.BuyTestSlotsPage;
 import uk.gov.dvsa.ui.pages.cpms.CardPaymentConfirmationPage;
 import uk.gov.dvsa.ui.pages.cpms.ChoosePaymentTypePage;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
@@ -20,11 +22,11 @@ import static org.hamcrest.core.Is.is;
 public class CpmsPurchaseSlotsTests extends BaseTest {
 
     @Test (groups = {"BVT", "Regression"}, description = "SPMS-37 Purachase slots by card successfully", dataProvider = "createAedmAndAe")
-    public void purchaseSlotsByCardSuccessfully(User aedm, AeDetails aeDetails) throws IOException { 
+    public void purchaseSlotsByCardSuccessfully(User aedm, AeDetails aeDetails) throws IOException, URISyntaxException {
         
       //Given I am on Buy test slots page as an Aedm
       BuyTestSlotsPage buyTestSlotsPage = pageNavigator
-                .goToAuthorisedExaminerPage(aedm, AuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
+                .goToPageAsAuthorisedExaminer(aedm, AedmAuthorisedExaminerViewPage.class, AedmAuthorisedExaminerViewPage.PATH, aeDetails.getId())
                 .clickBuySlotsLink();
       
       //When I submit the card payment request with required slots & valid card details
@@ -43,10 +45,10 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
     }
     
     @Test (groups = {"BVT", "Regression"}, description = "SPMS-37 Purachase slots exceeding maximun balance", dataProvider = "createAedmAndAe")
-    public void purchaseSlotsExceedingMaximumBalanceErrorTest(User aedm, AeDetails aeDetails) throws IOException {
+    public void purchaseSlotsExceedingMaximumBalanceErrorTest(User aedm, AeDetails aeDetails) throws IOException, URISyntaxException {
         
       //Given I am on Buy test slots page as an Aedm with positive slot balance
-      pageNavigator.goToAuthorisedExaminerPage(aedm, AuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
+      pageNavigator.goToPageAsAuthorisedExaminer(aedm, AedmAuthorisedExaminerViewPage.class, AuthorisedExaminerViewPage.PATH, aeDetails.getId())
                 .clickBuySlotsLink()
                 .enterSlotsRequired(60000)
                 .clickCalculateCostButton()
@@ -55,7 +57,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 .clickPayNowButton();
       
       BuyTestSlotsPage buyTestSlotsPage = pageNavigator
-              .goToAuthorisedExaminerPage(aedm, AuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
+              .goToPageAsAuthorisedExaminer(aedm, AedmAuthorisedExaminerViewPage.class, AuthorisedExaminerViewPage.PATH, aeDetails.getId())
               .clickBuySlotsLink();
               
       //When I submit required slots which makes the slot balance exceed the maximum balance
@@ -69,11 +71,11 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
     }
     
     @Test (groups = {"BVT", "Regression"}, description = "SPMS-264 Finance user processes Card payment", dataProvider = "createFinanceUserAndAe")
-    public void financeUserProcessesCardPayment(User financeUser, AeDetails aeDetails) throws IOException { 
+    public void financeUserProcessesCardPayment(User financeUser, AeDetails aeDetails) throws IOException, URISyntaxException {
         
       //Given I am on Choose payment type page as a Finance user
         ChoosePaymentTypePage choosePaymentTypePage = pageNavigator
-                .goToFinanceAuthorisedExaminerViewPage(financeUser, FinanceAuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
+                .goToPageAsAuthorisedExaminer(financeUser, FinanceAuthorisedExaminerViewPage.class, FinanceAuthorisedExaminerViewPage.PATH, aeDetails.getId())
                 .clickBuySlotsLinkAsFinanceUser();
       
      //When I submit the card payment request with required slots & valid card details

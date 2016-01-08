@@ -12,6 +12,7 @@ import java.util.List;
 
 public class UserService extends Service {
     private static final String CREATE_TESTER_PATH = "/testsupport/tester";
+    private static final String CREATE_DVLA_OFFICER_PATH = "/testsupport/dvlaoperative";
     private static final String CREATE_AEDM_PATH = "/testsupport/aedm";
     private static final String CREATE_CSCO_PATH = "/testsupport/csco";
     private static final String CREATE_MANAGER_PATH = "/testsupport/vts/sm";
@@ -135,8 +136,12 @@ public class UserService extends Service {
 
     protected User createUserAsSchemeUser(boolean accountClaimRequired) throws IOException {
         String schemeUserRequest = jsonHandler.convertToString(new CreateSchemeUserRequest(accountClaimRequired));
-        Response response = motClient.createUser(schemeUserRequest, CREATE_SCHEME_USER);
-        return userResponse(response);
+        return userResponse(motClient.createUser(schemeUserRequest, CREATE_SCHEME_USER));
+    }
+
+    protected User createDvlaOfficerUser(String diff) throws IOException {
+        String request = jsonHandler.convertToString(new CreateDvlaOfficerRequest(diff));
+        return userResponse(motClient.createUser(request, CREATE_DVLA_OFFICER_PATH));
     }
 
     private User userResponse(Response response) throws IOException {

@@ -6,6 +6,8 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.site.Status;
 import uk.gov.dvsa.ui.BaseTest;
 import java.io.IOException;
+import java.net.URISyntaxException;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -17,8 +19,8 @@ public class SiteStatusViewTest extends BaseTest {
         areaOffice2User = userData.createUserAsAreaOfficeTwo("AE2");
     }
 
-    @Test
-    public void updateVtsStatusSuccessfully() throws IOException {
+    @Test(groups = {"BVT", "Regression"}, description = "Verifies that Authorised user can update vts status")
+    public void updateVtsStatusSuccessfully() throws IOException, URISyntaxException {
         //Given I am on the VTS Details Page as Area Officer 2
         motUI.site.gotoPage(areaOffice2User, "1");
 

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="EndToEndTests" parallel="classes" thread-count="10">
-    <test name="EndToEndTests" enabled="false">
-        <packages>
-            <package name="com.dvsa.mot.selenium.e2e.*"/>
-        </packages>
-    </test>
-</suite>

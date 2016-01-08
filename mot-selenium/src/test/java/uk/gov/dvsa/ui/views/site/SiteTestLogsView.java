@@ -13,6 +13,7 @@ import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -37,13 +38,13 @@ public class SiteTestLogsView extends BaseTest {
     }
 
     @Test(groups = {"BVT"}, dataProvider = "users")
-    public void permittedUserCanViewTestLogs(User user) throws IOException {
+    public void permittedUserCanViewTestLogs(User user) throws IOException, URISyntaxException {
 
         //Given I performed 1 MOT  test Last week
         motApi.createTest(tester, testSite.getId(), vehicleData.getNewVehicle(user), TestOutcome.PASSED, 123456, DateTime.now().minusWeeks(1));
 
         //When I go to the Site Log page as <permitted user>
-        motUI.testLog.siteLogPage(user, String.valueOf(testSite.getId()));
+        motUI.testLog.siteLogPage(user, testSite.getId());
 
         //Then I am able to view the Test logs, with *last week's worth (Mon to Sun) as default View
         assertThat(motUI.testLog.isDisplayed(), is(true));
@@ -54,14 +55,14 @@ public class SiteTestLogsView extends BaseTest {
     }
 
     @Test(groups = {"BVT", "Regression"}, expectedExceptions = PageInstanceNotFoundException.class)
-    public void nonPermittedUserCannotViewTestLogs() throws IOException {
+    public void nonPermittedUserCannotViewTestLogs() throws IOException, URISyntaxException {
 
         //Given I am a tester
         Site site = siteData.createSite();
         User tester = userData.createTester(site.getId());
 
         //When I attempt to view the VTS Test Logs
-        motUI.testLog.siteLogPage(tester, String.valueOf(site.getId()));
+        motUI.testLog.siteLogPage(tester, site.getId());
 
         //Then I am not able to view the Test log
         assertThat(motUI.testLog.isDisplayed(), is(false));
@@ -69,7 +70,7 @@ public class SiteTestLogsView extends BaseTest {
     }
     
     @Test(groups = {"BVT", "Regression"})
-    public void permittedUserCanViewCustomDateRange() throws IOException {
+    public void permittedUserCanViewCustomDateRange() throws IOException, URISyntaxException {
 
         //Given I performed 2 Mot tests within 30 days
         AeDetails aeDetails = aeData.createAeWithDefaultValues();
@@ -87,7 +88,7 @@ public class SiteTestLogsView extends BaseTest {
 
 
         // When I go to the VTS Test Log page as <permitted user>
-        motUI.testLog.siteLogPage(userData.createAreaOfficeOne("AreaOfficer"), String.valueOf(testSite.getId()));
+        motUI.testLog.siteLogPage(userData.createAreaOfficeOne("AreaOfficer"), testSite.getId());
 
         //When I search with a date range
         motUI.testLog.selectDateRange(firstTestDate, secondTestDate);

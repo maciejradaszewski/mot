@@ -6,36 +6,52 @@ import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
-import uk.gov.dvsa.ui.pages.mot.createvehiclerecord.CreateNewVehicleRecordIdentificationPage;
-import uk.gov.dvsa.ui.pages.mot.retest.ConfirmVehicleRetestPage;
 import uk.gov.dvsa.ui.pages.mot.StartTestConfirmationPage;
+import uk.gov.dvsa.ui.pages.mot.retest.ConfirmVehicleRetestPage;
+import uk.gov.dvsa.ui.pages.vehicleinformation.CreateNewVehicleRecordIdentificationPage;
 
 
 public class VehicleSearchPage extends Page {
 
     private static final String PAGE_TITLE = "Find a vehicle";
-    public static final String path = "/vehicle-search";
+    public static final String PATH = "/vehicle-search";
+    public static final String REPLACEMENT_PATH = "/replacement-certificate-vehicle-search";
     public static final String TRAINING_TEST_PATH = "/training-test-vehicle-search";
 
     @FindBy(className = "content-header__type") private WebElement pageHeader;
+    
     @FindBy(className = "group") private WebElement breadCrumbList;
+    
     @FindBy(id = "vin-info") private WebElement vinInfo;
+
     @FindBy(id = "main-message") private WebElement mainMessage;
+
     @FindBy(id = "additional-message") private WebElement additionalMessage;
+
     @FindBy(name = "registration") protected WebElement registrationField;
+
     @FindBy(name = "vin") private WebElement vinField;
+
     @FindBy(id = "cancel_vehicle_search") private WebElement cancelButton;
+
     @FindBy(id = "vehicle-search") private WebElement searchButton;
+
     @FindBy(id = "global-breadcrumb") private WebElement stepInfo;
+
     @FindBy(id = "vin-type-select") private WebElement vinTypeSelect;
+
     @FindBy(id = "VehicleSearch") private WebElement vehicleSearchForm;
+
     @FindBy(id = "new-vehicle-record-link") private WebElement createNewVehicleLink;
+
     @FindBy(id = "search-again") private WebElement searchAgainLink;
     @FindBy(xpath = ".//p[contains(., 'No matches were found for VIN')]") private WebElement noVinMatchErrorBox;
     @FindBy(id= "results-table") private WebElement vehicleInfoTable;
+
     @FindBy(id = "new-vehicle-record-info" ) private WebElement createNewVehicleInfo;
 
     private By searchResultsTable = By.cssSelector("#results-table a");
+
     private By testStatus = By.id("vehicle-search-retest");
 
     public VehicleSearchPage(MotAppDriver driver) {

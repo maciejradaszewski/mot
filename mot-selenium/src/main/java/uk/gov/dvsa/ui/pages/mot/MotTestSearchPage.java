@@ -2,6 +2,7 @@ package uk.gov.dvsa.ui.pages.mot;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
@@ -9,7 +10,7 @@ import uk.gov.dvsa.ui.pages.Page;
 
 public class MotTestSearchPage extends Page {
 
-    public static final String path = "/mot-test-search";
+    public static final String PATH = "/mot-test-search";
     private static final String PAGE_TITLE = "Search for MOT tests by...";
 
     @FindBy(id = "type") private WebElement searchTypePrompt;
@@ -40,9 +41,12 @@ public class MotTestSearchPage extends Page {
         return this;
     }
 
-    public MotTestSearchPage clickSearchButton() {
+    public <T extends Page> T clickSearchButton(Class<T> clazz) {
         searchButton.click();
+        return MotPageFactory.newPage(driver, clazz);
+    }
 
-        return this;
+    public void clickSearchButton() {
+        searchButton.click();
     }
 }

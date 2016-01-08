@@ -16,7 +16,7 @@ public abstract class Configurator {
     private static final String MY_SELENIUM_DRIVER_PROPERTIES_FILE_PATH =
             "/selenium/driver/my.properties";
     private static final String DEFAULT_SELENIUM_ENV_PROPERTIES_FILE_PATH =
-            "/selenium/environment/localdev.properties";
+            "/selenium/environment/my.properties";
     private static final String MY_SELENIUM_ENV_PROPERTIES_FILE_PATH =
             "/selenium/environment/my.properties";
 

@@ -131,10 +131,10 @@ public class DeclarationStatementViewTests extends BaseTest {
         motUI.normalTest.conductTestPass(tester, vehicle);
 
         //When I create a replacement test certificate
-        motUI.duplicateReplacementCertificate.createReplacementCertificate(tester, vehicle);
+        motUI.certificate.createReplacementCertificate(tester, vehicle);
 
         //Then I should be presented with the declaration statement on the review page
-        assertThat(motUI.duplicateReplacementCertificate.isDeclarationStatementDisplayed(), is(true));
+        assertThat(motUI.certificate.isDeclarationStatementDisplayed(), is(true));
     }
 }
 

@@ -21,26 +21,25 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class PerformTesterFunctionTests extends BaseTest {
+
     private User tester;
     private Site testSite;
     private AeDetails aeDetails;
-    private Vehicle vehicle;
 
     @BeforeMethod(alwaysRun = true)
     private void setUp() throws IOException {
         aeDetails = aeData.createNewAe("My_Test_AE", 100);
         testSite = siteData.createNewSite(aeDetails.getId(), "Test_Site");
         tester = userData.createTester(testSite.getId());
-        vehicle = vehicleData.getNewVehicle(tester);
     }
 
     @Test (groups = {"BVT"})
-    public void editDetailsWithoutNeedingApproval() throws IOException {
+    public void editDetailsWithoutNeedingApproval() throws Exception {
         String newEmail = "email@domaingreat.com";
         String postCode = "BS33 5TT";
 
-        //Given I'm on the ChangeDetails page
-        ChangeDetailsPage changeDetailsPage = pageNavigator.gotoChangeDetailsPage(tester);
+        //Given I am logged as a Tester and I am on the ChangeDetails page
+        ChangeDetailsPage changeDetailsPage = pageNavigator.goToPage(tester, ChangeDetailsPage.PATH, ChangeDetailsPage.class);
 
         //When I edit my postcode and email details
         changeDetailsPage.editPostCode(postCode).editEmailAndConfirmEmail(newEmail, newEmail);
@@ -54,13 +53,15 @@ public class PerformTesterFunctionTests extends BaseTest {
     }
 
     @Test (groups = {"BVT", "Regression"})
-    public void viewPerformanceDashboard() throws IOException {
+    public void viewPerformanceDashboard() throws Exception {
+
         //Given I have done only 1 mot test
         motApi.createTest(tester, testSite.getId(),
                 vehicleData.getNewVehicle(tester), TestOutcome.PASSED, 14000, DateTime.now());
 
         //When I navigate to my performance dashboard page
-        PerformanceDashBoardPage performanceDashBoardPage = pageNavigator.gotoPerformanceDashboardPage(tester);
+        PerformanceDashBoardPage performanceDashBoardPage =
+                pageNavigator.goToPage(tester, PerformanceDashBoardPage.PATH, PerformanceDashBoardPage.class);
 
         //Then I should see my test conducted is 1
         assertThat(performanceDashBoardPage.getTestConductedText(), equalTo("1"));
@@ -70,13 +71,10 @@ public class PerformTesterFunctionTests extends BaseTest {
     }
 
     @Test (groups = {"BVT", "Regression"})
-    public void verifyTheCorrectAeAndVtsIsDisplayed() throws IOException {
-        //Given I am registered to My Test AE
+    public void verifyTheCorrectAeAndVtsIsDisplayed() throws Exception {
 
-        //And I am tester at Test Site
-
-        //When I view my homepage
-        HomePage homePage = pageNavigator.gotoHomePage(tester);
+        //Given I am logged as a Tester and I am on my homepage
+        HomePage homePage = pageNavigator.goToPage(tester, HomePage.PATH, HomePage.class);
 
         //Then my AE should be My Test AE
         assertThat(homePage.getAeName(), equalTo( aeDetails.getAeName()));
@@ -86,9 +84,10 @@ public class PerformTesterFunctionTests extends BaseTest {
     }
 
     @Test (groups = {"BVT", "Regression"})
-    public void myRoleIsDisplayedAsTester() throws IOException {
-        //Given I am on my homepage
-        HomePage homePage = pageNavigator.gotoHomePage(tester);
+    public void myRoleIsDisplayedAsTester() throws Exception {
+
+        //Given I am logged as a Tester and I am on my homepage
+        HomePage homePage = pageNavigator.goToPage(tester, HomePage.PATH, HomePage.class);
 
         //I expect to see my role displayed
         assertThat(homePage.getRole(), equalTo("Tester".toUpperCase()));

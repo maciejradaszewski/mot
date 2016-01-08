@@ -21,5 +21,4 @@ public class AdjustmentSummaryPage extends BasePage {
         confirmAdjustment.click();
         return new ManualAdjustmentSuccessPage(driver);
     }
-
 }

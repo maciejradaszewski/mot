@@ -4,43 +4,47 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.helper.RandomDataGenerator;
 import uk.gov.dvsa.ui.BaseTest;
-import uk.gov.dvsa.ui.interfaces.DisplayMessage;
+import uk.gov.dvsa.ui.interfaces.WarningPage;
 import uk.gov.dvsa.ui.pages.login.AuthenticationFailedPage;
 import uk.gov.dvsa.ui.pages.login.LockOutWarningPage;
+import uk.gov.dvsa.ui.pages.login.LockedAccountWarningPage;
 import uk.gov.dvsa.ui.pages.login.LoginPage;
 
 import java.io.IOException;
 
 public class OpenAMLockoutWarningTests extends BaseTest {
 
-    private int numberOfAttempts = 4;
+    private int warningAttempts = 4;
+    private int lockoutAttempts = 5;
 
     @Test(groups = {"Regression", "VM-12163"},
             description = "Test that validates the that user is redirected to authentication failed page after 4 incorrect password attempts")
     public void authenticationFailedFor4Times() throws IOException, InterruptedException {
 
-        // Given that I am on the Login page
-        LoginPage loginPage = pageNavigator.goToLoginPage();
+        // Given I have entered incorrect login details 3 times
+        final User user = userData.createTester(siteData.createSite().getId());
+        motApi.createMultipleSession(user.getUsername(), "Wrong", warningAttempts);
 
-        // When I provide incorrect password for 4 times
-        DisplayMessage message = tryToLoginWithInvalidCredentials(numberOfAttempts, loginPage);
+        // When I try for the 4th time
+        LoginPage loginPage = pageNavigator.goToLoginPage();
+        WarningPage warningPage = loginPage.login(LockOutWarningPage.class, user.getUsername(),  "Wrong");
 
         // Then I am redirected to Lockout warning page
-        message.isMessageDisplayed();
+        warningPage.isMessageDisplayed();
     }
 
-    private DisplayMessage tryToLoginWithInvalidCredentials(int numberOfAttempts, LoginPage loginPage) throws IOException {
-        String randomPassword = RandomDataGenerator.generatePassword(8);
-        final User tester = userData.createTester(siteData.createSite().getId());
+    @Test(groups = {"Regression", "VM-12163"})
+    public void lockAccountAfterInvalidAttempts() throws IOException, InterruptedException {
 
-        for (int i = 1; i < numberOfAttempts; i++) {
-            AuthenticationFailedPage authenticationFailedPage =
-                    loginPage.login(
-                            AuthenticationFailedPage.class, tester.getUsername(), randomPassword);
+        // Given I have entered incorrect login details 4 times
+        final User user = userData.createTester(siteData.createSite().getId());
+        motApi.createMultipleSession(user.getUsername(), "Wrong", lockoutAttempts);
 
-            authenticationFailedPage.returnToLoginPage();
-        }
+        // When I try the 5th time
+        LoginPage loginPage = pageNavigator.goToLoginPage();
+        WarningPage warningPage = loginPage.login(LockedAccountWarningPage.class, user.getUsername(), "Wrong");
 
-        return loginPage.login(LockOutWarningPage.class, tester.getUsername(), randomPassword);
+        // Then my account should be locked
+        warningPage.isMessageDisplayed();
     }
 }

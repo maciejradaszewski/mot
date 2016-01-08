@@ -10,12 +10,12 @@ import uk.gov.dvsa.ui.pages.EventsHistoryPage;
 import uk.gov.dvsa.ui.pages.vts.*;
 
 import java.io.IOException;
-import java.util.Map;
+import java.net.URISyntaxException;
 
 public class Site {
     private PageNavigator pageNavigator;
-    private VtsSearchForAVtsPage vtsSearchForAVtsPage;
-    private VtsSearchResultsPage vtsSearchResultsPage;
+    private SearchForAVtsPage vtsSearchForAVtsPage;
+    private SearchResultsPage vtsSearchResultsPage;
     private VehicleTestingStationPage vehicleTestingStationPage;
     private AddSiteAssessmentPage assessmentPage;
     private EventsHistoryPage eventsHistoryPage;
@@ -30,7 +30,7 @@ public class Site {
     }
 
     public void searchById(String vtsNumber) throws IOException {
-        vtsSearchResultsPage = vtsSearchForAVtsPage.searchForVts(vtsNumber);
+        vtsSearchResultsPage = vtsSearchForAVtsPage.searchForVts(SearchResultsPage.class, vtsNumber);
     }
 
     public String getStatus() {
@@ -55,14 +55,14 @@ public class Site {
         return vehicleTestingStationPage.isRiskAssesmentDisplayed();
     }
 
-    public void gotoAssessment(User user, String siteId) throws IOException {
+    public void gotoAssessment(User user, String siteId) throws IOException, URISyntaxException {
         String pageUrl = String.format(AddSiteAssessmentPage.path, siteId);
-        assessmentPage = pageNavigator.navigateToPage(user, pageUrl, AddSiteAssessmentPage.class);
+        assessmentPage = pageNavigator.goToPage(user, pageUrl, AddSiteAssessmentPage.class);
     }
 
-    public void gotoEventHistory(User user, String siteId) throws IOException {
+    public void gotoEventHistory(User user, String siteId) throws IOException, URISyntaxException {
         String pageUrl = String.format(EventsHistoryPage.PATH, siteId);
-        eventsHistoryPage = pageNavigator.navigateToPage(user, pageUrl, EventsHistoryPage.class);
+        eventsHistoryPage = pageNavigator.goToPage(user, pageUrl, EventsHistoryPage.class);
     }
 
     public void submitAssessment(AssessmentInfo aInfo, DateTime dateTime) {

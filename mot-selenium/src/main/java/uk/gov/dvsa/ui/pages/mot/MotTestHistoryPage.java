@@ -3,6 +3,7 @@ package uk.gov.dvsa.ui.pages.mot;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
+import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
@@ -32,5 +33,11 @@ public class MotTestHistoryPage extends Page {
 
     public void selectMotTestFromTableById(String testId){
         testSummaryViewLinkElement(testId).click();
+    }
+
+    public <T extends Page> T selectMotTestFromTableById(String testId, Class<T> clazz){
+        testSummaryViewLinkElement(testId).click();
+
+        return MotPageFactory.newPage(driver, clazz);
     }
 }

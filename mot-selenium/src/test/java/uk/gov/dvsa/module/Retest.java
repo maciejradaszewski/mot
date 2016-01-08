@@ -1,9 +1,11 @@
 package uk.gov.dvsa.module;
 
+import org.openqa.selenium.NoSuchElementException;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
-import uk.gov.dvsa.ui.pages.HomePage;
+import uk.gov.dvsa.helper.AssertionHelper;
+import uk.gov.dvsa.ui.pages.VehicleSearchPage;
 import uk.gov.dvsa.ui.pages.mot.retest.ReTestCompletePage;
 import uk.gov.dvsa.ui.pages.mot.retest.ReTestResultsEntryPage;
 import uk.gov.dvsa.ui.pages.mot.retest.ReTestSummaryPage;
@@ -17,9 +19,11 @@ import static org.hamcrest.core.Is.is;
 
 public class Retest {
 
-    PageNavigator pageNavigator = null;
+    PageNavigator pageNavigator;
     private boolean successful = false;
+    private String expectedText;
     private boolean declarationSuccessful = false;
+
 
     private static final String DECLARATION_STATEMENT = "I confirm that this MOT transaction has been conducted in accordance with " +
             "the conditions of authorisation which includes compliance with the MOT testing guide, the requirements for " +
@@ -46,15 +50,14 @@ public class Retest {
         successful = testCompletePage.verifyBackToHomeDisplayed();
     }
 
-    public void conductRetestFail(Vehicle vehicle, User tester) throws IOException, URISyntaxException {
-        ReTestResultsEntryPage resultsEntryPage = pageNavigator.gotoReTestResultsEntryPage(tester, vehicle);
-        resultsEntryPage.completeTestDetailsWithFailValues();
 
-        ReTestSummaryPage summaryPage = resultsEntryPage.addDefaultRfrPrsAndManualAdvisory();
+    public void searchForVehicle(User user, Vehicle vehicle) throws IOException, URISyntaxException {
+        VehicleSearchPage searchPage = pageNavigator.goToPage(user,VehicleSearchPage.PATH, VehicleSearchPage.class).searchVehicle(vehicle);
+        expectedText = searchPage.getTestStatus();
+    }
 
-        ReTestCompletePage testCompletePage = summaryPage.finishTestAndPrint();
-
-        successful = testCompletePage.isRefusalMessageDisplayed();
+    public boolean isTextPresent(String actual) throws NoSuchElementException {
+        return AssertionHelper.compareText(expectedText, actual);
     }
 
     public void verifyRetestIsSuccessful() {

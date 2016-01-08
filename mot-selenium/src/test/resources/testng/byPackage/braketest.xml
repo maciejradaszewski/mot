@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="Braketest" parallel="classes" thread-count="10">
-    <test name="Braketest">
-        <packages>
-            <package name="com.dvsa.mot.selenium.priv.frontend.vehicletest.braketest"/>
-        </packages>
-    </test>
-</suite>

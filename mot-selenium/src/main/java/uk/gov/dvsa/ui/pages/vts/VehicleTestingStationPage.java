@@ -11,7 +11,7 @@ import uk.gov.dvsa.ui.pages.mot.TestShortSummaryPage;
 import uk.gov.dvsa.ui.pages.profile.ProfileOfPage;
 
 public class VehicleTestingStationPage extends Page {
-    public static final String path = "/vehicle-testing-station/%s";
+    public static final String PATH = "/vehicle-testing-station/%s";
     private static final String PAGE_TITLE = "Vehicle Testing Station";
     
     private static final String SITE_ASSESSMENT_LINK_ID = "site-assessment-action-link";

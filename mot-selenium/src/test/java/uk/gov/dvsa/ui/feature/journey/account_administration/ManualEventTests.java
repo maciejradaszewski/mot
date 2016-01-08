@@ -11,6 +11,7 @@ import uk.gov.dvsa.ui.pages.events.CreateNewEventPageTwo;
 import uk.gov.dvsa.ui.pages.events.NewEventSummaryPage;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -29,10 +30,10 @@ public class ManualEventTests extends BaseTest {
     }
 
     @Test(groups = {"BVT", "Regression"}, description = "VM-11545")
-    public void recordManualEventSuccessfully() throws IOException {
+    public void recordManualEventSuccessfully() throws IOException, URISyntaxException {
 
         //Given I am on the Events History Page
-        EventsHistoryPage eventsHistoryPage = pageNavigator.goToEventsHistoryPage(dvsaUser, aeId);
+        EventsHistoryPage eventsHistoryPage = pageNavigator.goToPageAsAuthorisedExaminer(dvsaUser, EventsHistoryPage.class, EventsHistoryPage.AE_PATH, aeId);
 
         //And I click on the 'Record new event' link
         CreateNewEventPage createNewEventPage = eventsHistoryPage.clickRecordNewEvent();
