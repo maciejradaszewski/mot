@@ -10,14 +10,12 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.HomePage;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.AeSlotsUsagePage;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerChangeDetailsPage;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerTestLogPage;
-import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.*;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
-import uk.gov.dvsa.ui.pages.vts.VtsChangeContactDetailsPage;
+import uk.gov.dvsa.ui.pages.vts.ChangeContactDetailsPage;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -28,12 +26,12 @@ public class AedmManagesMotAccountTests extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"},
             description = "VM9855 - Journey 2 - AEDM Manages Mot Account", dataProvider = "createAedmAndAe")
-    public void editAuthorisedExaminerDetails(User aedm, AeDetails aeDetails) throws IOException {
+    public void editAuthorisedExaminerDetails(User aedm, AeDetails aeDetails) throws IOException, URISyntaxException {
 
         //Given I am on the Authorised Examiner Change Contact Details Page
         AuthorisedExaminerChangeDetailsPage authorisedExaminerChangeDetailsPage = pageNavigator
-                .goToAuthorisedExaminerPage(aedm, AuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()))
-                .clickChangeContactDetailsLink();
+            .goToPageAsAuthorisedExaminer(aedm, AedmAuthorisedExaminerViewPage.class, AedmAuthorisedExaminerViewPage.PATH, aeDetails.getId())
+            .clickChangeContactDetailsLink();
 
         //When I Change the Authorised Examiner Correspondence Details
         AuthorisedExaminerViewPage authorisedExaminerPage =
@@ -53,10 +51,10 @@ public class AedmManagesMotAccountTests extends BaseTest {
     @Test(groups = {"BVT", "Regression"},
             description = "VM-10253 - Journey 2 - AEDM Manages Mot Account", dataProvider = "createAeAedmSiteAndTester")
     public void viewConnectedAEWithAttachedVtsAndTester(
-            User aedm, AeDetails aeDetails, Site testSite, User tester) throws IOException {
+            User user, AeDetails aeDetails, Site testSite, User tester) throws Exception {
 
         //Given I am on my Homepage as AEDM
-        HomePage homePage = pageNavigator.gotoHomePage(aedm);
+        HomePage homePage = pageNavigator.goToPage(user, HomePage.PATH, HomePage.class);
 
         //I expect to see all AE's I am connected with and their respective VTS's
         assertThat(homePage.getAeName(), equalTo(aeDetails.getAeName()));
@@ -71,7 +69,7 @@ public class AedmManagesMotAccountTests extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"},
             description = "VM-10255 - Journey 2 - AEDM View AE Test logs", dataProvider = "createAeAedmSiteAndTester")
-    public void viewAETestLogs(User aedm, AeDetails aeDetails, Site site, User tester) throws IOException {
+    public void viewAETestLogs(User aedm, AeDetails aeDetails, Site site, User tester) throws IOException, URISyntaxException {
 
         //Given I perform an MOT test for my selected Authorised Examiner
         motApi.createTest(tester, site.getId(),
@@ -79,7 +77,7 @@ public class AedmManagesMotAccountTests extends BaseTest {
 
         //When I navigate to the Authorised Examiner Test Logs page
         AuthorisedExaminerTestLogPage authorisedExaminerPageTestLogPage =
-                pageNavigator.gotoAETestLogPage(aedm, String.valueOf(aeDetails.getId()));
+                pageNavigator.goToPageAsAuthorisedExaminer(aedm, AuthorisedExaminerTestLogPage.class, AuthorisedExaminerTestLogPage.PATH, aeDetails.getId());
 
         //Then Today's Test count should be equal to number of test for that AE
         assertThat(authorisedExaminerPageTestLogPage.getTodayCount(), equalTo("1"));
@@ -87,15 +85,14 @@ public class AedmManagesMotAccountTests extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"},
             description = "VM-10255 - Journey 2 - AEDM View AE Slot Usage", dataProvider = "createAeAedmSiteAndTester")
-    public void viewSlotReport(User aedm, AeDetails aeDetails, Site site, User tester) throws IOException {
+    public void viewSlotReport(User aedm, AeDetails aeDetails, Site site, User tester) throws IOException, URISyntaxException {
 
         //Given I perform an MOT test for my selected Authorised Examiner
         motApi.createTest(tester, site.getId(),
                 vehicleData.getNewVehicle(tester), TestOutcome.PASSED, 14000, DateTime.now());
 
-
         //When I navigate to the Slots usage Page
-        AeSlotsUsagePage aeSlotsUsagePage = pageNavigator.gotoAeSlotsUsagePage(aedm, String.valueOf(aeDetails.getId()));
+        AeSlotsUsagePage aeSlotsUsagePage = pageNavigator.goToPageAsAuthorisedExaminer(aedm, AeSlotsUsagePage.class, AeSlotsUsagePage.PATH, aeDetails.getId());
 
         //Then the Slots Usage table should contain number of test done
         assertThat(aeSlotsUsagePage.getSlotUsageCountMessage(), containsString("1 slot used today"));
@@ -103,13 +100,13 @@ public class AedmManagesMotAccountTests extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"},
             description = "VM-10257 - Journey 2 - AEDM Update VTS Contact Details", dataProvider = "createAedmSite")
-    public void updateVtsDetails(User aedm, Site site) throws IOException {
+    public void updateVtsDetails(User aedm, Site site) throws IOException, URISyntaxException {
         String email = "blah@blah.com";
         String telephone = "+447866554432";
 
         //Given I am VTS Change Contact Details Page
-        VtsChangeContactDetailsPage vtsChangesContactDetailsPage =
-                pageNavigator.gotoVtsChangeContactDetailsPage(aedm, String.valueOf(site.getId()));
+        ChangeContactDetailsPage vtsChangesContactDetailsPage =
+                pageNavigator.goToVtsPage(aedm, ChangeContactDetailsPage.class, ChangeContactDetailsPage.PATH, site.getId());
 
         //When I update the email and Tel Number
         vtsChangesContactDetailsPage
@@ -124,11 +121,11 @@ public class AedmManagesMotAccountTests extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"},
             description = "VM-10257 - Journey 2 - AEDM Remove Tester from VTS", dataProvider = "createAedmTester")
-    public void removeTesterFromVTS(User aedm, User tester) throws IOException {
+    public void removeTesterFromVTS(User user, User tester) throws Exception {
 
         //Given I am on the vehicle testing page
-        HomePage homePage = pageNavigator.gotoHomePage(aedm);
-        VehicleTestingStationPage vehicleTestingStationPage= homePage.selectRandomVts();
+        VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.goToPage(user, HomePage.PATH,  HomePage.class)
+                .selectRandomVts();
 
         //When I remove a tester from the VTS
         vehicleTestingStationPage.removeTesterRole(tester.getId()).confirmRemoveRole();

@@ -10,6 +10,7 @@ import uk.gov.dvsa.ui.pages.vts.ConfirmTestFacilitiesPage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Random;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,9 +32,10 @@ public class EditSiteDetailsTests extends BaseTest {
     }
 
     @Test(groups = {"Regression", "VM-10407 , Regression"})
-    public void changeTestFacilitiesTest() throws IOException {
+    public void changeTestFacilitiesTest() throws IOException, URISyntaxException {
         //Given I am logged in as AO1 & I navigate to the change testing facilities page
-        ChangeTestingFacilitiesPage changeTestingFacilitiesPage = pageNavigator.goToChangeTestingFacilitiesPage(areaOfficeUser, String.valueOf(site.getId()));
+        ChangeTestingFacilitiesPage changeTestingFacilitiesPage =
+                pageNavigator.goToVtsPage(areaOfficeUser, ChangeTestingFacilitiesPage.class, ChangeTestingFacilitiesPage.PATH, site.getId());
 
         //When I change the site testing facilities details for onePersonTestLane and twoPersonTestLane and submit the request
         ConfirmTestFacilitiesPage confirmTestFacilitiesPage = changeTestingFacilitiesPage

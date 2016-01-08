@@ -8,13 +8,11 @@ import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.helper.RandomDataGenerator;
 import uk.gov.dvsa.ui.BaseTest;
-import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
-import uk.gov.dvsa.ui.pages.dvsa.UserSearchPage;
-import uk.gov.dvsa.ui.pages.dvsa.UserSearchProfilePage;
-import uk.gov.dvsa.ui.pages.dvsa.UserSearchResultsPage;
+import uk.gov.dvsa.ui.pages.dvsa.*;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -40,7 +38,7 @@ public class DVSAManagingUserRolesTests extends BaseTest {
     }
 
     @Test(groups = {"BVT", "Regression"})
-    public void areaOfficeUserAddsRoleToVeUser() throws IOException{
+    public void areaOfficeUserAddsRoleToVeUser() throws IOException, URISyntaxException {
 
         //Given that I am on Manage roles page as a Area office 1 user
         pageNavigator.goToManageRolesPageViaUserSearch(areaOffice1User, vehicleExaminer);
@@ -53,7 +51,7 @@ public class DVSAManagingUserRolesTests extends BaseTest {
     }
 
     @Test(groups = {"BVT", "Regression"})
-    public void areaOfficeUserRemovesRoleFromVeUser() throws IOException{
+    public void areaOfficeUserRemovesRoleFromVeUser() throws IOException, URISyntaxException {
 
         //Given that I am on Manage roles page as a Area office 1 user
         pageNavigator.goToManageRolesPageViaUserSearch(areaOffice1User, vehicleExaminer);
@@ -68,10 +66,10 @@ public class DVSAManagingUserRolesTests extends BaseTest {
     @Test(groups = {"BVT", "Regression", "VM-12318"},
             description = "Test that validates the authorised DVSA user can search for user by email with " +
                     "expanded additional search criteria section")
-    public void areaOfficeUserCanSearchForUserByEmailExpandedSection() throws IOException{
+    public void areaOfficeUserCanSearchForUserByEmailExpandedSection() throws IOException, URISyntaxException {
 
         //Given that I am on Search user page as a Area office 1 user
-        pageNavigator.goToUserSearchPage(areaOffice1User);
+        pageNavigator.goToPage(areaOffice1User, UserSearchPage.PATH, UserSearchPage.class);
 
         //When I search for user by email with expanded criteria section
         motUI.searchUser.searchForUserByUserEmail(vehicleExaminer.getEmailAddress(), true, UserSearchResultsPage.class);
@@ -83,10 +81,11 @@ public class DVSAManagingUserRolesTests extends BaseTest {
     @Test(groups = {"BVT", "Regression", "VM-12318"},
             description = "Test that validates the authorised DVSA user can't search for user by email with " +
                     "collapsed additional search criteria section")
-    public void areaOfficeUserCantSearchForUserByEmailCollapsedSection() throws IOException{
+    public void areaOfficeUserCantSearchForUserByEmailCollapsedSection() throws IOException, URISyntaxException {
 
         //Given that I am on Search user page as a Area office 1 user
-        pageNavigator.goToUserSearchPage(areaOffice1User);
+        pageNavigator.goToPage(areaOffice1User, UserSearchPage.PATH, UserSearchPage.class);
+
 
         //When I search for user by email with collapsed criteria section
         motUI.searchUser.searchForUserByUserEmail(vehicleExaminer.getEmailAddress(), false, UserSearchPage.class);
@@ -97,10 +96,10 @@ public class DVSAManagingUserRolesTests extends BaseTest {
 
     @Test(groups = {"BVT", "Regression", "VM-12168"},
             description = "Test that validates the authorised DVSA user cant search for user by invalid email")
-    public void areaOfficeUserCantSearchForUserByInvalidEmail() throws IOException{
+    public void areaOfficeUserCantSearchForUserByInvalidEmail() throws IOException, URISyntaxException {
 
         //Given that I am on Search user page as a Area office 1 user
-        pageNavigator.goToUserSearchPage(areaOffice1User);
+        pageNavigator.goToPage(areaOffice1User, UserSearchPage.PATH, UserSearchPage.class);
 
         //When I search for user by invalid email
         motUI.searchUser.searchForUserByUserEmail(RandomDataGenerator.generateEmail(20, System.nanoTime()), true, UserSearchPage.class);
@@ -110,10 +109,10 @@ public class DVSAManagingUserRolesTests extends BaseTest {
     }
 
     @Test(groups = {"VM-7646", "Regression"}, dataProvider = "dvsaUserCanSearchForAUserByTown")
-    public void dvsaUserCanSearchOnTown(User user) throws IOException {
+    public void dvsaUserCanSearchOnTown(User user) throws IOException, URISyntaxException {
 
         //Given that I am on Search user page as a authorised DVSA user
-        pageNavigator.goToUserSearchPage(user);
+        pageNavigator.goToPage(user, UserSearchPage.PATH, UserSearchPage.class);
 
         //When I search for user by town
         motUI.searchUser.searchForUserByTown("Bristol");
@@ -124,10 +123,10 @@ public class DVSAManagingUserRolesTests extends BaseTest {
 
     @Test(groups = {"VM-4741", "Regression", "W-Sprint5"},
             description = "Verify that authorised dvsa user can search for user with valid date of birth")
-    public void dvsaUserCanSearchForUserByDateOfBirth() throws IOException {
+    public void dvsaUserCanSearchForUserByDateOfBirth() throws IOException, URISyntaxException {
 
         //Given that I am on Search user page as a authorised DVSA user
-        pageNavigator.goToUserSearchPage(areaOffice1User);
+        pageNavigator.goToPage(areaOffice1User, UserSearchPage.PATH, UserSearchPage.class);
 
         //When I search for user by valid date of birth
         motUI.searchUser.searchForUserByDateOfBirth("24-11-1961", true);
@@ -138,10 +137,10 @@ public class DVSAManagingUserRolesTests extends BaseTest {
 
     @Test(groups = {"VM-4741", "Regression", "W-Sprint5"},
             description = "Verify error message is displayed when search user with invalid format date")
-    public void dvsaUserCantSearchForUserByInvalidFormatDateOfBirth() throws IOException {
+    public void dvsaUserCantSearchForUserByInvalidFormatDateOfBirth() throws IOException, URISyntaxException {
 
         //Given that I am on Search user page as a authorised DVSA user
-        pageNavigator.goToUserSearchPage(areaOffice1User);
+        pageNavigator.goToPage(areaOffice1User, UserSearchPage.PATH, UserSearchPage.class);
 
         //When I search for user by invalid format date of birth
         motUI.searchUser.searchForUserByDateOfBirth("1-1-1920", false);
@@ -152,9 +151,9 @@ public class DVSAManagingUserRolesTests extends BaseTest {
 
     @Test(groups = {"VM-4741", "Regression", "W-Sprint5"},
             description = "Verify proper message was displayed when user search page return too many results")
-    public void dvsaUserSearchTooManyResults() throws IOException {
+    public void dvsaUserSearchTooManyResults() throws IOException, URISyntaxException {
         //Given that I am on Search user page as a Area office 1 user
-        pageNavigator.goToUserSearchPage(areaOffice1User);
+        pageNavigator.goToPage(areaOffice1User, UserSearchPage.PATH, UserSearchPage.class);
 
         //When I search for user by email with expanded criteria section
         motUI.searchUser.searchForUserByUserEmail("dummy@email.com", true, UserSearchPage.class);
@@ -165,9 +164,9 @@ public class DVSAManagingUserRolesTests extends BaseTest {
 
     @Test(groups = {"VM-4698", "VM-4842", "VM-7724", "V-Sprint10", "Regression", "W-Sprint4"},
             description = "Verify that authorised dvsa user can search for user by valid username")
-    public void dvsaSearchUserByUsername() throws IOException {
+    public void dvsaSearchUserByUsername() throws IOException, URISyntaxException {
         //Given that I am on Search user page as a Area office 1 user
-        pageNavigator.goToUserSearchPage(areaOffice1User);
+        pageNavigator.goToPage(areaOffice1User, UserSearchPage.PATH, UserSearchPage.class);
 
         //When I search for user by username
         motUI.searchUser.searchForUserByUsername(vehicleExaminer.getUsername(), UserSearchResultsPage.class);
@@ -178,9 +177,9 @@ public class DVSAManagingUserRolesTests extends BaseTest {
 
     @Test(groups = {"Regression"}, description = "Verify that authorised dvsa user can search for user and " +
             "get back to user search page with Back to user search link")
-    public void dvsaSearchUserByNameAndGetBackToUserSearchPage() throws IOException {
+    public void dvsaSearchUserByNameAndGetBackToUserSearchPage() throws IOException, URISyntaxException {
         //Given that I am on Search user page as a Area office 1 user
-        pageNavigator.goToUserSearchPage(areaOffice1User);
+        pageNavigator.goToPage(areaOffice1User, UserSearchPage.PATH, UserSearchPage.class);
 
         //When I click Back to user search link on User search results page
         motUI.searchUser.searchForUserByUserFirstName(vehicleExaminer.getFirstName(), UserSearchResultsPage.class).clickBackToUserSearch();
@@ -192,7 +191,7 @@ public class DVSAManagingUserRolesTests extends BaseTest {
     @Test(groups = {"BVT", "Regression", "VM-12321"},
             description = "Verifies that authorised user can check user roles via roles and associations link " +
                     "on user profile page")
-    public void dvsaUserCanViewTradesUserRolesAndAssociationsFromUserSearch() throws IOException {
+    public void dvsaUserCanViewTradesUserRolesAndAssociationsFromUserSearch() throws IOException, URISyntaxException {
 
         //Given that I am on User search profile page as an authorised DVSA user
         UserSearchProfilePage userSearchProfilePage = pageNavigator.goToUserSearchedProfilePageViaUserSearch(areaOffice1User, tester);
@@ -207,10 +206,10 @@ public class DVSAManagingUserRolesTests extends BaseTest {
     @Test(groups = {"BVT", "Regression", "VM-12321"},
             description = "Verifies that authorised DVSA user can check roles via roles and associations link " +
                     "of trade user")
-    public void dvsaUserCanViewTradeUsersRolesAndAssociations() throws IOException {
+    public void dvsaUserCanViewTradeUsersRolesAndAssociations() throws IOException, URISyntaxException {
 
         //Given I'm on the Site search page as an authorised DVSA user
-        pageNavigator.goToSiteSearchPage(areaOffice1User);
+        pageNavigator.goToPage(areaOffice1User, SiteSearchPage.PATH, SiteSearchPage.class);
 
         //When I click on an assigned user from vts details page
         motUI.searchSite.searchForSiteBySiteId(site.getSiteNumber(), VehicleTestingStationPage.class).chooseAssignedToVtsUser(tester.getId());
@@ -222,7 +221,7 @@ public class DVSAManagingUserRolesTests extends BaseTest {
     @Test(groups = {"BVT", "Regression", "VM-12321"},
             description = "Verifies that authorised user can navigate back from roles and associations page " +
                     "to user user profile page via link")
-    public void dvsaUserNavigatesBackFromRolesAndAssociationsPageViaLink() throws IOException {
+    public void dvsaUserNavigatesBackFromRolesAndAssociationsPageViaLink() throws IOException, URISyntaxException {
 
         //Given that I am on User roles and associations page as an authorised DVSA user
         RolesAndAssociationsPage rolesAndAssociationsPage = pageNavigator.goToUserSearchedProfilePageViaUserSearch(areaOffice1User, tester)

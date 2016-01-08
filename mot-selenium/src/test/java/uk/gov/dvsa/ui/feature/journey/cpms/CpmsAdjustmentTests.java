@@ -9,15 +9,16 @@ import uk.gov.dvsa.ui.pages.authorisedexaminer.FinanceAuthorisedExaminerViewPage
 import uk.gov.dvsa.ui.pages.cpms.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class CpmsAdjustmentTests extends BaseTest {
 
-    private CardPaymentConfirmationPage financeUserPurchaseSlotsByCard(User user, String path, String aeId, int slots) throws IOException {
+    private CardPaymentConfirmationPage financeUserPurchaseSlotsByCard(User user, String path, int aeId, int slots) throws IOException, URISyntaxException {
         CardPaymentConfirmationPage cardPaymentConfirmationPage = pageNavigator
-                .goToFinanceAuthorisedExaminerViewPage(user, path, aeId)
+                .goToPageAsAuthorisedExaminer(user, FinanceAuthorisedExaminerViewPage.class, path, aeId)
                 .clickBuySlotsLinkAsFinanceUser()
                 .selectCardPaymentTypeAndSubmit()
                 .enterSlotsRequired(slots)
@@ -29,11 +30,11 @@ public class CpmsAdjustmentTests extends BaseTest {
     }
 
     @Test(groups = {"BVT", "Regression"}, description = "SPMS-255 Finance user refunds slots", dataProvider = "createFinanceUserAndAe")
-    public void userRefundsSlots(User financeUser, AeDetails aeDetails) throws IOException {
+    public void userRefundsSlots(User financeUser, AeDetails aeDetails) throws IOException, URISyntaxException {
 
         //Given I am on Slot refund page as a Finance user with a valid payment
         SlotRefundPage slotRefundPage =
-                financeUserPurchaseSlotsByCard(financeUser, FinanceAuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()), 10000)
+                financeUserPurchaseSlotsByCard(financeUser, FinanceAuthorisedExaminerViewPage.PATH, aeDetails.getId(), 10000)
                 .clickBackToAuthorisedExaminerLink()
                 .clickRefundSlotsLink();
 
@@ -49,11 +50,11 @@ public class CpmsAdjustmentTests extends BaseTest {
     }
 
     @Test(enabled = false, groups = {"BVT", "Regression"}, description = "SPMS-42 Finance User processes Payment reversal", dataProvider = "createFinanceUserAndAe")
-    public void userReversesAPayment(User financeUser, AeDetails aeDetails) throws IOException {
+    public void userReversesAPayment(User financeUser, AeDetails aeDetails) throws IOException, URISyntaxException {
 
         //Given I am on Reverse payment page of a valid payment
         ReversePaymentSummaryPage reversePaymentSummaryPage =
-                financeUserPurchaseSlotsByCard(financeUser, FinanceAuthorisedExaminerViewPage.PATH, String.valueOf(aeDetails.getId()), 10000)
+                financeUserPurchaseSlotsByCard(financeUser, FinanceAuthorisedExaminerViewPage.PATH, aeDetails.getId(), 10000)
                 .clickViewPaymentDetailslink()
                 .clickReverseThisPaymentButton();
 

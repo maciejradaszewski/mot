@@ -53,4 +53,8 @@ public class UserData extends UserService{
     public User createSiteAdmin(int siteId, boolean accountClaimRequired) throws IOException {
         return createUserAsSiteAdmin(siteId, accountClaimRequired);
     }
+
+    public User createDvlaOfficer(String diff) throws IOException {
+        return createDvlaOfficerUser(diff);
+    }
 }

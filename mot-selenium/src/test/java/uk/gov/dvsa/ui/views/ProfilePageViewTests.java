@@ -12,6 +12,7 @@ import uk.gov.dvsa.ui.pages.profile.NewProfilePage;
 import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -41,10 +42,10 @@ public class ProfilePageViewTests extends BaseTest {
     }
 
     @Test(groups = {"Regression"}, description = "VM-10334")
-    public void testerQualificationStatusDisplayedOnProfilePage() throws IOException {
+    public void testerQualificationStatusDisplayedOnProfilePage() throws IOException, URISyntaxException {
 
         //Given I'm on the Your Profile Details page
-        ProfilePage profilePage = pageNavigator.gotoProfilePage(tester);
+        ProfilePage profilePage = pageNavigator.goToPage(tester,  ProfilePage.PATH, ProfilePage.class);
 
         //Then I should be able to see the qualification status
         assertThat(profilePage.isTesterQualificationStatusDisplayed(), is(true));
@@ -53,10 +54,10 @@ public class ProfilePageViewTests extends BaseTest {
     @Test(groups = {"BVT", "Regression", "VM-12321"},
             description = "Verifies that trade user can check own roles via roles and associations link " +
                     "on it's own profile page")
-    public void tradeUserCanViewHisOwnRolesAndAssociations() throws IOException {
+    public void tradeUserCanViewHisOwnRolesAndAssociations() throws IOException, URISyntaxException {
 
         //Given I'm on the Your Profile Details page
-        ProfilePage profilePage = pageNavigator.gotoProfilePage(tester);
+        ProfilePage profilePage = pageNavigator.goToPage(tester, ProfilePage.PATH, ProfilePage.class);
 
         //When I click on Roles and Associations link
         profilePage.clickRolesAndAssociationsLink();
@@ -69,7 +70,7 @@ public class ProfilePageViewTests extends BaseTest {
             description = "Verifies that authorised dvsa user can see change driving licence link and date of birth " +
                     "information on trade user profile",
             dataProvider = "dvsaUserForPersonalDetails")
-    public void dvsaUserCanSeeUserPersonalDetails(User user, boolean isChangeLinkDisplayed) throws IOException {
+    public void dvsaUserCanSeeUserPersonalDetails(User user, boolean isChangeLinkDisplayed) throws IOException, URISyntaxException {
 
         //Given I'm on the Trade user New Profile Details page as authorised DVSA user
         NewProfilePage newProfilePage = navigateToNewProfilePage(user, tester, false);
@@ -84,7 +85,7 @@ public class ProfilePageViewTests extends BaseTest {
     @Test(groups = {"Regression", "BL-448"},
             description = "Verifies that authorised dvsa user can change trade user email on trade user profile",
             dataProvider = "dvsaUserForContactDetails")
-    public void dvsaUserCanSeeUserContactDetails(User user) throws IOException {
+    public void dvsaUserCanSeeUserContactDetails(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the Trade user New Profile Details page as authorised DVSA user
         NewProfilePage newProfilePage = navigateToNewProfilePage(user, tester, false);
@@ -96,7 +97,7 @@ public class ProfilePageViewTests extends BaseTest {
     @Test(groups = {"Regression", "BL-448"},
             description = "Verifies that authorised user can see dvsa roles on dvsa user profile",
             dataProvider = "dvsaUserForContactDetails")
-    public void dvsaUserCanSeeDvsaUserRoles(User user) throws IOException {
+    public void dvsaUserCanSeeDvsaUserRoles(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the Trade user New Profile Details page as authorised DVSA user
         NewProfilePage newProfilePage = navigateToNewProfilePage(user, areaOffice2User, false);
@@ -108,7 +109,7 @@ public class ProfilePageViewTests extends BaseTest {
     @Test(groups = {"Regression", "BL-448"},
             description = "Verifies that authorised user can see qualification section on user profile",
             dataProvider = "anyUserForQualification")
-    public void anyUserCanSeeQualificationsSection(User user) throws IOException {
+    public void anyUserCanSeeQualificationsSection(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the Trade user New Profile Details page as authorised DVSA user
         NewProfilePage newProfilePage = navigateToNewProfilePage(user, tester, false);
@@ -120,7 +121,7 @@ public class ProfilePageViewTests extends BaseTest {
     @Test(groups = {"Regression", "BL-448"},
             description = "Verifies that user can see account security section on own user profile",
             dataProvider = "anyUserForAccountSecurity")
-    public void anyUserCanSeeAccountSecuritySectionOnOwnProfile(User user) throws IOException {
+    public void anyUserCanSeeAccountSecuritySectionOnOwnProfile(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the New Profile Details page as logged user
         NewProfilePage newProfilePage = navigateToNewProfilePage(user, user, true);
@@ -132,7 +133,7 @@ public class ProfilePageViewTests extends BaseTest {
     @Test(groups = {"Regression", "BL-448"},
             description = "Verifies that csco user can see account management section on other user profile",
             dataProvider = "anyUserForAccountManagement")
-    public void cscoUserCanSeeAccountManagementSectionOnAnyProfile(User user) throws IOException {
+    public void cscoUserCanSeeAccountManagementSectionOnAnyProfile(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the New Profile Details page as logged user
         NewProfilePage newProfilePage = navigateToNewProfilePage(csco, user, false);
@@ -145,7 +146,7 @@ public class ProfilePageViewTests extends BaseTest {
             description = "Verifies that authorised dvsa user can see change qualification links " +
                     "on trade user profile",
             dataProvider = "dvsaUserForChangeQualifications")
-    public void dvsaUserCanSeeChangeQualificationLinksOnTradeProfile(User user) throws IOException {
+    public void dvsaUserCanSeeChangeQualificationLinksOnTradeProfile(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the New Profile Details page as logged user
         NewProfilePage newProfilePage = navigateToNewProfilePage(user, tester, false);
@@ -158,7 +159,7 @@ public class ProfilePageViewTests extends BaseTest {
             description = "Verifies that authorised dvsa user can see manage roles link " +
                     "on other dvsa user profile",
             dataProvider = "dvsaUserForManageRoles")
-    public void dvsaUserCanSeeManageRolesOnUserProfile(User user) throws IOException {
+    public void dvsaUserCanSeeManageRolesOnUserProfile(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the New Profile Details page as logged user
         NewProfilePage newProfilePage = navigateToNewProfilePage(user, tester, false);
@@ -232,11 +233,12 @@ public class ProfilePageViewTests extends BaseTest {
                 {tester}};
     }
 
-    private NewProfilePage navigateToNewProfilePage(User authorisedUser, User profileOwner, boolean isOwnProfile) throws IOException {
+    private NewProfilePage navigateToNewProfilePage(User authorisedUser, User profileOwner, boolean isOwnProfile)
+            throws IOException, URISyntaxException {
         String ownProfile = profileOwner.getId() + "?context=your-profile";
         if (isOwnProfile) {
-            return pageNavigator.navigateToPage(authorisedUser, String.format(NewProfilePage.PATH, ownProfile), NewProfilePage.class);
+            return pageNavigator.goToPage(authorisedUser, String.format(NewProfilePage.PATH, ownProfile), NewProfilePage.class);
         }
-        return pageNavigator.navigateToPage(authorisedUser, String.format(NewProfilePage.PATH, profileOwner.getId()), NewProfilePage.class);
+        return pageNavigator.goToPage(authorisedUser, String.format(NewProfilePage.PATH, profileOwner.getId()), NewProfilePage.class);
     }
 }

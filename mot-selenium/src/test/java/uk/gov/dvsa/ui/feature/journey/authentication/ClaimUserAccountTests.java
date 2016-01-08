@@ -33,10 +33,10 @@ public class ClaimUserAccountTests extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"}, description = "VM-10319 - Tester, CSCO, AEDM can Claim Account and Set Password",
     dataProvider = "createTester")
-    public void claimAsUser(User user) throws IOException {
+    public void claimAsUser(User user) throws Exception {
 
         //Given I am on the AccountClaim page to my claim my account
-        AccountClaimPage accountClaimPage = pageNavigator.gotoAccountClaimPage(user);
+        AccountClaimPage accountClaimPage = pageNavigator.goToPage(user, AccountClaimPage.PATH, AccountClaimPage.class);
 
         //When I Enter a valid Email Address and a compliant Password
         accountClaimPage.enterEmailAndPassword(

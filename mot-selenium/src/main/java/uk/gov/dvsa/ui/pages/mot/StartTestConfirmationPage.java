@@ -5,7 +5,9 @@ import org.openqa.selenium.support.CacheLookup;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.Select;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
+import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
+import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 
@@ -18,6 +20,7 @@ public class StartTestConfirmationPage extends Page {
     @FindBy(id = "confirm_vehicle_confirmation") private WebElement confirmButton;
     @FindBy(id = "retest_vehicle_confirmation") private WebElement retestvehicleconfirmation;
     @FindBy(id = "vehicleWeight") private WebElement vehicleWeight;
+    @FindBy(id = "vehicle-class-select") private WebElement classDropdown;
     @FindBy(id = "fuel-type-select") private WebElement fuelType;
     @FindBy(id = "vehicle-class-select") private WebElement vehicleClass;
     @FindBy(id = "primary-colour") @CacheLookup private WebElement primaryColor;
@@ -39,14 +42,15 @@ public class StartTestConfirmationPage extends Page {
         return new TestOptionsPage(driver);
     }
 
+    public <T extends Page> T clickStartMotTest(Class<T> clazz) {
+        confirmButton.click();
+        return MotPageFactory.newPage(driver, clazz);
+    }
+
     public TestResultsEntryPage clickStartMotTestWhenConductingContingencyTest() {
         confirmButton.click();
 
         return new TestResultsEntryPage(driver);
-    }
-
-    public String getConfirmVehicleAndStartRetestButtonText(){
-        return retestvehicleconfirmation.getText();
     }
 
     public VehicleDetailsChangedPage changeVehicleDetailAndSubmit(Vehicle vehicle) {
@@ -61,11 +65,12 @@ public class StartTestConfirmationPage extends Page {
         return new RefuseToTestPage(driver);
     }
 
-    public boolean isTesterOnReTestConfirmationPage() {
-        return getTitle().contentEquals("Confirm vehicle for retest");
-    }
-
     public String getVehicleWeight() {
         return vehicleWeight.getText();
+    }
+
+    public StartTestConfirmationPage selectClass(String classNumber){
+        FormCompletionHelper.selectFromDropDownByVisibleText(classDropdown, classNumber);
+        return this;
     }
 }

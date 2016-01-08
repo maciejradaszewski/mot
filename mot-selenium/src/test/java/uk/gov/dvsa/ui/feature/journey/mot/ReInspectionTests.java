@@ -53,7 +53,7 @@ public class ReInspectionTests extends BaseTest {
     }
 
     @Test (groups = { "BVT", "Regression" }, description = "VM-9858, Journey 5")
-    public void veConductsVehicleReinspectionAndRecordsTheResultOfTheDvsaTest() throws IOException {
+    public void veConductsVehicleReInspectionAndRecordsTheResultOfTheDvsaTest() throws IOException {
 
         //Given that I'm logged in as a VE, I search for mot test
         vehicleReinspectionWorkflow()

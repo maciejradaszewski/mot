@@ -44,5 +44,4 @@ public class ManualAdjustmentSuccessPage extends BasePage {
                 .clickCreateOrderButton()
                 .clickConfirmAdjustment();
     }
-
 }

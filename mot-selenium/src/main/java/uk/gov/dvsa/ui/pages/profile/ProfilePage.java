@@ -10,7 +10,7 @@ import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
 
 public class ProfilePage extends AbstractProfilePage {
 
-    public static final String path = "/profile";
+    public static final String PATH = "/profile";
 
     @FindBy(id = "full-address") private WebElement addressField;
     @FindBy(id = "email-address") private WebElement emailAddressField;

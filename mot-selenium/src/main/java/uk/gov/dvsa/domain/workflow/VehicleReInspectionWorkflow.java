@@ -20,7 +20,7 @@ public class VehicleReInspectionWorkflow extends BaseWorkflow {
     }
 
     public TestSummaryPage searchFotMotTest(User user, String searchCategory, String searchValue, String motTestId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, MotTestSearchPage.path);
+        injectOpenAmCookieAndNavigateToPath(user, MotTestSearchPage.PATH);
         PageLocator.getMotTestSearchPage(driver)
                 .selectSearchCategory(searchCategory)
                 .fillSearchValue(searchValue)
@@ -31,33 +31,15 @@ public class VehicleReInspectionWorkflow extends BaseWorkflow {
         return new TestSummaryPage(driver);
     }
 
-    public HomePage startRetestPreviousVehicle(User user, String testNumber) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, RetestVehicleSearchPage.path);
-        PageLocator.getRetestVehicleSearchPage(driver)
-                .fillTestNumberField(testNumber)
-                .clickSearchButton();
-        PageLocator.getStartRetestConfirmationPage(driver)
-                .clickStartMotTest()
-                .clickReturnToHome();
-
-        return new HomePage(driver);
-    }
-
-    public TestResultsEntryRetestPage gotoTestResultsEntryPageWhenRetestStarted() {
-        PageLocator.getHomePage(driver)
-                .clickEnterTestResultsButton();
-        return new TestResultsEntryRetestPage(driver);
-    }
-
     public EventsHistoryPage gotoEventsHistoryPage(User user, String siteId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(VehicleTestingStationPage.path, siteId));
+        injectOpenAmCookieAndNavigateToPath(user, String.format(VehicleTestingStationPage.PATH, siteId));
         PageLocator.getVehicleTestingStationPage(driver)
                 .clickOnViewHistoryLink();
         return new EventsHistoryPage(driver);
     }
 
     public VehicleTestingStationPage gotoVehicleTestingStationPage(User user, String siteId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(VehicleTestingStationPage.path, siteId));
+        injectOpenAmCookieAndNavigateToPath(user, String.format(VehicleTestingStationPage.PATH, siteId));
         return new VehicleTestingStationPage(driver);
     }
 
@@ -88,7 +70,7 @@ public class VehicleReInspectionWorkflow extends BaseWorkflow {
     }
 
     public TestOptionsPage startMotTestAsATester(User user, Vehicle vehicle) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.path);
+        injectOpenAmCookieAndNavigateToPath(user, VehicleSearchPage.PATH);
 
         VehicleSearchPage vehicleSearchPage = PageLocator.getVehicleSearchPage(driver).searchVehicle(vehicle);
         StartTestConfirmationPage testConfirmationPage = vehicleSearchPage.selectVehicleForTest();

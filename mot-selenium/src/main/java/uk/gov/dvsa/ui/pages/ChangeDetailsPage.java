@@ -8,7 +8,7 @@ import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 
 public class ChangeDetailsPage extends Page {
-    public static final String path = "/profile/edit";
+    public static final String PATH = "/profile/edit";
     private static final String PAGE_TITLE = "Change details";
 
     @FindBy (id = "postcode") private WebElement postCodeField;

@@ -7,7 +7,7 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.*;
 
 public class CreateAePage extends Page {
-    public static final String path = "/authorised-examiner/create";
+    public static final String PATH = "/authorised-examiner/create";
     private static final String PAGE_TITLE = "Create Authorised Examiner";
 
     @FindBy(id = "organisationName") private WebElement businessName;

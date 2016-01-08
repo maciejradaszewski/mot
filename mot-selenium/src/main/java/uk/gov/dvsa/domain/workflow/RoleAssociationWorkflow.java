@@ -6,8 +6,8 @@ import uk.gov.dvsa.domain.service.CookieService;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
-import uk.gov.dvsa.ui.pages.vts.VtsChooseARolePage;
-import uk.gov.dvsa.ui.pages.vts.VtsSearchForAUserPage;
+import uk.gov.dvsa.ui.pages.vts.ChooseARolePage;
+import uk.gov.dvsa.ui.pages.vts.SearchForAUserPage;
 
 import java.io.IOException;
 
@@ -19,12 +19,12 @@ public class RoleAssociationWorkflow extends BaseWorkflow {
         this.driver = driver;
     }
 
-    public VtsChooseARolePage asAedmNavigateToVtsChooseARolePage(User user, User tester, String vtsNumber) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(VtsSearchForAUserPage.path, vtsNumber));
+    public ChooseARolePage asAedmNavigateToVtsChooseARolePage(User user, User tester, String vtsNumber) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(SearchForAUserPage.path, vtsNumber));
         PageLocator.getVtsSearchForAUserPage(driver)
                 .fillUserSearchBoxInput(tester.getUsername()).clickSearchButton();
 
-        return new VtsChooseARolePage(driver);
+        return new ChooseARolePage(driver);
     }
 
     public VehicleTestingStationPage assignSiteAdminRoleToUser() {
@@ -46,7 +46,7 @@ public class RoleAssociationWorkflow extends BaseWorkflow {
     }
 
     public HomePage navigateToHomePage(User user) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, HomePage.path);
+        injectOpenAmCookieAndNavigateToPath(user, HomePage.PATH);
 
         return new HomePage(driver);
     }
@@ -70,7 +70,7 @@ public class RoleAssociationWorkflow extends BaseWorkflow {
     }
 
     public NotificationPage loginAndNavigateToLastReceivedNotification(User user) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, HomePage.path);
+        injectOpenAmCookieAndNavigateToPath(user, HomePage.PATH);
         PageLocator.getHomePage(driver)
                 .clickOnLastNomination();
 

@@ -7,10 +7,12 @@ import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.VtsDisassociateStatus;
 import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.AedmAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.vts.AssociateASitePage;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,11 +37,11 @@ public class DvsaAdminAssociatesSiteToAeTests extends BaseTest {
     }
 
     @Test (groups = { "Regression" }, description = "VM-11112")
-    public void AO1RemovesSiteFromAE() throws IOException {
+    public void AO1RemovesSiteFromAE() throws IOException, URISyntaxException {
 
         //Given that I'm logged in as AO1, I go to Remove site from AE page
         AuthorisedExaminerViewPage authorisedExaminerViewPage = pageNavigator
-                .goToAreaOfficeAuthorisedExaminerPage(areaoffice1, String.valueOf(aeDetailsDefault.getId()));
+                .goToPageAsAuthorisedExaminer(areaoffice1, AedmAuthorisedExaminerViewPage.class, AedmAuthorisedExaminerViewPage.PATH, aeDetailsDefault.getId());
 
         //And I remove site from AE
         authorisedExaminerViewPage
@@ -51,11 +53,11 @@ public class DvsaAdminAssociatesSiteToAeTests extends BaseTest {
     }
 
     @Test (groups = { "Regression" }, description = "VM-2526")
-    public void AO1AssociatesSiteToAE() throws IOException {
+    public void AO1AssociatesSiteToAE() throws IOException, URISyntaxException {
 
-        //Given that I'm logged in as AO1, I go to Assosiate a site page
+        //Given that I'm logged in as AO1, I go to Associate a site page
         AssociateASitePage associateASitePage = pageNavigator
-                .goToAssociateASitePage(areaoffice1, String.valueOf(aeDetailsNew.getId()));
+                .goToPageAsAuthorisedExaminer(areaoffice1, AssociateASitePage.class, AssociateASitePage.PATH, aeDetailsNew.getId());
 
         //And I associate site to AE
         AuthorisedExaminerViewPage authorisedExaminerViewPage = associateASitePage

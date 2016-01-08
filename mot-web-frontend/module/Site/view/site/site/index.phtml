@@ -41,7 +41,7 @@ $contact = $site->getContactByType(\DvsaCommon\Enum\SiteContactTypeCode::BUSINES
 <h3 class="summary-heading">Site details
 <?php if ($permission->canChangeSiteDetails()): ?>
     <span class="summary-heading__action">
-        <a href="<?php echo VehicleTestingStationUrlBuilderWeb::siteDetails($site->getId()) ?>" >Change site details</a>
+        <a id="change-site-details" href="<?php echo VehicleTestingStationUrlBuilderWeb::siteDetails($site->getId()) ?>" >Change site details</a>
     </span>
 <?php endif ?>
 </h3>

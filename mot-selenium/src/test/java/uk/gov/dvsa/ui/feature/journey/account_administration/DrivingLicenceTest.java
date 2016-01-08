@@ -19,6 +19,7 @@ import uk.gov.dvsa.ui.pages.dvsa.UserSearchResultsPage;
 import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -62,7 +63,7 @@ public class DrivingLicenceTest extends BaseTest {
     @Test(groups = {"BVT", "Regression"},
             description = "Test that validates the authorised DVSA user can see driver licence section with or without add/edit link in it",
             dataProvider = "dvsaUserExpectsDrivingLicenceSection")
-    public void driverLicenceInfoIsVisibleOnSearchedUserProfilePage (User loggedInUser, boolean assertion) throws IOException{
+    public void driverLicenceInfoIsVisibleOnSearchedUserProfilePage (User loggedInUser, boolean assertion) throws IOException, URISyntaxException {
         UserSearchProfilePage profilePage = searchForUserAndViewProfile(loggedInUser, tester);
 
         // Then the driving licence number element is displayed
@@ -78,9 +79,9 @@ public class DrivingLicenceTest extends BaseTest {
     @Test(groups = {"BVT", "Regression"},
             description = "Test that validates the logged user can't see driver licence section on it's own profile page",
             dataProvider = "userCantSeeDrivingLicenceSection")
-    public void driverLicenceInfoNotVisibleOnUserOwnProfilePage (User loggedInUser) throws IOException{
+    public void driverLicenceInfoNotVisibleOnUserOwnProfilePage (User loggedInUser) throws IOException, URISyntaxException {
         // Given that I'm on a logged user profile page
-        ProfilePage profilePage = pageNavigator.gotoProfilePage(loggedInUser);
+        ProfilePage profilePage = pageNavigator.goToPage(loggedInUser, ProfilePage.PATH, ProfilePage.class);
 
         // Then the driving licence number element is not displayed
         assertThat(profilePage.drivingLicenceIsDisplayed(), is(false));
@@ -92,7 +93,7 @@ public class DrivingLicenceTest extends BaseTest {
     @Test(groups = {"BVT", "Regression"},
             description = "Test that validates the authorised DVSA user can't see driver licence section on other DVSA user",
             dataProvider = "expectsDrivingLicenceNotShown")
-    public void dvsaUserCantSeeDriverLicenceForOtherDvsaUser(User loggedInUser, User searchedUser) throws IOException {
+    public void dvsaUserCantSeeDriverLicenceForOtherDvsaUser(User loggedInUser, User searchedUser) throws IOException, URISyntaxException {
         // Given that I'm on a DVSA user profile as authorised DVSA user
         UserSearchProfilePage profilePage = searchForUserAndViewProfile(loggedInUser, searchedUser);
 
@@ -106,7 +107,7 @@ public class DrivingLicenceTest extends BaseTest {
     @Test(groups = {"BVT", "Regression"},
             description = "Test that DVSA user can edit non-DVSA user driving licence successfully",
             dataProvider = "validLicenceInputTestCases")
-    public void dvsaUserCanChangeNonDvsaUserDrivingLicenceWithValidInput(String number, String country, String countryText) throws IOException {
+    public void dvsaUserCanChangeNonDvsaUserDrivingLicenceWithValidInput(String number, String country, String countryText) throws IOException, URISyntaxException {
         // Given that I'm on a non-DVSA user profile as authorised DVSA user
         UserSearchProfilePage profilePage = searchForUserAndViewProfile(areaOffice1User, tester);
 
@@ -127,7 +128,7 @@ public class DrivingLicenceTest extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"},
             description = "Test that DVSA user can remove non-DVSA user driving licence")
-    public void dvsaUserCanRemoveNonDvsaUserDrivingLicence() throws IOException {
+    public void dvsaUserCanRemoveNonDvsaUserDrivingLicence() throws IOException, URISyntaxException {
         tester = userData.createTester(testSite.getId());
 
         // Given that I'm on a non-DVSA user profile as authorised DVSA user
@@ -146,7 +147,7 @@ public class DrivingLicenceTest extends BaseTest {
     @Test(groups = {"BVT", "Regression"},
             description = "Test that a validation error message is displayed to DVSA user when submitting wrong information",
             dataProvider = "invalidLicenceInputTestCases")
-    public void dvsaUserSeesValidationErrorWithInvalidInput(String number, String country, String error) throws IOException {
+    public void dvsaUserSeesValidationErrorWithInvalidInput(String number, String country, String error) throws IOException, URISyntaxException {
         // Given that I'm on a non-DVSA user profile as authorised DVSA user
         UserSearchProfilePage profilePage = searchForUserAndViewProfile(areaOffice1User, tester);
 
@@ -160,7 +161,7 @@ public class DrivingLicenceTest extends BaseTest {
     @Test(groups = {"BVT", "Regression"},
             description = "Test that a validation error message is displayed to DVSA user when no licence number is entered",
             dataProvider = "issuingCountriesNoLicenceNumberExpectsValidationError")
-    public void dvsaUserSeesValidationErrorWithNoLicenceNumberProvided(String country) throws IOException {
+    public void dvsaUserSeesValidationErrorWithNoLicenceNumberProvided(String country) throws IOException, URISyntaxException {
         // Given that I'm on a non-DVSA user profile as authorised DVSA user
         UserSearchProfilePage profilePage = searchForUserAndViewProfile(areaOffice1User, tester);
 
@@ -173,7 +174,7 @@ public class DrivingLicenceTest extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"},
             description = "Test that a validation error message is displayed to DVSA user when issuing country is invalid")
-    public void dvsaUserSeesValidationErrorWithInvalidIssuingCountryProvided() throws IOException {
+    public void dvsaUserSeesValidationErrorWithInvalidIssuingCountryProvided() throws IOException, URISyntaxException {
         // Given that I'm on a non-DVSA user profile as authorised DVSA user
         UserSearchProfilePage profilePage = searchForUserAndViewProfile(areaOffice1User, tester);
 
@@ -261,8 +262,8 @@ public class DrivingLicenceTest extends BaseTest {
         };
     }
 
-    private UserSearchProfilePage searchForUserAndViewProfile(User loggedInUser, User searchedUser) throws IOException {
-        HomePage homePage = pageNavigator.gotoHomePage(loggedInUser);
+    private UserSearchProfilePage searchForUserAndViewProfile(User loggedInUser, User searchedUser) throws IOException, URISyntaxException, URISyntaxException {
+        HomePage homePage = pageNavigator.goToPage(loggedInUser, HomePage.PATH,  HomePage.class);
         UserSearchPage userSearchPage = homePage.clickUserSearchLinkExpectingUserSearchPage();
         UserSearchResultsPage userSearchResultsPage = userSearchPage
                 .searchForUserByUsername(searchedUser.getUsername())

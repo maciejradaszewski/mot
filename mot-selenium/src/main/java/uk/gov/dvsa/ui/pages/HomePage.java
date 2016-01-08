@@ -12,7 +12,7 @@ import java.util.List;
 
 public class HomePage extends Page {
 
-    public static final String path = "/";
+    public static final String PATH = "/";
     private static final String PAGE_TITLE = "Your home";
 
     @FindBy (className = "global-header_name") private WebElement userNameHeader;
