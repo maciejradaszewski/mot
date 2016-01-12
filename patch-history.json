@@ -1,6 +1,12 @@
 {
   "pairs": [
     {
+      "privateCommit": "b77556d8cd4c4551cb035032e62f2edbb001cd0f",
+      "publicCommit": "ec888cf9295c6d989cb62535c0e6cf5c6fc3eebd",
+      "branch": "public-master",
+      "date": "Tue Jan 12 16:31:44 2016 +0100"
+    },
+    {
       "privateCommit": "24815560158419950166ffc0fbc8a923bad702cd",
       "publicCommit": "aa99b914fc60a59707a01e7e15c0f7abde3b6e48",
       "branch": "public-master",

@@ -199,6 +199,41 @@ class RetestEligibilityValidatorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testValidateVehicleForRetest_twoTests_vtsAandB_cancelledAtA_notEligibleAtB()
+    {
+        //Given
+        $cancelledTest = $this->mockMotTest($this->currentDate, MotTestStatusName::ABORTED);
+        $cancelledTest->getVehicleTestingStation()->setId(5);
+
+        $this
+            ->motTestRepository
+            ->expects($this->at(0))
+            ->method("findLastNormalTest")
+            ->willReturn($cancelledTest);
+
+        $this
+            ->motTestRepository
+            ->expects($this->at(1))
+            ->method("findLastNormalTest")
+            ->willReturn(null);
+
+        $this
+            ->motTestRepository
+            ->expects($this->never())
+            ->method("countNotCancelledTests");
+
+        $validator = $this->createRetestEligibilityValidator();
+
+        // when
+        $checkResult = XMock::invokeMethod($validator, 'validateVehicleForRetest', [self::VEHICLE_ID, self::TEST_VTS_ID]);
+
+        // then
+        $this->assertEquals(
+            [RetestEligibilityCheckCode::RETEST_REJECTED_ORIGINAL_WAS_NOT_FAILED],
+            $checkResult
+        );
+    }
+
     private function mockMotTest(\DateTime $completedDate, $status = null)
     {
         $site = new Site();
