@@ -103,7 +103,7 @@ class RetestEligibilityValidator
 
         if ($lastTest->isCancelled() && $isDifferentVts) {
             $lastTest = $this->motTestRepository->findLastNormalTest($vehicleId, $contingencyDto, $vtsId);
-            if (!$lastTest->isFailed()) {
+            if ($lastTest == null || !$lastTest->isFailed()) {
                 return [RetestEligibilityCheckCode::RETEST_REJECTED_ORIGINAL_WAS_NOT_FAILED];
             }
 
