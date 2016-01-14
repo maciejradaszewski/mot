@@ -5,6 +5,7 @@ namespace UserAdmin\Controller;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Constants\Role;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
@@ -165,7 +166,8 @@ class EmailAddressController extends AbstractDvsaMotTestController
                 'searchQueryParams' => $this->getRequest()->getQuery()->toArray(),
                 'emailAddressUrl' => UserAdminUrlBuilderWeb::emailChange($personId),
                 'emailValue'      => $emailValue,
-                'emailConfirmValue'      => $emailConfirmValue
+                'emailConfirmValue'      => $emailConfirmValue,
+                'newProfileEnabled' => $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE),
             ]
         );
 

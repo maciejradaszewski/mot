@@ -36,6 +36,11 @@ class UserTradeRolesViewModel
 
     private $businessRoleCatalog;
 
+    /**
+     * @var bool $newProfileEnabled
+     */
+    private $newProfileEnabled;
+
     /** @var Url */
     private $urlHelper;
 
@@ -47,17 +52,20 @@ class UserTradeRolesViewModel
      * @param PersonTradeRoleDto[] $tradeRoles
      * @param BusinessRoleCatalog $businessRoleCatalog
      * @param Url $urlHelper
+     * @param bool $newProfileEnabled
      */
     public function __construct(MotFrontendAuthorisationServiceInterface $authorisationService,
                                 array $tradeRoles,
                                 BusinessRoleCatalog $businessRoleCatalog,
-                                Url $urlHelper
+                                Url $urlHelper,
+                                $newProfileEnabled
     )
     {
         $this->authorisationService = $authorisationService;
         $this->tradeRoles = $tradeRoles;
         $this->businessRoleCatalog = $businessRoleCatalog;
         $this->urlHelper = $urlHelper;
+        $this->newProfileEnabled = $newProfileEnabled;
     }
 
     /**
@@ -187,5 +195,13 @@ class UserTradeRolesViewModel
 
     public function isRoleTypeSite(PersonTradeRoleDto $position){
         return $this->businessRoleCatalog->getByCode($position->getRoleCode())->getType() == BusinessRole::SITE_TYPE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNewProfileEnabled()
+    {
+        return $this->newProfileEnabled;
     }
 }

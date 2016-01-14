@@ -22,7 +22,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $this->
             <li>
                 <?php /** if javascript is enabled clicking this link triggers window.history.back() */ ?>
                 <a class="history-go-back" <?php echo $userTradeRolesViewModel->getPersonIsViewingOwnProfile() ? null : 'onclick="window.history.back();return false;"'; ?>
-                   href="<?php echo $this->url('user-home/profile/byId'); ?>">
+                   href="<?php echo $userTradeRolesViewModel->isNewProfileEnabled() ? '/preview/profile/' . $userTradeRolesViewModel->getPersonId() : $this->url('user-home/profile/byId'); ?>">
                     <?php echo $userTradeRolesViewModel->getPersonIsViewingOwnProfile() ? 'Return to your profile' : 'Return to user profile';?>
                 </a>
             </li>
