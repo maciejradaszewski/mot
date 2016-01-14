@@ -343,4 +343,6 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
     </table>
 <?php endif; ?>
 
+<?php echo $this->directDebitInfo($orgId); ?>
+
 <?php echo $this->partial('/organisation/authorised-examiner/partials/index-buttons', ['urlBack' => $this->urlBack]); ?>
