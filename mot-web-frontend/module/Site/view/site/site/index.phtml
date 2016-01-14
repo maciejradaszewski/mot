@@ -129,7 +129,17 @@ echo $this->partial(
             <th class="table-summary__key">
                 <?php if ($permission->canViewProfile($position->getPerson())): ?>
 
-                    <a href="<?php echo PersonUrlBuilderWeb::profile($position->getPerson()->getId()); ?>">
+                    <a href="<?php
+                    echo $this->isFeatureEnabled('new_person_profile')
+                        ? $this->url('newProfile',
+                            ['personId' => $position->getPerson()->getId()],
+                            [
+                                'query' => [
+                                    'context' => 'vts'
+                                ]
+                            ]
+                        )
+                        : PersonUrlBuilderWeb::profile($position->getPerson()->getId())?>">
                         <?php echo $this->escapeHtml($position->getPerson()->getFullName());
                         if ($permission->canViewUsername()):
                             echo "(" . $this->escapeHtml($position->getPerson()->getUsername()) . ")";

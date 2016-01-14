@@ -10,6 +10,7 @@ use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Configuration\MotConfig;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Enum\MessageTypeCode;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
@@ -300,7 +301,7 @@ class UserProfileController extends AbstractDvsaMotTestController
                 'resetClaimAccountUrlPost' => $this->buildUrlWithCurrentSearchQuery(
                     UserAdminUrlBuilderWeb::userProfileClaimAccountPost($personId)
                 ),
-                'userProfileUrl' => $this->buildUrlWithCurrentSearchQuery(
+                'userProfileUrl' => $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ? '/preview/profile/' . $personId : $this->buildUrlWithCurrentSearchQuery(
                     UserAdminUrlBuilderWeb::userProfile($personId)
                 ),
             ]

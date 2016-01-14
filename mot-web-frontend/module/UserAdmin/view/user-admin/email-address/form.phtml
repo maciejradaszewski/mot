@@ -7,6 +7,9 @@ use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 /** @var string $emailAddressUrl */
 /** @var string $emailValue */
 /** @var string $emailConfirmValue */
+/**
+ * @var bool $newProfileEnabled
+ */
 
 $errorMessages      = $this->layout()->flashMessenger->getErrorMessages();
 $successMessages    = $this->layout()->flashMessenger->getSuccessMessages();
@@ -61,7 +64,7 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             'value'         => 'Change email address',
             'linkMessage'   => $emailAddressUrl,
             'navigation'    => [
-                'Cancel and return to user profile' => UserAdminUrlBuilderWeb::of()->userProfile($presenter->getPersonId()),
+                'Cancel and return to user profile' => $newProfileEnabled ? '/preview/profile/' . $presenter->getPersonId() : UserAdminUrlBuilderWeb::of()->userProfile($presenter->getPersonId()),
             ]
         ]
     ); ?>

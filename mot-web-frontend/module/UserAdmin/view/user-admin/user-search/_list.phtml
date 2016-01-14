@@ -22,7 +22,19 @@ use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
     <?php foreach ($users as $user): ?>
         <tr data-element="result-details">
             <td data-element="result-username">
-                <a href="<?php echo $helper->getProfileUrl($user->getPersonId()) ?>?<?php echo http_build_query($resultsQueryArray); ?>">
+                <a href="<?php
+                echo $this->isFeatureEnabled('new_person_profile')
+                    ? $this->url('newProfile',
+                        [
+                            'personId' => $user->getPersonId()
+                        ],
+                        [
+                            'query' => [
+                                'context' => 'user-search'
+                            ],
+                        ]
+                    )
+                    : $helper->getProfileUrl($user->getPersonId()) . '?' . http_build_query($resultsQueryArray); ?>">
                     <?php echo $this->escapeHtml($user->displayFullName()); ?>
                 </a>
             </td>

@@ -5,6 +5,7 @@ namespace UserAdmin\Controller;
 use Core\Controller\AbstractAuthActionController;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use UserAdmin\Presenter\UserProfilePresenter;
@@ -93,7 +94,7 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
         return new ViewModel(
             [
                 'profilePresenter' => $profilePresenter,
-                'userProfileUrl' => $this->buildUrlWithCurrentSearchQuery(
+                'userProfileUrl' => $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ? '/preview/profile/' . $personId : $this->buildUrlWithCurrentSearchQuery(
                     UserAdminUrlBuilderWeb::userProfile($personId)
                 ),
                 'resetClaimAccountUrlPost' => $this->buildUrlWithCurrentSearchQuery(

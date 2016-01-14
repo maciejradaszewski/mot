@@ -8,6 +8,7 @@
 namespace Event\ViewModel\Event;
 
 use DvsaClient\Entity\Person;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Dto\Event\EventFormDto;
 use DvsaCommon\Dto\Event\EventListDto;
@@ -17,6 +18,7 @@ use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\SiteUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
+use DvsaFeature\FeatureToggles;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -37,6 +39,10 @@ class EventViewModel
     private $formModel;
     /** @var EventListDto list of extracted Dto events prepared for list */
     private $eventList;
+    /**
+     * @var bool featureToggles
+     */
+    private $newProfileEnabled;
 
     /* @var string $eventType */
     private $eventType;
@@ -48,6 +54,7 @@ class EventViewModel
      * @param EventFormDto             $formModel
      * @param string                   $eventType
      * @param int                      $id
+     * @param bool                     $newProfileEnabled
      */
     public function __construct(
         $organisation,
@@ -55,7 +62,8 @@ class EventViewModel
         $person,
         EventFormDto $formModel,
         $eventType,
-        $id
+        $id,
+        $newProfileEnabled
     ) {
         $this->setOrganisation($organisation);
         $this->setSite($site);
@@ -63,6 +71,7 @@ class EventViewModel
         $this->setFormModel($formModel);
         $this->setEventType($eventType);
         $this->setId($id);
+        $this->newProfileEnabled = $newProfileEnabled;
     }
 
     /**
@@ -90,7 +99,7 @@ class EventViewModel
             case 'site':
                 return SiteUrlBuilderWeb::of($this->site->getId());
             case 'person':
-                return UserAdminUrlBuilderWeb::userProfile($this->person->getId());
+                return $this->newProfileEnabled ? '/preview/profile/' . $this->person->getId() : UserAdminUrlBuilderWeb::userProfile($this->person->getId());
         }
 
         return '';

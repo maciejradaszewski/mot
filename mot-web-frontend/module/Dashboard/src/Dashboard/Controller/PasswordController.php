@@ -7,6 +7,7 @@ use Core\Service\MotFrontendIdentityProviderInterface;
 use Dashboard\Form\ChangePasswordForm;
 use Dashboard\Service\PasswordService;
 use DvsaCommon\Configuration\MotConfig;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\InputFilter\Account\ChangePasswordInputFilter;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\StringUtils;
@@ -74,11 +75,14 @@ class PasswordController extends AbstractAuthActionController
 
         $form->obfuscateOldPasswordElementName();
 
+        $newProfileEnabled = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE);
+
         return [
             'form'        => $form,
             'username'    => $this->getIdentity()->getUsername(),
             'cancelRoute' => $hasPasswordExpired ? "logout" : "user-home/profile/byId",
-            'cancelText'  => $hasPasswordExpired ? "Cancel and return to sign in" : "Cancel and return to your profile"
+            'cancelText'  => $hasPasswordExpired ? "Cancel and return to sign in" : "Cancel and return to your profile",
+            'newProfileEnabled' => $newProfileEnabled,
         ];
     }
 

@@ -19,6 +19,7 @@ use DvsaClient\Mapper\OrganisationPositionMapper;
 use DvsaClient\Mapper\SitePositionMapper;
 use DvsaCommon\ApiClient\Person\PersonTradeRoles\Dto\PersonTradeRoleDto;
 use DvsaCommon\ApiClient\Person\PersonTradeRoles\PersonTradeRolesApiResource;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Enum\RoleCode;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\Utility\ArrayUtils;
@@ -103,7 +104,8 @@ class UserTradeRolesController extends AbstractAuthActionController
         $vm = new UserTradeRolesViewModel($this->authorisationService,
             $this->personTradeRoleSorter->sortTradeRoles($tradeRoles),
             $this->catalog->businessRole(),
-            $urlHelper
+            $urlHelper,
+            $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)
         );
         $vm->setPersonId((int)$this->params()->fromRoute('id'));
         $vm->setPersonIsViewingOwnProfile($personIsViewingOwnProfile);

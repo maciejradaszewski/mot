@@ -9,6 +9,7 @@ namespace Event\Controller;
 
 use Core\Controller\AbstractAuthActionController;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Dto\Common\DateDto;
 use DvsaCommon\Dto\Event\EventFormDto;
@@ -83,7 +84,8 @@ class EventController extends AbstractAuthActionController
             $this->getPerson((int) $id, $type),
             new EventFormDto($formData),
             $type,
-            $id
+            $id,
+            $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)
         );
 
         $viewModel->setEventList(
