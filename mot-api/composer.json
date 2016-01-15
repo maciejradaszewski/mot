@@ -15,7 +15,7 @@
     "soflomo/purifier": "0.1.1",
     "slot-purchase/backend-api": "v3.6.7",
     "danielstjules/stringy": "~2.0",
-    "aws/aws-sdk-php": "3.2.*"
+    "aws/aws-sdk-php": "^3.9"
   },
   "autoload" : {
     "psr-0" : {
