@@ -4,41 +4,47 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6d882a91d172b7800e56fe736fa43817",
-    "content-hash": "123322c78d946907826ba1401a1793a5",
+    "hash": "f680e8756efbde9b04cebeda25039bfe",
+    "content-hash": "bb5916f493e7406524d3d153c73ce65a",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.2.6",
+            "version": "3.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d21c2aa132bbcd55325a50435bdd1e141c7f79e5"
+                "reference": "dff1c76551777fcc5890d2d5324f9f9e5cdd4e3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d21c2aa132bbcd55325a50435bdd1e141c7f79e5",
-                "reference": "d21c2aa132bbcd55325a50435bdd1e141c7f79e5",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/dff1c76551777fcc5890d2d5324f9f9e5cdd4e3d",
+                "reference": "dff1c76551777fcc5890d2d5324f9f9e5cdd4e3d",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": ">=5.3|~6.0.1|~6.1",
+                "guzzlehttp/guzzle": "~5.3|~6.0.1|~6.1",
                 "guzzlehttp/promises": "~1.0",
                 "guzzlehttp/psr7": "~1.0",
                 "mtdowling/jmespath.php": "~2.2",
                 "php": ">=5.5"
             },
             "require-dev": {
+                "andrewsville/php-token-reflection": "^1.4",
+                "aws/aws-php-sns-message-validator": "~1.0",
                 "behat/behat": "~3.0",
+                "doctrine/cache": "~1.4",
                 "ext-dom": "*",
                 "ext-json": "*",
                 "ext-openssl": "*",
                 "ext-pcre": "*",
                 "ext-simplexml": "*",
                 "ext-spl": "*",
-                "phpunit/phpunit": "~4.0"
+                "nette/neon": "^2.3",
+                "phpunit/phpunit": "~4.0|~5.0"
             },
             "suggest": {
+                "aws/aws-php-sns-message-validator": "To validate incoming SNS notifications",
+                "doctrine/cache": "To use the DoctrineCacheAdapter",
                 "ext-curl": "To send requests using cURL",
                 "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
             },
@@ -78,7 +84,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2015-08-12 19:44:09"
+            "time": "2016-01-15 02:01:24"
         },
         {
             "name": "behat/transliterator",
