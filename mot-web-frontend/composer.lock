@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cf506cd1e3a6d2f42918c78007bbcee3",
-    "content-hash": "af8c1852f1570408bca10537a59d645e",
+    "hash": "5f9c19c655322309870d7d2b0195b235",
+    "content-hash": "8c51712efea5c564234dc10ec3c6c9bd",
     "packages": [
         {
             "name": "cpms/client",
@@ -1340,11 +1340,11 @@
         },
         {
             "name": "slot-purchase/web-frontend",
-            "version": "v3.6.4",
+            "version": "v3.6.5",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/web-frontend.git",
-                "reference": "17b3eb5248c674eb365131c0e4e1afaae9221887"
+                "reference": "b34b85d5edaa4b6d7fda561d14017976eeb4819e"
             },
             "require": {
                 "cpms/cpms-forms": "1.22.*",
@@ -1378,7 +1378,7 @@
                 "proprietary"
             ],
             "description": "Slot Purchase Frontend",
-            "time": "2016-01-06 18:22:46"
+            "time": "2016-01-15 12:08:57"
         },
         {
             "name": "soflomo/purifier",
