@@ -224,8 +224,6 @@ class PasswordResetController extends AbstractAuthActionController
         return $this->initViewModelInformation(self::PAGE_TITLE_CONFIRMATION, self::PAGE_SUBTITLE, self::STEP_4);
     }
 
-
-
     public function changePasswordAction()
     {
         $token = $this->params('resetToken');

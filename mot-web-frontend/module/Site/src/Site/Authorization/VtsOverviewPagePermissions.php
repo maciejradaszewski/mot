@@ -187,9 +187,44 @@ class VtsOverviewPagePermissions
         return $this->isGranted(PermissionAtSite::VTS_UPDATE_TESTING_FACILITIES_DETAILS);
     }
 
-    public function canChangeSiteDetails()
+    public function canChangeSiteName()
     {
-        return $this->isGranted(PermissionAtSite::VTS_UPDATE_SITE_DETAILS);
+        return $this->isGranted(PermissionAtSite::VTS_UPDATE_NAME);
+    }
+
+    public function canChangeSitePhone()
+    {
+        return $this->isGranted(PermissionAtSite::VTS_UPDATE_PHONE);
+    }
+
+    public function canChangeSiteAddress()
+    {
+        return $this->isGranted(PermissionAtSite::VTS_UPDATE_ADDRESS);
+    }
+
+    public function canChangeSiteCountry()
+    {
+        return $this->isGranted(PermissionAtSite::VTS_UPDATE_COUNTRY);
+    }
+
+    public function canChangeSiteEmail()
+    {
+        return $this->isGranted(PermissionAtSite::VTS_UPDATE_EMAIL);
+    }
+
+    public function canChangeSiteClasses()
+    {
+        return $this->isGranted(PermissionAtSite::VTS_UPDATE_CLASSES);
+    }
+
+    public function canChangeSiteType()
+    {
+        return $this->isGranted(PermissionAtSite::VTS_UPDATE_TYPE);
+    }
+
+    public function canChangeSiteStatus()
+    {
+        return $this->isGranted(PermissionAtSite::VTS_UPDATE_STATUS);
     }
 
     public function canSearchVts()

@@ -223,6 +223,18 @@ class CatalogService
         return $countries;
     }
 
+    public function getCountries()
+    {
+        $countries = [];
+        foreach ($this->getData()['countries'] as $country) {
+            if (isset($country['code'])) {
+                $countries[$country['code']] = $country['name'];
+            }
+        }
+
+        return $countries;
+    }
+
     public function getFuelTypes()
     {
         $types = [];
@@ -321,6 +333,19 @@ class CatalogService
     {
         $types = [];
         foreach ($this->getData()['siteStatus'] as $type) {
+            $types[$type['code']] = $type['name'];
+        }
+
+        return $types;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSiteTypes()
+    {
+        $types = [];
+        foreach ($this->getData()['siteTypes'] as $type) {
             $types[$type['code']] = $type['name'];
         }
 

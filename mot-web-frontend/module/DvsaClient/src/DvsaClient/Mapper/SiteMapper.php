@@ -2,17 +2,14 @@
 
 namespace DvsaClient\Mapper;
 
-use DvsaClient\Entity\Address;
-use DvsaClient\Entity\Person;
-use DvsaClient\Entity\SiteDailyOpeningHours;
-use DvsaClient\Entity\SitePosition;
 use DvsaClient\Entity\VehicleTestingStation;
-use DvsaCommon\Date\Time;
 use DvsaCommon\Dto\Site\EnforcementSiteAssessmentDto;
+use DvsaCommon\Dto\Site\OldSiteContactDto;
 use DvsaCommon\Dto\Site\SiteContactDto;
-use DvsaCommon\Dto\Site\SiteDto;
 use DvsaCommon\Dto\Site\SiteListDto;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
+use DvsaCommon\Dto\Site\SiteContactPatchDto;
+use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilder;
 use DvsaCommon\Utility\DtoHydrator;
 use Zend\Stdlib\Hydrator\ClassMethods;
@@ -22,7 +19,7 @@ use Zend\Stdlib\Hydrator\ClassMethods;
  *
  * @package DvsaClient\Mapper
  */
-class SiteMapper extends DtoMapper
+class SiteMapper extends DtoMapper implements AutoWireableInterface
 {
     protected $entityClass = VehicleTestingStation::class;
 
@@ -128,7 +125,7 @@ class SiteMapper extends DtoMapper
 
     public function validateSiteDetails($siteId, VehicleTestingStationDto $siteDetailsDto)
     {
-        $apiUrl = VehicleTestingStationUrlBuilder::validateSiteDetails($siteId);
+        $apiUrl = VehicleTestingStationUrlBuilder::vtsDetails($siteId);
         $siteDetailsDto->setIsNeedConfirmation(true);
 
         return $this->put($apiUrl, DtoHydrator::dtoToJson($siteDetailsDto));
@@ -136,9 +133,23 @@ class SiteMapper extends DtoMapper
 
     public function updateSiteDetails($siteId, VehicleTestingStationDto $siteDetailsDto)
     {
-        $apiUrl = VehicleTestingStationUrlBuilder::validateSiteDetails($siteId);
+        $apiUrl = VehicleTestingStationUrlBuilder::vtsDetails($siteId);
 
         return $this->put($apiUrl, DtoHydrator::dtoToJson($siteDetailsDto));
+    }
+
+    public function updateVtsProperty($vtsId, $property, $value)
+    {
+        $apiUrl = VehicleTestingStationUrlBuilder::vtsDetails($vtsId);
+
+        return $this->patch($apiUrl, [$property => $value, '_class' => VehicleTestingStationDto::class]);
+    }
+
+    public function updateVtsContactProperty($vtsId, $property, $value)
+    {
+        $apiUrl = VehicleTestingStationUrlBuilder::contactUpdate($vtsId);
+
+        return $this->patch($apiUrl, [$property => $value, '_class' => SiteContactPatchDto::class]);
     }
 
     public function validateSiteAssessment($siteId, EnforcementSiteAssessmentDto $assessmentDto)

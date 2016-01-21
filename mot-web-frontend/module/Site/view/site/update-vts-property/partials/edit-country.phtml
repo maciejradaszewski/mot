@@ -1,0 +1,20 @@
+<?php
+use Site\UpdateVtsProperty\Process\Form\CountryPropertyForm;
+use Site\UpdateVtsProperty\UpdateVtsPropertyViewModel;
+
+/** @var UpdateVtsPropertyViewModel $viewModel */
+
+/** @var CountryPropertyForm $form */
+$form = $viewModel->getForm();
+?>
+<div class="row">
+    <div class="col-sm-4">
+        <?php echo $this->partial(
+            'partial/gds/form/control',
+            [
+                'element' => $form->getCountryElement()
+            ]
+        );
+        ?>
+    </div>
+</div>

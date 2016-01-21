@@ -7,24 +7,32 @@ use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\MotIdentityInterface;
+use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Constants\EventDescription;
 use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\AuthorisationForTestingMotAtSiteStatusCode;
+use DvsaCommon\Enum\CountryCode;
 use DvsaCommon\Enum\EventTypeCode;
-use DvsaCommon\Enum\SiteStatusCode;
+use DvsaCommon\Model;
+use DvsaCommon\Model\VehicleTestingStation;
+use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaEntities\Entity\AuthorisationForTestingMotAtSite;
 use DvsaEntities\Entity\AuthorisationForTestingMotAtSiteStatus;
 use DvsaEntities\Entity\EventSiteMap;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteStatus;
+use DvsaEntities\Entity\SiteType;
 use DvsaEntities\Entity\VehicleClass;
 use DvsaEntities\Repository\AuthorisationForTestingMotAtSiteStatusRepository;
+use DvsaEntities\Repository\NonWorkingDayCountryRepository;
 use DvsaEntities\Repository\SiteRepository;
 use DvsaEntities\Repository\SiteStatusRepository;
+use DvsaEntities\Repository\SiteTypeRepository;
 use DvsaEntities\Repository\VehicleClassRepository;
 use DvsaEventApi\Service\EventService;
+use SiteApi\Service\Validator\SiteDetailsValidator;
 use SiteApi\Service\Validator\SiteValidator;
 
 class SiteDetailsService
@@ -33,6 +41,7 @@ class SiteDetailsService
     const STATUS_FIELD = 'Status';
     const CLASSES_FIELD = 'Testing classes';
     const AREA_OFFICE_FIELD = 'area_office';
+    const TYPE_FIELD = 'type';
     const OLD_VALUE = 'old';
     const NEW_VALUE = 'new';
 
@@ -84,6 +93,18 @@ class SiteDetailsService
      * @var SiteStatusRepository
      */
     private $siteStatusRepository;
+    /**
+     * @var SiteDetailsValidator
+     */
+    private $siteDetailsValidator;
+    /**
+     * @var SiteTypeRepository
+     */
+    private $siteTypeRepository;
+    /**
+     * @var NonWorkingDayCountryRepository
+     */
+    private $nonWorkingDayCountryRepository;
 
     public function __construct(
         SiteRepository $siteRepository,
@@ -96,7 +117,10 @@ class SiteDetailsService
         EntityManager $entityManager,
         VehicleClassRepository $vehicleClassRepository,
         AuthorisationForTestingMotAtSiteStatusRepository $authForTestingMotStatusRepository,
-        SiteStatusRepository $siteStatusRepository
+        SiteStatusRepository $siteStatusRepository,
+        SiteDetailsValidator $siteDetailsValidator,
+        SiteTypeRepository $siteTypeRepository,
+        NonWorkingDayCountryRepository $nonWorkingDayCountryRepository
     )
     {
         $this->siteRepository = $siteRepository;
@@ -112,6 +136,9 @@ class SiteDetailsService
         $this->vehicleClassRepository = $vehicleClassRepository;
         $this->authForTestingMotStatusRepository = $authForTestingMotStatusRepository;
         $this->siteStatusRepository = $siteStatusRepository;
+        $this->siteDetailsValidator = $siteDetailsValidator;
+        $this->siteTypeRepository = $siteTypeRepository;
+        $this->nonWorkingDayCountryRepository = $nonWorkingDayCountryRepository;
     }
 
     public function update($siteId, VehicleTestingStationDto $dto)
@@ -129,6 +156,79 @@ class SiteDetailsService
         /** @var Site $site */
         $site = $this->siteRepository->get($siteId);
         $this->updateSiteDetails($site, $dto);
+
+        return [
+            'success' => true
+        ];
+    }
+
+    /**
+     * @param int $siteId
+     * @param array $data
+     * @return array
+     * @throws \DvsaCommonApi\Service\Exception\BadRequestException
+     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
+     * @throws \DvsaCommon\Exception\UnauthorisedException
+     */
+    public function patch($siteId, array $data)
+    {
+        $dto = DtoHydrator::jsonToDto($data);
+        $this->updateVtsAssertion->assertGranted($siteId);
+
+        /** @var VehicleTestingStationDto $dto */
+        $dto = $this->xssFilter->filter($dto);
+
+        if ($dto->isNeedConfirmation() === true) {
+            return true;
+        }
+
+        $site = $this->siteRepository->get($siteId);
+        $diff = [];
+
+        if(array_key_exists(VehicleTestingStation::PATCH_PROPERTY_NAME, $data)) {
+            $this->authService->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_NAME, $siteId);
+            $this->siteDetailsValidator->validateName($dto);
+        }
+        if(array_key_exists(VehicleTestingStation::PATCH_PROPERTY_CLASSES, $data)) {
+            $this->authService->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_CLASSES, $siteId);
+            $this->siteDetailsValidator->validateTestClasses($dto);
+        }
+        if(array_key_exists(VehicleTestingStation::PATCH_PROPERTY_STATUS, $data)) {
+            $this->authService->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_STATUS, $siteId);
+            $this->siteDetailsValidator->validateStatus($dto);
+        }
+        if(array_key_exists(VehicleTestingStation::PATCH_PROPERTY_TYPE, $data)) {
+            $this->authService->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_TYPE, $siteId);
+            $this->siteDetailsValidator->validateType($dto);
+        }
+
+        if(array_key_exists(VehicleTestingStation::PATCH_PROPERTY_COUNTRY, $data)) {
+            $this->authService->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_COUNTRY, $siteId);
+            $this->siteDetailsValidator->validateCountry($dto);
+        }
+
+        $this->siteDetailsValidator->getErrors()->throwIfAnyField();
+
+        if(array_key_exists(VehicleTestingStation::PATCH_PROPERTY_NAME, $data)) {
+            $this->updateName($site, $dto, $diff);
+        }
+        if(array_key_exists(VehicleTestingStation::PATCH_PROPERTY_CLASSES, $data)) {
+            $this->updateClasses($site, $dto, $diff);
+        }
+        if(array_key_exists(VehicleTestingStation::PATCH_PROPERTY_STATUS, $data)) {
+            $this->updateStatus($site, $dto, $diff);
+        }
+        if(array_key_exists(VehicleTestingStation::PATCH_PROPERTY_TYPE, $data)) {
+            $this->updateType($site, $dto, $diff);
+        }
+        if(array_key_exists(VehicleTestingStation::PATCH_PROPERTY_COUNTRY, $data)) {
+            $this->updateCountry($site, $dto);
+        }
+
+        $this->raiseSiteEvents($site, $diff);
+
+        $this->siteRepository->persist($site);
+        $this->siteRepository->flush();
 
         return [
             'success' => true
@@ -162,10 +262,24 @@ class SiteDetailsService
         }
     }
 
+    private function updateType(Site $site, VehicleTestingStationDto $dto, array & $diff)
+    {
+        $old = $site->getType();
+        $new = $dto->getType();
+
+        if(!empty($new) && $new != $old->getCode()) {
+            /** @var SiteType $newType */
+            $newType = $this->siteTypeRepository->getByCode($new);
+            $site->setType($newType);
+            $this->createDiffArray($diff, $old->getName(), $newType->getName(), self::TYPE_FIELD);
+        }
+    }
+
     private function updateStatus(Site $site, VehicleTestingStationDto $dto, array & $diff)
     {
         /** @var SiteStatus $old */
         $old = $site->getStatus();
+
         /** @var string $new */
         $new = $dto->getStatus();
 
@@ -200,6 +314,27 @@ class SiteDetailsService
 
             $this->createDiffArray($diff, $stringifyOldClasses, $stringifyNewClasses, self::CLASSES_FIELD);
         }
+    }
+
+    private function updateCountry(Site $site, VehicleTestingStationDto $dto)
+    {
+        $country = $dto->getCountry();
+        switch($country) {
+            case CountryCode::WALES:
+                $site->setDualLanguage(true);
+                $site->setScottishBankHoliday(false);
+                break;
+            case CountryCode::SCOTLAND:
+                $site->setDualLanguage(false);
+                $site->setScottishBankHoliday(true);
+                break;
+            case CountryCode::ENGLAND:
+                $site->setDualLanguage(false);
+                $site->setScottishBankHoliday(false);
+                break;
+        }
+
+        $site->setNonWorkingDayCountry($this->nonWorkingDayCountryRepository->getOneByCode($country));
     }
 
     /**

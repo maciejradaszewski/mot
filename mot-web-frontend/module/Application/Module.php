@@ -36,6 +36,7 @@ use Application\Navigation\Breadcrumbs\Handler\Factory\SiteNameResolverFactory;
 use Application\Navigation\Breadcrumbs\Handler\OrganisationNameBySiteResolver;
 use Application\Navigation\Breadcrumbs\Handler\SimpleResolver;
 use Application\Navigation\Breadcrumbs\Handler\SiteNameResolver;
+use Application\Service\CatalogService;
 use Application\Service\ContingencySessionManager;
 use DvsaCommon\Auth\NotLoggedInException;
 use DvsaCommon\Configuration\MotConfig;
@@ -165,6 +166,7 @@ class Module implements
             'factories'  => [
                 self::APPLICATION_SESSION                 => ApplicationSessionFactory::class,
                 'CatalogService'                          => CatalogServiceFactory::class,
+                CatalogService::class                     => CatalogServiceFactory::class,
                 'AuthAdapter'                             => AuthAdapterFactory::class,
                 'ZendAuthenticationService'               => ZendAuthenticationServiceFactory::class,
                 'ApplicationWideCache'                    => ApplicationWideCacheFactory::class,

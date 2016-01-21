@@ -1,0 +1,45 @@
+<?php
+use Site\UpdateVtsProperty\UpdateVtsPropertyViewModel;
+
+/** @var UpdateVtsPropertyViewModel $viewModel */
+$form = $viewModel->getForm();
+
+?>
+<div class="row">
+    <div class="col-sm-4">
+        <fieldset>
+            <?php
+            echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->get('address_line1')
+                ]
+            );
+            echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->get('address_line2')
+                ]
+            );
+            echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->get('address_line3')
+                ]
+            );
+            echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->get('town')
+                ]
+            );
+            echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->get('postcode')
+                ]
+            );
+            ?>
+        </fieldset>
+    </div>
+</div>

@@ -16,6 +16,7 @@ use DvsaCommonTest\TestUtils\XMock;
 use Site\Authorization\VtsOverviewPagePermissions;
 use Site\ViewModel\SiteViewModel;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
+use Zend\Mvc\Controller\Plugin\Url;
 
 /**
  * Class SiteViewModelTest
@@ -33,6 +34,8 @@ class SiteViewModelTest extends \PHPUnit_Framework_TestCase
     private $equipments;
     private $tests;
     private $model;
+    /** @var Url */
+    private $urlHelper;
 
     public function SetUp()
     {
@@ -41,19 +44,20 @@ class SiteViewModelTest extends \PHPUnit_Framework_TestCase
         $this->tests = [(new MotTestInProgressDto())];
         $this->permissions = XMock::of(VtsOverviewPagePermissions::class);
         $this->model = [self::STATUS_MODEL => 'test'];
+        $this->urlHelper = XMock::of(Url::class);
     }
 
     public function testGetterSetter()
     {
-        $model = new SiteViewModel($this->site, $this->equipments, $this->tests, $this->permissions, $this->model);
+        $model = new SiteViewModel($this->site, $this->equipments, $this->tests, $this->permissions, $this->model, $this->urlHelper);
 
         $this->assertEquals($this->site, $model->getSite());
         $this->assertEquals($this->permissions, $model->getPermissions());
         $this->assertEquals('England', $model->getCountryToggle());
 
-        $model = new SiteViewModel($this->site->setIsScottishBankHoliday(true), $this->equipments, $this->tests, $this->permissions, $this->model);
+        $model = new SiteViewModel($this->site->setIsScottishBankHoliday(true), $this->equipments, $this->tests, $this->permissions, $this->model, $this->urlHelper);
         $this->assertEquals('Scotland', $model->getCountryToggle());
-        $model = new SiteViewModel($this->site->setIsDualLanguage(true), $this->equipments, $this->tests, $this->permissions, $this->model);
+        $model = new SiteViewModel($this->site->setIsDualLanguage(true), $this->equipments, $this->tests, $this->permissions, $this->model, $this->urlHelper);
         $this->assertEquals('Wales', $model->getCountryToggle());
 
         $this->assertEquals(

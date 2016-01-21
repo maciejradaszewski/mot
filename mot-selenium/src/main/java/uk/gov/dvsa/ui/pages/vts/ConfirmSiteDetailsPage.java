@@ -7,23 +7,29 @@ import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 
 public class ConfirmSiteDetailsPage extends Page {
-    public static final String path = "/vehicle-testing-station/%s/site-details/confirmation";
-    private static final String PAGE_TITLE = "Confirm site details";
+    public static final String path = "/vehicle-testing-station/%s/%s/review";
+    private String pageTitle = "";
 
-    @FindBy(id = "submitSiteDetailsUpdate") private WebElement submitButton;
+    @FindBy(id = "submitUpdate") private WebElement submitButton;
+    @FindBy(id = "vtsClasses") private WebElement tableElementValue;
 
-    public ConfirmSiteDetailsPage(MotAppDriver driver) {
+    public ConfirmSiteDetailsPage(MotAppDriver driver, String pageTitle) {
         super(driver);
+        this.pageTitle = pageTitle;
         selfVerify();
     }
 
     @Override
     protected boolean selfVerify() {
-        return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
+        return PageInteractionHelper.verifyTitle(this.getTitle(), pageTitle);
     }
 
     public  VehicleTestingStationPage clickSubmitButton() {
         submitButton.click();
         return new VehicleTestingStationPage(driver);
+    }
+
+    public String getClasses() {
+        return tableElementValue.getText();
     }
 }

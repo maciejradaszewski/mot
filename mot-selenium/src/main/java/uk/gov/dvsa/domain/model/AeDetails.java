@@ -1,10 +1,12 @@
 package uk.gov.dvsa.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import uk.gov.dvsa.helper.CompanyDetailsHelper;
 import uk.gov.dvsa.helper.ContactDetailsHelper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonSerialize
 public class AeDetails {
 
     private int id;

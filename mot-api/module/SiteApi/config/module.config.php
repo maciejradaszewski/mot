@@ -295,6 +295,16 @@ return [
                             ],
                         ],
                     ],
+                    'contact-only'      => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'    => '/contact',
+                            'defaults' => [
+                                'controller' => SiteContactController::class,
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
                     'mot-test-log' => [
                         'type'    => 'Segment',
                         'options' => [

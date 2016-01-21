@@ -25,7 +25,7 @@ public class SiteStatusViewTest extends BaseTest {
         motUI.site.gotoPage(areaOffice2User, "1");
 
         //And I change the status of a VTS
-        String newStatus = motUI.site.changeStatus(Status.REJECTED);
+        String newStatus = motUI.site.changeStatus(Status.EXTINCT);
 
         //Then the VTS status is updated
         motUI.site.vtsSearchPage(areaOffice2User);

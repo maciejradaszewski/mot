@@ -13,6 +13,7 @@ use DvsaCommonApi\Service\Mapper\ReasonForRefusalMapper;
 use DvsaEntities\Entity\AuthorisationForTestingMotStatus;
 use DvsaEntities\Entity\BrakeTestType;
 use DvsaEntities\Entity\Colour;
+use DvsaEntities\Entity\Country;
 use DvsaEntities\Entity\CountryOfRegistration;
 use DvsaEntities\Entity\EmptyVinReason;
 use DvsaEntities\Entity\EmptyVrmReason;
@@ -31,6 +32,7 @@ use DvsaEntities\Entity\PersonSystemRole;
 use DvsaEntities\Entity\ReasonForRefusal;
 use DvsaEntities\Entity\SiteBusinessRole;
 use DvsaEntities\Entity\SiteStatus;
+use DvsaEntities\Entity\SiteType;
 use DvsaEntities\Entity\TransmissionType;
 use DvsaEntities\Entity\VehicleClass;
 use DvsaEntities\Entity\VisitReason;
@@ -435,5 +437,27 @@ class DataCatalogService extends AbstractService
         $repo = $this->entityManager->getRepository(SiteStatus::class);
         $items = $repo->getAll();
         return $this->extractType2EnumValues($items);
+    }
+
+    /**
+     * Fetches all availible countries
+     * @return array
+     */
+    public function getCountries()
+    {
+        $this->authService->assertGranted(PermissionInSystem::DATA_CATALOG_READ);
+        $items = $this->entityManager->getRepository(Country::class)->findAll();
+        return $this->extractType2EnumValues($items, self::ENUM_TYPE_STANDARD);
+    }
+
+    /**
+     * @return array
+     */
+    public function getSiteTypes()
+    {
+        /** @var SiteStatusRepository $repo */
+        $repo = $this->entityManager->getRepository(SiteType::class);
+        $items = $repo->findAll();
+        return $this->extractType2EnumValues($items, self::ENUM_TYPE_STANDARD);
     }
 }

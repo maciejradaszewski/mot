@@ -211,17 +211,12 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
         return $url;
     }
 
-    public static function updateSiteDetails($siteId)
+    public static function vtsDetails($siteId)
     {
         $url = self::vtsById($siteId)
             ->appendRoutesAndParams(self::SITE_DETAILS);
 
         return $url;
-    }
-
-    public static function validateSiteDetails($siteId)
-    {
-        return self::updateSiteDetails($siteId);
     }
 
     public static function validateSiteAssessment($siteId)

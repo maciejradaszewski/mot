@@ -1,11 +1,15 @@
 package uk.gov.dvsa.ui.views.site;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
+import uk.gov.dvsa.domain.model.site.Status;
+import uk.gov.dvsa.domain.model.vehicle.VehicleClass;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.vts.ChangeTestingFacilitiesPage;
+import uk.gov.dvsa.ui.pages.vts.ConfirmSiteDetailsPage;
 import uk.gov.dvsa.ui.pages.vts.ConfirmTestFacilitiesPage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
@@ -22,6 +26,8 @@ public class EditSiteDetailsTests extends BaseTest {
    private String twoPersonTestLane;
    private Site site;
    private User areaOfficeUser;
+   private String newSiteName = "Tested Garage";
+   private String newSiteType = "Area Office";
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() throws IOException {
@@ -49,6 +55,79 @@ public class EditSiteDetailsTests extends BaseTest {
         //Then my changes are displayed on the testing station page
         assertThat(finalVehicleTestingStationPage.verifyOnePersonTestLaneValueDisplayed(), is(onePersonTestLane));
         assertThat(finalVehicleTestingStationPage.verifyTwoPersonTestLaneValueDisplayed(), is(twoPersonTestLane));
+    }
+
+    @Test(groups = {"Regression"})
+    public void areaOffice1UserCanChangeSiteDetailsClasses() throws IOException {
+        //Given I am logged in as AO1 & I navigate to the vehicle testing station page
+        VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.goToVtsPage(areaOfficeUser, String.valueOf(site.getId()));
+
+        //When I navigate to change classes and I change data
+        ConfirmSiteDetailsPage confirmTestFacilitiesPage =
+                vehicleTestingStationPage.clickOnChangeClassesLink()
+                        .uncheckAllSelectedClasses()
+                        .chooseOption(VehicleClass.three.getId())
+                        .clickConfirmationSubmitButton();
+
+        //Then table contains changed classes
+        Assert.assertTrue(confirmTestFacilitiesPage.getClasses().equals(VehicleClass.three.getId()));
+
+        //When I confirm my site classes changes
+        VehicleTestingStationPage finalVehicleTestingStationPage = confirmTestFacilitiesPage.clickSubmitButton();
+
+        //Then correct notification is displayed
+        Assert.assertTrue(finalVehicleTestingStationPage.getValidationMessage().equals("Classes have been successfully changed."));
+    }
+
+    @Test(groups = {"Regression"})
+    public void areaOffice1UserCanChangeSiteDetailsType() throws IOException {
+        //Given I am logged in as AO1 & I navigate to the vehicle testing station pag
+        VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.goToVtsPage(areaOfficeUser, String.valueOf(site.getId()));
+
+        //When I navigate to change type and I change data
+        VehicleTestingStationPage finalVehicleTestingStationPage =
+                vehicleTestingStationPage.clickOnChangeTypeLink()
+                        .chooseOption(newSiteType)
+                        .clickSubmitButton();
+
+        //Then my changes are displayed on the testing station page
+        //And notification is displayed
+        Assert.assertTrue(finalVehicleTestingStationPage.getTypeValue().equals(newSiteType));
+        Assert.assertTrue(finalVehicleTestingStationPage.getValidationMessage().equals("Site type has been successfully changed."));
+    }
+
+    @Test(groups = {"Regression"})
+    public void areaOffice1UserCanChangeSiteDetailsName() throws IOException {
+        //Given I am logged in as AO1 & I navigate to the vehicle testing station pag
+        VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.goToVtsPage(areaOfficeUser, String.valueOf(site.getId()));
+
+        //When I navigate to change name and I change data
+        VehicleTestingStationPage finalVehicleTestingStationPage =
+                vehicleTestingStationPage.clickOnChangeNameLink()
+                        .inputSiteDetailsName(newSiteName)
+                        .clickSubmitButton();
+
+        //Then my changes are displayed on the testing station page
+        //And notification is displayed
+        Assert.assertTrue(finalVehicleTestingStationPage.getNameValue().equals(newSiteName));
+        Assert.assertTrue(finalVehicleTestingStationPage.getValidationMessage().equals("Site name has been successfully changed."));
+    }
+
+    @Test(groups = {"Regression"})
+    public void areaOffice1UserCanChangeSiteDetailsStatus() throws IOException {
+        //Given I am logged in as AO1 & I navigate to the vehicle testing station pag
+        VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.goToVtsPage(areaOfficeUser, String.valueOf(site.getId()));
+
+        //When I navigate to change status and I change data
+        VehicleTestingStationPage finalVehicleTestingStationPage =
+                vehicleTestingStationPage.clickOnChangeStatusLink()
+                        .changeSiteStatus(Status.REJECTED)
+                        .clickSubmitButton();
+
+        //Then my changes are displayed on the testing station page
+        //And notification is displayed
+        Assert.assertTrue(finalVehicleTestingStationPage.getStatusValue().equals(Status.REJECTED.getText()));
+        Assert.assertTrue(finalVehicleTestingStationPage.getValidationMessage().equals("Site status has been successfully changed."));
     }
 
     private String generateTestLaneNumber() {

@@ -157,7 +157,7 @@ class SiteController extends AbstractAuthActionController
         $equipmentModelStatusMap = $this->catalog->getEquipmentModelStatuses();
         $siteStatusMap = $this->catalog->getSiteStatus();
 
-        $view = new SiteViewModel($site, $equipment, $testInProgress, $permissions, $equipmentModelStatusMap);
+        $view = new SiteViewModel($site, $equipment, $testInProgress, $permissions, $equipmentModelStatusMap, $this->url());
 
         //  --  get ref page    --
         $refSession = new Container('referralSession');

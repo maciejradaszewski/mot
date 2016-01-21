@@ -4,16 +4,19 @@ namespace SiteApi\Factory\Service;
 
 use Doctrine\ORM\EntityManager;
 use DvsaEntities\Entity\AuthorisationForTestingMotAtSiteStatus;
+use DvsaEntities\Entity\NonWorkingDayCountry;
 use DvsaEntities\Entity\Site;
 use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaEntities\Entity\SiteStatus;
+use DvsaEntities\Entity\SiteType;
 use DvsaEntities\Entity\VehicleClass;
 use DvsaEntities\Repository\AuthorisationForTestingMotAtSiteStatusRepository;
 use DvsaEntities\Repository\SiteRepository;
 use DvsaEntities\Repository\SiteStatusRepository;
+use DvsaEntities\Repository\SiteTypeRepository;
 use DvsaEntities\Repository\VehicleClassRepository;
 use DvsaEventApi\Service\EventService;
 use SiteApi\Service\SiteDetailsService;
@@ -58,6 +61,14 @@ class SiteDetailsServiceFactory  implements FactoryInterface
         /** @var SiteStatusRepository $siteStatusRepository */
         $siteStatusRepository = $entityManager->getRepository(SiteStatus::class);
 
+        /** @var SiteDetailsValidator $siteDetailsValidator */
+        $siteDetailsValidator = $serviceLocator->get(SiteDetailsValidator::class);
+
+        /** @var SiteTypeRepository $siteTypeRepository */
+        $siteTypeRepository = $entityManager->getRepository(SiteType::class);
+
+        $nonWorkingDayCountryRepository = $entityManager->getRepository(NonWorkingDayCountry::class);
+
         return new SiteDetailsService(
             $siteRepository,
             $authorisationService,
@@ -73,7 +84,10 @@ class SiteDetailsServiceFactory  implements FactoryInterface
             $entityManager,
             $vehicleClassRepository,
             $authForTestingMotStatusRepository,
-            $siteStatusRepository
+            $siteStatusRepository,
+            $siteDetailsValidator,
+            $siteTypeRepository,
+            $nonWorkingDayCountryRepository
         );
     }
 }

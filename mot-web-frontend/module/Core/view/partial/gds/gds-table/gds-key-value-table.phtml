@@ -1,0 +1,43 @@
+<?php
+
+use Core\ViewModel\Gds\Table\GdsTable;
+
+/** @var GdsTable $table */
+if (!isset($table) || !$table instanceof GdsTable) {
+    throw new InvalidArgumentException('This partial expects variable $table of type ' . GdsTable::class);
+}
+
+?>
+<table class="key-value-list">
+    <thead>
+    <tr>
+        <th colspan="2">
+            <?php echo $this->escapeHtml($table->getHeaderText()); ?>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($table->getRows() as $row): ?>
+        <tr>
+            <?php
+                $id = $row->getHtmlId();
+                $escape = $row->getValue()->isEscapeRequired();
+                $value = $row->getValue()->getContent();
+                $value = ($value === null ? 'N/A' : $value);
+            ?>
+
+            <th class="key-value-list__key">
+                <?php echo $this->escapeHtml($row->getLabel()->getContent()); ?>
+            </th>
+
+            <td class="key-value-list__value"
+                <?php
+            echo $id ? ' id="' . $this->escapeHtmlAttr($id) .'"' : '';
+            echo $colspan ? ' colspan="' . $this->escapeHtmlAttr($colspan) .'"' : '';
+            ?>>
+                <?php echo $escape ? $this->escapeHtml($value) : $value; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

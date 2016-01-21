@@ -40,7 +40,7 @@ public class SiteDetailsPage extends BasePage {
 
     @FindBy(id = "assign-a-role") private WebElement assignARole;
 
-    @FindBy(id = "test-classes") private WebElement testClasses;
+    @FindBy(id = "site-classes") private WebElement testClasses;
 
     @FindBy(id = "site-role-1-roles") private WebElement siteRole;
 

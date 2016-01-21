@@ -7,6 +7,7 @@ use DvsaCommon\Dto\BrakeTest\BrakeTestTypeDto;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Dto\Equipment\EquipmentDto;
 use DvsaCommon\Dto\Security\RolesMapDto;
+use DvsaCommon\Enum\CountryCode;
 use DvsaCommon\Utility\ArrayUtils;
 
 /**
@@ -36,6 +37,9 @@ class VehicleTestingStationDto extends SiteDto
     private $equipments;
     /** @var  SiteTestingDailyScheduleDto[] */
     private $siteTestingSchedule;
+
+    /** @var  string */
+    private $country;
 
     /** @var  MotTestDto[] */
     private $motTests;
@@ -316,5 +320,21 @@ class VehicleTestingStationDto extends SiteDto
         }
 
         return $counts;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
+     * @param string $country
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
     }
 }

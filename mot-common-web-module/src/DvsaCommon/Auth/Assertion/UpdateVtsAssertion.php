@@ -3,6 +3,7 @@
 namespace DvsaCommon\Auth\Assertion;
 
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Exception\UnauthorisedException;
 
@@ -89,6 +90,26 @@ class UpdateVtsAssertion
     public function assertUpdateBusinessDetails($siteId)
     {
         $this->authorisationService->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_BUSINESS_DETAILS, $siteId);
+    }
+
+    public function assertUpdateAddress($siteId)
+    {
+        $this->authorisationService->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_ADDRESS, $siteId);
+    }
+
+    public function assertUpdateCountry($siteId)
+    {
+        $this->authorisationService->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_COUNTRY, $siteId);
+    }
+
+    public function assertUpdateEmail($siteId)
+    {
+        $this->authorisationService->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_EMAIL, $siteId);
+    }
+
+    public function assertUpdatePhone($siteId)
+    {
+        $this->authorisationService->assertGrantedAtSite(PermissionAtSite::VTS_UPDATE_PHONE, $siteId);
     }
 
     /**

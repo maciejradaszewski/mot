@@ -43,9 +43,8 @@ public class Site {
 
     public String changeStatus(Status status) {
         vehicleTestingStationPage
-                .clickOnChangeSiteDetailsLink()
-                .changeSiteStatus(status.getText())
-                .clickSubmitButton()
+                .clickOnChangeStatusLink()
+                .changeSiteStatus(status)
                 .clickSubmitButton();
 
         return status.getText();

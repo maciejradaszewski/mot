@@ -38,11 +38,18 @@ class AutoWireFactory implements AbstractFactoryInterface
 
         $reflection = new \ReflectionClass($requestedName);
 
-        $constructorParameters = ArrayUtils::map($reflection->getConstructor()->getParameters(),
-            function (\ReflectionParameter $parameter) use ($serviceLocator, $requestedName) {
-                return $serviceLocator->get($parameter->getClass()->getName());
-            });
+        $constructor = $reflection->getConstructor();
 
-        return $reflection->newInstanceArgs($constructorParameters);
+        if ($constructor === null) {
+            return $reflection->newInstance();
+        } else {
+
+            $constructorParameters = ArrayUtils::map($constructor->getParameters(),
+                function (\ReflectionParameter $parameter) use ($serviceLocator, $requestedName) {
+                    return $serviceLocator->get($parameter->getClass()->getName());
+                });
+
+            return $reflection->newInstanceArgs($constructorParameters);
+        }
     }
 }

@@ -1,0 +1,59 @@
+<?php
+use DvsaCommon\Utility\ArrayUtils;
+use Zend\Form\Element\MultiCheckbox;
+
+/** @var $element MultiCheckbox */
+if (!$element instanceof MultiCheckbox) {
+    throw new InvalidArgumentException('This partial expects variable $element of type: ' . MultiCheckbox::class);
+}
+
+$formHint = $element->getAttribute('formHint');
+$errorMessage = ArrayUtils::firstOrNull($element->getMessages());
+
+$labelClass = ArrayUtils::tryGet($element->getLabelAttributes(), 'class', '');
+
+?>
+
+<div class="form-group">
+    <fieldset>
+        <legend class="<?php echo $this->escapeHtmlAttr($labelClass); ?>">
+            <?php echo $this->escapeHtml($element->getLabel()); ?>
+            <?php if (!empty($formHint)): ?>
+                <span class="form-hint"><?php echo $this->escapeHtml($formHint); ?></span>
+            <?php endif; ?>
+
+            <?php if (!empty($errorMessage)): ?>
+                <span class="validation-message"><?php echo $this->escapeHtml($this->errorMessage); ?></span>
+            <?php endif; ?>
+        </legend>
+
+        <?php foreach ($element->getValueOptions() as $option): ?>
+            <?php
+            $attributes = ArrayUtils::tryGet($option, 'attributes', []);
+            $checkBoxHtmlId = ArrayUtils::tryGet($attributes, 'id', []);
+            $value = ArrayUtils::tryGet($option, 'value', '');
+            $checked = in_array($value, $element->getValue());
+            $label = ArrayUtils::tryGet($option, 'label', '')
+            ?>
+
+            <label
+                class="block-label"
+                for="<?php echo $checkBoxHtmlId; ?>"
+                <?php if (!empty($dataTarget)): ?>
+                    data-target="<?php echo $this->escapeHtmlAttr($dataTarget); ?>"
+                <?php endif; ?>
+                >
+                <input type="checkbox"
+                       value="<?php echo $this->escapeHtmlAttr($value); ?>"
+                       name="<?php echo $element->getName() ?>[]"
+                       id="<?php echo $checkBoxHtmlId ?>"
+                    <?php if ($checked === true): ?>
+                        checked
+                    <?php endif; ?>
+                    />
+                <?php echo $this->escapeHtml($label); ?>
+            </label>
+        <?php endforeach ?>
+
+    </fieldset>
+</div>

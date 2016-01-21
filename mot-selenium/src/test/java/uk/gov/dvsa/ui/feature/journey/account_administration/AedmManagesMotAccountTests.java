@@ -99,27 +99,6 @@ public class AedmManagesMotAccountTests extends BaseTest {
     }
 
     @Test(groups = {"BVT", "Regression"},
-            description = "VM-10257 - Journey 2 - AEDM Update VTS Contact Details", dataProvider = "createAedmSite")
-    public void updateVtsDetails(User aedm, Site site) throws IOException, URISyntaxException {
-        String email = "blah@blah.com";
-        String telephone = "+447866554432";
-
-        //Given I am VTS Change Contact Details Page
-        ChangeContactDetailsPage vtsChangesContactDetailsPage =
-                pageNavigator.goToVtsPage(aedm, ChangeContactDetailsPage.class, ChangeContactDetailsPage.PATH, site.getId());
-
-        //When I update the email and Tel Number
-        vtsChangesContactDetailsPage
-                .editEmailAndConfirmEmail(email, email)
-                .editTelephoneNumber(telephone);
-        VehicleTestingStationPage vehicleTestingStationPage = vtsChangesContactDetailsPage.clickSaveContactDetails();
-
-        //Then I The details should updated successfully
-        assertThat(vehicleTestingStationPage.getEmailValue(), equalTo("blah@blah.com"));
-        assertThat(vehicleTestingStationPage.getPhoneNumberValue(), equalTo("+447866554432"));
-    }
-
-    @Test(groups = {"BVT", "Regression"},
             description = "VM-10257 - Journey 2 - AEDM Remove Tester from VTS", dataProvider = "createAedmTester")
     public void removeTesterFromVTS(User user, User tester) throws Exception {
 
