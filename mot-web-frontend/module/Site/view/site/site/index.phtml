@@ -1,9 +1,7 @@
 <?php
 
 use Core\Catalog\BusinessRole\BusinessRoleCatalog;
-use Core\Formatting\AddressFormatter;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
-use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
@@ -38,76 +36,26 @@ $organisation = $site->getOrganisation();
 $contact = $site->getContactByType(\DvsaCommon\Enum\SiteContactTypeCode::BUSINESS);
 ?>
 
-<h3 class="summary-heading">Site details
-<?php if ($permission->canChangeSiteDetails()): ?>
-    <span class="summary-heading__action">
-        <a id="change-site-details" href="<?php echo VehicleTestingStationUrlBuilderWeb::siteDetails($site->getId()) ?>" >Change site details</a>
-    </span>
-<?php endif ?>
-</h3>
+<h3 class="summary-heading">Site details</h3>
 
 <?php
 
 
-$organisationDisplay = '';
-if (isset($organisation)) {
-    if ($permission->canViewAuthorisedExaminer()) {
-        $organisationDisplay = '<a id="authorised-examiner-link" href="' . AuthorisedExaminerUrlBuilderWeb::of($organisation->getId()) . '">' . $organisation->getName() . '</a>';
-    } else {
-        $organisationDisplay = $organisation->getName();
-    }
-}
-
-$body = [
-    ['Name', $site->getName(), 'id' => 'site-name'],
-    [
-        'VTS ID',
-        $site->getSiteNumber(),
-        'id' => 'site-number',
-    ],
-    ['Classes', !empty($site->getTestClasses()) ? implode(',', $site->getTestClasses()) : 'None', 'id' => 'test-classes'],
-];
-
-if($permission->canViewVtsType()){
-    $body[] = ['Type', $viewModel->getSiteTypes()[$site->getType()], 'id' => 'site-type'];
-}
-
-$body[] = [
-    'Authorised Examiner',
-    $organisationDisplay,
-    'id' => 'authorisedExaminer',
-    'escape' => !$permission->canViewAuthorisedExaminer(),
-];
-
 echo $this->partial(
-    'partial/gds/gds-table/table',
+    'partial/gds/gds-table/gds-summary-table',
     [
-        'body' => $body,
+        'table' => $viewModel->buildSiteDetailsSummaryTable(),
     ]
 );
 ?>
 
-<h3 class="summary-heading">Contact details
-    <?php if ($permission->canChangeDetails()): ?>
-        <span class="summary-heading__action"><a id="change-contact-details"
-           href="<?php echo VehicleTestingStationUrlBuilderWeb::contactDetails($site->getId()) ?>"
-            >Change contact details</a>
-        </span>
-    <?php endif ?>
-</h3>
+<h3 class="summary-heading">Contact details</h3>
 
 <?php
-$contactDetails[] = ['Address', (new AddressFormatter())->escapedDtoToMultiLine($contact->getAddress()), 'id' => 'site-address', 'escape' => false];
-if ($permission->canViewCountry()) {
-    $contactDetails[] = ['Country', $viewModel->getCountryToggle(), 'id' => 'site-country'];
-}
-$contactDetails[] = ['Email', $contact->getPrimaryEmailAddress(), 'id' => 'email'];
-$contactDetails[] = ['Telephone', $contact->getPrimaryPhoneNumber(), 'id' => 'phone-number'];
-
 echo $this->partial(
-    'partial/gds/gds-table/table',
+    'partial/gds/gds-table/gds-summary-table',
     [
-        'body' => $contactDetails,
+        'table' => $viewModel->buildSiteContactDetailsSummaryTable(),
     ]
 );
 ?>

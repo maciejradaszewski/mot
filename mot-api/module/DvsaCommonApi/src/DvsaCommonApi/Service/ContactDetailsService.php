@@ -62,6 +62,27 @@ class ContactDetailsService extends AbstractService
     }
 
     /**
+     * @param ContactDto    $contactDto
+     * @param ContactDetail $contactDetails
+     *
+     * @return ContactDetail
+     */
+    public function patchContactDetailsFromDto(ContactDto $contactDto, ContactDetail $contactDetails)
+    {
+        //  ----  set address ----
+        $this->updateAddressInContactDetails($contactDetails, $contactDto);
+
+        //  ----  add/update/remove phones and emails ----
+        $this->updatePhonesInContactDetails($contactDetails, $contactDto->getPhones());
+        $this->updateEmailsInContactDetails($contactDetails, $contactDto->getEmails());
+
+        $this->entityManager->persist($contactDetails);
+        $this->entityManager->flush();
+
+        return $contactDetails;
+    }
+
+    /**
      * @param ContactDetail $contactDetails
      * @param ContactDto    $contactDto
      */

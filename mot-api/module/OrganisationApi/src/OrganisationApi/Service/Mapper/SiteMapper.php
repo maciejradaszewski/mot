@@ -68,6 +68,7 @@ class SiteMapper extends AbstractApiMapper
         foreach ($contacts as $contact) {
             /** @var SiteContactDto $contactDto */
             $contactDto = new SiteContactDto();
+
             $contactDto = $this->contactMapper->toDto($contact->getDetails(), $contactDto);
             $contactDto->setType($contact->getType()->getCode());
             $contactsDtos[] = $contactDto;

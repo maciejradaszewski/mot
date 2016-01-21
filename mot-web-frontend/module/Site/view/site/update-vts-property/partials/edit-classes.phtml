@@ -1,0 +1,20 @@
+<?php
+use Site\UpdateVtsProperty\Process\Form\ClassesPropertyForm;
+use Site\UpdateVtsProperty\UpdateVtsPropertyViewModel;
+
+/** @var UpdateVtsPropertyViewModel $viewModel */
+
+/** @var ClassesPropertyForm $form */
+$form = $viewModel->getForm();
+?>
+<div class="row">
+    <div class="col-sm-4">
+        <?php echo $this->partial(
+            'partial/gds/zend-form/control-multi-checkbox',
+            [
+                'element' => $form->getClassesElement()
+            ]
+        );
+        ?>
+    </div>
+</div>

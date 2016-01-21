@@ -1,5 +1,6 @@
 <?php
 
+use DvsaCommon\Factory\AutoWire\AutoWireFactory;
 use DvsaMotTest\Controller\MotTestCertificatesController;
 use Site\Controller\MotTestLogController;
 use Site\Controller\RoleController;
@@ -9,6 +10,7 @@ use Site\Factory\Controller\MotTestLogControllerFactory;
 use Site\Factory\Controller\RoleControllerFactory;
 use Site\Factory\Controller\SiteControllerFactory;
 use Site\Factory\Controller\SiteSearchControllerFactory;
+use Site\UpdateVtsProperty\UpdateVtsPropertyController;
 
 return [
     'router'       => [
@@ -46,7 +48,7 @@ return [
                     ],
                 ],
             ],
-            'vehicle-testing-station'                    => [
+            'vehicle-testing-station'            => [
                 'type'    => 'segment',
                 'options' => [
                     'route'       => '/vehicle-testing-station/:id',
@@ -180,6 +182,34 @@ return [
                     'defaults'    => [
                         'controller' => SiteController::class,
                         'action'     => 'index',
+                    ],
+                ],
+            ],
+            'vehicle-testing-station-edit-property'     => [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/vehicle-testing-station/:id/:propertyName/change',
+                    'constraints' => [
+                        'id' => '[0-9]+',
+                        'propertyName' => 'name|classes|status|type|email|phone|address|country',
+                    ],
+                    'defaults'    => [
+                        'controller' => UpdateVtsPropertyController::class,
+                        'action'     => 'edit',
+                    ],
+                ],
+            ],
+            'vehicle-testing-station-edit-property-review'     => [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/vehicle-testing-station/:id/:propertyName/review/:formUuid',
+                    'constraints' => [
+                        'id' => '[0-9]+',
+                        'propertyName' => 'name|classes|status|type|email|phone|address|country',
+                    ],
+                    'defaults'    => [
+                        'controller' => UpdateVtsPropertyController::class,
+                        'action'     => 'review',
                     ],
                 ],
             ],
@@ -333,6 +363,9 @@ return [
             RoleController::class                  => RoleControllerFactory::class,
             SiteSearchControllerFactory::class     => SiteSearchControllerFactory::class,
             SiteController::class                  => SiteControllerFactory::class,
+        ],
+        'abstract_factories' => [
+            AutoWireFactory::class,
         ],
     ],
     'view_manager' => [

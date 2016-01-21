@@ -1,0 +1,22 @@
+<?php
+use Site\UpdateVtsProperty\Process\Form\TypePropertyForm;
+use Site\UpdateVtsProperty\UpdateVtsPropertyViewModel;
+
+/** @var UpdateVtsPropertyViewModel $viewModel */
+
+/** @var TypePropertyForm $form */
+$form = $viewModel->getForm();
+
+?>
+<div class="row">
+    <div class="col-sm-6">
+        <fieldset>
+            <?php  echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->getTypeElement()
+                ]
+            );?>
+        </fieldset>
+    </div>
+</div>

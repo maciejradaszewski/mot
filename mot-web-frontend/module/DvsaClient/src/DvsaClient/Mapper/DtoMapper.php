@@ -46,6 +46,13 @@ class DtoMapper
         return $this->hydrator->doHydration($response['data']);
     }
 
+    protected function patch($url, $data)
+    {
+        $response = $this->client->patch($url, $data);
+
+        return $this->hydrator->doHydration($response['data']);
+    }
+
     protected function delete($url)
     {
         $response = $this->client->delete($url);

@@ -10,8 +10,10 @@ use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Repository\AuthorisationForTestingMotAtSiteStatusRepository;
+use DvsaEntities\Repository\NonWorkingDayCountryRepository;
 use DvsaEntities\Repository\SiteRepository;
 use DvsaEntities\Repository\SiteStatusRepository;
+use DvsaEntities\Repository\SiteTypeRepository;
 use DvsaEntities\Repository\VehicleClassRepository;
 use DvsaEventApi\Service\EventService;
 use SiteApi\Factory\Service\SiteDetailsServiceFactory;
@@ -45,6 +47,8 @@ class SiteDetailsServiceFactoryTest extends AbstractServiceTestCase
         $this->mockMethod($entityManager, 'getRepository', $this->at(1), XMock::of(VehicleClassRepository::class));
         $this->mockMethod($entityManager, 'getRepository', $this->at(2), XMock::of(AuthorisationForTestingMotAtSiteStatusRepository::class));
         $this->mockMethod($entityManager, 'getRepository', $this->at(3), XMock::of(SiteStatusRepository::class));
+        $this->mockMethod($entityManager, 'getRepository', $this->at(4), XMock::of(SiteTypeRepository::class));
+        $this->mockMethod($entityManager, 'getRepository', $this->at(5), XMock::of(NonWorkingDayCountryRepository::class));
 
 
         $factory = new SiteDetailsServiceFactory();

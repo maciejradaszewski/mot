@@ -1,0 +1,47 @@
+<?php
+use Core\ViewModel\Gds\Table\GdsTable;
+
+/** @var GdsTable $table */
+if (!isset($table) || !$table instanceof GdsTable) {
+    throw new InvalidArgumentException('This partial expects variable $table of type ' . GdsTable::class);
+}
+
+?>
+<table class="table-summary">
+    <thead>
+    <tr>
+        <th class="<?php echo $this->escapeHtmlAttr($table->getHeaderCssClass()); ?>"
+            colspan="<?php
+            echo $table->getHeaderColspan()
+            ?>"
+            >
+            <?php echo $this->escapeHtml($table->getHeaderText()); ?>
+        </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <?php if ($table->hasBody()): ?>
+        <?php foreach ($table->getRows() as $row): ?>
+            <tr>
+                <th class="table-summary__key">
+                    <?php echo $this->escapeHtml($row->getLabel()->getContent()); ?>
+                </th>
+                <?php
+                $value = ($row->getValue()->getContent() === null ? 'N/A' : $row->getValue()->getContent());
+                ?>
+                <td class="table-summary__value">
+                    <span<?php
+                        echo($row->getHtmlId() ? ' id="' . $this->escapeHtmlAttr($row->getHtmlId()) . '"' : '');
+                        ?>>
+                        <?php echo $row->getValue()->isEscapeRequired() ? $this->escapeHtml($value) : $value; ?></span>
+                <?php if (!empty($row->hasActionLink()))
+                    echo '<a href="' . $row->getActionLink()->getUrl() . '" class="table-summary__action" title="'. $row->getActionLink()->getTooltip() . '"' .($row->getHtmlId() ? (' id="' . $this->escapeHtmlAttr($row->getHtmlId()) .'-change"') : '')
+                        . '>'. $row->getActionLink()->getText() .'<span class="visuallyhidden"> ' .  $this->escapeHtml($row->getLabel()->getContent()) . '</span>
+                    </a>' ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+    </tbody>
+</table>

@@ -23,18 +23,18 @@ class SiteType
      *
      * @ORM\Column(name="name", type="string", length=50, nullable=true)
      */
-    private $type;
+    private $name;
 
     /**
      * Set type
      *
-     * @param string $type
+     * @param string $name
      *
      * @return SiteType
      */
-    public function setType($type)
+    public function setName($name)
     {
-        $this->type = $type;
+        $this->name = $name;
 
         return $this;
     }
@@ -44,8 +44,8 @@ class SiteType
      *
      * @return string
      */
-    public function getType()
+    public function getName()
     {
-        return $this->type;
+        return $this->name;
     }
 }

@@ -1,0 +1,24 @@
+<?php
+use Site\UpdateVtsProperty\Process\Form\EmailPropertyForm;
+use Site\UpdateVtsProperty\UpdateVtsPropertyViewModel;
+
+/** @var UpdateVtsPropertyViewModel $viewModel */
+
+/** @var EmailPropertyForm $form */
+$form = $viewModel->getForm();
+
+?>
+<div class="row">
+    <div class="col-sm-4">
+        <fieldset>
+            <?php
+            echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->getEmailElement()
+                ]
+            );
+            ?>
+        </fieldset>
+    </div>
+</div>

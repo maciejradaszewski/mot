@@ -3,6 +3,10 @@
 namespace Core\Controller;
 
 use Application\Navigation\Breadcrumbs\BreadcrumbsBuilder;
+use Core\Action\AbstractActionResult;
+use Core\Action\ActionResult;
+use Core\Action\RedirectToRoute;
+use Core\Action\RedirectToUrl;
 use Core\ViewModel\Sidebar\SidebarInterface;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\Utility\ArrayUtils;
@@ -199,5 +203,71 @@ abstract class AbstractDvsaActionController
     public function setPageLede($lede)
     {
         $this->layout()->setVariable('pageLede', $lede);
+    }
+
+    public function setBreadcrumbs(array $breadcrumbs)
+    {
+        $this->layout()->setVariable('breadcrumbs', $breadcrumbs);
+    }
+
+    public function applyActionResult(AbstractActionResult $result)
+    {
+        if ($result->getSuccessMessages()) {
+            foreach ($result->getSuccessMessages() as $message) {
+                $this->addSuccessMessage($message);
+            }
+        }
+
+        if ($result->getErrorMessages()) {
+            foreach ($result->getErrorMessages() as $message) {
+                $this->addErrorMessage($message);
+            }
+        }
+
+        if ($result instanceof ActionResult) {
+            if ($result->getSidebar()) {
+                $this->setSidebar($result->getSidebar());
+            }
+
+            if ($result->layout()->getTemplate()) {
+                $this->layout($result->layout()->getTemplate());
+            }
+
+            if ($result->layout()->getPageTitle()) {
+                $this->setPageTitle($result->layout()->getPageTitle());
+            }
+
+            if ($result->layout()->getPageSubTitle()) {
+                $this->setPageSubTitle($result->layout()->getPageSubTitle());
+            }
+
+            if ($result->layout()->getPageLede()) {
+                $this->setPageLede($result->layout()->getPageLede());
+            }
+
+            if ($result->layout()->getBreadcrumbs()) {
+                $this->setBreadcrumbs($result->layout()->getBreadcrumbs());
+            }
+
+            $viewModel = new ViewModel([
+                'viewModel' => $result->getViewModel(),
+            ]);
+
+            if ($result->getTemplate()) {
+                $viewModel->setTemplate($result->getTemplate());
+            }
+
+            return $viewModel;
+        } elseif ($result instanceof RedirectToRoute) {
+            return $this->redirect()->toRoute(
+                $result->getRouteName(),
+                $result->getRouteParams(),
+                ['query' => $result->getQueryParams()]
+            );
+        } elseif ($result instanceof RedirectToUrl) {
+            return $this->redirect()->toUrl($result->getUrl());
+        }
+
+        throw new \InvalidArgumentException();
     }
 }

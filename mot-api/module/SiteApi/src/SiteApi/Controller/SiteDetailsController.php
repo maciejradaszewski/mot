@@ -29,6 +29,12 @@ class SiteDetailsController extends AbstractDvsaRestfulController
         /** @var VehicleTestingStationDto $dto */
         $dto = DtoHydrator::jsonToDto($data);
         $result = $this->siteDetailsService->update($siteId, $dto);
+        return ApiResponse::jsonOk($result);
+    }
+
+    public function patch($siteId, $data)
+    {
+        $result = $this->siteDetailsService->patch($siteId, $data);
 
         return ApiResponse::jsonOk($result);
     }

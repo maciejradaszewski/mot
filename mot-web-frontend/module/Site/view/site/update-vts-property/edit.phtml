@@ -1,0 +1,36 @@
+<?php
+
+use Core\Routing\VtsRoutes;
+use Site\UpdateVtsProperty\UpdateVtsPropertyViewModel;
+
+/**
+ * @var UpdateVtsPropertyViewModel $viewModel
+ */
+
+?>
+
+<?php echo $this->partial('zendFormErrorMessages', ['form' => $viewModel->getForm()]); ?>
+<?php echo $this->partial('errorMessages', array('getFromFlash' => true)); ?>
+
+<form novalidate="" autocomplete="off" method="POST"
+      action="<?php echo VtsRoutes::of($this)->vtsEditProperty($viewModel->getVtsId(), $viewModel->getPropertyName()); ?>">
+
+    <?php echo $this->csrfToken(); ?>
+    <?php
+    echo $this->partial(
+        $viewModel->getPartial(), [
+            'viewModel' => $viewModel,
+        ]
+    );
+    ?>
+
+    <nav class="content-navigation">
+        <input type="submit" class="button" value="<?php echo $viewModel->getSubmitButtonText() ?>" id="submitUpdate">
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo VtsRoutes::of($this)->vts($viewModel->getVtsId()); ?>">Cancel and return to vehicle
+                    testing station</a>
+            </li>
+        </ul>
+    </nav>
+</form>

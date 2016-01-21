@@ -9,6 +9,8 @@ namespace Site;
 
 use Site\Factory\Service\SiteSearchServiceFactory;
 use Site\Service\SiteSearchService;
+use Site\UpdateVtsProperty\Factory\UpdateVtsPropertyProcessBuilderFactory;
+use Site\UpdateVtsProperty\UpdateVtsPropertyProcessBuilder;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
 
@@ -33,6 +35,7 @@ class Module implements ConfigProviderInterface, ServiceProviderInterface
         return [
             'factories' => [
                 SiteSearchService::class => SiteSearchServiceFactory::class,
+                UpdateVtsPropertyProcessBuilder::class => UpdateVtsPropertyProcessBuilderFactory::class,
             ],
         ];
     }

@@ -5,7 +5,9 @@ namespace SiteApiTest\Service;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\Assertion\UpdateVtsAssertion;
 use DvsaCommon\Auth\PermissionAtSite;
+use DvsaCommon\Dto\Contact\ContactDto;
 use DvsaCommon\Dto\Site\SiteContactDto;
+use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\Utility\Hydrator;
@@ -16,8 +18,11 @@ use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\Validator\AddressValidator;
 use DvsaCommonApi\Service\Validator\ContactDetailsValidator;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
+use DvsaCommonTest\TestUtils\MethodSpy;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\ContactDetail;
+use DvsaEntities\Entity\Email;
+use DvsaEntities\Entity\Phone;
 use DvsaEntities\Entity\PhoneContactType;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\SiteContact;
@@ -45,6 +50,10 @@ class SiteContactServiceTest extends AbstractServiceTestCase
     private $mockSiteContactTypeRepo;
     /** @var  AuthorisationServiceInterface|MockObj */
     private $mockAuthService;
+    /** @var  UpdateVtsAssertion */
+    private $updateVtsAssertion;
+    /** @var  UpdateVtsAssertion */
+    private $mockUpdateVtsAssertion;
 
     public function setup()
     {
@@ -52,11 +61,14 @@ class SiteContactServiceTest extends AbstractServiceTestCase
         $this->mockSiteContactTypeRepo = XMock::of(SiteContactTypeRepository::class);
         $this->mockAuthService = $this->getMockAuthorizationService();
 
+        $this->updateVtsAssertion = new UpdateVtsAssertion($this->mockAuthService);
+        $this->mockUpdateVtsAssertion = Xmock::of(UpdateVtsAssertion::class);
+
         $this->siteContactSrv = new SiteContactService(
             $this->getMockEntityManager(),
             $this->createContactDetailsService(),
             $this->createXssFilterMock(),
-            new UpdateVtsAssertion($this->mockAuthService)
+            $this->updateVtsAssertion
         );
 
         XMock::mockClassField($this->siteContactSrv, 'siteContactRepo', $this->mockSiteContactRepo);
@@ -220,5 +232,175 @@ class SiteContactServiceTest extends AbstractServiceTestCase
             ->will($this->returnArgument(0));
 
         return $xssFilterMock;
+    }
+
+    private function createMockSiteContactServiceWithMockedUpdateVtsAssertion()
+    {
+        $siteContactService = new SiteContactService(
+            $this->getMockEntityManager(),
+            $this->createContactDetailsService(),
+            $this->createXssFilterMock(),
+            $this->mockUpdateVtsAssertion
+        );
+        XMock::mockClassField($siteContactService, 'siteContactRepo', $this->mockSiteContactRepo);
+        XMock::mockClassField($siteContactService, 'siteContactTypeRepo', $this->mockSiteContactTypeRepo);
+
+        return $siteContactService;
+    }
+
+    private function createSiteContact()
+    {
+        $site = new Site();
+
+        $contactDetails = new ContactDetail();
+        $contactDetails->addEmail(
+            (new Email())
+                ->setIsPrimary(true)
+        );
+        $contactDetails->addPhone(
+            (new Phone())
+                ->setIsPrimary(true)
+                ->setContactType(
+                    (new PhoneContactType())
+                        ->setCode(PhoneContactTypeCode::BUSINESS)
+                )
+        );
+
+        $siteContactType = new SiteContactType();
+        $siteContactType->setCode(SiteContactTypeCode::BUSINESS);
+
+        return new SiteContact($contactDetails, $siteContactType, $site);
+    }
+
+    /**
+     * @dataProvider dataProvideTestPatchContactFromJson
+     */
+    public function testPatchContactFromJson($data, $expectedAsserts = null, $expectedException = null)
+    {
+        $this->siteContactSrv = $this->createMockSiteContactServiceWithMockedUpdateVtsAssertion();
+        $siteContact = $this->createSiteContact();
+        $this->mockSiteContactRepo->expects($this->any())->method('getHydratedByTypeCode')
+            ->willReturn($siteContact);
+
+        if(!empty($expectedException)) {
+            $this->setExpectedException($expectedException);
+        } else {
+            $siteContactRepoSpy = new MethodSpy($this->mockSiteContactRepo, 'save');
+        }
+
+        if(is_array($expectedAsserts)) {
+            $spies = [];
+            foreach($expectedAsserts as $expectedAssert) {
+                $spies[]= new MethodSpy($this->mockUpdateVtsAssertion, $expectedAssert);
+            }
+        }
+
+        $this->siteContactSrv->patchContactFromJson(1, $data);
+
+        if(isset($spies) && is_array($spies)) {
+            /** @var MethodSpy $spy */
+            foreach($spies as $spy) {
+                $this->assertEquals(1, $spy->invocationCount());
+            }
+        }
+
+        if(isset($siteContactRepoSpy)) {
+            /** @var ContactDetail $savedContact */
+            $savedContact = $siteContactRepoSpy->paramsForLastInvocation()[0];
+
+            if(array_key_exists('email', $data)) {
+                $this->assertEquals($data['email'], $savedContact->getPrimaryEmail()->getEmail());
+                $this->assertCount(1, $savedContact->getEmails());
+            }
+
+            if(array_key_exists('phone', $data)) {
+                $this->assertEquals($data['phone'], $savedContact->getPrimaryPhone()->getNumber());
+                $this->assertCount(1, $savedContact->getPhones());
+            }
+
+            if(array_key_exists('address', $data)) {
+                $address = $data['address'];
+                $addressFields= [
+                    'addressLine1' => 'getAddressLine1',
+                    'addressLine2' => 'getAddressLine2',
+                    'addressLine3' => 'getAddressLine3',
+                    'postcode' => 'getPostcode',
+                    'town' => 'getTown',
+                ];
+
+                foreach($addressFields as $field => $getter) {
+                    if(array_key_exists($field, $address)) {
+                        $this->assertEquals($address[$field], $savedContact->getAddress()->$getter());
+                    }
+                }
+            }
+        }
+    }
+
+    public function dataProvideTestPatchContactFromJson()
+    {
+        return [
+            //Check if correct asserts are runned depending on data
+            [
+                'data' => [
+                    'email' => 'new@email.com',
+                ],
+                'expectedAsserts' => [
+                    'assertUpdateEmail',
+                ],
+            ],
+            [
+                'data' => [
+                    'phone' => '100200300',
+                ],
+                'expectedAsserts' => [
+                    'assertUpdatePhone',
+                ],
+            ],
+            [
+                'data' => [
+                    'address' => [
+                        'town' => 'New Town',
+                        'postcode' => '10-200',
+                        'addressLine1' => 'Streeet'
+                    ],
+                ],
+                'expectedAsserts' => [
+                    'assertUpdateAddress'
+                ],
+            ],
+            //Check asserts runned for full dataset
+            [
+                'data' => [
+                    'email' => 'new@email.com',
+                    'phone' => '100200300',
+                    'address' => [
+                        'town' => 'New Town',
+                        'postcode' => '10-200',
+                        'addressLine1' => 'Streeet'
+                    ],
+                ],
+                'expectedAsserts' => [
+                    'assertUpdateEmail',
+                    'assertUpdatePhone',
+                    'assertUpdateAddress'
+                ],
+            ],
+            //Check if exception is thrown if address is incomplete
+            [
+                'data' => [
+                    'address' => [
+                        'town' => 'New Town',
+                        'postcode' => '10-200',
+                    ],
+                ],
+                'expectedAsserts' =>
+                    []
+                ,
+                'expectedException' =>
+                    'DvsaCommonApi\Service\Exception\RequiredFieldException'
+                ,
+            ],
+        ];
     }
 }

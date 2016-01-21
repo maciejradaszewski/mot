@@ -1,0 +1,17 @@
+<?php
+use Site\UpdateVtsProperty\Process\Form\PhonePropertyForm;
+use Site\UpdateVtsProperty\UpdateVtsPropertyViewModel;
+
+/** @var UpdateVtsPropertyViewModel $viewModel */
+
+/** @var PhonePropertyForm $form */
+$form = $viewModel->getForm();
+?>
+<fieldset>
+    <?php  echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getPhoneElement()
+        ]
+    );?>
+</fieldset>

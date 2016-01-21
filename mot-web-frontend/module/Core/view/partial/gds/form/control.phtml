@@ -1,10 +1,26 @@
 <?php
 
-use \DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\Utility\ArrayUtils;
+use Zend\Form\Element\Radio;
+use Zend\Form\Element\Select;
+
 $errorMessages = $element->getMessages();
 $errorMessage = ArrayUtils::firstOrNull($errorMessages);
-$params = ["name" => $element->getName(),"label" => $element->getLabel(), "value" => $element->getValue(), "errorMessage" => $errorMessage];
+$params = ["name" => $element->getName(), "label" => $element->getLabel(), "value" => $element->getValue(), "errorMessage" => $errorMessage];
 $params = array_merge($params, $element->getAttributes());
+
+if ($element instanceof Select) {
+    $params["options"] = $element->getValueOptions();
+} elseif ($element instanceof Radio) {
+    $params["options"] = ArrayUtils::map($element->getValueOptions(),
+        function (array $option) use ($element) {
+            if ($option['value'] == $element->getValue()) {
+                $option['checked'] = true;
+            }
+            return $option;
+        });
+}
+
 if ($element->hasAttribute("group") && $element->getAttribute("group") === true):
     $partial = 'partial/gds/form/control-' . $element->getAttribute('type') . '-group';
 else:
@@ -15,4 +31,3 @@ echo $this->partial(
     $partial,
     $params
 );
-?>

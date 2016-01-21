@@ -124,7 +124,7 @@ class SiteMapperTest extends AbstractMapperTest
 
         $this->client->expects($this->once())
             ->method('put')
-            ->with(VehicleTestingStationUrlBuilder::validateSiteDetails(self::ORGANISATION_ID), DtoHydrator::dtoToJson($dto))
+            ->with(VehicleTestingStationUrlBuilder::vtsDetails(self::ORGANISATION_ID), DtoHydrator::dtoToJson($dto))
             ->willReturn(['data' => true]);
 
         $this->assertTrue(
@@ -166,7 +166,7 @@ class SiteMapperTest extends AbstractMapperTest
     {
         $this->client->expects($this->once())
             ->method('put')
-            ->with(VehicleTestingStationUrlBuilder::updateSiteDetails(self::ORGANISATION_ID))
+            ->with(VehicleTestingStationUrlBuilder::vtsDetails(self::ORGANISATION_ID))
             ->willReturn(['data' => ['success' => true]])
         ;
 

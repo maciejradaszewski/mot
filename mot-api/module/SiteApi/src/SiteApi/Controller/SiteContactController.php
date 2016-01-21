@@ -32,6 +32,21 @@ class SiteContactController extends AbstractDvsaRestfulController
         return ApiResponse::jsonOk($result);
     }
 
+    public function patch($siteId, $data)
+    {
+        if ($siteId === null) {
+            return $this->returnBadRequestResponseModel(
+                self::SITE_ID_REQUIRED_MESSAGE,
+                self::ERROR_CODE_REQUIRED,
+                self::SITE_ID_REQUIRED_DISPLAY_MESSAGE
+            );
+        }
+
+        $result = $this->getSiteContactService()->patchContactFromJson($siteId, $data);
+
+        return ApiResponse::jsonOk($result);
+    }
+
     /**
      * @return SiteContactService
      */
