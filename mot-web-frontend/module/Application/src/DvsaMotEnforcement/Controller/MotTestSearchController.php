@@ -313,7 +313,7 @@ class MotTestSearchController extends AbstractAuthActionController
         if ($vehicleTestSearchService->checkIfMotTestExists($searchParamsDto)) {
             return $this->redirect()->toRoute(
                 'enforcement-view-mot-test',
-                ['motTestNumber' => $searchParamsDto->getTestNumber()],
+                ['motTestNumber' => trim($searchParamsDto->getTestNumber())],
                 ['query' => [
                     'type' => static::SEARCH_TYPE_TEST_NUMBER,
                 ]]
