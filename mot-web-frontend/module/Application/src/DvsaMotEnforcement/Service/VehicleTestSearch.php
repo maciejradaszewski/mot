@@ -416,7 +416,7 @@ class VehicleTestSearch
      */
     public function isSearchTermValid()
     {
-        $length = strlen($this->getSearchTerm());
+        $length = strlen(trim($this->getSearchTerm()));
         return $length >= self::MINIMUM_LENGTH_OF_SEARCH_TERM;
     }
 

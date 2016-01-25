@@ -307,7 +307,7 @@ class MotTestSearchController extends AbstractAuthActionController
 
         $searchParamsDto = new MotTestSearchParamsDto();
         $searchParamsDto
-            ->setTestNumber(intval($testNumber))
+            ->setTestNumber($testNumber)
             ->setFormat(SearchParamConst::FORMAT_DATA_TABLES);
 
         if ($vehicleTestSearchService->checkIfMotTestExists($searchParamsDto)) {
