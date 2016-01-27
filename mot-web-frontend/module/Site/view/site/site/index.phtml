@@ -1,6 +1,7 @@
 <?php
 
 use Core\Catalog\BusinessRole\BusinessRoleCatalog;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
@@ -79,13 +80,11 @@ echo $this->partial(
 
                     <a href="<?php
                     echo $this->isFeatureEnabled('new_person_profile')
-                        ? $this->url('newProfile',
-                            ['personId' => $position->getPerson()->getId()],
+                        ? $this->url(ContextProvider::VTS_PARENT_ROUTE,
                             [
-                                'query' => [
-                                    'context' => 'vts'
-                                ]
-                            ]
+                                'vehicleTestingStationId' => $site->getId(),
+                                'id' => $position->getPerson()->getId()
+                            ], []
                         )
                         : PersonUrlBuilderWeb::profile($position->getPerson()->getId())?>">
                         <?php echo $this->escapeHtml($position->getPerson()->getFullName());

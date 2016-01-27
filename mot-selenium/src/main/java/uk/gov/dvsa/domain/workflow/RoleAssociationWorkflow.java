@@ -79,10 +79,16 @@ public class RoleAssociationWorkflow extends BaseWorkflow {
 
     private void injectOpenAmCookieAndNavigateToPath(User user, String path) throws IOException {
         driver.setUser(user);
-        driver.manage().addCookie(getCookieForUser(user));
+        addCookieToBrowser(user);
         driver.navigateToPath(path);
     }
     private Cookie getCookieForUser(User user) throws IOException {
         return CookieService.generateOpenAmLoginCookie(user);
+    }
+
+    private void addCookieToBrowser(User user) throws IOException {
+        driver.manage().deleteAllCookies();
+        driver.loadBaseUrl();
+        driver.manage().addCookie(getCookieForUser(user));
     }
 }

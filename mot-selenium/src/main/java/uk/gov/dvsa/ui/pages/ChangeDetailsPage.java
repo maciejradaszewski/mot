@@ -5,7 +5,7 @@ import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
-import uk.gov.dvsa.ui.pages.profile.ProfilePage;
+import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
 
 public class ChangeDetailsPage extends Page {
     public static final String PATH = "/profile/edit";
@@ -39,8 +39,8 @@ public class ChangeDetailsPage extends Page {
         return this;
     }
 
-    public ProfilePage update() {
+    public PersonProfilePage update() {
         updateButton.click();
-        return new ProfilePage(driver);
+        return new PersonProfilePage(driver);
     }
 }

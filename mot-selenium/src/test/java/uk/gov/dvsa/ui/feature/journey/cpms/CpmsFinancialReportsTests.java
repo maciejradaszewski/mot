@@ -25,7 +25,7 @@ public class CpmsFinancialReportsTests extends BaseTest {
     public void userGeneratesReportSuccessfully() throws Exception {
         
         //Given I am logged as a Finance user and I am on Generate report page
-        GenerateReportPage generateReportPage = pageNavigator.goToPage(financeUser, GenerateReportPage.PATH, GenerateReportPage.class);
+        GenerateReportPage generateReportPage = pageNavigator.navigateToPage(financeUser, GenerateReportPage.PATH, GenerateReportPage.class);
         
         //When I select report type and Submit
         DownloadReportPage downloadReportPage = generateReportPage.selectReportType("CPMS82FA1F0C").clickGenerateReportButton();

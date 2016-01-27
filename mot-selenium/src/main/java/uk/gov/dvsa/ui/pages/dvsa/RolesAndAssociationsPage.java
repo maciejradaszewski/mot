@@ -3,10 +3,13 @@ package uk.gov.dvsa.ui.pages.dvsa;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
+import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.RemoveRolePage;
+import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +41,11 @@ public class RolesAndAssociationsPage extends Page{
         return roleValues;
     }
 
-    public UserSearchProfilePage clickReturnToUserProfile() {
+    public ProfilePage clickReturnToUserProfile() {
         returnToUserProfileLink.click();
-        return new UserSearchProfilePage(driver);
+        return MotPageFactory.getProfilePageInstance(
+                new NewUserProfilePage(driver),
+                new UserSearchProfilePage(driver));
     }
 
     public RemoveRolePage removeRole() {

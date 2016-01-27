@@ -1,8 +1,8 @@
 package uk.gov.dvsa.ui.pages.exception;
 
-public class PageInstanceNotFoundException extends RuntimeException{
+public class PageInstanceNotFoundException extends RuntimeException {
 
-    public PageInstanceNotFoundException(String message) {
+    public PageInstanceNotFoundException(final String message) {
         super(message);
     }
 }

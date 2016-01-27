@@ -5,9 +5,9 @@
  * @link http://gitlab.clb.npm/mot/mot
  */
 
-namespace Dvsa\Mot\Frontend\PersonModuleTest\ViewModel\Sidebar;
+namespace Dvsa\Mot\Frontend\PersonModuleTest\View;
 
-class ProfileSidebarTest extends \PHPUnit_Framework_TestCase
+class PersonProfileSidebarTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetStatusBox()
     {

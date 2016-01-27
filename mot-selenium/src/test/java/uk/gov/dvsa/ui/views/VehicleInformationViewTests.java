@@ -32,7 +32,7 @@ public class VehicleInformationViewTests extends BaseTest {
 
         //Given i am on the Vehicle Information Page as an AreaOffice1User
         VehicleInformationSearchPage vehicleInformationSearchPage =
-                pageNavigator.goToPage(areaOffice1User, VehicleInformationSearchPage.PATH, VehicleInformationSearchPage.class);
+                pageNavigator.navigateToPage(areaOffice1User, VehicleInformationSearchPage.PATH, VehicleInformationSearchPage.class);
 
         //When I search for a vehicle
         VehicleInformationResultsPage vehicleInformationResultsPage = vehicleInformationSearchPage

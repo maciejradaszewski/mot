@@ -56,12 +56,12 @@ public class Site {
 
     public void gotoAssessment(User user, String siteId) throws IOException, URISyntaxException {
         String pageUrl = String.format(AddSiteAssessmentPage.path, siteId);
-        assessmentPage = pageNavigator.goToPage(user, pageUrl, AddSiteAssessmentPage.class);
+        assessmentPage = pageNavigator.navigateToPage(user, pageUrl, AddSiteAssessmentPage.class);
     }
 
     public void gotoEventHistory(User user, String siteId) throws IOException, URISyntaxException {
         String pageUrl = String.format(EventsHistoryPage.PATH, siteId);
-        eventsHistoryPage = pageNavigator.goToPage(user, pageUrl, EventsHistoryPage.class);
+        eventsHistoryPage = pageNavigator.navigateToPage(user, pageUrl, EventsHistoryPage.class);
     }
 
     public void submitAssessment(AssessmentInfo aInfo, DateTime dateTime) {

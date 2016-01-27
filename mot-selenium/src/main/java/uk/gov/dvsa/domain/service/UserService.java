@@ -63,14 +63,14 @@ public class UserService extends Service {
     }
 
     public User createUserAsAreaOfficeOneUser(String namePrefix) throws IOException {
-        String aoRequest = jsonHandler.convertToString(new CreateAreaOfficeOneRequest(namePrefix, false));
+        String aoRequest = jsonHandler.convertToString(new CreateAreaOfficeUserRequest(namePrefix, false));
         Response response = motClient.createUser(aoRequest, CREATE_AREA_OFFICE_1_PATH);
 
         return userResponse(response);
     }
 
     public User createUserAsAreaOfficeTwo(String namePrefix) throws IOException {
-        String aoRequest = jsonHandler.convertToString(new CreateAreaOfficeTwoRequest(namePrefix, false));
+        String aoRequest = jsonHandler.convertToString(new CreateAreaOfficeUserRequest(namePrefix, false));
         Response response = motClient.createUser(aoRequest, CREATE_AREA_OFFICE_2_PATH);
 
         return userResponse(response);

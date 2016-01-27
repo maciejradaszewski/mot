@@ -41,8 +41,6 @@ public class HomePage extends Page {
 
     @Override
     protected boolean selfVerify() {
-        String j = driver.getCurrentUser().getNamesAndSurname();
-
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE)
                 && userNameHeader.getText().equals(driver.getCurrentUser().getNamesAndSurname());
     }

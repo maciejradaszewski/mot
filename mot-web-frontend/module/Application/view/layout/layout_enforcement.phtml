@@ -81,16 +81,11 @@ if ($this->authorisationHelper()->hasRole(\DvsaCommon\Constants\Role::USER)) {
             <nav class="global-header_navigation">
                 <ul>
                     <li><a href="<?php echo $this->url(UserHomeController::ROUTE); ?>" class="selected" id="homepage">Home</a></li>
-                    <li><a href="<?php echo $this->isFeatureEnabled('new_person_profile')
-                                            ? $this->url('newProfile',
-                                                [],
-                                                [
-                                                    'query' => [
-                                                        'context' => 'your-profile'
-                                                    ]
-                                                ]
-                                            )
-                                            : PersonUrlBuilderWeb::profile()  ?>" id="user-profile">Your Profile</a></li>
+                    <li><a href="<?php
+                        echo $this->isFeatureEnabled('new_person_profile')
+                            ? $this->url('newProfile', [], []) :
+                            PersonUrlBuilderWeb::profile()
+                    ?>" id="user-profile">Your Profile</a></li>
                     <li><a href="<?php echo $this->url(LogoutController::ROUTE_LOGOUT); ?>" id="logout">Sign out</a></li>
                 </ul>
             </nav>

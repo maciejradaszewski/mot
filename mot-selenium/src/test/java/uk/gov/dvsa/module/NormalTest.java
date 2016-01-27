@@ -87,7 +87,7 @@ public class NormalTest {
     }
 
     public void changeVehicleDetails(User tester, Vehicle vehicle) throws IOException, URISyntaxException {
-        VehicleSearchPage vehicleSearchPage = pageNavigator.goToPage(tester, VehicleSearchPage.PATH, VehicleSearchPage.class);
+        VehicleSearchPage vehicleSearchPage = pageNavigator.navigateToPage(tester, VehicleSearchPage.PATH, VehicleSearchPage.class);
         StartTestConfirmationPage startTestConfirmationPage = vehicleSearchPage.searchVehicle(vehicle).selectVehicleForTest();
         VehicleDetailsChangedPage vehicleDetailsChangedPage = startTestConfirmationPage.changeVehicleDetailAndSubmit(vehicle);
 
@@ -145,7 +145,7 @@ public class NormalTest {
 
     public void viewTestAs(User user, String motTestId) throws IOException, URISyntaxException {
         String path = String.format(EnforcementTestSummaryPage.PATH, motTestId);
-        enforcementSummaryPage = pageNavigator.goToPage(user, path, EnforcementTestSummaryPage.class);
+        enforcementSummaryPage = pageNavigator.navigateToPage(user, path, EnforcementTestSummaryPage.class);
         testStatus = enforcementSummaryPage.getTestStatus();
     }
 

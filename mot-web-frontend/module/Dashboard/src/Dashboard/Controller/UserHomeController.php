@@ -157,7 +157,7 @@ class UserHomeController extends AbstractAuthActionController
         $hasTradeRoles = TradeRole::containsTradeRole($roles);
 
         if ($this->viewTradeRolesAssertion->shouldViewLink($profileId, $hasInternalRoles, $hasTradeRoles)) {
-            $this->setSidebar(new ProfileSidebar($profileId));
+            $this->setSidebar(new ProfileSidebar($profileId, $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)));
         }
 
         return $data;

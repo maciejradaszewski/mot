@@ -6,13 +6,10 @@ use DvsaClient\Mapper\UserAdminMapper;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Dto\Person\SearchPersonResultDto;
 use DvsaCommon\Dto\Security\SecurityQuestionDto;
-use DvsaCommon\Enum\LicenceCountryCode;
 use DvsaCommon\HttpRestJson\Client;
 
 /**
- * Class UserAdminMapperTest
- *
- * @package DvsaClientTest\Mapper
+ * Class UserAdminMapperTest.
  */
 class UserAdminMapperTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +18,7 @@ class UserAdminMapperTest extends \PHPUnit_Framework_TestCase
     const ANSWER        = 'answer';
 
     /**
-     * @var $mapper UserAdminMapper
+     * @var UserAdminMapper
      */
     private $mapper;
 
@@ -84,7 +81,7 @@ class UserAdminMapperTest extends \PHPUnit_Framework_TestCase
             ->willReturn(['data' => $result]);
         $this->assertInstanceOf(
             PersonHelpDeskProfileDto::class,
-            $this->mapper->getUserProfile(self::PERSON_ID)
+            $this->mapper->getUserProfile(self::PERSON_ID, false)
         );
     }
 
@@ -107,7 +104,7 @@ class UserAdminMapperTest extends \PHPUnit_Framework_TestCase
             'addressLine2' => '',
             'addressLine3' => '',
             'addressLine4' => '',
-            'username' => ''
+            'username' => '',
         ];
         $this->client->expects($this->any())
             ->method('get')

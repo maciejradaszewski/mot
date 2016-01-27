@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.ChangePasswordFromProfilePage;
-import uk.gov.dvsa.ui.pages.profile.ProfilePage;
+import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -28,22 +28,22 @@ public class ChangePasswordTests extends BaseTest {
     public void testerChangesPassword() throws Exception {
 
         //Given I am logged as a tester and I am on my profile page
-        ProfilePage profilePage = pageNavigator.goToPage(tester, ProfilePage.PATH, ProfilePage.class);
+        PersonProfilePage personProfilePage = pageNavigator.navigateToPage(tester, PersonProfilePage.PATH, PersonProfilePage.class);
 
         //And I click change password link
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
-                profilePage.clickChangePasswordLink();
+                personProfilePage.clickChangePasswordLink();
 
         //When I change my password
         changePasswordFromProfilePage.enterOldPassword(tester.getPassword());
         String password = "Password2";
         changePasswordFromProfilePage.enterNewPassword(password);
         changePasswordFromProfilePage.confirmNewPassword(password);
-        profilePage = changePasswordFromProfilePage.clickSubmitButton(ProfilePage.class);
+        personProfilePage = changePasswordFromProfilePage.clickSubmitButton(PersonProfilePage.class);
 
         //Then the password is changed and the success message is displayed
-        assertThat(profilePage.isSuccessMessageDisplayed(), is(true));
-        Assert.assertTrue(profilePage.getMessageSuccess().toString().equals(messageSuccess));
+        assertThat(personProfilePage.isSuccessMessageDisplayed(), is(true));
+        Assert.assertTrue(personProfilePage.getMessageSuccess().toString().equals(messageSuccess));
     }
 
     @Test(groups = {"BVT, regression"}, description = "VM-7668, Tester cancels password change")
@@ -51,11 +51,10 @@ public class ChangePasswordTests extends BaseTest {
 
         //Given I am logged in as a tester and I am on the password change page
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
-                pageNavigator.goToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
+                pageNavigator.navigateToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
 
         //Then I click cancel link and I am back to the profile page
-        ProfilePage profilePage = changePasswordFromProfilePage.clickCancelLink();
-
+        changePasswordFromProfilePage.clickCancelLink();
     }
 
     @Test(groups = {"BVT, regression"}, description = "VM-7668, Tester changes password for the same one")
@@ -63,7 +62,7 @@ public class ChangePasswordTests extends BaseTest {
 
         //Given I am logged in as a tester and I am on the password change page
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
-                pageNavigator.goToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
+                pageNavigator.navigateToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
 
         //When I try to change password same as the old password
         changePasswordFromProfilePage.enterOldPassword(tester.getPassword());
@@ -84,7 +83,7 @@ public class ChangePasswordTests extends BaseTest {
 
         //Given I am logged in as a tester and I am on the password change page
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
-                pageNavigator.goToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
+                pageNavigator.navigateToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
 
         //When I try to type new password that does not match with confirmed password
         changePasswordFromProfilePage.enterOldPassword(tester.getPassword());
@@ -105,7 +104,7 @@ public class ChangePasswordTests extends BaseTest {
 
         //Given I am logged in as a tester and I am on the password change page
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
-                pageNavigator.goToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
+                pageNavigator.navigateToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
 
         //When I try to change password for the password that does not match password policy
         changePasswordFromProfilePage.enterOldPassword(tester.getPassword());
@@ -124,7 +123,7 @@ public class ChangePasswordTests extends BaseTest {
 
         //Given I am logged in as a tester and I am on the password change page
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
-                pageNavigator.goToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
+                pageNavigator.navigateToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
 
         //When I try put empty old password
         changePasswordFromProfilePage.enterNewPassword("Password1");
@@ -143,7 +142,7 @@ public class ChangePasswordTests extends BaseTest {
 
         //Given I am logged in as a tester and I am on the password change page
         ChangePasswordFromProfilePage changePasswordFromProfilePage =
-                pageNavigator.goToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
+                pageNavigator.navigateToPage(tester, ChangePasswordFromProfilePage.PATH, ChangePasswordFromProfilePage.class);
 
         //When I leave empty fields and click submit
         changePasswordFromProfilePage.clickSubmitButton(ChangePasswordFromProfilePage.class);

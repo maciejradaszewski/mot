@@ -9,6 +9,7 @@ use DvsaCommon\Auth\PermissionInSystem;
 /** @var string $usernameRecoverUrl */
 /** @var string $resetClaimAccountUrl */
 /** @var string $resetClaimAccountUrlPost */
+/** @var string $routeName */
 
 $errorMessages      = $this->layout()->flashMessenger->getErrorMessages();
 $successMessages    = $this->layout()->flashMessenger->getSuccessMessages();
@@ -101,8 +102,10 @@ $isEmail = empty(trim($presenter->displayEmail())) ? false : true;
             <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::PROFILE_EDIT_OTHERS_EMAIL_ADDRESS)): ?>
             <a class="key-value-list__action"
                id="email-address-change"
-               href="<?php echo $this->url(
-                   'user_admin/user-profile/email-change', ['personId' => $presenter->getPersonId()]
+               href="<?php echo $this->isFeatureEnabled('new_person_profile') ?
+                   $url . '/email' :
+                   $this->url(
+                       'user_admin/user-profile/email-change', ['personId' => $presenter->getPersonId()]
                ); ?>"
                title="Amend user email">
                 Change this

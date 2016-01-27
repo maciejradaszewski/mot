@@ -5,7 +5,10 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.CookieService;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
-import uk.gov.dvsa.ui.pages.*;
+import uk.gov.dvsa.ui.pages.AssessmentDetailsConfirmationPage;
+import uk.gov.dvsa.ui.pages.EventsHistoryPage;
+import uk.gov.dvsa.ui.pages.PageLocator;
+import uk.gov.dvsa.ui.pages.VehicleSearchPage;
 import uk.gov.dvsa.ui.pages.mot.*;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
@@ -15,7 +18,7 @@ public class VehicleReInspectionWorkflow extends BaseWorkflow {
 
     private MotAppDriver driver;
 
-    public void setDriver(MotAppDriver driver) {
+    public final void setDriver(final MotAppDriver driver) {
         this.driver = driver;
     }
 
@@ -90,12 +93,18 @@ public class VehicleReInspectionWorkflow extends BaseWorkflow {
     }
 
     private void injectOpenAmCookieAndNavigateToPath(User user, String path) throws IOException {
-        driver.manage().addCookie(getCookieForUser(user));
-        driver.navigateToPath(path);
         driver.setUser(user);
+        addCookieToBrowser(user);
+        driver.navigateToPath(path);
     }
 
     private Cookie getCookieForUser(User user) throws IOException {
         return CookieService.generateOpenAmLoginCookie(user);
+    }
+
+    private void addCookieToBrowser(User user) throws IOException {
+        driver.manage().deleteAllCookies();
+        driver.loadBaseUrl();
+        driver.manage().addCookie(getCookieForUser(user));
     }
 }

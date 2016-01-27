@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="Build Verification Test" parallel="classes" thread-count="1">
+<suite name="Build Verification Test" parallel="classes" thread-count="10">
+    <listeners>
+        <listener class-name="uk.gov.dvsa.framework.listeners.NewProfileToggleAnnotationTransformer"/>
+    </listeners>
     <test name="Build Verification Test">
         <groups>
             <run>

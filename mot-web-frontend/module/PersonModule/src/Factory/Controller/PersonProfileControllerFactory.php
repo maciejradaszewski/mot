@@ -13,6 +13,8 @@ use Dashboard\Authorisation\ViewTradeRolesAssertion;
 use Dashboard\Data\ApiDashboardResource;
 use Dvsa\Mot\Frontend\PersonModule\Controller\PersonProfileController;
 use Dvsa\Mot\Frontend\PersonModule\Security\PersonProfileGuardBuilder;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
+use DvsaClient\MapperFactory;
 use UserAdmin\Service\UserAdminSessionManager;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -51,7 +53,14 @@ class PersonProfileControllerFactory implements FactoryInterface
         /** @var PersonProfileGuardBuilder $personProfileGuardBuilder */
         $personProfileGuardBuilder = $serviceLocator->get(PersonProfileGuardBuilder::class);
 
+        /** @var MapperFactory $mapperFactory */
+        $mapperFactory = $serviceLocator->get(MapperFactory::class);
+
+        /** @var ContextProvider $contextProvider */
+        $contextProvider = $serviceLocator->get(ContextProvider::class);
+
         return new PersonProfileController($apiPersonalDetails, $apiDashboardResource, $catalogService,
-            $userAdminSessionManager, $viewTradeRolesAssertion, $personProfileGuardBuilder);
+            $userAdminSessionManager, $viewTradeRolesAssertion, $personProfileGuardBuilder, $mapperFactory,
+            $contextProvider);
     }
 }

@@ -47,23 +47,25 @@ class EventDetailViewModelTest extends \PHPUnit_Framework_TestCase
             [],
             new EventDto(),
             'organisation',
-            new EventFormDto()
+            new EventFormDto(),
+            false,
+            ''
         );
         $this->assertInstanceOf(EventDetailViewModel::class, $this->viewModel);
         $this->assertEquals('organisation', $this->viewModel->getEventType());
 
-        $this->viewModel = new EventDetailViewModel(new OrganisationDto(), [], [], new EventDto(), 'site', new EventFormDto());
+        $this->viewModel = new EventDetailViewModel(new OrganisationDto(), [], [], new EventDto(), 'site', new EventFormDto(), false, '');
         $this->assertInstanceOf(EventDetailViewModel::class, $this->viewModel);
         $this->assertEquals('site', $this->viewModel->getEventType());
 
-        $this->viewModel = new EventDetailViewModel(new OrganisationDto(), [], [], new EventDto(), 'person', new EventFormDto());
+        $this->viewModel = new EventDetailViewModel(new OrganisationDto(), [], [], new EventDto(), 'person', new EventFormDto(), false, '');
         $this->assertInstanceOf(EventDetailViewModel::class, $this->viewModel);
         $this->assertEquals('person', $this->viewModel->getEventType());
     }
 
     public function testGetterSetterOrganisation()
     {
-        $this->viewModel = new EventDetailViewModel(null, null, null, null, null, null);
+        $this->viewModel = new EventDetailViewModel(null, null, null, null, null, null, null, null);
         $this->assertInstanceOf(EventDetailViewModel::class, $this->viewModel->setOrganisation(new OrganisationDto()));
         $this->assertInstanceOf(OrganisationDto::class, $this->viewModel->getOrganisation());
     }
@@ -71,28 +73,28 @@ class EventDetailViewModelTest extends \PHPUnit_Framework_TestCase
     public function testGetterSetterSite()
     {
         $result = new VehicleTestingStationDto();
-        $this->viewModel = new EventDetailViewModel(null, null, null, null, null, null);
+        $this->viewModel = new EventDetailViewModel(null, null, null, null, null, null, null, null);
         $this->assertInstanceOf(EventDetailViewModel::class, $this->viewModel->setSite($result));
         $this->assertEquals($result, $this->viewModel->getSite());
     }
 
     public function testGetterSetterPerson()
     {
-        $this->viewModel = new EventDetailViewModel(null, null, null, null, null, null);
+        $this->viewModel = new EventDetailViewModel(null, null, null, null, null, null, null, null);
         $this->assertInstanceOf(EventDetailViewModel::class, $this->viewModel->setPerson(new Person()));
         $this->assertInstanceOf(Person::class, $this->viewModel->getPerson());
     }
 
     public function testGetterSetterEvent()
     {
-        $this->viewModel = new EventDetailViewModel(null, null, null, null, null, null);
+        $this->viewModel = new EventDetailViewModel(null, null, null, null, null, null, null, null);
         $this->assertInstanceOf(EventDetailViewModel::class, $this->viewModel->setEvent(new EventDto()));
         $this->assertInstanceOf(EventDto::class, $this->viewModel->getEvent());
     }
 
     public function testGetterSetterFormModel()
     {
-        $this->viewModel = new EventDetailViewModel(null, null, null, null, null, null);
+        $this->viewModel = new EventDetailViewModel(null, null, null, null, null, null, null, null);
         $this->assertInstanceOf(EventDetailViewModel::class, $this->viewModel->setFormModel(new EventFormDto()));
         $this->assertInstanceOf(EventFormDto::class, $this->viewModel->getFormModel());
     }
@@ -118,7 +120,7 @@ class EventDetailViewModelTest extends \PHPUnit_Framework_TestCase
         $site = (new VehicleTestingStationDto())
             ->setId(self::SITE_ID);
 
-        $this->viewModel = new EventDetailViewModel($organisation, $site, null, null, 'ae', new EventFormDto($data));
+        $this->viewModel = new EventDetailViewModel($organisation, $site, null, null, 'ae', new EventFormDto($data), false, '');
         $this->assertEquals('/event/list/ae/9?search=search&isShowDate=1&dateFrom%5BDay%5D=1&dateFrom%5BMonth%5D=1&dateFrom%5BYear%5D=2015&dateTo%5BDay%5D=1&dateTo%5BMonth%5D=1&dateTo%5BYear%5D=2015', $this->viewModel->getGoBackLink());
         $this->viewModel->setEventType('site');
         $this->assertEquals('/event/list/site/1?search=search&isShowDate=1&dateFrom%5BDay%5D=1&dateFrom%5BMonth%5D=1&dateFrom%5BYear%5D=2015&dateTo%5BDay%5D=1&dateTo%5BMonth%5D=1&dateTo%5BYear%5D=2015', $this->viewModel->getGoBackLink());
@@ -145,7 +147,7 @@ class EventDetailViewModelTest extends \PHPUnit_Framework_TestCase
             ->setMiddleName(self::PERSON_MIDDLENAME)
             ->setFamilyName(self::PERSON_FAMILYNAME);
 
-        $this->viewModel = new EventDetailViewModel($organisation, $site, $person, null, 'ae', new EventFormDto());
+        $this->viewModel = new EventDetailViewModel($organisation, $site, $person, null, 'ae', new EventFormDto(), false, '');
         $this->assertEquals('AE Event for', $this->viewModel->getTitle());
         $this->assertEquals(self::AE_NUMBER . ' - ' . self::AE_NAME, $this->viewModel->getName());
         $this->viewModel->setEventType('site');

@@ -4,13 +4,14 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Keyboard;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.UnreachableBrowserException;
 
 import java.util.List;
 import java.util.Set;
 
-public class MotRemoteWebDriver extends MotAppDriver{
+public class MotRemoteWebDriver extends MotAppDriver {
 
-    public MotRemoteWebDriver(RemoteWebDriver remoteWebDriver) {
+    public MotRemoteWebDriver(final RemoteWebDriver remoteWebDriver) {
         super(remoteWebDriver);
     }
 
@@ -161,7 +162,13 @@ public class MotRemoteWebDriver extends MotAppDriver{
 
     @Override
     public void quit() {
-        remoteWebDriver.quit();
+        try {
+            remoteWebDriver.quit();
+        } catch (UnreachableBrowserException e){
+            //There is no sense propagating the exception, the browser is already dead if an exception happens
+            //It stops Jenkins printing stack trace all over the place
+            //We can simply log a warning if necessary
+        }
     }
 
     @Override

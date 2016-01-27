@@ -2,6 +2,7 @@
 
 namespace DvsaClient\Mapper;
 
+use Application\Data\ApiPersonalDetails;
 use DvsaCommon\Dto\Person\PersonContactDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Dto\Person\SearchPersonResultDto;
@@ -9,6 +10,7 @@ use DvsaCommon\Dto\Security\SecurityQuestionDto;
 use DvsaCommon\UrlBuilder\MessageUrlBuilder;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilder;
+use DvsaCommon\HttpRestJson\Client;
 
 /**
  * Class UserAdminMapper
@@ -17,6 +19,23 @@ use DvsaCommon\UrlBuilder\UserAdminUrlBuilder;
  */
 class UserAdminMapper extends DtoMapper
 {
+    const NEW_PROFILE_URL = '/personal-details/{:id}/';
+
+    /** @var ApiPersonalDetails */
+    private $personDetailsService;
+
+    /**
+     * UserAdminMapper constructor.
+     * @param Client             $client
+     */
+    public function __construct(
+        Client $client
+    )
+    {
+        parent::__construct($client);
+        $this->personDetailsService = new ApiPersonalDetails($client);
+    }
+
     /**
      * @param int       $personId
      * @param int       $questionId
@@ -43,16 +62,21 @@ class UserAdminMapper extends DtoMapper
     }
 
     /**
-     * @param int $personId
+     * @param int    $personId
+     * @param string $usingNewProfile
      * @return PersonHelpDeskProfileDto
      */
-    public function getUserProfile($personId)
+    public function getUserProfile($personId, $usingNewProfile)
     {
-        $url = PersonUrlBuilder::helpDeskProfileUnrestricted($personId)->toString();
+        if ($usingNewProfile) {
+            $response = $this->personDetailsService->getPersonalDetailsData($personId);
+            return PersonHelpDeskProfileDto::fromArray($response);
 
-        $response = $this->client->get($url);
-
-        return PersonHelpDeskProfileDto::fromArray($response['data']);
+        } else {
+            $url = PersonUrlBuilder::helpDeskProfileUnrestricted($personId)->toString();
+            $response = $this->client->get($url);
+            return PersonHelpDeskProfileDto::fromArray($response['data']);
+        }
     }
 
     /**

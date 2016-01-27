@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
 
-public class HelpDeskUserProfilePage extends Page {
+public class HelpDeskUserProfilePage extends HelpDeskProfilePage {
 
     private static final String PAGE_TITLE = "User profile";
     public static final String PATH = "/user-admin/user-profile/%s";
@@ -20,14 +20,9 @@ public class HelpDeskUserProfilePage extends Page {
     @FindBy (id = "person-email") private WebElement emailAddress;
     @FindBy(id = "person-2fa-method") private WebElement personAuthenticationMethod;
 
-    public HelpDeskUserProfilePage(MotAppDriver driver) {
-        super(driver);
-        selfVerify();
-    }
 
-    @Override
-    public boolean selfVerify() {
-        return PageInteractionHelper.verifyTitle(getTitle(), PAGE_TITLE);
+    public HelpDeskUserProfilePage(MotAppDriver driver) {
+        super(driver, PAGE_TITLE);
     }
 
     public ChangeEmailPage clickChangeUserEmailLink() {

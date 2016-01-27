@@ -9,7 +9,6 @@ use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
-use DvsaCommonTest\TestUtils\Auth\AuthorisationServiceMock;
 use DvsaCommonTest\TestUtils\Auth\GrantAllAuthorisationServiceStub;
 use DvsaCommonTest\TestUtils\XMock;
 use PHPUnit_Framework_TestCase as TestCase;
@@ -69,25 +68,31 @@ class PersonRoleManagementServiceTest extends TestCase
 
     public function testGetPersonManageableInternalRoles()
     {
+        $isNewPersonProfileEnabled = false;
+
         $this->assertEquals(
             $this->expectedDataForMockPersonId(PersonRoleManagementService::ROLES_MANAGEABLE),
-            $this->service->getPersonManageableInternalRoles(self::PID_AO1)
+            $this->service->getPersonManageableInternalRoles(self::PID_AO1, $isNewPersonProfileEnabled)
         );
     }
 
     public function testGetPersonAssignedInternalRoles()
     {
+        $isNewPersonProfileEnabled = false;
+
         $this->assertEquals(
             $this->expectedDataForMockPersonId(PersonRoleManagementService::ROLES_ASSIGNED),
-            $this->service->getPersonAssignedInternalRoles(self::PID_AO1)
+            $this->service->getPersonAssignedInternalRoles(self::PID_AO1, $isNewPersonProfileEnabled)
         );
     }
 
     public function testGetUserProfile()
     {
+        $isNewPersonProfileEnabled = false;
+
         $this->assertInstanceOf(
             PersonHelpDeskProfileDto::class,
-            $this->service->getUserProfile(self::PID_AO1)
+            $this->service->getUserProfile(self::PID_AO1, $isNewPersonProfileEnabled)
         );
     }
 
@@ -238,7 +243,7 @@ class PersonRoleManagementServiceTest extends TestCase
                     'authenticationMethod' => [
                         'name' => 'Pin',
                         'code' => 'PIN',
-                    ]
+                    ],
                 ],
             ],
         ];

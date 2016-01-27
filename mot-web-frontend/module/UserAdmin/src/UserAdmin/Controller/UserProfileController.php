@@ -100,7 +100,9 @@ class UserProfileController extends AbstractDvsaMotTestController
         $this->authorisationService->assertGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE);
 
         // Get the person ID from the URL
-        $personId = $this->params()->fromRoute('personId');
+        $personId = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->params()->fromRoute('id') :
+            $this->params()->fromRoute('personId');
 
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
@@ -118,7 +120,7 @@ class UserProfileController extends AbstractDvsaMotTestController
         $viewModel->setTemplate($presenter->getTemplate());
 
         if ($this->viewTradeRolesAssertion->shouldViewLink($personId, $presenter->hasDvsaRoles(), $presenter->hasTradeRoles())) {
-            $this->setSidebar(new ProfileSidebar($personId));
+            $this->setSidebar(new ProfileSidebar($personId, $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)));
         }
 
         return $viewModel;
@@ -133,7 +135,10 @@ class UserProfileController extends AbstractDvsaMotTestController
     {
         $this->authorisationService->assertGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE);
 
-        $personId = $this->params()->fromRoute('personId');
+        $personId = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->params()->fromRoute('id') :
+            $this->params()->fromRoute('personId');
+
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
             $this->getTesterAuthorisationViewModel($personId),
@@ -160,7 +165,10 @@ class UserProfileController extends AbstractDvsaMotTestController
     {
         $this->authorisationService->assertGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE);
 
-        $personId = $this->params()->fromRoute('personId');
+        $personId = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->params()->fromRoute('id') :
+            $this->params()->fromRoute('personId');
+
         $presenter = new UserProfilePresenter(
             $this->userAccountAdminService->getUserProfile($personId),
             $this->getTesterAuthorisationViewModel($personId),
@@ -214,7 +222,9 @@ class UserProfileController extends AbstractDvsaMotTestController
     public function claimAccountAction()
     {
         $this->authorisationService->assertGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE);
-        $personId = $this->params()->fromRoute('personId');
+        $personId = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->params()->fromRoute('id') :
+            $this->params()->fromRoute('personId');
 
         $prgHelper = new PrgHelper($this->getRequest());
         if ($prgHelper->isRepeatPost()) {
@@ -244,7 +254,9 @@ class UserProfileController extends AbstractDvsaMotTestController
      */
     private function claimAccountProcess($personId, PrgHelper $prgHelper)
     {
-        $url = $this->buildUrlWithCurrentSearchQuery(UserAdminUrlBuilderWeb::userProfile($personId));
+        $url = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->url()->fromRoute('newProfileUserAdmin', ['id' => $personId]):
+            $this->buildUrlWithCurrentSearchQuery(UserAdminUrlBuilderWeb::userProfile($personId));
 
         try {
             $this->userAccountAdminService->resetClaimAccount($personId);
@@ -301,9 +313,11 @@ class UserProfileController extends AbstractDvsaMotTestController
                 'resetClaimAccountUrlPost' => $this->buildUrlWithCurrentSearchQuery(
                     UserAdminUrlBuilderWeb::userProfileClaimAccountPost($personId)
                 ),
-                'userProfileUrl' => $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ? '/preview/profile/' . $personId : $this->buildUrlWithCurrentSearchQuery(
-                    UserAdminUrlBuilderWeb::userProfile($personId)
-                ),
+                'userProfileUrl' => $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+                    $this->url()->fromRoute('newProfileUserAdmin', ['id' => $personId]) :
+                    $this->buildUrlWithCurrentSearchQuery(
+                        UserAdminUrlBuilderWeb::userProfile($personId)
+                    )
             ]
         );
 

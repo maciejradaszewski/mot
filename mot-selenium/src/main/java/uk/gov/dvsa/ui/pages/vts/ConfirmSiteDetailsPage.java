@@ -11,7 +11,7 @@ public class ConfirmSiteDetailsPage extends Page {
     private String pageTitle = "";
 
     @FindBy(id = "submitUpdate") private WebElement submitButton;
-    @FindBy(id = "vtsClasses") private WebElement tableElementValue;
+    @FindBy(id = "classes") private WebElement tableElementValue;
 
     public ConfirmSiteDetailsPage(MotAppDriver driver, String pageTitle) {
         super(driver);

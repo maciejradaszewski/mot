@@ -7,10 +7,9 @@ import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.ui.BaseTest;
-import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.RemoveRolePage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
-import uk.gov.dvsa.ui.pages.profile.ProfilePage;
+import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.io.IOException;
@@ -38,19 +37,16 @@ public class TradeUserManagingRolesTests extends BaseTest {
         areaOffice1User = userData.createAreaOfficeOne("AreaOfficer");
     }
 
-    @Test(groups = {"BVT", "Regression", "VM-12321"},
+    @Test(testName = "NewProfile", groups = {"BVT", "Regression", "VM-12321"},
             description = "Verifies that trade user cant check roles via roles and associations link " +
                     "of other trade user")
     public void tradeUserCantViewAeAssociationOfOtherTradeUser() throws IOException, URISyntaxException {
 
-        //Given I'm on the Vts details page
-        VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.goToPage(siteManager,  HomePage.PATH, HomePage.class).selectRandomVts();
+        //Given I'm on the profile page of a user as a Trade user
+        motUI.userRoute.tradeViewUserProfile(siteManager, tester);
 
-        //When I click on assigned user
-        vehicleTestingStationPage.chooseAssignedToVtsUser(tester.getId());
-
-        //Then Roles and Associations link should not be displayed
-        assertThat(motUI.manageRoles.isRolesAndAssociationsLinkDisplayedOnProfileOfPage(), is(false));
+        //I expect Roles and Associations link should be displayed
+        assertThat(motUI.userRoute.page().isRolesAndAssociationsLinkDisplayed(), is(false));
     }
 
 
@@ -60,7 +56,7 @@ public class TradeUserManagingRolesTests extends BaseTest {
     public void tradeUserCanNavigateFromDeleteRolePageViaLink() throws IOException, URISyntaxException {
 
         //Given I'm logged in as Trade user and I am on Remove role page
-        RemoveRolePage removeRolePage = pageNavigator.goToPage(tester, ProfilePage.PATH, ProfilePage.class)
+        RemoveRolePage removeRolePage = pageNavigator.navigateToPage(tester, PersonProfilePage.PATH, PersonProfilePage.class)
                 .clickRolesAndAssociationsLink().removeRole();
 
         //When I click on Cancel and return to roles and associations link
@@ -76,7 +72,7 @@ public class TradeUserManagingRolesTests extends BaseTest {
         vehicleReinspectionWorkflow().startMotTestAsATester(tester, testVehicle);
 
         //Given I'm logged in as Trade user with test in progress and I am on Remove role page
-        RemoveRolePage removeRolePage = pageNavigator.goToPage(tester, ProfilePage.PATH, ProfilePage.class)
+        RemoveRolePage removeRolePage = pageNavigator.navigateToPage(tester, PersonProfilePage.PATH, PersonProfilePage.class)
                 .clickRolesAndAssociationsLink().removeRole();
 
         //When I click on Confirm button
@@ -91,7 +87,7 @@ public class TradeUserManagingRolesTests extends BaseTest {
     public void tradeUserCanRemoveOwnTradeRole() throws IOException, URISyntaxException {
 
         //Given I am logged in as Trade user and I am on Remove role page
-        RemoveRolePage removeRolePage = pageNavigator.goToPage(tester, ProfilePage.PATH, ProfilePage.class)
+        RemoveRolePage removeRolePage = pageNavigator.navigateToPage(tester, PersonProfilePage.PATH, PersonProfilePage.class)
                 .clickRolesAndAssociationsLink().removeRole();
 
         //When I click on Confirm button
@@ -104,7 +100,6 @@ public class TradeUserManagingRolesTests extends BaseTest {
     @Test(groups = {"BVT", "Regression", "BL-94"},
             description = "Verifies that when trade user removes his own role it's not assigned to vts")
     public void tradeUserRoleIsNotAssignedToVtsAfterDeletion() throws IOException, URISyntaxException {
-
         tradeUserCanRemoveOwnTradeRole();
 
         //Given I am logged in as an authorised DVSA user and I am on the Site search page

@@ -43,7 +43,7 @@ class RecordDemoTestController extends AbstractDvsaMotTestController
         if ($this->getRequest()->isPost()) {
             $this->demoTestAssessmentMapper->createAssessment($tester->getId(), $vehicleClassGroup);
 
-            $this->redirect()->toRoute('user_admin/user-profile', ['personId' => $tester->getId()]);
+            $this->redirect()->toRoute('user_admin/user-profile', ['id' => $tester->getId()]);
         }
 
         $params = $this->getRequest()->getQuery()->toArray();

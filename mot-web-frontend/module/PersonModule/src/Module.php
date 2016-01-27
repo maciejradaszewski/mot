@@ -7,6 +7,7 @@
 
 namespace Dvsa\Mot\Frontend\PersonModule;
 
+use Dvsa\Mot\Frontend\PersonModule\Factory\View\PersonProfileUrlGeneratorViewHelperFactory;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ControllerProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
@@ -46,5 +47,17 @@ class Module implements
     public function getServiceConfig()
     {
         return include __DIR__ . '/../config/services.config.php';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getViewHelperConfig()
+    {
+        return [
+            'factories' => [
+                'personProfileUrl' => PersonProfileUrlGeneratorViewHelperFactory::class,
+            ],
+        ];
     }
 }

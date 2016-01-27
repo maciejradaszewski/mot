@@ -54,7 +54,7 @@ public class AedmManagesMotAccountTests extends BaseTest {
             User user, AeDetails aeDetails, Site testSite, User tester) throws Exception {
 
         //Given I am on my Homepage as AEDM
-        HomePage homePage = pageNavigator.goToPage(user, HomePage.PATH, HomePage.class);
+        HomePage homePage = pageNavigator.navigateToPage(user, HomePage.PATH, HomePage.class);
 
         //I expect to see all AE's I am connected with and their respective VTS's
         assertThat(homePage.getAeName(), equalTo(aeDetails.getAeName()));
@@ -103,7 +103,7 @@ public class AedmManagesMotAccountTests extends BaseTest {
     public void removeTesterFromVTS(User user, User tester) throws Exception {
 
         //Given I am on the vehicle testing page
-        VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.goToPage(user, HomePage.PATH,  HomePage.class)
+        VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.navigateToPage(user, HomePage.PATH,  HomePage.class)
                 .selectRandomVts();
 
         //When I remove a tester from the VTS

@@ -23,7 +23,7 @@ public class AuthorisedExaminerTests extends BaseTest {
         User areaOffice1User = userData.createAreaOfficeOne("AreaOfficer");
 
         //Given I am on the Create AE screen as DVSA Admin user
-        CreateAePage createAePage = pageNavigator.goToPage(areaOffice1User, CreateAePage.PATH, CreateAePage.class);
+        CreateAePage createAePage = pageNavigator.navigateToPage(areaOffice1User, CreateAePage.PATH, CreateAePage.class);
 
         //When I Create an AE using valid business details as correspondence details
         AeDetails aeDetails = new AeDetails();
@@ -39,7 +39,7 @@ public class AuthorisedExaminerTests extends BaseTest {
         User areaOffice1User = userData.createAreaOfficeOne("AreaOfficer");
 
         //Given I am on the Create AE screen as DVSA Admin user
-        CreateAePage createAePage = pageNavigator.goToPage(areaOffice1User, CreateAePage.PATH, CreateAePage.class);
+        CreateAePage createAePage = pageNavigator.navigateToPage(areaOffice1User, CreateAePage.PATH, CreateAePage.class);
 
         //When the the user has entered valid data and clicks the Continue to Summary button
         AeDetails aeDetails = new AeDetails();
@@ -56,7 +56,7 @@ public class AuthorisedExaminerTests extends BaseTest {
         User areaOffice1User = userData.createAreaOfficeOne("AreaOfficer");
 
         //Given I am on the Create AE screen as DVSA Admin user
-        CreateAePage createAePage = pageNavigator.goToPage(areaOffice1User, CreateAePage.PATH, CreateAePage.class);
+        CreateAePage createAePage = pageNavigator.navigateToPage(areaOffice1User, CreateAePage.PATH, CreateAePage.class);
 
         //When the user enters email address and selects 'Email address not provided' option
         createAePage.enterBusinessEmail(ContactDetailsHelper.getEmail())
@@ -71,7 +71,7 @@ public class AuthorisedExaminerTests extends BaseTest {
         User areaOffice1User = userData.createAreaOfficeOne("AreaOfficer");
 
         //Given I am on the Create AE screen as DVSA Admin user
-        CreateAePage createAePage = pageNavigator.goToPage(areaOffice1User, CreateAePage.PATH, CreateAePage.class);
+        CreateAePage createAePage = pageNavigator.navigateToPage(areaOffice1User, CreateAePage.PATH, CreateAePage.class);
 
         //When the user enters email address and selects 'Email address not provided' option
         AeDetails aeDetails = new AeDetails();

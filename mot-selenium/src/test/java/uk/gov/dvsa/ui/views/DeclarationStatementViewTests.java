@@ -108,7 +108,7 @@ public class DeclarationStatementViewTests extends BaseTest {
         motUI.contingency.testPage(tester);
 
         //When I complete a contingency test and view the summary page
-        motUI.contingency.recordTest("12345A", DateTime.now(), vehicle);
+        motUI.contingency.recordTest("12345A", DateTime.now().minusHours(1), vehicle);
 
         //Then I should be presented with the declaration statement
         assertThat(motUI.contingency.isDeclarationStatementDisplayed(), is(true));

@@ -8,13 +8,14 @@
 namespace Dvsa\Mot\Frontend\PersonModule\Security;
 
 use Dashboard\Model\PersonalDetails;
-use DoctrineORMModule\Proxy\__CG__\DvsaEntities\Entity\Role;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use DvsaClient\Entity\TesterAuthorisation;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Enum\RoleCode;
+use DvsaCommon\Model\OrganisationBusinessRoleCode;
 use InvalidArgumentException;
 use PersonApi\Dto\PersonDetails;
 
@@ -23,13 +24,6 @@ use PersonApi\Dto\PersonDetails;
  */
 class PersonProfileGuard
 {
-    // The context in which the user is viewing the profile.
-    const AE_CONTEXT = 'ae';
-    const NO_CONTEXT = 'none';
-    const USER_SEARCH_CONTEXT = 'user-search';
-    const VTS_CONTEXT = 'vts';
-    const YOUR_PROFILE_CONTEXT = 'your-profile';
-
     /**
      * @var MotAuthorisationServiceInterface
      */
@@ -71,6 +65,11 @@ class PersonProfileGuard
     private $targetPersonRoles;
 
     /**
+     * @var array
+     */
+    private $loggedInPersonRoles;
+
+    /**
      * PersonProfileGuard constructor.
      *
      * @param MotAuthorisationServiceInterface $authorisationService
@@ -92,7 +91,7 @@ class PersonProfileGuard
         $this->testerAuthorisation = $testerAuthorisation;
         $this->tradeRolesAndAssociations = $tradeRolesAndAssociations;
 
-        $availableContexts = $this->getAvailableContexts();
+        $availableContexts = ContextProvider::getAvailableContexts();
         if (!in_array($context, $availableContexts)) {
             throw new InvalidArgumentException(sprintf('Invalid context "%s". These are the valid ones: "%s"',
                 $context, implode('", "', $availableContexts)));
@@ -107,7 +106,7 @@ class PersonProfileGuard
      */
     public function isViewingOwnProfile()
     {
-        return self::YOUR_PROFILE_CONTEXT === $this->context;
+        return ContextProvider::YOUR_PROFILE_CONTEXT === $this->context;
     }
 
     /**
@@ -130,9 +129,9 @@ class PersonProfileGuard
     public function canViewDateOfBirth()
     {
         return $this->authorisationService->isGranted(PermissionInSystem::VIEW_DATE_OF_BIRTH)
-            && $this->targetUserHasNoneOrAnyRoleOf([
-                RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
-                RoleCode::AUTHORISED_EXAMINER_DELEGATE,
+            && $this->targetPersonHasNoneOrAnyRoleOf([
+                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
+                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE,
                 RoleCode::SITE_MANAGER,
                 RoleCode::SITE_ADMIN,
                 RoleCode::TESTER,
@@ -149,9 +148,9 @@ class PersonProfileGuard
     public function canViewDrivingLicence()
     {
         return $this->authorisationService->isGranted(PermissionInSystem::VIEW_DRIVING_LICENCE)
-            && $this->targetUserHasNoneOrAnyRoleOf([
-                RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
-                RoleCode::AUTHORISED_EXAMINER_DELEGATE,
+            && $this->targetPersonHasNoneOrAnyRoleOf([
+                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
+                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE,
                 RoleCode::SITE_MANAGER,
                 RoleCode::SITE_ADMIN,
                 RoleCode::TESTER,
@@ -168,9 +167,9 @@ class PersonProfileGuard
     public function canChangeDrivingLicence()
     {
         return $this->authorisationService->isGranted(PermissionInSystem::ADD_EDIT_DRIVING_LICENCE)
-            && $this->targetUserHasNoneOrAnyRoleOf([
-                RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
-                RoleCode::AUTHORISED_EXAMINER_DELEGATE,
+            && $this->targetPersonHasNoneOrAnyRoleOf([
+                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
+                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE,
                 RoleCode::SITE_MANAGER,
                 RoleCode::SITE_ADMIN,
                 RoleCode::TESTER,
@@ -237,27 +236,23 @@ class PersonProfileGuard
      */
     public function canViewTradeRoles()
     {
-        return ((!empty($this->tradeRolesAndAssociations)
-                && $this->isViewingOwnProfile()
-            )
+        return (
+            ($this->isViewingOwnProfile() && $this->loggedInPersonHasNoneOrAnyRoleOf([
+                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
+                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE,
+                RoleCode::SITE_MANAGER,
+                RoleCode::SITE_ADMIN,
+                RoleCode::TESTER,
+            ]))
             || ($this->authorisationService->isGranted(PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER)
-                && $this->targetUserHasNoneOrAnyRoleOf([
-                                                        RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
-                                                        RoleCode::AUTHORISED_EXAMINER_DELEGATE,
-                                                        RoleCode::SITE_MANAGER,
-                                                        RoleCode::SITE_ADMIN,
-                                                        RoleCode::TESTER,
-                                                       ])
-            )
+                && $this->targetPersonHasNoneOrAnyRoleOf([
+                    OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
+                    OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE,
+                    RoleCode::SITE_MANAGER,
+                    RoleCode::SITE_ADMIN,
+                    RoleCode::TESTER,
+            ]))
         );
-    }
-
-    /**
-     * @return bool
-     */
-    public function shouldDisplayTradeRoles()
-    {
-        return $this->canViewTradeRoles() && !empty($this->tradeRolesAndAssociations);
     }
 
     /**
@@ -265,24 +260,22 @@ class PersonProfileGuard
      */
     public function canManageDvsaRoles()
     {
-        return (!($this->authorisationService->isGranted(PermissionInSystem::MANAGE_DVSA_ROLES)
-                && $this->isViewingHimself())
-            &&  ($this->authorisationService->isGranted(PermissionInSystem::MANAGE_DVSA_ROLES)
-                && ($this->targetUserHasNoneOrAnyRoleOf([
-                                                         RoleCode::SCHEME_MANAGER,
-                                                         RoleCode::SCHEME_USER,
-                                                         RoleCode::AREA_OFFICE_1,
-                                                         RoleCode::AREA_OFFICE_2,
-                                                         RoleCode::VEHICLE_EXAMINER,
-                                                         RoleCode::CUSTOMER_SERVICE_MANAGER,
-                                                         RoleCode::CUSTOMER_SERVICE_OPERATIVE,
-                                                         RoleCode::DVLA_MANAGER,
-                                                         RoleCode::DVLA_OPERATIVE,
-                                                         RoleCode::FINANCE_,
-                                                         RoleCode::SCHEME_MANAGER,
-                                                        ])
-                )
-            )
+        return (
+            !($this->authorisationService->isGranted(PermissionInSystem::MANAGE_DVSA_ROLES) && $this->isViewingHimself())
+            && ($this->authorisationService->isGranted(PermissionInSystem::MANAGE_DVSA_ROLES)
+                && ($this->targetPersonHasNoneOrAnyRoleOf([
+                     RoleCode::SCHEME_MANAGER,
+                     RoleCode::SCHEME_USER,
+                     RoleCode::AREA_OFFICE_1,
+                     RoleCode::AREA_OFFICE_2,
+                     RoleCode::VEHICLE_EXAMINER,
+                     RoleCode::CUSTOMER_SERVICE_MANAGER,
+                     RoleCode::CUSTOMER_SERVICE_OPERATIVE,
+                     RoleCode::DVLA_MANAGER,
+                     RoleCode::DVLA_OPERATIVE,
+                     RoleCode::FINANCE,
+                     RoleCode::SCHEME_MANAGER,
+            ])))
         );
     }
 
@@ -292,16 +285,18 @@ class PersonProfileGuard
     public function canChangeTesterQualificationStatus()
     {
         return $this->authorisationService->isGranted(PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS)
-                && ($this->targetUserHasNoneOrAnyRoleOf([
-                                                         RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
-                                                         RoleCode::AUTHORISED_EXAMINER_DELEGATE,
-                                                         RoleCode::SITE_MANAGER,
-                                                         RoleCode::SITE_ADMIN,
-                                                         RoleCode::TESTER
-                                                        ])
-                    || (!in_array($this->testerAuthorisation->getGroupAStatus()->getCode(), [AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, null])
-                            && !in_array($this->testerAuthorisation->getGroupBStatus()->getCode(), [AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, null]))
-                   );
+            && ($this->targetPersonHasNoneOrAnyRoleOf([
+                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
+                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE,
+                RoleCode::SITE_MANAGER,
+                RoleCode::SITE_ADMIN,
+                RoleCode::TESTER,
+            ]) || (!in_array($this->testerAuthorisation->getGroupAStatus()->getCode(), [
+                    AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, null,
+                ])
+                && !in_array($this->testerAuthorisation->getGroupBStatus()->getCode(), [
+                    AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, null,
+            ])));
     }
 
     /**
@@ -317,7 +312,7 @@ class PersonProfileGuard
      */
     public function canViewAccountSecurity()
     {
-        return $this->isViewingOwnProfile() && $this->context === self::YOUR_PROFILE_CONTEXT;
+        return $this->isViewingOwnProfile() && $this->context === ContextProvider::YOUR_PROFILE_CONTEXT;
     }
 
     /**
@@ -326,7 +321,7 @@ class PersonProfileGuard
     public function canViewAccountManagement()
     {
         return $this->authorisationService->isGranted(PermissionInSystem::MANAGE_USER_ACCOUNTS)
-            && ($this->isViewingOwnProfile() && $this->context !== self::YOUR_PROFILE_CONTEXT
+            && ($this->isViewingOwnProfile() && $this->context !== ContextProvider::YOUR_PROFILE_CONTEXT
                 || !$this->isViewingOwnProfile());
     }
 
@@ -340,15 +335,6 @@ class PersonProfileGuard
         }
 
         return $this->loggedInPersonId;
-    }
-
-    /**
-     * @return array
-     */
-    private function getAvailableContexts()
-    {
-        return [self::AE_CONTEXT, self::NO_CONTEXT, self::USER_SEARCH_CONTEXT, self::VTS_CONTEXT,
-            self::YOUR_PROFILE_CONTEXT, ];
     }
 
     /**
@@ -368,9 +354,42 @@ class PersonProfileGuard
      *
      * @return bool
      */
-    private function targetUserHasAnyRoleOf(array $roles)
+    private function targetPersonHasAnyRoleOf(array $roles)
     {
         return !empty(array_intersect($roles, $this->getTargetPersonRoles()));
+    }
+
+    /**
+     * A NO-ROLES user can actually have the USER role and still be considered NO-ROLES hence we remove this special
+     * role before performing our checks.
+     *
+     * @param array $roles
+     *
+     * @return bool
+     */
+    private function targetPersonHasNoneOrAnyRoleOf(array $roles)
+    {
+        $targetPersonRoles = $this->getTargetPersonRoles();
+        foreach (array_keys($targetPersonRoles) as $k) {
+            if (RoleCode::USER === $targetPersonRoles[$k]) {
+                unset($targetPersonRoles[$k]);
+                break;
+            }
+        }
+
+        return empty($targetPersonRoles) || $this->targetPersonHasAnyRoleOf($roles);
+    }
+
+    /**
+     * @return array
+     */
+    private function getLoggedInPersonRoles()
+    {
+        if (null === $this->loggedInPersonRoles) {
+            $this->loggedInPersonRoles = $this->authorisationService->getRolesAsArray();
+        }
+
+        return $this->loggedInPersonRoles;
     }
 
     /**
@@ -378,8 +397,29 @@ class PersonProfileGuard
      *
      * @return bool
      */
-    private function targetUserHasNoneOrAnyRoleOf(array $roles)
+    private function loggedInPersonHasAnyRoleOf(array $roles)
     {
-        return empty($this->getTargetPersonRoles()) || $this->targetUserHasAnyRoleOf($roles);
+        return !empty(array_intersect($roles, $this->getLoggedInPersonRoles()));
+    }
+
+    /**
+     * A NO-ROLES user can actually have the USER role and still be considered NO-ROLES hence we remove this special
+     * role before performing our checks.
+     *
+     * @param array $roles
+     *
+     * @return bool
+     */
+    private function loggedInPersonHasNoneOrAnyRoleOf(array $roles)
+    {
+        $loggedInUserRoles = $this->authorisationService->getRolesAsArray();
+        foreach (array_keys($loggedInUserRoles) as $k) {
+            if (RoleCode::USER === $loggedInUserRoles[$k]) {
+                unset($loggedInUserRoles[$k]);
+                break;
+            }
+        }
+
+        return empty($loggedInUserRoles) || $this->loggedInPersonHasAnyRoleOf($roles);
     }
 }

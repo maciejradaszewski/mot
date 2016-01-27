@@ -4,7 +4,9 @@
 ?>
 <div class="row">
     <div class="col-sm-8" id="recover-username-confirmation">
-        A letter will be sent to <strong><?php echo $this->escapeHtml($presenter->displayFullName()); ?></strong> containing the username for their MOT account.
+        A letter will be sent to <strong><?php
+            echo $this->escapeHtml($presenter->displayFullName());
+        ?></strong> containing the username for their MOT account.
     </div>
 </div>
 

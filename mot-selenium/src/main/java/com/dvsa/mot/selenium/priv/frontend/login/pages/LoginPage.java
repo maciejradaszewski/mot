@@ -80,7 +80,6 @@ public class LoginPage extends BasePage {
     }
 
     public LoginPage typeUsername(String text) {
-
         getUserNameInputField().sendKeys(text);
         return this;
     }

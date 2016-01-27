@@ -5,11 +5,10 @@ namespace UserAdminTest\Service;
 use DvsaClient\Mapper\UserAdminMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
-use DvsaCommon\Enum\MessageTypeCode;
-use DvsaCommon\Exception\UnauthorisedException;
-use DvsaCommon\HttpRestJson\Client;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaFeature\FeatureToggles;
 use PHPUnit_Framework_TestCase as TestCase;
 use UserAdmin\Service\HelpdeskAccountAdminService;
 
@@ -31,9 +30,12 @@ class HelpdeskAccountAdminServiceTest extends TestCase
     {
         $this->userAdminMapperMock = XMock::of(UserAdminMapper::class);
         $this->authorisationMock = XMock::of(MotAuthorisationServiceInterface::class);
+        $featureToggles = $this->getFeatureTogglesService([FeatureToggle::NEW_PERSON_PROFILE => false]);
+
         $this->sut = new HelpdeskAccountAdminService(
             $this->authorisationMock,
-            $this->userAdminMapperMock
+            $this->userAdminMapperMock,
+            $featureToggles
         );
     }
 
@@ -92,5 +94,28 @@ class HelpdeskAccountAdminServiceTest extends TestCase
 
         // when
         $this->sut->resetAccount($personId);
+    }
+
+    /**
+     * @param array $featureToggles
+     *
+     * @return FeatureToggles
+     */
+    private function getFeatureTogglesService(array $featureToggles = [])
+    {
+        $map = [];
+        foreach ($featureToggles as $name => $value) {
+            $map += [(string) $name, (bool) $value];
+        }
+
+        $featureToggles = $this
+            ->getMockBuilder(FeatureToggles::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $featureToggles
+            ->method('isEnabled')
+            ->will($this->returnValueMap($map));
+
+        return $featureToggles;
     }
 }

@@ -33,10 +33,14 @@
     </tbody>
 </table>
 
-<form method="post" action="<?php echo $this->url(
-    'user_admin/user-profile/change-qualification-status/confirmation',
-    ['personId' => $testerId, 'vehicleClassGroup' => $group]
-) ?>">
+<form method="post" action="<?php echo $this->isFeatureEnabled('new_person_profile')
+    ? $this->url('newProfileUserAdmin/change-qualification-status/confirmation',
+        ['id' => $testerId, 'vehicleClassGroup' => $group]
+    ) :
+    $this->url(
+        'user_admin/user-profile/change-qualification-status/confirmation',
+        ['personId' => $testerId, 'vehicleClassGroup' => $group]
+    ) ?>">
 
     <?php echo $this->csrfToken() ?>
 
@@ -44,10 +48,15 @@
         <input id="confirm-record-demo-test" type="submit" class="button" value="Confirm qualification status"/>
         <ul class="content-navigation__secondary">
             <li>
-                <a id="cancel-record-demo-test" href="<?php echo $this->url(
-                    'user_admin/user-profile/change-qualification-status',
-                    ['personId' => $testerId, 'vehicleClassGroup' => $group]
-                ); ?>">Back to change qualification status</a>
+                <a id="cancel-record-demo-test" href="<?php echo $this->isFeatureEnabled('new_person_profile')
+                    ? $this->url(
+                        'newProfileUserAdmin/change-qualification-status',
+                        ['id' => $testerId, 'vehicleClassGroup' => $group]) :
+                    $this->url(
+                        'user_admin/user-profile/change-qualification-status',
+                        ['personId' => $testerId, 'vehicleClassGroup' => $group]
+                    ); ?>">Back to change qualification status
+                </a>
             </li>
         </ul>
     </nav>

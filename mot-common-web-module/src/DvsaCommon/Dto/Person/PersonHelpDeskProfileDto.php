@@ -105,21 +105,48 @@ class PersonHelpDeskProfileDto
         TypeCheck::assertArray($data);
 
         $dto = new static();
+
+        // supports both new and old profile formats
+        try {
+            $dto->setUserName(ArrayUtils::get($data, 'userName'));
+        } catch (\OutOfBoundsException $e) {
+            $dto->setUserName(ArrayUtils::get($data, 'username'));
+        }
+
+        try {
+            $dto->setLastName(ArrayUtils::get($data, 'lastName'));
+        } catch (\OutOfBoundsException $e) {
+            $dto->setLastName(ArrayUtils::get($data, 'surname'));
+        }
+
+        try {
+            $dto->setTelephone(ArrayUtils::get($data, 'telephone'));
+        } catch (\OutOfBoundsException $e) {
+            $dto->setTelephone(ArrayUtils::get($data, 'phone'));
+        }
+
+        try {
+            $dto->setDrivingLicenceNumber(ArrayUtils::get($data, 'drivingLicence'));
+        } catch (\OutOfBoundsException $e) {
+            $dto->setDrivingLicenceNumber(ArrayUtils::get($data, 'drivingLicenceNumber'));
+        }
+
+        try {
+            $dto->setAuthenticationMethod(AuthenticationMethodDto::fromArray(ArrayUtils::get($data, 'authenticationMethod')));
+        } catch (\OutOfBoundsException $e) {
+            // ignore this for now as new profile does not display the auth method
+        }
+
         $dto
             ->setTitle(ArrayUtils::get($data, 'title'))
-            ->setUserName(ArrayUtils::get($data, 'userName'))
             ->setFirstName(ArrayUtils::get($data, 'firstName'))
             ->setMiddleName(ArrayUtils::get($data, 'middleName'))
-            ->setLastName(ArrayUtils::get($data, 'lastName'))
             ->setDateOfBirth(ArrayUtils::get($data, 'dateOfBirth'))
             ->setEmail(ArrayUtils::get($data, 'email'))
-            ->setTelephone(ArrayUtils::get($data, 'telephone'))
             ->setAddress(AddressDto::fromArray($data))
             ->setRoles(ArrayUtils::get($data, 'roles'))
-            ->setDrivingLicenceNumber(ArrayUtils::get($data, 'drivingLicence'))
             ->setDrivingLicenceRegion(ArrayUtils::tryGet($data, 'drivingLicenceRegion', ''))
-            ->setDrivingLicenceRegionCode(ArrayUtils::tryGet($data, 'drivingLicenceRegionCode', ''))
-            ->setAuthenticationMethod(AuthenticationMethodDto::fromArray(ArrayUtils::get($data, 'authenticationMethod')));
+            ->setDrivingLicenceRegionCode(ArrayUtils::tryGet($data, 'drivingLicenceRegionCode', ''));
 
         return $dto;
     }

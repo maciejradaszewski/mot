@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
 
 namespace Dashboard\ViewModel;
 
@@ -7,6 +11,7 @@ use Core\Catalog\BusinessRole\BusinessRole;
 use Core\Catalog\BusinessRole\BusinessRoleCatalog;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
 use Dashboard\Controller\UserTradeRolesController;
+use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
 use DvsaCommon\ApiClient\Person\PersonTradeRoles\Dto\PersonTradeRoleDto;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionAtSite;
@@ -17,6 +22,9 @@ use Zend\View\Helper\Url;
 
 class UserTradeRolesViewModel
 {
+    const ROUTE_SITE = 'vehicle-testing-station';
+    const ROUTE_ORGANISATION = 'authorised-examiner';
+
     /**
      * @var int
      */
@@ -37,40 +45,57 @@ class UserTradeRolesViewModel
     private $businessRoleCatalog;
 
     /**
-     * @var bool $newProfileEnabled
+     * @var bool
      */
     private $newProfileEnabled;
 
-    /** @var Url */
+    /**
+     * @var Url
+     */
     private $urlHelper;
 
-    const ROUTE_SITE = 'vehicle-testing-station';
-    const ROUTE_ORGANISATION = 'authorised-examiner';
+    /**
+     * @var string
+     */
+    private $previousRouteUrl;
+
+    /**
+     * @var PersonProfileUrlGenerator
+     */
+    private $personProfileUrlGenerator;
 
     /**
      * @param MotFrontendAuthorisationServiceInterface $authorisationService
-     * @param PersonTradeRoleDto[] $tradeRoles
-     * @param BusinessRoleCatalog $businessRoleCatalog
-     * @param Url $urlHelper
-     * @param bool $newProfileEnabled
+     * @param PersonTradeRoleDto[]                     $tradeRoles
+     * @param BusinessRoleCatalog                      $businessRoleCatalog
+     * @param Url                                      $urlHelper
+     * @param bool                                     $newProfileEnabled
+     * @param PersonProfileUrlGenerator                $personProfileUrlGenerator
+     * @param string                                   $previousRouteUrl
      */
-    public function __construct(MotFrontendAuthorisationServiceInterface $authorisationService,
-                                array $tradeRoles,
-                                BusinessRoleCatalog $businessRoleCatalog,
-                                Url $urlHelper,
-                                $newProfileEnabled
-    )
-    {
+    public function __construct(
+        MotFrontendAuthorisationServiceInterface $authorisationService,
+        array $tradeRoles,
+        BusinessRoleCatalog $businessRoleCatalog,
+        Url $urlHelper,
+        $newProfileEnabled,
+        PersonProfileUrlGenerator $personProfileUrlGenerator,
+        $previousRouteUrl
+    ) {
         $this->authorisationService = $authorisationService;
         $this->tradeRoles = $tradeRoles;
         $this->businessRoleCatalog = $businessRoleCatalog;
         $this->urlHelper = $urlHelper;
         $this->newProfileEnabled = $newProfileEnabled;
+        $this->previousRouteUrl = $previousRouteUrl;
+        $this->personProfileUrlGenerator = $personProfileUrlGenerator;
     }
 
     /**
-     * Decides if we should display role as a link - checks permission to view site/organisation
+     * Decides if we should display role as a link - checks permission to view site/organisation.
+     *
      * @param PersonTradeRoleDto $personTradeRole
+     *
      * @return bool
      */
     public function shouldDisplayLink(PersonTradeRoleDto $personTradeRole)
@@ -96,8 +121,10 @@ class UserTradeRolesViewModel
     }
 
     /**
-     * Generates URL for
+     * Generates URL for.
+     *
      * @param PersonTradeRoleDto $personTradeRole
+     *
      * @return string|VehicleTestingStationUrlBuilderWeb|AuthorisedExaminerUrlBuilderWeb
      */
     public function getUrlForRole(PersonTradeRoleDto $personTradeRole)
@@ -118,8 +145,10 @@ class UserTradeRolesViewModel
     }
 
     /**
-     * Generates URL for removing trade role
+     * Generates URL for removing trade role.
+     *
      * @param PersonTradeRoleDto $personTradeRole
+     *
      * @return string|VehicleTestingStationUrlBuilderWeb|AuthorisedExaminerUrlBuilderWeb
      */
     public function getUrlForRemoveRole(PersonTradeRoleDto $personTradeRole)
@@ -139,11 +168,19 @@ class UserTradeRolesViewModel
             }
         }
 
-        return $this->urlHelper->__invoke($route, [
+        $params = [
             'id' => $this->personId,
             'positionId' => $personTradeRole->getPositionId(),
             'entityId' => $personTradeRole->getWorkplaceId(),
-        ]);
+        ];
+
+        if (true === $this->newProfileEnabled) {
+            $route = basename($route);
+
+            return $this->personProfileUrlGenerator->fromPersonProfile($route, $params);
+        }
+
+        return $this->urlHelper->__invoke($route, $params);
     }
 
     public function canBeRemoved(PersonTradeRoleDto $tradeRole)
@@ -193,7 +230,8 @@ class UserTradeRolesViewModel
         return $this->tradeRoles;
     }
 
-    public function isRoleTypeSite(PersonTradeRoleDto $position){
+    public function isRoleTypeSite(PersonTradeRoleDto $position)
+    {
         return $this->businessRoleCatalog->getByCode($position->getRoleCode())->getType() == BusinessRole::SITE_TYPE;
     }
 
@@ -203,5 +241,13 @@ class UserTradeRolesViewModel
     public function isNewProfileEnabled()
     {
         return $this->newProfileEnabled;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPreviousRouteUrl()
+    {
+        return $this->previousRouteUrl;
     }
 }

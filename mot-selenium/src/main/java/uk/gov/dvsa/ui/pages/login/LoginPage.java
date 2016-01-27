@@ -33,7 +33,7 @@ public class LoginPage extends Page {
         return new CreateAnAccountPage(driver);
     }
 
-    public <T extends Page>T login(Class<T> clazz, String userName, String password) {
+    public <T extends Page>T login(String userName, String password, Class<T> clazz) {
         userIdInput.sendKeys(userName);
         userPasswordInput.sendKeys(password);
         submitButton.click();

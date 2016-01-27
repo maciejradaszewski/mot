@@ -12,6 +12,7 @@ class FeaturesController extends BaseTestSupportRestfulController
     public function get($featureName)
     {
         $featuresService = $this->getServiceLocator()->get(FeaturesService::class);
+
         return $featuresService->get($featureName);
     }
 }

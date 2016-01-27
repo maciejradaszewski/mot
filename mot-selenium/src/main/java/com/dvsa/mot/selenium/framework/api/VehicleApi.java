@@ -63,9 +63,6 @@ public class VehicleApi extends BaseApi {
         newVehicle.manufactureDate = vehicle.manufactureDate;
         newVehicle.dateOfFirstRegistration = vehicle.dateOfFirstRegistration;
 
-        Utilities.Logger.LogInfo(
-                "Old vehicle " + vehicle.carReg + " -> " + "New vehicle " + newVehicle.carReg);
-
         return newVehicle;
     }
 }

@@ -78,6 +78,9 @@ class EventController extends AbstractAuthActionController
 
         $formData = $request->getQuery()->toArray();
 
+        // get the previous route from url until /event/list is refactored to new profile
+        $previousRoute = $this->getRequest()->getQuery('previousRoute');
+
         $viewModel = new EventViewModel(
             $this->getOrganisation($id, $type),
             $this->getSite($id, $type),
@@ -85,7 +88,8 @@ class EventController extends AbstractAuthActionController
             new EventFormDto($formData),
             $type,
             $id,
-            $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)
+            $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE),
+            $previousRoute
         );
 
         $viewModel->setEventList(
@@ -104,6 +108,7 @@ class EventController extends AbstractAuthActionController
             'canRecordEvent',
             $this->getAuthorizationService()->isGranted(PermissionInSystem::EVENT_CREATE)
         );
+        $viewModel->setVariable('previousRoute', $previousRoute);
 
         return $viewModel;
     }
@@ -320,6 +325,9 @@ class EventController extends AbstractAuthActionController
             return $this->redirect()->toUrl(PersonUrlBuilderWeb::home());
         }
 
+        // get the previous route from url until /event/list is refactored to new profile
+        $previousRoute = $this->getRequest()->getQuery('previousRoute');
+
         /* @var Request $request */
         $request = $this->getRequest();
         $formData = $request->getQuery()->toArray();
@@ -330,7 +338,9 @@ class EventController extends AbstractAuthActionController
             $this->getPerson($id, $type),
             $this->getEventDetails($eventId),
             $type,
-            new EventFormDto($formData)
+            new EventFormDto($formData),
+            $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE),
+            $previousRoute
         );
 
         return (new ViewModel(

@@ -3,6 +3,7 @@
 namespace DvsaCommonTest\TestUtils;
 
 use Zend\Mvc\Controller\ControllerManager;
+use Zend\Mvc\Controller\PluginManager;
 use Zend\ServiceManager\ServiceManager;
 
 /**
@@ -67,6 +68,24 @@ class ServiceFactoryTestHelper
         $cm->setServiceLocator($sm);
         self::fillContainer($sm, $injectionMap);
         self::test($cm, $factoryClass, $resultClass);
+    }
+
+    /**
+     * Used to test factories that lookup PluginManager implementation of ServiceLocator i.e.
+     * for building all kind of 'controllers'.
+     *
+     * @param $factoryClass
+     * @param $resultClass
+     * @param $injectionMap
+     */
+    public static function testCreateServiceWithPluginManager($factoryClass, $resultClass, $injectionMap)
+    {
+        $pm = new PluginManager();
+        $sm = new ServiceManager();
+        $sm->setAllowOverride(true);
+        $pm->setServiceLocator($sm);
+        self::fillContainer($sm, $injectionMap);
+        self::test($pm, $factoryClass, $resultClass);
     }
 
     private static function fillContainer($container, $injectionMap)

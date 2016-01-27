@@ -4,6 +4,7 @@ namespace UserAdmin\Controller;
 
 use Core\Controller\AbstractAuthActionController;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use UserAdmin\Service\PersonRoleManagementService;
 use Zend\View\Model\ViewModel;
@@ -22,7 +23,7 @@ class PersonRoleController extends AbstractAuthActionController
 
     /**
      * @param MotAuthorisationServiceInterface $authorisationService
-     * @param PersonRoleManagementService $personRoleManagementService
+     * @param PersonRoleManagementService      $personRoleManagementService
      */
     public function __construct(
         MotAuthorisationServiceInterface $authorisationService,
@@ -48,11 +49,12 @@ class PersonRoleController extends AbstractAuthActionController
             } else {
                 $this->addErrorMessage(sprintf("There has been an error trying to add role %s", $roleName));
             }
-            $this->redirect()->toUrl(
-                UserAdminUrlBuilderWeb::personInternalRoleManagement(
-                    $this->getPersonIdFromRoute()
-                )
-            );
+
+            $redirectUrl = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+                $this->url()->fromRoute('newProfileUserAdmin/manage-user-internal-role', ['id' => $this->getPersonIdFromRoute()]) :
+                UserAdminUrlBuilderWeb::personInternalRoleManagement($this->getPersonIdFromRoute());
+
+            $this->redirect()->toUrl($redirectUrl);
         } else {
             $this->layout()->setVariables(
                 [
@@ -64,6 +66,7 @@ class PersonRoleController extends AbstractAuthActionController
 
             $viewModel = new ViewModel(
                 [
+                    'personId' => $this->getPersonIdFromRoute(),
                     'roleName' => $roleName,
                     'personName' => $this->getPersonNameForBreadcrumbs(),
                     'urlManageInternalRoles' => UserAdminUrlBuilderWeb::personInternalRoleManagement(
@@ -93,9 +96,12 @@ class PersonRoleController extends AbstractAuthActionController
                             ->getPersonSystemRoles()[$this->getPersonSystemRoleIdFromRoute()]['name'];
 
             $this->addSuccessMessage(sprintf("%s has been removed", $roleName));
-            $this->redirect()->toUrl(
-                UserAdminUrlBuilderWeb::personInternalRoleManagement($this->getPersonIdFromRoute())
-            );
+
+            $redirectUrl = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+                $this->url()->fromRoute('newProfileUserAdmin/manage-user-internal-role', ['id' => $this->getPersonIdFromRoute()]) :
+                UserAdminUrlBuilderWeb::personInternalRoleManagement($this->getPersonIdFromRoute());
+
+            $this->redirect()->toUrl($redirectUrl);
         } else {
             $this->layout()->setVariables(
                 [
@@ -107,6 +113,7 @@ class PersonRoleController extends AbstractAuthActionController
 
             $viewModel = new ViewModel(
                 [
+                    'personId' => $this->getPersonIdFromRoute(),
                     'roleName' => $this->getCatalogService()
                         ->getPersonSystemRoles()[$this->getPersonSystemRoleIdFromRoute()]['name'],
                     'personName' => $this->getPersonNameForBreadcrumbs(),
@@ -133,11 +140,11 @@ class PersonRoleController extends AbstractAuthActionController
         $this->personRoleManagementService->forbidManagementOfSelf($this->getPersonIdFromRoute());
 
         $assignedInternalRoles = $this->personRoleManagementService->getPersonAssignedInternalRoles(
-            $this->getPersonIdFromRoute()
+            $this->getPersonIdFromRoute(), $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)
         );
 
         $manageableInternalRoles = $this->personRoleManagementService->getPersonManageableInternalRoles(
-            $this->getPersonIdFromRoute()
+            $this->getPersonIdFromRoute(), $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)
         );
 
         $viewModel = new ViewModel(
@@ -152,7 +159,8 @@ class PersonRoleController extends AbstractAuthActionController
     }
 
     /**
-     * Checks to make sure that the form has been posted
+     * Checks to make sure that the form has been posted.
+     *
      * @return bool
      */
     private function hasBeenConfirmed()
@@ -165,7 +173,9 @@ class PersonRoleController extends AbstractAuthActionController
      */
     private function getPersonIdFromRoute()
     {
-        return $this->params()->fromRoute('personId');
+        return $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->params()->fromRoute('id') :
+            $this->params()->fromRoute('personId');
     }
 
     /**
@@ -181,37 +191,40 @@ class PersonRoleController extends AbstractAuthActionController
      */
     private function getPersonProfileUrl()
     {
-        return UserAdminUrlBuilderWeb::of()->userProfile($this->getPersonIdFromRoute())->toString();
+        return $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->url()->fromRoute('newProfileUserAdmin', ['id' => $this->getPersonIdFromRoute()]) :
+            UserAdminUrlBuilderWeb::of()->userProfile($this->getPersonIdFromRoute())->toString();
     }
 
     /**
-     * Prepare required array for the breadcrumbs based on the given page name
+     * Prepare required array for the breadcrumbs based on the given page name.
      *
      * @param string $pageName
+     *
      * @return array
      */
     private function getBreadcrumbs($pageName)
     {
         return [
-            'breadcrumbs' =>
-                [
+            'breadcrumbs' => [
                     'User search' => UserAdminUrlBuilderWeb::of()->userSearch(),
                     $this->getPersonNameForBreadcrumbs() => $this->getPersonProfileUrl(),
                     $pageName => '',
-                ]
+                ],
         ];
     }
 
     /**
-     * Concatenate person title, first, middle and last name
+     * Concatenate person title, first, middle and last name.
      *
      * @return string
      */
     private function getPersonNameForBreadcrumbs()
     {
-        $person = $this->personRoleManagementService->getUserProfile($this->getPersonIdFromRoute());
+        $isNewUserProfileEnabled = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE);
+        $person = $this->personRoleManagementService->getUserProfile($this->getPersonIdFromRoute(), $isNewUserProfileEnabled);
 
-        return join(
+        return implode(
             ' ',
             array_filter(
                 [

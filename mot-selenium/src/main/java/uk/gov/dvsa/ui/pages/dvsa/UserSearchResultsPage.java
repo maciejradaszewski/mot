@@ -3,10 +3,12 @@ package uk.gov.dvsa.ui.pages.dvsa;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import uk.gov.dvsa.domain.model.User;
+import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
+import uk.gov.dvsa.ui.pages.ProfilePage;
+import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +16,10 @@ import java.util.List;
 public class UserSearchResultsPage extends Page {
 
     private static final String PAGE_TITLE = "User search";
-    @FindBy(id="results") private WebElement searchResults;
-    @FindBy(id="return_to_user_search") private WebElement backtoUserSearchLink;
+    @FindBy(id = "results") private WebElement searchResults;
+    @FindBy(id = "return_to_user_search") private WebElement backtoUserSearchLink;
 
-    public UserSearchResultsPage(MotAppDriver driver) {
+    public UserSearchResultsPage(final MotAppDriver driver) {
         super(driver);
         selfVerify();
     }
@@ -27,9 +29,9 @@ public class UserSearchResultsPage extends Page {
         return PageInteractionHelper.verifyTitle(getTitle(), PAGE_TITLE);
     }
 
-    public UserSearchProfilePage chooseUser(int resultPosition) {
+    public ProfilePage chooseUser(final int resultPosition) {
         getResultsList().get(resultPosition).click();
-        return new UserSearchProfilePage(driver);
+        return MotPageFactory.getProfilePageInstance(new NewUserProfilePage(driver), new UserSearchProfilePage(driver));
     }
 
     public UserSearchPage clickBackToUserSearch() {

@@ -10,6 +10,7 @@ use DvsaCommon\Dto\Search\MotTestSearchParamsDto;
 use DvsaCommon\HttpRestJson\Client as RestClient;
 use DvsaCommon\HttpRestJson\Exception\NotFoundException;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
+use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\Obfuscate\ParamObfuscator;
 use DvsaCommon\UrlBuilder\MotTestUrlBuilder;
 use DvsaCommon\UrlBuilder\TesterUrlBuilder;
@@ -27,6 +28,7 @@ class VehicleTestSearch
     const VRM_NO_RESULTS_FOUND_MSG = 'No results found for that registration';
     const VIN_NO_RESULTS_FOUND_MSG = 'No results found for that vehicle';
     const MINIMUM_LENGTH_OF_SEARCH_TERM = 2;
+    const MAXIMUM_LENGTH_OF_SEARCH_TERM = 200;
 
     const SEARCH_TERM_NOT_SEARCH = 'not-search';
 
@@ -164,18 +166,22 @@ class VehicleTestSearch
      */
     public function checkIfMotTestExists(MotTestSearchParamsDto $params)
     {
-        $apiResult = $this->restClient->getWithParams(
-            MotTestUrlBuilder::search()->toString(),
-            [
-                SearchParamConst::SEARCH_TEST_NUMBER_QUERY_PARAM => $params->getTestNumber(),
-                SearchParamConst::FORMAT => $params->getFormat(),
-            ]
-        );
 
-        /** @var \DvsaCommon\Dto\Search\SearchResultDto $result */
-        $result = DtoHydrator::jsonToDto($apiResult['data']);
+        try {
+            $apiResult = $this->restClient->getWithParams(
+                MotTestUrlBuilder::search()->toString(),
+                [
+                    SearchParamConst::SEARCH_TEST_NUMBER_QUERY_PARAM => $params->getTestNumber(),
+                    SearchParamConst::FORMAT => $params->getFormat(),
+                ]
+            );
+            /** @var \DvsaCommon\Dto\Search\SearchResultDto $result */
+            $result = DtoHydrator::jsonToDto($apiResult['data']);
 
-        return $result->getResultCount() == 1;
+            return $result->getResultCount() == 1;
+        } catch (ValidationException $e) {
+            return false;
+        }
     }
 
     /**
@@ -418,6 +424,22 @@ class VehicleTestSearch
     {
         $length = strlen(trim($this->getSearchTerm()));
         return $length >= self::MINIMUM_LENGTH_OF_SEARCH_TERM;
+    }
+
+    /**
+     * Returns true if the search for MOT test term is valid.
+     *
+     * @return bool
+     */
+    public function isMotTestSearchTermValid()
+    {
+        $testNr = trim($this->getSearchTerm());
+        $length = strlen($testNr);
+        $doesSearchContainNonNumericCharacters = (bool) preg_match('/[^0-9]/', $testNr);
+
+        return $length >= self::MINIMUM_LENGTH_OF_SEARCH_TERM
+            && $length <= self::MAXIMUM_LENGTH_OF_SEARCH_TERM
+            && !$doesSearchContainNonNumericCharacters;
     }
 
     /**

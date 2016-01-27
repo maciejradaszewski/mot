@@ -3,14 +3,16 @@
 use Dvsa\Mot\Frontend\PersonModule\Security\PersonProfileGuard;
 use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use DvsaCommon\Constants\FeatureToggle;
 
 /**
  * @var \Dashboard\Model\PersonalDetails  $personalDetails
  * @var array                             $motAuthorisations
  * @var MotAuthorisationServiceInterface  $authorisationService
  * @var array                             $systemRoles
- * @var bool                              $isViewingOwnProfile
  * @var PersonProfileGuard                $personProfileGuard
+ * @var string                            $routeName
+ * @var array                             $routeParams
  */
 
 $motAuthorisations = $this->motAuthorisations;
@@ -24,7 +26,7 @@ $fullAddressArray = array_filter([
     'strlen');
 $escFullAddress = $this->escapeHtml(implode(", ", $fullAddressArray)) ?: null;
 
-$this->layout()->setVariable('pageSubTitle', $isViewingOwnProfile ? 'Your profile' : 'Profile of');
+$this->layout()->setVariable('pageSubTitle', $personProfileGuard->isViewingOwnProfile() ? 'Your profile' : 'User profile');
 $this->layout()->setVariable('pageTitle', $personalDetails->getFullName());
 
 echo $this->partial('errorMessages', ['getFromFlash' => true]);
@@ -32,11 +34,6 @@ echo $this->partial('errorMessages', ['getFromFlash' => true]);
 echo $this->partial('partial/gds/general/system-message', ['messages' =>  $this->layout()->flashMessenger->getSuccessMessages(), 'type' => 'success']);
 
 ?>
-
-<?php
-$this->layout()->setVariable('pageSubTitle', $isViewingOwnProfile ? 'Your profile' : 'User profile');
-$this->layout()->setVariable('pageTitle', $personalDetails->getFullName());
-//?>
 <h3 class="summary-heading">Personal details</h3>
 <table class="table-summary" id="personal_details">
     <tbody>
@@ -67,22 +64,29 @@ $this->layout()->setVariable('pageTitle', $personalDetails->getFullName());
         </td>
     </tr>
     <?php endif ?>
-    <?php if (empty($systemRoles) && !$isViewingOwnProfile) : ?>
+    <?php if (true === $personProfileGuard->canViewDrivingLicence()) : ?>
     <tr>
         <th class="table-summary__key">
             Driving licence
         </th>
         <td class="table-summary__value" id="drivingLicence">
             <?php
+            $licenceRegionCode = $personalDetails->getDrivingLicenceRegion();
+            if ($licenceRegionCode === 'NU') {
+                $licenceRegionCode = 'Non-UK';
+            }
             echo !empty($personalDetails->getDrivingLicenceNumber())
                     ? $this->escapeHtml($personalDetails->getDrivingLicenceNumber())
                         . '<br>'
-                        . '<span class="table-summary__meta">' .  $this->escapeHtml($personalDetails->getDrivingLicenceRegion()) .' licence</span>'
-                    : '<span class="table-summary__meta">Unknown</span>'; ?>
+                        . '<span class="table-summary__meta">' .  $this->escapeHtml($licenceRegionCode) .' licence</span>'
+                    : '<span class="table-summary__meta">None Recorded</span>'; ?>
             <?php if (true === $personProfileGuard->canChangeDrivingLicence()) :
-                    echo '<a href="/user-admin/user-profile/' . $personalDetails->getId() . '/driving-licence" class="table-summary__action">Change<span class="visuallyhidden"> Driving licence </span></a>';
-                 endif
-            ?>
+                $url = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+                    $this->personProfileUrl()->fromPersonProfile('driving-licence-change') :
+                    ('/user-admin/user-profile/' . $personalDetails->getId() . '/driving-licence');
+                echo '<a href="' . $url .
+                    '" class="table-summary__action">Change<span class="visuallyhidden"> Driving licence </span></a>';
+            endif ?>
         </td>
     </tr>
     <?php endif ?>
@@ -101,9 +105,11 @@ $this->layout()->setVariable('pageTitle', $personalDetails->getFullName());
                 : '<span class="table-summary__meta">Unknown</span>'; ?>
 
             <?php if (true === $personProfileGuard->canChangeEmailAddress()) :
-                     echo '<a href="/user-admin/user-profile/' . $personalDetails->getId() . '/email" class="table-summary__action">Change<span class="visuallyhidden"> Email</span></a>';
-                 endif
-            ?>
+                $emailUrl = $this->isFeatureEnabled('new_person_profile') ?
+                    $this->url($routeName, $routeParams) . '/email' :
+                    '/user-admin/user-profile/' . $personalDetails->getId() . '/email';
+                echo '<a href="' . $emailUrl . '" class="table-summary__action">Change<span class="visuallyhidden"> Email</span></a>';
+            endif ?>
         </td>
     </tr>
     <tr>

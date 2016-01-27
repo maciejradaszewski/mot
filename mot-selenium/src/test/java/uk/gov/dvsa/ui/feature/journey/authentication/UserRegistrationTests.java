@@ -1,11 +1,10 @@
 package uk.gov.dvsa.ui.feature.journey.authentication;
 
-import org.openqa.selenium.NoSuchElementException;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.helper.ContactDetailsHelper;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.login.LoginPage;
-import uk.gov.dvsa.ui.pages.userregistration.*;
+import uk.gov.dvsa.ui.pages.userregistration.CreateAnAccountPage;
 
 import java.io.IOException;
 
