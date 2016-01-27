@@ -2,6 +2,8 @@
 /**
  * @var $viewModel \DashBoard\ViewModel\RemoveRoleViewModel
  */
+use DvsaCommon\Constants\FeatureToggle;
+
 ?>
 
 <div class="text">
@@ -12,9 +14,10 @@
 </div>
 
 <form action="<?php
-echo $this->url(
-    null,
-    ['id' => $viewModel->getPersonId(), 'positionId' => $viewModel->getPositionId(), 'entityId' => $viewModel->getEntityId()]
+echo $this->url(null, [
+    'id' => $viewModel->getPersonId(),
+    'positionId' => $viewModel->getPositionId(),
+    'entityId' => $viewModel->getEntityId()]
 );
 ?>" method="post">
     <?php echo $this->csrfToken(); ?>
@@ -24,7 +27,10 @@ echo $this->url(
 
         <ul class="content-navigation__secondary">
             <li>
-                <a id="cancel-and-return-to-profile" href="<?php echo $this->url('user-home/profile/byId/trade-roles', [ 'id' => $viewModel->getPersonId()]); ?>">
+                <a id="cancel-and-return-to-profile" href="<?php
+                    echo $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+                        $this->personProfileUrl()->fromPersonProfile('trade-roles'):
+                        $this->url('user-home/profile/byId/trade-roles', [ 'id' => $viewModel->getPersonId()]); ?>">
                     Cancel and return to roles and associations
                 </a>
             </li>

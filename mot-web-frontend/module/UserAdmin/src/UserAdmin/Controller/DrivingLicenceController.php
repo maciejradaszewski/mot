@@ -18,6 +18,8 @@ use DvsaCommon\Constants\Role;
 use Core\Service\SessionService;
 use DvsaCommon\Exception\UnauthorisedException;
 use Exception;
+use DvsaCommon\Constants\FeatureToggle;
+use Dvsa\Mot\Frontend\PersonModule\Controller\PersonProfileController;
 
 /**
  * Class DrivingLicenceController
@@ -33,6 +35,10 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
     const SESSION_STORAGE_KEY_PREFIX = 'CHANGE_PERSON_DRIVING_LICENCE';
 
     const DRIVING_LICENCE_DELETE_TEMPLATE = 'user-admin/driving-licence/delete.phtml';
+
+    const NEW_PROFILE_URL = 'user-admin/user/{:id}';
+    const NEW_PROFILE_ROUTE = 'newProfileUserAdmin';
+    const NEW_PROFILE_LICENCE_SUMMARY_ROUTE = 'newProfileUserAdmin/driving-licence-change/summary';
 
     /**
      * @var HelpdeskAccountAdminService
@@ -94,6 +100,10 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
         $this->authorisationService->assertGranted(PermissionInSystem::ADD_EDIT_DRIVING_LICENCE);
 
         $personId = $this->params()->fromRoute('personId');
+        if (null === $personId) {
+            $personId = $this->params()->fromRoute('id');
+        }
+
         $profile = $this->accountAdminService->getUserProfile($personId);
         $presenter = $this->createPresenter($personId);
 
@@ -122,8 +132,9 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
             ];
 
             if ($this->validate($params) && $this->saveToSession($personId, $params)) {
-                $profileUrl = UserAdminUrlBuilderWeb::of()->drivingLicenceChangeSummary($personId);
-                return $this->redirect()->toUrl($profileUrl);
+                return $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+                    $this->redirect()->toRoute(self::NEW_PROFILE_LICENCE_SUMMARY_ROUTE, ['id' => $personId]) :
+                    $this->redirect()->toUrl(UserAdminUrlBuilderWeb::of()->drivingLicenceChangeSummary($personId));
             } else {
                 // Set the driving licence number and region to the one that was submitted to re-display
                 $drivingLicenceNumber = $this->getRequest()->getPost('drivingLicenceNumber');
@@ -131,10 +142,9 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
             }
         }
 
-        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => [
-            $presenter->displayTitleAndFullName() => UserAdminUrlBuilderWeb::of()->userProfile($personId),
-            'Change driving licence' => '',
-        ]]);
+        $this->layout()->setVariable('breadcrumbs', [
+            'breadcrumbs' => $this->getBreadcrumbBase($presenter, $personId)
+        ]);
 
         return new ViewModel([
             'presenter' => $presenter,
@@ -152,7 +162,9 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
     {
         $this->authorisationService->assertGranted(PermissionInSystem::ADD_EDIT_DRIVING_LICENCE);
 
-        $personId = $this->params()->fromRoute('personId');
+        $personId = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->params()->fromRoute('id') : $this->params()->fromRoute('personId');
+
         $request = $this->getRequest();
 
         // If there is no summary data stored in the session for this user, redirect to their profile
@@ -177,8 +189,9 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
             }
 
             // Redirect to the user profile on success or failure and display a relevant message
-            $redirectUrl = UserAdminUrlBuilderWeb::of()->userProfile($personId);
-            return $this->redirect()->toUrl($redirectUrl);
+            return $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+                $this->redirect()->toRoute(self::NEW_PROFILE_ROUTE, ['id' => $personId]) :
+                $this->redirect()->toUrl(UserAdminUrlBuilderWeb::of()->userProfile($personId));
         }
 
         $this->layout('layout/layout-govuk.phtml');
@@ -186,11 +199,11 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
         $this->layout()->setVariable('pageSubTitle', self::PAGE_SUBTITLE);
 
         $presenter = $this->createPresenter($personId);
+        $breadcrumbs = $breadcrumbs = $this->getBreadcrumbBase($presenter, $personId);
 
-        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => [
-            $presenter->displayTitleAndFullName() => UserAdminUrlBuilderWeb::of()->userProfile($personId),
-            'Change driving licence' => '',
-        ]]);
+        $this->layout()->setVariable('breadcrumbs', [
+            'breadcrumbs' => $breadcrumbs
+        ]);
 
         return new ViewModel([
             'presenter' => (new DrivingLicenceSummaryPresenter)->setPersonId($personId),
@@ -201,7 +214,10 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
 
     public function deleteAction()
     {
-        $personId = $this->params()->fromRoute('personId');
+        $personId = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->params()->fromRoute('id') :
+            $this->params()->fromRoute('personId');
+
         $profile = $this->accountAdminService->getUserProfile($personId);
         $presenter = $this->createPresenter($personId);
 
@@ -215,7 +231,8 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
             return $this->redirect()->toUrl($redirectUrl);
         }
 
-        $personId = $this->params()->fromRoute('personId');
+        $personId = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->params()->fromRoute('id') : $this->params()->fromRoute('personId');
         $request = $this->getRequest();
         $profile = $this->accountAdminService->getUserProfile($personId);
 
@@ -239,8 +256,9 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
             }
 
             // Redirect to the user profile on success or failure and display a relevant message
-            $redirectUrl = UserAdminUrlBuilderWeb::of()->userProfile($personId);
-            return $this->redirect()->toUrl($redirectUrl);
+            return $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+                $this->redirect()->toRoute(self::NEW_PROFILE_ROUTE, ['id' => $personId]) :
+                $this->redirect()->toUrl(UserAdminUrlBuilderWeb::of()->userProfile($personId));
         }
 
         $this->layout('layout/layout-govuk.phtml');
@@ -249,22 +267,27 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
 
         $presenter = $this->createPresenter($personId);
 
+        $breadcrumbs = $this->getBreadcrumbBase($presenter, $personId);
+
         $this->layout()->setVariable(
             'breadcrumbs',
             [
-                'breadcrumbs' => [
-                    $presenter->displayTitleAndFullName() => UserAdminUrlBuilderWeb::of()->userProfile($personId),
-                    'Change driving licence' => '',
-                ]
+                'breadcrumbs' => $breadcrumbs
             ]
         );
+
+        $backButtonUrl = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->url()->fromRoute('newProfileUserAdmin/driving-licence-change', ['id' => $personId]):
+            UserAdminUrlBuilderWeb::of()->drivingLicenceChange($personId);
+
+            UserAdminUrlBuilderWeb::of()->drivingLicenceChange($personId);
 
         return new ViewModel(
             [
                 'presenter' => new DrivingLicenceSummaryPresenter,
                 'drivingLicenceNumber' => $drivingLicenceNumber,
                 'drivingLicenceRegion' => $drivingLicenceRegion,
-                'backButtonUrl' => UserAdminUrlBuilderWeb::of()->drivingLicenceChange($personId),
+                'backButtonUrl' => $backButtonUrl,
                 'fullName' => $profile->getFirstName() . ' ' . $profile->getMiddleName() . ' ' . $profile->getLastName(),
                 'title' => $profile->getTitle()
             ],
@@ -340,5 +363,18 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
             $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
             $this->authorisationService
         );
+    }
+
+    private function getBreadcrumbBase($presenter, $personId)
+    {
+        return $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ? [
+            PersonProfileController::CONTENT_HEADER_TYPE__USER_SEARCH => $this->url()->fromRoute('user_admin/user-search'),
+            $presenter->displayTitleAndFullName() => $this->url()->fromRoute('newProfileUserAdmin', ['id' => $personId]),
+            'Change driving licence' => '',
+        ]
+            : [
+            $presenter->displayTitleAndFullName() => UserAdminUrlBuilderWeb::of()->userProfile($personId),
+            'Change driving licence' => '',
+        ];
     }
 }

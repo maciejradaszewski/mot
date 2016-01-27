@@ -1,6 +1,7 @@
 <?php
 
 use Dashboard\Controller\UserHomeController;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use DvsaCommon\Dto\Organisation\OrganisationSiteLinkDto;
 use DvsaCommon\Utility\AddressUtils;
 use Organisation\Controller\AuthorisedExaminerPrincipalController;
@@ -166,14 +167,10 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
                 <th class="table-summary__key">
                     <?php if ($viewModel->getViewAuthorisation()->canViewProfile($employee->getPerson())): ?>
                         <a href="<?php echo $this->isFeatureEnabled('new_person_profile')
-                                            ? $this->url('newProfile',
+                                            ? $this->url(ContextProvider::AE_PARENT_ROUTE,
                                                 [
-                                                    'personId' => $employee->getPerson()->getId()
-                                                ],
-                                                [
-                                                    'query' => [
-                                                        'context' => 'ae'
-                                                    ],
+                                                    'authorisedExaminerId' => $orgId,
+                                                    'id' => $employee->getPerson()->getId()
                                                 ]
                                             )
                                             : $this->url(UserHomeController::ROUTE_PROFILE, ['id' => $employee->getPerson()->getId()]); ?>">

@@ -6,9 +6,10 @@ use Core\Controller\AbstractDvsaActionController;
 use Core\Service\LazyMotFrontendAuthorisationService;
 use Core\Service\MotFrontendIdentityProvider;
 use CoreTest\Service\StubCatalogService;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
+use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use Dvsa\OpenAM\OpenAMClient;
 use Dvsa\OpenAM\OpenAMClientInterface;
-use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
 use DvsaCommon\Auth\MotIdentityProvider;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\HttpRestJson\Exception\NotFoundException;
@@ -16,9 +17,9 @@ use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\Model\ListOfRolesAndPermissions;
 use DvsaCommon\Model\PersonAuthorization;
 use DvsaCommonTest\Bootstrap;
-use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\TestCaseTrait;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaFeature\FeatureToggles;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Result;
 use Zend\Authentication\Storage\NonPersistent;
@@ -28,16 +29,13 @@ use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\Http\TreeRouteStack as HttpRouter;
 use Zend\Mvc\Router\RouteMatch;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\Parameters;
 
 /**
- * Class AbstractFrontendControllerTestCase
+ * Class AbstractFrontendControllerTestCase.
  *
  * use CoreTest\Controller\AbstractFrontendControllerTestCase;
- *
- * @package DvsaCommonTest\Controller
  */
 abstract class AbstractFrontendControllerTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -127,6 +125,33 @@ abstract class AbstractFrontendControllerTestCase extends \PHPUnit_Framework_Tes
     }
 
     /**
+     * @param array $featureToggles
+     *
+     * @return $this
+     */
+    public function withFeatureToggles(array $featureToggles = [])
+    {
+        $serviceManager = $this->getServiceManager();
+
+        $map = [];
+        foreach ($featureToggles as $name => $value) {
+            $map += [(string) $name, (bool) $value];
+        }
+
+        $featureToggles = $this
+            ->getMockBuilder(FeatureToggles::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $featureToggles
+            ->method('isEnabled')
+            ->will($this->returnValueMap($map));
+
+        $serviceManager->setService('Feature\FeatureToggles', $featureToggles);
+
+        return $this;
+    }
+
+    /**
      * Helper: Answers an instance of a simple route stack so we can dispatch events to
      * the controller under test. The service manager MUST be set by this stage or an
      * exception is thrown.
@@ -144,7 +169,7 @@ abstract class AbstractFrontendControllerTestCase extends \PHPUnit_Framework_Tes
     }
 
     /**
-     * Helper: Given the name of a function, $controllerName, creates a new
+     * Helper: Given the name of a function, $controllerName, creates a new.
      *
      * @param $controllerName String
      *
@@ -179,7 +204,7 @@ abstract class AbstractFrontendControllerTestCase extends \PHPUnit_Framework_Tes
     }
 
     /**
-     * Mocks the OpenAMClient that is now used from the web frontend
+     * Mocks the OpenAMClient that is now used from the web frontend.
      *
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
@@ -193,6 +218,7 @@ abstract class AbstractFrontendControllerTestCase extends \PHPUnit_Framework_Tes
         ->method('validateCredentials')
         ->will($this->returnValue(true));
         $this->getServiceManager()->setService(OpenAMClientInterface::class, $mockOpenAMClient);
+
         return $mockOpenAMClient;
     }
 
@@ -319,9 +345,9 @@ abstract class AbstractFrontendControllerTestCase extends \PHPUnit_Framework_Tes
     }
 
     /**
-     * @return ServiceManager
-     *
      * @throws \Exception
+     *
+     * @return ServiceManager
      */
     protected function getServiceManager()
     {
@@ -468,7 +494,7 @@ abstract class AbstractFrontendControllerTestCase extends \PHPUnit_Framework_Tes
     }
 
     /**
-     * Check response status code
+     * Check response status code.
      *
      * @param int      $expectStatusCode
      * @param Response $response

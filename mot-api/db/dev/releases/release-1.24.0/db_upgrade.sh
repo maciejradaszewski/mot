@@ -6,6 +6,7 @@ db_name=mot_v195_rel4
 # add files here in intended run order for release
 upgradefiles+=('2016-01-13-BL-367-change-site-classes-type-status-permissions-STORY.sql');
 upgradefiles+=('2016-01-21-BL-367-change-event-description-column-size-STORY.sql');
+upgradefiles+=('2016-01-26-BL-588-grant-missing-permissions-to-csm-STORY.sql');
 
 # add files here in intended run order for release
 

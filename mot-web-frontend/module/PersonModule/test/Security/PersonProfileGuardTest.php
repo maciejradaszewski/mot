@@ -10,6 +10,7 @@ namespace Dvsa\Mot\Frontend\PersonModuleTest\Security;
 use Dashboard\Model\PersonalDetails;
 use Dashboard\Service\TradeRolesAssociationsService;
 use Dvsa\Mot\Frontend\PersonModule\Security\PersonProfileGuard;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use DvsaClient\Entity\TesterAuthorisation;
 use DvsaClient\Entity\TesterGroupAuthorisationStatus;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
@@ -18,6 +19,7 @@ use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Enum\RoleCode;
+use DvsaCommon\Model\OrganisationBusinessRoleCode;
 use InvalidArgumentException;
 
 class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
@@ -84,13 +86,13 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->context = PersonProfileGuard::NO_CONTEXT;
+        $this->context = ContextProvider::NO_CONTEXT;
     }
 
     public function testIsViewingOwnProfileWhenInTheYourProfileContext()
     {
         $guard = $this
-            ->withContext(PersonProfileGuard::YOUR_PROFILE_CONTEXT)
+            ->withContext(ContextProvider::YOUR_PROFILE_CONTEXT)
             ->createPersonProfileGuard(self::LOGGED_IN_PERSON_ID);
         $this->assertTrue($guard->isViewingOwnProfile());
     }
@@ -98,7 +100,7 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
     public function testIsViewingOwnProfileWhenNotInTheYourProfileContext()
     {
         $guard = $this
-            ->withContext(PersonProfileGuard::NO_CONTEXT)
+            ->withContext(ContextProvider::NO_CONTEXT)
             ->createPersonProfileGuard(self::LOGGED_IN_PERSON_ID);
         $this->assertFalse($guard->isViewingOwnProfile());
     }
@@ -131,49 +133,56 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 // When INVALID-USER View NO-ROLES
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, []],
                 [self::TARGET_PERSON_ID, []],
                 false,
             ],
             [
                 // When VALID-USER View AUTHORISED_EXAMINER_DESIGNATED_MANAGER
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
-                [self::TARGET_PERSON_ID, [RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
+                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
                 true,
             ],
             [
                 // When VALID-USER View AUTHORISED_EXAMINER_DELEGATE
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
-                [self::TARGET_PERSON_ID, [RoleCode::AUTHORISED_EXAMINER_DELEGATE]],
+                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE]],
                 true,
             ],
             [
                 // When VALID-USER View SITE_MANAGER
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
                 [self::TARGET_PERSON_ID, [RoleCode::SITE_MANAGER]],
                 true,
             ],
             [
                 // When VALID-USER View SITE_ADMIN
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
                 [self::TARGET_PERSON_ID, [RoleCode::SITE_ADMIN]],
                 true,
             ],
             [
                 // When VALID-USER View TESTER
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
                 [self::TARGET_PERSON_ID, [RoleCode::TESTER]],
                 true,
             ],
             [
                 // When VALID-USER View NO-ROLES
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [RoleCode::USER]],
+                true,
+            ],
+            [
+                // When VALID-USER View NO-ROLES
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
                 [self::TARGET_PERSON_ID, []],
                 true,
@@ -211,52 +220,66 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 // When INVALID-USER View NO-ROLES
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, []],
                 [self::TARGET_PERSON_ID, []],
                 false,
             ],
             [
                 // When VALID-USER View AUTHORISED_EXAMINER_DESIGNATED_MANAGER
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DRIVING_LICENCE]],
-                [self::TARGET_PERSON_ID, [RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
+                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
                 true,
             ],
             [
                 // When VALID-USER View AUTHORISED_EXAMINER_DELEGATE
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DRIVING_LICENCE]],
-                [self::TARGET_PERSON_ID, [RoleCode::AUTHORISED_EXAMINER_DELEGATE]],
+                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE]],
                 true,
             ],
             [
                 // When VALID-USER View SITE_MANAGER
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DRIVING_LICENCE]],
                 [self::TARGET_PERSON_ID, [RoleCode::SITE_MANAGER]],
                 true,
             ],
             [
                 // When VALID-USER View SITE_ADMIN
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DRIVING_LICENCE]],
                 [self::TARGET_PERSON_ID, [RoleCode::SITE_ADMIN]],
                 true,
             ],
             [
                 // When VALID-USER View TESTER
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DRIVING_LICENCE]],
                 [self::TARGET_PERSON_ID, [RoleCode::TESTER]],
                 true,
             ],
             [
                 // When VALID-USER View NO-ROLES
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DRIVING_LICENCE]],
+                [self::TARGET_PERSON_ID, [RoleCode::USER]],
+                true,
+            ],
+            [
+                // When VALID-USER View NO-ROLES
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DRIVING_LICENCE]],
                 [self::TARGET_PERSON_ID, []],
                 true,
+            ],
+            [
+                // When AEDM-USER View TESTER: false
+                ContextProvider::NO_CONTEXT,
+                $this->getLoggedInPersonForDataProvider('AEDM'),
+                $this->getTargetPersonForDataProvider('TESTER'),
+                false,
             ],
         ];
     }
@@ -291,21 +314,28 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 // When NO-ROLES-USER View NO-ROLES With YOUR-PROFILE-CONTEXT
-                PersonProfileGuard::YOUR_PROFILE_CONTEXT,
+                ContextProvider::YOUR_PROFILE_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, []],
                 [self::TARGET_PERSON_ID, []],
                 true,
             ],
             [
                 // When NO-ROLES-USER View NO-ROLES With NO-CONTEXT
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, []],
                 [self::TARGET_PERSON_ID, []],
                 false,
             ],
             [
                 // When VALID-USER View NO-ROLES With NO-CONTEXT
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::PROFILE_EDIT_OTHERS_EMAIL_ADDRESS]],
+                [self::TARGET_PERSON_ID, [RoleCode::USER]],
+                true,
+            ],
+            [
+                // When VALID-USER View NO-ROLES With NO-CONTEXT
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::PROFILE_EDIT_OTHERS_EMAIL_ADDRESS]],
                 [self::TARGET_PERSON_ID, []],
                 true,
@@ -343,49 +373,56 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 // When INVALID-USER View NO-ROLES
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, []],
                 [self::TARGET_PERSON_ID, []],
                 false,
             ],
             [
                 // When VALID-USER View AEDM
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ADD_EDIT_DRIVING_LICENCE]],
-                [self::TARGET_PERSON_ID, [RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
+                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
                 true,
             ],
             [
                 // When VALID-USER View AED
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ADD_EDIT_DRIVING_LICENCE]],
-                [self::TARGET_PERSON_ID, [RoleCode::AUTHORISED_EXAMINER_DELEGATE]],
+                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE]],
                 true,
             ],
             [
                 // When VALID-USER View SITE-M
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ADD_EDIT_DRIVING_LICENCE]],
                 [self::TARGET_PERSON_ID, [RoleCode::SITE_MANAGER]],
                 true,
             ],
             [
                 // When VALID-USER View SITE-A
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ADD_EDIT_DRIVING_LICENCE]],
                 [self::TARGET_PERSON_ID, [RoleCode::SITE_ADMIN]],
                 true,
             ],
             [
                 // When VALID-USER View TESTER
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ADD_EDIT_DRIVING_LICENCE]],
                 [self::TARGET_PERSON_ID, [RoleCode::TESTER]],
                 true,
             ],
             [
                 // When VALID-USER View NO-ROLES
-                PersonProfileGuard::NO_CONTEXT,
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ADD_EDIT_DRIVING_LICENCE]],
+                [self::TARGET_PERSON_ID, [RoleCode::USER]],
+                true,
+            ],
+            [
+                // When VALID-USER View NO-ROLES
+                ContextProvider::NO_CONTEXT,
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ADD_EDIT_DRIVING_LICENCE]],
                 [self::TARGET_PERSON_ID, []],
                 true,
@@ -524,28 +561,75 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER]],
-                [self::TARGET_PERSON_ID, [RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER], []],
+                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER], []],
+                ContextProvider::NO_CONTEXT,
                 true,
             ],
             [
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER,]],
-                [self::TARGET_PERSON_ID, [RoleCode::AUTHORISED_EXAMINER_DELEGATE]],
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER], []],
+                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE], []],
+                ContextProvider::NO_CONTEXT,
                 true,
             ],
             [
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER]],
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER], []],
                 [self::TARGET_PERSON_ID, [RoleCode::SITE_MANAGER]],
+                ContextProvider::NO_CONTEXT,
                 true,
             ],
             [
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER]],
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER], []],
                 [self::TARGET_PERSON_ID, [RoleCode::SITE_ADMIN]],
+                ContextProvider::NO_CONTEXT,
                 true,
             ],
             [
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER]],
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER], []],
                 [self::TARGET_PERSON_ID, [RoleCode::TESTER]],
+                ContextProvider::NO_CONTEXT,
+                true,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [], []],
+                [self::TARGET_PERSON_ID, [RoleCode::TESTER]],
+                ContextProvider::NO_CONTEXT,
+                false,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [], [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
+                [self::TARGET_PERSON_ID, []],
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                true,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [], [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE]],
+                [self::TARGET_PERSON_ID, []],
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                true,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [], [RoleCode::SITE_ADMIN]],
+                [self::TARGET_PERSON_ID, []],
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                true,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [], [RoleCode::SITE_MANAGER]],
+                [self::TARGET_PERSON_ID, []],
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                true,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [], [RoleCode::TESTER]],
+                [self::TARGET_PERSON_ID, []],
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                true,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [], [RoleCode::USER]],
+                [self::TARGET_PERSON_ID, []],
+                ContextProvider::YOUR_PROFILE_CONTEXT,
                 true,
             ],
         ];
@@ -553,12 +637,23 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider canViewTradeRolesProvider
+     *
+     * @param array  $loggedInPerson
+     * @param array  $targetPerson
+     * @param string $context
+     * @param bool   $result
      */
-    public function testCanViewTradeRoles(array $loggedInPerson, array $targetPerson, $result)
+    public function testCanViewTradeRoles(array $loggedInPerson, array $targetPerson, $context, $result)
     {
+        $loggedInPersonPermissions = $loggedInPerson[1];
+        $loggedInPersonRoles = $loggedInPerson[2];
+        $context = $context ?: ContextProvider::NO_CONTEXT;
+
         $guard = $this
-            ->withPermissions($loggedInPerson[1])
+            ->withPermissions($loggedInPersonPermissions)
+            ->withRoles($loggedInPersonRoles)
             ->withTargetPerson($targetPerson[0], $targetPerson[1])
+            ->withContext($context)
             ->createPersonProfileGuard();
         $this->assertEquals($result, $guard->canViewTradeRoles());
     }
@@ -568,17 +663,17 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
         $guard = $this
             ->withEmptyPermissions()
             ->createPersonProfileGuard();
-        $this->assertFalse($guard->shouldDisplayTradeRoles());
+        $this->assertFalse($guard->canViewTradeRoles());
     }
 
-    public function testShouldNotDisplayTradeRolesWithEmptyTradeRoles()
+    public function testShouldDisplayTradeRolesEvenWithEmptyTradeRoles()
     {
-        $tradeRoles = [];
-
         $guard = $this
             ->withPermissions(PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER)
-            ->createPersonProfileGuard(self::LOGGED_IN_PERSON_ID, self::TARGET_PERSON_ID, $tradeRoles);
-        $this->assertFalse($guard->shouldDisplayTradeRoles());
+            ->withEmptyRoles()
+            ->withTargetPerson(self::TARGET_PERSON_ID, [])
+            ->createPersonProfileGuard(self::LOGGED_IN_PERSON_ID);
+        $this->assertTrue($guard->canViewTradeRoles());
     }
 
     public function testShouldDisplayTradeRoles()
@@ -589,7 +684,7 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
             ->withPermissions(PermissionInSystem::VIEW_TRADE_ROLES_OF_ANY_USER)
             ->withTargetPerson(self::TARGET_PERSON_ID)
             ->createPersonProfileGuard(self::LOGGED_IN_PERSON_ID);
-        $this->assertTrue($guard->shouldDisplayTradeRoles());
+        $this->assertTrue($guard->canViewTradeRoles());
     }
 
     public function testCantManageDvsaRolesIfMissingPermissions()
@@ -623,7 +718,7 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
                 true,
             ],
             [
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::MANAGE_DVSA_ROLES,]],
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::MANAGE_DVSA_ROLES]],
                 [self::TARGET_PERSON_ID, [RoleCode::SCHEME_USER]],
                 true,
             ],
@@ -664,7 +759,7 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::MANAGE_DVSA_ROLES]],
-                [self::TARGET_PERSON_ID, [RoleCode::FINANCE_]],
+                [self::TARGET_PERSON_ID, [RoleCode::FINANCE]],
                 true,
             ],
         ];
@@ -682,26 +777,6 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($result, $guard->canManageDvsaRoles());
     }
 
-    public function testCantChangeTesterQualificationStatus()
-    {
-        $guard = $this
-            ->withEmptyPermissions()
-            ->createPersonProfileGuard();
-        $this->assertFalse($guard->canChangeTesterQualificationStatus());
-
-        $guard = $this
-        ->withPermissions(PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS)
-        ->withTesterAuthorisation(AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, null)
-        ->createPersonProfileGuard();
-        $this->assertFalse($guard->canChangeTesterQualificationStatus());
-
-        $guard = $this
-            ->withPermissions(PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS)
-            ->withTesterAuthorisation(null, AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED)
-            ->createPersonProfileGuard();
-        $this->assertFalse($guard->canChangeTesterQualificationStatus());
-    }
-
     /**
      * Change tester qualification status.
      *
@@ -712,12 +787,12 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS]],
-                [self::TARGET_PERSON_ID, [RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
+                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
                 true,
             ],
             [
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS,]],
-                [self::TARGET_PERSON_ID, [RoleCode::AUTHORISED_EXAMINER_DELEGATE]],
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS]],
+                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE]],
                 true,
             ],
             [
@@ -735,6 +810,56 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
                 [self::TARGET_PERSON_ID, [RoleCode::TESTER]],
                 true,
             ],
+            [
+                [self::LOGGED_IN_PERSON_ID, []],
+                [self::TARGET_PERSON_ID, []],
+                false,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS]],
+                [self::TARGET_PERSON_ID, []],
+                true,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS]],
+                [self::TARGET_PERSON_ID, [], AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, null],
+                true,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS]],
+                [self::TARGET_PERSON_ID, [], null, AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED],
+                true,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS]],
+                [self::TARGET_PERSON_ID, [RoleCode::CUSTOMER_SERVICE_OPERATIVE], AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, null],
+                false,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS]],
+                [self::TARGET_PERSON_ID, [RoleCode::CUSTOMER_SERVICE_OPERATIVE], null, AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED],
+                false,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS]],
+                [self::TARGET_PERSON_ID, [RoleCode::CUSTOMER_SERVICE_OPERATIVE], AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED],
+                false,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS]],
+                [self::TARGET_PERSON_ID, [RoleCode::CUSTOMER_SERVICE_OPERATIVE], AuthorisationForTestingMotStatusCode::QUALIFIED, null],
+                false,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS]],
+                [self::TARGET_PERSON_ID, [RoleCode::CUSTOMER_SERVICE_OPERATIVE], null, AuthorisationForTestingMotStatusCode::QUALIFIED],
+                false,
+            ],
+            [
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS]],
+                [self::TARGET_PERSON_ID, [RoleCode::CUSTOMER_SERVICE_OPERATIVE], AuthorisationForTestingMotStatusCode::QUALIFIED, AuthorisationForTestingMotStatusCode::QUALIFIED],
+                true,
+            ],
         ];
     }
 
@@ -743,9 +868,13 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
      */
     public function testCanChangeTesterQualificationStatus(array $loggedInPerson, array $targetPerson, $result)
     {
+        $groupAStatus = isset($targetPerson[2]) ? $targetPerson[2] : null;
+        $groupBStatus = isset($targetPerson[3]) ? $targetPerson[3] : null;
+
         $guard = $this
             ->withPermissions($loggedInPerson[1])
             ->withTargetPerson($targetPerson[0], $targetPerson[1])
+            ->withTesterAuthorisation($groupAStatus, $groupBStatus)
             ->createPersonProfileGuard();
         $this->assertEquals($result, $guard->canChangeTesterQualificationStatus());
     }
@@ -774,10 +903,10 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
             ->createPersonProfileGuard();
         $this->assertFalse($guard->canViewAccountSecurity());
 
-        $invalidContexts = [PersonProfileGuard::AE_CONTEXT,
-            PersonProfileGuard::NO_CONTEXT,
-            PersonProfileGuard::USER_SEARCH_CONTEXT,
-            PersonProfileGuard::VTS_CONTEXT,];
+        $invalidContexts = [ContextProvider::AE_CONTEXT,
+            ContextProvider::NO_CONTEXT,
+            ContextProvider::USER_SEARCH_CONTEXT,
+            ContextProvider::VTS_CONTEXT,];
 
         foreach ($invalidContexts as $context) {
             $guard = $this
@@ -794,7 +923,7 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
         $guard = $this
             ->withEmptyPermissions()
             ->withTargetPerson(self::LOGGED_IN_PERSON_ID)
-            ->withContext(PersonProfileGuard::YOUR_PROFILE_CONTEXT)
+            ->withContext(ContextProvider::YOUR_PROFILE_CONTEXT)
             ->createPersonProfileGuard();
         $this->assertTrue($guard->canViewAccountSecurity());
     }
@@ -809,17 +938,17 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
         $guard = $this
             ->withPermissions(PermissionInSystem::MANAGE_USER_ACCOUNTS)
             ->withTargetPerson(self::LOGGED_IN_PERSON_ID)
-            ->withContext(PersonProfileGuard::YOUR_PROFILE_CONTEXT)
+            ->withContext(ContextProvider::YOUR_PROFILE_CONTEXT)
             ->createPersonProfileGuard();
         $this->assertFalse($guard->canViewAccountManagement());
     }
 
     public function testCanViewAccountManagement()
     {
-        $validContexts = [PersonProfileGuard::AE_CONTEXT,
-            PersonProfileGuard::NO_CONTEXT,
-            PersonProfileGuard::USER_SEARCH_CONTEXT,
-            PersonProfileGuard::VTS_CONTEXT,];
+        $validContexts = [ContextProvider::AE_CONTEXT,
+            ContextProvider::NO_CONTEXT,
+            ContextProvider::USER_SEARCH_CONTEXT,
+            ContextProvider::VTS_CONTEXT,];
 
         foreach ($validContexts as $context) {
             $guard = $this
@@ -861,11 +990,11 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
     public function contextProvider()
     {
         return [
-            [PersonProfileGuard::NO_CONTEXT, false],
-            [PersonProfileGuard::AE_CONTEXT, false],
-            [PersonProfileGuard::VTS_CONTEXT, false],
-            [PersonProfileGuard::USER_SEARCH_CONTEXT, false],
-            [PersonProfileGuard::YOUR_PROFILE_CONTEXT, false],
+            [ContextProvider::NO_CONTEXT, false],
+            [ContextProvider::AE_CONTEXT, false],
+            [ContextProvider::VTS_CONTEXT, false],
+            [ContextProvider::USER_SEARCH_CONTEXT, false],
+            [ContextProvider::YOUR_PROFILE_CONTEXT, false],
             ['Invalid context', true],
             ['', true],
             [null, true],
@@ -933,14 +1062,8 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
      *
      * @return $this
      */
-    private function withRoles($activeRoles)
+    private function withRoles(array $activeRoles)
     {
-        $activeRoles = (array) $activeRoles;
-
-        if (empty($permissionsToEnable)) {
-            return $this;
-        }
-
         $this
             ->authorisationService
             ->method('hasRole')
@@ -959,12 +1082,12 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $groupACode
-     * @param string $groupBCode
+     * @param string|null $groupACode
+     * @param string|null $groupBCode
      *
      * @return $this
      */
-    private function withTesterAuthorisation($groupACode, $groupBCode)
+    private function withTesterAuthorisation($groupACode = null, $groupBCode = null)
     {
         $groupAStatus = $this
             ->getMockBuilder(TesterGroupAuthorisationStatus::class)
@@ -1048,5 +1171,64 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
 
         return new PersonProfileGuard($this->authorisationService, $this->identityProvider, $this->personalDetails,
             $this->testerAuthorisation, $this->tradeRolesAndAssociations, $this->context);
+    }
+
+    /**
+     * Warning: this method makes assumptions about the database data which might fall out of sync.
+     *
+     * @param $role
+     *
+     * @return array
+     */
+    private function getLoggedInPersonForDataProvider($role)
+    {
+        $role = strtoupper($role);
+        $availableRoles = ['AED', 'AEDM','AO1', 'AO2', 'CSCO', 'CSM', 'NO-ROLES', 'SITE-A', 'SITE-M', 'SM', 'SU',
+            'TESTER', 'VE', ];
+        if (!in_array($role, $availableRoles)) {
+            throw new InvalidArgumentException(sprintf('Unknown role "%s"', $role));
+        }
+
+        $permissions = [];
+
+        switch ($role) {
+            case 'AEDM':
+                break;
+        }
+
+        return [
+            self::LOGGED_IN_PERSON_ID,
+            $permissions,
+        ];
+    }
+
+    /**
+     * Warning: this method makes assumptions about the database data which might fall out of sync.
+     *
+     * @param $role
+     *
+     * @return array
+     */
+    private function getTargetPersonForDataProvider($role)
+    {
+        $role = strtoupper($role);
+        $availableRoles = ['AED', 'AEDM','AO1', 'AO2', 'CSCO', 'CSM', 'NO-ROLES', 'SITE-A', 'SITE-M', 'SM', 'SU',
+            'TESTER', 'VE', ];
+        if (!in_array($role, $availableRoles)) {
+            throw new InvalidArgumentException(sprintf('Unknown role "%s"', $role));
+        }
+
+        $roles = [];
+
+        switch ($role) {
+            case 'TESTER':
+                $roles[] = [RoleCode::TESTER];
+                break;
+        }
+
+        return [
+            self::TARGET_PERSON_ID,
+            $roles,
+        ];
     }
 }

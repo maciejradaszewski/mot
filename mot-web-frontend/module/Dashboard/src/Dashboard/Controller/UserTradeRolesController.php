@@ -1,4 +1,9 @@
 <?php
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
 
 namespace Dashboard\Controller;
 
@@ -14,31 +19,69 @@ use Dashboard\Service\TradeRolesAssociationsService;
 use Dashboard\ViewModel\RemoveRoleViewModel;
 use Dashboard\ViewModel\UserTradeRolesViewModel;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
+use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
 use DvsaClient\Mapper\BusinessPositionMapperInterface;
 use DvsaClient\Mapper\OrganisationPositionMapper;
 use DvsaClient\Mapper\SitePositionMapper;
 use DvsaCommon\ApiClient\Person\PersonTradeRoles\Dto\PersonTradeRoleDto;
 use DvsaCommon\ApiClient\Person\PersonTradeRoles\PersonTradeRolesApiResource;
 use DvsaCommon\Constants\FeatureToggle;
-use DvsaCommon\Enum\RoleCode;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\Utility\ArrayUtils;
 use Zend\View\Model\ViewModel;
 
+/**
+ * UserTradeRoles Controller.
+ */
 class UserTradeRolesController extends AbstractAuthActionController
 {
     const ROUTE_REMOVE_AE_ROLE = 'user-home/profile/byId/remove-ae-role';
     const ROUTE_REMOVE_VTS_ROLE = 'user-home/profile/byId/remove-vts-role';
     const ROUTE_TRADE_ROLES = 'user-home/profile/byId/trade-roles';
 
+    /**
+     * @var MotFrontendIdentityProviderInterface
+     */
     private $identityProvider;
+
+    /**
+     * @var TradeRolesAssociationsService
+     */
     private $tradeRolesAssociationsService;
+
+    /**
+     * @var ViewTradeRolesAssertion
+     */
     private $viewTradeRolesAssertion;
+
+    /**
+     * @var MotFrontendAuthorisationServiceInterface
+     */
     private $authorisationService;
+
+    /**
+     * @var OrganisationPositionMapper
+     */
     private $organisationPositionMapper;
+
+    /**
+     * @var SitePositionMapper
+     */
     private $sitePositionMapper;
+
+    /**
+     * @var PersonTradeRolesApiResource
+     */
     private $personTradeRolesApiResource;
+
+    /**
+     * @var EnumCatalog
+     */
     private $catalog;
+
+    /**
+     * @var MotAuthorizationRefresherInterface
+     */
     private $authorisationRefresher;
 
     /**
@@ -46,6 +89,26 @@ class UserTradeRolesController extends AbstractAuthActionController
      */
     private $personTradeRoleSorter;
 
+    /**
+     * @var PersonProfileUrlGenerator
+     */
+    private $personProfileUrlGenerator;
+
+    /**
+     * UserTradeRolesController constructor.
+     *
+     * @param MotFrontendIdentityProviderInterface     $identityProvider
+     * @param TradeRolesAssociationsService            $tradeRolesAssociationsService
+     * @param ViewTradeRolesAssertion                  $viewTradeRolesAssertion
+     * @param MotFrontendAuthorisationServiceInterface $authorisationService
+     * @param OrganisationPositionMapper               $organisationPositionMapper
+     * @param SitePositionMapper                       $sitePositionMapper
+     * @param PersonTradeRolesApiResource              $personTradeRolesApiResource
+     * @param EnumCatalog                              $catalog
+     * @param MotAuthorizationRefresherInterface       $authorisationRefresher
+     * @param PersonTradeRoleSorterService             $personTradeRoleSorter
+     * @param PersonProfileUrlGenerator                $personProfileUrlGenerator
+     */
     public function __construct(
         MotFrontendIdentityProviderInterface $identityProvider,
         TradeRolesAssociationsService $tradeRolesAssociationsService,
@@ -56,9 +119,9 @@ class UserTradeRolesController extends AbstractAuthActionController
         PersonTradeRolesApiResource $personTradeRolesApiResource,
         EnumCatalog $catalog,
         MotAuthorizationRefresherInterface $authorisationRefresher,
-        PersonTradeRoleSorterService $personTradeRoleSorter
-    )
-    {
+        PersonTradeRoleSorterService $personTradeRoleSorter,
+        PersonProfileUrlGenerator $personProfileUrlGenerator
+    ) {
         $this->identityProvider = $identityProvider;
         $this->tradeRolesAssociationsService = $tradeRolesAssociationsService;
         $this->viewTradeRolesAssertion = $viewTradeRolesAssertion;
@@ -69,11 +132,17 @@ class UserTradeRolesController extends AbstractAuthActionController
         $this->catalog = $catalog;
         $this->authorisationRefresher = $authorisationRefresher;
         $this->personTradeRoleSorter = $personTradeRoleSorter;
+        $this->personProfileUrlGenerator = $personProfileUrlGenerator;
     }
 
+    /**
+     * @throws \DvsaCommon\Exception\UnauthorisedException
+     *
+     * @return array
+     */
     public function indexAction()
     {
-        $personId = (int)$this->params()->fromRoute('id');
+        $personId = (int) $this->params()->fromRoute('id');
 
         $this->viewTradeRolesAssertion->assertGratedViewProfileTradeRolesPage($personId);
 
@@ -101,13 +170,18 @@ class UserTradeRolesController extends AbstractAuthActionController
 
         $urlHelper = $this->getServiceLocator()->get('ViewHelperManager')->get('url');
 
+        $previousUrl = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->personProfileUrlGenerator->toPersonProfile() : '';
+
         $vm = new UserTradeRolesViewModel($this->authorisationService,
             $this->personTradeRoleSorter->sortTradeRoles($tradeRoles),
             $this->catalog->businessRole(),
             $urlHelper,
-            $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)
+            $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE),
+            $this->personProfileUrlGenerator,
+            $previousUrl
         );
-        $vm->setPersonId((int)$this->params()->fromRoute('id'));
+        $vm->setPersonId((int) $this->params()->fromRoute('id'));
         $vm->setPersonIsViewingOwnProfile($personIsViewingOwnProfile);
 
         return [
@@ -115,6 +189,14 @@ class UserTradeRolesController extends AbstractAuthActionController
         ];
     }
 
+    /**
+     * @param BusinessPositionMapperInterface $positionMapper
+     * @param $roleType
+     *
+     * @throws \DvsaCommon\Exception\UnauthorisedException
+     *
+     * @return \Zend\Http\Response|\Zend\View\Model\ViewModel
+     */
     protected function removeRole(BusinessPositionMapperInterface $positionMapper, $roleType)
     {
         $positionId = $this->params()->fromRoute('positionId');
@@ -140,11 +222,15 @@ class UserTradeRolesController extends AbstractAuthActionController
                 $this->addErrorMessages($e->getDisplayMessages());
             }
 
-            return $this->redirect()->toRoute(self::ROUTE_TRADE_ROLES, ['id' => $personId]);
+            return true === $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)
+                ? $this->redirect()->toUrl($this->personProfileUrlGenerator->fromPersonProfile('trade-roles'))
+                : $this->redirect()->toRoute(self::ROUTE_TRADE_ROLES, ['id' => $personId]);
         }
 
         if (!$personTradeRole) {
-            return $this->redirect()->toRoute(self::ROUTE_TRADE_ROLES, ['id' => $personId]);
+            return true === $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)
+                ? $this->redirect()->toUrl($this->personProfileUrlGenerator->fromPersonProfile('trade-roles'))
+                : $this->redirect()->toRoute(self::ROUTE_TRADE_ROLES, ['id' => $personId]);
         }
 
         $removeRoleViewModel = (new RemoveRoleViewModel())
@@ -162,6 +248,9 @@ class UserTradeRolesController extends AbstractAuthActionController
         return $viewModel;
     }
 
+    /**
+     * @param PersonTradeRoleDto $personTradeRole
+     */
     private function clearCurrentVtsIfNeeded(PersonTradeRoleDto $personTradeRole)
     {
         $roleType = $this->catalog->businessRole()->getByCode($personTradeRole->getRoleCode())->getType();
@@ -181,11 +270,17 @@ class UserTradeRolesController extends AbstractAuthActionController
         }
     }
 
+    /**
+     * @return \Zend\Http\Response|\Zend\View\Model\ViewModel
+     */
     public function removeVtsRoleAction()
     {
         return $this->removeRole($this->sitePositionMapper, BusinessRole::SITE_TYPE);
     }
 
+    /**
+     * @return \Zend\Http\Response|\Zend\View\Model\ViewModel
+     */
     public function removeAeRoleAction()
     {
         return $this->removeRole($this->organisationPositionMapper, BusinessRole::ORGANISATION_TYPE);
@@ -194,6 +289,7 @@ class UserTradeRolesController extends AbstractAuthActionController
     /**
      * @param $tradeRoleId
      * @param $personId
+     *
      * @return PersonTradeRoleDto
      */
     public function getPersonTradeRole($tradeRoleId, $personId)

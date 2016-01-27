@@ -6,7 +6,8 @@ import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
-import uk.gov.dvsa.ui.pages.profile.ProfilePage;
+import uk.gov.dvsa.ui.pages.profile.NewPersonProfilePage;
+import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
 
 public class ChangePasswordFromProfilePage extends Page {
 
@@ -46,7 +47,7 @@ public class ChangePasswordFromProfilePage extends Page {
 
     public ProfilePage clickCancelLink() {
         cancelLink.click();
-        return new ProfilePage(driver);
+        return MotPageFactory.getProfilePageInstance(new NewPersonProfilePage(driver), new PersonProfilePage(driver));
     }
 
     public <T extends Page> T clickSubmitButton(Class<T> clazz) {

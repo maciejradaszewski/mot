@@ -3,6 +3,7 @@
 namespace UserAdmin\Factory\Service;
 
 use DvsaClient\MapperFactory;
+use DvsaFeature\FeatureToggles;
 use UserAdmin\Service\HelpdeskAccountAdminService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -14,14 +15,21 @@ class HelpdeskAccountAdminServiceFactory implements FactoryInterface
 {
     /**
      * @param ServiceLocatorInterface $serviceLocator
+     *
      * @return HelpdeskAccountAdminService
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $authorisationService = $serviceLocator->get("AuthorisationService");
+        /** @var FeatureToggles $featureToggles */
+        $featureToggles = $serviceLocator->get('Feature\FeatureToggles');
         /** @var MapperFactory $mapperFactory */
         $mapperFactory = $serviceLocator->get(MapperFactory::class);
 
-        return new HelpdeskAccountAdminService($authorisationService, $mapperFactory->UserAdmin);
+        return new HelpdeskAccountAdminService(
+            $authorisationService,
+            $mapperFactory->UserAdmin,
+            $featureToggles
+        );
     }
 }

@@ -3,19 +3,23 @@
 namespace UserAdminTest\Controller;
 
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
+use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
 use DvsaClient\Entity\TesterAuthorisation;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
+use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Dto\Person\PersonContactDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
-use UserAdmin\Service\HelpdeskAccountAdminService;
-use Zend\View\Model\ViewModel;
-use Zend\Session\Container;
 use UserAdmin\Controller\EmailAddressController;
+use UserAdmin\Service\HelpdeskAccountAdminService;
+use Zend\Session\Container;
+use Zend\View\Model\ViewModel;
 
 class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
 {
@@ -25,6 +29,21 @@ class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
     private $helpdeskAccountAdminServiceMock;
     private $authorisationMock;
     private $testerGroupAuthorisationMapper;
+
+    /**
+     * @var MapperFactory
+     */
+    private $mapperFactory;
+
+    /**
+     * @var PersonProfileUrlGenerator
+     */
+    private $personProfileUrlGenerator;
+
+    /**
+     * @var ContextProvider
+     */
+    private $contextProvider;
 
     public function setUp()
     {
@@ -39,15 +58,34 @@ class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
             ->method('getAuthorisation')
             ->willReturn(new TesterAuthorisation());
 
+        $this->mapperFactory = $this
+            ->getMockBuilder(MapperFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->personProfileUrlGenerator = $this
+            ->getMockBuilder(PersonProfileUrlGenerator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->contextProvider = $this
+            ->getMockBuilder(ContextProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->setController(
             new EmailAddressController(
                 $this->authorisationMock,
                 $this->helpdeskAccountAdminServiceMock,
-                $this->testerGroupAuthorisationMapper
+                $this->testerGroupAuthorisationMapper,
+                $this->mapperFactory,
+                $this->personProfileUrlGenerator,
+                $this->contextProvider
             )
         );
 
         $this->getController()->setServiceLocator($serviceManager);
+        $this->withFeatureToggles([FeatureToggle::NEW_PERSON_PROFILE => false]);
 
         $this->createHttpRequestForController('index');
 
@@ -94,7 +132,6 @@ class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
         if (!empty($expect['viewModel'])) {
             $this->assertInstanceOf(ViewModel::class, $result);
             $this->assertResponseStatus(self::HTTP_OK_CODE);
-
         }
 
         if (!empty($expect['flashError'])) {
@@ -159,7 +196,7 @@ class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
                 ],
                 'expect' => [
                     'viewModel' => false,
-                    'url'       => UserAdminUrlBuilderWeb::of()->UserProfile(self::PERSON_ID)
+                    'url'       => UserAdminUrlBuilderWeb::of()->UserProfile(self::PERSON_ID),
                 ],
             ],
             // -- non-matching email fields --
@@ -184,12 +221,12 @@ class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
                         'method' => 'updatePersonContactEmail',
                         'params' => [self::PERSON_ID, self::EMAIL],
                         'result' => new PersonContactDto(),
-                        'with'   => $this->never()
+                        'with'   => $this->never(),
                     ],
                 ],
                 'expect' => [
                     'viewModel' => true,
-                    'flashError' => 'Emails do not match'
+                    'flashError' => 'Emails do not match',
                 ],
             ],
             // -- blank email fields --
@@ -214,14 +251,14 @@ class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
                         'method' => 'updatePersonContactEmail',
                         'params' => [self::PERSON_ID, self::EMAIL],
                         'result' => new PersonContactDto(),
-                        'with'   => $this->never()
+                        'with'   => $this->never(),
                     ],
                 ],
                 'expect' => [
                     'viewModel' => true,
-                    'flashError' => 'Email cannot be blank'
+                    'flashError' => 'Email cannot be blank',
                 ],
-            ]
+            ],
         ];
     }
 }

@@ -1,4 +1,9 @@
 <?php
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
 
 namespace Dashboard\Factory\Controller;
 
@@ -8,13 +13,22 @@ use Dashboard\Authorisation\ViewTradeRolesAssertion;
 use Dashboard\Controller\UserTradeRolesController;
 use Dashboard\Service\PersonTradeRoleSorterService;
 use Dashboard\Service\TradeRolesAssociationsService;
+use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
 use DvsaClient\MapperFactory;
 use DvsaCommon\ApiClient\Person\PersonTradeRoles\PersonTradeRolesApiResource;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 
+/**
+ * Class UserTradeRolesControllerFactory.
+ */
 class UserTradeRolesControllerFactory extends AbstractFrontendControllerFactory
 {
+    /**
+     * @param \Zend\ServiceManager\ServiceLocatorInterface $controllerManager
+     *
+     * @return \Dashboard\Controller\UserTradeRolesController
+     */
     public function createController(ServiceLocatorInterface $controllerManager)
     {
         /** @var ServiceManager $serviceLocator */
@@ -22,6 +36,9 @@ class UserTradeRolesControllerFactory extends AbstractFrontendControllerFactory
 
         /** @var MapperFactory $mapperFactory */
         $mapperFactory = $serviceLocator->get(MapperFactory::class);
+
+        /** @var PersonProfileUrlGenerator $personProfileUrlGenerator */
+        $personProfileUrlGenerator = $serviceLocator->get(PersonProfileUrlGenerator::class);
 
         return new UserTradeRolesController(
             $serviceLocator->get('MotIdentityProvider'),
@@ -33,7 +50,8 @@ class UserTradeRolesControllerFactory extends AbstractFrontendControllerFactory
             $this->getApiResource(PersonTradeRolesApiResource::class),
             $serviceLocator->get(EnumCatalog::class),
             $serviceLocator->get('AuthorisationService'),
-            $serviceLocator->get(PersonTradeRoleSorterService::class)
+            $serviceLocator->get(PersonTradeRoleSorterService::class),
+            $personProfileUrlGenerator
         );
     }
 }

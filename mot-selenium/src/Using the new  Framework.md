@@ -6,13 +6,11 @@ This suite builds on the Selenium WebDriver browser automation library. It utili
 
 
 * 1.2 **The Page Object Pattern  **  
-The Page Object Pattern gives us a common sense way to model content in a reusable and maintainable way. it allows us to apply the same principles of modularity, reuse and encapsulation that we use in other aspects of programming to avoid redundancy withtin the suite.  
-**From the WebDriver wiki page on the Page Object Pattern:**
+The Page Object Pattern gives us a common sense way to model content in a reusable and maintainable way. it allows us to apply the same principles of modularity, reuse and encapsulation that we use in other aspects of programming to avoid redundancy within the suite.
 
 > **Within your web app’s UI there are areas that your tests interact with. A Page Object simply models these as objects within the test code. This reduces the amount of duplicated code and means that if the UI changes, the fix need only be applied in one place.**
 
-The Page Object Pattern is an important technique, and this suite provides first class support via the Page class.
-
+> -- Webdriver Wikipedia page
 
 ##2. The Mot App Web Driver
 * 2.1 **The Mot App Driver Implementation**  
@@ -30,26 +28,27 @@ Example Usage in BaseTest
         driver = webDriverConfigurator.get().getDriver();
 
 * 2.2 **The base url**  
-      The driver instances maintain a baseUrl property that is used to resolve all relative URLs. This value can come from configuration or can be explicitly set on the driver.
+      The driver instance maintain a baseUrl property that is used to resolve all relative URLs. This value can come from configuration or by uing the setter method.
+            
 * 2.3 **The User Field**  
 The driver instances maintain a User property, when set, it can be used for verification purposes on the current page. The MotAppDriver has a setter method to set the User.
 
  		public void setUser(User user){
-        this.user = user;
+           this.user = user;
     	}
     
 * 2.4 **The navigateToPath(String path) method**   
 	This method takes a path parameter, appends it to the baseUrl and navigates to that full Url. For this to function correctly, **every page object created must have a defined public final constant PATH**, except the page cannot be navigated to directly. e.g. Modal Pages.
 	
 		public void navigateToPath(String path){
-        remoteWebDriver.get(baseUrl + path);
+          remoteWebDriver.get(baseUrl + path);
     	}
 
 * 2.5 **The loadBaseUrl() method**
 This is custom method within the MotAppDriver, when set, this method simply navigate via the browser to the baseUrl without appending any path, Users can navigate the app from baseUrl via actual page interactions. 
 
 		public void loadBaseUrl(){
-        remoteWebDriver.get(baseUrl);
+           remoteWebDriver.get(baseUrl);
 	    }
 
 ##3. **Page**  
@@ -62,13 +61,13 @@ The Page class is responsible for initialising the element on all child classes 
  		public Page(MotAppDriver driver) {
         	this.driver = driver;
         	PageFactory.initElements(driver, this);
-        	PageInteractionHelper.getInstance(driver);
+        	PageInteractionHelper.setDriver(driver);
         	PhpInlineErrorVerifier.verifyErrorAtPage(driver, getTitle());
    	 	}
 
 * 3.2 **The selfVerify() method**  
-This is an abstract method which must be implemented by all child class of the super class Page. Page uses this method for checking if it is pointing at a given page. it doesnt limit checking to only page title, but also for any other element where the current page does not have a title.
-
+This is an abstract method which must be implemented by all child class of the super class Page. Page uses this method for checking if it is pointing at a given page. it doesnt limit checking to only page title, sometimes verfification might require more than title.
+ 
 		@Override
     	protected boolean selfVerify() {
         	PageInteractionHelper.waitForElementToBeVisible(modalTitle, Configurator.defaultWebElementTimeout);
@@ -78,17 +77,17 @@ This is an abstract method which must be implemented by all child class of the s
 
 ##4. The Navigator Class
 * 4.1 **The PageNavigator Class**
-The PageNavigator class handles all navigation request from the test class, it removes the need for the test class to know/have deep knowledge of what page object exists. All cookie/session creation is handled within this class.
+The PageNavigator class handles all navigation request passed from the MotUI delegate class to other delegate classes, it removes the need for the test class to know/have deep knowledge of what page object exists. All cookie/session creation is handled within this class. It uses a generic method navigateToPage which takes a user object, string and return object.
 
-		 AccountClaimPage accountClaimPage = pageNavigator.gotoAccountClaimPage(user);
-
+		ProfilePage profilePage = pageNavigator.navigateToPage(user, ProfilePage.PATH, ProfilePage.class);
+		
 * 4.2 **The injectOpenAmCookieAndNavigateToPath(User user, String path) method.**
  This method handles setting the user in the driver instance, adding the session cookie to the current browser and calls the driver.navigateToPath() method.
  
  		private void injectOpenAmCookieAndNavigateToPath(User user, String path) throws IOException {
         	driver.setUser(user);
-        	driver.manage().addCookie(getCookieForUser(user));
-        	driver.navigateToPath(path);
+            addCookieToBrowser(user);
+        	navigateToPath(path);
     	}
 
 ##5. Testing
@@ -102,17 +101,14 @@ Build Verification test is a set of tests run on every new build to verify that 
  e.g.
 The below story covers an end to end flow of the User Account claim process.
 
- 		Given I am on the AccountClaim page to my claim my account
-		And I Enter a valid Email Address and a compliant Password
-        And I set my security answers and Review my account
-		When I verify my details entered
-        AccountClaimConfirmationPage claimConfirmationPage = claimReviewPage.clickClaimYourAccountButton();
-		Then verify a pin number is displayed
- 		And user is directed to the HomePage
+ 		Given I am on the AccountClaim page
+		When I complete all forms with valid details
+		Then I can get my PIN number
  		
 * 5.1.2 **Writing Test**
 Test clasess should be written in Gherkin Syntax
-**Given I am logged in as Wilson**  
+
+>**Given I am logged in as Wilson**  
 **When I try to post to Expensive Therapy**  
 **Then I should see "Your article was published.**
 

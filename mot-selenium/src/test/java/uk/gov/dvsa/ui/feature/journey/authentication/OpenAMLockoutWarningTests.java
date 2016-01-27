@@ -27,7 +27,7 @@ public class OpenAMLockoutWarningTests extends BaseTest {
 
         // When I try for the 4th time
         LoginPage loginPage = pageNavigator.goToLoginPage();
-        WarningPage warningPage = loginPage.login(LockOutWarningPage.class, user.getUsername(),  "Wrong");
+        WarningPage warningPage = loginPage.login(user.getUsername(), "Wrong", LockOutWarningPage.class);
 
         // Then I am redirected to Lockout warning page
         warningPage.isMessageDisplayed();
@@ -42,7 +42,7 @@ public class OpenAMLockoutWarningTests extends BaseTest {
 
         // When I try the 5th time
         LoginPage loginPage = pageNavigator.goToLoginPage();
-        WarningPage warningPage = loginPage.login(LockedAccountWarningPage.class, user.getUsername(), "Wrong");
+        WarningPage warningPage = loginPage.login(user.getUsername(), "Wrong", LockedAccountWarningPage.class);
 
         // Then my account should be locked
         warningPage.isMessageDisplayed();

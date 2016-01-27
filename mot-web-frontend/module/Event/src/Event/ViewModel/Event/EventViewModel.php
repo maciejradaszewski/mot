@@ -47,6 +47,9 @@ class EventViewModel
     /* @var string $eventType */
     private $eventType;
 
+    /** @var string $previousRoute */
+    private $previousRoute;
+
     /**
      * @param OrganisationDto          $organisation
      * @param VehicleTestingStationDto $site
@@ -55,6 +58,7 @@ class EventViewModel
      * @param string                   $eventType
      * @param int                      $id
      * @param bool                     $newProfileEnabled
+     * @param string|null              $previousRoute
      */
     public function __construct(
         $organisation,
@@ -63,7 +67,8 @@ class EventViewModel
         EventFormDto $formModel,
         $eventType,
         $id,
-        $newProfileEnabled
+        $newProfileEnabled,
+        $previousRoute = null
     ) {
         $this->setOrganisation($organisation);
         $this->setSite($site);
@@ -72,6 +77,7 @@ class EventViewModel
         $this->setEventType($eventType);
         $this->setId($id);
         $this->newProfileEnabled = $newProfileEnabled;
+        $this->previousRoute = $previousRoute;
     }
 
     /**
@@ -83,7 +89,12 @@ class EventViewModel
      */
     public function getEventDetailLink($eventId)
     {
-        return EventUrlBuilderWeb::of()->eventDetail($this->getId(), $eventId, $this->getEventType());
+        $url = EventUrlBuilderWeb::of()->eventDetail($this->getId(), $eventId, $this->getEventType())->toString();
+        if ($this->newProfileEnabled) {
+            return $url . '?previousRoute=' . $this->previousRoute;
+        } else {
+            return $url;
+        }
     }
 
     /**
@@ -99,7 +110,14 @@ class EventViewModel
             case 'site':
                 return SiteUrlBuilderWeb::of($this->site->getId());
             case 'person':
-                return $this->newProfileEnabled ? '/preview/profile/' . $this->person->getId() : UserAdminUrlBuilderWeb::userProfile($this->person->getId());
+                if ($this->newProfileEnabled) {
+                    if (null === $this->previousRoute) {
+                        return '/your-profile/' . $this->person->getId();
+                    } else {
+                        return $this->previousRoute;
+                    }
+                }
+                return UserAdminUrlBuilderWeb::userProfile($this->person->getId());
         }
 
         return '';
@@ -177,7 +195,7 @@ class EventViewModel
             $result[] = [
                 'type' => [
                     'type' => $event->getType(),
-                    'url'  => $this->getEventDetailLink($event->getId())->toString() . '?' .
+                    'url'  => $this->getEventDetailLink($event->getId()) . '?' .
                         http_build_query($this->formModel->toArray()),
                 ],
                 'date'        => DateTimeDisplayFormat::textDateTimeShort($event->getDate()),

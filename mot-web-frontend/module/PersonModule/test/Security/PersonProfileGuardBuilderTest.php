@@ -11,6 +11,7 @@ use Dashboard\Model\PersonalDetails;
 use Dashboard\Service\TradeRolesAssociationsService;
 use Dvsa\Mot\Frontend\PersonModule\Security\PersonProfileGuard;
 use Dvsa\Mot\Frontend\PersonModule\Security\PersonProfileGuardBuilder;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use DvsaClient\Entity\TesterAuthorisation;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
@@ -80,7 +81,7 @@ class PersonProfileGuardBuilderTest extends \PHPUnit_Framework_TestCase
         $personalDetails = $this->createPersonalDetails(1);
 
         $this->assertInstanceOf(PersonProfileGuard::class, $this->builder->createPersonProfileGuard($personalDetails,
-            PersonProfileGuard::NO_CONTEXT));
+            ContextProvider::NO_CONTEXT));
     }
 
     /**

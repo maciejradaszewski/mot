@@ -38,7 +38,7 @@ public class VehicleSearchPageViewTests extends BaseTest {
     public void breadCrumbTrailIsDisplayed() throws IOException, URISyntaxException {
 
         //Given I'm on the vehicle search page
-        VehicleSearchPage vehicleSearchPage = pageNavigator.goToPage(tester, VehicleSearchPage.PATH, VehicleSearchPage.class);
+        VehicleSearchPage vehicleSearchPage = pageNavigator.navigateToPage(tester, VehicleSearchPage.PATH, VehicleSearchPage.class);
 
         //I Expect the BreadCrumb to contain Mot Testing
         assertThat("Mot Testing Crumb Trail not displayed properly",
@@ -50,7 +50,7 @@ public class VehicleSearchPageViewTests extends BaseTest {
     public void validationMessageIsDisplayedForInvalidRegOrVin() throws IOException, URISyntaxException {
 
         //Given I'm on vehicle search page
-        VehicleSearchPage vehicleSearchPage = pageNavigator.goToPage(tester, VehicleSearchPage.PATH, VehicleSearchPage.class);
+        VehicleSearchPage vehicleSearchPage = pageNavigator.navigateToPage(tester, VehicleSearchPage.PATH, VehicleSearchPage.class);
 
         //When I search for vehicle without registration and VIN
         vehicleSearchPage.searchVehicle("", "");
@@ -68,7 +68,7 @@ public class VehicleSearchPageViewTests extends BaseTest {
     public void validRegAndVinReturnsCorrectVehicle() throws IOException, URISyntaxException {
 
         //Given I'm on vehicle search page
-        VehicleSearchPage vehicleSearchPage = pageNavigator.goToPage(tester, VehicleSearchPage.PATH, VehicleSearchPage.class);
+        VehicleSearchPage vehicleSearchPage = pageNavigator.navigateToPage(tester, VehicleSearchPage.PATH, VehicleSearchPage.class);
 
         //When I search for a vehicle with correct VIN and registration number
         vehicleSearchPage.searchVehicle(vehicle.getRegistrationNumber(), vehicle.getVin());

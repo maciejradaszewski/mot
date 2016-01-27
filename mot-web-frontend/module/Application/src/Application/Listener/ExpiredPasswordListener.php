@@ -42,7 +42,9 @@ class ExpiredPasswordListener
         'account/claim/review',
         'account/claim/reset',
         'user-home/profile/change-password',
-        'user-home/profile/change-password/confirmation'
+        'user-home/profile/change-password/confirmation',
+        'newProfile/profile/change-password',
+        'newProfile/profile/change-password/confirmation'
     ];
 
     public function __construct(

@@ -32,12 +32,21 @@ class EventDetailViewModel
     /** @var EventFormDto */
     private $formModel;
 
+    /** @var bool */
+    private $usingNewProfile;
+
+    /** @var string */
+    private $previousRoute;
+
     /**
      * @param OrganisationDto          $organisation
      * @param VehicleTestingStationDto $site
      * @param Person                   $person
      * @param string                   $eventType
      * @param EventDto                 $event
+     * @param EventFormDto             $formModel
+     * @param bool                     $usingNewProfile
+     * @param string                   $previousRoute
      */
     public function __construct(
         $organisation,
@@ -45,8 +54,13 @@ class EventDetailViewModel
         $person,
         $event,
         $eventType,
-        $formModel
+        $formModel,
+        $usingNewProfile,
+        $previousRoute
     ) {
+        $this->usingNewProfile = $usingNewProfile;
+        $this->previousRoute = $previousRoute;
+
         $this->setOrganisation($organisation);
         $this->setSite($site);
         $this->setPerson($person);
@@ -63,23 +77,32 @@ class EventDetailViewModel
      */
     public function getGoBackLink()
     {
+        $url = '';
+
         switch ($this->eventType) {
             case 'ae':
-                return EventUrlBuilderWeb::of()->eventList(
+                $url = EventUrlBuilderWeb::of()->eventList(
                     $this->organisation->getId(),
                     $this->getEventType()
                 )->toString() . '?' . http_build_query($this->formModel->toArray());
+                break;
             case 'site':
-                return EventUrlBuilderWeb::of()
+                $url = EventUrlBuilderWeb::of()
                     ->eventList($this->site->getId(), $this->getEventType())
                     ->toString() . '?' . http_build_query($this->formModel->toArray());
+                break;
             case 'person':
-                return EventUrlBuilderWeb::of()->eventList(
+                $url = EventUrlBuilderWeb::of()->eventList(
                     $this->person->getId(), $this->getEventType()
                 )->toString() . '?' . http_build_query($this->formModel->toArray());
+                break;
         }
 
-        return '';
+        if ($this->usingNewProfile && null !== $this->previousRoute) {
+            $url = $url . '&previousRoute=' . $this->previousRoute;
+        }
+
+        return $url;
     }
 
     /**

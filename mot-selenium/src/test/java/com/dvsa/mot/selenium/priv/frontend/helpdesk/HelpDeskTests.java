@@ -27,7 +27,7 @@ public class HelpDeskTests extends BaseTest {
 
     private AeService aeService = new AeService();
 
-    @Test(groups = {"VM-4880", "VM-4881", "VM-4842", "VM-7724", "V-Sprint10", "W-Sprint5",
+    @Test(testName = "Legacy", groups = {"VM-4880", "VM-4881", "VM-4842", "VM-7724", "V-Sprint10", "W-Sprint5",
             "Regression", "slice_D"}, description = "Verify ResetPassword functionality")
     public void testHelpdeskResetPasswordSuccessfully() {
 
@@ -50,7 +50,7 @@ public class HelpDeskTests extends BaseTest {
                 "Check the correct message is displayed when reset password is triggered by post");
     }
 
-    @Test(groups = {"VM-4880", "VM-4881", "VM-4842", "VM-7724", "V-Sprint10", "W-Sprint5",
+    @Test(testName = "Legacy", groups = {"VM-4880", "VM-4881", "VM-4842", "VM-7724", "V-Sprint10", "W-Sprint5",
             "Regression", "slice_D"}, description = "Verify RecoverUserName functionality")
     public void testHelpdeskResetUsernameSuccessfully() {
 
@@ -73,7 +73,7 @@ public class HelpDeskTests extends BaseTest {
                 "Check the correct message is displayed when username recovery is triggered by post");
     }
 
-    @Test(groups = {"VM-4880", "VM-4842", "VM-7724", "V-Sprint10", "W-Sprint5", "Regression",
+    @Test(testName = "Legacy", groups = {"VM-4880", "VM-4842", "VM-7724", "V-Sprint10", "W-Sprint5", "Regression",
             "slice_D"}, description = "Verify ReturnToHome functionality in the user profile page")
     public void testGoToUserProfilePageAndGoToHome() {
         Login user = createTester(true);
@@ -106,7 +106,7 @@ public class HelpDeskTests extends BaseTest {
                 {Login.LOGIN_ENFTESTER4}};
     }
 
-    @Test(groups = {"VM-7295", "Regression"}, dataProvider = "dvsaUserCanSearchForAUser")
+    @Test(testName = "Legacy", groups = {"VM-7295", "Regression"}, dataProvider = "dvsaUserCanSearchForAUser")
     public void testUserCanClickOnEventsHistoryLink(Login login) {
         EventHistoryPage eventHistoryPage =
                 UserDashboardPage.navigateHereFromLoginPage(driver, login).clickUserSearch()
@@ -116,7 +116,7 @@ public class HelpDeskTests extends BaseTest {
                 "Check if event history table page is displayed");
     }
 
-    @Test(groups = {"VM-9084", "Regression"})
+    @Test(testName = "Legacy", groups = {"VM-9084", "Regression"})
     public void testCSCOCanSearchForUsersWithUnclaimedAccounts() {
         Login unclaimedAccountUser = createTester(true);
         HelpDeskUserProfilePage helpDeskUserProfilePage =
@@ -128,7 +128,7 @@ public class HelpDeskTests extends BaseTest {
                 "Check that username searched is displayed on profile page");
     }
 
-    @Test(groups = {"VM-9085", "Regression"}) public void testCSCOCanReclaimAccountByPost() {
+    @Test(testName = "Legacy", groups = {"VM-9085", "Regression"}) public void testCSCOCanReclaimAccountByPost() {
 
         ArrayList vts = new ArrayList();
         String aeName = RandomStringUtils.randomAlphabetic(6);
@@ -164,7 +164,7 @@ public class HelpDeskTests extends BaseTest {
                 "Check message displayed when account reclaim is a success");
     }
 
-    @Test(groups = {"VM-9085", "Regression"})
+    @Test(testName = "Legacy", groups = {"VM-9085", "Regression"})
     public void testCSCOCanCancelAccountReclaimAndReturnToUserProfile() {
 
         HelpDeskUserProfilePage helpDeskUserProfilePage = HelpdeskUserSearchPage
@@ -176,7 +176,7 @@ public class HelpDeskTests extends BaseTest {
                 "Check to ensure account wasn't reclaimed");
     }
 
-    @Test(groups = {"VM-9085", "Regression"}) public void testAccountCantBeReclaimedMoreThanOnce() {
+    @Test(testName = "Legacy", groups = {"VM-9085", "Regression"}) public void testAccountCantBeReclaimedMoreThanOnce() {
 
         HelpDeskUserProfilePage helpDeskUserProfilePage = HelpdeskUserSearchPage
                 .navigateHereFromLoginPage(driver, Login.LOGIN_CUSTOMER_SERVICE)

@@ -9,6 +9,8 @@ use DvsaCommon\Dto\Person\PersonContactDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Enum\MessageTypeCode;
 use DvsaCommon\HttpRestJson\Exception\NotFoundException;
+use DvsaCommon\Constants\FeatureToggle;
+use DvsaFeature\FeatureToggles;
 
 /**
  * Service for account management by helpdesk.
@@ -26,15 +28,23 @@ class HelpdeskAccountAdminService
     private $authorisationService;
 
     /**
+     * @var FeatureToggles
+     */
+    private $featureToggles;
+
+    /**
      * @param MotAuthorisationServiceInterface $authorisationService
      * @param UserAdminMapper $userAdminMapper
+     * @param FeatureToggles $featureToggles
      */
     public function __construct(
         MotAuthorisationServiceInterface $authorisationService,
-        UserAdminMapper $userAdminMapper
+        UserAdminMapper $userAdminMapper,
+        FeatureToggles $featureToggles
     ) {
         $this->authorisationService = $authorisationService;
         $this->userAdminMapper = $userAdminMapper;
+        $this->featureToggles = $featureToggles;
     }
 
     /**
@@ -44,7 +54,11 @@ class HelpdeskAccountAdminService
      */
     public function getUserProfile($personId)
     {
-        return $this->userAdminMapper->getUserProfile($personId);
+        if($this->featureToggles->isEnabled(FeatureToggle::NEW_PERSON_PROFILE)) {
+            return $this->userAdminMapper->getUserProfile($personId, true);
+        } else {
+            return $this->userAdminMapper->getUserProfile($personId, false);
+        }
     }
 
     public function resetAccount($personId)

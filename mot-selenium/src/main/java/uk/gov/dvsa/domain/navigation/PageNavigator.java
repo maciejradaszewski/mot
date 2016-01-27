@@ -6,15 +6,11 @@ import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.CookieService;
 import uk.gov.dvsa.framework.config.Configurator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
-import uk.gov.dvsa.ui.pages.HomePage;
-import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.PageLocator;
-import uk.gov.dvsa.ui.pages.VehicleSearchPage;
+import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.accountclaim.AccountClaimPage;
 import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
 import uk.gov.dvsa.ui.pages.dvsa.UserSearchPage;
-import uk.gov.dvsa.ui.pages.dvsa.UserSearchProfilePage;
 import uk.gov.dvsa.ui.pages.dvsa.UserSearchResultsPage;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 import uk.gov.dvsa.ui.pages.login.LoginPage;
@@ -45,7 +41,7 @@ public class PageNavigator {
         return CookieService.generateOpenAmLoginCookie(user);
     }
 
-    public <T extends Page> T goToPage(User user, String path, Class<T> clazz) throws URISyntaxException, IOException {
+    public <T extends Page> T navigateToPage(User user, String path, Class<T> clazz) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, path);
         return MotPageFactory.newPage(driver, clazz);
     }
@@ -106,12 +102,6 @@ public class PageNavigator {
         driver.loadBaseUrl();
     }
 
-    private void injectOpenAmCookieAndNavigateToPath(User user, String path) throws IOException {
-        driver.setUser(user);
-        driver.manage().addCookie(getCookieForUser(user));
-        navigateToPath(path);
-    }
-
     public HomePage gotoHomePage(User user) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, HomePage.PATH);
 
@@ -130,7 +120,6 @@ public class PageNavigator {
     }
 
     public CreateAnAccountPage goToCreateAnAccountPage() throws IOException {
-        driver.navigateToPath(CreateAnAccountPage.PATH);
         navigateToPath(CreateAnAccountPage.PATH);
 
         return new CreateAnAccountPage(driver);
@@ -161,15 +150,29 @@ public class PageNavigator {
     }
 
     public LoginPage goToLoginPage() throws IOException {
+        driver.loadBaseUrl();
         return new LoginPage(driver);
+    }
+
+    public EventsHistoryPage goToEventsHistoryPage(User user, int aeId) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(EventsHistoryPage.AE_PATH, aeId));
+        return new EventsHistoryPage(driver);
+    }
+
+    public TestCompletePage gotoTestCompletePage(User user, String motTestNumber) throws IOException {
+        injectOpenAmCookieAndNavigateToPath(user, String.format(TestSummaryPage.PATH, motTestNumber));
+        TestSummaryPage summaryPage = new TestSummaryPage(driver);
+        summaryPage.finishTestAndPrint();
+
+        return new TestCompletePage(driver);
     }
 
     public ManageRolesPage goToManageRolesPageViaUserSearch(User loggedUser, User searchedUser) throws IOException, URISyntaxException {
         return goToUserSearchedProfilePageViaUserSearch(loggedUser, searchedUser).clickManageRolesLink();
     }
 
-    public UserSearchProfilePage goToUserSearchedProfilePageViaUserSearch(User loggedUser, User searchedUser) throws IOException, URISyntaxException {
-        return goToPage(loggedUser, UserSearchPage.PATH, UserSearchPage.class).searchForUserByUsername(searchedUser.getUsername())
+    public ProfilePage goToUserSearchedProfilePageViaUserSearch(User loggedUser, User searchedUser) throws IOException, URISyntaxException {
+        return navigateToPage(loggedUser, UserSearchPage.PATH, UserSearchPage.class).searchForUserByUsername(searchedUser.getUsername())
                 .clickSearchButton(UserSearchResultsPage.class).chooseUser(0);
     }
 
@@ -204,5 +207,17 @@ public class PageNavigator {
 
     private void navigateToPath(String path) {
         driver.navigateToPath(path);
+    }
+    
+    private void injectOpenAmCookieAndNavigateToPath(User user, String path) throws IOException {
+        driver.setUser(user);
+        addCookieToBrowser(user);
+        navigateToPath(path);
+    }
+
+    private void addCookieToBrowser(User user) throws IOException {
+        driver.manage().deleteAllCookies();
+        driver.loadBaseUrl();
+        driver.manage().addCookie(getCookieForUser(user));
     }
 }

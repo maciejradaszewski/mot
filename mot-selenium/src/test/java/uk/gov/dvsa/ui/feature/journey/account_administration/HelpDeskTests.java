@@ -15,8 +15,6 @@ import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
 
 public class HelpDeskTests extends BaseTest {
 
@@ -40,14 +38,13 @@ public class HelpDeskTests extends BaseTest {
         String email = RandomDataGenerator.generateEmail(15);
 
         //Given that I am on Bob's profile page as a Customer Service Centre Operative
-        HelpDeskUserProfilePage helpDeskUserProfilePage =
-                pageNavigator.goToUserHelpDeskProfilePage(csco, bob.getId());
+        motUI.helpDesk.viewUserProfile(csco, bob.getId());
 
         //When I update Bob's email address
-        helpDeskUserProfilePage.updateEmailSuccessfully(email);
+        motUI.helpDesk.page().updateEmailSuccessfully(email);
 
         //Then Bob's email is updated successfully
-        helpDeskUserProfilePage.isEmailUpdateSuccessful(email);
+        motUI.helpDesk.page().isEmailUpdateSuccessful(email);
     }
 
     @Test(groups = {"Regression", "VM-11326"},

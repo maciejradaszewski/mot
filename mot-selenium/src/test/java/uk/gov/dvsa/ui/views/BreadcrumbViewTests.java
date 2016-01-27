@@ -29,7 +29,7 @@ public class BreadcrumbViewTests extends BaseTest {
     @Test(groups = {"Regression"}, description = "Breadcrumb is visible in vehicle testing station")
     public void isBreadcrumbVisibleInVehicleTestingStationPage() throws Exception {
         //Given I am logged in as tester and I am on the Vehicle testing station page
-        VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.goToPage(tester, HomePage.PATH, HomePage.class)
+        VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.navigateToPage(tester, HomePage.PATH, HomePage.class)
                 .selectRandomVts();
 
         //Then the breadcrumbNames are displayed in breadcrumb top navigation panel

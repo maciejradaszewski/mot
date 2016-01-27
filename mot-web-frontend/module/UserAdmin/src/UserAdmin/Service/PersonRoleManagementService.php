@@ -4,14 +4,14 @@ namespace UserAdmin\Service;
 
 use Application\Helper\DataMappingHelper;
 use Application\Service\CatalogService;
+use DvsaClient\Mapper\UserAdminMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
-use DvsaClient\Mapper\UserAdminMapper;
-use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
-use DvsaCommon\Auth\MotIdentityProviderInterface;
+use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 
 class PersonRoleManagementService
 {
@@ -44,10 +44,10 @@ class PersonRoleManagementService
     private $personInternalRoles;
 
     /**
-     * @param MotIdentityProviderInterface $motIdentityProvider
+     * @param MotIdentityProviderInterface     $motIdentityProvider
      * @param MotAuthorisationServiceInterface $authorisationService
-     * @param HttpRestJsonClient $client
-     * @param CatalogService $catalogService
+     * @param HttpRestJsonClient               $client
+     * @param CatalogService                   $catalogService
      */
     public function __construct(
         MotIdentityProviderInterface $motIdentityProvider,
@@ -63,7 +63,7 @@ class PersonRoleManagementService
     }
 
     /**
-     * Checks to see if the user has the relevant permission
+     * Checks to see if the user has the relevant permission.
      *
      * @return bool
      */
@@ -105,8 +105,10 @@ class PersonRoleManagementService
     }
 
     /**
-     * Throws an exception if the user attempts to manage themselves
+     * Throws an exception if the user attempts to manage themselves.
+     *
      * @param int $personToBeManagedId
+     *
      * @throws UnauthorisedException if the user attempts to manage themselves
      */
     public function forbidManagementOfSelf($personToBeManagedId)
@@ -117,8 +119,10 @@ class PersonRoleManagementService
     }
 
     /**
-     * Returns true if the logged in user is the same as the user being managed
+     * Returns true if the logged in user is the same as the user being managed.
+     *
      * @param int $personToBeManagedId
+     *
      * @return bool
      */
     public function personToManageIsSelf($personToBeManagedId)
@@ -129,6 +133,7 @@ class PersonRoleManagementService
     /**
      * @param int $personId
      * @param int $personSystemRoleId
+     *
      * @return boolean
      */
     public function addRole($personId, $personSystemRoleId)
@@ -143,8 +148,9 @@ class PersonRoleManagementService
         // API throws an exception if the post fails, catch that here and return
         try {
             $this->client->post($url, [
-                'personSystemRoleCode' => $foundItem['code']
+                'personSystemRoleCode' => $foundItem['code'],
             ]);
+
             return true;
         } catch (GeneralRestException $e) {
             return false;
@@ -154,8 +160,10 @@ class PersonRoleManagementService
     /**
      * @param $personId
      * @param $personSystemRoleId
-     * @return bool
+     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function removeRole($personId, $personSystemRoleId)
     {
@@ -169,6 +177,7 @@ class PersonRoleManagementService
 
         try {
             $this->client->delete($url);
+
             return true;
         } catch (GeneralRestException $e) {
             return false;
@@ -176,19 +185,23 @@ class PersonRoleManagementService
     }
 
     /**
-     * @param int $personId
+     * @param int  $personId
+     * @param bool $isNewUserProfileEnabled
+     * 
      * @return \DvsaCommon\Dto\Person\PersonHelpDeskProfileDto
      */
-    public function getUserProfile($personId)
+    public function getUserProfile($personId, $isNewUserProfileEnabled)
     {
-        return $this->userAdminMapper->getUserProfile($personId);
+        return $this->userAdminMapper->getUserProfile($personId, $isNewUserProfileEnabled);
     }
 
     /**
-     * @param int $personId
+     * @param int  $personId
+     * @param bool $isNewUserProfileEnabled
+     *
      * @return array
      */
-    public function getPersonManageableInternalRoles($personId)
+    public function getPersonManageableInternalRoles($personId, $isNewUserProfileEnabled)
     {
         $personSystemRoles = $this->catalogService->getPersonSystemRoles();
 
@@ -201,14 +214,26 @@ class PersonRoleManagementService
         }
 
         $manageableRolesAndUrl = array_map(
-            function ($element) use ($personId) {
-                $element['url'] = [
-                    'route' => 'user_admin/user-profile/manage-user-internal-role/add-internal-role',
-                    'params' => [
+            function ($element) use ($personId, $isNewUserProfileEnabled) {
+                if ($isNewUserProfileEnabled) {
+                    $route = 'newProfileUserAdmin/manage-user-internal-role/add-internal-role';
+                    $params = [
+                        'id' => $personId,
+                        'personSystemRoleId' => $element['id'],
+                    ];
+                } else {
+                    $route = 'user_admin/user-profile/manage-user-internal-role/add-internal-role';
+                    $params = [
                         'personId' => $personId,
                         'personSystemRoleId' => $element['id'],
-                    ]
+                    ];
+                }
+
+                $element['url'] = [
+                    'route' => $route,
+                    'params' => $params,
                 ];
+
                 return $element;
             },
             $manageableRoles
@@ -218,10 +243,12 @@ class PersonRoleManagementService
     }
 
     /**
-     * @param int $personId
+     * @param int  $personId
+     * @param bool $isNewUserProfileEnabled
+     *
      * @return array
      */
-    public function getPersonAssignedInternalRoles($personId)
+    public function getPersonAssignedInternalRoles($personId, $isNewUserProfileEnabled = false)
     {
         if (false === $this->userHasPermissionToReadPersonDvsaRoles()) {
             return [];
@@ -240,14 +267,26 @@ class PersonRoleManagementService
         }
 
         $manageableRolesAndUrl = array_map(
-            function ($element) use ($personId) {
-                $element['url'] = [
-                    'route' => 'user_admin/user-profile/manage-user-internal-role/remove-internal-role',
-                    'params' => [
+            function ($element) use ($personId, $isNewUserProfileEnabled) {
+                if ($isNewUserProfileEnabled) {
+                    $route = 'newProfileUserAdmin/manage-user-internal-role/remove-internal-role';
+                    $params = [
+                        'id' => $personId,
+                        'personSystemRoleId' => $element['id'],
+                    ];
+                } else {
+                    $route = 'user_admin/user-profile/manage-user-internal-role/remove-internal-role';
+                    $params = [
                         'personId' => $personId,
                         'personSystemRoleId' => $element['id'],
-                    ]
+                    ];
+                }
+
+                $element['url'] = [
+                    'route' => $route,
+                    'params' => $params,
                 ];
+
                 return $element;
             },
             $manageableRoles
@@ -270,6 +309,7 @@ class PersonRoleManagementService
 
     /**
      * @param $personId
+     *
      * @return array
      */
     private function retrievePersonAssignedAndInternalRoles($personId)
@@ -286,6 +326,7 @@ class PersonRoleManagementService
 
     /**
      * @param $personId
+     *
      * @return mixed
      */
     private function retrievePersonAssignedInternalRoles($personId)
@@ -295,6 +336,7 @@ class PersonRoleManagementService
 
     /**
      * @param $personId
+     *
      * @return mixed
      */
     private function retrievePersonManageableInternalRoles($personId)

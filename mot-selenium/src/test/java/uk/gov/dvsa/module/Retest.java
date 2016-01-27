@@ -52,7 +52,7 @@ public class Retest {
 
 
     public void searchForVehicle(User user, Vehicle vehicle) throws IOException, URISyntaxException {
-        VehicleSearchPage searchPage = pageNavigator.goToPage(user,VehicleSearchPage.PATH, VehicleSearchPage.class).searchVehicle(vehicle);
+        VehicleSearchPage searchPage = pageNavigator.navigateToPage(user,VehicleSearchPage.PATH, VehicleSearchPage.class).searchVehicle(vehicle);
         expectedText = searchPage.getTestStatus();
     }
 

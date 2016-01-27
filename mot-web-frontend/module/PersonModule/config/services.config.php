@@ -6,10 +6,16 @@
  */
 
 use Dvsa\Mot\Frontend\PersonModule\Factory\Security\PersonProfileGuardBuilderFactory;
+use Dvsa\Mot\Frontend\PersonModule\Factory\View\ContextProviderFactory;
+use Dvsa\Mot\Frontend\PersonModule\Factory\View\PersonProfileUrlGeneratorFactory;
 use Dvsa\Mot\Frontend\PersonModule\Security\PersonProfileGuardBuilder;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
+use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
 
 return [
     'factories' => [
+        ContextProvider::class => ContextProviderFactory::class,
         PersonProfileGuardBuilder::class => PersonProfileGuardBuilderFactory::class,
+        PersonProfileUrlGenerator::class => PersonProfileUrlGeneratorFactory::class,
     ],
 ];

@@ -83,17 +83,17 @@ public class ConductMotTests extends BaseTest {
 
     @Test(groups = {"BVT", "Regression"} )
     public void startAndAbortTestAsVE() throws URISyntaxException, IOException {
-        User VehicleExaminer = userData.createVehicleExaminer("Default-VE", false);
+        User vehicleExaminer = userData.createVehicleExaminer("Default-VE", false);
 
         //Given I start a test as Tester
         String testId = motUI.normalTest.startTest();
 
         //When a Vehicle Examiner abort the test
-        motUI.normalTest.viewTestAs(VehicleExaminer, testId);
+        motUI.normalTest.viewTestAs(vehicleExaminer, testId);
         motUI.normalTest.abortAsVe();
 
         //Then the test is aborted successfully
-        motUI.normalTest.viewTestAs(VehicleExaminer, testId);
+        motUI.normalTest.viewTestAs(vehicleExaminer, testId);
         assertThat(motUI.normalTest.getTestStatus(), equalToIgnoringCase("Aborted by VE"));
     }
 

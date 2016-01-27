@@ -51,7 +51,7 @@ public class Certificate {
     }
 
     public void printReplacementPage(User user, Vehicle vehicle, String motTestNumber) throws IOException, URISyntaxException {
-        pageNavigator.goToPage(user, VehicleSearchPage.REPLACEMENT_PATH, VehicleSearchPage.class).searchVehicle(vehicle).selectVehicle();
+        pageNavigator.navigateToPage(user, VehicleSearchPage.REPLACEMENT_PATH, VehicleSearchPage.class).searchVehicle(vehicle).selectVehicle();
         certificateTestHistoryPage = new DuplicateReplacementCertificateTestHistoryPage(pageNavigator.getDriver());
 
         certificatePage = certificateTestHistoryPage.viewTest(motTestNumber, MotTestCertificatePage.class);
@@ -60,7 +60,7 @@ public class Certificate {
     }
 
     private void updateCertificatePage(User user, Vehicle vehicle, String motTestNumber) throws IOException, URISyntaxException {
-        pageNavigator.goToPage(user, VehicleSearchPage.REPLACEMENT_PATH, VehicleSearchPage.class)
+        pageNavigator.navigateToPage(user, VehicleSearchPage.REPLACEMENT_PATH, VehicleSearchPage.class)
                 .searchVehicle(vehicle).selectVehicle();
         certificateTestHistoryPage = new DuplicateReplacementCertificateTestHistoryPage(pageNavigator.getDriver());
 
@@ -98,7 +98,7 @@ public class Certificate {
     public void viewSummaryAsVehicleExaminer(User user, String siteNumber, String testNumber)
             throws IOException, URISyntaxException {
         MotTestSearchPage testSearchPage = pageNavigator
-                .goToPage(user, MotTestSearchPage.PATH, MotTestSearchPage.class);
+                .navigateToPage(user, MotTestSearchPage.PATH, MotTestSearchPage.class);
 
         MotTestHistoryPage testHistoryPage = testSearchPage.fillSearchValue(siteNumber)
                 .clickSearchButton(MotTestHistoryPage.class);

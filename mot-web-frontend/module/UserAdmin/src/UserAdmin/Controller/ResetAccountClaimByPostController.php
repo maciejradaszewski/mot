@@ -48,7 +48,9 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
 
     public function indexAction()
     {
-        $personId = $this->params()->fromRoute('personId');
+        $personId = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->params()->fromRoute('id') :
+            $this->params()->fromRoute('personId');
 
         if ($this->getRequest()->isPost() === true) {
             return $this->requestReclaim($personId);
@@ -68,9 +70,12 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
                 $this->addErrorMessage($errorMessage);
             }
         }
-        return $this->redirect()->toUrl(
-            $this->buildUrlWithCurrentSearchQuery(UserAdminUrlBuilderWeb::userProfile($personId))
-        );
+
+        $redirectUrl = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+            $this->url()->fromRoute('newProfileUserAdmin', ['id' => $personId]):
+            $this->buildUrlWithCurrentSearchQuery(UserAdminUrlBuilderWeb::userProfile($personId));
+
+        return $this->redirect()->toUrl($redirectUrl);
     }
 
     private function displayConfirmationScreen($personId)
@@ -94,9 +99,11 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
         return new ViewModel(
             [
                 'profilePresenter' => $profilePresenter,
-                'userProfileUrl' => $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ? '/preview/profile/' . $personId : $this->buildUrlWithCurrentSearchQuery(
-                    UserAdminUrlBuilderWeb::userProfile($personId)
-                ),
+                'userProfileUrl' => $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
+                    $this->url()->fromRoute('newProfileUserAdmin', ['id' => $personId]) :
+                    $this->buildUrlWithCurrentSearchQuery(
+                        UserAdminUrlBuilderWeb::userProfile($personId)
+                    ),
                 'resetClaimAccountUrlPost' => $this->buildUrlWithCurrentSearchQuery(
                     UserAdminUrlBuilderWeb::userProfileClaimAccountPost($personId)
                 ),

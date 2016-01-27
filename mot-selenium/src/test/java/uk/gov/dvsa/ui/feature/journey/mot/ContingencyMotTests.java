@@ -39,7 +39,7 @@ public class ContingencyMotTests extends BaseTest {
         motUI.contingency.testPage(tester);
 
         //When I enter valid Contingency Test details
-        motUI.contingency.recordTest(contingencyCode, DateTime.now(), vehicle);
+        motUI.contingency.recordTest(contingencyCode, DateTime.now().minusHours(1), vehicle);
 
         //Then it Contingency is entered successfully
         assertThat(motUI.contingency.isTestSaveSuccessful(), is(true));
@@ -49,13 +49,15 @@ public class ContingencyMotTests extends BaseTest {
     public void conductReTestSuccessfully() throws IOException, URISyntaxException {
 
         //Given I have a vehicle with a failed MOT test
-        motApi.createTest(tester, site.getId(), vehicle, TestOutcome.FAILED, 12345, DateTime.now().minusMinutes(10));
+        motApi.createTest(tester, site.getId(), vehicle,
+                TestOutcome.FAILED, 12345,
+                DateTime.now().minusMinutes(30));
 
         //And all faults has been fixed
 
         //When I Conduct a re-test on the vehicle via contingency route
         motUI.contingency.testPage(tester);
-        motUI.contingency.recordReTest(contingencyCode, DateTime.now(), vehicle);
+        motUI.contingency.recordReTest(contingencyCode, DateTime.now().minusMinutes(10), vehicle);
 
         //Then the retest is successful
         motUI.contingency.isTestSaveSuccessful();

@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 
 public class PersonalProfileTest extends BaseTest {
 
-    @Test(groups = {"VM-3338", "bug-fix", "VM-4471", "Regression"})
+    @Test(testName = "Legacy", groups = {"VM-3338", "bug-fix", "VM-4471", "Regression"})
     public void testEditPersonProfileEmailDetails() {
 
         String emailAddress = RandomDataGenerator.generateEmail(20, System.nanoTime());
@@ -32,7 +32,7 @@ public class PersonalProfileTest extends BaseTest {
                 "Email should be updated");
     }
 
-    @Test(groups = {"VM-3338", "bug-fix", "VM-4471", "Regression"})
+    @Test(testName = "Legacy", groups = {"VM-3338", "bug-fix", "VM-4471", "Regression"})
     public void testEditPersonalProfileDetailsWithValidationError() {
 
         String emailAddress = RandomDataGenerator.generateEmail(20, System.nanoTime());
@@ -51,7 +51,7 @@ public class PersonalProfileTest extends BaseTest {
                 confirmationEmailAddress, "email confirmation not preserved");
     }
 
-    @Test(groups = {"Regression", "VM-5075"}) public void testResettingTesterSecurityPin() {
+    @Test(testName = "Legacy", groups = {"Regression", "VM-5075"}) public void testResettingTesterSecurityPin() {
         Person claimsTester = createTesterAsPerson(Collections.singletonList(1), true);
         OpenAMClaimAccountSignInPage openAMClaimAccountSignInPage =
                 new LoginPage(driver).navigateToClaimAccountPage(driver, claimsTester.login);

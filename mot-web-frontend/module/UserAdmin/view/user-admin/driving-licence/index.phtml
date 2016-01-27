@@ -3,6 +3,7 @@
 use DvsaCommon\Enum\LicenceCountryCode;
 use UserAdmin\Presenter\DrivingLicenceSummaryPresenter;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
+use DvsaCommon\Constants\FeatureToggle;
 
 /** @var \UserAdmin\Presenter\UserProfilePresenter $presenter */
 
@@ -78,11 +79,18 @@ echo $this->partial('partial/forms/errorMessagePageHeader.phtml',['messages' => 
 </form>
 <ul class="content-navigation__secondary">
     <li>
-        <a href="<?php echo $this->url('user_admin/user-profile', ['personId' => $presenter->getPersonId()]); ?>">Cancel and return to user profile</a>
+        <a href="<?php
+            echo $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)
+                ? $this->personProfileUrl()->toPersonProfile() : $this->url('user_admin/user-profile', ['personId' => $presenter->getPersonId()]);
+        ?>">Cancel and return to user profile</a>
     </li>
     <?php if ($drivingLicenceNumber): ?>
     <li>
-        <a id="delete-driving-licence" href="<?php echo UserAdminUrlBuilderWeb::drivingLicenceDelete($presenter->getPersonId()); ?>">Remove driving licence</a>
+        <a id="delete-driving-licence" href="<?php
+            echo $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)
+                ? $this->url('newProfileUserAdmin/driving-licence-change/delete', ['id' => $presenter->getPersonId()]) :
+                UserAdminUrlBuilderWeb::drivingLicenceDelete($presenter->getPersonId());
+        ?>">Remove driving licence</a>
     </li>
     <?php endif; ?>
 </ul>

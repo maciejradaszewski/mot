@@ -4,11 +4,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
-import uk.gov.dvsa.ui.pages.AbstractProfilePage;
+import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.ChangePasswordFromProfilePage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
 
-public class ProfilePage extends AbstractProfilePage {
+public class PersonProfilePage extends ProfilePage {
 
     public static final String PATH = "/profile";
 
@@ -19,14 +19,8 @@ public class ProfilePage extends AbstractProfilePage {
     @FindBy(id = "validation-message--success") private WebElement messageSuccess;
     @FindBy(id="roles-and-associations-link") private WebElement rolesAndAssociationsLink;
 
-    public ProfilePage(MotAppDriver driver) {
-        super(driver);
-        selfVerify();
-    }
-
-    @Override
-    protected boolean selfVerify() {
-        return PageInteractionHelper.verifyTitle(this.getTitle(), driver.getCurrentUser().getFullName());
+    public PersonProfilePage(MotAppDriver driver) {
+        super(driver, driver.getCurrentUser().getFullName());
     }
 
     public boolean verifyPostCodeIsChanged(String postcode) {
@@ -37,6 +31,7 @@ public class ProfilePage extends AbstractProfilePage {
         return emailAddressField.getText().equals(email);
     }
 
+    @Override
     public boolean isTesterQualificationStatusDisplayed() {
         return qualificationStatus.isDisplayed();
     }
@@ -46,6 +41,7 @@ public class ProfilePage extends AbstractProfilePage {
         return new ChangePasswordFromProfilePage(driver);
     }
 
+    @Override
     public RolesAndAssociationsPage clickRolesAndAssociationsLink() {
         rolesAndAssociationsLink.click();
         return new RolesAndAssociationsPage(driver);
@@ -56,6 +52,11 @@ public class ProfilePage extends AbstractProfilePage {
     }
 
     public String getMessageSuccess(){
-       return  messageSuccess.getText();
+       return messageSuccess.getText();
+    }
+
+    @Override
+    public boolean isRolesAndAssociationsLinkDisplayed() {
+        return PageInteractionHelper.isElementDisplayed(rolesAndAssociationsLink);
     }
 }

@@ -2,10 +2,13 @@ package uk.gov.dvsa.ui.pages.changedriverlicence;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
+import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.dvsa.UserSearchProfilePage;
+import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
 
 public class ReviewDrivingLicencePage extends Page {
 
@@ -29,13 +32,12 @@ public class ReviewDrivingLicencePage extends Page {
         return new ChangeDrivingLicencePage(driver);
     }
 
-    public String getDrivingLicenceNumber()
-    {
+    public String getDrivingLicenceNumber() {
         return drivingLicenceNumber.getText();
     }
 
-    public UserSearchProfilePage clickChangeDrivingLicenceButton() {
+    public ProfilePage clickChangeDrivingLicenceButton() {
         changeDrivingLicenceButton.click();
-        return new UserSearchProfilePage(driver);
+        return MotPageFactory.getProfilePageInstance(new NewUserProfilePage(driver), new UserSearchProfilePage(driver));
     }
 }

@@ -1,12 +1,18 @@
 package uk.gov.dvsa.shared;
 
+import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.module.*;
+import uk.gov.dvsa.ui.pages.HomePage;
+import uk.gov.dvsa.ui.pages.login.LoginPage;
+
+import java.io.IOException;
 
 public class MotUI {
 
     private PageNavigator pageNavigator = new PageNavigator();
+    private HomePage homepage;
 
     public final Retest retest;
     public final NormalTest normalTest;
@@ -15,9 +21,11 @@ public class MotUI {
     public final TestLog testLog;
     public final SearchUser searchUser;
     public final SearchSite searchSite;
+    public final UserRoute userRoute;
     public final Site site;
     public final Certificate certificate;
     public final Contingency contingency;
+    public final HelpDesk helpDesk;
 
     public MotUI(MotAppDriver driver) {
         pageNavigator.setDriver(driver);
@@ -29,7 +37,19 @@ public class MotUI {
         searchUser = new SearchUser(pageNavigator);
         searchSite = new SearchSite(pageNavigator);
         certificate = new Certificate(pageNavigator);
+        userRoute = new UserRoute(pageNavigator);
         site = new Site(pageNavigator);
         contingency = new Contingency(pageNavigator);
+        helpDesk = new HelpDesk(pageNavigator);
+    }
+
+    public void login(final User user) throws IOException {
+        LoginPage loginPage = pageNavigator.goToLoginPage();
+        pageNavigator.getDriver().setUser(user);
+        homepage = loginPage.login(user.getUsername(), user.getPassword(), HomePage.class);
+    }
+
+    public boolean isLoginSuccessful(){
+        return homepage != null;
     }
 }

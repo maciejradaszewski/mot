@@ -36,7 +36,7 @@ public class ClaimUserAccountTests extends BaseTest {
     public void claimAsUser(User user) throws Exception {
 
         //Given I am on the AccountClaim page to my claim my account
-        AccountClaimPage accountClaimPage = pageNavigator.goToPage(user, AccountClaimPage.PATH, AccountClaimPage.class);
+        AccountClaimPage accountClaimPage = pageNavigator.navigateToPage(user, AccountClaimPage.PATH, AccountClaimPage.class);
 
         //When I Enter a valid Email Address and a compliant Password
         accountClaimPage.enterEmailAndPassword(

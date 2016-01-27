@@ -8,10 +8,6 @@ use Dashboard\Form\ChangePasswordForm;
 use Dashboard\Service\PasswordService;
 use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Constants\FeatureToggle;
-use DvsaCommon\InputFilter\Account\ChangePasswordInputFilter;
-use DvsaCommon\Utility\ArrayUtils;
-use DvsaCommon\Utility\StringUtils;
-use Zend\Http\Response;
 
 class PasswordController extends AbstractAuthActionController
 {
@@ -28,8 +24,7 @@ class PasswordController extends AbstractAuthActionController
         ChangePasswordForm $form,
         MotFrontendIdentityProviderInterface $identityProvider,
         MotConfig $config
-    )
-    {
+    ) {
         $this->passwordService = $passwordService;
         $this->form = $form;
         $this->identityProvider = $identityProvider;
@@ -42,7 +37,7 @@ class PasswordController extends AbstractAuthActionController
         $this->layout()->setVariable('pageSubTitle', "Your account");
         $this->layout()->setVariable('pageTitle', "Change your password");
         $breadcrumbs = [
-            'Your account'         => '/profile',
+            'Your account'         => $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ? '/your-profile' : '/profile',
             'Change your password' => '',
         ];
 
@@ -59,10 +54,14 @@ class PasswordController extends AbstractAuthActionController
             if ($form->isValid()) {
                 if ($this->passwordService->changePassword($form->getData())) {
                     if ($hasPasswordExpired) {
-                        return $this->redirect()->toRoute('user-home/profile/change-password/confirmation');
+                        $url = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ? 'user-home/your-profile/change-password/confirmation' : 'user-home/profile/change-password/confirmation';
+
+                        return $this->redirect()->toRoute($url);
                     } else {
                         $this->addSuccessMessage("Your password has been changed.");
-                        return $this->redirect()->toRoute('user-home/profile/byId');
+                        $url = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ? 'newProfile' : 'user-home/profile/byId';
+
+                        return $this->redirect()->toRoute($url);
                     }
                 }
 
@@ -80,7 +79,7 @@ class PasswordController extends AbstractAuthActionController
         return [
             'form'        => $form,
             'username'    => $this->getIdentity()->getUsername(),
-            'cancelRoute' => $hasPasswordExpired ? "logout" : "user-home/profile/byId",
+            'cancelRoute' => $hasPasswordExpired ? "logout" : ($this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ? 'newProfile' : 'user-home/profile/byId'),
             'cancelText'  => $hasPasswordExpired ? "Cancel and return to sign in" : "Cancel and return to your profile",
             'newProfileEnabled' => $newProfileEnabled,
         ];

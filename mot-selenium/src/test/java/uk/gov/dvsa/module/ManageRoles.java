@@ -2,7 +2,8 @@ package uk.gov.dvsa.module;
 
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
-import uk.gov.dvsa.ui.pages.profile.ProfileOfPage;
+import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
+import uk.gov.dvsa.ui.pages.profile.ProfileOfUserPage;
 import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
@@ -63,7 +64,7 @@ public class ManageRoles {
     }
 
     public boolean isRolesAndAssociationsLinkDisplayedOnProfileOfPage() {
-        return new ProfileOfPage(pageNavigator.getDriver()).isRolesAndAssociationsLinkDisplayed();
+        return new NewUserProfilePage(pageNavigator.getDriver()).isRolesAndAssociationsLinkDisplayed();
     }
 
     public boolean isErrorMessageDisplayedOnRolesAndAssociationsPage() {

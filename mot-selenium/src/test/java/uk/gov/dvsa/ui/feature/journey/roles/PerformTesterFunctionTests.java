@@ -7,12 +7,11 @@ import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
-import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.ChangeDetailsPage;
 import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.PerformanceDashBoardPage;
-import uk.gov.dvsa.ui.pages.profile.ProfilePage;
+import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
 
 import java.io.IOException;
 
@@ -39,17 +38,17 @@ public class PerformTesterFunctionTests extends BaseTest {
         String postCode = "BS33 5TT";
 
         //Given I am logged as a Tester and I am on the ChangeDetails page
-        ChangeDetailsPage changeDetailsPage = pageNavigator.goToPage(tester, ChangeDetailsPage.PATH, ChangeDetailsPage.class);
+        ChangeDetailsPage changeDetailsPage = pageNavigator.navigateToPage(tester, ChangeDetailsPage.PATH, ChangeDetailsPage.class);
 
         //When I edit my postcode and email details
         changeDetailsPage.editPostCode(postCode).editEmailAndConfirmEmail(newEmail, newEmail);
 
         //Then I should be able to save with entering my pin
-        ProfilePage profilePage = changeDetailsPage.update();
+        PersonProfilePage personProfilePage = changeDetailsPage.update();
 
        //And my details should be changed
-        assertThat(profilePage.verifyPostCodeIsChanged(postCode), is(true));
-        assertThat(profilePage.verifyEmailIsChanged(newEmail), is(true));
+        assertThat(personProfilePage.verifyPostCodeIsChanged(postCode), is(true));
+        assertThat(personProfilePage.verifyEmailIsChanged(newEmail), is(true));
     }
 
     @Test (groups = {"BVT", "Regression"})
@@ -61,7 +60,7 @@ public class PerformTesterFunctionTests extends BaseTest {
 
         //When I navigate to my performance dashboard page
         PerformanceDashBoardPage performanceDashBoardPage =
-                pageNavigator.goToPage(tester, PerformanceDashBoardPage.PATH, PerformanceDashBoardPage.class);
+                pageNavigator.navigateToPage(tester, PerformanceDashBoardPage.PATH, PerformanceDashBoardPage.class);
 
         //Then I should see my test conducted is 1
         assertThat(performanceDashBoardPage.getTestConductedText(), equalTo("1"));
@@ -74,7 +73,7 @@ public class PerformTesterFunctionTests extends BaseTest {
     public void verifyTheCorrectAeAndVtsIsDisplayed() throws Exception {
 
         //Given I am logged as a Tester and I am on my homepage
-        HomePage homePage = pageNavigator.goToPage(tester, HomePage.PATH, HomePage.class);
+        HomePage homePage = pageNavigator.navigateToPage(tester, HomePage.PATH, HomePage.class);
 
         //Then my AE should be My Test AE
         assertThat(homePage.getAeName(), equalTo( aeDetails.getAeName()));
@@ -87,7 +86,7 @@ public class PerformTesterFunctionTests extends BaseTest {
     public void myRoleIsDisplayedAsTester() throws Exception {
 
         //Given I am logged as a Tester and I am on my homepage
-        HomePage homePage = pageNavigator.goToPage(tester, HomePage.PATH, HomePage.class);
+        HomePage homePage = pageNavigator.navigateToPage(tester, HomePage.PATH, HomePage.class);
 
         //I expect to see my role displayed
         assertThat(homePage.getRole(), equalTo("Tester".toUpperCase()));

@@ -7,7 +7,7 @@ use DvsaCommon\Enum\RoleCode;
 class DvsaRole
 {
     /**
-     * Returns an array of all existing DVSA roles
+     * Returns an array of all existing DVSA roles.
      *
      * @return array
      */
@@ -19,7 +19,7 @@ class DvsaRole
             RoleCode::VEHICLE_EXAMINER,
             RoleCode::SCHEME_MANAGER,
             RoleCode::SCHEME_USER,
-            RoleCode::FINANCE_,
+            RoleCode::FINANCE,
             RoleCode::CUSTOMER_SERVICE_OPERATIVE,
             RoleCode::DVLA_OPERATIVE,
             RoleCode::DVLA_MANAGER,
@@ -28,7 +28,7 @@ class DvsaRole
     }
 
     /**
-     * Returns an array of all DVSA roles that can receive special notices
+     * Returns an array of all DVSA roles that can receive special notices.
      *
      * @return array
      */
@@ -46,9 +46,10 @@ class DvsaRole
     }
 
     /**
-     * To check if the given role list contain any DVSA role
+     * To check if the given role list contain any DVSA role.
      *
      * @param array $roles | Array of roles
+     *
      * @return bool
      */
     public static function containDvsaRole($roles)
@@ -66,9 +67,10 @@ class DvsaRole
     }
 
     /**
-     * To check if the given role is a DVSA role
+     * To check if the given role is a DVSA role.
      *
      * @param string $role
+     *
      * @return bool
      */
     public static function isDvsaRole($role)

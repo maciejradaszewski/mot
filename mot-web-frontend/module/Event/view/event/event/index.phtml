@@ -71,7 +71,9 @@ $events = $viewModel->getEventList()->getEvents();
                         <?php $escClass = ($i++ % 2 == 0 ? 'even' : 'odd');?>
                         <tr class="<?php echo $escClass; ?>">
                             <td class="truncate" title="<?php echo $this->escapeHtml($event->getType()); ?>">
-                                <a href="<?php echo $viewModel->getEventDetailLink($event->getId()); ?>">
+                                <a href="<?php
+                                    echo $viewModel->getEventDetailLink($event->getId());
+                                ?>">
                                     <?php echo $this->escapeHtml($event->getType()); ?>
                                 </a>
                             </td>

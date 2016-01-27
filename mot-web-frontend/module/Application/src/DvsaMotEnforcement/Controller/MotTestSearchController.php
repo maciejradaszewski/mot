@@ -36,7 +36,7 @@ class MotTestSearchController extends AbstractAuthActionController
     const TEST_NOT_FOUND_MSG        = 'No results found for that site';
     const TESTER_NOT_FOUND_MSG      = 'No results found for that tester';
     const DATE_FORMAT_ERROR         = 'Date Range format invalid';
-    const MOT_TEST_NOT_FOUND        = 'No result found for that test number';
+    const MOT_TEST_NOT_FOUND        = 'No results found for that test number';
 
     const SEARCH_TYPE_TEST_NUMBER = 'testNumber';
 
@@ -299,6 +299,12 @@ class MotTestSearchController extends AbstractAuthActionController
 
         if (!$vehicleTestSearchService->isSearchTermValid()) {
             $this->addErrorMessages(self::INVALID_SEARCH_TERM_MSG);
+
+            return $vehicleTestSearchService->prepareRouteQueryForRedirect('mot-test-search', $this);
+        }
+
+        if (!$vehicleTestSearchService->isMotTestSearchTermValid()) {
+            $this->addErrorMessages(self::MOT_TEST_NOT_FOUND);
 
             return $vehicleTestSearchService->prepareRouteQueryForRedirect('mot-test-search', $this);
         }

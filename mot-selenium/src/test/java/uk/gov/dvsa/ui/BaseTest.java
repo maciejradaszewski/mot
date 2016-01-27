@@ -54,8 +54,6 @@ public abstract class BaseTest {
         vehicleReInspectionWorkflow.setDriver(driver);
 
         driver.setBaseUrl(Configurator.baseUrl());
-        driver.loadBaseUrl();
-        driver.manage().deleteAllCookies();
     }
 
     @AfterMethod(alwaysRun = true)
@@ -68,7 +66,7 @@ public abstract class BaseTest {
             // Take screenshot on test failure
             if (result.getStatus() == ITestResult.FAILURE && Configurator.isErrorScreenshotEnabled()) {
                 Utilities.takeScreenShot(driver,
-                        result.getTestClass().getName().replace("com.dvsa.mot.selenium.", "") + "."
+                        result.getTestClass().getName().replace("uk.gov.dvsa.", "") + "."
                                 + result.getName() + "_" + Configurator.screenshotDateFormat.format(new Date())
                                 + ".png", Configurator.getErrorScreenshotPath() + "/" + Configurator.getBuildNumber());
             }
