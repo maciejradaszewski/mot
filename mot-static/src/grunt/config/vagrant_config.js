@@ -17,7 +17,7 @@ module.exports = function(grunt, config) {
         var getKeyCmd = function(cmd) {
             var file = execSync(util.format(cmd, infFolder));
 
-            return (file.length > 0) ? grunt.file.read(file) : '';
+            return (file.length > 0) ? grunt.file.read(file.replace(/\"/g,'')) : '';
         };
 
         if (config.legacy === false) {
