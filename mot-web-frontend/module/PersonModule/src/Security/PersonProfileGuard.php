@@ -208,6 +208,16 @@ class PersonProfileGuard
     }
 
     /**
+     * Tester status box with both statuses should be shown if either status != "Initial Training Needed".
+     *
+     * @return bool
+     */
+    public function shouldDisplayTesterQualificationStatusBox()
+    {
+        return $this->shouldDisplayGroupAStatus() || $this->shouldDisplayGroupBStatus();
+    }
+
+    /**
      * @return bool
      */
     public function canResetAccount()
@@ -323,6 +333,15 @@ class PersonProfileGuard
         return $this->authorisationService->isGranted(PermissionInSystem::MANAGE_USER_ACCOUNTS)
             && ($this->isViewingOwnProfile() && $this->context !== ContextProvider::YOUR_PROFILE_CONTEXT
                 || !$this->isViewingOwnProfile());
+    }
+
+    /**
+     * @return bool
+     */
+    public function canEditName()
+    {
+        return !$this->isViewingHimself()
+        && $this->authorisationService->isGranted(PermissionInSystem::EDIT_PERSON_NAME);
     }
 
     /**

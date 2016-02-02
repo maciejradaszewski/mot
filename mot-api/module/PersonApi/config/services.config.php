@@ -6,6 +6,7 @@ use PersonApi\Factory\Service\PasswordExpiryServiceFactory;
 use PersonApi\Factory\Service\PersonalAuthorisationForMotTestingServiceFactory;
 use PersonApi\Factory\Service\PersonalDetailsServiceFactory;
 use PersonApi\Factory\Service\PersonContactServiceFactory;
+use PersonApi\Factory\Service\PersonNameServiceFactory;
 use PersonApi\Factory\Service\PersonServiceFactory;
 use PersonApi\Factory\Service\PersonTradeRoleServiceFactory;
 use PersonApi\Factory\Service\UserStatsServiceFactory;
@@ -19,6 +20,7 @@ use PersonApi\Service\DashboardService;
 use PersonApi\Service\PersonalAuthorisationForMotTestingService;
 use PersonApi\Service\PersonalDetailsService;
 use PersonApi\Service\PersonContactService;
+use PersonApi\Service\PersonNameService;
 use PersonApi\Service\PersonService;
 use PersonApi\Service\PersonRoleService;
 use PersonApi\Service\PersonTradeRoleService;
@@ -51,7 +53,8 @@ return [
         PasswordExpiryService::class                     => PasswordExpiryServiceFactory::class,
         PasswordExpiryNotificationService::class         => PasswordExpiryNotificationServiceFactory::class,
         PersonEventService::class                        => PersonEventServiceFactory::class,
-        PersonTradeRoleService::class                   => PersonTradeRoleServiceFactory::class,
+        PersonTradeRoleService::class                    => PersonTradeRoleServiceFactory::class,
+        PersonNameService::class                         => PersonNameServiceFactory::class,
     ],
     'invokables' => [
         PersonGenerator::class          => PersonGenerator::class,

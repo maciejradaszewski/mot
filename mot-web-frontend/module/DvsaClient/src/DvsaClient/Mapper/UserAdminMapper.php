@@ -151,4 +151,17 @@ class UserAdminMapper extends DtoMapper
 
         return $this->client->delete($url);
     }
+
+    public function updatePersonName($personId, $firstName, $middleName, $lastName)
+    {
+        $url = UserAdminUrlBuilder::personName($personId);
+
+        return $this->client->post(
+            $url, [
+                "firstName" => $firstName,
+                "middleName" => $middleName,
+                "lastName" => $lastName,
+            ]
+        );
+    }
 }

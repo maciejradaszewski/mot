@@ -132,6 +132,7 @@ final class PermissionInSystem
     const VIEW_DRIVING_LICENCE = 'VIEW-DRIVING-LICENCE';
     const VIEW_DATE_OF_BIRTH = 'VIEW-DATE-OF-BIRTH';
     const MANAGE_USER_ACCOUNTS = 'MANAGE-USER-ACCOUNTS';
+    const EDIT_PERSON_NAME = 'EDIT-PERSON-NAME';
 
     /**
      * @return array
@@ -260,6 +261,7 @@ final class PermissionInSystem
             self::VIEW_DRIVING_LICENCE,
             self::VIEW_DATE_OF_BIRTH,
             self::MANAGE_USER_ACCOUNTS,
+            self::EDIT_PERSON_NAME,
         ];
     }
 }

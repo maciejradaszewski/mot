@@ -6,6 +6,7 @@
  */
 
 use Dashboard\Factory\Controller\SecurityQuestionControllerFactory;
+use Dvsa\Mot\Frontend\PersonModule\Controller\ChangeNameController;
 use Dvsa\Mot\Frontend\PersonModule\Controller\PersonProfileController;
 use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use UserAdmin\Factory\Controller\EmailAddressControllerFactory;
@@ -196,7 +197,7 @@ return [
                             ],
                         ],
                     ],
-                ]
+                ],
             ],
             'newProfileUserAdmin' => [
                 'type' => 'segment',
@@ -468,7 +469,18 @@ return [
                             ],
                         ],
                     ],
-                ]
+                    'change-person-name' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/name/change',
+                            'defaults' => [
+                                'controller' => ChangeNameController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                ],
             ],
             ContextProvider::VTS_PARENT_ROUTE => [
                 'type' => 'segment',
@@ -633,7 +645,18 @@ return [
                             ],
                         ],
                     ],
-                ]
+                    'change-person-name' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/name/change',
+                            'defaults' => [
+                                'controller' => ChangeNameController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                ],
             ],
             ContextProvider::AE_PARENT_ROUTE => [
                 'type' => 'segment',
@@ -798,8 +821,19 @@ return [
                             ],
                         ],
                     ],
+                    'change-person-name' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/name/change',
+                            'defaults' => [
+                                'controller' => ChangeNameController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
                 ],
-            ]
+            ],
         ],
     ],
 ];

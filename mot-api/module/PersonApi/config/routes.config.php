@@ -20,6 +20,7 @@ use PersonApi\Controller\PersonTradeRoleController;
 use PersonApi\Controller\ResetClaimAccountController;
 use PersonApi\Controller\ResetPinController;
 use PersonApi\Controller\UpdateLicenceDetailsController;
+use PersonApi\Controller\UpdatePersonNameController;
 use PersonApi\Controller\UserStatsController;
 use UserApi\SpecialNotice\Controller\SpecialNoticeController;
 
@@ -259,6 +260,16 @@ return [
                         'route'    => '/driving-licence',
                         'defaults' => [
                             'controller' => UpdateLicenceDetailsController::class,
+                        ],
+                    ],
+                    'may_terminate' => true,
+                ],
+                'update-name' => [
+                    'type' => 'segment',
+                    'options' => [
+                        'route' => '/name',
+                        'defaults' => [
+                            'controller' => UpdatePersonNameController::class
                         ],
                     ],
                     'may_terminate' => true,

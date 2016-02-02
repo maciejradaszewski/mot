@@ -11,6 +11,7 @@ class Person extends MotApi
     const PATH_DASHBOARD = '/dashboard';
     const PATH_RBAC_ROLES = '/rbac-roles';
     const PATH_PASSWORD = '/password';
+    const PATH_NAME = '/name';
     const PATH_LICENCE_UPDATE = '/driving-licence';
 
     public function getPersonMotTestingClasses($token, $user_id)
@@ -145,6 +146,16 @@ class Person extends MotApi
             $token,
             MotApi::METHOD_PUT,
             str_replace('{user_id}', $user_id, self::PATH.self::PATH_PASSWORD),
+            $data
+        );
+    }
+
+    public function changeName($token, $user_id, array$data)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_POST,
+            str_replace('{user_id}', $user_id, self::PATH.self::PATH_NAME),
             $data
         );
     }

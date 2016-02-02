@@ -1,6 +1,5 @@
 package uk.gov.dvsa.ui.pages.profile;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
@@ -15,6 +14,7 @@ public class NewUserProfilePage extends ProfilePage {
     public static final String PATH = "/user-admin/user/%s";
 
     @FindBy(id = "manage-roles") private WebElement selectManageRolesLink;
+    @FindBy(css = "#display-name a") private WebElement changeNameLink;
     @FindBy(id = "validation-message--success") private WebElement messageSuccess;
     @FindBy(id = "roles-and-associations") private WebElement roleAndAssociationLink;
     @FindBy(id = "drivingLicence") private WebElement drivingLicence;
@@ -69,6 +69,10 @@ public class NewUserProfilePage extends ProfilePage {
         return messageSuccess.getText();
     }
 
+    public boolean isSuccessMessageDisplayed() {
+        return messageSuccess.isDisplayed();
+    }
+
     public boolean isQualificationStatusSectionIsDisplayed() {
         return PageInteractionHelper.isElementDisplayed(qualificationStatus);
     }
@@ -114,5 +118,19 @@ public class NewUserProfilePage extends ProfilePage {
     public RolesAndAssociationsPage clickRolesAndAssociationsLink() {
         roleAndAssociationLink.click();
         return new RolesAndAssociationsPage(driver);
+    }
+
+    @Override
+    public boolean isChangeNameLinkDisplayed() {
+        return PageInteractionHelper.isElementDisplayed(changeNameLink);
+    }
+
+    public ChangeNamePage clickChangeNameLink() {
+        changeNameLink.click();
+        return new ChangeNamePage(driver);
+    }
+
+    public boolean isPageLoaded() {
+        return selfVerify();
     }
 }

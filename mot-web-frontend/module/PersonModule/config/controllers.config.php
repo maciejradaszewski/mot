@@ -5,7 +5,9 @@
  * @link http://gitlab.clb.npm/mot/mot
  */
 
+use Dvsa\Mot\Frontend\PersonModule\Controller\ChangeNameController;
 use Dvsa\Mot\Frontend\PersonModule\Controller\PersonProfileController;
+use Dvsa\Mot\Frontend\PersonModule\Factory\Controller\ChangeNameControllerFactory;
 use Dvsa\Mot\Frontend\PersonModule\Factory\Controller\PersonProfileControllerFactory;
 use Dashboard\Controller\UserTradeRolesController;
 use Dashboard\Factory\Controller\UserTradeRolesControllerFactory;
@@ -19,6 +21,7 @@ return [
         UserProfileControllerFactory::class => UserProfileController::class,
         PersonProfileController::class    => PersonProfileControllerFactory::class,
         UserTradeRolesController::class   => UserTradeRolesControllerFactory::class,
-        ChangeQualificationStatusController::class => ChangeQualificationStatusControllerFactory::class
+        ChangeQualificationStatusController::class => ChangeQualificationStatusControllerFactory::class,
+        ChangeNameController::class => ChangeNameControllerFactory::class,
     ],
 ];
