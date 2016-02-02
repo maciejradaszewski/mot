@@ -10,6 +10,7 @@ use PHPUnit_Framework_Assert as PHPUnit;
 use DvsaCommon\Dto\Site\SiteListDto;
 use DvsaCommon\Utility\DtoHydrator;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
+use DvsaCommon\Enum\VehicleClassId;
 use Behat\Gherkin\Node\TableNode;
 
 class VtsContext implements Context
@@ -479,5 +480,32 @@ class VtsContext implements Context
         $response = $this->vehicleTestingStation->getRiskAssessment($this->sessionContext->getCurrentAccessToken(), $this->getSite()['id']);
 
         PHPUnit::assertEquals(404, $response->getStatusCode());
+    }
+
+    /**
+     * @When class :vtsClass is removed from site
+     */
+    public function classIsRemovedFromSite($vtsClass)
+    {
+        $areaOffice1Service = $this->testSupportHelper->getAreaOffice1Service();
+        $ao = $areaOffice1Service->create([]);
+        $aoSession = $this->session->startSession(
+            $ao->data["username"],
+            $ao->data["password"]
+        );
+
+        $classes = VehicleClassId::getAll();
+
+        if(($key = array_search($vtsClass, $classes)) !== false) {
+            unset($classes[$key]);
+        }
+
+        $response = $this->vehicleTestingStation->updateSiteDetails(
+            $aoSession->getAccessToken(),
+            $this->siteCreate["id"],
+            ["classes" => [$classes]]
+        );
+
+        PHPUnit::assertEquals(200, $response->getStatusCode());
     }
 }
