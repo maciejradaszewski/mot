@@ -84,30 +84,56 @@ Feature: Person
     Then 2 test logs should show today in summary section
     And My test logs should return 2 detailed records
 
+  @driving-licence
   Scenario: An Area Office User can add a licence to a tester's profile
     Given I am logged in as an Area Office User
     And I have selected a user who needs to have a licence added to their profile
     When I add a licence 'smith711215jb9az' to the user's profile
     Then their licence should match 'SMITH711215JB9AZ'
 
-  Scenario: An Area Office User can edit a licence on a tester's profile
+  @driving-licence
+  Scenario: A Scheme manager can add a licence to a tester's profile
+    Given I am logged in as a Scheme Manager
+    And I have selected a user who needs to have a licence added to their profile
+    When I add a licence '11223344' with the region 'NI' to the user's profile
+    Then their licence should match '11223344'
+
+  @driving-licence
+  Scenario: An Area Office User can update a licence on a tester's profile
     Given I am logged in as an Area Office User
     And I have selected a user who needs to have their licence edited
     When I update the licence to 'SMITH711215JB9AZ'
     Then their licence should match 'SMITH711215JB9AZ'
 
+  @driving-licence
+  Scenario: A Scheme user can update a tester's licence and region
+    Given I am logged in as an Scheme User
+    And I have selected a user who needs to have their licence edited
+    When I update the licence to '11223344' and the region 'NI'
+    Then their licence should match '11223344'
+
+  @driving-licence
   Scenario: An Area Office User cannot add an invalid licence to a tester's profile
     Given I am logged in as an Area Office User
     And I have selected a user who needs to have a licence added to their profile
     When I add a licence 'IAMINVALID' to the user's profile
     Then the user should not have a licence associated with their account
 
+  @driving-licence
+  Scenario: An Area Office User cannot add an invalid licence and region to a tester's profile
+    Given I am logged in as an Area Office User
+    And I have selected a user who needs to have a licence added to their profile
+    When I add a licence 'IAMINVALID' to the user's profile
+    Then the user should not have a licence associated with their account
+
+  @driving-licence
   Scenario: An Area Office User cannot update a tester's licence to invalid data
     Given I am logged in as an Area Office User
     And I have selected a user who needs to have their licence edited
     When I update the licence to 'IAMINVALID'
     Then their licence should not match 'IAMINVALID'
 
+  @driving-licence
   Scenario: An Area Office User can delete a licence on a tester's profile
     Given I am logged in as an Area Office User
     And I have selected a user who needs to have their licence deleted

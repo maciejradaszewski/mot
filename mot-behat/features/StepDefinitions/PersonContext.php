@@ -734,7 +734,6 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     /**
      * @Given /^I have selected a user who needs to have their licence deleted|edited$/
      */
-
     public function selectUserWithLicence()
     {
         $this->createTester();
@@ -745,13 +744,24 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
      * @When I update the licence to :licenceNumber
      * @var string $licenceNumber
      */
-    public function updateUserLicenceTo($licenceNumber)
+    public function updateUserLicence($licenceNumber)
+    {
+        $this->updateUserLicenceWithRegion($licenceNumber, \DvsaCommon\Enum\LicenceCountryCode::GREAT_BRITAIN_ENGLAND_SCOTLAND_AND_WALES);
+    }
+
+    /**
+     * @When I add a licence :licenceNumber with the region :licenceRegion to the user's profile
+     * @When I update the licence to :licenceNumber and the region :licenceRegion
+     * @var string $licenceNumber
+     * @var string $licenceRegion
+     */
+    public function updateUserLicenceWithRegion($licenceNumber, $licenceRegion)
     {
         $testerId = $this->personLoginData->data['personId'];
 
         // create JSON to send to endpoint
         $licenceDetails = '{"drivingLicenceNumber": "' . $licenceNumber . '", "drivingLicenceRegion": "';
-        $licenceDetails .= \DvsaCommon\Enum\LicenceCountryCode::GREAT_BRITAIN_ENGLAND_SCOTLAND_AND_WALES . '"}';
+        $licenceDetails .= $licenceRegion . '"}';
 
         $response = $this->customerService->updateLicence(
             $this->sessionContext->getCurrentAccessToken(),

@@ -48,7 +48,7 @@ public class DrivingLicenceTest extends BaseTest {
     private static final String DRIVING_LICENCE_REGION_TEXT_GB = "GB";
     private static final String DRIVING_LICENCE_REGION_TEXT_NI = "NI";
     private static final String DRIVING_LICENCE_REGION_TEXT_NU = "Non-United Kingdom";
-    private static final String DRIVING_LICENCE_REGION_TEXT_NU_NEW_PROFILE = "NU";
+    private static final String DRIVING_LICENCE_REGION_TEXT_NU_NEW_PROFILE = "Non-UK";
 
     @BeforeClass(alwaysRun = true)
     private void setup() throws IOException {
@@ -144,7 +144,7 @@ public class DrivingLicenceTest extends BaseTest {
         ProfilePage postDeleteDrivingLicenceProfilePage = removeDrivingLicence(profilePage);
 
         // Then no driving licence will be recorded for the user
-        assertThat(postDeleteDrivingLicenceProfilePage.getDrivingLicenceForPerson(), is("None recorded"));
+        assertThat(postDeleteDrivingLicenceProfilePage.getDrivingLicenceForPerson(), containsString("None Recorded"));
     }
 
     @Test(groups = {"BVT", "Regression"},
