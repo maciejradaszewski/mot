@@ -99,9 +99,10 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
     {
         $this->authorisationService->assertGranted(PermissionInSystem::ADD_EDIT_DRIVING_LICENCE);
 
-        $personId = $this->params()->fromRoute('personId');
-        if (null === $personId) {
+        if ($this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)) {
             $personId = $this->params()->fromRoute('id');
+        } else {
+            $personId = $this->params()->fromRoute('personId');
         }
 
         $profile = $this->accountAdminService->getUserProfile($personId);
@@ -122,7 +123,7 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
         } else {
             // Otherwise load the licence data from the user profile
             $drivingLicenceNumber = $profile->getDrivingLicenceNumber();
-            $drivingLicenceRegion = $profile->getDrivingLicenceRegionCode();
+            $drivingLicenceRegion = $profile->getDrivingLicenceRegion();
         }
 
         if ($this->getRequest()->isPost()) {

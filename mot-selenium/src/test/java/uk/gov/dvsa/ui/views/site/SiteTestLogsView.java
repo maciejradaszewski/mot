@@ -77,7 +77,7 @@ public class SiteTestLogsView extends BaseTest {
         Site testSite = siteData.createNewSite(aeDetails.getId(), "My_Site");
         User tester = userData.createTester(testSite.getId());
 
-        DateTime firstTestDate = DateTime.now().withDayOfMonth(2);
+        DateTime firstTestDate = DateTime.now().withDayOfMonth(1);
         DateTime secondTestDate = DateTime.now().minusDays(30);
 
         motApi.createTest(tester, testSite.getId(), vehicleData.getNewVehicle(tester),

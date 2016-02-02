@@ -13,7 +13,7 @@ class UpdateLicenceDetailsController extends AbstractDvsaRestfulController
     /**
      * @var LicenceDetailsService $licenceService
      */
-    protected $licenceService;
+    private $licenceService;
 
     public function __construct(LicenceDetailsService $service)
     {
