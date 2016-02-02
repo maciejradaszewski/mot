@@ -131,6 +131,11 @@ class MotTestContext implements Context, SnippetAcceptingContext
      */
     private $certificateContext;
 
+    /**
+     * @var VtsContext
+     */
+    private $vtsContext;
+
     public function __construct(
         BrakeTestResult $brakeTestResult,
         MotTest $motTest,
@@ -165,6 +170,7 @@ class MotTestContext implements Context, SnippetAcceptingContext
         $this->contingencyTestContext = $scope->getEnvironment()->getContext(ContingencyTestContext::class);
         $this->personContext = $scope->getEnvironment()->getContext(PersonContext::class);
         $this->certificateContext = $scope->getEnvironment()->getContext(CertificateContext::class);
+        $this->vtsContext = $scope->getEnvironment()->getContext(VtsContext::class);
     }
 
     /**
@@ -1130,5 +1136,29 @@ class MotTestContext implements Context, SnippetAcceptingContext
         );
 
         PHPUnit::assertSame(200, $response->getStatusCode());
+    }
+
+    /**
+     * @Then I can not start an Mot Test for Vehicle with class :vehilceClass
+     */
+    public function iCanNotStartAnMotTestForVehicleWithClass($vehicleClass)
+    {
+        $vehicleId = $this->vehicleContext->createVehicle(['testClass' => $vehicleClass]);
+
+        $this->motTestData = $this->motTest->startNewMotTestWithVehicleId(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->sessionContext->getCurrentUserId(),
+            $vehicleId,
+            $vehicleClass,
+            ["vehicleTestingStationId" => $this->vtsContext->getSite()["id"]]
+        );
+
+        PHPUnit::assertSame(403, $this->motTestData->getStatusCode());
+
+        $expectedError = sprintf("Your Site is not authorised to test class %s vehicles", $vehicleClass);
+        $apiErrors = $this->motTestData->getBody()->offsetGet("errors")->toArray();
+        $error = array_shift($apiErrors)["message"];
+
+        PHPUnit::assertSame($expectedError, $error);
     }
 }

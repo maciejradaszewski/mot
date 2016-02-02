@@ -173,3 +173,11 @@ Feature: MOT Test
     And print of migrated mot tests is issued
     When I fetch jasper document for test
     Then document has only odometer readings from tests performed in past
+
+  Scenario Outline: Tester can not perform a MOT for vehicle on site with no associated classes
+    Given I am logged in as a Tester to new site
+    When class <class> is removed from site
+    Then I can not start an Mot Test for Vehicle with class <class>
+    Examples:
+      | class |
+      | 4     |

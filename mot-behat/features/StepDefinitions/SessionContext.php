@@ -6,7 +6,7 @@ use Dvsa\Mot\Behat\Datasource\Authentication;
 use Dvsa\Mot\Behat\Support\Api\AccountClaim;
 use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Api\Session\AuthenticatedUser;
-use Dvsa\Mot\Behat\Support\Api\TempPasswordChange;
+use Dvsa\Mot\Behat\Support\Api\AuthorisedExaminer;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 
 class SessionContext implements Context
@@ -20,6 +20,11 @@ class SessionContext implements Context
      * @var Session
      */
     private $session;
+
+    /**
+     * @var AuthorisedExaminer
+     */
+    private $authorisedExaminer;
 
     /**
      * @var AuthenticatedUser
@@ -41,19 +46,30 @@ class SessionContext implements Context
      */
     private $vtsContext;
 
+    /**
+     * @var AuthorisedExaminerContext
+     */
+    private $authorisedExaminerContext;
+
     /** @var PersonContext */
     private $personContext;
 
     /**
-     * @param AccountClaim       $accountClaim
-     * @param Session            $session
-     * @param TestSupportHelper  $testSupportHelper
+     * @param AccountClaim $accountClaim
+     * @param Session $session
+     * @param TestSupportHelper $testSupportHelper
+     * @param AuthorisedExaminer $authorisedExaminer
      */
-    public function __construct(AccountClaim $accountClaim, Session $session, TestSupportHelper $testSupportHelper)
-    {
+    public function __construct(
+        AccountClaim $accountClaim,
+        Session $session,
+        TestSupportHelper $testSupportHelper,
+        AuthorisedExaminer $authorisedExaminer
+    ) {
         $this->accountClaim      = $accountClaim;
         $this->session           = $session;
         $this->testSupportHelper = $testSupportHelper;
+        $this->authorisedExaminer = $authorisedExaminer;
     }
 
     /**
@@ -64,6 +80,7 @@ class SessionContext implements Context
         $this->accountClaimContext       = $scope->getEnvironment()->getContext(AccountClaimContext::class);
         $this->tempPasswordChangeContext = $scope->getEnvironment()->getContext(TempPasswordChangeContext::class);
         $this->vtsContext = $scope->getEnvironment()->getContext(VtsContext::class);
+        $this->authorisedExaminerContext = $scope->getEnvironment()->getContext(AuthorisedExaminerContext::class);
         $this->personContext = $scope->getEnvironment()->getContext(PersonContext::class);
     }
 
@@ -449,4 +466,36 @@ class SessionContext implements Context
         );
     }
 
+    /**
+     * @Given I am logged in as a Tester to new site
+     */
+    public function iAmLoggedInAsATesterToNewSite()
+    {
+        $this->iamLoggedInAsATester();
+
+        $aeId = $this->authorisedExaminerContext->createAE()["id"];
+        $this->vtsContext->createSite();
+        $siteId = $this->vtsContext->getSite()["id"];
+        $siteNumber = $this->vtsContext->getSite()["siteNumber"];
+
+        $areaOffice1Service = $this->testSupportHelper->getAreaOffice1Service();
+        $ao = $areaOffice1Service->create([]);
+        $aoSession = $this->session->startSession(
+            $ao->data["username"],
+            $ao->data["password"]
+        );
+
+        $this->authorisedExaminer->linkAuthorisedExaminerWithSite(
+            $aoSession->getAccessToken(),
+            $aeId,
+            $siteNumber
+        );
+
+        $testerService = $this->testSupportHelper->getTesterService();
+        $tester        = $testerService->create([
+            'siteIds'                => [$siteId],
+        ]);
+
+        $this->currentUser = $this->session->startSession($tester->data['username'], $tester->data['password']);
+    }
 }
