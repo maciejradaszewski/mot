@@ -26,6 +26,8 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
 
     private $newEmailAddress;
 
+    private $newName;
+
     private $searchData;
 
     private $userHelpDeskData;
@@ -79,6 +81,11 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
      * @var Response
      */
     private $updateUserEmailResponse;
+
+    /**
+     * @var Response
+     */
+    private $updateNameResponse;
 
     /**
      * @var Response
@@ -1093,6 +1100,71 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         }
 
         PHPUnit::assertNull($positionId);
+    }
+
+    /**
+     * @When /^I change a person's name to (.*) (.*) (.*)$/
+     *
+     * @param $firstName
+     * @param $middleName
+     * @param $lastName
+     */
+    public function iChangeAPersonsName($firstName, $middleName, $lastName)
+    {
+        $this->newName = ['firstName' => $firstName,
+                          'middleName' => $middleName,
+                          'lastName' => $lastName];
+
+        $userService = $this->testSupportHelper->getUserService();
+        $this->personLoginData = $userService->create([]);
+
+        $token = $this->sessionContext->getCurrentAccessToken();
+        $this->updateNameResponse = $this->person->changeName($token, $this->getPersonUserId(), $this->newName);
+    }
+
+    /**
+     * @When I change my own name to :firstName :middleName :lastName
+     *
+     * @param $firstName
+     * @param $middleName
+     * @param $lastName
+     */
+    public function iChangeMyOwnName($firstName, $middleName, $lastName)
+    {
+        $this->newName = ['firstName' => $firstName,
+                          'middleName' => $middleName,
+                          'lastName' => $lastName];
+
+        $token = $this->sessionContext->getCurrentAccessToken();
+        $this->updateNameResponse = $this->person->changeName($token, $this->sessionContext->getCurrentUserId(), $this->newName);
+    }
+
+
+    /**
+     * @Then The person's name should be updated
+     */
+    public function thePersonsNameShouldBeUpdated()
+    {
+        PHPUnit::assertSame(200, $this->updateNameResponse->getStatusCode());
+
+//        PHPUnit::assertSame($this->newName, $this->updateNameResponse->getBody()['data']['email'], 'Email address on User Profile is incorrect.');
+    }
+
+    /**
+     * @Then The person's name should not be updated
+     */
+    public function thePersonsNameShouldNotBeUpdated()
+    {
+        PHPUnit::assertSame(400, $this->updateNameResponse->getStatusCode());
+        PHPUnit::assertNotEmpty($this->updateNameResponse->getBody()['errors']);
+    }
+
+    /**
+     * @Then I am forbidden
+     */
+    public function iAmForbidden()
+    {
+        PHPUnit::assertSame(403, $this->updateNameResponse->getStatusCode());
     }
 
     /**

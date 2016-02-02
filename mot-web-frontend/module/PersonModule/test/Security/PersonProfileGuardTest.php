@@ -16,6 +16,7 @@ use DvsaClient\Entity\TesterGroupAuthorisationStatus;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\MotIdentityInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
+use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Enum\RoleCode;
@@ -999,6 +1000,59 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
             ['', true],
             [null, true],
         ];
+    }
+
+    public function testCanEditName()
+    {
+        $guard = $this
+            ->withPermissions(PermissionInSystem::EDIT_PERSON_NAME)
+            ->withTargetPerson(self::TARGET_PERSON_ID)
+            ->createPersonProfileGuard();
+
+        $this->assertTrue($guard->canEditName());
+    }
+
+    public function testViewingSelfCantEditName()
+    {
+        $guard = $this
+            ->withPermissions(PermissionInSystem::EDIT_PERSON_NAME)
+            ->withTargetPerson(self::LOGGED_IN_PERSON_ID)
+            ->createPersonProfileGuard();
+
+        $this->assertFalse($guard->canEditName());
+    }
+
+    public function testNoPermissionCantEditName()
+    {
+        $guard = $this
+            ->withEmptyPermissions()
+            ->withTargetPerson(self::TARGET_PERSON_ID)
+            ->createPersonProfileGuard();
+
+        $this->assertFalse($guard->canEditName());
+    }
+
+    public function shouldShowTesterQualificiatonStatusBoxProvider()
+    {
+        return [
+            [AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, false],
+            [AuthorisationForTestingMotStatusCode::QUALIFIED, AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, true],
+        ];
+    }
+
+    /**
+     * @dataProvider shouldShowTesterQualificiatonStatusBoxProvider
+     * @param AuthorisationForTestingMotStatusCode $groupAStatus
+     * @param AuthorisationForTestingMotStatusCode $groupBStatus
+     * @param bool $shouldDisplay
+     */
+    public function testShouldShowTesterQualificationStatusBox($groupAStatus, $groupBStatus, $shouldDisplay)
+    {
+        $guard = $this
+            ->withTesterAuthorisation($groupAStatus, $groupBStatus)
+            ->createPersonProfileGuard();
+
+        $this->assertEquals($guard->shouldDisplayTesterQualificationStatusBox(), $shouldDisplay);
     }
 
     /**

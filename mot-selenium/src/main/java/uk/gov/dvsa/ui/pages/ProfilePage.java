@@ -5,6 +5,7 @@ import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
+import uk.gov.dvsa.ui.pages.profile.ChangeNamePage;
 
 public abstract class ProfilePage extends Page {
     private static String pageTitle;
@@ -44,12 +45,20 @@ public abstract class ProfilePage extends Page {
         return null;
     }
 
+    public ChangeNamePage clickChangeNameLink() {
+        return null;
+    }
+
     public String getDrivingLicenceRegionForPerson() {
         return null;
     }
 
     public String getMessageSuccess(){
         return "";
+    }
+
+    public boolean isSuccessMessageDisplayed() {
+        return false;
     }
 
     public boolean isTesterQualificationStatusDisplayed() {
@@ -92,4 +101,11 @@ public abstract class ProfilePage extends Page {
         return false;
     }
 
+    public boolean isChangeNameLinkDisplayed() {
+        return false;
+    }
+
+    public boolean isPageLoaded() {
+        return false;
+    }
 }

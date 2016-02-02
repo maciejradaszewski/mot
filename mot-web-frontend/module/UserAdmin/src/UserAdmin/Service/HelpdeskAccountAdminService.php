@@ -120,4 +120,9 @@ class HelpdeskAccountAdminService
     {
         return $this->userAdminMapper->deleteDrivingLicence($personId);
     }
+
+    public function updateName($personId, $firstName, $middleName, $lastName)
+    {
+        return $this->userAdminMapper->updatePersonName($personId, $firstName, $middleName, $lastName);
+    }
 }

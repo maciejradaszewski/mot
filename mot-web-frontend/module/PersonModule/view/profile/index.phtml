@@ -29,10 +29,11 @@ $escFullAddress = $this->escapeHtml(implode(", ", $fullAddressArray)) ?: null;
 $this->layout()->setVariable('pageSubTitle', $personProfileGuard->isViewingOwnProfile() ? 'Your profile' : 'User profile');
 $this->layout()->setVariable('pageTitle', $personalDetails->getFullName());
 
-echo $this->partial('errorMessages', ['getFromFlash' => true]);
+$errorMessages = $this->layout()->flashMessenger->getErrorMessages();
+$successMessages = $this->layout()->flashMessenger->getSuccessMessages();
 
-echo $this->partial('partial/gds/general/system-message', ['messages' =>  $this->layout()->flashMessenger->getSuccessMessages(), 'type' => 'success']);
-
+echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
+echo $this->partial('partial/gds/general/system-message', ['messages' => $errorMessages, 'type' => 'failure']);
 ?>
 <h3 class="summary-heading">Personal details</h3>
 <table class="table-summary" id="personal_details">
@@ -43,6 +44,11 @@ echo $this->partial('partial/gds/general/system-message', ['messages' =>  $this-
         </th>
         <td class="table-summary__value" id="display-name">
             <?php echo $this->escapeHtml($personalDetails->getFullName()); ?>
+            <?php if ($personProfileGuard->canEditName()) {
+                $url = $this->personProfileUrl()->fromPersonProfile('change-person-name');
+                echo '<a href="' . $url .
+                    '" class="table-summary__action">Change<span class="visuallyhidden"> Name </span></a>';
+            } ?>
         </td>
     </tr>
     <tr>

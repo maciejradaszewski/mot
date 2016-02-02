@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * @var string $firstName
+ * @var string $middleName
+ * @var string $lastName
+ */
+
+$errorMessages = $this->layout()->flashMessenger->getErrorMessages();
+echo $this->partial('partial/forms/errorMessagePageHeader.phtml',['messages' => $errorMessages]);
+?>
+<form method="POST">
+    <?php echo $this->csrfToken(); ?>
+    <fieldset>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id' => 'firstName',
+                'name' => 'firstName',
+                'errorMessage' => isset($errors['firstName']) ? $errors['firstName'] : null,
+                'label' => 'First name',
+                'value' => htmlspecialchars_decode($firstName),
+                'type' => 'text'
+            ]);
+        ?>
+    </fieldset>
+    <fieldset>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id' => 'middleName',
+                'name' => 'middleName',
+                'errorMessage' => isset($errors['middleName']) ? $errors['middleName'] : null,
+                'label' => 'Middle name (optional)',
+                'value' => htmlspecialchars_decode($middleName),
+                'type' => 'text'
+            ]);
+        ?>
+    </fieldset>
+    <fieldset>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id' => 'lastName',
+                'name' => 'lastName',
+                'errorMessage' => isset($errors['lastName']) ? $errors['lastName'] : null,
+                'label' => 'Last name',
+                'value' => htmlspecialchars_decode($lastName),
+                'type' => 'text'
+            ]);
+        ?>
+    </fieldset>
+    <?php echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id' => 'submitNameChange',
+            'value' => 'Change name',
+        ]
+    ); ?>
+    <ul class="content-navigation__secondary">
+        <li>
+            <a id="cancel-and-return" href="<?php
+            echo $this->personProfileUrl()->toPersonProfile();
+            ?>">Cancel and return to user profile</a>
+        </li>
+    </ul>
+</form>

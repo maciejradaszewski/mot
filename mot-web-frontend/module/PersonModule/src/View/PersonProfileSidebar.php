@@ -124,16 +124,13 @@ class PersonProfileSidebar extends GeneralSidebar
         $statusBox = new GeneralSidebarStatusBox();
         $statusBox->setId('qualification_status');
 
-        if (true === $this->personProfileGuard->shouldDisplayGroupAStatus()) {
+        if (true === $this->personProfileGuard->shouldDisplayTesterQualificationStatusBox()) {
             $statusBox->addItem(new GeneralSidebarStatusItem(
                 "group-a",
                 "Group A",
                 $this->testerAuthorisation->getGroupAStatus()->getName(),
                 $this->getQualificationStatusModifier($this->testerAuthorisation->getGroupAStatus()->getCode()),
                 "Class 1 and 2"));
-        }
-
-        if (true === $this->personProfileGuard->shouldDisplayGroupBStatus()) {
             $statusBox->addItem(new GeneralSidebarStatusItem(
                 "group-b",
                 "Group B",
