@@ -274,7 +274,7 @@ class ChangeNameController extends AbstractAuthActionController
             $breadcrumbs += [PersonProfileController::CONTENT_HEADER_TYPE__USER_SEARCH => $userSearchUrl, $personName => $profileUrl];
         }
 
-        $breadcrumbs += ['Change email address' => ''];
+        $breadcrumbs += ['Change name' => ''];
 
         return $breadcrumbs;
     }
