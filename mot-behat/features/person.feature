@@ -168,3 +168,32 @@ Feature: Person
       | Thisnameislongerthan45characterssoitisinvalidl |                                                |                                                 |
       | Joe                                            | Thisnameislongerthan45characterssoitisinvalidl |  Bloggs                                         |
       | Joe                                            |                                                |  Thisnameislongerthan45characterssoitisinvalidl |
+
+  Scenario: A user with permission to change date of birth can update date of birth of a different person
+    Given I am logged in as a Area Office 1
+    When I change a person date of birth to 20 10 1970
+    Then The person's date of birth should be updated
+
+  Scenario: A user with permission to change date of birth cannot change their own nam
+    Given I am logged in as a Area Office 1
+    When I change my date of birth to 20-10-1970
+    Then I should receive a Forbidden response
+
+  Scenario: A user withouth permission to change date of birth cannot change date of birth of a person
+    Given I am logged in as a Tester
+    When I change a person date of birth to 20 10 1970
+    Then I should receive a Forbidden response
+
+  Scenario Outline: Validation of date of birth is enforced
+    Given I am logged in as an Scheme User
+    When I change a person date of birth to <day> <month> <year>
+    Then The person's date of birth should not be updated
+
+    Examples:
+      | day  | month   | year     |
+      | asda | vsasdaf | yeaasdfr |
+      | ""   | ""      | ""       |
+      |      |         |          |
+      | 01   | 30      | 20a0     |
+      | 10   | 01      | 1800     |
+

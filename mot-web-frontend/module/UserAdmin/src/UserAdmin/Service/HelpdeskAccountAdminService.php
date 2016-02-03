@@ -125,4 +125,9 @@ class HelpdeskAccountAdminService
     {
         return $this->userAdminMapper->updatePersonName($personId, $firstName, $middleName, $lastName);
     }
+
+    public function updateDateOfBirth($personId, $data)
+    {
+        return $this->userAdminMapper->updateDateOfBirth($personId, $data);
+    }
 }

@@ -12,6 +12,7 @@ class Person extends MotApi
     const PATH_RBAC_ROLES = '/rbac-roles';
     const PATH_PASSWORD = '/password';
     const PATH_NAME = '/name';
+    const PATH_DATE_OF_BIRTH = '/date-of-birth';
     const PATH_LICENCE_UPDATE = '/driving-licence';
 
     public function getPersonMotTestingClasses($token, $user_id)
@@ -156,6 +157,16 @@ class Person extends MotApi
             $token,
             MotApi::METHOD_POST,
             str_replace('{user_id}', $user_id, self::PATH.self::PATH_NAME),
+            $data
+        );
+    }
+
+    public function changeDateOfBirth($token, $userId, array $data)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_POST,
+            str_replace('{user_id}', $userId, self::PATH.self::PATH_DATE_OF_BIRTH),
             $data
         );
     }

@@ -50,9 +50,8 @@ public class NewPersonProfilePage extends ProfilePage {
     }
 
     @Override
-    public boolean isDrivingLicenceAndDOBInformationIsDisplayed() {
-        return !personalDetails.findElements(By.id("drivingLicence")).isEmpty() &&
-                !personalDetails.findElements(By.id("dateOfBirth")).isEmpty();
+    public boolean isDrivingLicenceInformationIsDisplayed() {
+        return !personalDetails.findElements(By.id("drivingLicence")).isEmpty();
     }
 
     @Override

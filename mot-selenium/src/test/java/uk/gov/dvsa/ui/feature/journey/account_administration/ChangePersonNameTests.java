@@ -62,7 +62,7 @@ public class ChangePersonNameTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(user, tester);
 
         // When I am changing a name for a person
-        motUI.userRoute.changeName("Test", "Test", NewUserProfilePage.class);
+        motUI.userRoute.changeName("Test", "Test", true);
 
         // Then the success message should be displayed
         assertThat(motUI.userRoute.page().isSuccessMessageDisplayed(), is(true));
@@ -76,7 +76,7 @@ public class ChangePersonNameTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
 
         // When I am trying to submit an empty name for a person
-        motUI.userRoute.changeName("", "Test", ChangeNamePage.class);
+        motUI.userRoute.changeName("", "Test", false);
 
 
         // Then the error validation message should be displayed
@@ -91,7 +91,7 @@ public class ChangePersonNameTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(vehicleExaminerUser, tester);
 
         // When I am trying to submit an empty last name for a person
-        motUI.userRoute.changeName("Test", "", ChangeNamePage.class);
+        motUI.userRoute.changeName("Test", "", false);
 
 
         // Then the error validation message should be displayed
@@ -100,16 +100,15 @@ public class ChangePersonNameTests extends BaseTest {
 
     @Test(groups = {"BVT", "Regression", "BL-59"},
             testName = "NewProfile",
-            description = "Test that Authorised user can navigate to Change name page and backward",
-            dataProvider = "dvsaUserChangeNameProvider")
-    public void dvsaUserCanNavigateToAndBackwardChangeNamePage(User user) throws IOException {
+            description = "Test that Authorised user can navigate to Change name page and backward")
+    public void dvsaUserCanNavigateToAndBackwardChangeNamePage() throws IOException {
         // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
 
         // When I am navigating to Change name page and clicking on cancel and return link
         motUI.userRoute.page().clickChangeNameLink().clickCancelAndReturnLink();
 
-        // Then the success message should be displayed
+        // Then the person profile page should be displayed
         assertThat(motUI.userRoute.page().isPageLoaded(), is(true));
     }
 

@@ -27,6 +27,7 @@ public class NewUserProfilePage extends ProfilePage {
     @FindBy(id = "dateOfBirth") private WebElement dateOfBirth;
     @FindBy(css = "#drivingLicence a") protected WebElement changeDrivingLicenceLink;
     @FindBy(css = "#email-address a") protected WebElement changeEmailLink;
+    @FindBy(css = "#date-of-birth a") protected WebElement changeDOBLink;
     @FindBy(css = "#drivingLicence span") protected WebElement personDrivingLicenceRegion;
 
     public NewUserProfilePage(MotAppDriver driver) {
@@ -88,9 +89,13 @@ public class NewUserProfilePage extends ProfilePage {
     }
 
     @Override
-    public boolean isDrivingLicenceAndDOBInformationIsDisplayed() {
-        return PageInteractionHelper.isElementDisplayed(drivingLicence) &&
-                PageInteractionHelper.isElementDisplayed(dateOfBirth);
+    public boolean isChangeDOBLinkIsDisplayed() {
+        return PageInteractionHelper.isElementDisplayed(changeDOBLink);
+    }
+
+    @Override
+    public boolean isDrivingLicenceInformationIsDisplayed() {
+        return PageInteractionHelper.isElementDisplayed(drivingLicence);
     }
 
     @Override
@@ -128,6 +133,11 @@ public class NewUserProfilePage extends ProfilePage {
     public ChangeNamePage clickChangeNameLink() {
         changeNameLink.click();
         return new ChangeNamePage(driver);
+    }
+
+    public ChangeDateOfBirthPage clickChangeDOBLink() {
+        changeDOBLink.click();
+        return new ChangeDateOfBirthPage(driver);
     }
 
     public boolean isPageLoaded() {

@@ -123,93 +123,6 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * View Date Of Birth.
-     *
-     * Rule: When SM, SU, AO1, AO2, VE, CSM, CSCO View AEDM, AED, SITE-M, SITE-A, TESTER, NO-ROLES.
-     *
-     * @return array
-     */
-    public function viewDateOfBirthProvider()
-    {
-        return [
-            [
-                // When INVALID-USER View NO-ROLES
-                ContextProvider::NO_CONTEXT,
-                [self::LOGGED_IN_PERSON_ID, []],
-                [self::TARGET_PERSON_ID, []],
-                false,
-            ],
-            [
-                // When VALID-USER View AUTHORISED_EXAMINER_DESIGNATED_MANAGER
-                ContextProvider::NO_CONTEXT,
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
-                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
-                true,
-            ],
-            [
-                // When VALID-USER View AUTHORISED_EXAMINER_DELEGATE
-                ContextProvider::NO_CONTEXT,
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
-                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE]],
-                true,
-            ],
-            [
-                // When VALID-USER View SITE_MANAGER
-                ContextProvider::NO_CONTEXT,
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
-                [self::TARGET_PERSON_ID, [RoleCode::SITE_MANAGER]],
-                true,
-            ],
-            [
-                // When VALID-USER View SITE_ADMIN
-                ContextProvider::NO_CONTEXT,
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
-                [self::TARGET_PERSON_ID, [RoleCode::SITE_ADMIN]],
-                true,
-            ],
-            [
-                // When VALID-USER View TESTER
-                ContextProvider::NO_CONTEXT,
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
-                [self::TARGET_PERSON_ID, [RoleCode::TESTER]],
-                true,
-            ],
-            [
-                // When VALID-USER View NO-ROLES
-                ContextProvider::NO_CONTEXT,
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
-                [self::TARGET_PERSON_ID, [RoleCode::USER]],
-                true,
-            ],
-            [
-                // When VALID-USER View NO-ROLES
-                ContextProvider::NO_CONTEXT,
-                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::VIEW_DATE_OF_BIRTH]],
-                [self::TARGET_PERSON_ID, []],
-                true,
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider viewDateOfBirthProvider
-     *
-     * @param string $context
-     * @param array  $loggedInPerson
-     * @param array  $targetPerson
-     * @param bool   $result
-     */
-    public function testViewDateOfBirth($context, array $loggedInPerson, array $targetPerson, $result)
-    {
-        $guard = $this
-            ->withContext($context)
-            ->withPermissions($loggedInPerson[1])
-            ->withTargetPerson($targetPerson[0], $targetPerson[1])
-            ->createPersonProfileGuard($loggedInPerson[0]);
-        $this->assertEquals($result, $guard->canViewDateOfBirth());
-    }
-
-    /**
      * View Driving licence.
      *
      * Rule: When SM, SU, AO1, AO2, VE, CSM, CSCO View AEDM, AED, SITE-M, SITE-A, TESTER, NO-ROLES.
@@ -447,6 +360,168 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
             ->withTargetPerson($targetPerson[0], $targetPerson[1])
             ->createPersonProfileGuard($loggedInPerson[0]);
         $this->assertEquals($result, $guard->canChangeDrivingLicence());
+    }
+
+
+    /**
+     * Change Driving licence.
+     *
+     * When SM, SU, AO1, AO2, VE View ANYONE
+     * EXCEPT
+     * When SM, SU, AO1, AO2, VE View THEMSELVES - ALL CONTEXT
+     *
+     * @return array
+     */
+    public function changeDateOfBirthProvider()
+    {
+        return [
+            [
+                // When INVALID-USER View NO-ROLES
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, []],
+                [self::TARGET_PERSON_ID, []],
+                false,
+            ],
+            [
+                // When VALID-USER View THEMSELVES
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                false,
+            ],
+            [
+                // When INVALID-USER View THEMSELVES
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, []],
+                [self::LOGGED_IN_PERSON_ID, []],
+                false,
+            ],
+            [
+                // When INVALID-USER View THEMSELVES (your profile context)
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, []],
+                [self::LOGGED_IN_PERSON_ID, []],
+                false,
+            ],
+            [
+                // When VALID-USER View NO-ROLES
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, []],
+                true,
+            ],
+            [
+                // When VALID-USER View AEDM
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
+                true,
+            ],
+            [
+                // When VALID-USER View AED
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE]],
+                true,
+            ],
+            [
+                // When VALID-USER View TESTER
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [RoleCode::TESTER]],
+                true,
+            ],
+            [
+                // When VALID-USER View SCHEME_USER
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [RoleCode::SCHEME_USER]],
+                true,
+            ],
+            [
+                // When VALID-USER View SITE ADMIN
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [RoleCode::SITE_ADMIN]],
+                true,
+            ],
+            [
+                // When VALID-USER View VE
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [RoleCode::VEHICLE_EXAMINER]],
+                true,
+            ],
+            [
+                // When VALID-USER View AO1
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [RoleCode::AREA_OFFICE_1]],
+                true,
+            ],
+            [
+                // When VALID-USER View AO2
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [RoleCode::AREA_OFFICE_2]],
+                true,
+            ],
+            [
+                // When VALID-USER View CSCO
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [RoleCode::CUSTOMER_SERVICE_OPERATIVE]],
+                true,
+            ],
+            [
+                // When VALID-USER View CSM
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [RoleCode::CUSTOMER_SERVICE_MANAGER]],
+                true,
+            ],
+            [
+                // When VALID-USER View AEP
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [RoleCode::AUTHORISED_EXAMINER_PRINCIPAL]],
+                true,
+            ],
+            [
+                // When VALID-USER View DVLA_M
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [RoleCode::DVLA_MANAGER]],
+                true,
+            ],
+            [
+                // When VALID-USER View FINANCE
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH]],
+                [self::TARGET_PERSON_ID, [RoleCode::FINANCE]],
+                true,
+            ],
+
+        ];
+    }
+
+    /**
+     * @dataProvider changeDateOfBirthProvider
+     *
+     * @param $context
+     * @param array $loggedInPerson
+     * @param array $targetPerson
+     * @param $result
+     */
+    public function testChangeDateOfBirth($context, array $loggedInPerson, array $targetPerson, $result)
+    {
+        $guard = $this
+            ->withContext($context)
+            ->withPermissions($loggedInPerson[1])
+            ->withTargetPerson($targetPerson[0], $targetPerson[1])
+            ->createPersonProfileGuard($loggedInPerson[0]);
+
+        $this->assertEquals($result, $guard->canChangeDateOfBirth());
     }
 
     public function testShouldNotDisplayGroupAStatusWithEmptyStatusCode()

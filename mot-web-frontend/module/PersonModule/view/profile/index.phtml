@@ -59,17 +59,21 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
             <?php echo $this->escapeHtml($personalDetails->getUsername()); ?>
         </td>
     </tr>
-    <?php if (true === $personProfileGuard->canViewDateOfBirth()) : ?>
     <tr>
         <th class="table-summary__key">
             Date of birth
         </th>
-        <td class="table-summary__value" id="dateOfBirth">
+        <td class="table-summary__value" id="date-of-birth">
             <?php echo !empty($personalDetails->getDateOfBirth()) ? DateTimeDisplayFormat::textDate($personalDetails->getDateOfBirth())
                 : '<span class="table-summary__meta">Unknown</span>'; ?>
+
+            <?php if($personProfileGuard->canChangeDateOfBirth() && $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)){
+                $url = $this->personProfileUrl()->fromPersonProfile('change-person-date-of-birth');
+                echo '<a href="' . $url .
+                    '" class="table-summary__action">Change<span class="visuallyhidden"> Date of birth </span></a>';
+            } ?>
         </td>
     </tr>
-    <?php endif ?>
     <?php if (true === $personProfileGuard->canViewDrivingLicence()) : ?>
     <tr>
         <th class="table-summary__key">

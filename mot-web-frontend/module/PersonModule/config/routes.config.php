@@ -17,6 +17,7 @@ use UserAdmin\Factory\Controller\UserProfileControllerFactory;
 use UserAdmin\Controller\ChangeQualificationStatusController;
 use UserAdmin\Factory\Controller\ResetAccountClaimByPostControllerFactory;
 use UserAdmin\Factory\Controller\PersonRoleControllerFactory;
+use Dvsa\Mot\Frontend\PersonModule\Controller\ChangeDateOfBirthController;
 
 return [
     'router' => [
@@ -480,6 +481,17 @@ return [
                         ],
                         'may_terminate' => true,
                     ],
+                    'change-person-date-of-birth' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/date-of-birth',
+                            'defaults' => [
+                                'controller' => ChangeDateOfBirthController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
                 ],
             ],
             ContextProvider::VTS_PARENT_ROUTE => [
@@ -656,6 +668,17 @@ return [
                         ],
                         'may_terminate' => true,
                     ],
+                    'change-person-date-of-birth' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/date-of-birth',
+                            'defaults' => [
+                                'controller' => ChangeDateOfBirthController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
                 ],
             ],
             ContextProvider::AE_PARENT_ROUTE => [
@@ -734,8 +757,8 @@ return [
                             'defaults' => [
                                 'controller' => UserTradeRolesController::class,
                                 'action' => 'removeAeRole'
-                            ]
-                        ]
+                            ],
+                        ],
                     ],
                     'remove-vts-role' => [
                         'type'    => 'segment',
@@ -796,6 +819,17 @@ return [
                                 ],
                             ],
                         ],
+                    ],
+                    'change-person-date-of-birth' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/date-of-birth',
+                            'defaults' => [
+                                'controller' => ChangeDateOfBirthController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
                     ],
                     'change-qualification-status' => [
                         'type' => 'segment',

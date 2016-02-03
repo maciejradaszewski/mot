@@ -8,10 +8,7 @@ import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.Page;
 import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.dvsa.UserSearchProfilePage;
-import uk.gov.dvsa.ui.pages.profile.ChangeNamePage;
-import uk.gov.dvsa.ui.pages.profile.NewPersonProfilePage;
-import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
-import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
+import uk.gov.dvsa.ui.pages.profile.*;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.io.IOException;
@@ -22,6 +19,7 @@ public class UserRoute {
 
     private static final String FIRST_NAME_ERROR_MESSAGE = "First name - you must enter a first name";
     private static final String LAST_NAME_ERROR_MESSAGE = "Last name - you must enter a last name";
+    private static final String DOB_ERROR_MESSAGE = "must be a valid date of birth";
 
     public UserRoute(PageNavigator pageNavigator) {
         this.pageNavigator = pageNavigator;
@@ -56,11 +54,22 @@ public class UserRoute {
         profilePage = vtsPage.chooseAssignedToVtsUser(userProfileToView.getId());
     }
 
-    public <T extends Page> T changeName(String firstName, String lastName, Class<T> clazz) {
-        page().clickChangeNameLink();
-        FormCompletionHelper.enterText(getChangeNamePage().getFirstNameInputElement(), firstName);
-        FormCompletionHelper.enterText(getChangeNamePage().getLastNameInputElement(), lastName);
-        return getChangeNamePage().clickSubmitButton(clazz);
+    public <T extends Page> T changeName(String firstName, String lastName, boolean isInputValid) {
+        profilePage.clickChangeNameLink().fillFirstName(firstName).fillLastName(lastName);
+        if (!isInputValid) {
+            return (T)getChangeNamePage().clickSubmitButton(ChangeNamePage.class);
+        }
+        return (T)getChangeNamePage().clickSubmitButton(NewUserProfilePage.class);
+    }
+
+    public <T extends Page> T changeDateOfBirth(String day, String month, String year, boolean isValidValues) {
+        ChangeDateOfBirthPage page = profilePage.clickChangeDOBLink();
+
+        page.fillDay(day).fillMonth(month).fillYear(year);
+        if (!isValidValues) {
+            return (T)page.clickSubmitButton(ChangeDateOfBirthPage.class);
+        }
+        return (T)page.clickSubmitButton(NewUserProfilePage.class);
     }
 
     public boolean isTesterQualificationStatusDisplayed() {
@@ -78,11 +87,19 @@ public class UserRoute {
         }
     }
 
+    public boolean isValidationMessageOnDOBPageDisplayed() {
+        return getChangeDOBPage().getValidationMessage().equals(DOB_ERROR_MESSAGE);
+    }
+
     public ProfilePage page(){
         return profilePage;
     }
 
     private ChangeNamePage getChangeNamePage() {
         return new ChangeNamePage(pageNavigator.getDriver());
+    }
+
+    private ChangeDateOfBirthPage getChangeDOBPage() {
+        return new ChangeDateOfBirthPage(pageNavigator.getDriver());
     }
 }
