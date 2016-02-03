@@ -132,6 +132,14 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
      */
     private $authorisedExaminer;
 
+
+    private $newDateOfBirth;
+
+    /**
+     * @var Response
+     */
+    private $updateDateOfBirthResponse;
+
     /**
      * @param TestSupportHelper $testSupportHelper
      * @param CustomerService $customerService
@@ -1200,5 +1208,55 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
 
         $data = array_replace($defaults, $data);
         $this->personLoginData = $aedmService->create($data);
+    }
+
+    /**
+     * @When /^I change a person date of birth to (.*) (.*) (.*)$/
+     */
+    public function iChangeAPersonDateOfBirthTo($day, $month, $year)
+    {
+        $this->newDateOfBirth = [
+            'day' => $day,
+            'month' => $month,
+            'year' => $year,
+        ];
+        $userService = $this->testSupportHelper->getUserService();
+        $this->personLoginData = $userService->create([]);
+
+        $token = $this->sessionContext->getCurrentAccessToken();
+        $this->updateDateOfBirthResponse = $this->person->changeDateOfBirth($token, $this->getPersonUserId(), $this->newDateOfBirth);
+
+    }
+
+    /**
+     * @Then The person's date of birth should be updated
+     */
+    public function thePersonSDateOfBirthShouldBeUpdated()
+    {
+        PHPUnit::assertSame(200, $this->updateDateOfBirthResponse->getStatusCode());
+    }
+    /**
+     *
+     * @Then The person's date of birth should not be updated
+     */
+    public function thePersonSDateOfBirthShouldNotBeUpdated()
+    {
+        PHPUnit::assertSame(400, $this->updateDateOfBirthResponse->getStatusCode());
+        PHPUnit::assertNotEmpty($this->updateDateOfBirthResponse->getBody()['errors']);
+    }
+
+    /**
+     * @When I change my date of birth to :day-:month-:year
+     */
+    public function iChangeMyDateOfBirthTo($day, $month, $year)
+    {
+        $this->newDateOfBirth = [
+            'day' => $day,
+            'month' => $month,
+            'year' => $year,
+        ];
+
+        $token = $this->sessionContext->getCurrentAccessToken();
+        $this->updateDateOfBirthResponse = $this->person->changeDateOfBirth($token, $this->sessionContext->getCurrentUserId(), $this->newDateOfBirth);
     }
 }

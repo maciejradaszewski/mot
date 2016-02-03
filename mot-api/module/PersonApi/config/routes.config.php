@@ -23,6 +23,7 @@ use PersonApi\Controller\UpdateLicenceDetailsController;
 use PersonApi\Controller\UpdatePersonNameController;
 use PersonApi\Controller\UserStatsController;
 use UserApi\SpecialNotice\Controller\SpecialNoticeController;
+use PersonApi\Controller\UpdatePersonDateOfBirthController;
 
 return [
     'routes' => [
@@ -269,7 +270,17 @@ return [
                     'options' => [
                         'route' => '/name',
                         'defaults' => [
-                            'controller' => UpdatePersonNameController::class
+                            'controller' => UpdatePersonNameController::class,
+                        ],
+                    ],
+                    'may_terminate' => true,
+                ],
+                'update-date-of-birth'                 => [
+                    'type'    => 'segment',
+                    'options' => [
+                        'route'    => '/date-of-birth',
+                        'defaults' => [
+                            'controller' => UpdatePersonDateOfBirthController::class,
                         ],
                     ],
                     'may_terminate' => true,

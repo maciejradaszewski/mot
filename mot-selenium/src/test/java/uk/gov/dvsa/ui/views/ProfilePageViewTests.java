@@ -74,7 +74,7 @@ public class ProfilePageViewTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(user, tester);
 
         //Then Driving licence information should be displayed
-        assertThat(motUI.userRoute.page().isDrivingLicenceAndDOBInformationIsDisplayed(), is(true));
+        assertThat(motUI.userRoute.page().isDrivingLicenceInformationIsDisplayed(), is(true));
 
         //And Change driving licence link should be displayed if appropriate
         assertThat(motUI.userRoute.page().isChangeDrivingLicenceLinkIsDisplayed(), is(isChangeLinkDisplayed));

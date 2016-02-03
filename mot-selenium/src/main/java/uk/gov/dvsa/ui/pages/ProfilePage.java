@@ -5,6 +5,7 @@ import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
+import uk.gov.dvsa.ui.pages.profile.ChangeDateOfBirthPage;
 import uk.gov.dvsa.ui.pages.profile.ChangeNamePage;
 
 public abstract class ProfilePage extends Page {
@@ -49,6 +50,10 @@ public abstract class ProfilePage extends Page {
         return null;
     }
 
+    public ChangeDateOfBirthPage clickChangeDOBLink() {
+        return null;
+    }
+
     public String getDrivingLicenceRegionForPerson() {
         return null;
     }
@@ -65,11 +70,15 @@ public abstract class ProfilePage extends Page {
         return false;
     }
 
-    public boolean isDrivingLicenceAndDOBInformationIsDisplayed() {
+    public boolean isDrivingLicenceInformationIsDisplayed() {
         return false;
     }
 
     public boolean isChangeDrivingLicenceLinkIsDisplayed() {
+        return false;
+    }
+
+    public boolean isChangeDOBLinkIsDisplayed() {
         return false;
     }
 

@@ -164,4 +164,16 @@ class UserAdminMapper extends DtoMapper
             ]
         );
     }
+
+    /**
+     * @param $personId
+     * @param array $data
+     * @return mixed|string
+     */
+    public function updateDateOfBirth($personId, array $data)
+    {
+        $url = UserAdminUrlBuilder::personDayOfBirth($personId);
+
+        return $this->client->post($url, $data);
+    }
 }

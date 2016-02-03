@@ -3,6 +3,8 @@ $label = $this->withDefault('')->getValue($label);
 $day = $this->withDefault('')->getValue($day);
 $month = $this->withDefault('')->getValue($month);
 $year = $this->withDefault('')->getValue($year);
+$required = $this->withDefault(true)->getValue($required);
+$optional = $this->withDefault(true)->getValue($optional);
 /** @var \DateTime $value */
 $value = $this->withDefault(false)->getValue($value);
 $help  = $this->withDefault(false)->getValue($help);
@@ -47,7 +49,8 @@ $cssClass = join(
                     'name'           => 'dobDay',
                     'classFormGroup' => 'form-group-day',
                     'value'          => $day,
-                    'required'       => true,
+                    'required'       => $required,
+                    'optional'       => $optional,
                     'maxLength'      => 2,
                 ]
             );
@@ -60,7 +63,8 @@ $cssClass = join(
                     'name'           => 'dobMonth',
                     'classFormGroup' => 'form-group-month',
                     'value'          => $month,
-                    'required'       => true,
+                    'required'       => $required,
+                    'optional'       => $optional,
                     'maxLength'      => 2,
                 ]
             );
@@ -73,7 +77,8 @@ $cssClass = join(
                     'name'           => 'dobYear',
                     'classFormGroup' => 'form-group-year',
                     'value'          => $year,
-                    'required'       => true,
+                    'required'       => $required,
+                    'optional'       => $optional,
                     'maxLength'      => 4,
                 ]
             );

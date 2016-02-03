@@ -15,6 +15,9 @@ use UserAdmin\Factory\Controller\ChangeQualificationStatusControllerFactory;
 use UserAdmin\Controller\ChangeQualificationStatusController;
 use UserAdmin\Factory\Controller\UserProfileControllerFactory;
 use UserAdmin\Controller\UserProfileController;
+use Dvsa\Mot\Frontend\PersonModule\Controller\ChangeDateOfBirthController;
+use Dvsa\Mot\Frontend\PersonModule\Factory\Controller\ChangeDateOfBirthControllerFactory;
+
 
 return [
     'factories' => [
@@ -23,5 +26,6 @@ return [
         UserTradeRolesController::class   => UserTradeRolesControllerFactory::class,
         ChangeQualificationStatusController::class => ChangeQualificationStatusControllerFactory::class,
         ChangeNameController::class => ChangeNameControllerFactory::class,
+        ChangeDateOfBirthController::class => ChangeDateOfBirthControllerFactory::class,
     ],
 ];

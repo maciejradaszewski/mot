@@ -120,25 +120,6 @@ class PersonProfileGuard
     }
 
     /**
-     * View Date Of Birth.
-     *
-     * Rule: When SM, SU, AO1, AO2, VE, CSM, CSCO View AEDM, AED, SITE-M, SITE-A, TESTER, NO-ROLES.
-     *
-     * @return bool
-     */
-    public function canViewDateOfBirth()
-    {
-        return $this->authorisationService->isGranted(PermissionInSystem::VIEW_DATE_OF_BIRTH)
-            && $this->targetPersonHasNoneOrAnyRoleOf([
-                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
-                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE,
-                RoleCode::SITE_MANAGER,
-                RoleCode::SITE_ADMIN,
-                RoleCode::TESTER,
-        ]);
-    }
-
-    /**
      * View Driving licence.
      *
      * Rule: When SM, SU, AO1, AO2, VE, CSM, CSCO View AEDM, AED, SITE-M, SITE-A, TESTER, NO-ROLES.
@@ -440,5 +421,21 @@ class PersonProfileGuard
         }
 
         return empty($loggedInUserRoles) || $this->loggedInPersonHasAnyRoleOf($roles);
+    }
+
+    /**
+     * Rule:
+     *
+     * When SM, SU, AO1, AO2, VE View ANYONE
+     * EXCEPT
+     * When SM, SU, AO1, AO2, VE View THEMSELVES - ALL CONTEXTS
+     *
+     * @return bool
+     */
+    public function canChangeDateOfBirth()
+    {
+        return !$this->isViewingHimself()
+            && $this->authorisationService->isGranted(PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH)
+        ;
     }
 }

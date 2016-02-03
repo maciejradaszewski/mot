@@ -9,18 +9,18 @@ import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 import uk.gov.dvsa.ui.pages.ProfilePage;
 
-public class ChangeNamePage extends Page {
+public class ChangeDateOfBirthPage extends Page {
 
-    private static final String PAGE_TITLE = "Change name";
+    private static final String PAGE_TITLE = "Change date of birth";
 
-    @FindBy (id = "firstName") private WebElement firstNameInput;
-    @FindBy (id = "middleName") private WebElement middleNameInput;
-    @FindBy (id = "lastName") private WebElement lastNameInput;
-    @FindBy (id = "submitNameChange") private WebElement submitNameChangeButton;
-    @FindBy (id = "cancel-and-return") private WebElement cancelAndReturnLink;
-    @FindBy (id = "validation-summary-id") private WebElement validationMessage;
+    @FindBy(id = "date1-day") private WebElement dayInput;
+    @FindBy (id = "date1-month") private WebElement monthInput;
+    @FindBy (id = "date1-year") private WebElement yearInput;
+    @FindBy (id = "submitDateOfBirthChange") private WebElement submitDOBChangeButton;
+    @FindBy (id = "cancel-btn") private WebElement cancelAndReturnLink;
+    @FindBy (css = ".validation-message") private WebElement validationMessage;
 
-    public ChangeNamePage(MotAppDriver driver) {
+    public ChangeDateOfBirthPage(MotAppDriver driver) {
         super(driver);
         selfVerify();
     }
@@ -30,18 +30,23 @@ public class ChangeNamePage extends Page {
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
 
-    public ChangeNamePage fillFirstName(String value) {
-        FormCompletionHelper.enterText(firstNameInput, value);
+    public ChangeDateOfBirthPage fillDay(String value) {
+        FormCompletionHelper.enterText(dayInput, value);
         return this;
     }
 
-    public ChangeNamePage fillLastName(String value) {
-        FormCompletionHelper.enterText(lastNameInput, value);
+    public ChangeDateOfBirthPage fillMonth(String value) {
+        FormCompletionHelper.enterText(monthInput, value);
+        return this;
+    }
+
+    public ChangeDateOfBirthPage fillYear(String value) {
+        FormCompletionHelper.enterText(yearInput, value);
         return this;
     }
 
     public <T extends Page>T clickSubmitButton(Class<T> clazz) {
-        submitNameChangeButton.click();
+        submitDOBChangeButton.click();
         return MotPageFactory.newPage(driver, clazz);
     }
 
