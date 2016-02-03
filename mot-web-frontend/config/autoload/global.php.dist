@@ -139,6 +139,11 @@ return [
             'name'      => 'In service exhaust emission standards for road vehicles: 18th edition',
             'url'       => 'https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/348035/18th-edition-emissions-book-complete.pdf',
             'help_text' => 'Standards for checking vehicle exhaust emission procedures and limits',
+        ],
+        [
+            'name'      => 'Special notices',
+            'url'       => 'https://www.gov.uk/topic/mot/manuals',
+            'help_text' => 'Periodically issued information informing about changes to the MOT scheme',
         ]
     ],
     'recent_certificate_list' => [

@@ -13,12 +13,12 @@ use OutOfBoundsException;
 use Zend\Http\PhpEnvironment\Request;
 
 /**
- * Controller to render a page with a list of links to manuals, guides and standards.
+ * Controller to render a page with a list of links to Manuals, guides, special notices and standards.
  */
 class ManualsAndGuidesController extends AbstractAuthActionController
 {
     const ROUTE = 'manuals';
-    const PAGE_TITLE_INDEX_ACTION = 'Manuals and guides';
+    const PAGE_TITLE_INDEX_ACTION = 'MOT manuals and notices';
     const PAGE_SUBTITLE_INDEX_ACTION = 'Resources';
 
     /**
