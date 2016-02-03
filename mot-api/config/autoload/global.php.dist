@@ -64,4 +64,7 @@ return [
     ],
     //how many days before password expires notifications are going to be sent
     'password_expiry_notification_days' => [7, 3, 2, 1],
+
+    //refrs ids that should not be displayed
+    'disabled_rfrs' => [10108, 10109],
 ];

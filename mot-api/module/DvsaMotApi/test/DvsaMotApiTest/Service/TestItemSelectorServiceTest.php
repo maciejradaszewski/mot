@@ -1,11 +1,7 @@
 <?php
 namespace DvsaMotApiTest\Service;
 
-use DvsaAuthorisation\Service\AuthorisationServiceInterface;
-use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommonTest\TestUtils\MockHandler;
-use DvsaEntities\Entity\Language;
-use DvsaEntities\Entity\TestItemCategoryDescription;
 use DvsaEntities\Entity\VehicleClass;
 use DvsaEntities\Repository\RfrRepository;
 use DvsaEntities\Repository\TestItemCategoryRepository;
@@ -208,6 +204,47 @@ class TestItemSelectorServiceTest extends AbstractMotTestServiceTest
         $this->assertEquals($expectedData, $result);
     }
 
+    public function testSearchReasonsForRejectionDoNotReturnsDisabledRfrs()
+    {
+        $searchString = "stop lamp";
+        $diabledRfrId = 123;
+
+        $reasonForRejection = (new ReasonForRejection())
+            ->setDescriptions([])
+            ->setRfrId($diabledRfrId);
+
+        $expectedReasonsForRejection = [$reasonForRejection];
+        $expectedHydratedRfr = $this->getTestArrayWithId(1);
+
+        $expectedData = [
+            'searchDetails'        => ['count' => 1, 'hasMore' => false],
+            'reasonsForRejection' => [],
+        ];
+
+        $mockEntityManager = $this->getMockEntityManager();
+
+        $this->mockRfrRepository->expects($this->once())
+            ->method('findBySearchQuery')
+            ->with(
+                $searchString, $this->vehicleClass, $this->determinedRole, 0,
+                TestItemSelectorService::SEARCH_MAX_COUNT + 1
+            )
+            ->will($this->returnValue($expectedReasonsForRejection));
+
+        $mockHydrator = $this->getMockHydrator();
+        $mockHydrator->expects($this->any())
+            ->method('extract')
+            ->with($reasonForRejection)
+            ->will($this->returnValue($expectedHydratedRfr));
+
+        $testItemSelectorService = $this->getTisServiceWithMocks($mockEntityManager, $mockHydrator, null, [$diabledRfrId]);
+
+        //when
+        $result = $testItemSelectorService->searchReasonsForRejection($this->vehicleClass, $searchString, 0, 0);
+        //then
+        $this->assertEquals($expectedData, $result);
+    }
+
     protected function getTestMotTest()
     {
         $motTest = (new MotTest())->setId($this->testMotTestNumber);
@@ -235,7 +272,8 @@ class TestItemSelectorServiceTest extends AbstractMotTestServiceTest
     protected function getTisServiceWithMocks(
         $mockEntityManager,
         $mockHydrator,
-        $mockAuthService = null
+        $mockAuthService = null,
+        $disabledRfrs = []
     ) {
         $mockAuthService = $mockAuthService ?: $this->getMockAuthorizationService();
 
@@ -244,7 +282,8 @@ class TestItemSelectorServiceTest extends AbstractMotTestServiceTest
             $mockHydrator,
             $this->mockRfrRepository,
             $mockAuthService,
-            $this->mockTestItemCategoryRepository
+            $this->mockTestItemCategoryRepository,
+            $disabledRfrs
         );
     }
 
