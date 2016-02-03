@@ -16,6 +16,7 @@ use DvsaEntities\Entity\TestItemSelector;
 use DvsaEntities\Entity\ReasonForRejection;
 use DvsaEntities\Repository\RfrRepository;
 use DvsaEntities\Repository\TestItemCategoryRepository;
+use DvsaCommon\Configuration\MotConfig;
 
 /**
  * Class TestItemSelectorService
@@ -36,13 +37,15 @@ class TestItemSelectorService extends AbstractService
     /** @var RfrRepository */
     private $rfrRepository;
     private $testItemCategoryRepository;
+    private $disabledRfrs = [];
 
     public function __construct(
         EntityManager $entityManager,
         DoctrineHydrator $objectHydrator,
         RfrRepository $rfrRepository,
         AuthorisationServiceInterface $authService,
-        TestItemCategoryRepository $testItemCategoryRepository
+        TestItemCategoryRepository $testItemCategoryRepository,
+        array $disabledRfrs = []
     ) {
         parent::__construct($entityManager);
 
@@ -50,6 +53,7 @@ class TestItemSelectorService extends AbstractService
         $this->rfrRepository = $rfrRepository;
         $this->authService = $authService;
         $this->testItemCategoryRepository = $testItemCategoryRepository;
+        $this->disabledRfrs = $disabledRfrs;
     }
 
     public function getTestItemSelectorsDataByClass($vehicleClass)
@@ -170,6 +174,10 @@ class TestItemSelectorService extends AbstractService
         $reasonsForRejectionData = [];
         if ($reasonsForRejection) {
             foreach ($reasonsForRejection as $reasonForRejection) {
+                if ($this->shouldHideRfr($reasonForRejection->getRfrId())) {
+                    continue;
+                }
+
                 $reasonsForRejectionData[] = $this->extractReasonForRejection($reasonForRejection);
             }
         }
@@ -312,6 +320,10 @@ class TestItemSelectorService extends AbstractService
      */
     public function getReasonForRejectionById($rfrId)
     {
+        if ($this->shouldHideRfr($rfrId)) {
+            return null;
+        }
+
         $reasonForRejection = $this->entityManager->getRepository(ReasonForRejection::class)
             ->findOneBy(['rfrId' => $rfrId]);
 
@@ -352,5 +364,10 @@ class TestItemSelectorService extends AbstractService
         }
 
         return $applicable;
+    }
+
+    private function shouldHideRfr($rfrId)
+    {
+        return in_array($rfrId, $this->disabledRfrs);
     }
 }
