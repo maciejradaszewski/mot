@@ -9,13 +9,21 @@ namespace Dvsa\Mot\Frontend\PersonModuleTest\View;
 
 use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
+use DvsaCommon\Auth\MotIdentityInterface;
+use DvsaCommon\Auth\MotIdentityProviderInterface;
 use PHPUnit_Framework_TestCase;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Mvc\Router\Http\TreeRouteStack;
 
 class PersonProfileUrlGeneratorTest extends PHPUnit_Framework_TestCase
 {
+    const LOGGED_IN_PERSON_ID = 105;
     const DEFAULT_URL = '/your-profile';
+
+    /**
+     * @var MotIdentityProviderInterface
+     */
+    private $identityProvider;
 
     /**
      * @var Request
@@ -32,6 +40,20 @@ class PersonProfileUrlGeneratorTest extends PHPUnit_Framework_TestCase
         $this->router = new TreeRouteStack();
         $this->router->setRoutes(require __DIR__ . '/Fixtures/routes.php');
         $this->request = new Request();
+
+        $this->identityProvider = $this
+            ->getMockBuilder(MotIdentityProviderInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /** @var MotIdentityInterface $motIdentity */
+        $motIdentity = $this->getMock(MotIdentityInterface::class);
+        $motIdentity
+            ->method('getUserId')
+            ->willReturn(self::LOGGED_IN_PERSON_ID);
+        $this
+            ->identityProvider
+            ->method('getIdentity')
+            ->willReturn($motIdentity);
     }
 
     /**
@@ -58,7 +80,8 @@ class PersonProfileUrlGeneratorTest extends PHPUnit_Framework_TestCase
     {
         $this->setBaseUrl($currentUrl);
         $contextProvider = new ContextProvider($this->router, $this->request);
-        $personProfileUrlGenerator = new PersonProfileUrlGenerator($this->router, $this->request, $contextProvider);
+        $personProfileUrlGenerator = new PersonProfileUrlGenerator($this->router, $this->request, $contextProvider,
+            $this->identityProvider);
 
         $this->assertEquals($generatedUrl, $personProfileUrlGenerator->toPersonProfile());
     }
@@ -95,7 +118,8 @@ class PersonProfileUrlGeneratorTest extends PHPUnit_Framework_TestCase
             ->method('getContext')
             ->willReturn(ContextProvider::NO_CONTEXT);
 
-        $personProfileUrlGenerator = new PersonProfileUrlGenerator($this->router, $this->request, $contextProvider);
+        $personProfileUrlGenerator = new PersonProfileUrlGenerator($this->router, $this->request, $contextProvider,
+            $this->identityProvider);
 
         $this->assertEquals($generatedUrl, $personProfileUrlGenerator->toPersonProfile());
     }
@@ -106,6 +130,7 @@ class PersonProfileUrlGeneratorTest extends PHPUnit_Framework_TestCase
     public function fromPersonProfileProvider()
     {
         return [
+            ['/your-profile', ['trade-roles'], '/your-profile/105/trade-roles'],
             ['/your-profile/105', ['trade-roles'], '/your-profile/105/trade-roles'],
             ['/authorised-examiner/1/user/105', ['trade-roles'], '/authorised-examiner/1/user/105/trade-roles'],
             ['/vehicle-testing-station/2/user/105', ['trade-roles'], '/vehicle-testing-station/2/user/105/trade-roles'],
@@ -133,7 +158,8 @@ class PersonProfileUrlGeneratorTest extends PHPUnit_Framework_TestCase
 
         $this->setBaseUrl($currentUrl);
         $contextProvider = new ContextProvider($this->router, $this->request);
-        $personProfileUrlGenerator = new PersonProfileUrlGenerator($this->router, $this->request, $contextProvider);
+        $personProfileUrlGenerator = new PersonProfileUrlGenerator($this->router, $this->request, $contextProvider,
+            $this->identityProvider);
         $this->assertEquals($generatedUrl, $personProfileUrlGenerator->fromPersonProfile($subRouteName, $params,
             $options));
     }
@@ -144,6 +170,7 @@ class PersonProfileUrlGeneratorTest extends PHPUnit_Framework_TestCase
     public function fromPersonProfileWithUnknownContextProvider()
     {
         return [
+            ['/your-profile', ['trade-roles'], self::DEFAULT_URL],
             ['/your-profile/105', ['trade-roles'], self::DEFAULT_URL],
             ['/authorised-examiner/1/user/105', ['trade-roles'], self::DEFAULT_URL],
             ['/vehicle-testing-station/2/user/105', ['trade-roles'], self::DEFAULT_URL],
@@ -179,7 +206,8 @@ class PersonProfileUrlGeneratorTest extends PHPUnit_Framework_TestCase
             ->method('getContext')
             ->willReturn(ContextProvider::NO_CONTEXT);
 
-        $personProfileUrlGenerator = new PersonProfileUrlGenerator($this->router, $this->request, $contextProvider);
+        $personProfileUrlGenerator = new PersonProfileUrlGenerator($this->router, $this->request, $contextProvider,
+            $this->identityProvider);
 
         $this->assertEquals($generatedUrl, $personProfileUrlGenerator->fromPersonProfile($subRouteName, $params,
             $options));
