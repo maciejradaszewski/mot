@@ -9,6 +9,7 @@ namespace Dvsa\Mot\Frontend\PersonModule\Factory\View;
 
 use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
+use DvsaCommon\Auth\MotIdentityProviderInterface;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Mvc\Router\RouteStackInterface;
 use Zend\ServiceManager\FactoryInterface;
@@ -35,6 +36,9 @@ class PersonProfileUrlGeneratorFactory implements FactoryInterface
         /** @var ContextProvider $contextProvider */
         $contextProvider = $serviceLocator->get(ContextProvider::class);
 
-        return new PersonProfileUrlGenerator($router, $request, $contextProvider);
+        /** @var MotIdentityProviderInterface $identityProvider */
+        $identityProvider = $serviceLocator->get('MotIdentityProvider');
+
+        return new PersonProfileUrlGenerator($router, $request, $contextProvider, $identityProvider);
     }
 }

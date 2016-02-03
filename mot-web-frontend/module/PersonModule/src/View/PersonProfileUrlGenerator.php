@@ -7,6 +7,7 @@
 
 namespace Dvsa\Mot\Frontend\PersonModule\View;
 
+use DvsaCommon\Auth\MotIdentityProviderInterface;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Mvc\Router\RouteMatch;
 use Zend\Mvc\Router\RouteStackInterface as Router;
@@ -16,6 +17,16 @@ use Zend\Mvc\Router\RouteStackInterface as Router;
  */
 class PersonProfileUrlGenerator
 {
+    /**
+     * @var ContextProvider
+     */
+    private $contextProvider;
+
+    /**
+     * @var MotIdentityProviderInterface
+     */
+    private $identityProvider;
+
     /**
      * @var Request
      */
@@ -29,15 +40,18 @@ class PersonProfileUrlGenerator
     /**
      * PersonProfileUrlGenerator constructor.
      *
-     * @param Router          $router
-     * @param Request         $request
+     * @param Router $router
+     * @param Request $request
      * @param ContextProvider $contextProvider
+     * @param MotIdentityProviderInterface $identityProvider
      */
-    public function __construct(Router $router, Request $request, ContextProvider $contextProvider)
+    public function __construct(Router $router, Request $request, ContextProvider $contextProvider,
+                                MotIdentityProviderInterface $identityProvider)
     {
         $this->router = $router;
         $this->request = $request;
         $this->contextProvider = $contextProvider;
+        $this->identityProvider = $identityProvider;
     }
 
     /**
@@ -49,16 +63,16 @@ class PersonProfileUrlGenerator
     public function toPersonProfile()
     {
         $context = $this->contextProvider->getContext();
-        $personId = $this->getParamFromRoute('id');
-        if (null === $personId || !$context) {
-            return $this->generateUrlFromRoute(ContextProvider::YOUR_PROFILE_PARENT_ROUTE);
-        }
+        $personId = (int) $this->getParamFromRoute('id');
 
         if (ContextProvider::YOUR_PROFILE_CONTEXT === $context) {
             /*
              * Your Profile context.
+             *
+             * NOTE: The person 'id' parameter is optional in 'Your profile' contexts.
              */
-            return $this->generateUrlFromRoute(ContextProvider::YOUR_PROFILE_PARENT_ROUTE, ['id' => $personId]);
+            $params = ['id' => $personId ?: $this->getLoggedInPersonId()];
+            return $this->generateUrlFromRoute(ContextProvider::YOUR_PROFILE_PARENT_ROUTE, $params);
         } elseif (ContextProvider::USER_SEARCH_CONTEXT === $context) {
             /*
              * User search context.
@@ -98,16 +112,15 @@ class PersonProfileUrlGenerator
     public function fromPersonProfile($subRouteName = '', array $params = [], array $options = [])
     {
         $context = $this->contextProvider->getContext();
-        $personId = $this->getParamFromRoute('id');
-        if (null === $personId || !$context) {
-            return $this->generateUrlFromRoute(ContextProvider::YOUR_PROFILE_PARENT_ROUTE);
-        }
+        $personId = (int) $this->getParamFromRoute('id');
 
         if (ContextProvider::YOUR_PROFILE_CONTEXT === $context) {
             /*
              * Your Profile context.
+             *
+             * NOTE: The person 'id' parameter is optional in 'Your profile' contexts.
              */
-            $params = array_merge(['id' => $personId], $params);
+            $params = array_merge(['id' => $personId ?: $this->getLoggedInPersonId()], $params);
             $route = ContextProvider::YOUR_PROFILE_PARENT_ROUTE . '/' . $subRouteName;
         } elseif (ContextProvider::USER_SEARCH_CONTEXT === $context) {
             /*
@@ -168,5 +181,13 @@ class PersonProfileUrlGenerator
         $options['name'] = $route;
 
         return $this->router->assemble($params, $options);
+    }
+
+    /**
+     * @return int
+     */
+    private function getLoggedInPersonId()
+    {
+        return (int) $this->identityProvider->getIdentity()->getUserId();
     }
 }

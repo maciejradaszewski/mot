@@ -16,7 +16,6 @@ use DvsaClient\Entity\TesterGroupAuthorisationStatus;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\MotIdentityInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
-use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Enum\RoleCode;
@@ -195,6 +194,48 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
                 $this->getTargetPersonForDataProvider('TESTER'),
                 false,
             ],
+            [
+                // When AEDM View 'Your profile': Pass
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                $this->getLoggedInPersonForDataProvider('AEDM'),
+                $this->getTargetPersonForDataProvider('TESTER'),
+                true,
+            ],
+            [
+                // When AED View 'Your profile': Pass
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                $this->getLoggedInPersonForDataProvider('AED'),
+                [self::LOGGED_IN_PERSON_ID, []],
+                true,
+            ],
+            [
+                // When SITE-M View 'Your profile': Pass
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                $this->getLoggedInPersonForDataProvider('SITE-M'),
+                [self::LOGGED_IN_PERSON_ID, []],
+                true,
+            ],
+            [
+                // When SITE-A View 'Your profile': Pass
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                $this->getLoggedInPersonForDataProvider('SITE-A'),
+                [self::LOGGED_IN_PERSON_ID, []],
+                true,
+            ],
+            [
+                // When TESTER View 'Your profile': Pass
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                $this->getLoggedInPersonForDataProvider('TESTER'),
+                [self::LOGGED_IN_PERSON_ID, []],
+                true,
+            ],
+            [
+                // When NO-ROLES View 'Your profile': Pass
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                $this->getLoggedInPersonForDataProvider('NO-ROLES'),
+                [self::LOGGED_IN_PERSON_ID, []],
+                true,
+            ],
         ];
     }
 
@@ -208,9 +249,12 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
      */
     public function testViewDrivingLicence($context, array $loggedInPerson, array $targetPerson, $result)
     {
+        $loggedInPersonRoles = isset($loggedInPerson[2]) ? $loggedInPerson[2] : [];
+
         $guard = $this
             ->withContext($context)
             ->withPermissions($loggedInPerson[1])
+            ->withRoles($loggedInPersonRoles)
             ->withTargetPerson($targetPerson[0], $targetPerson[1])
             ->createPersonProfileGuard($loggedInPerson[0]);
         $this->assertEquals($result, $guard->canViewDrivingLicence());
@@ -1117,9 +1161,10 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider shouldShowTesterQualificiatonStatusBoxProvider
+     *
      * @param AuthorisationForTestingMotStatusCode $groupAStatus
      * @param AuthorisationForTestingMotStatusCode $groupBStatus
-     * @param bool $shouldDisplay
+     * @param bool                                 $shouldDisplay
      */
     public function testShouldShowTesterQualificationStatusBox($groupAStatus, $groupBStatus, $shouldDisplay)
     {
@@ -1319,16 +1364,29 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
         }
 
         $permissions = [];
+        $roles = [];
 
         switch ($role) {
             case 'AEDM':
+                $roles[] = RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER;
+                break;
+            case 'AED':
+                $roles[] = RoleCode::AUTHORISED_EXAMINER_DELEGATE;
+                break;
+            case 'SITE-M':
+                $roles[] = RoleCode::SITE_MANAGER;
+                break;
+            case 'SITE-A':
+                $roles[] = RoleCode::SITE_ADMIN;
+                break;
+            case 'TESTER':
+                $roles[] = RoleCode::TESTER;
+                break;
+            case 'NO-ROLES':
                 break;
         }
 
-        return [
-            self::LOGGED_IN_PERSON_ID,
-            $permissions,
-        ];
+        return [self::LOGGED_IN_PERSON_ID, $permissions, $roles];
     }
 
     /**

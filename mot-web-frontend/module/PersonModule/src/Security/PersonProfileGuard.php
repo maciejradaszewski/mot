@@ -123,19 +123,26 @@ class PersonProfileGuard
      * View Driving licence.
      *
      * Rule: When SM, SU, AO1, AO2, VE, CSM, CSCO View AEDM, AED, SITE-M, SITE-A, TESTER, NO-ROLES.
+     *       OR When AEDM, AED, SITE-M, SITE-A, TESTER, NO-ROLES View 'Your profile'.
      *
      * @return bool
      */
     public function canViewDrivingLicence()
     {
-        return $this->authorisationService->isGranted(PermissionInSystem::VIEW_DRIVING_LICENCE)
+        return ($this->authorisationService->isGranted(PermissionInSystem::VIEW_DRIVING_LICENCE)
             && $this->targetPersonHasNoneOrAnyRoleOf([
                 OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
                 OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE,
                 RoleCode::SITE_MANAGER,
                 RoleCode::SITE_ADMIN,
                 RoleCode::TESTER,
-        ]);
+            ]) || ($this->isViewingOwnProfile() && $this->loggedInPersonHasNoneOrAnyRoleOf([
+                   RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
+                   RoleCode::AUTHORISED_EXAMINER_DELEGATE,
+                   RoleCode::SITE_MANAGER,
+                   RoleCode::SITE_ADMIN,
+                   RoleCode::TESTER,
+       ])));
     }
 
     /**

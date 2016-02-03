@@ -221,8 +221,7 @@ public class DrivingLicenceTest extends BaseTest {
                 {areaOffice1User},
                 {vehicleExaminerUser},
                 {cscoUser},
-                {schemeManager},
-                {tester},
+                {schemeManager}
         };
     }
 
