@@ -2,6 +2,7 @@
 
 namespace DvsaCommonApi\Service\Validator;
 
+use DvsaCommon\Utility\TypeCheck;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApi\Service\Exception\RequiredFieldException;
 use Zend\Validator\Between as ValidateBetween;
@@ -112,7 +113,25 @@ abstract class AbstractValidator
 
     protected function checkRequiredFields(array $requiredFields, array $data)
     {
-        RequiredFieldException::CheckIfRequiredFieldsNotEmpty($requiredFields, $data);
+        if ($requiredFields && TypeCheck::isCollectionOfClass($requiredFields, RequiredField::class)) {
+            /** @var RequiredField[] $requiredFields */
+
+            $missingFieldNames = [];
+            foreach ($requiredFields as $requiredField) {
+                if (!array_key_exists($requiredField->getDataName(), $data)
+                    || $data[$requiredField->getDataName()] === ""
+                    || is_null($data[$requiredField->getDataName()])
+                ) {
+                    $missingFieldNames[] = $requiredField->getDisplayName();
+                }
+            }
+            if ($missingFieldNames) {
+                throw new RequiredFieldException($missingFieldNames);
+            }
+        } else {
+            RequiredFieldException::CheckIfRequiredFieldsNotEmpty($requiredFields, $data);
+        }
+
         return true;
     }
 

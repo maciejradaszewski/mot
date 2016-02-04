@@ -1,5 +1,6 @@
 <?php
 
+use Core\Routing\AeRoutes;
 use Dashboard\Controller\UserHomeController;
 use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use DvsaCommon\Dto\Organisation\OrganisationSiteLinkDto;
@@ -7,6 +8,7 @@ use DvsaCommon\Utility\AddressUtils;
 use Organisation\Controller\AuthorisedExaminerPrincipalController;
 use Organisation\Controller\RoleController;
 use Organisation\Controller\SiteController;
+use Organisation\UpdateAeProperty\UpdateAePropertyAction;
 
 /**
  * @var \Organisation\ViewModel\View\Index\IndexViewModel $viewModel
@@ -26,125 +28,40 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
 ?>
 <h3 class="summary-heading">
     Business details
-<?php if ($viewModel->getViewAuthorisation()->canUpdateAE()): ?>
-    <span class="summary-heading__action">
-        <a href="<?php echo $this->escapeHtmlAttr($presenter->getChangeStatusUrl()); ?>">
-            Change status & area office
-        </a>
-    </span>
-<?php endif; ?>
 </h3>
 
-<table class="table-summary">
-    <tbody>
-    <tr>
-        <th class="table-summary__key">
-            Name
-        </th>
-        <td id="ae-name" class="table-summary__value">
-            <?php echo $this->escapeHtml($presenter->getName()); ?>
-        </td>
-    </tr>
-    <tr>
-        <th class="table-summary__key">
-            Business type
-        </th>
+<?php
+echo $this->partial(
+    'partial/gds/gds-table/gds-summary-table',
+        [
+        'table' => $viewModel->buildAEBusinessDetailsSummaryTable(),
+        ]
+    );
+?>
 
-        <td id="ae-type" class="table-summary__value">
-            <?php echo $this->escapeHtml($presenter->getCompanyType()); ?>
-            <span class="table-summary__meta" id="ae-company-number">
-                <?php echo $this->escapeHtml($presenter->getCompanyNumber()); ?>
-            </span>
-        </td>
-    </tr>
-    <tr>
-        <th class="table-summary__key">
-            Trading as
-        </th>
 
-        <td id="ae-tradename" class="table-summary__value">
-            <?php echo $this->escapeHtml($presenter->getTradingName()); ?>
-        </td>
-    </tr>
-    <tr>
-        <th id="ae-number" class="table-summary__key">
-            AE ID
-        </th>
-
-        <td class="table-summary__value">
-            <?php echo $this->escapeHtml($presenter->getNumber()); ?>
-        </td>
-    </tr>
-<?php if ($viewModel->getViewAuthorisation()->canViewAeStatus()): ?>
-    <tr>
-        <th class="table-summary__key">
-            AE Appeal status
-        </th>
-
-        <td id="ae-auth-status" class="table-summary__value">
-            <?php echo "N/A"; /* @todo will be implemented in future */ ?>
-        </td>
-    </tr>
-    <tr>
-        <th class="table-summary__key">
-            AE Withdrawal date
-        </th>
-
-        <td id="ae-withdraw-date" class="table-summary__value">
-            <?php echo $withdrawalDate ? $this->escapeHtml($withdrawalDate) : 'N/A'; //@todo add to presenter ?>
-        </td>
-    </tr>
-    <tr>
-        <th class="table-summary__key">
-            DVSA area office
-        </th>
-
-        <td id="ae-dvsa-area-office" class="table-summary__value">
-            <?php echo $this->aoOfficeLabel ? $this->escapeHtml($this->aoOfficeLabel) : 'N/A'; ?>
-        </td>
-    </tr>
-<?php endif; ?>
-    </tbody>
-</table>
 
 <h3 class="summary-heading">
     Contact details
-    <?php if($viewModel->getViewAuthorisation()->canUpdateAE()): ?>
-        <span class="summary-heading__action">
-            <a id="change-contact-details" href="<?php echo $this->escapeHtmlAttr($presenter->getChangeDetailsUrl()); ?>">
-                Change contact details
-            </a>
-        </span>
-    <?php endif; ?>
 </h3>
 
-<?php $contactDetail = $organisation->getRegisteredCompanyContactDetail(); ?>
-<?php if($contactDetail): ?>
-    <?php echo $this->partial('/organisation/authorised-examiner/partials/contact-detail', [
-        'title' => 'Registered office',
-        'contactDetail' => $contactDetail,
-        //@todo: add more convention, less configuration and update ids in selenium tests
-        'ids' => [
-            'address' => 'reg_AE_address',
-            'email' => 'reg_email',
-            'phone' => 'reg_telephone',
-        ],
-    ]); ?>
-<?php endif; ?>
+<?php if($organisation->getRegisteredCompanyContactDetail()):
+    echo $this->partial(
+    'partial/gds/gds-table/gds-summary-table',
+    [
+    'table' => $viewModel->buildAERegisteredOfficeSummaryTable(),
+    ]
+    );
+endif; ?>
 
-<?php $correspondenceDetail = $organisation->getCorrespondenceContactDetail(); ?>
-<?php if($correspondenceDetail): ?>
-    <?php echo $this->partial('/organisation/authorised-examiner/partials/contact-detail', [
-        'title' => 'Correspondence',
-        'contactDetail' => $correspondenceDetail,
-        //@todo: add more convention, less configuration and update ids in selenium tests
-        'ids' => [
-            'address' => 'cor_address',
-            'email' => 'cor_email',
-            'phone' => 'cor_phone'
-        ],
-    ]); ?>
-<?php endif; ?>
+<?php if($organisation->getCorrespondenceContactDetail()):
+    echo $this->partial(
+    'partial/gds/gds-table/gds-summary-table',
+    [
+    'table' => $viewModel->buildAECorrespondenceSummaryTable(),
+    ]
+    );
+endif; ?>
 
 <?php if($viewModel->getViewAuthorisation()->canViewPersonnel()) :?>
     <h3 class="summary-heading">

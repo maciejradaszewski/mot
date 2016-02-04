@@ -1,7 +1,19 @@
 <?php
 
+use DvsaEntities\Factory\Repository\AuthForAeStatusRepositoryFactory;
+use DvsaEntities\Factory\Repository\CompanyTypeRepositoryFactory;
+use DvsaEntities\Factory\Repository\OrganisationContactTypeRepositoryFactory;
+use DvsaEntities\Factory\Repository\OrganisationRepositoryFactory;
+use DvsaEntities\Factory\Repository\PhoneContactTypeRepositoryFactory;
 use DvsaEntities\Factory\Repository\RbacRepositoryFactory;
+use DvsaEntities\Factory\Repository\SiteRepositoryFactory;
+use DvsaEntities\Repository\AuthForAeStatusRepository;
+use DvsaEntities\Repository\CompanyTypeRepository;
+use DvsaEntities\Repository\OrganisationContactTypeRepository;
+use DvsaEntities\Repository\OrganisationRepository;
+use DvsaEntities\Repository\PhoneContactTypeRepository;
 use DvsaEntities\Repository\RbacRepository;
+use DvsaEntities\Repository\SiteRepository;
 
 return [
     'service_manager' => [
@@ -10,6 +22,12 @@ return [
         ],
         'factories' => [
             RbacRepository::class => RbacRepositoryFactory::class,
+            OrganisationContactTypeRepository::class => OrganisationContactTypeRepositoryFactory::class,
+            CompanyTypeRepository::class => CompanyTypeRepositoryFactory::class,
+            OrganisationRepository::class => OrganisationRepositoryFactory::class,
+            PhoneContactTypeRepository::class => PhoneContactTypeRepositoryFactory::class,
+            AuthForAeStatusRepository::class => AuthForAeStatusRepositoryFactory::class,
+            SiteRepository::class => SiteRepositoryFactory::class,
         ],
     ],
     'doctrine'        => [

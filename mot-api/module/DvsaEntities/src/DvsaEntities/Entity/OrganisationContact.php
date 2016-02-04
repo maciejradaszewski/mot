@@ -21,7 +21,7 @@ class OrganisationContact extends Entity
     /**
      * @var ContactDetail
      *
-     * @ORM\ManyToOne(targetEntity="\DvsaEntities\Entity\ContactDetail")
+     * @ORM\ManyToOne(targetEntity="\DvsaEntities\Entity\ContactDetail", cascade={"persist"})
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="contact_detail_id", referencedColumnName="id")
      * })

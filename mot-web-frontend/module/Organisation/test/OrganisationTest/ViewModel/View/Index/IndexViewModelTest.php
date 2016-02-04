@@ -13,8 +13,10 @@ use DvsaCommon\Dto\Person\PersonDto;
 use DvsaCommon\Enum\OrganisationBusinessRoleCode;
 use DvsaCommonTest\TestUtils\XMock;
 use Organisation\Authorisation\AuthorisedExaminerViewAuthorisation;
+use Organisation\Presenter\AuthorisedExaminerPresenter;
 use Organisation\ViewModel\View\Index\EmployeeViewModel;
 use Organisation\ViewModel\View\Index\IndexViewModel;
+use Zend\Mvc\Controller\Plugin\Url;
 
 /**
  * Class IndexViewModelTest
@@ -50,10 +52,18 @@ class IndexViewModelTest extends \PHPUnit_Framework_TestCase
     /** @var AuthorisedExaminerViewAuthorisation */
     private $viewAuthorisation;
 
+    /** @var Url */
+    private $urlHelper;
+
+    /** @var  AuthorisedExaminerPresenter */
+    private $presenter;
+
     public function setUp()
     {
         $this->viewAuthorisation = XMock::of(AuthorisedExaminerViewAuthorisation::class);
-        $this->viewModel = new IndexViewModel($this->viewAuthorisation, new OrganisationDto(), [], $this->createPositions(), []);
+        $this->presenter = XMock::of(AuthorisedExaminerPresenter::class);
+        $this->urlHelper = XMock::of(Url::class);
+        $this->viewModel = new IndexViewModel($this->viewAuthorisation, new OrganisationDto(), $this->presenter, [], $this->createPositions(), [], $this->urlHelper);
     }
 
     private function createPositions()
@@ -116,7 +126,7 @@ class IndexViewModelTest extends \PHPUnit_Framework_TestCase
         $john = $this->createPerson(1);
         $mike = $this->createPerson(2);
 
-        $viewModel = new IndexViewModel($this->viewAuthorisation, new OrganisationDto(), [], $this->createPositions(), [$john, $mike]);
+        $viewModel = new IndexViewModel($this->viewAuthorisation, new OrganisationDto(), $this->presenter, [], $this->createPositions(), [$john, $mike], $this->urlHelper);
 
         $this->assertTrue($viewModel->isLastPrincipal($mike));
         $this->assertFalse($viewModel->isLastPrincipal($john));
@@ -126,7 +136,7 @@ class IndexViewModelTest extends \PHPUnit_Framework_TestCase
 
     public function test_isLastEmployee_shouldReturnFalse()
     {
-        $viewModel = new IndexViewModel($this->viewAuthorisation, new OrganisationDto(), [], $this->createPositions(), []);
+        $viewModel = new IndexViewModel($this->viewAuthorisation, new OrganisationDto(), $this->presenter, [], $this->createPositions(), [], $this->urlHelper);
 
         $this->assertFalse($viewModel->isLastEmployee(new EmployeeViewModel(new PersonDto())));
     }
@@ -134,7 +144,7 @@ class IndexViewModelTest extends \PHPUnit_Framework_TestCase
     public function test_getOrganisation_shouldBeOk()
     {
         $organisation = new OrganisationDto();
-        $viewModel = new IndexViewModel($this->viewAuthorisation, $organisation, [], $this->createPositions(), []);
+        $viewModel = new IndexViewModel($this->viewAuthorisation, $organisation, $this->presenter, [], $this->createPositions(), [], $this->urlHelper);
 
         $this->assertSame($organisation, $viewModel->getOrganisation());
     }
@@ -144,13 +154,13 @@ class IndexViewModelTest extends \PHPUnit_Framework_TestCase
         $vts1 = new VehicleTestingStation();
         $vts2 = new VehicleTestingStation();
         $orgDto = new OrganisationDto();
-        $viewModel1 = new IndexViewModel($this->viewAuthorisation, $orgDto, [$vts1, $vts2], $this->createPositions(), []);
+        $viewModel1 = new IndexViewModel($this->viewAuthorisation, $orgDto, $this->presenter, [$vts1, $vts2], $this->createPositions(), [], $this->urlHelper);
         $this->assertFalse($viewModel1->isLastVts($vts1));
         $this->assertTrue($viewModel1->isLastVts($vts2));
         $this->assertTrue($viewModel1->shouldViewContactDetailsForVts());
         $this->assertCount($viewModel1->getNumberOfVehicleTestingStations(), $viewModel1->getVehicleTestingStations());
 
-        $viewModel2 = new IndexViewModel($this->viewAuthorisation, $orgDto, [], $this->createPositions(), []);
+        $viewModel2 = new IndexViewModel($this->viewAuthorisation, $orgDto, $this->presenter, [], $this->createPositions(), [], $this->urlHelper);
         $this->assertFalse($viewModel2->shouldViewContactDetailsForVts());
     }
 
@@ -162,9 +172,11 @@ class IndexViewModelTest extends \PHPUnit_Framework_TestCase
         $viewModel = new IndexViewModel(
             $this->viewAuthorisation,
             new OrganisationDto(),
+            $this->presenter,
             [],
             $this->createPositions(),
-            [$john, $mike]
+            [$john, $mike],
+            $this->urlHelper
         );
 
         foreach ($viewModel->getPrincipals() as $index => $principal) {

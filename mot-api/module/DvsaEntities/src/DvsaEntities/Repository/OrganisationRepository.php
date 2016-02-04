@@ -102,4 +102,12 @@ class OrganisationRepository extends AbstractMutableRepository
         $result = $qb->getQuery()->getResult();
         return !empty($result) ? $result[0] : null;
     }
+
+    /**
+     * @param Organisation $entity
+     */
+    public function persist($entity)
+    {
+        $this->getEntityManager()->persist($entity);
+    }
 }

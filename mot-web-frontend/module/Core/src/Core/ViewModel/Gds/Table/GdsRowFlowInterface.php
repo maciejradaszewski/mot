@@ -31,6 +31,18 @@ interface GdsRowFlowInterface extends GdsTableFlowInterface
     public function getValue();
 
     /**
+     * @param $content
+     * @param bool $escape
+     * @return GdsRowValueMetaData
+     */
+    public function setValueMetaData($content, $escape = true);
+
+    /**
+     * @return GdsRowValueMetaData
+     */
+    public function getValueMetaData();
+
+    /**
      * @param $text
      * @param $url
      * @param string $tooltip

@@ -3,6 +3,7 @@
 namespace DvsaCommon\Dto\Organisation;
 
 use DvsaCommon\Dto\AbstractDataTransferObject;
+use DvsaCommon\Dto\AreaOffice\AreaOfficeDto;
 use DvsaCommon\Dto\Common\AuthForAeStatusDto;
 
 /**
@@ -20,7 +21,7 @@ class AuthorisedExaminerAuthorisationDto extends AbstractDataTransferObject
     /** @var AuthForAeStatusDto */
     private $status;
 
-    /** @var  \DvsaEntities\Entity\Site */
+    /** @var  AreaOfficeDto */
     private $assignedAreaOffice;
 
 //    /** @var  string */
@@ -123,7 +124,7 @@ class AuthorisedExaminerAuthorisationDto extends AbstractDataTransferObject
     }
 
     /**
-     * @return int
+     * @return AreaOfficeDto
      */
     public function getAssignedAreaOffice()
     {
@@ -131,7 +132,7 @@ class AuthorisedExaminerAuthorisationDto extends AbstractDataTransferObject
     }
 
     /**
-     * @param int $assignedAreaOffice
+     * @param AreaOfficeDto $assignedAreaOffice
      * @return $this
      */
     public function setAssignedAreaOffice($assignedAreaOffice)

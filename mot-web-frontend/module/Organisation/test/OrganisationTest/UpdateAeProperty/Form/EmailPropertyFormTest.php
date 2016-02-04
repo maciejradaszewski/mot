@@ -1,0 +1,87 @@
+<?php
+
+namespace Organisation\UpdateAeProperty\Form;
+
+use Organisation\UpdateAeProperty\Process\Form\RegisteredEmailPropertyForm;
+use Zend\Validator\EmailAddress;
+use Zend\Validator\StringLength;
+
+class EmailPropertyFormTest extends \PHPUnit_Framework_TestCase
+{
+    /**
+     * @dataProvider validData
+     */
+    public function testFormForValidData(array $data)
+    {
+        $form = new RegisteredEmailPropertyForm();
+        $form->setData($data);
+
+        $this->assertTrue($form->isValid());
+        $this->assertCount(0, $form->getMessages());
+    }
+
+    public function validData()
+    {
+        return [
+            [[RegisteredEmailPropertyForm::FIELD_EMAIL => ""]],
+            [[RegisteredEmailPropertyForm::FIELD_EMAIL => "email@email.com"]],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidData
+     */
+    public function testFormReturnsErrorMsgForInvalidData(array $data, $expectedMsg)
+    {
+        $form = new RegisteredEmailPropertyForm();
+        $form->setData($data);
+
+        $this->assertFalse($form->isValid());
+        $this->assertCount(1, $form->getMessages());
+
+        $invalidEmailMsg = $form->getEmailElement()->getMessages();
+        $this->assertCount(count($expectedMsg), $invalidEmailMsg);
+        $this->assertEquals($expectedMsg, $invalidEmailMsg);
+    }
+
+    public function invalidData()
+    {
+        return [
+            [
+                [RegisteredEmailPropertyForm::FIELD_EMAIL => "email"],
+                [EmailAddress::INVALID_FORMAT => RegisteredEmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG]
+            ],
+            [
+                [RegisteredEmailPropertyForm::FIELD_EMAIL => "email@"],
+                [EmailAddress::INVALID_FORMAT => RegisteredEmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG]
+            ],
+            [
+                [RegisteredEmailPropertyForm::FIELD_EMAIL => "email@email"],
+                [EmailAddress::INVALID_HOSTNAME => RegisteredEmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG]
+            ],
+            [
+                [RegisteredEmailPropertyForm::FIELD_EMAIL => "email.com"],
+                [EmailAddress::INVALID_FORMAT => RegisteredEmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG]
+            ],
+            [
+                [RegisteredEmailPropertyForm::FIELD_EMAIL => $this->createTooLongEmail()],
+                [
+                    EmailAddress::INVALID_FORMAT => RegisteredEmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG,
+                    StringLength::TOO_LONG => str_replace("%max%", RegisteredEmailPropertyForm::FIELD_EMAIL_MAX_LENGTH, RegisteredEmailPropertyForm::EMAIL_ADDRESS_TOO_LONG_MSG),
+                ]
+            ]
+        ];
+    }
+
+    private function createTooLongEmail()
+    {
+        $email = "";
+        $length = RegisteredEmailPropertyForm::FIELD_EMAIL_MAX_LENGTH;
+        while ($length) {
+            $email .= 'x';
+            $length--;
+        }
+
+        return $email . "@email.com";
+    }
+}

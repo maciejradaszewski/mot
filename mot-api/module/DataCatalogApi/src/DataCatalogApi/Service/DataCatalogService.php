@@ -10,9 +10,11 @@ use DvsaCommonApi\Service\AbstractService;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\Mapper\ReasonForCancelMapper;
 use DvsaCommonApi\Service\Mapper\ReasonForRefusalMapper;
+use DvsaEntities\Entity\AuthForAeStatus;
 use DvsaEntities\Entity\AuthorisationForTestingMotStatus;
 use DvsaEntities\Entity\BrakeTestType;
 use DvsaEntities\Entity\Colour;
+use DvsaEntities\Entity\CompanyType;
 use DvsaEntities\Entity\Country;
 use DvsaEntities\Entity\CountryOfRegistration;
 use DvsaEntities\Entity\EmptyVinReason;
@@ -459,5 +461,27 @@ class DataCatalogService extends AbstractService
         $repo = $this->entityManager->getRepository(SiteType::class);
         $items = $repo->findAll();
         return $this->extractType2EnumValues($items, self::ENUM_TYPE_STANDARD);
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrganisationCompanyTypes()
+    {
+        /** @var SiteStatusRepository $repo */
+        $repo = $this->entityManager->getRepository(CompanyType::class);
+        $items = $repo->findAll();
+        return $this->extractType2EnumValues($items, self::ENUM_TYPE_STANDARD);
+    }
+
+    /**
+     * @return array
+     */
+    public function getAuthForAuthorisedExaminerStatuses()
+    {
+        $this->authService->assertGranted(PermissionInSystem::DATA_CATALOG_READ);
+        $items = $this->entityManager->getRepository(AuthForAeStatus::class)->findAll();
+        return $this->extractType2EnumValues($items, self::ENUM_TYPE_STANDARD);
+
     }
 }

@@ -2,6 +2,8 @@
 namespace Organisation\Presenter;
 
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Enum\CompanyTypeCode;
+use DvsaCommon\Enum\CompanyTypeName;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\Utility\AddressUtils;
 
@@ -49,6 +51,11 @@ class AuthorisedExaminerPresenter
     public function getOrganisationType()
     {
         return $this->organisation->getOrganisationType();
+    }
+
+    public function isBusinessTypeCompany()
+    {
+        return $this->organisation->getCompanyType() == CompanyTypeName::COMPANY;
     }
 
     public function getCompanyType()

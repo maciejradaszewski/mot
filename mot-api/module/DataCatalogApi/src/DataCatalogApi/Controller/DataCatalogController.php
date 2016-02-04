@@ -20,6 +20,7 @@ class DataCatalogController extends AbstractDvsaRestfulController
         $service = $this->getServiceLocator()->get(DataCatalogService::class);
         return ApiResponse::jsonOk(
             [
+                'authForAuthorisedExaminerStatuses' => $service->getAuthForAuthorisedExaminerStatuses(),
                 'brakeTestType'         => $service->getBrakeTestType(),
                 'categories'            => $service->getEnforcementDecisionCategoryData(),
                 'colours'               => $service->getColours(),
@@ -32,6 +33,7 @@ class DataCatalogController extends AbstractDvsaRestfulController
                 'fuelTypes'             => $service->getFuelTypes(),
                 'motTestType'           => $service->getMotTestTypes(),
                 'organisationBusinessRole' => $service->getOrganisationBusinessRoles(),
+                'organisationCompanyTypes' => $service->getOrganisationCompanyTypes(),
                 'outcomes'              => $service->getEnforcementDecisionOutcomeData(),
                 'personSystemRoles'     => $service->getPersonSystemRoles(),
                 'qualificationStatus'   => $service->getQualificationStatus(),

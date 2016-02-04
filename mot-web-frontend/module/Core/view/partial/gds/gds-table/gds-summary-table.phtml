@@ -10,7 +10,7 @@ if (!isset($table) || !$table instanceof GdsTable) {
 <table class="table-summary">
     <thead>
     <tr>
-        <th class="<?php echo $this->escapeHtmlAttr($table->getHeaderCssClass()); ?>"
+        <th class="table-summary__heading"
             colspan="<?php
             echo $table->getHeaderColspan()
             ?>"
@@ -34,7 +34,15 @@ if (!isset($table) || !$table instanceof GdsTable) {
                     <span<?php
                         echo($row->getHtmlId() ? ' id="' . $this->escapeHtmlAttr($row->getHtmlId()) . '"' : '');
                         ?>>
-                        <?php echo $row->getValue()->isEscapeRequired() ? $this->escapeHtml($value) : $value; ?></span>
+                        <?php echo $row->getValue()->isEscapeRequired() ? $this->escapeHtml($value) : $value; ?>
+                    </span>
+                    <?php if (!empty($row->getValueMetaData())): ?>
+                        <span class="table-summary__meta"
+                        <?php echo($row->getHtmlId() ? ' id="' . $this->escapeHtmlAttr($row->getHtmlId()) . '-meta-data"' : '');?>>
+                            <?php $valueMetaData = $row->getValueMetaData()->getContent();
+                            echo $row->getValueMetaData()->isEscapeRequired() ? $this->escapeHtml($valueMetaData) : $valueMetaData; ?>
+                        </span>
+                    <?php endif ?>
                 <?php if (!empty($row->hasActionLink()))
                     echo '<a href="' . $row->getActionLink()->getUrl() . '" class="table-summary__action" title="'. $row->getActionLink()->getTooltip() . '"' .($row->getHtmlId() ? (' id="' . $this->escapeHtmlAttr($row->getHtmlId()) .'-change"') : '')
                         . '>'. $row->getActionLink()->getText() .'<span class="visuallyhidden"> ' .  $this->escapeHtml($row->getLabel()->getContent()) . '</span>

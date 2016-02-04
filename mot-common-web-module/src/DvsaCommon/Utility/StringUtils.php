@@ -16,4 +16,15 @@ class StringUtils
         // search forward starting from end minus needle length characters
         return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);
     }
+
+    /**
+     * @param $string
+     * @return int
+     */
+    public static function strlen($string)
+    {
+        $zendWrapper = \Zend\Stdlib\StringUtils::getWrapper();
+
+        return $zendWrapper->strlen($string);
+    }
 }

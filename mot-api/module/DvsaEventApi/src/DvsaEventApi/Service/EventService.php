@@ -8,6 +8,7 @@
 namespace DvsaEventApi\Service;
 
 use DateTime;
+use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommon\Date\DateUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -26,8 +27,10 @@ use DvsaCommonApi\Service\AbstractService;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\Entity\Event;
 use DvsaEntities\Entity\EventCategory;
+use DvsaEntities\Entity\EventOrganisationMap;
 use DvsaEntities\Entity\EventOutcome;
 use DvsaEntities\Entity\EventType;
+use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Entity\Person;
 use DvsaCommon\InputFilter\Event\RecordInputFilter;
 use DvsaEntities\Repository\EventRepository;
@@ -92,6 +95,9 @@ class EventService extends AbstractService
      */
     private $logger;
 
+    /** @var DateTimeHolder */
+    private $dateTimeHolder;
+
     /**
      * Creates the event service class.
      *
@@ -127,6 +133,7 @@ class EventService extends AbstractService
         $this->eventTypeOutcomeCategoryMapRepository = $eventTypeOutcomeCategoryMapRepository;
         $this->objectHydrator = $objectHydrator;
         $this->mapper = $mapper;
+        $this->dateTimeHolder = new DateTimeHolder();
     }
 
     /**
@@ -148,8 +155,11 @@ class EventService extends AbstractService
      *
      * @return Event the new event history record
      */
-    public function addEvent($eventType, $description, \DateTime $eventDate)
+    public function addEvent($eventType, $description, \DateTime $eventDate = null)
     {
+        if ($eventDate === null) {
+            $eventDate = $this->dateTimeHolder->getCurrent(true);
+        }
         try {
             $eventTypeObj = $this->validateEventType($eventType);
 
@@ -173,6 +183,29 @@ class EventService extends AbstractService
             }
             throw $e;
         }
+    }
+
+    /**
+     * Writes a single event into the event history log.
+     *
+     * @param Organisation  $organisation   Organisation of organisation
+     * @param string        $eventType             a value from the \DvsaCommon\Enum\EventTypeCode event types list.
+     * @param string        $description            a mandatory short description of the event
+     * @param \DateTime     $eventDate  the recorded event date
+     *
+     * @throws \Exception
+     *
+     * @return Event the new event history record
+     */
+    public function addOrganisationEvent(Organisation $organisation, $eventType, $description, \DateTime $eventDate = null)
+    {
+        $event = $this->addEvent($eventType, $description, $eventDate);
+
+        $eventMap = (new EventOrganisationMap())
+            ->setEvent($event)
+            ->setOrganisation($organisation);
+
+        $this->entityManager->persist($eventMap);
     }
 
     /**

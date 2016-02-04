@@ -353,6 +353,19 @@ class CatalogService
     }
 
     /**
+     * @return array
+     */
+    public function getOrganisationCompanyTypes()
+    {
+        $types = [];
+        foreach ($this->getData()['organisationCompanyTypes'] as $type) {
+            $types[$type['code']] = $type['name'];
+        }
+
+        return $types;
+    }
+
+    /**
      * @param $categoryName
      */
     public function getEventTypesWithOutcomesForCategory($categoryName)
@@ -365,5 +378,18 @@ class CatalogService
         }
 
         return isset($categories[$categoryName]) ? $this->getData()['eventTypesWithOutcomes'][$categoryName] : null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAuthForAuthorisedExaminerStatuses()
+    {
+        $statuses = [];
+        foreach ($this->getData()['authForAuthorisedExaminerStatuses'] as $status) {
+            $statuses[$status['code']] = $status['name'];
+        }
+
+        return $statuses;
     }
 }

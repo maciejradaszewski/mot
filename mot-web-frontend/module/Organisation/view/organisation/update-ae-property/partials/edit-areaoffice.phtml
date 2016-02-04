@@ -1,0 +1,17 @@
+<?php
+
+use Organisation\UpdateAeProperty\Process\Form\AreaOfficePropertyForm;
+
+/** @var \Organisation\UpdateAeProperty\UpdateAePropertyViewModel $viewModel */
+
+/** @var AreaOfficePropertyForm $form */
+$form = $viewModel->getForm();
+?>
+<fieldset>
+    <?php echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getAreaOfficeElement()
+        ]
+    );?>
+</fieldset>

@@ -5,6 +5,7 @@ namespace OrganisationApi\Factory\Controller;
 use Doctrine\ORM\EntityManager;
 use OrganisationApi\Controller\AuthorisedExaminerController;
 use OrganisationApi\Service\AuthorisedExaminerService;
+use OrganisationApi\Service\UpdateAeDetailsService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -15,6 +16,9 @@ class AuthorisedExaminerControllerFactory implements FactoryInterface
         /** @var ServiceLocatorInterface $serviceLocator */
         $serviceLocator = $controllerManager->getServiceLocator();
 
-        return new AuthorisedExaminerController($serviceLocator->get(AuthorisedExaminerService::class));
+        return new AuthorisedExaminerController(
+            $serviceLocator->get(AuthorisedExaminerService::class),
+            $serviceLocator->get(UpdateAeDetailsService::class)
+        );
     }
 }

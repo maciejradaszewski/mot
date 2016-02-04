@@ -1,22 +1,17 @@
 package uk.gov.dvsa.ui.pages.vts;
 
-import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.UpdateVtsContactDetailsPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import uk.gov.dvsa.domain.model.VtsChangePageTitle;
-import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.ConfigHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.mot.MotTestCertificatesPage;
 import uk.gov.dvsa.ui.pages.mot.TestShortSummaryPage;
+import uk.gov.dvsa.ui.pages.vts.ChangeDetails.*;
 import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
-import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
 import uk.gov.dvsa.ui.pages.profile.ProfileOfUserPage;
-
-import java.util.NoSuchElementException;
 
 public class VehicleTestingStationPage extends Page {
     public static final String PATH = "/vehicle-testing-station/%s";
@@ -247,44 +242,44 @@ public class VehicleTestingStationPage extends Page {
         return driver.findElementByCssSelector(selector).getText();
     }
 
-    public ChangeSiteDetailsPage clickOnChangeClassesLink() {
+    public ChangeDetailsClassesPage clickOnChangeClassesLink() {
         changeVtsClassesLink.click();
-        return new ChangeSiteDetailsPage(driver, VtsChangePageTitle.ChangeSiteClasses.getText());
+        return new ChangeDetailsClassesPage(driver);
     }
 
-    public ChangeSiteDetailsPage clickOnChangeNameLink() {
+    public ChangeDetailsNamePage clickOnChangeNameLink() {
         changeVtsNameLink.click();
-        return new ChangeSiteDetailsPage(driver, VtsChangePageTitle.ChangeSiteName.getText());
+        return new ChangeDetailsNamePage(driver);
     }
 
-    public ChangeSiteDetailsPage clickOnChangeStatusLink() {
+    public ChangeDetailsStatusPage clickOnChangeStatusLink() {
         changeVtsStatusLink.click();
-        return new ChangeSiteDetailsPage(driver, VtsChangePageTitle.ChangeSiteStatus.getText());
+        return new ChangeDetailsStatusPage(driver);
     }
 
-    public ChangeSiteDetailsPage clickOnChangeTypeLink() {
+    public ChangeDetailsTypePage clickOnChangeTypeLink() {
         changeVtsTypeLink.click();
-        return new ChangeSiteDetailsPage(driver, VtsChangePageTitle.ChangeSiteType.getText());
+        return new ChangeDetailsTypePage(driver);
     }
 
-    public ChangeContactDetailsPage clickOnChangeAddressLink() {
+    public ChangeDetailsAddressPage clickOnChangeAddressLink() {
         changeVtsAddressLink.click();
-        return new ChangeContactDetailsPage(driver, VtsChangePageTitle.ChangeContactDetailsAddress.getText());
+        return new ChangeDetailsAddressPage(driver);
     }
 
-    public ChangeContactDetailsPage clickOnChangeCountryLink() {
+    public ChangeDetailsCountryPage clickOnChangeCountryLink() {
         changeVtsCountryLink.click();
-        return new ChangeContactDetailsPage(driver, VtsChangePageTitle.ChangeContactDetailsCountry.getText());
+        return new ChangeDetailsCountryPage(driver);
     }
 
-    public ChangeContactDetailsPage clickOnChangeEmailLink() {
+    public ChangeDetailsEmailPage clickOnChangeEmailLink() {
         changeVtsEmailLink.click();
-        return new ChangeContactDetailsPage(driver, VtsChangePageTitle.ChangeContactDetailsEmail.getText());
+        return new ChangeDetailsEmailPage(driver);
     }
 
-    public ChangeContactDetailsPage clickOnChangeTelephoneLink() {
+    public ChangeDetailsTelephonePage clickOnChangeTelephoneLink() {
         changeVtsTelephoneLink.click();
-        return new ChangeContactDetailsPage(driver, VtsChangePageTitle.ChangeContactDetailsTelephone.getText());
+        return new ChangeDetailsTelephonePage(driver);
     }
 
     public boolean isChangeEmailLinkDisplayed() {

@@ -4,6 +4,8 @@ namespace DvsaClient\Mapper;
 
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Dto\Organisation\SiteDto;
+use DvsaCommon\Exception\NotImplementedException;
+use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilder;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
 use DvsaCommon\Utility\DtoHydrator;
@@ -13,7 +15,7 @@ use DvsaCommon\Utility\DtoHydrator;
  *
  * @package DvsaClient\Mapper
  */
-class OrganisationMapper extends DtoMapper
+class OrganisationMapper extends DtoMapper implements AutoWireableInterface
 {
     /**
      * @param $managerId
@@ -108,5 +110,30 @@ class OrganisationMapper extends DtoMapper
             return $areaOptions;
         }
         return $data;
+
+    }
+
+    /**
+     * Updates given AE property
+     * @param int $aeId
+     * @param string $property
+     * @param mixed $value
+     * @return mixed
+     */
+    public function updateAeProperty($aeId, $property, $value)
+    {
+        return $this->updateAePropertiesWithArray($aeId, [$property => $value]);
+    }
+
+    /**
+     * Updates AE with array of values
+     * @param int $aeId
+     * @param array $arrayOfValues
+     * @return mixed
+     */
+    public function updateAePropertiesWithArray($aeId, $arrayOfValues)
+    {
+        $apiUrl = AuthorisedExaminerUrlBuilder::of($aeId);
+        return $this->patch($apiUrl, $arrayOfValues);
     }
 }

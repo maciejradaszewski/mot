@@ -82,21 +82,23 @@ class AeOverviewSidebar extends GeneralSidebar
         if ($this->authorisationForView->canViewAeStatus()) {
             $aeAuth = $this->organisation->getAuthorisedExaminerAuthorisation();
             $aeAuthStatus = $aeAuth->getStatus();
-            if (AuthorisationForAuthorisedExaminerStatusCode::WITHDRAWN === $aeAuthStatus->getCode()
-                && !empty($aeAuth->getExpiryDate())
-            ) {
-                $withdrawalDate = DateTimeDisplayFormat::textDate($aeAuth->getExpiryDate());
+            if (!empty($aeAuth->getStatusChangedOn())) {
+                $statusChangeDate = DateTimeDisplayFormat::textDate($aeAuth->getStatusChangedOn());
             } else {
-                $withdrawalDate = "N/A";
+                $statusChangeDate = "N/A";
             }
 
+            $badge = $this->badgeForVtsStatus($aeAuthStatus->getCode());
+
             $statusBox->addItem(new GeneralSidebarStatusItem("ae-status", "Status", $aeAuthStatus->getName(),
-                SidebarBadge::success(), $withdrawalDate));
+                $badge, $statusChangeDate));
         }
 
         if ($this->authorisationForView->canViewSlotBalance()) {
+            $badge = $this->organisation->getSlotBalance() > 0 ? SidebarBadge::info(): SidebarBadge::normal();
+
             $statusBox->addItem(new GeneralSidebarStatusItem("slot-count", "Slots",
-                number_format($this->organisation->getSlotBalance(), 0, '.', ','), SidebarBadge::info()));
+                number_format($this->organisation->getSlotBalance(), 0, '.', ','), $badge));
         }
 
         $this->addItem($statusBox);
@@ -241,5 +243,30 @@ class AeOverviewSidebar extends GeneralSidebar
         }
 
         return $this->slotsLinks;
+    }
+
+    private function badgeForVtsStatus($statusCode)
+    {
+        switch ($statusCode) {
+            case AuthorisationForAuthorisedExaminerStatusCode::APPLIED:
+                return SidebarBadge::normal();
+            case AuthorisationForAuthorisedExaminerStatusCode::APPROVED:
+                return SidebarBadge::success();
+            case AuthorisationForAuthorisedExaminerStatusCode::LAPSED:
+                return SidebarBadge::normal();
+            case AuthorisationForAuthorisedExaminerStatusCode::REJECTED:
+                return SidebarBadge::alert();
+            case AuthorisationForAuthorisedExaminerStatusCode::RETRACTED:
+                return SidebarBadge::normal();
+            case AuthorisationForAuthorisedExaminerStatusCode::SURRENDERED:
+                return SidebarBadge::normal();
+            case AuthorisationForAuthorisedExaminerStatusCode::WITHDRAWN:
+                return SidebarBadge::normal();
+            case AuthorisationForAuthorisedExaminerStatusCode::UNKNOWN:
+                return SidebarBadge::normal();
+            default:
+                return SidebarBadge::normal();
+        }
+
     }
 }

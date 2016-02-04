@@ -14,6 +14,9 @@ class GdsRow implements GdsRowFlowInterface
     /** @var GdsRowValue */
     private $value = null;
 
+    /** @var GdsRowValueMetaData */
+    private $valueMetaData = null;
+
     private $parentTable;
 
     public function __construct(GdsTable $parentTable, $htmlId)
@@ -79,5 +82,16 @@ class GdsRow implements GdsRowFlowInterface
     public function getValue()
     {
         return $this->value;
+    }
+
+    public function setValueMetaData($content, $escape = true)
+    {
+        $this->valueMetaData = new GdsRowValueMetaData($this, $content, $escape);
+        return $this->valueMetaData;
+    }
+
+    public function getValueMetaData()
+    {
+        return $this->valueMetaData;
     }
 }

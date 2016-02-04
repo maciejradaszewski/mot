@@ -10,6 +10,9 @@ use Organisation\Controller\SlotsUsageController;
 use Organisation\Factory\Controller\SiteControllerFactory;
 use Organisation\Factory\Controller\AuthorisedExaminerControllerFactory;
 use Organisation\Factory\Controller\AuthorisedExaminerStatusControllerFactory;
+use Organisation\UpdateAeProperty\Factory\UpdateAePropertyProcessBuilderFactory;
+use Organisation\UpdateAeProperty\UpdateAePropertyController;
+use Organisation\UpdateAeProperty\UpdateAePropertyProcessBuilder;
 use SlotPurchase\Service\DirectDebitService;
 use SlotPurchase\Service\Factory\DirectDebitServiceFactory;
 
@@ -238,6 +241,36 @@ return [
                     ],
                 ],
             ],
+            'authorised-examiner-edit-property'     => [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/authorised-examiner/:id/:propertyName/change',
+                    'constraints' => [
+                        'id' => '[0-9]+',
+                        'propertyName' => 'name|trading-name|business-type|status|areaoffice' .
+                            '|registered-address|registered-email|registered-telephone' .
+                            '|correspondence-address|correspondence-email|correspondence-telephone'
+                    ],
+                    'defaults'    => [
+                        'controller' => UpdateAePropertyController::class,
+                        'action'     => 'edit',
+                    ],
+                ],
+            ],
+            'authorised-examiner-edit-property-review'     => [
+                'type'    => 'segment',
+                'options' => [
+                    'route'       => '/authorised-examiner/:id/:propertyName/review/:formUuid',
+                    'constraints' => [
+                        'id' => '[0-9]+',
+                        'propertyName' => 'registered-address|correspondence-address',
+                    ],
+                    'defaults'    => [
+                        'controller' => UpdateAePropertyController::class,
+                        'action'     => 'review',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers'    => [
@@ -251,9 +284,10 @@ return [
             AuthorisedExaminerStatusControllerFactory::class => AuthorisedExaminerStatusControllerFactory::class,
         ]
     ],
-    'services'      => [
+    'service_manager' => [
         'factories' => [
-            DirectDebitService::class                   => DirectDebitServiceFactory::class,
+            DirectDebitService::class => DirectDebitServiceFactory::class,
+            UpdateAePropertyProcessBuilder::class => UpdateAePropertyProcessBuilderFactory::class,
         ],
     ],
     'view_manager'   => [

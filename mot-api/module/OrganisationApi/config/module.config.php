@@ -1,5 +1,7 @@
 <?php
 
+use DvsaCommon\Factory\AutoWire\AutoWireFactory;
+use OrganisationApi\Controller\AuthorisedExaminerController;
 use OrganisationApi\Controller\AuthorisedExaminerPrincipalController;
 use OrganisationApi\Controller\AuthorisedExaminerNameController;
 use OrganisationApi\Controller\OrganisationPositionController;
@@ -10,7 +12,6 @@ use OrganisationApi\Controller\SiteLinkController;
 use OrganisationApi\Controller\OrganisationEventController;
 use OrganisationApi\Factory\Controller\OrganisationEventControllerFactory;
 use OrganisationApi\Factory\Controller\MotTestLogControllerFactory;
-use OrganisationApi\Factory\Controller\AuthorisedExaminerControllerFactory;
 use OrganisationApi\Factory\Controller\AuthorisedExaminerNameControllerFactory;
 use OrganisationApi\Factory\Controller\SiteControllerFactory;
 use OrganisationApi\Factory\Controller\SiteLinkControllerFactory;
@@ -28,10 +29,12 @@ return [
             SiteController::class                      => SiteControllerFactory::class,
             SiteLinkController::class                  => SiteLinkControllerFactory::class,
             MotTestLogControllerFactory::class         => MotTestLogControllerFactory::class,
-            AuthorisedExaminerControllerFactory::class => AuthorisedExaminerControllerFactory::class,
             AuthorisedExaminerStatusControllerFactory::class => AuthorisedExaminerStatusControllerFactory::class,
             OrganisationEventController::class               => OrganisationEventControllerFactory::class,
             AuthorisedExaminerNameController::class           => AuthorisedExaminerNameControllerFactory::class
+        ],
+        'abstract_factories' => [
+            AutoWireFactory::class,
         ],
     ],
     'router'      => [
@@ -93,7 +96,7 @@ return [
                         'id' => '[0-9]+',
                     ],
                     'defaults'    => [
-                        'controller' => AuthorisedExaminerControllerFactory::class,
+                        'controller' => AuthorisedExaminerController::class,
                     ],
                 ],
                 'may_terminate' => true,
@@ -122,7 +125,7 @@ return [
                         'options' => [
                             'route'       => '/number[/:number]',
                             'defaults'    => [
-                                'controller' => AuthorisedExaminerControllerFactory::class,
+                                'controller' => AuthorisedExaminerController::class,
                                 'action'     => 'getAuthorisedExaminerByNumber',
                             ],
                         ],
