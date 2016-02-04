@@ -37,6 +37,7 @@ default:
                 - SlotsAdjustTransactionContext
                 - SlotsDirectDebitContext
                 - SlotsInitiateRefundContext
+                - SlotsManualAdjustmentContext
                 - SlotsReportContext
                 - SlotsRefreshPaymentsContext
                 - SpecialNoticeContext
