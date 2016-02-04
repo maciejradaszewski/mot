@@ -18,6 +18,20 @@ class OdometerReading extends MotApi
         return $this->addReading($token, $mot_test_id, 'NOT_READ');
     }
 
+    public function editOdometerReading($token, $mot_test_id){
+        $body = json_encode([
+            'value' => 1001,
+            'unit' => "mi",
+        ]);
+
+        $this->client->request(new Request(
+            'POST',
+            str_replace('{mot_test_id}', $mot_test_id, self::PATH),
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer' . $token],
+            $body
+        ));
+    }
+
     public function addMeterReading($token, $mot_test_id, $value, $unit)
     {
         $body = json_encode([

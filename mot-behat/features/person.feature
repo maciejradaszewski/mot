@@ -197,3 +197,18 @@ Feature: Person
       | 01   | 30      | 20a0     |
       | 10   | 01      | 1800     |
 
+
+  Scenario: Get my profile details for valid user
+    Given I am logged in as a Tester
+    When I get my Profile details
+    Then the my profile details are returned
+
+  Scenario: Get user profile details for valid user
+    Given I am logged in as a Customer Service Manager
+    And I Search for a Valid User
+    Then the Users data will be returned
+
+  Scenario: Get user profile details for invalid user
+    Given I am logged in as a Customer Service Manager
+    And I Search for a Invalid User
+    Then the Users data will not be returned

@@ -15,11 +15,14 @@ use Dvsa\Mot\Behat\Support\Response;
 use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
+use DvsaCommon\Exception\UnauthorisedException;
 use PHPUnit_Framework_Assert as PHPUnit;
 use Behat\Behat\Tester\Exception\PendingException;
 
 class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingContext
 {
+    const FORBIDDEN = "FORBIDDEN";
+
     private $personalMotTestingClasses;
 
     private $personalDashboard;
@@ -139,6 +142,8 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
      * @var Response
      */
     private $updateDateOfBirthResponse;
+
+    private $ae;
 
     /**
      * @param TestSupportHelper $testSupportHelper
@@ -1259,4 +1264,62 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         $token = $this->sessionContext->getCurrentAccessToken();
         $this->updateDateOfBirthResponse = $this->person->changeDateOfBirth($token, $this->sessionContext->getCurrentUserId(), $this->newDateOfBirth);
     }
+
+    /**
+     * @Then /^the my profile details are returned$/
+     */
+    public function theMyProfileDetailsAreReturned()
+    {
+        $currentUsername = $this->sessionContext->getCurrentUser()->getUsername();
+        $retrievedUsername = $this->testerDetailsResponse->getBody()->toArray()['data']['username'];
+        PHPUnit::assertEquals($retrievedUsername, $currentUsername);
+    }
+
+    /**
+     * @When /^I attempt to create a new AE$/
+     */
+    public function iAttemptToCreateANewAE()
+    {
+        $this->iGetMyProfileDetails();
+        $username =  $this->testerDetailsResponse->getBody()['data']['username'];
+        try {
+            $this->authorisedExaminerContext->iAttemptsToCreateAEAs($username, "Password1");
+            $this->ae = "CREATED";
+        } catch (UnauthorisedException $ue) {
+            $this->ae = "FORBIDDEN";
+        }
+    }
+
+    /**
+     * @Then /^the creation of AE will be (.*)$/
+     */
+    public function theCreationOfAEWillBe($expectedStatus)
+    {
+        PHPUnit::assertEquals($this->ae, $expectedStatus);
+    }
+
+    /**
+     * @When /^I attempt to remove an AE$/
+     */
+    public function iAttemptToRemoveAnAE()
+    {
+        $this->authorisedExaminerContext->createAE();
+        $this->ae = $this->authorisedExaminerContext->iAttemptToRemoveAnAuthorisedExaminer();
+    }
+
+    /**
+     * @Then /^the removal of AE will be (.*)$/
+     */
+    public function theRemovalOfAEWillBe($expectedStatus)
+    {
+        try {
+            $this->ae->getBody()['data'];
+            $actualStatus = "REMOVED";
+        } catch (Exception $error) {
+            $actualStatus = $this->ae->getBody()['errors'][0]['message'];
+        }
+
+        PHPUnit::assertEquals($actualStatus, $expectedStatus);
+    }
+
 }

@@ -3,6 +3,52 @@ Feature: MOT Test
   I want to Perform an MOT Test
   So that I can verify a Vehicle is Road Worthy
 
+  Scenario: Mot info retrieval with valid VRM and test number
+    Given I am logged in as a Tester
+    And I start an Mot Test with a Class 3 Vehicle
+    And the Tester adds an Odometer Reading of 1000 mi
+    And the Tester adds a Class 3-7 Decelerometer Brake Test
+    And the Tester Passes the Mot Test
+    When I search for an MOT test
+    Then the MOT test data is returned
+
+  Scenario: MOT info retrieval with VRM missing
+    Given I am logged in as a Tester
+    And I start an Mot Test with a Class 3 Vehicle
+    And the Tester adds an Odometer Reading of 1000 mi
+    And the Tester adds a Class 3-7 Decelerometer Brake Test
+    And the Tester Passes the Mot Test
+    When I search for an MOT test with missing VRM
+    Then the search is failed with error "Invalid search. One of site number, tester, vehicle, vrm or vin id must be passed."
+
+  Scenario: MOT info retrieval with Mot test number missing
+    Given I am logged in as a Tester
+    And I start an Mot Test with a Class 3 Vehicle
+    And the Tester adds an Odometer Reading of 1000 mi
+    And the Tester adds a Class 3-7 Decelerometer Brake Test
+    And the Tester Passes the Mot Test
+    When I search for an MOT test with invalid Mot test number
+    Then the search is failed with error "Invalid search. One of site number, tester, vehicle, vrm or vin id must be passed."
+
+
+  Scenario: Mot info retrieval with non-existing VRM
+    Given I am logged in as a Tester
+    And I start an Mot Test with a Class 3 Vehicle
+    And the Tester adds an Odometer Reading of 1000 mi
+    And the Tester adds a Class 3-7 Decelerometer Brake Test
+    And the Tester Passes the Mot Test
+    When I search for an MOT test with non-existing VRM
+    Then the search will return no mot test
+
+  Scenario: Mot info retrieval with non-existing mot test number
+    Given I am logged in as a Tester
+    And I start an Mot Test with a Class 3 Vehicle
+    And the Tester adds an Odometer Reading of 1000 mi
+    And the Tester adds a Class 3-7 Decelerometer Brake Test
+    And the Tester Passes the Mot Test
+    When I search for an MOT test with non-existing mot test number
+    Then the search will return no mot test
+
   Scenario Outline: Create MOT with Vehicle Classes 3-7
     Given I am logged in as a Tester
     And I start an Mot Test with a Class <class> Vehicle
@@ -181,3 +227,36 @@ Feature: MOT Test
     Examples:
       | class |
       | 4     |
+
+  Scenario Outline: As a tester I require the ability to test class 1 & 2 vehicles
+    Given I am logged in as a Tester
+    And I start an Mot Test with a Class 1 Vehicle
+    And the Tester adds an Odometer Reading of 1000 mi
+    And I add roller brake test data for <scenario>
+    And the Tester Passes the Mot Test
+    Then the Mot test status should be <result>
+    Examples:
+      | scenario | result  |
+      | 1        | PASSED  |
+      | 2        | PASSED  |
+      | 3        | PASSED  |
+      | 4        | PASSED  |
+      | 5        | PASSED  |
+      | 6        | PASSED  |
+      | 7        | PASSED  |
+      | 8        | FAILED  |
+
+  Scenario Outline: As a tester I require the ability to perform Decelerometer test on class 1 & 2 vehicles
+    Given I am logged in as a Tester
+    And I start an Mot Test with a Class 1 Vehicle
+    And the Tester adds an Odometer Reading of 1000 mi
+    And the Tester adds a Class 1-2 Decelerometer Brake Test with custom brake data <control1BrakeEff> <control2BrakeEff>
+    And the Tester Passes the Mot Test
+    Then the Mot test status should be <result>
+    Then the controlOne and controlTwo status should be <control1Pass> <control2Pass>
+    Examples:
+      |control1BrakeEff |control2BrakeEff |control1Pass  |control2Pass |result    |
+      |30               |25               |true          |true         |PASSED    |
+      |29               |25               |false         |false        |FAILED    |
+      |28               |26               |false         |false        |FAILED    |
+      |30               |24               |true          |false        |FAILED    |

@@ -6,6 +6,7 @@ use Dvsa\Mot\Behat\Support\Api\AuthorisedExaminer;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use Dvsa\Mot\Behat\Support\Response;
 use PHPUnit_Framework_Assert as PHPUnit;
+use TestSupport\Helper\TestDataResponseHelper;
 
 class AuthorisedExaminerContext implements Context
 {
@@ -170,6 +171,7 @@ class AuthorisedExaminerContext implements Context
         $this->removeAeResponse = $this->authorisedExaminer->removeAuthorisedExaminer(
             $this->sessionContext->getCurrentAccessToken()
         );
+        return $this->removeAeResponse;
     }
 
     /**
@@ -218,6 +220,32 @@ class AuthorisedExaminerContext implements Context
             "id" => $response->data["id"],
             "aeRef" => $response->data["aeRef"],
             "aeName" => $response->data["aeName"],
+        ];
+
+        return $this->ae;
+    }
+
+    public function iAttemptsToCreateAEAs($username, $password)
+    {
+        if (!empty($this->ae)) {
+            return $this->ae;
+        }
+
+        $data = [
+            "slots" => 1001,
+            "requestor" => [
+                "username" => $username,
+                "password" => $password
+            ]
+        ];
+
+        $response = $this->testSupportHelper->getAeService()->create($data);
+
+        $this->ae = [
+            "id" => $response->data["id"],
+            "aeRef" => $response->data["aeRef"],
+            "aeName" => $response->data["aeName"],
+            "message" => $response->data["message"]
         ];
 
         return $this->ae;

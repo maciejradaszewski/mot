@@ -79,3 +79,34 @@ Feature: Permissions
     | Qualified        | A and B | 2                |
     | Qualified        | A and B | 4                |
 
+  Scenario Outline: Validate the permission of who can create an AE
+    Given I am logged in as user with <role>
+    When I attempt to create a new AE
+    Then the creation of AE will be <status>
+    Examples:
+      | role            | status        |
+      | tester          | FORBIDDEN     |
+      | siteManager     | FORBIDDEN     |
+      | siteAdmin       | FORBIDDEN     |
+      | aedm            | CREATED       |
+      | vehicleExaminer | FORBIDDEN     |
+      | csco            | FORBIDDEN     |
+      | schememgt       | FORBIDDEN     |
+      | schemeuser      | FORBIDDEN     |
+      | dvlaOper        | FORBIDDEN     |
+
+  Scenario Outline: Validate the permission of who can remove an AE
+    Given I am logged in as user with <role>
+    When I attempt to remove an AE
+    Then the removal of AE will be <status>
+    Examples:
+      | role            | status        |
+      | tester          | Forbidden     |
+      | siteManager     | Forbidden     |
+      | siteAdmin       | Forbidden     |
+      | aedm            | Forbidden     |
+      | vehicleExaminer | Forbidden     |
+      | csco            | Forbidden     |
+      | schemeuser      | Forbidden     |
+      | dvlaOper        | Forbidden     |
+      | schememgt       | REMOVED       |
