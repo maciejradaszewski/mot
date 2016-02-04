@@ -7,6 +7,7 @@ use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommon\Enum\CompanyTypeName;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
@@ -23,6 +24,7 @@ use Organisation\Form\AeCreateForm;
 use Organisation\Presenter\AuthorisedExaminerPresenter;
 use Organisation\ViewModel\AuthorisedExaminer\AeFormViewModel;
 use Organisation\ViewModel\Sidebar\AeOverviewSidebar;
+use Organisation\ViewModel\View\AEViewModel;
 use Organisation\ViewModel\View\Index\IndexViewModel;
 use SlotPurchase\Service\DirectDebitService;
 use Zend\Http\Request;
@@ -76,6 +78,11 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
      */
     private $directDebitService;
 
+    /*
+     * @var AuthorisedExaminerPresenter
+     */
+    private $presenter;
+
     public function __construct(
         MotFrontendAuthorisationServiceInterface $auth,
         MapperFactory $mapper,
@@ -100,7 +107,7 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
         $this->layout("layout/layout-govuk.phtml");
 
         $vm = $this->getIndexViewModel($orgId);
-        $presenter = new AuthorisedExaminerPresenter($vm->getOrganisation());
+        $presenter = $this->getAuthorisedExaminerPresenter();
 
         /** @var \DvsaCommon\Dto\AreaOffice\AreaOfficeDto $aoDto */
         $aoDto = $vm->getOrganisation()->getAuthorisedExaminerAuthorisation()->getAssignedAreaOffice();
@@ -118,8 +125,6 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
                 $aoLabel = $aoNumber;
             }
         }
-
-        //  logical block :: prepare view model
 
         $viewModel = new ViewModel(
             [
@@ -160,6 +165,16 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
         return $this->prepareViewModel($viewModel, $vm->getOrganisation()->getName(), self::INDEX_TITLE);
     }
 
+    private function setAuthorisedExaminerPresenter(OrganisationDto $organisation)
+    {
+        $this->presenter = new AuthorisedExaminerPresenter($organisation);
+    }
+
+    private function getAuthorisedExaminerPresenter() {
+        return $this->presenter;
+    }
+
+
     private function getBackButton($orgId)
     {
         if ($this->getAuthorisationForView($orgId)->canSearchAe()) {
@@ -198,7 +213,11 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
             ? $this->mapper->OrganisationSites->fetchAllForOrganisation($org->getId())
             : [];
 
-        return new IndexViewModel($viewAuthorisation, $org, $vehicleTestingStations, $positions, $principals);
+        $url = $this->url();
+
+        $this->setAuthorisedExaminerPresenter($org);
+
+        return new IndexViewModel($viewAuthorisation, $org, $this->getAuthorisedExaminerPresenter(), $vehicleTestingStations, $positions, $principals, $url);
     }
 
     /**

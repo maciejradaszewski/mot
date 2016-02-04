@@ -12,7 +12,6 @@ import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.*;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
-import uk.gov.dvsa.ui.pages.vts.ChangeContactDetailsPage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -23,30 +22,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class AedmManagesMotAccountTests extends BaseTest {
-
-    @Test(groups = {"BVT", "Regression"},
-            description = "VM9855 - Journey 2 - AEDM Manages Mot Account", dataProvider = "createAedmAndAe")
-    public void editAuthorisedExaminerDetails(User aedm, AeDetails aeDetails) throws IOException, URISyntaxException {
-
-        //Given I am on the Authorised Examiner Change Contact Details Page
-        AuthorisedExaminerChangeDetailsPage authorisedExaminerChangeDetailsPage = pageNavigator
-            .goToPageAsAuthorisedExaminer(aedm, AedmAuthorisedExaminerViewPage.class, AedmAuthorisedExaminerViewPage.PATH, aeDetails.getId())
-            .clickChangeContactDetailsLink();
-
-        //When I Change the Authorised Examiner Correspondence Details
-        AuthorisedExaminerViewPage authorisedExaminerPage =
-                authorisedExaminerChangeDetailsPage.fillOutMinimumContactDetails(
-                        aeContactDetails).saveContactDetailChanges();
-
-        //Then the Contact Details Should be Successfully changed
-        assertThat("The correspondence email has been updated correctly",
-                aeContactDetails.getEmail(), is(authorisedExaminerPage.getCorrespondenceEmailText()));
-
-        assertThat("The correspondence phone has been updated correctly",
-                aeContactDetails.getTelephoneNumber(),
-                is(authorisedExaminerPage.getCorrespondenceTelephoneText())
-        );
-    }
 
     @Test(groups = {"BVT", "Regression"},
             description = "VM-10253 - Journey 2 - AEDM Manages Mot Account", dataProvider = "createAeAedmSiteAndTester")
@@ -111,14 +86,6 @@ public class AedmManagesMotAccountTests extends BaseTest {
 
         //Then the tester should no longer be associated to Vts
         assertThat(vehicleTestingStationPage.isTesterDisplayed(tester.getId()), is(false));
-    }
-
-    @DataProvider(name = "createAedmAndAe")
-    public Object[][] createAedmAndAe() throws IOException {
-        AeDetails aeDetails = aeData.createAeWithDefaultValues();
-        User aedm = userData.createAedm(aeDetails.getId(), "My_AEDM", false);
-
-        return new Object[][]{{aedm, aeDetails}};
     }
 
     @DataProvider(name = "createAedmSite")

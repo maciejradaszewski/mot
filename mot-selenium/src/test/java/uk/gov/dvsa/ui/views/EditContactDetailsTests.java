@@ -5,8 +5,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
+import uk.gov.dvsa.domain.model.site.ContactDetailsCountry;
 import uk.gov.dvsa.ui.BaseTest;
-import uk.gov.dvsa.ui.pages.vts.ConfirmContactDetailsPage;
+import uk.gov.dvsa.ui.pages.vts.ConfirmChangeDetails.ConfirmChangeDetailsAddressPage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.io.IOException;
@@ -19,11 +20,10 @@ public class EditContactDetailsTests extends BaseTest {
     private Site site;
     private User areaOfficeUser;
     private User siteManager;
-    private String newCountry = "Wales";
     private String newStreet = "Test Street";
-    private String newEmail = "tester@gvsa.uk";
     private String newTown = "Tester Town";
     private String newPostcode = "1234 123";
+    private String newEmail = "tester@dvsa.uk";
     private String newTelephone = "+768-46-6543210";
 
     @BeforeMethod(alwaysRun = true)
@@ -39,7 +39,7 @@ public class EditContactDetailsTests extends BaseTest {
         VehicleTestingStationPage vehicleTestingStationPage = pageNavigator.goToVtsPage(areaOfficeUser, String.valueOf(site.getId()));
 
         //When I navigate to change address and I change data
-        ConfirmContactDetailsPage confirmTestFacilitiesPage =
+        ConfirmChangeDetailsAddressPage confirmTestFacilitiesPage =
                 vehicleTestingStationPage.clickOnChangeAddressLink()
                         .changeFirstAddressLine(newStreet)
                         .changeTown(newTown)
@@ -67,12 +67,12 @@ public class EditContactDetailsTests extends BaseTest {
         //When I navigate to change country and I change data
         VehicleTestingStationPage finalVehicleTestingStationPage =
                 vehicleTestingStationPage.clickOnChangeCountryLink()
-                        .chooseOption(newCountry)
+                        .chooseOption(ContactDetailsCountry.WALES)
                         .clickSubmitButton();
 
         //Then my changes are displayed on the testing station page
         //And notification is displayed
-        Assert.assertTrue(finalVehicleTestingStationPage.getCountryValue().equals(newCountry));
+        Assert.assertTrue(finalVehicleTestingStationPage.getCountryValue().equals(ContactDetailsCountry.WALES.getSiteContactDetailsCountry()));
         Assert.assertTrue(finalVehicleTestingStationPage.getValidationMessage().equals("Country has been successfully changed."));
     }
 

@@ -1,19 +1,18 @@
-package uk.gov.dvsa.ui.pages.vts;
+package uk.gov.dvsa.ui.pages.authorisedexaminer.ChangeDetails;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
+import uk.gov.dvsa.ui.pages.AreaOfficerAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.Page;
 
-public class ConfirmSiteDetailsPage extends Page {
-    public static final String path = "/vehicle-testing-station/%s/%s/review";
+public abstract class ChangeAEDetailsPage extends Page {
     private String pageTitle = "";
 
     @FindBy(id = "submitUpdate") private WebElement submitButton;
-    @FindBy(id = "classes") private WebElement tableElementValue;
 
-    public ConfirmSiteDetailsPage(MotAppDriver driver, String pageTitle) {
+    public ChangeAEDetailsPage(MotAppDriver driver, String pageTitle) {
         super(driver);
         this.pageTitle = pageTitle;
         selfVerify();
@@ -24,12 +23,8 @@ public class ConfirmSiteDetailsPage extends Page {
         return PageInteractionHelper.verifyTitle(this.getTitle(), pageTitle);
     }
 
-    public  VehicleTestingStationPage clickSubmitButton() {
+    public AreaOfficerAuthorisedExaminerViewPage clickSubmitButton() {
         submitButton.click();
-        return new VehicleTestingStationPage(driver);
-    }
-
-    public String getClasses() {
-        return tableElementValue.getText();
+        return new AreaOfficerAuthorisedExaminerViewPage(driver);
     }
 }

@@ -1,0 +1,35 @@
+<?php
+
+use Core\Routing\AeRoutes;
+use Site\UpdateVtsProperty\UpdateVtsPropertyViewModel;
+
+/**
+ * @var UpdateVtsPropertyViewModel $viewModel
+ */
+
+?>
+
+<?php echo $this->partial('zendFormErrorMessages', ['form' => $viewModel->getForm()]); ?>
+<?php echo $this->partial('errorMessages', array('getFromFlash' => true)); ?>
+
+<form novalidate="" autocomplete="off" method="POST"
+      action="<?php echo AeRoutes::of($this)->aeEditProperty($viewModel->getAeId(), $viewModel->getPropertyName()); ?>">
+
+    <?php echo $this->csrfToken(); ?>
+    <?php
+    echo $this->partial(
+        $viewModel->getPartial(), [
+            'viewModel' => $viewModel,
+        ]
+    );
+    ?>
+
+    <nav class="content-navigation">
+        <input type="submit" class="button" value="<?php echo $viewModel->getSubmitButtonText() ?>" id="submitUpdate">
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo AeRoutes::of($this)->ae($viewModel->getAeId()); ?>">Cancel and return to authorised examiner</a>
+            </li>
+        </ul>
+    </nav>
+</form>

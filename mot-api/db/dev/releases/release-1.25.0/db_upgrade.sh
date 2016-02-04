@@ -5,6 +5,8 @@ db_name=mot_v195_rel4
 
 # add files here in intended run order for release
 upgradefiles+=('2016-01-25-BL-59-person-profile-edit-name-STORY.sql');
+upgradefiles+=('2016-01-22-BL-63-ae-change-business-correspondence-details-permissions-STORY.sql');
+upgradefiles+=('2016-01-22-BL-269-ae-change-business-and-contact-details-permissions-STORY.sql');
 upgradefiles+=('2016-01-26-BL-814-new-rfr-STORY.sql');
 upgradefiles+=('2016-01-27-BL-927-change-date-of-birth-permissions-STORY.sql');
 

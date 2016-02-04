@@ -2,15 +2,17 @@
 namespace OrganisationApi\Controller;
 
 use DvsaCommon\Dto\Organisation\OrganisationDto;
+use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApi\Model\ApiResponse;
 use OrganisationApi\Service\AuthorisedExaminerService;
+use OrganisationApi\Service\UpdateAeDetailsService;
 
 /**
  * Api controller for AuthorisedExaminers
  */
-class AuthorisedExaminerController extends AbstractDvsaRestfulController
+class AuthorisedExaminerController extends AbstractDvsaRestfulController implements AutoWireableInterface
 {
     const AE_NUMBER_PARAM = 'number';
 
@@ -20,11 +22,14 @@ class AuthorisedExaminerController extends AbstractDvsaRestfulController
     private $service;
 
     /**
-     * @param AuthorisedExaminerService $service
+     * @var UpdateAeDetailsService
      */
-    public function __construct(AuthorisedExaminerService $service)
+    private $updateService;
+
+    public function __construct(AuthorisedExaminerService $service, UpdateAeDetailsService $updateService)
     {
         $this->service = $service;
+        $this->updateService = $updateService;
     }
 
     public function create($data)
@@ -43,6 +48,13 @@ class AuthorisedExaminerController extends AbstractDvsaRestfulController
         $result = $this->service->update($id, $dto);
 
         return ApiResponse::jsonOk($result);
+    }
+
+    public function patch($id, $data)
+    {
+        $this->updateService->update($id, $data);
+
+        return ApiResponse::jsonOk([]);
     }
 
     public function get($id)

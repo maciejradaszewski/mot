@@ -1,0 +1,17 @@
+<?php
+
+use Organisation\UpdateAeProperty\Process\Form\StatusPropertyForm;
+
+/** @var \Organisation\UpdateAeProperty\UpdateAePropertyViewModel $viewModel */
+
+/** @var StatusPropertyForm $form */
+$form = $viewModel->getForm();
+?>
+<fieldset>
+    <?php echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getStatusElement()
+        ]
+    );?>
+</fieldset>

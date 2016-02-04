@@ -1,0 +1,23 @@
+<?php
+use Organisation\UpdateAeProperty\Process\Form\RegisteredEmailPropertyForm;
+use Organisation\UpdateAeProperty\UpdateAePropertyViewModel;
+
+/** @var UpdateAePropertyViewModel $viewModel */
+/** @var EmailPropertyForm $form */
+$form = $viewModel->getForm();
+
+?>
+<div class="row">
+    <div class="col-sm-4">
+        <fieldset>
+            <?php
+            echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->getEmailElement()
+                ]
+            );
+            ?>
+        </fieldset>
+    </div>
+</div>

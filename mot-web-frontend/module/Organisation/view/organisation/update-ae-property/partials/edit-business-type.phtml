@@ -1,0 +1,28 @@
+<?php
+use DvsaCommon\Enum\CompanyTypeCode;
+use Organisation\UpdateAeProperty\Process\Form\BusinessTypePropertyForm;
+
+/** @var Organisation\UpdateAeProperty\UpdateAePropertyViewModel $viewModel */
+/** @var BusinessTypePropertyForm $form */
+
+$form = $viewModel->getForm();
+?>
+<fieldset>
+    <?php echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getTypeElement()
+        ]
+    );?>
+    <div id="<?php echo BusinessTypePropertyForm::FIELD_COMPANY_NUMBER ?>"
+        class="panel-indent
+            <?php echo ($form->getTypeElement()->getValue() != CompanyTypeCode::COMPANY) ? 'js-hidden' : '' ?>
+        ">
+        <?php echo $this->partial(
+            'partial/gds/form/control',
+            [
+                'element' => $form->getCompanyNumberElement()
+            ]
+        );?>
+    </div>
+</fieldset>

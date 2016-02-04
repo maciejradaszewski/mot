@@ -18,19 +18,19 @@ public abstract class AuthorisedExaminerViewPage extends Page {
 
     @FindBy(id = "change-contact-details") private WebElement changeContactDetails;
     @FindBy(id = "add-slots" ) private WebElement buySlots;
-    @FindBy(id = "cor_email") private WebElement correspondenceEmail;
-    @FindBy(id = "cor_phone") private WebElement correspondenceTelephone;
     @FindBy(id = "ae-name") private WebElement aeName;
-    @FindBy(id = "ae-tradename") private WebElement aeTradeName;
+    @FindBy(id = "ae-trading-name") private WebElement aeTradingName;
     @FindBy(id = "ae-type") private WebElement aeType;
     @FindBy(id = "ae-company-number") private WebElement aeCompanyNumber;
-    @FindBy(id = "reg_AE_address") private WebElement regAddress;
-    @FindBy(id = "reg_email") private WebElement regEmail;
-    @FindBy(id = "reg_telephone") private WebElement regTelephone;
-    @FindBy(id = "cor_address") private WebElement corrAddress;
-    @FindBy(id = "cor_email") private WebElement corrEmail;
-    @FindBy(id = "cor_phone") private WebElement corrPhone;
+    @FindBy(id = "ae-dvsa-area-office") private WebElement aeDVSAAreaOffice;
+    @FindBy(id = "reg-AE-address") private WebElement regAddress;
+    @FindBy(id = "reg-email") private WebElement regEmail;
+    @FindBy(id = "reg-telephone") private WebElement regTelephone;
+    @FindBy(id = "cor-address") private WebElement corrAddress;
+    @FindBy(id = "cor-email") private WebElement corrEmail;
+    @FindBy(id = "cor-phone") private WebElement corrPhone;
     @FindBy(id = "content") private WebElement siteContent;
+    @FindBy(id = "validation-message--success") private WebElement validationMessage;
     private static final String removeSiteFromAeLinkLocator = "#vehicle-testing-station-%s td a";
 
     private WebElement getRemoveSiteFromAeLink(String vtsId) {
@@ -49,23 +49,10 @@ public abstract class AuthorisedExaminerViewPage extends Page {
     @Override public boolean selfVerify() {
         return PageInteractionHelper.verifyTitle(this.getTitle(), pageTitle);
     }
-
-    public AuthorisedExaminerChangeDetailsPage clickChangeContactDetailsLink() {
-        changeContactDetails.click();
-        return new AuthorisedExaminerChangeDetailsPage(driver);
-    }
     
     public BuyTestSlotsPage clickBuySlotsLink() {
         buySlots.click();
         return new BuyTestSlotsPage(driver);
-    }
-
-    public String getCorrespondenceEmailText() {
-        return correspondenceEmail.getText();
-    }
-
-    public String getCorrespondenceTelephoneText() {
-        return correspondenceTelephone.getText();
     }
 
     public String getAeName() {
@@ -73,7 +60,7 @@ public abstract class AuthorisedExaminerViewPage extends Page {
     }
 
     public String getAeTradeName() {
-        return aeTradeName.getText();
+        return aeTradingName.getText();
     }
 
     public String getBusinessTypeWithCompanyNumber() {
@@ -94,6 +81,10 @@ public abstract class AuthorisedExaminerViewPage extends Page {
 
     public String getAeCorrAddress() {
         return corrAddress.getText();
+    }
+
+    public String getAeDVSAAreaOffice() {
+        return aeDVSAAreaOffice.getText();
     }
 
     public String getAeCorrEmail() {
@@ -143,5 +134,9 @@ public abstract class AuthorisedExaminerViewPage extends Page {
 
     public String getSiteContentText() {
         return siteContent.getText();
+    }
+
+    public String getValidationMessage() {
+        return validationMessage.getText();
     }
 }

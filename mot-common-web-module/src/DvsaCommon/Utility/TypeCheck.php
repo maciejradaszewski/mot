@@ -108,14 +108,18 @@ class TypeCheck
 
     public static function assertCollectionOfClass($data, $className)
     {
-        if (ArrayUtils::anyMatch(
-            $data,
-            function ($element) use ($className) {
-                return get_class($element) != $className;
-            }
-        )) {
+        if (!self::isCollectionOfClass($data, $className)) {
             throw new \InvalidArgumentException("Expected collection of '" . $className . "'.");
         }
+    }
+
+    public static function isCollectionOfClass($data, $className)
+    {
+        return ArrayUtils::anyMatch(
+            $data,
+            function ($element) use ($className) {
+                return !is_object($element) || get_class($element) != $className;
+            }) === false;
     }
 
     public static function assertCollectionOfScalarValues($collection)

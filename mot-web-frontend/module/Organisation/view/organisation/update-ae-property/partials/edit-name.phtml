@@ -1,0 +1,16 @@
+<?php
+use Organisation\UpdateAeProperty\Process\Form\NamePropertyForm;
+
+/** @var \Organisation\UpdateAeProperty\UpdateAePropertyViewModel $viewModel */
+
+/** @var NamePropertyForm $form */
+$form = $viewModel->getForm();
+?>
+<fieldset>
+    <?php echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getNameElement()
+        ]
+    );?>
+</fieldset>

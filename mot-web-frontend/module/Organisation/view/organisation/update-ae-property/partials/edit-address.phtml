@@ -1,0 +1,53 @@
+<?php
+
+use Organisation\UpdateAeProperty\Process\Form\AddressPropertyForm;
+use Organisation\UpdateAeProperty\UpdateAePropertyViewModel;
+
+/** @var UpdateAePropertyViewModel $viewModel */
+$form = $viewModel->getForm();
+
+?>
+<div class="row">
+    <div class="col-sm-4">
+        <fieldset>
+            <?php
+            echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->get(AddressPropertyForm::FIELD_ADDRESS_LINE_1)
+                ]
+            );
+            echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->get(AddressPropertyForm::FIELD_ADDRESS_LINE_2)
+                ]
+            );
+            echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->get(AddressPropertyForm::FIELD_ADDRESS_LINE_3)
+                ]
+            );
+            echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->get(AddressPropertyForm::FIELD_TOWN)
+                ]
+            );
+            echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->get(AddressPropertyForm::FIELD_COUNTRY)
+                ]
+            );
+            echo $this->partial(
+                'partial/gds/form/control',
+                [
+                    'element' => $form->get(AddressPropertyForm::FIELD_POSTCODE)
+                ]
+            );
+            ?>
+        </fieldset>
+    </div>
+</div>

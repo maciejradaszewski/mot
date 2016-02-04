@@ -259,4 +259,92 @@ class AuthorisedExaminerViewAuthorisation
             $this->authorisedExaminerId
         );
     }
+
+    public function canUpdateAEBusinessDetailsName()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_UPDATE_NAME,
+            $this->authorisedExaminerId
+        );
+    }
+
+    public function canUpdateAEBusinessDetailsTradingName()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_UPDATE_TRADING_NAME,
+            $this->authorisedExaminerId
+        );
+    }
+
+    public function canUpdateAEBusinessDetailsBusinessType()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_UPDATE_TYPE,
+            $this->authorisedExaminerId
+        );
+    }
+
+    public function canUpdateAEBusinessDetailsStatus()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_UPDATE_STATUS,
+            $this->authorisedExaminerId
+        );
+    }
+
+    public function canUpdateAEBusinessDetailsDVSAAreaOffice()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_UPDATE_DVSA_AREA_OFFICE,
+            $this->authorisedExaminerId
+        );
+    }
+
+    public function canUpdateAEContactDetailsRegisteredOfficeAddress()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_UPDATE_REGISTERED_OFFICE_ADDRESS,
+            $this->authorisedExaminerId
+        );
+    }
+
+    public function canUpdateAEContactDetailsRegisteredOfficeEmail()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_UPDATE_REGISTERED_OFFICE_EMAIL,
+            $this->authorisedExaminerId
+        );
+    }
+
+    public function canUpdateAEContactDetailsRegisteredOfficeTelephone()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_UPDATE_REGISTERED_OFFICE_PHONE,
+            $this->authorisedExaminerId
+        );
+    }
+
+    public function canUpdateAEContactDetailsCorrespondenceAddress()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_UPDATE_CORRESPONDENCE_ADDRESS,
+            $this->authorisedExaminerId
+        );
+    }
+
+    public function canUpdateAEContactDetailsCorrespondenceEmail()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_UPDATE_CORRESPONDENCE_EMAIL,
+            $this->authorisedExaminerId
+        );
+    }
+
+    public function canUpdateAEContactDetailsCorrespondenceTelephone()
+    {
+        return $this->authorisationService->isGrantedAtOrganisation(
+            PermissionAtOrganisation::AE_UPDATE_CORRESPONDENCE_PHONE,
+            $this->authorisedExaminerId
+        );
+    }
 }

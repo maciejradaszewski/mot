@@ -65,4 +65,14 @@ class AbstractGdsRowElement implements GdsRowFlowInterface
     {
         return $this->parentRow->getValue();
     }
+
+    public function setValueMetaData($content, $escape = true)
+    {
+        return $this->parentRow->setValueMetaData($content, $escape);
+    }
+
+    public function getValueMetaData()
+    {
+        return $this->parentRow->getValueMetaData();
+    }
 }

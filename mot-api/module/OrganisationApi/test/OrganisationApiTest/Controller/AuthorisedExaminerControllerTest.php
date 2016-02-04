@@ -9,6 +9,7 @@ use DvsaCommonApiTest\Controller\AbstractRestfulControllerTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use OrganisationApi\Controller\AuthorisedExaminerController;
 use OrganisationApi\Service\AuthorisedExaminerService;
+use OrganisationApi\Service\UpdateAeDetailsService;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Stdlib\Parameters;
@@ -30,7 +31,7 @@ class AuthorisedExaminerControllerTest extends AbstractRestfulControllerTestCase
     public function setUp()
     {
         $this->service = XMock::of(AuthorisedExaminerService::class);
-        $this->setController(new AuthorisedExaminerController($this->service));
+        $this->setController(new AuthorisedExaminerController($this->service, XMock::of(UpdateAeDetailsService::class)));
 
         parent::setUp();
     }

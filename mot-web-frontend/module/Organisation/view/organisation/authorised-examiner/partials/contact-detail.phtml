@@ -21,7 +21,7 @@ use Core\Formatting\AddressFormatter;
 
         <td id="<?php echo array_key_exists("address", $ids) ? $ids["address"] : null ?>" class="table-summary__value">
             <?php
-            echo !empty($contactDetail->getAddress()) ? AddressFormatter::escapedDtoToMultiLine($contactDetail->getAddress()) : 'N/A' ?>
+            echo !empty($contactDetail->getAddress()) ? (new AddressFormatter())->escapedDtoToMultiLine($contactDetail->getAddress()) : 'N/A' ?>
         </td>
     </tr>
     <tr>

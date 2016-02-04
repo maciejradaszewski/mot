@@ -26,7 +26,7 @@ public class AuthorisedExaminerFullDetailsPage extends BasePage {
 
     @FindBy(css = "#ae-status .text-secondary") private WebElement veAeStatusValidFrom;
 
-    @FindBy(id = "ae-tradename") private WebElement veAeTradeName;
+    @FindBy(id = "ae-trading-name") private WebElement veAeTradeName;
 
     @FindBy(id = "ae-type") private WebElement veAeType;
 

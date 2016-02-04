@@ -2,7 +2,7 @@
 
 namespace Site\UpdateVtsProperty;
 
-use Core\Routing\AERoutes;
+use Core\Routing\AeRoutes;
 use Core\Routing\VtsRoutes;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
@@ -38,7 +38,7 @@ class VtsBreadcrumbs
         if ($organisationId !== null &&
             $this->authorisationService->isGrantedAtOrganisation(PermissionAtOrganisation::AUTHORISED_EXAMINER_READ, $organisationId)
         ) {
-            $breadcrumbs[$this->vts->getOrganisation()->getName()] = AERoutes::of($this->url)->ae($organisationId);
+            $breadcrumbs[$this->vts->getOrganisation()->getName()] = AeRoutes::of($this->url)->ae($organisationId);
         }
 
         $breadcrumbs[$this->vts->getName()] = VtsRoutes::of($this->url)->vts($this->vts->getId());

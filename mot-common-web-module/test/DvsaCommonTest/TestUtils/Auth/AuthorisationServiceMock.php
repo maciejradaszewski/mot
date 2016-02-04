@@ -108,6 +108,14 @@ final class AuthorisationServiceMock implements MotAuthorisationServiceInterface
         return in_array($roleName, $this->roles);
     }
 
+    public function clearAll()
+    {
+        $this->global = [];
+        $this->siteMap = [];
+        $this->organisationMap = [];
+        $this->roles = [];
+    }
+
     /**
      * Returns the user's roles (at any level) as an array.
      *

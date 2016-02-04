@@ -37,13 +37,13 @@ class MethodSpy
     {
         $invocations = $this->getInvocations();
 
-        return count ($invocations);
+        return count($invocations);
     }
 
     /**
      * @return \PHPUnit_Framework_MockObject_Invocation_Object[]
      */
-    private function getInvocations()
+    public function getInvocations()
     {
         return $this->invoker->getInvocations();
     }

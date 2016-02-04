@@ -2,6 +2,7 @@
 
 namespace OrganisationApi;
 
+use DvsaCommon\Factory\AutoWire\AutoWireFactory;
 use DvsaCommon\Utility\Hydrator;
 use DvsaCommonApi\Service\AddressService;
 use DvsaCommonApi\Service\ContactDetailsService;
@@ -74,6 +75,9 @@ class Module
             ],
             'invokables' => [
                 PersonContactMapper::class => PersonContactMapper::class,
+            ],
+            'abstract_factories' => [
+                AutoWireFactory::class,
             ],
         ];
     }

@@ -117,10 +117,11 @@ class UpdateVtsAddressProcess implements UpdateVtsReviewProcessInterface, AutoWi
         $vtsData = $this->siteMapper->getById($vtsId);
         $table->newRow()->setLabel('Vehicle Testing Station')->setValue($vtsData->getName());
         $table->newRow("address")->setLabel("Address")
-        ->setValue(AddressFormatter::escapeAddressToMultiLine(
+        ->setValue((new AddressFormatter())->escapeAddressToMultiLine(
             $formData['address_line1'],
             $formData['address_line2'],
             $formData['address_line3'],
+            null,
             null,
             $formData['town'],
             $formData['postcode']

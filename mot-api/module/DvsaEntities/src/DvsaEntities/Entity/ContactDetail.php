@@ -130,7 +130,7 @@ class ContactDetail extends Entity
     }
 
     /**
-     * @return ArrayCollection[Phone]
+     * @return Phone[]
      */
     public function getPhones()
     {
@@ -178,7 +178,7 @@ class ContactDetail extends Entity
     }
 
     /**
-     * @return ArrayCollection[Email]
+     * @return Email[]
      */
     public function getEmails()
     {

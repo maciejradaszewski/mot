@@ -10,23 +10,37 @@ class AddressFormatter
 {
     protected static $addressPartsGlue = ',</br>';
 
-    public static function escapedDtoToMultiLine(AddressDto $dto = null)
+    public function escapedDtoToMultiLine(AddressDto $dto, $showCountry = false)
     {
-       return static::escapeAddressToMultiLine(
-           $dto->getAddressLine1(),
-           $dto->getAddressLine2(),
-           $dto->getAddressLine3(),
-           $dto->getAddressLine4(),
-           $dto->getTown(),
-           $dto->getPostcode()
-       );
+        if ($showCountry) {
+            return static::escapeAddressToMultiLine(
+                $dto->getAddressLine1(),
+                $dto->getAddressLine2(),
+                $dto->getAddressLine3(),
+                $dto->getAddressLine4(),
+                $dto->getTown(),
+                $dto->getCountry(),
+                $dto->getPostcode()
+            );
+        } else {
+            return static::escapeAddressToMultiLine(
+                $dto->getAddressLine1(),
+                $dto->getAddressLine2(),
+                $dto->getAddressLine3(),
+                $dto->getAddressLine4(),
+                null,
+                $dto->getTown(),
+                $dto->getPostcode()
+            );
+        }
     }
 
-    public static function escapeAddressToMultiLine(
+    public function escapeAddressToMultiLine(
         $addressLine1 = null,
         $addressLine2 = null,
         $addressLine3 = null,
         $addressLine4 = null,
+        $country = null,
         $town = null,
         $postcode = null
     )
@@ -38,10 +52,11 @@ class AddressFormatter
             $escaper->escapeHtml($addressLine2),
             $escaper->escapeHtml($addressLine3),
             $escaper->escapeHtml($addressLine4),
+            $escaper->escapeHtml($country),
             $escaper->escapeHtml($town),
             $escaper->escapeHtml($postcode),
         ];
 
-        return ArrayUtils::joinNonEmpty(static::$addressPartsGlue, $lines);
+        return trim(ArrayUtils::joinNonEmpty(static::$addressPartsGlue, $lines));
     }
 }

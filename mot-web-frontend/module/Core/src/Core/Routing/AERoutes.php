@@ -6,41 +6,42 @@ use Zend\Mvc\Controller\AbstractController;
 use Zend\View\Helper\Url;
 use Zend\View\Renderer\PhpRenderer;
 
-class AERoutes
+class AeRoutes extends AbstractRoutes
 {
-    private $urlHelper;
-
-    public function __construct(Url $urlHelper)
+    public function __construct($urlHelper)
     {
-        $this->urlHelper = $urlHelper;
+        parent::__construct($urlHelper);
     }
 
     public function ae($id)
     {
-        return $this->url(AERouteList::AE, ['id' => $id]);
+        return $this->url(AeRouteList::AE, ['id' => $id]);
     }
 
-    private function url($name = null, $params = array(), $options = array(), $reuseMatchedParams = false)
-    {
-        $helper = $this->urlHelper;
-        return $helper($name, $params, $options, $reuseMatchedParams);
-    }
-
+    /**
+     * @param Url|PhpRenderer|AbstractController|\Zend\Mvc\Controller\Plugin\Url $object
+     * @return AeRoutes
+     */
     public static function of($object)
     {
-        $urlHelper = null;
+        return new AeRoutes($object);
+    }
 
-        if ($object instanceof Url) {
-            $urlHelper = $object;
-        } elseif ($object instanceof PhpRenderer) {
-            $urlHelper = $object->plugin('url');
-        } elseif ($object instanceof AbstractController) {
-            $urlHelper = $object->plugin('url');
-        } else {
-            throw new \InvalidArgumentException("First parameter must be of class: " .
-                Url::class . ", " . PhpRenderer::class . " or " . AbstractController::class);
-        }
+    public function aeEditProperty($id, $propertyName, $formUuid = null)
+    {
+        return $this->url(
+            AeRouteList::AE_EDIT_PROPERTY,
+            ['id' => $id, 'propertyName' => $propertyName],
+            [
+                'query' => ['formUuid' => $formUuid],
+            ]);
+    }
 
-        return new AERoutes($urlHelper);
+    public function aeReviewEditProperty($id, $propertyName, $formUuid)
+    {
+        return $this->url(
+            AeRouteList::AE_EDIT_PROPERTY_REVIEW,
+            ['id' => $id, 'propertyName' => $propertyName, 'formUuid' => $formUuid]
+        );
     }
 }
