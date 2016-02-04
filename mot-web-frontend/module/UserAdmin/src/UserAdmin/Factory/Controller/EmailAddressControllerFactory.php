@@ -10,6 +10,7 @@ use UserAdmin\Controller\EmailAddressController;
 use UserAdmin\Service\HelpdeskAccountAdminService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Validator\EmailAddress;
 
 /**
  * Factory for {@link \UserAdmin\Controller\EmailAddressController}.

@@ -1,5 +1,6 @@
 package uk.gov.dvsa.ui.feature.journey.roles;
 
+import com.dvsa.mot.selenium.framework.RandomDataGenerator;
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -8,9 +9,7 @@ import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.ui.BaseTest;
-import uk.gov.dvsa.ui.pages.ChangeDetailsPage;
-import uk.gov.dvsa.ui.pages.HomePage;
-import uk.gov.dvsa.ui.pages.PerformanceDashBoardPage;
+import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
 
 import java.io.IOException;

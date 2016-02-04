@@ -129,7 +129,7 @@ public class DrivingLicenceTest extends BaseTest {
         assertThat(postChangeProfilePage.getMessageSuccess(), containsString(DRIVING_LICENCE_CHANGE_SUCCESS));
     }
 
-    @Test(groups = {"BVT", "Regression"},
+    @Test(testName = "NewProfile", groups = {"BVT", "Regression"},
             description = "Test that DVSA user can remove non-DVSA user driving licence")
     public void dvsaUserCanRemoveNonDvsaUserDrivingLicence() throws IOException, URISyntaxException {
         tester = userData.createTester(testSite.getId());
@@ -144,7 +144,7 @@ public class DrivingLicenceTest extends BaseTest {
         ProfilePage postDeleteDrivingLicenceProfilePage = removeDrivingLicence(profilePage);
 
         // Then no driving licence will be recorded for the user
-        assertThat(postDeleteDrivingLicenceProfilePage.getDrivingLicenceForPerson(), containsString("None Recorded"));
+        assertThat(postDeleteDrivingLicenceProfilePage.getDrivingLicenceForPerson(), containsString("None recorded"));
     }
 
     @Test(groups = {"BVT", "Regression"},

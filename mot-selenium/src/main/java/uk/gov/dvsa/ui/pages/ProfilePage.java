@@ -42,6 +42,10 @@ public abstract class ProfilePage extends Page {
         return null;
     }
 
+    public String getEmailAddressForPerson(){
+        return null;
+    }
+
     public ChangeDrivingLicencePage clickChangeDrivingLicenceLink() {
         return null;
     }
@@ -51,6 +55,10 @@ public abstract class ProfilePage extends Page {
     }
 
     public ChangeDateOfBirthPage clickChangeDOBLink() {
+        return null;
+    }
+
+    public ChangeEmailDetailsPage clickChangeEmailLink(){
         return null;
     }
 
@@ -117,4 +125,7 @@ public abstract class ProfilePage extends Page {
     public boolean isPageLoaded() {
         return false;
     }
+
+
+
 }

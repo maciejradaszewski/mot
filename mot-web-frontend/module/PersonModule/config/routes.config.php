@@ -36,7 +36,7 @@ return [
                     'newProfileEmail' => [
                         'type' => 'Segment',
                         'options' => [
-                            'route' => '/email',
+                            'route' => '/email/change',
                             'defaults' => [
                                 'controller' => EmailAddressControllerFactory::class,
                                 'action' => 'index'
@@ -214,7 +214,7 @@ return [
                     'userAdminEmail' => [
                         'type' => 'Segment',
                         'options' => [
-                            'route' => '/email',
+                            'route' => '/email/change',
                             'defaults' => [
                                 'controller' => EmailAddressControllerFactory::class,
                                 'action' => 'index'
@@ -508,7 +508,7 @@ return [
                     'VTSEmail' => [
                         'type' => 'Segment',
                         'options' => [
-                            'route' => '/email',
+                            'route' => '/email/change',
                             'defaults' => [
                                 'controller' => EmailAddressControllerFactory::class,
                                 'action' => 'index'
@@ -695,7 +695,7 @@ return [
                     'AEEmail' => [
                         'type' => 'Segment',
                         'options' => [
-                            'route' => '/email',
+                            'route' => '/email/change',
                             'defaults' => [
                                 'controller' => EmailAddressControllerFactory::class,
                                 'action' => 'index'

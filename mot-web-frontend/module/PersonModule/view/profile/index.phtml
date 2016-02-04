@@ -116,7 +116,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
 
             <?php if (true === $personProfileGuard->canChangeEmailAddress()) :
                 $emailUrl = $this->isFeatureEnabled('new_person_profile') ?
-                    $this->url($routeName, $routeParams) . '/email' :
+                    $this->url($routeName, $routeParams) . '/email/change' :
                     '/user-admin/user-profile/' . $personalDetails->getId() . '/email';
                 echo '<a href="' . $emailUrl . '" class="table-summary__action">Change<span class="visuallyhidden"> Email</span></a>';
             endif ?>
