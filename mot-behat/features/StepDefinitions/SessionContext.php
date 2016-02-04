@@ -498,4 +498,63 @@ class SessionContext implements Context
 
         $this->currentUser = $this->session->startSession($tester->data['username'], $tester->data['password']);
     }
+    /**
+     * @Given /^I am logged in as user with (.*)$/
+     */
+    public function iAmLoggedInAsUserWith($role)
+    {
+        switch ($role) {
+            case "tester":
+                $this->iAmLoggedInAsATester();
+                break;
+            case "siteManager":
+                $this->iAmLoggedInAsASiteManagerToNewSite();
+                break;
+            case "siteAdmin":
+                $this->iAmLoggedInAsASiteAdmin();
+                break;
+            case "aedm":
+                $this->iAmLoggedInAsAnAedmToNewOrganisation();
+                break;
+            case "vehicleExaminer":
+                $this->iAmLoggedInAsAVehicleExaminer();
+                break;
+            case "areaOffice":
+                $this->iAmLoggedInAsAnAreaOffice1();
+                break;
+            case "csco":
+                $this->iAmLoggedInAsACustomerServiceOperator();
+                break;
+            case "schememgt":
+                $this->iAmLoggedInAsASchemeManager();
+                break;
+            case "schemeuser":
+                $this->iAmLoggedInAsASchemeUser();
+                break;
+            case "dvlaOper":
+                $this->iAmLoggedInAsADVLAOperative();
+                break;
+            default:
+                throw new InvalidArgumentException;
+        }
+
+    }
+
+    public function iAmLoggedInAsASiteAdmin()
+    {
+        $this->vtsContext->createSite();
+        $siteId = $this->vtsContext->getSite()["id"];
+        $siteManagerService = $this->testSupportHelper->getSiteUserDataService();
+
+        $data = [
+            "siteIds" => [ $siteId ],
+            "requestor" => [
+                "username" => "tester1",
+                "password" => "Password1"
+            ]
+        ];
+        $user               = $siteManagerService->create($data, "SITE-ADMIN");
+        $this->currentUser  = $this->session->startSession($user->data['username'], $user->data['password']);
+    }
+
 }

@@ -5,6 +5,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Dvsa\Mot\Behat\Support\Api\MotTest;
 use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Response;
+use DvsaCommon\Utility\DtoHydrator;
 use PHPUnit_Framework_Assert as PHPUnit;
 
 class MotTestSearchContext implements Context
@@ -158,5 +159,74 @@ class MotTestSearchContext implements Context
         });
 
         return $result;
+    }
+
+    /**
+     * @When /^I search for an MOT test with invalid Mot test number$/
+     */
+    public function iSearchForAnMOTTestWithInvalidMotTestNumber()
+    {
+        $this->searchResponse = $this->motTest->searchMOTTest(
+            $this->sessionContext->getCurrentAccessToken(),
+            ['testNumber' => '']
+        );
+    }
+
+    /**
+     * @When /^I search for an MOT test with missing VRM$/
+     */
+    public function iSearchForAnMOTTestWithMissingVRM()
+    {
+        $this->searchResponse = $this->motTest->searchMOTTest(
+            $this->sessionContext->getCurrentAccessToken(),
+            ['vehicleRegNr' => '']
+        );
+    }
+
+    /**
+     * @Then /^the search is failed with error "([^"]*)"$/
+     */
+    public function theSearchIsFailedWithError($expectedErrorMessage)
+    {
+        $errorArr = $this->searchResponse->getBody()['errors'];
+        $foundError = false;
+        for ($i = 0; $i < count($errorArr); $i++){
+            if($errorArr[$i]['message'] == $expectedErrorMessage) {
+                $foundError = true;
+                break;
+            }
+        }
+        PHPUnit::assertTrue($foundError, 'Error Message not found: ' . $expectedErrorMessage);
+    }
+
+    /**
+     * @When /^I search for an MOT test with non\-existing VRM$/
+     */
+    public function iSearchForAnMOTTestWithNonExistingVRM()
+    {
+        $this->searchResponse = $this->motTest->searchMOTTest(
+            $this->sessionContext->getCurrentAccessToken(),
+            ['vehicleRegNr' => 'YYYYYY']
+        );
+    }
+
+    /**
+     * @Then /^the search will return no mot test$/
+     */
+    public function theSearchWillReturnNoMotTest()
+    {
+        $ResponseMessage = $this->searchResponse->getBody()['data']['resultCount'];
+        PHPUnit::assertEquals($ResponseMessage, "0");
+    }
+
+    /**
+     * @When /^I search for an MOT test with non\-existing mot test number$/
+     */
+    public function iSearchForAnMOTTestWithNonExistingMotTestNumber()
+    {
+        $this->searchResponse = $this->motTest->searchMOTTest(
+            $this->sessionContext->getCurrentAccessToken(),
+            ['testNumber' => '0000000000000']
+        );
     }
 }

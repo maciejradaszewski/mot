@@ -1161,4 +1161,44 @@ class MotTestContext implements Context, SnippetAcceptingContext
 
         PHPUnit::assertSame($expectedError, $error);
     }
+
+    /**
+     * @Then /^the controlOne and controlTwo status should be (.*) (.*)$/
+     */
+    public function theControlOneAndControlTwoStatusShouldBe($expectedControl1Pass, $expectedControl2Pass)
+    {
+        try {
+            $actualControl1Pass = $this->statusData->getBody()['data']['brakeTestResult']['control1EfficiencyPass'];
+            $actualControl2Pass = $this->statusData->getBody()['data']['brakeTestResult']['control2EfficiencyPass'];
+        } catch (LogicException $error){
+            $errorCode = $this->statusData->getBody()['errors'][0]['code'];
+            if ($errorCode == 60){
+                return;
+            }
+        }
+
+        PHPUnit::assertEquals($actualControl1Pass, $expectedControl1Pass == "true" ? 1 : 0);
+        PHPUnit::assertEquals($actualControl2Pass, $expectedControl2Pass == "true" ? 1 : 0);
+    }
+
+    /**
+     * @Then /^the Mot test status should be (.*)$/
+     */
+    public function theMotTestStatusShouldBe($expectedResult)
+    {
+        try {
+            $actualResult = $this->statusData->getBody()['data']['status'];
+        } catch (LogicException $error){
+            $errorCode = $this->statusData->getBody()['errors'][0]['code'];
+            if($errorCode == 60) {
+                $actualResult = ($errorCode == 60) ? "FAILED" : "";
+            } else {
+                $actualResult = "unknown";
+            }
+        }
+
+        PHPUnit::assertEquals($expectedResult, $actualResult);
+    }
+
+
 }
