@@ -195,16 +195,17 @@ class AuthorisedExaminerContext implements Context
     }
 
     /**
+     * @param int $slots
      * @return array
      */
-    public function createAE()
+    public function createAE($slots = 1001)
     {
         if (!empty($this->ae)) {
             return $this->ae;
         }
 
         $data = [
-            "slots" => 1001,
+            "slots" => $slots,
             "requestor" => [
                 "username" => "areaoffice1user",
                 "password" => "Password1"

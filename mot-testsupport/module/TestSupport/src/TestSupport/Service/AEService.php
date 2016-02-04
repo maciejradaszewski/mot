@@ -148,4 +148,14 @@ class AEService
         $this->em->flush();
     }
 
+    public function getSlotBalanceForAE($aeId)
+    {
+        $result = $this->em->getConnection()->executeQuery(
+            "SELECT slots_balance FROM organisation WHERE id=:organisation_id",
+            ['organisation_id' =>$aeId]
+        )->fetch();
+
+        return $result['slots_balance'];
+    }
+
 }

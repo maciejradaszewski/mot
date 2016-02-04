@@ -7,15 +7,20 @@ use Dvsa\Mot\Behat\Support\Response;
 
 class SlotPurchase extends MotApi
 {
-    const END_POINT_SLOT_PAYMENT           = 'slots/add-instant-settlement';
-    const END_POINT_REFUND                 = 'slots/refund/%s';
-    const END_POINT_TRANSACTION_SEARCH     = 'slots/transaction/search/%s';
-    const END_POINT_ADJUSTMENT             = 'slots/amendment/%s/adjustment';
+    const END_POINT_SLOT_PAYMENT = 'slots/add-instant-settlement';
+    const END_POINT_REFUND = 'slots/refund/%s';
+    const END_POINT_TRANSACTION_SEARCH = 'slots/transaction/search/%s';
+    const END_POINT_ADJUSTMENT = 'slots/amendment/%s/adjustment';
     const END_POINT_ADJUSTMENT_REASON_TYPE = 'slots/amendment-reason/type/%s';
-    const END_POINT_REVERSAL               = 'slots/amendment/%s/charge-back';
-    const END_POINT_REDIRECTION_DATE       = 'slots/redirection-data';
-    const END_POINT_PAYMENT_REFRESH    = 'slots/payment-refresh/%s';
-    const END_POINT_PAYMENT_DETAILS    = 'slots/report/details/payment/%s';
+    const END_POINT_REVERSAL = 'slots/amendment/%s/charge-back';
+    const END_POINT_REDIRECTION_DATE = 'slots/redirection-data';
+    const END_POINT_PAYMENT_REFRESH = 'slots/payment-refresh/%s';
+    const END_POINT_PAYMENT_DETAILS = 'slots/report/details/payment/%s';
+    const END_POINT_MANUAL_ADJUSTMENT = 'slots/adjustment';
+    const END_POINT_MANUAL_ADJUSTMENT_VALIDATE = 'slots/adjustment/validate';
+
+    const MANUAL_ADJUSTMENT_TYPE_POSITIVE = 'positive';
+    const MANUAL_ADJUSTMENT_TYPE_NEGATIVE = 'negative';
 
     /**
      * Adjust transaction
@@ -218,5 +223,31 @@ class SlotPurchase extends MotApi
             'GET',
             sprintf(self::END_POINT_PAYMENT_DETAILS, $transactionId)
         );
+    }
+
+    /**
+     * @param $token
+     * @param $organisation_id
+     * @param string $type
+     * @param string $reason
+     * @param string $comments
+     * @param int $slots
+     * @return Response
+     */
+    public function makeManualAdjustment(
+        $token,
+        $organisation_id,
+        $type = self::MANUAL_ADJUSTMENT_TYPE_POSITIVE,
+        $reason = 'some reason',
+        $comments = 'some comment',
+        $slots = 100
+    ) {
+        return $this->sendRequest($token, 'POST', self::END_POINT_MANUAL_ADJUSTMENT, [
+            'type' => $type,
+            'reason' => $reason,
+            'comments' => $comments,
+            'slots' => $slots,
+            'organisation_id' => $organisation_id,
+        ]);
     }
 }
