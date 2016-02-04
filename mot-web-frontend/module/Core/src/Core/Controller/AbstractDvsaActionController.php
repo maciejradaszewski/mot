@@ -113,6 +113,11 @@ abstract class AbstractDvsaActionController
         return $this;
     }
 
+    protected function addErrorMessageForKey($key, $message)
+    {
+        $this->flashMessenger()->addErrorMessage([$key => $message]);
+    }
+
     protected function addSuccessMessage($message)
     {
         $this->flashMessenger()->addSuccessMessage($message);

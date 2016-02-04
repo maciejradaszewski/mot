@@ -226,7 +226,7 @@ class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
                 ],
                 'expect' => [
                     'viewModel' => true,
-                    'flashError' => 'Emails do not match',
+                    'flashError' => ['emailConfirm' => "the email addresses you have entered don't match"],
                 ],
             ],
             // -- blank email fields --
@@ -256,7 +256,7 @@ class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
                 ],
                 'expect' => [
                     'viewModel' => true,
-                    'flashError' => 'Email cannot be blank',
+                    'flashError' => ['email' => 'must be a valid email address'],
                 ],
             ],
         ];

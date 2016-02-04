@@ -23,6 +23,7 @@ use DvsaMotTest\Controller\AbstractDvsaMotTestController;
 use UserAdmin\Presenter\UserProfilePresenter;
 use UserAdmin\Service\HelpdeskAccountAdminService;
 use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
+use Zend\Validator\EmailAddress;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -31,7 +32,13 @@ use Zend\View\Model\ViewModel;
 class EmailAddressController extends AbstractDvsaMotTestController
 {
     const PAGE_TITLE          = 'Change email address';
+    const PAGE_SUBTITLE_YOUR_PROFILE = 'Your profile';
     const PAGE_SUBTITLE_INDEX = 'User profile';
+
+    const MAX_EMAIL_LENGTH = 255;
+
+    const MSG_EMAIL_CHANGED_SUCCESS = 'Email address has been changed successfully.';
+    const MSG_EMAIL_CHANGED_FAILURE = 'Email address could not be changed. Please try again.';
 
     /**
      * @var HelpdeskAccountAdminService
@@ -67,11 +74,11 @@ class EmailAddressController extends AbstractDvsaMotTestController
      * EmailAddressController constructor.
      *
      * @param MotAuthorisationServiceInterface $authorisationService
-     * @param HelpdeskAccountAdminService      $userAccountAdminService
-     * @param TesterGroupAuthorisationMapper   $testerGroupAuthorisationMapper
-     * @param MapperFactory                    $mapperFactory
-     * @param PersonProfileUrlGenerator        $personProfileUrlGenerator
-     * @param ContextProvider                  $contextProvider
+     * @param HelpdeskAccountAdminService $userAccountAdminService
+     * @param TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper
+     * @param MapperFactory $mapperFactory
+     * @param PersonProfileUrlGenerator $personProfileUrlGenerator
+     * @param ContextProvider $contextProvider
      */
     public function __construct(
         MotAuthorisationServiceInterface $authorisationService,
@@ -116,7 +123,12 @@ class EmailAddressController extends AbstractDvsaMotTestController
             $params = $this->getRequest()->getPost()->toArray();
 
             if (true === ($validated = $this->validate($params['email'], $params['emailConfirm']))) {
-                $validated = $this->callApi($personId, $params['email'], $params['emailConfirm']);
+                try {
+                    $validated = $this->callApi($personId, $params['email'], $params['emailConfirm']);
+                    $this->flashMessenger()->addSuccessMessage(self::MSG_EMAIL_CHANGED_SUCCESS);
+                } catch (\Exception $e) {
+                    $this->flashMessenger()->addErrorMessage(self::MSG_EMAIL_CHANGED_FAILURE);
+                }
             };
 
             if ($validated) {
@@ -144,13 +156,20 @@ class EmailAddressController extends AbstractDvsaMotTestController
      */
     private function validate($email, $emailConfirm)
     {
+        $validator = new EmailAddress();
         $hasErrors = false;
-        if ($email != $emailConfirm) {
-            $this->addErrorMessage("Emails do not match");
+        if (strlen($email) > self::MAX_EMAIL_LENGTH) {
+            $this->addErrorMessageForKey('email', "must be " . self::MAX_EMAIL_LENGTH . " characters or less");
             $hasErrors = true;
         }
-        if ($email == '') {
-            $this->addErrorMessage("Email cannot be blank");
+
+        if ($email != $emailConfirm) {
+            $this->addErrorMessageForKey('emailConfirm', "the email addresses you have entered don't match");
+            $hasErrors = true;
+        }
+
+        if (!$validator->isValid($email)) {
+            $this->addErrorMessageForKey('email', "must be a valid email address");
             $hasErrors = true;
         }
 
@@ -205,7 +224,18 @@ class EmailAddressController extends AbstractDvsaMotTestController
     private function createViewModel($personId, $pageTitle, UserProfilePresenter $presenter, $isProfile = false,
                                      $emailValue, $emailConfirmValue)
     {
-        $this->layout()->setVariable('pageSubTitle', self::PAGE_SUBTITLE_INDEX . ' - ' . $presenter->displayFullName());
+        $newProfileEnabled = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE);
+
+        if ($newProfileEnabled) {
+            $this->layout()->setVariable(
+                'pageSubTitle',
+                $this->contextProvider->getContext() === ContextProvider::YOUR_PROFILE_CONTEXT
+                    ? self::PAGE_SUBTITLE_YOUR_PROFILE
+                    : self::PAGE_SUBTITLE_INDEX);
+        } else {
+            $this->layout()->setVariable('pageSubTitle', self::PAGE_SUBTITLE_INDEX . ' - ' . $presenter->displayFullName());
+        }
+
         $this->layout()->setVariable('pageTitle', $pageTitle);
         $breadcrumbs = $this->getBreadcrumbs($personId, $presenter, $isProfile);
         $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
@@ -222,6 +252,7 @@ class EmailAddressController extends AbstractDvsaMotTestController
                 'emailValue'      => $emailValue,
                 'emailConfirmValue'      => $emailConfirmValue,
                 'newProfileEnabled' => $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE),
+                'isViewingOwnProfile' => $this->contextProvider->getContext() === ContextProvider::YOUR_PROFILE_CONTEXT,
             ]
         );
 

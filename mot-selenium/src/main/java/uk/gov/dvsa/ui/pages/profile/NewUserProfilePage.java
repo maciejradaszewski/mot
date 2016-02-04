@@ -4,6 +4,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
+import uk.gov.dvsa.ui.pages.ChangeEmailDetailsPage;
 import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
@@ -28,6 +29,7 @@ public class NewUserProfilePage extends ProfilePage {
     @FindBy(css = "#drivingLicence a") protected WebElement changeDrivingLicenceLink;
     @FindBy(css = "#email-address a") protected WebElement changeEmailLink;
     @FindBy(css = "#date-of-birth a") protected WebElement changeDOBLink;
+    @FindBy(css = "#email-address") private WebElement userEmail;
     @FindBy(css = "#drivingLicence span") protected WebElement personDrivingLicenceRegion;
 
     public NewUserProfilePage(MotAppDriver driver) {
@@ -138,6 +140,16 @@ public class NewUserProfilePage extends ProfilePage {
     public ChangeDateOfBirthPage clickChangeDOBLink() {
         changeDOBLink.click();
         return new ChangeDateOfBirthPage(driver);
+    }
+
+    @Override
+    public ChangeEmailDetailsPage clickChangeEmailLink() {
+        changeEmailLink.click();
+        return new ChangeEmailDetailsPage(driver);
+    }
+
+    public boolean verifyEmailIsChanged(String email) {
+        return userEmail.getText().contains(email);
     }
 
     public boolean isPageLoaded() {

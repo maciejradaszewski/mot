@@ -4,10 +4,12 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.helper.ConfigHelper;
 import uk.gov.dvsa.helper.FormCompletionHelper;
+import uk.gov.dvsa.ui.pages.ChangeEmailDetailsPage;
 import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.Page;
 import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.dvsa.UserSearchProfilePage;
+import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
 import uk.gov.dvsa.ui.pages.profile.*;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
@@ -20,6 +22,9 @@ public class UserRoute {
     private static final String FIRST_NAME_ERROR_MESSAGE = "First name - you must enter a first name";
     private static final String LAST_NAME_ERROR_MESSAGE = "Last name - you must enter a last name";
     private static final String DOB_ERROR_MESSAGE = "must be a valid date of birth";
+
+    private static final String EMAIL_MUST_BE_VALID_MESSAGE = "must be a valid email address";
+    private static final String EMAIL_MUST_MATCH_MESSAGE = "the email addresses you have entered don't match";
 
     public UserRoute(PageNavigator pageNavigator) {
         this.pageNavigator = pageNavigator;
@@ -72,6 +77,20 @@ public class UserRoute {
         return (T)page.clickSubmitButton(NewUserProfilePage.class);
     }
 
+    public <T extends Page> T changeEmail(String email, String emailConfirmation, String value) {
+        profilePage.clickChangeEmailLink().fillEmail(email).fillEmailConfirmation(emailConfirmation);
+        switch (value) {
+            case "INVALID_INPUT":
+                return (T) getEmailChangePage().clickSubmitButton(ChangeEmailDetailsPage.class);
+            case "YOUR_PROFILE":
+                return (T) getEmailChangePage().clickSubmitButton(NewPersonProfilePage.class);
+            case "PERSON_PROFILE":
+                return (T) getEmailChangePage().clickSubmitButton(NewUserProfilePage.class);
+            default:
+                throw new PageInstanceNotFoundException("Page instantiation exception");
+        }
+    }
+
     public boolean isTesterQualificationStatusDisplayed() {
         return profilePage.isTesterQualificationStatusDisplayed();
     }
@@ -91,6 +110,23 @@ public class UserRoute {
         return getChangeDOBPage().getValidationMessage().equals(DOB_ERROR_MESSAGE);
     }
 
+    private ChangeDateOfBirthPage getChangeDOBPage() {
+        return new ChangeDateOfBirthPage(pageNavigator.getDriver());
+    }
+
+    public boolean isValidationMessageOnChangeEmailPageDisplayed(String warningMessage) {
+        switch (warningMessage) {
+            case "EMAIL_VALID":
+                return getEmailChangePage().getValidationMessage().equals(EMAIL_MUST_BE_VALID_MESSAGE);
+            case "EMAIL_MATCH":
+                return getEmailChangePage().getValidationMessage().equals(EMAIL_MUST_MATCH_MESSAGE);
+            case "EMAIL_MATCH_AND_VALID":
+                return getEmailChangePage().getValidationMessage().contains(EMAIL_MUST_BE_VALID_MESSAGE) && getEmailChangePage().getValidationMessage().contains(EMAIL_MUST_MATCH_MESSAGE);
+            default:
+                return false;
+        }
+    }
+
     public ProfilePage page(){
         return profilePage;
     }
@@ -99,7 +135,7 @@ public class UserRoute {
         return new ChangeNamePage(pageNavigator.getDriver());
     }
 
-    private ChangeDateOfBirthPage getChangeDOBPage() {
-        return new ChangeDateOfBirthPage(pageNavigator.getDriver());
+    private ChangeEmailDetailsPage getEmailChangePage() {
+        return new ChangeEmailDetailsPage(pageNavigator.getDriver());
     }
 }

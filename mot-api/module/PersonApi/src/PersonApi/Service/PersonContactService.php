@@ -88,7 +88,7 @@ class PersonContactService
      */
     public function updateEmailForPersonId($personId, $data)
     {
-        if ($this->authenticationService->getIdentity()->getUserId() !== $personId) {
+        if ($this->authenticationService->getIdentity()->getUserId() != $personId) {
             $this->authorisationService->assertGranted(PermissionInSystem::PROFILE_EDIT_OTHERS_EMAIL_ADDRESS);
         }
 
