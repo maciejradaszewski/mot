@@ -4,16 +4,16 @@ module.exports = function(grunt, config) {
         function handleCoverageOptions(coverageOptions, coverageType, coveragePath) {
 
             coverageType = coverageType || coverageOptions.defaultCoverageType;
-            if(coverageType !== 'clover' && coverageType !== 'html') {
+            if (coverageType !== 'clover' && coverageType !== 'html') {
                 grunt.log.error('Invalid coverage-type parameter specified: ' + coverageType);
             }
 
             coveragePath = coveragePath || (
-                coverageType === 'clover' ? coverageOptions.cloverPath : coverageOptions.htmlPath
-            );
+                    coverageType === 'clover' ? coverageOptions.cloverPath : coverageOptions.htmlPath
+                );
 
             var cmd = coverageOptions.baseCmd;
-            if(coverageType === 'clover') {
+            if (coverageType === 'clover') {
                 cmd += " --coverage-clover=" + coveragePath;
             } else if (coverageType === 'html') {
                 cmd += " --coverage-html=" + coveragePath;
@@ -23,16 +23,12 @@ module.exports = function(grunt, config) {
             return cmd;
         }
 
-        function isTaskForAws(){
-            return config.legacy === false;
-        }
-
         grunt.config('sshexec', {
             options: {
-                host: isTaskForAws() ? '<%= dev2_config.host %>' : '<%= vagrant_config.host %>',
-                port: isTaskForAws() ? '<%= dev2_config.port %>' : '<%= vagrant_config.port %>',
-                username: isTaskForAws() ? '<%= dev2_config.username %>' : '<%= vagrant_config.username %>',
-                privateKey: isTaskForAws() ? '<%= dev2_config.privateKey %>' : '<%= vagrant_config.privateKey %>',
+                host: '<%= dev2_config.host %>',
+                port: '<%= dev2_config.port %>',
+                username: '<%= dev2_config.username %>',
+                privateKey: '<%= dev2_config.privateKey %>',
 
                 coverage: {
                     api: {
@@ -72,10 +68,10 @@ module.exports = function(grunt, config) {
             },
             apache_restart_dev: {
                 options: {
-                    host: isTaskForAws() ? '<%= dev_config.host %>' : '<%= vagrant_config.host %>',
-                    port: isTaskForAws() ? '<%= dev_config.port %>' : '<%= vagrant_config.port %>',
-                    username: isTaskForAws() ? '<%= dev_config.username %>' : '<%= vagrant_config.username %>',
-                    privateKey: isTaskForAws() ? '<%= dev_config.privateKey %>' : '<%= vagrant_config.privateKey %>',
+                    host: '<%= dev_config.host %>',
+                    port: '<%= dev_config.port %>',
+                    username: '<%= dev_config.username %>',
+                    privateKey: '<%= dev_config.privateKey %>',
                 },
                 command: function() {
                     return 'sudo service <%= service_config.httpdServiceName %> restart';
@@ -83,10 +79,10 @@ module.exports = function(grunt, config) {
             },
             apache_restart_dev2: {
                 options: {
-                    host: isTaskForAws() ? '<%= dev2_config.host %>' : '<%= vagrant_config.host %>',
-                    port: isTaskForAws() ? '<%= dev2_config.port %>' : '<%= vagrant_config.port %>',
-                    username: isTaskForAws() ? '<%= dev2_config.username %>' : '<%= vagrant_config.username %>',
-                    privateKey: isTaskForAws() ? '<%= dev2_config.privateKey %>' : '<%= vagrant_config.privateKey %>',
+                    host: '<%= dev2_config.host %>',
+                    port: '<%= dev2_config.port %>',
+                    username: '<%= dev2_config.username %>',
+                    privateKey: '<%= dev2_config.privateKey %>',
                 },
                 command: function() {
                     return 'sudo service <%= service_config.httpdServiceName %> restart';
@@ -94,7 +90,6 @@ module.exports = function(grunt, config) {
             },
             fix_db_configs: {
                 command: function() {
-                    if(isTaskForAws()){
                         return [
                             //temp. fix for testsupport config - remove if https://gitlab.motdev.org.uk/webops/mot-vagrant/issues/45 is resolved
                             'file=<%= vagrant_config.workspace %>/mot-testsupport/config/autoload/global.php',
@@ -109,70 +104,58 @@ module.exports = function(grunt, config) {
                                 'cp ${file}.dist ${file}; ' +
                             'fi',
                             "sed -i 's/localhost/mysql/g' ${file}",
-                        ].join(' && ');;
-                    }
-                    return "";
+                        ].join(' && ');
                 }
             },
 
             reset_database: {
                 options: {
-                    host: isTaskForAws() ? '<%= dev_config.host %>' : '<%= vagrant_config.host %>',
-                    username: isTaskForAws() ? '<%= dev_config.username %>' : '<%= vagrant_config.username %>',
-                    privateKey: isTaskForAws() ? '<%= dev_config.privateKey %>' : '<%= vagrant_config.privateKey %>'
+                    host: '<%= dev_config.host %>',
+                    username: '<%= dev_config.username %>',
+                    privateKey: '<%= dev_config.privateKey %>',
                 },
                 command: function() {
-                    return isTaskForAws()
-                        ? 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && sudo ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> N && echo "DB Reset"'
-                        : 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> N && echo "DB Reset"'
+                    return 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && sudo ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> N && echo "DB Reset"';
                 }
             },
             reset_database_no_hist: {
                 options: {
-                    host: isTaskForAws() ? '<%= dev_config.host %>' : '<%= vagrant_config.host %>',
-                    username: isTaskForAws() ? '<%= dev_config.username %>' : '<%= vagrant_config.username %>',
-                    privateKey: isTaskForAws() ? '<%= dev_config.privateKey %>' : '<%= vagrant_config.privateKey %>'
+                    host: '<%= dev_config.host %>',
+                    username: '<%= dev_config.username %>',
+                    privateKey: '<%= dev_config.privateKey %>',
                 },
                 command: function() {
-                    return isTaskForAws()
-                        ? 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && sudo ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> N N && echo "DB Reset without *_hist tables"'
-                        : 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> N N && echo "DB Reset without *_hist tables"'
+                    return 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && sudo ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> N N && echo "DB Reset without *_hist tables"';
                     }
             },
             dump_database : {
                 options: {
-                    host: isTaskForAws() ? '<%= dev_config.host %>' : '<%= vagrant_config.host %>',
-                    username: isTaskForAws() ? '<%= dev_config.username %>' : '<%= vagrant_config.username %>',
-                    privateKey: isTaskForAws() ? '<%= dev_config.privateKey %>' : '<%= vagrant_config.privateKey %>'
+                    host: '<%= dev_config.host %>',
+                    username: '<%= dev_config.username %>',
+                    privateKey: '<%= dev_config.privateKey %>',
                 },
                 command: function() {
-                    return isTaskForAws()
-                        ? 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db/dev/bin && php ./dump_db.php && mysqldump -d --skip-add-drop-table -h <%= mysql_config.host %> -u <%= mysql_config.user %> -p<%= mysql_config.password %> <%= mysql_config.database %> > $dev_workspace/mot-api/db/dev/schema/create_dev_db_schema.sql && echo "DB dump"'
-                        : 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db/dev/bin && php ./dump_db.php && mysqldump -d --skip-add-drop-table -h <%= mysql_config.host %> -u <%= mysql_config.user %> -p<%= mysql_config.password %> <%= mysql_config.database %> > $dev_workspace/mot-api/db/dev/schema/create_dev_db_schema.sql && echo "DB dump"'
-                    }
+                    return 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db/dev/bin && php ./dump_db.php && mysqldump -d --skip-add-drop-table -h <%= mysql_config.host %> -u <%= mysql_config.user %> -p<%= mysql_config.password %> <%= mysql_config.database %> > $dev_workspace/mot-api/db/dev/schema/create_dev_db_schema.sql && echo "DB dump"';
+                }
             },
             reset_database_full: {
                 options: {
-                    host: isTaskForAws() ? '<%= dev_config.host %>' : '<%= vagrant_config.host %>',
-                    username: isTaskForAws() ? '<%= dev_config.username %>' : '<%= vagrant_config.username %>',
-                    privateKey: isTaskForAws() ? '<%= dev_config.privateKey %>' : '<%= vagrant_config.privateKey %>'
+                    host: '<%= dev_config.host %>',
+                    username:  '<%= dev_config.username %>',
+                    privateKey: '<%= dev_config.privateKey %>',
                 },
                 command: function() {
-                    return isTaskForAws()
-                        ? 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && sudo ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> Y && echo "DB Full Reset"'
-                        : 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> Y && echo "DB Full Reset"'
+                    return  'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && sudo ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> Y && echo "DB Full Reset"';
                     }
             },
             mysql_proc_fix: {
                 options: {
-                    host: isTaskForAws() ? '<%= dev_config.host %>' : '<%= vagrant_config.host %>',
-                    username: isTaskForAws() ? '<%= dev_config.username %>' : '<%= vagrant_config.username %>',
-                    privateKey: isTaskForAws() ? '<%= dev_config.privateKey %>' : '<%= vagrant_config.privateKey %>'
+                    host: '<%= dev_config.host %>',
+                    username: '<%= dev_config.username %>',
+                    privateKey: '<%= dev_config.privateKey %>',
                 },
                 command: function() {
-                    return isTaskForAws()
-                        ? 'sudo mysql -u<%= mysql_config.user %> -ppassword -e "use mysql; repair table mysql.proc;"'
-                        : 'mysql -u<%= mysql_config.user %> -ppassword -e "use mysql; repair table mysql.proc;"'
+                    return 'sudo mysql -u<%= mysql_config.user %> -ppassword -e "use mysql; repair table mysql.proc;"';
                     }
             },
 
@@ -285,7 +268,7 @@ module.exports = function(grunt, config) {
                 command: ['sudo sed -i.bak "s/^opcache.validate_timestamps.*/;opcache.validate_timestamps=0/g" <%= vagrant_config.phpRootDir %>/etc/php.d/opcache.ini']
             },
             trace_api_log: {
-                command: (isTaskForAws() ? 'sudo ' : '') + 'tail -f /var/log/dvsa/mot-api.log'
+                command: 'sudo  tail -f /var/log/dvsa/mot-api.log'
             },
             password_policy_show: {
                 options: {
@@ -414,7 +397,7 @@ module.exports = function(grunt, config) {
                     '
             },
             trace_web_log: {
-                command: (isTaskForAws() ? 'sudo ' : '') + 'tail -f /var/log/dvsa/mot-web-frontend.log'
+                command:  'sudo tail -f /var/log/dvsa/mot-web-frontend.log'
             },
             doctrine_proxy_gen: {
                 command: '<%= vagrant_config.workspace %>/Jenkins_Scripts/generate-proxies.sh <%= grunt.option("output") || "" %>'
