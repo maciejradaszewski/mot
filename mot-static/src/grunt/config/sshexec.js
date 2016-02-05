@@ -23,12 +23,26 @@ module.exports = function(grunt, config) {
             return cmd;
         }
 
+        var dev_ssh_options = {
+            host: '<%= dev_config.host %>',
+            username:'<%= dev_config.username %>',
+            privateKey: '<%= dev_config.privateKey %>',
+            port: '<%= dev_config.port %>',
+        };
+
+        var dev2_ssh_options = {
+            host: '<%= dev2_config.host %>',
+            username:'<%= dev2_config.username %>',
+            privateKey: '<%= dev2_config.privateKey %>',
+            port: '<%= dev2_config.port %>',
+        };
+
         grunt.config('sshexec', {
             options: {
-                host: '<%= dev2_config.host %>',
-                port: '<%= dev2_config.port %>',
-                username: '<%= dev2_config.username %>',
-                privateKey: '<%= dev2_config.privateKey %>',
+                host: dev2_ssh_options.host,
+                port: dev2_ssh_options.port,
+                username: dev2_ssh_options.username,
+                privateKey: dev2_ssh_options.privateKey,
 
                 coverage: {
                     api: {
@@ -58,7 +72,12 @@ module.exports = function(grunt, config) {
                 }
             },
 
-            apache_clear_php_sessions: {
+            apache_clear_php_sessions_dev: {
+                options: dev_ssh_options,
+                command:'sudo service <%= service_config.httpdServiceName %> stop; sudo rm -f <%= vagrant_config.phpRootDir %>/var/lib/php/session/sess_*; sudo service <%= service_config.httpdServiceName %> start;'
+            },
+            apache_clear_php_sessions_dev2: {
+                options: dev2_ssh_options,
                 command:'sudo service <%= service_config.httpdServiceName %> stop; sudo rm -f <%= vagrant_config.phpRootDir %>/var/lib/php/session/sess_*; sudo service <%= service_config.httpdServiceName %> start;'
             },
             apache_restart: {
@@ -67,23 +86,13 @@ module.exports = function(grunt, config) {
                 }
             },
             apache_restart_dev: {
-                options: {
-                    host: '<%= dev_config.host %>',
-                    port: '<%= dev_config.port %>',
-                    username: '<%= dev_config.username %>',
-                    privateKey: '<%= dev_config.privateKey %>',
-                },
+                options: dev_ssh_options,
                 command: function() {
                     return 'sudo service <%= service_config.httpdServiceName %> restart';
                 }
             },
             apache_restart_dev2: {
-                options: {
-                    host: '<%= dev2_config.host %>',
-                    port: '<%= dev2_config.port %>',
-                    username: '<%= dev2_config.username %>',
-                    privateKey: '<%= dev2_config.privateKey %>',
-                },
+                options: dev2_ssh_options,
                 command: function() {
                     return 'sudo service <%= service_config.httpdServiceName %> restart';
                 }
@@ -109,51 +118,31 @@ module.exports = function(grunt, config) {
             },
 
             reset_database: {
-                options: {
-                    host: '<%= dev_config.host %>',
-                    username: '<%= dev_config.username %>',
-                    privateKey: '<%= dev_config.privateKey %>',
-                },
+                options: dev_ssh_options,
                 command: function() {
                     return 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && sudo ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> N && echo "DB Reset"';
                 }
             },
             reset_database_no_hist: {
-                options: {
-                    host: '<%= dev_config.host %>',
-                    username: '<%= dev_config.username %>',
-                    privateKey: '<%= dev_config.privateKey %>',
-                },
+                options: dev_ssh_options,
                 command: function() {
                     return 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && sudo ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> N N && echo "DB Reset without *_hist tables"';
                     }
             },
             dump_database : {
-                options: {
-                    host: '<%= dev_config.host %>',
-                    username: '<%= dev_config.username %>',
-                    privateKey: '<%= dev_config.privateKey %>',
-                },
+                options: dev_ssh_options,
                 command: function() {
                     return 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db/dev/bin && php ./dump_db.php && mysqldump -d --skip-add-drop-table -h <%= mysql_config.host %> -u <%= mysql_config.user %> -p<%= mysql_config.password %> <%= mysql_config.database %> > $dev_workspace/mot-api/db/dev/schema/create_dev_db_schema.sql && echo "DB dump"';
                 }
             },
             reset_database_full: {
-                options: {
-                    host: '<%= dev_config.host %>',
-                    username:  '<%= dev_config.username %>',
-                    privateKey: '<%= dev_config.privateKey %>',
-                },
+                options: dev_ssh_options,
                 command: function() {
                     return  'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && sudo ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> Y && echo "DB Full Reset"';
                     }
             },
             mysql_proc_fix: {
-                options: {
-                    host: '<%= dev_config.host %>',
-                    username: '<%= dev_config.username %>',
-                    privateKey: '<%= dev_config.privateKey %>',
-                },
+                options: dev_ssh_options,
                 command: function() {
                     return 'sudo mysql -u<%= mysql_config.user %> -ppassword -e "use mysql; repair table mysql.proc;"';
                     }
@@ -243,16 +232,36 @@ module.exports = function(grunt, config) {
                     return cmd + ' -vv';
                 }
             },
-            xdebug_disable: {
-                command: 'sudo sed -i.bak "s/^\\s*zend_ext/;zend_ext/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini'
+            xdebug_disable_dev: {
+                options: dev_ssh_options,
+                command: 'sudo sed -i.bak "s/^.*zend_ext/;zend_ext/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini'
             },
-            xdebug_enable: {
-                command: 'sudo sed -i.bak "s/;\\s*zend_ext/zend_ext/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini'
+            xdebug_disable_dev2: {
+                options: dev2_ssh_options,
+                command: 'sudo sed -i.bak "s/^.*zend_ext/;zend_ext/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini'
             },
-            xdebug_on: {
+            xdebug_enable_dev: {
+                options: dev_ssh_options,
+                command: 'sudo sed -i.bak "s/.*zend_ext/zend_ext/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini'
+            },
+            xdebug_enable_dev2: {
+                options: dev2_ssh_options,
+                command: 'sudo sed -i.bak "s/.*zend_ext/zend_ext/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini'
+            },
+            xdebug_on_dev: {
+                options: dev_ssh_options,
                 command: 'sudo sed -i.bak "s/remote_autostart=0/remote_autostart=1/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini;sudo sed -i.bak "s/remote_enable=0/remote_enable=1/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini; '
             },
-            xdebug_off: {
+            xdebug_on_dev2: {
+                options: dev2_ssh_options,
+                command: 'sudo sed -i.bak "s/remote_autostart=0/remote_autostart=1/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini;sudo sed -i.bak "s/remote_enable=0/remote_enable=1/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini; '
+            },
+            xdebug_off_dev: {
+                options: dev_ssh_options,
+                command: 'sudo sed -i.bak "s/remote_autostart=1/remote_autostart=0/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini;sudo sed -i.bak "s/remote_enable=1/remote_enable=0/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini; '
+            },
+            xdebug_off_dev2: {
+                options: dev2_ssh_options,
                 command: 'sudo sed -i.bak "s/remote_autostart=1/remote_autostart=0/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini;sudo sed -i.bak "s/remote_enable=1/remote_enable=0/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini; '
             },
             xhprof_disable: {
@@ -268,14 +277,14 @@ module.exports = function(grunt, config) {
                 command: ['sudo sed -i.bak "s/^opcache.validate_timestamps.*/;opcache.validate_timestamps=0/g" <%= vagrant_config.phpRootDir %>/etc/php.d/opcache.ini']
             },
             trace_api_log: {
+                options: dev2_ssh_options,
                 command: 'sudo  tail -f /var/log/dvsa/mot-api.log'
             },
+            trace_web_log: {
+                options: dev_ssh_options,
+                command:  'sudo tail -f /var/log/dvsa/mot-webfrontend.log'
+            },
             password_policy_show: {
-                options: {
-                    host: '<%= devopenam_config.host %>',
-                    username: '<%= devopenam_config.username %>',
-                    privateKey: '<%= devopenam_config.privateKey %>'
-                },
                 command: 'cd /etc/openam/opends/bin/ && sudo ./dsconfig  get-password-policy-prop  \
                     --hostname localhost  \
                     --port 4444  \
@@ -285,11 +294,6 @@ module.exports = function(grunt, config) {
                     --trustAll'
             },
             password_policy_list: {
-                options: {
-                    host: '<%= devopenam_config.host %>',
-                    username: '<%= devopenam_config.username %>',
-                    privateKey: '<%= devopenam_config.privateKey %>'
-                },
                 command: 'cd /etc/openam/opends/bin/ && sudo ./dsconfig  list-password-policies  \
                     --hostname localhost  \
                     --port 4444  \
@@ -298,11 +302,6 @@ module.exports = function(grunt, config) {
                     --trustAll'
             },
             password_policy_delete: {
-                options: {
-                    host: '<%= devopenam_config.host %>',
-                    username: '<%= devopenam_config.username %>',
-                    privateKey: '<%= devopenam_config.privateKey %>'
-                },
                 command: 'cd /etc/openam/opends/bin/ && sudo ./dsconfig delete-password-policy  \
                     --hostname localhost  \
                     --port 4444  \
@@ -329,11 +328,6 @@ module.exports = function(grunt, config) {
                     --trustAll'
             },
             password_policy_create: {
-                options: {
-                    host: '<%= devopenam_config.host %>',
-                    username: '<%= devopenam_config.username %>',
-                    privateKey: '<%= devopenam_config.privateKey %>'
-                },
                 command: 'cd /etc/openam/opends/bin/ && sudo ./dsconfig create-password-policy \
                     --set default-password-storage-scheme:salted\\ SHA-512 \
                     --set password-expiration-warning-interval:0d \
@@ -395,9 +389,6 @@ module.exports = function(grunt, config) {
                     subtreeSpecification: { specificationFilter \\"(objectclass=motUser)\\" }" > /tmp/passwordpolicy \
                     sudo ./ldapmodify -h localhost -p 1389 -D"cn=directory manager" --bindPassword cangetinam -c -f /tmp/passwordpolicy && sudo rm /tmp/passwordpolicy \
                     '
-            },
-            trace_web_log: {
-                command:  'sudo tail -f /var/log/dvsa/mot-web-frontend.log'
             },
             doctrine_proxy_gen: {
                 command: '<%= vagrant_config.workspace %>/Jenkins_Scripts/generate-proxies.sh <%= grunt.option("output") || "" %>'

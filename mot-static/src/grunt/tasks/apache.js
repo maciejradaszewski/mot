@@ -13,6 +13,9 @@ module.exports = function(grunt, config) {
             'sshexec:apache_restart_dev',
             'sshexec:apache_restart_dev2'
         ]);
-        grunt.registerTask('apache:clear-php-sessions', 'Removes PHP sessions in the VM', 'sshexec:apache_clear_php_sessions');
+        grunt.registerTask('apache:clear-php-sessions', 'Removes PHP sessions in the VM', [
+            'sshexec:apache_clear_php_sessions_dev',
+            'sshexec:apache_clear_php_sessions_dev2'
+        ]);
     }
 };

@@ -15,8 +15,9 @@ module.exports = function(grunt, config) {
         	'xdebug:load',
         	'Ensure xdebug extension is loaded at runtime', 
         	[
-        		'sshexec:xdebug_enable',  // ensure the .so file is uncommented
-        		'sshexec:apache_restart'  // restart apache to prime
+        		'sshexec:xdebug_enable_dev',  // ensure the .so file is uncommented
+        		'sshexec:xdebug_enable_dev2',  // ensure the .so file is uncommented
+        		'apache:restart:all'  // restart apache to prime
         	]);
     	/**
     	 * XBDEBUG :: UNLOAD
@@ -28,8 +29,9 @@ module.exports = function(grunt, config) {
         	'xdebug:unload',
         	'Prevent xdebug extension being loaded',
         	[
-        		'sshexec:xdebug_disable',
-        		'sshexec:apache_restart'
+        		'sshexec:xdebug_disable_dev',
+        		'sshexec:xdebug_disable_dev2',
+        		'apache:restart:all'
         	]);
     	/**
     	 * XBDEBUG :: ON
@@ -40,8 +42,9 @@ module.exports = function(grunt, config) {
         	'xdebug:on',
         	'Enables xdebug for a debugging session',
         	[
-        		'sshexec:xdebug_on',
-        		'sshexec:apache_restart'
+        		'sshexec:xdebug_on_dev',
+        		'sshexec:xdebug_on_dev2',
+        		'apache:restart:all'
         	]);
     	/**
     	 * XBDEBUG :: OFF
@@ -52,8 +55,9 @@ module.exports = function(grunt, config) {
         	'xdebug:off',
         	'Stops xdebug listening for a debugger',
         	[
-        		'sshexec:xdebug_off',
-        		'sshexec:apache_restart'
+        		'sshexec:xdebug_off_dev',
+        		'sshexec:xdebug_off_dev2',
+        		'apache:restart:all'
         	]);
     }
 };
