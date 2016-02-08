@@ -9,6 +9,7 @@ upgradefiles+=('2016-01-22-BL-63-ae-change-business-correspondence-details-permi
 upgradefiles+=('2016-01-22-BL-269-ae-change-business-and-contact-details-permissions-STORY.sql');
 upgradefiles+=('2016-01-26-BL-814-new-rfr-STORY.sql');
 upgradefiles+=('2016-01-27-BL-927-change-date-of-birth-permissions-STORY.sql');
+upgradefiles+=('2016-02-08-BL-1347-ae-rename-three-permissions-STORY.sql');
 
 # add files here in intended run order for release
 
