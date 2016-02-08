@@ -852,7 +852,10 @@ class MotTestController extends AbstractDvsaMotTestController
 
         if ($headers->has('X-Forwarded-For')) {
             $header = $headers->get('X-Forwarded-For');
-            $ipAddress = $header->getFieldValue();
+            $ips = explode(',', $header->getFieldValue());
+            if (!empty($ips) && !empty($ips[0])) {
+                $ipAddress = $ips[0];
+            }
         }
 
         return $ipAddress;
