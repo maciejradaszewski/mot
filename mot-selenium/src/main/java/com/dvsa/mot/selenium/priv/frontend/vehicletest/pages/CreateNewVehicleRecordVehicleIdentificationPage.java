@@ -127,6 +127,7 @@ public class CreateNewVehicleRecordVehicleIdentificationPage extends BasePage {
     }
 
     public CreateNewVehicleRecordVehicleIdentificationPage enterVehicleDetails(Vehicle vehicle) {
+        setVin(vehicle.fullVIN);
         setDay(Integer.toString(vehicle.dateOfFirstUse.getDayOfMonth()));
         setMonth(Integer.toString(vehicle.dateOfFirstUse.getMonthOfYear()));
         setYear(Integer.toString(vehicle.dateOfFirstUse.getYear()));
@@ -185,6 +186,10 @@ public class CreateNewVehicleRecordVehicleIdentificationPage extends BasePage {
         vin.clear();
         vin.sendKeys(vehicle_Vin);
         return this;
+    }
+
+    public boolean isVinFieldEmpty() {
+        return vin.getText().isEmpty();
     }
 
     public boolean isCorrectDetailsDisplayed(Vehicle vehicle) {

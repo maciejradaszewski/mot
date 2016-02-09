@@ -113,7 +113,7 @@ class CreateVehicleControllerTest extends AbstractLightWebControllerTest
 
     public function testIndex_givenEnteredIndex_shouldRedirect()
     {
-        $query = ['reg' => 'RERG123', 'vin' => 'VIN1244'];
+        $query = ['reg' => 'RERG123'];
         $this->request->setQuery(new Parameters($query));
         $this->expectRedirect(
             CreateVehicleController::ROUTE,

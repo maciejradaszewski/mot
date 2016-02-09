@@ -20,17 +20,21 @@ public class CreateNewVehicleRecordTest extends BaseTest {
     private final String WRONG_VIN = "wrongvin";
     
 
-    @Test(groups = {"Regression", "VM-2333", "Sprint 22", "VM-2588", "MOT Testing"},
+    @Test(groups = {"Regression", "VM-2333", "Sprint 22", "VM-2588", "MOT Testing", "BL-1137"},
             description = "Create a new vehicle and validate that it has been successfully created")
     public void testCreateNewVehicleRecordSuccessfully() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_NON_EXISTENT_6);
 
-        VehicleSearchPage searchVehicle =
+        CreateNewVehicleRecordVehicleIdentificationPage newVehicleRecordVehicleIdentificationPage =
                 VehicleSearchPage.navigateHereFromLoginPage(driver, login).typeReg(vehicle.carReg)
                         .typeVIN(vehicle.fullVIN).submitSearchExpectingError()
-                        .createNewVehicle()
-                        .cancelReturnToVehicleSearch();
+                        .createNewVehicle();
+
+        assertThat("Vin was prepopulated", newVehicleRecordVehicleIdentificationPage.isVinFieldEmpty());
+
+        VehicleSearchPage searchVehicle =
+                newVehicleRecordVehicleIdentificationPage.cancelReturnToVehicleSearch();
 
         assertThat("Search form not displayed", searchVehicle.isVehicleSearchFormDisplayed(),
                 is(true));

@@ -67,7 +67,6 @@ class CreateVehicleController extends AbstractDvsaMotTestController
             ],
             [
                 'query' => [
-                    'vin' => $this->request->getQuery('vin'),
                     'reg' => $this->request->getQuery('reg')
                 ]
             ]
@@ -94,20 +93,12 @@ class CreateVehicleController extends AbstractDvsaMotTestController
             }
 
         } else {
-            if ($this->params()->fromQuery('vin')) {
-                $form->setData([
-                    'vehicleForm' =>
-                        ['VIN' => $this->params()->fromQuery('vin')]
-                ]);
-            }
-
             if ($this->params()->fromQuery('reg')) {
-                $form->setData([
+                $form->populateValues($form->setData([
                     'vehicleForm' =>
                         ['registrationNumber' => $this->params()->fromQuery('reg')]
-                ]);
+                ]));
             }
-
             $form->populateValues($step->getData());
         }
 
