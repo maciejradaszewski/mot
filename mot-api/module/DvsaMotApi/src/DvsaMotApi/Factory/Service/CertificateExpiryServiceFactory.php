@@ -23,7 +23,6 @@ class CertificateExpiryServiceFactory implements FactoryInterface
             new DateTimeHolder(),
             $serviceLocator->get('MotTestRepository'),
             $serviceLocator->get('VehicleRepository'),
-            $serviceLocator->get('DvlaVehicleRepository'),
             $serviceLocator->get('ConfigurationRepository'),
             $serviceLocator->get('DvsaAuthorisationService')
         );

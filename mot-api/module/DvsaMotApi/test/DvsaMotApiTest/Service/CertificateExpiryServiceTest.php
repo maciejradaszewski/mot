@@ -12,7 +12,6 @@ use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Vehicle;
 use DvsaEntities\Entity\VehicleClass;
 use DvsaEntities\Repository\ConfigurationRepository;
-use DvsaEntities\Repository\DvlaVehicleRepository;
 use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\VehicleRepository;
 use DvsaMotApi\Service\CertificateExpiryService;
@@ -46,11 +45,6 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
     protected $vehicleRepository;
 
     /**
-     * @var  VehicleRepository|MockObj
-     */
-    protected $dvlaVehicleRepository;
-
-    /**
      * @var  ConfigurationRepository|MockObj
      */
     protected $configurationRepository;
@@ -82,7 +76,6 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
 
         $this->motTestRepository       = XMock::of(MotTestRepository::class);
         $this->vehicleRepository       = XMock::of(VehicleRepository::class, ['find']);
-        $this->dvlaVehicleRepository   = XMock::of(DvlaVehicleRepository::class, ['find']);
         $this->authorisationService    = $this->getMockAuthorizationService();
         $this->paramObfuscator         = Bootstrap::getServiceManager()->get(ParamObfuscator::class);
 
@@ -103,13 +96,11 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
         $vehicle->setFirstRegistrationDate($date);
 
         $this->setupVehicleRepositoryMockReturnsVehicle($vehicle);
-        $this->setupDvlaVehicleRepositoryMockReturnsVehicle($vehicle);
 
         $certificateExpiryService = new CertificateExpiryService(
             new TestDateTimeHolder($date),
             $this->motTestRepository,
             $this->vehicleRepository,
-            $this->dvlaVehicleRepository,
             $this->configurationRepository,
             $this->authorisationService,
             $this->paramObfuscator
@@ -143,7 +134,6 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
             new TestDateTimeHolder($dateInvalid),
             $this->motTestRepository,
             $this->vehicleRepository,
-            $this->dvlaVehicleRepository,
             $this->configurationRepository,
             $this->authorisationService,
             $this->paramObfuscator
@@ -184,7 +174,6 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
             new TestDateTimeHolder($dateInvalid),
             $this->motTestRepository,
             $this->vehicleRepository,
-            $this->dvlaVehicleRepository,
             $this->configurationRepository,
             $this->authorisationService,
             $this->paramObfuscator
@@ -212,7 +201,6 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
             new TestDateTimeHolder($currentDate),
             $this->motTestRepository,
             $this->vehicleRepository,
-            $this->dvlaVehicleRepository,
             $this->configurationRepository,
             $this->authorisationService,
             $this->paramObfuscator
@@ -240,7 +228,6 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
             new TestDateTimeHolder($currentDate),
             $this->motTestRepository,
             $this->vehicleRepository,
-            $this->dvlaVehicleRepository,
             $this->configurationRepository,
             $this->authorisationService,
             $this->paramObfuscator
@@ -287,7 +274,6 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
             new TestDateTimeHolder(new \DateTime($dateOfMotTest)),
             $this->motTestRepository,
             $this->vehicleRepository,
-            $this->dvlaVehicleRepository,
             $this->configurationRepository,
             $this->authorisationService,
             $this->paramObfuscator
@@ -308,7 +294,6 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
 
         $vehicle = $this->createVehicle(1, $vehicleClass);
         $this->setupVehicleRepositoryMockReturnsVehicle($vehicle);
-        $this->setupDvlaVehicleRepositoryMockReturnsVehicle($vehicle);
 
         $calculatedExpiryDate = $certificateExpiryService->getInitialClassAwareExpiryDate(
             $vehicleClass,
@@ -345,14 +330,6 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
             ->will($this->returnValue($vehicle));
     }
 
-    protected function setupDvlaVehicleRepositoryMockReturnsVehicle($vehicle)
-    {
-        $this->dvlaVehicleRepository
-            ->expects($this->any())
-            ->method("find")
-            ->withAnyParameters()
-            ->will($this->returnValue($vehicle));
-    }
     protected function setupConfigurationRepositoryMockFindValuePostDateMonths()
     {
         $this->configurationRepository
