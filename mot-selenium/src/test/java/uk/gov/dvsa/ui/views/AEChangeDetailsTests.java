@@ -234,7 +234,7 @@ public class AEChangeDetailsTests extends BaseTest {
 
         //Then my changes are displayed on the AE
         //And notification is displayed
-        Assert.assertTrue(finalAreaOfficerAuthorisedExaminerViewPage.getAeDVSAAreaOffice().equals(AEAreaOfficeGroup.AREAOFFICE4.getValue()));
+        Assert.assertTrue(finalAreaOfficerAuthorisedExaminerViewPage.getAeDVSAAreaOffice().equals(AEAreaOfficeGroup.AREAOFFICE4.getName()));
         Assert.assertTrue(finalAreaOfficerAuthorisedExaminerViewPage.getValidationMessage().equals("Area office has been successfully changed."));
     }
 
