@@ -8,7 +8,6 @@ use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\Repository\ConfigurationRepository;
-use DvsaEntities\Repository\DvlaVehicleRepository;
 use DvsaEntities\Repository\MotTestRepository;
 use DvsaEntities\Repository\VehicleRepository;
 
@@ -23,8 +22,6 @@ class CertificateExpiryService
 
     /** @var \DvsaCommon\Date\DateTimeHolder */
     private $dateTime;
-    /** @var DvlaVehicleRepository $dvlaVehicleRepository */
-    private $dvlaVehicleRepository;
     /** @var MotTestRepository $motTestRepository */
     private $motTestRepository;
     /** @var VehicleRepository $vehicleRepository */
@@ -39,21 +36,18 @@ class CertificateExpiryService
      * @param DateTimeHolder $dateTimeHolder
      * @param MotTestRepository $motTestRepository
      * @param VehicleRepository $vehicleRepository
-     * @param DvlaVehicleRepository $dvlaVehicleRepository
      * @param ConfigurationRepository $configurationRepository
      */
     public function __construct(
         DateTimeHolder $dateTimeHolder,
         MotTestRepository $motTestRepository,
         VehicleRepository $vehicleRepository,
-        DvlaVehicleRepository $dvlaVehicleRepository,
         ConfigurationRepository $configurationRepository,
         AuthorisationServiceInterface $authService
     ) {
         $this->dateTime = $dateTimeHolder;
         $this->motTestRepository = $motTestRepository;
         $this->vehicleRepository = $vehicleRepository;
-        $this->dvlaVehicleRepository = $dvlaVehicleRepository;
         $this->configurationRepository = $configurationRepository;
         $this->authService = $authService;
     }
@@ -81,24 +75,31 @@ class CertificateExpiryService
             $testDate = $this->dateTime->getCurrentDate();
         }
 
-        $expiryDate = $this->motTestRepository->findLastCertificateExpiryDate($vehicleId);
-
-        if ($expiryDate === null) {
-            // Use a notional expiry date based on the first use / manufacture date instead.
-            $vehicle = (true === $isDvla)
-                ? $this->dvlaVehicleRepository->find($vehicleId)
-                : $this->vehicleRepository->find($vehicleId);
-
-            if (!$vehicle) {
-                throw new \Exception($isDvla ? 'DvlaVehicle' : 'Vehicle');
-            }
-
-            $expiryDate = MotTestDate::getNotionalExpiryDateForVehicle($vehicle);
+        if (true === $isDvla)
+        {
+            $expiryDate = null;
             $checkExpiryResults['previousCertificateExists'] = false;
+            $earliestTestDateForPostdatingExpiryDate = null;
+            $isEarlierThanTestDateLimit = false;
         }
+        else
+        {
+            $expiryDate = $this->motTestRepository->findLastCertificateExpiryDate($vehicleId);
 
-        $earliestTestDateForPostdatingExpiryDate = MotTestDate::preservationDate($expiryDate);
-        $isEarlierThanTestDateLimit = $testDate < $earliestTestDateForPostdatingExpiryDate;
+            if ($expiryDate === null) {
+                // Use a notional expiry date based on the first use / manufacture date instead.
+                $vehicle = $this->vehicleRepository->find($vehicleId);
+
+                if (!$vehicle) {
+                    throw new \Exception('Vehicle');
+                }
+
+                $expiryDate = MotTestDate::getNotionalExpiryDateForVehicle($vehicle);
+                $checkExpiryResults['previousCertificateExists'] = false;
+            }
+            $earliestTestDateForPostdatingExpiryDate = MotTestDate::preservationDate($expiryDate);
+            $isEarlierThanTestDateLimit = $testDate < $earliestTestDateForPostdatingExpiryDate;
+        }
 
         $checkExpiryResults['expiryDate'] = DateTimeApiFormat::date($expiryDate);
         $checkExpiryResults['earliestTestDateForPostdatingExpiryDate']

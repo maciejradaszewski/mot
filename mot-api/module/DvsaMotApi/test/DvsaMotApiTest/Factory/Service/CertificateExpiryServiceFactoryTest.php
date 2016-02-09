@@ -22,9 +22,8 @@ class CertificateExpiryServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $mockServiceLocator = XMock::of(ServiceLocatorInterface::class, ['get']);
         $this->mockMethod($mockServiceLocator, 'get', $this->at(0), XMock::of(MotTestRepository::class));
         $this->mockMethod($mockServiceLocator, 'get', $this->at(1), XMock::of(VehicleRepository::class));
-        $this->mockMethod($mockServiceLocator, 'get', $this->at(2), XMock::of(DvlaVehicleRepository::class));
-        $this->mockMethod($mockServiceLocator, 'get', $this->at(3), XMock::of(ConfigurationRepository::class));
-        $this->mockMethod($mockServiceLocator, 'get', $this->at(4), XMock::of(AuthorisationService::class));
+        $this->mockMethod($mockServiceLocator, 'get', $this->at(2), XMock::of(ConfigurationRepository::class));
+        $this->mockMethod($mockServiceLocator, 'get', $this->at(3), XMock::of(AuthorisationService::class));
 
         $this->assertInstanceOf(
             CertificateExpiryService::class,
