@@ -2,9 +2,8 @@ package uk.gov.dvsa.domain.service;
 
 import com.jayway.restassured.response.Response;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
-import uk.gov.dvsa.domain.model.*;
+import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.vehicle.*;
 import uk.gov.dvsa.framework.config.webdriver.WebDriverConfigurator;
 
@@ -63,11 +62,7 @@ public class VehicleService extends Service {
         Response response = motClient.createVehicle(
                 vehicleRequest, CREATE_PATH, authService.createSessionTokenForUser(user));
 
-        if (response.statusCode() == HttpStatus.SC_OK && response.body().path("errors") != null) {
-            throw new IllegalStateException("Vehicle creation failed");
-        }
-
-        return new Vehicle(vehicleDataMap, response.body().path("data").toString());
+        return new Vehicle(vehicleDataMap, ServiceResponse.createResponse(response, String.class));
     }
 
     private String generateCarRegistration() {

@@ -26,7 +26,7 @@ public class AuthService extends Service {
 
         Response response = motClient.createSession(request, CREATE_SESSION_ENDPOINT);
 
-        return response.path("data.accessToken");
+        return ServiceResponse.createResponse(response, "accessToken", String.class);
     }
 }
 

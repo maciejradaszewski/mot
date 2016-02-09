@@ -33,7 +33,6 @@ public class AeService extends Service {
         String token = authService.createSessionTokenForUser(areaOfficeUser);
         Response response = motClient.createAe(request, CREATE_AE_PATH, token);
 
-        return jsonHandler.hydrateObject(
-                jsonHandler.convertToString(response.body().path("data")), AeDetails.class);
+        return ServiceResponse.createResponse(response, AeDetails.class);
     }
 }
