@@ -36,21 +36,6 @@ public class MotTestService extends Service {
         String token = authService.createSessionTokenForUser(requestor);
         Response response = motClient.post(request, CREATE_MOT_TEST_PATH, token);
 
-        return jsonHandler.hydrateObject(
-                jsonHandler.convertToString(response.body().path("data")), MotTest.class);
-    }
-
-    protected MotTest createMotTest(CreateMotTestRequest motTestRequest) throws IOException {
-        String request =
-                jsonHandler.convertToString(motTestRequest);
-
-        String token = authService.createSessionTokenForUser(
-                motTestRequest.requestorName(), motTestRequest.requestorPassword()
-        );
-
-        Response response = motClient.post(request, CREATE_MOT_TEST_PATH, token);
-
-        return jsonHandler.hydrateObject(
-                jsonHandler.convertToString(response.body().path("data")), MotTest.class);
+        return ServiceResponse.createResponse(response, MotTest.class);
     }
 }

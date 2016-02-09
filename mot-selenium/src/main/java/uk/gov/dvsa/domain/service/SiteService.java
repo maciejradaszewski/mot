@@ -21,8 +21,6 @@ public class SiteService extends Service {
         String request = jsonHandler.convertToString(new CreateSiteRequest(aeId, areaOfficer, siteName));
 
         Response response = motClient.createSite(request, CREATE_PATH);
-
-        return jsonHandler.hydrateObject(
-                jsonHandler.convertToString(response.body().path("data")), Site.class);
+        return ServiceResponse.createResponse(response, Site.class);
     }
 }
