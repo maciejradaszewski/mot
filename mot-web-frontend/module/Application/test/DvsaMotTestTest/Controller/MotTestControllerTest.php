@@ -798,4 +798,38 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
 
         return $result;
     }
+
+    public static function TestIpExtractionFromHeaderDataProvider()
+    {
+        return [
+            ["1.1.1.1", "1.1.1.1"],
+            ["1.1.1.1, 2.2.2.2, 3.3.3.3", "1.1.1.1"],
+            ["", "0.0.0.0"],
+            [",", "0.0.0.0"],
+        ];
+    }
+
+    /**
+     * @dataProvider TestIpExtractionFromHeaderDataProvider
+     */
+    public function testCorrectlyObtainFirstIpFromHeader($testHeader, $expectedIp)
+    {
+        $this->setupAuthorizationService(
+            [PermissionInSystem::MOT_TEST_CONFIRM, PermissionAtSite::MOT_TEST_CONFIRM_AT_SITE]
+        );
+
+        $this->request->getHeaders()->addHeaders(array(
+            'X-Forwarded-For' => $testHeader,
+        ));
+
+        $motTestNr = (int)rand(1, 1000);
+        $motTestData = $this->getTestMotTestDataDto($motTestNr);
+        $expectedPostData = ['clientIp' => $expectedIp];
+
+        $restClientMock = $this->getRestClientMockWithGetMotTest(['data' => $motTestData]);
+        $this->mockMethod($restClientMock, 'post', $this->once(), null, ["mot-test/$motTestNr/status", $expectedPostData]);
+        $this->getResultForAction2('post','displayTestSummary', ['motTestNumber' => $motTestNr]);
+
+        $this->assertResponseStatus(self::HTTP_REDIRECT_CODE);
+    }
 }
