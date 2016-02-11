@@ -80,6 +80,7 @@ class EventOutcomeName
     const ITR = 'Initial training required';
     const NFA = 'No further action';
     const AWL = 'Advisory Warning Letter ';
+    const TA = 'Tester Active';
 
     /**
      * @return array of values for the type EventOutcomeName
@@ -157,6 +158,7 @@ class EventOutcomeName
             self::ITR,
             self::NFA,
             self::AWL,
+            self::TA,
         ];
     }
 
