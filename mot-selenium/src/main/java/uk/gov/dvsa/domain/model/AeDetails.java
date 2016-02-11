@@ -20,6 +20,10 @@ public class AeDetails {
         return id;
     }
 
+    public String getIdAsString() {
+        return String.valueOf(id);
+    }
+
     public String getAeRef() {
         return aeRef;
     }

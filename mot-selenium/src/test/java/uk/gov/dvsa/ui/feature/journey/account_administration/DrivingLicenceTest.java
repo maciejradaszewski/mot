@@ -176,26 +176,6 @@ public class DrivingLicenceTest extends BaseTest {
     }
 
     @Test(groups = {"BVT", "Regression"},
-            description = "Test that a validation error message is displayed to DVSA user when issuing country is invalid")
-    public void dvsaUserSeesValidationErrorWithInvalidIssuingCountryProvided() throws IOException, URISyntaxException {
-        // Given that I'm on a non-DVSA user profile as authorised DVSA user
-        ProfilePage profilePage = searchForUserAndViewProfile(areaOffice1User, tester);
-
-        // When I click the change driving licence link
-        ChangeDrivingLicencePage changeDrivingLicencePage = profilePage.clickChangeDrivingLicenceLink();
-
-        // And I enter driver licence number and supply an invalid issuing country
-        changeDrivingLicencePage.enterDriverLicenceNumber("AAAAA701010AA9AA")
-                .setInvalidDlIssuingCountry();
-
-        // And I click the submit button
-        changeDrivingLicencePage.clickSubmitDrivingLicenceButton(ChangeDrivingLicencePage.class);
-
-        // Then a validation error is displayed
-        assertThat(changeDrivingLicencePage.getValidationSummary(), containsString(ISSUING_COUNTRY_INVALID));
-    }
-
-    @Test(groups = {"BVT", "Regression"},
             expectedExceptions = PageInstanceNotFoundException.class,
             description = "Test that URL cannot be modified by DVSA user to change DVSA user driving licence")
     public void dvsaUserCannotModifyUrlToChangeOtherDvsaUserDrivingLicence() throws IOException {

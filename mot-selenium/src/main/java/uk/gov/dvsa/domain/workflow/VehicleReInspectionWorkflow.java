@@ -6,7 +6,7 @@ import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.service.CookieService;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.ui.pages.AssessmentDetailsConfirmationPage;
-import uk.gov.dvsa.ui.pages.EventsHistoryPage;
+import uk.gov.dvsa.ui.pages.events.EventsHistoryPage;
 import uk.gov.dvsa.ui.pages.PageLocator;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
 import uk.gov.dvsa.ui.pages.mot.*;

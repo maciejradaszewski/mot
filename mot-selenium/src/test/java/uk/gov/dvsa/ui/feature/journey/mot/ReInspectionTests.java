@@ -13,7 +13,7 @@ import uk.gov.dvsa.domain.shared.role.DvsaRoles;
 import uk.gov.dvsa.domain.shared.role.RoleManager;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.AssessmentDetailsConfirmationPage;
-import uk.gov.dvsa.ui.pages.EventsHistoryPage;
+import uk.gov.dvsa.ui.pages.events.EventsHistoryPage;
 import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.mot.TestCompletePage;
 import uk.gov.dvsa.ui.pages.mot.TestShortSummaryPage;

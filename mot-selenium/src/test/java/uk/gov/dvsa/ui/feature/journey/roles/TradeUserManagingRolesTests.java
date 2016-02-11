@@ -56,7 +56,7 @@ public class TradeUserManagingRolesTests extends BaseTest {
     public void tradeUserCanNavigateFromDeleteRolePageViaLink() throws IOException, URISyntaxException {
 
         //Given I'm logged in as Trade user and I am on Remove role page
-        RemoveRolePage removeRolePage = pageNavigator.navigateToPage(tester, PersonProfilePage.PATH, PersonProfilePage.class)
+        RemoveRolePage removeRolePage = pageNavigator.navigateToPage(userData.createTester(site.getId()), PersonProfilePage.PATH, PersonProfilePage.class)
                 .clickRolesAndAssociationsLink().removeRole();
 
         //When I click on Cancel and return to roles and associations link

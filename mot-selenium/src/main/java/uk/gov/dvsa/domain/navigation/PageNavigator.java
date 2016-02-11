@@ -155,19 +155,6 @@ public class PageNavigator {
         return new LoginPage(driver);
     }
 
-    public EventsHistoryPage goToEventsHistoryPage(User user, int aeId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(EventsHistoryPage.AE_PATH, aeId));
-        return new EventsHistoryPage(driver);
-    }
-
-    public TestCompletePage gotoTestCompletePage(User user, String motTestNumber) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(TestSummaryPage.PATH, motTestNumber));
-        TestSummaryPage summaryPage = new TestSummaryPage(driver);
-        summaryPage.finishTestAndPrint();
-
-        return new TestCompletePage(driver);
-    }
-
     public ManageRolesPage goToManageRolesPageViaUserSearch(User loggedUser, User searchedUser) throws IOException, URISyntaxException {
         return goToUserSearchedProfilePageViaUserSearch(loggedUser, searchedUser).clickManageRolesLink();
     }
