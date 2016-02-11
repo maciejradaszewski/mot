@@ -64,6 +64,9 @@ class EventTypeName
     const NTT_DIRECTED_RETRAINING_CLASSES_12 = 'NTT Directed Retraining: classes 1,2';
     const NTT_REFRESHER_CLASSES_12 = 'NTT Refresher: classes 1,2';
     const UPDATE_SITE_ASSESSMENT_RISK_SCORE = 'Update site assessment risk score';
+    const VTS_STATUS_CHANGE = 'VTS Status Change';
+    const LINK_STATUS_CHANGE = 'Link Status Change';
+    const ROLE_STATUS_CHANGE = 'Role Status Change';
 
     /**
      * @return array of values for the type EventTypeName
@@ -125,6 +128,9 @@ class EventTypeName
             self::NTT_DIRECTED_RETRAINING_CLASSES_12,
             self::NTT_REFRESHER_CLASSES_12,
             self::UPDATE_SITE_ASSESSMENT_RISK_SCORE,
+            self::VTS_STATUS_CHANGE,
+            self::LINK_STATUS_CHANGE,
+            self::ROLE_STATUS_CHANGE,
         ];
     }
 

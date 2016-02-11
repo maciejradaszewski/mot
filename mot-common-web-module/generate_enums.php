@@ -95,7 +95,7 @@ $constantGeneratorHelper = new EnumGeneration\EnumGenerationHelper();
 $constantGeneratorHelper->setDirectoryPath(ENUM_DIR_PATH);
 $constantGeneratorHelper->createDirectoryIfNotExisting();
 $constantGeneratorHelper->removeAllPreviouslyGeneratedEnums();
-$constantGeneratorHelper->setupDatabaseConnection('mot', 'localhost', 'root', 'password');
+$constantGeneratorHelper->setupDatabaseConnection('mot', 'mysql', 'motdbuser', 'password');
 
 $constantGeneratorHelper->generateEnumClasses($inputArray);
 

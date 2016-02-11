@@ -80,6 +80,7 @@ class EventOutcomeCode
     const ITR = 'ITR';
     const NFA = 'NFA';
     const AWL = 'AWL';
+    const TA = 'TA';
 
     /**
      * @return array of values for the type EventOutcomeCode
@@ -157,6 +158,7 @@ class EventOutcomeCode
             self::ITR,
             self::NFA,
             self::AWL,
+            self::TA,
         ];
     }
 
