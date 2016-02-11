@@ -1,6 +1,7 @@
 package uk.gov.dvsa.shared;
 
 import org.joda.time.DateTime;
+import uk.gov.dvsa.data.AeData;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.MotTest;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
@@ -12,6 +13,7 @@ import uk.gov.dvsa.domain.service.SessionManager;
 import java.io.IOException;
 
 public class MotApi extends MotTestService{
+    public final AeData aeData = new AeData();
 
     public MotTest createTest(User requestor, int siteId, Vehicle vehicle, TestOutcome outcome,
                                  int mileage, DateTime issuedDate) throws IOException {

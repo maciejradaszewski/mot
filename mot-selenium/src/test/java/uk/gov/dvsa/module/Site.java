@@ -6,7 +6,7 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.site.Status;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.ui.pages.AddSiteAssessmentPage;
-import uk.gov.dvsa.ui.pages.EventsHistoryPage;
+import uk.gov.dvsa.ui.pages.events.EventsHistoryPage;
 import uk.gov.dvsa.ui.pages.vts.*;
 
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class Site {
     }
 
     public void gotoEventHistory(User user, String siteId) throws IOException, URISyntaxException {
-        String pageUrl = String.format(EventsHistoryPage.PATH, siteId);
+        String pageUrl = String.format(EventsHistoryPage.SITE_PATH, siteId);
         eventsHistoryPage = pageNavigator.navigateToPage(user, pageUrl, EventsHistoryPage.class);
     }
 

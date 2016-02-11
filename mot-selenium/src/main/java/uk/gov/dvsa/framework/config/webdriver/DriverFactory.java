@@ -11,7 +11,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.testng.Assert;
 import uk.gov.dvsa.framework.config.Configurator;
-import uk.gov.dvsa.framework.config.webdriver.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;

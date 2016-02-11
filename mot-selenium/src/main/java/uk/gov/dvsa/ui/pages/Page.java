@@ -11,22 +11,25 @@ public abstract class Page {
     private By title = By.tagName("h1");
     protected MotAppDriver driver;
 
-    public Page(MotAppDriver driver) {
+    public Page(final MotAppDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
         PageInteractionHelper.setDriver(driver);
         PhpInlineErrorVerifier.verifyErrorAtPage(driver, getTitle());
     }
 
-    public String getTitle() {
+    public final String getTitle() {
         return driver.findElement(title).getText();
     }
 
-    public Breadcrumb getBreadcrumb() { return new Breadcrumb(driver); }
+    public final Breadcrumb getBreadcrumb() {
+        return new Breadcrumb(driver);
+    }
 
     protected abstract boolean selfVerify();
 
-    @Override public String toString() {
+    @Override
+    public final String toString() {
         return "Page: " + getTitle();
     }
 }
