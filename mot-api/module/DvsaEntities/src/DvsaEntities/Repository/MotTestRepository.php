@@ -1343,6 +1343,8 @@ class MotTestRepository extends AbstractMutableRepository
         if ($searchParam->getFormat() === SearchParamConst::FORMAT_DATA_CSV) {
             $qb
                 ->resetPart('orderBy')
+                ->orderBy("siteNumber ASC")
+                ->orderBy("testDate ASC")
                 ->select(
                     'CASE WHEN eml.id IS NOT NULL THEN emp.username ELSE NULL END AS emRecTester,
                     CASE WHEN eml.id IS NOT NULL THEN mt.created_on ELSE NULL END AS emRecDateTime,
