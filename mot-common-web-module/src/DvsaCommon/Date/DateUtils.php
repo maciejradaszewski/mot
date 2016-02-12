@@ -218,6 +218,19 @@ final class DateUtils
     }
 
     /**
+     * Calculates only number of minutes and seconds in given number of seconds
+     * @param $seconds number of seconds
+     * @return array with 'minutes' => total number of minutes, 'seconds' => seconds
+     */
+    public static function getMinutesAndSecondsFromSeconds($seconds)
+    {
+        return [
+            'minutes' => (int) floor($seconds / 60),
+            'seconds' => $seconds % 60,
+        ];
+    }
+
+    /**
      * Returns date on a set number of calendar months before a given date.
      * Equal to the date on the same day in a prior month: if the date does
      * not exist the end date of that month is used.

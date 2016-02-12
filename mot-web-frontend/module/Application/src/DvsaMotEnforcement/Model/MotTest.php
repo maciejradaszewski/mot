@@ -76,7 +76,9 @@ class MotTest
             $startedDate = DateUtils::toDateTime($startedDate);
             $completedDate = DateUtils::toDateTime($completedDate);
 
-            $durationTime = ceil(DateUtils::getDatesTimestampDelta($completedDate, $startedDate) / 60) . ' min';
+            $testDuration = DateUtils::getMinutesAndSecondsFromSeconds(
+                DateUtils::getDatesTimestampDelta($completedDate, $startedDate));
+            $durationTime = $testDuration['minutes'] . ' mins ' . $testDuration['seconds'] . ' sec';
         } else {
             $durationTime = 'N/A';
         }
