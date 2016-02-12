@@ -151,9 +151,11 @@ if (empty($motTest)) {
             }
 
             if ($completedDate) :
-                $durationMins = round(DateUtils::getDatesTimestampDelta($completedDate, $startDate) / 60);
+                $testDuration = DateUtils::getMinutesAndSecondsFromSeconds(DateUtils::getDatesTimestampDelta($completedDate, $startDate));
+                $durationMins = $testDuration['minutes'];
+                $durationSec = $testDuration['seconds'];
                 $escapedTestDuration =
-                    $this->escapeHtml($durationMins) . ' mins &nbsp;&nbsp;&nbsp;' .
+                    $this->escapeHtml($durationMins) . ' mins ' . $durationSec . ' sec &nbsp;&nbsp;&nbsp;' .
                     'From&nbsp;' . $this->escapeHtml(DateTimeDisplayFormat::dateTime($startDate)) .
                     '&nbsp;&nbsp;To&nbsp;' . $this->escapeHtml(DateTimeDisplayFormat::dateTime($completedDate));
                 ?>

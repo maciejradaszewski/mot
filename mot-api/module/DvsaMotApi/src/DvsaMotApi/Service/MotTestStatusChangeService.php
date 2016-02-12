@@ -394,6 +394,7 @@ class MotTestStatusChangeService implements TransactionAwareInterface
             $newPassedMotTestDate = clone $passedMotTest->getCompletedDate();
             $newPassedMotTestDate->add(new \DateInterval('PT1S'));
 
+            $passedMotTest->setStartedDate($motTest->getCompletedDate());
             $passedMotTest->setCompletedDate($newPassedMotTestDate);
 
             //  --  set Issue & Expire Date  --

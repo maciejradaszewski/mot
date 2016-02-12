@@ -242,6 +242,16 @@ class DateUtilsTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @dataProvider providerConvertSecondsToMinutesAndSeconds
+     */
+    public function testConvertSecondsToMinutesAndSeconds($seconds, $expectedResult)
+    {
+        $result = DateUtils::getMinutesAndSecondsFromSeconds($seconds);
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
 
     /**
      * @expectedException \InvalidArgumentException
@@ -295,6 +305,22 @@ class DateUtilsTest extends PHPUnit_Framework_TestCase
         ];
     }
 
+    public function providerConvertSecondsToMinutesAndSeconds()
+    {
+        return [
+            [0, ['minutes' => 0, 'seconds' => 0]],
+            [1, ['minutes' => 0, 'seconds' => 1]],
+            [30, ['minutes' => 0, 'seconds' => 30]],
+            [59, ['minutes' => 0, 'seconds' => 59]],
+            [60, ['minutes' => 1, 'seconds' => 0]],
+            [61, ['minutes' => 1, 'seconds' => 1]],
+            [120, ['minutes' => 2, 'seconds' => 0]],
+            [3600, ['minutes' => 60, 'seconds' => 0]],
+            [3601, ['minutes' => 60, 'seconds' => 1]],
+            [7200, ['minutes' => 120, 'seconds' => 0]],
+            [60 * 60 * 24 + 23, ['minutes' => 1440, 'seconds' => 23]],
+        ];
+    }
     public function provideDatesWithDays()
     {
         return [
