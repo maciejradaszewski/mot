@@ -2,6 +2,7 @@
 
 namespace MailerApiTest\Service;
 
+use DvsaCommon\Validator\EmailAddressValidator;
 use MailerApi\Model\Attachment;
 use MailerApi\Validator\MailerValidator;
 use PHPUnit_Framework_TestCase;
@@ -11,6 +12,7 @@ use Zend\Log\Logger;
 use Zend\Log\Writer\Mail;
 use DvsaCommonTest\TestUtils\XMock;
 use Zend\Mime\Message;
+use Zend\Validator\EmailAddress;
 
 class MailerServiceTest extends PHPUnit_Framework_TestCase
 {
@@ -22,6 +24,11 @@ class MailerServiceTest extends PHPUnit_Framework_TestCase
     /** @var  MailerValidator */
     protected $mockValidator;
 
+    /**
+     * @var EmailAddress
+     */
+    private $mockEmailValidator;
+
     public function setUp()
     {
         $this->prepServiceManager();
@@ -31,8 +38,29 @@ class MailerServiceTest extends PHPUnit_Framework_TestCase
     public function newEngineWithConfig($config)
     {
         $this->setConfig($config);
-        $this->mockValidator = XMock::of(MailerValidator::class, ['validate']);
-        $this->mailerService = new MailerService($config, null, $this->mockValidator);
+
+        $this->mockValidator = $this
+            ->getMockBuilder(MailerValidator::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['validate'])
+            ->getMock();
+
+        $this->mockValidator->expects($this->any())
+            ->method('validate')
+            ->willReturn(true);
+
+        $this->mockEmailValidator = $this
+            ->getMockBuilder(EmailAddressValidator::class)
+            ->setMethods(['isValid'])
+            ->getMock();
+
+        $this->mockEmailValidator->expects($this->any())
+            ->method('isValid')
+            ->willReturn(true);
+
+        $this->mailerService = new MailerService($config, null, $this->mockValidator, $this->mockEmailValidator);
+
+
     }
 
     /**
@@ -92,11 +120,11 @@ class MailerServiceTest extends PHPUnit_Framework_TestCase
     public function testSendDoesNothingWhenConfiguredNotToSend()
     {
         $this->setConfig(['sendingAllowed' => false]);
-        $this->mailerService = new MailerService($this->sm()->get('Config'), null, $this->mockValidator);
+        $this->mailerService = new MailerService($this->sm()->get('Config'), null, $this->mockValidator, $this->mockEmailValidator);
 
         $this->assertFalse(
             $this->mailerService->send(
-                'sean.charles@valtech.co.uk',
+                'mailerservicetest@' . EmailAddressValidator::TEST_DOMAIN,
                 'test subject',
                 'Hello, World!'
             )
@@ -116,7 +144,7 @@ class MailerServiceTest extends PHPUnit_Framework_TestCase
             return ($body instanceof Message) && ($body->getPartContent(0) == $mockMessage);
         }));
         $mockMail->expects($this->once())->method('setSubject')->with('test subject');
-        $mockMail->expects($this->once())->method('addTo')->with('sean.charles@valtech.co.uk');
+        $mockMail->expects($this->once())->method('addTo')->with('mailerservicetest@' . EmailAddressValidator::TEST_DOMAIN);
 
         $mockMta = XMock::of("\\Zend\\Mail\\Transport\\Sendmail", ['send']);
 
@@ -130,11 +158,11 @@ class MailerServiceTest extends PHPUnit_Framework_TestCase
                 'sender' => 'a unit test'
             ]
         );
-        $this->mailerService = new MailerService($this->sm()->get('Config'), null, $this->mockValidator);
+        $this->mailerService = new MailerService($this->sm()->get('Config'), null, $this->mockValidator, $this->mockEmailValidator);
 
         $this->assertTrue(
             $this->mailerService->send(
-                'sean.charles@valtech.co.uk',
+                'mailerservicetest@' . EmailAddressValidator::TEST_DOMAIN,
                 'test subject',
                 $mockMessage
             )
@@ -156,7 +184,7 @@ class MailerServiceTest extends PHPUnit_Framework_TestCase
             && (base64_decode($body->getPartContent(1)) == $mockAttachment->getContent()); //the second part will be base64 encoded
         }));
         $mockMail->expects($this->once())->method('setSubject')->with('test subject');
-        $mockMail->expects($this->once())->method('addTo')->with('dummy@email.com');
+        $mockMail->expects($this->once())->method('addTo')->with('mailerservicetest@' . EmailAddressValidator::TEST_DOMAIN);
 
         $mockMta = XMock::of("\\Zend\\Mail\\Transport\\Sendmail", ['send']);
 
@@ -170,11 +198,11 @@ class MailerServiceTest extends PHPUnit_Framework_TestCase
                 'sender' => 'a unit test'
             ]
         );
-        $this->mailerService = new MailerService($this->sm()->get('Config'), null, $this->mockValidator);
+        $this->mailerService = new MailerService($this->sm()->get('Config'), null, $this->mockValidator, $this->mockEmailValidator);
 
         $this->assertTrue(
             $this->mailerService->send(
-                'dummy@email.com',
+                'mailerservicetest@' . EmailAddressValidator::TEST_DOMAIN,
                 'test subject',
                 $mockMessage,
                 $mockAttachment

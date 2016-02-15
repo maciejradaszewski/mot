@@ -24,7 +24,7 @@ class ResetClaimAccountServiceTest extends AbstractServiceTestCase
 {
     const PERSON_ID = 3;
     const PERSON_USERNAME = 'csco';
-    const PERSON_EMAIL = 'dummy@dummy.com';
+    const PERSON_EMAIL = 'resetclaimaccountservicetest@dvsa.test';
 
     /** @var ResetClaimAccountService */
     private $service;

@@ -5,6 +5,7 @@ namespace UserAdminTest\Presenter;
 use Application\Service\CatalogService;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonTest\TestUtils\XMock;
 use UserAdmin\Presenter\UserProfilePresenter;
 use UserAdmin\Service\PersonRoleManagementService;
@@ -208,7 +209,7 @@ class UserProfilePresenterBuilder
             ->setLastName('Jones')
             ->setDateOfBirth('1992-05-29')
             ->setAddress($address)
-            ->setEmail('dummy@email.com')
+            ->setEmail('userprofilepresentertest@' . EmailAddressValidator::TEST_DOMAIN)
             ->setTelephone('+768-45-4433630');
     }
 

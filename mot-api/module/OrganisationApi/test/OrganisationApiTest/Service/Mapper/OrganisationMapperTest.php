@@ -4,6 +4,7 @@ namespace OrganisationApiTest\Service\Mapper;
 
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\PhoneContactTypeCode;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaEntities\Entity\Address;
 use DvsaEntities\Entity\AuthForAeStatus;
 use DvsaEntities\Entity\AuthorisationForAuthorisedExaminer;
@@ -62,7 +63,7 @@ class OrganisationMapperTest extends \PHPUnit_Framework_TestCase
             ->setPostcode('postcode');
         $email = (new Email())
             ->setIsPrimary(true)
-            ->setEmail('dummy@dummy.com');
+            ->setEmail('organisationmappertest@' . EmailAddressValidator::TEST_DOMAIN);
         $phone = (new Phone())
             ->setIsPrimary(true)
             ->setNumber('0123456789')

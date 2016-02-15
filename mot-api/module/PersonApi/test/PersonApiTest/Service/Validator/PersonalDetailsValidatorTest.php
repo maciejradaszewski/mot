@@ -87,8 +87,8 @@ class PersonalDetailsValidatorTest extends PHPUnit_Framework_TestCase
             'addressLine3'         => '34',
             'town'                 => 'Berlin',
             'postcode'             => '23-232',
-            'email'                => 'mickey@mouse.com',
-            'emailConfirmation'    => 'mickey@mouse.com',
+            'email'                => 'persondetailsvalidatortest@dvsa.com',
+            'emailConfirmation'    => 'persondetailsvalidatortest@dvsa.com',
             'phoneNumber'          => '+32324-324-324-234',
             'dateOfBirth'          => '1980-05-05',
         ];

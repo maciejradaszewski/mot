@@ -3,6 +3,7 @@
 namespace DvsaClient\ViewModel;
 
 use DvsaCommon\Dto\Contact\EmailDto;
+use DvsaCommon\Validator\EmailAddressValidator;
 use Zend\Stdlib\Parameters;
 
 /**
@@ -95,7 +96,7 @@ class EmailFormModel extends AbstractFormModel
                 ? sprintf(self::FIELD_CONTACT, $type, self::FIELD_EMAIL_CONFIRM)
                 : self::FIELD_EMAIL_CONFIRM;
 
-            $validator = new \Zend\Validator\EmailAddress();
+            $validator = new EmailAddressValidator();
             if ($validator->isValid(trim($email)) === false) {
                 $this->addError($field, self::ERR_INVALID);
             }

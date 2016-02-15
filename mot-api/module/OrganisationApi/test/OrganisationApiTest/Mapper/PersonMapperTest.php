@@ -3,6 +3,7 @@
 namespace OrganisationApiTest\Mapper;
 
 use DvsaCommon\Dto\Person\PersonDto;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaEntities\Entity\Person;
 use OrganisationApi\Service\Mapper\PersonMapper;
 
@@ -15,7 +16,7 @@ class PersonMapperTest extends \PHPUnit_Framework_TestCase
     {
         $mapper = new PersonMapper();
 
-        $result = $mapper->toArray(self::getPersonEntity('tester@example.com'));
+        $result = $mapper->toArray(self::getPersonEntity('personmappertest@' . EmailAddressValidator::TEST_DOMAIN));
         $this->assertTrue(is_array($result));
         $this->assertCount(9, $result);
     }
@@ -33,7 +34,7 @@ class PersonMapperTest extends \PHPUnit_Framework_TestCase
     {
         $mapper = new PersonMapper();
 
-        $result = $mapper->toDto(self::getPersonEntity('tester@example.com'));
+        $result = $mapper->toDto(self::getPersonEntity('personmappertest@' . EmailAddressValidator::TEST_DOMAIN));
         $this->assertInstanceOf(PersonDto::class, $result);
     }
 
@@ -41,7 +42,7 @@ class PersonMapperTest extends \PHPUnit_Framework_TestCase
     {
         $mapper = new PersonMapper();
 
-        $result = $mapper->manyToArray([self::getPersonEntity('tester@example.com')]);
+        $result = $mapper->manyToArray([self::getPersonEntity('personmappertest@' . EmailAddressValidator::TEST_DOMAIN)]);
         $this->assertTrue(is_array($result));
         $this->assertCount(1, $result);
     }

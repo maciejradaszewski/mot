@@ -18,7 +18,7 @@ class MailerControllerTest extends AbstractMotApiControllerTestCase
     protected $mockUserService;
     protected $mockLogger;
 
-    const DUMMY_EMAIL = 'dummy.account@valtech.co.uk';
+    const DUMMY_EMAIL = 'mailercontrollertest@dvsa.test';
 
     protected function setUp()
     {
@@ -43,6 +43,10 @@ class MailerControllerTest extends AbstractMotApiControllerTestCase
             ->setMockPerson()
             ->primePostRequest($detailsService)
             ->primeMailRendering();
+
+        $config = $this->serviceManager->get('Config');
+        $config['mailer']['checkHost'] = false;
+        $this->serviceManager->setService('Config', $config);
 
         /** @var \Zend\View\Model\JsonModel $result */
         $result = $this->triggerAction(
@@ -100,6 +104,10 @@ class MailerControllerTest extends AbstractMotApiControllerTestCase
         $this->mockLogger->expects($this->once())
             ->method('info');
 
+        $config = $this->serviceManager->get('Config');
+        $config['mailer']['checkHost'] = false;
+        $this->serviceManager->setService('Config', $config);
+
         /** @var \Zend\View\Model\JsonModel $result */
         $result = $this->triggerAction(
             [
@@ -131,6 +139,7 @@ class MailerControllerTest extends AbstractMotApiControllerTestCase
         // Remove the email override
         $config = $this->serviceManager->get('Config');
         $config['mailer']['mail-class'] = 31415;
+        $config['mailer']['checkHost'] = false;
         $config['mailer']['recipient'] = self::DUMMY_EMAIL;
         $this->serviceManager->setService('Config', $config);
 
@@ -210,6 +219,10 @@ class MailerControllerTest extends AbstractMotApiControllerTestCase
             ->primePostRequest($detailsService)
             ->primeMailRendering();
 
+        $config = $this->serviceManager->get('Config');
+        $config['mailer']['checkHost'] = false;
+        $this->serviceManager->setService('Config', $config);
+
         /** @var \Zend\View\Model\JsonModel $result */
         $result = $this->triggerAction(
             [
@@ -236,6 +249,7 @@ class MailerControllerTest extends AbstractMotApiControllerTestCase
         $config['mailer']['logfile'] = '';
         $config['mailer']['logfile'] = '/tmp/testing.log';
         $config['mailer']['mta-class'] = $mockTransport;
+        $config['mailer']['checkHost'] = false;
         $this->serviceManager->setService('Config', $config);
 
         $detailsService = $this->setMockPersonalDetails();

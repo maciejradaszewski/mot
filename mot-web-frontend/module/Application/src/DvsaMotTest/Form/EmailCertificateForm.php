@@ -1,6 +1,7 @@
 <?php
 namespace DvsaMotTest\Form;
 
+use DvsaCommon\Validator\EmailAddressValidator;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\Validator\EmailAddress;
@@ -160,7 +161,7 @@ class EmailCertificateForm extends Form
                     ],
                 ],
                 [
-                    'name' => EmailAddress::class,
+                    'name' => EmailAddressValidator::class,
                     'options' => [
                         'message' => self::MSG_EMAIL_IS_INVALID,
                         'hostnameValidator' => (new Hostname())->useIdnCheck(false)->setMessage(self::MSG_EMAIL_IS_INVALID)

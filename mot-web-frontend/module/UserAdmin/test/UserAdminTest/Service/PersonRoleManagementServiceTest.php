@@ -9,6 +9,7 @@ use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonTest\TestUtils\Auth\GrantAllAuthorisationServiceStub;
 use DvsaCommonTest\TestUtils\XMock;
 use PHPUnit_Framework_TestCase as TestCase;
@@ -226,7 +227,7 @@ class PersonRoleManagementServiceTest extends TestCase
                     'addressLine3' => '',
                     'addressLine4' => '',
                     'town' => 'Liverpool',
-                    'email' => 'dummy@email.com',
+                    'email' => 'personrolemanagementservicetest@' . EmailAddressValidator::TEST_DOMAIN,
                     'telephone' => '+768-45-4433630',
                     'roles' => [
                         'system' => [

@@ -7,6 +7,7 @@ use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Enum\LicenceCountryCode;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
+use DvsaCommon\Validator\EmailAddressValidator;
 
 /**
  * Unit tests for PersonHelpDeskProfileDto
@@ -55,7 +56,7 @@ class PersonHelpDeskProfileDtoTest extends \PHPUnit_Framework_TestCase
                     ->setAddressLine4('4.')
             )
             ->setTelephone('+768-45-4433630')
-            ->setEmail('dummy@email.com')
+            ->setEmail('personhelpdeskdtotest@' . EmailAddressValidator::TEST_DOMAIN)
             ->setRoles([SiteBusinessRoleCode::TESTER])
             ->setDrivingLicenceNumber('1234567890')
             ->setDrivingLicenceRegion(LicenceCountryCode::GREAT_BRITAIN_ENGLAND_SCOTLAND_AND_WALES)
@@ -82,7 +83,7 @@ class PersonHelpDeskProfileDtoTest extends \PHPUnit_Framework_TestCase
             'addressLine3' => '3.',
             'addressLine4' => '4.',
             'town' => 'Sm Twn',
-            'email' => 'dummy@email.com',
+            'email' => 'personhelpdeskdtotest@' . EmailAddressValidator::TEST_DOMAIN,
             'telephone' => '+768-45-4433630',
             'roles' => [
                 SiteBusinessRoleCode::TESTER,

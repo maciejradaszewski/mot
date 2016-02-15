@@ -4,6 +4,7 @@ namespace DvsaCommonTest\UrlBuilder;
 
 use DvsaCommon\UrlBuilder\AbstractUrlBuilder;
 use DvsaCommon\UrlBuilder\PersonUrlBuilder;
+use DvsaCommon\Validator\EmailAddressValidator;
 
 /**
  * Tests for PersonUrlBuilder.
@@ -29,9 +30,9 @@ class PersonUrlBuilderTest extends \PHPUnit_Framework_TestCase
         return [
             ['aaa-bbb'],
             ['tester1'],
-            ['551ba8edd48dd8.33613431@example.com'],
+            ['personurlbuildertest@' . EmailAddressValidator::TEST_DOMAIN],
             ['inactivetester_demo_not_req2'],
-            ['vm-4499-tester-A@example.com'],
+            ['personurlbuildertest@' . EmailAddressValidator::TEST_DOMAIN],
         ];
     }
 

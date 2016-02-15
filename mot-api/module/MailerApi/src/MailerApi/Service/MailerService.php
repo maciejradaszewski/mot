@@ -3,14 +3,15 @@
 namespace MailerApi\Service;
 
 use DvsaCommon\Dto\Mailer\MailerDto;
+use DvsaCommon\Validator\EmailAddressValidator;
 use MailerApi\Model\Attachment;
 use MailerApi\Validator\MailerValidator;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Service\Exception\BadRequestException;
+use Zend\Mvc\Router\Http\Hostname;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Mail;
 use Zend\Mime;
-use Zend\Validator\EmailAddress;
 
 /**
  * Class MailerEngine
@@ -34,6 +35,11 @@ class MailerService
     /** The mailer validation handler */
     protected $validator;
 
+    /**
+     * @var EmailAddress
+     */
+    private $emailValidator;
+
     /** Default from address for sent emails */
     const DEFAULT_FROM = 'noreply@dvsa-helpdesk';
 
@@ -44,12 +50,14 @@ class MailerService
      * @param Array $config contains the system-wide configuration data
      * @param Object $logger contains the application logger instance
      * @param MailerValidator|Object $validator contains the Mail service validation handler
+     * @param EmailAddressValidator
      */
-    public function __construct($config, $logger, MailerValidator $validator)
+    public function __construct($config, $logger, MailerValidator $validator, EmailAddressValidator $emailValidator)
     {
         $this->config = ArrayUtils::tryGet($config, 'mailer', []);
         $this->logger = $logger;
         $this->validator = $validator;
+        $this->emailValidator = $emailValidator;
     }
 
     /**
@@ -160,7 +168,13 @@ class MailerService
     private function getActualRecipient($tentativeRecipient)
     {
         $actualRecipient = ArrayUtils::tryGet($this->config, 'recipient', $tentativeRecipient);
-        $emailValidator = new EmailAddress();
+        $emailValidator = $this->emailValidator;
+
+        $checkHost = ArrayUtils::tryGet($this->config, 'checkHost', true);
+
+        if ($checkHost === false) {
+            $emailValidator->setAllow(15);
+        }
 
         if (!$emailValidator->isValid($actualRecipient)) {
             $errorText = sprintf('MailerEngine::send: invalid email: %s', $actualRecipient);

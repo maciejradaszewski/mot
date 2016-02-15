@@ -32,7 +32,7 @@ class PersonDetailsTest extends \PHPUnit_Framework_TestCase
     const ADDRESS_LINE_3         = '213';
     const TOWN                   = 'Dublin';
     const POSTCODE               = 'LON 123';
-    const EMAIL                  = 'j.smith@example.com';
+    const EMAIL                  = 'persondetailstest@dvsa.test';
     const PHONE                  = '123456765432';
     const DRIVING_LICENCE_NUMBER = '2343213';
     const REGION                 = 'Other';

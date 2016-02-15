@@ -3,6 +3,7 @@
 namespace DvsaCommonTest\Model;
 
 use DvsaCommon\Model\SearchPersonModel;
+use DvsaCommon\Validator\EmailAddressValidator;
 
 /**
  * Unit tests for SearchPersonDto
@@ -17,7 +18,7 @@ class SearchPersonModelTest extends \PHPUnit_Framework_TestCase
         $dateOfBirth = '1980-10-10';
         $town = 'Stoke Gifford';
         $postcode = 'CM1 2TQ';
-        $email = 'dummy@example.com';
+        $email = 'searchpersonmodeltest@' . EmailAddressValidator::TEST_DOMAIN;
 
         $model = new SearchPersonModel($username, $firstName, $lastName, $dateOfBirth, $town, $postcode, $email);
         $this->assertEquals($username, $model->getUsername());

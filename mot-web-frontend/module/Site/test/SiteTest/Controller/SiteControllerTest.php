@@ -32,6 +32,7 @@ use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
 use Site\Controller\SiteController;
@@ -576,8 +577,8 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
     {
         $postData = [
             SiteContactTypeCode::BUSINESS => [
-                EmailFormModel::FIELD_EMAIL         => 'test@domain.com',
-                EmailFormModel::FIELD_EMAIL_CONFIRM => 'test@domain.com',
+                EmailFormModel::FIELD_EMAIL         => 'sitecontrollertest@' . EmailAddressValidator::TEST_DOMAIN,
+                EmailFormModel::FIELD_EMAIL_CONFIRM => 'sitecontrollertest@' . EmailAddressValidator::TEST_DOMAIN,
                 PhoneFormModel::FIELD_NUMBER        => '12345678',
             ],
         ];
@@ -696,8 +697,8 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
             ->setContactType(PhoneContactTypeCode::BUSINESS)
             ->setNumber('test_Phone1');
         $email = (new EmailDto())
-            ->setEmail('test_Email1@toto.com')
-            ->setEmailConfirm('test_Email1@toto.com')
+            ->setEmail('sitecontrollertest@' . EmailAddressValidator::TEST_DOMAIN)
+            ->setEmailConfirm('sitecontrollertest@' . EmailAddressValidator::TEST_DOMAIN)
             ->setIsSupplied(true)
             ->setIsPrimary(true);
         $contact = new SiteContactDto();

@@ -2,6 +2,7 @@
 
 namespace SiteTest\UpdateVtsProperty\Form;
 
+use DvsaCommon\Validator\EmailAddressValidator;
 use Site\UpdateVtsProperty\Process\Form\EmailPropertyForm;
 use Zend\Validator\EmailAddress;
 use Zend\Validator\StringLength;
@@ -24,7 +25,7 @@ class EmailPropertyFormTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [[EmailPropertyForm::FIELD_EMAIL => ""]],
-            [[EmailPropertyForm::FIELD_EMAIL => "email@email.com"]],
+            [[EmailPropertyForm::FIELD_EMAIL => "emailpropertyformtest@dvsa.test"]],
         ];
     }
 
@@ -49,24 +50,24 @@ class EmailPropertyFormTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 [EmailPropertyForm::FIELD_EMAIL => "email"],
-                [EmailAddress::INVALID_FORMAT => EmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG]
+                [EmailAddressValidator::INVALID_FORMAT => EmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG]
             ],
             [
                 [EmailPropertyForm::FIELD_EMAIL => "email@"],
-                [EmailAddress::INVALID_FORMAT => EmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG]
+                [EmailAddressValidator::INVALID_FORMAT => EmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG]
             ],
             [
                 [EmailPropertyForm::FIELD_EMAIL => "email@email"],
-                [EmailAddress::INVALID_HOSTNAME => EmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG]
+                [EmailAddressValidator::INVALID_HOSTNAME => EmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG]
             ],
             [
                 [EmailPropertyForm::FIELD_EMAIL => "email.com"],
-                [EmailAddress::INVALID_FORMAT => EmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG]
+                [EmailAddressValidator::INVALID_FORMAT => EmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG]
             ],
             [
                 [EmailPropertyForm::FIELD_EMAIL => $this->createTooLongEmail()],
                 [
-                    EmailAddress::INVALID_FORMAT => EmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG,
+                    EmailAddressValidator::INVALID_FORMAT => EmailPropertyForm::EMAIL_ADDRESS_INVALID_MSG,
                     StringLength::TOO_LONG => str_replace("%max%", EmailPropertyForm::FIELD_EMAIL_MAX_LENGTH, EmailPropertyForm::EMAIL_ADDRESS_TOO_LONG_MSG),
                 ]
             ]

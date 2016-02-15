@@ -11,6 +11,7 @@ use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\AuthorisationForAuthorisedExaminerStatusCode;
 use DvsaCommon\Enum\CompanyTypeCode;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use OrganisationApi\Service\Validator\AuthorisedExaminerValidator;
 
@@ -83,7 +84,7 @@ class AuthorisedExaminerValidatorTest extends \PHPUnit_Framework_TestCase
                                         ->setTown('Town')
                                         ->setPostcode('Postcode')
                                 )
-                                ->setEmails([(new EmailDto())->setIsPrimary(true)->setEmail('dummy@dummy.com')])
+                                ->setEmails([(new EmailDto())->setIsPrimary(true)->setEmail('authorisedexaminervalidatortest@' . EmailAddressValidator::TEST_DOMAIN)])
                                 ->setPhones([(new PhoneDto())->setIsPrimary(true)->setNumber('0123456789')])
                         ]
                     )

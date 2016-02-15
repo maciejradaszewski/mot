@@ -12,6 +12,7 @@ use DvsaAuthentication\Identity;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommon\Obfuscate\ParamObfuscator;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Person;
@@ -247,8 +248,8 @@ class ClaimServiceTest extends AbstractServiceTestCase
     {
         return [
             'personId' => 5,
-            'email' => 'test@test.com',
-            'emailConfirmation' => 'test@test.com',
+            'email' => 'claimservicetest@' . EmailAddressValidator::TEST_DOMAIN,
+            'emailConfirmation' => 'claimservicetest@' . EmailAddressValidator::TEST_DOMAIN,
             'emailOptOut' => true,
             'password' => self::PASSWORD,
             'passwordConfirmation' => self::PASSWORD,

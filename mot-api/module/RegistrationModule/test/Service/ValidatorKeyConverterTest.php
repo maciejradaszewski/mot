@@ -8,6 +8,7 @@
 namespace Dvsa\Mot\Api\RegistrationModuleTest\Service;
 
 use Dvsa\Mot\Api\RegistrationModule\Service\ValidatorKeyConverter;
+use DvsaCommon\Validator\EmailAddressValidator;
 
 /**
  * Class ValidatorKeyConverterTest.
@@ -37,8 +38,8 @@ class ValidatorKeyConverterTest extends \PHPUnit_Framework_TestCase
                 'firstName'              => 'Joe',
                 'middleName'             => 'Light',
                 'lastName'               => 'Brown',
-                'emailAddress'           => 'joe.brown@sample.com',
-                'reTypeYourEmailAddress' => 'joe.brown@sample.com',
+                'emailAddress'           => 'validatorkeyconvertertest@' . EmailAddressValidator::TEST_DOMAIN,
+                'reTypeYourEmailAddress' => 'validatorkeyconvertertest@' . EmailAddressValidator::TEST_DOMAIN,
             ],
             'DvsaCommon\InputFilter\Registration\AddressInputFilter' => [
                 'addressLine1' => 'Center',
@@ -67,8 +68,8 @@ class ValidatorKeyConverterTest extends \PHPUnit_Framework_TestCase
                 'firstName'              => 'Joe',
                 'middleName'             => 'Light',
                 'lastName'               => 'Brown',
-                'emailAddress'           => 'joe.brown@sample.com',
-                'reTypeYourEmailAddress' => 'joe.brown@sample.com',
+                'emailAddress'           => 'validatorkeyconvertertest@' . EmailAddressValidator::TEST_DOMAIN,
+                'reTypeYourEmailAddress' => 'validatorkeyconvertertest@' . EmailAddressValidator::TEST_DOMAIN,
             ],
             'stepAddress' => [
                 'addressLine1' => 'Center',

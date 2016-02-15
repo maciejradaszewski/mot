@@ -2,6 +2,7 @@
 
 namespace MailerApiTest\Logic;
 
+use DvsaCommon\Validator\EmailAddressValidator;
 use MailerApi\Logic\AbstractMailerLogic;
 use DvsaCommonTest\TestUtils\XMock;
 use MailerApi\Service\MailerService;
@@ -35,7 +36,7 @@ class AbstractMailerLogicTest extends \PHPUnit_Framework_TestCase
         $this->createServiceWithMocks();
 
         $this->assertTrue($this->object->send(
-            'fake@home.com',
+            'abstractmailerlogictest@' . EmailAddressValidator::TEST_DOMAIN,
             __METHOD__.'_subject',
             __METHOD__.'message'
         ));

@@ -4,6 +4,7 @@ namespace DvsaClientTest\ViewModel;
 
 use DvsaClient\ViewModel\EmailFormModel;
 use DvsaCommon\Dto\Contact\EmailDto;
+use DvsaCommon\Validator\EmailAddressValidator;
 use Zend\Stdlib\Parameters;
 
 class EmailFormModelTest extends \PHPUnit_Framework_TestCase
@@ -151,8 +152,8 @@ class EmailFormModelTest extends \PHPUnit_Framework_TestCase
             //  set supply email, validation is true, because email valid and same
             [
                 'postData' => [
-                    EmailFormModel::FIELD_EMAIL         => 'proper@email.com',
-                    EmailFormModel::FIELD_EMAIL_CONFIRM => 'proper@email.com',
+                    EmailFormModel::FIELD_EMAIL         => 'emailformmodeltest@' . EmailAddressValidator::TEST_DOMAIN,
+                    EmailFormModel::FIELD_EMAIL_CONFIRM => 'emailformmodeltest@' . EmailAddressValidator::TEST_DOMAIN,
                     EmailFormModel::FIELD_IS_NOT_SUPPLY => 0,
                 ],
                 'expect'   => [
@@ -181,9 +182,9 @@ class EmailFormModelTest extends \PHPUnit_Framework_TestCase
     private static function getTestDto()
     {
         return (new EmailDto())
-            ->setEmail('test@email.com')
+            ->setEmail('emailformmodeltest@' . EmailAddressValidator::TEST_DOMAIN)
             ->setIsSupplied(true)
-            ->setEmailConfirm('test@email.com')
+            ->setEmailConfirm('emailformmodeltest@' . EmailAddressValidator::TEST_DOMAIN)
             ->setIsPrimary(true);
     }
 }

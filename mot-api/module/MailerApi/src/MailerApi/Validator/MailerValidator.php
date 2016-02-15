@@ -4,6 +4,7 @@ namespace MailerApi\Validator;
 
 use DvsaCommon\Dto\Mailer\MailerDto;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaMotApi\Service\UserService;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -40,14 +41,19 @@ class MailerValidator
     /** @var UserService $userService */
     protected $userService;
 
+    /**
+     * @var EmailAddress
+     */
+    private $emailValidator;
+
 
     /**
      * @param UserService $userService
      */
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, EmailAddress $emailValidator = null)
     {
         $this->userService = $userService;
-
+        $this->emailValidator = $emailValidator;
     }
 
     /**
@@ -182,10 +188,13 @@ class MailerValidator
     protected function validateEmail($email)
     {
         $this->assertNotNull($email, self::ERROR_NO_RECIPIENT);
-        $emailValidator = new EmailAddress();
-        if(!$emailValidator->isValid($email) ) {
+        if (is_null($this->emailValidator)) {
+            $this->emailValidator = new EmailAddressValidator();
+        }
+
+        if(!$this->emailValidator->isValid($email) ) {
             throw new BadRequestException(
-                implode(";", $emailValidator->getMessages()),
+                implode(";", $this->emailValidator->getMessages()),
                 BadRequestException::BAD_REQUEST_STATUS_CODE
             );
         }

@@ -10,6 +10,7 @@ use DvsaCommon\Dto\Contact\PhoneDto;
 use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaCommon\Enum\PhoneContactTypeCode;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonApi\Service\AddressService;
 use DvsaCommonApi\Service\ContactDetailsService;
 use DvsaCommonApi\Service\Validator\ContactDetailsValidator;
@@ -284,7 +285,7 @@ class ContactDetailsServiceTest extends AbstractServiceTest
 
     public function dataProviderTestUpdateEmailsInContactDetails()
     {
-        $email = 'unittest@test.com';
+        $email = 'contactdetailsservicetest@' . EmailAddressValidator::TEST_DOMAIN;
 
         //  --  dto --
         $emailDto = (new EmailDto())
@@ -309,15 +310,15 @@ class ContactDetailsServiceTest extends AbstractServiceTest
             //  --  contact has email, dto has address -> should update email by Id at contact  --
             [
                 'entity'             => $this->cloneEmail($emailEntity2),
-                'dto'                => $this->cloneEmailDto($emailDto)->setId(999)->setEmail('aaa@bbb.com'),
-                'expect'             => $this->cloneEmail($emailEntity2)->setEmail('aaa@bbb.com'),
+                'dto'                => $this->cloneEmailDto($emailDto)->setId(999)->setEmail('contactdetailsservicetest@' . EmailAddressValidator::TEST_DOMAIN),
+                'expect'             => $this->cloneEmail($emailEntity2)->setEmail('contactdetailsservicetest@' . EmailAddressValidator::TEST_DOMAIN),
                 'expectRemoveEntity' => null,
             ],
             //  --  contact has email, dto has address -> should find primary email and update at contact  --
             [
                 'entity'             => $this->cloneEmail($emailEntity),
-                'dto'                => $this->cloneEmailDto($emailDto)->setEmail('bbb@cccc.com'),
-                'expect'             => $this->cloneEmail($emailEntity)->setEmail('bbb@cccc.com'),
+                'dto'                => $this->cloneEmailDto($emailDto)->setEmail('contactdetailsservicetest@' . EmailAddressValidator::TEST_DOMAIN),
+                'expect'             => $this->cloneEmail($emailEntity)->setEmail('contactdetailsservicetest@' . EmailAddressValidator::TEST_DOMAIN),
                 'expectRemoveEntity' => null,
             ],
             //  --  details has email, dto without address -> email should be removed from contact    --
@@ -334,7 +335,7 @@ class ContactDetailsServiceTest extends AbstractServiceTest
     {
         $email = (new EmailDto())
             ->setIsPrimary(true)
-            ->setEmail('dummy@dummy.com');
+            ->setEmail('contactdetailsservicetest@' . EmailAddressValidator::TEST_DOMAIN);
         $phone = (new PhoneDto())
             ->setIsPrimary(true)
             ->setNumber('0123456789');
@@ -360,7 +361,7 @@ class ContactDetailsServiceTest extends AbstractServiceTest
             'town' => 'town',
             'postcode' => 'postcode',
             'phoneNumber' => '0123456789',
-            'email' => 'dummy@dummy.com',
+            'email' => 'contactdetailsservicetest@' . EmailAddressValidator::TEST_DOMAIN,
             'faxNumber' => '0123456789',
         ];
 
@@ -407,7 +408,7 @@ class ContactDetailsServiceTest extends AbstractServiceTest
             ->setPostcode('postcode');
         $email = (new Email())
             ->setIsPrimary(true)
-            ->setEmail('dummy@dummy.com');
+            ->setEmail('contactdetailsservicetest@' . EmailAddressValidator::TEST_DOMAIN);
         $phone = (new Phone())
             ->setIsPrimary(true)
             ->setNumber('0123456789')

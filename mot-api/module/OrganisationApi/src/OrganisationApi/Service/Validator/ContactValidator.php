@@ -3,6 +3,7 @@
 namespace OrganisationApi\Service\Validator;
 
 use DvsaCommon\Dto\Contact\ContactDto;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonApi\Service\Validator\AbstractValidator;
 
 class ContactValidator extends AbstractValidator
@@ -67,7 +68,7 @@ class ContactValidator extends AbstractValidator
     {
         if ($contactDto->getPrimaryEmail()->isSupplied() === true) {
 
-            $validator = new \Zend\Validator\EmailAddress();
+            $validator = new EmailAddressValidator();
 
             if ($validator->isValid(trim($contactDto->getPrimaryEmail()->getEmail())) === false) {
                 $this->errors->add(

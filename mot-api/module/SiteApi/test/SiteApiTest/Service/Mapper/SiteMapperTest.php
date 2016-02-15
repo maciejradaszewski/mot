@@ -7,6 +7,7 @@ use DvsaCommon\Dto\Site\SiteDto;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Enum\SiteStatusCode;
 use DvsaCommon\Enum\SiteTypeCode;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaEntities\Entity\Address;
 use DvsaEntities\Entity\ContactDetail;
 use DvsaEntities\Entity\Email;
@@ -80,7 +81,7 @@ class SiteMapperTest extends \PHPUnit_Framework_TestCase
             )
             ->addEmail(
                 (new Email())
-                    ->setEmail('test@test.com')
+                    ->setEmail('sitemappertest@' . EmailAddressValidator::TEST_DOMAIN)
                     ->setIsPrimary(true)
             );
 
@@ -95,7 +96,7 @@ class SiteMapperTest extends \PHPUnit_Framework_TestCase
             )
             ->addEmail(
                 (new Email())
-                    ->setEmail('test@test.com')
+                    ->setEmail('sitemappertest@' . EmailAddressValidator::TEST_DOMAIN)
                     ->setIsPrimary(true)
             );
 

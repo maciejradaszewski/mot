@@ -6,6 +6,7 @@ use DvsaCommon\Constants\PersonContactType;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Enum\OrganisationBusinessRoleCode;
 use DvsaCommon\Enum\SiteBusinessRoleCode;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\AuthorisationForTestingMot;
 use DvsaEntities\Entity\AuthorisationForTestingMotStatus;
@@ -256,7 +257,7 @@ class PersonTest extends PHPUnit_Framework_TestCase
         $person = new Person();
 
         $email = (new Email())
-            ->setEmail('dummy@dummy.com')
+            ->setEmail('persontest@' . EmailAddressValidator::TEST_DOMAIN)
             ->setIsPrimary(true);
 
         $contactDetail = (new ContactDetail())
@@ -266,6 +267,6 @@ class PersonTest extends PHPUnit_Framework_TestCase
         $personContact = new PersonContact($contactDetail, $contactType, $person);
         $person->addContact($personContact);
 
-        $this->assertSame('dummy@dummy.com', $person->getPrimaryEmail());
+        $this->assertSame('persontest@' . EmailAddressValidator::TEST_DOMAIN, $person->getPrimaryEmail());
     }
 }

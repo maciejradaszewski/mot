@@ -9,6 +9,7 @@ namespace DvsaCommonTest\InputFilter\Registration;
 
 use DvsaCommon\Factory\InputFilter\Registration\DetailsInputFilterFactory;
 use DvsaCommon\InputFilter\Registration\DetailsInputFilter;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonTest\Bootstrap;
 use Zend\Validator\EmailAddress;
 use Zend\Validator\Identical;
@@ -59,8 +60,8 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
                     'Joe',
                     'Light',
                     'Brown',
-                    'some@sample.com',
-                    'some@sample.com'
+                    'detailsinputfiltertest@' . EmailAddressValidator::TEST_DOMAIN,
+                    'detailsinputfiltertest@' . EmailAddressValidator::TEST_DOMAIN
                 ),
                 'isValid' => true,
                 'errorMessages' => $this->prepareMessages(
@@ -92,7 +93,7 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
                         Regex::NOT_MATCH => DetailsInputFilter::MSG_NAME_NO_PATTERN_MATCH,
                     ],
                     [
-                        EmailAddress::INVALID_FORMAT => DetailsInputFilter::MSG_EMAIL_INVALID,
+                        EmailAddressValidator::INVALID_FORMAT => DetailsInputFilter::MSG_EMAIL_INVALID,
                         NotEmpty::IS_EMPTY => DetailsInputFilter::MSG_EMAIL_INVALID,
                     ],
                     [
@@ -106,8 +107,8 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
                     'J0£',
                     'L1ght',
                     'Br0wn',
-                    'some@sample.com',
-                    'some@sample.com'
+                    'detailsinputfiltertest@' . EmailAddressValidator::TEST_DOMAIN,
+                    'detailsinputfiltertest@' . EmailAddressValidator::TEST_DOMAIN
                 ),
                 'isValid' => false,
                 'errorMessages' => $this->prepareMessages(
@@ -123,8 +124,8 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
                     'Joe',
                     'light',
                     'Brown',
-                    'some@sample.com',
-                    'somethingElse@sample.com'
+                    'detailsinputfiltertest@' . EmailAddressValidator::TEST_DOMAIN,
+                    'detailsinputfiltertestdifferent@' . EmailAddressValidator::TEST_DOMAIN
                 ),
                 'isValid' => false,
                 'errorMessages' => $this->prepareMessages(

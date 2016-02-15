@@ -7,6 +7,7 @@
 
 namespace DvsaCommon\InputFilter\Registration;
 
+use DvsaCommon\Validator\EmailAddressValidator;
 use Zend\InputFilter\InputFilter;
 use Zend\Validator\EmailAddress;
 use Zend\Validator\Hostname;
@@ -109,7 +110,7 @@ class DetailsInputFilter extends InputFilter
                 'required'   => true,
                 'validators' => [
                     [
-                        'name'    => EmailAddress::class,
+                        'name'    => EmailAddressValidator::class,
                         'options' => [
                             'allow'   => Hostname::ALLOW_ALL,
                             'message' => self::MSG_EMAIL_INVALID,

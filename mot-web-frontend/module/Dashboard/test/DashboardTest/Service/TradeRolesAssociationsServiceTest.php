@@ -203,7 +203,7 @@ class TradeRolesAssociationsServiceTest extends \PHPUnit_Framework_TestCase
             "addressLine3" => "",
             "town" => "Hill Valley",
             "postcode" => "L1 1PQ",
-            "email" => "marty@email.com",
+            "email" => "traderolesassociationstest@dvsa.test",
             "phone" => "iphone 6",
             "drivingLicenceNumber" => "1234567831234",
             "drivingLicenceRegion" => "GB",

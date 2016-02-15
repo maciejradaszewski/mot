@@ -3,6 +3,7 @@
 namespace UserApiTest\HelpDesk\Service\Validator;
 
 use DvsaCommon\Model\SearchPersonModel;
+use DvsaCommon\Validator\EmailAddressValidator;
 use UserApi\HelpDesk\Service\Validator\SearchPersonValidator;
 
 /**
@@ -60,13 +61,13 @@ class SearchPersonValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testEmailNotEmpty()
     {
-        $model = new SearchPersonModel(null, null, null, null, null, null, 'dummy@example.com');
+        $model = new SearchPersonModel(null, null, null, null, null, null, 'searchpersonvalidatortest@' . EmailAddressValidator::TEST_DOMAIN);
         (new SearchPersonValidator())->validate($model);
     }
 
     public function testAllFieldsNotEmpty()
     {
-        $model = new SearchPersonModel('username', 'First name', 'Last name', '1970-12-12', 'Stoke Gifford', 'CM3 7YH', 'dummy@example.com');
+        $model = new SearchPersonModel('username', 'First name', 'Last name', '1970-12-12', 'Stoke Gifford', 'CM3 7YH', 'searchpersonvalidatortest@' . EmailAddressValidator::TEST_DOMAIN);
         (new SearchPersonValidator())->validate($model);
     }
 

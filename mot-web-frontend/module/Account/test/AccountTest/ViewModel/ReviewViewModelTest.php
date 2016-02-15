@@ -3,6 +3,7 @@
 namespace AccountTest\ViewModel;
 
 use Account\ViewModel\ReviewViewModel;
+use DvsaCommon\Validator\EmailAddressValidator;
 
 class ReviewViewModelTest extends \PHPUnit_Framework_TestCase
 {
@@ -88,10 +89,10 @@ class ReviewViewModelTest extends \PHPUnit_Framework_TestCase
     private function getTestData()
     {
         return [
-            'email' => 'test@test.com',
+            'email' => 'reviewviewmodeltest@' . EmailAddressValidator::TEST_DOMAIN,
             'confirmEmailAndPassword' => [
                 'password' => 'Password1',
-                'email' => 'test2@test2.com'
+                'email' => 'reviewviewmodeltest2@' . EmailAddressValidator::TEST_DOMAIN
             ],
             'setSecurityQuestion' => [
                 'question_a' => '1',
