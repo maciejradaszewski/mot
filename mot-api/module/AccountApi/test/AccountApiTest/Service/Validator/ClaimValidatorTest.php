@@ -5,6 +5,7 @@ namespace AccountApiTest\Service\Validator;
 use AccountApi\Service\SecurityQuestionService;
 use AccountApi\Service\Validator\ClaimValidator;
 use DvsaCommon\Obfuscate\ParamObfuscator;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\TestCaseTrait;
 use DvsaCommonTest\TestUtils\XMock;
@@ -81,8 +82,8 @@ class ClaimValidatorTest extends AbstractServiceTestCase
         $params = array_merge(
             $this->params(),
             [
-                'email'             => 'bla@bla.com',
-                'emailConfirmation' => 'bla@bla2.com'
+                'email'             => 'claimvalidatortest@' . EmailAddressValidator::TEST_DOMAIN,
+                'emailConfirmation' => 'claimvalidatortest1@' . EmailAddressValidator::TEST_DOMAIN
             ]
         );
 
@@ -250,8 +251,8 @@ class ClaimValidatorTest extends AbstractServiceTestCase
     {
         return [
             'personId'              => 5,
-            'email'                 => 'test@test.com',
-            'emailConfirmation'     => 'test@test.com',
+            'email'                 => 'claimvalidatortest@' . EmailAddressValidator::TEST_DOMAIN,
+            'emailConfirmation'     => 'claimvalidatortest@' . EmailAddressValidator::TEST_DOMAIN,
             'emailOptOut'           => false,
             'password'              => 'Password1',
             'passwordConfirmation'  => 'Password1',

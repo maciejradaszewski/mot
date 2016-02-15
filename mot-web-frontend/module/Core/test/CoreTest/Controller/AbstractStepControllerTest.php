@@ -162,8 +162,8 @@ class AbstractStepControllerTest extends \PHPUnit_Framework_TestCase
             DetailsInputFilter::FIELD_FIRST_NAME     => "John",
             DetailsInputFilter::FIELD_MIDDLE_NAME    => "James",
             DetailsInputFilter::FIELD_LAST_NAME      => "Doe",
-            DetailsInputFilter::FIELD_EMAIL          => "john.james@doe.com",
-            DetailsInputFilter::FIELD_EMAIL_CONFIRM  => "john.james@doe.com",
+            DetailsInputFilter::FIELD_EMAIL          => "abstractstepcontrollertest@dvsa.test",
+            DetailsInputFilter::FIELD_EMAIL_CONFIRM  => "abstractstepcontrollertest@dvsa.test",
         ];
     }
 }

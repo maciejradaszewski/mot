@@ -2,6 +2,7 @@
 
 namespace Site\UpdateVtsProperty\Process\Form;
 
+use DvsaCommon\Validator\EmailAddressValidator;
 use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
@@ -37,7 +38,7 @@ class EmailPropertyForm extends Form
 
         $emailFilter = new Input($this->emailElement->getName());
 
-        $emailInvalidValidator = (new EmailAddress())->setMessage(self::EMAIL_ADDRESS_INVALID_MSG);
+        $emailInvalidValidator = (new EmailAddressValidator())->setMessage(self::EMAIL_ADDRESS_INVALID_MSG);
         $emailEmptyValidator = (new StringLength())
             ->setMax(self::FIELD_EMAIL_MAX_LENGTH)
             ->setMessage(self::EMAIL_ADDRESS_TOO_LONG_MSG, StringLength::TOO_LONG);

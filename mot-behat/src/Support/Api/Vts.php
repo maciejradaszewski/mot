@@ -17,6 +17,7 @@ use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommon\Dto\Site\FacilityDto;
 use DvsaCommon\Dto\Site\FacilityTypeDto;
 use DvsaCommon\Constants\FacilityTypeCode;
+use DvsaCommon\Validator\EmailAddressValidator;
 
 class Vts extends MotApi
 {
@@ -72,7 +73,7 @@ class Vts extends MotApi
             'addressLine1' => 'addressLine1',
             'town'         => 'Boston',
             'postcode'     => 'BT2 4RR',
-            'email'        => 'dummy@dummy.com',
+            'email'        => 'vtsbehatsupport@' . EmailAddressValidator::TEST_DOMAIN,
             'phoneNumber'  => '01117 26374',
             'classes'      => [1, 2, 3, 4, 5, 7],
         ];

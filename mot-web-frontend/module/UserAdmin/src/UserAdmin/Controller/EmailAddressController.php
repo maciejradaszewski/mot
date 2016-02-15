@@ -19,6 +19,7 @@ use DvsaCommon\Constants\Role;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaMotTest\Controller\AbstractDvsaMotTestController;
 use UserAdmin\Presenter\UserProfilePresenter;
 use UserAdmin\Service\HelpdeskAccountAdminService;
@@ -156,7 +157,7 @@ class EmailAddressController extends AbstractDvsaMotTestController
      */
     private function validate($email, $emailConfirm)
     {
-        $validator = new EmailAddress();
+        $validator = new EmailAddressValidator();
         $hasErrors = false;
         if (strlen($email) > self::MAX_EMAIL_LENGTH) {
             $this->addErrorMessageForKey('email', "must be " . self::MAX_EMAIL_LENGTH . " characters or less");

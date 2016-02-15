@@ -2,6 +2,7 @@
 
 namespace DvsaCommonApiTest\Service\Validator;
 
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonApi\Service\Validator\AddressValidator;
 use DvsaCommonApi\Service\Validator\ContactDetailsValidator;
@@ -15,8 +16,8 @@ class ContactDetailsValidatorTest extends AbstractServiceTestCase
     {
         $input = [
             'phoneNumber' => 'phoneNumber',
-            'email' => 'hamoruqipo@yahoo.com',
-            'emailConfirmation' => 'hamoruqipo@yahoo.com',
+            'email' => 'contactdetailvalidatortest@' . EmailAddressValidator::TEST_DOMAIN,
+            'emailConfirmation' => 'contactdetailvalidatortest@' . EmailAddressValidator::TEST_DOMAIN,
         ];
 
         $this->createContactDetailsValidator()->validate($input);
@@ -37,8 +38,8 @@ class ContactDetailsValidatorTest extends AbstractServiceTestCase
     {
         $input = [
             'phoneNumber' => 'phoneNumber',
-            'email' => 'hamoruqipo@yahoo.com',
-            'emailConfirmation' => 'o_hamoruqipo@yahoo.com',
+            'email' => 'contactdetailvalidatortest@' . EmailAddressValidator::TEST_DOMAIN,
+            'emailConfirmation' => 'contactdetailvalidatortest1@' . EmailAddressValidator::TEST_DOMAIN,
         ];
 
         $this->createContactDetailsValidator()->validate($input);

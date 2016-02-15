@@ -2,6 +2,7 @@
 
 namespace UserApiTest\Application\Service\Validator;
 
+use DvsaCommon\Validator\EmailAddressValidator;
 use UserApi\Application\Service\Validator\AccountValidator;
 
 /**
@@ -179,8 +180,8 @@ class AccountValidatorTest extends \PHPUnit_Framework_TestCase
             'town'                 => 'town',
             'postcode'             => 'postcode',
             'phoneNumber'          => 'phoneNumber',
-            'email'                => 'hamoruqipo@yahoo.com',
-            'emailConfirmation'    => 'hamoruqipo@yahoo.com',
+            'email'                => 'accountvalidatortest@' . EmailAddressValidator::TEST_DOMAIN,
+            'emailConfirmation'    => 'accountvalidatortest@' . EmailAddressValidator::TEST_DOMAIN,
             'password'             => 'AlaMa1Kota',
             'passwordConfirmation' => 'AlaMa1Kota',
             'drivingLicenceRegion' => 'other',

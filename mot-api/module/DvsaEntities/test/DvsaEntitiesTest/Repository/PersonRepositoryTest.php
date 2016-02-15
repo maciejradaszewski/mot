@@ -12,7 +12,7 @@ use DvsaEntities\Repository\PersonRepository;
 
 class PersonRepositoryTest extends \PHPUnit_Framework_TestCase
 {
-    const EMAIL_ADDRESS = 'person@example.com';
+    const EMAIL_ADDRESS = 'personrepositorytest@dvsa.test';
 
     /**
      * @group VM-10289

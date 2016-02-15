@@ -5,6 +5,7 @@ namespace PersonApiTest\Service;
 use Dvsa\OpenAM\OpenAMClient;
 use DvsaAuthorisation\Service\AuthorisationService;
 use DvsaCommon\Exception\UnauthorisedException;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Person;
@@ -72,7 +73,7 @@ class PersonServiceTest extends AbstractServiceTestCase
         $personMock
             ->expects($this->once())
             ->method('getPrimaryEmail')
-            ->willReturn('valid@valid.com');
+            ->willReturn('personservicetest@' . EmailAddressValidator::TEST_DOMAIN);
         $personMock
             ->expects($this->once())
             ->method('getId')
@@ -205,7 +206,7 @@ class PersonServiceTest extends AbstractServiceTestCase
         $mocks[AuthenticationService::class]
             ->expects($this->any())
             ->method('getIdentity')
-            ->will($this->returnValue($this->createPersonEntity('ft-enf-tester-3@example.com')));
+            ->will($this->returnValue($this->createPersonEntity('personservicetest@' . EmailAddressValidator::TEST_DOMAIN)));
 
         return $mocks;
     }

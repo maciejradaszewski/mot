@@ -2,6 +2,7 @@
 namespace MailerApiTest\Logic;
 
 use DvsaCommon\Dto\Mailer\MailerDto;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Person;
@@ -62,7 +63,7 @@ class PasswordReminderTest extends PHPUnit_Framework_TestCase
         $this->mailDto = new MailerDto();
         $this->mailDto->setData(['userid' => 5, 'user' => $mockPerson]);
 
-        $emailAddress = 'test.email@somewhere.com';
+        $emailAddress = 'passwordremindertest@' . EmailAddressValidator::TEST_DOMAIN;
 
         $logic = new PasswordReminder(
             $this->config['mailer'],

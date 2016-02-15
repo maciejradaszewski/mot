@@ -2,6 +2,7 @@
 
 namespace DvsaMotTest\Form;
 
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaMotTest\Form\EmailCertificateForm as Form;
 use Zend\Validator\NotEmpty;
 use Zend\Validator\EmailAddress;
@@ -61,7 +62,7 @@ class EmailCertificateFormTest extends PHPUnit_Framework_TestCase
                     Form::FIELD_FIRST_NAME => [NotEmpty::IS_EMPTY => Form::MSG_FIRST_NAME_IS_EMPTY],
                     Form::FIELD_FAMILY_NAME => [NotEmpty::IS_EMPTY => Form::MSG_FAMILY_NAME_IS_EMPTY],
                     Form::FIELD_EMAIL => [
-                        EmailAddress::INVALID_FORMAT => Form::MSG_EMAIL_IS_INVALID
+                        EmailAddressValidator::INVALID_FORMAT => Form::MSG_EMAIL_IS_INVALID
                     ]
                 ]
             ],
@@ -79,7 +80,7 @@ class EmailCertificateFormTest extends PHPUnit_Framework_TestCase
                     Form::FIELD_FAMILY_NAME => [StringLength::TOO_LONG => sprintf(Form::MSG_FAMILY_NAME_TOO_LONG, Form::FAMILY_NAME_MAX_LENGTH)],
                     Form::FIELD_EMAIL => [
                         StringLength::TOO_LONG => sprintf(Form::MSG_EMAIL_TOO_LONG, Form::EMAIL_MAX_LENGTH),
-                        EmailAddress::INVALID_FORMAT => Form::MSG_EMAIL_IS_INVALID
+                        EmailAddressValidator::INVALID_FORMAT => Form::MSG_EMAIL_IS_INVALID
                     ]
                 ]
             ],
@@ -89,26 +90,12 @@ class EmailCertificateFormTest extends PHPUnit_Framework_TestCase
                 [
                     Form::FIELD_FIRST_NAME => "John",
                     Form::FIELD_FAMILY_NAME => "Rambo",
-                    Form::FIELD_EMAIL => "john@rambo.com",
-                    Form::FIELD_RETYPE_EMAIL => "johnny@bravo.com"
+                    Form::FIELD_EMAIL => "emailcertificateformtest1@dvsa.test",
+                    Form::FIELD_RETYPE_EMAIL => "emailcertificateformtest@dvsa.test"
                 ],
                 [
                     Form::FIELD_RETYPE_EMAIL => [
                         Identical::NOT_SAME => Form::MSG_EMAIL_IS_NOT_IDENTICAL
-                    ]
-                ]
-            ],
-
-            //check if emial domain contains international characters
-            [
-                [
-                    Form::FIELD_FIRST_NAME => "John",
-                    Form::FIELD_FAMILY_NAME => "Rambo",
-                    Form::FIELD_EMAIL => "john@rambóś.com",
-                ],
-                [
-                    Form::FIELD_EMAIL => [
-                        EmailAddress::INVALID_HOSTNAME => Form::MSG_EMAIL_IS_INVALID
                     ]
                 ]
             ],
@@ -118,8 +105,8 @@ class EmailCertificateFormTest extends PHPUnit_Framework_TestCase
                 [
                     Form::FIELD_FIRST_NAME => "John",
                     Form::FIELD_FAMILY_NAME => "Rambo",
-                    Form::FIELD_EMAIL => "john@rambo.com",
-                    Form::FIELD_RETYPE_EMAIL => "john@rambo.com"
+                    Form::FIELD_EMAIL => "emailcertificateformtest@dvsa.test",
+                    Form::FIELD_RETYPE_EMAIL => "emailcertificateformtest@dvsa.test"
                 ],
                 []
             ],

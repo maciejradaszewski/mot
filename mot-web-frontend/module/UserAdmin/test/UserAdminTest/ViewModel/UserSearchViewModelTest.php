@@ -2,6 +2,7 @@
 
 namespace UserAdminTest\ViewModel;
 
+use DvsaCommon\Validator\EmailAddressValidator;
 use UserAdmin\Controller\UserSearchController;
 use UserAdmin\ViewModel\UserSearchViewModel;
 
@@ -100,7 +101,7 @@ class UserSearchViewModelTest extends \PHPUnit_Framework_TestCase
     public function expandingAdditionalSearchCriteriaDataProvider()
     {
         return [
-            ['John', 'Smith', 'john@smith.com', null, null, null, null, null, true],
+            ['John', 'Smith', 'usersearchviewmodeltest@' . EmailAddressValidator::TEST_DOMAIN, null, null, null, null, null, true],
             ['John', 'Smith', null, 10, null, null, null, null, true],
             ['John', 'Smith', null, null, 10, null, null, null, true],
             ['John', 'Smith', null, null, null, 2015, null, null, true],

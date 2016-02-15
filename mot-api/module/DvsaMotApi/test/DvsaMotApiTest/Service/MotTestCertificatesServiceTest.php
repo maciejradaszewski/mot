@@ -21,7 +21,7 @@ class MotTestCertificatesServiceTest extends \PHPUnit_Framework_TestCase
     private $storageService;
     private $mailerService;
 
-    private $emailData = ["email" => "nope@yep.com", "firstName" => "Nope", "familyName" => "Yep"];
+    private $emailData = ["email" => "mottestcertificatesservicetest@dvsa.test", "firstName" => "Nope", "familyName" => "Yep"];
 
 
     /**

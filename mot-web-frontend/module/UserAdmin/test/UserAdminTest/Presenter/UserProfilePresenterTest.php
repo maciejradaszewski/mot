@@ -4,6 +4,7 @@ namespace UserAdminTest\Presenter;
 
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
+use DvsaCommon\Validator\EmailAddressValidator;
 use UserAdmin\Presenter\UserProfilePresenter;
 
 /**
@@ -36,7 +37,7 @@ class UserProfilePresenterTest extends \PHPUnit_Framework_TestCase
             'Address line 1, Address line 2, Address line 3, Address line 4, Bristol, Postcode',
             $presenter->displayFullAddress()
         );
-        $this->assertEquals('dummy@email.com', $presenter->displayEmail());
+        $this->assertEquals('userprofilepresentertest@' . EmailAddressValidator::TEST_DOMAIN, $presenter->displayEmail());
         $this->assertEquals('+768-45-4433630', $presenter->displayTelephone());
 
         $this->assertEquals('/event/list/person/1', $presenter->displayEventsHistoryLink());

@@ -24,8 +24,8 @@ class DuplicatedEmailCheckerTest extends \PHPUnit_Framework_TestCase
      */
     private $subject;
 
-    const EXISTING_EMAIL = 'existing@example.com';
-    const NON_EXISTING_EMAIL = 'non-existing@example.com';
+    const EXISTING_EMAIL = 'existingduplicatedemailcheckertestr@dvsa.test';
+    const NON_EXISTING_EMAIL = 'non-existingduplicatedemailcheckertest@dvsa.test';
 
     public function setUp()
     {

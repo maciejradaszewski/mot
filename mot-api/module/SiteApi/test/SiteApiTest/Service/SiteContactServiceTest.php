@@ -11,6 +11,7 @@ use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\Utility\Hydrator;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\AddressService;
 use DvsaCommonApi\Service\ContactDetailsService;
@@ -343,7 +344,7 @@ class SiteContactServiceTest extends AbstractServiceTestCase
             //Check if correct asserts are runned depending on data
             [
                 'data' => [
-                    'email' => 'new@email.com',
+                    'email' => 'sitecontactservicetest@' . EmailAddressValidator::TEST_DOMAIN,
                 ],
                 'expectedAsserts' => [
                     'assertUpdateEmail',
@@ -372,7 +373,7 @@ class SiteContactServiceTest extends AbstractServiceTestCase
             //Check asserts runned for full dataset
             [
                 'data' => [
-                    'email' => 'new@email.com',
+                    'email' => 'sitecontactservicetest@' . EmailAddressValidator::TEST_DOMAIN,
                     'phone' => '100200300',
                     'address' => [
                         'town' => 'New Town',

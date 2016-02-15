@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityRepository;
 use DvsaAuthorisation\Service\AuthorisationService;
 use DvsaCommon\Dto\Person\PersonContactDto;
 use DvsaCommon\Exception\UnauthorisedException;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonApi\Service\Exception\DataValidationException;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonTest\TestUtils\XMock;
@@ -122,7 +123,7 @@ class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
             ->method('toDto')
             ->willReturn($dtoMock);
         $service = $this->createService();
-        $response = $service->updateEmailForPersonId($personId, ['emails' => ['foo@bar.com']]);
+        $response = $service->updateEmailForPersonId($personId, ['emails' => ['personcontactservicetest@' . EmailAddressValidator::TEST_DOMAIN]]);
         $this->assertEquals($dtoMock, $response);
     }
 
@@ -172,6 +173,6 @@ class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
             ->will($this->throwException(new UnauthorisedException('Not allowed')));
         $this->setExpectedException(UnauthorisedException::class);
         $service = $this->createService();
-        $service->updateEmailForPersonId($personId, ['emails' => ['foo@bar.com']]);
+        $service->updateEmailForPersonId($personId, ['emails' => ['personcontactservicetest@' . EmailAddressValidator::TEST_DOMAIN]]);
     }
 }

@@ -15,6 +15,7 @@ use DvsaCommon\InputFilter\Registration\DetailsInputFilter;
 use DvsaCommon\InputFilter\Registration\PasswordInputFilter;
 use DvsaCommon\InputFilter\Registration\SecurityQuestionFirstInputFilter;
 use DvsaCommon\InputFilter\Registration\SecurityQuestionSecondInputFilter;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonTest\TestUtils\XMock;
 
 class RegisterUserServiceTest extends \PHPUnit_Framework_TestCase
@@ -104,8 +105,8 @@ class RegisterUserServiceTest extends \PHPUnit_Framework_TestCase
                 DetailsInputFilter::FIELD_FIRST_NAME    => 'Fred',
                 DetailsInputFilter::FIELD_MIDDLE_NAME   => '',
                 DetailsInputFilter::FIELD_LAST_NAME     => 'Flintstone',
-                DetailsInputFilter::FIELD_EMAIL         => 'fred@bedrock.com',
-                DetailsInputFilter::FIELD_EMAIL_CONFIRM => 'fred@bedrock.com',
+                DetailsInputFilter::FIELD_EMAIL         => 'registeruserservicetest@' . EmailAddressValidator::TEST_DOMAIN,
+                DetailsInputFilter::FIELD_EMAIL_CONFIRM => 'registeruserservicetest@' . EmailAddressValidator::TEST_DOMAIN,
             ],
             AddressStep::STEP_ID => [
                 AddressInputFilter::FIELD_ADDRESS_1    => '1 Bedrock Way',

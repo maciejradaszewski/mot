@@ -13,6 +13,7 @@ use DvsaCommon\InputFilter\Registration\DetailsInputFilter;
 use DvsaCommon\InputFilter\Registration\PasswordInputFilter;
 use DvsaCommon\InputFilter\Registration\SecurityQuestionFirstInputFilter;
 use DvsaCommon\InputFilter\Registration\SecurityQuestionSecondInputFilter;
+use DvsaCommon\Validator\EmailAddressValidator;
 use Zend\InputFilter\InputFilterInterface;
 
 /**
@@ -137,8 +138,8 @@ class RegistrationValidatorTest extends \PHPUnit_Framework_TestCase
             DetailsInputFilter::class => [
                 DetailsInputFilter::FIELD_FIRST_NAME    => 'Joe',
                 DetailsInputFilter::FIELD_LAST_NAME     => 'Brown',
-                DetailsInputFilter::FIELD_EMAIL         => 'joe.brown@sample.com',
-                DetailsInputFilter::FIELD_EMAIL_CONFIRM => 'joe.brown@sample.com',
+                DetailsInputFilter::FIELD_EMAIL         => 'registrationvalidatortest@' . EmailAddressValidator::TEST_DOMAIN,
+                DetailsInputFilter::FIELD_EMAIL_CONFIRM => 'registrationvalidatortest@' . EmailAddressValidator::TEST_DOMAIN,
             ],
             AddressInputFilter::class => [
                 AddressInputFilter::FIELD_ADDRESS_1    => 'Center',

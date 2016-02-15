@@ -2,10 +2,12 @@
 namespace MailerApiTest\Validator;
 
 use DvsaCommon\Dto\Mailer\MailerDto;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaMotApi\Service\UserService;
 use MailerApi\Validator\MailerValidator;
 use MailerApiTest\Mixin\ServiceManager;
 use PHPUnit_Framework_TestCase;
+use Zend\Validator\EmailAddress;
 
 class MailerValidatorTest extends PHPUnit_Framework_TestCase
 {
@@ -19,8 +21,6 @@ class MailerValidatorTest extends PHPUnit_Framework_TestCase
         $this->prepServiceManager();
 
         $this->mockUserService = $this->setMockServiceClass(UserService::class, ['findPerson']);
-
-        $this->validator = new MailerValidator($this->mockUserService);
     }
 
     /**
@@ -30,6 +30,7 @@ class MailerValidatorTest extends PHPUnit_Framework_TestCase
     {
         $dto = new MailerDto();
         $dto->setData(['userid-not-here' => 0]);
+        $this->withRealEmailValidator();
         $this->validator->validate($dto, '');
     }
 
@@ -40,6 +41,7 @@ class MailerValidatorTest extends PHPUnit_Framework_TestCase
     {
         $dto = new MailerDto();
         $dto->setData(['userid' => 5]);
+        $this->withRealEmailValidator();
 
         $this->validator->validate($dto, 999);
     }
@@ -52,7 +54,7 @@ class MailerValidatorTest extends PHPUnit_Framework_TestCase
     {
         $dto = new MailerDto();
         $dto->setData(['userid-not-here' => 5]);
-
+        $this->withRealEmailValidator();
         $this->validator->validate($dto, MailerValidator::TYPE_REMIND_USERNAME);
     }
 
@@ -63,7 +65,7 @@ class MailerValidatorTest extends PHPUnit_Framework_TestCase
     {
         $dto = new MailerDto();
         $dto->setData(['userid-not-here' => 5]);
-
+        $this->withRealEmailValidator();
         $this->validator->validate($dto, MailerValidator::TYPE_REMIND_PASSWORD);
     }
 
@@ -71,7 +73,7 @@ class MailerValidatorTest extends PHPUnit_Framework_TestCase
     {
         $dto = new MailerDto();
         $dto->setData(['userid' => 5]);
-
+        $this->withRealEmailValidator();
         $this->validator->validate($dto, MailerValidator::TYPE_REMIND_PASSWORD);
     }
 
@@ -81,7 +83,7 @@ class MailerValidatorTest extends PHPUnit_Framework_TestCase
         $dto->setData(['userid' => 5]);
 
         $this->ensureUserIdGood(5);
-
+        $this->withRealEmailValidator();
         $this->assertTrue(
             $this->validator->validate(
                 $dto, MailerValidator::TYPE_REMIND_USERNAME
@@ -93,12 +95,12 @@ class MailerValidatorTest extends PHPUnit_Framework_TestCase
     {
         $dto = new MailerDto();
         $dto->setData([
-            "email" => "dummy@email.com",
+            "email" => "mailervalidatortest@dvsa.test",
             "firstName" => "some name",
             "familyName" => "familyName",
             "attachment" => "dummy attachment",
         ]);
-
+        $this->withMockEmailValidator();
         $this->assertTrue($this->validator->validate($dto, MailerValidator::TYPE_CUSTOMER_CERTIFICATE));
     }
 
@@ -109,12 +111,12 @@ class MailerValidatorTest extends PHPUnit_Framework_TestCase
     {
         $dto = new MailerDto();
         $dto->setData([
-            "email" => "dumdummydummydummydummydummydummydummydummydummydummydummydummydummydummydummydumm@email.com",
+            "email" => "mailervalidatortestemailtoolonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong@dvsa.test",
             "firstName" => "some name",
             "familyName" => "familyName",
             "attachment" => "dummy attachment",
         ]);
-
+        $this->withRealEmailValidator();
         $this->validator->validate($dto, MailerValidator::TYPE_CUSTOMER_CERTIFICATE);
     }
 
@@ -125,6 +127,7 @@ class MailerValidatorTest extends PHPUnit_Framework_TestCase
     {
         $dto = new MailerDto();
         $dto->setData([]);
+        $this->withRealEmailValidator();
 
         $this->validator->validate($dto, MailerValidator::TYPE_CUSTOMER_CERTIFICATE);
     }
@@ -137,5 +140,23 @@ class MailerValidatorTest extends PHPUnit_Framework_TestCase
             ->with($id)
             ->willReturn($with);
         return $this;
+    }
+
+    private function withRealEmailValidator()
+    {
+        $this->validator = new MailerValidator($this->mockUserService, new EmailAddressValidator());
+    }
+
+    private function withMockEmailValidator()
+    {
+        $mock = $this->getMockBuilder(EmailAddressValidator::class)
+            ->setMethods(['isValid'])
+            ->getMock();
+
+        $mock->expects($this->any())
+            ->method('isValid')
+            ->willReturn(true);
+
+        $this->validator = new MailerValidator($this->mockUserService, $mock);
     }
 }

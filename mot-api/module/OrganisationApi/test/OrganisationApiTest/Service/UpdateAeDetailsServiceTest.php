@@ -691,7 +691,7 @@ class UpdateAeDetailsServiceTest extends AbstractServiceTestCase
         $contactType = $testArguments->getOrganisationContactTypeCode();
 
         // GIVEN I have a correct email
-        $newEmail = "party@ibiza.com";
+        $newEmail = "updateaedetailsservicetest@dvsa.test";
         $data = [$testArguments->getEmailField() => $newEmail];
 
         // WHEN I update it
@@ -737,7 +737,7 @@ class UpdateAeDetailsServiceTest extends AbstractServiceTestCase
         );
 
         // AND I have a correct email
-        $newEmail = "party@ibiza.com";
+        $newEmail = "updateaedetailsservicetest@dvsa.test";
         $data = [$testArguments->getEmailField() => $newEmail];
 
         // WHEN I update it

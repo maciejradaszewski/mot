@@ -3,6 +3,7 @@
 namespace DvsaCommonTest\Dto\Contact;
 
 use DvsaCommon\Dto\Contact\EmailDto;
+use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonTest\Dto\AbstractDtoTester;
 
 /**
@@ -34,7 +35,7 @@ class EmailDtoTest extends AbstractDtoTester
     public function testIsEquals()
     {
         $dto = (new EmailDto())
-            ->setEmail('aaa@domain.com')
+            ->setEmail('emaildtotest@' . EmailAddressValidator::TEST_DOMAIN)
             ->setIsPrimary(true);
 
         $dtoB = clone $dto;
@@ -43,7 +44,7 @@ class EmailDtoTest extends AbstractDtoTester
         $this->assertTrue(EmailDto::isEquals($dto, $dtoB));
 
         //  --  test not equals   --
-        $dtoB->setEmail('bbbb@domain.com');
+        $dtoB->setEmail('emaildtotest1@' . EmailAddressValidator::TEST_DOMAIN);
         $this->assertFalse(EmailDto::isEquals($dto, $dtoB));
 
         $dtoB = clone $dto;

@@ -24,7 +24,7 @@ use Zend\View\Model\ViewModel;
 class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
 {
     const PERSON_ID = 105;
-    const EMAIL     = 'dummyemail@localhost.com';
+    const EMAIL     = 'emailaddresscontrollertest@dvsa.test';
 
     private $helpdeskAccountAdminServiceMock;
     private $authorisationMock;
