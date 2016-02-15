@@ -212,3 +212,22 @@ Feature: Person
     Given I am logged in as a Customer Service Manager
     And I Search for a Invalid User
     Then the Users data will not be returned
+
+  Scenario Outline: Tester performance dashboard daily stats are calculated
+    Given I am logged in as a Tester
+    When I pass <passedNormalTests> normal tests
+    And I fail <failedNormalTests> normal tests
+    And I perform <retests> retests
+    And I perform <demoTests> demotests
+    And I start and abort <abortedTests> tests
+    And I get my person stats
+    Then person stats show <conductedTests> conducted tests <passedNormalTests> passed tests and <resultFailedTests> failed tests
+
+    Examples:
+      | passedNormalTests | failedNormalTests | retests | demoTests | abortedTests | resultFailedTests | conductedTests |
+      | 0                 | 1                 | 0       | 0         | 0            | 1                 | 1              |
+      | 0                 | 0                 | 0       | 1         | 0            | 0                 | 0              |
+      | 1                 | 1                 | 0       | 0         | 0            | 1                 | 2              |
+      #creating retest implies failing mot test before doing retest, so in that case we have 3 initial tests
+      | 1                 | 1                 | 1       | 0         | 0            | 2                 | 3              |
+      | 0                 | 0                 | 0       | 0         | 1            | 0                 | 0              |

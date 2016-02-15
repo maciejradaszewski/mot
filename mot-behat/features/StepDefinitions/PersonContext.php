@@ -146,6 +146,11 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     private $ae;
 
     /**
+     * @var Response
+     */
+    private $personStats;
+
+    /**
      * @param TestSupportHelper $testSupportHelper
      * @param CustomerService $customerService
      * @param Session $session
@@ -1263,6 +1268,79 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
 
         $token = $this->sessionContext->getCurrentAccessToken();
         $this->updateDateOfBirthResponse = $this->person->changeDateOfBirth($token, $this->sessionContext->getCurrentUserId(), $this->newDateOfBirth);
+    }
+
+    /**
+     * @When I pass :testCount normal tests
+     */
+    public function iPassNormalTests($testCount)
+    {
+        for($i = 0; $i < $testCount; $i++) {
+            $this->motTestContext->vehicleHasANormalTestTestStarted();
+        }
+    }
+
+    /**
+     * @When I fail :testCount normal tests
+     */
+    public function iFailNormalTests($testCount)
+    {
+        for($i = 0; $i < $testCount; $i++) {
+            $this->motTestContext->vehicleHasMotTestFailed();
+        }
+    }
+
+    /**
+     * @When I perform :testCount retests
+     */
+    public function iPerformRetests($testCount)
+    {
+        for($i = 0; $i < $testCount; $i++) {
+            $this->motTestContext->vehicleHasMotTestReTestStarted();
+        }
+    }
+
+    /**
+     * @When I perform :testCount demotests
+     */
+    public function iPerformDemotests($testCount)
+    {
+        for($i = 0; $i < $testCount; $i++) {
+            $this->motTestContext->vehicleHasARoutineDemonstrationTestTestStarted();
+        }
+    }
+
+    /**
+     * @When I start and abort :testCount tests
+     */
+    public function iStartAndAbortTests($testCount)
+    {
+        for($i = 0; $i < $testCount; $i++) {
+            $this->motTestContext->vehicleHasAbortedTest();
+        }
+    }
+
+    /**
+     * @When I get my person stats
+     */
+    public function iGetMyPersonalStats()
+    {
+        $this->personStats = $this->person->getPersonStats(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->sessionContext->getCurrentUserId()
+        );
+    }
+
+    /**
+     * @Then person stats show :conductedTests conducted tests :passedNormalTests passed tests and :failedNormalTests failed tests
+     */
+    public function personStatsShowCorrectTestCount($conductedTests, $passedNormalTests, $failedNormalTests)
+    {
+        $data = $this->personStats->getBody()["data"];
+
+        PHPUnit::assertEquals($conductedTests, $data["total"]);
+        PHPUnit::assertEquals($passedNormalTests, $data["numberOfPasses"]);
+        PHPUnit::assertEquals($failedNormalTests, $data["numberOfFails"]);
     }
 
     /**
