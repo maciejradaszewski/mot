@@ -11,18 +11,15 @@ class DayStats
     private $total;
     private $numberOfPasses;
     private $numberOfFails;
-    private $numberOfRetests;
 
     public function __construct(
         $total,
         $numberOfPasses,
-        $numberOfFails,
-        $numberOfRetests
+        $numberOfFails
     ) {
         $this->total = $total;
         $this->numberOfPasses = $numberOfPasses;
         $this->numberOfFails = $numberOfFails;
-        $this->numberOfRetests = $numberOfRetests;
     }
 
     /**
@@ -34,7 +31,6 @@ class DayStats
             'total'           => $this->total,
             'numberOfPasses'  => $this->numberOfPasses,
             'numberOfFails'   => $this->numberOfFails,
-            'numberOfRetests' => $this->numberOfRetests,
         ];
     }
 }

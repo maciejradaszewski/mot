@@ -24,9 +24,10 @@ Feature: MOT Test history
       | an Area Office User|
 
   Scenario Outline: Search for MOT tests history by site
-    Given I am logged in as a Vehicle Examiner
+    Given I am logged in as a Tester
     And vehicle has a <test_type> test started
-    When I search for an MOT tests history by site
+    When I am logged in as a Vehicle Examiner
+    And I search for an MOT tests history by site
     Then MOT test history for vehicle and type <test_type> is <result>
     Examples:
     | test_type                             | result       |
@@ -44,9 +45,10 @@ Feature: MOT Test history
     | Non-Mot Test                          | not returned |
 
   Scenario Outline: Search for MOT tests history by site
-    Given I am logged in as a Vehicle Examiner
+    Given I am logged in as a Tester
     And vehicle has a <test_type> test started
-    When I search for an MOT tests history by vin
+    When I am logged in as a Vehicle Examiner
+    And I search for an MOT tests history by vin
     Then MOT test history for vehicle and type <test_type> is <result>
   Examples:
     | test_type                             | result       |
@@ -64,9 +66,10 @@ Feature: MOT Test history
     | Non-Mot Test                          | not returned |
 
   Scenario Outline: Search for MOT tests history by site
-    Given I am logged in as a Vehicle Examiner
+    Given I am logged in as a Tester
     And vehicle has a <test_type> test started
-    When I search for an MOT tests history by registration
+    When I am logged in as a Vehicle Examiner
+    And I search for an MOT tests history by registration
     Then MOT test history for vehicle and type <test_type> is <result>
   Examples:
     | test_type                             | result       |
@@ -84,8 +87,9 @@ Feature: MOT Test history
     | Non-Mot Test                          | not returned |
 
   Scenario Outline: Search for MOT tests history by test number
-    Given I am logged in as a Vehicle Examiner
+    Given I am logged in as a Tester
     And vehicle has a <test_type> test started
+    When I am logged in as a Vehicle Examiner
     When I search for an MOT tests history by testNumber
     Then MOT test history for vehicle and type <test_type> is <result>
   Examples:

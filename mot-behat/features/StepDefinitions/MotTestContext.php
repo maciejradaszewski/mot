@@ -890,8 +890,6 @@ class MotTestContext implements Context, SnippetAcceptingContext
      */
     public function vehicleHasMotTestReTestStarted()
     {
-        $this->sessionContext->iAmLoggedInAsATester();
-
         $this->vehicleHasMotTestFailed();
 
         $this->startMotTest($this->sessionContext->getCurrentUserId(),
@@ -903,13 +901,14 @@ class MotTestContext implements Context, SnippetAcceptingContext
 
     protected function vehicleHasMotTestStarted($testType)
     {
-        $this->sessionContext->iAmLoggedInAsATester();
-
         $this->startMotTest($this->sessionContext->getCurrentUserId(),
             $this->sessionContext->getCurrentAccessToken(),
             ['motTestType' => $testType],
             !empty($this->vehicleId) ? $this->vehicleId : null
         );
+        $this->odometerReading->addMeterReading($this->sessionContext->getCurrentAccessToken(), $this->motTest->getLastMotTestNumber(), 111, 'mi');
+        $this->brakeTestResult->addBrakeTestDecelerometerClass3To7($this->sessionContext->getCurrentAccessToken(), $this->motTest->getLastMotTestNumber());
+        $this->theTesterPassesTheMotTest();
     }
 
 
@@ -952,8 +951,6 @@ class MotTestContext implements Context, SnippetAcceptingContext
      */
     public function vehicleHasATargetedReinspectionTestStarted()
     {
-        $this->sessionContext->iAmLoggedInAsATester();
-
         $this->vehicleHasMotTestFailed();
 
         $this->startMotTest($this->sessionContext->getCurrentUserId(),
@@ -1000,8 +997,6 @@ class MotTestContext implements Context, SnippetAcceptingContext
      */
     public function vehicleHasADemonstrationTestFollowingTrainingTestStarted()
     {
-        $this->sessionContext->iAmLoggedInAsATester();
-
         $this->startMotTest($this->sessionContext->getCurrentUserId(),
             $this->sessionContext->getCurrentAccessToken(),
             [
@@ -1016,15 +1011,18 @@ class MotTestContext implements Context, SnippetAcceptingContext
      */
     public function vehicleHasARoutineDemonstrationTestTestStarted()
     {
-        $this->sessionContext->iAmLoggedInAsATester();
+        $this->vehicleHasMotTestStarted(MotTestTypeCode::ROUTINE_DEMONSTRATION_TEST);
+    }
 
+    public function vehicleHasAbortedTest()
+    {
         $this->startMotTest($this->sessionContext->getCurrentUserId(),
             $this->sessionContext->getCurrentAccessToken(),
-            [
-                'motTestType'      => MotTestTypeCode::ROUTINE_DEMONSTRATION_TEST,
-                'vehicleStationId' => null
-            ]
+            ['motTestType' => MotTestTypeCode::NORMAL_TEST],
+            !empty($this->vehicleId) ? $this->vehicleId : null
         );
+
+        $this->theTesterAbortsTheMotTest();
     }
 
     /**

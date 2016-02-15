@@ -9,6 +9,7 @@ class Person extends MotApi
     const PATH_ROLES = '/roles';
     const PATH_ROLES_ROLE = '/roles/{role}';
     const PATH_DASHBOARD = '/dashboard';
+    const PATH_STATS = '/stats';
     const PATH_RBAC_ROLES = '/rbac-roles';
     const PATH_PASSWORD = '/password';
     const PATH_NAME = '/name';
@@ -35,6 +36,20 @@ class Person extends MotApi
             $token,
             MotApi::METHOD_GET,
             str_replace('{user_id}', $user_id, self::PATH).self::PATH_DASHBOARD
+        );
+    }
+
+    /**
+     * @param string $token
+     * @param int $user_id
+     * @return \Dvsa\Mot\Behat\Support\Response
+     */
+    public function getPersonStats($token, $user_id)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_GET,
+            str_replace('{user_id}', $user_id, self::PATH).self::PATH_STATS
         );
     }
 

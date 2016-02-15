@@ -31,7 +31,6 @@ class UserStatsController extends AbstractAuthActionController
                 'total'   => $data['total'],
                 'passed'  => $data['numberOfPasses'],
                 'failed'  => $data['numberOfFails'],
-                'retests' => $data['numberOfRetests'],
             ],
             'currentMonth' => [
                 'averageTime' => $averageTestTime,

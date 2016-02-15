@@ -12,7 +12,7 @@ $this->layout()->setVariable('pageTitle', $taskName);
 <div class="row">
     <div class="col-sm-12">
         <p>
-            This dashboard shows information on all the MOT tests you have carried out across the garages you are currently working for.
+            This dashboard shows information based on all initial MOT tests you have carried out.
         </p>
     </div>
 </div>
@@ -35,11 +35,6 @@ $this->layout()->setVariable('pageTitle', $taskName);
             <div class="col-sm-3 stat head-space">
                 <span class="stat-number" id="today-number-failed"><?php echo $this->escapeHtml($today['failed']); ?></span>
                 <time class="stat-period">Failed</time>
-            </div>
-            <div class="col-sm-3 stat head-space">
-                <span class="stat-number" id="today-number-retests"><?php echo $this->escapeHtml($today['retests']); ?></span>
-                <time class="stat-period">Re-test</time>
-                <!-- <span class="stat-delta [is-increase|is-decrease]"></span> -->
             </div>
         </div>
     </div>

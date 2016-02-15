@@ -40,7 +40,7 @@ class UserStatsServiceTest extends AbstractServiceTestCase
     public function testGetUserDayStatsByPersonId()
     {
         //given
-        $motTests = $this->getArrayOfMotTestsWithRetests();
+        $motTests = $this->getArrayOfMotTests();
         $this->setUpMocks($motTests);
 
         //when
@@ -52,9 +52,8 @@ class UserStatsServiceTest extends AbstractServiceTestCase
             $result->toArray(),
             [
                 'total'           => 3,
-                'numberOfPasses'  => 2,
-                'numberOfFails'   => 1,
-                'numberOfRetests' => 1,
+                'numberOfPasses'  => 1,
+                'numberOfFails'   => 2,
             ]
         );
     }
@@ -73,8 +72,8 @@ class UserStatsServiceTest extends AbstractServiceTestCase
         $this->assertEquals(
             $result->toArray(),
             [
-                'averageTime' => 5400,
-                'failRate'    => 50,
+                'averageTime' => 4800,
+                'failRate'    => (double) 100*2/3,
             ]
         );
     }
@@ -93,30 +92,25 @@ class UserStatsServiceTest extends AbstractServiceTestCase
         $motTestFailed->setStatus($this->createMotTestStatus(MotTestStatusName::FAILED))
             ->setMotTestType($mtt)
             ->setStartedDate(new \DateTime('2014-07-01 11:00:00'))
-            ->setCompletedDate(new \DateTime('2014-07-01 13:00:00'));
+            ->setCompletedDate(new \DateTime('2014-07-01 12:00:00'));
 
-        $mtt = new \DvsaEntities\Entity\MotTestType();
-        $mtt->setCode(MotTestTypeCode::RE_TEST);
-        $motTestRetest = new MotTest();
-        $motTestRetest->setStatus($this->createMotTestStatus(MotTestStatusName::PASSED))
+        $motTestPrs1 = new MotTest();
+        $motTestPrs1->setStatus($this->createMotTestStatus(MotTestStatusName::PASSED))
             ->setMotTestType($mtt)
             ->setStartedDate(new \DateTime('2014-07-01 14:00:00'))
-            ->setCompletedDate(new \DateTime('2014-07-01 14:30:00'));
+            ->setCompletedDate(new \DateTime('2014-07-01 16:00:00'));
 
-        return [$motTestPassed, $motTestFailed];
-    }
-
-    private function getArrayOfMotTestsWithRetests()
-    {
-        $mtt = new MotTestType();
-        $mtt->setCode(MotTestTypeCode::RE_TEST);
-        $motTestRetest = new MotTest();
-        $motTestRetest->setStatus($this->createMotTestStatus(MotTestStatusName::PASSED))
+        $motTestPrs2 = new MotTest();
+        $motTestPrs2->setStatus($this->createMotTestStatus(MotTestStatusName::FAILED))
             ->setMotTestType($mtt)
             ->setStartedDate(new \DateTime('2014-07-01 14:00:00'))
-            ->setCompletedDate(new \DateTime('2014-07-01 14:30:00'));
+            ->setCompletedDate(new \DateTime('2014-07-01 16:00:00'));
 
-        return array_merge($this->getArrayOfMotTests(), [$motTestRetest]);
+        $motTestPrs1->setPrsMotTest($motTestPrs2);
+        $motTestPrs2->setPrsMotTest($motTestPrs1);
+
+
+        return [$motTestPassed, $motTestFailed, $motTestPrs1, $motTestPrs2];
     }
 
     private function setUpMocks($motTests)

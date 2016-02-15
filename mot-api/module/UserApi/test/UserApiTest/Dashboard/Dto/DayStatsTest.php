@@ -15,19 +15,16 @@ class DayStatsTest extends \PHPUnit_Framework_TestCase
         $total = 1;
         $numberOfPasses = 2;
         $numberOfFails = 3;
-        $numberOfRetests = 4;
 
         $stats = new DayStats(
             $total,
             $numberOfPasses,
-            $numberOfFails,
-            $numberOfRetests
+            $numberOfFails
         );
 
         $return = $stats->toArray();
         $this->assertEquals($total, $return['total']);
         $this->assertEquals($numberOfPasses, $return['numberOfPasses']);
         $this->assertEquals($numberOfFails, $return['numberOfFails']);
-        $this->assertEquals($numberOfRetests, $return['numberOfRetests']);
     }
 }
