@@ -115,7 +115,8 @@ public class CreateReInspectionOutcomeReportTests extends BaseTest {
         assessmentDetailsConfirmationPage.clickLogout();
     }
 
-    @Test(groups = {"VM-1407", "Sprint17", "Enf", "VM-2952", "Sprint25", "Enf", "Regression"})
+    // TODO rewrite test after prior investigation
+    @Test(groups = {"VM-1407", "Sprint17", "Enf", "VM-2952", "Sprint25", "Enf", "Regression"}, enabled = false)
     public void invertedAppealReportWithRfr() {
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
         Login login = createTester();

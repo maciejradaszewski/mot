@@ -55,7 +55,6 @@ public class RunTargetedReInspection {
         }
     }
 
-
     /**
      * Business test data
      */
@@ -67,47 +66,11 @@ public class RunTargetedReInspection {
             new TargetedReInspectionWithRfrs("12345", "presented", "1000", "200", "200", "200",
                     "200", "200", "200", "2.4.G.2", "worn", "3.5.1g", "pads disintegrated",
                     "4.1.E.1", "canvas visable", "1.8", "No mirrors");
-    //public static final TargetedReInspectionWithRfrs motwithrfr_2 = new TargetedReInspectionWithRfrs("12345","presented","1000","100","200","60","100","50","200","4.1.E.1","3.6.B.1", "3.6.B.2c", "6.3.4b");
-
-
-
-    //Ian Hyndman 28/02/1014
-    public class RFRTypes {
-        public final static String NEARSIDE = "nearside";
-        public final static String OFFSIDE = "offside";
-        public final static String FRONT = "front";
-        public final static String REAR = "rear";
-    }
-
 
     public class xPathStringsUsedForComparrison {
-        public final static String NTSCOREDROPDOWN =
-                "/html/body/div/div/div/div[2]/div/div/form/table/tbody/tr[2]/td[2]/select";
-        public final static String VESCOREDROPDOWN =
-                "/html/body/div/div/div/div[2]/div/div/form/table/tbody/tr[4]/td[2]/select";
-        public final static String NTSCOREDROPDOWN2 =
-                "/html/body/div/div/div/div[2]/div/div/form/table/tbody/tr[6]/td[2]/select";
-        public final static String VESCOREDROPDOWN2 =
-                "/html/body/div/div/div/div[2]/div/div/form/table/tbody/tr[8]/td[2]/select";
-        public final static String NTDEFECTDECISIONS1 =
-                "/html/body/div/div/div/div[2]/div/div/form/table/tbody/tr[2]/td[3]/select";
+        public final static String NTSCOREDROPDOWN = "//select[contains(@id, '-NT-FAIL-score')]";
+        public final static String VESCOREDROPDOWN = "//select[contains(@id, '-EC-FAIL-score')]";
         public final static String NTDEFECTDECISIONS =
                 "/html/body/div/div/div/div[2]/div/div/form/table/tbody/tr[2]/td[3]/select";
-        public final static String VEDEFECTDECISIONS =
-                "/html/body/div/div/div/div[2]/div/div/form/table/tbody/tr[4]/td[3]/select";
-        public final static String NTCATEGORY =
-                "/html/body/div/div/div/div[2]/div/div/form/table/tbody/tr[2]/td[4]/select";
-        //public final static String NTCATEGORY1="html/body/div[2]/div[3]/div/div/form/table/tbody/tr[4]/td[4]/select";
-        public final static String VECATEGORY =
-                "/html/body/div/div/div/div[2]/div/div/form/table/tbody/tr[4]/td[4]/select";
-        public final static String VECATEGORY_WHEN_ERROR =
-                "/html/body/div/div/div/div[3]/div/div/form/table/tbody/tr[4]/td[4]/select";
-        public final static String VECATEGORYNOTAPPLICABLE =
-                "/html/body/div[2]/div[3]/div/div/form/table/tbody/tr[4]/td[4]/select/option[2]";
-
-        public final static String DEFECTINCORRECTDECISION =
-                "/html/body/div[2]/div[3]/div/div/form/table/tbody/tr[2]/td[3]/select";
     }
-
-
 }

@@ -12,6 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
+import uk.gov.dvsa.helper.FormCompletionHelper;
 
 public class ManualAdvisoryPage extends BasePage {
 
@@ -23,7 +24,7 @@ public class ManualAdvisoryPage extends BasePage {
 
     @FindBy(id = "vertical-dd-0") private WebElement vertical;
 
-    @FindBy(id = "description-0") private WebElement description;
+    @FindBy(id = "description-0") private WebElement descriptionInput;
 
     @FindBy(id = "dangerous") private WebElement dangerousFailure;
 
@@ -83,12 +84,12 @@ public class ManualAdvisoryPage extends BasePage {
     }
 
     public ManualAdvisoryPage enterDescription(String description) {
-        this.description.sendKeys(description);
+        FormCompletionHelper.enterText(descriptionInput, description);
         return this;
     }
 
     public ManualAdvisoryPage clearDescription() {
-        this.description.clear();
+        this.descriptionInput.clear();
         return this;
     }
 

@@ -137,7 +137,7 @@ class EmailAddressController extends AbstractDvsaMotTestController
                     ? $this->personProfileUrlGenerator->toPersonProfile()
                     : UserAdminUrlBuilderWeb::of()->UserProfile($personId);
 
-                $this->redirect()->toUrl($url);
+                return $this->redirect()->toUrl($url);
             }
 
             $email        = $params['email'];

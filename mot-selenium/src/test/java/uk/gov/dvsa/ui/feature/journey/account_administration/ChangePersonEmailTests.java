@@ -95,10 +95,10 @@ public class ChangePersonEmailTests extends BaseTest {
 
         // When I am changing a name for a person
         String emailAddress = RandomDataGenerator.generateEmail(20, System.nanoTime());
-        NewUserProfilePage newUserProfilePage = motUI.userRoute.changeEmail(emailAddress, emailAddress, "PERSON_PROFILE");
+        motUI.userRoute.changeEmail(emailAddress, emailAddress, "PERSON_PROFILE");
 
         // Then the success message should be displayed
-        assertThat(newUserProfilePage.verifyEmailIsChanged(emailAddress), is(true));
+        assertThat(motUI.userRoute.page().isSuccessMessageDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-270"},
