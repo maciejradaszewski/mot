@@ -229,12 +229,12 @@ public class AEChangeDetailsTests extends BaseTest {
         //When I navigate to change DVSA Area Office and I change data
         AreaOfficerAuthorisedExaminerViewPage finalAreaOfficerAuthorisedExaminerViewPage =
                 areaOfficerAuthorisedExaminerViewPage.clickChangeDVSAAreaOfficeLink()
-                        .changeAreaOffice(AEAreaOfficeGroup.AREAOFFICE4)
+                        .changeAreaOffice("04")
                         .clickSubmitButton();
 
         //Then my changes are displayed on the AE
         //And notification is displayed
-        Assert.assertTrue(finalAreaOfficerAuthorisedExaminerViewPage.getAeDVSAAreaOffice().equals(AEAreaOfficeGroup.AREAOFFICE4.getName()));
+        Assert.assertTrue(finalAreaOfficerAuthorisedExaminerViewPage.getAeDVSAAreaOffice().equals("04"));
         Assert.assertTrue(finalAreaOfficerAuthorisedExaminerViewPage.getValidationMessage().equals("Area office has been successfully changed."));
     }
 

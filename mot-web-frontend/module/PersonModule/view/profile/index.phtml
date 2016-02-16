@@ -89,7 +89,7 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
                     ? $this->escapeHtml($personalDetails->getDrivingLicenceNumber())
                         . '<br>'
                         . '<span class="table-summary__meta">' .  $this->escapeHtml($licenceRegionCode) .' licence</span>'
-                    : '<span class="table-summary__meta">None Recorded</span>'; ?>
+                    : '<span class="table-summary__meta">None recorded</span>'; ?>
             <?php if (true === $personProfileGuard->canChangeDrivingLicence()) :
                 $url = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
                     $this->personProfileUrl()->fromPersonProfile('driving-licence-change') :

@@ -112,8 +112,6 @@ public class FailureLocationPage extends BasePage {
     }
 
     public ReasonForRejectionPage addFailureLocation(int rejectionId) {
-        //WebElement e = driver.findElement(By.id("rfr-submit-" + rejectionId));
-        //waitForElementToBeVisible(e, 5);
         WebDriverWait wait = new WebDriverWait(driver, 40);
         wait.until(
                 ExpectedConditions.visibilityOfElementLocated(By.id("rfr-submit-" + rejectionId)));

@@ -2,7 +2,6 @@ package uk.gov.dvsa.ui.pages.authorisedexaminer.ChangeDetails;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import uk.gov.dvsa.domain.model.AEAreaOfficeGroup;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.FormCompletionHelper;
 
@@ -16,8 +15,8 @@ public class ChangeAEDetailsAreaOfficePage extends ChangeAEDetailsPage {
         super(driver, PAGE_TITLE);
     }
 
-    public ChangeAEDetailsAreaOfficePage changeAreaOffice(AEAreaOfficeGroup newAreaOffice) {
-        FormCompletionHelper.selectFromDropDownByVisibleText(areaOfficeSelect, newAreaOffice.getName());
+    public ChangeAEDetailsAreaOfficePage changeAreaOffice(String value) {
+        FormCompletionHelper.selectFromDropDownByVisibleText(areaOfficeSelect, value);
         return this;
     }
 }

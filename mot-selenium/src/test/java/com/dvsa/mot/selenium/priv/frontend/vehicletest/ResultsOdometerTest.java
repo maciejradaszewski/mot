@@ -80,7 +80,9 @@ public class ResultsOdometerTest extends BaseTest {
         motTestPage.cancelMotTest(ReasonToCancel.REASON_INCORRECT_LOCATION);
     }
 
-    @Test(groups = "Regression", description = "Ensure that no more than 7 digits can be entered into the odometer field")
+//    TODO case needs to me migrated to new framework
+    @Test(groups = "Regression", description = "Ensure that no more than 7 digits can be entered into the odometer field",
+        enabled = false)
     public void testSubmitMoreThanLimitChars() {
 
         Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_MONDEO_2002);
