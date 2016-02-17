@@ -231,7 +231,7 @@ public class CreateReInspectionOutcomeReportTests extends BaseTest {
                 Text.TEXT_DISREGARD.text);
         comparisonPage.addTextToNtJustificationBox(Text.TEXT_TESTER_JUSTIFICATION);
         comparisonPage.selectDropdown(
-                RunTargetedReInspection.xPathStringsUsedForComparrison.VESCOREDROPDOWN,
+                RunTargetedReInspection.xPathStringsUsedForComparrison.EESCOREDROPDOWN,
                 Text.TEXT_DISREGARD.text);
         comparisonPage.addTextToVeJustificationBox(Text.TEXT_VE_JUSTIFICATION);
         comparisonPage.clickRecordAssessmentButton();

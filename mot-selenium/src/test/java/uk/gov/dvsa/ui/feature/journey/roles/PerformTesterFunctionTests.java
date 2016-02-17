@@ -31,7 +31,8 @@ public class PerformTesterFunctionTests extends BaseTest {
         tester = userData.createTester(testSite.getId());
     }
 
-    @Test (groups = {"BVT"})
+    //TODO Rewrite test according new person profile functionality
+    @Test (groups = {"BVT"}, enabled = false)
     public void editDetailsWithoutNeedingApproval() throws Exception {
         String newEmail = "email@domaingreat.com";
         String postCode = "BS33 5TT";
