@@ -42,6 +42,15 @@ $mastheadPresenter = new MastheadPresenter;
 
     echo $this->headScript();
     ?>
+    <?php $hashedUserId = $this->identity() ? hash('sha1', $this->identity()->getUserId() . '.'
+            . $this->identity()->getUsername()) : null; ?>
+    <?php if ($hashedUserId): ?>
+    <script>
+      dataLayer = [{
+        'userId': '<?php echo $hashedUserId; ?>'
+      }];
+    </script>
+    <?php endif; ?>
 </head>
 <body>
 <!-- Google Tag Manager -->

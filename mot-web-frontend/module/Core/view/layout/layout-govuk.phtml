@@ -75,6 +75,15 @@ use Core\ViewModel\Sidebar\SidebarInterface;
         // ga('create', 'UA-49672752-1', 'govuk-elements.herokuapp.com');
         // ga('send', 'pageview');
     </script>
+    <?php $hashedUserId = $this->identity() ? hash('sha1', $this->identity()->getUserId() . '.'
+            . $this->identity()->getUsername()) : null; ?>
+    <?php if ($hashedUserId): ?>
+        <script>
+            dataLayer = [{
+                'userId': '<?php echo $hashedUserId; ?>'
+            }];
+        </script>
+    <?php endif; ?>
 </head>
 <body class="">
 <!-- Google Tag Manager -->
