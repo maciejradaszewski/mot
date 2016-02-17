@@ -9,14 +9,16 @@ if (!isset($table) || !$table instanceof GdsTable) {
 
 ?>
 <table class="key-value-list">
-    <thead>
-    <tr>
-        <th colspan="2">
-            <?php echo $this->escapeHtml($table->getHeaderText()); ?>
-        </th>
-    </tr>
-    </thead>
-    <tbody>
+    <?php if ($table->isHeaderSet()): ?>
+        <thead>
+        <tr>
+            <th colspan="2">
+                <?php echo $this->escapeHtml($table->getHeaderText()); ?>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+    <?php endif ?>
     <?php foreach ($table->getRows() as $row): ?>
         <tr>
             <?php

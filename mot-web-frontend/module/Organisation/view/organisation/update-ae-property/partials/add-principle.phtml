@@ -1,0 +1,99 @@
+<?php
+
+use Organisation\UpdateAeProperty\Process\Form\AddressPropertyForm;
+use Organisation\UpdateAeProperty\UpdateAePropertyViewModel;
+use Organisation\UpdateAeProperty\Process\Form\AepForm;
+use DvsaCommon\Utility\ArrayUtils;
+
+/** @var UpdateAePropertyViewModel $viewModel */
+/** @var AepForm $form */
+$form = $viewModel->getForm();
+
+?>
+
+<fieldset>
+    <legend class="form-title heading-large visuallyhidden"></legend>
+    <legend class="form-legend">Name</legend>
+    <?php
+
+    echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getFirstNameElement()
+        ]
+    );
+    echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getMiddleNameElement()
+        ]
+    );
+    echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getLastNameElement()
+        ]
+    );
+?>
+</fieldset>
+
+<fieldset>
+    <legend class="form-title heading-large visuallyhidden"></legend>
+    <legend class="form-legend">Date of birth</legend>
+    <?php
+        echo $this->partial(
+            'partial/gds/form/control-dob-group',
+            [
+                'dayElement' => $form->getDobDayElement(),
+                'monthElement' => $form->getDobMonthElement(),
+                'yearElement' => $form->getDobYearElement(),
+            ]
+        );
+    ?>
+</fieldset>
+
+
+<fieldset>
+    <legend class="form-title heading-large visuallyhidden"></legend>
+    <legend class="form-legend">Contact address</legend>
+
+<?php
+    echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getAddressLine1Element()
+        ]
+    );
+    echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getAddressLine2Element()
+        ]
+    );
+    echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getAddressLine3Element()
+        ]
+    );
+    echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getTownElement()
+        ]
+    );
+    echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getCountryElement()
+        ]
+    );
+    echo $this->partial(
+        'partial/gds/form/control',
+        [
+            'element' => $form->getPostcodeElement()
+        ]
+    );
+    ?>
+
+</fieldset>

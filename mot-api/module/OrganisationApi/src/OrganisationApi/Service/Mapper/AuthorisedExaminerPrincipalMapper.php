@@ -1,9 +1,10 @@
 <?php
 namespace OrganisationApi\Service\Mapper;
 
-use DvsaCommon\Dto\Person\PersonDto;
+use DvsaCommon\Dto\AuthorisedExaminerPrincipal\AuthorisedExaminerPrincipalDto;
 use DvsaCommonApi\Service\Mapper\AbstractApiMapper;
-use DvsaEntities\Entity\Person;
+use DvsaEntities\Entity\AuthorisedExaminerPrincipal;
+use DvsaCommon\Date\DateTimeApiFormat;
 
 /**
  * Class AuthorisedExaminerPrincipalMapper
@@ -12,17 +13,10 @@ use DvsaEntities\Entity\Person;
  */
 class AuthorisedExaminerPrincipalMapper extends AbstractApiMapper
 {
-    private $personWithAddressMapper;
-
-    public function __construct()
-    {
-        $this->personWithAddressMapper = new PersonWithAddressMapper();
-    }
-
     /**
-     * @param Person[] $principals
+     * @param AuthorisedExaminerPrincipal[] $principals
      *
-     * @return PersonDto[]
+     * @return AuthorisedExaminerPrincipalDto[]
      */
     public function manyToDto($principals)
     {
@@ -30,14 +24,22 @@ class AuthorisedExaminerPrincipalMapper extends AbstractApiMapper
     }
 
     /**
-     * @param Person $principal
+     * @param AuthorisedExaminerPrincipal $principal
      *
-     * @return PersonDto
+     * @return AuthorisedExaminerPrincipalDto
      */
     public function toDto($principal)
     {
-        $principalData = $this->personWithAddressMapper->toDto($principal);
+        $aepDto = new AuthorisedExaminerPrincipalDto();
+        $aepDto
+            ->setId($principal->getId())
+            ->setFirstName($principal->getFirstName())
+            ->setMiddleName($principal->getMiddleName())
+            ->setFamilyName($principal->getFamilyName())
+            ->setDisplayName($principal->getDisplayName())
+            ->setDateOfBirth(DateTimeApiFormat::date($principal->getDateOfBirth()));
+        ;
 
-        return $principalData;
+        return $aepDto;
     }
 }

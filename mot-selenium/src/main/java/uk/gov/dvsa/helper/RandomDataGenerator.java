@@ -73,4 +73,8 @@ public class RandomDataGenerator {
         String newPassword = RandomStringUtils.randomAlphanumeric(length-passwordPrefix.length());
         return newPassword.concat(passwordPrefix);
     }
+
+    public static int generateRandomInteger(int min, int max) {
+        return min + (int)(Math.random() * ((max - min) + 1));
+    }
 }

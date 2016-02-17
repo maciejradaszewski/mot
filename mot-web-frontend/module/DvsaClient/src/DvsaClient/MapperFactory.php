@@ -3,6 +3,7 @@
 namespace DvsaClient;
 
 use DvsaClient\Mapper\AccountMapper;
+use DvsaClient\Mapper\AuthorisedExaminerPrincipalMapper;
 use DvsaClient\Mapper\DemoTestAssessmentMapper;
 use DvsaClient\Mapper\EquipmentMapper;
 use DvsaClient\Mapper\EquipmentModelMapper;
@@ -42,6 +43,7 @@ use Zend\Http\Client;
  * @property-read OrganisationRoleMapper                             $OrganisationRole
  * @property-read OrganisationSitesMapper                            $OrganisationSites
  * @property-read PersonMapper                                       $Person
+ * @property-read AuthorisedExaminerPrincipalMapper                  $AuthorisedExaminerPrincipal
  * @property-read RoleMapper                                         $Role
  * @property-read SecurityQuestionMapper                             $SecurityQuestion
  * @property-read SitePositionMapper                                 $SitePosition
@@ -62,6 +64,7 @@ class MapperFactory
     const ORGANISATION_ROLE = 'OrganisationRole';
     const ORGANISATION_SITE = 'OrganisationSites';
     const PERSON = 'Person';
+    const AUTHORISED_EXAMINER_PRINCIPAL = 'AuthorisedExaminerPrincipal';
     const ROLE = 'Role';
     const SITE = 'Site';
     const SITE_ROLE = 'SiteRole';

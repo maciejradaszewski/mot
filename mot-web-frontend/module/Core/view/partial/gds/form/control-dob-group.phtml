@@ -1,0 +1,58 @@
+<?php
+
+use DvsaCommon\Utility\ArrayUtils;
+
+$errorMessages = $dayElement->getMessages();
+$errorMessage = ArrayUtils::firstOrNull($errorMessages);
+?>
+
+<div class="form-group <?php if ($errorMessage): echo "has-error"; endif; ?>">
+    <fieldset>
+        <legend class="form-label">
+            Date of birth
+        </legend>
+        <div class="form-date">
+
+            <span class="form-hint">For example, 31 3 1980</span>
+            <?php if (!empty($errorMessage)): ?>
+                <span class="validation-message"><?php echo $this->escapeHtml($errorMessage); ?></span>
+            <?php endif; ?>
+
+            <div class="form-group form-group-day">
+                <?php
+                    echo $this->partial(
+                        'partial/gds/form/control-dob',
+                        [
+                            'element' => $dayElement,
+                            'label' => "Day"
+                        ]
+                    );
+                ?>
+            </div>
+
+            <div class="form-group form-group-month">
+                <?php
+                    echo $this->partial(
+                        'partial/gds/form/control-dob',
+                        [
+                            'element' => $monthElement
+                        ]
+                    );
+                ?>
+            </div>
+
+            <div class="form-group form-group-year">
+                <?php
+                    echo $this->partial(
+                        'partial/gds/form/control-dob',
+                        [
+                            'element' => $yearElement
+                        ]
+                    );
+                ?>
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+

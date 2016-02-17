@@ -2,76 +2,81 @@
 
 namespace Organisation\Controller;
 
+use Core\Action\RedirectToRoute;
 use Core\Controller\AbstractAuthActionController;
+use Core\Routing\AeRouteList;
+use Core\Routing\AeRoutes;
 use DvsaClient\MapperFactory;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use Organisation\Traits\OrganisationServicesTrait;
+use Organisation\ViewModel\AuthorisedExaminer\AeRemovePrincipalViewModel;
+use Organisation\UpdateAeProperty\UpdateAePropertyAction;
+use Organisation\UpdateAeProperty\UpdateAePropertyReviewAction;
 use SebastianBergmann\Exporter\Exception;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionAtOrganisation;
+use Zend\Mvc\Controller\Plugin\Url;
+
 
 /**
  * Class AuthorisedExaminerPrincipalController
  *
  * @package Organisation\Controller
  */
-class AuthorisedExaminerPrincipalController extends AbstractAuthActionController
+class AuthorisedExaminerPrincipalController extends AbstractAuthActionController implements AutoWireableInterface
 {
-    const ROUTE_INDEX = 'authorised-examiner/principals';
     const ROUTE_REMOVE_CONFIRMATION = 'authorised-examiner/remove-principal-confirmation';
+    const REMOVE_TITLE = 'Remove a principal';
     use OrganisationServicesTrait;
 
-    /**
-     * @var MotFrontendAuthorisationServiceInterface
-     */
     private $authorisationService;
-    /**
-     * @var MapperFactory
-     */
     private $mapper;
+    private $updateAction;
+    private $reviewAction;
 
-    public function __construct(MotFrontendAuthorisationServiceInterface $authorisationService, MapperFactory $mapper)
+    public function __construct
+    (
+        MotAuthorisationServiceInterface $authorisationService,
+        MapperFactory $mapper,
+        UpdateAePropertyAction $updateAction,
+        UpdateAePropertyReviewAction $reviewAction
+    )
     {
         $this->authorisationService = $authorisationService;
         $this->mapper = $mapper;
+        $this->updateAction = $updateAction;
+        $this->reviewAction = $reviewAction;
     }
 
-    public function indexAction()
+    public function createAction()
     {
-        $authorisedExaminerId = $this->params()->fromRoute('id');
-        $permission = PermissionAtOrganisation::AUTHORISED_EXAMINER_PRINCIPAL_CREATE;
-        $this->authorisationService->assertGrantedAtOrganisation($permission, $authorisedExaminerId);
+        $propertyName = UpdateAePropertyAction::AE_CREATE_AEP_PROPERTY;
+        $isPost = $this->getRequest()->isPost();
+        $aeId = $this->params()->fromRoute('id');
+        $formData = $this->getRequest()->getPost()->getArrayCopy();
+        $formUuid = $this->params()->fromQuery('formUuid');
 
-        $form = [];
+        $actionResult = $this->updateAction->execute($isPost, $propertyName, $aeId, $formUuid, $formData);
 
-        $urlAE = AuthorisedExaminerUrlBuilderWeb::of($authorisedExaminerId);
+        return $this->applyActionResult($actionResult);
+    }
 
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            try {
-                $postData = $this->getRequest()->getPost()->toArray();
-                $form = $postData;
-                $principalId = $this->mapper->Person->createPrincipalsForOrganisation(
-                    $authorisedExaminerId, $postData
-                );
+    public function reviewAction()
+    {
+        $propertyName = UpdateAePropertyAction::AE_CREATE_AEP_PROPERTY;
+        $isPost = $this->getRequest()->isPost();
+        $aeId = $this->params()->fromRoute('id');
+        $formUuid = $this->params()->fromRoute('formUuid');
 
-                $principal = $this->mapper->Person->getById($principalId);
-                $this->addInfoMessages($principal->getFullName() . ' has been added as AEP');
+        $actionResult = $this->reviewAction->execute($isPost, $propertyName, $aeId, $formUuid);
 
-                return $this->redirect()->toUrl($urlAE);
-            } catch (ValidationException $ve) {
-                $this->addErrorMessages($ve->getDisplayMessages());
-            }
-        }
-
-        return [
-            'values'        => $form,
-            'cancelRoute' => $urlAE,
-        ];
+        return $this->applyActionResult($actionResult);
     }
 
     public function removeConfirmationAction()
@@ -80,34 +85,65 @@ class AuthorisedExaminerPrincipalController extends AbstractAuthActionController
         $permission = PermissionAtOrganisation::AUTHORISED_EXAMINER_PRINCIPAL_REMOVE;
         $this->authorisationService->assertGrantedAtOrganisation($permission, $authorisedExaminerId);
 
-        $principalId = $this->params()->fromRoute('principalId');
-
         $authorisedExaminer = $this->mapper->Organisation->getAuthorisedExaminer($authorisedExaminerId);
-        $principal = $this->mapper->Person->getById($principalId);
+        $principalId = $this->params()->fromRoute('principalId');
+        $principal = $this->mapper->AuthorisedExaminerPrincipal->getByIdentifier($authorisedExaminerId, $principalId);
 
-        $urlAE = AuthorisedExaminerUrlBuilderWeb::of($authorisedExaminerId);
+        $urlAE = AeRoutes::of($this->url())->ae($authorisedExaminerId);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             try {
-                $this->mapper->Person->removePrincipalsForOrganisation(
-                    $authorisedExaminerId, $principalId
-                );
-
-                $this->addInfoMessages($principal->getFullName() . ' has been removed as AEP');
-
-                return $this->redirect()->toUrl($urlAE);
+                $this->mapper->AuthorisedExaminerPrincipal->removePrincipalsForOrganisation($authorisedExaminerId, $principalId);
+                $this->addSuccessMessage($principal->getDisplayName() . ' has been removed successfully.');
             } catch (RestApplicationException $e) {
                 $this->addErrorMessages($e->getDisplayMessages());
             }
-
-            return $this->redirect()->toUrl($urlAE);
+            return $this->applyActionResult(new RedirectToRoute(AeRouteList::AE, ['id' => $authorisedExaminerId]));
         }
 
-        return [
-            'principal'          => $principal,
-            'authorisedExaminer' => $authorisedExaminer,
-            'cancelRoute'        => $urlAE,
-        ];
+        $viewModel = new AeRemovePrincipalViewModel();
+        $viewModel
+            ->setAuthorisedExaminer($authorisedExaminer->getName())
+            ->setPrincipalName($principal->getDisplayName())
+            ->setAddress($principal->getContactDetails()->getAddress())
+            ->setDateOfBirth($principal->displayDateOfBirth())
+            ->setCancelUrl($urlAE);
+
+        $breadcrumbs = [$authorisedExaminer->getName() => $urlAE];
+
+        $lede = 'Are you sure you want to remove '. $viewModel->getPrincipalName() .' as an Authorised Examiner Principal?';
+
+        return $this->prepareViewModel(
+            new ViewModel(['viewModel' => $viewModel]), self::REMOVE_TITLE, 'Authorised Examiner', $lede, $breadcrumbs
+        );
+    }
+
+    /**
+     * Prepare the view model for all the step of the create ae
+     *
+     * @param ViewModel $view
+     * @param string    $title
+     * @param string    $subtitle
+     * @param null      $breadcrumbs
+     *
+     * @return ViewModel
+     */
+    private function prepareViewModel(
+        ViewModel $viewModel,
+        $title,
+        $subtitle,
+        $lede,
+        $breadcrumbs = null
+    ) {
+        $breadcrumbs = array_merge($breadcrumbs, [$title => ""]);
+
+        $this->layout('layout/layout-govuk.phtml');
+        $this->layout()->setVariable('pageTitle', $title)
+            ->setVariable('pageSubTitle', $subtitle)
+            ->setVariable('pageLede', $lede)
+            ->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
+
+        return $viewModel;
     }
 }

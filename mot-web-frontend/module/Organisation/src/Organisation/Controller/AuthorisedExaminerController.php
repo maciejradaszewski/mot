@@ -206,7 +206,7 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
         $viewAuthorisation->setPositions($positions);
 
         $principals = $viewAuthorisation->canViewAuthorisedExaminerPrincipals()
-            ? $this->mapper->Person->fetchPrincipalsForOrganisation($org->getId())
+            ? $this->mapper->AuthorisedExaminerPrincipal->fetchPrincipalsForOrganisation($org->getId())
             : [];
 
         $vehicleTestingStations = $viewAuthorisation->canViewVtsList()

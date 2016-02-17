@@ -3,6 +3,7 @@ package uk.gov.dvsa.ui.pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.Aep.RemoveAepPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.ChangeDetails.*;
 
@@ -21,6 +22,7 @@ public class AreaOfficerAuthorisedExaminerViewPage extends AuthorisedExaminerVie
     @FindBy(id = "cor-address-change") private WebElement changeCorrespondenceAddressLink;
     @FindBy(id = "cor-email-change") private WebElement changeCorrespondenceEmailLink;
     @FindBy(id = "cor-phone-change") private WebElement changeCorrespondenceTelephoneLink;
+    @FindBy(css = "#aeps a.remove-aep") private WebElement removeFirstAepLink;
 
     public AreaOfficerAuthorisedExaminerViewPage(MotAppDriver driver) {
         super(driver, PAGE_TITLE);
@@ -79,6 +81,11 @@ public class AreaOfficerAuthorisedExaminerViewPage extends AuthorisedExaminerVie
     public ChangeBusinessTypePage clickChangeBusinessTypeLink() {
         changeBusinessTypeLink.click();
         return new ChangeBusinessTypePage(driver);
+    }
+
+    public RemoveAepPage clickRemoveAepLink() {
+        removeFirstAepLink.click();
+        return new RemoveAepPage(driver);
     }
 
     public String getAEAuthStatus() {

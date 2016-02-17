@@ -37,6 +37,11 @@ class GdsTable implements GdsTableFlowInterface
         return $this->headerText;
     }
 
+    public function isHeaderSet()
+    {
+        return $this->headerText == '' ? false : true;
+    }
+
     public function getHeaderColspan()
     {
         return 2;

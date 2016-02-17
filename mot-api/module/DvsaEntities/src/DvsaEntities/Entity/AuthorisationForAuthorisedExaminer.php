@@ -63,17 +63,6 @@ class AuthorisationForAuthorisedExaminer extends Entity
     private $expiryDate;
 
     /**
-     * @var AuthorisedExaminerPrincipalAssociation[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="DvsaEntities\Entity\AuthorisedExaminerPrincipalAssociation",
-     *      mappedBy="authorisedExaminer",
-     *      fetch="LAZY"
-     * )
-     */
-    private $authorisedExaminersPrincipalAssociations;
-
-    /**
      * @var Site
      *
      * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Site")
@@ -82,11 +71,6 @@ class AuthorisationForAuthorisedExaminer extends Entity
      * })
      */
     private $areaOffice;
-
-    public function __construct()
-    {
-        $this->authorisedExaminersPrincipalAssociations = new ArrayCollection();
-    }
 
     /**
      * @param $organisation
@@ -114,37 +98,6 @@ class AuthorisationForAuthorisedExaminer extends Entity
     public function getDesignatedManager()
     {
         return $this->organisation->getDesignatedManager();
-    }
-
-    /**
-     * @return AuthorisedExaminerPrincipalAssociation[]
-     */
-    public function getAuthorisedExaminerPrincipalAssociation()
-    {
-        return $this->authorisedExaminersPrincipalAssociations;
-    }
-
-    /**
-     * @return Person[]
-     */
-    public function getAuthorisedExaminerPrincipals()
-    {
-        $principals = ArrayUtils::map(
-            $this->authorisedExaminersPrincipalAssociations,
-            function (AuthorisedExaminerPrincipalAssociation $association) {
-                return $association->getPerson();
-            }
-        );
-
-        return $principals;
-    }
-
-    public function addPrincipal(Person $principal)
-    {
-        $association = new AuthorisedExaminerPrincipalAssociation($principal, $this);
-        $this->authorisedExaminersPrincipalAssociations->add($association);
-
-        return $association;
     }
 
     /**

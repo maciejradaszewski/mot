@@ -181,18 +181,9 @@ class IndexViewModelTest extends \PHPUnit_Framework_TestCase
 
         foreach ($viewModel->getPrincipals() as $index => $principal) {
 
-            $personalContact = $viewModel->getPrincipalPersonalContact($index);
+            $aepContactDetails = $viewModel->getPrincipalContactDetails($index);
 
-            $this->assertEquals(PersonContactType::PERSONAL, $personalContact->getType());
-
-            foreach ($principal->getContacts() as $contact) {
-
-                if ($contact->getType() == PersonContactType::PERSONAL) {
-                    $this->assertSame($contact, $personalContact);
-                }
-
-            }
-
+            $this->assertSame($principal->getContactDetails(), $aepContactDetails);
         }
     }
 
