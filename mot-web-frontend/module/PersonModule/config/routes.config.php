@@ -23,7 +23,7 @@ use Dvsa\Mot\Frontend\PersonModule\Controller\ChangeDateOfBirthController;
 return [
     'router' => [
         'routes' => [
-            'newProfile' => [
+            ContextProvider::YOUR_PROFILE_PARENT_ROUTE => [
                 'type'    => 'segment',
                 'options' => [
                     'route'    => '/your-profile[/:id]',
@@ -212,7 +212,7 @@ return [
                     ],
                 ],
             ],
-            'newProfileUserAdmin' => [
+            ContextProvider::USER_SEARCH_PARENT_ROUTE => [
                 'type' => 'segment',
                 'options' => [
                     'route' => '/user-admin/user/[:id]',

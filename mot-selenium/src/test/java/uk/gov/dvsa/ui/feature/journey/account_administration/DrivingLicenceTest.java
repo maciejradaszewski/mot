@@ -83,13 +83,13 @@ public class DrivingLicenceTest extends BaseTest {
             dataProvider = "userCantSeeDrivingLicenceSection")
     public void driverLicenceInfoNotVisibleOnUserOwnProfilePage (User loggedInUser) throws IOException, URISyntaxException {
         // Given that I'm on a logged user profile page
-        PersonProfilePage personProfilePage = pageNavigator.navigateToPage(loggedInUser, PersonProfilePage.PATH, PersonProfilePage.class);
+        motUI.userRoute.viewYourProfile(loggedInUser);
 
         // Then the driving licence number element is not displayed
-        assertThat(personProfilePage.drivingLicenceIsDisplayed(), is(false));
+        assertThat(motUI.userRoute.page().drivingLicenceIsDisplayed(), is(false));
 
         // Then the add/edit link is not present
-        assertThat(personProfilePage.addEditDrivingLicenceLinkExists(), is(false));
+        assertThat(motUI.userRoute.page().addEditDrivingLicenceLinkExists(), is(false));
     }
 
     @Test(groups = {"BVT", "Regression"},

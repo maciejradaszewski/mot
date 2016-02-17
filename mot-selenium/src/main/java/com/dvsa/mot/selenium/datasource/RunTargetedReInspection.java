@@ -70,6 +70,7 @@ public class RunTargetedReInspection {
     public class xPathStringsUsedForComparrison {
         public final static String NTSCOREDROPDOWN = "//select[contains(@id, '-NT-FAIL-score')]";
         public final static String VESCOREDROPDOWN = "//select[contains(@id, '-EC-FAIL-score')]";
+        public final static String EESCOREDROPDOWN = "//select[contains(@id, '-ES-FAIL-score')]";
         public final static String NTDEFECTDECISIONS =
                 "/html/body/div/div/div/div[2]/div/div/form/table/tbody/tr[2]/td[3]/select";
     }

@@ -56,8 +56,8 @@ public class TradeUserManagingRolesTests extends BaseTest {
     public void tradeUserCanNavigateFromDeleteRolePageViaLink() throws IOException, URISyntaxException {
 
         //Given I'm logged in as Trade user and I am on Remove role page
-        RemoveRolePage removeRolePage = pageNavigator.navigateToPage(userData.createTester(site.getId()), PersonProfilePage.PATH, PersonProfilePage.class)
-                .clickRolesAndAssociationsLink().removeRole();
+        motUI.userRoute.viewYourProfile(userData.createTester(site.getId()));
+        RemoveRolePage removeRolePage = motUI.userRoute.page().clickRolesAndAssociationsLink().removeRole();
 
         //When I click on Cancel and return to roles and associations link
         removeRolePage.cancelRoleRemoval();
@@ -72,8 +72,8 @@ public class TradeUserManagingRolesTests extends BaseTest {
         vehicleReinspectionWorkflow().startMotTestAsATester(tester, testVehicle);
 
         //Given I'm logged in as Trade user with test in progress and I am on Remove role page
-        RemoveRolePage removeRolePage = pageNavigator.navigateToPage(tester, PersonProfilePage.PATH, PersonProfilePage.class)
-                .clickRolesAndAssociationsLink().removeRole();
+        motUI.userRoute.viewYourProfile(tester);
+        RemoveRolePage removeRolePage = motUI.userRoute.page().clickRolesAndAssociationsLink().removeRole();
 
         //When I click on Confirm button
         removeRolePage.confirmRemoveRole(RolesAndAssociationsPage.class);
@@ -87,8 +87,8 @@ public class TradeUserManagingRolesTests extends BaseTest {
     public void tradeUserCanRemoveOwnTradeRole() throws IOException, URISyntaxException {
 
         //Given I am logged in as Trade user and I am on Remove role page
-        RemoveRolePage removeRolePage = pageNavigator.navigateToPage(tester, PersonProfilePage.PATH, PersonProfilePage.class)
-                .clickRolesAndAssociationsLink().removeRole();
+        motUI.userRoute.viewYourProfile(tester);
+        RemoveRolePage removeRolePage = motUI.userRoute.page().clickRolesAndAssociationsLink().removeRole();
 
         //When I click on Confirm button
         removeRolePage.confirmRemoveRole(RolesAndAssociationsPage.class);
