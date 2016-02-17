@@ -2,14 +2,16 @@ package uk.gov.dvsa.ui.feature.journey.account_administration;
 
 import com.dvsa.mot.selenium.framework.RandomDataGenerator;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.profile.NewPersonProfilePage;
-import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
+import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
 
 import java.io.IOException;
 
@@ -59,15 +61,15 @@ public class ChangePersonEmailTests extends BaseTest {
     @Test(groups = {"BVT", "Regression", "BL-270"},
             testName = "NewProfile",
             description = "Test that Trade user can cancel their email from change email page")
-    public void dvsaUserCanCancelTheirEmailChange() throws IOException {
+    public void tradeUserCanCancelTheirEmailChange() throws IOException {
         //Given I am logged in as a Tester and I am on the My Profile Page
         motUI.userRoute.viewYourProfile(tester);
 
         //When I Cancel my Email address edit
-        motUI.userRoute.page().clickChangeEmailLink().clickCancelButton(true);
+        ProfilePage page = motUI.userRoute.page().clickChangeEmailLink().clickCancelButton(true);
 
         //Then I will be returned to My Profile Page
-        assertThat(motUI.userRoute.page().isPageLoaded(), is(true));
+        assertThat(page.isPageLoaded(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-270"},

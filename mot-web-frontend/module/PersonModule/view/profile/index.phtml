@@ -4,6 +4,7 @@ use Dvsa\Mot\Frontend\PersonModule\Security\PersonProfileGuard;
 use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Constants\FeatureToggle;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 
 /**
  * @var \Dashboard\Model\PersonalDetails  $personalDetails
@@ -13,6 +14,8 @@ use DvsaCommon\Constants\FeatureToggle;
  * @var PersonProfileGuard                $personProfileGuard
  * @var string                            $routeName
  * @var array                             $routeParams
+ * @var string                            $context
+ * @var string                            $userSearchResultUrl
  */
 
 $motAuthorisations = $this->motAuthorisations;
@@ -175,6 +178,11 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
 
 <nav class="content-navigation">
     <ul class="content-navigation__secondary">
+        <?php if($context === ContextProvider::USER_SEARCH_CONTEXT): ?>
+            <li>
+                <a href="<?php echo $this->escapeHtmlAttr($userSearchResultUrl);?>">Cancel and return to search results</a>
+            </li>
+        <?php endif; ?>
         <li>
             <a href="<?php echo $this->escapeHtmlAttr($this->url($userHomeRoute));?>">Return Home</a>
         </li>

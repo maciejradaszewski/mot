@@ -175,6 +175,22 @@ public class DVSAManagingUserRolesTests extends BaseTest {
         assertThat(motUI.searchUser.isUserSearchResultAccurate(vehicleExaminer), is(true));
     }
 
+    @Test(groups = {"Regression", "BL-1336"},
+            description = "Verify that authorised dvsa user can navigate back from user profile to user search for user with valid username")
+    public void dvsaCanSeeSearchParametersAfterNavigatingBackFromUserProfile() throws IOException, URISyntaxException {
+        //Given that I am on Search user page as a Area office 1 user
+        pageNavigator.navigateToPage(areaOffice1User, UserSearchPage.PATH, UserSearchPage.class);
+
+        //When I search for user by username and going back to user search form
+        UserSearchPage userSearchPage = motUI.searchUser.searchForUserByUsername(vehicleExaminer.getUsername(), UserSearchResultsPage.class)
+                .chooseUser(0)
+                .clickCancelAndReturnToSearchResults()
+                .clickBackToUserSearch();
+
+        //Then I should see the user search parameters
+        assertThat(userSearchPage.getUserNameFieldValue(), containsString(vehicleExaminer.getUsername()));
+    }
+
     @Test(groups = {"Regression"}, description = "Verify that authorised dvsa user can search for user and " +
             "get back to user search page with Back to user search link")
     public void dvsaSearchUserByNameAndGetBackToUserSearchPage() throws IOException, URISyntaxException {

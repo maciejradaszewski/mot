@@ -179,7 +179,8 @@ public class ReasonForRejection2Test extends BaseTest {
                 .clickLogout();
     }
 
-    @Test(groups = "Regression")
+    //TODO return test to Regression suite after stabilising
+    @Test(groups = "Unstable")
     public void testClickFailureIsDangerousOnFailSuccessfully_ManualAdvisory() {
 
         AeDetails aeDetails = aeService.createAe(

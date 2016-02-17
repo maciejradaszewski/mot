@@ -7,14 +7,11 @@ import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.ui.BaseTest;
-import uk.gov.dvsa.ui.pages.profile.ChangeNamePage;
-import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
+
+import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-
-
-import java.io.IOException;
 
 public class ChangePersonNameTests extends BaseTest {
 

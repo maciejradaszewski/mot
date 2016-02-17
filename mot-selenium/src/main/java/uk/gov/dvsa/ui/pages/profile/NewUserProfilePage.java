@@ -2,6 +2,7 @@ package uk.gov.dvsa.ui.pages.profile;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.ChangeEmailDetailsPage;
@@ -10,6 +11,8 @@ import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
+import uk.gov.dvsa.ui.pages.dvsa.UserSearchResultsPage;
+import uk.gov.dvsa.ui.pages.vts.SearchResultsPage;
 
 public class NewUserProfilePage extends ProfilePage {
     private static final String PAGE_TITLE = "User profile";
@@ -34,6 +37,7 @@ public class NewUserProfilePage extends ProfilePage {
     @FindBy(css = "#date-of-birth a") protected WebElement changeDOBLink;
     @FindBy(css = "#email-address") private WebElement userEmail;
     @FindBy(css = "#drivingLicence span") protected WebElement personDrivingLicenceRegion;
+    @FindBy(xpath = "(//*[@class='content-navigation__secondary']//a)[1]") protected WebElement cancelAndReturnToSearchResults;
 
     public NewUserProfilePage(MotAppDriver driver) {
         super(driver, PAGE_TITLE);
@@ -143,6 +147,12 @@ public class NewUserProfilePage extends ProfilePage {
     public ChangeDateOfBirthPage clickChangeDOBLink() {
         changeDOBLink.click();
         return new ChangeDateOfBirthPage(driver);
+    }
+
+    @Override
+    public UserSearchResultsPage clickCancelAndReturnToSearchResults() {
+        cancelAndReturnToSearchResults.click();
+        return MotPageFactory.newPage(driver, UserSearchResultsPage.class);
     }
 
     @Override

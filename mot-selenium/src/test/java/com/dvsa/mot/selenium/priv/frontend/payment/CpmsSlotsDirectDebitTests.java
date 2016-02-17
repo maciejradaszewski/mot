@@ -22,7 +22,8 @@ public class CpmsSlotsDirectDebitTests extends BaseTest {
         return aedmLogin;
     }
 
-    @Test(groups = {"Regression", "SPMS-147"}) public void setUpDirectDebitTest() {
+    //TODO return test to Regression suite after stabilising
+    @Test(groups = {"Unstable", "SPMS-147"}) public void setUpDirectDebitTest() {
         Login aedmLogin = createAedmAndReturnAedmLogin("DirectDebitSetup");
         DirectDebitConfirmationPage directDebitConfirmationPage = DirectDebitConfirmationPage
                 .setupDirectDebitSuccessfully(driver, aedmLogin, Payments.VALID_PAYMENTS, Person.PERSON_1, Address.ADDRESS_ADDRESS1);
@@ -37,7 +38,8 @@ public class CpmsSlotsDirectDebitTests extends BaseTest {
                 authorisedExaminerOverviewPage.isManageDirectDebitLinkVisible(), is(true));
     }
 
-    @Test(groups = {"Regression", "SPMS-43"}) public void cancelDirectDebitTest() {
+    //TODO return test to Regression suite after stabilising
+    @Test(groups = {"Unstable", "SPMS-43"}) public void cancelDirectDebitTest() {
         Login aedmLogin = createAedmAndReturnAedmLogin("CancelDirectDebit");
         AuthorisedExaminerOverviewPage authorisedExaminerOverviewPage = DirectDebitCancelConfirmationPage
                 .loginAndCancelExistingDirectDebit(driver, aedmLogin, Payments.VALID_PAYMENTS, Person.PERSON_1, Address.ADDRESS_ADDRESS1)

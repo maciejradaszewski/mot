@@ -152,7 +152,8 @@ public class VehicleConfirmationTest extends BaseTest {
                 is(true));
     }
 
-    @Test(groups = {"Regression", "VM-2197", "Sprint 21", "MOT Testing"},
+    //TODO return test to Regression suite after stabilising
+    @Test(groups = {"Unstable", "VM-2197", "Sprint 21", "MOT Testing"},
             description = "User search a vehicle which is not in the VTR table.All DVLA V5 info is imported in the confirmation page in order to create a new register in VTR table with all DVSA V5 data")
     public void testDVLAdataIsImportedWhenSearchVehicleWithoutVTRRecord() {
 

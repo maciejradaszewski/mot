@@ -12,7 +12,8 @@ import static org.hamcrest.core.Is.is;
 
 public class EventHistoryViewTests extends BaseTest {
 
-    @Test(groups = {"VM-5153", "VM-5154", "BVT", "Regression"})
+    //TODO return test to Regression suite after stabilising
+    @Test(groups = {"VM-5153", "VM-5154", "Unstable"})
     public void viewEventHistory() throws IOException {
         //Given I create Test AE
         AeDetails aeDetails = motApi.aeData.createNewAe("Test AE", 1);
