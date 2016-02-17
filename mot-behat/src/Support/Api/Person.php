@@ -15,6 +15,7 @@ class Person extends MotApi
     const PATH_NAME = '/name';
     const PATH_DATE_OF_BIRTH = '/date-of-birth';
     const PATH_LICENCE_UPDATE = '/driving-licence';
+    const PATH_TELEPHONE_NUMBER = '/phone-number';
 
     public function getPersonMotTestingClasses($token, $user_id)
     {
@@ -183,6 +184,22 @@ class Person extends MotApi
             MotApi::METHOD_POST,
             str_replace('{user_id}', $userId, self::PATH.self::PATH_DATE_OF_BIRTH),
             $data
+        );
+    }
+
+    /**
+     * @param string      $token
+     * @param int|string  $userId
+     * @param array       $telephoneData
+     * @return \Dvsa\Mot\Behat\Support\Response
+     */
+    public function changeTelephoneNumber($token, $userId, array $telephoneData)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_PUT,
+            str_replace('{user_id}', $userId, self::PATH.self::PATH_TELEPHONE_NUMBER),
+            $telephoneData
         );
     }
 }

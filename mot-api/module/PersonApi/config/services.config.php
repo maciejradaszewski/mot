@@ -37,6 +37,8 @@ use PersonApi\Service\PasswordExpiryNotificationService;
 use PersonApi\Factory\Service\PasswordExpiryNotificationServiceFactory;
 use PersonApi\Service\LicenceDetailsService;
 use PersonApi\Factory\Service\LicenceDetailsServiceFactory;
+use PersonApi\Service\TelephoneService;
+use PersonApi\Factory\Service\TelephoneServiceFactory;
 
 return [
     'factories'  => [
@@ -58,6 +60,7 @@ return [
         PersonTradeRoleService::class                    => PersonTradeRoleServiceFactory::class,
         PersonNameService::class                         => PersonNameServiceFactory::class,
         PersonDateOfBirthService::class                  => PersonDateOfBirthServiceFactory::class,
+        TelephoneService::class                          => TelephoneServiceFactory::class
     ],
     'invokables' => [
         PersonGenerator::class          => PersonGenerator::class,

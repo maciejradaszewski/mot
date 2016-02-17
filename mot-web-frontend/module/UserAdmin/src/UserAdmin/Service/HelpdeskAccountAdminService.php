@@ -121,6 +121,13 @@ class HelpdeskAccountAdminService
         return $this->userAdminMapper->deleteDrivingLicence($personId);
     }
 
+    /**
+     * @param $personId
+     * @param $firstName
+     * @param $middleName
+     * @param $lastName
+     * @return string|\Exception
+     */
     public function updateName($personId, $firstName, $middleName, $lastName)
     {
         return $this->userAdminMapper->updatePersonName($personId, $firstName, $middleName, $lastName);
@@ -129,5 +136,14 @@ class HelpdeskAccountAdminService
     public function updateDateOfBirth($personId, $data)
     {
         return $this->userAdminMapper->updateDateOfBirth($personId, $data);
+    }
+
+    /**
+     * @param $personId
+     * @param $newPhoneNumber
+     */
+    public function editTelephoneNumber($personId, $newPhoneNumber)
+    {
+        $this->userAdminMapper->updatePersonTelephoneNumber($personId, $newPhoneNumber);
     }
 }

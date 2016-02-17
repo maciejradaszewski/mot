@@ -62,6 +62,10 @@ public abstract class ProfilePage extends Page {
         return null;
     }
 
+    public ChangeTelephoneDetailsPage clickChangeTelephoneLink(){
+        return null;
+    }
+
     public String getDrivingLicenceRegionForPerson() {
         return null;
     }

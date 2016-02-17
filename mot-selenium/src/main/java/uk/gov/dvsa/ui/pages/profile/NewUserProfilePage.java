@@ -5,6 +5,7 @@ import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.ChangeEmailDetailsPage;
+import uk.gov.dvsa.ui.pages.ChangeTelephoneDetailsPage;
 import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
@@ -28,6 +29,8 @@ public class NewUserProfilePage extends ProfilePage {
     @FindBy(id = "dateOfBirth") private WebElement dateOfBirth;
     @FindBy(css = "#drivingLicence a") protected WebElement changeDrivingLicenceLink;
     @FindBy(css = "#email-address a") protected WebElement changeEmailLink;
+    @FindBy(css = "#telephone-number a") protected WebElement changeTelephoneLink;
+    @FindBy(css = "#telephone-number") protected WebElement userTelephone;
     @FindBy(css = "#date-of-birth a") protected WebElement changeDOBLink;
     @FindBy(css = "#email-address") private WebElement userEmail;
     @FindBy(css = "#drivingLicence span") protected WebElement personDrivingLicenceRegion;
@@ -148,8 +151,22 @@ public class NewUserProfilePage extends ProfilePage {
         return new ChangeEmailDetailsPage(driver);
     }
 
+    @Override
+    public ChangeTelephoneDetailsPage clickChangeTelephoneLink() {
+        changeTelephoneLink.click();
+        return new ChangeTelephoneDetailsPage(driver);
+    }
+
     public boolean verifyEmailIsChanged(String email) {
-        return userEmail.getText().contains(email);
+        return userTelephone.getText().contains(email);
+    }
+
+    public boolean verifyTelephoneChanged(String telephone) {
+        return userTelephone.getText().contains(telephone);
+    }
+
+    public boolean verifyConfirmationMessage(String message) {
+        return messageSuccess.getText().contains(message);
     }
 
     public boolean isPageLoaded() {

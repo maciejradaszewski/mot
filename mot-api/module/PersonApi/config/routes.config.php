@@ -24,6 +24,7 @@ use PersonApi\Controller\UpdatePersonNameController;
 use PersonApi\Controller\UserStatsController;
 use UserApi\SpecialNotice\Controller\SpecialNoticeController;
 use PersonApi\Controller\UpdatePersonDateOfBirthController;
+use PersonApi\Controller\EditTelephoneController;
 
 return [
     'routes' => [
@@ -281,6 +282,16 @@ return [
                         'route'    => '/date-of-birth',
                         'defaults' => [
                             'controller' => UpdatePersonDateOfBirthController::class,
+                        ],
+                    ],
+                    'may_terminate' => true,
+                ],
+                'update-phone-number' => [
+                    'type' => 'segment',
+                    'options' => [
+                        'route' => '/phone-number',
+                        'defaults' => [
+                            'controller' => EditTelephoneController::class,
                         ],
                     ],
                     'may_terminate' => true,

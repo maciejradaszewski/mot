@@ -6,6 +6,7 @@ import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.ChangeEmailDetailsPage;
+import uk.gov.dvsa.ui.pages.ChangeTelephoneDetailsPage;
 import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
 
@@ -23,6 +24,9 @@ public class NewPersonProfilePage extends ProfilePage {
     @FindBy(id = "roles-and-associations") private WebElement rolesAndAssociationsLink;
     @FindBy(css = "#email-address a") private WebElement changeEmailLink;
     @FindBy(css = "#email-address") private WebElement userEmail;
+    @FindBy(css = "#telephone-number") private WebElement userTelephone;
+    @FindBy(css = "#telephone-number a") private WebElement userTelephoneLink;
+    @FindBy(css = "#validation-message--success") private WebElement successMessage;
 
     private static String DVSA_ROLES = "dvsa_roles";
     private static String QUALIFICATION_STATUS = "qualification_status";
@@ -94,8 +98,21 @@ public class NewPersonProfilePage extends ProfilePage {
         return new ChangeEmailDetailsPage(driver);
     }
 
+    public ChangeTelephoneDetailsPage clickChangeTelephoneLink() {
+        userTelephoneLink.click();
+        return new ChangeTelephoneDetailsPage(driver);
+    }
+
     public boolean verifyEmailIsChanged(String email) {
         return userEmail.getText().contains(email);
+    }
+
+    public boolean verifyTelephoneIsChanged(String telephone) {
+        return userTelephone.getText().contains(telephone);
+    }
+
+    public boolean verifyConfirmationMessage(String message) {
+        return successMessage.getText().contains(message);
     }
 
     public boolean isPageLoaded() {
