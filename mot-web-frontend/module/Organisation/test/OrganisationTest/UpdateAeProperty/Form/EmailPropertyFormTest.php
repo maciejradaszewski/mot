@@ -83,6 +83,6 @@ class EmailPropertyFormTest extends \PHPUnit_Framework_TestCase
             $length--;
         }
 
-        return $email . "@email.com";
+        return $email . '@' . EmailAddressValidator::TEST_DOMAIN;
     }
 }
