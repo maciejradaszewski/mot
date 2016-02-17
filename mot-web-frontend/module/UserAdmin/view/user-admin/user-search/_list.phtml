@@ -26,7 +26,10 @@ use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
                 echo $this->isFeatureEnabled('new_person_profile')
                     ? $this->url('newProfileUserAdmin',
                         [
-                            'id' => $user->getPersonId()
+                            'id' => $user->getPersonId(),
+                        ],
+                        [
+                            'query' => $resultsQueryArray,
                         ]
                     )
                     : $helper->getProfileUrl($user->getPersonId()) . '?' . http_build_query($resultsQueryArray); ?>">

@@ -139,6 +139,8 @@ class PersonProfileController extends AbstractAuthActionController
             'userHomeRoute'             => UserHomeController::ROUTE,
             'routeName'                 => $routeName,
             'routeParams'               => $routeParams,
+            'context'                   => $context,
+            'userSearchResultUrl'       => $this->getUserSearchResultUrl(),
 
         ]);
     }
@@ -241,7 +243,11 @@ class PersonProfileController extends AbstractAuthActionController
             /*
              * User search context.
              */
-            $userSearchUrl = $this->url()->fromRoute('user_admin/user-search');
+            $userSearchUrl = $this->url()->fromRoute(
+                'user_admin/user-search',
+                [],
+                ['query' => $this->getRequest()->getQuery()->toArray()]
+            );
             $breadcrumbs += [self::CONTENT_HEADER_TYPE__USER_SEARCH => $userSearchUrl];
             $breadcrumbs += [$personalDetails->getFullName() => ''];
         } elseif (ContextProvider::YOUR_PROFILE_CONTEXT === $context) {
@@ -366,5 +372,13 @@ class PersonProfileController extends AbstractAuthActionController
 
                 return ['authorisedExaminerId' => $aeId, 'id' => $userId];
         }
+    }
+
+    /**
+     * @return string|null
+     */
+    private function getUserSearchResultUrl()
+    {
+        return $this->url()->fromRoute('user_admin/user-search-results', [], [ 'query' => $this->getRequest()->getQuery()->toArray()]);
     }
 }

@@ -69,6 +69,10 @@ public class UserSearchPage extends Page {
         return this;
     }
 
+    public String getUserNameFieldValue() {
+        return usernameInputField.getAttribute("value");
+    }
+
     public boolean isErrorMessageDisplayed() {
         return errorMessage.isDisplayed();
     }

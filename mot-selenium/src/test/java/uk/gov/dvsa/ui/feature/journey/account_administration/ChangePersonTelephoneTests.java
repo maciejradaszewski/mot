@@ -1,6 +1,5 @@
 package uk.gov.dvsa.ui.feature.journey.account_administration;
 
-import com.dvsa.mot.selenium.framework.RandomDataGenerator;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
