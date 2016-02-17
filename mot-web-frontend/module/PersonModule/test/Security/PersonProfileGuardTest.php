@@ -320,6 +320,60 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Change Telephone Number.
+     *
+     * Rule: When ANYONE View 'Your profile' OR When SM, SU, AO1, AO2, VE, CSM, CSCO Views ANYONE
+     *
+     * @return array
+     */
+    public function changeTelephoneNumberProvider()
+    {
+        return [
+            [
+                // When ANYONE View 'Your profile': Pass
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, []],
+                [self::LOGGED_IN_PERSON_ID, []],
+                true,
+            ],
+            [
+                // When ANYONE Without EDIT-TELEPHONE-NUMBER Permission View THEMSELVES With NO-CONTEXT: Fail
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, []],
+                [self::LOGGED_IN_PERSON_ID, []],
+                false,
+            ],
+            [
+                // When SM, SU, AO1, AO2, VE, CSM, CSCO Views ANYONE: Pass
+                ContextProvider::NO_CONTEXT,
+                [self::LOGGED_IN_PERSON_ID, [PermissionInSystem::EDIT_TELEPHONE_NUMBER]],
+                [self::TARGET_PERSON_ID, []],
+                true,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider changeTelephoneNumberProvider
+     *
+     * @param string $context
+     * @param array  $loggedInPerson
+     * @param array  $targetPerson
+     * @param $result
+     */
+    public function testChangeTelephoneNumber($context, array $loggedInPerson, array $targetPerson, $result)
+    {
+        $loggedInPersonPermissions = $loggedInPerson[1];
+
+        $guard = $this
+            ->withPermissions($loggedInPersonPermissions)
+            ->withTargetPerson($targetPerson[0], $targetPerson[1])
+            ->withContext($context)
+            ->createPersonProfileGuard();
+        $this->assertEquals($result, $guard->canChangeTelephoneNumber());
+    }
+
+    /**
      * Change Driving licence.
      *
      * Rule: When SM, SU, AO1, AO2, VE View AEDM, AED, SITE-M, SITE-A, TESTER, NO-ROLES.

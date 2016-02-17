@@ -147,9 +147,13 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
             Telephone
         </th>
         <td class="table-summary__value" id="telephone-number">
-            <?php echo !empty($personalDetails->getPhoneNumber()) ? $this->escapeHtml($personalDetails->getPhoneNumber())
+            <?php echo (null !== $personalDetails->getPhoneNumber() && '' !== $personalDetails->getPhoneNumber()) ? $this->escapeHtml($personalDetails->getPhoneNumber())
                 : '<span class="table-summary__meta">Unknown</span>';
-            $personalDetails->getRoles() ?>
+                if ($personProfileGuard->canChangeTelephoneNumber()) {
+                    $url = $this->personProfileUrl()->fromPersonProfile('change-telephone-number');
+                    echo '<a href="' . $url .'" class="table-summary__action" title="Change Telephone">Change<span class="visuallyhidden"> Telephone</span>';
+                }
+            ?>
         </td>
     </tr>
     </tbody>

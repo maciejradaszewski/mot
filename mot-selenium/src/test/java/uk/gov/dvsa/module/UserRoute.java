@@ -4,10 +4,7 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.helper.ConfigHelper;
 import uk.gov.dvsa.helper.FormCompletionHelper;
-import uk.gov.dvsa.ui.pages.ChangeEmailDetailsPage;
-import uk.gov.dvsa.ui.pages.HomePage;
-import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.ProfilePage;
+import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.dvsa.UserSearchProfilePage;
 import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
 import uk.gov.dvsa.ui.pages.profile.*;
@@ -25,6 +22,8 @@ public class UserRoute {
 
     private static final String EMAIL_MUST_BE_VALID_MESSAGE = "must be a valid email address";
     private static final String EMAIL_MUST_MATCH_MESSAGE = "the email addresses you have entered don't match";
+
+    private static final String TELEPHONE_TOO_LARGE_MESSAGE = "Phone number - must be 24 characters or less";
 
     public UserRoute(PageNavigator pageNavigator) {
         this.pageNavigator = pageNavigator;
@@ -91,6 +90,20 @@ public class UserRoute {
         }
     }
 
+    public <T extends Page> T changeTelephone(String telephone, String value) {
+        profilePage.clickChangeTelephoneLink().fillTel(telephone);
+        switch (value) {
+            case "INVALID_INPUT":
+                return (T) getTelephoneChangePage().clickSubmitButton(ChangeTelephoneDetailsPage.class);
+            case "YOUR_PROFILE":
+                return (T) getTelephoneChangePage().clickSubmitButton(NewPersonProfilePage.class);
+            case "PERSON_PROFILE":
+                return (T) getTelephoneChangePage().clickSubmitButton(NewUserProfilePage.class);
+            default:
+                throw new PageInstanceNotFoundException("Page instantiation exception");
+        }
+    }
+
     public boolean isTesterQualificationStatusDisplayed() {
         return profilePage.isTesterQualificationStatusDisplayed();
     }
@@ -127,6 +140,15 @@ public class UserRoute {
         }
     }
 
+    public boolean isValidationMessageOnChangeTelephonePageDisplayed(String warningMessage) {
+        switch (warningMessage) {
+            case "TELEPHONE_TOO_LARGE":
+                return getTelephoneChangePage().getValidationMessage().equals(TELEPHONE_TOO_LARGE_MESSAGE);
+            default:
+                return false;
+        }
+    }
+
     public ProfilePage page(){
         return profilePage;
     }
@@ -137,5 +159,9 @@ public class UserRoute {
 
     private ChangeEmailDetailsPage getEmailChangePage() {
         return new ChangeEmailDetailsPage(pageNavigator.getDriver());
+    }
+
+    private ChangeTelephoneDetailsPage getTelephoneChangePage() {
+        return new ChangeTelephoneDetailsPage(pageNavigator.getDriver());
     }
 }

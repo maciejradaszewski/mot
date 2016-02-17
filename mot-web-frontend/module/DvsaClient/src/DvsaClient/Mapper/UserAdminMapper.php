@@ -3,6 +3,7 @@
 namespace DvsaClient\Mapper;
 
 use Application\Data\ApiPersonalDetails;
+use Dvsa\Mot\Frontend\PersonModule\Controller\ChangeTelephoneController;
 use DvsaCommon\Dto\Person\PersonContactDto;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Dto\Person\SearchPersonResultDto;
@@ -152,6 +153,13 @@ class UserAdminMapper extends DtoMapper
         return $this->client->delete($url);
     }
 
+    /**
+     * @param $personId
+     * @param $firstName
+     * @param $middleName
+     * @param $lastName
+     * @return mixed|string
+     */
     public function updatePersonName($personId, $firstName, $middleName, $lastName)
     {
         $url = UserAdminUrlBuilder::personName($personId);
@@ -175,5 +183,21 @@ class UserAdminMapper extends DtoMapper
         $url = UserAdminUrlBuilder::personDayOfBirth($personId);
 
         return $this->client->post($url, $data);
+    }
+
+    /**
+     * @param $personId
+     * @param $newPhoneNumber
+     * @return mixed|string
+     */
+    public function updatePersonTelephoneNumber($personId, $newPhoneNumber)
+    {
+        $url = UserAdminUrlBuilder::personTelephone($personId);
+
+        $this->client->put(
+            $url, [
+                ChangeTelephoneController::PHONE_NUMBER_KEY => $newPhoneNumber
+            ]
+        );
     }
 }

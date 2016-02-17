@@ -11,6 +11,7 @@ class UserAdminUrlBuilder extends AbstractUrlBuilder
     const PERSON_DAY_OF_BIRTH       = 'person/:personId/date-of-birth';
     const LICENCE_DETAILS           = 'person/:personId/driving-licence';
     const PERSON_NAME               = 'person/:personId/name';
+    const PERSON_PHONE              = 'person/:personId/phone-number';
     const SECURITY_QUESTION         = 'security-question';
     const SECURITY_QUESTION_CHECK   = '/check/:questionId/:personId';
     const SECURITY_QUESTION_GET     = '/get/:questionId/:personId';
@@ -25,6 +26,7 @@ class UserAdminUrlBuilder extends AbstractUrlBuilder
         self::PERSON_NAME => '',
         self::PERSON_DAY_OF_BIRTH => '',
         self::LICENCE_DETAILS => '',
+        self::PERSON_PHONE => '',
     ];
 
     public function __construct()
@@ -45,6 +47,11 @@ class UserAdminUrlBuilder extends AbstractUrlBuilder
     public static function personName($personId)
     {
         return self::of()->appendRoutesAndParams(self::PERSON_NAME)->routeParam('personId', $personId);
+    }
+
+    public static function personTelephone($personId)
+    {
+        return self::of()->appendRoutesAndParams(self::PERSON_PHONE)->routeParam('personId', $personId);
     }
 
     /**

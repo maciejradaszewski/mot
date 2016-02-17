@@ -134,6 +134,7 @@ final class PermissionInSystem
     const MANAGE_USER_ACCOUNTS = 'MANAGE-USER-ACCOUNTS';
     const EDIT_PERSON_NAME = 'EDIT-PERSON-NAME';
     const EDIT_PERSON_DATE_OF_BIRTH = 'EDIT-PERSON-DATE-OF-BIRTH';
+    const EDIT_TELEPHONE_NUMBER = 'EDIT-TELEPHONE-NUMBER';
 
     /**
      * @return array
@@ -264,6 +265,7 @@ final class PermissionInSystem
             self::MANAGE_USER_ACCOUNTS,
             self::EDIT_PERSON_NAME,
             self::EDIT_PERSON_DATE_OF_BIRTH,
+            self::EDIT_TELEPHONE_NUMBER,
         ];
     }
 }

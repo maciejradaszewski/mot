@@ -9,6 +9,7 @@ use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Enum\PersonContactTypeCode;
 use DvsaCommonApi\Service\Exception\DataValidationException;
 use DvsaEntities\Entity\Email;
+use DvsaEntities\Entity\Phone;
 use DvsaEntities\Repository\PersonContactRepository;
 use OrganisationApi\Service\Mapper\PersonContactMapper;
 use PersonApi\Service\Validator\PersonalDetailsValidator;

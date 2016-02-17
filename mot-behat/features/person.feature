@@ -174,12 +174,12 @@ Feature: Person
     When I change a person date of birth to 20 10 1970
     Then The person's date of birth should be updated
 
-  Scenario: A user with permission to change date of birth cannot change their own nam
+  Scenario: A user with permission to change date of birth cannot change their own date of birth
     Given I am logged in as a Area Office 1
     When I change my date of birth to 20-10-1970
     Then I should receive a Forbidden response
 
-  Scenario: A user withouth permission to change date of birth cannot change date of birth of a person
+  Scenario: A user without permission to change date of birth cannot change date of birth of another person
     Given I am logged in as a Tester
     When I change a person date of birth to 20 10 1970
     Then I should receive a Forbidden response
@@ -212,6 +212,30 @@ Feature: Person
     Given I am logged in as a Customer Service Manager
     And I Search for a Invalid User
     Then the Users data will not be returned
+
+  @telephone
+  Scenario: A user with permission can add a valid telephone number to a user
+    Given I am logged in as an Area Office User
+    When I change a person's telephone number to '1234567890'
+    Then the person's telephone number should be updated
+
+  @telephone
+  Scenario: A user with permission cannot add an invalid telephone number to a user
+    Given I am logged in as an Area Office User
+    When I change a person's telephone number to '1234567890123456789012345'
+    Then the person's telephone number should not be updated
+
+  @telephone
+  Scenario: A user can update their telephone number to a valid number
+    Given I am logged in as a Tester
+    When I change my own telephone number to '1234567890'
+    Then my telephone number should be updated
+
+  @telephone
+  Scenario: A user cannot update their telephone number to an invalid number
+    Given I am logged in as a Tester
+    When I change my own telephone number to '1234567890123456789012345'
+    Then my telephone number should not be updated
 
   Scenario Outline: Tester performance dashboard daily stats are calculated
     Given I am logged in as a Tester

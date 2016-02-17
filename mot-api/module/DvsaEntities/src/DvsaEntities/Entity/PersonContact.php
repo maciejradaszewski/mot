@@ -53,6 +53,12 @@ class PersonContact extends Entity
      */
     private $type;
 
+    /**
+     * PersonContact constructor.
+     * @param \DvsaEntities\Entity\ContactDetail $contactDetail
+     * @param PersonContactType                  $type
+     * @param Person                             $person
+     */
     public function __construct(ContactDetail $contactDetail, PersonContactType $type, Person $person)
     {
         $this->contactDetail = $contactDetail;
@@ -60,12 +66,20 @@ class PersonContact extends Entity
         $this->person = $person;
     }
 
+    /**
+     * @param \DvsaEntities\Entity\ContactDetail $contactDetail
+     * @return $this
+     */
     public function setDetails(ContactDetail $contactDetail)
     {
         $this->contactDetail = $contactDetail;
 
         return $this;
     }
+
+    /**
+     * @return \DvsaEntities\Entity\ContactDetail
+     */
     public function getDetails()
     {
         return $this->contactDetail;

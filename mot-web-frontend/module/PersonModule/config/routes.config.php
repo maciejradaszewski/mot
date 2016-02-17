@@ -7,6 +7,7 @@
 
 use Dashboard\Factory\Controller\SecurityQuestionControllerFactory;
 use Dvsa\Mot\Frontend\PersonModule\Controller\ChangeNameController;
+use Dvsa\Mot\Frontend\PersonModule\Controller\ChangeTelephoneController;
 use Dvsa\Mot\Frontend\PersonModule\Controller\PersonProfileController;
 use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use UserAdmin\Factory\Controller\EmailAddressControllerFactory;
@@ -76,6 +77,17 @@ return [
                                 ],
                             ],
                         ],
+                    ],
+                    'change-telephone-number' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/telephone/change',
+                            'defaults' => [
+                                'controller' => ChangeTelephoneController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
                     ],
                     'trade-roles'              => [
                         'type'          => 'segment',
@@ -492,6 +504,17 @@ return [
                         ],
                         'may_terminate' => true,
                     ],
+                    'change-telephone-number' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/telephone/change',
+                            'defaults' => [
+                                'controller' => ChangeTelephoneController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
                 ],
             ],
             ContextProvider::VTS_PARENT_ROUTE => [
@@ -679,6 +702,17 @@ return [
                         ],
                         'may_terminate' => true,
                     ],
+                    'change-telephone-number' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/telephone/change',
+                            'defaults' => [
+                                'controller' => ChangeTelephoneController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
                 ],
             ],
             ContextProvider::AE_PARENT_ROUTE => [
@@ -861,6 +895,17 @@ return [
                             'route' => '/name/change',
                             'defaults' => [
                                 'controller' => ChangeNameController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
+                    'change-telephone-number' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/telephone/change',
+                            'defaults' => [
+                                'controller' => ChangeTelephoneController::class,
                                 'action' => 'index',
                             ],
                         ],

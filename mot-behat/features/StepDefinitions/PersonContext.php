@@ -143,6 +143,16 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
      */
     private $updateDateOfBirthResponse;
 
+    /**
+     * @var array
+     */
+    private $newTelephoneNumber;
+
+    /**
+     * @var Response
+     */
+    private $updateTelephoneNumberResponse;
+
     private $ae;
 
     /**
@@ -1268,6 +1278,51 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
 
         $token = $this->sessionContext->getCurrentAccessToken();
         $this->updateDateOfBirthResponse = $this->person->changeDateOfBirth($token, $this->sessionContext->getCurrentUserId(), $this->newDateOfBirth);
+    }
+
+    /**
+     * @When /^I change a person's telephone number to (.*)$/
+     * @param $telephoneNumber
+     */
+    public function iChangeAPersonsTelephoneNumberTo($telephoneNumber)
+    {
+        $this->newTelephoneNumber = ['personTelephone' => $telephoneNumber];
+        $userService = $this->testSupportHelper->getUserService();
+        $this->personLoginData = $userService->create([]);
+
+        $token = $this->sessionContext->getCurrentAccessToken();
+        $this->updateTelephoneNumberResponse = $this->person->changeTelephoneNumber($token, $this->getPersonUserId(), $this->newTelephoneNumber);
+    }
+
+    /**
+     * @When /^I change my own telephone number to (.*)$/
+     * @param $telephoneNumber
+     */
+    public function iChangeMyTelephoneNumberTo($telephoneNumber)
+    {
+        $this->newTelephoneNumber = ['personTelephone' => $telephoneNumber];
+
+        $token = $this->sessionContext->getCurrentAccessToken();
+        $this->updateTelephoneNumberResponse = $this->person->changeTelephoneNumber($token, $this->sessionContext->getCurrentUserId(), $this->newTelephoneNumber);
+    }
+
+    /**
+     * @Then /^the person's telephone number should be updated$/
+     * @Then /^my telephone number should be updated$/
+     */
+    public function telephoneNumberShouldBeUpdated()
+    {
+        PHPUnit::assertSame(200, $this->updateTelephoneNumberResponse->getStatusCode());
+    }
+
+    /**
+     * @Then /^the person's telephone number should not be updated$/
+     * @Then /^my telephone number should not be updated$/
+     */
+    public function telephoneNumberShouldNotBeUpdated()
+    {
+        PHPUnit::assertSame(400, $this->updateTelephoneNumberResponse->getStatusCode());
+        PHPUnit::assertNotEmpty($this->updateTelephoneNumberResponse->getBody()['errors']);
     }
 
     /**

@@ -204,7 +204,17 @@ class PersonDetails
                         'contactType' => $phoneContactType,
                     ]
                 );
+
             $this->phone = ($phone instanceof Phone) ? ($phone->getNumber() ?: null) : null;
+            if ($phone instanceof Phone) {
+                if (null === $phone->getNumber()) {
+                    $this->phone = null;
+                } else {
+                    $this->phone = $phone->getNumber();
+                }
+            } else {
+                $this->phone = null;
+            }
         } else {
             $this->phone = null;
         }

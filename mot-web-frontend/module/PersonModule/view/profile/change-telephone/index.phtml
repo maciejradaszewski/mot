@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * @var string $phoneNumber
+ * @var bool   $viewingOwnProfile
+ */
+
+$errorMessages = $this->layout()->flashMessenger->getErrorMessages();
+echo $this->partial(
+    'partial/forms/errorMessagePageHeader.phtml',['messages' => $errorMessages]);
+?>
+<form method="POST">
+    <?php echo $this->csrfToken(); ?>
+    <fieldset>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id'           => 'personTelephone',
+                'name'         => 'personTelephone',
+                'errorMessage' => isset($errors['personTelephone']) ? $errors['personTelephone'] : null,
+                'label'        => 'Telephone number',
+                'value'        => $phoneNumber,
+                'type'         => 'text'
+            ]);
+        ?>
+    </fieldset>
+    <?php echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id' => 'submit',
+            'value' => 'Change telephone number',
+        ]
+    ); ?>
+    <ul class="content-navigation__secondary">
+        <li>
+            <a id="cancel-and-return" href="<?php
+            echo $this->personProfileUrl()->toPersonProfile();
+            ?>"><?php echo $viewingOwnProfile ? "Cancel and return to your profile" : "Cancel and return to user profile" ?></a>
+        </li>
+    </ul>
+</form>

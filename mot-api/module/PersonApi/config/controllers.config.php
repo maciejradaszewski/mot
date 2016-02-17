@@ -2,6 +2,7 @@
 
 use PersonApi\Controller\AuthorisedExaminerController;
 use PersonApi\Controller\DashboardController;
+use PersonApi\Controller\EditTelephoneController;
 use PersonApi\Controller\MotTestingAuthorisationController;
 use PersonApi\Controller\PasswordController;
 use PersonApi\Controller\PasswordExpiryController;
@@ -25,6 +26,7 @@ use PersonApi\Controller\UpdatePersonDateOfBirthController;
 use PersonApi\Controller\UserStatsController;
 use PersonApi\Factory\Controller\AuthorisedExaminerControllerFactory;
 use PersonApi\Factory\Controller\DashboardControllerFactory;
+use PersonApi\Factory\Controller\EditTelephoneControllerFactory;
 use PersonApi\Factory\Controller\MotTestingAuthorisationControllerFactory;
 use PersonApi\Factory\Controller\PasswordControllerFactory;
 use PersonApi\Factory\Controller\PasswordExpiryControllerFactory;
@@ -42,14 +44,15 @@ use PersonApi\Factory\Controller\PersonSiteCountControllerFactory;
 use PersonApi\Factory\Controller\PersonTradeRoleControllerFactory;
 use PersonApi\Factory\Controller\ResetClaimAccountControllerFactory;
 use PersonApi\Factory\Controller\ResetPinControllerFactory;
+use PersonApi\Factory\Controller\UpdateLicenceDetailsControllerFactory;
 use PersonApi\Factory\Controller\UpdatePersonNameControllerFactory;
 use PersonApi\Factory\Controller\UpdatePersonDateOfBirthControllerFactory;
 use PersonApi\Factory\Controller\UserStatsControllerFactory;
-use PersonApi\Factory\Controller\UpdateLicenceDetailsControllerFactory;
 
 return [
     'factories' => [
         AuthorisedExaminerController::class        => AuthorisedExaminerControllerFactory::class,
+        EditTelephoneController::class             => EditTelephoneControllerFactory::class,
         DashboardController::class                 => DashboardControllerFactory::class,
         UpdateLicenceDetailsController::class      => UpdateLicenceDetailsControllerFactory::class,
         MotTestingAuthorisationController::class   => MotTestingAuthorisationControllerFactory::class,

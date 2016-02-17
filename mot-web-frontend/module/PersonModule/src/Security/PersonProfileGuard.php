@@ -176,6 +176,18 @@ class PersonProfileGuard
         return $this->isViewingOwnProfile()
             || $this->authorisationService->isGranted(PermissionInSystem::PROFILE_EDIT_OTHERS_EMAIL_ADDRESS);
     }
+    /**
+     * Change Telephone.
+     *
+     * Rule: When ANYONE View 'Your profile' OR When SM, SU, AO1, AO2, VE, CSM, CSCO Views ANYONE
+     *
+     * @return bool
+     */
+    public function canChangeTelephoneNumber()
+    {
+        return $this->isViewingOwnProfile()
+        || $this->authorisationService->isGranted(PermissionInSystem::EDIT_TELEPHONE_NUMBER);
+    }
 
     /**
      * @return bool
