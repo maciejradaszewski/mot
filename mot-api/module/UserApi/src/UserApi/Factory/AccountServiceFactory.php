@@ -10,6 +10,7 @@ use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\ContactDetailsService;
 use DvsaEntities\Entity\Gender;
 use DvsaEntities\Entity\Title;
+use DvsaEntities\Entity\AuthenticationMethod;
 use DvsaEntities\Mapper\PersonMapper as CommonEntitiesPersonMapper;
 use UserApi\Application\Service\AccountService;
 use UserApi\Application\Service\Validator\AccountValidator;
@@ -38,7 +39,8 @@ class AccountServiceFactory implements FactoryInterface
             $serviceLocator->get(ContactDetailsService::class),
             new CommonEntitiesPersonMapper(
                 $entityManager->getRepository(Title::class),
-                $entityManager->getRepository(Gender::class)
+                $entityManager->getRepository(Gender::class),
+                $entityManager->getRepository(AuthenticationMethod::class)
             ),
             $createUserAccountAssertion,
             $openAMClient,

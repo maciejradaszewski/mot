@@ -8,6 +8,8 @@ use DvsaClient\Entity\Person;
 use DvsaClient\Entity\VehicleTestingStation;
 use DvsaCommon\Constants\PersonContactType;
 use DvsaCommon\Dto\AreaOffice\AreaOfficeDto;
+use DvsaCommon\Dto\AuthorisedExaminerPrincipal\AuthorisedExaminerPrincipalDto;
+use DvsaCommon\Dto\Contact\ContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Dto\Organisation\OrganisationPositionDto;
 use DvsaCommon\Dto\Person\PersonDto;
@@ -70,7 +72,7 @@ class IndexViewModel
      * @param AuthorisedExaminerPresenter[]       $presenter
      * @param VehicleTestingStationDto[]          $vehicleTestingStations
      * @param OrganisationPositionDto[]           $positions
-     * @param PersonDto[]                         $principals
+     * @param AuthorisedExaminerPrincipalDto[]    $principals
      * @param Url                                 $urlHelper
      */
     public function __construct(
@@ -125,21 +127,11 @@ class IndexViewModel
 
     /**
      * @param int $principalIndex
-     * @return \DvsaCommon\Dto\Person\PersonContactDto|null
+     * @return ContactDto
      */
-    public function getPrincipalPersonalContact($principalIndex)
+    public function getPrincipalContactDetails($principalIndex)
     {
-        $personalContact = null;
-
-        /** @var \DvsaCommon\Dto\Person\PersonContactDto $contact */
-        foreach ($this->principals[$principalIndex]->getContacts() as $contact) {
-            if ($contact->getType() === PersonContactType::PERSONAL) {
-                $personalContact = $contact;
-                break;
-            }
-        }
-
-        return $personalContact;
+        return $this->principals[$principalIndex]->getContactDetails();
     }
 
     public function getOrganisation()
@@ -238,9 +230,11 @@ class IndexViewModel
         return $this->numberOfPrincipals > 0;
     }
 
-    public function canViewAeSection()
+    public function canViewAepSection()
     {
-        if ($this->hasPrincipals() && $this->viewAuthorisation->canViewAuthorisedExaminerPrincipals()) {
+        if (($this->hasPrincipals() && $this->viewAuthorisation->canViewAuthorisedExaminerPrincipals())
+            || $this->viewAuthorisation->canCreateAuthorisedExaminerPrincipal()
+        ) {
             return true;
         }
 

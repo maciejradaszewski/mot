@@ -2,10 +2,10 @@
 
 namespace DvsaCommonTest\Validator;
 
-
 use DvsaCommon\Validator\DateOfBirthValidator;
+use DvsaCommon\Date\DateTimeApiFormat;
 
-class DayOfBirthValidatorTest extends \PHPUnit_Framework_TestCase
+class DateOfBirthValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var DateOfBirthValidator $validator */
     private $validator;
@@ -18,6 +18,12 @@ class DayOfBirthValidatorTest extends \PHPUnit_Framework_TestCase
     public function testIsEmpty_shouldFail()
     {
         $this->assertFalse($this->validator->isValid([]));
+        $this->assertFalse($this->validator->isValid(""));
+    }
+
+    public function testNotValidFormat_shouldFail()
+    {
+        $this->assertFalse($this->validator->isValid("2-13-2001"));
     }
 
     public function testValidDate_shouldPass()
@@ -51,6 +57,20 @@ class DayOfBirthValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(
             $this->validator->isValid($this->dateToArray($date))
         );
+    }
+
+    public function testOver99Years_shouldFail()
+    {
+        $expectedMessage = 'must be less than 99 years ago';
+        $date = new \DateTime('-99 years');
+        $this->validator->setDateInThePast(new \DateTime('-99 years'));
+        $this->validator->setMessage($expectedMessage, DateOfBirthValidator::IS_OVER100);
+
+        $this->assertFalse(
+            $this->validator->isValid($date->format(DateTimeApiFormat::FORMAT_ISO_8601_DATE_ONLY))
+        );
+
+        $this->assertEquals([DateOfBirthValidator::IS_OVER100 => $expectedMessage], $this->validator->getMessages());
     }
 
     protected function dateToArray(\DateTime $date)

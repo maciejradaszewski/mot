@@ -19,6 +19,15 @@ class AuthorisedExaminerPrincipalController extends AbstractDvsaRestfulControlle
         return ApiResponse::jsonOk($service->getForAuthorisedExaminer($authorisedExaminerId));
     }
 
+    public function get($principalId)
+    {
+        $authorisedExaminerId = $this->params()->fromRoute('authorisedExaminerId');
+
+        $service = $this->getAuthorisedExaminerPrincipalService();
+
+        return ApiResponse::jsonOk($service->getForAuthorisedExaminerById($authorisedExaminerId, $principalId));
+    }
+
     public function delete($authorisedExaminerPrincipalId)
     {
         $authorisedExaminerId = $this->params()->fromRoute('authorisedExaminerId');

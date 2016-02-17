@@ -4,6 +4,11 @@ version=1.26.0
 db_name=mot_v195_rel4
 
 # add files here in intended run order for release
+
+upgradefiles+=('2016-02-08-BL-21-create-new-table-STORY.sql');
+upgradefiles+=('2016-02-09-BL-21-assign-permissions-STORY.sql');
+upgradefiles+=('2016-02-09-BL-21-new-event-type-STORY.sql');
+upgradefiles+=('2016-02-09-BL-21-copy-principals-to-new-table-STORY.sql');
 upgradefiles+=('2016-02-02-BL-931-add-edit-telephone-permission-STORY.sql');
 upgradefiles+=('2016-02-03-BL-1138-add-vts-status-change-event-type-STORY.sql');
 upgradefiles+=('2016-02-03-BL-1140-add-link-status-change-event-type-STORY.sql');

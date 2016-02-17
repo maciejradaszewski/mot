@@ -44,4 +44,15 @@ class AeRoutes extends AbstractRoutes
             ['id' => $id, 'propertyName' => $propertyName, 'formUuid' => $formUuid]
         );
     }
+
+    public function aeAddPrincipal($id, $formUuid = null)
+    {
+        return $this->url(
+            AeRouteList::AE_ADD_PRINCIPAL,
+            ['id' => $id],
+            [
+                'query' => ['formUuid' => $formUuid],
+            ]
+        );
+    }
 }

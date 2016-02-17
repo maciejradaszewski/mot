@@ -4,6 +4,7 @@
 namespace Organisation\UpdateAeProperty\Factory;
 
 
+use Organisation\UpdateAeProperty\Process\CreateAePrincipalProcess;
 use Organisation\UpdateAeProperty\Process\UpdateAeAreaOfficeProcess;
 use Organisation\UpdateAeProperty\Process\UpdateAeCorrespondenceAddressProcess;
 use Organisation\UpdateAeProperty\Process\UpdateAeCorrespondenceEmailProcess;
@@ -30,6 +31,7 @@ class UpdateAePropertyProcessBuilderFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $processBuilder = new UpdateAePropertyProcessBuilder();
+
         $processBuilder->add($serviceLocator->get(UpdateAeNameProcess::class));
         $processBuilder->add($serviceLocator->get(UpdateAeTradingNameProcess::class));
         $processBuilder->add($serviceLocator->get(UpdateAeBusinessTypeProcess::class));
@@ -41,6 +43,7 @@ class UpdateAePropertyProcessBuilderFactory implements FactoryInterface
         $processBuilder->add($serviceLocator->get(UpdateAeRegisteredAddressProcess::class));
         $processBuilder->add($serviceLocator->get(UpdateAeCorrespondenceAddressProcess::class));
         $processBuilder->add($serviceLocator->get(UpdateAeStatusProcess::class));
+        $processBuilder->add($serviceLocator->get(CreateAePrincipalProcess::class));
 
         return $processBuilder;
     }

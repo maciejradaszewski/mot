@@ -1,40 +1,43 @@
 <?php
 
-$sectionName = "Authorised Examiner";
-$taskName = "Remove an AEP";
-
-$this->headTitle($sectionName . ' - ' . $taskName);
-$this->layout()->setVariable('pageSubTitle', $this->translate($sectionName));
-$this->layout()->setVariable('pageTitle', $this->translate($taskName));
-
 /**
- * @var \DvsaClient\Entity\Person       $principal
- * @var \DvsaCommon\Dto\Organisation\OrganisationDto $authorisedExaminer
- * @var String                          $cancelRoute
+ * @var \Organisation\ViewModel\AuthorisedExaminer\AeRemovePrincipalViewModel $viewModel
+ * @var \Zend\Mvc\Controller\Plugin\FlashMessenger                   $flashMessenger
  */
+
+$viewModel = $this->viewModel;
+
+//  show api errors
+$flashMessenger = $this->layout()->flashMessenger;
+echo $this->partial(
+    'partial/gds/general/system-message',
+    ['messages' => $flashMessenger->getErrorMessages(), 'type' => 'failure']
+);
 ?>
 
-<h3>
-    Are you sure you want to remove
-    <span id="display-name">
-        <?php echo $this->escapeHtml($principal->getFullName()); ?>
-    </span>
-    as Authorised Examiner Principal of <?php echo $this->escapeHtml($authorisedExaminer->getName()); ?>?
-</h3>
-
-<form method="POST">
+<form method="POST" action="#" autocomplete="off" novalidate>
     <?php echo $this->csrfToken() ?>
 
-    <div class="form-group">
-        <?php echo $this->partial(
-            'submitElement',
-            [
-                'label' => 'Confirm',
-                'id'    => 'confirm-button'
-            ]
-        ); ?>
-    </div>
-    <div class="form-group">
-        <a id="cancel" href="<?php echo $this->escapeHtml($cancelRoute); ?>">Back to AE overview</a>
-    </div>
+    <?php
+    echo $this->partial(
+        'partial/gds/gds-table/gds-key-value-table',
+        [
+            'table' => $viewModel->getGdsTable(),
+        ]
+    );
+    ?>
+
+    <?php
+    echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id'         => 'confirm-button',
+            'value'      => 'Remove principal',
+            'class'      => 'button-warning',
+            'navigation' => [
+                'Cancel and return to authorised examiner' => $viewModel->getCancelUrl(),
+            ],
+        ]
+    );
+    ?>
 </form>

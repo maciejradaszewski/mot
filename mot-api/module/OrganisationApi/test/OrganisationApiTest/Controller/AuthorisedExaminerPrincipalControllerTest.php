@@ -52,6 +52,11 @@ class AuthorisedExaminerPrincipalControllerTest extends AbstractRestfulControlle
             ->will($this->returnValue([]));
 
         $siteServiceMock->expects($this->any())
+            ->method('getForAuthorisedExaminerById')
+            ->with($this->authorisedExaminerId, $this->authorisedExaminerPrincipalId)
+            ->will($this->returnValue([]));
+
+        $siteServiceMock->expects($this->any())
             ->method('deletePrincipalForAuthorisedExaminer')
             ->with($this->authorisedExaminerId, $this->authorisedExaminerPrincipalId)
             ->will($this->returnValue([]));

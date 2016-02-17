@@ -186,15 +186,27 @@ return [
                             ],
                         ],
                     ],
-                    'principals'                    => [
+                    'create-principal'                    => [
                         'type'    => 'segment',
                         'options' => [
-                            'route'       => '/principals',
+                            'route'       => '/add-principal',
                             'defaults'    => [
                                 'controller' => AuthorisedExaminerPrincipalController::class,
-                                'action'     => 'index',
+                                'action'     => 'create',
                             ],
                         ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'review-principal'    => [
+                                'type'    => 'segment',
+                                'options' => [
+                                    'route'       => '/review[/:formUuid]',
+                                    'defaults'    => [
+                                        'action'     => 'review',
+                                    ],
+                                ],
+                            ],
+                        ]
                     ],
                     'remove-principal-confirmation' => [
                         'type'    => 'segment',

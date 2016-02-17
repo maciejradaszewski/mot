@@ -7,6 +7,7 @@ import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
+import uk.gov.dvsa.ui.pages.authorisedexaminer.Aep.CreateAepPage;
 import uk.gov.dvsa.ui.pages.cpms.BuyTestSlotsPage;
 import uk.gov.dvsa.ui.pages.vts.DisassociateASitePage;
 
@@ -31,6 +32,7 @@ public abstract class AuthorisedExaminerViewPage extends Page {
     @FindBy(id = "cor-phone") private WebElement corrPhone;
     @FindBy(id = "content") private WebElement siteContent;
     @FindBy(id = "validation-message--success") private WebElement validationMessage;
+    @FindBy(id = "add-aep") private WebElement createAEPLink;
     private static final String removeSiteFromAeLinkLocator = "#vehicle-testing-station-%s td a";
 
     private WebElement getRemoveSiteFromAeLink(String vtsId) {
@@ -138,5 +140,10 @@ public abstract class AuthorisedExaminerViewPage extends Page {
 
     public String getValidationMessage() {
         return validationMessage.getText();
+    }
+
+    public CreateAepPage clickCreateAepLink(String aeId) {
+        createAEPLink.click();
+        return new CreateAepPage(driver);
     }
 }

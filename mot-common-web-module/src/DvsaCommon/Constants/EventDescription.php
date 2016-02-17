@@ -36,4 +36,7 @@ class EventDescription extends BaseEnumeration
     const DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE = 'Site %s %s has been linked to AE %s %s by %s';
     const AE_UNLINK_SITE = 'Site %s %s has been unlinked from AE %s %s by %s';
     const SITE_ASSESSMENT_RISK_SCORE = "Site assessment risk score %.2f for %s %s has been carried out by %s";
+
+    const AEP_ADDED_TO_AE = 'AEP %s %s has been added to Authorised Examiner %s %s by %s %s';
+    const AEP_REMOVED_TO_AE = 'AEP %s %s has been removed from Authorised Examiner %s %s by %s %s';
 }

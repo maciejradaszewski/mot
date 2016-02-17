@@ -64,6 +64,8 @@ class EventTypeCode
     const NTT_DIRECTED_RETRAINING_CLASSES_12 = 'NTTDA';
     const NTT_REFRESHER_CLASSES_12 = 'NTTRA';
     const UPDATE_SITE_ASSESSMENT_RISK_SCORE = 'USARS';
+    const CREATE_AEP = 'CAEP';
+    const REMOVE_AEP = 'RAEP';
     const VTS_STATUS_CHANGE = 'VSC';
     const LINK_STATUS_CHANGE = 'LSC';
     const ROLE_STATUS_CHANGE = 'RSC';
@@ -128,6 +130,8 @@ class EventTypeCode
             self::NTT_DIRECTED_RETRAINING_CLASSES_12,
             self::NTT_REFRESHER_CLASSES_12,
             self::UPDATE_SITE_ASSESSMENT_RISK_SCORE,
+            self::CREATE_AEP,
+            self::REMOVE_AEP,
             self::VTS_STATUS_CHANGE,
             self::LINK_STATUS_CHANGE,
             self::ROLE_STATUS_CHANGE,

@@ -19,6 +19,7 @@ class UpdateAePropertyAction implements AutoWireableInterface
     const AE_BUSINESS_TYPE_PROPERTY = 'business-type';
     const AE_STATUS_PROPERTY = 'status';
     const AE_DVSA_AREA_OFFICE_STATUS_PROPERTY = 'areaoffice';
+    const AE_CREATE_AEP_PROPERTY = 'add-principal';
     const AE_REGISTERED_ADDRESS_PROPERTY = 'registered-address';
     const AE_REGISTERED_EMAIL_PROPERTY = 'registered-email';
     const AE_REGISTERED_TELEPHONE_PROPERTY = 'registered-telephone';

@@ -9,6 +9,7 @@ use DvsaCommonTest\TestUtils\TestCaseTrait;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Repository\GenderRepository;
 use DvsaEntities\Repository\TitleRepository;
+use DvsaEntities\Repository\AuthenticationMethodRepository;
 use PersonApi\Factory\Service\BasePersonServiceFactory;
 use PersonApi\Service\BasePersonService;
 use PersonApi\Service\Validator\BasePersonValidator;
@@ -29,6 +30,7 @@ class BasePersonServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $entityManager = XMock::of(EntityManager::class);
         $this->mockMethod($entityManager, 'getRepository', $this->at(0), XMock::of(TitleRepository::class));
         $this->mockMethod($entityManager, 'getRepository', $this->at(1), XMock::of(GenderRepository::class));
+        $this->mockMethod($entityManager, 'getRepository', $this->at(2), XMock::of(AuthenticationMethodRepository::class));
 
         $mockServiceLocator = XMock::of(ServiceLocatorInterface::class, ['get']);
         $this->mockMethod($mockServiceLocator, 'get', $this->at(0), $entityManager);
