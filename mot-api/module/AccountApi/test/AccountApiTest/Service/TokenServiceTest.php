@@ -95,6 +95,10 @@ class TokenServiceTest extends AbstractServiceTestCase
         $this->mockConfig = $serviceManager->get('Config');
         $this->mockConfig[TokenService::CFG_PASSWORD_RESET][TokenService::CFG_PASSWORD_RESET_EXPIRE_TIME]
             = self::CFG_EXPIRE_TIME;
+        $this->mockConfig[TokenService::CFG_PASSWORD_RESET][TokenService::CFG_PASSWORD_RESET_SECRET]
+            = 'secretdeoufmilediou';
+        $this->mockConfig[TokenService::CFG_PASSWORD_RESET][TokenService::CFG_PASSWORD_RESET_HASH_METHOD]
+            = 'sha256';
         $this->mockConfig[AbstractMailerLogic::CONFIG_KEY] = [
             'sendingAllowed' => true,
             'recipient'   => 'tokenservicetest@' . EmailAddressValidator::TEST_DOMAIN,
