@@ -31,6 +31,8 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
 
     private $newName;
 
+    private $newAddress;
+
     private $searchData;
 
     private $userHelpDeskData;
@@ -89,6 +91,11 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
      * @var Response
      */
     private $updateNameResponse;
+
+    /**
+     * @var Response
+     */
+    private $updateAddressResponse;
 
     /**
      * @var Response
@@ -1184,8 +1191,6 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     public function thePersonsNameShouldBeUpdated()
     {
         PHPUnit::assertSame(200, $this->updateNameResponse->getStatusCode());
-
-//        PHPUnit::assertSame($this->newName, $this->updateNameResponse->getBody()['data']['email'], 'Email address on User Profile is incorrect.');
     }
 
     /**
@@ -1198,11 +1203,93 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     }
 
     /**
-     * @Then I am forbidden
+     * @Then I am forbidden from changing name
      */
-    public function iAmForbidden()
+    public function iAmForbiddenFromChangingName()
     {
         PHPUnit::assertSame(403, $this->updateNameResponse->getStatusCode());
+    }
+
+    /**
+     * @When /^I change a person's address to (.*), (.*), (.*), (.*), (.*), (.*)$/
+     *
+     * @param $firstLine
+     * @param $secondLine
+     * @param $thirdLine
+     * @param $townOrCity
+     * @param $country
+     * @param $postcode
+     */
+    public function iChangeAPersonsAddress($firstLine, $secondLine, $thirdLine, $townOrCity, $country, $postcode)
+    {
+        $this->newAddress = [
+            'firstLine' => $firstLine,
+            'secondLine' => $secondLine,
+            'thirdLine' => $thirdLine,
+            'townOrCity' => $townOrCity,
+            'country' => $country,
+            'postcode' => $postcode,
+        ];
+
+        $userService = $this->testSupportHelper->getUserService();
+        $this->personLoginData = $userService->create([]);
+
+        $otherUserId = $this->getPersonUserId();
+
+        $token = $this->sessionContext->getCurrentAccessToken();
+
+        $this->updateAddressResponse = $this->person->changeAddress($token, $otherUserId, $this->newAddress);
+    }
+
+    /**
+     * @When /^I change my own address to (.*), (.*), (.*), (.*), (.*), (.*)$/
+     *
+     * @param $firstLine
+     * @param $secondLine
+     * @param $thirdLine
+     * @param $townOrCity
+     * @param $country
+     * @param $postcode
+     */
+    public function iChangeMyOwnAddress($firstLine, $secondLine, $thirdLine, $townOrCity, $country, $postcode)
+    {
+        $this->newAddress = [
+            'firstLine' => $firstLine,
+            'secondLine' => $secondLine,
+            'thirdLine' => $thirdLine,
+            'townOrCity' => $townOrCity,
+            'country' => $country,
+            'postcode' => $postcode,
+        ];
+
+        $token = $this->sessionContext->getCurrentAccessToken();
+        $this->updateAddressResponse = $this->person->changeAddress($token, $this->sessionContext->getCurrentUserId(), $this->newAddress);
+    }
+
+    /**
+     * @Then The person's address is updated
+     */
+    public function thePersonsAddressIsUpdated()
+    {
+        PHPUnit::assertSame(200, $this->updateAddressResponse->getStatusCode());
+        PHPUnit::assertSame($this->newAddress, $this->updateAddressResponse->getBody()['data']->toArray());
+    }
+
+    /**
+     * @Then The person's address should not be updated
+     */
+    public function thePersonsAddressShouldNotBeUpdated()
+    {
+        PHPUnit::assertSame(400, $this->updateAddressResponse->getStatusCode());
+        PHPUnit::assertNotEmpty($this->updateAddressResponse->getBody()['errors']);
+    }
+
+    /**
+     * @Then I am forbidden from changing address
+     */
+    public function iAmForbiddenFromChangingAddress()
+    {
+        PHPUnit::assertSame(403, $this->updateAddressResponse->getStatusCode());
     }
 
     /**

@@ -138,6 +138,11 @@ class HelpdeskAccountAdminService
         return $this->userAdminMapper->updateDateOfBirth($personId, $data);
     }
 
+    public function updateAddress($personId, $firstLine, $secondLine, $thirdLine, $townOrCity, $country, $postcode)
+    {
+        return $this->userAdminMapper->updatePersonAddress($personId, $firstLine, $secondLine, $thirdLine, $townOrCity, $country, $postcode);
+    }
+
     /**
      * @param $personId
      * @param $newPhoneNumber

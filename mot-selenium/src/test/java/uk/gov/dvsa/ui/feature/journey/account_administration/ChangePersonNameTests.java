@@ -59,7 +59,7 @@ public class ChangePersonNameTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(user, tester);
 
         // When I am changing a name for a person
-        motUI.userRoute.changeName("Test", "Test", true);
+        motUI.userRoute.changeName().changePersonName("Test", "Test", true);
 
         // Then the success message should be displayed
         assertThat(motUI.userRoute.page().isSuccessMessageDisplayed(), is(true));
@@ -73,11 +73,11 @@ public class ChangePersonNameTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
 
         // When I am trying to submit an empty name for a person
-        motUI.userRoute.changeName("", "Test", false);
+        motUI.userRoute.changeName().changePersonName("", "Test", false);
 
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.isValidationMessageOnChangeNamePageDisplayed("FIRST_NAME"), is(true));
+        assertThat(motUI.userRoute.changeName().isValidationMessageOnChangeNamePageDisplayed("FIRST_NAME"), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-59"},
@@ -88,11 +88,11 @@ public class ChangePersonNameTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(vehicleExaminerUser, tester);
 
         // When I am trying to submit an empty last name for a person
-        motUI.userRoute.changeName("Test", "", false);
+        motUI.userRoute.changeName().changePersonName("Test", "", false);
 
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.isValidationMessageOnChangeNamePageDisplayed("LAST_NAME"), is(true));
+        assertThat(motUI.userRoute.changeName().isValidationMessageOnChangeNamePageDisplayed("LAST_NAME"), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-59"},

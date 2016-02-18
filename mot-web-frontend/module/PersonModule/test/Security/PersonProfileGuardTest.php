@@ -1205,7 +1205,7 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($guard->canEditName());
     }
 
-    public function shouldShowTesterQualificiatonStatusBoxProvider()
+    public function shouldShowTesterQualificationStatusBoxProvider()
     {
         return [
             [AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED, false],
@@ -1214,7 +1214,7 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider shouldShowTesterQualificiatonStatusBoxProvider
+     * @dataProvider shouldShowTesterQualificationStatusBoxProvider
      *
      * @param AuthorisationForTestingMotStatusCode $groupAStatus
      * @param AuthorisationForTestingMotStatusCode $groupBStatus
@@ -1227,6 +1227,51 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
             ->createPersonProfileGuard();
 
         $this->assertEquals($guard->shouldDisplayTesterQualificationStatusBox(), $shouldDisplay);
+    }
+
+    /**
+     * @return array
+     */
+    public function canEditAddressProvider()
+    {
+        return [
+            [
+                self::LOGGED_IN_PERSON_ID,
+                [],
+                ContextProvider::YOUR_PROFILE_CONTEXT,
+                true,
+            ],
+            [
+                self::TARGET_PERSON_ID,
+                [PermissionInSystem::EDIT_PERSON_ADDRESS],
+                ContextProvider::USER_SEARCH_CONTEXT,
+                true,
+            ],
+            [
+                self::TARGET_PERSON_ID,
+                [],
+                ContextProvider::USER_SEARCH_CONTEXT,
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider canEditAddressProvider
+     * @param int $targetPerson
+     * @param PermissionInSystem $permissions
+     * @param string $context
+     * @param bool $canChange
+     */
+    public function testCanEditAddress($targetPerson, $permissions, $context, $canChange)
+    {
+        $guard = $this
+            ->withTargetPerson($targetPerson)
+            ->withPermissions($permissions)
+            ->withContext($context)
+            ->createPersonProfileGuard();
+
+        $this->assertEquals($canChange, $guard->canChangeAddress());
     }
 
     /**

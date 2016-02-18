@@ -148,12 +148,12 @@ Feature: Person
   Scenario: A user with permission to change names cannot update their own name
     Given I am logged in as a Area Office 1
     When I change my own name to Joe Bloggs Smith
-    Then I am forbidden
+    Then I am forbidden from changing name
 
   Scenario: A user without permission to change names should be forbidden
     Given I am logged in as a Tester
     When I change a person's name to Joe Bloggs Smith
-    Then I am forbidden
+    Then I am forbidden from changing name
 
   Scenario Outline: Name validation is enforced
     Given I am logged in as an Scheme User
@@ -168,6 +168,37 @@ Feature: Person
       | Thisnameislongerthan45characterssoitisinvalidl |                                                |                                                 |
       | Joe                                            | Thisnameislongerthan45characterssoitisinvalidl |  Bloggs                                         |
       | Joe                                            |                                                |  Thisnameislongerthan45characterssoitisinvalidl |
+
+  @address
+  Scenario: A user with permission to edit other persons' addresses can update a different person's address
+    Given I am logged in as an Scheme User
+    When I change a person's address to 1 Some Street, Some Building, Some Area, Nottingham, UK, NG1 6LP
+    Then The person's address is updated
+
+  @address
+  Scenario: Any user can change their own address
+    Given I am logged in as a Tester
+    When I change my own address to 1 Some Street, Some Building, Some Area, Nottingham, UK, NG1 6LP
+    Then The person's address is updated
+
+  @address
+  Scenario: A user without permission to edit other persons' addresses cannot update a different person's address
+    Given I am logged in as a Tester
+    When I change a person's address to 1 Some Street, Some Building, Some Area, Nottingham, UK, NG1 6LP
+    Then I am forbidden from changing address
+
+  @address
+  Scenario Outline: Address validation is enforced
+    Given I am logged in as a Finance User
+    When I change my own address to <firstLine>, <secondLine>, <thirdLine>, <townOrCity>, <country>, <postcode>
+    Then The person's address should not be updated
+
+    Examples:
+      | firstLine  | secondLine  | thirdLine  | townOrCity | country | postcode |
+      |            | Second Line | Third Line | Nottingham | UK      | NG1 6LP  |
+      | First Line | Second Line | Third Line |            | UK      | NG1 6LP  |
+      | First Line |             | Third Line | Belfast    | NI      |          |
+      | First Line | Second Line |            | Bristol    | UK      | xxxxx    |
 
   Scenario: A user with permission to change date of birth can update date of birth of a different person
     Given I am logged in as a Area Office 1

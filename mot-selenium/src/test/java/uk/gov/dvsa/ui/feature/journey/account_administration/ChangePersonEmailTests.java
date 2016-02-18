@@ -11,6 +11,7 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.profile.NewPersonProfilePage;
+import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
 import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
 
 import java.io.IOException;
@@ -52,7 +53,7 @@ public class ChangePersonEmailTests extends BaseTest {
 
         //When I edit my Email address
         String emailAddress = RandomDataGenerator.generateEmail(20, System.nanoTime());
-        NewPersonProfilePage newPersonProfilePage = motUI.userRoute.changeEmail(emailAddress, emailAddress, "YOUR_PROFILE");
+        NewPersonProfilePage newPersonProfilePage = motUI.userRoute.changeEmail().changeUserEmail(emailAddress, emailAddress, "YOUR_PROFILE");
 
         //Then My Profile Email address will be amended
         assertThat(newPersonProfilePage.verifyEmailIsChanged(emailAddress), is(true));
@@ -97,10 +98,10 @@ public class ChangePersonEmailTests extends BaseTest {
 
         // When I am changing a name for a person
         String emailAddress = RandomDataGenerator.generateEmail(20, System.nanoTime());
-        motUI.userRoute.changeEmail(emailAddress, emailAddress, "PERSON_PROFILE");
+        NewUserProfilePage newUserProfilePage = motUI.userRoute.changeEmail().changeUserEmail(emailAddress, emailAddress, "PERSON_PROFILE");
 
         // Then the success message should be displayed
-        assertThat(motUI.userRoute.page().isSuccessMessageDisplayed(), is(true));
+        assertThat(newUserProfilePage.isSuccessMessageDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-270"},
@@ -111,10 +112,10 @@ public class ChangePersonEmailTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
 
         // When I am trying to submit an an invalid email
-        motUI.userRoute.changeEmail("ad%^&*£lkjfhadslkjhf", "ad%^&*£lkjfhadslkjhf", "INVALID_INPUT");
+        motUI.userRoute.changeEmail().changeUserEmail("ad%^&*£lkjfhadslkjhf", "ad%^&*£lkjfhadslkjhf", "INVALID_INPUT");
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.isValidationMessageOnChangeEmailPageDisplayed("EMAIL_VALID"), is(true));
+        assertThat(motUI.userRoute.changeEmail().isValidationMessageOnChangeEmailPageDisplayed("EMAIL_VALID"), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-270"},
@@ -125,10 +126,10 @@ public class ChangePersonEmailTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
 
         // When I am trying to submit a different confirmation email
-        motUI.userRoute.changeEmail("fred@bloggs.com", "barry@bloggs.com", "INVALID_INPUT");
+        motUI.userRoute.changeEmail().changeUserEmail("fred@bloggs.com", "barry@bloggs.com", "INVALID_INPUT");
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.isValidationMessageOnChangeEmailPageDisplayed("EMAIL_MATCH"), is(true));
+        assertThat(motUI.userRoute.changeEmail().isValidationMessageOnChangeEmailPageDisplayed("EMAIL_MATCH"), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-270"},
@@ -139,10 +140,10 @@ public class ChangePersonEmailTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
 
         // When I am trying to submit a different confirmation email
-        motUI.userRoute.changeEmail("ffghjfgj", "barry@bloggs.com", "INVALID_INPUT");
+        motUI.userRoute.changeEmail().changeUserEmail("ffghjfgj", "barry@bloggs.com", "INVALID_INPUT");
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.isValidationMessageOnChangeEmailPageDisplayed("EMAIL_MATCH_AND_VALID"), is(true));
+        assertThat(motUI.userRoute.changeEmail().isValidationMessageOnChangeEmailPageDisplayed("EMAIL_MATCH_AND_VALID"), is(true));
     }
 
     @DataProvider
@@ -172,5 +173,3 @@ public class ChangePersonEmailTests extends BaseTest {
         };
     }
 }
-
-

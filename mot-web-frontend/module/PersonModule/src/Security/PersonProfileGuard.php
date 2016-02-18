@@ -345,6 +345,15 @@ class PersonProfileGuard
     }
 
     /**
+     * @return bool
+     */
+    public function canChangeAddress()
+    {
+        return $this->authorisationService->isGranted(PermissionInSystem::EDIT_PERSON_ADDRESS)
+            || ($this->isViewingOwnProfile());
+    }
+
+    /**
      * @return int
      */
     private function getLoggedInPersonId()

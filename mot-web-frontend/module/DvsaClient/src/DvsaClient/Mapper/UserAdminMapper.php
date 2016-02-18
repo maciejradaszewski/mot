@@ -173,6 +173,22 @@ class UserAdminMapper extends DtoMapper
         );
     }
 
+    public function updatePersonAddress($personId, $firstLine, $secondLine, $thirdLine, $townOrCity, $country, $postcode)
+    {
+        $url = UserAdminUrlBuilder::personAddress($personId);
+
+        return $this->client->post(
+            $url, [
+                "firstLine" => $firstLine,
+                "secondLine" => $secondLine,
+                "thirdLine" => $thirdLine,
+                "townOrCity" => $townOrCity,
+                "country" => $country,
+                "postcode" => $postcode,
+            ]
+        );
+    }
+
     /**
      * @param $personId
      * @param array $data
