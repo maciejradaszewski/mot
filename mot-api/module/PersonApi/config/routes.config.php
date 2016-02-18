@@ -19,6 +19,7 @@ use PersonApi\Controller\PersonSiteCountController;
 use PersonApi\Controller\PersonTradeRoleController;
 use PersonApi\Controller\ResetClaimAccountController;
 use PersonApi\Controller\ResetPinController;
+use PersonApi\Controller\UpdateAddressController;
 use PersonApi\Controller\UpdateLicenceDetailsController;
 use PersonApi\Controller\UpdatePersonNameController;
 use PersonApi\Controller\UserStatsController;
@@ -296,6 +297,15 @@ return [
                     ],
                     'may_terminate' => true,
                 ],
+                'update-address' => [
+                    'type' => 'segment',
+                    'options' => [
+                        'route' => '/address',
+                        'defaults' => [
+                            'controller' => UpdateAddressController::class,
+                        ]
+                    ]
+                ]
             ],
         ],
     ],

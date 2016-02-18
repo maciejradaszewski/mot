@@ -105,7 +105,7 @@ class ChangeNameController extends AbstractAuthActionController
             $context
         );
 
-        $breadcrumbs = $this->generateBreadcrumbsFromRequest($context, $personalDetails);
+        $breadcrumbs = $this->generateBreadcrumbsFromRequest($personId, $personalDetails);
         $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
         if (!$personProfileGuard->canEditName()) {
@@ -210,9 +210,9 @@ class ChangeNameController extends AbstractAuthActionController
     /**
      * Get the breadcrumbs given the context of the url.
      *
-     * @param int                  $personId
-     * @param PersonalDetails      $personalDetails
-     *
+     * @param int $personId
+     * @param PersonalDetails $personalDetails
+     * @param bool $isProfile
      * @return array
      */
     private function generateBreadcrumbsFromRequest($personId, $personalDetails, $isProfile = false)
@@ -228,15 +228,16 @@ class ChangeNameController extends AbstractAuthActionController
             $profileUrl = $isProfile === false ? $this->url()->fromRoute('newProfile', ['id' => $personId]) : '';
             $breadcrumbs += [PersonProfileController::CONTENT_HEADER_TYPE__YOUR_PROFILE => $profileUrl];
         } elseif (ContextProvider::USER_SEARCH_CONTEXT === $context) {
-            /*
-             * User search context.
-             */
-            $userSearchUrl = $this->url()->fromRoute('user_admin/user-search');
-            $profileUrl = $isProfile === false
-                ? $this->url()->fromRoute(ContextProvider::USER_SEARCH_PARENT_ROUTE, ['id' => $personId]) : '';
+                /*
+                 * User search context.
+                 */
+                $userSearchUrl = $this->url()->fromRoute('user_admin/user-search');
 
-            $breadcrumbs += [PersonProfileController::CONTENT_HEADER_TYPE__USER_SEARCH => $userSearchUrl];
-            $breadcrumbs += [$personName => $profileUrl];
+                $profileUrl = $isProfile === false
+                    ? $this->url()->fromRoute('newProfileUserAdmin', ['id' => $personId]) : '';
+
+                $breadcrumbs += [PersonProfileController::CONTENT_HEADER_TYPE__USER_SEARCH => $userSearchUrl];
+                $breadcrumbs += [$personName => $profileUrl];
         } elseif (ContextProvider::AE_CONTEXT === $context) {
             /*
              * AE context.

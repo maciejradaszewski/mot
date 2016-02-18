@@ -131,18 +131,27 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
         </th>
         <td class="table-summary__value" id="full-address">
             <?php if (!empty($fullAddressArray)) : ?>
-                <?php echo !empty($personalDetails->getAddressLine1()) ? $personalDetails->getAddressLine1() . ', <br>'
+                <?php echo ($personalDetails->getAddressLine1() != '') ? $this->escapeHtml($personalDetails->getAddressLine1()) . ', <br>'
                     : ''; ?>
-                <?php echo !empty($personalDetails->getAddressLine2()) ? $personalDetails->getAddressLine2() . ', <br>'
+                <?php echo ($personalDetails->getAddressLine2() != '') ? $this->escapeHtml($personalDetails->getAddressLine2()) . ', <br>'
                     : ''; ?>
-                <?php echo !empty($personalDetails->getAddressLine3()) ? $personalDetails->getAddressLine3() . ', <br>'
+                <?php echo ($personalDetails->getAddressLine3() != '') ? $this->escapeHtml($personalDetails->getAddressLine3()) . ', <br>'
                     : ''; ?>
-                <?php echo !empty($personalDetails->getPostcode()) ? $personalDetails->getPostcode() . '<br>'
+                <?php echo ($personalDetails->getTown() != '') ? $this->escapeHtml($personalDetails->getTown()) . ', <br>'
+                    : ''; ?>
+                <?php echo ($personalDetails->getPostcode() != '') ? $this->escapeHtml($personalDetails->getPostcode()) . '<br>'
                     : ''; ?>
             <?php else :
                 echo '<span class="table-summary__meta">Unknown</span>';
             endif;
+
+            if ($personProfileGuard->canChangeAddress()) {
+                $url = $personProfileGuard->isViewingHimself() ? $this->url('newProfile/address/change-address', ['id' => $personalDetails->getId()])
+                    : $this->personProfileUrl()->fromPersonProfile('address/change-address');
+                echo '<a href="' . $url . '" class="table-summary__action">Change</a>';
+            }
             ?>
+
         </td>
     </tr>
     <tr>

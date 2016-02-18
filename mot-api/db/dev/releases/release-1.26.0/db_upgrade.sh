@@ -14,6 +14,7 @@ upgradefiles+=('2016-02-03-BL-1138-add-vts-status-change-event-type-STORY.sql');
 upgradefiles+=('2016-02-03-BL-1140-add-link-status-change-event-type-STORY.sql');
 upgradefiles+=('2016-02-03-BL-956-add-role-status-change-event-type-STORY.sql');
 upgradefiles+=('2016-02-08-BL-1335-add-tester-active-event-outcome-STORY.sql');
+upgradefiles+=('2016-02-01-BL-929-person-profile-edit-address-STORY.sql');
 
 # add files here in intended run order for release
 

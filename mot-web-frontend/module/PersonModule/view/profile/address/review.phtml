@@ -1,0 +1,59 @@
+<?php
+/**
+ * @var string $personName
+ * @var string $backButtonUrl
+ * @var string $firstLine
+ * @var string $secondLine
+ * @var string $thirdLine
+ * @var string $townOrCity
+ * @var string $country
+ * @var string $postcode
+ */
+
+?>
+
+<div class="lede">
+    <p>Please check the address below is correct.</p>
+</div>
+
+<table class="key-value-list">
+    <caption class="visuallyhidden">Summary of your details</caption>
+    <tbody>
+        <tr>
+            <th scope="col" class="key-value-list__key">User profile</th>
+            <td scope="col" class="key-value-list__value"><?php echo $personName?></td>
+        </tr>
+        <tr>
+            <th scope="col" class="key-value-list__key">Address</th>
+            <td scope="col" class="key-value-list__value">
+                <?php
+                echo $this->escapeHtml($firstLine) . '<br>';
+                echo ($secondLine != '') ? $this->escapeHtml($secondLine) . '<br>' : '<br>';
+                echo ($thirdLine != '') ? $this->escapeHtml($thirdLine) . '<br>' : '<br>';
+                echo ($townOrCity != '') ? $this->escapeHtml($townOrCity) . '<br>' : '<br>';
+                echo ($country != '') ? $this->escapeHtml($country) . '<br>' : '<br>';
+                echo ($postcode != '') ? $this->escapeHtml($postcode) . '<br>' : '<br>';
+                ?>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<nav class="content-navigation">
+    <form method="POST">
+        <?php echo $this->csrfToken(); ?>
+        <?php echo $this->partial(
+            'partial/gds/form/control-navigation',
+            [
+                'id' => 'submitAddress',
+                'value' => 'Change address',
+            ]
+        ); ?>
+    </form>
+    <ul class="content-navigation__secondary">
+        <li>
+            <a id="backtochangepage" href="<?php echo $backButtonUrl; ?>">Back</a>
+        </li>
+    </ul>
+</nav>
+

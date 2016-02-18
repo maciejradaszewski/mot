@@ -6,10 +6,9 @@ import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
 import uk.gov.dvsa.ui.pages.dvsa.UserSearchResultsPage;
+import uk.gov.dvsa.ui.pages.profile.ChangeAddressPage;
 import uk.gov.dvsa.ui.pages.profile.ChangeDateOfBirthPage;
 import uk.gov.dvsa.ui.pages.profile.ChangeNamePage;
-import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
-import uk.gov.dvsa.ui.pages.vts.SearchResultsPage;
 
 public abstract class ProfilePage extends Page {
     private static String pageTitle;
@@ -45,10 +44,6 @@ public abstract class ProfilePage extends Page {
         return null;
     }
 
-    public String getEmailAddressForPerson(){
-        return null;
-    }
-
     public ChangeDrivingLicencePage clickChangeDrivingLicenceLink() {
         return null;
     }
@@ -62,6 +57,10 @@ public abstract class ProfilePage extends Page {
     }
 
     public ChangeEmailDetailsPage clickChangeEmailLink(){
+        return null;
+    }
+
+    public ChangeAddressPage clickChangeAddressLink() {
         return null;
     }
 

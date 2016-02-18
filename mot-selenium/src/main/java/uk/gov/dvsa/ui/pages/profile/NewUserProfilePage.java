@@ -38,6 +38,7 @@ public class NewUserProfilePage extends ProfilePage {
     @FindBy(css = "#email-address") private WebElement userEmail;
     @FindBy(css = "#drivingLicence span") protected WebElement personDrivingLicenceRegion;
     @FindBy(xpath = "(//*[@class='content-navigation__secondary']//a)[1]") protected WebElement cancelAndReturnToSearchResults;
+    @FindBy(css = "#full-address a") private WebElement changeAddressLink;
 
     public NewUserProfilePage(MotAppDriver driver) {
         super(driver, PAGE_TITLE);
@@ -115,7 +116,7 @@ public class NewUserProfilePage extends ProfilePage {
     @Override
     public boolean isChangeQualificationLinksDisplayed() {
         return PageInteractionHelper.isElementDisplayed(groupA_qualification) &&
-        PageInteractionHelper.isElementDisplayed(groupB_qualification);
+                PageInteractionHelper.isElementDisplayed(groupB_qualification);
     }
 
     @Override
@@ -165,6 +166,12 @@ public class NewUserProfilePage extends ProfilePage {
     public ChangeTelephoneDetailsPage clickChangeTelephoneLink() {
         changeTelephoneLink.click();
         return new ChangeTelephoneDetailsPage(driver);
+    }
+
+    @Override
+    public ChangeAddressPage clickChangeAddressLink() {
+        changeAddressLink.click();
+        return new ChangeAddressPage(driver);
     }
 
     public boolean verifyEmailIsChanged(String email) {

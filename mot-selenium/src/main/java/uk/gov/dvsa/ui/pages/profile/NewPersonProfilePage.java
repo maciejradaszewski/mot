@@ -9,6 +9,7 @@ import uk.gov.dvsa.ui.pages.ChangeEmailDetailsPage;
 import uk.gov.dvsa.ui.pages.ChangeTelephoneDetailsPage;
 import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
+import uk.gov.dvsa.ui.pages.vts.ChangeDetails.ChangeDetailsAddressPage;
 
 public class NewPersonProfilePage extends ProfilePage {
 
@@ -23,6 +24,7 @@ public class NewPersonProfilePage extends ProfilePage {
     @FindBy(id = "account_security") private WebElement accountSecurity;
     @FindBy(id = "roles-and-associations") private WebElement rolesAndAssociationsLink;
     @FindBy(css = "#email-address a") private WebElement changeEmailLink;
+    @FindBy(css = "#full-address a") private WebElement changeAddressLink;
     @FindBy(css = "#email-address") private WebElement userEmail;
     @FindBy(css = "#telephone-number") private WebElement userTelephone;
     @FindBy(css = "#telephone-number a") private WebElement userTelephoneLink;
@@ -93,9 +95,21 @@ public class NewPersonProfilePage extends ProfilePage {
         return PageInteractionHelper.isElementDisplayed(rolesAndAssociationsLink);
     }
 
+    @Override
+    public boolean isSuccessMessageDisplayed() {
+        return successMessage.isDisplayed();
+    }
+
+    @Override
     public ChangeEmailDetailsPage clickChangeEmailLink() {
         changeEmailLink.click();
         return new ChangeEmailDetailsPage(driver);
+    }
+
+    @Override
+    public ChangeAddressPage clickChangeAddressLink() {
+        changeAddressLink.click();
+        return new ChangeAddressPage(driver);
     }
 
     public ChangeTelephoneDetailsPage clickChangeTelephoneLink() {

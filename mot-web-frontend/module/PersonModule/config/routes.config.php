@@ -7,6 +7,7 @@
 
 use Dashboard\Factory\Controller\SecurityQuestionControllerFactory;
 use Dvsa\Mot\Frontend\PersonModule\Controller\ChangeNameController;
+use Dvsa\Mot\Frontend\PersonModule\Controller\ChangeAddressController;
 use Dvsa\Mot\Frontend\PersonModule\Controller\ChangeTelephoneController;
 use Dvsa\Mot\Frontend\PersonModule\Controller\PersonProfileController;
 use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
@@ -34,13 +35,48 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
+                    'address' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/address',
+                            'defaults' => [
+                                'controller' => ChangeAddressController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => false,
+                        'child_routes' => [
+                            'change-address' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/change',
+                                    'defaults' => [
+                                        'controller' => ChangeAddressController::class,
+                                        'action' => 'index',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                            'review-address' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/review',
+                                    'defaults' => [
+                                        'controller' => ChangeAddressController::class,
+                                        'action' => 'review',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                        ],
+                    ],
                     'newProfileEmail' => [
                         'type' => 'Segment',
                         'options' => [
                             'route' => '/email/change',
                             'defaults' => [
                                 'controller' => EmailAddressControllerFactory::class,
-                                'action' => 'index'
+                                'action' => 'index',
                             ],
                         ],
                         'may-terminate' => true,
@@ -223,6 +259,41 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
+                    'address' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/address',
+                            'defaults' => [
+                                'controller' => ChangeAddressController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => false,
+                        'child_routes' => [
+                            'change-address' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/change',
+                                    'defaults' => [
+                                        'controller' => ChangeAddressController::class,
+                                        'action' => 'index',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                            'review-address' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/review',
+                                    'defaults' => [
+                                        'controller' => ChangeAddressController::class,
+                                        'action' => 'review',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                        ],
+                    ],
                     'userAdminEmail' => [
                         'type' => 'Segment',
                         'options' => [
@@ -528,6 +599,41 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
+                    'address' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/address',
+                            'defaults' => [
+                                'controller' => ChangeAddressController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => false,
+                        'child_routes' => [
+                            'change-address' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/change',
+                                    'defaults' => [
+                                        'controller' => ChangeAddressController::class,
+                                        'action' => 'index',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                            'review-address' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/review',
+                                    'defaults' => [
+                                        'controller' => ChangeAddressController::class,
+                                        'action' => 'review',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                        ],
+                    ],
                     'VTSEmail' => [
                         'type' => 'Segment',
                         'options' => [
@@ -726,6 +832,41 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
+                    'address' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/address',
+                            'defaults' => [
+                                'controller' => ChangeAddressController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => false,
+                        'child_routes' => [
+                            'change-address' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/change',
+                                    'defaults' => [
+                                        'controller' => ChangeAddressController::class,
+                                        'action' => 'index',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                            'review-address' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/review',
+                                    'defaults' => [
+                                        'controller' => ChangeAddressController::class,
+                                        'action' => 'review',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                        ],
+                    ],
                     'AEEmail' => [
                         'type' => 'Segment',
                         'options' => [

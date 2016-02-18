@@ -20,6 +20,7 @@ use PersonApi\Controller\PersonSiteCountController;
 use PersonApi\Controller\PersonTradeRoleController;
 use PersonApi\Controller\ResetClaimAccountController;
 use PersonApi\Controller\ResetPinController;
+use PersonApi\Controller\UpdateAddressController;
 use PersonApi\Controller\UpdateLicenceDetailsController;
 use PersonApi\Controller\UpdatePersonNameController;
 use PersonApi\Controller\UpdatePersonDateOfBirthController;
@@ -44,6 +45,7 @@ use PersonApi\Factory\Controller\PersonSiteCountControllerFactory;
 use PersonApi\Factory\Controller\PersonTradeRoleControllerFactory;
 use PersonApi\Factory\Controller\ResetClaimAccountControllerFactory;
 use PersonApi\Factory\Controller\ResetPinControllerFactory;
+use PersonApi\Factory\Controller\UpdateAddressControllerFactory;
 use PersonApi\Factory\Controller\UpdateLicenceDetailsControllerFactory;
 use PersonApi\Factory\Controller\UpdatePersonNameControllerFactory;
 use PersonApi\Factory\Controller\UpdatePersonDateOfBirthControllerFactory;
@@ -73,6 +75,7 @@ return [
         PasswordController::class                  => PasswordControllerFactory::class,
         PasswordExpiryController::class            => PasswordExpiryControllerFactory::class,
         PersonTradeRoleController::class           => PersonTradeRoleControllerFactory::class,
+        UpdateAddressController::class             => UpdateAddressControllerFactory::class,
         UpdatePersonNameController::class          => UpdatePersonNameControllerFactory::class,
         UpdatePersonDateOfBirthController::class   => UpdatePersonDateOfBirthControllerFactory::class,
     ],

@@ -1,0 +1,104 @@
+<?php
+
+/**
+ * @var string $firstLine
+ * @var string $secondLine
+ * @var string $thirdLine
+ * @var string $townOrCity
+ * @var string $country
+ * @var string $postcode
+ * @var null|array $errors
+ * @var bool $viewingOwnProfile
+ */
+$errorMessages = $this->layout()->flashMessenger->getErrorMessages();
+echo $this->partial('partial/forms/errorMessagePageHeader.phtml',['messages' => $errorMessages]);
+?>
+<form method="POST">
+    <?php echo $this->csrfToken(); ?>
+    <fieldset>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id' => 'firstLine',
+                'name' => 'firstLine',
+                'errorMessage' => isset($errors['firstLine']) ? $errors['firstLine'] : null,
+                'label' => 'Address',
+                'value' => htmlspecialchars_decode($firstLine),
+                'type' => 'text',
+                'divModifier' => 'form-group-compound',
+            ]);
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id' => 'secondLine',
+                'name' => 'secondLine',
+                'errorMessage' => isset($errors['secondLine']) ? $errors['secondLine'] : null,
+                'value' => htmlspecialchars_decode($secondLine),
+                'type' => 'text',
+                'divModifier' => 'form-group-compound',
+            ]);
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id' => 'thirdLine',
+                'name' => 'thirdLine',
+                'errorMessage' => isset($errors['thirdLine']) ? $errors['thirdLine'] : null,
+                'value' => htmlspecialchars_decode($thirdLine),
+                'type' => 'text',
+            ]);
+        ?>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id' => 'townOrCity',
+                'name' => 'townOrCity',
+                'errorMessage' => isset($errors['townOrCity']) ? $errors['townOrCity'] : null,
+                'label' => 'Town or city',
+                'value' => htmlspecialchars_decode($townOrCity),
+                'type' => 'text'
+            ]);
+        ?>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id' => 'country',
+                'name' => 'country',
+                'errorMessage' => isset($errors['country']) ? $errors['country'] : null,
+                'label' => 'Country (optional)',
+                'value' => htmlspecialchars_decode($country),
+                'type' => 'text'
+            ]);
+        ?>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-text-group',
+            [
+                'id' => 'postcode',
+                'name' => 'postcode',
+                'errorMessage' => isset($errors['postcode']) ? $errors['postcode'] : null,
+                'label' => 'Postcode',
+                'value' => htmlspecialchars_decode($postcode),
+                'type' => 'text'
+            ]);
+        ?>
+    </fieldset>
+    <?php echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id' => 'reviewAddress',
+            'value' => 'Review address',
+        ]
+    ); ?>
+    <ul class="content-navigation__secondary">
+        <li>
+            <a id="cancel-and-return" href="<?php
+            echo $this->personProfileUrl()->toPersonProfile();
+            ?>">
+                <?php echo $viewingOwnProfile ? 'Cancel and return to your profile' : 'Cancel and return to user profile'; ?>
+                </a>
+        </li>
+    </ul>
+</form>

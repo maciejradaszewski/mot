@@ -46,7 +46,7 @@ public class ChangeDOBTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(user, tester);
 
         // When I am changing a name for a person
-        motUI.userRoute.changeDateOfBirth("01", "01", "1975", true);
+        motUI.userRoute.changeDOB().changeDateOfBirth("01", "01", "1975", true);
 
         // Then the success message should be displayed
         assertThat(motUI.userRoute.page().isSuccessMessageDisplayed(), is(true));
@@ -74,10 +74,10 @@ public class ChangeDOBTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
 
         // When I am trying to change a date of birth for a person with invalid day
-        motUI.userRoute.changeDateOfBirth("", "01", "1975", false);
+        motUI.userRoute.changeDOB().changeDateOfBirth("", "01", "1975", false);
 
         // Then the error message should be displayed
-        assertThat(motUI.userRoute.isValidationMessageOnDOBPageDisplayed(), is(true));
+        assertThat(motUI.userRoute.changeDOB().isValidationMessageOnDOBPageDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-927"},
@@ -89,10 +89,10 @@ public class ChangeDOBTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(vehicleExaminerUser, tester);
 
         // When I am trying to change a date of birth for a person with invalid month
-        motUI.userRoute.changeDateOfBirth("01", "", "1975", false);
+        motUI.userRoute.changeDOB().changeDateOfBirth("01", "", "1975", false);
 
         // Then the error message should be displayed
-        assertThat(motUI.userRoute.isValidationMessageOnDOBPageDisplayed(), is(true));
+        assertThat(motUI.userRoute.changeDOB().isValidationMessageOnDOBPageDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-927"},
@@ -104,10 +104,10 @@ public class ChangeDOBTests extends BaseTest {
         motUI.userRoute.dvsaViewUserProfile(schemeManager, tester);
 
         // When I am trying to change a date of birth for a person with invalid year
-        motUI.userRoute.changeDateOfBirth("01", "01", "", false);
+        motUI.userRoute.changeDOB().changeDateOfBirth("01", "01", "", false);
 
         // Then the error message should be displayed
-        assertThat(motUI.userRoute.isValidationMessageOnDOBPageDisplayed(), is(true));
+        assertThat(motUI.userRoute.changeDOB().isValidationMessageOnDOBPageDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-59"},
