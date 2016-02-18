@@ -17,6 +17,49 @@ class Person extends MotApi
     const PATH_DATE_OF_BIRTH = '/date-of-birth';
     const PATH_LICENCE_UPDATE = '/driving-licence';
     const PATH_TELEPHONE_NUMBER = '/phone-number';
+    const PATH_RESET = '/reset-password';
+    const PATH_RESET_VALIDATE_TOKEN = '/{token}';
+    const PATH_RESET_CHANGE_PASSWORD_WITH_TOKEN = '/account/password-change';
+    const PATH_PASSWORD_EXPIRY_NOTIFICATION = '/password-expiry-notification';
+
+    public function setEmailRemainderOfExpiryPassword($token, $data)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_POST,
+            self::PATH_PASSWORD_EXPIRY_NOTIFICATION,
+            $data
+        );
+    }
+
+    public function validateToken($token, $passwordResetToken, $param)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_GET,
+            str_replace("{token}", $passwordResetToken, self::PATH_RESET.self::PATH_RESET_VALIDATE_TOKEN),
+            $param
+        );
+    }
+
+    public function generateToken($token, $param)
+    {
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_POST,
+            self::PATH_RESET,
+            $param
+        );
+    }
+
+    public function changePasswordWithToken($token, $param){
+        return $this->sendRequest(
+            $token,
+            MotApi::METHOD_POST,
+            self::PATH_RESET_CHANGE_PASSWORD_WITH_TOKEN,
+            $param
+        );
+    }
 
     public function getPersonMotTestingClasses($token, $user_id)
     {

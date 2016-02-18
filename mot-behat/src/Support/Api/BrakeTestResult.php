@@ -53,6 +53,51 @@ class BrakeTestResult extends MotApi
         ));
     }
 
+    public function addBrakeTestRollerClass3To7WithCustomData($token, $motNumber, RollerBrakeTestClass3To7 $rollerObject)
+    {
+        $body = json_encode([
+            'serviceBrake1Data' => [
+                'effortNearsideAxle1' => $rollerObject->getEffortNearsideAxle1(),
+                'effortOffsideAxle1' => $rollerObject->getEffortOffsideAxle1(),
+                'lockNearsideAxle1' => $rollerObject->getLockNearsideAxle1(),
+                'lockOffsideAxle1' => $rollerObject->getLockOffsideAxle1(),
+                'effortNearsideAxle2' => $rollerObject->getEffortNearsideAxle2(),
+                'effortOffsideAxle2' => $rollerObject->getEffortOffsideAxle2(),
+                'lockNearsideAxle2' => $rollerObject->getLockNearsideAxle1(),
+                'lockOffsideAxle2' => $rollerObject->getLockOffsideAxle2(),
+            ],
+            'parkingBrakeEffortSingle' => $rollerObject->getParkingBrakeEffortSingle(),
+            'parkingBrakeLockSingle' => $rollerObject->getParkingBrakeLockSingle(),
+            'parkingBrakeEffortNearside' => $rollerObject->getParkingBrakeEffortNearside(),
+            'parkingBrakeEffortOffside' => $rollerObject->getParkingBrakeEffortOffside(),
+            'parkingBrakeLockNearside' => $rollerObject->getParkingBrakeLockNearside(),
+            'parkingBrakeLockOffside' => $rollerObject->getParkingBrakeLockOffside(),
+            'serviceBrake1TestType' => $rollerObject->getServiceBrake1TestType(),
+//            'serviceBrake2TestType' => $rollerObject->getServiceBrake1TestType(),
+            'parkingBrakeTestType' => $rollerObject->getParkingBrakeTestType(),
+            'weightType' => $rollerObject->getWeightType(),
+            'vehicleWeight' => $rollerObject->getVehicleWeight(),
+            'brakeLineType' => $rollerObject->getBrakeLineType(),
+            'numberOfAxles' => $rollerObject->getNumberOfAxles(),
+            'parkingBrakeNumberOfAxles' => $rollerObject->getParkingBrakeNumberOfAxles(),
+            'positionOfSingleWheel' => $rollerObject->getPositionOfSingleWheel(),
+            'parkingBrakeWheelsCount' => $rollerObject->getParkingBrakeWheelsCount(),
+            'serviceBrakeControlsCount' => $rollerObject->getServiceBrakeControlsCount(),
+            'vehiclePurposeType' => $rollerObject->getVehiclePurposeType(),
+            'serviceBrakeIsSingleLine' => $rollerObject->getServiceBrakeIsSingleLine(),
+            'weightIsUnladen' => $rollerObject->getWeightIsUnladen(),
+            'isCommercialVehicle' => $rollerObject->getIsCommercialVehicle(),
+
+        ]);
+
+        return $this->client->request(new Request(
+            'POST',
+            str_replace("{mot_test_number}", $motNumber, self::PATH),
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
+            $body
+        ));
+    }
+
     public function addBrakeTestForRollerClass1To2($token, $motNumber)
     {
         $body = json_encode([
@@ -139,6 +184,34 @@ class BrakeTestResult extends MotApi
         ));
     }
 
+    public function addBrakeTestDecelerometerClass3To7WithCustomData($token, $motNumber, $data)
+    {
+        $body = json_encode([
+            'serviceBrake1Efficiency' => $data['serviceBrake1Efficiency'],
+            'parkingBrakeEfficiency' => $data['parkingBrakeEfficiency'],
+            'serviceBrake1TestType' => 'DECEL',
+            'serviceBrake2TestType' => null,
+            'parkingBrakeTestType' => 'DECEL',
+            'weightType' => null, 'vehicleWeight' => null,
+            'brakeLineType' => 'dual',
+            'numberOfAxles' => 2,
+            'parkingBrakeNumberOfAxles' => 1,
+            'positionOfSingleWheel' => null,
+            'parkingBrakeWheelsCount' => null,
+            'serviceBrakeControlsCount' => null,
+            'vehiclePurposeType' => null,
+            'serviceBrakeIsSingleLine' => false,
+            'isCommercialVehicle' => $data['isCommercialVehicle'],
+        ]);
+
+        return $this->client->request(new Request(
+            'POST',
+            str_replace('{mot_test_number}', $motNumber, self::PATH),
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
+            $body
+        ));
+    }
+
     public function addBrakeTestDecelerometerClass1To2($token, $motNumber, $control1BrakeEfficiency = 66, $control2BrakeEfficiency = 66)
     {
         $body = json_encode([
@@ -197,10 +270,10 @@ class BrakeTestResult extends MotApi
     {
 
         $body = json_encode([
-            'gradientControl1AboveUpperMinimum' => $param['control1Above30'] == "YES" ? true : false,
-            'gradientControl2AboveUpperMinimum' => $param['control2Above30'] == "YES" ? true : false,
-            'gradientControl1BelowMinimum'      => $param['control1Below25'] == "YES" ? true : false,
-            'gradientControl2BelowMinimum'      => $param['control2Below25'] == "YES" ? true : false,
+            'gradientControl1AboveUpperMinimum' => $param['control1Above30'],
+            'gradientControl2AboveUpperMinimum' => $param['control2Above30'],
+            'gradientControl1BelowMinimum'      => $param['control1Below25'],
+            'gradientControl2BelowMinimum'      => $param['control2Below25'],
             'brakeTestType' => 'GRADT'
         ]);
 
@@ -208,6 +281,27 @@ class BrakeTestResult extends MotApi
             'POST',
             str_replace('{mot_test_number}', $motNumber, self::PATH),
             ['Content-Type' => 'application/json', 'Authorization' => 'Bearer ' . $token],
+            $body
+        ));
+    }
+
+    public function addBrakeTestFloorClass1To2WithCustomData($token, $motNumber, $param)
+    {
+        $body = json_encode([
+            'control1EffortFront' => $param['control1Effort'],
+            'control2EffortFront' => $param['control2Effort'],
+            'vehicleWeightFront' => $param['vehicleWeightFront'],
+            'vehicleWeightRear' => $param['vehicleWeightRear'],
+            'riderWeight' => $param['riderWeight'],
+            'isSidecarAttached' => 0,
+            'sidecarWeight' => null,
+            'brakeTestType' => 'FLOOR'
+        ]);
+
+        return $this->client->request(new Request(
+            'POST',
+            str_replace('{mot_test_number}', $motNumber, self::PATH),
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
             $body
         ));
     }
