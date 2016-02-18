@@ -26,7 +26,7 @@ class DateOfBirthValidator extends AbstractValidator
     protected $messageTemplates = array(
         self::IS_EMPTY          => self::ERR_MSG_IS_EMPTY,
         self::IS_FUTURE         => self::ERR_MSG_IS_FUTURE,
-        self::IS_OVER100        => self::IS_OVER100,
+        self::IS_OVER100        => self::ERR_MSG_IS_OVER100,
         self::IS_INVALID_FORMAT => self::ERR_MSG_IS_INVALID_FORMAT,
     );
 
