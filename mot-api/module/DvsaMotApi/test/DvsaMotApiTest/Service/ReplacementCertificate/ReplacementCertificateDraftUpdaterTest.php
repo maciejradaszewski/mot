@@ -111,7 +111,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($updatedDraft->includeInMismatchFile());
     }
 
-    public function testSetIncludeInPassFile_isAlwaysFalse_forDVLAChangePermission_Only_Vin_Changed()
+    public function testSetIncludeInPassFile_isAlwaysTrue_forDVLAChangePermission_Only_Vin_Changed()
     {
         //given
         $this->returnsOkCheckResult();
@@ -142,7 +142,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $updatedDraft = $this->createSUT()->updateDraft($draft, $change);
 
         //then
-        $this->assertFalse($updatedDraft->includeInPassFile());
+        $this->assertTrue($updatedDraft->includeInPassFile());
     }
 
     public function testSetIncludeInMismatchFile_isAlwaysFalse_forDVLAChangePermission_Only_Vin_Changed()
@@ -179,7 +179,7 @@ class ReplacementCertificateDraftUpdaterTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($updatedDraft->includeInMismatchFile());
     }
 
-    public function testSetIncludeInPassFile_isAlwaysTrue_forDVLAChangePermission_Only_Vin_Changed()
+    public function testSetIncludeInPassFile_isAlwaysTrue_forDVLAChangePermission_Only_Vrm_Changed()
     {
         //given
         $this->returnsOkCheckResult();
