@@ -230,7 +230,7 @@ class ReplacementCertificateDraftUpdater implements TransactionAwareInterface
         if ($this->changedByDVLA()) {
             // makes the assumption that batch import will never be able to
             //update expiry date of replacement certificate
-            if ($vrmChanged || $dateChanged) {
+            if ($vrmChanged || $vinChanged || $dateChanged) {
                 $draft->setIncludeInPassFile(true);
             } elseif (!$draft->includeInPassFileIsTrue()) {
                 $draft->setIncludeInPassFile(false);
