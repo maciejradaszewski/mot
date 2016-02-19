@@ -21,6 +21,9 @@ use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileSidebar;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Constants\FeatureToggle;
+use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
+use DvsaCommon\UrlBuilder\PersonUrlBuilder;
+use Exception;
 use UserAdmin\Service\UserAdminSessionManager;
 use Zend\View\Model\ViewModel;
 
@@ -31,6 +34,8 @@ class PersonProfileController extends AbstractAuthActionController
 {
     const CONTENT_HEADER_TYPE__USER_SEARCH = 'User search';
     const CONTENT_HEADER_TYPE__YOUR_PROFILE = 'Your profile';
+    const ERR_PIN_UPDATE_FAIL = 'There was a problem updating your PIN.';
+    const ERR_COMMON_API = 'Something went wrong.';
 
     /**
      * @var ApiPersonalDetails
@@ -143,6 +148,59 @@ class PersonProfileController extends AbstractAuthActionController
             'userSearchResultUrl'       => $this->getUserSearchResultUrl(),
 
         ]);
+    }
+
+    /**
+     * @return array
+     */
+    public function securitySettingsAction()
+    {
+        $userId = $this->getIdentity()->getUserId();
+
+        if ($this->userAdminSessionManager->isUserAuthenticated($userId) !== true) {
+            $url = $this->url()->fromRoute(ContextProvider::YOUR_PROFILE_PARENT_ROUTE . '/security-questions', [
+                'id' => $userId,
+            ]);
+
+            return $this->redirect()->toUrl($url);
+        }
+
+        $personalInfo = $this->getAuthenticatedData();
+
+        /** @var PersonalDetails $personalDetails */
+        $personalDetails = $personalInfo['personalDetails'];
+
+        $returnData = [
+            'fullName' => $personalDetails->getFullName(),
+            'config'   => $this->getConfig(),
+            'userId'   => $userId,
+        ];
+
+        if ($this->getRequest()->isPost()) {
+            try {
+                $apiUrl = PersonUrlBuilder::resetPin($userId);
+                $responseData = $this->getRestClient()->put($apiUrl, null);
+
+                $returnData['pin'] = $responseData['data']['pin'];
+                $this->flashMessenger()->clearMessages();
+            } catch (Exception $e) {
+                $errorMessage = ($e instanceof GeneralRestException) ? self::ERR_PIN_UPDATE_FAIL : self::ERR_COMMON_API;
+                $this->flashMessenger()->addErrorMessage($errorMessage);
+            }
+        } else {
+            $this->layout('layout/layout-govuk.phtml');
+        }
+
+        $breadcrumbs = [
+            self::CONTENT_HEADER_TYPE__YOUR_PROFILE => $this->url()->fromRoute(ContextProvider::YOUR_PROFILE_PARENT_ROUTE),
+            'Reset your PIN' => '',
+        ];
+
+        $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
+        $this->layout()->setVariable('pageSubTitle', self::CONTENT_HEADER_TYPE__YOUR_PROFILE);
+        $this->layout()->setVariable('pageTitle', 'Reset your PIN');
+
+        return $this->createViewModel('profile/security-settings.phtml', $returnData);
     }
 
     /**
@@ -270,7 +328,7 @@ class PersonProfileController extends AbstractAuthActionController
      *
      * @param PersonalDetails $personalDetails
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return array
      */

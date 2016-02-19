@@ -2,13 +2,14 @@
 
 namespace UserAdminTest\ViewModel;
 
+use Account\Service\SecurityQuestionService;
+use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
 use DvsaClient\Entity\Person;
 use DvsaCommon\Dto\Security\SecurityQuestionDto;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use DvsaCommonTest\TestUtils\XMock;
 use UserAdmin\Service\UserAdminSessionManager;
 use UserAdmin\ViewModel\SecurityQuestionViewModel;
-use Account\Service\SecurityQuestionService;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
 
 /**
@@ -41,9 +42,13 @@ class SecurityQuestionViewModelTest extends \PHPUnit_Framework_TestCase
         $this->person      = new Person();
         $this->question    = new SecurityQuestionDto();
 
-        $this->view = new SecurityQuestionViewModel(
-            $this->service
-        );
+        /** @var PersonProfileUrlGenerator $personProfileUrlGenerator */
+        $personProfileUrlGenerator = $this
+            ->getMockBuilder(PersonProfileUrlGenerator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->view = new SecurityQuestionViewModel($this->service, false, $personProfileUrlGenerator);
         $this->messenger = XMock::of(FlashMessenger::class);
     }
 

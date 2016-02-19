@@ -1,4 +1,9 @@
 <?php
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
 
 namespace Account\AbstractClass;
 
@@ -8,32 +13,41 @@ use DvsaCommon\HttpRestJson\Exception\NotFoundException;
 use DvsaCommon\UrlBuilder\AccountUrlBuilderWeb;
 use DvsaMotTest\Controller\AbstractDvsaMotTestController;
 use MotFitnesse\Util\UrlBuilder;
+use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
-use Zend\Http\Request;
-use Zend\Escaper;
 
 /**
- * Class AbstractSecurityQuestionController
- * @package Account\AbstractClass
+ * Abstract SecurityQuestion Controller.
  */
 abstract class AbstractSecurityQuestionController extends AbstractDvsaMotTestController
 {
-    /** @var SecurityQuestionService */
+    /**
+     * @var SecurityQuestionService
+     */
     protected $service;
-    /** @var AbstractSecurityQuestionViewModel */
+
+    /**
+     * @var AbstractSecurityQuestionViewModel
+     */
     protected $viewModel;
 
+    /**
+     * AbstractSecurityQuestionController constructor.
+     *
+     * @param SecurityQuestionService $securityQuestionService
+     */
     public function __construct(SecurityQuestionService $securityQuestionService)
     {
         $this->service = $securityQuestionService;
     }
 
     /**
-     * This action is the end point to enter the question answer for the help desk
+     * This action is the end point to enter the question answer for the help desk.
      *
      * @param int $personId
      * @param int $questionNumber
+     *
      * @return Response|ViewModel
      */
     public function index($personId, $questionNumber, $viewModel)
@@ -44,7 +58,7 @@ abstract class AbstractSecurityQuestionController extends AbstractDvsaMotTestCon
         $prgHelper = new PrgHelper($request);
         if ($prgHelper->isRepeatPost()) {
             return $this->redirect()->toUrl($prgHelper->getRedirectUrl());
-        };
+        }
 
         $this->service->setUserAndQuestion($personId, $questionNumber);
 
@@ -53,17 +67,20 @@ abstract class AbstractSecurityQuestionController extends AbstractDvsaMotTestCon
         if ($this->service->manageSessionQuestion($request, $this->flashMessenger()) === true) {
             $urlNext = $this->viewModel->getNextPageLink($this->flashMessenger());
             $prgHelper->setRedirectUrl($urlNext instanceof UrlBuilder ? $urlNext->toString() : $urlNext);
+
             return $this->redirect()->toUrl($urlNext);
         } elseif ($request->isPost()) {
-            $urlCurrent = $this->viewModel->getCurrentLink();
-            $prgHelper->setRedirectUrl($urlCurrent->toString());
+            $urlCurrent = (string) $this->viewModel->getCurrentLink();
+            $prgHelper->setRedirectUrl($urlCurrent);
+
             return $this->redirect()->toUrl($urlCurrent);
         }
+
         return $this->initViewModelInformation($prgHelper);
     }
 
     /**
-     * This function initialise the view model
+     * This function initialise the view model.
      *
      * @param PrgHelper $prgHelper
      *

@@ -1,31 +1,28 @@
 <?php
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
 
 namespace Account\Controller;
 
 use Account\AbstractClass\AbstractSecurityQuestionController;
-use Account\Service\SecurityQuestionService;
 use Account\ViewModel\SecurityQuestionViewModel;
-use Zend\Http\Response;
+use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
+use DvsaCommon\Constants\FeatureToggle;
 use Zend\View\Model\ViewModel;
-use Zend\Http\Request;
-use Zend\Escaper;
 
 /**
- * Class SecurityQuestionController
- * @package Account\Controller
+ * SecurityQuestion Controller.
  */
 class SecurityQuestionController extends AbstractSecurityQuestionController
 {
     const PAGE_TITLE    = 'Forgotten Password';
     const PAGE_SUBTITLE = 'MOT Testing Service';
 
-    public function __construct(SecurityQuestionService $securityQuestionService)
-    {
-        parent::__construct($securityQuestionService);
-    }
-
     /**
-     * This action is the end point to enter the question answer for the help desk
+     * This action is the end point to enter the question answer for the help desk.
      *
      * @return \Zend\Http\Response|ViewModel
      */
@@ -33,8 +30,8 @@ class SecurityQuestionController extends AbstractSecurityQuestionController
     {
         $personId   = $this->params()->fromRoute('personId');
         $questionNumber = $this->params()->fromRoute('questionNumber');
-        $viewModel = new SecurityQuestionViewModel($this->service);
 
+        $viewModel = $this->createViewModel();
         $view = $this->index($personId, $questionNumber, $viewModel);
 
         $this->layout()->setVariable('pageSubTitle', self::PAGE_SUBTITLE);
@@ -42,5 +39,17 @@ class SecurityQuestionController extends AbstractSecurityQuestionController
         $this->layout()->setVariable('progress', $this->service->getStep());
 
         return $view;
+    }
+
+    /**
+     * @return SecurityQuestionViewModel
+     */
+    private function createViewModel()
+    {
+        $isNewPersonProfileEnabled = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE);
+        /** @var PersonProfileUrlGenerator $personProfileUrlGenerator */
+        $personProfileUrlGenerator = $this->getServiceLocator()->get(PersonProfileUrlGenerator::class);
+
+        return new SecurityQuestionViewModel($this->service, $isNewPersonProfileEnabled, $personProfileUrlGenerator);
     }
 }

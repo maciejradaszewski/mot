@@ -248,8 +248,8 @@ class PersonProfileGuard
     {
         return (
             ($this->isViewingOwnProfile() && $this->loggedInPersonHasNoneOrAnyRoleOf([
-                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
-                OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE,
+                RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER,
+                RoleCode::AUTHORISED_EXAMINER_DELEGATE,
                 RoleCode::SITE_MANAGER,
                 RoleCode::SITE_ADMIN,
                 RoleCode::TESTER,

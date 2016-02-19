@@ -1,31 +1,29 @@
 <?php
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
 
 namespace AccountTest\Controller;
 
 use Account\Controller\SecurityQuestionController;
 use Account\Service\SecurityQuestionService;
+use Account\Validator\ClaimValidator;
 use Account\ViewModel\PasswordResetFormModel;
 use Application\Helper\PrgHelper;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
+use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
+use DvsaCommon\Constants\FeatureToggle;
+use DvsaCommon\HttpRestJson\Exception\NotFoundException;
 use DvsaCommon\UrlBuilder\AccountUrlBuilderWeb;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
-use PHPUnit_Framework_MockObject_MockObject as MockObj;
-use Zend\View\Model\ViewModel;
-use Zend\Http\Request;
-use Zend\Http\Response;
-use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\Http\TreeRouteStack as HttpRouter;
-use Zend\Mvc\Router\RouteMatch;
 use Zend\Session\Container;
-use Zend\Stdlib\Parameters;
-use DvsaCommon\HttpRestJson\Exception\NotFoundException;
-use Account\Validator\ClaimValidator;
+use Zend\View\Model\ViewModel;
 
 /**
- * Class SecurityQuestionControllerTest
- *
- * @package AccountTest\Controller
+ * Class SecurityQuestionControllerTest.
  */
 class SecurityQuestionControllerTest extends AbstractFrontendControllerTestCase
 {
@@ -36,7 +34,9 @@ class SecurityQuestionControllerTest extends AbstractFrontendControllerTestCase
 
     private $answerTooLong;
 
-
+    /**
+     * @var SecurityQuestionService
+     */
     protected $securityQuestionService;
 
     protected function setUp()
@@ -44,8 +44,17 @@ class SecurityQuestionControllerTest extends AbstractFrontendControllerTestCase
         $serviceManager = Bootstrap::getServiceManager();
         $serviceManager->setAllowOverride(true);
         $this->setServiceManager($serviceManager);
+        $this->withFeatureToggles([FeatureToggle::NEW_PERSON_PROFILE => false]);
 
         $this->securityQuestionService = XMock::of(SecurityQuestionService::class);
+
+        $personProfileUrlGenerator = $this
+            ->getMockBuilder(PersonProfileUrlGenerator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this
+            ->getServiceManager()
+            ->setService(PersonProfileUrlGenerator::class, $personProfileUrlGenerator);
 
         $this->setController(
             new SecurityQuestionController($this->securityQuestionService)
@@ -90,7 +99,6 @@ class SecurityQuestionControllerTest extends AbstractFrontendControllerTestCase
         if (!empty($expect['viewModel'])) {
             $this->assertInstanceOf(ViewModel::class, $result);
             $this->assertResponseStatus(self::HTTP_OK_CODE);
-
         }
 
         if (!empty($expect['errors'])) {
@@ -135,7 +143,7 @@ class SecurityQuestionControllerTest extends AbstractFrontendControllerTestCase
                         'method' => 'manageSessionQuestion',
                         'params' => [],
                         'result' => true,
-                    ]
+                    ],
                 ],
                 'expect'   => [
                     'url' => AccountUrlBuilderWeb::forgottenPasswordNotAuthenticated(),
@@ -234,7 +242,7 @@ class SecurityQuestionControllerTest extends AbstractFrontendControllerTestCase
                 'action'   => 'index',
                 'postData' => [
                     self::QUESTION_ONE => self::ANSWER,
-                    PrgHelper::FORM_GUID_FIELD_NAME => 'testToken'
+                    PrgHelper::FORM_GUID_FIELD_NAME => 'testToken',
                 ],
                 'mocks'    => [],
                 'expect'   => [

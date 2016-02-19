@@ -186,6 +186,16 @@ return [
                         ],
 
                     ],
+                    'security-settings' => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'    => '/security-settings',
+                            'defaults' => [
+                                'controller' => PersonProfileController::class,
+                                'action' => 'securitySettings',
+                            ],
+                        ],
+                    ],
                     'security-questions' => [
                         'type'    => 'segment',
                         'options' => [
