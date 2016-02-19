@@ -1,10 +1,11 @@
 <?php
+
+use Dashboard\ViewModel\SecurityQuestionViewModel;
 use DvsaCommon\UrlBuilder\AccountUrlBuilderWeb;
-use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 use Account\Validator\ClaimValidator;
 
 /**
- * @var \Account\ViewModel\SecurityQuestionViewModel  $viewModel
+ * @var SecurityQuestionViewModel  $viewModel
  * @var string $numberOfAttemptMessage
  */
 
@@ -12,7 +13,7 @@ $question = $viewModel->getQuestion();
 $questionNumber = $viewModel->getQuestionNumber();
 $personId = $viewModel->getUserId();
 
-$formAction         = PersonUrlBuilderWeb::securityQuestions($questionNumber);
+$formAction         = $viewModel->getFormActionUrl($questionNumber);
 $legendTitle        = 'Security question ' . ($questionNumber == 1 ? 'one' : 'two');
 $labelText          = $question->getText();
 $inputId            = 'question' . $questionNumber;

@@ -3,29 +3,20 @@
 namespace UserAdmin\ViewModel;
 
 use Account\AbstractClass\AbstractSecurityQuestionViewModel;
-use Account\Service\SecurityQuestionService;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use UserAdmin\Service\UserAdminSessionManager;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
 
 /**
- * Class SecurityQuestionViewModel
- * @package UserAdmin\ViewModel
+ * Class SecurityQuestionViewModel.
  */
 class SecurityQuestionViewModel extends AbstractSecurityQuestionViewModel
 {
     /**
-     * @param SecurityQuestionService $service
-     */
-    public function __construct($service)
-    {
-        parent::__construct($service);
-    }
-
-    /**
-     * This function return the skip question link
+     * This function return the skip question link.
      *
      * @param FlashMessenger $flashMessenger
+     *
      * @return UserAdminUrlBuilderWeb
      */
     public function getNextPageLink(FlashMessenger $flashMessenger)
@@ -42,7 +33,7 @@ class SecurityQuestionViewModel extends AbstractSecurityQuestionViewModel
     }
 
     /**
-     * This function return the skip question link
+     * This function return the skip question link.
      *
      * @return UserAdminUrlBuilderWeb
      */

@@ -1,36 +1,34 @@
 <?php
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
 
 namespace UserAdmin\Controller;
 
 use Account\AbstractClass\AbstractSecurityQuestionController;
-use Account\Service\SecurityQuestionService;
+use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use UserAdmin\ViewModel\SecurityQuestionViewModel;
-use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
-use Zend\Http\Request;
-use Zend\Escaper;
 
 /**
- * Class SecurityQuestionController
- * @package UserAdmin\Controller
+ * Class SecurityQuestionController.
  */
 class SecurityQuestionController extends AbstractSecurityQuestionController
 {
     const PAGE_TITLE    = 'User profile';
     const PAGE_SUBTITLE = 'Authenticate %s';
 
-    public function __construct(SecurityQuestionService $securityQuestionService)
-    {
-        parent::__construct($securityQuestionService);
-    }
-
     /**
-     * This action is the end point to enter the question answer for the help desk
+     * This action is the end point to enter the question answer for the help desk.
+     *
+     * @throws \DvsaCommon\Auth\NotLoggedInException
      *
      * @return \Zend\Http\Response|ViewModel
-     * @throws \DvsaCommon\Auth\NotLoggedInException
      */
     public function indexAction()
     {
@@ -38,8 +36,8 @@ class SecurityQuestionController extends AbstractSecurityQuestionController
 
         $personId   = $this->params()->fromRoute('personId');
         $questionNumber = $this->params()->fromRoute('questionNumber', 1);
-        $viewModel = new SecurityQuestionViewModel($this->service);
 
+        $viewModel = $this->createViewModel();
         $view = $this->index($personId, $questionNumber, $viewModel);
 
         if ($view instanceof ViewModel) {
@@ -49,13 +47,35 @@ class SecurityQuestionController extends AbstractSecurityQuestionController
                 sprintf(self::PAGE_SUBTITLE, $this->viewModel->getPerson()->getFullName())
             );
 
-            $breadcrumbs = [
-                'User search' => UserAdminUrlBuilderWeb::of()->userSearch(),
-                'Authenticate user' => '',
-            ];
+            $breadcrumbs = $this->createBreadcrumbs();
             $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
         }
 
         return $view;
+    }
+
+    /**
+     * @return SecurityQuestionViewModel
+     */
+    private function createViewModel()
+    {
+        $isNewPersonProfileEnabled = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE);
+        /** @var PersonProfileUrlGenerator $personProfileUrlGenerator */
+        $personProfileUrlGenerator = $this->getServiceLocator()->get(PersonProfileUrlGenerator::class);
+
+        return new SecurityQuestionViewModel($this->service, $isNewPersonProfileEnabled, $personProfileUrlGenerator);
+    }
+
+    /**
+     * @return array
+     */
+    private function createBreadcrumbs()
+    {
+        $breadcrumbs = [
+            'User search' => UserAdminUrlBuilderWeb::of()->userSearch(),
+            'Authenticate user' => '',
+        ];
+
+        return $breadcrumbs;
     }
 }

@@ -1,33 +1,28 @@
 <?php
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
 
 namespace Account\ViewModel;
 
 use Account\AbstractClass\AbstractSecurityQuestionViewModel;
-use Account\Service\SecurityQuestionService;
 use DvsaCommon\UrlBuilder\AccountUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use UserAdmin\Service\UserAdminSessionManager;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
-use Zend\View\Model\ViewModel;
 
 /**
- * Class SecurityQuestionViewModel
- * @package Account\ViewModel
+ * Class SecurityQuestionViewModel.
  */
 class SecurityQuestionViewModel extends AbstractSecurityQuestionViewModel
 {
     /**
-     * @param SecurityQuestionService $service
-     */
-    public function __construct($service)
-    {
-        parent::__construct($service);
-    }
-
-    /**
-     * This function return the skip question link
+     * This function return the skip question link.
      *
      * @param FlashMessenger $flashMessenger
+     *
      * @return UserAdminUrlBuilderWeb
      */
     public function getNextPageLink(FlashMessenger $flashMessenger)
@@ -40,16 +35,18 @@ class SecurityQuestionViewModel extends AbstractSecurityQuestionViewModel
                 );
             }
             $flashMessenger->clearCurrentMessagesFromNamespace(FlashMessenger::NAMESPACE_ERROR);
+
             return AccountUrlBuilderWeb::forgottenPasswordNotAuthenticated();
         }
         if ($this->service->getQuestionSuccess() === true) {
             return AccountUrlBuilderWeb::forgottenPasswordAuthenticated();
         }
+
         return AccountUrlBuilderWeb::forgottenPasswordNotAuthenticated();
     }
 
     /**
-     * This function return the skip question link
+     * This function return the skip question link.
      *
      * @return UserAdminUrlBuilderWeb
      */

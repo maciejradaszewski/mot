@@ -1,41 +1,63 @@
 <?php
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
 
 namespace Account\AbstractClass;
 
 use Account\Service\SecurityQuestionService;
+use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
+use DvsaClient\Entity\Person;
 use DvsaCommon\Dto\Security\SecurityQuestionDto;
 use DvsaCommon\UrlBuilder\UrlBuilderWeb;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
 use Zend\View\Model\ViewModel;
-use DvsaClient\Entity\Person;
 
 /**
- * Class AbstractSecurityQuestionViewModel
- * @package Account\AbstractClass
+ * AbstractSecurityQuestion ViewModel.
  */
 abstract class AbstractSecurityQuestionViewModel
 {
-    /** @var SecurityQuestionService */
+    /**
+     * @var bool
+     */
+    private $isNewPersonProfileEnabled;
+
+    /**
+     * @var \Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator
+     */
+    protected $personProfileUrlGenerator;
+
+    /**
+     * @var SecurityQuestionService
+     */
     protected $service;
 
     /**
+     * @param SecurityQuestionService   $service
+     * @param bool                      $isNewPersonProfileEnabled
+     * @param PersonProfileUrlGenerator $personProfileUrlGenerator
+     */
+    public function __construct($service, $isNewPersonProfileEnabled, PersonProfileUrlGenerator $personProfileUrlGenerator)
+    {
+        $this->service = $service;
+        $this->isNewPersonProfileEnabled = (bool) $isNewPersonProfileEnabled;
+        $this->personProfileUrlGenerator = $personProfileUrlGenerator;
+    }
+
+    /**
      * @param FlashMessenger $flashMessenger
+     *
      * @return UrlBuilderWeb
      */
     abstract public function getNextPageLink(FlashMessenger $flashMessenger);
 
     /**
-     * @return UrlBuilderWeb
+     * @return UrlBuilderWeb|string
      */
     abstract public function getCurrentLink();
-
-    /**
-     * @param SecurityQuestionService $service
-     */
-    public function __construct($service)
-    {
-        $this->service = $service;
-    }
 
     /**
      * @return SecurityQuestionDto
@@ -61,7 +83,6 @@ abstract class AbstractSecurityQuestionViewModel
         return $this->service->getUserId();
     }
 
-
     /**
      * @return Person
      */
@@ -76,5 +97,33 @@ abstract class AbstractSecurityQuestionViewModel
     public function getSearchParams()
     {
         return $this->service->getSearchParams();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isNewPersonProfileEnabled()
+    {
+        return $this->isNewPersonProfileEnabled;
+    }
+
+    /**
+     * @param int $questionNumber
+     *
+     * @return string
+     */
+    protected function generateSecurityQuestionsUrlForNewProfile($questionNumber)
+    {
+        return $this->personProfileUrlGenerator->fromPersonProfile('security-questions', [
+            'questionNumber' => $questionNumber,
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    protected function generateSecuritySettingsUrlForNewProfile()
+    {
+        return $this->personProfileUrlGenerator->fromPersonProfile('security-settings');
     }
 }

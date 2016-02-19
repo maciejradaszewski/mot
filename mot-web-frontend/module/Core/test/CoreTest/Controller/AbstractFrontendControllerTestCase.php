@@ -135,7 +135,7 @@ abstract class AbstractFrontendControllerTestCase extends \PHPUnit_Framework_Tes
 
         $map = [];
         foreach ($featureToggles as $name => $value) {
-            $map += [(string) $name, (bool) $value];
+            $map[] = [(string) $name, (bool) $value];
         }
 
         $featureToggles = $this

@@ -771,13 +771,13 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
                 false,
             ],
             [
-                [self::LOGGED_IN_PERSON_ID, [], [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
+                [self::LOGGED_IN_PERSON_ID, [], [RoleCode::AUTHORISED_EXAMINER_DESIGNATED_MANAGER]],
                 [self::TARGET_PERSON_ID, []],
                 ContextProvider::YOUR_PROFILE_CONTEXT,
                 true,
             ],
             [
-                [self::LOGGED_IN_PERSON_ID, [], [OrganisationBusinessRoleCode::AUTHORISED_EXAMINER_DELEGATE]],
+                [self::LOGGED_IN_PERSON_ID, [], [RoleCode::AUTHORISED_EXAMINER_DELEGATE]],
                 [self::TARGET_PERSON_ID, []],
                 ContextProvider::YOUR_PROFILE_CONTEXT,
                 true,
