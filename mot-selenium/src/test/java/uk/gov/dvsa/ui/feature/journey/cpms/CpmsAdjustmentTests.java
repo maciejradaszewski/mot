@@ -29,7 +29,7 @@ public class CpmsAdjustmentTests extends BaseTest {
         return cardPaymentConfirmationPage;
     }
 
-    @Test(groups = {"BVT", "Regression"}, description = "SPMS-255 Finance user refunds slots", dataProvider = "createFinanceUserAndAe")
+    @Test(groups = {"CPMS"}, description = "SPMS-255 Finance user refunds slots", dataProvider = "createFinanceUserAndAe")
     public void userRefundsSlots(User financeUser, AeDetails aeDetails) throws IOException, URISyntaxException {
 
         //Given I am on Slot refund page as a Finance user with a valid payment
@@ -49,7 +49,7 @@ public class CpmsAdjustmentTests extends BaseTest {
                 slotRefundConfirmationPage.isRefundSuccessMessageDisplayed(), is(true));
     }
 
-    @Test(enabled = false, groups = {"BVT", "Regression"}, description = "SPMS-42 Finance User processes Payment reversal", dataProvider = "createFinanceUserAndAe")
+    @Test(enabled = false, groups = {"CPMS"}, description = "SPMS-42 Finance User processes Payment reversal", dataProvider = "createFinanceUserAndAe")
     public void userReversesAPayment(User financeUser, AeDetails aeDetails) throws IOException, URISyntaxException {
 
         //Given I am on Reverse payment page of a valid payment

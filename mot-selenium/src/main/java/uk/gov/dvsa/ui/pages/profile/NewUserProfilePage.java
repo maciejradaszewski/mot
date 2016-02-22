@@ -7,7 +7,6 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.ChangeEmailDetailsPage;
 import uk.gov.dvsa.ui.pages.ChangeTelephoneDetailsPage;
-import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
@@ -41,7 +40,13 @@ public class NewUserProfilePage extends ProfilePage {
     @FindBy(css = "#full-address a") private WebElement changeAddressLink;
 
     public NewUserProfilePage(MotAppDriver driver) {
-        super(driver, PAGE_TITLE);
+        super(driver);
+        selfVerify();
+    }
+
+    @Override
+    protected boolean selfVerify() {
+        return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
 
     @Override
@@ -71,15 +76,11 @@ public class NewUserProfilePage extends ProfilePage {
     }
 
     @Override
-    public String getDrivingLicenceRegionForPerson() {
-        return personDrivingLicenceRegion.getText();
-    }
-
-    @Override
     public String getMessageSuccess(){
         return messageSuccess.getText();
     }
 
+    @Override
     public boolean isSuccessMessageDisplayed() {
         return messageSuccess.isDisplayed();
     }
@@ -151,12 +152,6 @@ public class NewUserProfilePage extends ProfilePage {
     }
 
     @Override
-    public UserSearchResultsPage clickCancelAndReturnToSearchResults() {
-        cancelAndReturnToSearchResults.click();
-        return MotPageFactory.newPage(driver, UserSearchResultsPage.class);
-    }
-
-    @Override
     public ChangeEmailDetailsPage clickChangeEmailLink() {
         changeEmailLink.click();
         return new ChangeEmailDetailsPage(driver);
@@ -174,19 +169,13 @@ public class NewUserProfilePage extends ProfilePage {
         return new ChangeAddressPage(driver);
     }
 
-    public boolean verifyEmailIsChanged(String email) {
-        return userTelephone.getText().contains(email);
-    }
-
-    public boolean verifyTelephoneChanged(String telephone) {
-        return userTelephone.getText().contains(telephone);
-    }
-
-    public boolean verifyConfirmationMessage(String message) {
-        return messageSuccess.getText().contains(message);
-    }
-
     public boolean isPageLoaded() {
         return selfVerify();
+    }
+
+    @Override
+    public UserSearchResultsPage clickCancelAndReturnToSearchResults() {
+        cancelAndReturnToSearchResults.click();
+        return MotPageFactory.newPage(driver, UserSearchResultsPage.class);
     }
 }

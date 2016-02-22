@@ -8,6 +8,7 @@ import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.profile.NewPersonProfilePage;
 import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
+import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 
 public class ChangeTelephoneDetailsPage extends Page {
 
@@ -33,17 +34,19 @@ public class ChangeTelephoneDetailsPage extends Page {
         return this;
     }
 
-    public <T extends Page> T clickSubmitButton(Class<T> clazz) {
+    public ProfilePage submitAndReturnToProfilePage(ProfilePage page) {
         submitTelephone.click();
-        return MotPageFactory.newPage(driver, clazz);
+        return MotPageFactory.newPage(driver, page.getClass());
     }
 
-    public <T extends Page> T clickCancelButton(boolean isYourProfile){
+    public ChangeTelephoneDetailsPage submit() {
+        submitTelephone.click();
+        return this;
+    }
+
+    public ProfilePage cancelEdit(ProfilePage page){
         cancelAndReturnToYourProfile.click();
-        if (isYourProfile){
-            return (T)MotPageFactory.newPage(driver, NewPersonProfilePage.class);
-        }
-        return (T)MotPageFactory.newPage(driver, NewUserProfilePage.class);
+        return MotPageFactory.newPage(driver, page.getClass());
     }
 
     public String getValidationMessage() {

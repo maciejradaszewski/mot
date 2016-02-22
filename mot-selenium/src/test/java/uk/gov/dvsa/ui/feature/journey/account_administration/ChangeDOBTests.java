@@ -12,9 +12,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
 public class ChangeDOBTests extends BaseTest {
+    private static final String DOB_ERROR_MESSAGE = "must be a valid date of birth";
 
     private User areaOffice1User;
     private User vehicleExaminerUser;
@@ -42,14 +44,14 @@ public class ChangeDOBTests extends BaseTest {
             description = "Test that Authorised user can change date of birth on other person profile",
             dataProvider = "dvsaUserChangeDOBProvider")
     public void dvsaUserCanChangeDOBOnOtherPersonProfile(User user) throws IOException {
-        // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        // Given I am on the profile page of a user as DVSA
+        motUI.profile.dvsaViewUserProfile(user, tester);
 
-        // When I am changing a name for a person
-        motUI.userRoute.changeDOB().changeDateOfBirth("01", "01", "1975", true);
+        // When I change the Date of Birth
+        motUI.profile.changeDateOfBirthTo("10 Apr 1980");
 
         // Then the success message should be displayed
-        assertThat(motUI.userRoute.page().isSuccessMessageDisplayed(), is(true));
+        assertThat(motUI.profile.page().isSuccessMessageDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-927"},
@@ -59,55 +61,26 @@ public class ChangeDOBTests extends BaseTest {
     public void userCantSeeChangeDOBLinkOnOwnProfile(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the New Person Profile page as logged user
-        motUI.userRoute.viewYourProfile(user);
+        motUI.profile.viewYourProfile(user);
 
         //Then Change date of birth link should not be displayed
-        assertThat(motUI.userRoute.page().isChangeDOBLinkIsDisplayed(), is(false));
+        assertThat(motUI.profile.page().isChangeDOBLinkIsDisplayed(), is(false));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-927"},
             testName = "NewProfile",
-            description = "Test that user should provide a valid day in order to change date of birth")
-    public void userShouldProvideAValidDay() throws IOException, URISyntaxException {
+            description = "Test that user should provide a valid day in order to change date of birth",
+            dataProvider = "invalidDateData")
+    public void validationMessageDisplayedForInvalidInput(String day, String month, String year) throws IOException, URISyntaxException {
 
         // Given I'm on the New Person Profile page as logged user
-        motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
+        motUI.profile.dvsaViewUserProfile(areaOffice1User, tester);
 
-        // When I am trying to change a date of birth for a person with invalid day
-        motUI.userRoute.changeDOB().changeDateOfBirth("", "01", "1975", false);
+        // When I am trying to change a date of birth for a person with invalid values
+        String validationMessage = motUI.profile.changeDOBwithInvalidValues(day, month, year);
 
-        // Then the error message should be displayed
-        assertThat(motUI.userRoute.changeDOB().isValidationMessageOnDOBPageDisplayed(), is(true));
-    }
-
-    @Test(groups = {"BVT", "Regression", "BL-927"},
-            testName = "NewProfile",
-            description = "Test that user should provide a valid month in order to change date of birth")
-    public void userShouldProvideAValidMonth() throws IOException, URISyntaxException {
-
-        // Given I'm on the New Person Profile page as logged user
-        motUI.userRoute.dvsaViewUserProfile(vehicleExaminerUser, tester);
-
-        // When I am trying to change a date of birth for a person with invalid month
-        motUI.userRoute.changeDOB().changeDateOfBirth("01", "", "1975", false);
-
-        // Then the error message should be displayed
-        assertThat(motUI.userRoute.changeDOB().isValidationMessageOnDOBPageDisplayed(), is(true));
-    }
-
-    @Test(groups = {"BVT", "Regression", "BL-927"},
-            testName = "NewProfile",
-            description = "Test that user should provide a valid year in order to change date of birth")
-    public void userShouldProvideAValidYear() throws IOException, URISyntaxException {
-
-        // Given I'm on the New Person Profile page as logged user
-        motUI.userRoute.dvsaViewUserProfile(schemeManager, tester);
-
-        // When I am trying to change a date of birth for a person with invalid year
-        motUI.userRoute.changeDOB().changeDateOfBirth("01", "01", "", false);
-
-        // Then the error message should be displayed
-        assertThat(motUI.userRoute.changeDOB().isValidationMessageOnDOBPageDisplayed(), is(true));
+        // Then the appropriate validation message should be displayed
+        assertThat(validationMessage, containsString(DOB_ERROR_MESSAGE));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-59"},
@@ -115,13 +88,13 @@ public class ChangeDOBTests extends BaseTest {
             description = "Test that Authorised user can navigate to Change date of birth page and backward")
     public void dvsaUserCanNavigateToAndBackwardDOBPage() throws IOException {
         // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
+        motUI.profile.dvsaViewUserProfile(areaOffice1User, tester);
 
         // When I am navigating to Change date of birth page and clicking on cancel and return link
-        motUI.userRoute.page().clickChangeDOBLink().clickCancelAndReturnLink();
+        motUI.profile.page().clickChangeDOBLink().clickCancelAndReturnLink();
 
         // Then the person profile page should be displayed
-        assertThat(motUI.userRoute.page().isPageLoaded(), is(true));
+        assertThat(motUI.profile.page().isPageLoaded(), is(true));
     }
 
     @DataProvider
@@ -130,6 +103,15 @@ public class ChangeDOBTests extends BaseTest {
                 {areaOffice1User},
                 {vehicleExaminerUser},
                 {schemeManager}
+        };
+    }
+
+    @DataProvider
+    private Object[][] invalidDateData() {
+        return new Object[][] {
+                {"", "10", "1980"},
+                {"10", "", "1980"},
+                {"10", "01", ""}
         };
     }
 

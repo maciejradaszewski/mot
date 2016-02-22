@@ -4,8 +4,8 @@
   <groupId>dvsa-mot.com</groupId>
   <artifactId>selenium</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>DVSA MOT Selenium</name>
-  <description>DVSA MOT Selenium tests project</description>
+  <name>DVSA MTS</name>
+  <description>DVSA MTS UI Automation Framework</description>
 
   <dependencies>
     <dependency>

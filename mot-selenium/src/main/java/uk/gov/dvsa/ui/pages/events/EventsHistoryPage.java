@@ -3,6 +3,7 @@ package uk.gov.dvsa.ui.pages.events;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import uk.gov.dvsa.framework.config.Configurator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
@@ -37,11 +38,9 @@ public class EventsHistoryPage extends Page {
 
     public final String getEventNames(String aeId) {
         By selector = By.cssSelector(String.format(eventNames, aeId));
-        if (isEventHistoryTableDisplayed()) {
-            return driver.findElement(selector).getText();
-        }
+        PageInteractionHelper.waitForPageToLoad();
 
-        return "No event found";
+        return driver.findElement(selector).getText();
     }
 
     public EventsHistoryPage fillSearchInput(String searchString) {

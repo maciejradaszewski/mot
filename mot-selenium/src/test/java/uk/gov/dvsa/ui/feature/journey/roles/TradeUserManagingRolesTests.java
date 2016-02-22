@@ -9,7 +9,6 @@ import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.ui.BaseTest;
 import uk.gov.dvsa.ui.pages.RemoveRolePage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
-import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.io.IOException;
@@ -43,10 +42,10 @@ public class TradeUserManagingRolesTests extends BaseTest {
     public void tradeUserCantViewAeAssociationOfOtherTradeUser() throws IOException, URISyntaxException {
 
         //Given I'm on the profile page of a user as a Trade user
-        motUI.userRoute.tradeViewUserProfile(siteManager, tester);
+        motUI.profile.tradeViewUserProfile(siteManager, tester);
 
         //I expect Roles and Associations link should be displayed
-        assertThat(motUI.userRoute.page().isRolesAndAssociationsLinkDisplayed(), is(false));
+        assertThat(motUI.profile.page().isRolesAndAssociationsLinkDisplayed(), is(false));
     }
 
 
@@ -56,8 +55,8 @@ public class TradeUserManagingRolesTests extends BaseTest {
     public void tradeUserCanNavigateFromDeleteRolePageViaLink() throws IOException, URISyntaxException {
 
         //Given I'm logged in as Trade user and I am on Remove role page
-        motUI.userRoute.viewYourProfile(userData.createTester(site.getId()));
-        RemoveRolePage removeRolePage = motUI.userRoute.page().clickRolesAndAssociationsLink().removeRole();
+        motUI.profile.viewYourProfile(userData.createTester(site.getId()));
+        RemoveRolePage removeRolePage = motUI.profile.page().clickRolesAndAssociationsLink().removeRole();
 
         //When I click on Cancel and return to roles and associations link
         removeRolePage.cancelRoleRemoval();
@@ -72,8 +71,8 @@ public class TradeUserManagingRolesTests extends BaseTest {
         vehicleReinspectionWorkflow().startMotTestAsATester(tester, testVehicle);
 
         //Given I'm logged in as Trade user with test in progress and I am on Remove role page
-        motUI.userRoute.viewYourProfile(tester);
-        RemoveRolePage removeRolePage = motUI.userRoute.page().clickRolesAndAssociationsLink().removeRole();
+        motUI.profile.viewYourProfile(tester);
+        RemoveRolePage removeRolePage = motUI.profile.page().clickRolesAndAssociationsLink().removeRole();
 
         //When I click on Confirm button
         removeRolePage.confirmRemoveRole(RolesAndAssociationsPage.class);
@@ -87,8 +86,8 @@ public class TradeUserManagingRolesTests extends BaseTest {
     public void tradeUserCanRemoveOwnTradeRole() throws IOException, URISyntaxException {
 
         //Given I am logged in as Trade user and I am on Remove role page
-        motUI.userRoute.viewYourProfile(tester);
-        RemoveRolePage removeRolePage = motUI.userRoute.page().clickRolesAndAssociationsLink().removeRole();
+        motUI.profile.viewYourProfile(tester);
+        RemoveRolePage removeRolePage = motUI.profile.page().clickRolesAndAssociationsLink().removeRole();
 
         //When I click on Confirm button
         removeRolePage.confirmRemoveRole(RolesAndAssociationsPage.class);

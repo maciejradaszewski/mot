@@ -5,6 +5,7 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.module.*;
+import uk.gov.dvsa.module.profile.Profile;
 import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.events.EventsHistoryPage;
 import uk.gov.dvsa.ui.pages.events.HistoryType;
@@ -24,7 +25,7 @@ public class MotUI {
     public final TestLog testLog;
     public final SearchUser searchUser;
     public final SearchSite searchSite;
-    public final UserRoute userRoute;
+    public final Profile profile;
     public final Site site;
     public final Certificate certificate;
     public final Contingency contingency;
@@ -41,7 +42,7 @@ public class MotUI {
         searchUser = new SearchUser(pageNavigator);
         searchSite = new SearchSite(pageNavigator);
         certificate = new Certificate(pageNavigator);
-        userRoute = new UserRoute(pageNavigator);
+        profile = new Profile(pageNavigator);
         site = new Site(pageNavigator);
         contingency = new Contingency(pageNavigator);
         helpDesk = new HelpDesk(pageNavigator);

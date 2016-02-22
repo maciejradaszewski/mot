@@ -42,6 +42,11 @@ class SiteUserDataService implements ServiceLocatorAwareInterface
      */
     private $sitePermissionsHelper;
 
+    /**
+     * @var AccountPerson
+     */
+    private $accountPerson;
+
     public function __construct(
         NotificationsHelper $notificationsHelper,
         SitePermissionsHelper $sitePermissionsHelper
@@ -66,10 +71,11 @@ class SiteUserDataService implements ServiceLocatorAwareInterface
             /** @var $accountService AccountService */
             $accountService = $this->getServiceLocator()->get(AccountService::class);
             $dataGeneratorHelper = DataGeneratorHelper::buildForDifferentiator($data);
+            $this->accountPerson = new AccountPerson($data, $dataGeneratorHelper);
+
             $account = $accountService->createAccount(
                 $role,
-                $dataGeneratorHelper,
-                new AccountPerson($data, $dataGeneratorHelper)
+                $dataGeneratorHelper, $this->accountPerson
             );
         } else {
             $account = new Account($data);
@@ -82,7 +88,18 @@ class SiteUserDataService implements ServiceLocatorAwareInterface
                 "message"  => $role . ' created',
                 "username" => $account->getUsername(),
                 "password" => $account->getPassword(),
-                "personId" => $account->getPersonId()
+                "personId" => $account->getPersonId(),
+                "firstName"=> $account->getFirstName(),
+                "middleName" => $this->accountPerson->getMiddleName(),
+                "surname"  => $account->getSurname(),
+                "addressLine1" => $this->accountPerson->getAddressLine1(),
+                "addressLine2" => $this->accountPerson->getAddressLine2(),
+                "postcode" => $this->accountPerson->getPostcode(),
+                "phoneNumber" => $this->accountPerson->getPhoneNumber(),
+                "emailAddress" => $this->accountPerson->getEmailAddress(),
+                "multiSiteUser" => (isset($data['siteIds']) && count($data['siteIds']) > 1) ? true : false,
+                "dateOfBirth" => $this->accountPerson->getDateOfBirth(),
+                "drivingLicenceNumber" => $this->accountPerson->getDrivingLicenceNumber(),
             ]
         );
     }

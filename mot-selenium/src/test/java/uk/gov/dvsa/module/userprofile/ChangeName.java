@@ -2,9 +2,9 @@ package uk.gov.dvsa.module.userprofile;
 
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.profile.ChangeNamePage;
 import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
+import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 
 public class ChangeName {
 

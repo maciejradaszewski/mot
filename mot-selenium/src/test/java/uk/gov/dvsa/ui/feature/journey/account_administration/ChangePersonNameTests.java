@@ -44,10 +44,10 @@ public class ChangePersonNameTests extends BaseTest {
             dataProvider = "dvsaUserProvider")
     public void dvsaUserCanSeeChangeNameLinkOnOtherPersonProfile(User user, boolean isLinkVisible) throws IOException {
         // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        motUI.profile.dvsaViewUserProfile(user, tester);
 
         // Then the change name link should be displayed
-        assertThat(motUI.userRoute.page().isChangeNameLinkDisplayed(), is(isLinkVisible));
+        assertThat(motUI.profile.page().isChangeNameLinkDisplayed(), is(isLinkVisible));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-59"},
@@ -56,13 +56,13 @@ public class ChangePersonNameTests extends BaseTest {
             dataProvider = "dvsaUserChangeNameProvider")
     public void dvsaUserCanChangeNameOnOtherPersonProfile(User user) throws IOException {
         // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        motUI.profile.dvsaViewUserProfile(user, tester);
 
         // When I am changing a name for a person
-        motUI.userRoute.changeName().changePersonName("Test", "Test", true);
+        motUI.profile.changeName().changePersonName("Test", "Test", true);
 
         // Then the success message should be displayed
-        assertThat(motUI.userRoute.page().isSuccessMessageDisplayed(), is(true));
+        assertThat(motUI.profile.page().isSuccessMessageDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-59"},
@@ -70,14 +70,14 @@ public class ChangePersonNameTests extends BaseTest {
             description = "Test that Authorised user should provide a first name in order to update user information")
     public void dvsaUserShouldProvideFirstName() throws IOException {
         // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
+        motUI.profile.dvsaViewUserProfile(areaOffice1User, tester);
 
         // When I am trying to submit an empty name for a person
-        motUI.userRoute.changeName().changePersonName("", "Test", false);
+        motUI.profile.changeName().changePersonName("", "Test", false);
 
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.changeName().isValidationMessageOnChangeNamePageDisplayed("FIRST_NAME"), is(true));
+        assertThat(motUI.profile.changeName().isValidationMessageOnChangeNamePageDisplayed("FIRST_NAME"), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-59"},
@@ -85,14 +85,14 @@ public class ChangePersonNameTests extends BaseTest {
             description = "Test that Authorised user should provide a last name in order to update user information")
     public void dvsaUserShouldProvideLastName() throws IOException {
         // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(vehicleExaminerUser, tester);
+        motUI.profile.dvsaViewUserProfile(vehicleExaminerUser, tester);
 
         // When I am trying to submit an empty last name for a person
-        motUI.userRoute.changeName().changePersonName("Test", "", false);
+        motUI.profile.changeName().changePersonName("Test", "", false);
 
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.changeName().isValidationMessageOnChangeNamePageDisplayed("LAST_NAME"), is(true));
+        assertThat(motUI.profile.changeName().isValidationMessageOnChangeNamePageDisplayed("LAST_NAME"), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-59"},
@@ -100,13 +100,13 @@ public class ChangePersonNameTests extends BaseTest {
             description = "Test that Authorised user can navigate to Change name page and backward")
     public void dvsaUserCanNavigateToAndBackwardChangeNamePage() throws IOException {
         // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
+        motUI.profile.dvsaViewUserProfile(areaOffice1User, tester);
 
         // When I am navigating to Change name page and clicking on cancel and return link
-        motUI.userRoute.page().clickChangeNameLink().clickCancelAndReturnLink();
+        motUI.profile.page().clickChangeNameLink().clickCancelAndReturnLink();
 
         // Then the person profile page should be displayed
-        assertThat(motUI.userRoute.page().isPageLoaded(), is(true));
+        assertThat(motUI.profile.page().isPageLoaded(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-59"},
@@ -115,10 +115,10 @@ public class ChangePersonNameTests extends BaseTest {
             dataProvider = "dvsaUserFroOwnProfileProvider")
     public void dvsaUserCantSeeChangeNameLinkOnOwnProfile(User user) throws IOException {
         // Given I am on my own person profile as a dvsa user
-        motUI.userRoute.viewYourProfile(user);
+        motUI.profile.viewYourProfile(user);
 
         // Then the change name link should not be displayed
-        assertThat(motUI.userRoute.page().isChangeNameLinkDisplayed(), is(false));
+        assertThat(motUI.profile.page().isChangeNameLinkDisplayed(), is(false));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-59"},
@@ -127,10 +127,10 @@ public class ChangePersonNameTests extends BaseTest {
             dataProvider = "tradeUserProvider")
     public void userCantSeeChangeNameLinkOnOtherPersonProfile(User user) throws IOException {
         // Given I am on other person profile as a trade user
-        motUI.userRoute.tradeViewUserProfile(user, tester);
+        motUI.profile.tradeViewUserProfile(user, tester);
 
         // Then the change name link should not be displayed
-        assertThat(motUI.userRoute.page().isChangeNameLinkDisplayed(), is(false));
+        assertThat(motUI.profile.page().isChangeNameLinkDisplayed(), is(false));
     }
 
     @DataProvider

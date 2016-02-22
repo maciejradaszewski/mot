@@ -9,6 +9,7 @@ import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.mot.MotTestCertificatesPage;
 import uk.gov.dvsa.ui.pages.mot.TestShortSummaryPage;
+import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 import uk.gov.dvsa.ui.pages.vts.ChangeDetails.*;
 import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
 import uk.gov.dvsa.ui.pages.profile.ProfileOfUserPage;

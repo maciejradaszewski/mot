@@ -21,7 +21,7 @@ import static org.hamcrest.core.Is.is;
 
 public class CpmsPurchaseSlotsTests extends BaseTest {
 
-    @Test (groups = {"BVT", "Regression"}, description = "SPMS-37 Purachase slots by card successfully", dataProvider = "createAedmAndAe")
+    @Test (groups = {"CPMS"}, description = "SPMS-37 Purachase slots by card successfully", dataProvider = "createAedmAndAe")
     public void purchaseSlotsByCardSuccessfully(User aedm, AeDetails aeDetails) throws IOException, URISyntaxException {
         
       //Given I am on Buy test slots page as an Aedm
@@ -44,7 +44,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
               cardPaymentConfirmationPage.getPaymentStatusMessage(), containsString("Payment has been successful"));   
     }
     
-    @Test (groups = {"BVT", "Regression"}, description = "SPMS-37 Purachase slots exceeding maximun balance", dataProvider = "createAedmAndAe")
+    @Test (groups = {"CPMS"}, description = "SPMS-37 Purachase slots exceeding maximun balance", dataProvider = "createAedmAndAe")
     public void purchaseSlotsExceedingMaximumBalanceErrorTest(User aedm, AeDetails aeDetails) throws IOException, URISyntaxException {
         
       //Given I am on Buy test slots page as an Aedm with positive slot balance
@@ -70,7 +70,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
               buyTestSlotsPageWithError.isExceedsMaximumSlotBalanceMessageDisplayed(), is(true));   
     }
     
-    @Test (groups = {"BVT", "Regression"}, description = "SPMS-264 Finance user processes Card payment", dataProvider = "createFinanceUserAndAe")
+    @Test (groups = {"CPMS"}, description = "SPMS-264 Finance user processes Card payment", dataProvider = "createFinanceUserAndAe")
     public void financeUserProcessesCardPayment(User financeUser, AeDetails aeDetails) throws IOException, URISyntaxException {
         
       //Given I am on Choose payment type page as a Finance user
