@@ -1,4 +1,9 @@
 <?php
+/**
+ * This file is part of the DVSA MOT Frontend project.
+ *
+ * @link http://gitlab.clb.npm/mot/mot
+ */
 
 namespace UserAdmin\Controller;
 
@@ -6,6 +11,7 @@ use Application\Helper\PrgHelper;
 use Application\Service\CatalogService;
 use Dashboard\Authorisation\ViewTradeRolesAssertion;
 use Dashboard\ViewModel\Sidebar\ProfileSidebar;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
@@ -22,8 +28,7 @@ use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
 use Zend\View\Model\ViewModel;
 
 /**
- * Class UserProfileController
- * @package UserAdmin\Controller
+ * UserProfile Controller.
  */
 class UserProfileController extends AbstractDvsaMotTestController
 {
@@ -61,16 +66,19 @@ class UserProfileController extends AbstractDvsaMotTestController
      */
     private $config;
 
+    /**
+     * @var ViewTradeRolesAssertion
+     */
     private $viewTradeRolesAssertion;
 
     /**
      * @param MotAuthorisationServiceInterface $authorisationService
-     * @param HelpdeskAccountAdminService $userAccountAdminService
-     * @param TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper
-     * @param PersonRoleManagementService $personRoleManagementService
-     * @param CatalogService $catalogService
-     * @param MotConfig $config
-     * @param ViewTradeRolesAssertion $viewTradeRolesAssertion
+     * @param HelpdeskAccountAdminService      $userAccountAdminService
+     * @param TesterGroupAuthorisationMapper   $testerGroupAuthorisationMapper
+     * @param PersonRoleManagementService      $personRoleManagementService
+     * @param CatalogService                   $catalogService
+     * @param MotConfig                        $config
+     * @param ViewTradeRolesAssertion          $viewTradeRolesAssertion
      */
     public function __construct(
         MotAuthorisationServiceInterface $authorisationService,
@@ -91,7 +99,7 @@ class UserProfileController extends AbstractDvsaMotTestController
     }
 
     /**
-     * Action to display the user profile for the helpdesk
+     * Action to display the user profile for the helpdesk.
      *
      * @return \Zend\Http\Response|ViewModel
      */
@@ -127,7 +135,7 @@ class UserProfileController extends AbstractDvsaMotTestController
     }
 
     /**
-     * Action to process the record of the password reset
+     * Action to process the record of the password reset.
      *
      * @return \Zend\Http\Response|ViewModel
      */
@@ -157,7 +165,7 @@ class UserProfileController extends AbstractDvsaMotTestController
     }
 
     /**
-     * Action to process the record of the username reminder
+     * Action to process the record of the username reminder.
      *
      * @return \Zend\Http\Response|ViewModel
      */
@@ -186,12 +194,12 @@ class UserProfileController extends AbstractDvsaMotTestController
     }
 
     /**
-     * Process the reset password/username remainder process to the api
+     * Process the reset password/username remainder process to the api.
      *
-     * @param string $messageTypeCode
+     * @param string               $messageTypeCode
      * @param UserProfilePresenter $presenter
-     * @param string $pageTitleSuccess
-     * @param string $pageTitleFailure
+     * @param string               $pageTitleSuccess
+     * @param string               $pageTitleFailure
      *
      * @return \Zend\Http\Response|ViewModel
      */
@@ -202,12 +210,13 @@ class UserProfileController extends AbstractDvsaMotTestController
         try {
             $params = [
                 'personId'        => $presenter->getPersonId(),
-                'messageTypeCode' => $messageTypeCode
+                'messageTypeCode' => $messageTypeCode,
             ];
             $this->userAccountAdminService->postMessage($params);
         } catch (ValidationException $e) {
             $view = $this->createViewModel($presenter->getPersonId(), $pageTitleFailure, $presenter);
             $view->setVariable('isFailure', true);
+
             return $view;
         }
 
@@ -215,7 +224,7 @@ class UserProfileController extends AbstractDvsaMotTestController
     }
 
     /**
-     * Action to display the reset claim account page
+     * Action to display the reset claim account page.
      *
      * @return \Zend\Http\Response|ViewModel
      */
@@ -242,20 +251,22 @@ class UserProfileController extends AbstractDvsaMotTestController
 
         $pageTitle = 'Reclaim account';
         $view = $this->createViewModel($personId, $pageTitle, $presenter);
+
         return $view->setVariable('prgHelper', $prgHelper);
     }
 
     /**
-     * Process the claim account reset process to the api
+     * Process the claim account reset process to the api.
      *
-     * @param int $personId
+     * @param int       $personId
      * @param PrgHelper $prgHelper
+     *
      * @return \Zend\Http\Response
      */
     private function claimAccountProcess($personId, PrgHelper $prgHelper)
     {
         $url = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
-            $this->url()->fromRoute('newProfileUserAdmin', ['id' => $personId]):
+            $this->url()->fromRoute('newProfileUserAdmin', ['id' => $personId]) :
             $this->buildUrlWithCurrentSearchQuery(UserAdminUrlBuilderWeb::userProfile($personId));
 
         try {
@@ -271,7 +282,7 @@ class UserProfileController extends AbstractDvsaMotTestController
     }
 
     /**
-     * Create the view model with all the information needed
+     * Create the view model with all the information needed.
      *
      * @param int                  $personId
      * @param string               $pageTitle
@@ -284,13 +295,24 @@ class UserProfileController extends AbstractDvsaMotTestController
     {
         $this->layout()->setVariable('pageSubTitle', self::PAGE_SUBTITLE_INDEX);
         $this->layout()->setVariable('pageTitle', $pageTitle);
+
+        if (false === $isProfile) {
+            $userProfileUrl = (true === $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE))
+                ? $this->url()->fromRoute(ContextProvider::USER_SEARCH_PARENT_ROUTE, ['id' => $personId])
+                : $this->buildUrlWithCurrentSearchQuery(UserAdminUrlBuilderWeb::of()->userProfile($personId));
+        } else {
+            $userProfileUrl = '';
+        }
+
         $breadcrumbs = [
             'User search' => $this->buildUrlWithCurrentSearchQuery(UserAdminUrlBuilderWeb::of()->userSearch()),
-            $presenter->displayTitleAndFullName() =>
-                $isProfile === false ? $this->buildUrlWithCurrentSearchQuery(
-                    UserAdminUrlBuilderWeb::of()->userProfile($personId)
-                ) : '',
+            $presenter->displayTitleAndFullName() => $userProfileUrl,
         ];
+
+        if (true === $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)) {
+            $breadcrumbs += ['Reclaim account' => ''];
+        }
+
         $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
         $this->layout('layout/layout-govuk.phtml');
 
@@ -317,7 +339,7 @@ class UserProfileController extends AbstractDvsaMotTestController
                     $this->url()->fromRoute('newProfileUserAdmin', ['id' => $personId]) :
                     $this->buildUrlWithCurrentSearchQuery(
                         UserAdminUrlBuilderWeb::userProfile($personId)
-                    )
+                    ),
             ]
         );
 
@@ -325,7 +347,7 @@ class UserProfileController extends AbstractDvsaMotTestController
     }
 
     /**
-     * Build a url with the query params
+     * Build a url with the query params.
      *
      * @param string $url
      *
@@ -337,6 +359,7 @@ class UserProfileController extends AbstractDvsaMotTestController
         if (empty($params)) {
             return $url;
         }
+
         return $url . '?' . http_build_query($params);
     }
 
