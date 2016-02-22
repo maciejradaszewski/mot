@@ -32,7 +32,6 @@ class ReinspectionReportController extends AbstractAuthActionController
      * confirmation of saving reinspection assessment (rfr differences + mot tests)
      *
      * @return \Zend\Http\Response|ViewModel
-     * @throws \DvsaCommon\Auth\NotLoggedInException
      */
     public function recordAssessmentConfirmationAction()
     {

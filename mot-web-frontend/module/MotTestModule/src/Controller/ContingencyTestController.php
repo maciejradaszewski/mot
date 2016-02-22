@@ -48,8 +48,6 @@ class ContingencyTestController extends AbstractDvsaMotTestController
     /**
      * This action display the contingency form.
      *
-     * @throws \DvsaCommon\Auth\NotLoggedInException
-     *
      * @return ViewModel
      */
     public function indexAction()

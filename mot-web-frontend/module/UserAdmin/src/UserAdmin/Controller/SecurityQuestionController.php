@@ -26,8 +26,6 @@ class SecurityQuestionController extends AbstractSecurityQuestionController
     /**
      * This action is the end point to enter the question answer for the help desk.
      *
-     * @throws \DvsaCommon\Auth\NotLoggedInException
-     *
      * @return \Zend\Http\Response|ViewModel
      */
     public function indexAction()

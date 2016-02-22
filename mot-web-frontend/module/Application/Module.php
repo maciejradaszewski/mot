@@ -38,7 +38,6 @@ use Application\Navigation\Breadcrumbs\Handler\SimpleResolver;
 use Application\Navigation\Breadcrumbs\Handler\SiteNameResolver;
 use Application\Service\CatalogService;
 use Application\Service\ContingencySessionManager;
-use DvsaCommon\Auth\NotLoggedInException;
 use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\HttpRestJson\Exception\GeneralRestException;
@@ -219,28 +218,6 @@ class Module implements
 
         /** @var  $viewManager \Zend\Mvc\View\Console\ViewManager */
         $viewManager = $serviceManager->get('viewManager');
-
-        if ($exception instanceof NotLoggedInException) {
-            // From http://stackoverflow.com/a/14170913/116509
-            $url = $e->getRouter()->assemble([], ['name' => 'login']);
-            $response = $e->getResponse();
-            $response->getHeaders()->addHeaderLine('Location', $url);
-            $response->setStatusCode(302);
-            $response->sendHeaders();
-
-            $stopCallBack = function ($event) use ($response) {
-                $event->stopPropagation();
-
-                return $response;
-            };
-            $e->getApplication()->getEventManager()->attach(
-                MvcEvent::EVENT_ROUTE,
-                $stopCallBack,
-                WebListenerEventsPriorities::ROUTE_STOP_PROPAGATION
-            );
-
-            return $response;
-        }
 
         $eid = false;
 

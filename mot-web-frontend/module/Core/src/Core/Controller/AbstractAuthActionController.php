@@ -3,7 +3,6 @@ namespace Core\Controller;
 
 use Core\Service\MotFrontendAuthorisationServiceInterface;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
-use DvsaCommon\Auth\NotLoggedInException;
 use Zend\Session\Container;
 
 /**
@@ -32,15 +31,6 @@ abstract class AbstractAuthActionController extends AbstractDvsaActionController
     protected function getIdentity()
     {
         return $this->getIdentityProviderService()->getIdentity();
-    }
-
-    protected function verifyIsAuthenticated()
-    {
-        $auth = $this->getServiceLocator()->get('ZendAuthenticationService');
-
-        if (!$auth->hasIdentity()) {
-            throw new NotLoggedInException();
-        }
     }
 
     protected function assertGranted($permission, $resource = null)

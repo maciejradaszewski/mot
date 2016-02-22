@@ -3,7 +3,6 @@ namespace OrganisationTest\Controller;
 
 use DvsaClient\Mapper\OrganisationMapper;
 use DvsaClient\MapperFactory;
-use DvsaCommon\Auth\NotLoggedInException;
 use DvsaCommon\Auth\PermissionInSystem;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaCommon\Dto\Organisation\OrganisationDto;

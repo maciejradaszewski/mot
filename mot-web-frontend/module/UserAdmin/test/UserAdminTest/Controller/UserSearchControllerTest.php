@@ -5,7 +5,6 @@ namespace UserAdminTest\Controller;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use DvsaClient\Mapper\UserAdminMapper;
 use DvsaClient\MapperFactory;
-use DvsaCommon\Auth\NotLoggedInException;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Dto\Person\SearchPersonResultDto;
 use DvsaCommonTest\Bootstrap;

@@ -46,8 +46,6 @@ class EventController extends AbstractAuthActionController
      * This is the common action who allow us to get the information needed
      * and build the view.
      *
-     * @throws \DvsaCommon\Auth\NotLoggedInException
-     *
      * @return Response|ViewModel
      */
     public function listAction()
@@ -114,8 +112,6 @@ class EventController extends AbstractAuthActionController
     }
 
     /**
-     * @throws \DvsaCommon\Auth\NotLoggedInException
-     *
      * @return Response|ViewModel
      */
     public function createAction()
@@ -291,8 +287,6 @@ class EventController extends AbstractAuthActionController
 
     /**
      * This is the common action who allow us to get the information about an event.
-     *
-     * @throws \DvsaCommon\Auth\NotLoggedInException
      *
      * @return Response|ViewModel
      */
