@@ -62,6 +62,7 @@ class DvlaVehicleUpdatedService implements TransactionAwareInterface
         $vehicle = $this->vehicleRepository->find($vehicleId);
         $changeDto = new ReplacementCertificateDraftChangeDTO();
         $changeDto->setVrm($vehicle->getRegistration());
+        $changeDto->setVin($vehicle->getVin());
 
         return $this->inTransaction(
             function () use ($latestMotTestNumber, $userId, $changeDto) {
