@@ -53,7 +53,6 @@ class VehicleController extends AbstractAuthActionController
      * Show vehicle details.
      *
      * @throws \Exception
-     * @throws \DvsaCommon\Auth\NotLoggedInException
      * @throws \DvsaCommon\Obfuscate\InvalidArgumentException
      *
      * @return array|\Zend\Http\Response|ViewModel
@@ -138,8 +137,6 @@ class VehicleController extends AbstractAuthActionController
     /**
      * This action is responsible for showing the search screen for a vehicle and handle the post of the form.
      *
-     * @throws \DvsaCommon\Auth\NotLoggedInException
-     *
      * @return \Zend\View\Model\ViewModel
      */
     public function searchAction()
@@ -165,8 +162,6 @@ class VehicleController extends AbstractAuthActionController
      * This action is responsible for handling the search and showing the results/page details of the vehicle in
      * function of the number of results.
      * If there no results found the action redirect to search page with an error message.
-     *
-     * @throws \DvsaCommon\Auth\NotLoggedInException
      *
      * @return ViewModel
      */

@@ -20,7 +20,6 @@ use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use Dvsa\OpenAM\OpenAMClient;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
-use DvsaCommon\Auth\NotLoggedInException;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Enum\RoleCode;
 use DvsaCommon\Enum\VehicleClassCode;
@@ -178,10 +177,6 @@ class UserHomeControllerTest extends AbstractFrontendControllerTestCase
 
         if (!$isAuth) {
             $this->getAuthenticationServiceMockForFailure();
-
-            if (!$expectCanAccess) {
-                $this->setExpectedException(NotLoggedInException::class);
-            }
 
             $this->getResponseForAction($action, $params);
         } else {

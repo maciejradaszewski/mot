@@ -77,8 +77,6 @@ class SpecialNoticesController extends AbstractAuthActionController
     }
 
     /**
-     * @throws \DvsaCommon\Auth\NotLoggedInException
-     *
      * @return ViewModel
      */
     public function displaySpecialNoticesAction()
@@ -141,7 +139,6 @@ class SpecialNoticesController extends AbstractAuthActionController
     }
 
     /**
-     * @throws \DvsaCommon\Auth\NotLoggedInException
      *
      * @return \DvsaCommon\Traits\Response|\DvsaCommon\Traits\ViewModel
      */
@@ -187,8 +184,6 @@ class SpecialNoticesController extends AbstractAuthActionController
     }
 
     /**
-     * @throws \DvsaCommon\Auth\NotLoggedInException
-     *
      * @return \Zend\Http\Response
      */
     public function acknowledgeSpecialNoticeAction()
@@ -228,8 +223,6 @@ class SpecialNoticesController extends AbstractAuthActionController
     }
 
     /**
-     * @throws \DvsaCommon\Auth\NotLoggedInException
-     *
      * @return ViewModel
      */
     public function displayRemovedSpecialNoticesAction()
@@ -289,8 +282,6 @@ class SpecialNoticesController extends AbstractAuthActionController
     }
 
     /**
-     * @throws \DvsaCommon\Auth\NotLoggedInException
-     *
      * @return ViewModel
      */
     public function createSpecialNoticeAction()
@@ -308,8 +299,6 @@ class SpecialNoticesController extends AbstractAuthActionController
     }
 
     /**
-     * @throws \DvsaCommon\Auth\NotLoggedInException
-     *
      * @return \Zend\Http\Response|ViewModel
      */
     public function editAction()
@@ -342,8 +331,6 @@ class SpecialNoticesController extends AbstractAuthActionController
      * @param $url
      * @param $form
      * @param $isEdit
-     *
-     * @throws \DvsaCommon\Auth\NotLoggedInException
      *
      * @return \Zend\Http\Response|ViewModel
      */
@@ -393,7 +380,6 @@ class SpecialNoticesController extends AbstractAuthActionController
 
     /**
      * @throws UnauthorisedException
-     * @throws \DvsaCommon\Auth\NotLoggedInException
      *
      * @return \Zend\Http\Response|ViewModel
      */
@@ -449,8 +435,6 @@ class SpecialNoticesController extends AbstractAuthActionController
     }
 
     /**
-     * @throws \DvsaCommon\Auth\NotLoggedInException
-     *
      * @return \Zend\Http\Response
      */
     public function removeSpecialNoticeAction()

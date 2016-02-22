@@ -231,7 +231,6 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
 
     /**
      * @return \Zend\Http\Response|ViewModel
-     * @throws \DvsaCommon\Auth\NotLoggedInException
      * @throws \Exception
      */
     public function editAction()
@@ -279,7 +278,6 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
 
     /**
      * @return \Zend\Http\Response|ViewModel
-     * @throws \DvsaCommon\Auth\NotLoggedInException
      */
     public function createAction()
     {
@@ -330,7 +328,6 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
 
     /**
      * @return \Zend\Http\Response|ViewModel
-     * @throws \DvsaCommon\Auth\NotLoggedInException
      */
     public function confirmationAction()
     {
