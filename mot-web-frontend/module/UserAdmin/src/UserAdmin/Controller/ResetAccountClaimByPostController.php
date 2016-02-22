@@ -12,6 +12,7 @@ use UserAdmin\Presenter\UserProfilePresenter;
 use UserAdmin\Service\HelpdeskAccountAdminService;
 use UserAdmin\ViewModel\UserProfile\TesterAuthorisationViewModel;
 use Zend\View\Model\ViewModel;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 
 /**
  * Set account to be unclaimed for security questions reset journey.
@@ -78,7 +79,7 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
         return $this->redirect()->toUrl($redirectUrl);
     }
 
-    private function displayConfirmationScreen($personId)
+    private function displayConfirmationScreen($personId, $isOwnProfile = false)
     {
         $person = $this->accountAdminService->getUserProfile($personId);
 
@@ -89,11 +90,23 @@ class ResetAccountClaimByPostController extends AbstractAuthActionController
         $this->layout()->setVariable('pageSubTitle', self::PAGE_SUBTITLE_INDEX);
         $this->layout()->setVariable('pageTitle', self::PAGE_TITLE_INDEX);
 
+        if (false === $isOwnProfile) {
+            $userProfileUrl = (true === $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE))
+                ? $this->url()->fromRoute(ContextProvider::USER_SEARCH_PARENT_ROUTE, ['id' => $personId])
+                : $this->buildUrlWithCurrentSearchQuery(UserAdminUrlBuilderWeb::of()->userProfile($personId));
+        } else {
+            $userProfileUrl = '';
+        }
+
         $breadcrumbs = [
             'User search' => $this->buildUrlWithCurrentSearchQuery(UserAdminUrlBuilderWeb::of()->userResults()),
-            $profilePresenter->displayTitleAndFullName() =>
-                $this->buildUrlWithCurrentSearchQuery(UserAdminUrlBuilderWeb::userProfile($personId)),
+            $profilePresenter->displayTitleAndFullName() => $userProfileUrl
         ];
+
+        if ($this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)) {
+            $breadcrumbs += ['Reclaim account' => ''];
+        }
+
         $this->layout()->setVariable('breadcrumbs', ['breadcrumbs' => $breadcrumbs]);
 
         return new ViewModel(
