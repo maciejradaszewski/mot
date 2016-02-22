@@ -43,10 +43,10 @@ public class ProfilePageViewTests extends BaseTest {
     public void testerQualificationStatusDisplayedOnProfilePage() throws IOException {
 
         //Given I'm on the Your Profile Details page
-        motUI.userRoute.viewYourProfile(tester);
+        motUI.profile.viewYourProfile(tester);
 
         //Then I should be able to see the qualification status
-        assertThat(motUI.userRoute.isTesterQualificationStatusDisplayed(), is(true));
+        assertThat(motUI.profile.isTesterQualificationStatusDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "VM-12321"},
@@ -55,10 +55,10 @@ public class ProfilePageViewTests extends BaseTest {
     public void tradeUserCanViewHisOwnRolesAndAssociations() throws IOException, URISyntaxException {
 
         //Given I'm on the Your Profile Details page
-        motUI.userRoute.viewYourProfile(tester);
+        motUI.profile.viewYourProfile(tester);
 
         //When I click on Roles and Associations link
-        motUI.userRoute.page().clickRolesAndAssociationsLink();
+        motUI.profile.page().clickRolesAndAssociationsLink();
 
         //Then roles should be displayed
         assertThat(motUI.manageRoles.isRolesTableContainsValidTesterData(), is(true));
@@ -71,13 +71,13 @@ public class ProfilePageViewTests extends BaseTest {
     public void dvsaUserCanSeeUserPersonalDetails(User user, boolean isChangeLinkDisplayed) throws IOException, URISyntaxException {
 
         //Given I'm on the Trade user New Profile Details page as authorised DVSA user
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        motUI.profile.dvsaViewUserProfile(user, tester);
 
         //Then Driving licence information should be displayed
-        assertThat(motUI.userRoute.page().isDrivingLicenceInformationIsDisplayed(), is(true));
+        assertThat(motUI.profile.page().isDrivingLicenceInformationIsDisplayed(), is(true));
 
         //And Change driving licence link should be displayed if appropriate
-        assertThat(motUI.userRoute.page().isChangeDrivingLicenceLinkIsDisplayed(), is(isChangeLinkDisplayed));
+        assertThat(motUI.profile.page().isChangeDrivingLicenceLinkIsDisplayed(), is(isChangeLinkDisplayed));
     }
 
     @Test(testName = "NewProfile", groups = {"BVT", "Regression", "BL-448"},
@@ -86,10 +86,10 @@ public class ProfilePageViewTests extends BaseTest {
     public void dvsaUserCanSeeUserContactDetails(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the Trade user New Profile Details page as authorised DVSA user
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        motUI.profile.dvsaViewUserProfile(user, tester);
 
         //Then Change email link should be displayed
-        assertThat(motUI.userRoute.page().isChangeEmailLinkIsDisplayed(), is(true));
+        assertThat(motUI.profile.page().isChangeEmailLinkIsDisplayed(), is(true));
     }
 
     @Test(testName = "NewProfile", groups = {"BVT", "Regression", "BL-448"},
@@ -98,10 +98,10 @@ public class ProfilePageViewTests extends BaseTest {
     public void dvsaUserCanSeeDvsaUserRoles(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the Trade user New Profile Details page as authorised DVSA user
-        motUI.userRoute.dvsaViewUserProfile(user, areaOffice2User);
+        motUI.profile.dvsaViewUserProfile(user, areaOffice2User);
 
         //Then Dvsa roles section should be displayed
-        assertThat(motUI.userRoute.page().isDvsaRolesSectionIsDisplayed(), is(true));
+        assertThat(motUI.profile.page().isDvsaRolesSectionIsDisplayed(), is(true));
     }
 
     @Test(testName = "NewProfile", groups = {"BVT", "Regression", "BL-448"},
@@ -110,10 +110,10 @@ public class ProfilePageViewTests extends BaseTest {
     public void anyUserCanSeeQualificationsSection(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the Trade user New Profile Details page as authorised DVSA user
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        motUI.profile.dvsaViewUserProfile(user, tester);
 
         //Then Qualification section should be displayed
-        assertThat(motUI.userRoute.page().isQualificationStatusSectionIsDisplayed(), is(true));
+        assertThat(motUI.profile.page().isQualificationStatusSectionIsDisplayed(), is(true));
     }
 
     @Test(testName = "NewProfile", groups = {"BVT", "Regression", "BL-448"},
@@ -122,10 +122,10 @@ public class ProfilePageViewTests extends BaseTest {
     public void anyUserCanSeeAccountSecuritySectionOnOwnProfile(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the New Profile Details page as logged user
-        motUI.userRoute.viewYourProfile(user);
+        motUI.profile.viewYourProfile(user);
 
         //Then Account security section should be displayed
-        assertThat(motUI.userRoute.page().isAccountSecuritySectionDisplayed(), is(true));
+        assertThat(motUI.profile.page().isAccountSecuritySectionDisplayed(), is(true));
     }
 
     @Test(testName = "NewProfile", groups = {"BVT", "Regression", "BL-448"},
@@ -134,10 +134,10 @@ public class ProfilePageViewTests extends BaseTest {
     public void cscoUserCanSeeAccountManagementSectionOnAnyProfile(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the New Profile Details page as logged user
-        motUI.userRoute.dvsaViewUserProfile(csco, user);
+        motUI.profile.dvsaViewUserProfile(csco, user);
 
         //Then Account management section should be displayed
-        assertThat(motUI.userRoute.page().isAccountManagementSectionDisplayed(), is(true));
+        assertThat(motUI.profile.page().isAccountManagementSectionDisplayed(), is(true));
     }
 
     @Test(testName = "NewProfile", groups = {"BVT", "Regression", "BL-448"},
@@ -147,10 +147,10 @@ public class ProfilePageViewTests extends BaseTest {
     public void dvsaUserCanSeeChangeQualificationLinksOnTradeProfile(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the New Profile Details page as logged user
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        motUI.profile.dvsaViewUserProfile(user, tester);
 
         //Then Change qualification links should be displayed
-        assertThat(motUI.userRoute.page().isChangeDrivingLicenceLinkIsDisplayed(), is(true));
+        assertThat(motUI.profile.page().isChangeDrivingLicenceLinkIsDisplayed(), is(true));
     }
 
     @Test(testName = "NewProfile", groups = {"BVT", "Regression", "BL-448"},
@@ -160,10 +160,10 @@ public class ProfilePageViewTests extends BaseTest {
     public void dvsaUserCanSeeManageRolesOnUserProfile(User user) throws IOException, URISyntaxException {
 
         //Given I'm on the New Profile Details page as logged user
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        motUI.profile.dvsaViewUserProfile(user, tester);
 
         //Then Manage roles link should be displayed
-        assertThat(motUI.userRoute.page().isChangeQualificationLinksDisplayed(), is(true));
+        assertThat(motUI.profile.page().isChangeQualificationLinksDisplayed(), is(true));
     }
 
     @DataProvider(name = "dvsaUserForPersonalDetails")

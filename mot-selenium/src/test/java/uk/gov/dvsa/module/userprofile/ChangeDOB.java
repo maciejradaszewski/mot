@@ -1,36 +1,35 @@
 package uk.gov.dvsa.module.userprofile;
 
-import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.ProfilePage;
-import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import uk.gov.dvsa.ui.pages.profile.ChangeDateOfBirthPage;
 import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
+import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 
 public class ChangeDOB {
-
     private ProfilePage profilePage;
-    private ChangeDateOfBirthPage changeDateOfBirthPage;
-
-    private static final String DOB_ERROR_MESSAGE = "must be a valid date of birth";
 
     public ChangeDOB(ProfilePage profilePage) {
         this.profilePage = profilePage;
     }
+    public ProfilePage changeDateOfBirthTo(String dateOfBirth) {
+        String pattern = "dd MMM yyyy";
+        DateTime newDob = DateTime.parse(dateOfBirth, DateTimeFormat.forPattern(pattern));
 
-    public <T extends Page> T changeDateOfBirth(String day, String month, String year, boolean isValidValues) {
-        changeDateOfBirthPage = profilePage.clickChangeDOBLink();
+        profilePage =  profilePage.clickChangeDOBLink()
+                .fillDay(newDob.dayOfMonth().getAsString())
+                .fillMonth(newDob.monthOfYear().getAsString())
+                .fillYear(newDob.year().getAsString())
+                .clickSubmitButton(NewUserProfilePage.class);
 
-        changeDateOfBirthPage.fillDay(day).fillMonth(month).fillYear(year);
-        if (!isValidValues) {
-            return (T)changeDateOfBirthPage.clickSubmitButton(ChangeDateOfBirthPage.class);
-        }
-        return (T)changeDateOfBirthPage.clickSubmitButton(NewUserProfilePage.class);
+        return profilePage;
     }
 
-    public boolean isValidationMessageOnDOBPageDisplayed() {
-        if (changeDateOfBirthPage == null) {
-            throw new PageInstanceNotFoundException("ChangeDateOfBirthPage wasn't instantiated");
-        }
-        return changeDateOfBirthPage.getValidationMessage().equals(DOB_ERROR_MESSAGE);
+    public String changeDOBwithInvalidValues(String day, String month, String year) {
+        return profilePage.clickChangeDOBLink()
+                .fillDay(day)
+                .fillMonth(month)
+                .fillYear(year)
+                .clickSubmitButton(ChangeDateOfBirthPage.class).getValidationMessage();
     }
 }

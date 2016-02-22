@@ -22,6 +22,6 @@ public class EventHistoryViewTests extends BaseTest {
         motUI.showEventHistoryFor(HistoryType.AE, userData.createAreaOfficeOne("ao1"), aeDetails);
 
         //Then I should see a Create event
-        assertThat(motUI.eventHistory.containsEvent("DVSA Administrator Create AE"), is(true));
+        motUI.eventHistory.containsEvent("DVSA Administrator Create AE");
     }
 }

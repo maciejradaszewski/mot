@@ -5,8 +5,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
-import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
 
 public class ProfileOfUserPage extends ProfilePage {
@@ -18,7 +16,13 @@ public class ProfileOfUserPage extends ProfilePage {
     @FindBy(id="roles-and-associations-link") private WebElement rolesAndAssociationsLink;
 
     public ProfileOfUserPage(MotAppDriver driver) {
-        super(driver, PAGE_TITLE);
+        super(driver);
+        selfVerify();
+    }
+
+    @Override
+    protected boolean selfVerify() {
+        return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
 
     public boolean isRolesAndAssociationsLinkDisplayed() {

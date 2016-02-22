@@ -3,10 +3,8 @@ package uk.gov.dvsa.domain.navigation;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.ConfigHelper;
 import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.ProfilePage;
-import uk.gov.dvsa.ui.pages.dvsa.UserSearchProfilePage;
+import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
-import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
 
 import java.lang.reflect.Constructor;
 

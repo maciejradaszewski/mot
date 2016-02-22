@@ -2,24 +2,24 @@ package uk.gov.dvsa.ui.feature.journey.account_administration;
 
 import com.dvsa.mot.selenium.framework.RandomDataGenerator;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.ui.BaseTest;
-import uk.gov.dvsa.ui.pages.ProfilePage;
-import uk.gov.dvsa.ui.pages.profile.NewPersonProfilePage;
-import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
-import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
+import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
 public class ChangePersonEmailTests extends BaseTest {
+
+    private static final String EMAIL_MUST_BE_VALID_MESSAGE = "must be a valid email address";
+    private static final String EMAIL_MUST_MATCH_MESSAGE = "the email addresses you have entered don't match";
 
     private User areaOffice1User;
     private User vehicleExaminerUser;
@@ -49,14 +49,14 @@ public class ChangePersonEmailTests extends BaseTest {
             description = "Test that Trade user can edit their email from their profile page")
     public void tradeUserCanEditTheirEmailAddress() throws Exception {
         //Given I am logged in as a Tester and I am on the My Profile Page
-        motUI.userRoute.viewYourProfile(tester);
+        motUI.profile.viewYourProfile(tester);
 
         //When I edit my Email address
         String emailAddress = RandomDataGenerator.generateEmail(20, System.nanoTime());
-        NewPersonProfilePage newPersonProfilePage = motUI.userRoute.changeEmail().changeUserEmail(emailAddress, emailAddress, "YOUR_PROFILE");
+        ProfilePage profilePage = motUI.profile.changeYourEmailTo(emailAddress);
 
         //Then My Profile Email address will be amended
-        assertThat(newPersonProfilePage.verifyEmailIsChanged(emailAddress), is(true));
+        assertThat(profilePage.isSuccessMessageDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-270"},
@@ -64,10 +64,10 @@ public class ChangePersonEmailTests extends BaseTest {
             description = "Test that Trade user can cancel their email from change email page")
     public void tradeUserCanCancelTheirEmailChange() throws IOException {
         //Given I am logged in as a Tester and I am on the My Profile Page
-        motUI.userRoute.viewYourProfile(tester);
+        motUI.profile.viewYourProfile(tester);
 
         //When I Cancel my Email address edit
-        ProfilePage page = motUI.userRoute.page().clickChangeEmailLink().clickCancelButton(true);
+        ProfilePage page = motUI.profile.page().clickChangeEmailLink().clickCancelButton(true);
 
         //Then I will be returned to My Profile Page
         assertThat(page.isPageLoaded(), is(true));
@@ -79,13 +79,13 @@ public class ChangePersonEmailTests extends BaseTest {
             dataProvider = "dvsaUserChangeEmailProvider")
     public void dvsaUserCanCancelTheirUserEmailChange(User user) throws IOException {
         //Given I am logged in as a Tester and I am on the My Profile Page
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        motUI.profile.dvsaViewUserProfile(user, tester);
 
         //When I Cancel my Email address edit
-        motUI.userRoute.page().clickChangeEmailLink().clickCancelButton(false);
+        motUI.profile.page().clickChangeEmailLink().clickCancelButton(false);
 
         //Then I will be returned to My Profile Page
-        assertThat(motUI.userRoute.page().isPageLoaded(), is(true));
+        assertThat(motUI.profile.page().isPageLoaded(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-270"},
@@ -94,56 +94,33 @@ public class ChangePersonEmailTests extends BaseTest {
             dataProvider = "dvsaUserChangeEmailProvider")
     public void dvsaUserCanChangeEmailOnOtherPersonProfile(User user) throws IOException {
         // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        motUI.profile.dvsaViewUserProfile(user, tester);
 
-        // When I am changing a name for a person
+        // When I am changing a email for a person
         String emailAddress = RandomDataGenerator.generateEmail(20, System.nanoTime());
-        NewUserProfilePage newUserProfilePage = motUI.userRoute.changeEmail().changeUserEmail(emailAddress, emailAddress, "PERSON_PROFILE");
+        motUI.profile.changeUserEmailAsDvsaTo(emailAddress);
 
         // Then the success message should be displayed
-        assertThat(newUserProfilePage.isSuccessMessageDisplayed(), is(true));
+        assertThat(motUI.profile.page().isSuccessMessageDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-270"},
             testName = "NewProfile",
+            dataProvider = "emailValidationTestCaseValues",
             description = "Test that Authorised user should provide a valid email in order to update user information")
-    public void dvsaUserShouldProvideValidEmails() throws IOException {
+    public void validationMessageShouldBeDisplayedForIncorrectInputValue(
+            String email,
+            String confirmationEmail,
+            String expectedvalidationMessage) throws IOException {
+
         // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
+        motUI.profile.dvsaViewUserProfile(areaOffice1User, tester);
 
         // When I am trying to submit an an invalid email
-        motUI.userRoute.changeEmail().changeUserEmail("ad%^&*£lkjfhadslkjhf", "ad%^&*£lkjfhadslkjhf", "INVALID_INPUT");
+        String validationMessage = motUI.profile.changeEmailWithInvalidInputs(email, confirmationEmail);
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.changeEmail().isValidationMessageOnChangeEmailPageDisplayed("EMAIL_VALID"), is(true));
-    }
-
-    @Test(groups = {"BVT", "Regression", "BL-270"},
-            testName = "NewProfile",
-            description = "Test that Authorised user should provide the same email and email confirmation in order to update user information")
-    public void dvsaUserShouldProvideSameEmailsAndEmailConfirmation() throws IOException {
-        // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
-
-        // When I am trying to submit a different confirmation email
-        motUI.userRoute.changeEmail().changeUserEmail("fred@bloggs.com", "barry@bloggs.com", "INVALID_INPUT");
-
-        // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.changeEmail().isValidationMessageOnChangeEmailPageDisplayed("EMAIL_MATCH"), is(true));
-    }
-
-    @Test(groups = {"BVT", "Regression", "BL-270"},
-            testName = "NewProfile",
-            description = "Test that Authorised user should provide incorrect email and valid email confirmation in order to update user information")
-    public void dvsaUserShouldProvideInvalidEmailEmailsAndValidEmailConfirmation() throws IOException {
-        // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
-
-        // When I am trying to submit a different confirmation email
-        motUI.userRoute.changeEmail().changeUserEmail("ffghjfgj", "barry@bloggs.com", "INVALID_INPUT");
-
-        // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.changeEmail().isValidationMessageOnChangeEmailPageDisplayed("EMAIL_MATCH_AND_VALID"), is(true));
+        assertThat(validationMessage, containsString(expectedvalidationMessage));
     }
 
     @DataProvider
@@ -153,6 +130,14 @@ public class ChangePersonEmailTests extends BaseTest {
                 {vehicleExaminerUser, true},
                 {csco, false},
                 {schemeManager, true}
+        };
+    }
+
+   @DataProvider
+    private Object[][] emailValidationTestCaseValues() {
+        return new Object[][] {
+                {"ad%^&*£lkjfhadslkjhf", "ad%^&*£lkjfhadslkjhf", EMAIL_MUST_BE_VALID_MESSAGE },
+                {"fred@bloggs.com", "barry@bloggs.com", EMAIL_MUST_MATCH_MESSAGE},
         };
     }
 

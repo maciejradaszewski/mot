@@ -44,13 +44,13 @@ public class ChangeAddressTests extends BaseTest {
             dataProvider = "dvsaUserChangeAddressProvider")
     public void dvsaUserCanChangeAddressOnOtherPersonProfile(User user) throws IOException {
         // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        motUI.profile.dvsaViewUserProfile(user, tester);
 
         // When I am changing an address for a person
-        motUI.userRoute.changeAddress().changeAddress("1 Portland street", "Manchester", "m1 4wb", "USER_PROFILE");
+        motUI.profile.changeAddress().changeAddress("1 Portland street", "Manchester", "m1 4wb", "USER_PROFILE");
 
         // Then the success message should be displayed
-        assertThat(motUI.userRoute.page().isSuccessMessageDisplayed(), is(true));
+        assertThat(motUI.profile.page().isSuccessMessageDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-929"},
@@ -59,13 +59,13 @@ public class ChangeAddressTests extends BaseTest {
             dataProvider = "userChangeOwnAddressProvider")
     public void userCanChangeAddressOnOwnPersonProfile(User user) throws IOException {
         // Given I am on own person profile
-        motUI.userRoute.viewYourProfile(user);
+        motUI.profile.viewYourProfile(user);
 
         // When I am changing an address
-        motUI.userRoute.changeAddress().changeAddress("1 Portland street", "Manchester", "m1 4wb", "PERSON_PROFILE");
+        motUI.profile.changeAddress().changeAddress("1 Portland street", "Manchester", "m1 4wb", "PERSON_PROFILE");
 
         // Then the success message should be displayed
-        assertThat(motUI.userRoute.page().isSuccessMessageDisplayed(), is(true));
+        assertThat(motUI.profile.page().isSuccessMessageDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-929"},
@@ -73,16 +73,16 @@ public class ChangeAddressTests extends BaseTest {
             description = "Test that authorised user can navigate through change address journey on other person profile")
     public void dvsaUserCanNavigateThroughChangeAddressJourneyOnOtherPersonProfile() throws IOException {
         // Given I am as authorised user on other person profile
-        motUI.userRoute.dvsaViewUserProfile(schemeManager, tester);
+        motUI.profile.dvsaViewUserProfile(schemeManager, tester);
 
         // When I am navigating to change address, review address and backward to person profile page
-        motUI.userRoute.changeAddress()
+        motUI.profile.changeAddress()
                 .navigateToReviewAddress()
                 .navigateFromReviewAddressToChangeAddress()
                 .navigateFromChangeAddressToPersonProfile(false);
 
         // Then the user profile page should be loaded
-        assertThat(motUI.userRoute.page().isPageLoaded(), is(true));
+        assertThat(motUI.profile.page().isPageLoaded(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-929"},
@@ -90,16 +90,16 @@ public class ChangeAddressTests extends BaseTest {
             description = "Test that user can navigate through change address journey on own person profile")
     public void userCanNavigateThroughChangeAddressJourneyOnOwnPersonProfile() throws IOException {
         // Given I am on own person profile
-        motUI.userRoute.viewYourProfile(areaOffice1User);
+        motUI.profile.viewYourProfile(areaOffice1User);
 
         // When I am navigating to change address, review address and backward to person profile page
-        motUI.userRoute.changeAddress()
+        motUI.profile.changeAddress()
                 .navigateToReviewAddress()
                 .navigateFromReviewAddressToChangeAddress()
                 .navigateFromChangeAddressToPersonProfile(true);
 
         // Then the person profile page should be loaded
-        assertThat(motUI.userRoute.page().isPageLoaded(), is(true));
+        assertThat(motUI.profile.page().isPageLoaded(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-929"},
@@ -107,13 +107,13 @@ public class ChangeAddressTests extends BaseTest {
             description = "Test that user should provide correct address during change address journey on own person profile")
     public void userShouldProvideCorrectAddress() throws IOException {
         // Given I am on own person profile
-        motUI.userRoute.viewYourProfile(areaOffice1User);
+        motUI.profile.viewYourProfile(areaOffice1User);
 
         // When I am trying to submit an address with incorrect address input
-        motUI.userRoute.changeAddress().changeAddress("", "Manchester", "m1 4wb", "INVALID_INPUT");
+        motUI.profile.changeAddress().changeAddress("", "Manchester", "m1 4wb", "INVALID_INPUT");
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.changeAddress().isValidationMessageOnChangeAddressPageDisplayed("FIRST_LINE_INVALID"), is(true));
+        assertThat(motUI.profile.changeAddress().isValidationMessageOnChangeAddressPageDisplayed("FIRST_LINE_INVALID"), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-929"},
@@ -121,13 +121,13 @@ public class ChangeAddressTests extends BaseTest {
             description = "Test that user should provide correct town during change address journey on own person profile")
     public void userShouldProvideCorrectTown() throws IOException {
         // Given I am on own person profile
-        motUI.userRoute.viewYourProfile(csco);
+        motUI.profile.viewYourProfile(csco);
 
         // When I am trying to submit an address with incorrect town input
-        motUI.userRoute.changeAddress().changeAddress("1 Lane", "", "m1 4wb", "INVALID_INPUT");
+        motUI.profile.changeAddress().changeAddress("1 Lane", "", "m1 4wb", "INVALID_INPUT");
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.changeAddress().isValidationMessageOnChangeAddressPageDisplayed("TOWN_INVALID"), is(true));
+        assertThat(motUI.profile.changeAddress().isValidationMessageOnChangeAddressPageDisplayed("TOWN_INVALID"), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-929"},
@@ -135,13 +135,13 @@ public class ChangeAddressTests extends BaseTest {
             description = "Test that user should provide correct postcode during change address journey on own person profile")
     public void userShouldProvideCorrectPostcode() throws IOException {
         // Given I am on own person profile
-        motUI.userRoute.viewYourProfile(siteManager);
+        motUI.profile.viewYourProfile(siteManager);
 
         // When I am trying to submit an address with incorrect postcode input
-        motUI.userRoute.changeAddress().changeAddress("1 Lane", "Manchester", "", "INVALID_INPUT");
+        motUI.profile.changeAddress().changeAddress("1 Lane", "Manchester", "", "INVALID_INPUT");
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.changeAddress().isValidationMessageOnChangeAddressPageDisplayed("POSTCODE_INVALID"), is(true));
+        assertThat(motUI.profile.changeAddress().isValidationMessageOnChangeAddressPageDisplayed("POSTCODE_INVALID"), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-929"},
@@ -149,13 +149,13 @@ public class ChangeAddressTests extends BaseTest {
             description = "Test that user should provide correct values during change address journey on own person profile")
     public void userShouldProvideCorrectValues() throws IOException {
         // Given I am on own person profile
-        motUI.userRoute.viewYourProfile(aedm);
+        motUI.profile.viewYourProfile(aedm);
 
         // When I am trying to submit an address with incorrect input
-        motUI.userRoute.changeAddress().changeAddress("", "", "", "INVALID_INPUT");
+        motUI.profile.changeAddress().changeAddress("", "", "", "INVALID_INPUT");
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.changeAddress().isValidationMessageOnChangeAddressPageDisplayed("INPUT_INVALID"), is(true));
+        assertThat(motUI.profile.changeAddress().isValidationMessageOnChangeAddressPageDisplayed("INPUT_INVALID"), is(true));
     }
 
     @DataProvider

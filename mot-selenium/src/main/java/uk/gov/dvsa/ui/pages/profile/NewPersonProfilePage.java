@@ -3,12 +3,13 @@ package uk.gov.dvsa.ui.pages.profile;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.ChangeEmailDetailsPage;
 import uk.gov.dvsa.ui.pages.ChangeTelephoneDetailsPage;
-import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
+import uk.gov.dvsa.ui.pages.dvsa.UserSearchResultsPage;
 import uk.gov.dvsa.ui.pages.vts.ChangeDetails.ChangeDetailsAddressPage;
 
 public class NewPersonProfilePage extends ProfilePage {
@@ -17,6 +18,8 @@ public class NewPersonProfilePage extends ProfilePage {
     private static final String PAGE_TITLE = "Your profile";
 
     @FindBy(id = "personal_details") private WebElement personalDetails;
+    @FindBy(css = "#date-of-birth a") protected WebElement changeDOBLink;
+    @FindBy(css = "#display-name a") private WebElement changeNameLink;
     @FindBy(id = "contact_details") private WebElement contactDetails;
     @FindBy(id = "qualification_status") private WebElement qualificationStatus;
     @FindBy(id = "account_management") private WebElement accountManagement;
@@ -36,7 +39,13 @@ public class NewPersonProfilePage extends ProfilePage {
     private static String GROUP_B_QUALIFICATION = "change-group-b-qualification";
 
     public NewPersonProfilePage(MotAppDriver driver) {
-        super(driver, PAGE_TITLE);
+        super(driver);
+        selfVerify();
+    }
+
+    @Override
+    protected boolean selfVerify() {
+        return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
 
     @Override
@@ -47,6 +56,21 @@ public class NewPersonProfilePage extends ProfilePage {
     @Override
     public boolean isChangeEmailLinkIsDisplayed() {
         return !contactDetails.findElements(By.xpath(".//*[@id='email-address']/a")).isEmpty();
+    }
+
+    @Override
+    public boolean isSuccessMessageDisplayed() {
+        return successMessage.isDisplayed();
+    }
+
+    @Override
+    public boolean isChangeDOBLinkIsDisplayed() {
+        return PageInteractionHelper.isElementDisplayed(changeDOBLink);
+    }
+
+    @Override
+    public boolean isChangeNameLinkDisplayed() {
+        return PageInteractionHelper.isElementDisplayed(changeNameLink);
     }
 
     @Override
@@ -96,20 +120,9 @@ public class NewPersonProfilePage extends ProfilePage {
     }
 
     @Override
-    public boolean isSuccessMessageDisplayed() {
-        return successMessage.isDisplayed();
-    }
-
-    @Override
     public ChangeEmailDetailsPage clickChangeEmailLink() {
         changeEmailLink.click();
         return new ChangeEmailDetailsPage(driver);
-    }
-
-    @Override
-    public ChangeAddressPage clickChangeAddressLink() {
-        changeAddressLink.click();
-        return new ChangeAddressPage(driver);
     }
 
     public ChangeTelephoneDetailsPage clickChangeTelephoneLink() {
@@ -121,15 +134,13 @@ public class NewPersonProfilePage extends ProfilePage {
         return userEmail.getText().contains(email);
     }
 
-    public boolean verifyTelephoneIsChanged(String telephone) {
-        return userTelephone.getText().contains(telephone);
-    }
-
-    public boolean verifyConfirmationMessage(String message) {
-        return successMessage.getText().contains(message);
-    }
-
     public boolean isPageLoaded() {
         return selfVerify();
+    }
+
+    @Override
+    public ChangeAddressPage clickChangeAddressLink() {
+        changeAddressLink.click();
+        return new ChangeAddressPage(driver);
     }
 }

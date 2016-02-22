@@ -8,6 +8,7 @@ import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.profile.NewPersonProfilePage;
 import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
+import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 
 public class ChangePasswordFromProfilePage extends Page {
 

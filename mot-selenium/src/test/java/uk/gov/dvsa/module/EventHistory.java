@@ -5,6 +5,9 @@ import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.ui.pages.events.EventType;
 import uk.gov.dvsa.ui.pages.events.EventsHistoryPage;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+
 public final class EventHistory {
     private EventsHistoryPage historyPage;
     private AeDetails aeDetails;
@@ -14,15 +17,12 @@ public final class EventHistory {
         this.aeDetails = aeDetails;
     }
 
-    public boolean containsEvent(String eventName) {
-        if(historyPage != null){
-            return historyPage.getEventNames(aeDetails.getIdAsString()).contains(eventName);
+    public void containsEvent(String eventName) {
+        if (historyPage != null) {
+            assertThat(historyPage.getEventNames(aeDetails.getIdAsString()), containsString(eventName));
+        } else {
+            throw new IllegalStateException("Event History Page is not loaded");
         }
-
-        throw new IllegalStateException("Event History Page is not loaded");
-    }
-
-    public void createNewEvent(EventType eventType, DateTime dateTime) {
 
     }
 }

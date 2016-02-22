@@ -1,12 +1,8 @@
 package uk.gov.dvsa.module.userprofile;
 
 import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
-import uk.gov.dvsa.ui.pages.profile.ChangeAddressPage;
-import uk.gov.dvsa.ui.pages.profile.NewPersonProfilePage;
-import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
-import uk.gov.dvsa.ui.pages.profile.ReviewAddressPage;
+import uk.gov.dvsa.ui.pages.profile.*;
 
 public class ChangeAddress {
 

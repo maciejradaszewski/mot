@@ -2,9 +2,12 @@ package uk.gov.dvsa.ui.pages.dvsa;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
-import uk.gov.dvsa.ui.pages.ProfilePage;
+import uk.gov.dvsa.ui.pages.profile.ChangeAddressPage;
+import uk.gov.dvsa.ui.pages.profile.ChangeNamePage;
+import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 
 public class UserSearchProfilePage extends ProfilePage {
@@ -13,6 +16,7 @@ public class UserSearchProfilePage extends ProfilePage {
     public static final String PATH = "/user-admin/user-profile/%s";
 
     @FindBy(id = "manage-internal-roles") private WebElement selectManageRolesLink;
+    @FindBy(css = "#display-name a") private WebElement changeNameLink;
     @FindBy(id = "person-driving-licence") private WebElement personDrivingLicence;
     @FindBy(id = "person-driving-licence-number") private WebElement personDrivingLicenceNumber;
     @FindBy(id = "person-driving-licence-region") private WebElement personDrivingLicenceRegion;
@@ -21,7 +25,13 @@ public class UserSearchProfilePage extends ProfilePage {
     @FindBy(id="roles-and-associations-link") private WebElement rolesAndAssociationsLink;
 
     public UserSearchProfilePage(MotAppDriver driver) {
-        super(driver, PAGE_TITLE);
+        super(driver);
+        selfVerify();
+    }
+
+    @Override
+    protected boolean selfVerify() {
+        return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
 
     @Override
@@ -41,13 +51,14 @@ public class UserSearchProfilePage extends ProfilePage {
     }
 
     @Override
-    public String getDrivingLicenceForPerson() {
-        return personDrivingLicenceNumber.getText();
+    public ChangeNamePage clickChangeNameLink() {
+        changeNameLink.click();
+        return new ChangeNamePage(driver);
     }
 
     @Override
-    public String getDrivingLicenceRegionForPerson() {
-        return personDrivingLicenceRegion.getText();
+    public String getDrivingLicenceForPerson() {
+        return personDrivingLicenceNumber.getText();
     }
 
     public boolean isSuccessMessageDisplayed(){

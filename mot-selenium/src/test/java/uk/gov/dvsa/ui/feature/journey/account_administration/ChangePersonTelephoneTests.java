@@ -7,15 +7,16 @@ import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.ui.BaseTest;
-import uk.gov.dvsa.ui.pages.profile.NewPersonProfilePage;
-import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
+import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
 public class ChangePersonTelephoneTests extends BaseTest {
+    private static final String TELEPHONE_TOO_LARGE_MESSAGE = "Phone number - must be 24 characters or less";
 
     private User areaOffice1User;
     private User areaOffice2User;
@@ -47,29 +48,28 @@ public class ChangePersonTelephoneTests extends BaseTest {
             description = "Test that Trade user can edit their telephone from their profile page")
     public void tradeUserCanEditTheirTelephone() throws Exception {
         // Given I am logged in as a Tester and I am on the My Profile Page
-        motUI.userRoute.viewYourProfile(tester);
+        ProfilePage profilePage = motUI.profile.viewYourProfile(tester);
 
         // When I edit my Telephone number
         String telephoneNumber = "+44 (0) 1225 200 123";
-        NewPersonProfilePage newPersonProfilePage = motUI.userRoute.changeTelephone(telephoneNumber, "YOUR_PROFILE");
+        motUI.profile.editTelephone(telephoneNumber).submitAndReturnToProfilePage(profilePage);
 
         // Then My Profile Telephone number will be amended with successful confirmation message
-        assertThat(newPersonProfilePage.verifyTelephoneIsChanged(telephoneNumber), is(true));
-        assertThat(newPersonProfilePage.verifyConfirmationMessage("Telephone number has been changed successfully."), is(true));
+        assertThat(profilePage.isSuccessMessageDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-931"},
             testName = "NewProfile",
             description = "Test that Trade user can cancel their telephone update from change telephone page")
-    public void dvsaUserCanCancelTheirTelephoneChange() throws IOException {
-        // Given I am logged in as a Tester and I am on the My Profile Page
-        motUI.userRoute.viewYourProfile(tester);
+    public void tradeUserCanCancelTheirTelephoneChange() throws IOException {
+        // Given I am the Change telephone page as a tester
+        ProfilePage profilePage = motUI.profile.viewYourProfile(tester);
 
         // When I Cancel my Telephone number edit
-        motUI.userRoute.page().clickChangeTelephoneLink().clickCancelButton(true);
+        motUI.profile.editTelephone("123456").cancelEdit(profilePage);
 
         // Then I will be returned to My Profile Page
-        assertThat(motUI.userRoute.page().isPageLoaded(), is(true));
+        assertThat(motUI.profile.page().isPageLoaded(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-931"},
@@ -78,13 +78,13 @@ public class ChangePersonTelephoneTests extends BaseTest {
             dataProvider = "dvsaUserChangeTelephoneProvider")
     public void dvsaUserCanCancelUserTelephoneChange(User user) throws IOException {
         // Given I am logged in as a DVSA User and User Profile Page
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        ProfilePage profilePage = motUI.profile.dvsaViewUserProfile(user, tester);
 
         // When I Cancel users Telephone number edit
-        motUI.userRoute.page().clickChangeTelephoneLink().clickCancelButton(false);
+        motUI.profile.editTelephone("111111").cancelEdit(profilePage);
 
         // Then I will be returned to User Page
-        assertThat(motUI.userRoute.page().isPageLoaded(), is(true));
+        assertThat(motUI.profile.page().isPageLoaded(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-931"},
@@ -93,29 +93,28 @@ public class ChangePersonTelephoneTests extends BaseTest {
             dataProvider = "dvsaUserChangeTelephoneProvider")
     public void dvsaUserCanChangeTelephoneNumberOnOtherPersonProfile(User user) throws IOException {
         // Given I am on a Users profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(user, tester);
+        ProfilePage profilePage = motUI.profile.dvsaViewUserProfile(user, tester);
 
         // When I am changing telephone number for a person
         String telephoneNumber = "+44 (0) 1225 200 123";
-        NewUserProfilePage newUserProfilePage = motUI.userRoute.changeTelephone(telephoneNumber, "PERSON_PROFILE");
+        motUI.profile.editTelephone(telephoneNumber).submitAndReturnToProfilePage(profilePage);
 
         // Then My Profile Telephone number will be amended with successful confirmation message
-        assertThat(newUserProfilePage.verifyTelephoneChanged(telephoneNumber), is(true));
-        assertThat(newUserProfilePage.verifyConfirmationMessage("Telephone number has been changed successfully."), is(true));
+        assertThat(profilePage.isSuccessMessageDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-931"},
             testName = "NewProfile",
             description = "Test that Trade user cannot enter more than 24 Chars in the Telephone number")
-    public void dvsaUserShouldProvideValidTelephoneNumber() throws IOException {
+    public void tradeUserShouldProvideValidTelephoneNumber() throws IOException {
         // Given I am logged in as a Tester and I am on the My Profile Page
-        motUI.userRoute.viewYourProfile(tester);
+        motUI.profile.viewYourProfile(tester);
 
         // When I am trying to submit a telephone number greater than 24 Chars
-        motUI.userRoute.changeTelephone("A123456789B123456789C12345", "INVALID_INPUT");
+        String validationMessage = motUI.profile.editTelephoneWithInvalidInput("A123456789B123456789C12345");
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.isValidationMessageOnChangeTelephonePageDisplayed("TELEPHONE_TOO_LARGE"), is(true));
+        assertThat(validationMessage, containsString(TELEPHONE_TOO_LARGE_MESSAGE));
     }
 
     @Test(groups = {"BVT", "Regression", "BL-931"},
@@ -123,13 +122,13 @@ public class ChangePersonTelephoneTests extends BaseTest {
             description = "Test that Authorised user should provide an appropriate sized telephone number in order to update user information")
     public void dvsaUserShouldNotProvideInvalidSizedTelephoneNumber() throws IOException {
         // Given I am on other person profile as an authorised user
-        motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
+        motUI.profile.dvsaViewUserProfile(areaOffice1User, tester);
 
         // When I am trying to submit a telephone number greater than 24 Chars
-        motUI.userRoute.changeTelephone("A123456789B123456789C12345", "INVALID_INPUT");
+        String validationMessage = motUI.profile.editTelephoneWithInvalidInput("A123456789B123456789C12345");
 
         // Then the error validation message should be displayed
-        assertThat(motUI.userRoute.isValidationMessageOnChangeTelephonePageDisplayed("TELEPHONE_TOO_LARGE"), is(true));
+        assertThat(validationMessage, containsString(TELEPHONE_TOO_LARGE_MESSAGE));
     }
 
     @DataProvider

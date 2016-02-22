@@ -8,7 +8,6 @@ import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.helper.RandomDataGenerator;
 import uk.gov.dvsa.ui.BaseTest;
-import uk.gov.dvsa.ui.pages.ProfilePage;
 import uk.gov.dvsa.ui.pages.dvsa.*;
 
 import java.io.IOException;
@@ -182,7 +181,8 @@ public class DVSAManagingUserRolesTests extends BaseTest {
         pageNavigator.navigateToPage(areaOffice1User, UserSearchPage.PATH, UserSearchPage.class);
 
         //When I search for user by username and going back to user search form
-        UserSearchPage userSearchPage = motUI.searchUser.searchForUserByUsername(vehicleExaminer.getUsername(), UserSearchResultsPage.class)
+        UserSearchPage userSearchPage =
+                motUI.searchUser.searchForUserByUsername(vehicleExaminer.getUsername(), UserSearchResultsPage.class)
                 .chooseUser(0)
                 .clickCancelAndReturnToSearchResults()
                 .clickBackToUserSearch();
@@ -210,10 +210,10 @@ public class DVSAManagingUserRolesTests extends BaseTest {
     public void dvsaUserCanViewTradesUserRolesAndAssociationsFromUserSearch() throws IOException, URISyntaxException {
 
         //Given that I am on a user profile page as an authorised DVSA user
-        motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
+        motUI.profile.dvsaViewUserProfile(areaOffice1User, tester);
 
         //I expect to see roles displayed
-        assertThat(motUI.userRoute.page().clickRolesAndAssociationsLink().getRoleValues().isEmpty(), is(false));
+        assertThat(motUI.profile.page().clickRolesAndAssociationsLink().getRoleValues().isEmpty(), is(false));
     }
 
     @Test(groups = {"BVT", "Regression", "VM-12321"},
@@ -222,10 +222,10 @@ public class DVSAManagingUserRolesTests extends BaseTest {
     public void dvsaUserCanViewTradeUsersRolesAndAssociations() throws IOException, URISyntaxException {
 
         //Given I'm on the profile page of a user as an authorised DVSA user
-        motUI.userRoute.dvsaViewUserProfile(areaOffice1User, tester);
+        motUI.profile.dvsaViewUserProfile(areaOffice1User, tester);
 
         //I expect Roles and Associations link should be displayed
-        assertThat(motUI.userRoute.page().isRolesAndAssociationsLinkDisplayed(), is(true));
+        assertThat(motUI.profile.page().isRolesAndAssociationsLinkDisplayed(), is(true));
     }
 
     @Test(groups = {"BVT", "Regression", "VM-12321"},
