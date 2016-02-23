@@ -57,6 +57,7 @@ class TypePropertyForm extends Form
         $typeInput = new Input(self::FIELD_TYPE);
         $typeInput
             ->setRequired(true)
+            ->setErrorMessage(self::TYPE_EMPTY_MSG)
             ->getValidatorChain()
             ->attach($typeEmptyValidator);
 
