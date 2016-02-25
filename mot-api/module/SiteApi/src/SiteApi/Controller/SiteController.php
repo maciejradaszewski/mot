@@ -46,19 +46,6 @@ class SiteController extends AbstractDvsaRestfulController
         return ApiResponse::jsonOk($result);
     }
 
-    /**
-     * @return JsonModel
-     * @deprecated VM-7285 (An update site data functionality was removed and changed to update
-     * contact details of VTS only. An update contact details use SiteContactController, so this
-     * method not used anywhere, but I left it, because it wil be need in future)
-     */
-    public function update($id, $data)
-    {
-        $result = $this->service->update($id, $data);
-
-        return ApiResponse::jsonOk($result);
-    }
-
     public function get($id)
     {
         $data = $this->service->getSite($id);

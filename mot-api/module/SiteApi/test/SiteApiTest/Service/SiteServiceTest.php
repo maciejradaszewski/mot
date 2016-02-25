@@ -328,68 +328,6 @@ class SiteServiceTest extends AbstractServiceTestCase
                     'result' => $vtsDto,
                 ],
             ],
-
-            //  --  update Failed --
-            [
-                'method'      => 'update',
-                'params' => [
-                    'siteId' => self::SITE_ID,
-                    'data'   => [],
-                ],
-                'repo'        => null,
-                'permissions' => [],
-                'expect'      => [
-                    'exception' => [
-                        'class'   => UnauthorisedException::class,
-                        'message' => 'Update vts assertion failed',
-                    ],
-                ],
-            ],
-
-            //  --  update   --
-            [
-                'method'      => 'update',
-                'params' => [
-                    'siteId' => self::SITE_ID,
-                    'data'   => [],
-                ],
-                'repo'        => null,
-                'permissions' => [
-                    PermissionAtSite::VTS_UPDATE_NAME,
-                    PermissionAtSite::VTS_UPDATE_CORRESPONDENCE_DETAILS,
-                    PermissionAtSite::VTS_UPDATE_BUSINESS_DETAILS,
-                ],
-                'expect'      => [
-                    'exception' => [
-                        'class'   => BadRequestException::class,
-                        'message' => 'Validation errors encountered',
-                    ],
-                ],
-            ],
-
-            //  --  update   --
-            [
-                'method'      => 'update',
-                'params' => [
-                    self::SITE_ID,
-                    $this->getSitePostData()
-                ],
-                'repo'        => [
-                    'method' => 'get',
-                    'result' => $this->getSiteEntity(),
-                    'params' => [self::SITE_ID],
-                ],
-                'permissions' => [
-                    PermissionAtSite::VTS_UPDATE_NAME,
-                    PermissionAtSite::VTS_UPDATE_CORRESPONDENCE_DETAILS,
-                    PermissionAtSite::VTS_UPDATE_BUSINESS_DETAILS,
-                ],
-                'expect'      => [
-                    'result' => [
-                        'id' => self::SITE_ID
-                    ],
-                ],
-            ],
         ];
     }
 

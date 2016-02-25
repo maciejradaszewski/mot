@@ -9,7 +9,6 @@ use Organisation\Controller\SiteController;
 use Organisation\Controller\SlotsUsageController;
 use Organisation\Factory\Controller\SiteControllerFactory;
 use Organisation\Factory\Controller\AuthorisedExaminerControllerFactory;
-use Organisation\Factory\Controller\AuthorisedExaminerStatusControllerFactory;
 use Organisation\UpdateAeProperty\Factory\UpdateAePropertyProcessBuilderFactory;
 use Organisation\UpdateAeProperty\UpdateAePropertyController;
 use Organisation\UpdateAeProperty\UpdateAePropertyProcessBuilder;
@@ -67,35 +66,6 @@ return [
                                         'action'     => 'confirmation',
                                     ],
                                 ],
-                            ],
-                        ],
-                    ],
-                    'edit'                => [
-                        'type'    => 'segment',
-                        'options' => [
-                            'route'       => '/edit',
-                            'defaults'    => [
-                                'controller' => AuthorisedExaminerControllerFactory::class,
-                                'action'     => 'edit',
-                            ],
-                        ],
-                    ],
-                    'edit-status'                => [
-                        'type'    => 'segment',
-                        'options' => [
-                            'route'       => '/edit-status',
-                            'defaults'    => [
-                                'controller' => AuthorisedExaminerStatusControllerFactory::class,
-                            ],
-                        ],
-                    ],
-                    'edit-status-confirm'                => [
-                        'type'    => 'segment',
-                        'options' => [
-                            'route'       => '/edit-status/confirmation',
-                            'defaults'    => [
-                                'controller' => AuthorisedExaminerStatusControllerFactory::class,
-                                'action' => 'confirmation'
                             ],
                         ],
                     ],
@@ -293,7 +263,6 @@ return [
         'factories' => [
             SiteController::class                      => SiteControllerFactory::class,
             AuthorisedExaminerControllerFactory::class => AuthorisedExaminerControllerFactory::class,
-            AuthorisedExaminerStatusControllerFactory::class => AuthorisedExaminerStatusControllerFactory::class,
         ]
     ],
     'service_manager' => [

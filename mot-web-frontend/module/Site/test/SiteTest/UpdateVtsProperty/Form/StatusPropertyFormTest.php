@@ -2,8 +2,8 @@
 
 namespace SiteTest\UpdateVtsProperty\Form;
 
+use DvsaCommon\Model\VtsStatus;
 use Site\UpdateVtsProperty\Process\Form\StatusPropertyForm;
-use Site\Form\VtsSiteDetailsForm;
 
 class StatusPropertyFormTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,8 +22,10 @@ class StatusPropertyFormTest extends \PHPUnit_Framework_TestCase
     public function validData()
     {
         $data = [];
-        $form = new VtsSiteDetailsForm();
-        foreach ($form->getStatuses() as $code => $name) {
+
+        $statuses = VtsStatus::getStatuses();
+
+        foreach ($statuses as $code => $name) {
             $data[] = [[StatusPropertyForm::FIELD_STATUS => $code]];
         }
 

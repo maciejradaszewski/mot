@@ -70,23 +70,6 @@ class OrganisationMapper extends DtoMapper implements AutoWireableInterface
         return $this->post($url, DtoHydrator::dtoToJson($dto));
     }
 
-    public function status(OrganisationDto $dto, $id)
-    {
-        $url = AuthorisedExaminerUrlBuilder::status($id);
-
-        return $this->put($url, DtoHydrator::dtoToJson($dto));
-    }
-
-    public function validateStatusAndAO(OrganisationDto $dto, $id)
-    {
-        $url = AuthorisedExaminerUrlBuilder::status($id);
-        $dto->setIsValidateOnly(true);
-
-        $data = DtoHydrator::dtoToJson($dto);
-
-        return $this->put($url, $data);
-    }
-
     /**
      * Answers a list of sites that are Area Offices. If the flag
      * 'for select' is true it means we want a K-V array instead of

@@ -374,21 +374,4 @@ class VtsOverviewPagePermissionsTest extends PHPUnit_Framework_TestCase
             ],
         ];
     }
-
-    public function testCanChangeDetails()
-    {
-        $this->mockMethod($this->mockAuthSrv, 'isGrantedAtSite', $this->any(), true);
-
-        $obj = new VtsOverviewPagePermissions(
-            $this->mockAuthSrv,
-            $this->mockIdentity,
-            $this->mockVtsData,
-            [],
-            self::$ORG_ID
-        );
-
-        $actualResult = $obj->canChangeDetails();
-
-        $this->assertEquals($actualResult, true);
-    }
 }

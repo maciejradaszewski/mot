@@ -102,18 +102,6 @@ class AuthorisedExaminerValidator extends AbstractValidator
         }
     }
 
-    public function validateStatus(AuthorisedExaminerAuthorisationDto $dto)
-    {
-        if (empty($dto->getStatus()) || $this->isEmpty($dto->getStatus()->getCode())
-            || AuthorisationForAuthorisedExaminerStatusCode::exists(
-                $dto->getStatus()->getCode()
-            ) === false
-        ) {
-            $this->errors->add(self::ERR_STATUS, self::FIELD_STATUS);
-        }
-        return $this;
-    }
-
     public function validateAreaOffice(AuthorisedExaminerAuthorisationDto $dto, $validAreaOffices)
     {
         $intAONumber = $dto->getAssignedAreaOffice();

@@ -6,6 +6,8 @@ use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Api\Vts;
 use Dvsa\Mot\Behat\Support\Api\Notification;
 use Dvsa\Mot\Behat\Support\Api\AuthorisedExaminer;
+use DvsaCommon\Dto\Site\VehicleTestingStationDto;
+use DvsaCommon\Model\VehicleTestingStation;
 use PHPUnit_Framework_Assert as PHPUnit;
 use DvsaCommon\Dto\Site\SiteListDto;
 use DvsaCommon\Utility\DtoHydrator;
@@ -503,7 +505,10 @@ class VtsContext implements Context
         $response = $this->vehicleTestingStation->updateSiteDetails(
             $aoSession->getAccessToken(),
             $this->siteCreate["id"],
-            ["classes" => [$classes]]
+            [
+                VehicleTestingStation::PATCH_PROPERTY_CLASSES => $classes,
+                '_class' => VehicleTestingStationDto::class,
+            ]
         );
 
         PHPUnit::assertEquals(200, $response->getStatusCode());

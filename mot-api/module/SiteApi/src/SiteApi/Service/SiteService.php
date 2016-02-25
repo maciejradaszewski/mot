@@ -19,11 +19,8 @@ use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Enum\BrakeTestTypeCode;
 use DvsaCommon\Enum\CountryCode;
 use DvsaCommon\Enum\EventTypeCode;
-use DvsaCommon\Enum\PhoneContactTypeCode;
-use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Enum\SiteStatusCode;
 use DvsaCommon\Enum\VehicleClassCode;
-use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\Hydrator;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\AbstractService;
@@ -55,7 +52,6 @@ use DvsaEventApi\Service\EventService;
 use SiteApi\Service\Mapper\SiteBusinessRoleMapMapper;
 use SiteApi\Service\Mapper\VtsMapper;
 use SiteApi\Service\Validator\SiteValidator;
-use SiteApi\Service\Validator\SiteValidatorBuilder;
 use Zend\Http\Request;
 
 /**
@@ -103,8 +99,6 @@ class SiteService extends AbstractService
     private $nonWorkingDayCountryRepository;
     /** @var SiteStatusRepository */
     private $siteStatusRepository;
-    /** @var SiteValidatorBuilder */
-    private $siteValidatorBuilder;
     /** @var VtsMapper */
     private $vtsMapper;
     /** @var XssFilter */
@@ -184,8 +178,6 @@ class SiteService extends AbstractService
         $this->objectHydrator = $objectHydrator;
 
         $this->vtsMapper = new VtsMapper();
-
-        $this->siteValidatorBuilder = new SiteValidatorBuilder($updateVtsAssertion);
 
         $this->dateTimeHolder = new DateTimeHolder;
         $this->validator = $validator;
@@ -407,36 +399,6 @@ class SiteService extends AbstractService
 
     /**
      * @param $id
-     * @param array $data
-     * @return array
-     * @throws \DvsaCommonApi\Service\Exception\NotFoundException
-     * @deprecated VM-7285
-     */
-    public function update($id, array $data)
-    {
-        $this->updateVtsAssertion->assertGranted($id);
-
-        $validator = $this->siteValidatorBuilder->buildEditValidator($id);
-        $data      = $this->xssFilter->filterMultiple($data);
-        $validator->validate($data);
-
-        $site = $this->repository->get($id);
-
-        if ($this->updateVtsAssertion->canUpdateBusinessDetails($id)) {
-            $this->setBusinessContact($site, $data);
-        }
-
-        if ($this->updateVtsAssertion->canUpdateCorrespondenceDetails($id)) {
-            $this->setCorrespondenceContact($site, $data);
-        }
-
-        $this->repository->save($site);
-
-        return ['id' => $site->getId()];
-    }
-
-    /**
-     * @param $id
      * @return VehicleTestingStationDto
      * @throws NotFoundException
      */
@@ -490,32 +452,6 @@ class SiteService extends AbstractService
         );
 
         return $this->vtsMapper->toDto($site);
-    }
-
-    private function setBusinessContact(Site $site, $data)
-    {
-        $businessContact = $this->contactService->create($data, PhoneContactTypeCode::BUSINESS, true);
-
-        /** @var SiteContactType $siteContactType */
-        $siteContactType = $this->siteContactTypeRepository->getByCode(SiteContactTypeCode::BUSINESS);
-
-        $site->setContact($businessContact, $siteContactType);
-    }
-
-    private function setCorrespondenceContact(Site $site, $data)
-    {
-        $data = ArrayUtils::removePrefixFromKeys($data, 'correspondence');
-
-        $correspondenceContact = $this->contactService->create(
-            $data,
-            PhoneContactTypeCode::BUSINESS,
-            true
-        );
-
-        /** @var SiteContactType $siteContactType */
-        $siteContactType = $this->siteContactTypeRepository->getByCode(SiteContactTypeCode::CORRESPONDENCE);
-
-        $site->setContact($correspondenceContact, $siteContactType);
     }
 
     /**

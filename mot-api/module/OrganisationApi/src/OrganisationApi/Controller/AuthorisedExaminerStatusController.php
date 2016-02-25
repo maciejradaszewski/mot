@@ -22,15 +22,6 @@ class AuthorisedExaminerStatusController extends AbstractDvsaRestfulController
         $this->service = $service;
     }
 
-    public function update($id, $data)
-    {
-        /** @var OrganisationDto $dto */
-        $dto    = DtoHydrator::jsonToDto($data);
-        $result = $this->service->updateStatus($id, $dto);
-
-        return ApiResponse::jsonOk($result);
-    }
-
     public function getAreaOfficesAction()
     {
         return ApiResponse::jsonOk($this->service->getAllAreaOffices());

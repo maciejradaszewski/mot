@@ -76,20 +76,6 @@ class SiteMapper extends DtoMapper implements AutoWireableInterface
     }
 
     /**
-     * Update Contact for specified site
-     *
-     * @param integer $siteId
-     * @param SiteContactDto $contactDto
-     * @return array
-     */
-    public function updateContactDetails($siteId, SiteContactDto $contactDto)
-    {
-        $apiUrl = VehicleTestingStationUrlBuilder::contactUpdate($siteId, $contactDto->getId());
-
-        return $this->client->put($apiUrl, DtoHydrator::dtoToJson($contactDto));
-    }
-
-    /**
      * Update testing facilities for specified site
      *
      * @param $siteId
@@ -121,21 +107,6 @@ class SiteMapper extends DtoMapper implements AutoWireableInterface
     {
         $apiUrl = VehicleTestingStationUrlBuilder::search();
         return $this->post($apiUrl, $params);
-    }
-
-    public function validateSiteDetails($siteId, VehicleTestingStationDto $siteDetailsDto)
-    {
-        $apiUrl = VehicleTestingStationUrlBuilder::vtsDetails($siteId);
-        $siteDetailsDto->setIsNeedConfirmation(true);
-
-        return $this->put($apiUrl, DtoHydrator::dtoToJson($siteDetailsDto));
-    }
-
-    public function updateSiteDetails($siteId, VehicleTestingStationDto $siteDetailsDto)
-    {
-        $apiUrl = VehicleTestingStationUrlBuilder::vtsDetails($siteId);
-
-        return $this->put($apiUrl, DtoHydrator::dtoToJson($siteDetailsDto));
     }
 
     public function updateVtsProperty($vtsId, $property, $value)

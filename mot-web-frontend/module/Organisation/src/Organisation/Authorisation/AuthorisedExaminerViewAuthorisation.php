@@ -68,13 +68,6 @@ class AuthorisedExaminerViewAuthorisation
         return $this->authorisationService->isGrantedAtOrganisation($permission, $this->authorisedExaminerId);
     }
 
-    public function canUpdateAe()
-    {
-        return $this->authorisationService->isGrantedAtOrganisation(
-            PermissionAtOrganisation::AUTHORISED_EXAMINER_UPDATE, $this->authorisedExaminerId
-        );
-    }
-
     public function canViewVtsList()
     {
         return $this->authorisationService->isGrantedAtOrganisation(

@@ -5,6 +5,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use Dvsa\Mot\Behat\Support\Api\Session;
+use DvsaCommon\Model\VehicleTestingStation;
 use PHPUnit_Framework_Assert as PHPUnit;
 use Dvsa\Mot\Behat\Support\Api\Vts;
 use DvsaCommon\Dto\Site\VehicleTestingStationDto;
@@ -298,7 +299,10 @@ class VtsManagementContext implements Context
         $response = $this->vehicleTestingStation->updateSiteDetails(
             $this->sessionContext->getCurrentAccessToken(),
             $this->siteCreate['id'],
-            ['status' => $this->siteStatus]
+            [
+                VehicleTestingStation::PATCH_PROPERTY_STATUS => $this->siteStatus,
+                '_class' => VehicleTestingStationDto::class,
+            ]
         );
 
         $this->response = $response;

@@ -231,53 +231,6 @@ class AuthorisedExaminerController extends AbstractDvsaMotTestController
 
     /**
      * @return \Zend\Http\Response|ViewModel
-     * @throws \Exception
-     */
-    public function editAction()
-    {
-        $orgId = $this->params('id');
-
-        $this->auth->assertGrantedAtOrganisation(PermissionAtOrganisation::AUTHORISED_EXAMINER_UPDATE, $orgId);
-
-        $aeViewUrl = AuthorisedExaminerUrlBuilderWeb::of($orgId)->toString();
-        $organisation = $this->mapper->Organisation->getAuthorisedExaminer($orgId);
-
-        //  logical block :: prepare model
-        $form = new AeContactDetailsForm($organisation);
-        $form->setCancelUrl($aeViewUrl);
-
-        /* @var Request $request */
-        $request = $this->getRequest();
-
-        if ($request->isPost()) {
-            $form->fromPost($request->getPost());
-
-            if ($form->isValid()) {
-                $aeDto = $form->toDto();
-
-                try {
-                    $this->mapper->Organisation->update($orgId, $aeDto);
-
-                    return $this->redirect()->toUrl($aeViewUrl);
-                } catch (RestApplicationException $e) {
-                    $this->addErrorMessages($e->getDisplayMessages());
-                }
-            }
-        }
-
-        //  logical block :: prepare view
-        $subTitle = self::EDIT_SUBTITLE . ' - ' .
-            $organisation->getAuthorisedExaminerAuthorisation()->getAuthorisedExaminerRef();
-
-        $breadcrumbs = [$organisation->getName() => $aeViewUrl];
-
-        return $this->prepareViewModel(
-            new ViewModel(['model' => $form]), self::EDIT_TITLE, $subTitle, $breadcrumbs
-        );
-    }
-
-    /**
-     * @return \Zend\Http\Response|ViewModel
      */
     public function createAction()
     {

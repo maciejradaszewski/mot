@@ -308,63 +308,6 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
         $this->assertArrayHasKey('aeRef', $actual);
     }
 
-    public function testUpdate()
-    {
-        $orgId = 99999;
-
-        $aeAuth = new AuthorisedExaminerAuthorisationDto();
-        /** @var \DvsaEntities\Entity\Site $site */
-        $site = new Site();
-        $site->setSiteNumber(self::SITE_ID."BLAH");
-        $ae = new AuthorisationForAuthorisedExaminer();
-        $ae->setAreaOffice($site);
-
-        $orgEntity = new Organisation();
-        $orgEntity
-            ->setId($orgId)
-            ->setName('unit test')
-            ->setRegisteredCompanyNumber('utest reg nr')
-            ->setTradingAs('unit trading')
-            ->setOrganisationType(new OrganisationType())
-            ->setAuthorisedExaminer($ae)
-            ->setContact(
-                new ContactDetail(),
-                (new OrganisationContactType())->setCode(OrganisationContactTypeCode::CORRESPONDENCE)
-            );
-
-        $ae->setOrganisation($orgEntity);
-
-        $orgDto = new OrganisationDto();
-        $orgDto
-            ->setName('unit test')
-            ->setRegisteredCompanyNumber('utest reg nr')
-            ->setTradingAs('unit trading')
-            ->setOrganisationType(OrganisationTypeConst::AUTHORISED_EXAMINER)
-            ->setAuthorisedExaminerAuthorisation($aeAuth)
-            ->setContacts(
-                [
-                    (new OrganisationContactDto())
-                        ->setType(OrganisationContactTypeCode::CORRESPONDENCE)
-                ]
-            );
-
-        //  --  set permission  --
-        $this->assertGrantedAtOrganisation(
-            $this->mockAuthService, [PermissionAtOrganisation::AUTHORISED_EXAMINER_UPDATE], $orgId
-        );
-
-        //  --  mock    --
-        $this->mockMethod($this->mockOrganisationRepo, 'getAuthorisedExaminer', $this->once(), $orgEntity, $orgId);
-        $this->mockMethod($this->mockOrganisationRepo, 'save', $this->once(), null, $orgEntity);
-        $this->contactDetailsService->expects($this->once())
-            ->method('setContactDetailsFromDto')
-            ->willReturn(new ContactDetail());
-
-        //  --  call & check    --
-        $actual = $this->authorisedExaminerService->update($orgId, $orgDto);
-        $this->assertSame(['id' => $orgId], $actual);
-    }
-
     public function testHydrateOrganisation()
     {
         $org = $this->authorisedExaminerService->hydrateOrganisation(new Organisation(), self::getData());
@@ -478,7 +421,6 @@ class AuthorisedExaminerServiceTest extends AbstractServiceTestCase
                 'method' => 'create',
                 'params' => [new OrganisationDto()],
             ],
-            ['update', [self::AE_ID, new OrganisationDto()]],
             ['get', [self::AE_ID]],
             ['getByNumber', [self::AE_ID]],
             ['getAuthorisedExaminersForPerson', [self::PERSON_ID]],

@@ -91,11 +91,6 @@ class VehicleTestingStationUrlBuilderWeb extends AbstractUrlBuilder
             ->appendRoutesAndParams(self::TESTING_FACILITIES_CONFIRM);
     }
 
-    public static function siteDetails($siteId)
-    {
-        return self::byId($siteId)->appendRoutesAndParams(self::SITE_DETAILS);
-    }
-
     public static function create()
     {
         return self::main()->appendRoutesAndParams(self::CREATE);
@@ -105,12 +100,6 @@ class VehicleTestingStationUrlBuilderWeb extends AbstractUrlBuilder
     {
         return self::create()
             ->appendRoutesAndParams(self::CREATE_CONFIRM);
-    }
-
-    public static function siteDetailsConfirm($siteId)
-    {
-        return self::siteDetails($siteId)
-            ->appendRoutesAndParams(self::SITE_DETAILS_CONFIRM);
     }
 
     public static function viewSiteRiskAssessment($siteId)

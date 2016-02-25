@@ -102,26 +102,6 @@ class AuthorisedExaminerControllerTest extends AbstractRestfulControllerTestCase
                 ]
             ],
             [
-                'method' => Request::METHOD_PUT,
-                'action' => null,
-                'params' => [
-                    'route' => [
-                        'id' => self::AE_ID,
-                    ],
-                    'put' => $jsonOrganisationDto,
-                ],
-                'mocks'  => [
-                    'method' => 'update',
-                    'params' => [self::AE_ID, $getServiceResult],
-                    'result' => ['id' => self::AE_ID],
-                ],
-                'expect' => [
-                    'result' => [
-                        'data' => $postServiceResult,
-                    ]
-                ]
-            ],
-            [
                 'method' => 'post',
                 'action' => null,
                 'params' => [

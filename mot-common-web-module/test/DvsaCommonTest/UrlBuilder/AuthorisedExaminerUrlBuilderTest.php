@@ -48,11 +48,6 @@ class AuthorisedExaminerUrlBuilderTest extends PHPUnit_Framework_TestCase
             AuthorisedExaminerUrlBuilder::siteLink(self::AE_ID, self::LINK_ID),
             $base . '/site/link/' . self::LINK_ID
         );
-
-        $this->checkUrl(
-            AuthorisedExaminerUrlBuilder::status(self::AE_ID),
-            $base . '/status'
-        );
     }
 
     private function checkUrl(AuthorisedExaminerUrlBuilder $urlBuilder, $expectUrl)

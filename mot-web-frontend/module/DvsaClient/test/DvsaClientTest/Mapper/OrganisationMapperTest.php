@@ -123,37 +123,4 @@ class OrganisationMapperTest extends AbstractMapperTest
 
         $this->assertEquals($expect, $actualDto);
     }
-
-    public function testStatusAuthorisedExaminer()
-    {
-        $expectDto = new OrganisationDto();
-        $expect = 'expect response';
-
-        $this->setupClientMockPut(
-            AuthorisedExaminerUrlBuilder::status(self::AE_ID),
-            DtoHydrator::dtoToJson($expectDto),
-            ['data' => $expect]
-        );
-
-        $actualDto = $this->mapper->status($expectDto, self::AE_ID);
-
-        $this->assertEquals($expect, $actualDto);
-    }
-
-    public function testValidateStatusAuthorisedExaminer()
-    {
-        $expectDto = (new OrganisationDto())
-            ->setIsValidateOnly(true);
-        $expect = 'expect response';
-
-        $this->setupClientMockPut(
-            AuthorisedExaminerUrlBuilder::status(self::AE_ID),
-            DtoHydrator::dtoToJson($expectDto),
-            ['data' => $expect]
-        );
-
-        $actualDto = $this->mapper->validateStatusAndAO($expectDto, self::AE_ID);
-
-        $this->assertEquals($expect, $actualDto);
-    }
 }

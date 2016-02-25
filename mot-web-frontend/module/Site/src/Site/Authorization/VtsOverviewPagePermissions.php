@@ -177,11 +177,6 @@ class VtsOverviewPagePermissions
         return $this->canRemoveRoleAtSite();
     }
 
-    public function canChangeDetails()
-    {
-        return $this->isGranted(PermissionAtSite::VTS_UPDATE_BUSINESS_DETAILS);
-    }
-
     public function canChangeTestingFacilities()
     {
         return $this->isGranted(PermissionAtSite::VTS_UPDATE_TESTING_FACILITIES_DETAILS);
