@@ -124,7 +124,7 @@ class SiteTestingFacilitiesService
      */
     public function update($siteId, VehicleTestingStationDto $data)
     {
-        $this->updateVtsAssertion->assertGranted($siteId);
+        $this->updateVtsAssertion->assertUpdateTestingFacilities($siteId);
 
         /** @var VehicleTestingStationDto $data */
         $data = $this->xssFilter->filter($data);

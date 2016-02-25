@@ -16,10 +16,10 @@ use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\Enum\SiteTypeName;
+use DvsaCommon\Model\VtsStatus;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
 use Site\Authorization\VtsOverviewPagePermissions;
-use Site\Form\VtsSiteDetailsForm;
 use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
 use Site\ViewModel\MotTest\MotTestInProgressViewModel;
 use Zend\Mvc\Controller\Plugin\Url;
@@ -173,8 +173,9 @@ class SiteViewModel
 
     public function getStatusName($key)
     {
-        $statusName = new VtsSiteDetailsForm();
-        return $statusName->getStatuses()[$key];
+        $statuses = VtsStatus::getStatuses();
+
+        return $statuses[$key];
     }
 
     public function buildSiteDetailsSummaryTable()

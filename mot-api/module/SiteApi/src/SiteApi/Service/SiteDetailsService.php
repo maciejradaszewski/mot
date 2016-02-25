@@ -141,27 +141,6 @@ class SiteDetailsService
         $this->nonWorkingDayCountryRepository = $nonWorkingDayCountryRepository;
     }
 
-    public function update($siteId, VehicleTestingStationDto $dto)
-    {
-        $this->updateVtsAssertion->assertGranted($siteId);
-
-        /** @var VehicleTestingStationDto $dto */
-        $dto = $this->xssFilter->filter($dto);
-        $this->siteValidator->validateSiteDetailOnEdit($dto);
-
-        if ($dto->isNeedConfirmation() === true) {
-            return true;
-        }
-
-        /** @var Site $site */
-        $site = $this->siteRepository->get($siteId);
-        $this->updateSiteDetails($site, $dto);
-
-        return [
-            'success' => true
-        ];
-    }
-
     /**
      * @param int $siteId
      * @param array $data
@@ -173,14 +152,9 @@ class SiteDetailsService
     public function patch($siteId, array $data)
     {
         $dto = DtoHydrator::jsonToDto($data);
-        $this->updateVtsAssertion->assertGranted($siteId);
 
         /** @var VehicleTestingStationDto $dto */
         $dto = $this->xssFilter->filter($dto);
-
-        if ($dto->isNeedConfirmation() === true) {
-            return true;
-        }
 
         $site = $this->siteRepository->get($siteId);
         $diff = [];
@@ -233,22 +207,6 @@ class SiteDetailsService
         return [
             'success' => true
         ];
-    }
-
-    private function updateSiteDetails(Site $site, VehicleTestingStationDto $data)
-    {
-        $diff = [];
-
-        $this->updateName($site, $data, $diff);
-        $this->updateClasses($site, $data, $diff);
-        $this->updateStatus($site, $data, $diff);
-
-        $this->raiseSiteEvents($site, $diff);
-
-        $this->entityManager->persist($site);
-        $this->entityManager->flush();
-
-        return $diff;
     }
 
     private function updateName(Site $site, VehicleTestingStationDto $dto, array & $diff)

@@ -124,21 +124,6 @@ class AuthorisedExaminerUrlBuilderWeb extends AbstractUrlBuilder
         return $this->appendRoutesAndParams(self::SEARCH);
     }
 
-    public static function aeEdit($id)
-    {
-        return self::of($id)->appendRoutesAndParams(self::EDIT);
-    }
-
-    public static function aeEditStatus($id)
-    {
-        return self::of($id)->appendRoutesAndParams(self::EDIT_STATUS);
-    }
-
-    public static function aeEditStatusConfirm($id)
-    {
-        return self::aeEditStatus($id)->appendRoutesAndParams(self::EDIT_STATUS_CONFIRM);
-    }
-
     public static function roles($aeId)
     {
         return self::of($aeId)->appendRoutesAndParams(self::ROLES);

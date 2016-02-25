@@ -37,8 +37,6 @@ class SiteContactService extends AbstractService
     private $siteContactRepo;
     /** @var SiteContactTypeRepository  */
     private $siteContactTypeRepo;
-    /** @var AuthorisationServiceInterface */
-    private $authService;
 
     public function __construct(
         EntityManager $entityManager,
@@ -54,36 +52,6 @@ class SiteContactService extends AbstractService
 
         $this->siteContactRepo = $entityManager->getRepository(SiteContact::class);
         $this->siteContactTypeRepo = $entityManager->getRepository(SiteContactType::class);
-    }
-
-    /**
-     * Update site contact from Dto
-     *
-     * @param integer        $siteId
-     * @param SiteContactDto $dto
-     *
-     * @return array
-     * @throws NotFoundException
-     */
-    public function updateContactFromDto($siteId, SiteContactDto $dto)
-    {
-        if ($dto->getType() === SiteContactTypeCode::BUSINESS) {
-            $this->updateVtsAssertion->assertUpdateBusinessDetails($siteId);
-        }
-
-        $contact = $this->siteContactRepo->getHydratedByTypeCode($siteId, $dto->getType());
-
-        //  --  Xss filter  --
-        $dto = $this->xssFilter->filter($dto);
-
-        //  --  update contact   --
-        $contactDetails = $contact->getDetails();
-        $contactDetails = $this->contactDetailsService->setContactDetailsFromDto($dto, $contactDetails);
-
-        //  --  save --
-        $this->siteContactRepo->save($contactDetails);
-
-        return ['id' => $contact->getId()];
     }
 
     private function buildDto(array $data)

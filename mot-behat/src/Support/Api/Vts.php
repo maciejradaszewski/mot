@@ -12,7 +12,9 @@ use DvsaCommon\Dto\Site\VehicleTestingStationDto;
 use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Enum\SiteTypeCode;
+use DvsaCommon\Model\VehicleTestingStation;
 use DvsaCommon\UrlBuilder\UrlBuilder;
+use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilder;
 use DvsaCommon\Utility\DtoHydrator;
 use DvsaCommon\Dto\Site\FacilityDto;
 use DvsaCommon\Dto\Site\FacilityTypeDto;
@@ -138,14 +140,12 @@ class Vts extends MotApi
 
     public function updateSiteDetails($token, $siteId, array $site)
     {
-        $site = array_merge($this->getDefaults(), $site);
-        $siteDto = $this->generateSiteDto($site);
-        $body = json_encode(DtoHydrator::dtoToJson($siteDto));
+        $body = json_encode($site);
 
         return $this->client->request(
             new Request(
-                'PUT',
-                str_replace('{site_id}', $siteId, self::SITE_DETAILS),
+                'PATCH',
+                VehicleTestingStationUrlBuilder::vtsDetails($siteId),
                 ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
                 $body
             )
@@ -242,6 +242,10 @@ class Vts extends MotApi
 
     public function removeAllTestClasses($token, $siteId)
     {
-        return $this->updateSiteDetails($token, $siteId, ['classes' => []]);
+        return $this->updateSiteDetails($token, $siteId,
+            [
+                VehicleTestingStation::PATCH_PROPERTY_CLASSES => [],
+                '_class' => VehicleTestingStationDto::class,
+            ]);
     }
 }

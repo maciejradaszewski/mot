@@ -63,16 +63,6 @@ class AuthorisedExaminerPresenter
         return $this->organisation->getCompanyType();
     }
 
-    public function getChangeDetailsUrl()
-    {
-        return AuthorisedExaminerUrlBuilderWeb::aeEdit($this->organisation->getId());
-    }
-
-    public function getChangeStatusUrl()
-    {
-        return AuthorisedExaminerUrlBuilderWeb::aeEditStatus($this->organisation->getId());
-    }
-
     public function getAssignRoleUrl()
     {
         return AuthorisedExaminerUrlBuilderWeb::roles($this->organisation->getId());

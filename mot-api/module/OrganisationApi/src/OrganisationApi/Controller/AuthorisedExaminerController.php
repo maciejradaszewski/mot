@@ -41,15 +41,6 @@ class AuthorisedExaminerController extends AbstractDvsaRestfulController impleme
         return ApiResponse::jsonOk($result);
     }
 
-    public function update($id, $data)
-    {
-        /** @var OrganisationDto $dto */
-        $dto    = DtoHydrator::jsonToDto($data);
-        $result = $this->service->update($id, $dto);
-
-        return ApiResponse::jsonOk($result);
-    }
-
     public function patch($id, $data)
     {
         $this->updateService->update($id, $data);

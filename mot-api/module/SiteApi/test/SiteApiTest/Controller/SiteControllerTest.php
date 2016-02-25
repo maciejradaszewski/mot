@@ -95,7 +95,6 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
                 $getSrvResultDto,
                 $getExpect,
             ],
-            ['put', null, ['id' => self::SITE_ID, 'data' => []], [], 'update', $postSrvResult, $postExpect],
             [
                 'post',
                 null,
@@ -146,7 +145,6 @@ class SiteControllerTest extends AbstractRestfulControllerTestCase
                 'serviceMethod' => 'getSite',
                 'paramName'     => 'id',
             ],
-            ['put', null, 'update', 'id'],
         ];
     }
 

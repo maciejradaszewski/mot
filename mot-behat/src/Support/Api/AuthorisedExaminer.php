@@ -13,6 +13,7 @@ use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaCommon\Enum\PhoneContactTypeCode;
+use DvsaCommon\Model\AuthorisedExaminerPatchModel;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilder;
 use DvsaCommon\UrlBuilder\OrganisationUrlBuilder;
 use DvsaCommon\Utility\DtoHydrator;
@@ -111,22 +112,12 @@ class AuthorisedExaminer extends MotApi
 
     public function updateStatusAuthorisedExaminer($token, $id, $status)
     {
-        $aeDto = new AuthorisedExaminerAuthorisationDto();
-        $aeDto->setAssignedAreaOffice(1);
-        $statusDto = new AuthForAeStatusDto();
-        $statusDto->setCode($status);
-        $aeDto->setStatus($statusDto);
-
-        $dto = (new OrganisationDto())
-            ->setId($id)
-            ->setAuthorisedExaminerAuthorisation($aeDto);
-
         return $this->client->request(
             new Request(
-                'PUT',
-                AuthorisedExaminerUrlBuilder::status($id),
+                'PATCH',
+                AuthorisedExaminerUrlBuilder::of($id),
                 ['Content-Type' => 'application/json', 'Authorization' => 'Bearer ' . $token],
-                json_encode(DtoHydrator::dtoToJson($dto))
+                json_encode([AuthorisedExaminerPatchModel::STATUS => $status])
             )
         );
     }

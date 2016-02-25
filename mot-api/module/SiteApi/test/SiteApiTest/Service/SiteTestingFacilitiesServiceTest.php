@@ -122,6 +122,7 @@ class SiteTestingFacilitiesServiceTest extends AbstractServiceTestCase
             1
         );
 
+        $this->mockService($this->siteRepository, 'get', $this->getSiteEntityMock());
         $this->setExpectedException(UnauthorisedException::class);
         $this->getService()->update(self::SITE_ID, new VehicleTestingStationDto());
     }
@@ -159,9 +160,6 @@ class SiteTestingFacilitiesServiceTest extends AbstractServiceTestCase
             [
                 PermissionAtSite::VTS_UPDATE_TESTING_FACILITIES_DETAILS,
                 PermissionAtSite::VTS_UPDATE_NAME,
-                PermissionAtSite::VTS_UPDATE_CORRESPONDENCE_DETAILS,
-                PermissionAtSite::VTS_UPDATE_BUSINESS_DETAILS,
-                PermissionAtSite::VTS_UPDATE_SITE_DETAILS
             ],
             self::SITE_ID
         );
@@ -184,9 +182,6 @@ class SiteTestingFacilitiesServiceTest extends AbstractServiceTestCase
             [
                 PermissionAtSite::VTS_UPDATE_TESTING_FACILITIES_DETAILS,
                 PermissionAtSite::VTS_UPDATE_NAME,
-                PermissionAtSite::VTS_UPDATE_CORRESPONDENCE_DETAILS,
-                PermissionAtSite::VTS_UPDATE_BUSINESS_DETAILS,
-                PermissionAtSite::VTS_UPDATE_SITE_DETAILS
             ],
             self::SITE_ID
         );

@@ -2,8 +2,8 @@
 
 namespace Site\UpdateVtsProperty\Process\Form;
 
+use DvsaCommon\Model\VtsStatus;
 use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
-use Site\Form\VtsSiteDetailsForm;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
 use Zend\InputFilter\Input;
@@ -22,8 +22,8 @@ class StatusPropertyForm extends Form
     {
         parent::__construct(self::FIELD_STATUS);
 
-        $data = new VtsSiteDetailsForm();
-        $options = $data->getStatuses();
+        $statuses = VtsStatus::getStatuses();
+        $options = $statuses;
 
         $this->statusElement = new Select();
         $this

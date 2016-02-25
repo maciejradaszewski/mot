@@ -51,8 +51,6 @@ class AuthorisedExaminerPresenterTest extends \PHPUnit_Framework_TestCase
     {
         $presenter = new AuthorisedExaminerPresenter($this->getOrganisationDto());
 
-        $this->assertEquals(AuthorisedExaminerUrlBuilderWeb::aeEdit(self::AE_ID), $presenter->getChangeDetailsUrl());
-        $this->assertEquals(AuthorisedExaminerUrlBuilderWeb::aeEditStatus(self::AE_ID), $presenter->getChangeStatusUrl());
         $this->assertEquals(AuthorisedExaminerUrlBuilderWeb::principals(self::AE_ID), $presenter->getPrincipalsUrl());
         $this->assertEquals(AuthorisedExaminerUrlBuilderWeb::roles(self::AE_ID), $presenter->getAssignRoleUrl());
     }

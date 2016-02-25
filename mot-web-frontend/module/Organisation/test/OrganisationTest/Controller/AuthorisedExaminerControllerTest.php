@@ -25,7 +25,6 @@ use DvsaCommonTest\TestUtils\XMock;
 use DvsaFeature\Exception\FeatureNotAvailableException;
 use DvsaFeature\FeatureToggles;
 use Organisation\Controller\AuthorisedExaminerController;
-use Organisation\Form\AeContactDetailsForm;
 use Organisation\Form\AeCreateForm;
 use Organisation\ViewModel\AuthorisedExaminer\AeFormViewModel;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
@@ -381,78 +380,6 @@ class AuthorisedExaminerControllerTest extends AbstractFrontendControllerTestCas
                     'viewModel' => true,
                 ],
             ],
-            //  --  edit contact details: post action --
-            [
-                'method' => 'post',
-                'action' => 'edit',
-                'params' => [
-                    'post'  => [
-                        OrganisationContactTypeCode::CORRESPONDENCE       => [
-                            EmailFormModel::FIELD_IS_NOT_SUPPLY => 1,
-                            PhoneFormModel::FIELD_NUMBER        => '0123453454',
-                        ],
-                        AeContactDetailsForm::FIELD_IS_CORR_ADDR_THE_SAME => 1,
-                    ],
-                    'route' => [
-                        'id' => self::AE_ID
-                    ],
-                ],
-                'mocks'  => [
-                    [
-                        'class'  => 'mockOrgMapper',
-                        'method' => 'getAuthorisedExaminer',
-                        'params' => [self::AE_ID],
-                        'result' => $this->getOrganisation(),
-                    ],
-                    [
-                        'class'  => 'mockOrgMapper',
-                        'method' => 'update',
-                        'params' => [],
-                        'result' => ['id' => self::AE_ID],
-                    ],
-                ],
-                'expect' => [
-                    'url' => AuthorisedExaminerUrlBuilderWeb::of(self::AE_ID),
-                ],
-            ],
-            //  --  edit contact details: post action error --
-            [
-                'method' => 'post',
-                'action' => 'edit',
-                'params' => [
-                    'post'  => [
-                        OrganisationContactTypeCode::CORRESPONDENCE       => [
-                            EmailFormModel::FIELD_IS_NOT_SUPPLY => 1,
-                            PhoneFormModel::FIELD_NUMBER        => '0123453454',
-                        ],
-                        AeContactDetailsForm::FIELD_IS_CORR_ADDR_THE_SAME => 1,
-                    ],
-                    'route' => [
-                        'id' => self::AE_ID
-                    ],
-                ],
-                'mocks'  => [
-                    [
-                        'class'  => 'mockOrgMapper',
-                        'method' => 'getAuthorisedExaminer',
-                        'params' => [self::AE_ID],
-                        'result' => $this->getOrganisation(),
-                    ],
-                    [
-                        'class'  => 'mockOrgMapper',
-                        'method' => 'update',
-                        'params' => [],
-                        'result' => new RestApplicationException(
-                            '/', 'post', [], 10, [['displayMessage' => 'something wrong']]
-                        ),
-                    ],
-                ],
-                'expect' => [
-                    'viewModel'  => true,
-                    'flashError' => 'something wrong',
-                ],
-            ],
-
             //  --  index: access action from AE search --
             [
                 'method' => 'get',

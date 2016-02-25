@@ -86,22 +86,6 @@ class SiteMapperTest extends AbstractMapperTest
         );
     }
 
-    public function testUpdateContactDetails()
-    {
-        $dto = (new SiteContactDto())
-            ->setId(self::ORGANISATION_ID);
-
-        $this->client->expects($this->once())
-            ->method('put')
-            ->with(VehicleTestingStationUrlBuilder::contactUpdate(self::ORGANISATION_ID, $dto->getId()))
-            ->willReturn(['data' => ['id' => self::ORGANISATION_ID]]);
-
-        $this->assertSame(
-            ['data' => ['id' => self::ORGANISATION_ID]],
-            $this->mapper->updateContactDetails(self::ORGANISATION_ID, $dto)
-        );
-    }
-
     public function testValidateTestingFacilities()
     {
         $dto = (new VehicleTestingStationDto())
@@ -114,21 +98,6 @@ class SiteMapperTest extends AbstractMapperTest
 
         $this->assertTrue(
             $this->mapper->validateTestingFacilities(self::ORGANISATION_ID, $dto)
-        );
-    }
-
-    public function testValidateSiteDetails()
-    {
-        $dto = (new VehicleTestingStationDto())
-            ->setIsNeedConfirmation(true);
-
-        $this->client->expects($this->once())
-            ->method('put')
-            ->with(VehicleTestingStationUrlBuilder::vtsDetails(self::ORGANISATION_ID), DtoHydrator::dtoToJson($dto))
-            ->willReturn(['data' => true]);
-
-        $this->assertTrue(
-            $this->mapper->validateSiteDetails(self::ORGANISATION_ID, $dto)
         );
     }
 
@@ -158,30 +127,6 @@ class SiteMapperTest extends AbstractMapperTest
 
         $this->assertSame(
             ['data' => ['success' => true]],
-            $actualResult
-        );
-    }
-
-    public function testUpdateSiteDetails()
-    {
-        $this->client->expects($this->once())
-            ->method('put')
-            ->with(VehicleTestingStationUrlBuilder::vtsDetails(self::ORGANISATION_ID))
-            ->willReturn(['data' => ['success' => true]])
-        ;
-
-        $vtsDto = (new VehicleTestingStationDto())
-            ->setId(self::ORGANISATION_ID)
-            ->setStatus(SiteStatusCode::APPROVED)
-            ->setName("test name")
-            ->setType(SiteTypeCode::VEHICLE_TESTING_STATION)
-            ->setTestClasses(["1", "2"])
-        ;
-
-        $actualResult = $this->mapper->updateSiteDetails(self::ORGANISATION_ID, $vtsDto);
-
-        $this->assertSame(
-            ['success' => true],
             $actualResult
         );
     }

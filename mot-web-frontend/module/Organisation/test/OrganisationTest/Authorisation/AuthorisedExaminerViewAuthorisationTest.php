@@ -73,16 +73,6 @@ class AuthorisedExaminerViewAuthorisationTest extends \PHPUnit_Framework_TestCas
         $this->assertTrue($this->auth->canRemoveAuthorisedExaminerPrincipal());
     }
 
-    public function testCanUpdateAe()
-    {
-        $this->authMock->expects($this->once())
-            ->method('isGrantedAtOrganisation')
-            ->with(PermissionAtOrganisation::AUTHORISED_EXAMINER_UPDATE, self::ID)
-            ->willReturn(true);
-
-        $this->assertTrue($this->auth->canUpdateAe());
-    }
-
     public function testCanViewVtsList()
     {
         $this->authMock->expects($this->once())

@@ -7,15 +7,11 @@ use Core\Catalog\BusinessRole\BusinessRoleCatalog;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
-use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaClient\Mapper\EquipmentMapper;
 use DvsaClient\Mapper\MotTestInProgressMapper;
 use DvsaClient\Mapper\SiteMapper;
 use DvsaClient\MapperFactory;
-use DvsaClient\ViewModel\EmailFormModel;
-use DvsaClient\ViewModel\PhoneFormModel;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
-use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Constants\FacilityTypeCode;
 use DvsaCommon\Dto\Contact\AddressDto;
@@ -32,11 +28,9 @@ use DvsaCommon\Enum\SiteTypeCode;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\VehicleTestingStationUrlBuilderWeb;
 use DvsaCommon\Utility\ArrayUtils;
-use DvsaCommon\Validator\EmailAddressValidator;
 use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
 use Site\Controller\SiteController;
-use Site\Form\VtsContactDetailsUpdateForm;
 use Site\Form\VtsCreateForm;
 use Site\Form\VtsUpdateTestingFacilitiesForm;
 use Site\ViewModel\VehicleTestingStation\VtsFormViewModel;
@@ -392,27 +386,6 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
                 ],
             ],
             [
-                'method'          => 'get',
-                'action'          => 'contactDetails',
-                'params'          => ['route' => ['id' => null]],
-                'mocks'           => [],
-                'expect'          => [
-                    'exception' => [
-                        'class' => \Exception::class,
-                        'message' => SiteController::ERR_MSG_INVALID_SITE_ID_OR_NR
-                    ]
-                ],
-            ],
-            [
-                'method'          => 'get',
-                'action'          => 'contactDetails',
-                'params'          => ['route' => ['id' => self::SITE_ID]],
-                'mocks'           => [],
-                'expect'          => [
-                    'viewModel' => true,
-                ],
-            ],
-            [
                 'method' => 'get',
                 'action' => 'testingFacilities',
                 'params' => [
@@ -544,69 +517,6 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProviderTestUpdatePost
-     */
-    public function testUpdatePost($postData, $apiReturn, array $expect)
-    {
-        $this->setupAuthenticationServiceForIdentity(StubIdentityAdapter::asTester());
-        $this->setupAuthorizationService([PermissionAtSite::VTS_UPDATE_BUSINESS_DETAILS]);
-
-        //  --  mock    --
-        if ($apiReturn !== null) {
-            $this->mockMethod($this->vehicleTestingStationMapperMock, 'updateContactDetails', $this->once(), $apiReturn);
-        }
-
-        //  --  call    --
-        $result = $this->getResultForAction2('post', 'contactDetails', ['id' => self::SITE_ID], null, $postData);
-
-        //  --  check   --
-        if (!empty($expect['errors'])) {
-            /** @var  VtsContactDetailsUpdateForm $form */
-            $form = $result->getVariable('form');
-
-            foreach ($expect['errors'] as $field => $error) {
-                $this->assertEquals($error, $form->getError($field));
-            }
-        } elseif (!empty($expect['url'])) {
-            $this->assertRedirectLocation2($expect['url']);
-        }
-    }
-
-    public function dataProviderTestUpdatePost()
-    {
-        $postData = [
-            SiteContactTypeCode::BUSINESS => [
-                EmailFormModel::FIELD_EMAIL         => 'sitecontrollertest@' . EmailAddressValidator::TEST_DOMAIN,
-                EmailFormModel::FIELD_EMAIL_CONFIRM => 'sitecontrollertest@' . EmailAddressValidator::TEST_DOMAIN,
-                PhoneFormModel::FIELD_NUMBER        => '12345678',
-            ],
-        ];
-
-        return [
-            //  --  test errors from api    --
-            [
-                'postData' => $postData,
-                'apiReturn' => new ValidationException(
-                    '/', 'post', [], 10, [['field' => 'fieldA', 'displayMessage' => 'error msg']]
-                ),
-                'expect' => [
-                    'errors' => [
-                        'fieldA' => 'error msg',
-                    ],
-                ],
-            ],
-            //  --  test success    --
-            [
-                'postData' => $postData,
-                'apiReturn' => ['id' => self::SITE_ID],
-                'expect' => [
-                    'url' => VehicleTestingStationUrlBuilderWeb::byId(self::SITE_ID)->toString(),
-                ],
-            ],
-        ];
-    }
-
     private function getVehicleTestingStationMapperMock()
     {
         $dto = (new VehicleTestingStationDto())
@@ -697,8 +607,8 @@ class SiteControllerTest extends AbstractFrontendControllerTestCase
             ->setContactType(PhoneContactTypeCode::BUSINESS)
             ->setNumber('test_Phone1');
         $email = (new EmailDto())
-            ->setEmail('sitecontrollertest@' . EmailAddressValidator::TEST_DOMAIN)
-            ->setEmailConfirm('sitecontrollertest@' . EmailAddressValidator::TEST_DOMAIN)
+            ->setEmail('test_Email1@toto.com')
+            ->setEmailConfirm('test_Email1@toto.com')
             ->setIsSupplied(true)
             ->setIsPrimary(true);
         $contact = new SiteContactDto();

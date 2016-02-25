@@ -74,32 +74,6 @@ return [
                     ],
                 ],
             ],
-            'vehicle-testing-station-edit'               => [
-                'type'    => 'segment',
-                'options' => [
-                    'route'       => '/vehicle-testing-station/:id/edit',
-                    'constraints' => [
-                        'id' => '[0-9]+',
-                    ],
-                    'defaults'    => [
-                        'controller' => SiteController::class,
-                        'action'     => 'edit',
-                    ],
-                ],
-            ],
-            'vehicle-testing-station-update'             => [
-                'type'    => 'segment',
-                'options' => [
-                    'route'       => '/vehicle-testing-station/:id/contact-details',
-                    'constraints' => [
-                        'id' => '[0-9]+',
-                    ],
-                    'defaults'    => [
-                        'controller' => SiteController::class,
-                        'action'     => 'contact-details',
-                    ],
-                ],
-            ],
             'vehicle-testing-station-rag-status'             => [
                 'type'    => 'segment',
                 'options' => [
@@ -296,30 +270,6 @@ return [
                                     'defaults' => [
                                         'controller' => SiteController::class,
                                         'action'     => 'testingFacilitiesConfirmation',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                    'edit-site-details'            => [
-                        'type'    => 'segment',
-                        'options' => [
-                            'route'    => '/:id/site-details',
-                            'defaults' => [
-                                'siteId'     => '[0-9]+',
-                                'controller' => SiteController::class,
-                                'action'     => 'siteDetails',
-                            ],
-                        ],
-                        'may_terminate' => true,
-                        'child_routes'  => [
-                            'confirmation' => [
-                                'type'    => 'literal',
-                                'options' => [
-                                    'route'    => '/confirmation',
-                                    'defaults' => [
-                                        'controller' => SiteController::class,
-                                        'action'     => 'siteDetailsConfirmation',
                                     ],
                                 ],
                             ],
