@@ -3,21 +3,17 @@ namespace MailerApiTest\Logic;
 
 use DvsaCommon\Dto\Mailer\MailerDto;
 use DvsaCommon\Validator\EmailAddressValidator;
-use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Person;
 use DvsaMotApi\Service\UserService;
 use MailerApi\Logic\PasswordReminder;
 use MailerApi\Service\MailerService;
 use MailerApi\Validator\MailerValidator;
-use MailerApiTest\Mixin\ServiceManager;
 use PHPUnit_Framework_TestCase;
 use Zend\Log\Logger;
 
 class PasswordReminderTest extends PHPUnit_Framework_TestCase
 {
-    use ServiceManager;
-
     protected $validator;
     protected $mockUserService;
     protected $mockMailerService;
@@ -26,24 +22,16 @@ class PasswordReminderTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $appTestConfig = include getcwd() . '/test/test.config.php';
-        Bootstrap::init($appTestConfig);
-
-        $this->prepServiceManager();
-
-        $this->mockUserService = $this->setMockServiceClass(UserService::class, ['findPerson']);
+        $this->mockUserService = XMock::of(UserService::class, ['findPerson']);
         $this->validator = new MailerValidator($this->mockUserService);
 
-        $mockLogger = XMock::of(Logger::class, []);
-        $this->serviceManager->setService('Application\Logger', $mockLogger);
-
-        $this->mockMailerService = $this->setMockServiceClass(
+        $this->mockMailerService = XMock::of(
             MailerService::class,
             ['send', 'validate']
         );
 
         // Turn off the logging feature
-        $this->config = $this->serviceManager->get('Config');
+        $this->config = ['mailer' => [], 'helpdesk' => []];
         $this->config['mailer']['logfile'] = '';
         $this->config['mailer']['sendingAllowed'] = false;
     }
