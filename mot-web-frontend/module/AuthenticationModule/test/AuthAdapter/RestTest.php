@@ -67,6 +67,7 @@ class RestTest extends PHPUnit_Framework_TestCase
                                     'roles'       => [SiteBusinessRoleCode::TESTER],
                                     'isAccountClaimRequired' => false,
                                     'isPasswordChangeRequired' => false,
+                                    'isSecondFactorRequired'   => false,
                                     'rbacData' =>   [
                                         "normal"              =>
                                             [

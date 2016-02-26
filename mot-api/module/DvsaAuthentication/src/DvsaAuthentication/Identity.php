@@ -21,6 +21,11 @@ class Identity implements MotIdentityInterface
     protected $uuid;
 
     /**
+     * @var \DateTime $passwordExpiryDate
+     */
+    protected $passwordExpiryDate;
+
+    /**
      * @var int
      */
     protected $userId;
@@ -46,6 +51,11 @@ class Identity implements MotIdentityInterface
     protected $isPasswordChangeRequired;
 
     /**
+     * @var bool
+     */
+    protected $isSecondFactorRequired;
+
+    /**
      * @var Person
      */
     private $person;
@@ -57,6 +67,7 @@ class Identity implements MotIdentityInterface
         $this->displayName = $person->getDisplayName();
         $this->isAccountClaimRequired = $person->isAccountClaimRequired();
         $this->isPasswordChangeRequired = $person->isPasswordChangeRequired();
+        $this->isSecondFactorRequired = $person->getAuthenticationMethod()->isCard();
         $this->person = $person;
     }
 
@@ -103,6 +114,14 @@ class Identity implements MotIdentityInterface
     /**
      * @return bool
      */
+    public function isSecondFactorRequired()
+    {
+        return $this->isSecondFactorRequired;
+    }
+
+    /**
+     * @return bool
+     */
     public function isAccountClaimRequired()
     {
         return $this->isAccountClaimRequired;
@@ -138,6 +157,25 @@ class Identity implements MotIdentityInterface
         $this->uuid = $uuid;
 
         return $this;
+    }
+
+
+    /**
+     * @param \DateTime $passwordExpiryDate
+     * @return $this
+     */
+    public function setPasswordExpiryDate(\DateTime $passwordExpiryDate)
+    {
+        $this->passwordExpiryDate = $passwordExpiryDate;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getPasswordExpiryDate()
+    {
+        return $this->passwordExpiryDate;
     }
 
     /**

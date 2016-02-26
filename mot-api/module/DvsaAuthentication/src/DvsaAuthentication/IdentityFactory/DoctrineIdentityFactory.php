@@ -26,12 +26,13 @@ class DoctrineIdentityFactory implements IdentityFactory
      * @param string $username
      * @param string $token
      * @param string $uuid
+     * @param \DateTime $passwordExpiryDate
      *
      * @return Identity
      */
-    public function create($username, $token, $uuid)
+    public function create($username, $token, $uuid, $passwordExpiryDate)
     {
-        $person = $this->personRepository->findOneBy(['username' => $username]);
+        $person = $this->personRepository->findIdentity($username);
 
         if (!$person instanceof Person) {
             throw new \InvalidArgumentException(sprintf('Person "%s" not found', $username));

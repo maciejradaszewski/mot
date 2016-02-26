@@ -55,6 +55,11 @@ class Identity implements MotFrontendIdentityInterface
     private $passwordChangeRequired = false;
 
     /**
+     * @var bool
+     */
+    private $secondFactorRequired = false;
+
+    /**
      * By default we can assume the password has expired.
      * It will be verified by ExpiredPasswordListener
      *
@@ -225,12 +230,31 @@ class Identity implements MotFrontendIdentityInterface
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isSecondFactorRequired()
+    {
+        return $this->secondFactorRequired;
+    }
+
+    /**
+     * @param $secondFactorRequired
+     * @return $this
+     */
+    public function setSecondFactorRequired($secondFactorRequired)
+    {
+        $this->secondFactorRequired = $secondFactorRequired;
+        return $this;
+    }
+
     public function isPasswordChangeRequired()
     {
         return $this->passwordChangeRequired;
     }
 
-    public function getUuid(){
+    public function getUuid()
+    {
         return $this->username;
     }
 

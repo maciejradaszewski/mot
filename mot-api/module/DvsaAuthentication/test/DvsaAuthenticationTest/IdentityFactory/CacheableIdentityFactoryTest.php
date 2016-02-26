@@ -6,6 +6,8 @@ use DvsaAuthentication\CacheableIdentity;
 use DvsaAuthentication\Identity;
 use DvsaAuthentication\IdentityFactory;
 use DvsaAuthentication\IdentityFactory\CacheableIdentityFactory;
+use DvsaCommon\Enum\PersonAuthType;
+use DvsaEntities\Entity\AuthenticationMethod;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\PersonRepository;
 
@@ -65,7 +67,7 @@ class CacheableIdentityFactoryTest extends \PHPUnit_Framework_TestCase
         $this->identityIsNotInCache();
         $this->identityIsCreatedByDecoratedFactory($this->getIdentity());
 
-        $identity = $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID);
+        $identity = $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID, null);
 
         $this->assertInstanceOf(CacheableIdentity::class, $identity);
     }
@@ -77,7 +79,7 @@ class CacheableIdentityFactoryTest extends \PHPUnit_Framework_TestCase
         $this->identityIsInCache($expectedIdentity);
         $this->identityIsCreatedByDecoratedFactory($this->getIdentity());
 
-        $identity = $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID);
+        $identity = $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID, null);
 
         $this->assertEquals($expectedIdentity->getUserId(), $identity->getUserId());
     }
@@ -95,7 +97,7 @@ class CacheableIdentityFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->identityIsInCache($expectedIdentity);
 
-        $identity = $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID);
+        $identity = $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID, null);
 
         $this->assertSame($expectedIdentity->getUserId(), $identity->getUserId());
         $this->assertSame($person, $identity->getPerson());
@@ -108,7 +110,7 @@ class CacheableIdentityFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->invalidIdentityIsInCache(serialize('foo'));
 
-        $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID);
+        $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID, null);
     }
 
     public function testItStoresCreatedIdentityInCache()
@@ -122,7 +124,7 @@ class CacheableIdentityFactoryTest extends \PHPUnit_Framework_TestCase
                 return unserialize($value) instanceof CacheableIdentity;
             }), self::LIFE_TIME);
 
-        $identity = $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID);
+        $identity = $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID, null);
         $this->assertSame(self::EXAMPLE_TOKEN, $identity->getToken());
         $this->assertSame(self::EXAMPLE_UUID, $identity->getUuid());
     }
@@ -134,7 +136,7 @@ class CacheableIdentityFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->cache->expects($this->never())->method('save');
 
-        $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID);
+        $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID, null);
     }
 
     public function testItDoesNotStoreCreatedIdentityInCacheIfPasswordChangeIsRequired()
@@ -144,7 +146,7 @@ class CacheableIdentityFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->cache->expects($this->never())->method('save');
 
-        $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID);
+        $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID, null);
     }
 
     public function testItPopulatesTheCacheAgainIfCacheDidNotReturnASerializedString()
@@ -158,7 +160,7 @@ class CacheableIdentityFactoryTest extends \PHPUnit_Framework_TestCase
                 return unserialize($value) instanceof CacheableIdentity;
             }), self::LIFE_TIME);
 
-        $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID);
+        $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, self::EXAMPLE_UUID, null);
     }
 
     public function testItUpdatesTheUuidAfterLoadingIdentityFromCache()
@@ -168,7 +170,7 @@ class CacheableIdentityFactoryTest extends \PHPUnit_Framework_TestCase
         $this->identityIsInCache($expectedIdentity);
         $this->identityIsCreatedByDecoratedFactory($this->getIdentity());
 
-        $identity = $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, 'new-uuid');
+        $identity = $this->identityFactory->create(self::EXAMPLE_USERNAME, self::EXAMPLE_TOKEN, 'new-uuid', null);
 
         $this->assertSame('new-uuid', $identity->getUuid());
     }

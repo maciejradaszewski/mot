@@ -5,6 +5,7 @@ namespace DvsaEntities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use DvsaCommon\Constants\PersonContactType;
+use DvsaCommon\Enum\PersonAuthType;
 use DvsaCommon\Formatting\PersonFullNameFormatter;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Enum\BusinessRoleStatusCode;
@@ -187,6 +188,7 @@ class Person extends Entity
         $this->siteBusinessRoleMaps = new ArrayCollection();
         $this->organisationBusinessRoleMaps = new ArrayCollection();
         $this->personSecurityAnswers = new ArrayCollection();
+        $this->setAuthenticationMethod(new AuthenticationMethod(PersonAuthType::PIN));
     }
 
     /**

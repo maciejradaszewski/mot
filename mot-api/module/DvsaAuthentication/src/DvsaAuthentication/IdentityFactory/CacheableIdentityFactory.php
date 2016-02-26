@@ -55,9 +55,9 @@ class CacheableIdentityFactory implements IdentityFactory
      *
      * @return Identity
      */
-    public function create($username, $token, $uuid)
+    public function create($username, $token, $uuid, $passwordExpiryDate)
     {
-        $identity = $this->fetchIdentity($username, $token, $uuid);
+        $identity = $this->fetchIdentity($username, $token, $uuid, $passwordExpiryDate);
 
         if (!$identity instanceof CacheableIdentity) {
             throw new \RuntimeException('Failed to create a CacheableIdentity');
@@ -73,15 +73,18 @@ class CacheableIdentityFactory implements IdentityFactory
      * @param string $username
      * @param string $token
      * @param string $uuid
+     * @param string $passwordExpiryDate
      *
      * @return CacheableIdentity
      */
-    private function fetchIdentity($username, $token, $uuid)
+    private function fetchIdentity($username, $token, $uuid, $passwordExpiryDate)
     {
         $cacheKey = $this->calculateCacheKey($token);
 
         if (!$identity = @unserialize($this->cache->fetch($cacheKey))) {
-            $identity = new CacheableIdentity($this->identityFactory->create($username, $token, $uuid));
+            $identity = new CacheableIdentity(
+                $this->identityFactory->create($username, $token, $uuid, $passwordExpiryDate)
+            );
 
             if (!$identity->isAccountClaimRequired() && !$identity->isPasswordChangeRequired()) {
                 $this->cache->save($cacheKey, serialize($identity), $this->ttl);

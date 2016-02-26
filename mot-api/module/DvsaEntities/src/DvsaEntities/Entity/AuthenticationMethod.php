@@ -63,7 +63,7 @@ class AuthenticationMethod
 
     /**
      * @param string $code
-     * @return Person
+     * @return AuthenticationMethod
      */
     public function setCode($code)
     {

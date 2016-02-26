@@ -147,7 +147,7 @@ class DtoReflectiveSerializer
 
     private function serializeProperty(DtoPropertyReflection $property, $value)
     {
-        if ($value == null) {
+        if ($value === null) {
             return null;
         }
 

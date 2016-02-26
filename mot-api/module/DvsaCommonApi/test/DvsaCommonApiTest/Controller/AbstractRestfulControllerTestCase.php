@@ -2,7 +2,9 @@
 namespace DvsaCommonApiTest\Controller;
 
 use DvsaAuthentication\Identity;
+use DvsaCommon\Enum\PersonAuthType;
 use DvsaCommonTest\Bootstrap;
+use DvsaEntities\Entity\AuthenticationMethod;
 use DvsaEntities\Entity\Person;
 use HttpResponse;
 use PHPUnit_Framework_MockObject_MockObject;

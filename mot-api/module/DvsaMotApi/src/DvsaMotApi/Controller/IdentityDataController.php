@@ -1,4 +1,5 @@
 <?php
+
 namespace DvsaMotApi\Controller;
 
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
@@ -33,7 +34,8 @@ class IdentityDataController extends AbstractDvsaRestfulController
             'displayName'              => $identity->getDisplayName(),
             'role'                     => '',
             'isAccountClaimRequired'   => $identity->isAccountClaimRequired(),
-            'isPasswordChangeRequired' => $identity->isPasswordChangeRequired()
+            'isPasswordChangeRequired' => $identity->isPasswordChangeRequired(),
+            'isSecondFactorRequired'   => $identity->isSecondFactorRequired()
         ];
         $returnStruct['user'] = $personData;
         $returnStruct['identity'] = $identity->getUsername();

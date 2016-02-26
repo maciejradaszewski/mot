@@ -63,7 +63,8 @@ class Rest implements AdapterInterface
             ->setDisplayRole($restResultData['user']['role'])
             ->setAccessToken($this->tokenService->getToken())
             ->setAccountClaimRequired($restResultData['user']['isAccountClaimRequired'])
-            ->setPasswordChangeRequired($restResultData['user']['isPasswordChangeRequired']);
+            ->setPasswordChangeRequired($restResultData['user']['isPasswordChangeRequired'])
+            ->setSecondFactorRequired($restResultData['user']['isSecondFactorRequired']);
 
         return new Result(Result::SUCCESS, $identity);
     }
