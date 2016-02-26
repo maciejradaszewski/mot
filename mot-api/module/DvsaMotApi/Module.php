@@ -118,7 +118,6 @@ class Module implements
                 'OdometerReadingRepository' => \DvsaMotApi\Factory\OdometerReadingRepositoryFactory::class,
                 'OdometerReadingUpdatingService' => \DvsaMotApi\Factory\Service\OdometerReadingUpdatingServiceFactory::class,
                 'OdometerReadingQueryService' => \DvsaMotApi\Factory\Service\OdometerReadingQueryServiceFactory::class,
-                'RoleRefreshService' => \DvsaMotApi\Factory\Service\RoleRefreshServiceFactory::class,
                 'MotTestMapper' => \DvsaMotApi\Factory\Service\Mapper\MotTestMapperFactory::class,
                 //  @ARCHIVE VM-4532    MotDemoTestService
                 CertificateCreationService::class => \DvsaMotApi\Factory\Service\CertificateCreationServiceFactory::class,
