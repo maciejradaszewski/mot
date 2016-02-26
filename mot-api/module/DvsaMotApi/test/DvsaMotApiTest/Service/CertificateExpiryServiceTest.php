@@ -49,25 +49,8 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
      */
     protected $configurationRepository;
 
-    /**
-     * @var ParamObfuscator
-     */
-    protected $paramObfuscator;
-
-    /**
-     * @var string
-     */
-    protected $obfuscatedId;
-
-    /**
-     * @var int
-     */
-    protected $deobfuscatedId;
-
     public function setUp()
     {
-        $appTestConfig = include getcwd() . '/test/test.config.php';
-        Bootstrap::init($appTestConfig);
 
         $this->configurationRepository = \DvsaCommonTest\TestUtils\XMock::of(
             ConfigurationRepository::class,
@@ -77,10 +60,7 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
         $this->motTestRepository       = XMock::of(MotTestRepository::class);
         $this->vehicleRepository       = XMock::of(VehicleRepository::class, ['find']);
         $this->authorisationService    = $this->getMockAuthorizationService();
-        $this->paramObfuscator         = Bootstrap::getServiceManager()->get(ParamObfuscator::class);
 
-        $this->obfuscatedId   = 'NmZkNTJjZTEyMWQzNWQ0ZDc1ZTZlZDcwMGQ0MzkyMjFmOGM1Yjc4MTIwMWE5NzJmMTQxYzczYjE0ZGYxMmM4Y0ppSHBhSnZhMkt1bUdzNUhUSUt0Y29yeG56Z0tzNXdSMVdvS1NIYUFjd28';
-        $this->deobfuscatedId = '1';
     }
 
     public function testCheckVehicleWithNoTestHavingExpiryDate()
@@ -102,12 +82,11 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
             $this->motTestRepository,
             $this->vehicleRepository,
             $this->configurationRepository,
-            $this->authorisationService,
-            $this->paramObfuscator
+            $this->authorisationService
         );
 
         // when
-        $checkExpiryResults = $certificateExpiryService->getExpiryDetailsForVehicle($this->obfuscatedId);
+        $checkExpiryResults = $certificateExpiryService->getExpiryDetailsForVehicle(self::VEHICLE_ID);
 
         // then
         $this->assertEquals(false, $checkExpiryResults['previousCertificateExists']);
@@ -135,8 +114,7 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
             $this->motTestRepository,
             $this->vehicleRepository,
             $this->configurationRepository,
-            $this->authorisationService,
-            $this->paramObfuscator
+            $this->authorisationService
         );
 
         // when
@@ -175,8 +153,7 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
             $this->motTestRepository,
             $this->vehicleRepository,
             $this->configurationRepository,
-            $this->authorisationService,
-            $this->paramObfuscator
+            $this->authorisationService
         );
 
         $dateTimeHolder = new TestDateTimeHolder($date);
@@ -202,12 +179,11 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
             $this->motTestRepository,
             $this->vehicleRepository,
             $this->configurationRepository,
-            $this->authorisationService,
-            $this->paramObfuscator
+            $this->authorisationService
         );
 
         // when
-        $checkExpiryResults = $certificateExpiryService->getExpiryDetailsForVehicle($this->obfuscatedId);
+        $checkExpiryResults = $certificateExpiryService->getExpiryDetailsForVehicle(1);
 
         // then
         $this->assertEquals(true, $checkExpiryResults['previousCertificateExists']);
@@ -229,12 +205,10 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
             $this->motTestRepository,
             $this->vehicleRepository,
             $this->configurationRepository,
-            $this->authorisationService,
-            $this->paramObfuscator
-        );
+            $this->authorisationService);
 
         // when
-        $checkExpiryResults = $certificateExpiryService->getExpiryDetailsForVehicle($this->obfuscatedId);
+        $checkExpiryResults = $certificateExpiryService->getExpiryDetailsForVehicle(1);
 
         // then
         $this->assertEquals(true, $checkExpiryResults['previousCertificateExists']);
@@ -275,9 +249,7 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
             $this->motTestRepository,
             $this->vehicleRepository,
             $this->configurationRepository,
-            $this->authorisationService,
-            $this->paramObfuscator
-        );
+            $this->authorisationService);
 
         $this->configurationRepository->expects($this->any())
             ->method("getValue")
@@ -345,7 +317,7 @@ class CertificateExpiryServiceTest extends AbstractServiceTestCase
             ->will($this->returnValue(self::YEARS_BEFORE_FIRST_TEST_IS_DUE));
     }
 
-    protected function createVehicle($id = 1, $vehicleClassCode = 4, $newAtFirstReg = false)
+    protected function createVehicle($id = self::VEHICLE_ID, $vehicleClassCode = 4, $newAtFirstReg = false)
     {
         $vehicle = new Vehicle();
         $vehicle->setId($id);
