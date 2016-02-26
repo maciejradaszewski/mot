@@ -5,6 +5,8 @@ namespace DvsaAuthenticationTest\IdentityFactory;
 use DvsaAuthentication\Identity;
 use DvsaAuthentication\IdentityFactory;
 use DvsaAuthentication\IdentityFactory\DoctrineIdentityFactory;
+use DvsaCommon\Enum\PersonAuthType;
+use DvsaEntities\Entity\AuthenticationMethod;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\PersonRepository;
 
@@ -37,11 +39,11 @@ class DoctrineIdentityFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $person = $this->getPerson('tester1');
         $this->personRepository->expects($this->any())
-            ->method('findOneBy')
-            ->with($this->equalTo(['username' => 'tester1']))
+            ->method('findIdentity')
+            ->with('tester1')
             ->willReturn($person);
 
-        $identity = $this->identityFactory->create('tester1', 'abcd', '1234');
+        $identity = $this->identityFactory->create('tester1', 'abcd', '1234', null);
 
         $this->assertInstanceOf(Identity::class, $identity);
         $this->assertSame($person, $identity->getPerson());
@@ -59,7 +61,7 @@ class DoctrineIdentityFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('findOneBy')
             ->willReturn(null);
 
-        $this->identityFactory->create('tester1', 'abcd', '1234');
+        $this->identityFactory->create('tester1', 'abcd', '1234', null);
     }
 
     /**

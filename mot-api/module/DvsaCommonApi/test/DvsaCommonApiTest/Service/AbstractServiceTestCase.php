@@ -156,11 +156,7 @@ abstract class AbstractServiceTestCase extends PHPUnit_Framework_TestCase
      */
     protected function getMockPerson()
     {
-        $mockPerson = $this->getMockWithDisabledConstructor(Person::class);
-
-        $this->mockMethod($mockPerson, 'isVehicleExaminer', $this->any(), false);
-
-        return $mockPerson;
+        return new Person();
     }
 
     /**

@@ -506,7 +506,6 @@ class AbstractDvsaRestfulController
     protected function returnDto($dto)
     {
         $dtoSerializer = $this->getDtoSerializer();
-
         return ApiResponse::jsonOk($dtoSerializer->serialize($dto));
     }
 

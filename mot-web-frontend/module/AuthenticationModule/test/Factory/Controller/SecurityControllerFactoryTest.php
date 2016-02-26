@@ -11,10 +11,12 @@ use Account\Service\ExpiredPasswordService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Controller\SecurityController;
 use Dvsa\Mot\Frontend\AuthenticationModule\Factory\Controller\SecurityControllerFactory;
 use Dvsa\Mot\Frontend\AuthenticationModule\OpenAM\OpenAMAuthenticator;
+use Dvsa\Mot\Frontend\AuthenticationModule\Service\AuthenticationFailureViewModelBuilder;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\GotoUrlService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\IdentitySessionStateService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\LoginCsrfCookieService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\WebAuthenticationCookieService;
+use Dvsa\Mot\Frontend\AuthenticationModule\Service\WebLoginService;
 use Dvsa\Mot\Frontend\AuthenticationModuleTest\Service\LoginCsrfCookieServiceTest;
 use DvsaCommonTest\TestUtils\ServiceFactoryTestHelper;
 use Zend\Authentication\AuthenticationService;
@@ -31,13 +33,14 @@ class SecurityControllerFactoryTest extends \PHPUnit_Framework_TestCase
             [
                 'Request' => Request::class,
                 'Response' => Response::class,
-                OpenAMAuthenticator::class,
                 GotoUrlService::class,
                 'tokenService' => WebAuthenticationCookieService::class,
                 IdentitySessionStateService::class,
-                'ZendAuthenticationService' => AuthenticationService::class,
+                WebLoginService::class,
                 ExpiredPasswordService::class => ExpiredPasswordService::class,
-                LoginCsrfCookieService::class => LoginCsrfCookieService::class
+                LoginCsrfCookieService::class => LoginCsrfCookieService::class,
+                'ZendAuthenticationService' => AuthenticationService::class,
+                AuthenticationFailureViewModelBuilder::class
             ]
         );
     }

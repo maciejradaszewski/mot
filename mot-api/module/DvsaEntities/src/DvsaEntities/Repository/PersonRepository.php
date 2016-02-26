@@ -8,6 +8,7 @@ use DvsaCommon\Constants\PersonContactType;
 use DvsaCommon\Model\SearchPersonModel;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaEntities\DqlBuilder\TesterSearchParamDqlBuilder;
+use DvsaEntities\Entity\AuthenticationMethod;
 use DvsaEntities\Entity\BusinessRoleStatus;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\Site;
@@ -91,6 +92,25 @@ class PersonRepository extends AbstractMutableRepository
         }
 
         return $person;
+    }
+
+    /**
+     * Retrieves all done necessary to set up identity in one query.
+     * @param $username
+     * @return null|Person
+     */
+    public function findIdentity($username) {
+
+            $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+            $queryBuilder
+                ->select('p, am')
+                ->from(Person::class, 'p')
+                ->join(AuthenticationMethod::class, 'am', Join::INNER_JOIN, 'p.authenticationMethod = am.id')
+                ->where('p.username = :username')
+                ->setParameter('username', $username);
+
+            $result = $queryBuilder->getQuery()->getResult();
+            return empty($result) ? null: $result[0];
     }
 
     /**

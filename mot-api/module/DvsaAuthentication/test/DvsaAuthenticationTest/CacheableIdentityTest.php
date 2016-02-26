@@ -4,6 +4,8 @@ namespace DvsaAuthenticationTest;
 
 use DvsaAuthentication\CacheableIdentity;
 use DvsaAuthentication\Identity;
+use DvsaCommon\Enum\PersonAuthType;
+use DvsaEntities\Entity\AuthenticationMethod;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Repository\PersonRepository;
 use Serializable;
