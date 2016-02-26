@@ -7,14 +7,14 @@
 
 namespace ApplicationTest\Factory\Controller;
 
-use Application\Controller\ManualsAndGuidesController;
-use Application\Factory\Controller\ManualsAndGuidesControllerFactory;
+use Application\View\Helper\ManualsAndGuidesHelper;
+use Application\View\HelperFactory\ManualsAndGuidesFactory;
 use DvsaCommonTest\TestUtils\ServiceFactoryTestHelper;
 
 /**
- * Covers ManualsAndGuidesControllerFactory.
+ * Covers ManualsAndGuidesFactory.
  */
-class ManualsAndGuidesControllerFactoryTest extends \PHPUnit_Framework_TestCase
+class ManualsAndGuidesFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array  $config
@@ -29,8 +29,8 @@ class ManualsAndGuidesControllerFactoryTest extends \PHPUnit_Framework_TestCase
         }
 
         ServiceFactoryTestHelper::testCreateServiceForCM(
-            ManualsAndGuidesControllerFactory::class,
-            ManualsAndGuidesController::class,
+            ManualsAndGuidesFactory::class,
+            ManualsAndGuidesHelper::class,
             [
                 'Config' => function () use ($config) {
                     return $config;
@@ -51,7 +51,7 @@ class ManualsAndGuidesControllerFactoryTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
-                    'documents' => 'In physics, string theory is a theoretical framework in which the point-like particles' .
+                    'manuals' => 'In physics, string theory is a theoretical framework in which the point-like particles' .
                     ' of particle physics are replaced by one-dimensional objects called strings. String theory' .
                     ' describes how these strings propagate through space and interact with each other.',
                 ],
@@ -70,26 +70,22 @@ class ManualsAndGuidesControllerFactoryTest extends \PHPUnit_Framework_TestCase
     private function getFullConfig()
     {
         return [
-            'documents' => [
+            'manuals' => [
                 [
                     'name'      => 'MOT inspection manual for class 1 and 2 vehicles',
                     'url'       => '/documents/manuals/m1i00000001.htm',
-                    'help_text' => 'Manual for motor bicycle and side car testing',
                 ],
                 [
                     'name'      => 'MOT inspection manual for class 3, 4, 5, and 7 vehicles',
                     'url'       => '/documents/manuals/m4i00000001.htm',
-                    'help_text' => 'Manual for testing private passenger and light commercial vehicles',
                 ],
                 [
                     'name'      => 'MOT testing guide',
                     'url'       => '/documents/manuals/tgi00000001.htm',
-                    'help_text' => 'Guidance on how the MOT scheme is run',
                 ],
                 [
                     'name'      => 'In service exhaust emission standards for road vehicles: 18th edition',
                     'url'       => 'https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/348035/18th-edition-emissions-book-complete.pdf',
-                    'help_text' => 'Standards for checking vehicle exhaust emission procedures and limits',
                 ],
             ],
         ];

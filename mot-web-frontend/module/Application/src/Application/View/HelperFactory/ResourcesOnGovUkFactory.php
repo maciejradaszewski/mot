@@ -1,38 +1,32 @@
 <?php
-/**
- * This file is part of the DVSA MOT Frontend project.
- *
- * @link http://gitlab.clb.npm/mot/mot
- */
 
-namespace Application\Factory\Controller;
+namespace Application\View\HelperFactory;
 
-use Application\Controller\ManualsAndGuidesController;
-use InvalidArgumentException;
+use Application\View\Helper\ResourcesOnGovUkHelper;
+use DvsaCommon\Utility\TypeCheck;
 use OutOfBoundsException;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Factory for ManualsAndGuidesController instances.
+ * Factory for ResourcesOnGovUkFactoryHelper instances.
  */
-class ManualsAndGuidesControllerFactory implements FactoryInterface
+class ResourcesOnGovUkFactory implements FactoryInterface
 {
-    const CONFIG_KEY = 'documents';
+    const CONFIG_KEY = 'resources';
 
     /**
      * @param ServiceLocatorInterface $serviceLocator
      *
-     * @return ManualsAndGuidesController
+     * @return ResourcesOnGovUkHelper
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /* @var \Zend\Mvc\Controller\ControllerManager $serviceLocator */
         $controllerManager = $serviceLocator->getServiceLocator();
-
         $config = $this->extractConfig($controllerManager->get('Config'));
 
-        return new ManualsAndGuidesController($config);
+        return new ResourcesOnGovUkHelper($config);
     }
 
     /**
@@ -46,10 +40,7 @@ class ManualsAndGuidesControllerFactory implements FactoryInterface
             throw new OutOfBoundsException(sprintf('Parameter "%s" is missing in configuration.', self::CONFIG_KEY));
         }
 
-        if (!is_array($config[self::CONFIG_KEY])) {
-            throw new InvalidArgumentException(sprintf('Parameter "%s" should be of array type, got "%s" instead',
-                self::CONFIG_KEY, gettype(self::CONFIG_KEY)));
-        }
+        TypeCheck::assertArray($config[self::CONFIG_KEY]);
 
         return $config[self::CONFIG_KEY];
     }

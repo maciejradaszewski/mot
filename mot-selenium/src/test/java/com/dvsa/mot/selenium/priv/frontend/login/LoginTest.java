@@ -4,7 +4,7 @@ import com.dvsa.mot.selenium.datasource.Login;
 import com.dvsa.mot.selenium.framework.BaseTest;
 import com.dvsa.mot.selenium.priv.frontend.login.pages.LoginPage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
-import com.dvsa.mot.selenium.pub.frontend.application.tester.pages.ManualsPage;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,15 +45,20 @@ public class LoginTest extends BaseTest {
 
         UserDashboardPage dashboardPage =
                 UserDashboardPage.navigateHereFromLoginPage(driver, login);
-        ManualsPage manualsPage = dashboardPage.clickFooterManualAndGuidesLink();
 
-        assertThat("Testing guides link not present in Manuals page",
-                manualsPage.isTestingGuidesLinkPresent(), is(true));
-        assertThat("Inspection manual Classes 1 & 2 link not present in Manuals page",
-                manualsPage.isInspectionManualClasses1And2LinkPresent(), is(true));
-        assertThat("Inspection manual Classes 3 to 7 link not present in Manuals page",
-                manualsPage.isInspectionManualClasses3To7LinkPresent(), is(true));
-        assertThat("Emissions book link not present in Manuals page",
-                manualsPage.isEmissionsBookLinkPresent(), is(true));
+        Assert.assertEquals("Manual for class 1 and 2 vehicles",
+                dashboardPage.getManualNameForClass1And2());
+        Assert.assertEquals("Manual for class 3, 4, 5, and 7 vehicles",
+                dashboardPage.getManualNameForClass345And7());
+        Assert.assertEquals("MOT testing guide",
+                dashboardPage.getManualTestingGuideName());
+        Assert.assertEquals("Checklist for class 1 and 2 vehicles (VT29)",
+                dashboardPage.getResourcesNameChecklistForClass1And2());
+        Assert.assertEquals("Checklist for class 3, 4, 5, and 7 vehicles (VT29M)",
+                dashboardPage.getResourcesNameChecklistForClass345And7());
+        Assert.assertEquals("In service exhaust emission standards for road vehicles: 18th edition",
+                dashboardPage.getResourcesNameEmissionStandards());
+        Assert.assertEquals("Special notices",
+                dashboardPage.getResourcesNameSpecialNotices());
     }
 }

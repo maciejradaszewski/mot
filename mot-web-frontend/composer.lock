@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c51725f31dd92f395588b4730ba7f805",
-    "content-hash": "f9316bdc9bc3c7407a208604900a39bc",
+    "hash": "c3a6ebf197f5cca2d094443bc848f012",
+    "content-hash": "2527f2bd17f8f120fe8f2946622d74c5",
     "packages": [
         {
             "name": "cpms/client",
@@ -1028,11 +1028,11 @@
         },
         {
             "name": "dvsa/web-frontend-assets",
-            "version": "v0.7.6",
+            "version": "v0.7.8",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/web-frontend-assets.git",
-                "reference": "e6b8f80a33503d1090cca1d50da6c70a167ae201"
+                "reference": "335a9d57f15489a597fb077840e8deb8a9ea86c5"
             },
             "type": "library",
             "authors": [
@@ -1041,7 +1041,7 @@
                     "email": ""
                 }
             ],
-            "time": "2016-02-05 12:00:26"
+            "time": "2016-02-17 14:41:37"
         },
         {
             "name": "erusev/parsedown",

@@ -1,9 +1,7 @@
 <?php
 
 use Application\Controller\FormsController;
-use Application\Controller\ManualsAndGuidesController;
 use Application\Controller\ReportController;
-use Application\Factory\Controller\ManualsAndGuidesControllerFactory;
 use DvsaMotEnforcement\Controller\MotTestController as EnforcementMotTestController;
 use DvsaMotEnforcement\Controller\MotTestSearchController as EnforcementMotTestSearchController;
 use DvsaMotEnforcement\Controller\ReinspectionReportController;
@@ -49,7 +47,6 @@ return [
         ReinspectionReportController::class => ReinspectionReportController::class,
     ],
     'factories' => [
-        ManualsAndGuidesController::class         => ManualsAndGuidesControllerFactory::class,
         RefuseToTestController::class             => RefuseToTestControllerFactory::class,
         SpecialNoticesController::class           => SpecialNoticesControllerFactory::class,
         VehicleSearchController::class            => VehicleSearchControllerFactory::class,
