@@ -4,7 +4,6 @@ namespace DvsaMotApi\Controller;
 
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApi\Model\ApiResponse;
-use DvsaMotApi\Service\RoleRefreshService;
 use Zend\Authentication\AuthenticationService;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -22,11 +21,6 @@ class IdentityDataController extends AbstractDvsaRestfulController
         $motIdentityProvider = $sm->get('DvsaAuthenticationService');
         /** @var Identity $identity */
         $identity = $motIdentityProvider->getIdentity();
-        /** @var RoleRefreshService $roleRefreshService */
-        $roleRefreshService = $sm->get('RoleRefreshService');
-        if ($roleRefreshService->refreshRoles($identity->getUserId())) {
-            // TODO - we need to move this somewhere else when the SessionController is deleted!
-        }
 
         $personData = [
             'userId'                   => $identity->getUserId(),
