@@ -1,22 +1,34 @@
-<?php
-use Application\Controller\ManualsAndGuidesController;
-?>
 <footer class="group js-footer" id="footer" role="contentinfo">
     <div class="footer-wrapper">
 
-        <?php if ($this->identity()) : ?><div class="footer-categories">
-            <div class="footer-resources">
-                <h2 class="footer-resources__header">Resources</h2>
+        <div class="footer-categories">
+            <div class="footer-resources--two-thirds">
+                <h2 class="footer-resources__header"><?php echo $this->resourcesOnGovUkHelper()->getTitle(); ?></h2>
                 <ul>
-                    <li>
-                    <a id="footerManuals"
-                       href="<?php echo $this->url(ManualsAndGuidesController::ROUTE); ?>">
-                        Manuals, guides, special notices and standards</a>
-                    </li>
+                    <?php foreach ($this->resourcesOnGovUkHelper()->getDocuments() as $key => $resource) : ?>
+                        <li>
+                            <a id="resources_<?php echo $key ?>" href="<?php echo $resource['url']; ?>">
+                                <?php echo $resource['name']; ?>
+                            </a>
+                            <?php echo $resource['help_text']; ?>
+                        </li>
+                    <?php endforeach?>
+                </ul>
+            </div>
+            <div class="footer-resources--one-third">
+                <h2 class="footer-resources__header"><?php echo $this->manualsHelper()->getTitle(); ?></h2>
+                <ul>
+                    <?php foreach ($this->manualsHelper()->getDocuments() as $key => $resource) : ?>
+                        <li>
+                            <a id="manuals_<?php echo $key ?>" href="<?php echo $resource['url']; ?>">
+                                <?php echo $resource['name']; ?>
+                            </a>
+                        </li>
+                    <?php endforeach?>
                 </ul>
             </div>
             <hr>
-        </div><?php endif; ?>
+        </div>
 
         <div class="footer-meta">
             <div class="footer-meta-inner">

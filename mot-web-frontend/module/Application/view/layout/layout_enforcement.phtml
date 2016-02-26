@@ -1,7 +1,6 @@
 <?php
 
 use Application\Build\BuildConfig;
-use Application\Controller\ManualsAndGuidesController;
 use Application\Controller\IndexController;
 use Dashboard\Controller\UserHomeController;
 use Dvsa\Mot\Frontend\AuthenticationModule\Controller\LogoutController;
@@ -162,43 +161,85 @@ if ($this->authorisationHelper()->hasRole(\DvsaCommon\Constants\Role::USER)) {
 </div>
 <!-- /container -->
 <footer role="contentinfo" id="footer" class="module-global-footer">
-  <div class="container">
-    <div class="row">
-      <div class="global-footer_meta col-sm-12">
-        <div class="global-footer_resources">
-            <h3>Resources</h3>
-            <nav class="global-footer_navigation-resources">
-                <ul>
-                    <li>
-                        <a id="footerManuals" href="<?php echo $this->url(ManualsAndGuidesController::ROUTE); ?>"
-                           title="Manuals, guides, special notices and standards">
-                            Manuals, guides, special notices and standards
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+    <div class="container">
+        <div class="row global-footer_links">
+            <div class="col-md-8 col-sm-12">
+                <div class="global-footer_resources">
+                    <h3><?php echo $this->resourcesOnGovUkHelper()->getTitle(); ?></h3>
+                    <nav class="global-footer_navigation-resources">
+                        <ul class="list-unstyled">
+                            <?php foreach ($this->resourcesOnGovUkHelper()->getDocuments() as $key => $resource) : ?>
+                                <li>
+                                    <a id="resources_<?php echo $key ?>" href="<?php echo $resource['url']; ?>">
+                                        <?php echo $resource['name']; ?>
+                                    </a>
+                                    <?php echo $resource['help_text']; ?>
+                                </li>
+                            <?php endforeach?>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class=" col-md-4 col-sm-12">
+                <div class="global-footer_resources">
+                    <h3><?php echo $this->manualsHelper()->getTitle(); ?></h3>
+                    <nav class="global-footer_navigation-resources">
+                        <ul class="list-unstyled">
+                            <?php foreach ($this->manualsHelper()->getDocuments() as $key => $resource) : ?>
+                                <li>
+                                    <a id="manuals_<?php echo $key ?>" href="<?php echo $resource['url']; ?>">
+                                        <?php echo $resource['name']; ?>
+                                    </a>
+                                </li>
+                            <?php endforeach?>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-sm-9 global-footer_meta">
-        <nav class="global-footer_navigation">
-          <ul>
-            <li><a href="https://www.gov.uk/help/cookies">Cookies</a></li>
-            <li>
-                Built by the Driver &amp; Vehicle Standards Agency
-                <?php
-                $releaseTagTemplate = '<span class="tt-hint">Release {release_tag_name}</span>';
-                echo $this->getReleaseTag()->renderReleaseTag($releaseTagTemplate);
-                ?>
-            </li>
-          </ul>
-        </nav>
-        <p class="global-footer_licence"><a class="licence-logo" href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2">Open Government Licence</a> All content is available under the <a href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2">Open Government Licence v2.0</a>, except where otherwise stated</p>
-      </div>
-      <div class="col-sm-3 global-footer_copyright">
-        <a href="http://www.nationalarchives.gov.uk/information-management/our-services/crown-copyright.htm">&copy; Crown copyright</a>
-      </div>
+
+        <div class="row">
+
+            <div class="col-md-12 col-sm-12">
+
+                <hr class="global-footer_divider" />
+
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-9 global-footer_meta">
+                <nav class="global-footer_navigation">
+                    <ul>
+                        <li><a href="https://www.gov.uk/help/cookies">Cookies</a></li>
+                        <li>
+                            Built by the Driver &amp; Vehicle Standards Agency
+                            <?php
+                            $releaseTagTemplate = '<span class="tt-hint">Release {release_tag_name}</span>';
+                            echo $this->getReleaseTag()->renderReleaseTag($releaseTagTemplate);
+                            ?>
+                        </li>
+                    </ul>
+                </nav>
+                <p class="global-footer_licence">
+                    <a href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2"
+                       class="licence-logo">
+                        Open Government Licence
+                    </a>
+                    All content is available under the
+                    <a href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2">
+                        Open Government Licence v2.0
+                    </a>, except where otherwise stated
+                </p>
+            </div>
+            <div class="col-sm-3 global-footer_copyright">
+                <a href="http://www.nationalarchives.gov.uk/information-management/our-services/crown-copyright.htm">
+                    &copy; Crown copyright
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
 </footer>
 <?php echo $this->inlineScript(); ?>
 <?php echo $this->partial('partial/fragments/google-analytics'); ?>

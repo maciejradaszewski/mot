@@ -4,6 +4,7 @@ use Application\Controller as Application;
 use Application\Navigation\Breadcrumbs\Handler\OrganisationNameBySiteResolver;
 use Application\Navigation\Breadcrumbs\Handler\SimpleResolver;
 use Application\Navigation\Breadcrumbs\Handler\SiteNameResolver;
+use Application\View\HelperFactory\ResourcesOnGovUkFactory;
 use Application\View\HelperFactory\AuthorisationHelperFactory;
 use Application\View\HelperFactory\CurrentMotTestFactory;
 use Application\View\HelperFactory\DashboardDataProviderFactory;
@@ -11,6 +12,7 @@ use Application\View\HelperFactory\GetSiteCountFactory;
 use Application\View\HelperFactory\GetSitesFactory;
 use Application\View\HelperFactory\IdentityHelperFactory;
 use Application\View\HelperFactory\LocationSelectorFactory;
+use Application\View\HelperFactory\ManualsAndGuidesFactory;
 use DvsaMotEnforcement\Controller as Enforcement;
 use DvsaMotEnforcement\Controller\MotTestSearchController as EnforcementMotTestSearchController;
 use DvsaMotEnforcementApi\Controller as Ajax;
@@ -69,16 +71,6 @@ return [
                                 'action'     => 'contingencyAdvisoryCertificate',
                             ],
                         ],
-                    ],
-                ],
-            ],
-            'manuals'                                     => [
-                'type'    => 'segment',
-                'options' => [
-                    'route'    => '/manuals',
-                    'defaults' => [
-                        'controller' => Application\ManualsAndGuidesController::class,
-                        'action'     => 'index',
                     ],
                 ],
             ],
@@ -1135,13 +1127,15 @@ return [
             'camelCaseToFirstUppercaseReadable' => CamelCaseToFirstUppercaseReadable::class,
         ],
         'factories'  => [
-            'identityHelper'        => IdentityHelperFactory::class,
-            'authorisationHelper'   => AuthorisationHelperFactory::class,
-            'dashboardDataProvider' => DashboardDataProviderFactory::class,
-            'currentMotTest'        => CurrentMotTestFactory::class,
-            'getSites'              => GetSitesFactory::class,
-            'locationSelector'      => LocationSelectorFactory::class,
-            'getSiteCount'          => GetSiteCountFactory::class,
+            'identityHelper'         => IdentityHelperFactory::class,
+            'authorisationHelper'    => AuthorisationHelperFactory::class,
+            'dashboardDataProvider'  => DashboardDataProviderFactory::class,
+            'currentMotTest'         => CurrentMotTestFactory::class,
+            'getSites'               => GetSitesFactory::class,
+            'locationSelector'       => LocationSelectorFactory::class,
+            'getSiteCount'           => GetSiteCountFactory::class,
+            'manualsHelper'          => ManualsAndGuidesFactory::class,
+            'resourcesOnGovUkHelper' => ResourcesOnGovUkFactory::class,
         ]
     ],
     'module_layouts'             => [

@@ -6,7 +6,6 @@ import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.EnforcementHomePage
 import com.dvsa.mot.selenium.priv.frontend.login.pages.LoginPage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
 import com.dvsa.mot.selenium.priv.frontend.user.UserPersonalProfilePage;
-import com.dvsa.mot.selenium.pub.frontend.application.tester.pages.ManualsPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -42,7 +41,13 @@ public abstract class BasePage extends PageInteractionHelper {
 
     @FindBy(linkText = "Cancel") private WebElement cancel;
 
-    @FindBy(id = "footerManuals") private WebElement footerManuals;
+    @FindBy(id = "manuals_0") private WebElement manualsClass12;
+    @FindBy(id = "manuals_1") private WebElement manualsClass3457;
+    @FindBy(id = "manuals_2") private WebElement manualsTestingGuide;
+    @FindBy(id = "resources_0") private WebElement resourcesChecklist12;
+    @FindBy(id = "resources_1") private WebElement resourcesChecklist3457;
+    @FindBy(id = "resources_2") private WebElement resourcesStandards;
+    @FindBy(id = "resources_3") private WebElement resourcesSpecialNotices;
 
     @FindBy(xpath = "id('footer')//a[@href='https://www.gov.uk/help/cookies']") private WebElement cookies;
 
@@ -171,9 +176,32 @@ public abstract class BasePage extends PageInteractionHelper {
         return null;
     }
 
-    public ManualsPage clickFooterManualAndGuidesLink() {
-        footerManuals.click();
-        return new ManualsPage(driver);
+    public String getManualNameForClass1And2() {
+        return manualsClass12.getText();
+    }
+
+    public String getManualNameForClass345And7() {
+        return manualsClass3457.getText();
+    }
+
+    public String getManualTestingGuideName() {
+        return manualsTestingGuide.getText();
+    }
+
+    public String getResourcesNameChecklistForClass1And2() {
+        return resourcesChecklist12.getText();
+    }
+
+    public String getResourcesNameChecklistForClass345And7() {
+        return resourcesChecklist3457.getText();
+    }
+
+    public String getResourcesNameEmissionStandards() {
+        return resourcesStandards.getText();
+    }
+
+    public String getResourcesNameSpecialNotices() {
+        return resourcesSpecialNotices.getText();
     }
 
     public String getMotTestId() {
