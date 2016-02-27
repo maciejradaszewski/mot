@@ -38,17 +38,19 @@ class DoctrineIdentityFactoryTest extends \PHPUnit_Framework_TestCase
     public function testItReturnsAnIdentity()
     {
         $person = $this->getPerson('tester1');
+        $date = new \DateTime('20001212121212');
         $this->personRepository->expects($this->any())
             ->method('findIdentity')
             ->with('tester1')
             ->willReturn($person);
 
-        $identity = $this->identityFactory->create('tester1', 'abcd', '1234', null);
+        $identity = $this->identityFactory->create('tester1', 'abcd', '1234', $date);
 
         $this->assertInstanceOf(Identity::class, $identity);
         $this->assertSame($person, $identity->getPerson());
         $this->assertSame('abcd', $identity->getToken());
         $this->assertSame('1234', $identity->getUuid());
+        $this->assertSame($date, $identity->getPasswordExpiryDate());
     }
 
     /**

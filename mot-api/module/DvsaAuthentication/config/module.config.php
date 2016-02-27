@@ -10,6 +10,8 @@ use DvsaAuthentication\Factory\IdentityFactoryFactory;
 use DvsaAuthentication\Factory\OtpServiceFactory;
 use DvsaAuthentication\Identity\Factory\IdentityByTokenResolverFactory;
 use DvsaAuthentication\Identity\IdentityByTokenResolver;
+use DvsaAuthentication\Identity\OpenAM\Factory\IdentityAttributesMapperFactory;
+use DvsaAuthentication\Identity\OpenAM\IdentityAttributesMapper;
 use DvsaAuthentication\Identity\OpenAM\OpenAMIdentityByTokenResolver;
 use DvsaAuthentication\Login\Authenticator;
 use DvsaAuthentication\Login\Factory\AuthenticatorFactory;
@@ -34,7 +36,8 @@ return [
             UsernamePasswordAuthenticator::class    => AuthenticatorFactory::class,
             LoginService::class                     => LoginServiceFactory::class,
             IdentityByTokenResolver::class          => IdentityByTokenResolverFactory::class,
-            OpenAMIdentityByTokenResolver::class    => IdentityByTokenResolverFactory::class
+            OpenAMIdentityByTokenResolver::class    => IdentityByTokenResolverFactory::class,
+            IdentityAttributesMapper::class         => IdentityAttributesMapperFactory::class
         ],
     ]
 ];

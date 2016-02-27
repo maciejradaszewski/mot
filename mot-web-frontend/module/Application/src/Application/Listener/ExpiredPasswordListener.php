@@ -28,9 +28,7 @@ class ExpiredPasswordListener
     private $timeHolder;
 
     private $logger;
-
-    private $expiredPasswordService;
-
+    
     private $whiteList = [
         'login',
         'logout',
@@ -50,14 +48,12 @@ class ExpiredPasswordListener
     public function __construct(
         MotIdentityProviderInterface $identityProvider,
         DateTimeHolder $timeHolder,
-        LoggerInterface $logger,
-        ExpiredPasswordService $expiredPasswordService
+        LoggerInterface $logger
     )
     {
         $this->identityProvider = $identityProvider;
         $this->timeHolder = $timeHolder;
         $this->logger = $logger;
-        $this->expiredPasswordService = $expiredPasswordService;
     }
 
     public function __invoke(MvcEvent $event)
@@ -80,7 +76,7 @@ class ExpiredPasswordListener
             return;
         }
 
-        $expirationDate = $this->expiredPasswordService->getExpiryDateForCurrentUser();
+        $expirationDate = $identity->getPasswordExpiryDate();
 
         $now = $this->timeHolder->getCurrent();
 
