@@ -33,9 +33,11 @@ class AuthenticationResponseMapper
                 ->setUsername($identity->getUsername())
                 ->setDisplayName($identity->getDisplayName())
                 ->setRole('')
+                ->setPasswordExpiryDate($identity->getPasswordExpiryDate())
                 ->setIsAccountClaimRequired($identity->isAccountClaimRequired())
                 ->setIsPasswordChangeRequired($identity->isPasswordChangeRequired())
                 ->setIsSecondFactorRequired($identity->isSecondFactorRequired());
+
             $authnDto->setUser($authnUserDto);
         }
         return $authnDto;

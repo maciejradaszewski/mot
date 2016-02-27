@@ -27,6 +27,9 @@ class AuthenticatedUserDto implements ReflectiveDtoInterface
     /** @var  bool */
     private $isSecondFactorRequired;
 
+    /** @var  \DateTime */
+    private $passwordExpiryDate;
+
     /**
      * @return int
      */
@@ -150,6 +153,24 @@ class AuthenticatedUserDto implements ReflectiveDtoInterface
     public function setIsSecondFactorRequired($isSecondFactorRequired)
     {
         $this->isSecondFactorRequired = $isSecondFactorRequired;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getPasswordExpiryDate()
+    {
+        return $this->passwordExpiryDate;
+    }
+
+    /**
+     * @param \DateTime $passwordExpiryDate
+     * @return AuthenticatedUserDto
+     */
+    public function setPasswordExpiryDate(\DateTime $passwordExpiryDate)
+    {
+        $this->passwordExpiryDate = $passwordExpiryDate;
         return $this;
     }
 }

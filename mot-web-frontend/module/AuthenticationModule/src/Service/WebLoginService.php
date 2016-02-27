@@ -48,6 +48,7 @@ class WebLoginService
                 ->setDisplayName($responseDto->getUser()->getDisplayName())
                 ->setDisplayRole($responseDto->getUser()->getRole())
                 ->setAccessToken($responseDto->getAccessToken())
+                ->setPasswordExpiryDate($responseDto->getUser()->getPasswordExpiryDate())
                 ->setAccountClaimRequired($responseDto->getUser()->isIsAccountClaimRequired())
                 ->setPasswordChangeRequired($responseDto->getUser()->isIsPasswordChangeRequired())
                 ->setSecondFactorRequired($responseDto->getUser()->isIsSecondFactorRequired());

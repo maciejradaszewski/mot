@@ -15,8 +15,7 @@ class ExpiredPasswordListenerFactory implements FactoryInterface
         return new ExpiredPasswordListener(
             $serviceLocator->get('MotIdentityProvider'),
             new DateTimeHolder(),
-            $serviceLocator->get('Application\Logger'),
-            $serviceLocator->get(ExpiredPasswordService::class)
+            $serviceLocator->get('Application\Logger')
         );
     }
 }

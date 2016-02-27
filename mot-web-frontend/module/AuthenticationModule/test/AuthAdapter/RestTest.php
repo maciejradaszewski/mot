@@ -64,7 +64,7 @@ class RestTest extends PHPUnit_Framework_TestCase
                                     'username'    => self::TEST_USERNAME,
                                     'displayName' => 'Test Name',
                                     'role'        => 'Test Role',
-                                    'roles'       => [SiteBusinessRoleCode::TESTER],
+                                    'passwordExpiryDate' => '2000-12-12T12:12:12Z',
                                     'isAccountClaimRequired' => false,
                                     'isPasswordChangeRequired' => false,
                                     'isSecondFactorRequired'   => false,

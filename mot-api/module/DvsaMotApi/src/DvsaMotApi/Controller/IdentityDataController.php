@@ -2,6 +2,7 @@
 
 namespace DvsaMotApi\Controller;
 
+use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommonApi\Controller\AbstractDvsaRestfulController;
 use DvsaCommonApi\Model\ApiResponse;
 use Zend\Authentication\AuthenticationService;
@@ -10,7 +11,9 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Model\JsonModel;
 use DvsaAuthentication\Identity;
 
-
+/**
+ * That controller should be deleted once OpenAM session and PHP session timeouts are realigned
+ */
 class IdentityDataController extends AbstractDvsaRestfulController
 {
     public function getList()
@@ -29,7 +32,8 @@ class IdentityDataController extends AbstractDvsaRestfulController
             'role'                     => '',
             'isAccountClaimRequired'   => $identity->isAccountClaimRequired(),
             'isPasswordChangeRequired' => $identity->isPasswordChangeRequired(),
-            'isSecondFactorRequired'   => $identity->isSecondFactorRequired()
+            'isSecondFactorRequired'   => $identity->isSecondFactorRequired(),
+            'passwordExpiryDate'       => DateTimeApiFormat::dateTime($identity->getPasswordExpiryDate())
         ];
         $returnStruct['user'] = $personData;
         $returnStruct['identity'] = $identity->getUsername();

@@ -3,6 +3,9 @@ namespace Dvsa\Mot\Frontend\AuthenticationModule\AuthAdapter;
 
 use DvsaApplicationLogger\TokenService\TokenServiceInterface;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
+use DvsaCommon\Date\DateTimeApiFormat;
+use DvsaCommon\Date\DateTimeDisplayFormat;
+use DvsaCommon\Date\DateUtils;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\HttpRestJson\Exception\ForbiddenOrUnauthorisedException;
 use DvsaCommon\UrlBuilder\UrlBuilder;
@@ -62,6 +65,7 @@ class Rest implements AdapterInterface
             ->setDisplayName($restResultData['user']['displayName'])
             ->setDisplayRole($restResultData['user']['role'])
             ->setAccessToken($this->tokenService->getToken())
+            ->setPasswordExpiryDate(DateUtils::toDateTime($restResultData['user']['passwordExpiryDate']))
             ->setAccountClaimRequired($restResultData['user']['isAccountClaimRequired'])
             ->setPasswordChangeRequired($restResultData['user']['isPasswordChangeRequired'])
             ->setSecondFactorRequired($restResultData['user']['isSecondFactorRequired']);

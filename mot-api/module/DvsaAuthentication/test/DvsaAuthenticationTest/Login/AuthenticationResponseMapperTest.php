@@ -22,7 +22,7 @@ class AuthenticationResponseMapperTest extends \PHPUnit_Framework_TestCase
     public function testMapToDto_givenSuccessfulResponse_shouldExpectCorrectDtoState()
     {
         $identity = new Identity($this->defaultPerson());
-        $identity->setToken('customToken');
+        $identity->setToken('customToken')->setPasswordExpiryDate($this->aDate());
         $successfulResponse = new AuthenticationSuccess($identity);
 
         $mapper = new AuthenticationResponseMapper();
@@ -32,9 +32,9 @@ class AuthenticationResponseMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($successfulResponse->getIdentity()->getToken(), $result->getAccessToken());
         $this->assertEquals(AuthenticationResultCode::SUCCESS, $result->getAuthnCode());
         $this->assertCount(1, $result->getMessages());
-        $this->assertEquals($successfulResponse->getIdentity()->getUsername(), $result->getUser()->getUsername());
-        $this->assertEquals($successfulResponse->getIdentity()->getUserId(), $result->getUser()->getUserId());
-        $this->assertEquals($successfulResponse->getIdentity()->getDisplayName(), $result->getUser()->getDisplayName());
+        $this->assertEquals($identity->getUsername(), $result->getUser()->getUsername());
+        $this->assertEquals($identity->getUserId(), $result->getUser()->getUserId());
+        $this->assertEquals($identity->getDisplayName(), $result->getUser()->getDisplayName());
         $this->assertEquals('', $result->getUser()->getRole());
         $this->assertEquals(Result::SUCCESS, $result->getCode());
         $this->assertTrue($result->isIsValid());
@@ -53,7 +53,8 @@ class AuthenticationResponseMapperTest extends \PHPUnit_Framework_TestCase
     {
         $person = $this->defaultPerson();
         $person->setAuthenticationMethod($this->authenticationType($authMethod));
-        $successfulResponse = new AuthenticationSuccess(new Identity($person));
+        $identity = (new Identity($person))->setPasswordExpiryDate($this->aDate());
+        $successfulResponse = new AuthenticationSuccess($identity);
         $mapper = new AuthenticationResponseMapper();
 
         $result = $mapper->mapToDto($successfulResponse, 'anything');
@@ -75,7 +76,8 @@ class AuthenticationResponseMapperTest extends \PHPUnit_Framework_TestCase
     )
     {
         $person = $this->defaultPerson()->setPasswordChangeRequired($passwordChangeRequired);
-        $successfulResponse = new AuthenticationSuccess(new Identity($person));
+        $identity = (new Identity($person))->setPasswordExpiryDate($this->aDate());
+        $successfulResponse = new AuthenticationSuccess($identity);
         $mapper = new AuthenticationResponseMapper();
 
         $result = $mapper->mapToDto($successfulResponse, 'anything');
@@ -97,7 +99,8 @@ class AuthenticationResponseMapperTest extends \PHPUnit_Framework_TestCase
     )
     {
         $person = $this->defaultPerson()->setAccountClaimRequired($accountClaimRequired);
-        $successfulResponse = new AuthenticationSuccess(new Identity($person));
+        $identity = (new Identity($person))->setPasswordExpiryDate($this->aDate());
+        $successfulResponse = new AuthenticationSuccess($identity);
         $mapper = new AuthenticationResponseMapper();
 
         $result = $mapper->mapToDto($successfulResponse, 'anything');
@@ -206,6 +209,10 @@ class AuthenticationResponseMapperTest extends \PHPUnit_Framework_TestCase
             ->setFirstName('customFirstName')
             ->setAccountClaimRequired(false)
             ->setPasswordChangeRequired(false);
+    }
+
+    private function aDate() {
+        return new \DateTime('20001212121212');
     }
 
 }

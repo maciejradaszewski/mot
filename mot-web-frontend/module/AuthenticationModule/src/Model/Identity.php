@@ -68,6 +68,11 @@ class Identity implements MotFrontendIdentityInterface
     private $passwordExpired = true;
 
     /**
+     * @var \DateTime
+     */
+    private $passwordExpiryDate;
+
+    /**
      * @return PersonAuthorization
      * @deprecated will be removed - do not use
      */
@@ -267,6 +272,24 @@ class Identity implements MotFrontendIdentityInterface
     {
         $this->passwordExpired = $passwordExpired;
 
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getPasswordExpiryDate()
+    {
+        return $this->passwordExpiryDate;
+    }
+
+    /**
+     * @param \DateTime $passwordExpiryDate
+     * @return Identity
+     */
+    public function setPasswordExpiryDate($passwordExpiryDate)
+    {
+        $this->passwordExpiryDate = $passwordExpiryDate;
         return $this;
     }
 }

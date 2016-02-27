@@ -38,6 +38,6 @@ class DoctrineIdentityFactory implements IdentityFactory
             throw new \InvalidArgumentException(sprintf('Person "%s" not found', $username));
         }
 
-        return (new Identity($person))->setToken($token)->setUuid($uuid);
+        return (new Identity($person))->setToken($token)->setUuid($uuid)->setPasswordExpiryDate($passwordExpiryDate);
     }
 }

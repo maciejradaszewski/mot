@@ -19,6 +19,7 @@ class OpenAMIdentityByTokenResolverTest extends \PHPUnit_Framework_TestCase
 
     const ATTR_USERNAME = 'uid';
     const ATTR_UUID = 'entryuuid';
+    const ATTR_EXPIRY_DATE = 'ds-pwp-password-expiration-time';
 
     private $openAMClient;
 
@@ -38,6 +39,7 @@ class OpenAMIdentityByTokenResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->openAMClientOptions->setIdentityAttributeUsername(self::ATTR_USERNAME);
         $this->openAMClientOptions->setIdentityAttributeUuid(self::ATTR_UUID);
+        $this->openAMClientOptions->setIdentityAttributePasswordExpiryTime(self::ATTR_EXPIRY_DATE);
     }
 
 
@@ -68,7 +70,11 @@ class OpenAMIdentityByTokenResolverTest extends \PHPUnit_Framework_TestCase
                     self::ATTR_UUID,
                     $this->validIdentityAttributes()
                 )
-            ]
+            ],
+            [$this->removeKey(
+                self::ATTR_EXPIRY_DATE,
+                $this->validIdentityAttributes()
+            )]
         ];
     }
 
@@ -113,7 +119,7 @@ class OpenAMIdentityByTokenResolverTest extends \PHPUnit_Framework_TestCase
             ->willReturn($identityAttributes);
 
         $this->identityFactory->expects($this->once())->method('create')
-            ->with('usernameValue', $inputToken, 'uuidValue', null)
+            ->with('usernameValue', $inputToken, 'uuidValue', new \DateTime('20001112121212'))
             ->willReturn($identity);
 
         $this->create()->resolve($inputToken);
@@ -138,8 +144,10 @@ class OpenAMIdentityByTokenResolverTest extends \PHPUnit_Framework_TestCase
 
     private function validIdentityAttributes()
     {
-        $usernameAttr = self::ATTR_USERNAME;
-        $uuidAttr = self::ATTR_UUID;
-        return [$usernameAttr => 'usernameValue', $uuidAttr => 'uuidValue'];
+        return [
+            self::ATTR_USERNAME => 'usernameValue',
+            self::ATTR_UUID => 'uuidValue',
+            self::ATTR_EXPIRY_DATE => '20001112121212'
+        ];
     }
 }
