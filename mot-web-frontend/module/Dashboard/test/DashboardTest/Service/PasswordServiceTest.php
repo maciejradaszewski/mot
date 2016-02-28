@@ -4,6 +4,7 @@ namespace DashboardTest\Service;
 
 use Dashboard\Service\PasswordService;
 use Core\Service\MotFrontendIdentityProviderInterface;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
 use DvsaCommon\HttpRestJson\Client;
 use DvsaCommon\InputFilter\Account\ChangePasswordInputFilter;
@@ -60,11 +61,16 @@ class PasswordServiceTest extends \PHPUnit_Framework_TestCase
 
     private function createIdentityProvider()
     {
-        $identity = XMock::of(MotFrontendIdentityInterface::class);
+        $identity = XMock::of(Identity::class);
         $identity
             ->expects($this->any())
             ->method("getUserId")
             ->willReturn(1);
+
+        $identity
+            ->expects($this->any())
+            ->method('setPasswordExpired')
+            ->with(false);
 
         $identityProvider = XMock::of(MotFrontendIdentityProviderInterface::class);
         $identityProvider

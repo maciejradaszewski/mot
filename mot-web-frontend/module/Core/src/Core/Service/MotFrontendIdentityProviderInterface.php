@@ -2,7 +2,7 @@
 
 namespace Core\Service;
 
-use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
+use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
 use Zend\Authentication\AuthenticationService;
 
@@ -11,6 +11,6 @@ use Zend\Authentication\AuthenticationService;
  */
 interface MotFrontendIdentityProviderInterface extends MotIdentityProviderInterface
 {
-    /** @return MotFrontendIdentityInterface */
+    /** @return Identity */
     public function getIdentity();
 }
