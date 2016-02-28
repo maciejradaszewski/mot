@@ -13,15 +13,10 @@ class ExpiredPasswordServiceTest extends \PHPUnit_Framework_TestCase
 {
     const TOKEN = "token";
     const USERNAME = "tester1";
-
-    private $openAMClient;
-
     private $mapper;
 
     public function setUp()
     {
-        $this->openAMClient = XMock::of(OpenAMClientInterface::class);
-
         $mapper = XMock::of(ExpiredPasswordMapper::class);
         $mapper
             ->expects($this->exactly(0))
@@ -34,14 +29,14 @@ class ExpiredPasswordServiceTest extends \PHPUnit_Framework_TestCase
     {
         $config = $this->createMotConfig(['feature_toggle' => false]);
 
-        $this->sentExpiredPasswordNotificationIfNeeded($config,$this->mapper, $this->openAMClient);
+        $this->sentExpiredPasswordNotificationIfNeeded($config,$this->mapper, null);
     }
 
     public function test_doNotSendNotification_whenPasswordExpiryNotificationDaysIsEmpty()
     {
         $config = $this->createMotConfig(['password_expiry_notification_days' => []]);
 
-        $this->sentExpiredPasswordNotificationIfNeeded($config, $this->mapper, $this->openAMClient);
+        $this->sentExpiredPasswordNotificationIfNeeded($config, $this->mapper, null);
     }
 
     public function test_doNotSendNotification_whenUsersPasswordNotExpireShortlys()
@@ -51,13 +46,7 @@ class ExpiredPasswordServiceTest extends \PHPUnit_Framework_TestCase
         $date = new \DateTime();
         $date = $date->modify('+ 38 day');
 
-        $openAMClient = XMock::of(OpenAMClientInterface::class);
-        $openAMClient
-            ->expects($this->any())
-            ->method("getPasswordExpiryDate")
-            ->willReturn($date);
-
-        $this->sentExpiredPasswordNotificationIfNeeded($config, $this->mapper, $openAMClient);
+        $this->sentExpiredPasswordNotificationIfNeeded($config, $this->mapper, $date);
     }
 
     public function test_doNotSendNotification_whenPasswordHasAlreadyExpired()
@@ -67,13 +56,7 @@ class ExpiredPasswordServiceTest extends \PHPUnit_Framework_TestCase
         $date = new \DateTime();
         $date = $date->modify('+ 28 day');
 
-        $openAMClient = XMock::of(OpenAMClientInterface::class);
-        $openAMClient
-            ->expects($this->any())
-            ->method("getPasswordExpiryDate")
-            ->willReturn($date);
-
-        $this->sentExpiredPasswordNotificationIfNeeded($config, $this->mapper, $openAMClient);
+        $this->sentExpiredPasswordNotificationIfNeeded($config, $this->mapper, $date);
     }
 
     public function test_sendNotification_whenUsersPasswordExpireShortly()
@@ -83,36 +66,28 @@ class ExpiredPasswordServiceTest extends \PHPUnit_Framework_TestCase
         $date = new \DateTime();
         $date = $date->modify('+ 36 day');
 
-        $openAMClient = XMock::of(OpenAMClientInterface::class);
-        $openAMClient
-            ->expects($this->any())
-            ->method("getPasswordExpiryDate")
-            ->willReturn($date);
-
         $mapper = XMock::of(ExpiredPasswordMapper::class);
         $mapper
             ->expects($this->exactly(1))
             ->method("postPasswordExpiredDate");
 
-        $this->sentExpiredPasswordNotificationIfNeeded($config, $mapper, $openAMClient);
+        $this->sentExpiredPasswordNotificationIfNeeded($config, $mapper, $date);
     }
 
-    private function createExpiredPasswordService($config, $mapper, $openAMClient)
+    private function createExpiredPasswordService($config, $mapper)
     {
         return new ExpiredPasswordService(
             XMock::of(MotFrontendIdentityProviderInterface::class),
             $config,
-            $mapper,
-            $openAMClient,
-            "realm"
+            $mapper
         );
     }
 
-    private function sentExpiredPasswordNotificationIfNeeded($config, $mapper, $openAMClient)
+    private function sentExpiredPasswordNotificationIfNeeded($config, $mapper, $passwordExpiryDate)
     {
         $this
-            ->createExpiredPasswordService($config, $mapper, $openAMClient)
-            ->sentExpiredPasswordNotificationIfNeeded(self::TOKEN, self::USERNAME);
+            ->createExpiredPasswordService($config, $mapper)
+            ->sentExpiredPasswordNotificationIfNeeded(self::TOKEN, $passwordExpiryDate);
     }
 
     /**

@@ -30,6 +30,7 @@ class PasswordService
 
         try {
             $this->client->put($url, $data);
+            $this->identityProvider->getIdentity()->setPasswordExpired(false);
             return true;
         } catch (ValidationException $e) {
             $this->extractErrors($e);

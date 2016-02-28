@@ -189,7 +189,8 @@ class SecurityController extends AbstractDvsaActionController
         $this->authenticationCookieService->setUpCookie($authnDto->getAccessToken());
 
         // to be extracted to API
-        $this->expiredPasswordService->sentExpiredPasswordNotificationIfNeeded($authnDto->getAccessToken(), $username);
+        $this->expiredPasswordService->sentExpiredPasswordNotificationIfNeeded($authnDto->getAccessToken(),
+            $authnDto->getUser()->getPasswordExpiryDate());
 
         $rawGoto = $request->getPost(self::PARAM_GOTO);
         $goto = $this->gotoService->decodeGoto($rawGoto);

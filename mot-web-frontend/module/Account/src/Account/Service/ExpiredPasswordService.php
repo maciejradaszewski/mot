@@ -17,36 +17,18 @@ class ExpiredPasswordService
 
     private $mapper;
 
-    private $openAmClient;
-
-    private $realm;
-
     public function __construct(
         MotFrontendIdentityProviderInterface $identityProvider,
         MotConfig $config,
-        ExpiredPasswordMapper $mapper,
-        OpenAMClientInterface $openAmClient,
-        $realm
-    )
-    {
+        ExpiredPasswordMapper $mapper
+    ) {
         $this->identityProvider = $identityProvider;
         $this->config = $config;
         $this->mapper = $mapper;
-        $this->openAmClient = $openAmClient;
-        $this->realm = $realm;
     }
 
-    public function getExpiryDateForCurrentUser()
+    public function calculatePasswordChangePromptDate($expirationDate)
     {
-        $userName = $this->identityProvider->getIdentity()->getUsername();
-
-        return $this->getExpiryDateForUser($userName);
-    }
-
-    public function getExpiryDateForUser($username)
-    {
-        $expirationDate = $this->openAmClient->getPasswordExpiryDate(new OpenAMLoginDetails($username, null, $this->realm));
-
         $expirationDate = DateUtils::roundUp($expirationDate);
 
         $expirationDate = $expirationDate->modify("- " . $this->getGracePeriod());
@@ -54,12 +36,12 @@ class ExpiredPasswordService
         return $expirationDate;
     }
 
-    public function sentExpiredPasswordNotificationIfNeeded($token, $username)
+    public function sentExpiredPasswordNotificationIfNeeded($token, $passwordExpiryDate)
     {
         if ($this->isExpiryPasswordEnabled()) {
-            if ($this->willUserPasswordExpireShortly($username)) {
-                $expiryDate = $this->getExpiryDateForUser($username);
-                $this->mapper->postPasswordExpiredDate($token, $expiryDate);
+            if ($this->willUserPasswordExpireShortly($passwordExpiryDate)) {
+                $passwordChangePromptDate = $this->calculatePasswordChangePromptDate($passwordExpiryDate);
+                $this->mapper->postPasswordExpiredDate($token, $passwordChangePromptDate);
             }
         }
     }
@@ -69,7 +51,7 @@ class ExpiredPasswordService
         return $this->config->get('feature_toggle', 'openam.password.expiry.enabled');
     }
 
-    private function willUserPasswordExpireShortly($username)
+    private function willUserPasswordExpireShortly($passwordExpiryDate)
     {
         $longestNotificationPeriod = $this->getLongestPeriod();
 
@@ -77,7 +59,7 @@ class ExpiredPasswordService
             return false;
         }
 
-        $expiryDate = $this->getExpiryDateForUser($username);
+        $expiryDate = $this->calculatePasswordChangePromptDate($passwordExpiryDate);
         $now = new \DateTime();
         $whenToSendNotifications = clone $expiryDate;
         $whenToSendNotifications = $whenToSendNotifications->modify('- ' . $longestNotificationPeriod . 'days');

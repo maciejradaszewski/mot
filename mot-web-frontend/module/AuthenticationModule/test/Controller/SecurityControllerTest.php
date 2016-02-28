@@ -13,6 +13,7 @@ use Dashboard\Controller\UserHomeController;
 use Dvsa\Mot\Frontend\AuthenticationModule\Controller\SecurityController;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\IdentitySessionState;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\WebLoginService;
+use DvsaCommon\Dto\Authn\AuthenticatedUserDto;
 use DvsaCommon\Dto\Authn\AuthenticationResponseDto;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Dvsa\Mot\Frontend\AuthenticationModule\Service\AuthenticationFailureViewModelBuilder;
@@ -37,7 +38,6 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
     const VALID_GOTO_URL = 'http://goto.url.com/url';
     const BASE_GOTO = 'http://goto.url.com';
     const INVALID_GOTO_URL = 'http://goto.com/aaa';
-
 
 
     /** @var GotoUrlService */
@@ -177,16 +177,14 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
             ->method('decodeGoto')
             ->willReturn(self::VALID_GOTO_URL);
 
-        $expiryPasswordService = XMock::of(ExpiredPasswordService::class);
-        $expiryPasswordService
-            ->expects($this->once())
-            ->method("sentExpiredPasswordNotificationIfNeeded");
-        $this->setController($this->buildController($expiryPasswordService));
-
+        $passwordExpiryDate = new \DateTime('20121212121212');
         $token = 'xifuvdv09RGEgrege';
         $authenticationDto = (new AuthenticationResponseDto())
             ->setAuthnCode(AuthenticationResultCode::SUCCESS)
+            ->setUser((new AuthenticatedUserDto())->setPasswordExpiryDate($passwordExpiryDate))
             ->setAccessToken($token);
+
+        $this->expectExpiredPasswordNotificationCheck($token, $passwordExpiryDate);
 
         $this->authenticationResponse($authenticationDto);
 
@@ -201,16 +199,15 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
     public function testOnPostLoginAction_givenLoginSuccess_and_passedCsrfValidation_shouldRedirectToUserHome()
     {
 
-        $expiryPasswordService = XMock::of(ExpiredPasswordService::class);
-        $expiryPasswordService
-            ->expects($this->once())
-            ->method("sentExpiredPasswordNotificationIfNeeded");
-        $this->setController($this->buildController($expiryPasswordService));
-
+        $passwordExpiryDate = new \DateTime('20121212121212');
         $token = 'xifuvdv09RGEgrege';
         $authenticationDto = (new AuthenticationResponseDto())
             ->setAuthnCode(AuthenticationResultCode::SUCCESS)
+            ->setUser((new AuthenticatedUserDto())->setPasswordExpiryDate($passwordExpiryDate))
             ->setAccessToken($token);
+
+        $this->expectExpiredPasswordNotificationCheck($token, $passwordExpiryDate);
+
         $this->authenticationResponse($authenticationDto);
 
         $this->loginCsrfCookieService->expects($this->once())->method('validate')->with($this->request)
@@ -232,16 +229,15 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
 
     public function testOnPostLoginAction_whenLoginSuccess_and_invalidGoto_shouldRedirectToGotoUrl()
     {
-        $expiryPasswordService = XMock::of(ExpiredPasswordService::class);
-        $expiryPasswordService
-            ->expects($this->once())
-            ->method("sentExpiredPasswordNotificationIfNeeded");
-        $this->setController($this->buildController($expiryPasswordService));
 
+        $passwordExpiryDate = new \DateTime('20121212121212');
         $token = 'xifuvdv09RGEgrege';
         $authenticationDto = (new AuthenticationResponseDto())
             ->setAuthnCode(AuthenticationResultCode::SUCCESS)
+            ->setUser((new AuthenticatedUserDto())->setPasswordExpiryDate($passwordExpiryDate))
             ->setAccessToken($token);
+
+        $this->expectExpiredPasswordNotificationCheck($token, $passwordExpiryDate);
 
         $this->authenticationResponse($authenticationDto);
         $this->expectSessionIdRegenerated(true);
@@ -280,6 +276,15 @@ class SecurityControllerTest extends AbstractLightWebControllerTest
         } else {
             $this->sessionManager->expects($this->never())->method($this->anything());
         }
+    }
+
+    private function expectExpiredPasswordNotificationCheck($token, $passwordExpiryDate)
+    {
+        $expiryPasswordService = XMock::of(ExpiredPasswordService::class);
+        $expiryPasswordService
+            ->expects($this->once())
+            ->method("sentExpiredPasswordNotificationIfNeeded");
+        $this->setController($this->buildController($expiryPasswordService));
     }
 
     private function expectAuthCookieWasSetUp($token)
