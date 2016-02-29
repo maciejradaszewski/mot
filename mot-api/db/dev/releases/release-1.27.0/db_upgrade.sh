@@ -6,6 +6,8 @@ db_name=mot_v195_rel4
 # add files here in intended run order for release
 
 upgradefiles+=('2016-02-15-BL-63-VTS-AE-update-cleanup-STORY.sql');
+upgradefiles+=('2016-02-15-BL-278-slot_balance_finance_report-STORY.sql');
+upgradefiles+=('2016-02-15-BL-278-test_count_at_site_report-STORY.sql');
 
 # add files here in intended run order for release
 
