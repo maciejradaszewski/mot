@@ -40,11 +40,6 @@ class VehicleService
     const DEFAULT_MAKE_MODEL_NAME = 'Unknown';
     const DEFAULT_BODY_TYPE_CODE = '0';
 
-    /**
-     * Uplift added to unladen weight in kilos.
-     */
-    const UNLADEN_WEIGHT_UPLIFT = 140;
-
     /** @var  AuthorisationServiceInterface */
     private $authService;
     /** @var  VehicleRepository */
@@ -289,7 +284,6 @@ class VehicleService
                 $this->vehicleCatalog->getCountryOfRegistrationByCode(self::DEFAULT_COUNTRY_OF_REGISTRATION)
             )
             ->setFuelType($fuelType)
-            ->setWeight($dvlaVehicle->getDesignedGrossWeight())
             ->setDvlaVehicleId($dvlaVehicle->getDvlaVehicleId())
             ->setFreeTextMakeName($makeModelName);
 
@@ -354,18 +348,45 @@ class VehicleService
      */
     private function importWeight(DvlaVehicle $dvlaVehicle, Vehicle $vehicle)
     {
-        $grossWeight = $dvlaVehicle->getDesignedGrossWeight();
-        if (!empty($grossWeight)) {
-            $vehicle->setWeight($grossWeight);
-            $vehicle->setWeightSource($this->vehicleCatalog->getWeightSourceByCode(WeightSourceCode::DGW));
 
+        if (empty($vehicle->getVehicleClass()) || empty($vehicle->getVehicleClass()->getCode()))
+        {
+             // logic can only be applied with a vehicle class.
+             return;
+        }
+
+        if ($vehicle->getVehicleClass()->getCode() === Vehicle::VEHICLE_CLASS_1 ||
+            $vehicle->getVehicleClass()->getCode() === Vehicle::VEHICLE_CLASS_2)
+        {
+            // No weight expected to be carried forward for these vehicle classes. 
             return;
         }
 
-        $unladenWeight = $dvlaVehicle->getUnladenWeight();
-        if (!empty($unladenWeight)) {
-            $vehicle->setWeight($unladenWeight + self::UNLADEN_WEIGHT_UPLIFT);
-            $vehicle->setWeightSource($this->vehicleCatalog->getWeightSourceByCode(WeightSourceCode::UNLADEN));
+        if ($vehicle->getVehicleClass()->getCode() === Vehicle::VEHICLE_CLASS_3 ||
+            $vehicle->getVehicleClass()->getCode() === Vehicle::VEHICLE_CLASS_4)
+        {
+            $massInServiceWeight = $dvlaVehicle->getMassInServiceWeight();
+            if (!empty($massInServiceWeight)) {
+                $vehicle->setWeight($massInServiceWeight);
+                $vehicle->setWeightSource($this->vehicleCatalog->getWeightSourceByCode(WeightSourceCode::MISW));
+
+                return;
+            }
+ 
+            // weight not set for class 3 or 4 vehicles if mass in service weight is empty.
+            return;
+        }
+
+        if ($vehicle->getVehicleClass()->getCode() === Vehicle::VEHICLE_CLASS_5 ||
+            $vehicle->getVehicleClass()->getCode() === Vehicle::VEHICLE_CLASS_7)
+        {
+            $grossWeight = $dvlaVehicle->getDesignedGrossWeight();
+            if (!empty($grossWeight)) {
+                $vehicle->setWeight($grossWeight);
+                $vehicle->setWeightSource($this->vehicleCatalog->getWeightSourceByCode(WeightSourceCode::DGW));
+    
+                return;
+            }
         }
     }
 
