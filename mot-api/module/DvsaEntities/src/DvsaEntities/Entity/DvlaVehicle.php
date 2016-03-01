@@ -142,6 +142,15 @@ class DvlaVehicle implements VehicleInterface
     private $unladenWeight;
 
     /**
+     * Mass in service weight in kilos.
+     *
+     * @var integer
+     *
+     * @ORM\Column(name="mass_in_service_weight", type="integer", nullable=true)
+     */
+    private $massInServiceWeight;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="engine_number", type="string", nullable=true)
@@ -606,6 +615,31 @@ class DvlaVehicle implements VehicleInterface
     {
         return $this->unladenWeight;
     }
+
+    /**
+     * Set massInServiceWeight.
+     *
+     * @param integer $massInServiceWeight in kilos
+     *
+     * @return DvlaVehicle
+     */
+    public function setMassInServiceWeight($massInServiceWeight)
+    {
+        $this->massInServiceWeight = $massInServiceWeight;
+
+        return $this;
+    }
+
+    /**
+     * Get Mass In Service weight.
+     *
+     * @return integer weight in kilos
+     */
+    public function getMassInServiceWeight()
+    {
+        return $this->massInServiceWeight;
+    }
+
 
     /**
      * @param string $engineNumber

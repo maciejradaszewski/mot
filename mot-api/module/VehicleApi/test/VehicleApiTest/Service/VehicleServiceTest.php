@@ -202,6 +202,7 @@ class VehicleServiceTest extends AbstractServiceTestCase
     {
         $dvlaVehicle = VOF::dvlaVehicle();
         $vehicleClassCode = VehicleClassCode::CLASS_4;
+        $dvlaVehicle->setMassInServiceWeight(1000);
 
         $vtrCapture = ArgCapture::create();
 
@@ -237,7 +238,7 @@ class VehicleServiceTest extends AbstractServiceTestCase
             ->will($this->returnValue($map));
 
         $this->returningOn(
-            $this->mockVehicleCatalog, VOF::weightSource(WeightSourceCode::DGW), 'getWeightSourceByCode'
+            $this->mockVehicleCatalog, VOF::weightSource(WeightSourceCode::MISW), 'getWeightSourceByCode'
         );
 
         $this->mockVehicleRepository
@@ -267,30 +268,205 @@ class VehicleServiceTest extends AbstractServiceTestCase
         $this->assertEquals($dvlaVehicle->getCylinderCapacity(), $v->getCylinderCapacity());
         $this->assertEquals($dvlaVehicle->getBodyType(), $v->getBodyType()->getCode());
         $this->assertEquals($dvlaVehicle->getFuelType(), $v->getFuelType()->getCode());
-        $this->assertEquals($dvlaVehicle->getDesignedGrossWeight(), $v->getWeight());
+        $this->assertEquals($dvlaVehicle->getMassInServiceWeight(), $v->getWeight());
         $this->assertEquals($dvlaVehicle->getDvlaVehicleId(), $v->getDvlaVehicleId());
-        $this->assertEquals(WeightSourceCode::DGW, $v->getWeightSource()->getCode());
+        $this->assertEquals(WeightSourceCode::MISW, $v->getWeightSource()->getCode());
     }
 
-    public function testCreateVtrAndV5CfromDvlaVehicleGivenDvlaVehicleShouldCountWeightBasedOnUnladenWeight()
+    /**
+     * @dataProvider getVehicleWeight
+     * @param array $data
+     * @param array $expectedData
+     */
+    public function testDependsOnVehicleClassShouldImportDifferentWeight(array $data, array $expectedData)
     {
         $dvlaVehicle = VOF::dvlaVehicle();
-        $dvlaVehicle->setDesignedGrossWeight(null);
-        $dvlaVehicle->setUnladenWeight(1000);
+        $vehicleClassCode = $data["vehicleClassCode"];
+        $vehicleClassId = $data["vehicleClassId"];
+        $weightSourceCode = $data["weightSourceCode"];
+        $dvlaVehicle->setMassInServiceWeight($data["massInServiceWeight"]);
+        $dvlaVehicle->setUnladenWeight($data["unladenWeight"]);
+        $dvlaVehicle->setDesignedGrossWeight($data["designedGrossWeight"]);
 
-        $vehicleClassCode = VehicleClassCode::CLASS_4;
         $vtrCapture = ArgCapture::create();
 
         $this->returningOn($this->mockVehicleCatalog, VOF::countryOfRegistration(3), 'getCountryOfRegistrationByCode');
         $this->returningOn(
             $this->mockVehicleCatalog,
-            VOF::vehicleClass(VehicleClassId::CLASS_4, VehicleClassCode::CLASS_4),
+            VOF::vehicleClass($vehicleClassId, $vehicleClassCode),
+            'getVehicleClassByCode'
+        );
+        $this->returningOn($this->mockDvlaVehicleRepository, $dvlaVehicle);
+        $this->returningOn($this->mockVehicleCatalog, VOF::bodyType(), "findBodyTypeByCode");
+
+        if ($weightSourceCode !== VehicleClassCode::CLASS_1 && $weightSourceCode !== VehicleClassCode::CLASS_2) {
+            $this->returningOn(
+                $this->mockVehicleCatalog, VOF::weightSource($weightSourceCode), 'getWeightSourceByCode'
+            );
+        }
+
+        $colourCode = 'R';
+        $secondaryColourCode = 'G';
+        $this->returningOn(
+            $this->mockVehicleCatalog,
+            MultiCallStubBuilder::of()
+                ->add([$colourCode, $this->anything()], VOF::colour(1, $colourCode))
+                ->add([$secondaryColourCode, $this->anything()], VOF::colour(2, $secondaryColourCode))
+                ->build(),
+            'getColourByCode'
+        );
+        $this->returningOn($this->mockVehicleCatalog, VOF::model(), 'getModelByCode');
+
+        $this->mockVehicleRepository
+            ->expects($this->any())
+            ->method('save');
+
+        $this->mockVehicleV5CRepository
+            ->expects($this->once())
+            ->method('save');
+
+        $v = $this->createService()->createVtrAndV5CFromDvlaVehicle(self::VEHICLE_ID_ENC, $vehicleClassCode);
+
+        $wsc = null;
+        if ($v->getWeightSource()) {
+            $wsc = $v->getWeightSource()->getCode();
+        }
+
+        $this->assertEquals($expectedData["weight"], $v->getWeight());
+        $this->assertEquals($expectedData["weightSourceCode"], $wsc);
+    }
+
+    public function getVehicleWeight()
+    {
+        return [
+            [
+                [
+                    "vehicleClassCode" => VehicleClassCode::CLASS_1,
+                    "vehicleClassId" => VehicleClassId::CLASS_1,
+                    "weightSourceCode" => null,
+                    "massInServiceWeight" => 2000,
+                    "unladenWeight" => 2500,
+                    "designedGrossWeight" => 3000
+                ],
+                [
+                    "weight" => 0,
+                    "weightSourceCode" => null
+                ]
+            ],
+
+            [
+                [
+                    "vehicleClassCode" => VehicleClassCode::CLASS_2,
+                    "vehicleClassId" => VehicleClassId::CLASS_2,
+                    "weightSourceCode" => WeightSourceCode::DGW,
+                    "massInServiceWeight" => 2000,
+                    "unladenWeight" => 2500,
+                    "designedGrossWeight" => 3000
+                ],
+                [
+                    "weight" => 0,
+                    "weightSourceCode" => null
+                ]
+            ],
+
+            [
+                [
+                    "vehicleClassCode" => VehicleClassCode::CLASS_3,
+                    "vehicleClassId" => VehicleClassId::CLASS_3,
+                    "weightSourceCode" => WeightSourceCode::MISW,
+                    "massInServiceWeight" => 2000,
+                    "unladenWeight" => 2500,
+                    "designedGrossWeight" => 3000
+                ],
+                [
+                    "weight" => 2000,
+                    "weightSourceCode" => WeightSourceCode::MISW
+                ]
+            ],
+
+            [
+                [
+                    "vehicleClassCode" => VehicleClassCode::CLASS_4,
+                    "vehicleClassId" => VehicleClassId::CLASS_4,
+                    "weightSourceCode" => WeightSourceCode::DGW,
+                    "massInServiceWeight" => 0,
+                    "unladenWeight" => 2500,
+                    "designedGrossWeight" => 3000
+                ],
+                [
+                    "weight" => 0,
+                    "weightSourceCode" => null
+                ]
+            ],
+
+            [
+                [
+                    "vehicleClassCode" => VehicleClassCode::CLASS_5,
+                    "vehicleClassId" => VehicleClassId::CLASS_5,
+                    "weightSourceCode" => WeightSourceCode::DGW,
+                    "massInServiceWeight" => 2000,
+                    "unladenWeight" => 2500,
+                    "designedGrossWeight" => 3000
+                ],
+                [
+                    "weight" => 3000,
+                    "weightSourceCode" => WeightSourceCode::DGW
+                ]
+            ],
+
+            [
+                [
+                    "vehicleClassCode" => VehicleClassCode::CLASS_7,
+                    "vehicleClassId" => VehicleClassId::CLASS_7,
+                    "weightSourceCode" => WeightSourceCode::DGW,
+                    "massInServiceWeight" => 2000,
+                    "unladenWeight" => 2500,
+                    "designedGrossWeight" => 3000
+                ],
+                [
+                    "weight" => 3000,
+                    "weightSourceCode" => WeightSourceCode::DGW
+                ]
+            ],
+
+            [
+                [
+                    "vehicleClassCode" => VehicleClassCode::CLASS_7,
+                    "vehicleClassId" => VehicleClassId::CLASS_7,
+                    "weightSourceCode" => WeightSourceCode::DGW,
+                    "massInServiceWeight" => 2000,
+                    "unladenWeight" => 2500,
+                    "designedGrossWeight" => 0
+                ],
+                [
+                    "weight" => 0,
+                    "weightSourceCode" => null
+                ]
+            ],
+        ];
+    }
+
+    public function testCreateVtrAndV5CfromDvlaVehicleGivenDvlaVehicleShouldCountWeightBasedOnGrossWeight()
+    {
+        $grossWeight = 3200;
+
+        $dvlaVehicle = VOF::dvlaVehicle();
+        $dvlaVehicle->setDesignedGrossWeight($grossWeight);
+        $dvlaVehicle->setUnladenWeight(1000);
+
+        $vehicleClassCode = VehicleClassCode::CLASS_5;
+        $vtrCapture = ArgCapture::create();
+
+        $this->returningOn($this->mockVehicleCatalog, VOF::countryOfRegistration(3), 'getCountryOfRegistrationByCode');
+        $this->returningOn(
+            $this->mockVehicleCatalog,
+            VOF::vehicleClass(VehicleClassId::CLASS_5, VehicleClassCode::CLASS_5),
             'getVehicleClassByCode'
         );
         $this->returningOn($this->mockDvlaVehicleRepository, $dvlaVehicle);
         $this->returningOn($this->mockVehicleCatalog, VOF::bodyType(), "findBodyTypeByCode");
         $this->returningOn(
-            $this->mockVehicleCatalog, VOF::weightSource(WeightSourceCode::UNLADEN), 'getWeightSourceByCode'
+            $this->mockVehicleCatalog, VOF::weightSource(WeightSourceCode::DGW), 'getWeightSourceByCode'
         );
 
         $colourCode = 'R';
@@ -320,14 +496,15 @@ class VehicleServiceTest extends AbstractServiceTestCase
         /** @var Vehicle $v */
         $v = $vtrCapture->get();
 
-        $this->assertEquals(1140, $v->getWeight());
-        $this->assertEquals(WeightSourceCode::UNLADEN, $v->getWeightSource()->getCode());
+        $this->assertEquals($grossWeight, $v->getWeight());
+        $this->assertEquals(WeightSourceCode::DGW, $v->getWeightSource()->getCode());
     }
 
     public function testCreateVtrAndV5CfromDvlaVehicleGivenDvlaVehicleShouldCreateLinkBetweenDvlaAndVtr()
     {
         $dvlaVehicle = VOF::dvlaVehicle();
         $vehicleClassCode = VehicleClassCode::CLASS_4;
+        $dvlaVehicle->setMassInServiceWeight(1000);
 
         $dvlaCapture = ArgCapture::create();
 
@@ -379,6 +556,7 @@ class VehicleServiceTest extends AbstractServiceTestCase
         $dvlaVehicle = VOF::dvlaVehicle();
         $dvlaVehicle->setV5DocumentNumber(null);
         $vehicleClassCode = VehicleClassCode::CLASS_4;
+        $dvlaVehicle->setMassInServiceWeight(1000);
 
         $vtrCapture = ArgCapture::create();
 
@@ -414,7 +592,7 @@ class VehicleServiceTest extends AbstractServiceTestCase
             ->will($this->returnValue($map));
 
         $this->returningOn(
-            $this->mockVehicleCatalog, VOF::weightSource(WeightSourceCode::DGW), 'getWeightSourceByCode'
+            $this->mockVehicleCatalog, VOF::weightSource(WeightSourceCode::MISW), 'getWeightSourceByCode'
         );
 
         $this->mockVehicleRepository
@@ -443,9 +621,9 @@ class VehicleServiceTest extends AbstractServiceTestCase
         $this->assertEquals($dvlaVehicle->getCylinderCapacity(), $v->getCylinderCapacity());
         $this->assertEquals($dvlaVehicle->getBodyType(), $v->getBodyType()->getCode());
         $this->assertEquals($dvlaVehicle->getFuelType(), $v->getFuelType()->getCode());
-        $this->assertEquals($dvlaVehicle->getDesignedGrossWeight(), $v->getWeight());
+        $this->assertEquals($dvlaVehicle->getMassInServiceWeight(), $v->getWeight());
         $this->assertEquals($dvlaVehicle->getDvlaVehicleId(), $v->getDvlaVehicleId());
-        $this->assertEquals(WeightSourceCode::DGW, $v->getWeightSource()->getCode());
+        $this->assertEquals(WeightSourceCode::MISW, $v->getWeightSource()->getCode());
     }
     /**
      * @dataProvider invalidDvlaBodyTypeCodeProvider
@@ -455,14 +633,15 @@ class VehicleServiceTest extends AbstractServiceTestCase
         $dvlaVehicle = VOF::dvlaVehicle();
         $dvlaVehicle->setV5DocumentNumber(null);
         $dvlaVehicle->setBodyType($invalidDvlaBodyType);
-        $vehicleClassCode = VehicleClassCode::CLASS_4;
+        $vehicleClassCode = VehicleClassCode::CLASS_7;
+        $dvlaVehicle->setDesignedGrossWeight(1000);
 
         $vtrCapture = ArgCapture::create();
 
         $this->returningOn($this->mockVehicleCatalog, VOF::countryOfRegistration(3), 'getCountryOfRegistrationByCode');
         $this->returningOn(
             $this->mockVehicleCatalog,
-            VOF::vehicleClass(VehicleClassId::CLASS_4, VehicleClassCode::CLASS_4),
+            VOF::vehicleClass(VehicleClassId::CLASS_7, VehicleClassCode::CLASS_7),
             'getVehicleClassByCode'
         );
         $this->returningOn($this->mockDvlaVehicleRepository, $dvlaVehicle);
