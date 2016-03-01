@@ -163,7 +163,11 @@ if (!isset($rfr)) {
 
             $callPromise = $.post($form.attr('action') , $form.serializeArray())
             $callPromise.done(function (data, textStatus, jqXHR) {
-
+                if(typeof data !== typeof {}) {
+                    location.reload();
+                    return;
+                }
+                
                 if (data.redirectUrl) {
                     location.href = data.redirectUrl + '#' + '<?php echo $this->escapeJs($rfr['type'] . '_' . $rfr['id']); ?>';
                     location.reload();
@@ -172,7 +176,7 @@ if (!isset($rfr)) {
                 }
             }).fail(function (jqXHR, textStatus, errorThrown) {
 
-                var errorCtx = { messages : ["Error occurred. Please try to resubmit the form"]};
+                var errorCtx = { messages : ["Please close the form and try again"]};
                 updateMessagesPane(errorCtx);
             });
         });
