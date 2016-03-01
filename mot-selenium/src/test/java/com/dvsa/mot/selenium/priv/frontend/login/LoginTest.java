@@ -52,9 +52,9 @@ public class LoginTest extends BaseTest {
                 dashboardPage.getManualNameForClass345And7());
         Assert.assertEquals("MOT testing guide",
                 dashboardPage.getManualTestingGuideName());
-        Assert.assertEquals("Checklist for class 1 and 2 vehicles (VT29)",
+        Assert.assertEquals("Checklist for class 1 and 2 vehicles (VT29M)",
                 dashboardPage.getResourcesNameChecklistForClass1And2());
-        Assert.assertEquals("Checklist for class 3, 4, 5, and 7 vehicles (VT29M)",
+        Assert.assertEquals("Checklist for class 3, 4, 5, and 7 vehicles (VT29)",
                 dashboardPage.getResourcesNameChecklistForClass345And7());
         Assert.assertEquals("In service exhaust emission standards for road vehicles: 18th edition",
                 dashboardPage.getResourcesNameEmissionStandards());
