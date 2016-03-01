@@ -8,6 +8,7 @@ use Core\Action\ActionResult;
 use Core\Action\RedirectToRoute;
 use Core\Action\RedirectToUrl;
 use Core\ViewModel\Sidebar\SidebarInterface;
+use Dvsa\Mot\Frontend\Plugin\AjaxResponsePlugin;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaFeature\Exception\FeatureNotAvailableException;
@@ -18,6 +19,9 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
 
+/**
+ * @method AjaxResponsePlugin ajaxResponse()
+ */
 abstract class AbstractDvsaActionController
     extends AbstractActionController
 {
