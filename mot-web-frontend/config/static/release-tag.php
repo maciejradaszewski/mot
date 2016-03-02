@@ -1,5 +1,7 @@
 <?php
 
+use Dvsa\Mot\Frontend\Version;
+
 return [
-    'release_tag' => '1.26.0',
+    'release_tag' => Version::VERSION,
 ];
