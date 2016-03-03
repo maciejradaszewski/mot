@@ -111,4 +111,10 @@ public class ConductMotTests extends BaseTest {
         //Then the retest is successful
         motUI.retest.verifyRetestIsSuccessful();
     }
+
+    @Test(groups = {"BVT", "Regression"})
+    public void printInspectionSheetSuccessfully() throws IOException {
+        TestOptionsPage page = vehicleReinspectionWorkflow().startMotTestAsATester(tester, vehicle);
+        page.clickPrintInspectionSheet();
+    }
 }

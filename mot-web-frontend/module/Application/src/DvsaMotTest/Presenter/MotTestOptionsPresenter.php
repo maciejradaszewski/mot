@@ -10,6 +10,7 @@ class MotTestOptionsPresenter
 {
     /** @var MotTestOptionsDto $motTestOptions */
     private $motTestOptions;
+    protected $motTestNumber;
 
     public function __construct(MotTestOptionsDto $motTestOptions)
     {
@@ -58,5 +59,23 @@ class MotTestOptionsPresenter
     public function isMotTest()
     {
         return !$this->isMotTestRetest();
+    }
+
+    /**
+     * @return bool
+     */
+    public function getMotTestNumber()
+    {
+        return $this->motTestNumber;
+    }
+
+    /**
+     * @param mixed $motTestNumber
+     * @return MotTestOptionsPresenter
+     */
+    public function setMotTestNumber($motTestNumber)
+    {
+        $this->motTestNumber = $motTestNumber;
+        return $this;
     }
 }

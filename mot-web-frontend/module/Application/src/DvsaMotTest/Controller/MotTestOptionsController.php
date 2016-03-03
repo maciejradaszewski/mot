@@ -4,11 +4,13 @@ namespace DvsaMotTest\Controller;
 
 use DvsaCommon\Dto\MotTesting\MotTestOptionsDto;
 use DvsaCommon\Enum\MotTestTypeCode;
+use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\UrlBuilder\UrlBuilder;
+use DvsaMotTest\Service\MotChecklistPdfService;
 use DvsaMotTest\Presenter\MotTestOptionsPresenter;
 use Zend\View\Model\ViewModel;
 
-class MotTestOptionsController extends AbstractDvsaMotTestController
+class MotTestOptionsController extends AbstractDvsaMotTestController implements AutoWireableInterface
 {
     const ROUTE_MOT_TEST_OPTIONS = 'mot-test/options';
 
@@ -20,6 +22,13 @@ class MotTestOptionsController extends AbstractDvsaMotTestController
     const PAGE_SUB_TITLE_TRAINING = 'Training test';
     const PAGE_SUB_TITLE_TEST = 'MOT testing';
 
+    protected $motChecklistPdfService;
+
+    public function __construct(MotChecklistPdfService $motChecklistPdfService)
+    {
+        $this->motChecklistPdfService = $motChecklistPdfService;
+    }
+
     public function motTestOptionsAction()
     {
         $motTestNumber = $this->params()->fromRoute('motTestNumber');
@@ -29,6 +38,7 @@ class MotTestOptionsController extends AbstractDvsaMotTestController
         );
 
         $presenter = new MotTestOptionsPresenter($dto);
+        $presenter->setMotTestNumber($motTestNumber);
 
         $pageTitle = self::PAGE_TITLE_TEST;
 
@@ -49,4 +59,20 @@ class MotTestOptionsController extends AbstractDvsaMotTestController
 
         return $viewModel;
     }
+
+    public function motChecklistAction()
+    {
+        $motTestNumber = $this->params()->fromRoute('motTestNumber');
+        $pdf = $this->motChecklistPdfService->getChecklistPdf($motTestNumber);
+        $this->getResponse()
+            ->setContent($pdf)
+            ->getHeaders()->addHeaders([
+                'Content-Length'        =>  strlen($pdf),
+                'Content-Type'          => 'application/pdf',
+                'Content-Disposition'   => 'filename=Mot-checklist_' . $motTestNumber . '.pdf',
+            ]);
+
+        return $this->getResponse();
+    }
+
 }
