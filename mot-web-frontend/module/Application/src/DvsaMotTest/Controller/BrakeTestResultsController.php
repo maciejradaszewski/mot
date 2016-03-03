@@ -22,6 +22,7 @@ use DvsaMotTest\Model\BrakeTestConfigurationClass3AndAboveHelper;
 use DvsaMotTest\Model\BrakeTestConfigurationHelperInterface;
 use DvsaMotTest\Model\BrakeTestResultClass1And2ViewModel;
 use DvsaMotTest\Model\BrakeTestResultClass3AndAboveViewModel;
+use DvsaCommon\Enum\BrakeTestTypeCode;
 use Zend\View\Model\ViewModel;
 use DvsaMotTest\View\Model\MotTestTitleModel;
 
@@ -90,6 +91,17 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
         $configHelper = $this->getConfigHelperService($isVehicleBikeType);
         $configHelper->setConfigDto($dto);
 
+        $preselectBrakeTestWeight = false;
+        if ($motTest->getVehicle()->getClassCode() !== VehicleClassCode::CLASS_1 && $motTest->getVehicle()->getClassCode() !== VehicleClassCode::CLASS_2) {
+            $hasCorrectServiceBrakeTestType = in_array($configHelper->getServiceBrakeTestType(),[BrakeTestTypeCode::PLATE, BrakeTestTypeCode::ROLLER]);
+            $hasCorrectParkingBrakeTestType = in_array($configHelper->getParkingBrakeTestType(),[BrakeTestTypeCode::PLATE, BrakeTestTypeCode::ROLLER]);
+
+
+            if ($configHelper->getVehicleWeight() && ($hasCorrectServiceBrakeTestType || $hasCorrectParkingBrakeTestType)) {
+                $preselectBrakeTestWeight = true;
+            }
+        }
+
         $viewModel = new ViewModel();
         $viewModel->setVariable('isMotContingency', $this->getContingencySessionManager()->isMotContingency());
         $viewModel->setVariable('brakeTestTypes', array_reverse($this->getCatalogService()->getBrakeTestTypes()));
@@ -98,6 +110,7 @@ class BrakeTestResultsController extends AbstractDvsaMotTestController
         $viewModel->setVariable('configHelper', $configHelper);
         $viewModel->setVariable('brakeTestResult', $brakeTestResult);
         $viewModel->setVariable('motTestTitleViewModel', (new MotTestTitleModel()));
+        $viewModel->setVariable('preselectBrakeTestWeight', $preselectBrakeTestWeight);
 
         if ($isVehicleBikeType) {
             $viewModel->setVariable('brakeTestType',

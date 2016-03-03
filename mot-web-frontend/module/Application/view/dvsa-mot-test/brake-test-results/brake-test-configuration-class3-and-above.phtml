@@ -98,14 +98,19 @@ $weightTypes = getWeightTypes($vehicleClass);
                     <legend class="form-label">Vehicle weight type</legend>
 
                     <div class="form-group form-group-related label-reg">
-                        <?php foreach ($weightTypes as $weightType => $weightTypeName): ?>
+                        <?php foreach ($weightTypes as $weightType => $weightTypeName):
+                            $hasBrakeTestWeight = false;
+                            if ($configHelper->getWeightType() === $weightType && $preselectBrakeTestWeight) {
+                                $hasBrakeTestWeight = true;
+                            }
+                            ?>
                             <label class="block-label label-clear" for="weightType-<?php echo $this->escapeHtml($weightType); ?>">
                                 <input type="radio"
                                        id="weightType-<?php echo $this->escapeHtml($weightType); ?>"
                                        name="weightType"
                                        value="<?php echo $this->escapeHtml($weightType); ?>"
                                        onchange="weightTypeChange(this.value)"
-                                    <?php if ($configHelper->getWeightType() === $weightType) {
+                                    <?php if ($hasBrakeTestWeight) {
                                         echo 'checked';
                                     } ?>
                                  />
