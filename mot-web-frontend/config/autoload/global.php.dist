@@ -151,4 +151,15 @@ return [
     ],
     //how many days before password expires notifications are going to be sent
     'password_expiry_notification_days' => [7, 3, 2, 1],
+    'pdf' => [
+        'mot_checklist' => [
+            'templates' => [
+                'motorbike' => '/opt/dvsa/mot-web-frontend/pdf/mot_checklist/templates/motobike.pdf',
+                'car' => '/opt/dvsa/mot-web-frontend/pdf/mot_checklist/templates/car.pdf',
+            ],
+            'fonts' => [
+                'monospaced' => '/opt/dvsa/mot-web-frontend/pdf/mot_checklist/fonts/courier.ttf',
+            ],
+        ],
+    ],
 ];

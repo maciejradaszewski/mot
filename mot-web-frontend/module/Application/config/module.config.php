@@ -12,6 +12,7 @@ use Application\View\HelperFactory\GetSiteCountFactory;
 use Application\View\HelperFactory\GetSitesFactory;
 use Application\View\HelperFactory\IdentityHelperFactory;
 use Application\View\HelperFactory\LocationSelectorFactory;
+use DvsaCommon\Factory\AutoWire\AutoWireFactory;
 use Application\View\HelperFactory\ManualsAndGuidesFactory;
 use DvsaMotEnforcement\Controller as Enforcement;
 use DvsaMotEnforcement\Controller\MotTestSearchController as EnforcementMotTestSearchController;
@@ -19,6 +20,7 @@ use DvsaMotEnforcementApi\Controller as Ajax;
 use DvsaMotTest\Controller as MotTest;
 use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaMotEnforcement\Controller\MotTestController as EnforcementMotTestController;
+use DvsaMotTest\Factory\Service\MotChecklistPdfServiceFactory;
 use DvsaMotTest\Form\Validator\SpecialNoticePublishDateValidator;
 use Application\View\Helper\CamelCaseToReadable;
 use Application\View\Helper\CamelCaseToFirstUppercaseReadable;
@@ -26,6 +28,7 @@ use Dvsa\Mot\Frontend\Plugin\AjaxResponsePlugin;
 use DvsaCommon\Constants\MotTestNumberConstraint;
 use DvsaMotTest\NewVehicle\Controller\CreateVehicleController;
 use DvsaMotTest\Controller\MotTestCertificatesController;
+use DvsaMotTest\Service\MotChecklistPdfService;
 
 return [
     'controllers' => require __DIR__ . '/controllers.config.php',
@@ -426,6 +429,19 @@ return [
                             'defaults' => [
                                 'controller' => MotTest\MotTestOptionsController::class,
                                 'action'     => 'motTestOptions',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'mot-checklist' => [
+                                'type'    => 'segment',
+                                'options' => [
+                                    'route'    => '/checklist',
+                                    'defaults' => [
+                                        'controller' => MotTest\MotTestOptionsController::class,
+                                        'action'     => 'motChecklist',
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -950,11 +966,15 @@ return [
     ],
     'service_manager'            => [
         'abstract_factories' => [
+            AutoWireFactory::class,
             \Zend\Cache\Service\StorageCacheAbstractServiceFactory::class,
             \Zend\Log\LoggerAbstractServiceFactory::class,
         ],
         'aliases'            => [
             'translator' => 'MvcTranslator',
+        ],
+        'factories' => [
+               MotChecklistPdfService::class => MotChecklistPdfServiceFactory::class
         ],
     ],
     'session_namespace_prefixes' => [

@@ -40,4 +40,5 @@ public abstract class OptionsPage extends Page {
 
         return new HomePage(driver);
     }
+
 }

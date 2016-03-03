@@ -2,6 +2,7 @@
 
 use Application\Controller\FormsController;
 use Application\Controller\ReportController;
+use DvsaCommon\Factory\AutoWire\AutoWireFactory;
 use DvsaMotEnforcement\Controller\MotTestController as EnforcementMotTestController;
 use DvsaMotEnforcement\Controller\MotTestSearchController as EnforcementMotTestSearchController;
 use DvsaMotEnforcement\Controller\ReinspectionReportController;
@@ -39,7 +40,6 @@ return [
         ReportController::class             => ReportController::class,
         LocationSelectController::class     => LocationSelectController::class,
         MotTestController::class            => MotTestController::class,
-        MotTestOptionsController::class     => MotTestOptionsController::class,
         VehicleDictionaryController::class  => VehicleDictionaryController::class,
         BrakeTestResultsController::class   => BrakeTestResultsController::class,
         TestItemSelectorController::class   => TestItemSelectorController::class,
