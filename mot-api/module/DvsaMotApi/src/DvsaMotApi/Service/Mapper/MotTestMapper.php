@@ -274,6 +274,17 @@ class MotTestMapper
             $siteJson['authorisedExaminer'] = ($ae ? $ae->getId() : null);
 
             unset($siteJson['roles']);
+
+            $defaultServiceBrakeTestClass3AndAbove =  $site->getDefaultServiceBrakeTestClass3AndAbove();
+            if ($defaultServiceBrakeTestClass3AndAbove) {
+                $siteJson['defaultServiceBrakeTestClass3AndAbove'] = $defaultServiceBrakeTestClass3AndAbove->getCode();
+            }
+
+            $defaultParkingBrakeTestClass3AndAbove =  $site->getDefaultParkingBrakeTestClass3AndAbove();
+            if ($defaultServiceBrakeTestClass3AndAbove) {
+                $siteJson['defaultParkingBrakeTestClass3AndAbove'] = $defaultParkingBrakeTestClass3AndAbove->getCode();
+            }
+
             $result->setVehicleTestingStation($siteJson);
         }
 

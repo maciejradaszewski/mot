@@ -411,10 +411,13 @@ class MotTestRepository extends AbstractMutableRepository
     public function getMotTestByNumber($motTestNumber)
     {
         $result = $this->createQueryBuilder('mt')
-            ->select('mt, rfr')
+            ->addSelect(['rfr', 'vts', 'dsbtc3a', 'dpbtc3a'])
             ->innerJoin('mt.motTestType', 'tt')
             ->innerJoin('mt.status', 's')
             ->leftJoin('mt.motTestReasonForRejections', 'rfr')
+            ->leftJoin('mt.vehicleTestingStation', 'vts')
+            ->leftJoin('vts.defaultServiceBrakeTestClass3AndAbove', 'dsbtc3a')
+            ->leftJoin('vts.defaultParkingBrakeTestClass3AndAbove', 'dpbtc3a')
             ->where('mt.number = :number')
             ->setParameters(['number' => $motTestNumber])
             ->getQuery()->getOneOrNullResult();

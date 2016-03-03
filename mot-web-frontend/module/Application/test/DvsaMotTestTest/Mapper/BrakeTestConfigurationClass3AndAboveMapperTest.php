@@ -8,6 +8,7 @@ use DvsaCommon\Dto\Vehicle\VehicleDto;
 use DvsaCommon\Dto\VehicleClassification\VehicleClassDto;
 use DvsaCommon\Enum\BrakeTestTypeCode;
 use DvsaCommon\Enum\VehicleClassCode;
+use DvsaCommon\Enum\WeightSourceCode;
 use DvsaMotTest\Mapper\BrakeTestConfigurationClass3AndAboveMapper;
 use PHPUnit_Framework_TestCase;
 
@@ -102,7 +103,7 @@ class BrakeTestConfigurationClass3AndAboveMapperTest extends PHPUnit_Framework_T
             'serviceBrake1TestType' => BrakeTestTypeCode::ROLLER,
             'positionOfSingleWheel' => BrakeTestConfigurationClass3AndAboveMapper::LOCATION_FRONT,
             'parkingBrakeTestType' => BrakeTestTypeCode::ROLLER,
-            'weightType' => 'vsi',
+            'weightType' => WeightSourceCode::VSI,
             'vehicleWeight' => '1400',
             'weightIsUnladen' => '1',
             'brakeLineType' => BrakeTestConfigurationClass3AndAboveMapper::BRAKE_LINE_TYPE_SINGLE,
@@ -123,7 +124,7 @@ class BrakeTestConfigurationClass3AndAboveMapperTest extends PHPUnit_Framework_T
             ->setServiceBrake1TestType(BrakeTestTypeCode::ROLLER)
             ->setServiceBrake2TestType(null)
             ->setParkingBrakeTestType(BrakeTestTypeCode::ROLLER)
-            ->setWeightType('vsi')
+            ->setWeightType(WeightSourceCode::VSI)
             ->setVehicleWeight('1400')
             ->setWeightIsUnladen(true)
             ->setServiceBrakeIsSingleLine(true)
@@ -144,7 +145,7 @@ class BrakeTestConfigurationClass3AndAboveMapperTest extends PHPUnit_Framework_T
             ->setServiceBrake1TestType(BrakeTestTypeCode::ROLLER)
             ->setServiceBrake2TestType(null)
             ->setParkingBrakeTestType(BrakeTestTypeCode::ROLLER)
-            ->setWeightType('vsi')
+            ->setWeightType(WeightSourceCode::VSI)
             ->setWeightIsUnladen(false)
             ->setServiceBrakeIsSingleLine(false)
             ->setIsCommercialVehicle(false)

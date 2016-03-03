@@ -7,6 +7,7 @@ use DvsaCommon\Dto\BrakeTest\BrakeTestConfigurationDtoInterface;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Enum\BrakeTestTypeCode;
 use DvsaCommon\Enum\VehicleClassCode;
+use DvsaCommon\Enum\WeightSourceCode;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommon\Utility\TypeCheck;
 
@@ -61,7 +62,7 @@ class BrakeTestConfigurationClass3AndAboveMapper implements BrakeTestConfigurati
         $dto->setServiceBrake1TestType(BrakeTestTypeCode::ROLLER);
         $dto->setServiceBrake2TestType(null);
         $dto->setParkingBrakeTestType(BrakeTestTypeCode::ROLLER);
-        $dto->setWeightType('vsi');
+        $dto->setWeightType(WeightSourceCode::VSI);
         $dto->setWeightIsUnladen(false);
         $dto->setServiceBrakeIsSingleLine(false);
         $dto->setIsCommercialVehicle(false);
