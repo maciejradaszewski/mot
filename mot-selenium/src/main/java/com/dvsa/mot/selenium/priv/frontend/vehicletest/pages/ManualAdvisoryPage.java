@@ -100,11 +100,6 @@ public class ManualAdvisoryPage extends BasePage {
         return this;
     }
 
-    public ReasonForRejectionPage addManualAdvisory() {
-        addButton.click();
-        return new ReasonForRejectionPage(driver);
-    }
-
     public ReasonForRejectionPage addManualAdvisoryExpectingError() {
         addButton.click();
         waitForTextToBePresentInElement(errorMessages,
@@ -135,7 +130,7 @@ public class ManualAdvisoryPage extends BasePage {
         ReasonForRejectionPage reasonForRejectionPage = new ReasonForRejectionPage(driver);
         int previousCount = reasonForRejectionPage.getPreviousRfrCount();
         enterManualAdvisory(manualAdvisory);
-        addManualAdvisory();
+        addButton.click();
         reasonForRejectionPage.waitForRfrUpdate(previousCount);
         return new ReasonForRejectionPage(driver);
     }
