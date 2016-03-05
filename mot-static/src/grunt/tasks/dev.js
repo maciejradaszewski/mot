@@ -46,6 +46,12 @@ module.exports = function (grunt, config) {
                 'apache:restart:all'
             ]
         );
+        grunt.registerTask('puppet_apply', 'Runs puppet apply for all VMs',
+        [
+            'shell:expand_vagrant_puppet',
+            'sshexec:papply_dev',
+            'sshexec:papply_dev2'
+        ]);
 
         // Environment Maintenance Tasks
         grunt.registerTask('env:mot:updatecheck', 'Disables the DVSA Logger', [

@@ -23,6 +23,9 @@ module.exports = function(grunt, config) {
         },
         config_reload: {
             command: './mot-static/src/scripts/reload_config_files_from_dist.sh'
+        },
+        expand_vagrant_puppet: {
+            command: 'cd $WORKSPACE/../puppet-code && rm -Rf work && bash build vagrant'
         }
     });
 };
