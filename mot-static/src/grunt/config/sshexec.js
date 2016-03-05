@@ -1,4 +1,4 @@
-module.exports = function(grunt, config) {
+module.exports = function (grunt, config) {
     if (config.environment === config.ENV_DEVELOPMENT) {
 
         function handleCoverageOptions(coverageOptions, coverageType, coveragePath) {
@@ -25,14 +25,14 @@ module.exports = function(grunt, config) {
 
         var dev_ssh_options = {
             host: '<%= dev_config.host %>',
-            username:'<%= dev_config.username %>',
+            username: '<%= dev_config.username %>',
             privateKey: '<%= dev_config.privateKey %>',
             port: '<%= dev_config.port %>',
         };
 
         var dev2_ssh_options = {
             host: '<%= dev2_config.host %>',
-            username:'<%= dev2_config.username %>',
+            username: '<%= dev2_config.username %>',
             privateKey: '<%= dev2_config.privateKey %>',
             port: '<%= dev2_config.port %>',
         };
@@ -74,85 +74,99 @@ module.exports = function(grunt, config) {
 
             apache_clear_php_sessions_dev: {
                 options: dev_ssh_options,
-                command:'sudo service <%= service_config.httpdServiceName %> stop; sudo rm -f <%= vagrant_config.phpRootDir %>/var/lib/php/session/sess_*; sudo service <%= service_config.httpdServiceName %> start;'
+                command: 'sudo service <%= service_config.httpdServiceName %> stop; sudo rm -f <%= vagrant_config.phpRootDir %>/var/lib/php/session/sess_*; sudo service <%= service_config.httpdServiceName %> start;'
             },
             apache_clear_php_sessions_dev2: {
                 options: dev2_ssh_options,
-                command:'sudo service <%= service_config.httpdServiceName %> stop; sudo rm -f <%= vagrant_config.phpRootDir %>/var/lib/php/session/sess_*; sudo service <%= service_config.httpdServiceName %> start;'
+                command: 'sudo service <%= service_config.httpdServiceName %> stop; sudo rm -f <%= vagrant_config.phpRootDir %>/var/lib/php/session/sess_*; sudo service <%= service_config.httpdServiceName %> start;'
             },
             apache_restart: {
-                command: function() {
+                command: function () {
                     return 'sudo service <%= service_config.httpdServiceName %> restart';
                 }
             },
             apache_restart_dev: {
                 options: dev_ssh_options,
-                command: function() {
+                command: function () {
                     return 'sudo service <%= service_config.httpdServiceName %> restart';
                 }
             },
             apache_restart_dev2: {
                 options: dev2_ssh_options,
-                command: function() {
+                command: function () {
                     return 'sudo service <%= service_config.httpdServiceName %> restart';
                 }
             },
+            papply_dev: {
+                options: dev_ssh_options,
+                command: [
+                    'sudo cp /tmp/hiera/hiera.yaml /etc/puppetlabs/code/hiera.yaml',
+                    'sudo /vagrant/scripts/papply'
+                ]
+            },
+            papply_dev2: {
+                options: dev2_ssh_options,
+                command: [
+                    'sudo cp /tmp/hiera/hiera.yaml /etc/puppetlabs/code/hiera.yaml',
+                    'sudo /vagrant/scripts/papply'
+                ]
+            },
             fix_db_configs: {
-                command: function() {
-                        return [
-                            //temp. fix for testsupport config - remove if https://gitlab.motdev.org.uk/webops/mot-vagrant/issues/45 is resolved
-                            'file=<%= vagrant_config.workspace %>/mot-testsupport/config/autoload/global.php',
-                            'if [ ! -f ${file} ]; then ' +
-                                'cp ${file}.dist ${file}; ' +
-                            'fi',
-                            "sed -i 's/localhost/mysql/g' ${file}",
+                command: function () {
+                    return [
+                        //temp. fix for testsupport config - remove if https://gitlab.motdev.org.uk/webops/mot-vagrant/issues/45 is resolved
+                        'file=<%= vagrant_config.workspace %>/mot-testsupport/config/autoload/global.php',
+                        'if [ ! -f ${file} ]; then ' +
+                        'cp ${file}.dist ${file}; ' +
+                        'fi',
+                        "sed -i 's/localhost/mysql/g' ${file}",
 
-                            // temp fix for proxy generation - remove if https://gitlab.motdev.org.uk/webops/mot-vagrant/issues/45 is resolved
-                            'file=<%= vagrant_config.workspace %>/mot-api/config/autoload/doctrine.development.php',
-                            'if [ ! -f ${file} ]; then ' +
-                                'cp ${file}.dist ${file}; ' +
-                            'fi',
-                            "sed -i 's/localhost/mysql/g' ${file}",
-                        ].join(' && ');
+                        // temp fix for proxy generation - remove if https://gitlab.motdev.org.uk/webops/mot-vagrant/issues/45 is resolved
+                        'file=<%= vagrant_config.workspace %>/mot-api/config/autoload/doctrine.development.php',
+                        'if [ ! -f ${file} ]; then ' +
+                        'cp ${file}.dist ${file}; ' +
+                        'fi',
+                        "sed -i 's/localhost/mysql/g' ${file}",
+                    ].join(' && ');
                 }
             },
 
             reset_database: {
                 options: dev_ssh_options,
-                command: function() {
+                command: function () {
                     return 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && sudo ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> N && echo "DB Reset"';
                 }
             },
             reset_database_no_hist: {
                 options: dev_ssh_options,
-                command: function() {
+                command: function () {
                     return 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && sudo ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> N N && echo "DB Reset without *_hist tables"';
-                    }
+                }
             },
-            dump_database : {
+            dump_database: {
                 options: dev_ssh_options,
-                command: function() {
+                command: function () {
                     return 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db/dev/bin && php ./dump_db.php && mysqldump -d --skip-add-drop-table -h <%= mysql_config.host %> -u <%= mysql_config.user %> -p<%= mysql_config.password %> <%= mysql_config.database %> > $dev_workspace/mot-api/db/dev/schema/create_dev_db_schema.sql && echo "DB dump"';
                 }
             },
             reset_database_full: {
                 options: dev_ssh_options,
-                command: function() {
-                    return  'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && sudo ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> Y && echo "DB Full Reset"';
-                    }
+                command: function () {
+                    return 'export dev_workspace="<%= vagrant_config.workspace %>"; cd <%= vagrant_config.workspace %>/mot-api/db && sudo ./reset_db_with_test_data.sh -f <%= mysql_config.user %> <%= mysql_config.password %> <%= mysql_config.host %> <%= mysql_config.database %> <%= mysql_config.grantuser %> Y && echo "DB Full Reset"';
+                }
             },
             mysql_proc_fix: {
                 options: dev_ssh_options,
-                command: function() {
+                command: function () {
                     return 'sudo mysql -u<%= mysql_config.user %> -ppassword -e "use mysql; repair table mysql.proc;"';
-                    }
+                }
             },
 
             phpunit: {
                 command: 'export dev_workspace="<%= vagrant_config.workspace %>"; <%= vagrant_config.workspace %>/Jenkins_Scripts/run_unit_tests.sh'
             },
             test_php_frontend: {
-                command: function() {
+                command: function () {
                     var coverageOptions = grunt.config('sshexec.options.coverage.frontend');
 
                     // No coverage options - bail out
@@ -168,7 +182,7 @@ module.exports = function(grunt, config) {
                 }
             },
             test_php_api: {
-                command: function() {
+                command: function () {
                     var coverageOptions = grunt.config('sshexec.options.coverage.api');
 
                     // No coverage options - bail out
@@ -184,11 +198,11 @@ module.exports = function(grunt, config) {
                 }
             },
             test_php_api_db_verification: {
-                command: function() {
+                command: function () {
                     var coverageOptions = grunt.config('sshexec.options.coverage.db_verification');
 
                     // No coverage options - bail out
-                    if(!grunt.option('coverage')) {
+                    if (!grunt.option('coverage')) {
                         return coverageOptions.baseCmd;
                     }
 
@@ -200,11 +214,11 @@ module.exports = function(grunt, config) {
                 }
             },
             test_php_common: {
-                command: function() {
+                command: function () {
                     var coverageOptions = grunt.config('sshexec.options.coverage.common');
 
                     // No coverage options - bail out
-                    if(!grunt.option('coverage')) {
+                    if (!grunt.option('coverage')) {
                         return coverageOptions.baseCmd;
                     }
 
@@ -216,17 +230,17 @@ module.exports = function(grunt, config) {
                 }
             },
             test_behat: {
-                command: function() {
+                command: function () {
                     var cmd = 'cd <%= vagrant_config.workspace %>/mot-behat && bin/behat';
 
-                    if(grunt.option('feature')) {
+                    if (grunt.option('feature')) {
                         cmd += ' "' + grunt.option('feature') + '"';
                     }
-                    if(grunt.option('format')) {
-                        cmd += ' --format="' + grunt.option('format') +  '"'
+                    if (grunt.option('format')) {
+                        cmd += ' --format="' + grunt.option('format') + '"'
                     }
-                    if(grunt.option('tags')) {
-                        cmd += ' --tags="' + grunt.option('tags') +  '"'
+                    if (grunt.option('tags')) {
+                        cmd += ' --tags="' + grunt.option('tags') + '"'
                     }
 
                     return cmd + ' -vv';
@@ -282,7 +296,7 @@ module.exports = function(grunt, config) {
             },
             trace_web_log: {
                 options: dev_ssh_options,
-                command:  'sudo tail -f /var/log/dvsa/mot-webfrontend.log'
+                command: 'sudo tail -f /var/log/dvsa/mot-webfrontend.log'
             },
             password_policy_show: {
                 command: 'cd /etc/openam/opends/bin/ && sudo ./dsconfig  get-password-policy-prop  \
@@ -419,7 +433,7 @@ module.exports = function(grunt, config) {
                     host: '<%= jasper_config.host %>',
                     username: '<%= jasper_config.username %>',
                     privateKey: '<%= jasper_config.privateKey %>'
-            },
+                },
                 command: 'sudo /opt/jasperreports/ctlscript.sh restart'
             },
             create_dvsa_logger_db: {
