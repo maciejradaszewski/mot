@@ -8,7 +8,7 @@ import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.service.FeaturesService;
 import uk.gov.dvsa.helper.RandomDataGenerator;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.helpdesk.HelpDeskUserProfilePage;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.io.IOException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class HelpDeskTests extends BaseTest {
+public class HelpDeskTests extends DslTest {
 
     private User tester;
     private Site testSite;

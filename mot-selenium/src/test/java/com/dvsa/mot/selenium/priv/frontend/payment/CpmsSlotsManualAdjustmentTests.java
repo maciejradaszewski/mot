@@ -1,18 +1,14 @@
 package com.dvsa.mot.selenium.priv.frontend.payment;
 
-import com.dvsa.mot.selenium.datasource.Assertion;
 import com.dvsa.mot.selenium.datasource.ChequePayment;
 import com.dvsa.mot.selenium.datasource.Login;
-import com.dvsa.mot.selenium.datasource.Payments;
 import com.dvsa.mot.selenium.framework.BaseTest;
 import com.dvsa.mot.selenium.framework.api.FinanceUserCreationApi;
 import com.dvsa.mot.selenium.framework.api.authorisedexaminer.AeDetails;
 import com.dvsa.mot.selenium.framework.api.authorisedexaminer.AeService;
 import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.DetailsOfAuthorisedExaminerPage;
 import com.dvsa.mot.selenium.priv.frontend.enforcement.pages.SearchForAePage;
-import com.dvsa.mot.selenium.priv.frontend.payment.pages.AdjustmentConfirmationPage;
 import com.dvsa.mot.selenium.priv.frontend.payment.pages.ManualAdjustmentSuccessPage;
-
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -53,7 +49,7 @@ public class CpmsSlotsManualAdjustmentTests extends BaseTest {
                 manualAdjustmentSuccessPage.getAdjustmentStatusMessage(), is("Transaction has been adjusted"));
     }
     
-    @Test(groups = {"Regression", "SPMS-80"})
+    @Test(groups = {"CPMS", "SPMS-80"})
     public void manualAdjustmentOfTransactionForIncorrectAmount() {
         String aeRef = createAeAndReturnAeReference("ChequePayment");
         Login financeUserLogin = createFinanceUserReturnFinanceUserLogin();

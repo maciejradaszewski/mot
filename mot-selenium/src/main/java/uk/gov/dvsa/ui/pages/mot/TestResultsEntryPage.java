@@ -89,23 +89,9 @@ public class TestResultsEntryPage extends Page {
         return this;
     }
 
-    public TestSummaryPage addDefaultRfrPrsAndManualAdvisory(){
+    public TestItemSelector clickAddFRFButton() {
         AddRFRButton.click();
-
-        ReasonForRejectionPage rejectionPage = new ReasonForRejectionPage(driver);
-        rejectionPage
-                .addManualAdvisory()
-                .addPRS()
-                .clickDone();
-
-        reviewTestButton.click();
-
-        return new TestSummaryPage(driver);
-    }
-
-    public ReasonForRejectionPage clickAddFRFButton() {
-        AddRFRButton.click();
-        return new ReasonForRejectionPage(driver);
+        return new TestItemSelector(driver);
     }
 
     public TestSummaryPage clickReviewTestButton(){

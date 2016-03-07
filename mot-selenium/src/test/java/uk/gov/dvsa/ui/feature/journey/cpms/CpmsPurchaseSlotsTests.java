@@ -4,7 +4,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AedmAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.AuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.FinanceAuthorisedExaminerViewPage;
@@ -19,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
-public class CpmsPurchaseSlotsTests extends BaseTest {
+public class CpmsPurchaseSlotsTests extends DslTest {
 
     @Test (groups = {"CPMS"}, description = "SPMS-37 Purachase slots by card successfully", dataProvider = "createAedmAndAe")
     public void purchaseSlotsByCardSuccessfully(User aedm, AeDetails aeDetails) throws IOException, URISyntaxException {

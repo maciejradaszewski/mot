@@ -4,7 +4,7 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.helper.ContactDetailsHelper;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.AreaOfficerAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.ConfirmNewAeDetailsPage;
 import uk.gov.dvsa.ui.pages.CreateAePage;
@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class AuthorisedExaminerTests extends BaseTest {
+public class AuthorisedExaminerTests extends DslTest {
 
     @Test(groups = {"FeatureToggleCreateAe"}) public void createAuthorisedExaminerSuccessfully()
             throws IOException, URISyntaxException {

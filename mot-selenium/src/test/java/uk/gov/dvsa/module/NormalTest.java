@@ -6,13 +6,14 @@ import uk.gov.dvsa.data.UserData;
 import uk.gov.dvsa.data.VehicleData;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.CancelTestReason;
+import uk.gov.dvsa.domain.model.mot.ReasonForVehicleRefusal;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.AssertionHelper;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
 import uk.gov.dvsa.ui.pages.mot.*;
-import uk.gov.dvsa.domain.model.mot.ReasonForVehicleRefusal;
+import uk.gov.dvsa.ui.pages.mot.modal.ManualAdvisoryModalPage;
 import uk.gov.dvsa.ui.pages.vehicleinformation.CreateNewVehicleRecordConfirmPage;
 import uk.gov.dvsa.ui.pages.vehicleinformation.CreateNewVehicleRecordIdentificationPage;
 import uk.gov.dvsa.ui.pages.vehicleinformation.CreateNewVehicleRecordSpecificationPage;
@@ -160,5 +161,10 @@ public class NormalTest {
 
     public boolean isTextPresent(String actual) throws NoSuchElementException {
         return AssertionHelper.compareText(expectedText, actual);
+    }
+
+    public String addManualAdvisoryWithProfaneDescription(String description) {
+        ManualAdvisoryModalPage advisoryModalPage = testResultsEntryPage.clickAddFRFButton().addManualAdvisory();
+        return advisoryModalPage.addAdvisoryWithProfaneDescription(description).getValidationMessage();
     }
 }

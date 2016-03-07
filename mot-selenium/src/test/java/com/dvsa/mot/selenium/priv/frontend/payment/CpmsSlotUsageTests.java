@@ -41,7 +41,7 @@ public class CpmsSlotUsageTests extends BaseTest {
         return aedmLogin;
     }
 
-    @Test(groups = {"Regression", "SPMS-119"}) public void slotUsageReportTest() {
+    @Test(groups = {"CPMS", "SPMS-119"}) public void slotUsageReportTest() {
 
         Login aedmLogin = createMotTestsAndReturnAedmLogin();
         OrganisationSlotsUsagePage organisationSlotsUsagePage =
@@ -96,7 +96,7 @@ public class CpmsSlotUsageTests extends BaseTest {
                 slotsUsedLastYearPage.isDownloadFileOptionsDisplayed(), is(true));
     }
 
-    @Test(groups = {"Regression", "SPMS-119"}) public void vtsSlotUsageReportTest() {
+    @Test(groups = {"CPMS", "SPMS-119"}) public void vtsSlotUsageReportTest() {
 
         Login aedmLogin = createMotTestsAndReturnAedmLogin();
         VehicleTestStationSlotUsagePage vehicleTestStationSlotUsagePage =

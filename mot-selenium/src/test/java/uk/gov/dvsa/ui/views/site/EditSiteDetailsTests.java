@@ -8,7 +8,7 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.site.Status;
 import uk.gov.dvsa.domain.model.site.Type;
 import uk.gov.dvsa.domain.model.vehicle.VehicleClass;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.vts.ChangeTestingFacilitiesPage;
 import uk.gov.dvsa.ui.pages.vts.ConfirmChangeDetails.ConfirmChangeDetailsClassesPage;
 import uk.gov.dvsa.ui.pages.vts.ConfirmTestFacilitiesPage;
@@ -21,7 +21,7 @@ import java.util.Random;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class EditSiteDetailsTests extends BaseTest {
+public class EditSiteDetailsTests extends DslTest {
 
     private String onePersonTestLane;
     private String twoPersonTestLane;

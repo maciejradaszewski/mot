@@ -4,7 +4,7 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.PersonDetails;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.AreaOfficerAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.Aep.CreateAepPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.Aep.ReviewCreateAepPage;
@@ -17,7 +17,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-public class AuthorisedExaminerPrincipalsTests extends BaseTest {
+public class AuthorisedExaminerPrincipalsTests extends DslTest {
 
     private AeDetails ae = null;
     private PersonDetails aep = null;

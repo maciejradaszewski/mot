@@ -2,7 +2,7 @@ package uk.gov.dvsa.ui.views;
 
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.events.HistoryType;
 
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class EventHistoryViewTests extends BaseTest {
+public class EventHistoryViewTests extends DslTest {
 
     //TODO return test to Regression suite after stabilising
     @Test(groups = {"VM-5153", "VM-5154", "Unstable"})

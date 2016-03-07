@@ -6,7 +6,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.*;
 import uk.gov.dvsa.helper.ContactDetailsHelper;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.AreaOfficerAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.ConfirmChangeDetails.ConfirmChangeAECorrespondenceAddressPage;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.ConfirmChangeDetails.ConfirmChangeAERegisteredOfficeAddressPage;
@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class AEChangeDetailsTests extends BaseTest {
+public class AEChangeDetailsTests extends DslTest {
 
     private AeDetails aeDetails;
     private User areaOfficeUser;

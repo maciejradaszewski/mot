@@ -2,7 +2,6 @@ package uk.gov.dvsa.ui.views;
 
 import org.joda.time.DateTime;
 import org.openqa.selenium.NoSuchElementException;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
@@ -10,7 +9,7 @@ import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.VehicleSearchPage;
 
 import java.io.IOException;
@@ -20,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
-public class VehicleSearchPageViewTests extends BaseTest {
+public class VehicleSearchPageViewTests extends DslTest {
 
     private User tester;
     private Vehicle vehicle;

@@ -54,7 +54,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
         return chequePaymentOrderConfirmedPage;
     }
 
-    @Test(groups = {"Regression", "SPMS-37"})
+    @Test(groups = {"CPMS", "SPMS-37"})
     public void purchaseSlotsAuthorizedExaminerPageVerification() {
         Login aedmLogin = createAedmAndReturnAedmLogin("AePageVerification");
         AuthorisedExaminerOverviewPage authorisedExaminerOverviewPage =
@@ -70,7 +70,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 authorisedExaminerOverviewPage.isSlotsAdjustmentLinkVisible(), is(false));
     }
 
-    @Test(groups = {"Regression", "SPMS-88"}) public void purchaseSlotsUserCancelsPaymentTest() {
+    @Test(groups = {"CPMS", "SPMS-88"}) public void purchaseSlotsUserCancelsPaymentTest() {
         Login aedmLogin = createAedmAndReturnAedmLogin("UserCancelsPayment");
         BuySlotsPage buySlotsPage = AuthorisedExaminerOverviewPage
                 .navigateHereFromLoginPage(driver, aedmLogin)
@@ -83,7 +83,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 buySlotsPage.isCalculateCostButtonVisible(), is(true));
     }
 
-    @Test(groups = {"Regression", "SPMS-47"}) public void transactionHistoryVerificationTest() {
+    @Test(groups = {"CPMS", "SPMS-47"}) public void transactionHistoryVerificationTest() {
         PaymentConfirmationPage paymentConfirmationPage = loginAsAedmAndPurchaseSlotsByCard();
 
         TransactionHistoryPage transactionHistoryPage =
@@ -138,7 +138,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 lastYearTransactionsHistory.isDownloadFileOptionsDisplayed(), is(true));
     }
 
-    @Test(groups = {"Regression", "SPMS-47"}) public void paymentInvoiceDetailsVerificationTest() {
+    @Test(groups = {"CPMS", "SPMS-47"}) public void paymentInvoiceDetailsVerificationTest() {
         PaymentDetailsPage paymentDetailsPage = loginAsAedmAndPurchaseSlotsByCard()
                 .clickViewPurchaseDetailsLink();       
 
@@ -154,7 +154,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 is(true));
     }
 
-    @Test(groups = {"Regression", "SPMS-120"})
+    @Test(groups = {"CPMS", "SPMS-120"})
     public void financeUserPurchaseSlotsByChequeSuccessfulJourney() {
         ChequePaymentOrderConfirmedPage chequePaymentOrderConfirmedPage =
                 loginAsFinanceUserAndPurchaseSlotsByCheque();
@@ -169,7 +169,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 is("£" + ChequePayment.VALID_CHEQUE_PAYMENTS.cost));
     }
 
-    @Test(groups = {"Regression", "SPMS-120"})
+    @Test(groups = {"CPMS", "SPMS-120"})
     public void financeUserPurchaseSlotsByInvalidDateCheque() {
         String aeRef = createAeAndReturnAeReference("ChequePayment");
         Login financeUserLogin = createFinanceUserReturnFinanceUserLogin();
@@ -184,7 +184,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 enterChequeDetailsPage.isValidationErrorMessageDisplayed(), is(true));
     }
 
-    @Test(groups = {"Regression", "SPMS-199"})
+    @Test(groups = {"CPMS", "SPMS-199"})
     public void financeUserSearchForPaymentByPaymentReference() {
         Login financeUserLogin = createFinanceUserReturnFinanceUserLogin();
         PaymentDetailsPage paymentDetailsPage = loginAsAedmAndPurchaseSlotsByCard()
@@ -207,7 +207,7 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
                 searchedPaymentDetailsPage.getOrderDetailsText(), is("Order details"));
     }
 
-    @Test(groups = {"Regression", "SPMS-77"})
+    @Test(groups = {"CPMS", "SPMS-77"})
     public void financeUserSearchForPaymentByInvoiceReference() {
         Login financeUserLogin = createFinanceUserReturnFinanceUserLogin();
         PaymentDetailsPage paymentDetailsPage = loginAsAedmAndPurchaseSlotsByCard()
@@ -229,5 +229,4 @@ public class CpmsPurchaseSlotsTests extends BaseTest {
         assertThat("Verifying OrderDetails displayed",
                 searchedPaymentDetailsPage.getOrderDetailsText(), is("Order details"));
     }
-
 }

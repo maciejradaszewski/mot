@@ -121,20 +121,6 @@ public class ReTestResultsEntryPage extends Page {
         return this;
     }
 
-    public ReTestSummaryPage addDefaultRfrPrsAndManualAdvisory(){
-        AddRFRButton.click();
-
-        ReasonForRejectionPage rejectionPage = new ReasonForRejectionPage(driver);
-        rejectionPage
-                .addManualAdvisory()
-                .addPRS()
-                .clickRetestDone();
-
-        reviewTestButton.click();
-
-        return new ReTestSummaryPage(driver);
-    }
-
     public ReTestSummaryPage clickReviewTestButton(){
         reviewTestButton.click();
 

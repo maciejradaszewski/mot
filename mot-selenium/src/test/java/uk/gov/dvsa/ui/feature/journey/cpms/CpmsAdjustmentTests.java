@@ -4,7 +4,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.FinanceAuthorisedExaminerViewPage;
 import uk.gov.dvsa.ui.pages.cpms.*;
 
@@ -14,7 +14,7 @@ import java.net.URISyntaxException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class CpmsAdjustmentTests extends BaseTest {
+public class CpmsAdjustmentTests extends DslTest {
 
     private CardPaymentConfirmationPage financeUserPurchaseSlotsByCard(User user, String path, int aeId, int slots) throws IOException, URISyntaxException {
         CardPaymentConfirmationPage cardPaymentConfirmationPage = pageNavigator
