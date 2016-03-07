@@ -91,10 +91,6 @@ $currentNotices = $specialNotices['currentNotices'];
     <span class="divider full"></span>
 </div>
 
-<p>If you have any queries regarding this Special Notice or other testing matters,
-<?php echo lcfirst(trim($this->partial('partial/gds/general/contactHelpdesk', ['config' => $this->config['helpdesk']]))); ?></p>
-
-
 <div>
     <a href="<?php echo $this->url(\Dashboard\Controller\UserHomeController::ROUTE); ?>"
        class="btn btn-primary" id="returnDashboard">Back</a>
