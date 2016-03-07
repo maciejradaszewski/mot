@@ -83,6 +83,7 @@ class WebAuthenticationListener
             '@^/forgotten-password(?!/update$)(.*)@',
             '@^/account/register@',
             '@^/account/register/(.*)@',
+            '@^/your-profile/(.*)/change-password@'
         ];
     }
 }

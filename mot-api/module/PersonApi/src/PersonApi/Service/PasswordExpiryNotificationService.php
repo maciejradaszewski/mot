@@ -2,7 +2,9 @@
 
 namespace PersonApi\Service;
 
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaEntities\Entity\PasswordDetail;
+use DvsaFeature\FeatureToggles;
 use NotificationApi\Service\NotificationService;
 use NotificationApi\Dto\Notification;
 use DvsaEntities\Repository\NotificationRepository;
@@ -20,18 +22,25 @@ class PasswordExpiryNotificationService
     private $personRepository;
     private $transaction;
 
+    /**
+     * @var FeatureToggles $featureToggles
+     */
+    private $featureToggles;
+
     public function __construct(
         NotificationService $notificationService,
         NotificationRepository $notificationRepository,
         PersonRepository $personRepository,
         PasswordDetailRepository $passwordDetailRepository,
-        Transaction $transaction
+        Transaction $transaction,
+        FeatureToggles $featureToggles
     ) {
         $this->notificationService = $notificationService;
         $this->notificationRepository = $notificationRepository;
         $this->personRepository = $personRepository;
         $this->passwordDetail = $passwordDetailRepository;
         $this->transaction = $transaction;
+        $this->featureToggles = $featureToggles;
     }
 
     /**
@@ -42,11 +51,11 @@ class PasswordExpiryNotificationService
     public function send($personId, $day)
     {
         $person = $this->personRepository->get($personId);
-
         $data = (new Notification())
             ->setRecipient($person->getId())
             ->setTemplate(Notification::TEMPLATE_PASSWORD_EXPIRY)
             ->addField("expiryDay", $this->getExpiryDay($day))
+            ->addField("change_password_url", $this->getChangePasswordUrl($personId))
             ->toArray();
 
         $this->transaction->begin();
@@ -86,6 +95,21 @@ class PasswordExpiryNotificationService
         }
 
         return sprintf(self::EXPIRY_IN_XX_DAYS, $day);
+    }
+
+    /**
+     * Return the correct URL for taking the user to the change-password page.
+     *
+     * @param int $personId Logged in user's ID
+     *
+     * @return string
+     */
+    private function getChangePasswordUrl($personId) {
+        if ($this->featureToggles->isEnabled(FeatureToggle::NEW_PERSON_PROFILE)) {
+            return '/your-profile/' . $personId . '/change-password';
+        } else {
+            return '/profile/change-password';
+        }
     }
 
     /**

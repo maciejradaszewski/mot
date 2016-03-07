@@ -4,9 +4,12 @@ namespace Application\Listener;
 
 use Account\Service\ExpiredPasswordService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use Dvsa\OpenAM\Model\OpenAMLoginDetails;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Date\DateTimeHolder;
+use DvsaFeature\FeatureToggles;
 use Zend\Log\LoggerInterface;
 use Zend\Mvc\MvcEvent;
 
@@ -31,33 +34,21 @@ class ExpiredPasswordListener
 
     private $expiredPasswordService;
 
-    private $whiteList = [
-        'login',
-        'logout',
-        'forgotten-password/update-password',
-        'account/claim',
-        'account/claim/confirmEmailAndPassword',
-        'account/claim/setSecurityQuestion',
-        'account/claim/displayPin',
-        'account/claim/review',
-        'account/claim/reset',
-        'user-home/profile/change-password',
-        'user-home/profile/change-password/confirmation',
-        'newProfile/profile/change-password',
-        'newProfile/profile/change-password/confirmation'
-    ];
+    private $featureToggles;
 
     public function __construct(
         MotIdentityProviderInterface $identityProvider,
         DateTimeHolder $timeHolder,
         LoggerInterface $logger,
-        ExpiredPasswordService $expiredPasswordService
+        ExpiredPasswordService $expiredPasswordService,
+        FeatureToggles $featureToggles
     )
     {
         $this->identityProvider = $identityProvider;
         $this->timeHolder = $timeHolder;
         $this->logger = $logger;
         $this->expiredPasswordService = $expiredPasswordService;
+        $this->featureToggles = $featureToggles;
     }
 
     public function __invoke(MvcEvent $event)
@@ -80,8 +71,7 @@ class ExpiredPasswordListener
             return;
         }
 
-        $expirationDate =
-            $this->expiredPasswordService->calculatePasswordChangePromptDate($identity->getPasswordExpiryDate());
+        $expirationDate = $this->expiredPasswordService->calculatePasswordChangePromptDate($identity->getPasswordExpiryDate());
 
         $now = $this->timeHolder->getCurrent();
 
@@ -93,8 +83,21 @@ class ExpiredPasswordListener
             return;
         }
 
-        $redirectUrl = $event->getRouter()->assemble([], ['name' => 'user-home/profile/change-password']);
+        $personId = $this->identityProvider->getIdentity()->getUserId();
 
+        $newProfileEnabled
+            = $this->featureToggles->isEnabled(FeatureToggle::NEW_PERSON_PROFILE);
+
+        if ($newProfileEnabled) {
+            $redirectUrl = $event->getRouter()->assemble(
+                ['id' => $personId], ['name' => ContextProvider::YOUR_PROFILE_PARENT_ROUTE . '/change-password']
+            );
+        } else {
+            $redirectUrl = $event->getRouter()->assemble(
+                [], ['name' => 'user-home/profile/change-password']
+            );
+        }
+        
         if ($redirectUrl) {
             $response = $event->getResponse();
             $response->getHeaders()->addHeaderLine('Location', $redirectUrl);
@@ -106,7 +109,7 @@ class ExpiredPasswordListener
 
     private function isRouteRestricted($routeName)
     {
-        return !in_array($routeName, $this->whiteList);
+        return !in_array($routeName, $this->getWhitelist());
     }
 
     /**
@@ -115,5 +118,24 @@ class ExpiredPasswordListener
     private function getIdentity()
     {
         return $this->identityProvider->getIdentity();
+    }
+
+    private function getWhitelist()
+    {
+        return [
+            'login',
+            'logout',
+            'forgotten-password/update-password',
+            'account/claim',
+            'account/claim/confirmEmailAndPassword',
+            'account/claim/setSecurityQuestion',
+            'account/claim/displayPin',
+            'account/claim/review',
+            'account/claim/reset',
+            'user-home/profile/change-password',
+            'user-home/profile/change-password/confirmation',
+            ContextProvider::YOUR_PROFILE_PARENT_ROUTE . '/change-password',
+            ContextProvider::YOUR_PROFILE_PARENT_ROUTE . '/change-password/confirmation'
+        ];
     }
 }
