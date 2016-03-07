@@ -2,8 +2,10 @@
 
 namespace PersonApiTest\Service;
 
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommonTest\TestUtils\MethodSpy;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaFeature\FeatureToggles;
 use NotificationApi\Service\NotificationService;
 use NotificationApi\Dto\Notification;
 use DvsaEntities\Entity\Person;
@@ -41,12 +43,15 @@ class PasswordExpiryNotificationServiceTest extends \PHPUnit_Framework_TestCase
             ->method("get")
             ->willReturn($this->user);
 
+        $featureToggles = $this->createFeatureTogglesWithNewPersonProfileEnabled();
+
         $this->service = new PasswordExpiryNotificationService(
             $this->notificationService,
             XMock::of(NotificationRepository::class),
             $personRepository,
             XMock::of(PasswordDetailRepository::class),
-            XMock::of(Transaction::class)
+            XMock::of(Transaction::class),
+            $featureToggles
         );
     }
 
@@ -96,5 +101,44 @@ class PasswordExpiryNotificationServiceTest extends \PHPUnit_Framework_TestCase
         }
 
         return sprintf(PasswordExpiryNotificationService::EXPIRY_IN_XX_DAYS, $day);
+    }
+
+    /**
+     * @return FeatureToggles
+     */
+    private function createFeatureTogglesWithNewPersonProfileEnabled()
+    {
+        return $this->createFeatureToggles([FeatureToggle::NEW_PERSON_PROFILE => true]);
+    }
+
+    /**
+     * @return FeatureToggles
+     */
+    private function createFeatureTogglesWithNewPersonProfileDisabled()
+    {
+        return $this->createFeatureToggles([FeatureToggle::NEW_PERSON_PROFILE => false]);
+    }
+
+    /**
+     * @param array $featureToggles
+     *
+     * @return FeatureToggles
+     */
+    private function createFeatureToggles(array $featureToggles = [])
+    {
+        $map = [];
+        foreach ($featureToggles as $name => $value) {
+            $map[] = [(string) $name, (bool) $value];
+        }
+
+        $featureToggles = $this
+            ->getMockBuilder(FeatureToggles::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $featureToggles
+            ->method('isEnabled')
+            ->will($this->returnValueMap($map));
+
+        return $featureToggles;
     }
 }

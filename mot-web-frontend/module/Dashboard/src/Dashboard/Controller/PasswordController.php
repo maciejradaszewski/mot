@@ -6,6 +6,7 @@ use Core\Controller\AbstractAuthActionController;
 use Core\Service\MotFrontendIdentityProviderInterface;
 use Dashboard\Form\ChangePasswordForm;
 use Dashboard\Service\PasswordService;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Constants\FeatureToggle;
 
@@ -54,12 +55,27 @@ class PasswordController extends AbstractAuthActionController
             if ($form->isValid()) {
                 if ($this->passwordService->changePassword($form->getData())) {
                     if ($hasPasswordExpired) {
-                        $url = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ? 'user-home/your-profile/change-password/confirmation' : 'user-home/profile/change-password/confirmation';
-
-                        return $this->redirect()->toRoute($url);
+                        $url = $this->isFeatureEnabled(
+                            FeatureToggle::NEW_PERSON_PROFILE
+                        )
+                            ? ContextProvider::YOUR_PROFILE_PARENT_ROUTE
+                                . '/change-password/confirmation'
+                            : 'user-home/profile/change-password/confirmation';
+                        return  $this->isFeatureEnabled(
+                            FeatureToggle::NEW_PERSON_PROFILE
+                        )
+                        ? $this->redirect()->toRoute(
+                            $url,
+                            ['id' => $this->identityProvider->getIdentity()->getUserId()]
+                        )
+                        : $this->redirect()->toRoute($url);
                     } else {
                         $this->addSuccessMessage("Your password has been changed.");
-                        $url = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ? 'newProfile' : 'user-home/profile/byId';
+                        $url = $this->isFeatureEnabled(
+                            FeatureToggle::NEW_PERSON_PROFILE
+                        ) 
+                            ? ContextProvider::YOUR_PROFILE_PARENT_ROUTE
+                            : 'user-home/profile/byId';
 
                         return $this->redirect()->toRoute($url);
                     }

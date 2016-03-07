@@ -3,6 +3,7 @@
 namespace PersonApiTest\Factory\Service;
 
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaFeature\FeatureToggles;
 use PersonApi\Service\PasswordExpiryNotificationService;
 use PersonApi\Factory\Service\PasswordExpiryNotificationServiceFactory;
 use NotificationApi\Service\NotificationService;
@@ -39,8 +40,15 @@ class PasswordExpiryNotificationServiceFactoryTest extends \PHPUnit_Framework_Te
                 }
             });
 
+        /** @var FeatureToggles $featureToggle */
+        $featureToggles = $this
+            ->getMockBuilder(FeatureToggles::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $serviceManager->setService(NotificationService::class, XMock::of(NotificationService::class));
         $serviceManager->setService(EntityManager::class, $entityManager);
+        $serviceManager->setService('Feature\FeatureToggles', $featureToggles);
 
         // Create the factory
         $factory = new PasswordExpiryNotificationServiceFactory();
