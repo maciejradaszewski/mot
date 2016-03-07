@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
-public class ChangePersonEmailTests extends BaseTest {
+public class ChangePersonEmailTests extends DslTest {
 
     private static final String EMAIL_MUST_BE_VALID_MESSAGE = "must be a valid email address";
     private static final String EMAIL_MUST_MATCH_MESSAGE = "the email addresses you have entered don't match";

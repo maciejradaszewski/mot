@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.NotificationPage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
@@ -14,7 +14,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class AedmRoleAssociationTests extends BaseTest {
+public class AedmRoleAssociationTests extends DslTest {
 
     private User aedm;
     private User tester;

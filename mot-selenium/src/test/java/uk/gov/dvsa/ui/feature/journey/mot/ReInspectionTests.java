@@ -11,7 +11,7 @@ import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
 import uk.gov.dvsa.domain.shared.role.DvsaRoles;
 import uk.gov.dvsa.domain.shared.role.RoleManager;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.AssessmentDetailsConfirmationPage;
 import uk.gov.dvsa.ui.pages.events.EventsHistoryPage;
 import uk.gov.dvsa.ui.pages.HomePage;
@@ -30,7 +30,7 @@ import static uk.gov.dvsa.domain.model.mot.ReinspectionScoreCategory.INSPECTION_
 import static uk.gov.dvsa.domain.model.mot.ReinspectionTestScore.DISREGARDED;
 
 
-public class ReInspectionTests extends BaseTest {
+public class ReInspectionTests extends DslTest {
 
     private User vehicleExaminer;
     private User tester;

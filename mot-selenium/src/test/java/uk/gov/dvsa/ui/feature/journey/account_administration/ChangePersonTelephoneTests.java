@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.profile.ProfilePage;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
-public class ChangePersonTelephoneTests extends BaseTest {
+public class ChangePersonTelephoneTests extends DslTest {
     private static final String TELEPHONE_TOO_LARGE_MESSAGE = "Phone number - must be 24 characters or less";
 
     private User areaOffice1User;

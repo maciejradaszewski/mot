@@ -8,7 +8,7 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.mot.ReasonForRejectionPage;
+import uk.gov.dvsa.ui.pages.mot.TestItemSelector;
 
 public class ManualAdvisoryModalPage extends Page {
 
@@ -45,17 +45,28 @@ public class ManualAdvisoryModalPage extends Page {
         return PageInteractionHelper.verifyTitle(modalTitle.getText(), PAGE_TITLE);
     }
 
-    public ReasonForRejectionPage addManualAdvisory() {
+    public TestItemSelector addAdvisory(String description) {
+        enterAdvisory(description);
+        addButton.click();
+        return new TestItemSelector(driver);
+    }
 
+    public ManualAdvisoryModalPage addAdvisoryWithProfaneDescription(String description){
+        enterAdvisory(description);
+        addButton.click();
+        return this;
+    }
+
+    private void enterAdvisory(String description) {
         FormCompletionHelper.selectFromDropDownByValue(lateral, String.valueOf(Advisory.Lateral.nearside));
         FormCompletionHelper.selectFromDropDownByValue(longitudinal, String.valueOf(Advisory.Longitudinal.rear));
         FormCompletionHelper.selectFromDropDownByValue(vertical, String.valueOf(Advisory.Vertical.lower));
 
-        FormCompletionHelper.enterText(description, Advisory.DESCRIPTION);
+        FormCompletionHelper.enterText(this.description, description);
         FormCompletionHelper.selectInputBox(dangerousFailure);
+    }
 
-        addButton.click();
-        PageInteractionHelper.refreshPage();
-        return new ReasonForRejectionPage(driver);
+    public String getValidationMessage() {
+        return errorMessages.getText();
     }
 }

@@ -7,7 +7,7 @@ import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.helper.RandomDataGenerator;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.dvsa.*;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.StringContains.containsString;
 
-public class DVSAManagingUserRolesTests extends BaseTest {
+public class DVSAManagingUserRolesTests extends DslTest {
 
     private User vehicleExaminer;
     private User areaOffice1User;

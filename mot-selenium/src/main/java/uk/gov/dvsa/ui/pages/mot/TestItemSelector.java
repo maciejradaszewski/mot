@@ -16,45 +16,33 @@ import uk.gov.dvsa.ui.pages.mot.retest.ReTestResultsEntryPage;
 import java.util.List;
 import java.util.Random;
 
-public class ReasonForRejectionPage extends Page {
+public class TestItemSelector extends Page {
 
-    @FindBy(tagName = "a")
-    private List<WebElement> links;
+    @FindBy(tagName = "a") private List<WebElement> links;
 
-    @FindBy(className = "step")
-    private WebElement stepInfo;
+    @FindBy(className = "step") private WebElement stepInfo;
 
-    @FindBy(id = "info-message")
-    private WebElement infoMessage;
+    @FindBy(id = "info-message") private WebElement infoMessage;
 
-    @FindBy(linkText = "Manual")
-    private WebElement manualButton;
+    @FindBy(linkText = "Manual") private WebElement manualButton;
 
-    @FindBy(className = "modal-title")
-    private WebElement rfrTitle;
+    @FindBy(className = "modal-title") private WebElement rfrTitle;
 
-    @FindBy(id = "reason-for-rejection-modal")
-    private WebElement reasonsForRejection;
+    @FindBy(id = "reason-for-rejection-modal") private WebElement reasonsForRejection;
 
-    @FindBy(id = "rfr-modal-close")
-    private WebElement closeRFRList;
+    @FindBy(id = "rfr-modal-close") private WebElement closeRFRList;
 
-    private By searchForRfrField = By.id("rfr-search");
+    @FindBy(id = "test-item-selector-btn-search") private WebElement searchButton;
 
-    @FindBy(id = "test-item-selector-btn-search")
-    private WebElement searchButton;
-
-    @FindBy(id = "mot-header-details-rfr-done")
-    private WebElement doneButton;
+    @FindBy(id = "mot-header-details-rfr-done") private WebElement doneButton;
 
     @FindBy(id = "manual-advisory") private WebElement manualAdvisory;
 
     @FindBy(id = "rfrCount") private WebElement rfrCount;
 
-    @FindBy(css = ".rfr-list.row > li")
-    private List<WebElement> rfrElements;
+    @FindBy(css = ".rfr-list.row > li") private List<WebElement> rfrElements;
 
-
+    private By searchForRfrField = By.id("rfr-search");
     private By prsButtons = By.cssSelector("[data-type='PRS']");
     private By rfrLink = By.xpath("//*[contains(@href, '#rfr-details-dialog-')]");
     private static final String PAGE_TITLE = "Add PRS, failures and advisories";
@@ -64,9 +52,10 @@ public class ReasonForRejectionPage extends Page {
     By modalTitle = By.className("modal-title");
     By submitModal = By.name("submit");
 
-    public ReasonForRejectionPage(MotAppDriver driver) {
+    public TestItemSelector(MotAppDriver driver) {
         super(driver);
         PageInteractionHelper.refreshPage();
+        PageInteractionHelper.waitForElementToBeVisible(manualAdvisory, Configurator.defaultWebElementTimeout);
         selfVerify();
     }
 
@@ -74,10 +63,6 @@ public class ReasonForRejectionPage extends Page {
     protected boolean selfVerify() {
         return PageInteractionHelper.verifyTitle(this.getTitle(), PAGE_TITLE);
     }
-
-    /**
-     * Click Done when an RFR has been added successfully
-     */
 
     public TestResultsEntryPage clickDone() {
         PageInteractionHelper.waitForElementToBeVisible(doneButton, Configurator.defaultFastWebElementTimeout);
@@ -91,17 +76,12 @@ public class ReasonForRejectionPage extends Page {
         return new ReTestResultsEntryPage(driver);
     }
 
-    public ReasonForRejectionPage addManualAdvisory() {
+    public ManualAdvisoryModalPage addManualAdvisory() {
         manualAdvisory.click();
-
-        ManualAdvisoryModalPage advisoryModalPage = new ManualAdvisoryModalPage(driver);
-        advisoryModalPage.addManualAdvisory();
-
-        return this;
+        return new ManualAdvisoryModalPage(driver);
     }
 
-    public ReasonForRejectionPage addPRS() {
-
+    public TestItemSelector addPRS() {
         driver.findElement(searchForRfrField).sendKeys(Fault.HORN_CONTROL_MISSING.getDescription());
         searchButton.click();
 
@@ -116,7 +96,7 @@ public class ReasonForRejectionPage extends Page {
         return this;
     }
 
-    public ReasonForRejectionPage checkRFR() {
+    public TestItemSelector checkRFR() {
         driver.findElement(searchForRfrField).sendKeys(Fault.HORN_CONTROL_MISSING.getDescription());
         searchButton.click();
 

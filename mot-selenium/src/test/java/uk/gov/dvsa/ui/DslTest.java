@@ -17,7 +17,7 @@ import uk.gov.dvsa.shared.MotUI;
 import java.util.Date;
 
 @Listeners(InfoLoggingListener.class)
-public abstract class BaseTest {
+public abstract class DslTest {
 
     private MotAppDriver driver = null;
     protected AeData aeData = new AeData();

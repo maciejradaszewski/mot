@@ -4,7 +4,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.events.EventsHistoryPage;
 import uk.gov.dvsa.ui.pages.events.CreateNewEventPage;
 import uk.gov.dvsa.ui.pages.events.CreateNewEventPageTwo;
@@ -16,7 +16,7 @@ import java.net.URISyntaxException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class ManualEventTests extends BaseTest {
+public class ManualEventTests extends DslTest {
 
     private User dvsaUser;
     private AeDetails ae;

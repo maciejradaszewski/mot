@@ -1,6 +1,5 @@
 package uk.gov.dvsa.ui.feature.journey.roles;
 
-import com.dvsa.mot.selenium.framework.RandomDataGenerator;
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -8,7 +7,7 @@ import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.*;
 import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
 
@@ -18,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class PerformTesterFunctionTests extends BaseTest {
+public class PerformTesterFunctionTests extends DslTest {
 
     private User tester;
     private Site testSite;

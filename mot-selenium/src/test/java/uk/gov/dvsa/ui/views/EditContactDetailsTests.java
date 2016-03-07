@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.site.ContactDetailsCountry;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.vts.ConfirmChangeDetails.ConfirmChangeDetailsAddressPage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
@@ -15,7 +15,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class EditContactDetailsTests extends BaseTest {
+public class EditContactDetailsTests extends DslTest {
 
     private Site site;
     private User areaOfficeUser;

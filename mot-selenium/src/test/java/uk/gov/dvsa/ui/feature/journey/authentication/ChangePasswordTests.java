@@ -5,7 +5,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.ChangePasswordFromProfilePage;
 import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
 
@@ -14,7 +14,7 @@ import static org.hamcrest.core.Is.is;
 
 import java.io.IOException;
 
-public class ChangePasswordTests extends BaseTest {
+public class ChangePasswordTests extends DslTest {
 
     private User tester;
     private String messageSuccess = "Your password has been changed.";

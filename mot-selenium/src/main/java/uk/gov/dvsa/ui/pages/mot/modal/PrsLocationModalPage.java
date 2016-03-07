@@ -9,7 +9,7 @@ import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.FormCompletionHelper;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
-import uk.gov.dvsa.ui.pages.mot.ReasonForRejectionPage;
+import uk.gov.dvsa.ui.pages.mot.TestItemSelector;
 
 public class PrsLocationModalPage extends Page {
     private WebElement modalTitle;
@@ -54,7 +54,7 @@ public class PrsLocationModalPage extends Page {
         return String.format(id, rfrId);
     }
 
-    public ReasonForRejectionPage addPrs() {
+    public TestItemSelector addPrs() {
         FormCompletionHelper.selectFromDropDownByValue(lateral, String.valueOf(Advisory.Lateral.nearside));
         FormCompletionHelper.selectFromDropDownByValue(longitudinal, String.valueOf(Advisory.Longitudinal.front));
         FormCompletionHelper.selectFromDropDownByValue(vertical, String.valueOf(Advisory.Vertical.outer));
@@ -62,6 +62,6 @@ public class PrsLocationModalPage extends Page {
 
         addButton.click();
         PageInteractionHelper.refreshPage();
-        return new ReasonForRejectionPage(driver);
+        return new TestItemSelector(driver);
     }
 }

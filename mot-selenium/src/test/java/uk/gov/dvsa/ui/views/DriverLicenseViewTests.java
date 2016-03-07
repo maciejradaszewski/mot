@@ -3,7 +3,7 @@ package uk.gov.dvsa.ui.views;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringContains.containsString;
 
-public class DriverLicenseViewTests extends BaseTest {
+public class DriverLicenseViewTests extends DslTest {
     private static final String DRIVING_LICENCE_CHANGE_SUCCESS = "Driving licence has been changed successfully.";
     private static final String DRIVING_LICENCE_WRONG_NI_FORMAT = "Driving licence - must be a valid Northern Ireland driving licence";
     private static final String DRIVING_LICENCE_WRONG_GB_FORMAT = "Driving licence - must be a valid Great Britain driving licence";

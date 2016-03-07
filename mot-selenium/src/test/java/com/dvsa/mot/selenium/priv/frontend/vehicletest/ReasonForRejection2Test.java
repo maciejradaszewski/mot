@@ -48,43 +48,6 @@ public class ReasonForRejection2Test extends BaseTest {
         return new MotTestApi().createTest(login, vehicle, site.getId(), testData, null);
     }
 
-
-    @Test(groups = {"Regression", "VM-1581", "VM-1578", "VM-1579", "short-vehicle", "VM-1741"})
-    public void addManualAdvisoryWithProfanityDescriptionAndPressCancelAndAddSuccessfully() {
-
-        AeDetails aeDetails = aeService.createAe(
-                RandomDataGenerator.generateRandomAlphaNumeric(12, UUID.randomUUID().hashCode()));
-        String profanityDescription = "YSQkaG9sZSQ=";
-        Vehicle vehicle = createVehicle(Vehicle.VEHICLE_CLASS4_CLIO_2004);
-        Site site = new VtsCreationApi()
-                .createVtsSite(aeDetails.getId(), TestGroup.ALL, Login.LOGIN_AREA_OFFICE1, vtsName);
-        Login login = createTester(Arrays.asList(site.getId()));
-
-        MotTestPage motTestPage = MotTestPage.navigateHereFromLoginPage(driver, login, vehicle);
-        int previousNumberOfAdvisories = motTestPage.getNumberOfAdvisories();
-        ReasonForRejectionPage reasonForRejectionPage = motTestPage.addRFR();
-        ManualAdvisoryPage manualAdvisoryPage = reasonForRejectionPage.addManualyAdvisor();
-        manualAdvisoryPage.enterManualAdvisory(ManualAdvisory.manualAdvisory_CASE1)
-                .clearDescription().enterDescription(convertBase64ToString(profanityDescription))
-                .addManualAdvisoryExpectingError();
-
-        assertThat("Check error message", manualAdvisoryPage.getErrorMessages(),
-                is(Assertion.ASSERTION_PROFANITY_DETECTED.assertion));
-
-        manualAdvisoryPage.cancelManualAdvisory().clickDone();
-        int updatedNumberOfAdvisories = motTestPage.getNumberOfAdvisories();
-
-        assertThat("Compare updated number of advisories to previous", updatedNumberOfAdvisories,
-                is(previousNumberOfAdvisories));
-
-        motTestPage.addRFR().addManualyAdvisor()
-                .submitManualAdvisory(ManualAdvisory.manualAdvisory_CASE1).clickDone();
-        int updatedNumberOfAdvisoriesAfterAddingRFR = motTestPage.getNumberOfAdvisories();
-
-        assertThat("Compare updated number of advisories to previous",
-                updatedNumberOfAdvisoriesAfterAddingRFR, is(previousNumberOfAdvisories + 1));
-    }
-
     @DataProvider(name = "DP-MultipleRFRs")
     public Object[][] testClass4MOTFailWithMultipleRFRsData() {
 

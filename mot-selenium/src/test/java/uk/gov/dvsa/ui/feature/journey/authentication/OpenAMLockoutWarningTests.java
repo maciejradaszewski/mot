@@ -2,17 +2,15 @@ package uk.gov.dvsa.ui.feature.journey.authentication;
 
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.helper.RandomDataGenerator;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.interfaces.WarningPage;
-import uk.gov.dvsa.ui.pages.login.AuthenticationFailedPage;
 import uk.gov.dvsa.ui.pages.login.LockOutWarningPage;
 import uk.gov.dvsa.ui.pages.login.LockedAccountWarningPage;
 import uk.gov.dvsa.ui.pages.login.LoginPage;
 
 import java.io.IOException;
 
-public class OpenAMLockoutWarningTests extends BaseTest {
+public class OpenAMLockoutWarningTests extends DslTest {
 
     private int warningAttempts = 4;
     private int lockoutAttempts = 5;

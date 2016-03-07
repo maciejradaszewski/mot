@@ -2,14 +2,14 @@ package uk.gov.dvsa.ui.feature.journey.authentication;
 
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class LoginTests extends BaseTest {
+public class LoginTests extends DslTest {
 
     @Test(groups = {"BVT", "Regression"})
     void userCanLogInSuccessfullyViaFrontend() throws IOException {

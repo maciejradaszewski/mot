@@ -4,14 +4,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.site.Status;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class SiteStatusViewTest extends BaseTest {
+public class SiteStatusViewTest extends DslTest {
     private User areaOffice2User;
 
     @BeforeMethod(alwaysRun = true)

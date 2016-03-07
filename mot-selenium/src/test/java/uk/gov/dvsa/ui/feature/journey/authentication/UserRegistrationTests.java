@@ -2,7 +2,7 @@ package uk.gov.dvsa.ui.feature.journey.authentication;
 
 import org.testng.annotations.Test;
 import uk.gov.dvsa.helper.ContactDetailsHelper;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.login.LoginPage;
 import uk.gov.dvsa.ui.pages.userregistration.CreateAnAccountPage;
 
@@ -11,7 +11,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class UserRegistrationTests extends BaseTest {
+public class UserRegistrationTests extends DslTest {
 
     private final String name = ContactDetailsHelper.generateUniqueName();
     private final String surname = ContactDetailsHelper.generateUniqueName();

@@ -6,10 +6,9 @@ import org.testng.annotations.Test;
 import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
-import uk.gov.dvsa.domain.model.mot.DateRange;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.helper.enums.DateRangeFilter;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.exception.PageInstanceNotFoundException;
 
 import java.io.IOException;
@@ -18,7 +17,7 @@ import java.net.URISyntaxException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class SiteTestLogsView extends BaseTest {
+public class SiteTestLogsView extends DslTest {
 
     Site testSite;
     User tester;

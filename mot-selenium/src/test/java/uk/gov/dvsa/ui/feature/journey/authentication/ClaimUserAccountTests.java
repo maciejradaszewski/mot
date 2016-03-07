@@ -6,7 +6,7 @@ import uk.gov.dvsa.domain.model.AeDetails;
 import uk.gov.dvsa.domain.model.Site;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.helper.RandomDataGenerator;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.accountclaim.AccountClaimConfirmationPage;
 import uk.gov.dvsa.ui.pages.accountclaim.AccountClaimPage;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class ClaimUserAccountTests extends BaseTest {
+public class ClaimUserAccountTests extends DslTest {
 
     @DataProvider(name = "createTester")
     public Object[][] createTesterAndVehicle() throws IOException {

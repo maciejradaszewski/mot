@@ -9,7 +9,7 @@ import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.MotTest;
 import uk.gov.dvsa.domain.model.mot.TestOutcome;
 import uk.gov.dvsa.domain.model.vehicle.Vehicle;
-import uk.gov.dvsa.ui.BaseTest;
+import uk.gov.dvsa.ui.DslTest;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -17,7 +17,7 @@ import java.net.URISyntaxException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class ReplacementCertificatesTest extends BaseTest {
+public class ReplacementCertificatesTest extends DslTest {
 
     private Site site;
     private Vehicle vehicle;
