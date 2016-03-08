@@ -3,6 +3,8 @@ $this->headTitle('Test item selector search');
 
 /** @var \DvsaCommon\Dto\Common\MotTestDto $motTestDetails */
 $latestRfrs = $motTestDetails->getReasonsForRejection();
+
+$vehicleClassCode = $motTestDetails->getVehicleClass()->getCode();
 ?>
 
 <?php echo $this->partial(
@@ -30,7 +32,9 @@ echo $this->partial('testItemSelectorSearch', ['motTestNumber' => $motTestNumber
 
 <?php echo $this->partial('rfrList', ['motTestNumber'           => $motTestNumber,
                                            'reasonsForRejection' => $reasonsForRejection,
-                                           'searchString'        => $searchString]); ?>
+                                           'searchString'        => $searchString,
+                                           'vehicleClassCode' => $vehicleClassCode
+]); ?>
 
 <?php  if ($reasonsForRejection && count($reasonsForRejection) > 0) { ?>
 <div class="row">
