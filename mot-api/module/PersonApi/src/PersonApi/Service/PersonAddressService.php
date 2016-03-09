@@ -13,6 +13,7 @@ use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\PersonContact;
 use DvsaEntities\Entity\PersonContactType;
 use DvsaCommon\Constants\PersonContactType as ContactType;
+use PersonApi\Helper\PersonDetailsChangeNotificationHelper;
 use Zend\Code\Exception\InvalidArgumentException;
 
 class PersonAddressService extends AbstractService
@@ -35,22 +36,29 @@ class PersonAddressService extends AbstractService
     private $authService;
 
     /**
+     * @var PersonDetailsChangeNotificationHelper
+     */
+    private $notificationHelper;
+
+    /**
      * PersonAddressService constructor.
      *
      * @param EntityManager $entityManager
      * @param AddressValidator $validator
      * @param AuthorisationService $authorisationService
+     * @param PersonDetailsChangeNotificationHelper $notificationHelper
      */
     public function __construct(
         EntityManager $entityManager,
         AddressValidator $validator,
-        AuthorisationService $authorisationService
-        )
-    {
+        AuthorisationService $authorisationService,
+        PersonDetailsChangeNotificationHelper $notificationHelper
+    ) {
         parent::__construct($entityManager);
 
         $this->validator = $validator;
         $this->authService = $authorisationService;
+        $this->notificationHelper = $notificationHelper;
     }
 
     public function update($personId, $data)
@@ -77,6 +85,10 @@ class PersonAddressService extends AbstractService
         $address->setPostcode($data[self::POSTCODE]);
 
         $this->entityManager->flush();
+
+        if ($identity->getUserId() != $personId) {
+            $this->notificationHelper->sendChangedPersonalDetailsNotification($person);
+        }
 
         return $data;
     }

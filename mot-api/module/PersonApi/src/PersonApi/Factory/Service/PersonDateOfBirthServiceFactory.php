@@ -7,6 +7,7 @@ use DvsaCommon\Validator\DateOfBirthValidator;
 use PersonApi\Service\PersonDateOfBirthService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use PersonApi\Helper\PersonDetailsChangeNotificationHelper;
 
 class PersonDateOfBirthServiceFactory implements FactoryInterface
 {
@@ -23,6 +24,9 @@ class PersonDateOfBirthServiceFactory implements FactoryInterface
         $dayOfBirthValidator = new DateOfBirthValidator();
         $authService = $serviceLocator->get('DvsaAuthorisationService');
 
-        return new PersonDateOfBirthService($entityManager, $dayOfBirthValidator, $authService);
+        /** @var PersonDetailsChangeNotificationHelper $notificationHelper */
+        $notificationHelper = $serviceLocator->get(PersonDetailsChangeNotificationHelper::class);
+
+        return new PersonDateOfBirthService($entityManager, $dayOfBirthValidator, $authService, $notificationHelper);
     }
 }

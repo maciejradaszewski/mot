@@ -3,25 +3,25 @@
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode as Table;
-use DvsaCommon\Constants\Role;
 use Dvsa\Mot\Behat\Datasource\Authentication;
 use Dvsa\Mot\Behat\Datasource\Random;
+use Dvsa\Mot\Behat\Support\Api\AuthorisedExaminer;
 use Dvsa\Mot\Behat\Support\Api\CustomerService;
+use Dvsa\Mot\Behat\Support\Api\Notification;
 use Dvsa\Mot\Behat\Support\Api\Person;
+use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Api\Tester;
 use Dvsa\Mot\Behat\Support\Api\Vts;
-use Dvsa\Mot\Behat\Support\Api\AuthorisedExaminer;
-use Dvsa\Mot\Behat\Support\Response;
-use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
+use Dvsa\Mot\Behat\Support\Response;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Exception\UnauthorisedException;
 use PHPUnit_Framework_Assert as PHPUnit;
-use Behat\Behat\Tester\Exception\PendingException;
 
 class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingContext
 {
     const FORBIDDEN = "FORBIDDEN";
+    const PERSONAL_DETAILS_CHANGED_NOTIFICATION_ID = 26;
 
     private $personalMotTestingClasses;
 
@@ -168,6 +168,11 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     private $personStats;
 
     /**
+     * @var Notification
+     */
+    private $notification;
+
+    /**
      * @param TestSupportHelper $testSupportHelper
      * @param CustomerService $customerService
      * @param Session $session
@@ -175,6 +180,7 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
      * @param Tester $tester
      * @param Vts $vts
      * @param AuthorisedExaminer $authorisedExaminer
+     * @param Notification $notification
      */
     public function __construct(
         TestSupportHelper $testSupportHelper,
@@ -183,7 +189,8 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         Person $person,
         Tester $tester,
         Vts $vts,
-        AuthorisedExaminer $authorisedExaminer
+        AuthorisedExaminer $authorisedExaminer,
+        Notification $notification
     ) {
         $this->testSupportHelper = $testSupportHelper;
         $this->customerService = $customerService;
@@ -192,6 +199,7 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         $this->tester = $tester;
         $this->vts = $vts;
         $this->authorisedExaminer = $authorisedExaminer;
+        $this->notification = $notification;
     }
 
     /**
@@ -291,12 +299,33 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     }
 
     /**
+     * @When /^I update a user's email address$/
+     */
+    public function iUpdateUsersEmailAddress()
+    {
+        $this->newEmailAddress = Random::getRandomEmail();
+
+        $userService = $this->testSupportHelper->getUserService();
+        $this->personLoginData = $userService->create([]);
+
+        $this->updateUserEmailResponse = $this->person->updateUserEmail(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->getPersonUserId(),
+            $this->newEmailAddress
+        );
+    }
+
+    /**
      * @Then /^I will see my updated email address$/
      */
     public function iWillSeeMyUpdatedEmailAddress()
     {
         PHPUnit::assertSame(200, $this->updateUserEmailResponse->getStatusCode());
-        PHPUnit::assertSame($this->newEmailAddress, $this->updateUserEmailResponse->getBody()['data']['email'], 'Email address on User Profile is incorrect.');
+        PHPUnit::assertSame(
+            $this->newEmailAddress,
+            $this->updateUserEmailResponse->getBody()['data']['emails'][0]['email'],
+            'Email address on User Profile is incorrect.'
+        );
     }
 
     /**
@@ -306,8 +335,26 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     {
         $body = $this->updateUserEmailResponse->getBody()->toArray();
 
-        PHPUnit::assertSame(400, $this->updateUserEmailResponse->getStatusCode(), 'Did not receive 400 Bad Request response');
-        PHPUnit::assertFalse(isset($body['data']['email']), 'Data key containing Email data was returned in response body.');
+        PHPUnit::assertSame(422, $this->updateUserEmailResponse->getStatusCode(), 'Did not receive 422 Unprocessable entity response');
+        PHPUnit::assertFalse(isset($body['data']['emails']), 'Data key containing Email data was returned in response body.');
+    }
+
+    /**
+     * @Then /^the user's email address will be updated$/
+     */
+    public function usersEmailAddressWillBeUpdated()
+    {
+        $body = $this->updateUserEmailResponse->getBody()->toArray();
+
+        PHPUnit::assertSame(
+            200,
+            $this->updateUserEmailResponse->getStatusCode()
+        );
+        PHPUnit::assertSame(
+            $this->newEmailAddress,
+            $body['data']['emails'][0]['email'],
+            'Email address on User Profile is incorrect.'
+        );
     }
 
     /**
@@ -1208,6 +1255,58 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     public function iAmForbiddenFromChangingName()
     {
         PHPUnit::assertSame(403, $this->updateNameResponse->getStatusCode());
+    }
+
+    /**
+     * @Then the person should receive a notification about the change
+     */
+    public function userGetsNotificationAboutChange()
+    {
+        $session = $this->session->startSession(
+            $this->getPersonUsername(),
+            $this->getPersonPassword()
+        );
+
+        $response = $this->notification->fetchNotificationForPerson($session->getAccessToken(), $session->getUserId());
+        $notifications = $response->getBody()->toArray();
+
+        PHPUnit::assertNotEmpty($notifications);
+
+        // Assert that the notification that we are expecting exists
+        $found = false;
+        foreach ($notifications['data'] as $notification) {
+            if ($notification['templateId'] == self::PERSONAL_DETAILS_CHANGED_NOTIFICATION_ID) {
+                $found = true;
+                break;
+            }
+        }
+        PHPUnit::assertTrue($found, 'Notification for personal details being changed not found');
+    }
+
+    /**
+     * @Then the person should not receive a notification about the change
+     */
+    public function userDoesNotGetNotificationAboutChange()
+    {
+        $response = $this->notification->fetchNotificationForPerson(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->sessionContext->getCurrentUserId()
+        );
+        $notifications = $response->getBody()->toArray();
+
+        if (empty($notifications)) {
+            PHPUnit::assertEmpty($notifications);
+        } else {
+            // Assert that there are no changed details notifications
+            $found = false;
+            foreach ($notifications['data'] as $notification) {
+                if ($notification['templateId'] == self::PERSONAL_DETAILS_CHANGED_NOTIFICATION_ID) {
+                    $found = true;
+                    break;
+                }
+            }
+            PHPUnit::assertFalse($found, 'Notification for personal details being changed was found');
+        }
     }
 
     /**

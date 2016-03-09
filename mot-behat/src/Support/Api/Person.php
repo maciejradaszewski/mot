@@ -21,6 +21,7 @@ class Person extends MotApi
     const PATH_RESET_VALIDATE_TOKEN = '/{token}';
     const PATH_RESET_CHANGE_PASSWORD_WITH_TOKEN = '/account/password-change';
     const PATH_PASSWORD_EXPIRY_NOTIFICATION = '/password-expiry-notification';
+    const PATH_EMAIL = '/contact';
 
     public function setEmailRemainderOfExpiryPassword($token, $data)
     {
@@ -164,29 +165,13 @@ class Person extends MotApi
         }
 
         $body = [
-            'title' => 'Mr',
-            'firstName' => 'Bob',
-            'middleName' => 'Thomas',
-            'surname' => 'Arctor',
-            'gender' => 'Male',
-            'drivingLicenceNumber' => 'GARDN605109C99LY60',
-            'drivingLicenceRegion' => 'GB',
-            'addressLine1' => 'Straw Hut',
-            'addressLine2' => '5 Uncanny St',
-            'addressLine3' => '',
-            'town' => 'Liverpool',
-            'postcode' => 'L1 1PQ',
-            'email' => $newEmail,
-            'emailConfirmation' => $emailConfirmation,
-            'phoneNumber' => '+768-45-4433630',
-            'update-profile' => 'update-profile',
-            'dateOfBirth' => '1981-04-24',
+            'emails' => [$newEmail, $emailConfirmation],
         ];
 
         return $this->sendRequest(
             $token,
-            MotApi::METHOD_PUT,
-            str_replace('{user_id}', $user_id, self::PATH_PERSONAL_DETAILS),
+            MotApi::METHOD_PATCH,
+            str_replace('{user_id}', $user_id, self::PATH . self::PATH_EMAIL),
             $body
         );
     }

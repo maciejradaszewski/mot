@@ -11,6 +11,7 @@ use DvsaCommon\Validator\PersonNameValidator;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\AbstractService;
 use DvsaCommonApi\Service\Exception\InvalidFieldValueException;
+use PersonApi\Helper\PersonDetailsChangeNotificationHelper;
 
 class PersonNameService extends AbstractService
 {
@@ -33,24 +34,32 @@ class PersonNameService extends AbstractService
     private $authService;
 
     /**
+     * @var PersonDetailsChangeNotificationHelper
+     */
+    private $notificationHelper;
+
+    /**
      * PersonNameService constructor.
      *
-     * @param EntityManager                 $entityManager
-     * @param PersonNameValidator                 $validator
-     * @param XssFilter                     $xssFilter
-     * @param AuthorisationServiceInterface $authService
+     * @param EntityManager                         $entityManager
+     * @param PersonNameValidator                   $validator
+     * @param XssFilter                             $xssFilter
+     * @param AuthorisationServiceInterface         $authService
+     * @param PersonDetailsChangeNotificationHelper $notificationHelper
      */
     public function __construct(
         EntityManager $entityManager,
         PersonNameValidator $validator,
         XssFilter $xssFilter,
-        AuthorisationServiceInterface $authService
+        AuthorisationServiceInterface $authService,
+        PersonDetailsChangeNotificationHelper $notificationHelper
     ) {
         parent::__construct($entityManager);
 
         $this->validator = $validator;
         $this->xssFilter = $xssFilter;
         $this->authService = $authService;
+        $this->notificationHelper = $notificationHelper;
     }
 
     /**
@@ -82,6 +91,8 @@ class PersonNameService extends AbstractService
         $person->setFamilyName($data[self::LAST_NAME]);
 
         $this->entityManager->flush();
+
+        $this->notificationHelper->sendChangedPersonalDetailsNotification($person);
 
         return $data;
     }

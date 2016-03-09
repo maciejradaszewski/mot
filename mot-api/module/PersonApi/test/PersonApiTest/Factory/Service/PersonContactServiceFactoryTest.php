@@ -10,6 +10,7 @@ use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Repository\PersonContactRepository;
 use OrganisationApi\Service\Mapper\PersonContactMapper;
 use PersonApi\Factory\Service\PersonContactServiceFactory;
+use PersonApi\Helper\PersonDetailsChangeNotificationHelper;
 use PersonApi\Service\PersonContactService;
 use PersonApi\Service\Validator\PersonalDetailsValidator;
 use Zend\Authentication\AuthenticationService;
@@ -53,6 +54,7 @@ class PersonContactServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $this->mockMethod($mockServiceLocator, 'get', $this->at(3), XMock::of(AuthenticationService::class));
         $this->mockMethod($mockServiceLocator, 'get', $this->at(4), XMock::of(AuthorisationService::class));
         $this->mockMethod($mockServiceLocator, 'get', $this->at(5), XMock::of(EntityManager::class));
+        $this->mockMethod($mockServiceLocator, 'get', $this->at(6), XMock::of(PersonDetailsChangeNotificationHelper::class));
 
         $this->assertInstanceOf(
             PersonContactService::class,

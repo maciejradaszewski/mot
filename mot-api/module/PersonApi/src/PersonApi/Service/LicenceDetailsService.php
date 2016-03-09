@@ -3,6 +3,7 @@
 namespace PersonApi\Service;
 
 use Doctrine\ORM\EntityManager;
+use Dvsa\Mot\Frontend\PersonModule\Security\PersonProfileGuardBuilder;
 use DvsaCommon\Validator\DrivingLicenceValidator;
 use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\AbstractService;
@@ -10,6 +11,7 @@ use DvsaCommonApi\Service\Exception\InvalidFieldValueException;
 use DvsaEntities\Entity\Licence;
 use DvsaEntities\Entity\LicenceCountry;
 use DvsaEntities\Entity\LicenceType;
+use PersonApi\Helper\PersonDetailsChangeNotificationHelper;
 
 class LicenceDetailsService extends AbstractService
 {
@@ -30,19 +32,27 @@ class LicenceDetailsService extends AbstractService
     private $xssFilter;
 
     /**
-     * @param EntityManager                 $entityManager
-     * @param DrivingLicenceValidator       $validator
-     * @param XssFilter                     $xssFilter
+     * @var PersonDetailsChangeNotificationHelper
+     */
+    private $notificationHelper;
+
+    /**
+     * @param EntityManager                         $entityManager
+     * @param DrivingLicenceValidator               $validator
+     * @param XssFilter                             $xssFilter
+     * @param PersonDetailsChangeNotificationHelper $notificationHelper
      */
     public function __construct(
         EntityManager $entityManager,
         DrivingLicenceValidator $validator,
-        XssFilter $xssFilter
+        XssFilter $xssFilter,
+        PersonDetailsChangeNotificationHelper $notificationHelper
     ) {
         parent::__construct($entityManager);
 
         $this->validator = $validator;
         $this->xssFilter = $xssFilter;
+        $this->notificationHelper = $notificationHelper;
     }
 
     /**
@@ -86,6 +96,8 @@ class LicenceDetailsService extends AbstractService
 
         $this->entityManager->flush();
 
+        $this->sendChangeNotification($person);
+
         return $licence;
     }
 
@@ -100,6 +112,8 @@ class LicenceDetailsService extends AbstractService
         $person->setDrivingLicence(null);
 
         $this->entityManager->flush();
+
+        $this->sendChangeNotification($person);
     }
 
     /**
@@ -131,6 +145,14 @@ class LicenceDetailsService extends AbstractService
                 $licenceTypeRepo->getByCode($data[self::DRIVING_LICENCE_TYPE])
             );
         }
+    }
+
+    /**
+     * @param $person
+     */
+    private function sendChangeNotification($person)
+    {
+        $this->notificationHelper->sendChangedPersonalDetailsNotification($person);
     }
 
 }
