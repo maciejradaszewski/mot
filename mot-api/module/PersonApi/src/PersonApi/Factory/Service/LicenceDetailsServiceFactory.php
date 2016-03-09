@@ -8,6 +8,7 @@ use PersonApi\Service\LicenceDetailsService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use DvsaCommonApi\Filter\XssFilter;
+use PersonApi\Helper\PersonDetailsChangeNotificationHelper;
 
 class LicenceDetailsServiceFactory implements FactoryInterface
 {
@@ -16,7 +17,8 @@ class LicenceDetailsServiceFactory implements FactoryInterface
         return new LicenceDetailsService(
             $serviceLocator->get(EntityManager::class),
             new DrivingLicenceValidator(),
-            $serviceLocator->get(XssFilter::class)
+            $serviceLocator->get(XssFilter::class),
+            $serviceLocator->get(PersonDetailsChangeNotificationHelper::class)
         );
     }
 }

@@ -10,6 +10,7 @@ use DvsaCommon\Exception\UnauthorisedException;
 use DvsaCommon\Validator\DateOfBirthValidator;
 use DvsaCommonApi\Service\AbstractService;
 use DvsaCommonApi\Service\Exception\BadRequestException;
+use PersonApi\Helper\PersonDetailsChangeNotificationHelper;
 
 class PersonDateOfBirthService extends AbstractService
 {
@@ -22,15 +23,21 @@ class PersonDateOfBirthService extends AbstractService
      */
     private $authService;
 
+    /**
+     * @var PersonDetailsChangeNotificationHelper
+     */
+    private $notificationHelper;
+
     public function __construct(
         EntityManager $entityManager,
         DateOfBirthValidator $dayOfBirthValidator,
-        AuthorisationService $authService
-    )
-    {
+        AuthorisationService $authService,
+        PersonDetailsChangeNotificationHelper $notificationHelper
+    ) {
         parent::__construct($entityManager);
         $this->dayOfBirthValidator = $dayOfBirthValidator;
         $this->authService = $authService;
+        $this->notificationHelper = $notificationHelper;
     }
 
     /**
@@ -47,7 +54,7 @@ class PersonDateOfBirthService extends AbstractService
 
         $person = $this->findPerson((int) $personId);
 
-        if($this->dayOfBirthValidator->isValid($data)){
+        if ($this->dayOfBirthValidator->isValid($data)) {
             $dayOfBirthDate = DateUtils::toDateFromParts(
                 $data[DateOfBirthValidator::FIELD_DAY],
                 $data[DateOfBirthValidator::FIELD_MONTH],
@@ -57,8 +64,9 @@ class PersonDateOfBirthService extends AbstractService
 
             $this->entityManager->persist($person);
             $this->entityManager->flush($person);
-        }
-        else {
+
+            $this->notificationHelper->sendChangedPersonalDetailsNotification($person);
+        } else {
             throw new BadRequestException('validation failed', 400);
         }
     }
@@ -70,7 +78,7 @@ class PersonDateOfBirthService extends AbstractService
     private function assertNotChangingOwnName($personId)
     {
         $identity = $this->authService->getIdentity();
-        if($identity->getUserId() == $personId){
+        if ($identity->getUserId() == $personId) {
             throw new UnauthorisedException('Cannot edit your own date of birth');
         }
     }

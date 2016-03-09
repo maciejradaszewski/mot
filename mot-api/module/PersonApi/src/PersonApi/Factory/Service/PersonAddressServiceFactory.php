@@ -8,6 +8,7 @@ use DvsaCommon\Validator\AddressValidator;
 use PersonApi\Service\PersonAddressService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use PersonApi\Helper\PersonDetailsChangeNotificationHelper;
 
 class PersonAddressServiceFactory implements FactoryInterface
 {
@@ -16,7 +17,8 @@ class PersonAddressServiceFactory implements FactoryInterface
         return new PersonAddressService(
             $serviceLocator->get(EntityManager::class),
             new AddressValidator(),
-            $serviceLocator->get('DvsaAuthorisationService')
+            $serviceLocator->get('DvsaAuthorisationService'),
+            $serviceLocator->get(PersonDetailsChangeNotificationHelper::class)
         );
     }
 }

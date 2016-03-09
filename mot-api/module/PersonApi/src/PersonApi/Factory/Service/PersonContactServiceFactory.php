@@ -12,6 +12,7 @@ use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use DvsaAuthorisation\Service\AuthorisationService;
 use Zend\Authentication\AuthenticationService;
+use PersonApi\Helper\PersonDetailsChangeNotificationHelper;
 
 /**
  * Factory for PersonContactService
@@ -38,6 +39,7 @@ class PersonContactServiceFactory implements FactoryInterface
         $authorisationService = $serviceLocator->get('DvsaAuthorisationService');
         /** @var EntityManager $entityManager */
         $entityManager = $serviceLocator->get('doctrine.entitymanager.orm_default');
+        $notificationHelper = $serviceLocator->get(PersonDetailsChangeNotificationHelper::class);
 
         return new PersonContactService(
             $repository,
@@ -46,7 +48,8 @@ class PersonContactServiceFactory implements FactoryInterface
             $validator,
             $authenticationService,
             $authorisationService,
-            $entityManager
+            $entityManager,
+            $notificationHelper
         );
     }
 }

@@ -16,6 +16,7 @@ use DvsaEntities\Entity\PersonContact;
 use DvsaEntities\Entity\ContactDetail;
 use DvsaEntities\Repository\PersonContactRepository;
 use OrganisationApi\Service\Mapper\PersonContactMapper;
+use PersonApi\Helper\PersonDetailsChangeNotificationHelper;
 use PersonApi\Service\PersonContactService;
 use PersonApi\Service\Validator\PersonalDetailsValidator;
 use Zend\Authentication\AuthenticationService;
@@ -39,6 +40,8 @@ class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
     private $identityMock;
     /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManager */
     private $emMock;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|PersonDetailsChangeNotificationHelper */
+    private $notificationHelperMock;
 
     public function setUp()
     {
@@ -52,6 +55,7 @@ class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
         $this->authorisationServiceMock = XMock::of(AuthorisationService::class, ['assertGranted']);
         $this->identityMock = XMock::of(Identity::class, ['getUserId']);
         $this->emMock = XMock::of(EntityManager::class);
+        $this->notificationHelperMock = XMock::of(PersonDetailsChangeNotificationHelper::class);
     }
 
     private function createService()
@@ -63,7 +67,8 @@ class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
             $this->personalDetailsValidatorMock,
             $this->authenticationServiceMock,
             $this->authorisationServiceMock,
-            $this->emMock
+            $this->emMock,
+            $this->notificationHelperMock
         );
     }
 
@@ -94,10 +99,10 @@ class PersonContactServiceTest extends \PHPUnit_Framework_TestCase
     public function testUpdateEmailForPersonIdReturnsDto()
     {
         $personId = 1;
-        $this->authenticationServiceMock->expects($this->once())
+        $this->authenticationServiceMock->expects($this->atLeastOnce())
             ->method('getIdentity')
             ->willReturn($this->identityMock);
-        $this->identityMock->expects($this->once())
+        $this->identityMock->expects($this->atLeastOnce())
             ->method('getUserId')
             ->willReturn($personId);
         $this->personalDetailsValidatorMock->expects($this->once())

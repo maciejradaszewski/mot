@@ -25,28 +25,19 @@ Feature: Person
     Then I will see my username in my Profile
     And I will see my user id in my Profile
 
+  @email
   Scenario: Successfully update Area Office user email address
     Given I am logged in as an Area Office User
     When I update my email address on my profile
     Then I will see my updated email address
 
+  @email
   Scenario: Successfully update Tester user email address
     Given I am logged in as a Tester
     When I update my email address on my profile
     Then I will see my updated email address
 
-  Scenario: Tester cannot update their profile with mismatching email addresses
-    Given I am logged in as a Tester
-    When I update my profile with a mismatching email address
-    Then my email address will not be updated
-    And I should receive an email mismatch message in the response
-
-  Scenario: Area Office User cannot update their profile with mismatching email addresses
-    Given I am logged in as an Area Office User
-    When I update my profile with a mismatching email address
-    Then my email address will not be updated
-    And I should receive an email mismatch message in the response
-
+  @email
   Scenario Outline: Area Office user attempts to change email that violates validation
     Given I am logged in as an Area Office User
     When I update my email address to <email>
@@ -59,6 +50,7 @@ Feature: Person
       | com   |
       | @     |
 
+  @email
   Scenario Outline: Email validation is enforced on User Profile for Tester
     Given I am logged in as a Tester
     When I update my email address to <email>
@@ -70,6 +62,14 @@ Feature: Person
       | .com  |
       | com   |
       | @     |
+
+  @email
+  @details-changed-notification
+  Scenario: User is notified when their email address is changed by DVSA
+    Given I am logged in as an Area Office User
+    When I update a user's email address
+    Then the user's email address will be updated
+    And the person should receive a notification about the change
 
   @wip
   Scenario: AE record contains Data Disclosure
@@ -140,6 +140,14 @@ Feature: Person
     When I delete the user's licence
     Then the user should not have a licence associated with their account
 
+  @driving-licence
+  @details-changed-notification
+  Scenario: An Area Office User can delete a licence on a tester's profile
+    Given I am logged in as an Area Office User
+    And I have selected a user who needs to have their licence deleted
+    When I delete the user's licence
+    Then the user should not have a licence associated with their account
+
   Scenario: A user with permission to change names can update a different person's name
     Given I am logged in as a Scheme Manager
     When I change a person's name to Joe Bloggs Smith
@@ -168,6 +176,12 @@ Feature: Person
       | Thisnameislongerthan45characterssoitisinvalidl |                                                |                                                 |
       | Joe                                            | Thisnameislongerthan45characterssoitisinvalidl |  Bloggs                                         |
       | Joe                                            |                                                |  Thisnameislongerthan45characterssoitisinvalidl |
+
+  @details-changed-notification
+  Scenario: A user gets a notification when their name is updated by DVSA
+    Given I am logged in as a Scheme Manager
+    When I change a person's name to Joe Bloggs Smith
+    Then the person should receive a notification about the change
 
   @address
   Scenario: A user with permission to edit other persons' addresses can update a different person's address
@@ -200,6 +214,20 @@ Feature: Person
       | First Line |             | Third Line | Belfast    | NI      |          |
       | First Line | Second Line |            | Bristol    | UK      | xxxxx    |
 
+  @address
+  @details-changed-notification
+  Scenario: A user gets a notification when the DVSA update their address
+    Given I am logged in as a Area Office 1
+    When I change a person's address to 1 Some Street, Some Building, Some Area, Nottingham, UK, NG1 6LP
+    Then the person should receive a notification about the change
+
+  @address
+  @details-changed-notification
+  Scenario: A user does not get a notification when they update their own address
+    Given I am logged in as a Tester
+    When I change my own address to 1 Some Street, Some Building, Some Area, Nottingham, UK, NG1 6LP
+    Then the person should not receive a notification about the change
+
   Scenario: A user with permission to change date of birth can update date of birth of a different person
     Given I am logged in as a Area Office 1
     When I change a person date of birth to 20 10 1970
@@ -228,6 +256,11 @@ Feature: Person
       | 01   | 30      | 20a0     |
       | 10   | 01      | 1800     |
 
+  @details-changed-notification
+  Scenario: A user gets a notification when their date of birth is updated by DVSA
+    Given I am logged in as a Area Office 1
+    When I change a person date of birth to 01 01 1970
+    Then the person should receive a notification about the change
 
   Scenario: Get my profile details for valid user
     Given I am logged in as a Tester
@@ -267,6 +300,20 @@ Feature: Person
     Given I am logged in as a Tester
     When I change my own telephone number to '1234567890123456789012345'
     Then my telephone number should not be updated
+
+  @telephone
+  @details-changed-notification
+  Scenario: A user gets a notification when the DVSA update their telephone number
+    Given I am logged in as a Area Office 1
+    When I change a person's telephone number to '1234567890'
+    Then the person should receive a notification about the change
+
+  @telephone
+  @details-changed-notification
+  Scenario: A user does not get a notification when they update their own telephone number
+    Given I am logged in as a Tester
+    When I change my own telephone number to '1234567890'
+    Then the person should not receive a notification about the change
 
   Scenario Outline: Tester performance dashboard daily stats are calculated
     Given I am logged in as a Tester

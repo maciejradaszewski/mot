@@ -14,6 +14,8 @@ use DvsaCommon\Dto\Contact\ContactDto;
 use DvsaCommon\Dto\Contact\PhoneDto;
 use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommonApi\Service\Exception\BadRequestException;
+use PersonApi\Helper\PersonDetailsChangeNotificationHelper;
+use DvsaAuthorisation\Service\AuthorisationService;
 
 class TelephoneService extends AbstractService
 {
@@ -23,24 +25,36 @@ class TelephoneService extends AbstractService
     /** @var TelephoneNumberValidator */
     private $validator;
 
-    /** @var XssFilter  */
-    private $xssFilter;
+    /**
+     * @var AuthorisationService
+     */
+    private $authService;
 
     /**
-     * @param EntityManager            $entityManager
-     * @param ContactDetailsService    $contactDetailsService
-     * @param TelephoneNumberValidator $validator
-     * @param XssFilter                $xssFilter
+     * @var PersonDetailsChangeNotificationHelper
+     */
+    private $notificationHelper;
+
+    /**
+     * @param EntityManager                         $entityManager
+     * @param ContactDetailsService                 $contactDetailsService
+     * @param TelephoneNumberValidator              $validator
+     * @param AuthorisationService                  $authorisationService
+     * @param PersonDetailsChangeNotificationHelper $notificationHelper
      */
     public function __construct(
         EntityManager $entityManager,
         ContactDetailsService $contactDetailsService,
-        TelephoneNumberValidator $validator
+        TelephoneNumberValidator $validator,
+        AuthorisationService $authorisationService,
+        PersonDetailsChangeNotificationHelper $notificationHelper
     ) {
         parent::__construct($entityManager);
 
         $this->contactDetailsService = $contactDetailsService;
         $this->validator = $validator;
+        $this->authService = $authorisationService;
+        $this->notificationHelper = $notificationHelper;
     }
 
     /**
@@ -50,6 +64,7 @@ class TelephoneService extends AbstractService
     public function updatePhoneNumber($personId, $newPhoneNumber)
     {
         $person = $this->findPerson($personId);
+        $identity = $this->authService->getIdentity();
 
         /** @var PersonContact $personContactDetails */
         $personContact = ArrayUtils::firstOrNull($person->getContacts());
@@ -73,6 +88,10 @@ class TelephoneService extends AbstractService
                 ->setContactType(PhoneContactTypeCode::PERSONAL);
 
             $contactDto->setPhones([$newPhone]);
+
+            if ($identity->getUserId() != $personId) {
+                $this->notificationHelper->sendChangedPersonalDetailsNotification($person);
+            }
 
             return $this->contactDetailsService->patchContactDetailsFromDto(
                 $contactDto,

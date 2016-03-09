@@ -3,12 +3,13 @@
 namespace PersonApi\Factory\Service;
 
 use Doctrine\ORM\EntityManager;
+use DvsaAuthorisation\Service\AuthorisationService;
 use DvsaCommon\Validator\TelephoneNumberValidator;
-use DvsaCommonApi\Filter\XssFilter;
 use DvsaCommonApi\Service\ContactDetailsService;
+use PersonApi\Helper\PersonDetailsChangeNotificationHelper;
+use PersonApi\Service\TelephoneService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use PersonApi\Service\TelephoneService;
 
 class TelephoneServiceFactory implements FactoryInterface
 {
@@ -23,10 +24,18 @@ class TelephoneServiceFactory implements FactoryInterface
         /** @var TelephoneNumberValidator $validator */
         $validator = new TelephoneNumberValidator();
 
+        /** @var AuthorisationService $authService */
+        $authService = $serviceLocator->get('DvsaAuthorisationService');
+
+        /** @var PersonDetailsChangeNotificationHelper $notificationHelper */
+        $notificationHelper = $serviceLocator->get(PersonDetailsChangeNotificationHelper::class);
+
         return new TelephoneService(
             $entityManager,
             $contactDetailsService,
-            $validator
+            $validator,
+            $authService,
+            $notificationHelper
         );
     }
 }

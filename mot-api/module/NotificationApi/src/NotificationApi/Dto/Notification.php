@@ -6,7 +6,10 @@ namespace NotificationApi\Dto;
  */
 class Notification
 {
-    /** values from database `notification_template` */
+    /**
+     * values from database `notification_template`
+     * These should be replaced with enums generated from codes _not_ use hardcoded ids
+     */
     const TEMPLATE_TESTER_APPLICATION_APPROVED = 1;
     const TEMPLATE_TESTER_APPLICATION_REJECTED = 2;
     const TEMPLATE_TESTER_INITIAL_TRAINING_PASSED = 3;
@@ -25,10 +28,11 @@ class Notification
     const TEMPLATE_AE_UNLINK_SITE = 18;
     const TEMPLATE_DVSA_ASSIGN_ROLE = 16;
     const TEMPLATE_DVSA_REMOVE_ROLE = 17;
-	const TEMPLATE_TESTER_STATUS_CHANGE = 20;
+    const TEMPLATE_TESTER_STATUS_CHANGE = 20;
     const TEMPLATE_TESTER_STATUS_CHANGE_NEW = 22;
     const TEMPLATE_PASSWORD_EXPIRY = 24;
     const TEMPLATE_USER_REMOVED_OWN_ROLE = 25;
+    const TEMPLATE_PERSONAL_DETAILS_CHANGED = 26;
 
     /** @var $template int */
     private $template;
