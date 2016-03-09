@@ -22,7 +22,10 @@ module.exports = function (grunt, config) {
         grunt.config('service_config', {
             //workspace:  '/home/vagrant/mot',
             //phpRootDir: '/opt/rh/php55/root',
-            httpdServiceName: 'httpd24-httpd'
+            httpdServiceName: 'httpd24-httpd',
+            opendjServiceName: 'opendj',
+            mysqlServiceName: 'mysql',
+            jasperServiceName: 'tomcat'
         });
 
         // dev (Frontend, OpenDJ, Jasper, MySQL, Distauth)
@@ -31,7 +34,8 @@ module.exports = function (grunt, config) {
             port: 22,
             username: 'vagrant',
             privateKey: getKeyCmd('cd %s && vagrant ssh-config dev | grep IdentityFile | awk \'{print $2}\'', 'dev'),
-            workspace: '/home/vagrant/mot'
+            workspace: '/home/vagrant/mot',
+            mysqlConfigDir: ''
         });
         // dev2 (API, OpenAM)
         grunt.config('dev2_config', {
