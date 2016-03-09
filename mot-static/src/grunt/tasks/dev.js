@@ -36,7 +36,7 @@ module.exports = function (grunt, config) {
             [
                 'sshexec:enable_dvsa_logger_api',
                 'sshexec:enable_dvsa_logger_web',
-                'apache:restart:all',
+                'apache:restart:all'
             ]
         );
         grunt.registerTask('dev:dvsa_logger_disable', 'Disables the DVSA Logger',
@@ -44,6 +44,18 @@ module.exports = function (grunt, config) {
                 'sshexec:disable_dvsa_logger_api',
                 'sshexec:disable_dvsa_logger_web',
                 'apache:restart:all'
+            ]
+        );
+        grunt.registerTask('dev:mysql_general_log_enable', 'Enables mysql general log',
+            [
+                'sshexec:mysql_general_log_enable',
+                'dev:restart:mysql'
+            ]
+        );
+        grunt.registerTask('dev:mysql_general_log_disable', 'Disables mysql general log',
+            [
+                'sshexec:mysql_general_log_disable',
+                'dev:restart:mysql'
             ]
         );
         grunt.registerTask('puppet_apply', 'Runs puppet apply for all VMs',
@@ -72,6 +84,25 @@ module.exports = function (grunt, config) {
             'sshexec:doctrine_default_develop_dist',
             'doctrine:proxy',
             'apache:restart:all'
+        ]);
+
+        grunt.registerTask('dev:restart:apache', 'Restarts Apache', [
+            'apache:restart:all'
+        ]);
+        grunt.registerTask('dev:restart:opendj', 'Restarts OpenDJ', [
+            'sshexec:opendj_restart_dev'
+        ]);
+        grunt.registerTask('dev:restart:jasper', 'Restarts Jasper', [
+            'sshexec:jasper_restart'
+        ]);
+        grunt.registerTask('dev:restart:mysql', 'Restarts Mysql', [
+            'sshexec:mysql_restart_dev'
+        ]);
+        grunt.registerTask('dev:restart:all', 'Restarts all known services', [
+            'apache:restart:all',
+            'sshexec:opendj_restart_dev',
+            'sshexec:mysql_restart_dev',
+            'sshexec:jasper_restart'
         ]);
     }
 };

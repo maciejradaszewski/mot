@@ -111,6 +111,24 @@ module.exports = function (grunt, config) {
                     'sudo /vagrant/scripts/papply'
                 ]
             },
+            opendj_restart_dev: {
+                options: dev_ssh_options,
+                command: function() {
+                    return 'sudo service <%= service_config.opendjServiceName %> restart';
+                }
+            },
+            jasper_restart: {
+                options: dev_ssh_options,
+                command: function() {
+                    return 'sudo service <%= service_config.jasperServiceName %> restart';
+                }
+            },
+            mysql_restart_dev: {
+                options: dev_ssh_options,
+                command: function() {
+                    return 'sudo service <%= service_config.mysqlServiceName %> restart';
+                }
+            },
             fix_db_configs: {
                 command: function () {
                     return [
@@ -246,6 +264,14 @@ module.exports = function (grunt, config) {
                     return cmd + ' -vv';
                 }
             },
+            mysql_general_log_disable: {
+                options: dev_ssh_options,
+                command: 'sudo sed -i.bak "s/^general-log = 1/general-log = 0/g" <%= vagrant_config.mysqlConfigDir %>/etc/my.cnf'
+            },
+            mysql_general_log_enable: {
+                options: dev_ssh_options,
+                command: 'sudo sed -i.bak "s/^general-log = 0/general-log = 1/g" <%= vagrant_config.mysqlConfigDir %>/etc/my.cnf'
+            },
             xdebug_disable_dev: {
                 options: dev_ssh_options,
                 command: 'sudo sed -i.bak "s/^.*zend_ext/;zend_ext/g" <%= vagrant_config.phpRootDir %>/etc/php.d/xdebug.ini'
@@ -297,6 +323,10 @@ module.exports = function (grunt, config) {
             trace_web_log: {
                 options: dev_ssh_options,
                 command: 'sudo tail -f /var/log/dvsa/mot-webfrontend.log'
+            },
+            trace_mysql_log: {
+                options: dev_ssh_options,
+                command: 'sudo tail -f /var/log/mysql/general.log'
             },
             password_policy_show: {
                 command: 'cd /etc/openam/opends/bin/ && sudo ./dsconfig  get-password-policy-prop  \
