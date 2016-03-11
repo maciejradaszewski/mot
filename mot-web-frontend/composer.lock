@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "30d7ac0564a5085ecf6823dc2b4361b1",
-    "content-hash": "2c336cfc198c802cb60ad833742a41ee",
+    "hash": "dafeb523540cb90268e328ae47f53ffb",
+    "content-hash": "eaf96b47b03bc83d4efc8dbcc96639c0",
     "packages": [
         {
             "name": "cpms/client",
@@ -583,12 +583,6 @@
                     "homepage": "http://www.spiffyjr.me/"
                 },
                 {
-                    "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com",
-                    "homepage": "http://ocramius.github.com/",
-                    "role": "Developer"
-                },
-                {
                     "name": "Evan Coury",
                     "email": "me@evancoury.com",
                     "homepage": "http://blog.evan.pro/"
@@ -596,6 +590,11 @@
                 {
                     "name": "Guilherme Blanco",
                     "email": "guilhermeblanco@hotmail.com"
+                },
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "http://marco-pivetta.com/"
                 }
             ],
             "description": "Zend Framework 2 Module that provides Doctrine ORM functionality",
@@ -1340,11 +1339,11 @@
         },
         {
             "name": "slot-purchase/web-frontend",
-            "version": "v3.6.5",
+            "version": "v3.6.6",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/web-frontend.git",
-                "reference": "b34b85d5edaa4b6d7fda561d14017976eeb4819e"
+                "reference": "fd9769c42d7359753839af40a0f36c68de96cfee"
             },
             "require": {
                 "cpms/cpms-forms": "1.22.*",
@@ -1353,6 +1352,7 @@
                 "zendframework/zendframework": "<2.5"
             },
             "require-dev": {
+                "fabpot/php-cs-fixer": "~1.5",
                 "phpunit/phpunit": "4.0.*",
                 "zendframework/zend-developer-tools": "dev-master",
                 "zendframework/zftool": "dev-master"
@@ -1378,7 +1378,7 @@
                 "proprietary"
             ],
             "description": "Slot Purchase Frontend",
-            "time": "2016-01-15 12:08:57"
+            "time": "2016-02-24 15:03:27"
         },
         {
             "name": "soflomo/purifier",
@@ -1613,12 +1613,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:zendframework/ZendPdf.git",
-                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0"
+                "url": "https://github.com/zendframework/ZendPdf.git",
+                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },
