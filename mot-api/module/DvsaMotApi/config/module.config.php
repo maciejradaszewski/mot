@@ -12,6 +12,7 @@ use DvsaMotApi\Controller\MotTestStatusController;
 use DvsaMotApi\Controller\ReasonForRejectionController;
 use DvsaMotApi\Controller\ReplacementCertificateDraftController;
 use DvsaMotApi\Controller\RetestController;
+use DvsaMotApi\Controller\SurveyController;
 use DvsaMotApi\Controller\TestItemCategoryNameController;
 use DvsaMotApi\Controller\TesterMotTestLogController;
 use DvsaMotApi\Controller\MotCertificatesController;
@@ -603,6 +604,15 @@ return [
                     ],
                     'defaults'    => [
                         'controller' => 'DvsaMotApi\Controller\EnforcementMotTestResult',
+                    ],
+                ],
+            ],
+            'survey' => [
+                'type' => 'segment',
+                'options' => [
+                    'route' => '/survey',
+                    'defaults' => [
+                        'controller' => SurveyController::class,
                     ],
                 ],
             ],

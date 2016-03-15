@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="Regression Tests" parallel="classes" thread-count="10">
     <listeners>
-        <listener class-name="uk.gov.dvsa.framework.listeners.NewProfileToggleAnnotationTransformer"/>
+        <listener class-name="uk.gov.dvsa.framework.listeners.FeatureToggleAnnotationTransformer"/>
     </listeners>
     <test name="Regression test suite">
         <groups>

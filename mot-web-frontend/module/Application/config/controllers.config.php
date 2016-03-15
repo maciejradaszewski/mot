@@ -2,7 +2,6 @@
 
 use Application\Controller\FormsController;
 use Application\Controller\ReportController;
-use DvsaCommon\Factory\AutoWire\AutoWireFactory;
 use DvsaMotEnforcement\Controller\MotTestController as EnforcementMotTestController;
 use DvsaMotEnforcement\Controller\MotTestSearchController as EnforcementMotTestSearchController;
 use DvsaMotEnforcement\Controller\ReinspectionReportController;
@@ -14,7 +13,6 @@ use DvsaMotTest\Controller\CertificatePrintingController;
 use DvsaMotTest\Controller\LocationSelectController;
 use DvsaMotTest\Controller\MotTestCertificatesController;
 use DvsaMotTest\Controller\MotTestController;
-use DvsaMotTest\Controller\MotTestOptionsController;
 use DvsaMotTest\Controller\RefuseToTestController;
 use DvsaMotTest\Controller\ReplacementCertificateController;
 use DvsaMotTest\Controller\SpecialNoticesController;

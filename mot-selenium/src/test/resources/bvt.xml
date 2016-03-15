@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="Build Verification Test" parallel="classes" thread-count="10">
     <listeners>
-        <listener class-name="uk.gov.dvsa.framework.listeners.NewProfileToggleAnnotationTransformer"/>
+        <listener class-name="uk.gov.dvsa.framework.listeners.FeatureToggleAnnotationTransformer"/>
     </listeners>
     <test name="Build Verification Test">
         <groups>

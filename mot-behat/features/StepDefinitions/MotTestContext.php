@@ -139,6 +139,16 @@ class MotTestContext implements Context, SnippetAcceptingContext
      */
     private $vtsContext;
 
+    /**
+     * @var int $satisfactionRating
+     */
+    private $satisfactionRating;
+
+    /**
+     * @var Response $satisfactionRating
+     */
+    private $satisfactionRatingResponse;
+
     public function __construct(
         BrakeTestResult $brakeTestResult,
         MotTest $motTest,
@@ -1201,5 +1211,29 @@ class MotTestContext implements Context, SnippetAcceptingContext
         } else {
             PHPUnit::assertTrue(true, "Test Failed"); return [];
         }
+    }
+
+    /**
+     * @Given /^I submit a survey response of (.*)$/
+     */
+    public function iSubmitASurveyResponse($satisfactionRating)
+    {
+        $this->satisfactionRating = $satisfactionRating;
+        $this->satisfactionRatingResponse = $this->motTest->submitSurveyResponse(
+            $this->sessionContext->getCurrentAccessToken(),
+            $satisfactionRating
+        );
+    }
+
+    /**
+     * @Then /^The survey response is saved$/
+     */
+    public function theSurveyResponseIsSaved()
+    {
+        PHPUnit::assertSame(200, $this->satisfactionRatingResponse->getStatusCode());
+        PHPUnit::assertTrue(
+            $this->satisfactionRating ==
+            $this->satisfactionRatingResponse->getBody()['data']['satisfaction_rating']
+        );
     }
 }

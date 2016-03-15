@@ -45,7 +45,7 @@ public class NormalTest {
         driver = pageNavigator.getDriver();
     }
 
-    public void conductTestPass(User tester, Vehicle vehicle) throws IOException, URISyntaxException {
+    public TestCompletePage conductTestPass(User tester, Vehicle vehicle) throws IOException, URISyntaxException {
         TestResultsEntryPage testResultsEntryPage = pageNavigator.gotoTestResultsEntryPage(tester, vehicle);
         testResultsEntryPage.completeTestDetailsWithPassValues();
         TestSummaryPage testSummaryPage = testResultsEntryPage.clickReviewTestButton();
@@ -54,7 +54,7 @@ public class NormalTest {
             assertThat(testSummaryPage.getDeclarationText(), equalToIgnoringCase(DECLARATION_STATEMENT));
             declarationSuccessful = true;
         }
-        testSummaryPage.finishTestAndPrint();
+        return testSummaryPage.finishTestAndPrint();
     }
 
     public boolean isDeclarationStatementDisplayed() {

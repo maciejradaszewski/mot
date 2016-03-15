@@ -4,6 +4,7 @@ namespace Dvsa\Mot\Behat\Support\Api;
 
 use Dvsa\Mot\Behat\Datasource\Authentication;
 use Dvsa\Mot\Behat\Support\HttpClient;
+use Dvsa\Mot\Behat\Support\Request;
 
 class MotTest extends AbstractMotTest
 {
@@ -11,6 +12,7 @@ class MotTest extends AbstractMotTest
     const PATH_GET_CERT = 'mot-test-certificate?number=651157444199';
     const PATH_SEARCH = 'mot-test-search';
     const PATH_RECENT_CERTIFICATE = 'mot-recent-certificate';
+    const PATH_SURVEY = '/survey';
 
     /**
      * @var Person
@@ -176,5 +178,17 @@ class MotTest extends AbstractMotTest
             MotApi::METHOD_GET,
             self::PATH_SEARCH . "?" . http_build_query($params)
         );
+    }
+
+    public function submitSurveyResponse($token, $satisfactionRating)
+    {
+        $body = '{"satisfaction_rating": ' . ($satisfactionRating == "" ? 'null' : $satisfactionRating) . '}';
+
+        return $this->client->request(new Request(
+            MotApi::METHOD_POST,
+            self::PATH_SURVEY,
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '. $token],
+            $body
+        ));
     }
 }

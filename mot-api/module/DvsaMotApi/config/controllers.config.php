@@ -16,6 +16,7 @@ use DvsaMotApi\Controller\MotTestStatusController;
 use DvsaMotApi\Controller\ReasonForRejectionController;
 use DvsaMotApi\Controller\ReplacementCertificateDraftController;
 use DvsaMotApi\Controller\RetestController;
+use DvsaMotApi\Controller\SurveyController;
 use DvsaMotApi\Controller\TesterMotTestLogController;
 use DvsaMotApi\Controller\TestItemCategoryNameController;
 use DvsaMotApi\Factory\Controller\CertificatePrintingControllerFactory;
@@ -26,6 +27,7 @@ use DvsaMotApi\Factory\Controller\MotCertificatePdfControllerFactory;
 use DvsaMotApi\Factory\Controller\MotCertificatesControllerFactory;
 use DvsaMotApi\Factory\Controller\MotTestStatusControllerFactory;
 use DvsaMotApi\Factory\Controller\ReplacementCertificateDraftControllerFactory;
+use DvsaMotApi\Factory\Controller\SurveyControllerFactory;
 use DvsaMotApi\Factory\Controller\TesterControllerFactory;
 use DvsaMotApi\Factory\Controller\TesterMotTestLogControllerFactory;
 use DvsaMotApi\Factory\Controller\UserControllerFactory;
@@ -73,5 +75,6 @@ return [
         MotCertificatesController::class             => MotCertificatesControllerFactory::class,
         MotCertificatePdfController::class           => MotCertificatePdfControllerFactory::class,
         MotCertificateEmailController::class         => MotCertificateEmailControllerFactory::class,
+        SurveyController::class                      => SurveyControllerFactory::class,
     ],
 ];
