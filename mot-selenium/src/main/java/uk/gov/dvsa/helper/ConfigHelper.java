@@ -8,4 +8,8 @@ public class ConfigHelper {
     public static boolean isNewPersonProfileEnabled() {
         return service.getToggleValue("new_person_profile");
     }
+
+    public static boolean isSurveyPageEnabled() {
+        return service.getToggleValue("survey_page");
+    }
 }

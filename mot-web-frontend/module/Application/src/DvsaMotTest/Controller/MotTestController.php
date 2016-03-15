@@ -582,7 +582,9 @@ class MotTestController extends AbstractDvsaMotTestController
     public function testResultAction()
     {
         $motTestNumber = $this->params()->fromRoute('motTestNumber', 0);
-
+        /**
+         * @var MotTestDto $motDetails
+         */
         $motDetails = $this->tryGetMotTestOrAddErrorMessages();
 
         $this->layout()->setVariable('hideChangeSiteLink', true);
@@ -591,7 +593,9 @@ class MotTestController extends AbstractDvsaMotTestController
             [
                 'motDetails'    => $motDetails,
                 'motTestNumber' => $motTestNumber,
-                'isDuplicate'   => false
+                'isDuplicate'   => false,
+                'shouldDisplaySurvey' => $motDetails->getTestType()->getCode() === 'NT'
+                                        && $this->isFeatureEnabled(FeatureToggle::SURVEY_PAGE),
             ]
         );
         /** @var MotTestDto $motDetails */

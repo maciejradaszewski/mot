@@ -1,0 +1,65 @@
+<?php
+
+use Dvsa\Mot\Frontend\MotTestModule\Controller\SurveyPageController;
+
+$this->layout()->setVariable('pageTitle', 'Give feedback');
+?>
+
+<form method="POST">
+    <?php echo $this->csrfToken(); ?>
+    <fieldset>
+        <legend class="form-label">Overall, how did you feel about the service you received today?</legend>
+        <?php
+        echo $this->partial(
+            'partial/gds/form/control-radio-group',
+            [
+                'name' => 'satisfactionRating',
+                'splitLastOption' => false,
+                'options' => [
+                    [
+                        'inputName' => 'satisfactionRating',
+                        'value' => SurveyPageController::VERY_SATISFIED,
+                        'key' => 'Very satisfied',
+                    ],
+                    [
+                        'inputName' => 'satisfactionRating',
+                        'value' => SurveyPageController::SATISFIED,
+                        'key' => 'Satisfied',
+                    ],
+                    [
+                        'inputName' => 'satisfactionRating',
+                        'value' => SurveyPageController::NEITHER_SATISFIED_NOR_DISSATISFIED,
+                        'key' => 'Neither satisfied nor dissatisfied',
+                    ],
+                    [
+                        'inputName' => 'satisfactionRating',
+                        'value' => SurveyPageController::DISSATISFIED,
+                        'key' => 'Dissatisfied',
+                    ],
+                    [
+                        'inputName' => 'satisfactionRating',
+                        'value' => SurveyPageController::VERY_DISSATISFIED,
+                        'key' => 'Very dissatisfied',
+                    ],
+                ],
+            ]
+        );
+        ?>
+    </fieldset>
+    <?php echo $this->partial(
+        'partial/gds/form/control-navigation',
+        [
+            'id' => 'submitSurvey',
+            'value' => 'Send feedback',
+        ]
+    ); ?>
+    <ul class="content-navigation__secondary">
+        <li>
+            <a id="cancel-and-return" href="<?php
+            echo '/';
+            ?>">
+                <?php echo 'Cancel and return home' ?>
+            </a>
+        </li>
+    </ul>
+</form>

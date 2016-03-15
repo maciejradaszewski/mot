@@ -7,15 +7,19 @@ import uk.gov.dvsa.helper.ConfigHelper;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-public class NewProfileToggleAnnotationTransformer implements IAnnotationTransformer {
+public class FeatureToggleAnnotationTransformer implements IAnnotationTransformer {
     @Override
     public void transform(ITestAnnotation iTestAnnotation, Class aClass, Constructor constructor, Method method) {
-        if(iTestAnnotation.getTestName().equals("NewProfile")){
+        if (iTestAnnotation.getTestName().equals("NewProfile")) {
             iTestAnnotation.setEnabled(ConfigHelper.isNewPersonProfileEnabled());
         }
 
-        if(iTestAnnotation.getTestName().equals("Legacy")){
+        if (iTestAnnotation.getTestName().equals("Legacy")) {
             iTestAnnotation.setEnabled(!ConfigHelper.isNewPersonProfileEnabled());
+        }
+
+        if (iTestAnnotation.getTestName().equals("Survey")) {
+            iTestAnnotation.setEnabled(ConfigHelper.isSurveyPageEnabled());
         }
     }
 }

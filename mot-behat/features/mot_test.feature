@@ -349,3 +349,17 @@ Feature: MOT Test
       | class4.roller.valid.low     | PASSED  |
       | class4.roller.invalid.low   | FAILED  |
       | class4.roller.invalid.high  | FAILED  |
+
+  @survey
+  Scenario Outline: Tester submits a survey response
+    Given I am logged in as a Tester
+    And I submit a survey response of <response>
+    Then The survey response is saved
+    Examples:
+      | response |
+      |          |
+      | 1        |
+      | 2        |
+      | 3        |
+      | 4        |
+      | 5        |

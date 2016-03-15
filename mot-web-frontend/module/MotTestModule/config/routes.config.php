@@ -6,6 +6,7 @@
  */
 
 use Dvsa\Mot\Frontend\MotTestModule\Controller\ContingencyTestController;
+use Dvsa\Mot\Frontend\MotTestModule\Controller\SurveyPageController;
 
 return [
     'router' => [
@@ -27,6 +28,16 @@ return [
                     'defaults' => [
                         'controller' => ContingencyTestController::class,
                         'action'     => 'error',
+                    ],
+                ],
+            ],
+            'survey' => [
+                'type' => 'segment',
+                'options' => [
+                    'route' => '/survey',
+                    'defaults' => [
+                        'controller' => SurveyPageController::class,
+                        'action'     => 'index',
                     ],
                 ],
             ],
