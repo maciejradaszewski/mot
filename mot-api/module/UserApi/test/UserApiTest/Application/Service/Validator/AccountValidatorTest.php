@@ -2,6 +2,9 @@
 
 namespace UserApiTest\Application\Service\Validator;
 
+use DateInterval;
+use DateTime;
+use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommon\Validator\EmailAddressValidator;
 use UserApi\Application\Service\Validator\AccountValidator;
 
@@ -146,10 +149,30 @@ class AccountValidatorTest extends \PHPUnit_Framework_TestCase
     public function testValidateUnder16ThrowsException()
     {
         $data = $this->getCorrectData();
+        $dateTimeHolder = new DateTimeHolder();
+        $sixteenYears = new DateInterval('P16Y');
+        $oneDay = new DateInterval('P1D');
+        $date = (new DateTime($dateTimeHolder->getCurrent()->format('Y-m-d')))->sub($sixteenYears)->add($oneDay);
         $data = array_merge(
             $data,
             [
-                'dateOfBirth' => '2000-03-15',
+                'dateOfBirth' => $date->format('Y-m-d'),
+            ]
+        );
+
+        $this->callValidator($data);
+    }
+
+    public function testValidateUnder16DoesNotThrowExceptionForValidDate()
+    {
+        $data = $this->getCorrectData();
+        $dateTimeHolder = new DateTimeHolder();
+        $sixteenYears = new DateInterval('P16Y');
+        $date = (new DateTime($dateTimeHolder->getCurrent()->format('Y-m-d')))->sub($sixteenYears);
+        $data = array_merge(
+            $data,
+            [
+                'dateOfBirth' => $date->format('Y-m-d'),
             ]
         );
 
