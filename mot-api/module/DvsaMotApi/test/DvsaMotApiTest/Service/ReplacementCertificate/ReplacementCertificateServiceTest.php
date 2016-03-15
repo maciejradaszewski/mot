@@ -10,6 +10,7 @@ use DvsaCommonApiTest\Service\AbstractServiceTestCase;
 use DvsaCommonApiTest\Transaction\TestTransactionExecutor;
 use DvsaCommonTest\TestUtils\ArgCapture;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaEntities\Entity\CertificateReplacement;
 use DvsaEntities\Entity\ReplacementCertificateDraft;
 use DvsaEntities\Repository\CertificateReplacementRepository;
 use DvsaEntities\Repository\CertificateTypeRepository;
@@ -198,6 +199,7 @@ class ReplacementCertificateServiceTest extends AbstractServiceTestCase
 
         $this->createSUT()->applyDraft($draft->getId(), $data);
 
+        /** @var CertificateReplacement $certReplacement */
         $certReplacement = $certificateReplacementCapture->get();
         $this->assertEquals(
             $exampleReason, $certReplacement->getReplacementReason(),

@@ -12,6 +12,7 @@ use DvsaCommon\Utility\ArrayUtils;
 use DvsaDocument\Service\Document\DocumentService;
 use DvsaMotApi\Mapper;
 use DvsaMotApi\Mapper\AbstractMotTestMapper;
+use InvalidArgumentException;
 use Zend\Stdlib\Hydrator\ClassMethods;
 
 /**
@@ -70,9 +71,6 @@ class CertificateCreationService
         }
 
         $testStatus = $motTestData->getStatus();
-        if ($testStatus === MotTestStatusName::PASSED) {
-            return $this->createPassCertificate($motTestNumber, $motTestData, $userId);
-        }
 
         if (in_array(
             $testStatus,
@@ -82,31 +80,61 @@ class CertificateCreationService
                 MotTestStatusName::ABORTED
             ]
         )) {
-            $this->createPrsCertificate($motTestData, $userId);
+            if($this->isPrsTest($motTestData)){
+                $this->createPrsPassCertificate($motTestData, $userId);
+            }
 
-            // whatever happens, create the VT30
             return $this->createFailCertificate($motTestNumber, $motTestData, $userId);
         }
 
-        // there's a slim chance we'll get here without doing anything; if so
-        // make sure we still return the original data
+        if ($testStatus === MotTestStatusName::PASSED) {
+            if($this->isPrsTest($motTestData)){
+                $this->createPrsFailCertificate($motTestData, $userId);
+            }
+
+            return $this->createPassCertificate($motTestNumber, $motTestData, $userId);
+        }
+
+
         return $motTestData;
     }
 
     /**
      * @param MotTestDto $motTestData
      * @param int        $userId
-     *
-     * @return int|null
+     * @throws InvalidArgumentException
+     * @return int
      */
-    private function createPrsCertificate(MotTestDto $motTestData, $userId)
+    private function createPrsPassCertificate(MotTestDto $motTestData, $userId)
     {
         $motTestNumber = $motTestData->getPrsMotTestNumber();
         if ($motTestNumber === null) {
-            return null;
+            throw new InvalidArgumentException();
         }
 
         $this->createPassCertificate(
+            $motTestNumber,
+            $this->motTestService->getMotTestData($motTestNumber),
+            $userId
+        );
+
+        return $motTestNumber;
+    }
+
+    /**
+     * @param MotTestDto $motTestData
+     * @param int        $userId
+     * @throws InvalidArgumentException
+     * @return int
+     */
+    private function createPrsFailCertificate(MotTestDto $motTestData, $userId)
+    {
+        $motTestNumber = $motTestData->getPrsMotTestNumber();
+        if ($motTestNumber === null) {
+            throw new InvalidArgumentException();
+        }
+
+        $this->createFailCertificate(
             $motTestNumber,
             $this->motTestService->getMotTestData($motTestNumber),
             $userId
@@ -248,6 +276,11 @@ class CertificateCreationService
     {
         return ($data->getTestType() !== null)
         && ($data->getTestType()->getCode() === MotTestTypeCode::NORMAL_TEST);
+    }
+
+    private function isPrsTest(MotTestDto $motTestData)
+    {
+        return !is_null($motTestData->getPrsMotTestNumber());
     }
 
 }

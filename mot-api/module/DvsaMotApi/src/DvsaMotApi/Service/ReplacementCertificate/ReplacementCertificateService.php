@@ -32,6 +32,8 @@ class ReplacementCertificateService implements TransactionAwareInterface
 
     const CHERISHED_TRANSFER_REASON = 'DVLA Cherished Transfer';
 
+    protected $certificateCreationService;
+
     /**
      * @var \Doctrine\ORM\EntityManager
      */
