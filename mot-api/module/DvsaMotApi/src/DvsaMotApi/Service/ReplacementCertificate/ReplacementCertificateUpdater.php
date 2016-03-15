@@ -73,6 +73,22 @@ class ReplacementCertificateUpdater
             }
         }
 
+        $this->updateMotTestFromDraft($draft, $motTest, $hasFullRights);
+        if($motTest->getPrsMotTest()){
+            $motTest->setPrsMotTest($this->updateMotTestFromDraft($draft, $motTest->getPrsMotTest(), $hasFullRights));
+        }
+
+        return $motTest;
+    }
+
+    /**
+     * @param ReplacementCertificateDraft $draft
+     * @param $motTest
+     * @param $hasFullRights
+     * @return MotTest
+     */
+    protected function updateMotTestFromDraft(ReplacementCertificateDraft $draft, MotTest $motTest, $hasFullRights)
+    {
         $motTest->setOdometerReading($draft->getOdometerReading())
             ->setExpiryDate($draft->getExpiryDate())
             ->setPrimaryColour($draft->getPrimaryColour())

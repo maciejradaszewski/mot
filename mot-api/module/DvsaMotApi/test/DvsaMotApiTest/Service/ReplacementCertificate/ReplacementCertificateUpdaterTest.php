@@ -11,8 +11,11 @@ use Api\Check\CheckResult;
 use DvsaCommonApi\Service\Exception\BadRequestException;
 use DvsaCommonApi\Service\Exception\ForbiddenException;
 use DvsaCommonTest\TestUtils\XMock;
+use DvsaEntities\Entity\MotTest;
+use DvsaEntities\Entity\ReplacementCertificateDraft;
 use DvsaMotApi\Service\MotTestSecurityService;
 use DvsaMotApi\Service\ReplacementCertificate\ReplacementCertificateUpdater;
+use DvsaMotApiTest\Factory\MotTestObjectsFactory;
 use DvsaMotApiTest\Factory\ReplacementCertificateObjectsFactory;
 use PHPUnit_Framework_TestCase;
 
@@ -60,6 +63,46 @@ class ReplacementCertificateUpdaterTest extends PHPUnit_Framework_TestCase
             $draft->getOdometerReading()->getResultType(),
             $motTest->getOdometerReading()->getResultType()
         );
+    }
+
+    public function testCreateGivenDraftShouldUpdateCertificateAndPrs()
+    {
+        $this->userAssignedToVts();
+        $this->userHasId(2);
+        $this->permissionsGranted(
+            [PermissionInSystem::CERTIFICATE_REPLACEMENT, PermissionInSystem::CERTIFICATE_REPLACEMENT_SPECIAL_FIELDS]
+        );
+
+        $draft = ReplacementCertificateObjectsFactory::replacementCertificateDraft()
+            ->setReplacementReason("Reason")
+            ->setVin(rand(0,999999999999))
+            ->setVrm(rand(0, 999999));
+        $draft->getOdometerReading()->setValue(rand(0,999999));
+        $draft->getMake()->setCode(rand(0,999999));
+        $draft->getMotTest()->setPrsMotTest(MotTestObjectsFactory::motTest());
+        $draft->getPrimaryColour()->setCode(rand(0, 100000));
+        $draft->getSecondaryColour()->setCode(rand(0, 100000));
+        $draft->getMake()->setCode(rand(0, 100000));
+        $draft->getModel()->setCode(rand(0, 100000));
+
+        $motTest = $this->createSut()->update($draft);
+
+        $checkIfTestIsUpdatedFromDraft = function(ReplacementCertificateDraft $draft, MotTest $motTest){
+            $this->assertEquals($draft->getExpiryDate(), $motTest->getExpiryDate());
+            $this->assertEquals($draft->getOdometerReading(),$motTest->getOdometerReading());
+            $this->assertEquals($draft->getPrimaryColour(), $motTest->getPrimaryColour());
+            $this->assertEquals($draft->getSecondaryColour(), $motTest->getSecondaryColour());
+            $this->assertEquals($draft->getModel(), $motTest->getModel());
+            $this->assertEquals($draft->getMake(), $motTest->getMake());
+            $this->assertEquals($draft->getMake(), $motTest->getVehicle()->getMake());
+            $this->assertEquals($draft->getModel(), $motTest->getVehicle()->getModel());
+            $this->assertEquals($draft->getVin(), $motTest->getVehicle()->getVin());
+            $this->assertEquals($draft->getVrm(), $motTest->getVehicle()->getRegistration());
+        };
+
+        $checkIfTestIsUpdatedFromDraft($draft, $motTest);
+        $checkIfTestIsUpdatedFromDraft($draft, $motTest->getPrsMotTest());
+
     }
 
     public function testCreateGivenDifferentMotTestVersionWhenApplyingShouldThrowForbiddenException()

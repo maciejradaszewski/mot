@@ -405,7 +405,15 @@ class CertificateCreationServiceTest extends AbstractServiceTestCase
 
     public function testWithNoRecognisedCertificateOutcomeForStatus()
     {
-        $this->assertEquals((new MotTestDto())->setStatus('bar'), $this->service->create(1, (new MotTestDto())->setStatus('bar'), 1));
+        $this->mockMotService->expects($this->never())
+            ->method('getAdditionalSnapshotData')
+            ->will($this->returnValue([
+                'tester' => [],
+                'expiryDate' => (new \DateTime())->format('Y-m-d'),
+            ]));
+
+        $motTestDto = (new MotTestDto())->setStatus('bar');
+        $this->assertEquals($motTestDto, $this->service->create(1, (new MotTestDto())->setStatus('bar'), 1));
     }
 
     public function testCreateWithValidDataAndPassedDualLanguageVts()
