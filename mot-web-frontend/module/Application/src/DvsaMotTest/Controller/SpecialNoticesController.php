@@ -49,6 +49,8 @@ class SpecialNoticesController extends AbstractAuthActionController
             SpecialNoticeAudience::TESTER_CLASS_4,
             SpecialNoticeAudience::TESTER_CLASS_5,
             SpecialNoticeAudience::TESTER_CLASS_7,
+            SpecialNoticeAudience::DVSA,
+            SpecialNoticeAudience::VTS,
         ];
 
     /**
@@ -472,7 +474,17 @@ class SpecialNoticesController extends AbstractAuthActionController
 
         if ($targetTestClasses) {
             foreach ($targetTestClasses as $targetClass) {
-                $classNumber = substr($targetClass, -1, 1);
+                switch ($targetClass) {
+                    case "DVSA":
+                        $classNumber = "D";
+                        break;
+                    case "VTS":
+                        $classNumber = "V";
+                        break;
+                    default:
+                        $classNumber = substr($targetClass, -1);
+                }
+
                 $roleMessage = $roleMessage . $classNumber . ' ';
             }
         } else {

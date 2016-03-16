@@ -2,11 +2,13 @@ Feature: Special Notices
   Admin users should be able to post special notices
   Users should be able to read any special notices sent to them
 
+  @special-notice
   Scenario: Broadcast a Special Notice
     Given I am logged in as a Special Notice broadcast user
     When I send a new Special Notice broadcast
     Then I will see the broadcast was successful
 
+  @special-notice
   Scenario Outline: Scheme User user creates new internal Special Notice
     Given I am logged in as a Scheme User
     And site with dvsa and vts users roles exists
@@ -24,6 +26,7 @@ Feature: Special Notices
       | DVSA, TESTER-CLASS-1 | tomorrow        | tomorrow        |
       | DVSA, TESTER-CLASS-1 | tomorrow        | now             |
 
+  @special-notice
   Scenario: Tester user attempts to create new Special Notice but does not have authorisation
     Given I am not logged in
     When I create a Special Notice
