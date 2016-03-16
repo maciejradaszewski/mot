@@ -8,6 +8,7 @@ db_name=mot_v195_rel4
 upgradefiles+=('2016-03-04-BL-1942-demo-test-permissions-STORY.sql');
 upgradefiles+=('2016-03-07-BL-1529-survey-page-for-mot-service.sql');
 upgradefiles+=('2016-03-01-BL-1464-users-do-not-receive-notification-when-personal-details-updated.sql');
+upgradefiles+=('2016-03-09-BL-772-add-users-with-aedm-and-aed-roles-to-the-list-of-special-notice-recipients-STORY.sql');
 upgradefiles+=('2016-02-25-BL-1395-DVLA-Import-Date-Handling-STORY.sql');
 
 # add files here in intended run order for release
