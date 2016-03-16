@@ -281,7 +281,7 @@ class MotTestMapper
             }
 
             $defaultParkingBrakeTestClass3AndAbove =  $site->getDefaultParkingBrakeTestClass3AndAbove();
-            if ($defaultServiceBrakeTestClass3AndAbove) {
+            if ($defaultParkingBrakeTestClass3AndAbove) {
                 $siteJson['defaultParkingBrakeTestClass3AndAbove'] = $defaultParkingBrakeTestClass3AndAbove->getCode();
             }
 

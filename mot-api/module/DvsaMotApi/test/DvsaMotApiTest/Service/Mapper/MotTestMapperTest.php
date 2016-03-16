@@ -2,6 +2,11 @@
 
 namespace DvsaMotApiTest\Service\Mapper;
 
+use DvsaCommon\Enum\BrakeTestTypeCode;
+use DvsaCommon\Enum\PhoneContactTypeCode;
+use DvsaCommon\Enum\VehicleClassCode;
+use DvsaEntities\Entity\BrakeTestType;
+use DvsaEntities\Entity\Phone;
 use DvsaCommon\Date\DateTimeApiFormat;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommon\Dto\Common\ColourDto;
@@ -38,6 +43,7 @@ use DvsaEntities\Entity\MotTestStatus;
 use DvsaEntities\Entity\MotTestType;
 use DvsaEntities\Entity\Organisation;
 use DvsaEntities\Entity\Person;
+use DvsaEntities\Entity\PhoneContactType;
 use DvsaEntities\Entity\ReasonForRejection;
 use DvsaEntities\Entity\ReasonForRejectionDescription;
 use DvsaEntities\Entity\Site;
@@ -362,5 +368,147 @@ class MotTestMapperTest extends AbstractServiceTestCase
             ->willReturn(MotTestStatusName::ACTIVE);
 
         return $status;
+    }
+
+    /**
+     * @dataProvider getMotTests
+     */
+    public function testMapMotTestMinimalMappedCorrectlyBrakeTestClass3AndAbove(MotTest $motTest)
+    {
+        $mocks = $this->getMocksForMotTestMapperService();
+        $motTestMapper = $this->constructMotTestMapperWithMocks($mocks);
+
+        $result = $motTestMapper->mapMotTestMinimal($motTest);
+
+        $vehicle = $motTest->getVehicleTestingStation();
+
+        if ($vehicle->getDefaultServiceBrakeTestClass3AndAbove()) {
+            $brakeTest = $vehicle->getDefaultServiceBrakeTestClass3AndAbove();
+            $this->assertEquals($brakeTest->getCode(), $result->getVehicleTestingStation()['defaultServiceBrakeTestClass3AndAbove']);
+        } else {
+            $vts = $result->getVehicleTestingStation();
+            $defaultServiceBrakeTestClass3AndAbove = null;
+
+            if (array_key_exists('defaultServiceBrakeTestClass3AndAbove', $vts)) {
+                $defaultServiceBrakeTestClass3AndAbove = $vts['defaultServiceBrakeTestClass3AndAbove'];
+            }
+
+            $this->assertNull($defaultServiceBrakeTestClass3AndAbove);
+        }
+
+        if ($vehicle->getDefaultParkingBrakeTestClass3AndAbove()) {
+            $brakeTest = $vehicle->getDefaultParkingBrakeTestClass3AndAbove();
+            $this->assertEquals($brakeTest->getCode(), $result->getVehicleTestingStation()['defaultParkingBrakeTestClass3AndAbove']);
+        } else {
+            $vts = $result->getVehicleTestingStation();
+            $defaultParkingBrakeTestClass3AndAbove = null;
+
+            if (array_key_exists('defaultParkingBrakeTestClass3AndAbove', $vts)) {
+                $defaultParkingBrakeTestClass3AndAbove = $vts['defaultParkingBrakeTestClass3AndAbove'];
+            }
+
+            $this->assertNull($defaultParkingBrakeTestClass3AndAbove);
+        }
+
+    }
+
+    public function getMotTests()
+    {
+        $site1 = $this->createSite();
+
+        $brakeTestType = new BrakeTestType();
+        $brakeTestType
+            ->setCode(BrakeTestTypeCode::PLATE)
+            ->setId(1);
+
+        $site2 = $this->createSite();
+        $site2->setDefaultServiceBrakeTestClass3AndAbove($brakeTestType);
+
+        $brakeTestType = new BrakeTestType();
+        $brakeTestType
+            ->setCode(BrakeTestTypeCode::PLATE)
+            ->setId(1);
+
+        $site3 = $this->createSite();
+        $site3->setDefaultParkingBrakeTestClass3AndAbove($brakeTestType);
+
+        $site4 = $this->createSite();
+        $site4
+            ->setDefaultServiceBrakeTestClass3AndAbove($brakeTestType)
+            ->setDefaultParkingBrakeTestClass3AndAbove($brakeTestType);
+
+        return [
+            [$this->createMotTest($site1)],
+            [$this->createMotTest($site2)],
+            [$this->createMotTest($site3)],
+            [$this->createMotTest($site4)],
+        ];
+    }
+
+    private function createSite()
+    {
+        $address = new Address();
+        $address
+            ->setAddressLine1("address line 1")
+            ->setAddressLine2("address line 2")
+            ->setAddressLine3("address line 3")
+            ->setCountry("England")
+            ->setPostcode("postcode")
+            ->setTown("London")
+        ;
+
+        $phoneContactType = new PhoneContactType();
+        $phoneContactType->setCode(PhoneContactTypeCode::BUSINESS);
+
+        $phone = new Phone();
+        $phone
+            ->setContactType($phoneContactType)
+            ->setNumber("658 876 678")
+            ->setIsPrimary(true)
+        ;
+
+        $contactDetail = new ContactDetail();
+        $contactDetail
+            ->setAddress($address)
+            ->addPhone($phone);
+
+        $siteContactType = new SiteContactType();
+        $siteContactType->setCode(SiteContactTypeCode::BUSINESS);
+
+        $site = new Site();
+        $site
+            ->setId(1)
+            ->setContact($contactDetail, $siteContactType)
+        ;
+
+        return $site;
+    }
+
+    private function createMotTest(Site $site = null)
+    {
+        $vehicleClass = new VehicleClass();
+        $vehicleClass->setCode(VehicleClassCode::CLASS_3);
+
+        $cor = (new CountryOfRegistration())->setName('COR');
+
+        $vehicle = new Vehicle();
+        $vehicle
+            ->setVehicleClass($vehicleClass)
+            ->setCountryOfRegistration($cor)
+        ;
+
+        $motTest = new MotTest();
+        $motTest
+            ->setVehicleTestingStation($site)
+            ->setStatus(new MotTestStatus())
+            ->setVehicle($vehicle)
+            ->setVehicleClass($vehicleClass)
+            ->setMake((new Make())->setName('MAKE'))
+            ->setModel((new Model())->setName('MODEL'))
+            ->setCountryOfRegistration($cor)
+            ->setPrsMotTest((new MotTest())->setNumber(2))
+            ;
+
+        return $motTest;
     }
 }
