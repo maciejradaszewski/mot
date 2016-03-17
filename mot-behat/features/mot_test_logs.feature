@@ -16,3 +16,13 @@ Feature: MOT Logs
     And I am logged in as an Area Office User
     When I download that site's test logs for today
     Then I will see the correct MOT Test Log Data
+
+  Scenario:
+    Given I am logged in as a Tester
+    And I perform test on the VTS when it's linked to some AE first time
+    And I perform test on the VTS when it's linked to other AE first time
+    And I perform test on the VTS when it's linked to some AE second time
+    When I am logged in as a Area Office 1
+    And I fetch test logs for those AE and VTS's
+    Then test logs show correct test count
+    And slot usage shows correct value

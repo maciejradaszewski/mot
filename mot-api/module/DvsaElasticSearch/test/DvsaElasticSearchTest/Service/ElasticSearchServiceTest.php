@@ -15,6 +15,7 @@ use DvsaEntities\DqlBuilder\SearchParam\MotTestSearchParam;
 use DvsaEntities\DqlBuilder\SearchParam\VehicleSearchParam;
 use DvsaEntities\DqlBuilder\SearchParam\VehicleTestingStationSearchParam;
 use DvsaEntities\Entity\Site;
+use DvsaEntities\Repository\OrganisationRepository;
 use DvsaEntities\Repository\SiteRepository;
 use Zend\Http\Request;
 use Zend\ServiceManager\ServiceManager;
@@ -31,8 +32,8 @@ class ElasticSearchServiceTest extends AbstractServiceTestCase
     protected $serviceManager;
 
     protected $mockAuth;
-    /** @var  Site|MockObj */
-    protected $mockSite;
+    /** @var  SiteRepository|MockObj */
+    protected $mockSiteRepository;
     protected $mockEm;
 
     /** @var  ElasticSearchService */
@@ -50,11 +51,11 @@ class ElasticSearchServiceTest extends AbstractServiceTestCase
         $this->serviceManager->setAllowOverride(true);
 
         $this->mockEm = $this->getMock(EntityManager::class, ['getRepository'], [], '', false);
-        $this->mockSite = XMock::of(SiteRepository::class);
+        $this->mockSiteRepository = XMock::of(SiteRepository::class);
 
         $this->mockAuth = $this->getMockAuthorizationService(true);
 
-        $this->esService = new ElasticSearchService($this->mockAuth);
+        $this->esService = new ElasticSearchService($this->mockAuth, $this->mockSiteRepository);
 
         $this->dateFrom = new \DateTime('1970-01-01');
         $this->dateTo = new \DateTime();

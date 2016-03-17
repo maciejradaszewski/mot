@@ -6,7 +6,6 @@ use OrganisationApi\Controller\AuthorisedExaminerPrincipalController;
 use OrganisationApi\Controller\AuthorisedExaminerNameController;
 use OrganisationApi\Controller\OrganisationPositionController;
 use OrganisationApi\Controller\OrganisationRoleController;
-use OrganisationApi\Controller\OrganisationSlotUsageController;
 use OrganisationApi\Controller\SiteController;
 use OrganisationApi\Controller\SiteLinkController;
 use OrganisationApi\Controller\OrganisationEventController;
@@ -20,7 +19,6 @@ use OrganisationApi\Factory\Controller\AuthorisedExaminerStatusControllerFactory
 return [
     'controllers' => [
         'invokables' => [
-            OrganisationSlotUsageController::class       => OrganisationSlotUsageController::class,
             AuthorisedExaminerPrincipalController::class => AuthorisedExaminerPrincipalController::class,
             OrganisationPositionController::class        => OrganisationPositionController::class,
             OrganisationRoleController::class            => OrganisationRoleController::class,
@@ -192,18 +190,6 @@ return [
                     ],
                 ],
             ],
-            'authorised-examiner-slot'             => [
-                'type'    => 'Segment',
-                'options' => [
-                    'route'       => '/authorised-examiner/:id/slot',
-                    'constraints' => [
-                        'id' => '[0-9]+',
-                    ],
-                    'defaults'    => [
-                        'controller' => 'OrganisationApi\Controller\AuthorisedExaminerSlot',
-                    ],
-                ],
-            ],
             'organisation-position'                => [
                 'type'    => 'Segment',
                 'options' => [
@@ -227,31 +213,6 @@ return [
                     ],
                     'defaults'    => [
                         'controller' => OrganisationRoleController::class,
-                    ],
-                ],
-            ],
-
-            'organisation-usage' => [
-                'type'    => 'Segment',
-                'options' => [
-                    'route'       => '/organisation/:organisationId/slot-usage',
-                    'constraints' => [
-                        'organisationId' => '[0-9]+',
-                    ],
-                    'defaults' => [
-                        'controller' => OrganisationSlotUsageController::class,
-                    ],
-                ],
-                'may_terminate' => true,
-                'child_routes'  => [
-                    'period-data' => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/period-data',
-                            'defaults' => [
-                                'action' => 'period-data',
-                            ],
-                        ],
                     ],
                 ],
             ],

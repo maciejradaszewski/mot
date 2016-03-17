@@ -61,10 +61,8 @@ class MotTestLogContext implements Context
     /**
      * @When I download that site's test logs for today
      */
-    public function getSiteTestLogs()
+    public function getSiteTestLogs($siteId = 1)
     {
-        $siteId = 1;
-
         $this->userTestLogs = $this->authorisedExaminer->getTodaysTestLogs(
             $this->sessionContext->getCurrentAccessToken(),
             2,

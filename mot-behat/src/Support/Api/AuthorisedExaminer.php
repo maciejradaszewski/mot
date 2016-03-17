@@ -12,6 +12,7 @@ use DvsaCommon\Dto\Organisation\OrganisationContactDto;
 use DvsaCommon\Dto\Organisation\OrganisationDto;
 use DvsaCommon\Enum\CompanyTypeCode;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
+use DvsaCommon\Enum\OrganisationSiteStatusCode;
 use DvsaCommon\Enum\PhoneContactTypeCode;
 use DvsaCommon\Model\AuthorisedExaminerPatchModel;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilder;
@@ -158,15 +159,29 @@ class AuthorisedExaminer extends MotApi
         );
     }
 
-    public function linkAuthorisedExaminerWithSite($token, $aeId, $siteName)
+    public function linkAuthorisedExaminerWithSite($token, $aeId, $siteNumber)
     {
         $linkUrl = AuthorisedExaminerUrlBuilder::siteLink($aeId);
         $request = new Request(
             'POST',
             $linkUrl,
             ['Content-Type' => 'application/json', 'Authorization' => 'Bearer ' . $token],
-            json_encode(['siteNumber' => $siteName])
+            json_encode(['siteNumber' => $siteNumber])
         );
+        return $this->client->request($request);
+    }
+
+    public function unlinkSiteFromAuthorisedExaminer($token, $aeId, $linkId)
+    {
+        $unlinkUrl = AuthorisedExaminerUrlBuilder::siteLink($aeId, $linkId);
+        $request = new Request(
+            'PUT',
+            $unlinkUrl,
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer ' . $token],
+            //todo add const: status: surrender
+            json_encode(OrganisationSiteStatusCode::SURRENDERED)
+        );
+
         return $this->client->request($request);
     }
 

@@ -13,6 +13,7 @@ use Dvsa\Mot\Behat\Support\Api\OdometerReading;
 use Dvsa\Mot\Behat\Support\Api\ReasonForRejection;
 use Dvsa\Mot\Behat\Support\Api\Session;
 use Dvsa\Mot\Behat\Support\Api\Vehicle;
+use Dvsa\Mot\Behat\Support\Api\SlotReport;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use Dvsa\Mot\Behat\Support\Response;
 use DvsaCommon\Enum\MotTestTypeCode;
@@ -140,6 +141,16 @@ class MotTestContext implements Context, SnippetAcceptingContext
     private $vtsContext;
 
     /**
+     * @var AuthorisedExaminerContext
+     */
+    private $aeContext;
+
+    /**
+     * @var MotTestLogContext
+     */
+    private $motTestLogContext;
+
+    /**
      * @var int $satisfactionRating
      */
     private $satisfactionRating;
@@ -148,6 +159,11 @@ class MotTestContext implements Context, SnippetAcceptingContext
      * @var Response $satisfactionRating
      */
     private $satisfactionRatingResponse;
+
+    /**
+     * @var SlotReport
+     */
+    private $slotsReport;
 
     public function __construct(
         BrakeTestResult $brakeTestResult,
@@ -159,7 +175,8 @@ class MotTestContext implements Context, SnippetAcceptingContext
         Session $session,
         TestSupportHelper $testSupportHelper,
         Vehicle $vehicle,
-        History $history
+        History $history,
+        SlotReport $slotsReport
     ) {
         $this->brakeTestResult = $brakeTestResult;
         $this->motTest = $motTest;
@@ -171,6 +188,7 @@ class MotTestContext implements Context, SnippetAcceptingContext
         $this->testSupportHelper = $testSupportHelper;
         $this->vehicle = $vehicle;
         $this->history = $history;
+        $this->slotsReport = $slotsReport;
     }
 
     /**
@@ -184,6 +202,8 @@ class MotTestContext implements Context, SnippetAcceptingContext
         $this->personContext = $scope->getEnvironment()->getContext(PersonContext::class);
         $this->certificateContext = $scope->getEnvironment()->getContext(CertificateContext::class);
         $this->vtsContext = $scope->getEnvironment()->getContext(VtsContext::class);
+        $this->aeContext = $scope->getEnvironment()->getContext(AuthorisedExaminerContext::class);
+        $this->motTestLogContext = $scope->getEnvironment()->getContext(MotTestLogContext::class);
     }
 
     /**
@@ -226,6 +246,8 @@ class MotTestContext implements Context, SnippetAcceptingContext
             $testClass,
             $motTestParams
         );
+
+        return $this->motTestData;
     }
 
     /**
@@ -710,13 +732,22 @@ class MotTestContext implements Context, SnippetAcceptingContext
      * @Given /^I create (.*) mot tests$/
      * @Given /^I create an mot test$/
      * @Given /^I have created (.*) mot tests$/
+     * @Given I have created :number mot tests for :siteName site
      *
      * @param $number
      */
-    public function ICreateMotTests($number = 1)
+    public function ICreateMotTests($number = 1, $siteName = null)
     {
+        $motTestParams = [];
+        if(!empty($siteName)) {
+            $site = $this->vtsContext->getSite($siteName);
+            $motTestParams["vehicleTestingStationId"] = $site["id"];
+        }
+
         for ($i=0; $i < $number; $i++) {
-            $this->startMotTest($this->sessionContext->getCurrentUserId(), $this->sessionContext->getCurrentAccessToken());
+            $this->startMotTest($this->sessionContext->getCurrentUserId(), $this->sessionContext->getCurrentAccessToken(),
+                $motTestParams
+            );
             $this->motTest->abort(
                 $this->sessionContext->getCurrentAccessToken(),
                 $this->motTest->getInProgressTestId(
@@ -1211,6 +1242,115 @@ class MotTestContext implements Context, SnippetAcceptingContext
         } else {
             PHPUnit::assertTrue(true, "Test Failed"); return [];
         }
+    }
+
+    /**
+     * @Given I perform test on the VTS when it's linked to :ae AE :time time
+     */
+    public function iPerformTestOnTheVtsWhenItsLinkedToAe($aeName, $time)
+    {
+        $this->sessionContext->iAmLoggedInAsAnAreaOffice1();
+        $ae = $this->aeContext->createAE(1000, $aeName);
+        $vts = $this->vtsContext->createSite();
+
+        $this->aeContext->iLinkVtsToAe($ae["id"], $vts["siteNumber"], $aeName);
+
+        $this->sessionContext->iAmLoggedInAsATesterAssignedToSites([$vts["id"]]);
+        $this->startMotTest($this->sessionContext->getCurrentUserId(),
+            $this->sessionContext->getCurrentAccessToken(), ["vehicleTestingStationId" => $vts["id"]]
+        );
+        $this->odometerReading->addMeterReading($this->sessionContext->getCurrentAccessToken(), $this->motTest->getLastMotTestNumber(), 111, 'mi');
+        $this->brakeTestResult->addBrakeTestDecelerometerClass3To7($this->sessionContext->getCurrentAccessToken(), $this->motTest->getLastMotTestNumber());
+        $this->theTesterPassesTheMotTest();
+
+        //When we assign VTS back to first AE, we don't want to unlink them after test
+        if($time != 'second') {
+            $this->sessionContext->iAmLoggedInAsAnAreaOffice1();
+            $this->aeContext->iUnlinkEveryVtsFromAe($aeName);
+        }
+    }
+
+    /**
+     * @When I fetch test logs for those AE and VTS's
+     */
+    public function iFetchTestLogsForThoseAeAndVtsS()
+    {
+        $this->aeContext->iGetTestLogs("some");
+        $this->aeContext->iGetTestLogs("other");
+        $this->vtsContext->iGetTestLogs();
+    }
+
+    /**
+     * @Then test logs show correct test count
+     */
+    public function testLogsShowCorrectTestCount()
+    {
+        $someTestLogs = $this->aeContext->getAe("some")["testLogs"];
+        PHPUnit::assertEquals(2, $someTestLogs["resultCount"]);
+
+        $otherTestLogs = $this->aeContext->getAe("other")["testLogs"];
+        PHPUnit::assertEquals(1, $otherTestLogs["resultCount"]);
+
+        $siteTestLogs = $this->vtsContext->getSite()["testLogs"];
+        PHPUnit::assertEquals(2, $siteTestLogs["resultCount"]);
+
+        //cleanup
+        $this->aeContext->iUnlinkEveryVtsFromAe("some");
+    }
+
+    /**
+     * @Then slot usage shows correct value
+     */
+    public function slotUsageShowsCorrectValue()
+    {
+        $this->sessionContext->iAmLoggedInAsAnAreaOffice1();
+
+        $response = $this->slotsReport->getSlotUsage(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->aeContext->getAe("some")["id"]
+            );
+
+        $rows = $response->getBody()->toArray()["data"]["rows"];
+
+        PHPUnit::assertCount(1, $rows);
+
+        $data = array_shift($rows);
+
+        PHPUnit::assertEquals(2, $data["tests_number"]);
+
+        $response = $this->slotsReport->getSlotUsage(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->aeContext->getAe("other")["id"]
+        );
+
+        $rows = $response->getBody()->toArray()["data"]["rows"];
+
+        PHPUnit::assertCount(1, $rows);
+
+        $data = array_shift($rows);
+
+        PHPUnit::assertEquals(1, $data["tests_number"]);
+
+        $response = $this->slotsReport->getSlotUsageNumber(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->vtsContext->getSite()["id"],
+            $this->aeContext->getAe("some")["id"]
+        );
+
+        $slotUsageNumber = $response->getBody()->toArray()["data"]["slot_usage_number"];
+
+        PHPUnit::assertEquals(2, $slotUsageNumber);
+    }
+
+    /**
+     * @Given there is a Vts assigned to Ae
+     */
+    public function thereIsAVtsAssignedToAe()
+    {
+        $this->sessionContext->iAmLoggedInAsAnAreaOffice1();
+        $ae = $this->aeContext->createAE(1001);
+        $vts = $this->vtsContext->createSite();
+        $this->aeContext->iLinkVtsToAe($ae["id"], $vts["siteNumber"]);
     }
 
     /**

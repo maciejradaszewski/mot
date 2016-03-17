@@ -6,7 +6,6 @@ use Organisation\Controller\MotTestLogController;
 use Organisation\Controller\RoleController;
 use Organisation\Controller\SearchController;
 use Organisation\Controller\SiteController;
-use Organisation\Controller\SlotsUsageController;
 use Organisation\Factory\Controller\SiteControllerFactory;
 use Organisation\Factory\Controller\AuthorisedExaminerControllerFactory;
 use Organisation\UpdateAeProperty\Factory\UpdateAePropertyProcessBuilderFactory;
@@ -258,7 +257,6 @@ return [
     'controllers'    => [
         'invokables' => [
             SearchController::class                      => SearchController::class,
-            SlotsUsageController::class                  => SlotsUsageController::class,
         ],
         'factories' => [
             SiteController::class                      => SiteControllerFactory::class,

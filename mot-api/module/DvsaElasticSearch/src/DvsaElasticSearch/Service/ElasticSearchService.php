@@ -9,6 +9,7 @@ use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Auth\PermissionAtOrganisation;
+use DvsaCommon\Dto\Search\SearchResultDto;
 use DvsaElasticSearch\Query\FbQueryMotTest;
 use DvsaElasticSearch\Query\FbQueryMotTestLog;
 use DvsaElasticSearch\Query\FbQuerySite;
@@ -18,6 +19,8 @@ use DvsaEntities\DqlBuilder\SearchParam\MotTestSearchParam;
 use DvsaEntities\DqlBuilder\SearchParam\VehicleTestingStationSearchParam;
 use DvsaEntities\DqlBuilder\SearchParam\VehicleSearchParam;
 use DvsaCommonApi\Model\SearchParam;
+use DvsaEntities\Repository\OrganisationRepository;
+use DvsaEntities\Repository\SiteRepository;
 use Zend\Di\ServiceLocatorInterface;
 use Zend\Http\Request;
 
@@ -39,6 +42,7 @@ class ElasticSearchService
     /** @var AuthorisationServiceInterface */
     protected $authService;
 
+    private $siteRepository;
 
     /**
      * This creates the ES search service. It requires the following services:
@@ -47,9 +51,11 @@ class ElasticSearchService
      * @internal param $
      */
     public function __construct(
-        AuthorisationServiceInterface $authService
+        AuthorisationServiceInterface $authService,
+        SiteRepository $siteRepository
     ) {
         $this->authService = $authService;
+        $this->siteRepository = $siteRepository;
     }
 
     /**
@@ -104,7 +110,22 @@ class ElasticSearchService
             PermissionAtSite::VTS_TEST_LOGS, $params->getSiteId()
         );
 
-        return SuperSearchQuery::execute($params, new FbQueryMotTestLog());
+        //in order to find only tests for current AE->VTS association we need to pass organisation id
+        $site = $this->siteRepository->get($params->getSiteId());
+        $organisation = $site->getOrganisation();
+
+        if(is_object($organisation)) {
+            $params->setOrganisationId($organisation->getId());
+            return SuperSearchQuery::execute($params, new FbQueryMotTestLog());
+        } else {
+            $resultDto = new SearchResultDto();
+            $resultDto
+                ->setSearched($params->toDto())
+                ->setResultCount(0)
+                ->setTotalResultCount(0)
+                ->setIsElasticSearch(false);
+            return $resultDto;
+        }
     }
 
     /**

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "dafeb523540cb90268e328ae47f53ffb",
-    "content-hash": "eaf96b47b03bc83d4efc8dbcc96639c0",
+    "hash": "3789662861cd119d6409e1b7df3ea015",
+    "content-hash": "643da4f95816a0c5235fd7240b8b87fd",
     "packages": [
         {
             "name": "cpms/client",
@@ -583,6 +583,12 @@
                     "homepage": "http://www.spiffyjr.me/"
                 },
                 {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "http://ocramius.github.com/",
+                    "role": "Developer"
+                },
+                {
                     "name": "Evan Coury",
                     "email": "me@evancoury.com",
                     "homepage": "http://blog.evan.pro/"
@@ -590,11 +596,6 @@
                 {
                     "name": "Guilherme Blanco",
                     "email": "guilhermeblanco@hotmail.com"
-                },
-                {
-                    "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com",
-                    "homepage": "http://marco-pivetta.com/"
                 }
             ],
             "description": "Zend Framework 2 Module that provides Doctrine ORM functionality",
@@ -1339,11 +1340,11 @@
         },
         {
             "name": "slot-purchase/web-frontend",
-            "version": "v3.6.6",
+            "version": "v3.6.7",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/web-frontend.git",
-                "reference": "fd9769c42d7359753839af40a0f36c68de96cfee"
+                "reference": "ea13aa2e0259984c9347c33e06b4620c9f87e7f0"
             },
             "require": {
                 "cpms/cpms-forms": "1.22.*",
@@ -1378,7 +1379,7 @@
                 "proprietary"
             ],
             "description": "Slot Purchase Frontend",
-            "time": "2016-02-24 15:03:27"
+            "time": "2016-03-16 16:14:47"
         },
         {
             "name": "soflomo/purifier",

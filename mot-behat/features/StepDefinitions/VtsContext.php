@@ -49,7 +49,10 @@ class VtsContext implements Context
 
     /** @var \SessionContext */
     private $sessionContext;
-    private $siteCreate;
+
+    /** @var array */
+    private $createdVts;
+
     private $resultContext;
 
     /** @var PersonContext */
@@ -93,10 +96,16 @@ class VtsContext implements Context
 
     /**
      * @BeforeScenario @create-site
+     * BeforeScenario can't handle argument, so I extract this to new method
      */
-    public function createSite()
+    public function createSiteBeforeScenario()
     {
-        if ($this->siteCreate === null) {
+        return $this->createSite();
+    }
+
+    public function createSite($name = "default")
+    {
+        if ($this->createdVts[$name] === null) {
             $areaOffice1Service = $this->testSupportHelper->getAreaOffice1Service();
             $ao = $areaOffice1Service->create([]);
             $aoSession = $this->session->startSession(
@@ -116,17 +125,19 @@ class VtsContext implements Context
             if (! is_object($responseBody)) {
                 throw new Exception("createSite: responseBody is not an object: failed to create Vts");
             }
-            $this->siteCreate = $responseBody->toArray()['data'];
+            $this->createdVts[$name] = $responseBody->toArray()['data'];
         }
+
+        return $this->createdVts[$name];
     }
 
     /**
      * @When /^I request information about a VTS$/
      */
-    public function iRequestInformationAboutVts()
+    public function iRequestInformationAboutVts($name = "default")
     {
         $this->resultContext = $this->vehicleTestingStation->getVtsDetails(
-            $this->siteCreate['id'],
+            $this->createdVts[$name]['id'],
             $this->sessionContext->getCurrentAccessToken()
         );
     }
@@ -134,14 +145,14 @@ class VtsContext implements Context
     /**
      * @Then /^the VTS details are returned$/
      */
-    public function theVtsDetailsAreReturned()
+    public function theVtsDetailsAreReturned($name = "default")
     {
         /** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $dto */
         $dto = DtoHydrator::jsonToDto($this->resultContext->getBody()->toArray()['data']);
 
         PHPUnit::assertThat(
             $dto->getSiteNumber(),
-            PHPUnit::equalTo($this->siteCreate['siteNumber']), 'No VTS details returned for VTS Number'
+            PHPUnit::equalTo($this->createdVts[$name]['siteNumber']), 'No VTS details returned for VTS Number'
         );
     }
 
@@ -187,9 +198,9 @@ class VtsContext implements Context
     /**
      * @When /^I search for a existing Vehicle Testing Station by it's number$/
      */
-    public function iSearchForAnExistingVehicleTestingStationByItsNumber()
+    public function iSearchForAnExistingVehicleTestingStationByItsNumber($name = "default")
     {
-        $this->iSearchForAnExistingVehicleTestingStationByParam(['siteNumber' => $this->siteCreate['siteNumber']]);
+        $this->iSearchForAnExistingVehicleTestingStationByParam(['siteNumber' => $this->createdVts[$name]['siteNumber']]);
     }
 
     /**
@@ -276,7 +287,7 @@ class VtsContext implements Context
     /**
      * @Given I attempt to assign the role of site manager to more than one user of a vehicle testing station
      */
-    public function IAttemptToAssignTheRoleOfSiteManagerToMoreThanOneUserOfAVTS()
+    public function IAttemptToAssignTheRoleOfSiteManagerToMoreThanOneUserOfAVTS($name = "default")
     {
         $testerService = $this->sessionContext->testSupportHelper->getTesterService();
 
@@ -298,7 +309,7 @@ class VtsContext implements Context
         $result1 = $this->vehicleTestingStation->nominateToRole(
             $this->siteManager1Data['personId'],
             $role,
-            $this->siteCreate['id'],
+            $this->createdVts[$name]['id'],
             $this->sessionContext->getCurrentAccessToken()
         );
 
@@ -306,7 +317,7 @@ class VtsContext implements Context
         $result2 = $this->vehicleTestingStation->nominateToRole(
             $this->siteManager2Data['personId'],
             $role,
-            $this->siteCreate['id'],
+            $this->createdVts[$name]['id'],
             $this->sessionContext->getCurrentAccessToken()
         );
 
@@ -357,9 +368,9 @@ class VtsContext implements Context
     /**
      * @return array
      */
-    public function getSite()
+    public function getSite($name = "default")
     {
-        return $this->siteCreate;
+        return $this->createdVts[$name];
     }
 
     /**
@@ -487,7 +498,7 @@ class VtsContext implements Context
     /**
      * @When class :vtsClass is removed from site
      */
-    public function classIsRemovedFromSite($vtsClass)
+    public function classIsRemovedFromSite($vtsClass, $name="default")
     {
         $areaOffice1Service = $this->testSupportHelper->getAreaOffice1Service();
         $ao = $areaOffice1Service->create([]);
@@ -504,7 +515,7 @@ class VtsContext implements Context
 
         $response = $this->vehicleTestingStation->updateSiteDetails(
             $aoSession->getAccessToken(),
-            $this->siteCreate["id"],
+            $this->createdVts[$name]["id"],
             [
                 VehicleTestingStation::PATCH_PROPERTY_CLASSES => $classes,
                 '_class' => VehicleTestingStationDto::class,
@@ -512,5 +523,19 @@ class VtsContext implements Context
         );
 
         PHPUnit::assertEquals(200, $response->getStatusCode());
+    }
+
+    public function getCreatedSites()
+    {
+        return $this->createdVts;
+    }
+
+    public function iGetTestLogs($name = "default")
+    {
+        $this->createdVts[$name]["testLogs"] = $this->vehicleTestingStation->getTestLogs(
+            $this->sessionContext->getCurrentAccessToken(), $this->createdVts[$name]["id"]
+        )->getBody()["data"];
+
+        return $this->createdVts[$name]["testLogs"];
     }
 }

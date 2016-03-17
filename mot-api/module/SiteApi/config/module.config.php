@@ -16,7 +16,6 @@ use SiteApi\Controller\SitePositionController;
 use SiteApi\Controller\SitePositionValidateController;
 use SiteApi\Controller\SiteRoleController;
 use SiteApi\Controller\SiteSearchController;
-use SiteApi\Controller\SiteSlotUsageController;
 use SiteApi\Controller\SiteTestingDailyScheduleController;
 use SiteApi\Controller\SiteTestingFacilitiesController;
 use SiteApi\Controller\VehicleTestingStationAuthorisedClassesController;
@@ -39,7 +38,6 @@ return [
                 VehicleTestingStationAuthorisedClassesController::class,
             SiteRoleController::class                 => SiteRoleController::class,
             SitePositionController::class             => SitePositionController::class,
-            SiteSlotUsageController::class            => SiteSlotUsageController::class,
             EquipmentController::class                => EquipmentController::class,
             SiteTestingDailyScheduleController::class => SiteTestingDailyScheduleController::class,
             DefaultBrakeTestsController::class        => DefaultBrakeTestsController::class,
@@ -107,30 +105,6 @@ return [
                     ],
                     'defaults'    => [
                         'controller' => SitePositionValidateController::class,
-                    ],
-                ],
-            ],
-            'site-usage' => [
-                'type'    => 'Segment',
-                'options' => [
-                    'route'       => '/site/:siteId/slot-usage',
-                    'constraints' => [
-                        'siteId' => '[0-9]+',
-                    ],
-                    'defaults'    => [
-                        'controller' => SiteSlotUsageController::class,
-                    ],
-                ],
-                'may_terminate' => true,
-                'child_routes'  => [
-                    'period-data' => [
-                        'type' => 'Literal',
-                        'options' => [
-                            'route' => '/period-data',
-                            'defaults' => [
-                                'action' => 'period-data',
-                            ],
-                        ],
                     ],
                 ],
             ],

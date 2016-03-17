@@ -31,7 +31,7 @@ class OrganisationSiteMap extends Entity
     /**
      * @var \DvsaEntities\Entity\Organisation
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Organisation", fetch="LAZY", inversedBy="sites")
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Organisation", fetch="LAZY")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="organisation_id", referencedColumnName="id")
      * })

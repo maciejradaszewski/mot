@@ -51,7 +51,7 @@ class AuthorisedExaminerContext implements Context
     /**
      * @var array
      */
-    private $ae = [];
+    private $createdAuthorisedExaminers = [];
 
     /**
      * @param AuthorisedExaminer $authorisedExaminer
@@ -198,12 +198,13 @@ class AuthorisedExaminerContext implements Context
 
     /**
      * @param int $slots
+     * @param string $name
      * @return array
      */
-    public function createAE($slots = 1001)
+    public function createAE($slots = 1001, $name = "default")
     {
-        if (!empty($this->ae)) {
-            return $this->ae;
+        if (!empty($this->createdAuthorisedExaminers[$name])) {
+            return $this->createdAuthorisedExaminers[$name];
         }
 
         $data = [
@@ -216,19 +217,19 @@ class AuthorisedExaminerContext implements Context
 
         $response = $this->testSupportHelper->getAeService()->create($data);
 
-        $this->ae = [
+        $this->createdAuthorisedExaminers[$name] = [
             "id" => $response->data["id"],
             "aeRef" => $response->data["aeRef"],
             "aeName" => $response->data["aeName"],
         ];
 
-        return $this->ae;
+        return $this->createdAuthorisedExaminers[$name];
     }
 
-    public function iAttemptsToCreateAEAs($username, $password)
+    public function iAttemptsToCreateAEAs($username, $password, $name = "default")
     {
-        if (!empty($this->ae)) {
-            return $this->ae;
+        if (!empty($this->createdAuthorisedExaminers[$name])) {
+            return $this->createdAuthorisedExaminers[$name];
         }
 
         $data = [
@@ -241,22 +242,26 @@ class AuthorisedExaminerContext implements Context
 
         $response = $this->testSupportHelper->getAeService()->create($data);
 
-        $this->ae = [
+        $this->createdAuthorisedExaminers[$name] = [
             "id" => $response->data["id"],
             "aeRef" => $response->data["aeRef"],
             "aeName" => $response->data["aeName"],
             "message" => $response->data["message"]
         ];
 
-        return $this->ae;
+        return $this->createdAuthorisedExaminers[$name];
     }
 
     /**
      * @return array
      */
-    public function getAE()
+    public function getAe($name = "default")
     {
-        return $this->ae;
+        if(array_key_exists($name, $this->createdAuthorisedExaminers)) {
+            return $this->createdAuthorisedExaminers[$name];
+        }
+
+        return null;
     }
 
     /**
@@ -284,5 +289,44 @@ class AuthorisedExaminerContext implements Context
             $this->siteNrForLinking
         );
         PHPUnit::assertEquals(200, $linkResponse->getStatusCode());
+    }
+
+    public function iLinkVtsToAe($aeId, $siteNumber, $name = "default")
+    {
+        $link = $this->authorisedExaminer->linkAuthorisedExaminerWithSite(
+            $this->sessionContext->getCurrentAccessToken(), $aeId, $siteNumber
+        );
+        $linkId = $link->getBody()["data"]["id"];
+
+        $this->createdAuthorisedExaminers[$name]["vtsLinks"][]=$linkId;
+    }
+
+    public function iUnlinkVtsFromAe($aeId, $linkId)
+    {
+        $unlink = $this->authorisedExaminer->unlinkSiteFromAuthorisedExaminer(
+            $this->sessionContext->getCurrentAccessToken(), $aeId, $linkId
+        );
+
+        return $unlink;
+    }
+
+    public function iUnlinkEveryVtsFromAe($name = "default")
+    {
+        $aeId = $this->createdAuthorisedExaminers[$name]["id"];
+
+        if(array_key_exists("vtsLinks", $this->createdAuthorisedExaminers[$name])) {
+            foreach($this->createdAuthorisedExaminers[$name]["vtsLinks"] as $linkId) {
+                $this->iUnlinkVtsFromAe($aeId, $linkId);
+            }
+        }
+    }
+
+    public function iGetTestLogs($name = "default")
+    {
+        $this->createdAuthorisedExaminers[$name]["testLogs"] = $this->authorisedExaminer->getTodaysTestLogs(
+            $this->sessionContext->getCurrentAccessToken(), $this->createdAuthorisedExaminers[$name]["id"]
+        )->getBody()["data"];
+
+        return $this->createdAuthorisedExaminers[$name]["testLogs"];
     }
 }

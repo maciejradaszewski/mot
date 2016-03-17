@@ -151,8 +151,8 @@ class VtsService
 
             $stmt = $this->em->getConnection()->prepare("
                 INSERT INTO organisation_site_map
-                (organisation_id, site_id, trading_name, status_id, status_changed_on, created_by)
-                VALUES (?, ?, ?, 2, NOW(), (SELECT `id` FROM `person` WHERE `user_reference` = 'Static Data' OR `username` = 'static data'))"
+                (organisation_id, site_id, trading_name, status_id, start_date, end_date, status_changed_on, created_by)
+                VALUES (?, ?, ?, 2, LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 YEAR)), LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 WEEK)), NOW(), (SELECT `id` FROM `person` WHERE `user_reference` = 'Static Data' OR `username` = 'static data'))"
             );
 
             $stmt->bindValue(1, $data['aeId']);
