@@ -14,6 +14,8 @@ class SlotReport extends MotApi
 {
     const CREATE_REPORT = '/slots/financial-report';
     const REPORT_STATUS = '/slots/financial-report/%s';
+    const SLOT_USAGE = '/slots/report/slot-usage';
+    const SLOT_USAGE_NUMBER = '/slots/report/slot-usage-number/site/%d';
 
     private $reportCodes = [
         'slotBalance'      => 'MOT00001',
@@ -39,6 +41,40 @@ class SlotReport extends MotApi
     public function getReportStatus($token, $code)
     {
         $path = sprintf(self::REPORT_STATUS, $code);
+
+        return $this->sendRequest($token, 'GET', $path);
+    }
+
+    public function getSlotUsage($token, $organisationId, \DateTime $fromDate = null, \DateTime $toDate = null)
+    {
+        $data = ["limit" => 10, "organisation" => $organisationId];
+
+        if ($fromDate !== null) {
+            $data["dateFrom"] = $fromDate->format("Y-m-d");
+        }
+
+        if ($toDate !== null) {
+            $data["dateTo"] = $toDate->format("Y-m-d");
+        }
+
+        $path = self::SLOT_USAGE . "?" . http_build_query($data);
+
+        return $this->sendRequest($token, 'GET', $path);
+    }
+
+    public function getSLotUsageNumber($token, $siteId,$organisationId, \DateTime $fromDate = null, \DateTime $toDate = null)
+    {
+        $data = ["organisation" => $organisationId];
+
+        if ($fromDate !== null) {
+            $data["dateFrom"] = $fromDate->format("Y-m-d");
+        }
+
+        if ($toDate !== null) {
+            $data["dateTo"] = $toDate->format("Y-m-d");
+        }
+
+        $path = sprintf(self::SLOT_USAGE_NUMBER, $siteId) . "?" . http_build_query($data);
 
         return $this->sendRequest($token, 'GET', $path);
     }

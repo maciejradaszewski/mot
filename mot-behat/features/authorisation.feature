@@ -15,13 +15,6 @@ Feature: Authorisation of requests
     And I should not see any data in the response body
     And I should see "Unauthorised" in the error message
 
-  Scenario: Unable to GET site/:id/slot-usage when not logged in
-    Given I am not logged in
-    When I make a "GET" request to "site/1/slot-usage"
-    Then I should receive an Unauthorised response
-    And I should not see any data in the response body
-    And I should see "Unauthorised" in the error message
-
   Scenario: Unable to GET mot-test-search when not logged in
     Given I am not logged in
     When I make a "GET" request to "mot-test-search"

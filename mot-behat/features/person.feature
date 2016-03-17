@@ -78,8 +78,9 @@ Feature: Person
     Then the Authorised Examiner record contains Data Disclosure data
 
   Scenario: A Person can view their test logs
-    Given I am logged in as a Tester
-    And I have created 2 mot tests
+    Given there is a Vts assigned to Ae
+    Given I am logged in as a Tester assigned to default site
+    And I have created 2 mot tests for default site
     When I review my test logs
     Then 2 test logs should show today in summary section
     And My test logs should return 2 detailed records

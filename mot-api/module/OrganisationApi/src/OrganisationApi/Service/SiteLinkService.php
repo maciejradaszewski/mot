@@ -194,6 +194,7 @@ ERR_MSG;
                 ->setOrganisation($organisation)
                 ->setSite($site)
                 ->setTradingName($organisation->getTradingAs())
+                ->setStartDate($this->dateTimeHolder->getCurrent())
                 ->setStatus($status)
                 ->setStatusChangedOn($this->dateTimeHolder->getCurrent());
 
@@ -228,7 +229,7 @@ ERR_MSG;
             throw $e;
         }
 
-        return ['id' => $organisation->getId()];
+        return ['id' => $map->getId()];
     }
 
     /**
@@ -269,9 +270,9 @@ ERR_MSG;
         $emConn->beginTransaction();
 
         try {
-            $mapEntity->setStatus(
-                $this->orgSiteStatusRepo->getByCode($statusCode)
-            );
+            $mapEntity->setStatus($this->orgSiteStatusRepo->getByCode($statusCode))
+                ->setStatusChangedOn($this->dateTimeHolder->getCurrent())
+                ->setEndDate($this->dateTimeHolder->getCurrent());
 
             //  remove organisation from site
             $siteEntity->setOrganisation(null);

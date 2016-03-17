@@ -16,6 +16,7 @@ use DvsaCommon\Dto\MotTesting\ContingencyTestDto;
 use DvsaCommon\Enum\MotTestStatusCode;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
+use DvsaCommon\Enum\OrganisationSiteStatusCode;
 use DvsaCommonApi\Model\SearchParam;
 use DvsaCommonApi\Service\Exception\NotFoundException;
 use DvsaCommonApi\Service\Exception\ServiceException;
@@ -25,6 +26,7 @@ use DvsaEntities\Entity\Make;
 use DvsaEntities\Entity\Model;
 use DvsaEntities\Entity\MotTest;
 use DvsaEntities\Entity\MotTestType;
+use DvsaEntities\Entity\OrganisationSiteMap;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\Site;
 use DvsaEntities\Entity\Vehicle;
@@ -843,6 +845,150 @@ class MotTestRepository extends AbstractMutableRepository
     }
 
     /**
+     * Generic function to get MOT test count through organisation_site_map
+     * @param $whereString
+     * @param $whereParam
+     * @param $whereValue
+     * @return mixed
+     */
+    private function getCountOfMotTests($whereString, $whereParam, $whereValue)
+    {
+        $testTypes = [
+            'TT_NORMAL'                  => MotTestTypeCode::NORMAL_TEST,
+            'TT_PARTIAL_RETEST_LEFT'     => MotTestTypeCode::PARTIAL_RETEST_LEFT_VTS,
+            'TT_PARTIAL_RETEST_REPAIRED' => MotTestTypeCode::PARTIAL_RETEST_REPAIRED_AT_VTS,
+            'TT_RETEST'                  => MotTestTypeCode::RE_TEST,
+        ];
+
+        $statuses = [
+            'TS_ABANDONED'  => MotTestStatusName::ABANDONED,
+            'TS_ABORTED'    => MotTestStatusName::ABORTED,
+            'TS_ABORTED_VE' => MotTestStatusName::ABORTED_VE,
+            'TS_FAILED'     => MotTestStatusName::FAILED,
+            'TS_PASSED'     => MotTestStatusName::PASSED,
+            'TS_REFUSED'    => MotTestStatusName::REFUSED,
+        ];
+
+        $sql = '
+            SELECT
+                COUNT(t.id) AS `year`,
+                SUM(
+                    CASE WHEN coalesce(t.completed_date, t.started_date) BETWEEN
+                             LAST_DAY(CURRENT_DATE() - INTERVAL 2 MONTH) + INTERVAL 1 DAY
+                             AND LAST_DAY(CURRENT_DATE()) - INTERVAL 1 MONTH + INTERVAL 1 DAY
+                             AND (
+                                coalesce(t.completed_date, t.started_date) <= osm.end_date OR osm.end_date IS NULL
+                             )
+                             AND coalesce(t.completed_date, t.started_date) >= osm.start_date
+					THEN 1
+                    ELSE 0
+                    END
+                ) AS `month`,
+                SUM(
+					CASE WHEN coalesce(t.completed_date, t.started_date) BETWEEN
+							CURRENT_DATE() - INTERVAL WEEKDAY(CURRENT_DATE()) + 7 DAY
+							AND CURRENT_DATE() - INTERVAL WEEKDAY(CURRENT_DATE()) DAY
+                             AND (
+                                coalesce(t.completed_date, t.started_date) <= osm.end_date OR osm.end_date IS NULL
+                             )
+                             AND coalesce(t.completed_date, t.started_date) >= osm.start_date
+					THEN 1
+                    ELSE 0
+                    END
+                ) AS `week`,
+                SUM(
+                    CASE WHEN coalesce(t.completed_date, t.started_date) >= CURRENT_DATE()
+                             AND (
+                                coalesce(t.completed_date, t.started_date) <= osm.end_date OR osm.end_date IS NULL
+                             )
+                             AND coalesce(t.completed_date, t.started_date) >= osm.start_date
+                    THEN 1
+                    ELSE 0
+                    END
+                ) AS `today`
+
+            FROM
+                site AS s
+
+                INNER JOIN organisation_site_map AS osm ON
+                    osm.site_id = s.id
+
+                INNER JOIN organisation_site_status AS oss ON
+                    oss.id = osm.status_id
+
+                INNER JOIN mot_test AS t ON
+                    t.site_id = s.id
+
+                INNER JOIN mot_test_type AS tt ON
+                    tt.id = t.mot_test_type_id
+
+                INNER JOIN mot_test_status AS ts ON
+                    ts.id = t.status_id
+
+            WHERE
+                '.$whereString.'
+                AND (
+                    (
+                      t.completed_date IS NULL
+                      AND t.started_date >= (CURRENT_DATE() - INTERVAL 1 YEAR + INTERVAL 1 DAY)
+                    )
+                    OR (
+                        t.completed_date IS NOT NULL
+                        AND t.completed_date >= (CURRENT_DATE() - INTERVAL 1 YEAR + INTERVAL 1 DAY)
+                    )
+                )
+                 AND (
+                    coalesce(t.completed_date, t.started_date) <= osm.end_date OR osm.end_date IS NULL
+                 )
+                 AND coalesce(t.completed_date, t.started_date) >= osm.start_date
+                ';
+
+        //  --  add test type where clause --
+        $whereParams = [];
+        foreach ($testTypes as $key => $val) {
+            $whereParams[] = ':' . $key;
+        }
+        $sql .= ' AND tt.code IN (' . implode(', ', $whereParams) . ')';
+
+        //  --  add test type where clause --
+        $whereParams = [];
+        foreach ($statuses as $key => $val) {
+            $whereParams[] = ':' . $key;
+        }
+        $sql .= ' AND ts.name IN (' . implode(', ', $whereParams) . ')';
+
+
+        //fiter out organisation_site_statuses
+        $sql .= ' AND oss.code NOT IN (:ORGANISATION_SITE_STATUS_CODES)';
+
+        //  ----  prepare statement and bind params   ----
+        $em = $this->getEntityManager();
+        $sql = $em->getConnection()->prepare($sql);
+
+        $sql->bindValue($whereParam, $whereValue);
+
+        //  --  bind test types --
+        foreach ($testTypes as $key => $val) {
+            $sql->bindValue($key, $val);
+        }
+
+        //  --  bind statuses --
+        foreach ($statuses as $key => $val) {
+            $sql->bindValue($key, $val);
+        }
+
+        //bind organisation_site_status codes
+        $sql->bindValue('ORGANISATION_SITE_STATUS_CODES', implode(', ', [
+            OrganisationSiteStatusCode::APPLIED,
+            OrganisationSiteStatusCode::UNKNOWN
+        ]));
+
+        $sql->execute();
+
+        return $sql->fetch();
+    }
+
+    /**
      * This function is responsible to get the number of mot test realised for
      * last 365 days, previous month, previous week and today.
      *
@@ -852,106 +998,8 @@ class MotTestRepository extends AbstractMutableRepository
      */
     public function getCountOfMotTestsSummary($organisationId)
     {
-        $testTypes = [
-            'TT_NORMAL'                  => MotTestTypeCode::NORMAL_TEST,
-            'TT_PARTIAL_RETEST_LEFT'     => MotTestTypeCode::PARTIAL_RETEST_LEFT_VTS,
-            'TT_PARTIAL_RETEST_REPAIRED' => MotTestTypeCode::PARTIAL_RETEST_REPAIRED_AT_VTS,
-            'TT_RETEST'                  => MotTestTypeCode::RE_TEST,
-        ];
-
-        $statuses = [
-            'TS_ABANDONED'  => MotTestStatusName::ABANDONED,
-            'TS_ABORTED'    => MotTestStatusName::ABORTED,
-            'TS_ABORTED_VE' => MotTestStatusName::ABORTED_VE,
-            'TS_FAILED'     => MotTestStatusName::FAILED,
-            'TS_PASSED'     => MotTestStatusName::PASSED,
-            'TS_REFUSED'    => MotTestStatusName::REFUSED,
-        ];
-
-        $sql = '
-            SELECT
-                COUNT(t.id) AS `year`,
-                SUM(
-                    CASE WHEN coalesce(t.completed_date, t.started_date) BETWEEN
-                             LAST_DAY(CURRENT_DATE() - INTERVAL 2 MONTH) + INTERVAL 1 DAY
-                             AND LAST_DAY(CURRENT_DATE()) - INTERVAL 1 MONTH + INTERVAL 1 DAY
-					THEN 1
-                    ELSE 0
-                    END
-                ) AS `month`,
-                SUM(
-					CASE WHEN coalesce(t.completed_date, t.started_date) BETWEEN
-							CURRENT_DATE() - INTERVAL WEEKDAY(CURRENT_DATE()) + 7 DAY
-							AND CURRENT_DATE() - INTERVAL WEEKDAY(CURRENT_DATE()) DAY
-					THEN 1
-                    ELSE 0
-                    END
-                ) AS `week`,
-                SUM(
-                    CASE WHEN coalesce(t.completed_date, t.started_date) >= CURRENT_DATE()
-                    THEN 1
-                    ELSE 0
-                    END
-                ) AS `today`
-
-            FROM
-                site AS s
-
-                INNER JOIN mot_test AS t ON
-                    t.site_id = s.id
-
-                INNER JOIN mot_test_type AS tt ON
-                    tt.id = t.mot_test_type_id
-
-                INNER JOIN mot_test_status AS ts ON
-                    ts.id = t.status_id
-
-            WHERE
-                s.organisation_id = :ORGANISATION_ID
-                AND (
-                    (
-                      t.completed_date IS NULL
-                      AND t.started_date >= (CURRENT_DATE() - INTERVAL 1 YEAR + INTERVAL 1 DAY)
-                    )
-                    OR (
-                        t.completed_date IS NOT NULL
-                        AND t.completed_date >= (CURRENT_DATE() - INTERVAL 1 YEAR + INTERVAL 1 DAY)
-                    )
-                )';
-
-        //  --  add test type where clause --
-        $whereParams = [];
-        foreach ($testTypes as $key => $val) {
-            $whereParams[] = ':' . $key;
-        }
-        $sql .= ' AND tt.code IN (' . implode(', ', $whereParams) . ')';
-
-        //  --  add test type where clause --
-        $whereParams = [];
-        foreach ($statuses as $key => $val) {
-            $whereParams[] = ':' . $key;
-        }
-        $sql .= ' AND ts.name IN (' . implode(', ', $whereParams) . ')';
-
-        //  ----  prepare statement and bind params   ----
-        $em = $this->getEntityManager();
-        $sql = $em->getConnection()->prepare($sql);
-
-        $sql->bindValue('ORGANISATION_ID', $organisationId);
-
-        //  --  bind test types --
-        foreach ($testTypes as $key => $val) {
-            $sql->bindValue($key, $val);
-        }
-
-        //  --  bind statuses --
-        foreach ($statuses as $key => $val) {
-            $sql->bindValue($key, $val);
-        }
-
-        $sql->execute();
-
-        return $sql->fetch();
+        return $this->getCountOfMotTests('osm.organisation_id = :ORGANISATION_ID', 'ORGANISATION_ID',
+            $organisationId);
     }
 
     /**
@@ -961,106 +1009,7 @@ class MotTestRepository extends AbstractMutableRepository
      */
     public function getCountOfSiteMotTestsSummary($siteId)
     {
-        $testTypes = [
-            'TT_NORMAL'                  => MotTestTypeCode::NORMAL_TEST,
-            'TT_PARTIAL_RETEST_LEFT'     => MotTestTypeCode::PARTIAL_RETEST_LEFT_VTS,
-            'TT_PARTIAL_RETEST_REPAIRED' => MotTestTypeCode::PARTIAL_RETEST_REPAIRED_AT_VTS,
-            'TT_RETEST'                  => MotTestTypeCode::RE_TEST,
-        ];
-
-        $statuses = [
-            'TS_ABANDONED'  => MotTestStatusName::ABANDONED,
-            'TS_ABORTED'    => MotTestStatusName::ABORTED,
-            'TS_ABORTED_VE' => MotTestStatusName::ABORTED_VE,
-            'TS_FAILED'     => MotTestStatusName::FAILED,
-            'TS_PASSED'     => MotTestStatusName::PASSED,
-            'TS_REFUSED'    => MotTestStatusName::REFUSED,
-        ];
-
-        $sql = '
-            SELECT
-                COUNT(t.id) AS `year`,
-                SUM(
-                    CASE WHEN coalesce(t.completed_date, t.started_date) BETWEEN
-                             LAST_DAY(CURRENT_DATE() - INTERVAL 2 MONTH) + INTERVAL 1 DAY
-                             AND LAST_DAY(CURRENT_DATE()) - INTERVAL 1 MONTH + INTERVAL 1 DAY
-					THEN 1
-                    ELSE 0
-                    END
-                ) AS `month`,
-                SUM(
-					CASE WHEN coalesce(t.completed_date, t.started_date) BETWEEN
-							CURRENT_DATE() - INTERVAL WEEKDAY(CURRENT_DATE()) + 7 DAY
-							AND CURRENT_DATE() - INTERVAL WEEKDAY(CURRENT_DATE()) DAY
-					THEN 1
-                    ELSE 0
-                    END
-                ) AS `week`,
-                SUM(
-                    CASE WHEN coalesce(t.completed_date, t.started_date) >= CURRENT_DATE()
-                    THEN 1
-                    ELSE 0
-                    END
-                ) AS `today`
-
-            FROM
-                site AS s
-
-                INNER JOIN mot_test AS t ON
-                    t.site_id = s.id
-
-                INNER JOIN mot_test_type AS tt ON
-                    tt.id = t.mot_test_type_id
-
-                INNER JOIN mot_test_status AS ts ON
-                    ts.id = t.status_id
-
-            WHERE
-                s.id = :SITE_ID
-                AND (
-                    (
-                      t.completed_date IS NULL
-                      AND t.started_date >= (CURRENT_DATE() - INTERVAL 1 YEAR + INTERVAL 1 DAY)
-                    )
-                    OR (
-                        t.completed_date IS NOT NULL
-                        AND t.completed_date >= (CURRENT_DATE() - INTERVAL 1 YEAR + INTERVAL 1 DAY)
-                    )
-                )';
-
-        //  --  add test type where clause --
-        $whereParams = [];
-        foreach ($testTypes as $key => $val) {
-            $whereParams[] = ':' . $key;
-        }
-        $sql .= ' AND tt.code IN (' . implode(', ', $whereParams) . ')';
-
-        //  --  add test type where clause --
-        $whereParams = [];
-        foreach ($statuses as $key => $val) {
-            $whereParams[] = ':' . $key;
-        }
-        $sql .= ' AND ts.name IN (' . implode(', ', $whereParams) . ')';
-
-        //  ----  prepare statement and bind params   ----
-        $em = $this->getEntityManager();
-        $sql = $em->getConnection()->prepare($sql);
-
-        $sql->bindValue('SITE_ID', $siteId);
-
-        //  --  bind test types --
-        foreach ($testTypes as $key => $val) {
-            $sql->bindValue($key, $val);
-        }
-
-        //  --  bind statuses --
-        foreach ($statuses as $key => $val) {
-            $sql->bindValue($key, $val);
-        }
-
-        $sql->execute();
-
-        return $sql->fetch();
+        return $this->getCountOfMotTests('osm.site_id = :SITE_ID AND osm.organisation_id = s.organisation_id', 'SITE_ID', $siteId);
     }
 
     /**
@@ -1073,132 +1022,7 @@ class MotTestRepository extends AbstractMutableRepository
      */
     public function getCountOfTesterMotTestsSummary($testerId)
     {
-        $testTypes = [
-            'TT_NORMAL'                  => MotTestTypeCode::NORMAL_TEST,
-            'TT_PARTIAL_RETEST_LEFT'     => MotTestTypeCode::PARTIAL_RETEST_LEFT_VTS,
-            'TT_PARTIAL_RETEST_REPAIRED' => MotTestTypeCode::PARTIAL_RETEST_REPAIRED_AT_VTS,
-            'TT_RETEST'                  => MotTestTypeCode::RE_TEST,
-        ];
-
-        $statuses = [
-            'TS_ABANDONED'  => MotTestStatusName::ABANDONED,
-            'TS_ABORTED'    => MotTestStatusName::ABORTED,
-            'TS_ABORTED_VE' => MotTestStatusName::ABORTED_VE,
-            'TS_FAILED'     => MotTestStatusName::FAILED,
-            'TS_PASSED'     => MotTestStatusName::PASSED,
-            'TS_REFUSED'    => MotTestStatusName::REFUSED,
-        ];
-
-        $sql = '
-            SELECT
-                COUNT(t.id) AS `year`,
-                SUM(
-                    CASE WHEN coalesce(t.completed_date, t.started_date) BETWEEN
-                             LAST_DAY(CURRENT_DATE() - INTERVAL 2 MONTH) + INTERVAL 1 DAY
-                             AND LAST_DAY(CURRENT_DATE()) - INTERVAL 1 MONTH + INTERVAL 1 DAY
-					THEN 1
-                    ELSE 0
-                    END
-                ) AS `month`,
-                SUM(
-					CASE WHEN coalesce(t.completed_date, t.started_date) BETWEEN
-							CURRENT_DATE() - INTERVAL WEEKDAY(CURRENT_DATE()) + 7 DAY
-							AND CURRENT_DATE() - INTERVAL WEEKDAY(CURRENT_DATE()) DAY
-					THEN 1
-                    ELSE 0
-                    END
-                ) AS `week`,
-                SUM(
-                    CASE WHEN coalesce(t.completed_date, t.started_date) >= CURRENT_DATE()
-                    THEN 1
-                    ELSE 0
-                    END
-                ) AS `today`
-
-            FROM
-                mot_test AS t
-
-                INNER JOIN mot_test_type AS tt ON
-                    tt.id = t.mot_test_type_id
-
-                INNER JOIN mot_test_status AS ts ON
-                    ts.id = t.status_id
-
-            WHERE
-                t.person_id = :person_id
-                AND (
-                    (
-                      t.completed_date IS NULL
-                      AND t.started_date >= (CURRENT_DATE() - INTERVAL 1 YEAR + INTERVAL 1 DAY)
-                    )
-                    OR (
-                        t.completed_date IS NOT NULL
-                        AND t.completed_date >= (CURRENT_DATE() - INTERVAL 1 YEAR + INTERVAL 1 DAY)
-                    )
-                )';
-
-        //  --  add test type where clause --
-        $whereParams = [];
-        foreach ($testTypes as $key => $val) {
-            $whereParams[] = ':' . $key;
-        }
-        $sql .= ' AND tt.code IN (' . implode(', ', $whereParams) . ')';
-
-        //  --  add test type where clause --
-        $whereParams = [];
-        foreach ($statuses as $key => $val) {
-            $whereParams[] = ':' . $key;
-        }
-        $sql .= ' AND ts.name IN (' . implode(', ', $whereParams) . ')';
-
-        //  ----  prepare statement and bind params   ----
-        $em = $this->getEntityManager();
-        $sql = $em->getConnection()->prepare($sql);
-
-        $sql->bindValue('person_id', $testerId);
-
-        //  --  bind test types --
-        foreach ($testTypes as $key => $val) {
-            $sql->bindValue($key, $val);
-        }
-
-        //  --  bind statuses --
-        foreach ($statuses as $key => $val) {
-            $sql->bindValue($key, $val);
-        }
-
-        $sql->execute();
-
-        return $sql->fetch();
-    }
-
-    /**
-     * This function is responsible to get the number of mot test realise the
-     * current day.
-     *
-     * @param int $organisationId
-     *
-     * @return array eg. ['today' => 1234]
-     */
-    public function getNumberOfMotTestsForToday($organisationId)
-    {
-        $sql =
-            '
-            SELECT
-              COUNT(test.id) as `today`
-            FROM
-              mot_test AS test
-              INNER JOIN site AS site ON test.site_id = site.id
-            WHERE
-              site.organisation_id = :ORGANISATION_ID
-              AND test.completed_date >= CURRENT_DATE()';
-
-        $em = $this->getEntityManager();
-        $sql = $em->getConnection()->prepare($sql);
-        $sql->bindValue('ORGANISATION_ID', $organisationId);
-        $sql->execute();
-
-        return $sql->fetch();
+        return $this->getCountOfMotTests('t.person_id = :PERSON_ID', 'PERSON_ID', $testerId);
     }
 
     /**
@@ -1208,7 +1032,7 @@ class MotTestRepository extends AbstractMutableRepository
      *
      * @return NativeQueryBuilder
      */
-    public function prepareMotTest(MotTestSearchParam $searchParam)
+    public function prepareMotTestLogQuery(MotTestSearchParam $searchParam)
     {
         //  --  prepare sub query   --
         $qb = new NativeQueryBuilder();
@@ -1226,7 +1050,9 @@ class MotTestRepository extends AbstractMutableRepository
             ->join('model', 'vmo', 'vmo.id = mt.model_id', NativeQueryBuilder::JOIN_TYPE_LEFT)
             ->join('mot_test_type', 'tt', 'tt.id = mt.mot_test_type_id')
             ->join('mot_test_status', 'ts', 'ts.id = mt.status_id')
-            ->join('person', 'p', 'p.id = mt.person_id');
+            ->join('person', 'p', 'p.id = mt.person_id')
+            ->join('organisation_site_map', 'osm', 'osm.site_id = mt.site_id')
+            ->join('organisation_site_status', 'oss', 'oss.id = osm.status_id');
 
         if ($searchParam->getSiteNumber()) {
             $qb->andwhere('s.site_number = :SITE_NR')
@@ -1252,16 +1078,22 @@ class MotTestRepository extends AbstractMutableRepository
             $qb->andwhere('mt.vehicle_id = :VEHICLE_ID')
                 ->setParameter('VEHICLE_ID', $searchParam->getVehicleId());
         }
-
-        if ($searchParam->getOrganisationId()) {
-            $qb->andwhere('s.organisation_id = :ORGANISATION_ID')
-                ->setParameter('ORGANISATION_ID', $searchParam->getOrganisationId());
+            
+        if($searchParam->getOrganisationId()) {
+            $qb->andWhere('osm.organisation_id = :OSM_ORGANISATION_ID')
+                ->setParameter('OSM_ORGANISATION_ID', $searchParam->getOrganisationId());
+        }
+        
+        if($searchParam->getSiteId()) {
+            $qb->andWhere('osm.site_id = :OSM_SITE_ID')
+                ->setParameter('OSM_SITE_ID', $searchParam->getSiteId());
         }
 
-        if ($searchParam->getSiteId()) {
-            $qb->andwhere('s.id = :SITE_ID')
-                ->setParameter('SITE_ID', $searchParam->getSiteId());
-        }
+        $qb->andWhere('oss.code NOT IN (:ORGANISATION_SITE_STATUS_ID)')
+                ->setParameter('ORGANISATION_SITE_STATUS_ID', implode(',', [
+                    OrganisationSiteStatusCode::APPLIED,
+                    OrganisationSiteStatusCode::UNKNOWN
+            ]));
 
         $statuses = $searchParam->getStatus();
         if (!empty($statuses)) {
@@ -1300,6 +1132,8 @@ class MotTestRepository extends AbstractMutableRepository
                     )
                 )
                 ')
+                ->andWhere('mt.completed_date >= osm.start_date')
+                ->andWhere('(mt.completed_date <= osm.end_date OR osm.end_date IS NULL)')
                 ->setParameter('DATE_FROM', $searchParam->getDateFrom() ?: new \DateTime('1900-01-01'))
                 ->setParameter('DATE_TO', $searchParam->getDateTo() ?: new \DateTime());
         }
@@ -1328,9 +1162,9 @@ class MotTestRepository extends AbstractMutableRepository
         return $qb;
     }
 
-    public function getMotTestLogsResult(SearchParam $searchParam)
+    public function getMotTestLogsResult(MotTestSearchParam $searchParam)
     {
-        $qb = $this->prepareMotTest($searchParam);
+        $qb = $this->prepareMotTestLogQuery($searchParam);
         $qb
             ->resetPart('select', 'all')
             ->select('mt.number, mt.client_ip, ts.name AS status')
@@ -1381,7 +1215,7 @@ class MotTestRepository extends AbstractMutableRepository
      */
     public function getMotTestLogsResultCount(MotTestSearchParam $searchParam)
     {
-        $qb = $this->prepareMotTest($searchParam)
+        $qb = $this->prepareMotTestLogQuery($searchParam)
             ->resetPart('select')
             ->select('count(mt.id) AS count')
             ->resetPart('orderBy')

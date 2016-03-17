@@ -30,6 +30,7 @@ class Vts extends MotApi
     const TESTING_FACILITIES = 'vehicle-testing-station/{site_id}/testing-facilities';
     const SITE_DETAILS = 'vehicle-testing-station/{site_id}/site-details';
     const RISK_ASSESMENT = 'vehicle-testing-station/{site_id}/risk-assessment';
+    const TEST_LOG = 'vehicle-testing-station/{site_id}/mot-test-log';
 
     public function getVtsDetails($vtsId, $token)
     {
@@ -247,5 +248,57 @@ class Vts extends MotApi
                 VehicleTestingStation::PATCH_PROPERTY_CLASSES => [],
                 '_class' => VehicleTestingStationDto::class,
             ]);
+    }
+
+    public function getTestLogs($token, $siteId)
+    {
+        //todo probably there's no need to pass that much params to api
+        $body = json_encode([
+            'organisationId' => NULL,
+            'siteId' => $siteId,
+            'siteNr' => NULL,
+            'personId' => NULL,
+            'vehicleId' => NULL,
+            'vehicleRegNr' => NULL,
+            'vehicleVin' => NULL,
+            'dateFromTs' => strtotime('today 01 am'),
+            'dateToTs' => strtotime('tomorrow 01 am'),
+            'status' =>
+                array (
+                    0 => 'ABANDONED',
+                    1 => 'ABORTED',
+                    2 => 'ABORTED_VE',
+                    3 => 'FAILED',
+                    4 => 'PASSED',
+                    5 => 'REFUSED',
+                ),
+            'testType' =>
+                array (
+                    0 => 'NT',
+                    1 => 'PL',
+                    2 => 'PV',
+                    3 => 'RT',
+                ),
+            'format' => 'DATA_CSV',
+            'isSearchRecent' => false,
+            'pageNr' => 1,
+            'rowsCount' => 50000,
+            'searchTerm' => NULL,
+            'sortBy' => 'testDateTime',
+            'sortDirection' => 'DESC',
+            'start' => NULL,
+            'filter' => NULL,
+            'isApiGetData' => true,
+            'isApiGetTotalCount' => false,
+            'isEsEnabled' => NULL,
+            '_class' => 'DvsaCommon\Dto\Search\MotTestSearchParamsDto',
+        ]);
+
+        return $this->client->request(new Request(
+            MotApi::METHOD_POST,
+            str_replace('{site_id}', $siteId, self::TEST_LOG),
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
+            $body
+        ));
     }
 }

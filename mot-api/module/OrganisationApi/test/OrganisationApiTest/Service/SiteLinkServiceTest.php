@@ -42,6 +42,7 @@ use SiteApi\Service\MotTestInProgressService;
 class SiteLinkServiceTest extends AbstractServiceTestCase
 {
     const ORG_ID = 9999;
+    const ORG_SITE_MAP_ID = null;
     const AE_NUMBER = 1;
     const SITE_ID = 8888;
     const SITE_NUMBER = 'S00001';
@@ -196,6 +197,7 @@ class SiteLinkServiceTest extends AbstractServiceTestCase
         ];
 
         $linkEntity = (new OrganisationSiteMap())
+            ->setId(self::ORG_SITE_MAP_ID)
             ->setOrganisation($orgEntity)
             ->setSite($siteEntity);
 
@@ -307,7 +309,7 @@ class SiteLinkServiceTest extends AbstractServiceTestCase
                 ],
                 'permissions' => null,
                 'expect'      => [
-                    'result' => ['id' => self::ORG_ID],
+                    'result' => ['id' => self::ORG_SITE_MAP_ID],
                 ],
             ],
 

@@ -101,6 +101,15 @@ class SessionContext implements Context
     }
 
     /**
+     * @Given I am logged in as a Tester assigned to :name site
+     */
+    public function iAmLoggedInAsATesterAssignedToNameSite($name = "default")
+    {
+        $site = $this->vtsContext->getSite($name);
+        $this->iAmLoggedInAsATesterAssignedToSites([$site["id"]]);
+    }
+
+    /**
      * @Given I am logged in as a Special Notice broadcast user
      */
     public function iAmLoggedInAsASpecialNoticeBroadcastUser()
