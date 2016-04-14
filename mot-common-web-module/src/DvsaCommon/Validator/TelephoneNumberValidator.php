@@ -53,7 +53,7 @@ class TelephoneNumberValidator extends AbstractValidator
 
         // not validating number by format due to existing data containing brackets, addition symbols, spaces, etc.
         // validate number has not more than 24 characters
-        if (strlen($newPhoneNumber) > 24) {
+        if (mb_strlen($newPhoneNumber) > 24) {
             $this->setMessage(self::MSG_PHONE_NUMBER_TOO_LONG, self::PHONE_NUMBER_KEY);
             $this->error(self::PHONE_NUMBER_KEY);
             $phoneNumberValid = false;

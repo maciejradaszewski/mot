@@ -2,13 +2,13 @@
 
 namespace Site\UpdateVtsProperty\Process\Form;
 
-use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
 use Core\Catalog\CountryCatalog;
 use DvsaCommon\Model\CountryOfVts;
+use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
+use Zend\Form\Element\Radio;
 use Zend\Form\Form;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
-use Zend\Form\Element\Radio;
 use Zend\Validator\NotEmpty;
 
 class CountryPropertyForm extends Form
@@ -25,7 +25,7 @@ class CountryPropertyForm extends Form
 
         $countryOptions = [];
 
-        foreach (CountryOfVts::getPossibleCountryCodes() as  $countryCode) {
+        foreach (CountryOfVts::getPossibleCountryCodes() as $countryCode) {
             $vtsCountry = $countryCatalog->getByCode($countryCode);
             $countryOptions[] = [
                 'label'     => $vtsCountry->getName(),

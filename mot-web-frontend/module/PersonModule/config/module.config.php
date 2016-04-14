@@ -5,6 +5,9 @@
  * @link http://gitlab.clb.npm/mot/mot
  */
 
+use Dvsa\Mot\Frontend\PersonModule\Controller\QualificationDetailsController;
+use Dvsa\Mot\Frontend\PersonModule\Factory\Service\QualificationDetailsServiceFactory;
+
 return [
     'view_manager' => [
         'template_path_stack' => [
@@ -12,6 +15,11 @@ return [
         ],
         'strategies' => [
             'ViewJsonStrategy',
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
+            QualificationDetailsController::class => QualificationDetailsServiceFactory::class,
         ],
     ],
 ];

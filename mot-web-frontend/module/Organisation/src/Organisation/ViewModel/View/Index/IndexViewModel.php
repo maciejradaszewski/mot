@@ -279,18 +279,18 @@ class IndexViewModel
         $table = new GdsTable();
         $row = $table->newRow('ae-name')->setLabel('Name')->setValue($presenter->getName() ? : 'N/A');
         if ($permissions->canUpdateAEBusinessDetailsName()) {
-            $row->setActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_NAME_PROPERTY), "Change Name");
+            $row->addActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_NAME_PROPERTY), "Change Name");
         }
         $row = $table->newRow('ae-trading-name')->setLabel('Trading name')->setValue($presenter->getTradingName() ? : 'N/A');
         if ($permissions->canUpdateAEBusinessDetailsTradingName()) {
-            $row->setActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_TRADING_NAME_PROPERTY), "Change Trading Name");
+            $row->addActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_TRADING_NAME_PROPERTY), "Change Trading Name");
         }
         $row = $table->newRow('ae-type')->setLabel('Business type')->setValue($presenter->getCompanyType() ? : 'N/A');
         if($presenter->isBusinessTypeCompany()){
             $row->setValueMetaData($presenter->getCompanyNumber() ?: 'N/A');
         }
         if ($permissions->canUpdateAEBusinessDetailsBusinessType()) {
-            $row->setActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_BUSINESS_TYPE_PROPERTY), "Change Business Type");
+            $row->addActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_BUSINESS_TYPE_PROPERTY), "Change Business Type");
         }
         $table->newRow('ae-number')->setLabel('AE ID')->setValue($presenter->getNumber() ? : 'N/A');
         if ($permissions->canViewAeStatus()) {
@@ -298,13 +298,13 @@ class IndexViewModel
             $table->newRow('ae-withdraw-date')->setLabel('AE Withdrawal date')->setValue($withdrawalDate ? $withdrawalDate : 'N/A');
             $row = $table->newRow('ae-dvsa-area-office')->setLabel('DVSA area office')->setValue($aoNumber);
             if ($permissions->canUpdateAEBusinessDetailsDVSAAreaOffice()) {
-                $row->setActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_DVSA_AREA_OFFICE_STATUS_PROPERTY), "Change DVSA AO");
+                $row->addActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_DVSA_AREA_OFFICE_STATUS_PROPERTY), "Change DVSA AO");
             }
         }
 
         if ($permissions->canUpdateAEBusinessDetailsStatus()) {
             $row = $table->newRow('ae-auth-status')->setLabel('Status')->setValue($this->getStatusName() ? : 'N/A');
-            $row->setActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_STATUS_PROPERTY), "Change Status");
+            $row->addActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_STATUS_PROPERTY), "Change Status");
         }
 
         return $table;
@@ -330,15 +330,15 @@ class IndexViewModel
         $table->setHeader("Registered office");
         $row = $table->newRow('reg-AE-address')->setLabel('Address')->setValue($addressString, false);
         if ($permissions->canUpdateAEContactDetailsRegisteredOfficeAddress()) {
-            $row->setActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_REGISTERED_ADDRESS_PROPERTY), "Change Registered Address");
+            $row->addActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_REGISTERED_ADDRESS_PROPERTY), "Change Registered Address");
         }
         $row = $table->newRow('reg-email')->setLabel('Email')->setValue($email, false);
         if ($permissions->canUpdateAEContactDetailsRegisteredOfficeEmail()) {
-            $row->setActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_REGISTERED_EMAIL_PROPERTY), "Change Registered Email");
+            $row->addActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_REGISTERED_EMAIL_PROPERTY), "Change Registered Email");
         }
         $row = $table->newRow('reg-telephone')->setLabel('Telephone')->setValue($contactDetail->getPrimaryPhoneNumber());
         if ($permissions->canUpdateAEContactDetailsRegisteredOfficeTelephone()) {
-            $row->setActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_REGISTERED_TELEPHONE_PROPERTY), "Change Registered Telephone");
+            $row->addActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_REGISTERED_TELEPHONE_PROPERTY), "Change Registered Telephone");
         }
         return $table;
     }
@@ -363,15 +363,15 @@ class IndexViewModel
         $table->setHeader("Correspondence");
         $row = $table->newRow('cor-address')->setLabel('Address')->setValue($addressString, false);
         if ($permissions->canUpdateAEContactDetailsCorrespondenceAddress()) {
-            $row->setActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_CORRESPONDENCE_ADDRESS_PROPERTY), "Change Registered Address");
+            $row->addActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_CORRESPONDENCE_ADDRESS_PROPERTY), "Change Registered Address");
         }
         $row = $table->newRow('cor-email')->setLabel('Email')->setValue($email, false);
         if ($permissions->canUpdateAEContactDetailsCorrespondenceEmail()) {
-            $row->setActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_CORRESPONDENCE_EMAIL_PROPERTY), "Change Registered Email");
+            $row->addActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_CORRESPONDENCE_EMAIL_PROPERTY), "Change Registered Email");
         }
         $row = $table->newRow('cor-phone')->setLabel('Telephone')->setValue($correspondenceDetail->getPrimaryPhoneNumber());
         if ($permissions->canUpdateAEContactDetailsCorrespondenceTelephone()) {
-            $row->setActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_CORRESPONDENCE_TELEPHONE_PROPERTY), "Change Registered Telephone");
+            $row->addActionLink('Change', AeRoutes::of($urlHelper)->aeEditProperty($orgId, UpdateAePropertyAction::AE_CORRESPONDENCE_TELEPHONE_PROPERTY), "Change Registered Telephone");
         }
         return $table;
     }

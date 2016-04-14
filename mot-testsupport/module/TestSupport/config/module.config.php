@@ -42,6 +42,7 @@ return [
             Controller\TesterAuthorisationStatusController::class => Controller\TesterAuthorisationStatusController::class,
             Controller\DocumentController::class            =>  Controller\DocumentController::class,
             Controller\PersonRoleController::class            =>  Controller\PersonRoleController::class,
+            Controller\QualificationDetailsController::class => Controller\QualificationDetailsController::class,
         ],
     ],
     'router'       => [
@@ -360,6 +361,15 @@ return [
                             'route' => '/event/create',
                             'defaults' => [
                                 'controller' => Controller\EventDataController::class,
+                            ],
+                        ],
+                    ],
+                    'qualificationDetailsSub' => [
+                        'type'         => 'Segment',
+                        'options'      => [
+                            'route' => '/qualification-details',
+                            'defaults' => [
+                                'controller' => Controller\QualificationDetailsController::class,
                             ],
                         ],
                     ],

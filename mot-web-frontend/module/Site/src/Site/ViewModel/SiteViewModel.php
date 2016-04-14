@@ -196,20 +196,20 @@ class SiteViewModel
         $row = $table->newRow('site-name')->setLabel('Name')->setValue($site->getName());
         if ($permissions->canChangeSiteName())
         {
-            $row->setActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_NAME_PROPERTY), "Change Name");
+            $row->addActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_NAME_PROPERTY), "Change Name");
         }
         $table->newRow('site-number')->setLabel('VTS ID')->setValue($site->getSiteNumber());
         $row = $table->newRow('site-classes')->setLabel('Classes')->setValue(!empty($site->getTestClasses()) ? implode(',', $site->getTestClasses()) : 'None');
 
         if ($permissions->canChangeSiteClasses()) {
-            $row->setActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_CLASSES_PROPERTY), 'Change Classes');
+            $row->addActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_CLASSES_PROPERTY), 'Change Classes');
         }
 
         if ($permissions->canViewVtsType()) {
             $row = $table->newRow('site-type')->setLabel('Type')->setValue($this->getSiteTypes()[$site->getType()]);
 
             if ($permissions->canChangeSiteType()) {
-                $row->setActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_TYPE_PROPERTY), 'Change Type');
+                $row->addActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_TYPE_PROPERTY), 'Change Type');
             }
         }
 
@@ -222,7 +222,7 @@ class SiteViewModel
         $row = $table->newRow('site-status')->setLabel('Status')->setValue($this->getStatusName($site->getStatus()));
 
         if ($permissions->canChangeSiteStatus()) {
-            $row->setActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_STATUS_PROPERTY), 'Change Status');
+            $row->addActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_STATUS_PROPERTY), 'Change Status');
         }
 
         return $table;
@@ -239,24 +239,24 @@ class SiteViewModel
         $row = $table->newRow('site-address')->setLabel('Address')->setValue((new AddressFormatter())->escapedDtoToMultiLine($contact->getAddress()), false);
 
         if ($permissions->canChangeSiteAddress()) {
-            $row->setActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_ADDRESS_PROPERTY), 'Change Address');
+            $row->addActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_ADDRESS_PROPERTY), 'Change Address');
         }
 
         if ($permissions->canViewCountry()) {
             $row = $table->newRow('site-country')->setLabel('Country')->setValue($this->getCountryToggle());
             if ($permissions->canChangeSiteCountry()) {
-                $row->setActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_COUNTRY_PROPERTY), 'Change Country');
+                $row->addActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_COUNTRY_PROPERTY), 'Change Country');
             }
         }
 
         $row = $table->newRow('email')->setLabel('Email')->setValue($contact->getPrimaryEmailAddress());
         if ($permissions->canChangeSiteEmail()) {
-            $row->setActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_EMAIL_PROPERTY), 'Change Email');
+            $row->addActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_EMAIL_PROPERTY), 'Change Email');
         }
 
         $row = $table->newRow('phone-number')->setLabel('Telephone')->setValue($contact->getPrimaryPhoneNumber());
         if ($permissions->canChangeSitePhone()) {
-            $row->setActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_PHONE_PROPERTY), 'Change Telephone');
+            $row->addActionLink('Change', VtsRoutes::of($this->urlHelper)->vtsEditProperty($site->getId(), UpdateVtsPropertyAction::VTS_PHONE_PROPERTY), 'Change Telephone');
         }
 
         return $table;

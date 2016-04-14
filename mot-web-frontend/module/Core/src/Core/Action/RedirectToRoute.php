@@ -2,7 +2,7 @@
 
 namespace Core\Action;
 
-class RedirectToRoute extends AbstractActionResult
+class RedirectToRoute extends AbstractRedirectActionResult
 {
     private $routeName;
 

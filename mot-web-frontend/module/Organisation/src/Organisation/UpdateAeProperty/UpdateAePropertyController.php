@@ -9,14 +9,18 @@ class UpdateAePropertyController extends AbstractAuthActionController implements
 {
     private $updateAction;
     private $reviewAction;
+    /** @var UpdateAePropertyProcessBuilder todo deprecated remove */
+    private $processBuilder;
 
     public function __construct(
         UpdateAePropertyAction $updateAction,
-        UpdateAePropertyReviewAction $reviewAction
+        UpdateAePropertyReviewAction $reviewAction,
+        UpdateAePropertyProcessBuilder $processBuilder
     )
     {
         $this->updateAction = $updateAction;
         $this->reviewAction = $reviewAction;
+        $this->processBuilder = $processBuilder;
     }
 
     public function editAction()
@@ -27,7 +31,7 @@ class UpdateAePropertyController extends AbstractAuthActionController implements
         $formData = $this->getRequest()->getPost()->getArrayCopy();
         $formUuid = $this->params()->fromQuery('formUuid');
 
-        $actionResult = $this->updateAction->execute($isPost, $propertyName, $aeId, $formUuid, $formData);
+        $actionResult = $this->updateAction->execute($isPost, $this->processBuilder->get($propertyName), new UpdateAeContext($aeId, $propertyName), $formUuid, $formData);
 
         return $this->applyActionResult($actionResult);
     }
@@ -39,7 +43,7 @@ class UpdateAePropertyController extends AbstractAuthActionController implements
         $aeId = $this->params()->fromRoute('id');
         $formUuid = $this->params()->fromRoute('formUuid');
 
-        $actionResult = $this->reviewAction->execute($isPost, $propertyName, $aeId, $formUuid);
+        $actionResult = $this->reviewAction->execute($isPost, $this->processBuilder->get($propertyName), new UpdateAeContext($aeId, $propertyName), $formUuid);
 
         return $this->applyActionResult($actionResult);
     }

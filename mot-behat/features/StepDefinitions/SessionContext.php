@@ -85,6 +85,15 @@ class SessionContext implements Context
     }
 
     /**
+     * @Given I am logged in as a new User
+     */
+    public function iAmLoggedInAsANewUser()
+    {
+        $this->currentUser = $this->session->logInAsNewUser($this->testSupportHelper);
+
+    }
+
+    /**
      * @Given I am logged in as a Tester
      */
     public function iAmLoggedInAsATester()

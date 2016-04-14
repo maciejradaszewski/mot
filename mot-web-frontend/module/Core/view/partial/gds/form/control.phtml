@@ -6,7 +6,13 @@ use Zend\Form\Element\Select;
 
 $errorMessages = $element->getMessages();
 $errorMessage = ArrayUtils::firstOrNull($errorMessages);
-$params = ["name" => $element->getName(), "label" => $element->getLabel(), "value" => $element->getValue(), "errorMessage" => $errorMessage];
+$params = [
+    "name" => $element->getName(),
+    "label" => $element->getLabel(),
+    "value" => $element->getValue(),
+    "errorMessage" => $errorMessage,
+    "help" => $element->getAttribute("help"),
+];
 $params = array_merge($params, $element->getAttributes());
 
 if ($element instanceof Select) {

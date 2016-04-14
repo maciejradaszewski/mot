@@ -2,7 +2,7 @@
 
 namespace UserAdmin\ViewModel\UserProfile;
 
-use DvsaClient\Entity\TesterAuthorisation;
+use DvsaCommon\Model\TesterAuthorisation;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;

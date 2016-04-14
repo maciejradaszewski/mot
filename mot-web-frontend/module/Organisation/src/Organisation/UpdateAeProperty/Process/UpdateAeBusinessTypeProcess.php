@@ -7,28 +7,22 @@ use DvsaClient\Mapper\OrganisationMapper;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Enum\CompanyTypeCode;
-use DvsaCommon\Exception\NotImplementedException;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\Model\AuthorisedExaminerPatchModel;
+use Organisation\UpdateAeProperty\AbstractSingleStepAeProcess;
 use Organisation\UpdateAeProperty\Process\Form\BusinessTypePropertyForm;
 use Organisation\UpdateAeProperty\UpdateAePropertyAction;
-use Organisation\UpdateAeProperty\UpdateAePropertyProcessInterface;
+use Zend\View\Helper\Url;
 
-class UpdateAeBusinessTypeProcess implements UpdateAePropertyProcessInterface, AutoWireableInterface
+class UpdateAeBusinessTypeProcess extends AbstractSingleStepAeProcess implements AutoWireableInterface
 {
     private $propertyCompanyNumber = UpdateAePropertyAction::AE_COMPANY_NUMBER_PROPERTY;
     private $propertyName = UpdateAePropertyAction::AE_BUSINESS_TYPE_PROPERTY;
     private $permission = PermissionAtOrganisation::AE_UPDATE_TYPE;
-    private $requiresReview = false;
     private $submitButtonText = "Change business type";
     private $successfulEditMessage = "Business type has been successfully changed.";
     private $formPageTitle = "Change business type";
     private $formPartial = "organisation/update-ae-property/partials/edit-business-type";
-
-    /**
-     * @var OrganisationMapper
-     */
-    private $organisationMapper;
 
     /**
      * @var OrganisationCompanyTypeCatalog
@@ -42,10 +36,11 @@ class UpdateAeBusinessTypeProcess implements UpdateAePropertyProcessInterface, A
     public function __construct(
         OrganisationMapper $organisationMapper,
         OrganisationCompanyTypeCatalog $organisationCompanyTypeCatalog,
-        MapperFactory $mapper
+        MapperFactory $mapper,
+        Url $urlHelper
     )
     {
-        $this->organisationMapper = $organisationMapper;
+        parent::__construct($organisationMapper, $urlHelper);
         $this->organisationCompanyTypeCatalog = $organisationCompanyTypeCatalog;
         $this->mapper = $mapper;
     }
@@ -53,11 +48,6 @@ class UpdateAeBusinessTypeProcess implements UpdateAePropertyProcessInterface, A
     public function getPropertyName()
     {
         return $this->propertyName;
-    }
-
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
     }
 
     public function getFormPartial()
@@ -75,12 +65,12 @@ class UpdateAeBusinessTypeProcess implements UpdateAePropertyProcessInterface, A
         return $this->submitButtonText;
     }
 
-    public function getPrePopulatedData($aeId)
+    public function getPrePopulatedData()
     {
-        $authorisedExaminer = $this->organisationMapper->getAuthorisedExaminer($aeId);
+        $authorisedExaminer = $this->organisationMapper->getAuthorisedExaminer($this->context->getAeId());
         $companyType = $this->organisationCompanyTypeCatalog->getByName($authorisedExaminer->getCompanyType());
         $return = [$this->propertyCompanyNumber => $authorisedExaminer->getRegisteredCompanyNumber()];
-        if(!is_null($companyType)){
+        if (!is_null($companyType)) {
             $return[$this->propertyName] = $companyType->getCode();
         }
 
@@ -92,16 +82,16 @@ class UpdateAeBusinessTypeProcess implements UpdateAePropertyProcessInterface, A
         return $this->permission;
     }
 
-    public function update($aeId, $formData)
+    public function update($formData)
     {
         $companyNumber = $formData[$this->propertyCompanyNumber];
-        if($formData[$this->propertyName] != CompanyTypeCode::COMPANY){
-            return $this->organisationMapper->updateAeProperty($aeId, AuthorisedExaminerPatchModel::TYPE,
+        if ($formData[$this->propertyName] != CompanyTypeCode::COMPANY) {
+            return $this->organisationMapper->updateAeProperty($this->context->getAeId(), AuthorisedExaminerPatchModel::TYPE,
                 $formData[$this->propertyName]);
         } else {
             return $this->organisationMapper->updateAePropertiesWithArray($aeId, [
-                AuthorisedExaminerPatchModel::TYPE =>  $formData[$this->propertyName],
-                AuthorisedExaminerPatchModel::COMPANY_NUMBER =>  $companyNumber,
+                AuthorisedExaminerPatchModel::TYPE           => $formData[$this->propertyName],
+                AuthorisedExaminerPatchModel::COMPANY_NUMBER => $companyNumber,
             ]);
         }
     }
@@ -111,7 +101,7 @@ class UpdateAeBusinessTypeProcess implements UpdateAePropertyProcessInterface, A
         return $this->successfulEditMessage;
     }
 
-    public function getFormPageTitle()
+    public function getEditStepPageTitle()
     {
         return $this->formPageTitle;
     }

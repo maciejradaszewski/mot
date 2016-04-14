@@ -15,7 +15,7 @@ use Core\ViewModel\Sidebar\GeneralSidebarStatusBox;
 use Core\ViewModel\Sidebar\GeneralSidebarStatusItem;
 use Core\ViewModel\Sidebar\SidebarBadge;
 use Dvsa\Mot\Frontend\PersonModule\Security\PersonProfileGuard;
-use DvsaClient\Entity\TesterAuthorisation;
+use DvsaCommon\Model\TesterAuthorisation;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
 
@@ -237,6 +237,10 @@ class PersonProfileSidebar extends GeneralSidebar
             $this->currentUrl :
             self::OLD_USER_PROFILE_URL . $this->personId) . '/manage-internal-role';
 
+        $qualificationDetailsUrl = ($this->newProfileEnabled ?
+                $this->currentUrl :
+                self::OLD_USER_PROFILE_URL . $this->personId) . '/qualification-details';
+
         $relatedBox = new GeneralSidebarLinkList('Related');
         $relatedBox->setId('related');
 
@@ -283,6 +287,16 @@ class PersonProfileSidebar extends GeneralSidebar
                     'event-history',
                     'Event history',
                     '/event/list/person/' . $this->personId . '?previousRoute=' . $this->currentUrl
+                )
+            );
+        }
+
+        if ($this->personProfileGuard->canViewQualificationDetails()) {
+            $relatedBox->addLink(
+                new GeneralSidebarLink(
+                    'qualification-details',
+                    'Qualification details',
+                    $qualificationDetailsUrl
                 )
             );
         }

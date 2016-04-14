@@ -15,9 +15,6 @@ use DvsaCommon\Input\AuthorisedExaminerPrincipal\TownInput;
 use DvsaCommon\InputFilter\AuthorisedExaminerPrincipal\CreateAepInputFilter;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
-use Zend\Validator\NotEmpty;
-use Zend\Validator\StringLength;
 
 class AepForm extends Form
 {
@@ -175,7 +172,7 @@ class AepForm extends Form
             return "";
         }
 
-        return join("-", [ $year, $month, $day ]);
+        return join("-", [$year, $month, $day]);
     }
 
     private function showLabelOnError($field, $label)
@@ -244,5 +241,4 @@ class AepForm extends Form
     {
         return $this->get(PostcodeInput::FIELD);
     }
-
 }

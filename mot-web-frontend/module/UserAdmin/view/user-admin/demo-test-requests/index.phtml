@@ -1,0 +1,36 @@
+<?php
+use Report\Table\Table;
+
+/** @var Table $table */
+/** @var string $downloadCsvLink */
+?>
+<header class="content-header">
+    <h1>
+        <span class="content-header__type">
+           Demo test requests
+        </span>
+        <span class="content-header__title">
+            Users that requested a Demo test
+        </span>
+    </h1>
+</header>
+
+<h2 class="result__group-heading"><strong><?php echo $table->getRowsTotalCount() ?></strong> requests for <strong>Demo tests</strong></h2>
+
+    <?php echo $table->renderTable($this); ?>
+    <?php echo $table->renderFooter($this); ?>
+
+<?php if($table->getRowsTotalCount() > 0): ?>
+    <div class="result__actions">
+        <p>Download Demo test requests as a
+            <a href="<?php echo $downloadCsvLink; ?>" class="" rel="external">CSV (Excel)</a> file.
+        </p>
+    </div>
+<?php endif; ?>
+<nav class="content-navigation">
+    <ul class="content-navigation__secondary">
+        <li>
+            <a href="<?php echo $this->url('user-home') ?>">Return to home</a>
+        </li>
+    </ul>
+</nav>

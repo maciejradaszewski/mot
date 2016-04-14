@@ -24,6 +24,13 @@ class VehicleClass extends Entity
 
     use EnumType1EntityTrait;
 
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="vehicle_class_group_id", type="string", length=5, nullable=false)
+     */
+
     private $group;
 
     public function __construct($code = null, $name = null)

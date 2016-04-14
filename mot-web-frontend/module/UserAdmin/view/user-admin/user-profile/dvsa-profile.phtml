@@ -69,16 +69,6 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $errorM
         </td>
     </tr>
     <?php endif; ?>
-    <?php if ($display2FAMethod): ?>
-    <tr>
-        <th class="key-value-list__key">
-            Two-factor authentication method
-        </th>
-        <td id="person-2fa-method" class="key-value-list__value">
-            <?php echo $this->escapeHtml($presenter->displayAuthenticationMethod()); ?>
-        </td>
-    </tr>
-    <?php endif; ?>
     </tbody>
 </table>
 

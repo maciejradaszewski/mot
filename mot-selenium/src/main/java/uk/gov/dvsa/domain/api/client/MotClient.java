@@ -22,6 +22,10 @@ public class MotClient {
         return postRequest(request, path, token);
     }
 
+    public Response createQualificationCertificate(String request, String path, String token) {
+        return postRequest(request, path, token);
+    }
+
     public Response post(String request, String path, String token) {
         return postRequest(request, path, token);
     }

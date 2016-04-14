@@ -1,0 +1,58 @@
+<?php
+use DvsaCommon\Dto\Search\SearchParamsDto;
+use Report\Table\TableOptions;
+
+/** @var SearchParamsDto $searchParams */
+/** @var TableOptions $tableOptions */
+/** @var int $firstItemNumber */
+/** @var int $lastItemNumber */
+/** @var int $totalItemCount */
+
+
+$urlForPage = function ($pageNumber) use ($searchParams) {
+    $urlSearchParams = clone $searchParams;
+    $urlSearchParams->setPageNr($pageNumber);
+    return $this->url(null, [], ['query' => $urlSearchParams->toQueryParams()->toArray()], true);
+};
+?>
+
+<div class="pager">
+    <?php if ($this->pageCount && $this->pageCount > 1): ?>
+        <div class="pager__controls">
+            <?php if (isset($this->previous)): ?>
+                <a class="pager__prev" href="<?php echo $urlForPage($this->previous); ?>">
+                    Prev
+                </a>
+            <?php endif; ?>
+
+            <ul class="pager__list">
+                <?php foreach ($this->pagesInRange as $page): ?>
+                    <?php if ($page != $this->current): ?>
+                        <li>
+                            <a href="<?php echo $urlForPage($page); ?>">
+                                <?php echo $page; ?>
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li>
+                            <?php echo $page; ?>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
+
+            <?php if (isset($this->next)): ?>
+                <a class="pager__next" href="<?php echo $urlForPage($this->next); ?>">
+                    Next
+                </a>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if($totalItemCount > 0): ?>
+    <div class="pager__summary">Showing <?php
+       echo $this->escapeHtml(
+            sprintf('%s – %s of %s %s', $firstItemNumber, $lastItemNumber, $totalItemCount, $tableOptions->getItemsText())
+        ); ?></div>
+    <?php endif; ?>
+</div>

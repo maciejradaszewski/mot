@@ -38,6 +38,7 @@ class PermissionAtSite
     const VTS_UPDATE_SITE_RISK_ASSESSMENT = 'VTS-UPDATE-SITE-RISK-ASSESSMENT';
     const VTS_TEST_LOGS = 'VTS-TEST-LOGS';
     const VTS_VIEW_CONTACT_DETAILS_COUNTRY = 'VTS-VIEW-CONTACT-DETAILS-COUNTRY';
+    const VIEW_QUA_DET_OF_THE_SAME_SITE_USER = 'VIEW-QUA-DET-OF-THE-SAME-SITE-USER';
 
     public static function all()
     {
@@ -74,6 +75,7 @@ class PermissionAtSite
             self::VTS_UPDATE_SITE_RISK_ASSESSMENT,
             self::VTS_TEST_LOGS,
             self::VTS_VIEW_CONTACT_DETAILS_COUNTRY,
+            self::VIEW_QUA_DET_OF_THE_SAME_SITE_USER,
         ];
     }
 }

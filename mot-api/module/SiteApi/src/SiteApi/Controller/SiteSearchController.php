@@ -35,4 +35,13 @@ class SiteSearchController extends AbstractDvsaRestfulController
     {
         return ApiResponse::jsonOk($this->service->findSites(DtoHydrator::jsonToDto($data)));
     }
+
+    /**
+     * @param mixed $number
+     * @return JsonModel
+     */
+    public function get($number)
+    {
+        return ApiResponse::jsonOk($this->service->findSiteByNumber($number));
+    }
 }

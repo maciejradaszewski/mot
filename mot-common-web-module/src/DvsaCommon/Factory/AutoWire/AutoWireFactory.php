@@ -46,7 +46,7 @@ class AutoWireFactory implements AbstractFactoryInterface
 
             $constructorParameters = ArrayUtils::map($constructor->getParameters(),
                 function (\ReflectionParameter $parameter) use ($serviceLocator, $requestedName) {
-                    return $serviceLocator->get($parameter->getClass()->getName());;
+                    return $serviceLocator->get($parameter->getClass()->getName());
                 });
 
             return $reflection->newInstanceArgs($constructorParameters);

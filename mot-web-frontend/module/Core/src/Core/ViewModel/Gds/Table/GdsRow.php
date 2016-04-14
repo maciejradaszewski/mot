@@ -2,9 +2,12 @@
 
 namespace Core\ViewModel\Gds\Table;
 
+use DvsaCommon\Utility\ArrayUtils;
+
 class GdsRow implements GdsRowFlowInterface
 {
     private $htmlId = null;
+    private $htmlClass = null;
     /** @var GdsTableActionLink */
     private $actionLink = null;
 
@@ -19,15 +22,29 @@ class GdsRow implements GdsRowFlowInterface
 
     private $parentTable;
 
-    public function __construct(GdsTable $parentTable, $htmlId)
+    /** @var GdsTableActionLink[] */
+    private $actionLinks = [];
+
+    public function __construct(GdsTable $parentTable, $htmlId, $htmlClass)
     {
         $this->parentTable = $parentTable;
         $this->htmlId = $htmlId;
+        $this->htmlClass = $htmlClass;
     }
 
     public function getHtmlId()
     {
         return $this->htmlId;
+    }
+
+    public function isHtmlClassSet()
+    {
+        return $this->htmlClass !== null;
+    }
+
+    public function getHtmlClass()
+    {
+        return $this->htmlClass;
     }
 
     public function setLabel($content, $escape = true)
@@ -41,21 +58,32 @@ class GdsRow implements GdsRowFlowInterface
         return $this->label;
     }
 
-    public function setActionLink($text, $url, $tooltip = ' ')
+    public function addActionLink($text, $url, $tooltip = ' ', $id = '')
     {
-        $this->actionLink = new GdsTableActionLink($this, $text, $url, $tooltip);
+        $actionLink = new GdsTableActionLink($this, $text, $url, $tooltip, $id);
+        $this->actionLinks[] = $actionLink;
 
-        return $this->actionLink;
+        return $actionLink;
     }
 
-    public function hasActionLink()
+    public function hasActionLink($index = 0)
     {
-        return $this->actionLink !== null;
+        return array_key_exists($index, $this->actionLinks);
     }
 
-    public function getActionLink()
+    public function hasActionLinks()
     {
-        return $this->actionLink;
+        return !empty($this->actionLinks);
+    }
+
+    public function getActionLink($index = 0)
+    {
+        return ArrayUtils::tryGet($this->actionLinks, $index);
+    }
+
+    public function getActionLinks()
+    {
+        return $this->actionLinks;
     }
 
     public function newRow($htmlId = null)

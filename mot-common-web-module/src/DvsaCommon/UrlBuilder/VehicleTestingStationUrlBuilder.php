@@ -32,6 +32,7 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
     const VTS_CONTACT_UPDATE = '/update';
 
     const SEARCH = 'vehicle-testing-station/search';
+    const VTS_BY_NUMBER = '/number[/:number]';
     const NAME = '/name';
     const ORGANISATION = '/organisation';
 
@@ -75,7 +76,9 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
                 self::MOT_TEST_LOG_SUMMARY => '',
             ],
         ],
-        self::SEARCH                                    => '',
+        self::SEARCH => [
+            self::VTS_BY_NUMBER => '',
+        ],
     ];
 
     public static function vtsName($id)
@@ -168,6 +171,12 @@ class VehicleTestingStationUrlBuilder extends AbstractUrlBuilder
     {
         return self::of()->appendRoutesAndParams(self::VTS_BY_ID)
             ->routeParam('id', $id);
+    }
+
+    public static function vtsByNumber($number = null)
+    {
+        return self::of()->search()->appendRoutesAndParams(self::VTS_BY_NUMBER)
+            ->routeParam('number', $number);
     }
 
     public static function testInProgress($vtsId)

@@ -138,6 +138,7 @@ class RegistrationValidatorTest extends \PHPUnit_Framework_TestCase
             DetailsInputFilter::class => [
                 DetailsInputFilter::FIELD_FIRST_NAME    => 'Joe',
                 DetailsInputFilter::FIELD_LAST_NAME     => 'Brown',
+                DetailsInputFilter::FIELD_PHONE         => '123123123',
                 DetailsInputFilter::FIELD_EMAIL         => 'registrationvalidatortest@' . EmailAddressValidator::TEST_DOMAIN,
                 DetailsInputFilter::FIELD_EMAIL_CONFIRM => 'registrationvalidatortest@' . EmailAddressValidator::TEST_DOMAIN,
             ],

@@ -5,6 +5,7 @@ namespace Core\Controller;
 use Application\Navigation\Breadcrumbs\BreadcrumbsBuilder;
 use Core\Action\AbstractActionResult;
 use Core\Action\ActionResult;
+use Core\Action\NotFoundActionResult;
 use Core\Action\RedirectToRoute;
 use Core\Action\RedirectToUrl;
 use Core\ViewModel\Sidebar\SidebarInterface;
@@ -275,6 +276,8 @@ abstract class AbstractDvsaActionController
             );
         } elseif ($result instanceof RedirectToUrl) {
             return $this->redirect()->toUrl($result->getUrl());
+        } elseif ($result instanceof NotFoundActionResult) {
+            return $this->notFoundAction();
         }
 
         throw new \InvalidArgumentException();

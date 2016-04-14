@@ -17,86 +17,127 @@ use DvsaCommon\UrlBuilder\RegistrationUrlBuilderWeb;
     <fieldset>
         <legend class="form-title heading-large" id="newUserName">Your name</legend>
 
-        <div class="form-group<?php if ($firstNameHasError): ?> has-error<?php endif; ?>">
-            <label for="firstName" class="form-label">
-                First name
-                <?php
-                    if ($firstNameHasError) {
-                        echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors['firstName']]);
-                    }
-                ?>
-            </label>
-            <input type="text" name="firstName" id="firstName" class="form-control"
-                   value="<?php echo $this->escapeHtmlAttr($firstName) ?>">
-        </div>
+        <?php
+        $classFormGroup =  $firstNameHasError ? 'has-error' : '';
+        echo $this->partial(
+            'partial/forms/inputBox.phtml', [
+                'id'    => 'firstName',
+                'label' => 'First name',
+                'labelId' => 'first-name',
+                'type'  => 'text',
+                'classFormGroup' => $classFormGroup,
+                'errors' => $errors['firstName'],
+                'classLabel' => 'form-label',
+                'value' => $firstName ? : '',
+                'optional' => false,
+            ]
+        );
 
-        <div class="form-group<?php if ($middleNameHasError): ?> has-error<?php endif; ?>">
-            <label for="middleName" class="form-label">
-                Middle name (optional)
-                <?php
-                if ($middleNameHasError) {
-                    echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors['middleName']]);
-                }
-                ?>
-            </label>
-            <input type="text" name="middleName" id="middleName" class="form-control"
-                   value="<?php echo $this->escapeHtmlAttr($middleName) ?>">
-        </div>
+        $classFormGroup =  $middleNameHasError ? 'has-error' : '';
+        echo $this->partial(
+            'partial/forms/inputBox.phtml', [
+                'id'    => 'middleName',
+                'label' => 'Middle name',
+                'labelId' => 'middle-name',
+                'type'  => 'text',
+                'classFormGroup' => $classFormGroup,
+                'errors' => $errors['middleName'],
+                'classLabel' => 'form-label',
+                'value' => $middleName ? : '',
+                'optional' => true,
+            ]
+        );
 
-        <div class="form-group<?php if ($lastNameHasError): ?> has-error<?php endif; ?>">
-            <label for="lastName" class="form-label">
-                Last name
-                <?php
-                if ($lastNameHasError) {
-                    echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors['lastName']]);
-                }
-                ?>
-            </label>
-            <input type="text" name="lastName" id="lastName" class="form-control"
-                   value="<?php echo $this->escapeHtmlAttr($lastName) ?>">
-        </div>
+        $classFormGroup =  $lastNameHasError ? 'has-error' : '';
+        echo $this->partial(
+            'partial/forms/inputBox.phtml', [
+                'id'    => 'lastName',
+                'label' => 'Last name',
+                'labelId' => 'last-name',
+                'type'  => 'text',
+                'classFormGroup' => $classFormGroup,
+                'errors' => $errors['lastName'],
+                'classLabel' => 'form-label',
+                'value' => $lastName ? : '',
+                'optional' => false,
+            ]
+        ); ?>
+
+    </fieldset>
+
+    <fieldset>
+        <legend class="form-title heading-large" id="phone-legend">Your telephone number</legend>
+
+        <?php
+        $classFormGroup =  $phoneHasError ? 'has-error' : '';
+        echo $this->partial(
+            'partial/forms/inputBox.phtml', [
+                'id'    => 'phone',
+                'label' => 'Telephone number',
+                'labelId' => 'telephone-number',
+                'type'  => 'text',
+                'classFormGroup' => $classFormGroup,
+                'errors' => $errors['phone'],
+                'classLabel' => 'form-label',
+                'value' => $phone ? : '',
+                'optional' => false,
+            ]
+        ); ?>
 
     </fieldset>
 
     <fieldset>
         <legend class="form-title heading-large" id="email">Your email address</legend>
 
+        <?php
+        $classFormGroup =  $emailAddressHasError ? 'has-error' : '';
+        echo $this->partial(
+            'partial/forms/inputBox.phtml', [
+                'id'    => 'emailAddress',
+                'label' => 'Email address',
+                'labelId' => 'email-address',
+                'type'  => 'text',
+                'classFormGroup' => $classFormGroup,
+                'errors' => $errors['emailAddress'],
+                'classLabel' => 'form-label',
+                'value' => $emailAddress ? : '',
+                'optional' => false,
+                'cssClass' => 'form-control-1-3',
+                'formHintText' => 'Your User ID will be sent to this address',
+            ]
+        );
 
-        <div class="form-group<?php if ($emailAddressHasError): ?> has-error<?php endif; ?>">
-            <label for="emailAddress" class="form-label">
-                Email address
-                <span class="form-hint">Your User ID will be sent to this address</span>
-                <?php
-                if ($emailAddressHasError) {
-                    echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors['emailAddress']]);
-                }
-                ?>
-            </label>
-            <input type="email" name="emailAddress" id="emailAddress" class="form-control form-control-1-3"
-                   value="<?php echo $this->escapeHtmlAttr($emailAddress) ?>">
-        </div>
-
-
-        <div class="form-group<?php if ($confirmEmailAddressHasError): ?> has-error<?php endif; ?>">
-            <label for="confirmEmailAddress" class="form-label">
-                Re-type your email address
-                <?php
-                if ($confirmEmailAddressHasError) {
-                    echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors['confirmEmailAddress']]);
-                }
-                ?>
-            </label>
-            <input type="email" name="confirmEmailAddress" id="confirmEmailAddress"
-                   class="form-control form-control-1-3"
-                   value="<?php echo $this->escapeHtmlAttr($confirmEmailAddress) ?>">
-        </div>
-
+        $classFormGroup =  $confirmEmailAddressHasError ? 'has-error' : '';
+        echo $this->partial(
+            'partial/forms/inputBox.phtml', [
+                'id'    => 'confirmEmailAddress',
+                'label' => 'Re-type your email address',
+                'labelId' => 'Re-type-your-email-address',
+                'type'  => 'text',
+                'classFormGroup' => $classFormGroup,
+                'errors' => $errors['confirmEmailAddress'],
+                'classLabel' => 'form-label',
+                'value' => $confirmEmailAddress ? : '',
+                'optional' => false,
+                'cssClass' => 'form-control-1-3',
+            ]
+        ); ?>
 
     </fieldset>
 
     <nav class="content-navigation">
-
-        <input type="submit" value="Continue" id="continue" class="button">
+        <?php
+        echo $this->partial(
+            'submitElement',
+            [
+                'label' => 'Continue',
+                'id' => 'continue',
+                'name' => 'action',
+                'value' => 'Continue',
+                'cssClass' => 'button'
+            ]
+        );
+        ?>
 
         <ul class="content-navigation__secondary">
             <li>

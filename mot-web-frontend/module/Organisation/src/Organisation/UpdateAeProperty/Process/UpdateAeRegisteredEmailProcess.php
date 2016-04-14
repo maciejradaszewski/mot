@@ -2,16 +2,15 @@
 
 namespace Organisation\UpdateAeProperty\Process;
 
-use DvsaClient\Mapper\OrganisationMapper;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\Model\AuthorisedExaminerPatchModel;
-use Organisation\UpdateAeProperty\UpdateAePropertyAction;
+use Organisation\UpdateAeProperty\AbstractSingleStepAeProcess;
 use Organisation\UpdateAeProperty\Process\Form\RegisteredEmailPropertyForm;
-use Organisation\UpdateAeProperty\UpdateAePropertyProcessInterface;
+use Organisation\UpdateAeProperty\UpdateAePropertyAction;
 
-class UpdateAeRegisteredEmailProcess implements UpdateAePropertyProcessInterface, AutoWireableInterface
+class UpdateAeRegisteredEmailProcess extends AbstractSingleStepAeProcess implements AutoWireableInterface
 {
     protected $propertyName = UpdateAePropertyAction::AE_REGISTERED_EMAIL_PROPERTY;
     protected $permission = PermissionAtOrganisation::AE_UPDATE_REGISTERED_OFFICE_EMAIL;
@@ -20,12 +19,6 @@ class UpdateAeRegisteredEmailProcess implements UpdateAePropertyProcessInterface
     protected $successfulEditMessage = "Registered office email address has been successfully changed.";
     protected $formPageTitle = "Change registered office email address";
     protected $formPartial = "organisation/update-ae-property/partials/edit-email";
-    protected $organisationMapper;
-
-    public function __construct(OrganisationMapper $siteMapper)
-    {
-        $this->organisationMapper = $siteMapper;
-    }
 
     public function getPropertyName()
     {
@@ -47,9 +40,9 @@ class UpdateAeRegisteredEmailProcess implements UpdateAePropertyProcessInterface
         return $this->submitButtonText;
     }
 
-    public function getPrePopulatedData($aeId)
+    public function getPrePopulatedData()
     {
-        $contact = $this->organisationMapper->getAuthorisedExaminer($aeId)->getContactByType(OrganisationContactTypeCode::REGISTERED_COMPANY);
+        $contact = $this->organisationMapper->getAuthorisedExaminer($this->context->getAeId())->getContactByType(OrganisationContactTypeCode::REGISTERED_COMPANY);
 
         return [$this->propertyName => $contact->getPrimaryEmailAddress()];
     }
@@ -64,18 +57,13 @@ class UpdateAeRegisteredEmailProcess implements UpdateAePropertyProcessInterface
         return $this->successfulEditMessage;
     }
 
-    public function getFormPageTitle()
+    public function getEditStepPageTitle()
     {
         return $this->formPageTitle;
     }
 
-    public function update($aeId, $formData)
+    public function update($formData)
     {
-        $this->organisationMapper->updateAeProperty($aeId, AuthorisedExaminerPatchModel::REGISTERED_EMAIL, $formData[$this->propertyName]);
-    }
-
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
+        $this->organisationMapper->updateAeProperty($this->context->getAeId(), AuthorisedExaminerPatchModel::REGISTERED_EMAIL, $formData[$this->propertyName]);
     }
 }

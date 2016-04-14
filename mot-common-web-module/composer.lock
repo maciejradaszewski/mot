@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "444279d02128cd47f71983c486fd91cd",
-    "content-hash": "d6b6f2d4b157e1b3ef021575f7bdcece",
+    "hash": "7660430c92528cfff1ef2b10687cde75",
+    "content-hash": "046269c3974a3960791a19a1ada0233b",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -496,12 +496,6 @@
                     "homepage": "http://www.spiffyjr.me/"
                 },
                 {
-                    "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com",
-                    "homepage": "http://ocramius.github.com/",
-                    "role": "Developer"
-                },
-                {
                     "name": "Evan Coury",
                     "email": "me@evancoury.com",
                     "homepage": "http://blog.evan.pro/"
@@ -509,6 +503,11 @@
                 {
                     "name": "Guilherme Blanco",
                     "email": "guilhermeblanco@hotmail.com"
+                },
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "http://marco-pivetta.com/"
                 }
             ],
             "description": "Zend Framework 2 Module that provides Doctrine ORM functionality",
@@ -715,7 +714,7 @@
             "version": "v1.3.0",
             "source": {
                 "type": "git",
-                "url": "http://gitlab.clb.npm/mot/dvsa-application-logger.git",
+                "url": "git@gitlab.motdev.org.uk:mot/dvsa-application-logger.git",
                 "reference": "34da62e20b980a569bbca4a5d7cf9dbe2810bbd4"
             },
             "require": {
@@ -759,7 +758,7 @@
             "version": "v1.1.0",
             "source": {
                 "type": "git",
-                "url": "git@gitlab.clb.npm:mot/dvsa-doctrine-module.git",
+                "url": "git@gitlab.motdev.org.uk:mot/dvsa-doctrine-module.git",
                 "reference": "b6abefa1d1585acc20fff015798415eebef7ee15"
             },
             "require": {
@@ -789,7 +788,7 @@
             "version": "1.1.0",
             "source": {
                 "type": "git",
-                "url": "http://gitlab.clb.npm/sc/dvsa-document-module.git",
+                "url": "git@gitlab.motdev.org.uk:mot/dvsa-document-module.git",
                 "reference": "ca919e741d602c546d24b3c42ae7554ea7e833f6"
             },
             "require": {
@@ -818,7 +817,7 @@
             "version": "v1.1.1",
             "source": {
                 "type": "git",
-                "url": "http://gitlab.clb.npm/mot/featuretoggle.git",
+                "url": "git@gitlab.motdev.org.uk:mot/featuretoggle.git",
                 "reference": "2ca85b84d5b20959a5f4fe899fd989f92602403f"
             },
             "require": {

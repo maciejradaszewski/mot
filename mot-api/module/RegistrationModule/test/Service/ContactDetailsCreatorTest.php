@@ -15,6 +15,7 @@ use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\PersonContact;
 use DvsaEntities\Entity\PersonContactType;
+use DvsaEntities\Entity\PhoneContactType;
 
 /**
  * Class ContactDetailCreatorTest.
@@ -36,15 +37,30 @@ class ContactDetailsCreatorTest extends \PHPUnit_Framework_TestCase
                 new PersonContactType()
             );
 
+        $phoneContactTypeRepository = XMock::of(EntityRepository::class);
+        $phoneContactTypeRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(
+                new PhoneContactType()
+            );
+
         /** @var EntityManager $mockEntityManager */
         $mockEntityManager = XMock::of(EntityManager::class);
-        $mockEntityManager->expects($this->any())
+        $mockEntityManager->expects($this->at(0))
             ->method('getRepository')
+            ->with($this->equalTo(PersonContactType::class))
             ->willReturn($personContactTypeRepository);
+
+        $mockEntityManager->expects($this->at(1))
+            ->method('getRepository')
+            ->with($this->equalTo(PhoneContactType::class))
+            ->willReturn($phoneContactTypeRepository);
 
         $this->subject = new ContactDetailsCreator(
             $mockEntityManager,
-            $mockEntityManager->getRepository(PersonContactType::class)
+            $mockEntityManager->getRepository(PersonContactType::class),
+            $mockEntityManager->getRepository(PhoneContactType::class)
         );
     }
 
@@ -68,6 +84,7 @@ class ContactDetailsCreatorTest extends \PHPUnit_Framework_TestCase
                 [
                     ValidatorKeyConverter::inputFilterToStep(DetailsInputFilter::class) => [
                         DetailsInputFilter::FIELD_EMAIL => 'x',
+                        DetailsInputFilter::FIELD_PHONE => '1',
                     ],
                     ValidatorKeyConverter::inputFilterToStep(AddressInputFilter::class) => [
                         AddressInputFilter::FIELD_ADDRESS_1    => 'a1',

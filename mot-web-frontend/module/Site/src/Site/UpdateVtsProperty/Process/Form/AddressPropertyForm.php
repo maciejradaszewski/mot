@@ -18,7 +18,6 @@ class AddressPropertyForm extends Form
     const FIELD_POSTCODE = 'postcode';
     const MSG_TOO_LONG = 'must be %max% characters or less';
 
-
     public function __construct()
     {
         parent::__construct();
@@ -63,11 +62,11 @@ class AddressPropertyForm extends Form
         $filter = new InputFilter();
 
         $filter->add([
-            'name' => self::FIELD_ADDRESS_LINE_1,
-            'required' => true,
+            'name'       => self::FIELD_ADDRESS_LINE_1,
+            'required'   => true,
             'validators' => [
                 [
-                    'name' => NotEmpty::class,
+                    'name'    => NotEmpty::class,
                     'options' => [
                         'messages' => [
                             NotEmpty::IS_EMPTY => 'you must enter the first line of the address'
@@ -75,9 +74,9 @@ class AddressPropertyForm extends Form
                     ],
                 ],
                 [
-                    'name' => StringLength::class,
+                    'name'    => StringLength::class,
                     'options' => [
-                        'max' => 50,
+                        'max'      => 50,
                         'messages' => [
                             StringLength::TOO_LONG => self::MSG_TOO_LONG
                         ],
@@ -87,13 +86,13 @@ class AddressPropertyForm extends Form
         ]);
 
         $filter->add([
-            'name' => self::FIELD_ADDRESS_LINE_2,
-            'required' => false,
+            'name'       => self::FIELD_ADDRESS_LINE_2,
+            'required'   => false,
             'validators' => [
                 [
-                    'name' => StringLength::class,
+                    'name'    => StringLength::class,
                     'options' => [
-                        'max' => 50,
+                        'max'      => 50,
                         'messages' => [
                             StringLength::TOO_LONG => self::MSG_TOO_LONG
                         ],
@@ -103,13 +102,13 @@ class AddressPropertyForm extends Form
         ]);
 
         $filter->add([
-            'name' => self::FIELD_ADDRESS_LINE_3,
-            'required' => false,
+            'name'       => self::FIELD_ADDRESS_LINE_3,
+            'required'   => false,
             'validators' => [
                 [
-                    'name' => StringLength::class,
+                    'name'    => StringLength::class,
                     'options' => [
-                        'max' => 50,
+                        'max'      => 50,
                         'messages' => [
                             StringLength::TOO_LONG => self::MSG_TOO_LONG
                         ],
@@ -119,11 +118,11 @@ class AddressPropertyForm extends Form
         ]);
 
         $filter->add([
-            'name' => self::FIELD_TOWN,
-            'required' => true,
+            'name'       => self::FIELD_TOWN,
+            'required'   => true,
             'validators' => [
                 [
-                    'name' => NotEmpty::class,
+                    'name'    => NotEmpty::class,
                     'options' => [
                         'messages' => [
                             NotEmpty::IS_EMPTY => 'you must enter a town or city'
@@ -131,9 +130,9 @@ class AddressPropertyForm extends Form
                     ],
                 ],
                 [
-                    'name' => StringLength::class,
+                    'name'    => StringLength::class,
                     'options' => [
-                        'max' => 50,
+                        'max'      => 50,
                         'messages' => [
                             StringLength::TOO_LONG => self::MSG_TOO_LONG
                         ],
@@ -143,11 +142,11 @@ class AddressPropertyForm extends Form
         ]);
 
         $filter->add([
-            'name' => self::FIELD_POSTCODE,
-            'required' => true,
+            'name'       => self::FIELD_POSTCODE,
+            'required'   => true,
             'validators' => [
                 [
-                    'name' => NotEmpty::class,
+                    'name'    => NotEmpty::class,
                     'options' => [
                         'messages' => [
                             NotEmpty::IS_EMPTY => 'you must enter a postcode'
@@ -155,9 +154,9 @@ class AddressPropertyForm extends Form
                     ],
                 ],
                 [
-                    'name' => StringLength::class,
+                    'name'    => StringLength::class,
                     'options' => [
-                        'max' => 10,
+                        'max'      => 10,
                         'messages' => [
                             StringLength::TOO_LONG => self::MSG_TOO_LONG
                         ],
@@ -185,5 +184,4 @@ class AddressPropertyForm extends Form
             $this->getElements()[$field]->setLabel($label);
         }
     }
-
 }

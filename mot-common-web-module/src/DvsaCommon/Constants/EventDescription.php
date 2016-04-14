@@ -33,6 +33,10 @@ class EventDescription extends BaseEnumeration
     const TESTER_QUALIFICATION_STATUS_CHANGE_NEW = 'Tester qualification status for group %s has been changed to %s, by %s';
     const TESTER_QUALIFICATION_STATUS_CHANGE_UPDATE = 'Tester qualification status for group %s changed from %s to %s, by %s';
 
+    const MOT_TESTING_QUALIFICATION_CERTIFICATE_RECORD = 'Tester qualification certificate details for group %s recorded by %s. Certificate number %s and Certificate date %s.';
+    const MOT_TESTING_QUALIFICATION_CERTIFICATE_EDIT = 'Tester qualification certificate details for group %s edited by %s. Details changed to Certificate number %s and Certificate date %s';
+    const MOT_TESTING_QUALIFICATION_CERTIFICATE_REMOVE = 'Tester qualification certificate removed for group %s by %s. Certificate number %s and Certificate date %s';
+
     const DVSA_ADMINISTRATOR_LINK_A_SITE_TO_AN_AE = 'Site %s %s has been linked to AE %s %s by %s';
     const AE_UNLINK_SITE = 'Site %s %s has been unlinked from AE %s %s by %s';
     const SITE_ASSESSMENT_RISK_SCORE = "Site assessment risk score %.2f for %s %s has been carried out by %s";

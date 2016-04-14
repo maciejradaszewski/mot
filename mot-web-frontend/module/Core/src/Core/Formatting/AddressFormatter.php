@@ -8,7 +8,7 @@ use DvsaCommon\Utility\ArrayUtils;
 
 class AddressFormatter
 {
-    protected static $addressPartsGlue = ',</br>';
+    protected $addressPartsGlue = ',</br>';
 
     public function escapedDtoToMultiLine(AddressDto $dto, $showCountry = false)
     {
@@ -57,6 +57,16 @@ class AddressFormatter
             $escaper->escapeHtml($postcode),
         ];
 
-        return trim(ArrayUtils::joinNonEmpty(static::$addressPartsGlue, $lines));
+        return trim(ArrayUtils::joinNonEmpty($this->addressPartsGlue, $lines));
+    }
+
+    /**
+     * @param string $addressPartsGlue
+     * @return AddressFormatter
+     */
+    public function setAddressPartsGlue($addressPartsGlue)
+    {
+        $this->addressPartsGlue = $addressPartsGlue;
+        return $this;
     }
 }

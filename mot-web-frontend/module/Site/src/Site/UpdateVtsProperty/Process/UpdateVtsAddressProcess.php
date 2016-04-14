@@ -4,23 +4,20 @@ namespace Site\UpdateVtsProperty\Process;
 
 use Core\Formatting\AddressFormatter;
 use Core\ViewModel\Gds\Table\GdsTable;
-use DvsaClient\Mapper\SiteMapper;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\Model\VehicleTestingStation;
 use DvsaCommon\Utility\DtoHydrator;
+use Site\UpdateVtsProperty\AbstractTwoStepVtsProcess;
 use Site\UpdateVtsProperty\Process\Form\AddressPropertyForm;
 use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
-use Site\UpdateVtsProperty\UpdateVtsReviewProcessInterface;
 
-class UpdateVtsAddressProcess implements UpdateVtsReviewProcessInterface, AutoWireableInterface
+class UpdateVtsAddressProcess extends AbstractTwoStepVtsProcess implements AutoWireableInterface
 {
     private $propertyName = UpdateVtsPropertyAction::VTS_ADDRESS_PROPERTY;
     private $permission = PermissionAtSite::VTS_UPDATE_ADDRESS;
-    private $requiresReview = true;
-    private $breadcrumbLabel = "Change site address";
     private $submitButtonText = "Review address";
     private $successfulEditMessage = "Address has been successfully changed.";
     private $formPageTitle = "Change address";
@@ -29,24 +26,9 @@ class UpdateVtsAddressProcess implements UpdateVtsReviewProcessInterface, AutoWi
     private $reviewPageLede = "Please check the address below is correct.";
     private $reviewPageButtonText = "Change address";
 
-    /**
-     * @var SiteMapper
-     */
-    private $siteMapper;
-
-    public function __construct(SiteMapper $siteMapper)
-    {
-        $this->siteMapper = $siteMapper;
-    }
-
     public function getPropertyName()
     {
         return $this->propertyName;
-    }
-
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
     }
 
     public function getFormPartial()
@@ -64,9 +46,9 @@ class UpdateVtsAddressProcess implements UpdateVtsReviewProcessInterface, AutoWi
         return $this->submitButtonText;
     }
 
-    public function getPrePopulatedData($vtsId)
+    public function getPrePopulatedData()
     {
-        $vtsData = $this->siteMapper->getById($vtsId);
+        $vtsData = $this->siteMapper->getById($this->context->getVtsId());
         $contact = $vtsData->getContactByType(SiteContactTypeCode::BUSINESS);
         if (empty($contact)) {
             return [];
@@ -86,7 +68,7 @@ class UpdateVtsAddressProcess implements UpdateVtsReviewProcessInterface, AutoWi
         return $this->permission;
     }
 
-    public function update($vtsId, $formData)
+    public function update($formData)
     {
         $addressDto = new AddressDto();
         $addressDto->setAddressLine1($formData['address_line1']);
@@ -95,7 +77,7 @@ class UpdateVtsAddressProcess implements UpdateVtsReviewProcessInterface, AutoWi
         $addressDto->setPostcode($formData['postcode']);
         $addressDto->setTown($formData['town']);
         $this->siteMapper->updateVtsContactProperty(
-            $vtsId,
+            $this->context->getVtsId(),
             VehicleTestingStation::PATCH_PROPERTY_ADDRESS,
             DtoHydrator::dtoToJson($addressDto)
         );
@@ -106,26 +88,26 @@ class UpdateVtsAddressProcess implements UpdateVtsReviewProcessInterface, AutoWi
         return $this->successfulEditMessage;
     }
 
-    public function getFormPageTitle()
+    public function getEditStepPageTitle()
     {
         return $this->formPageTitle;
     }
 
-    public function transformFormIntoGdsTable($vtsId, array $formData)
+    public function transformFormIntoGdsTable(array $formData)
     {
         $table = new GdsTable();
-        $vtsData = $this->siteMapper->getById($vtsId);
+        $vtsData = $this->siteMapper->getById($this->context->getVtsId());
         $table->newRow()->setLabel('Vehicle Testing Station')->setValue($vtsData->getName());
         $table->newRow("address")->setLabel("Address")
-        ->setValue((new AddressFormatter())->escapeAddressToMultiLine(
-            $formData['address_line1'],
-            $formData['address_line2'],
-            $formData['address_line3'],
-            null,
-            null,
-            $formData['town'],
-            $formData['postcode']
-        ),false);
+            ->setValue((new AddressFormatter())->escapeAddressToMultiLine(
+                $formData['address_line1'],
+                $formData['address_line2'],
+                $formData['address_line3'],
+                null,
+                null,
+                $formData['town'],
+                $formData['postcode']
+            ), false);
 
         return $table;
     }
@@ -143,10 +125,5 @@ class UpdateVtsAddressProcess implements UpdateVtsReviewProcessInterface, AutoWi
     public function getReviewPageButtonText()
     {
         return $this->reviewPageButtonText;
-    }
-
-    public function getBreadcrumbLabel()
-    {
-        return $this->breadcrumbLabel;
     }
 }

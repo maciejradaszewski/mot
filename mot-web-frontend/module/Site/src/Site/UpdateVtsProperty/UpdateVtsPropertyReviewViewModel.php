@@ -28,6 +28,10 @@ class UpdateVtsPropertyReviewViewModel
         return $this->submitButtonText;
     }
 
+    /**
+     * @return
+     * @deprecated Check if this exists, if not remove it
+     */
     public function getFormData()
     {
         return $this->formData;

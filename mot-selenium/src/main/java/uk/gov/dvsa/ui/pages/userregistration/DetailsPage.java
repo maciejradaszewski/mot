@@ -18,6 +18,8 @@ public class DetailsPage extends Page {
 
     @FindBy(id = "lastName") private WebElement lastName;
 
+    @FindBy(id = "phone") private WebElement telephoneNumber;
+
     @FindBy(id = "emailAddress") private WebElement emailAddress;
 
     @FindBy(id = "confirmEmailAddress") private WebElement verifyEmailAddress;
@@ -48,11 +50,12 @@ public class DetailsPage extends Page {
         return new AddressPage(driver);
     }
 
-    public DetailsPage enterYourDetails(String email, String name, String surname)
+    public DetailsPage enterYourDetails(String email, String name, String surname, String telephone)
     {
         FormCompletionHelper.enterText(firstName, name);
         FormCompletionHelper.enterText(lastName, surname);
         FormCompletionHelper.enterText(emailAddress, email);
+        FormCompletionHelper.enterText(telephoneNumber, telephone);
         FormCompletionHelper.enterText(verifyEmailAddress, email);
 
         return this;

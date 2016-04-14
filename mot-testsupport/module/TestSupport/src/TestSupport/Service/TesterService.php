@@ -147,6 +147,20 @@ class TesterService
         $this->testerAuthorisationStatusService->setTesterQualificationStatus($testerId, $data);
     }
 
+    public function insertTesterQualificationStatus($testerId, $group, $statusCode)
+    {
+        if (!VehicleClassGroupCode::exists($group)) {
+            throw new \InvalidArgumentException("Group '" . $group . "' does not exist.");
+        }
+
+        $this->testerAuthorisationStatusService->insertTesterQualificationStatus($testerId, [$group => $statusCode]);
+    }
+
+    public function removeTesterQualificationStatusForGroup($testerId, $group)
+    {
+        $this->testerAuthorisationStatusService->deleteTesterQualificationStatusForGroup($testerId, $group);
+    }
+
     private function sendNominationsForTesterAndAcceptThem(Account $account, $data)
     {
         $this->sitePermissionsHelper->addPermissionToSites($account, SiteBusinessRoleCode::TESTER, $data['siteIds']);

@@ -3,15 +3,12 @@
 namespace Organisation\UpdateAeProperty\Process\Form;
 
 use Organisation\UpdateAeProperty\UpdateAePropertyAction;
+use Zend\Form\Element\Select;
 use Zend\Form\Form;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
-use Zend\Validator\EmailAddress;
-use Zend\Validator\NotEmpty;
-use Zend\Validator\StringLength;
-use Zend\Form\Element\Select;
 use Zend\Validator\InArray;
-use DvsaClient\Mapper\OrganisationMapper;
+use Zend\Validator\NotEmpty;
 
 class AreaOfficePropertyForm extends Form
 {
@@ -26,7 +23,6 @@ class AreaOfficePropertyForm extends Form
     public function __construct(array $possibleAreaOffices)
     {
         parent::__construct(self::FIELD_AREA_OFFICE);
-
 
         $this->areaOfficeElement = new Select();
         $this

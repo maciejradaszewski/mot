@@ -16,6 +16,7 @@ public class UserRegistrationTests extends DslTest {
     private final String name = ContactDetailsHelper.generateUniqueName();
     private final String surname = ContactDetailsHelper.generateUniqueName();
     private final String email = ContactDetailsHelper.getEmail();
+    private final String telephone = ContactDetailsHelper.getPhoneNumber();
 
     @Test(groups = {"BVT", "Regression"}, description = "VM-11472")
     public void createUserAccountSuccessfully() throws IOException {
@@ -24,7 +25,7 @@ public class UserRegistrationTests extends DslTest {
         motUI.register.createAnAccount();
 
         //When I continue to enter my details
-        motUI.register.completeDetailsWithDefaultValues(email);
+        motUI.register.completeDetailsWithDefaultValues(email, telephone);
 
         //Then my account is created successfully
         assertThat(motUI.register.isAccountCreated(), is(true));
@@ -37,13 +38,13 @@ public class UserRegistrationTests extends DslTest {
         motUI.register.createAnAccount();
 
         //When I continue to enter my details
-        motUI.register.completeDetailsWithDefaultValues(email);
+        motUI.register.completeDetailsWithDefaultValues(email, telephone);
 
         //Then my account is created successfully
         //motUI.register.createAnAccount();
 
         //When I re-enter my details and use the same email as before
-        motUI.register.completeDetailsWithCustomValues(name, surname, email);
+        motUI.register.completeDetailsWithCustomValues(name, surname, email, telephone);
 
         //Then I am prompted that this email is already in use
         assertThat(motUI.register.isEmailDuplicated(), is(true));

@@ -21,16 +21,15 @@ class UpdateAeCorrespondencePhoneProcess extends UpdateAeRegisteredPhoneProcess
         return new CorrespondencePhonePropertyForm();
     }
 
-    public function getPrePopulatedData($aeId)
+    public function getPrePopulatedData()
     {
-        $contact = $this->organisationMapper->getAuthorisedExaminer($aeId)->getContactByType(OrganisationContactTypeCode::CORRESPONDENCE);
+        $contact = $this->organisationMapper->getAuthorisedExaminer($this->context->getAeId())->getContactByType(OrganisationContactTypeCode::CORRESPONDENCE);
 
         return [$this->propertyName => $contact->getPrimaryPhoneNumber()];
     }
 
-
-    public function update($aeId, $formData)
+    public function update($formData)
     {
-        $this->organisationMapper->updateAeProperty($aeId, AuthorisedExaminerPatchModel::CORRESPONDENCE_PHONE, $formData[$this->propertyName]);
+        $this->organisationMapper->updateAeProperty($this->context->getAeId(), AuthorisedExaminerPatchModel::CORRESPONDENCE_PHONE, $formData[$this->propertyName]);
     }
 }

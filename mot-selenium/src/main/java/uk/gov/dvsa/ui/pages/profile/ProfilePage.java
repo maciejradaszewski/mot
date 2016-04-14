@@ -8,6 +8,7 @@ import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
 import uk.gov.dvsa.ui.pages.dvsa.UserSearchResultsPage;
+import uk.gov.dvsa.ui.pages.profile.qualificationdetails.QualificationDetailsPage;
 
 public abstract class ProfilePage extends Page {
 
@@ -120,6 +121,10 @@ public abstract class ProfilePage extends Page {
     }
 
     public UserSearchResultsPage clickCancelAndReturnToSearchResults() {
+        throw new UnsupportedOperationException("Operation not supported for: " + this.toString());
+    }
+
+    public QualificationDetailsPage clickQualificationDetailsLink() {
         throw new UnsupportedOperationException("Operation not supported for: " + this.toString());
     }
 }

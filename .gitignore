@@ -18,7 +18,7 @@ tests/postman/collection.json
 tests/postman/results.json
 tests/postman/*/*/response.txt
 npm-debug.log
-
+mot-selenium/build/
 /poc-log
 /poc-api/module/*/test/log/
 /poc-web/module/*/test/log/

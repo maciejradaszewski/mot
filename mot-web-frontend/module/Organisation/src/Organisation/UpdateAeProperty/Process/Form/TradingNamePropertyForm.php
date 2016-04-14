@@ -7,7 +7,6 @@ use Zend\Form\Element\Text;
 use Zend\Form\Form;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
-use Zend\Validator\EmailAddress;
 use Zend\Validator\NotEmpty;
 use Zend\Validator\StringLength;
 
@@ -31,8 +30,7 @@ class TradingNamePropertyForm extends Form
             ->setLabel('Trading name')
             ->setAttribute('id', 'aeTradingNameTextBox')
             ->setAttribute('required', true)
-            ->setAttribute('group', true)
-        ;
+            ->setAttribute('group', true);
 
         $this->add($this->nameElement);
 

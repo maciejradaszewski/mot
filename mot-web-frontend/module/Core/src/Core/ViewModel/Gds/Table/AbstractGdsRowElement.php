@@ -31,6 +31,16 @@ class AbstractGdsRowElement implements GdsRowFlowInterface
         return $this->parentRow->getHtmlId();
     }
 
+    public function isHtmlClassSet()
+    {
+        return $this->parentRow->isHtmlClassSet();
+    }
+
+    public function getHtmlClass()
+    {
+        return $this->parentRow->getHtmlClass();
+    }
+
     public function setLabel($content, $escape = true)
     {
         return $this->parentRow->setLabel($content, $escape);
@@ -41,9 +51,9 @@ class AbstractGdsRowElement implements GdsRowFlowInterface
         return $this->parentRow->getLabel();
     }
 
-    public function setActionLink($text, $url, $tooltip = ' ')
+    public function addActionLink($text, $url, $tooltip = ' ', $id = '')
     {
-        return $this->parentRow->setActionLink($text, $url, $tooltip);
+        return $this->parentRow->addActionLink($text, $url, $tooltip, $id);
     }
 
     public function getActionLink()

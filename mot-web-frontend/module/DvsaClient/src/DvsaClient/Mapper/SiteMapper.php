@@ -137,4 +137,15 @@ class SiteMapper extends DtoMapper implements AutoWireableInterface
 
         return $this->post($apiUrl, DtoHydrator::dtoToJson($assessmentDto));
     }
+
+    /**
+     * @param string
+     * @return VehicleTestingStationDto
+     */
+    public function getByNumber($vtsNumber)
+    {
+        $apiUrl = VehicleTestingStationUrlBuilder::vtsByNumber($vtsNumber);
+
+        return DtoHydrator::jsonToDto($this->get($apiUrl));
+    }
 }

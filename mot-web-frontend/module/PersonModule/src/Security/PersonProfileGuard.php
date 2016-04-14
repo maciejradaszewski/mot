@@ -9,9 +9,14 @@ namespace Dvsa\Mot\Frontend\PersonModule\Security;
 
 use Dashboard\Model\PersonalDetails;
 use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
-use DvsaClient\Entity\TesterAuthorisation;
+use DvsaCommon\Auth\Assertion\CreateMotTestingCertificateAssertion;
+use DvsaCommon\Auth\Assertion\UpdateMotTestingCertificateAssertion;
+use DvsaCommon\Auth\Assertion\RemoveMotTestingCertificateAssertion;
+use DvsaCommon\Enum\VehicleClassGroupCode;
+use DvsaCommon\Model\TesterAuthorisation;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
+use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Enum\RoleCode;
@@ -68,6 +73,20 @@ class PersonProfileGuard
      * @var array
      */
     private $loggedInPersonRoles;
+
+    private static $dvsaRoles = [
+        RoleCode::SCHEME_MANAGER,
+        RoleCode::SCHEME_USER,
+        RoleCode::AREA_OFFICE_1,
+        RoleCode::AREA_OFFICE_2,
+        RoleCode::VEHICLE_EXAMINER,
+        RoleCode::CUSTOMER_SERVICE_MANAGER,
+        RoleCode::CUSTOMER_SERVICE_OPERATIVE,
+        RoleCode::DVLA_MANAGER,
+        RoleCode::DVLA_OPERATIVE,
+        RoleCode::FINANCE,
+        RoleCode::SCHEME_MANAGER,
+    ];
 
     /**
      * PersonProfileGuard constructor.
@@ -320,6 +339,15 @@ class PersonProfileGuard
     /**
      * @return bool
      */
+    public function canViewQualificationDetails()
+    {
+        // we don't show the link when we look at a profile
+        return !$this->targetPersonHasAnyRoleOf(self::$dvsaRoles);
+    }
+
+    /**
+     * @return bool
+     */
     public function canViewAccountSecurity()
     {
         return $this->isViewingOwnProfile() && $this->context === ContextProvider::YOUR_PROFILE_CONTEXT;
@@ -463,7 +491,66 @@ class PersonProfileGuard
     public function canChangeDateOfBirth()
     {
         return !$this->isViewingHimself()
-            && $this->authorisationService->isGranted(PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH)
-        ;
+        && $this->authorisationService->isGranted(PermissionInSystem::EDIT_PERSON_DATE_OF_BIRTH);
+    }
+
+    public function canCreateQualificationDetails($vehicleClassGroupCode)
+    {
+        $createMotTestingCertificateAssertion = new CreateMotTestingCertificateAssertion(
+            $this->authorisationService,
+            $this->identityProvider
+        );
+
+        return $createMotTestingCertificateAssertion->isGranted(
+            $this->targetPersonDetails->getId(),
+            $vehicleClassGroupCode,
+            $this->targetPersonDetails->getRolesAndAssociations()['system']['roles'],
+            $this->testerAuthorisation
+        );
+    }
+
+    public function canUpdateQualificationDetails($vehicleClassGroupCode)
+    {
+        $createMotTestingCertificateAssertion = new UpdateMotTestingCertificateAssertion(
+            $this->authorisationService,
+            $this->identityProvider
+        );
+
+        return $createMotTestingCertificateAssertion->isGranted(
+            $this->targetPersonDetails->getId(),
+            $vehicleClassGroupCode,
+            $this->targetPersonDetails->getRolesAndAssociations()['system']['roles'],
+            $this->testerAuthorisation
+        );
+    }
+
+    public function canRemoveQualificationDetails($vehicleClassGroupCode)
+    {
+        if ($this->getStatusForGroup($vehicleClassGroupCode) === AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED) {
+            return false;
+        }
+
+        $assertion = new RemoveMotTestingCertificateAssertion(
+            $this->authorisationService,
+            $this->identityProvider
+        );
+
+        return $assertion->isGranted(
+            $this->targetPersonDetails->getId(),
+            $vehicleClassGroupCode,
+            $this->testerAuthorisation
+        );
+    }
+
+    private function getStatusForGroup($vehicleClassGroupCode)
+    {
+        $status = null;
+        if ($vehicleClassGroupCode === VehicleClassGroupCode::BIKES && $this->testerAuthorisation->hasGroupAStatus()) {
+            $status = $this->testerAuthorisation->getGroupAStatus()->getCode();
+        } elseif ($vehicleClassGroupCode === VehicleClassGroupCode::CARS_ETC && $this->testerAuthorisation->hasGroupBStatus()) {
+            $status = $this->testerAuthorisation->getGroupBStatus()->getCode();
+        }
+
+        return $status;
     }
 }

@@ -2,111 +2,112 @@
 
 namespace DvsaEntities\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use DvsaEntities\EntityTrait\CommonIdentityTrait;
 
 /**
- * QualificationAward
+ * MotTest
  *
- * @ORM\Table(name="qualification_award", uniqueConstraints={@ORM\UniqueConstraint(name="id_UNIQUE", columns={"id"})}, indexes={@ORM\Index(name="fk_qualification_award_1", columns={"person_id"}), @ORM\Index(name="fk_qualification_award_2", columns={"qualification_id"}), @ORM\Index(name="fk_qualification_award_3", columns={"created_by"}), @ORM\Index(name="fk_qualification_award_6", columns={"verified_by"})})
- * @ORM\Entity
+ * @ORM\Table(name="qualification_award")
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\QualificationAwardRepository")
  */
 class QualificationAward extends Entity
 {
     use CommonIdentityTrait;
 
-    const ENTITY_NAME = 'QualificationAward';
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="certificate_number", type="string", length=50, nullable=true)
-     */
-    private $certificateNumber;
-
-    /**
-     * @var Country
-     *
-     * @ORM\ManyToOne(targetEntity="Country")
-     * @ORM\JoinColumn(name="country_lookup_id", referencedColumnName="id")
-     */
-    private $country;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="awarded_on", type="datetime", nullable=true)
-     */
-    private $awardedOn;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="verified_on", type="datetime", nullable=true)
-     */
-    private $verifiedOn;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="expiry_date", type="datetime", nullable=true)
-     */
-    private $expiryDate;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="status_id", type="smallint", nullable=true)
-     */
-    private $statusId;
-
     /**
      * @var \DvsaEntities\Entity\Person
      *
      * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Person")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="person_id", referencedColumnName="id")
-     * })
+     * @ORM\JoinColumn(name="person_id", referencedColumnName="id")
      */
     private $person;
 
     /**
-     * @var \DvsaEntities\Entity\Qualification
+     * @var \DvsaEntities\Entity\Site
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Qualification")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="qualification_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Site")
+     * @ORM\JoinColumn(name="site_id", referencedColumnName="id")
      */
-    private $qualification;
+    private $site;
 
     /**
-     * @var \DvsaEntities\Entity\Person
+     * @var \DvsaEntities\Entity\VehicleClassGroup
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\Person")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="verified_by", referencedColumnName="id")
-     * })
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\VehicleClassGroup")
+     * @ORM\JoinColumn(name="vehicle_class_group_id", referencedColumnName="id")
      */
-    private $verifiedBy;
+    private $vehicleClassGroup;
+
 
     /**
-     * Set certificateNumber
+     * @var string
      *
-     * @param string $certificateNumber
+     * @ORM\Column(name="certificate_number", type="string", nullable=false)
+     */
+    private $certificateNumber;
+
+    /**
+     * @var \DateTime
      *
+     * @ORM\Column(name="date_of_qualification", type="datetime", nullable=false)
+     */
+    private $dateOfQualification;
+
+    /**
+     * @return Person
+     */
+    public function getPerson()
+    {
+        return $this->person;
+    }
+
+    /**
+     * @param Person $person
      * @return QualificationAward
      */
-    public function setCertificateNumber($certificateNumber)
+    public function setPerson(Person $person)
     {
-        $this->certificateNumber = $certificateNumber;
+        $this->person = $person;
+        return $this;
+    }
+
+    /**
+     * @return Site
+     */
+    public function getSite()
+    {
+        return $this->site;
+    }
+
+    /**
+     * @param Site $site
+     * @return QualificationAward
+     */
+    public function setSite(Site $site = null)
+    {
+        $this->site = $site;
+        return $this;
+    }
+
+    /**
+     * @return VehicleClassGroup
+     */
+    public function getVehicleClassGroup()
+    {
+        return $this->vehicleClassGroup;
+    }
+
+    public function setVehicleClassGroup(VehicleClassGroup $vehicleClassGroup)
+    {
+        $this->vehicleClassGroup = $vehicleClassGroup;
 
         return $this;
     }
 
     /**
-     * Get certificateNumber
-     *
      * @return string
      */
     public function getCertificateNumber()
@@ -115,190 +116,30 @@ class QualificationAward extends Entity
     }
 
     /**
-     * @param Country $country
-     *
-     * @return MotTest
-     */
-    public function setCountry(Country $country)
-    {
-        $this->country = $country;
-
-        return $this;
-    }
-
-    /**
-     * @return Country
-     */
-    public function getCountry()
-    {
-        return $this->country;
-    }
-
-    /**
-     * Set awardedOn
-     *
-     * @param \DateTime $awardedOn
-     *
+     * @param $certificateNumber
      * @return QualificationAward
      */
-    public function setAwardedOn($awardedOn)
+    public function setCertificateNumber($certificateNumber)
     {
-        $this->awardedOn = $awardedOn;
-
+        $this->certificateNumber = $certificateNumber;
         return $this;
     }
 
     /**
-     * Get awardedOn
-     *
      * @return \DateTime
      */
-    public function getAwardedOn()
+    public function getDateOfQualification()
     {
-        return $this->awardedOn;
+        return $this->dateOfQualification;
     }
 
     /**
-     * Set verifiedOn
-     *
-     * @param \DateTime $verifiedOn
-     *
+     * @param \DateTime $dateOfQualification
      * @return QualificationAward
      */
-    public function setVerifiedOn($verifiedOn)
+    public function setDateOfQualification(\DateTime $dateOfQualification)
     {
-        $this->verifiedOn = $verifiedOn;
-
+        $this->dateOfQualification = $dateOfQualification;
         return $this;
-    }
-
-    /**
-     * Get verifiedOn
-     *
-     * @return \DateTime
-     */
-    public function getVerifiedOn()
-    {
-        return $this->verifiedOn;
-    }
-
-    /**
-     * Set expiryDate
-     *
-     * @param \DateTime $expiryDate
-     *
-     * @return QualificationAward
-     */
-    public function setExpiryDate($expiryDate)
-    {
-        $this->expiryDate = $expiryDate;
-
-        return $this;
-    }
-
-    /**
-     * Get expiryDate
-     *
-     * @return \DateTime
-     */
-    public function getExpiryDate()
-    {
-        return $this->expiryDate;
-    }
-
-    /**
-     * Set statusId
-     *
-     * @param integer $statusId
-     *
-     * @return QualificationAward
-     */
-    public function setStatusId($statusId)
-    {
-        $this->statusId = $statusId;
-
-        return $this;
-    }
-
-    /**
-     * Get statusId
-     *
-     * @return integer
-     */
-    public function getStatusId()
-    {
-        return $this->statusId;
-    }
-
-    /**
-     * Set person
-     *
-     * @param \DvsaEntities\Entity\Person $person
-     *
-     * @return QualificationAward
-     */
-    public function setPerson(\DvsaEntities\Entity\Person $person = null)
-    {
-        $this->person = $person;
-
-        return $this;
-    }
-
-    /**
-     * Get person
-     *
-     * @return \DvsaEntities\Entity\Person
-     */
-    public function getPerson()
-    {
-        return $this->person;
-    }
-
-    /**
-     * Set qualification
-     *
-     * @param \DvsaEntities\Entity\Qualification $qualification
-     *
-     * @return QualificationAward
-     */
-    public function setQualification(\DvsaEntities\Entity\Qualification $qualification = null)
-    {
-        $this->qualification = $qualification;
-
-        return $this;
-    }
-
-    /**
-     * Get qualification
-     *
-     * @return \DvsaEntities\Entity\Qualification
-     */
-    public function getQualification()
-    {
-        return $this->qualification;
-    }
-
-    /**
-     * Set verifiedBy
-     *
-     * @param \DvsaEntities\Entity\Person $verifiedBy
-     *
-     * @return QualificationAward
-     */
-    public function setVerifiedBy(\DvsaEntities\Entity\Person $verifiedBy = null)
-    {
-        $this->verifiedBy = $verifiedBy;
-
-        return $this;
-    }
-
-    /**
-     * Get verifiedBy
-     *
-     * @return \DvsaEntities\Entity\Person
-     */
-    public function getVerifiedBy()
-    {
-        return $this->verifiedBy;
     }
 }

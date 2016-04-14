@@ -74,11 +74,11 @@ class AddressPropertyForm extends Form
 
         $filter = new InputFilter();
 
-        $stringLenghtValidator = function($lenght) {
+        $stringLenghtValidator = function ($lenght) {
             return [
-                'name' => StringLength::class,
+                'name'    => StringLength::class,
                 'options' => [
-                    'max' => $lenght,
+                    'max'      => $lenght,
                     'messages' => [
                         StringLength::TOO_LONG => self::MSG_TOO_LONG
                     ],
@@ -86,9 +86,9 @@ class AddressPropertyForm extends Form
             ];
         };
 
-        $stringNotEmptyValidator = function ($message){
+        $stringNotEmptyValidator = function ($message) {
             return [
-                'name' => NotEmpty::class,
+                'name'    => NotEmpty::class,
                 'options' => [
                     'messages' => [
                         NotEmpty::IS_EMPTY => $message,
@@ -98,8 +98,8 @@ class AddressPropertyForm extends Form
         };
 
         $filter->add([
-            'name' => self::FIELD_ADDRESS_LINE_1,
-            'required' => true,
+            'name'       => self::FIELD_ADDRESS_LINE_1,
+            'required'   => true,
             'validators' => [
                 $stringNotEmptyValidator('you must enter the first line of the address'),
                 $stringLenghtValidator(static::FIELD_MAX_LENGHT),
@@ -107,40 +107,40 @@ class AddressPropertyForm extends Form
         ]);
 
         $filter->add([
-            'name' => self::FIELD_ADDRESS_LINE_2,
-            'required' => false,
+            'name'       => self::FIELD_ADDRESS_LINE_2,
+            'required'   => false,
             'validators' => [
                 $stringLenghtValidator(static::FIELD_MAX_LENGHT),
             ]
         ]);
 
         $filter->add([
-            'name' => self::FIELD_ADDRESS_LINE_3,
-            'required' => false,
+            'name'       => self::FIELD_ADDRESS_LINE_3,
+            'required'   => false,
             'validators' => [
                 $stringLenghtValidator(static::FIELD_MAX_LENGHT),
             ]
         ]);
 
         $filter->add([
-            'name' => self::FIELD_TOWN,
-            'required' => true,
+            'name'       => self::FIELD_TOWN,
+            'required'   => true,
             'validators' => [
                 $stringNotEmptyValidator(self::MSG_TOWN_EMPTY),
                 $stringLenghtValidator(static::FIELD_MAX_LENGHT),
             ]
         ]);
         $filter->add([
-            'name' => self::FIELD_COUNTRY,
-            'required' => false,
+            'name'       => self::FIELD_COUNTRY,
+            'required'   => false,
             'validators' => [
                 $stringLenghtValidator(static::FIELD_MAX_LENGHT),
             ]
         ]);
 
         $filter->add([
-            'name' => self::FIELD_POSTCODE,
-            'required' => true,
+            'name'       => self::FIELD_POSTCODE,
+            'required'   => true,
             'validators' => [
                 $stringNotEmptyValidator(self::MSG_POSTCODE_EMPTY),
                 $stringLenghtValidator(static::FIELD_POSTCODE_MAX_LENGHT),
@@ -166,5 +166,4 @@ class AddressPropertyForm extends Form
             $this->getElements()[$field]->setLabel($label);
         }
     }
-
 }

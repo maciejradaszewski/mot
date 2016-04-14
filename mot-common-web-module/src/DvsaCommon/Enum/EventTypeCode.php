@@ -69,6 +69,8 @@ class EventTypeCode
     const VTS_STATUS_CHANGE = 'VSC';
     const LINK_STATUS_CHANGE = 'LSC';
     const ROLE_STATUS_CHANGE = 'RSC';
+    const REMOVAL_OF_GROUP_A_CERTIFICATE = 'RGAC';
+    const REMOVAL_OF_GROUP_B_CERTIFICATE = 'RGBC';
 
     /**
      * @return array of values for the type EventTypeCode
@@ -135,6 +137,8 @@ class EventTypeCode
             self::VTS_STATUS_CHANGE,
             self::LINK_STATUS_CHANGE,
             self::ROLE_STATUS_CHANGE,
+            self::REMOVAL_OF_GROUP_A_CERTIFICATE,
+            self::REMOVAL_OF_GROUP_B_CERTIFICATE
         ];
     }
 

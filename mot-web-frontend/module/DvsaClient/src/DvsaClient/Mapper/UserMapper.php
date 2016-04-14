@@ -3,6 +3,9 @@
 namespace DvsaClient\Mapper;
 
 use DvsaClient\Entity\User;
+use DvsaCommon\Dto\Person\PersonDto;
+use DvsaCommon\Dto\Search\SearchParamsDto;
+use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 
 /**

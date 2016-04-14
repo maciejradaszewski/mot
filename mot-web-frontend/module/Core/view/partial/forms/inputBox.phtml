@@ -19,8 +19,9 @@ $escapedHintText = isset($hintText) ? '<p class="help-block">' . $this->escapeHt
 $classFormGroup = isset($classFormGroup) ? $classFormGroup : '';
 $classLabel = isset($classLabel) ? $classLabel : '';
 $labelId = isset($labelId) ? $labelId : str_replace(' ', '-', $classFormGroup . $label);
+$formHintText = isset($formHintText) ? $formHintText : '';
+$errors = isset($errors) ? $errors : '';
 ?>
-
 
 <div class="form-group <?php echo $this->escapeHtmlAttr($classFormGroup); ?>" <?php echo $elementId ? 'id="'. $this->escapeHtmlAttr($elementId) .'"' : ''; ?>>
     <label for="<?php echo $this->escapeHtmlAttr($id); ?>" id="<?php echo $this->escapeHtmlAttr($labelId); ?>" class="<?php echo $this->escapeHtmlAttr($classLabel); ?>">
@@ -28,6 +29,14 @@ $labelId = isset($labelId) ? $labelId : str_replace(' ', '-', $classFormGroup . 
                 echo $this->escapeHtml($label);
                 if (!$required && $optional) {
                     echo ' (optional)';
+                }
+                if (isset($formHintText)): ?>
+                    <span class="form-hint">
+                        <?php echo $formHintText; ?>
+                    </span>
+                <?php endif;
+                if (isset($errors)) {
+                    echo $this->partial('partial/forms/errorMessageInline.phtml', ['messages' => $errors]);
                 }
             ?>
     </label>

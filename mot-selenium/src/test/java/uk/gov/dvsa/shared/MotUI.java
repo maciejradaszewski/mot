@@ -31,6 +31,7 @@ public class MotUI {
     public final Contingency contingency;
     public final HelpDesk helpDesk;
     public final EventHistory eventHistory;
+    public final DemoTestRequests demoTestRequests;
 
     public MotUI(MotAppDriver driver) {
         pageNavigator.setDriver(driver);
@@ -47,6 +48,7 @@ public class MotUI {
         contingency = new Contingency(pageNavigator);
         helpDesk = new HelpDesk(pageNavigator);
         eventHistory = new EventHistory();
+        demoTestRequests = new DemoTestRequests(pageNavigator);
     }
 
     public void login(final User user) throws IOException {

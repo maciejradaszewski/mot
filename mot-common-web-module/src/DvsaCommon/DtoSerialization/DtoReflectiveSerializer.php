@@ -16,7 +16,7 @@ class DtoReflectiveSerializer
         $this->convertiblesRegister = $convertiblesRegister;
     }
 
-    public function serialize($dto)
+    public function  serialize($dto)
     {
         if (is_array($dto)) {
             $this->validateIfAllOfSameClassAndDtoOrConvertible($dto);

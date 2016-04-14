@@ -1,10 +1,13 @@
 <?php
 namespace Organisation\UpdateAeProperty\Process;
 
+use Core\Formatting\AddressFormatter;
+use Core\ViewModel\Gds\Table\GdsTable;
+use DvsaClient\Mapper\OrganisationMapper;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\PermissionAtOrganisation;
-use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Date\DateTimeApiFormat;
+use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\Input\AuthorisedExaminerPrincipal\AddressLine1Input;
 use DvsaCommon\Input\AuthorisedExaminerPrincipal\AddressLine2Input;
@@ -16,20 +19,15 @@ use DvsaCommon\Input\AuthorisedExaminerPrincipal\FirstNameInput;
 use DvsaCommon\Input\AuthorisedExaminerPrincipal\MiddleNameInput;
 use DvsaCommon\Input\AuthorisedExaminerPrincipal\PostcodeInput;
 use DvsaCommon\Input\AuthorisedExaminerPrincipal\TownInput;
-use DvsaCommon\Model\AuthorisedExaminerPatchModel;
+use Organisation\UpdateAeProperty\AbstractTwoStepAeProcess;
 use Organisation\UpdateAeProperty\Process\Form\AepForm;
-use Organisation\UpdateAeProperty\Process\Form\AreaOfficePropertyForm;
 use Organisation\UpdateAeProperty\UpdateAePropertyAction;
-use Organisation\UpdateAeProperty\UpdateAeReviewProcessInterface;
-use Core\ViewModel\Gds\Table\GdsTable;
-use Core\Formatting\AddressFormatter;
+use Zend\View\Helper\Url;
 
-class CreateAePrincipalProcess implements UpdateAeReviewProcessInterface, AutoWireableInterface
+class CreateAePrincipalProcess extends AbstractTwoStepAeProcess implements AutoWireableInterface
 {
     private $propertyName = UpdateAePropertyAction::AE_CREATE_AEP_PROPERTY;
     private $permission = PermissionAtOrganisation::AUTHORISED_EXAMINER_PRINCIPAL_CREATE;
-    private $requiresReview = true;
-    protected $breadcrumbLabel = "Add principal";
     private $submitButtonText = "Review principal";
     private $successfulEditMessage = "%s has been added as a Authorised Examiner Principal.";
     private $formPageTitle = "Add a principal";
@@ -40,19 +38,15 @@ class CreateAePrincipalProcess implements UpdateAeReviewProcessInterface, AutoWi
     protected $reviewPageButtonText = "Add principal";
     private $aepName = "";
 
-    public function __construct(MapperFactory $mapperFactory)
+    public function __construct(MapperFactory $mapperFactory, OrganisationMapper $organisationMapper, Url $urlHelper)
     {
+        parent::__construct($organisationMapper, $urlHelper);
         $this->personMapper = $mapperFactory->Person;
     }
 
     public function getPropertyName()
     {
         return $this->propertyName;
-    }
-
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
     }
 
     public function getFormPartial()
@@ -70,7 +64,7 @@ class CreateAePrincipalProcess implements UpdateAeReviewProcessInterface, AutoWi
         return $this->submitButtonText;
     }
 
-    public function getPrePopulatedData($aeId)
+    public function getPrePopulatedData()
     {
         return [];
     }
@@ -80,10 +74,10 @@ class CreateAePrincipalProcess implements UpdateAeReviewProcessInterface, AutoWi
         return $this->permission;
     }
 
-    public function update($aeId, $formData)
+    public function update($formData)
     {
         $dob = new \DateTime();
-        $dob->setDate((int) $formData[AepForm::FIELD_DOB_YEAR], (int) $formData[AepForm::FIELD_DOB_MONTH], (int) $formData[AepForm::FIELD_DOB_DAY]);
+        $dob->setDate((int)$formData[AepForm::FIELD_DOB_YEAR], (int)$formData[AepForm::FIELD_DOB_MONTH], (int)$formData[AepForm::FIELD_DOB_DAY]);
 
         $formData[DateOfBirthInput::FIELD] = $dob->format(DateTimeApiFormat::FORMAT_ISO_8601_DATE_ONLY);
 
@@ -91,7 +85,7 @@ class CreateAePrincipalProcess implements UpdateAeReviewProcessInterface, AutoWi
         unset($formData[AepForm::FIELD_DOB_MONTH]);
         unset($formData[AepForm::FIELD_DOB_YEAR]);
 
-        $this->personMapper->createPrincipalsForOrganisation($aeId, $formData);
+        $this->personMapper->createPrincipalsForOrganisation($this->context->getAeId(), $formData);
     }
 
     public function getSuccessfulEditMessage()
@@ -99,19 +93,19 @@ class CreateAePrincipalProcess implements UpdateAeReviewProcessInterface, AutoWi
         return sprintf($this->successfulEditMessage, $this->getAepName());
     }
 
-    public function getFormPageTitle()
+    public function getEditStepPageTitle()
     {
         return $this->formPageTitle;
     }
 
-    public function transformFormIntoGdsTable($aeId, array $formData)
+    public function transformFormIntoGdsTable(array $formData)
     {
         $table = new GdsTable();
 
         $name = $this->getAepName($formData);
 
         $dob = new \DateTime();
-        $dob->setDate((int) $formData[AepForm::FIELD_DOB_YEAR], (int) $formData[AepForm::FIELD_DOB_MONTH], (int) $formData[AepForm::FIELD_DOB_DAY]);
+        $dob->setDate((int)$formData[AepForm::FIELD_DOB_YEAR], (int)$formData[AepForm::FIELD_DOB_MONTH], (int)$formData[AepForm::FIELD_DOB_DAY]);
 
         $table->newRow("name")->setLabel("Name")->setValue($name);
         $table->newRow("dob")->setLabel("Date of birth")->setValue($dob->format(DateTimeDisplayFormat::FORMAT_DATE));
@@ -125,7 +119,7 @@ class CreateAePrincipalProcess implements UpdateAeReviewProcessInterface, AutoWi
                 $formData[CountryInput::FIELD],
                 $formData[PostcodeInput::FIELD]
             )
-                ,false);
+                , false);
 
         return $table;
     }
@@ -143,11 +137,6 @@ class CreateAePrincipalProcess implements UpdateAeReviewProcessInterface, AutoWi
     public function getReviewPageButtonText()
     {
         return $this->reviewPageButtonText;
-    }
-
-    public function getBreadcrumbLabel()
-    {
-        return $this->breadcrumbLabel;
     }
 
     /**

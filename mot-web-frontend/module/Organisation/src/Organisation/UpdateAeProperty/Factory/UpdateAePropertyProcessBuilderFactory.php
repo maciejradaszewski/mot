@@ -3,19 +3,18 @@
 
 namespace Organisation\UpdateAeProperty\Factory;
 
-
 use Organisation\UpdateAeProperty\Process\CreateAePrincipalProcess;
 use Organisation\UpdateAeProperty\Process\UpdateAeAreaOfficeProcess;
+use Organisation\UpdateAeProperty\Process\UpdateAeBusinessTypeProcess;
 use Organisation\UpdateAeProperty\Process\UpdateAeCorrespondenceAddressProcess;
 use Organisation\UpdateAeProperty\Process\UpdateAeCorrespondenceEmailProcess;
 use Organisation\UpdateAeProperty\Process\UpdateAeCorrespondencePhoneProcess;
+use Organisation\UpdateAeProperty\Process\UpdateAeNameProcess;
 use Organisation\UpdateAeProperty\Process\UpdateAeRegisteredAddressProcess;
 use Organisation\UpdateAeProperty\Process\UpdateAeRegisteredEmailProcess;
-use Organisation\UpdateAeProperty\Process\UpdateAeNameProcess;
 use Organisation\UpdateAeProperty\Process\UpdateAeRegisteredPhoneProcess;
 use Organisation\UpdateAeProperty\Process\UpdateAeStatusProcess;
 use Organisation\UpdateAeProperty\Process\UpdateAeTradingNameProcess;
-use Organisation\UpdateAeProperty\Process\UpdateAeBusinessTypeProcess;
 use Organisation\UpdateAeProperty\UpdateAePropertyProcessBuilder;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;

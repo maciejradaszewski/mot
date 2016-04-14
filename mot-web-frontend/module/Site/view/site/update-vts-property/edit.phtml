@@ -13,7 +13,7 @@ use Site\UpdateVtsProperty\UpdateVtsPropertyViewModel;
 <?php echo $this->partial('errorMessages', array('getFromFlash' => true)); ?>
 
 <form novalidate="" autocomplete="off" method="POST"
-      action="<?php echo VtsRoutes::of($this)->vtsEditProperty($viewModel->getAeId(), $viewModel->getPropertyName()); ?>">
+      action="<?php echo VtsRoutes::of($this)->vtsEditProperty($viewModel->getVtsId(), $viewModel->getPropertyName()); ?>">
 
     <?php echo $this->csrfToken(); ?>
     <?php
@@ -28,7 +28,7 @@ use Site\UpdateVtsProperty\UpdateVtsPropertyViewModel;
         <input type="submit" class="button" value="<?php echo $viewModel->getSubmitButtonText() ?>" id="submitUpdate">
         <ul class="content-navigation__secondary">
             <li>
-                <a href="<?php echo VtsRoutes::of($this)->vts($viewModel->getAeId()); ?>">Cancel and return to vehicle
+                <a href="<?php echo VtsRoutes::of($this)->vts($viewModel->getVtsId()); ?>">Cancel and return to vehicle
                     testing station</a>
             </li>
         </ul>

@@ -1,38 +1,25 @@
 <?php
 namespace Organisation\UpdateAeProperty\Process;
 
-use DvsaClient\Mapper\OrganisationMapper;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\Model\AuthorisedExaminerPatchModel;
-use Organisation\UpdateAeProperty\UpdateAePropertyAction;
+use Organisation\UpdateAeProperty\AbstractSingleStepAeProcess;
 use Organisation\UpdateAeProperty\Process\Form\TradingNamePropertyForm;
-use Organisation\UpdateAeProperty\UpdateAePropertyProcessInterface;
+use Organisation\UpdateAeProperty\UpdateAePropertyAction;
 
-class UpdateAeTradingNameProcess implements UpdateAePropertyProcessInterface, AutoWireableInterface
+class UpdateAeTradingNameProcess extends AbstractSingleStepAeProcess implements AutoWireableInterface
 {
     private $propertyName = UpdateAePropertyAction::AE_TRADING_NAME_PROPERTY;
     private $permission = PermissionAtOrganisation::AE_UPDATE_TRADING_NAME;
-    private $requiresReview = false;
     private $submitButtonText = "Change trading name";
     private $successfulEditMessage = "Trading name has been successfully changed.";
     private $formPageTitle = "Change trading name";
     private $formPartial = "organisation/update-ae-property/partials/edit-trading-name";
-    private $organisationMapper;
-
-    public function __construct(OrganisationMapper $organisationMapper)
-    {
-        $this->organisationMapper = $organisationMapper;
-    }
 
     public function getPropertyName()
     {
         return $this->propertyName;
-    }
-
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
     }
 
     public function getFormPartial()
@@ -50,9 +37,9 @@ class UpdateAeTradingNameProcess implements UpdateAePropertyProcessInterface, Au
         return $this->submitButtonText;
     }
 
-    public function getPrePopulatedData($aeId)
+    public function getPrePopulatedData()
     {
-        $aeData = $this->organisationMapper->getAuthorisedExaminer($aeId);
+        $aeData = $this->organisationMapper->getAuthorisedExaminer($this->context->getAeId());
         return [$this->propertyName => $aeData->getTradingAs()];
     }
 
@@ -61,9 +48,9 @@ class UpdateAeTradingNameProcess implements UpdateAePropertyProcessInterface, Au
         return $this->permission;
     }
 
-    public function update($aeId, $formData)
+    public function update($formData)
     {
-        $this->organisationMapper->updateAeProperty($aeId, AuthorisedExaminerPatchModel::TRADING_NAME, $formData[$this->propertyName]);
+        $this->organisationMapper->updateAeProperty($this->context->getAeId(), AuthorisedExaminerPatchModel::TRADING_NAME, $formData[$this->propertyName]);
     }
 
     public function getSuccessfulEditMessage()
@@ -71,7 +58,7 @@ class UpdateAeTradingNameProcess implements UpdateAePropertyProcessInterface, Au
         return $this->successfulEditMessage;
     }
 
-    public function getFormPageTitle()
+    public function getEditStepPageTitle()
     {
         return $this->formPageTitle;
     }

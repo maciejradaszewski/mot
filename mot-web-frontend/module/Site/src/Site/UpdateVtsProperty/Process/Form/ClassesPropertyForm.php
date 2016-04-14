@@ -2,14 +2,13 @@
 
 namespace Site\UpdateVtsProperty\Process\Form;
 
-use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
 use DvsaCommon\Enum\VehicleClassCode;
 use DvsaCommon\Utility\ArrayUtils;
-use Zend\Form\Element\Text;
+use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
+use Zend\Form\Element\MultiCheckbox;
 use Zend\Form\Form;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
-use Zend\Form\Element\MultiCheckbox;
 
 class ClassesPropertyForm extends Form
 {

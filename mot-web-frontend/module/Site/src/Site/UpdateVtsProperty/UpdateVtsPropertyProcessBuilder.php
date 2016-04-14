@@ -2,13 +2,21 @@
 
 namespace Site\UpdateVtsProperty;
 
+use Core\TwoStepForm\ProcessBuilderInterface;
+use Core\TwoStepForm\SingleStepProcessInterface;
 use DvsaClient\Mapper\SiteMapper;
 use DvsaCommon\Utility\ArrayUtils;
 
-class UpdateVtsPropertyProcessBuilder
+/**
+ * Class UpdateVtsPropertyProcessBuilder
+ * @package Site\UpdateVtsProperty
+ *
+ * @deprecated remove this class
+ */
+class UpdateVtsPropertyProcessBuilder implements ProcessBuilderInterface
 {
     /**
-     * @var UpdateVtsPropertyProcessInterface[]
+     * @var SingleStepProcessInterface[]
      */
     private $processes = [];
 
@@ -19,14 +27,14 @@ class UpdateVtsPropertyProcessBuilder
         $this->siteMapper = $siteMapper;
     }
 
-    public function add(UpdateVtsPropertyProcessInterface $process)
+    public function add(AbstractSingleStepVtsProcess $process)
     {
         $this->processes[$process->getPropertyName()] = $process;
     }
 
     public function get($propertyName)
     {
-        /** @var UpdateVtsPropertyProcessInterface $process */
+        /** @var SingleStepProcessInterface $process */
         $process = ArrayUtils::tryGet($this->processes, $propertyName);
 
         if ($process === null) {

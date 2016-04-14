@@ -8,6 +8,7 @@
 namespace DvsaCommon\InputFilter\Registration;
 
 use DvsaCommon\Validator\EmailAddressValidator;
+use DvsaCommon\Validator\TelephoneNumberValidator;
 use Zend\InputFilter\InputFilter;
 use Zend\Validator\EmailAddress;
 use Zend\Validator\Hostname;
@@ -25,6 +26,7 @@ class DetailsInputFilter extends InputFilter
 {
     /** To be used by firs name, middle name and last name */
     const LIMIT_NAME_MAX = 45;
+    const LIMIT_PHONE_MAX = 24;
     const LIMIT_EMAIL_MAX = 255;
 
     /** First name */
@@ -39,6 +41,11 @@ class DetailsInputFilter extends InputFilter
     /** Last name */
     const FIELD_LAST_NAME = 'lastName';
     const MSG_LAST_NAME_EMPTY = 'you must enter a last name';
+
+    /** Phone */
+    const FIELD_PHONE = 'phone';
+    const MSG_PHONE_MAX = 'must be %d characters or less';
+    const MSG_PHONE_INVALID = 'you must enter a telephone number';
 
     /** Email address */
     const FIELD_EMAIL = 'emailAddress';
@@ -55,6 +62,7 @@ class DetailsInputFilter extends InputFilter
         $this->initValidatorsForNames(self::FIELD_FIRST_NAME, true, self::MSG_FIRST_NAME_EMPTY);
         $this->initValidatorsForNames(self::FIELD_MIDDLE_NAME);
         $this->initValidatorsForNames(self::FIELD_LAST_NAME, true, self::MSG_LAST_NAME_EMPTY);
+        $this->initValidatorPhone();
         $this->initValidatorEmail();
         $this->initValidatorEmailConfirm();
     }
@@ -97,6 +105,34 @@ class DetailsInputFilter extends InputFilter
         }
 
         $this->add($input);
+    }
+
+    /**
+     * Adding validators for the phone field/input.
+     */
+    private function initValidatorPhone()
+    {
+        $this->add(
+            [
+                'name'       => self::FIELD_PHONE,
+                'required'   => true,
+                'validators' => [
+                    [
+                        'name'    => TelephoneNumberValidator::class,
+                        'options' => [
+                            'allow'   => Hostname::ALLOW_ALL,
+                            'message' => self::MSG_PHONE_INVALID,
+                        ],
+                    ],
+                    [
+                        'name'    => NotEmpty::class,
+                        'options' => [
+                            'message' => self::MSG_PHONE_INVALID,
+                        ],
+                    ],
+                ],
+            ]
+        );
     }
 
     /**
