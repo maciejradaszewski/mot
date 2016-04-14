@@ -727,9 +727,9 @@ class MotTestRepository extends AbstractMutableRepository
             ->innerJoin('t.motTestType', 'tt')
             ->innerJoin('t.status', 'ts')
             ->where("t.vehicle = :vehicleId")
+            ->andWhere("ts.name = :name")
             ->andWhere("tt.code IN (:codes)")
             ->orderBy('t.issuedDate', 'DESC')
-            ->groupBy('o.value')
             ->setMaxResults($limit);
 
         if ($dateTo != null) {
@@ -738,6 +738,7 @@ class MotTestRepository extends AbstractMutableRepository
         }
 
         $qb->setParameter("vehicleId", $vehicleId)
+            ->setParameter("name", MotTestStatusName::PASSED)
             ->setParameter("codes", $codes);
 
         return $qb->getQuery()->getArrayResult();

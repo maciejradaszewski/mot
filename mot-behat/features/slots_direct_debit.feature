@@ -18,14 +18,14 @@ Feature: Cancel a Direct Debit Mandate
   @dd
   @slots
   Scenario Outline: No other user is authorised to Cancel Direct Debit
-    Given I am logged in as <role>
+    Given I am logged in as user with <role>
     And I have an active direct debit mandate for <organisation>
     When I request to cancel the direct debit for <organisation>
     Then My direct debit should not be canceled
   Examples:
-    | role            | organisation |
-    | areaoffice1user | halfords     |
-    | tester1         | halfords     |
+    | role       | organisation |
+    | areaOffice | halfords     |
+    | tester     | halfords     |
 
   @slots
   @dd

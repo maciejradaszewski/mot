@@ -1021,6 +1021,25 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         return $this->personLoginData;
     }
 
+    public function createAedm(array $data = [], $aeId = null)
+    {
+        if (is_null($aeId)) {
+            $ae = $this->authorisedExaminerContext->createAE();
+            $aeId = $ae["id"];
+        }
+
+        $defaults = [
+            "aeIds" => [$aeId],
+        ];
+
+        $data = array_replace($defaults, $data);
+
+        $aedm = $this->testSupportHelper->getAedmService();
+        $this->personLoginData = $aedm->create($data);
+
+        return $this->personLoginData;
+    }
+
     private function nominateToSiteRole($role)
     {
         $siteId = $this->vtsContext->getSite()["id"];
@@ -1389,31 +1408,6 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
     public function iAmForbiddenFromChangingAddress()
     {
         PHPUnit::assertSame(403, $this->updateAddressResponse->getStatusCode());
-    }
-
-    /**
-     * @param array $data
-     * @throws Exception
-     */
-    public function createAEDM(array $data = [], $aeId = null)
-    {
-        if (is_null($aeId)) {
-            $ae = $this->authorisedExaminerContext->createAE();
-            $aeId = $ae["id"];
-        }
-
-        $aedmService = $this->testSupportHelper->getAedmService();
-
-        $defaults = [
-            "aeIds" => [ $aeId ],
-            "requestor" => [
-                "username" => "schememgt",
-                "password" => "Password1"
-            ]
-        ];
-
-        $data = array_replace($defaults, $data);
-        $this->personLoginData = $aedmService->create($data);
     }
 
     /**

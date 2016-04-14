@@ -19,12 +19,17 @@ Feature: Special Notices
     When the Special Notice is broadcasted
     Then users received Special Notice
     Examples:
-      | target_roles         | internal_date   | external_date   |
-      | DVSA, VTS            | now             | tomorrow        |
-      | DVSA, TESTER-CLASS-1 | now             | now             |
-      | DVSA                 | now             | tomorrow        |
-      | DVSA, TESTER-CLASS-1 | tomorrow        | tomorrow        |
-      | DVSA, TESTER-CLASS-1 | tomorrow        | now             |
+      | target_roles              | internal_date   | external_date   |
+      | DVSA, VTS                 | now             | tomorrow        |
+      | DVSA, VTS                 | tomorrow        | tomorrow        |
+      | DVSA, TESTER-CLASS-1      | now             | tomorrow        |
+      | DVSA, TESTER-CLASS-1      | tomorrow        | tomorrow        |
+      | DVSA                      | now             | tomorrow        |
+      | DVSA, VTS, TESTER-CLASS-1 | now             | now             |
+      | VTS, TESTER-CLASS-1       | tomorrow        | now             |
+      | VTS, TESTER-CLASS-1       | tomorrow        | tomorrow        |
+      | VTS, TESTER-CLASS-2       | tomorrow        | now             |
+      | VTS, TESTER-CLASS-2       | tomorrow        | tomorrow        |
 
   @special-notice
   Scenario: Tester user attempts to create new Special Notice but does not have authorisation

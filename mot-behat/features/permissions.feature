@@ -110,3 +110,22 @@ Feature: Permissions
       | schemeuser      | Forbidden     |
       | dvlaOper        | Forbidden     |
       | schememgt       | REMOVED       |
+
+  Scenario Outline: User can/cannot ABORT MOT test
+    Given I am logged in as a Tester
+    And vehicle has a <test_type> test started
+    And I am logged in as user with <role>
+    When the User Aborts the Mot Test
+    Then the MOT Test Status is "<status>"
+    Examples:
+      | test_type                | role            | status     |
+      | Targeted Reinspection    | areaOffice      | Forbidden  |
+      | MOT Compliance Survey    | tester          | Forbidden  |
+      | Inverted Appeal          | siteManager     | Forbidden  |
+      | Targeted Reinspection    | siteAdmin       | Forbidden  |
+      | Statutory Appeal         | aedm            | Forbidden  |
+      | Targeted Reinspection    | vehicleExaminer | ABORTED    |
+      | MOT Compliance Survey    | csco            | Forbidden  |
+      | Targeted Reinspection    | schememgt       | Forbidden  |
+      | Inverted Appeal          | schemeuser      | Forbidden  |
+      | Statutory Appeal         | dvlaOper        | Forbidden  |

@@ -93,6 +93,10 @@ class MotTestValidator extends AbstractValidator
             return true;
         }
 
+        if ($motTest->getMotTestType()->getIsReinspection()) {
+            $this->authorizationService->assertGranted(PermissionInSystem::VE_MOT_TEST_ABORT);
+        }
+
         $this->authorizationService->assertGrantedAtSite(
             PermissionAtSite::MOT_TEST_ABORT_AT_SITE,
             $motTest->getVehicleTestingStation()->getId()

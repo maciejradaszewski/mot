@@ -72,6 +72,18 @@ module.exports = function (grunt, config) {
         grunt.registerTask('env:mot:hotfix', 'Disables the DVSA Logger', [
             'shell:env_dvsa_hotfix'
         ]);
+        grunt.registerTask('dev:token',
+            'Gets OpenAM token for given user (e.g. --u=tester1) and password (--p=password).',
+            [
+                'shell:api_token'
+            ]
+        );
+        grunt.registerTask('special-notice:broadcast',
+            'Forces special notice broadcast',
+            [
+                'shell:special_notice_broadcast'
+            ]
+        );
         grunt.registerTask('switch:branch', 'Runs common tasks after switching branches',
         [
             'apache:restart:all', // reset DB requires a clean class cache, hence reset happens twice

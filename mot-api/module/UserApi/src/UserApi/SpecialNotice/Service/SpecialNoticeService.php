@@ -1,11 +1,13 @@
 <?php
 namespace UserApi\SpecialNotice\Service;
 
+use DateTime;
 use Doctrine\ORM\EntityManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Date\DateTimeApiFormat;
+use DvsaCommon\Date\DateTimeHolderInterface;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommonApi\Service\AbstractService;
 use DvsaCommonApi\Service\Exception\ForbiddenException;
@@ -38,6 +40,7 @@ class SpecialNoticeService extends AbstractService
     private $motIdentityProvider;
     /** @var SpecialNoticeValidator $validator */
     private $validator;
+    private $dateTimeHolder;
 
     /**
      * @param EntityManager $entityManager
@@ -45,13 +48,15 @@ class SpecialNoticeService extends AbstractService
      * @param AuthorisationServiceInterface $authService
      * @param AuthenticationService $motIdentityProvider
      * @param SpecialNoticeValidator $validator
+     * @param DateTimeHolderInterface $dateTimeHolder
      */
     public function __construct(
         EntityManager $entityManager,
         DoctrineObject $objectHydrator,
         AuthorisationServiceInterface $authService,
         AuthenticationService $motIdentityProvider,
-        SpecialNoticeValidator $validator
+        SpecialNoticeValidator $validator,
+        DateTimeHolderInterface $dateTimeHolder
     ) {
         parent::__construct($entityManager);
         $this->specialNoticeRepository = $entityManager->getRepository(SpecialNotice::class);
@@ -62,6 +67,7 @@ class SpecialNoticeService extends AbstractService
         $this->authService = $authService;
         $this->motIdentityProvider = $motIdentityProvider;
         $this->validator = $validator;
+        $this->dateTimeHolder = $dateTimeHolder;
     }
 
     public function getSpecialNoticeContent($id)
@@ -135,6 +141,8 @@ class SpecialNoticeService extends AbstractService
 
         $specialNoticeContent->setIsPublished(true);
 
+        $this->fillIssueYearAndNumber($specialNoticeContent);
+
         $this->entityManager->persist($specialNoticeContent);
         $this->entityManager->flush();
 
@@ -178,11 +186,11 @@ class SpecialNoticeService extends AbstractService
         $contentData = $this->objectHydrator->extract($content);
         unset($contentData['issueNumberNumber']);
         unset($contentData['issueNumberYear']);
-        $contentData['issueNumber'] = sprintf(
+        $contentData['issueNumber'] = !is_null($content->getIssueNumber()) ? sprintf(
             self::ISSUE_NUMBER_FORMAT,
             $content->getIssueNumber(),
             $content->getIssueYear()
-        );
+        ) : null;
         $contentData['issueDate'] = DateTimeApiFormat::date($content->getIssueDate());
         $contentData['expiryDate'] = DateTimeApiFormat::date($content->getExpiryDate());
         $contentData['internalPublishDate'] = DateTimeApiFormat::date($content->getInternalPublishDate());
@@ -204,14 +212,10 @@ class SpecialNoticeService extends AbstractService
     private function mapContent($data, SpecialNoticeContent $specialNoticeContent = null)
     {
         $this->validator->validate($data);
-
-        $issueNumber = $this->generateIssueNumber();
-
         $issueDate = DateUtils::toDate($data['externalPublishDate']);
         $specialNoticeExpiryDate = DateUtils::toDate($data['externalPublishDate']);
 
         $specialNoticeExpiryDate->add(new \DateInterval('P' . $data['acknowledgementPeriod'] . 'D'));
-        $issueYear = date('Y');
 
         if ($specialNoticeContent == null) {
             $specialNoticeContent = new SpecialNoticeContent();
@@ -222,8 +226,6 @@ class SpecialNoticeService extends AbstractService
         $specialNoticeContent->setInternalPublishDate(DateUtils::toDate($data['internalPublishDate']));
         $specialNoticeContent->setExternalPublishDate(DateUtils::toDate($data['externalPublishDate']));
         $specialNoticeContent->setIssueDate($issueDate);
-        $specialNoticeContent->setIssueNumber($issueNumber);
-        $specialNoticeContent->setIssueYear($issueYear);
         $specialNoticeContent->setNoticeText($data['noticeText']);
 
         $this->assignAudience($data['targetRoles'], $specialNoticeContent);
@@ -377,9 +379,12 @@ class SpecialNoticeService extends AbstractService
         $this->entityManager->flush();
     }
 
-    public function generateIssueNumber()
+    public function generateIssueNumber($year = null)
     {
-        $latestIssueNumberResult = $this->specialNoticeRepository->getLatestIssueNumber();
+        if(is_null($year)){
+            $year = $this->dateTimeHolder->getCurrent()->format('Y');
+        }
+        $latestIssueNumberResult = $this->specialNoticeRepository->getLatestIssueNumber($year);
 
         $latestIssueNumber = current($latestIssueNumberResult);
 
@@ -456,5 +461,15 @@ class SpecialNoticeService extends AbstractService
     {
         $overdueSpecialNotices = $this->getAmountOfOverdueSpecialNoticesForClasses();
         return $overdueSpecialNotices[$vehicleClass];
+    }
+
+    private function fillIssueYearAndNumber(SpecialNoticeContent $specialNoticeContent)
+    {
+        if (is_null($specialNoticeContent->getIssueNumber()) && !is_null($specialNoticeContent->getExternalPublishDate())) {
+            $publishYear = $specialNoticeContent->getExternalPublishDate()->format('Y');
+            $specialNoticeContent->setIssueNumber($this->generateIssueNumber($publishYear));
+            $specialNoticeContent->setIssueYear($publishYear);
+        }
+        return $specialNoticeContent;
     }
 }

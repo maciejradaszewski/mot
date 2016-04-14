@@ -55,9 +55,11 @@ class DvlaVehicleMapper extends AbstractVehicleMapper
         //  Make and Model details
         $makeCode       = $vehicle->getMakeCode();
         $modelCode      = $vehicle->getModelCode();
-        // Search in DVSA make and model tables if no mapping is found
-        $fallbackToDvsa = true;
-        $map            = $this->vehicleCatalog->getMakeModelMapByDvlaCode($makeCode, $modelCode, $fallbackToDvsa);
+        $map            = null;
+
+        if (!$vehicle->getMakeInFull()) {
+            $map = $this->vehicleCatalog->getMakeModelMapByDvlaCode($makeCode, $modelCode);
+        }
         $makeEntity     = $map ? $map->getMake() : null;
         $modelEntity    = $map ? $map->getModel() : null;
 
@@ -80,13 +82,20 @@ class DvlaVehicleMapper extends AbstractVehicleMapper
         if ($modelDto->getName()) {
             $dto->setModelName($modelDto->getName());
         } else {
-            $dto->setModelName($this->vehicleCatalog->getModelNameByDvlaCode($makeCode, $modelCode));
+            if (!$vehicle->getMakeInFull()) {
+                $dto->setModelName($this->vehicleCatalog->getModelNameByDvlaCode($makeCode, $modelCode));
+            }
         }
 
         if ($makeDto->getName()) {
             $dto->setMakeName($makeDto->getName());
         } else {
-            $dto->setMakeName($this->vehicleCatalog->getMakeNameByDvlaCode($makeCode));
+            if ($vehicle->getMakeInFull()) {
+                $dto->setMakeName($vehicle->getMakeInFull());
+            }
+            else {
+                $dto->setMakeName($this->vehicleCatalog->getMakeNameByDvlaCode($makeCode));
+            }
         }
 
         $fuelTypeDto = new VehicleParamDto();

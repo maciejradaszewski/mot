@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ed8bd92f0b99b21079e0635fb7970df8",
-    "content-hash": "7a7f2e7880a6dfe1d7569d8897f9a7ec",
+    "hash": "807fbc731064ef5f18d5d81ce271ab9d",
+    "content-hash": "a18d493f9d87d2bf77e55adca53d9ef8",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1637,11 +1637,11 @@
         },
         {
             "name": "slot-purchase/backend-api",
-            "version": "v3.6.8",
+            "version": "v3.6.9",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git",
-                "reference": "628f694cd200aecf50ed7aef275644b5a6e6b321"
+                "reference": "05566dca74bcd7e37b3f38d3e0ccd64cf02027cc"
             },
             "require": {
                 "cpms/client": "1.22.*",
@@ -1654,7 +1654,9 @@
             },
             "require-dev": {
                 "doctrine/data-fixtures": "dev-master",
+                "fabpot/php-cs-fixer": "~1.5",
                 "phpunit/phpunit": "4.0.*",
+                "whatthejeff/nyancat-phpunit-resultprinter": "~1.2",
                 "zendframework/zend-developer-tools": "dev-master",
                 "zendframework/zftool": "dev-master"
             },
@@ -1679,7 +1681,7 @@
                 "proprietary"
             ],
             "description": "API for slot purchasing and related features",
-            "time": "2016-03-16 16:14:03"
+            "time": "2016-03-24 09:29:15"
         },
         {
             "name": "soflomo/purifier",
@@ -1913,12 +1915,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/ZendPdf.git",
-                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
+                "url": "git@github.com:zendframework/ZendPdf.git",
+                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "shasum": ""
             },

@@ -42,14 +42,12 @@ class SpecialNoticeRepository extends AbstractMutableRepository
         return $this->find($id);
     }
 
-    public function getLatestIssueNumber()
+    public function getLatestIssueNumber($year)
     {
-        $currentYear = (new \DateTime())->format('Y');
-
         return $this->getEntityManager()
             ->createQuery(self::GET_LATEST_ISSUE_NUMBER_QUERY)
             ->setMaxResults(1)
-            ->setParameter(1, $currentYear)
+            ->setParameter(1, $year)
             ->getOneOrNullResult();
     }
 

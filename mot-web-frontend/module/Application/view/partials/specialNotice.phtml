@@ -34,9 +34,11 @@ $showRemoveButton = isset($showRemoveButton) ? $showRemoveButton : false;
                             <li id="status-<?php echo $this->escapeHtmlAttr($specialNoticeContentId); ?>" class="message-details">
                                 Status: <?php echo $specialNoticeContent['isPublished'] ? "Published" : "Draft" ?>
                             </li>
-                            <li class="message-details">
-                                Issue number: <?php echo $this->escapeHtml($specialNoticeContent['issueNumber']); ?>
-                            </li>
+                            <?php if(!is_null($specialNoticeContent['issueNumber'])): ?>
+                                <li class="message-details">
+                                    Issue number: <?php echo $this->escapeHtml($specialNoticeContent['issueNumber']); ?>
+                                </li>
+                            <?php endif; ?>
                             <li class="message-details">
                                 Classes: <?php echo $this->escapeHtml($specialNoticeContent['targetRoles']); ?>
                             </li>

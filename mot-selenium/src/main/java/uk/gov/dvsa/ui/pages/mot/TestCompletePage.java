@@ -61,6 +61,6 @@ public class TestCompletePage extends Page {
     }
 
     public boolean isPrintDocumentButtonDisplayed(){
-        return printDocumentButton.isDisplayed();
+        return PageInteractionHelper.isElementDisplayed(printDocumentButton);
     }
 }

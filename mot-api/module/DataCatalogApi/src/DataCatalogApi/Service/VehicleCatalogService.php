@@ -228,11 +228,10 @@ class VehicleCatalogService
      *
      * @param string $dvlaMakeCode
      * @param string $dvlaModelCode
-     * @param bool   $fallbackToDvsa Search in DVSA make and model tables if no mapping is found
      *
      * @return DvlaMakeModelMap|null
      */
-    public function getMakeModelMapByDvlaCode($dvlaMakeCode, $dvlaModelCode, $fallbackToDvsa = false)
+    public function getMakeModelMapByDvlaCode($dvlaMakeCode, $dvlaModelCode)
     {
         $map = $this
             ->entityManager
@@ -241,28 +240,6 @@ class VehicleCatalogService
                 'dvlaMakeCode'  => $dvlaMakeCode,
                 'dvlaModelCode' => $dvlaModelCode,
             ]);
-
-        if (!$map && true === $fallbackToDvsa) {
-            $model = $this
-                ->entityManager
-                ->getRepository(Model::class)
-                ->findOneBy([
-                    'code'     => $dvlaModelCode,
-                    'makeCode' => $dvlaMakeCode,
-                ]);
-
-            if (!$model) {
-                return;
-            }
-
-            $map = (new DvlaMakeModelMap())
-                ->setModel($model);
-
-            $make = $model ? $model->getMake() : null;
-            if ($make) {
-                $map->setMake($make);
-            }
-        }
 
         return $map;
     }

@@ -5,7 +5,9 @@ namespace DvsaMotTest\Controller;
 use Application\Helper\PrgHelper;
 use Application\Service\ContingencySessionManager;
 use Core\Authorisation\Assertion\WebPerformMotTestAssertion;
+use Core\Service\MotFrontendAuthorisationServiceInterface;
 use DvsaCommon\Auth\Assertion\AbandonVehicleTestAssertion;
+use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\FeatureToggle;
@@ -19,6 +21,7 @@ use DvsaCommon\Dto\Person\PersonDto;
 use DvsaCommon\Enum\MotTestStatusName;
 use DvsaCommon\Enum\MotTestTypeCode;
 use DvsaCommon\Exception\UnauthorisedException;
+use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\HttpRestJson\Exception\NotFoundException;
 use DvsaCommon\HttpRestJson\Exception\OtpApplicationException;
 use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
@@ -29,6 +32,7 @@ use DvsaCommon\UrlBuilder\MotTestUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\ReportUrlBuilder;
 use DvsaCommon\UrlBuilder\UrlBuilder;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommonApi\Service\Exception\UnauthenticatedException;
 use DvsaMotTest\Model\OdometerReadingViewObject;
 use DvsaMotTest\Model\OdometerUpdate;
 use DvsaMotTest\View\Model\MotPrintModel;
@@ -42,7 +46,7 @@ use Zend\View\Model\ViewModel;
  *
  * @package DvsaMotTest\Controller
  */
-class MotTestController extends AbstractDvsaMotTestController
+class MotTestController extends AbstractDvsaMotTestController implements AutoWireableInterface
 {
     const DATE_FORMAT = 'j F Y';
     const DATETIME_FORMAT = 'd M Y H:i';
@@ -54,6 +58,13 @@ class MotTestController extends AbstractDvsaMotTestController
 
     const ROUTE_MOT_TEST = 'mot-test';
     const ROUTE_MOT_TEST_SHORT_SUMMARY = 'mot-test/short-summary';
+
+    /** @var MotAuthorisationServiceInterface */
+    private $authorisationService;
+
+    public function __construct(MotAuthorisationServiceInterface $authorisationService) {
+        $this->authorisationService = $authorisationService;
+    }
 
     public function indexAction()
     {
@@ -635,25 +646,44 @@ class MotTestController extends AbstractDvsaMotTestController
         return $viewModel;
     }
 
+    protected function assertCanAbortTest(MotTestDto $motTest)
+    {
+        if (!$this->canAbortTest($motTest)) {
+            throw new UnauthenticatedException();
+        }
+    }
+
+    protected function canAbortTest(MotTestDto $motTest)
+    {
+        /** @var MotTestTypeDto $testType */
+        $testType = $motTest->getTestType();
+
+        if (MotTestType::isReinspection($testType->getCode())) {
+            return $this->authorisationService->isGranted(PermissionInSystem::VE_MOT_TEST_ABORT);
+        }
+
+        return $this->CanAbortTestAtSite($motTest);
+    }
+
     protected function assertCanAbortTestAtSite(MotTestDto $motTest)
     {
         $site = $motTest->getVehicleTestingStation();
         $siteId = ArrayUtils::get($site, 'id');
-        $this->getAuthorizationService()->assertGrantedAtSite(PermissionAtSite::MOT_TEST_ABORT_AT_SITE, $siteId);
+        $this->authorisationService->assertGrantedAtSite(PermissionAtSite::MOT_TEST_ABORT_AT_SITE, $siteId);
     }
 
     protected function assertCanViewTestInProgress(MotTestDto $motTest)
     {
         $site = $motTest->getVehicleTestingStation();
         $siteId = ArrayUtils::get($site, 'id');
-        $this->getAuthorizationService()->assertGrantedAtSite(PermissionAtSite::VIEW_TESTS_IN_PROGRESS_AT_VTS, $siteId);
+        $this->authorisationService->assertGrantedAtSite(PermissionAtSite::VIEW_TESTS_IN_PROGRESS_AT_VTS, $siteId);
     }
 
     protected function canAbortTestAtSite(MotTestDto $motTest)
     {
         $site = $motTest->getVehicleTestingStation();
         $siteId = ArrayUtils::get($site, 'id');
-        return $this->getAuthorizationService()->isGrantedAtSite(PermissionAtSite::MOT_TEST_ABORT_AT_SITE, $siteId);
+        return $this->authorisationService->isGrantedAtSite(PermissionAtSite::MOT_TEST_ABORT_AT_SITE, $siteId);
     }
 
     /**
@@ -670,10 +700,12 @@ class MotTestController extends AbstractDvsaMotTestController
 
         $this->assertCanViewTestInProgress($motTest);
 
+        $canAbortTest = $this->canAbortTest($motTest);
+
         return new ViewModel(
             [
                 'motTest'            => $motTest,
-                'canAbortTestAtSite' => $this->canAbortTestAtSite($motTest),
+                'canAbortTest'       => $canAbortTest,
                 'motTestTitleViewModel' => (new MotTestTitleModel())
             ]
         );
@@ -693,7 +725,7 @@ class MotTestController extends AbstractDvsaMotTestController
         /** @var MotTestDto $motTest */
         $motTest = $this->tryGetMotTestShortSummaryOrAddErrorMessages();
 
-        $this->assertCanAbortTestAtSite($motTest);
+        $this->assertCanAbortTest($motTest);
 
         $selectedReasonId = null;
 
@@ -756,7 +788,7 @@ class MotTestController extends AbstractDvsaMotTestController
         /** @var MotTestDto $motTest */
         $motTest = $this->tryGetMotTestShortSummaryOrAddErrorMessages();
 
-        $this->assertCanAbortTestAtSite($motTest);
+        $this->assertCanAbortTest($motTest);
 
         return (new ViewModel(
             [

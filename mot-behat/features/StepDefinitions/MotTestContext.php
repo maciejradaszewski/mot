@@ -214,7 +214,11 @@ class MotTestContext implements Context, SnippetAcceptingContext
      */
     public function theMOTTestStatusIs($status)
     {
-        $actualResponse = $this->statusData->getBody()['data']['status'];
+        try {
+            $actualResponse = $this->statusData->getBody()['data']['status'];
+        } catch (Exception $error) {
+            $actualResponse = $this->statusData->getBody()['errors'][0]['message'];
+        }
 
         PHPUnit::assertEquals($status, $actualResponse, 'MOT Test Status is incorrect');
     }
@@ -614,6 +618,15 @@ class MotTestContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @When /^the User Aborts the Mot Test$/
+     */
+    public function theUserAbortsTheMotTest($test = 'normal')
+    {
+        $mot = $this->getMotTest($test);
+        $this->statusData = $this->motTest->abort($this->sessionContext->getCurrentAccessToken(), $mot->getLastMotTestNumber());
+    }
+
+    /**
      * @When /^I start a Contingency MOT test$/
      */
     public function iStartAContingencyMOTTest()
@@ -871,6 +884,23 @@ class MotTestContext implements Context, SnippetAcceptingContext
         while ($number) {
             $this->createPassedMotTest($this->personContext->getPersonUserId(), $this->personContext->getPersonToken(), $vehicleId);
             $this->motTestNumbers[]=$this->getMotTestNumber();
+            $this->behatWait();
+            $number--;
+        }
+    }
+
+    /**
+     * @Given :number failed MOT tests have been created for the same vehicle
+     */
+    public function failedMotTestsHaveBeenCreatedForTheSameVehicle($number)
+    {
+        $this->vehicleContext->createVehicle();
+        $this->personContext->createTester(["username" => "tester".$this->testSupportHelper->getDataGeneratorHelper()->generateRandomString(10)]);
+
+        while ($number) {
+            $this->vehicleHasANormalTestTestStarted();
+            $this->vehicleHasMotTestFailed();
+            $this->motTestNumbers[] = $this->getMotTestNumber();
             $this->behatWait();
             $number--;
         }

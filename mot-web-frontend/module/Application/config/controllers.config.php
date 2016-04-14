@@ -23,6 +23,7 @@ use DvsaMotTest\Controller\VehicleDictionaryController;
 use DvsaMotTest\Controller\VehicleSearchController;
 use DvsaMotTest\Factory\Controller\CertificatePrintingControllerFactory;
 use DvsaMotTest\Factory\Controller\MotTestCertificatesControllerFactory;
+use DvsaMotTest\Factory\Controller\MotTestControllerFactory;
 use DvsaMotTest\Factory\Controller\RefuseToTestControllerFactory;
 use DvsaMotTest\Factory\Controller\ReplacementCertificateControllerFactory;
 use DvsaMotTest\Factory\Controller\SpecialNoticesControllerFactory;
@@ -37,7 +38,6 @@ return [
         FormsController::class              => FormsController::class,
         ReportController::class             => ReportController::class,
         LocationSelectController::class     => LocationSelectController::class,
-        MotTestController::class            => MotTestController::class,
         VehicleDictionaryController::class  => VehicleDictionaryController::class,
         BrakeTestResultsController::class   => BrakeTestResultsController::class,
         TestItemSelectorController::class   => TestItemSelectorController::class,

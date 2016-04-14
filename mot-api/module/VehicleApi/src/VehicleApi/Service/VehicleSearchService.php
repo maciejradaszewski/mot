@@ -356,23 +356,22 @@ class VehicleSearchService
     private function extractDvlaVehicle(DvlaVehicle $v)
     {
         $fuelTypeEntity = $this->findFuelTypeByPropulsionCode($v->getFuelType());
-        // Search in DVSA make and model tables if no mapping is found
-        $fallbackToDvsa = true;
-        $map = $this->vehicleCatalog->getMakeModelMapByDvlaCode(
-            $v->getMakeCode(), $v->getModelCode(), $fallbackToDvsa
-        );
+        $modelDetailName = '';
 
-        if ($map) {
-            $makeName = $map->getMake() ? $map->getMake()->getName() : $v->getMakeInFull();
-            $modelName = $map->getModel() ? $map->getModel()->getName() : '';
-            $modelDetailName = $map->getModelDetail() ? $map->getModelDetail()->getName() : '';
-        } else {
-            $makeName = $this->vehicleCatalog->getMakeNameByDvlaCode($v->getMakeCode());
-            $modelName = $this->vehicleCatalog->getModelNameByDvlaCode($v->getMakeCode(), $v->getModelCode());
-            $modelDetailName = '';
+        if ($v->getMakeInFull()) {
+            $makeName = $v->getMakeInFull();
+        }
+        else
+        {
+            $map = $this->vehicleCatalog->getMakeModelMapByDvlaCode($v->getMakeCode(), $v->getModelCode());
 
-            if (!$makeName && !$modelName && $v->getMakeInFull()) {
-                $makeName = $v->getMakeInFull();
+            if ($map) {
+                $makeName = $map->getMake() ? $map->getMake()->getName() : $this->vehicleCatalog->getMakeNameByDvlaCode($v->getMakeCode());
+                $modelName = $map->getModel() ? $map->getModel()->getName() : $this->vehicleCatalog->getModelNameByDvlaCode($v->getMakeCode(), $v->getModelCode());
+                $modelDetailName = $map->getModelDetail() ? $map->getModelDetail()->getName() : '';
+            } else {
+                $makeName = $this->vehicleCatalog->getMakeNameByDvlaCode($v->getMakeCode());
+                $modelName = $this->vehicleCatalog->getModelNameByDvlaCode($v->getMakeCode(), $v->getModelCode());
             }
         }
 

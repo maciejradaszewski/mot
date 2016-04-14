@@ -30,22 +30,6 @@ class IncognitoVehicleTest extends PHPUnit_Framework_TestCase
         $this->assertNull($this->incognitoVehicle->getTestDate());
     }
 
-    /**
-     * @covers DvsaEntities\Entity\Vehicle::setEndDate
-     * @covers DvsaEntities\Entity\Vehicle::setExpiryDate
-     * @covers DvsaEntities\Entity\Vehicle::setPerson
-     * @covers DvsaEntities\Entity\Vehicle::setSite
-     * @covers DvsaEntities\Entity\Vehicle::setStartDate
-     * @covers DvsaEntities\Entity\Vehicle::setVehicle
-     * @covers DvsaEntities\Entity\Vehicle::setTestDate
-     * @covers DvsaEntities\Entity\Vehicle::getEndDate
-     * @covers DvsaEntities\Entity\Vehicle::getStartDate
-     * @covers DvsaEntities\Entity\Vehicle::getTestDate
-     * @covers DvsaEntities\Entity\Vehicle::getExpiryDate
-     * @covers DvsaEntities\Entity\Vehicle::getPerson
-     * @covers DvsaEntities\Entity\Vehicle::getVehicle
-     * @covers DvsaEntities\Entity\Vehicle::getSite
-     */
     public function testGettersAndSetters()
     {
         $date = new \DateTime("2015-07-08");
