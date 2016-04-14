@@ -12,6 +12,7 @@ import java.util.List;
 
 public class UserService extends Service {
     private static final String CREATE_TESTER_PATH = "/testsupport/tester";
+    private static final String CREATE_USER_PATH = "/testsupport/user";
     private static final String CREATE_DVLA_OFFICER_PATH = "/testsupport/dvlaoperative";
     private static final String CREATE_AEDM_PATH = "/testsupport/aedm";
     private static final String CREATE_CSCO_PATH = "/testsupport/csco";
@@ -26,6 +27,10 @@ public class UserService extends Service {
 
     protected UserService() {
         super(WebDriverConfigurator.testSupportUrl());
+    }
+
+    protected User createUserWithNoRole() throws IOException {
+        return userResponse(motClient.createUser("{}", CREATE_USER_PATH));
     }
 
     protected User createUserAsTester(int siteId) throws IOException {

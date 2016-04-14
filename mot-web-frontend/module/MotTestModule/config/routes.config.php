@@ -40,6 +40,19 @@ return [
                         'action'     => 'index',
                     ],
                 ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'thanks' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/thanks',
+                            'defaults' => [
+                                'controller' => SurveyPageController::class,
+                                'action'     => 'thanks',
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ],
     ],

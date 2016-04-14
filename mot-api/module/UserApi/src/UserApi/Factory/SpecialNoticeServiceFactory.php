@@ -3,6 +3,7 @@
 namespace UserApi\Factory;
 
 use Doctrine\ORM\EntityManager;
+use DvsaCommon\Date\DateTimeHolder;
 use UserApi\SpecialNotice\Service\SpecialNoticeService;
 use UserApi\SpecialNotice\Service\Validator\SpecialNoticeValidator;
 use Zend\ServiceManager\FactoryInterface;
@@ -17,7 +18,8 @@ class SpecialNoticeServiceFactory implements FactoryInterface
             $serviceLocator->get('Hydrator'),
             $serviceLocator->get('DvsaAuthorisationService'),
             $serviceLocator->get('DvsaAuthenticationService'),
-            new SpecialNoticeValidator()
+            new SpecialNoticeValidator(),
+            new DateTimeHolder()
         );
     }
 }

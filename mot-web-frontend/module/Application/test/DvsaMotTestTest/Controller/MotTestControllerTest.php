@@ -34,9 +34,14 @@ use Core\Service\MotFrontendAuthorisationServiceInterface;
  */
 class MotTestControllerTest extends AbstractDvsaMotTestTestCase
 {
+    /* @var MotFrontendAuthorisationServiceInterface $authServiceMock */
+    private $authServiceMock;
+
     protected function setUp()
     {
-        $this->controller = new MotTestController();
+        $this->authServiceMock = XMock::of(MotFrontendAuthorisationServiceInterface::class);
+
+        $this->controller = new MotTestController($this->authServiceMock);
 
         $serviceManager = Bootstrap::getServiceManager();
         $this->controller->setServiceLocator($serviceManager);

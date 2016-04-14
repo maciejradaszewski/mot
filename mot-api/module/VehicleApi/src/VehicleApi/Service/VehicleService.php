@@ -221,46 +221,51 @@ class VehicleService
         $dvlaVehicle = $this->dvlaVehicleRepository->get($dvlaVehicleId);
 
         $fuelType = $this->vehicleCatalog->findFuelTypeByPropulsionCode($dvlaVehicle->getFuelType());
+
         $makeCode = $dvlaVehicle->getMakeCode();
         $modelCode = $dvlaVehicle->getModelCode();
+        $makeName = null;
+        $modelName = null;
+        $map = null;
+        $make = null;
+        $model = null;
 
         // Logic
-        $makeModelName = self::DEFAULT_MAKE_MODEL_NAME;
-
-        $legacyMakeName = $this->vehicleCatalog->getMakeNameByDvlaCode($makeCode);
-        $legacyModelName = $this->vehicleCatalog->getModelNameByDvlaCode($makeCode, $modelCode);
-
+        // When DVLA populate the MakeInFull value, the dvla make code always maps to UNKNOWN,
+        // and the model code maps to UNKNOWN also
         if (!$dvlaVehicle->getMakeInFull()) {
             if (!is_null($makeCode) || !is_null($modelCode)) {
                 $map = $this->vehicleCatalog->getMakeModelMapByDvlaCode($makeCode, $modelCode);
 
+                $make = $map ? $map->getMake() : null;
+                $model = $map ? $map->getModel() : null;
+
                 if ($map) {
-                    $makeName = (!$map->getMake()) ? self::DEFAULT_MAKE_MODEL_NAME : $map->getMake()->getName();
-                    $modelName = (!$map->getModel()) ? self::DEFAULT_MAKE_MODEL_NAME : $map->getModel()->getName();
-                } else {
-                    $makeName = $legacyMakeName;
-                    $modelName = $legacyModelName;
+                    $makeName  = (!$map->getMake())  ? null : $map->getMake()->getName();
+                    $modelName = (!$map->getModel()) ? null : $map->getModel()->getName();
                 }
 
-                $makeModelName = $makeName . ' ' . $modelName;
+                if (is_null($makeName)) {
+                    $makeName = $this->vehicleCatalog->getMakeNameByDvlaCode($makeCode);
+                    if (!$makeName) {
+                        $makeName = self::DEFAULT_MAKE_MODEL_NAME;
+                    }
+               }
 
-                if (!$makeName && !$modelName) {
-                    $makeModelName = self::DEFAULT_MAKE_MODEL_NAME;
-                }
+               if (is_null($modelName)) {
+                   $modelName = $this->vehicleCatalog->getModelNameByDvlaCode($makeCode, $modelCode);
+               }
+
+               if (empty($modelName)) {
+                    $modelName = null;
+               }
+            } else {
+                $makeName = self::DEFAULT_MAKE_MODEL_NAME;
             }
         } else {
-            if (!$legacyMakeName && !$legacyModelName) {
-                $makeModelName = $dvlaVehicle->getMakeInFull();
-            } else {
-                $makeModelName = $legacyMakeName . ' ' . $legacyModelName;
-            }
+            $makeName = $dvlaVehicle->getMakeInFull();
         }
 
-        // Search in DVSA make and model tables if no mapping is found
-        $fallbackToDvsa = true;
-        $map = $this->vehicleCatalog->getMakeModelMapByDvlaCode($makeCode, $modelCode, $fallbackToDvsa);
-        $make = $map ? $map->getMake() : null;
-        $model = $map ? $map->getModel() : null;
         $bodyType = $this->vehicleCatalog->findBodyTypeByCode($dvlaVehicle->getBodyType());
 
         if (is_null($bodyType)) {
@@ -279,13 +284,19 @@ class VehicleService
             ->setVehicleClass($this->vehicleCatalog->getVehicleClassByCode($vehicleClassCode))
             ->setMake($make)
             ->setModel($model)
-            ->setMake($make)
             ->setCountryOfRegistration(
                 $this->vehicleCatalog->getCountryOfRegistrationByCode(self::DEFAULT_COUNTRY_OF_REGISTRATION)
             )
             ->setFuelType($fuelType)
-            ->setDvlaVehicleId($dvlaVehicle->getDvlaVehicleId())
-            ->setFreeTextMakeName($makeModelName);
+            ->setDvlaVehicleId($dvlaVehicle->getDvlaVehicleId());
+
+        if (is_null($make)) {
+            $vehicle->setFreeTextMakeName($makeName);
+        }
+
+        if (is_null($model)) {
+            $vehicle->setFreeTextModelName($modelName);
+        }
 
         $this->importWeight($dvlaVehicle, $vehicle);
 

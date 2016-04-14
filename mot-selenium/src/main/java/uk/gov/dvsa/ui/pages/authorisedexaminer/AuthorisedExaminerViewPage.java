@@ -4,11 +4,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import uk.gov.dvsa.domain.model.AeDetails;
+import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.Page;
 import uk.gov.dvsa.ui.pages.authorisedexaminer.Aep.CreateAepPage;
 import uk.gov.dvsa.ui.pages.cpms.BuyTestSlotsPage;
+import uk.gov.dvsa.ui.pages.cpms.TransactionHistoryPage;
 import uk.gov.dvsa.ui.pages.vts.DisassociateASitePage;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,6 +35,8 @@ public abstract class AuthorisedExaminerViewPage extends Page {
     @FindBy(id = "content") private WebElement siteContent;
     @FindBy(id = "validation-message--success") private WebElement validationMessage;
     @FindBy(id = "add-aep") private WebElement createAEPLink;
+    @FindBy(id = "slot-count") private WebElement numberOfSlots;
+    @FindBy(id = "transaction-history") private WebElement transactionHistory;
     private static final String removeSiteFromAeLinkLocator = "#vehicle-testing-station-%s td a";
 
     private WebElement getRemoveSiteFromAeLink(String vtsId) {
@@ -97,6 +101,10 @@ public abstract class AuthorisedExaminerViewPage extends Page {
         return corrPhone.getText();
     }
 
+    public int getSlotCount() {
+        return Integer.valueOf(numberOfSlots.getText().split("\n")[0]);
+    }
+
     private boolean verifyNewAeBusinessDetails(AeDetails aeDetails) {
         assertThat(getAeName(), equalTo(aeDetails.getAeBusinessDetails().getBusinessName()));
         assertThat(getAeTradeName(), equalTo(aeDetails.getAeBusinessDetails().getTradingName()));
@@ -145,5 +153,10 @@ public abstract class AuthorisedExaminerViewPage extends Page {
     public CreateAepPage clickCreateAepLink(String aeId) {
         createAEPLink.click();
         return new CreateAepPage(driver);
+    }
+
+    public TransactionHistoryPage clickTransactionHistoryLink() {
+        transactionHistory.click();
+        return MotPageFactory.newPage(driver, TransactionHistoryPage.class);
     }
 }

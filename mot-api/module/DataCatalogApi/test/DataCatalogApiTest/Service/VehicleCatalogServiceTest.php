@@ -159,9 +159,6 @@ class VehicleCatalogServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetMakeModelMapByDvlaCode()
     {
-        $fallbackToDvsa         = false;
-        $result                 = $this->vcs->getMakeModelMapByDvlaCode('AA', '000', $fallbackToDvsa);
-
         $make                   = $this->getMock(Make::class);
         $model                  = $this->getMock(Model::class);
 
@@ -194,58 +191,10 @@ class VehicleCatalogServiceTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($dvlaMakeModelMapRepository));
 
         $vcs = new VehicleCatalogService($entityManager);
-        $map = $vcs->getMakeModelMapByDvlaCode('AA', '000', $fallbackToDvsa);
+        $map = $vcs->getMakeModelMapByDvlaCode('AA', '000');
         $this->assertEquals($dvlaMakeModelMapEntity, $map);
         $this->assertEquals($make, $map->getMake());
         $this->assertEquals($model, $map->getModel());
     }
 
-    public function testGetMakeModelMapByDvlaCodeWithDvsaFallback()
-    {
-        $fallbackToDvsa         = true;
-        $result                 = $this->vcs->getMakeModelMapByDvlaCode('AA', '000', $fallbackToDvsa);
-
-        $make                   = $this->getMock(Make::class);
-        $model                  = $this->getMock(Model::class);
-        $model
-            ->expects($this->once())
-            ->method('getMake')
-            ->will($this->returnValue($make));
-
-        $modelRepository         = $this
-            ->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $modelRepository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->will($this->returnValue($model));
-
-        $dvlaMakeModelMapRepository = $this
-            ->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $dvlaMakeModelMapRepository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->will($this->returnValue(null));
-
-        $entityManager = $this
-            ->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entityManager
-            ->expects($this->any())
-            ->method('getRepository')
-            ->will($this->returnValueMap([
-                [DvlaMakeModelMap::class, $dvlaMakeModelMapRepository],
-                [Model::class, $modelRepository],
-        ]));
-
-        $vcs = new VehicleCatalogService($entityManager);
-
-        $map = $vcs->getMakeModelMapByDvlaCode('AA', '000', $fallbackToDvsa);
-        $this->assertEquals($make, $map->getMake());
-        $this->assertEquals($model, $map->getModel());
-    }
 }

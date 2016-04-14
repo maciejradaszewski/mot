@@ -117,4 +117,17 @@ public class ConductMotTests extends DslTest {
         TestOptionsPage page = vehicleReinspectionWorkflow().startMotTestAsATester(tester, vehicle);
         page.clickPrintInspectionSheet();
     }
+
+    @Test (groups = {"BVT", "Regression"})
+    public void printDocumentButtonShouldNotBeDisplayedForDemoTest() throws IOException, URISyntaxException {
+
+        // GIVEN I conducted a demo test as a new user
+        TestSummaryPage summaryPage = motUI.normalTest.conductTrainingTest(userData.createUserWithoutRole(), vehicle);
+
+        // WHEN I complete it
+        TestCompletePage testCompletePage = motUI.normalTest.finishTrainingTest(summaryPage);
+
+        //THEN I should not be presented with
+        assertThat(testCompletePage.isPrintDocumentButtonDisplayed(), is(false));
+    }
 }

@@ -201,6 +201,8 @@ class VehicleServiceTest extends AbstractServiceTestCase
     public function testCreateVtrAndV5CfromDvlaVehicleGivenDvlaVehicleShouldCreateVtrAndV5C()
     {
         $dvlaVehicle = VOF::dvlaVehicle();
+        $dvlaVehicle->setMakeCode("BB");
+        $dvlaVehicle->setModelCode("COOPER");
         $vehicleClassCode = VehicleClassCode::CLASS_4;
         $dvlaVehicle->setMassInServiceWeight(1000);
 
@@ -230,7 +232,9 @@ class VehicleServiceTest extends AbstractServiceTestCase
         $this->returningOn($this->mockVehicleCatalog, VOF::make(), 'findMakeByCode');
 
         $map = (new DvlaMakeModelMap())
+            ->setMake(VOF::make())
             ->setModel(VOF::model());
+
         $this
             ->mockVehicleCatalog
             ->expects($this->once())
@@ -557,6 +561,8 @@ class VehicleServiceTest extends AbstractServiceTestCase
         $dvlaVehicle->setV5DocumentNumber(null);
         $vehicleClassCode = VehicleClassCode::CLASS_4;
         $dvlaVehicle->setMassInServiceWeight(1000);
+        $dvlaVehicle->setMakeCode("BB");
+        $dvlaVehicle->setModelCode("COOPER");
 
         $vtrCapture = ArgCapture::create();
 
@@ -584,6 +590,7 @@ class VehicleServiceTest extends AbstractServiceTestCase
         $this->returningOn($this->mockVehicleCatalog, VOF::make(), 'findMakeByCode');
 
         $map = (new DvlaMakeModelMap())
+            ->setMake(VOF::make())
             ->setModel(VOF::model());
         $this
             ->mockVehicleCatalog
@@ -635,6 +642,8 @@ class VehicleServiceTest extends AbstractServiceTestCase
         $dvlaVehicle->setBodyType($invalidDvlaBodyType);
         $vehicleClassCode = VehicleClassCode::CLASS_7;
         $dvlaVehicle->setDesignedGrossWeight(1000);
+        $dvlaVehicle->setMakeCode("BB");
+        $dvlaVehicle->setModelCode("COOPER");
 
         $vtrCapture = ArgCapture::create();
 

@@ -2,10 +2,13 @@
 
 namespace UserApiTest\SpecialNotice\Service;
 
+use DateTime;
 use DvsaCommon\Auth\MotIdentity;
 use DvsaCommon\Constants\SpecialNoticeAudience as SpecialNoticeAudienceConstant;
+use DvsaCommon\Date\DateTimeHolder;
 use DvsaCommon\Date\DateUtils;
 use DvsaCommonApiTest\Service\AbstractServiceTestCase;
+use DvsaCommonTest\Date\TestDateTimeHolder;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaEntities\Entity\SpecialNotice;
 use DvsaEntities\Entity\SpecialNoticeAudience;
@@ -63,12 +66,21 @@ class SpecialNoticeServiceTest extends AbstractServiceTestCase
         $this->motIdentityProvider->expects($this->any())
             ->method('getIdentity')
             ->will($this->returnValue(new MotIdentity(1, 'tester')));
-        $this->sut = new SpecialNoticeService(
+        $this->sut = $this->mockSpecialNoticeServiceWithDate(new DateTime());
+    }
+
+    private function mockSpecialNoticeServiceWithDate(DateTime $dateTime = null)
+    {
+        if(is_null($dateTime)){
+            $dateTime = new DateTime();
+        }
+        return new SpecialNoticeService(
             $this->entityManager,
             $this->objectHydrator,
             $this->authService,
             $this->motIdentityProvider,
-            new SpecialNoticeValidator()
+            new SpecialNoticeValidator(),
+            new TestDateTimeHolder($dateTime)
         );
     }
 
@@ -127,7 +139,7 @@ class SpecialNoticeServiceTest extends AbstractServiceTestCase
     {
         //given
         $specialNotice = $this->createTestSpecialNotice();
-        $specialNotice->getContent()->setExpiryDate(new \DateTime('2013-01-01'));
+        $specialNotice->getContent()->setExpiryDate(new DateTime('2013-01-01'));
 
         //when
         $data = $this->sut->extract($specialNotice);
@@ -194,9 +206,9 @@ class SpecialNoticeServiceTest extends AbstractServiceTestCase
     {
         //given
         $overdueSpecialNotice1 = $this->createTestSpecialNotice();
-        $overdueSpecialNotice1->getContent()->setExpiryDate(new \DateTime('2013-09-01'));
+        $overdueSpecialNotice1->getContent()->setExpiryDate(new DateTime('2013-09-01'));
         $overdueSpecialNotice2 = $this->createTestSpecialNotice();
-        $overdueSpecialNotice2->getContent()->setExpiryDate(new \DateTime('2014-01-01'));
+        $overdueSpecialNotice2->getContent()->setExpiryDate(new DateTime('2014-01-01'));
         $this->mockEntityManagerForSpecialNotices(
             [
                 $overdueSpecialNotice1,
@@ -217,7 +229,7 @@ class SpecialNoticeServiceTest extends AbstractServiceTestCase
         //given
         $acknowledgedExpiredSpecialNotice = $this->createTestSpecialNotice();
         $acknowledgedExpiredSpecialNotice->setIsAcknowledged(true);
-        $acknowledgedExpiredSpecialNotice->getContent()->setExpiryDate(new \DateTime('2013-01-01'));
+        $acknowledgedExpiredSpecialNotice->getContent()->setExpiryDate(new DateTime('2013-01-01'));
         $this->mockEntityManagerForSpecialNotices([$acknowledgedExpiredSpecialNotice]);
 
         //when
@@ -236,9 +248,9 @@ class SpecialNoticeServiceTest extends AbstractServiceTestCase
         $earlierExpiryDate = '2113-01-01';
 
         $unreadSpecialNotice1 = $this->createTestSpecialNotice();
-        $unreadSpecialNotice1->getContent()->setExpiryDate(new \DateTime($laterExpiryDate));
+        $unreadSpecialNotice1->getContent()->setExpiryDate(new DateTime($laterExpiryDate));
         $unreadSpecialNotice2 = $this->createTestSpecialNotice();
-        $unreadSpecialNotice2->getContent()->setExpiryDate(new \DateTime($earlierExpiryDate));
+        $unreadSpecialNotice2->getContent()->setExpiryDate(new DateTime($earlierExpiryDate));
         $this->mockEntityManagerForSpecialNotices(
             [
                 $unreadSpecialNotice1,
@@ -277,8 +289,8 @@ class SpecialNoticeServiceTest extends AbstractServiceTestCase
     public function testCreateSpecialNoticeWithValidDataShouldCreateSpecialNotice()
     {
         // given
-        $internalPublishDate = new \DateTime("tomorrow");
-        $externalPublishDate = new \DateTime("tomorrow + 1day");
+        $internalPublishDate = new DateTime("tomorrow");
+        $externalPublishDate = new DateTime("tomorrow + 1day");
 
         $noticeData = [
             'noticeTitle'           => 'Tilte',
@@ -292,14 +304,13 @@ class SpecialNoticeServiceTest extends AbstractServiceTestCase
                 SpecialNoticeAudienceConstant::TESTER_CLASS_1,
             ],
         ];
-        $this->specialNoticeRepository->expects($this->once())
-            ->method('getLatestIssueNumber')
-            ->will($this->returnValue([3]));
+        $this->specialNoticeRepository->expects($this->never())
+            ->method('getLatestIssueNumber');
         // when
         $result = $this->sut->createSpecialNotice($noticeData);
 
         // then
-        $this->assertEquals(date("4-Y"), $result['issueNumber']);
+        $this->assertNull($result['issueNumber']);
         $this->assertEquals($externalPublishDate->format('Y-m-d'), $result['issueDate']);
     }
 
@@ -335,6 +346,42 @@ class SpecialNoticeServiceTest extends AbstractServiceTestCase
     }
 
     /**
+     * @dataProvider dataProviderSpecialNoticePublishDate
+     */
+    public function testPublishSpecialNoticeWithValidIdShouldCreateIssueNumberAndIssueDate($issueNumber, DateTime $externalPublishDate)
+    {
+        // given
+        $id = 1234;
+        $this->setupMockForSingleCall(
+            $this->entityManager,
+            'find',
+            (new SpecialNoticeContent())->setExternalPublishDate($externalPublishDate)
+        );
+        $this->specialNoticeRepository->expects($this->once())
+            ->method('getLatestIssueNumber')
+            ->will($this->returnValue([$issueNumber]));
+
+        $this->mockSpecialNoticeServiceWithDate($externalPublishDate);
+
+        // when
+        $result = $this->sut->publish($id);
+        $this->assertEquals($result->getIssueNumber(), $issueNumber + 1);
+        $this->assertEquals($result->getIssueYear(), $externalPublishDate->format('Y'));
+
+        // then
+        $this->assertTrue($result->isPublished());
+    }
+
+    public function dataProviderSpecialNoticePublishDate()
+    {
+        return [
+            [1, (new DateTime('2015-12-31 23:59:00'))],
+            [2, (new DateTime('2016-12-31 23:59:00'))],
+            [2, (new DateTime('2017-12-31 23:59:00'))],
+        ];
+    }
+
+    /**
      * @expectedException        \DvsaCommonApi\Service\Exception\NotFoundException
      * @expectedExceptionMessage Special Notice 1234 not found
      */
@@ -363,10 +410,10 @@ class SpecialNoticeServiceTest extends AbstractServiceTestCase
         $content->setId(1);
         $content->setTitle('title');
         $content->setNoticeText('noticeText');
-        $content->setIssueDate(new \DateTime());
+        $content->setIssueDate(new DateTime());
         $content->setIssueNumber(1);
         $content->setIssueYear(2014);
-        $content->setExpiryDate(new \DateTime());
+        $content->setExpiryDate(new DateTime());
         $content->addSpecialNoticeAudience(
             (new SpecialNoticeAudience())
                 ->setAudienceId(3)
@@ -386,4 +433,5 @@ class SpecialNoticeServiceTest extends AbstractServiceTestCase
             ->method('getAllCurrentSpecialNoticesForUser')
             ->will($this->returnValue($specialNotices));
     }
+
 }

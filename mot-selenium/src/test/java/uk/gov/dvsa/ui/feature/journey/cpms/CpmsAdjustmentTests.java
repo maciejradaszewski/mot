@@ -68,6 +68,115 @@ public class CpmsAdjustmentTests extends DslTest {
 
     }
 
+    @Test(groups = {"CPMS", "BL-1611", "Regression"}, description = "Verify that financeuser can perform a positive manual adjustment",
+          dataProvider = "createFinanceUserAndAe")
+    public void userPerformsAPositiveManualAdjustment(User financeUser, AeDetails aeDetails) throws IOException, URISyntaxException {
+
+        int numberOfSlotsBeforeAdjustment, numberOfSlotsAfterAdjustment;
+
+        //Given I am on slot adjustment page as a finance user
+        FinanceAuthorisedExaminerViewPage financeAuthorisedExaminerViewPage = pageNavigator.goToPageAsAuthorisedExaminer(financeUser,
+                                                                  FinanceAuthorisedExaminerViewPage.class,
+                                                                  FinanceAuthorisedExaminerViewPage.PATH,
+                                                                  aeDetails.getId());
+        numberOfSlotsBeforeAdjustment = financeAuthorisedExaminerViewPage.getSlotCount();
+
+        //When I make a positive adjustment and submit changes
+        financeAuthorisedExaminerViewPage.clickSlotAdjustment()
+                .adjustSlots("100", "Test positive adjustment", true)
+                .reviewAdjustment(ReviewSlotAdjustmentPage.class)
+                .adjustSlots();
+
+        //Then the adjustment should have taken effect
+        numberOfSlotsAfterAdjustment = financeAuthorisedExaminerViewPage.getSlotCount();
+        assertThat(numberOfSlotsBeforeAdjustment + 100 == numberOfSlotsAfterAdjustment, is(true));
+    }
+
+    @Test(groups = {"CPMS", "BL-1611", "Regression"}, description = "Verify that financeuser can perform a negative manual adjustment",
+            dataProvider = "createFinanceUserAndAe")
+    public void userPerformsANegativeAdjustment(User financeUser, AeDetails aeDetails) throws IOException, URISyntaxException {
+
+        int numberOfSlotsBeforeAdjustment, numberOfSlotsAfterAdjustment;
+
+        //Given I am on slot adjustment page as a finance user
+        FinanceAuthorisedExaminerViewPage financeAuthorisedExaminerViewPage = pageNavigator.goToPageAsAuthorisedExaminer(financeUser,
+                FinanceAuthorisedExaminerViewPage.class,
+                FinanceAuthorisedExaminerViewPage.PATH,
+                aeDetails.getId());
+        numberOfSlotsBeforeAdjustment = financeAuthorisedExaminerViewPage.getSlotCount();
+
+        //When I make a positive adjustment and submit changes
+        financeAuthorisedExaminerViewPage.clickSlotAdjustment()
+                .adjustSlots("100", "Test negative adjustment", false)
+                .reviewAdjustment(ReviewSlotAdjustmentPage.class)
+                .adjustSlots();
+
+        //Then the adjustment should have taken effect
+        numberOfSlotsAfterAdjustment = financeAuthorisedExaminerViewPage.getSlotCount();
+        assertThat(numberOfSlotsBeforeAdjustment - 100 == numberOfSlotsAfterAdjustment, is(true));
+    }
+
+    @Test(groups = {"CPMS", "BL-1611", "Regression"}, description = "Verify that financeuser must add a comment for a manual adjustment",
+            dataProvider = "createFinanceUserAndAe")
+    public void userMustEnterACommentForAManualAdjustment(User financeUser, AeDetails aeDetails) throws IOException, URISyntaxException {
+
+        //Given I am on slot adjustment page as a finance user
+        FinanceAuthorisedExaminerViewPage financeAuthorisedExaminerViewPage = pageNavigator.goToPageAsAuthorisedExaminer(financeUser,
+                FinanceAuthorisedExaminerViewPage.class,
+                FinanceAuthorisedExaminerViewPage.PATH,
+                aeDetails.getId());
+
+        //When I make a positive adjustment without a comment
+        SlotAdjustmentPage slotAdjustmentPage = financeAuthorisedExaminerViewPage.clickSlotAdjustment()
+                .adjustSlots("100", "", false)
+                .reviewAdjustment(SlotAdjustmentPage.class);
+
+        //Then an error message should be displayed
+        assertThat(slotAdjustmentPage.isErrorMessageDisplayed(), is(true));
+    }
+
+    @Test(groups = {"CPMS", "BL-1611", "Regression"},
+            description = "Financeuser is able to see positive manual adjustment amount on transaction history screen",
+            dataProvider = "createFinanceUserAndAe")
+    public void positiveAdjustmentAmountIsShownOnPurchaseHistoryScreen(User financeUser, AeDetails aeDetails) throws IOException, URISyntaxException {
+
+        //Given I make a positive slot count adjustment for an AE as a finance user
+        FinanceAuthorisedExaminerViewPage financeAuthorisedExaminerViewPage = pageNavigator.goToPageAsAuthorisedExaminer(financeUser,
+                FinanceAuthorisedExaminerViewPage.class,
+                FinanceAuthorisedExaminerViewPage.PATH,
+                aeDetails.getId()).clickSlotAdjustment()
+                .adjustSlots("420", "Test positive adjustment", true)
+                .reviewAdjustment(ReviewSlotAdjustmentPage.class)
+                .adjustSlots();
+
+        //When I go to the purchase history page for that AE
+        TransactionHistoryPage transactionHistoryPage = financeAuthorisedExaminerViewPage.clickTransactionHistoryLink();
+
+        //Then adjustment amount should be visible in the transaction history table
+        assertThat("420".equals(transactionHistoryPage.getAdjustmentQuantity()), is(true));
+    }
+
+    @Test(groups = {"CPMS", "BL-1611", "Regression"},
+            description = "Financeuser is able to see negative manual adjustment amount on transaction history screen",
+            dataProvider = "createFinanceUserAndAe")
+    public void negativeAdjustmentAmountIsShownOnPurchaseHistoryScreen(User financeUser, AeDetails aeDetails) throws IOException, URISyntaxException {
+
+        //Given I make a negative slot count adjustment for an AE as a finance user
+        FinanceAuthorisedExaminerViewPage financeAuthorisedExaminerViewPage = pageNavigator.goToPageAsAuthorisedExaminer(financeUser,
+                FinanceAuthorisedExaminerViewPage.class,
+                FinanceAuthorisedExaminerViewPage.PATH,
+                aeDetails.getId()).clickSlotAdjustment()
+                .adjustSlots("420", "Test negative adjustment", false)
+                .reviewAdjustment(ReviewSlotAdjustmentPage.class)
+                .adjustSlots();
+
+        //And I go to the purchase history page for that AE
+        TransactionHistoryPage transactionHistoryPage = financeAuthorisedExaminerViewPage.clickTransactionHistoryLink();
+
+        //Then adjustment amount should be visible in the transaction history table
+        assertThat("-420".equals(transactionHistoryPage.getAdjustmentQuantity()), is(true));
+    }
+
     @DataProvider(name = "createFinanceUserAndAe")
     public Object[][] createFinanceUserAndAe() throws IOException {
         AeDetails aeDetails = aeData.createAeWithDefaultValues();

@@ -13,13 +13,12 @@ use DvsaCommon\Constants\FeatureToggle;
 use Zend\View\Model\ViewModel;
 
 /**
- * Class SurveyPageController
- * @package DvsaMotTest\Controller
+ * Class SurveyPageController.
  */
 class SurveyPageController extends AbstractAuthActionController
 {
     /**
-     * @var SurveyService $surveyService
+     * @var SurveyService
      */
     private $surveyService;
 
@@ -33,6 +32,7 @@ class SurveyPageController extends AbstractAuthActionController
 
     /**
      * SurveyPageController constructor.
+     *
      * @param SurveyService $surveyService
      */
     public function __construct(
@@ -47,13 +47,13 @@ class SurveyPageController extends AbstractAuthActionController
     public function indexAction()
     {
         $ref = $_SERVER['HTTP_REFERER'];
-//        if (strpos($ref, 'test-result') === FALSE && strpos($ref, 'survey') === FALSE) {
-//            return $this->notFoundAction();
-//        }
+        if (strpos($ref, 'test-result') === false && strpos($ref, 'survey') === false) {
+            return $this->notFoundAction();
+        }
         if (true !== $this->isFeatureEnabled(FeatureToggle::SURVEY_PAGE)) {
             return $this->notFoundAction();
         }
-        
+
         $this->layout('layout/layout-govuk.phtml');
 
         if ($this->getRequest()->isPost()) {
@@ -65,11 +65,31 @@ class SurveyPageController extends AbstractAuthActionController
 
             if (is_null($satisfactionRating)) {
                 return $this->redirect()->toUrl('/');
+            } else {
+                return $this->redirect()->toRoute('survey/thanks');
             }
         }
-        
+
         return $this->createViewModel(
             'survey-page/index.phtml',
+            []
+        );
+    }
+
+    public function thanksAction()
+    {
+        $ref = $_SERVER['HTTP_REFERER'];
+        if (strpos($ref, 'survey') === false) {
+            return $this->notFoundAction();
+        }
+
+        if (!$this->isFeatureEnabled(FeatureToggle::SURVEY_PAGE)) {
+            return $this->notFoundAction();
+        }
+
+        $this->layout('layout/layout-govuk.phtml');
+
+        return $this->createViewModel('survey-page/thanks.phtml',
             []
         );
     }

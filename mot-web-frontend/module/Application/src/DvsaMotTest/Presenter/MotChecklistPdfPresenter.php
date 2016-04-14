@@ -6,6 +6,7 @@ namespace DvsaMotTest\Presenter;
 
 use DateTime;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\MotFrontendIdentityInterface;
+use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Dto\Common\MotTestDto;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\Model\VehicleClassGroup;
@@ -71,8 +72,8 @@ class MotChecklistPdfPresenter implements AutoWireableInterface
 
         $fields = [
             new MotChecklistPdfField(mb_substr($this->identity->getDisplayName(), 0, static::TESTER_NAME_LENGTH), 365, 768, static::FONT_SIZE_8),
-            new MotChecklistPdfField($startDate->format('d M Y'), 330, $this->firstLineY, static::FONT_SIZE_8),
-            new MotChecklistPdfField($startDate->format('g:i a'), 412, $this->firstLineY, static::FONT_SIZE_8),
+            new MotChecklistPdfField(DateTimeDisplayFormat::dateShort($startDate), 330, $this->firstLineY, static::FONT_SIZE_8),
+            new MotChecklistPdfField(DateTimeDisplayFormat::time($startDate), 412, $this->firstLineY, static::FONT_SIZE_8),
             new MotChecklistPdfField(!is_null($site) ? $site['siteNumber'] : '', 496, $this->firstLineY, static::FONT_SIZE_8),
             new MotChecklistPdfField($vehicle->getRegistration(), $this->firstColumnX, $this->secondLineY, static::FONT_SIZE_9),
             new MotChecklistPdfField($vehicle->getVin(), $this->secondColumnX, $this->secondLineY, static::FONT_SIZE_9),

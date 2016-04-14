@@ -33,7 +33,7 @@ class SpecialNoticeContext implements Context
     private $personContext;
 
     /**
-     * @var Response
+     * @var SpecialNoticeBroadcastResult
      */
     private $specialNoticeBroadcastResult;
 
@@ -52,8 +52,19 @@ class SpecialNoticeContext implements Context
      */
     private $session;
 
+    /**
+     * @var Tester
+     */
     private $tester;
 
+    /**
+     * @var AEDM
+     */
+    private $aedm;
+
+    /**
+     * @var AreaOffice1User
+     */
     private $areaOffice1user;
 
     /**
@@ -140,6 +151,7 @@ class SpecialNoticeContext implements Context
         $siteId = $this->vtsContext->getSite()["id"];
 
         $this->tester = $this->personContext->createTester(["siteIds" => [$siteId]]);
+        $this->aedm = $this->personContext->createAedm([]);
         $this->areaOffice1user = $this->testSupportHelper->getAreaOffice1Service()->create([]);
     }
 
@@ -161,8 +173,8 @@ class SpecialNoticeContext implements Context
      */
     public function theSpecialNoticeIsBroadcasted()
     {
-        $session = $this->session->startSession(Authentication::LOGIN_CRON_JOB_USER, Authentication::PASSWORD_DEFAULT);
-        $response = $this->specialNotice->sendBroadcast($session->getAccessToken());
+        $this->sessionContext->iAmLoggedInAsAnCronUser();
+        $response = $this->specialNotice->sendBroadcast($this->sessionContext->getCurrentAccessToken());
 
         PHPUnit_Framework_Assert::assertTrue($response);
     }
@@ -178,10 +190,10 @@ class SpecialNoticeContext implements Context
 
     private function assertInternalSpecialNotice()
     {
-        $session = $this->session->startSession($this->areaOffice1user->data["username"], $this->areaOffice1user->data["password"]);
-        $response = $this->specialNotice->getSpecialNotices($session->getAccessToken(), $session->getUserId());
+        $dvsaUserSession = $this->session->startSession($this->areaOffice1user->data["username"], $this->areaOffice1user->data["password"]);
+        $dvsaUserResponse = $this->specialNotice->getSpecialNotices($dvsaUserSession->getAccessToken(), $dvsaUserSession->getUserId());
 
-        PHPUnit_Framework_Assert::assertEquals(200, $response->getStatusCode());
+        PHPUnit_Framework_Assert::assertEquals(200, $dvsaUserResponse->getStatusCode());
 
         $sn = $this->specialNoticeResponse->getBody()->toArray()["data"];
         $snContentid = $sn["id"];
@@ -192,28 +204,32 @@ class SpecialNoticeContext implements Context
         $internalPublishDate = new \DateTime($sn["internalPublishDate"]);
         $internalPublishDate->setTime(0,0,0);
 
-        $userSpecialNotices = $response->getBody()->toArray()["data"];
-        $found = false;
-        foreach ($userSpecialNotices as $specialNotice) {
+        $dvsaUserSpecialNotices = $dvsaUserResponse->getBody()->toArray()["data"];
+        $foundDvsaSpecialNotice = false;
+        foreach ($dvsaUserSpecialNotices as $specialNotice) {
             if ($snContentid === $specialNotice["contentId"]) {
-                $found = true;
+                $foundDvsaSpecialNotice = true;
                 break;
             }
         }
 
         if ($internalPublishDate <= $today) {
-            PHPUnit_Framework_Assert::assertTrue($found);
+            PHPUnit_Framework_Assert::assertTrue($foundDvsaSpecialNotice);
         } else {
-            PHPUnit_Framework_Assert::assertFalse($found);
+            PHPUnit_Framework_Assert::assertFalse($foundDvsaSpecialNotice);
         }
     }
 
     private function assertExternalSpecialNotice()
     {
-        $session = $this->session->startSession($this->tester->data["username"], $this->tester->data["password"]);
-        $response = $this->specialNotice->getSpecialNotices($session->getAccessToken(), $session->getUserId());
+        $testerSession = $this->session->startSession($this->tester->data["username"], $this->tester->data["password"]);
+        $testerResponse = $this->specialNotice->getSpecialNotices($testerSession->getAccessToken(), $testerSession->getUserId());
 
-        PHPUnit_Framework_Assert::assertEquals(200, $response->getStatusCode());
+        $vtsUserSession = $this->session->startSession($this->aedm->data["username"], $this->aedm->data["password"]);
+        $vtsUserResponse = $this->specialNotice->getSpecialNotices($vtsUserSession->getAccessToken(), $vtsUserSession->getUserId());
+
+        PHPUnit_Framework_Assert::assertEquals(200, $testerResponse->getStatusCode());
+        PHPUnit_Framework_Assert::assertEquals(200, $vtsUserResponse->getStatusCode());
 
         $sn = $this->specialNoticeResponse->getBody()->toArray()["data"];
         $snContentid = $sn["id"];
@@ -224,19 +240,31 @@ class SpecialNoticeContext implements Context
         $externalPublishDate = new \DateTime($sn["externalPublishDate"]);
         $externalPublishDate->setTime(0,0,0);
 
-        $userSpecialNotices = $response->getBody()->toArray()["data"];
-        $found = false;
-        foreach ($userSpecialNotices as $specialNotice) {
+        $testerSpecialNotices = $testerResponse->getBody()->toArray()["data"];
+        $foundTesterSpecialNotice = false;
+        foreach ($testerSpecialNotices as $specialNotice) {
             if ($snContentid === $specialNotice["contentId"]) {
-                $found = true;
+                $foundTesterSpecialNotice = true;
+                break;
+            }
+        }
+
+        $vtsUserSpecialNotices = $vtsUserResponse->getBody()->toArray()["data"];
+        $foundVtsUserSpecialNotice = false;
+        foreach ($vtsUserSpecialNotices as $specialNotice) {
+            if ($snContentid === $specialNotice["contentId"]) {
+                $foundVtsUserSpecialNotice = true;
                 break;
             }
         }
 
         if ($externalPublishDate <= $today) {
-            PHPUnit_Framework_Assert::assertTrue($found);
+            PHPUnit_Framework_Assert::assertTrue($foundTesterSpecialNotice);
+            PHPUnit_Framework_Assert::assertTrue($foundVtsUserSpecialNotice);
+
         } else {
-            PHPUnit_Framework_Assert::assertFalse($found);
+            PHPUnit_Framework_Assert::assertFalse($foundTesterSpecialNotice);
+            PHPUnit_Framework_Assert::assertFalse($foundVtsUserSpecialNotice);
         }
     }
 

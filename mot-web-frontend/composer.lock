@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3789662861cd119d6409e1b7df3ea015",
-    "content-hash": "643da4f95816a0c5235fd7240b8b87fd",
+    "hash": "255294cf3ef094f129ec16ae98352f86",
+    "content-hash": "29669dac13a81055fce691d306815a94",
     "packages": [
         {
             "name": "cpms/client",
@@ -1028,11 +1028,11 @@
         },
         {
             "name": "dvsa/web-frontend-assets",
-            "version": "v0.7.8",
+            "version": "v0.7.10",
             "source": {
                 "type": "git",
                 "url": "http://gitlab.clb.npm/mot/web-frontend-assets.git",
-                "reference": "335a9d57f15489a597fb077840e8deb8a9ea86c5"
+                "reference": "84079ab3ad500a9d969e4f88a91a937421ee2a33"
             },
             "type": "library",
             "authors": [
@@ -1041,7 +1041,7 @@
                     "email": ""
                 }
             ],
-            "time": "2016-02-17 14:41:37"
+            "time": "2016-03-14 13:34:02"
         },
         {
             "name": "erusev/parsedown",
@@ -1614,12 +1614,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/ZendPdf.git",
-                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
+                "url": "git@github.com:zendframework/ZendPdf.git",
+                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },

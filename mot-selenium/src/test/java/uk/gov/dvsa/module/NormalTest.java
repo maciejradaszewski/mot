@@ -113,12 +113,18 @@ public class NormalTest {
         setDeclarationStatementStatus(changedPage);
     }
 
-    public void conductTrainingTest(User tester, Vehicle vehicle) throws IOException, URISyntaxException {
+    public TestSummaryPage conductTrainingTest(User tester, Vehicle vehicle) throws IOException, URISyntaxException {
         TestResultsEntryPage testResultsEntryPage = pageNavigator.gotoTrainingTestResultsEntryPage(tester, vehicle);
         testResultsEntryPage.completeTestDetailsWithPassValues();
         TestSummaryPage testSummaryPage = testResultsEntryPage.clickReviewTestButton();
 
         declarationSuccessful = testSummaryPage.isDeclarationElementPresentInDom();
+
+        return testSummaryPage;
+    }
+
+    public TestCompletePage finishTrainingTest(TestSummaryPage testSummaryPage) throws IOException, URISyntaxException {
+         return testSummaryPage.clickFinishButton();
     }
 
     public void refuseToTestVehicle(User tester, Vehicle vehicle, ReasonForVehicleRefusal reason) throws IOException, URISyntaxException {

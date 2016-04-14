@@ -25,7 +25,6 @@ public class TestSummaryPage extends Page {
     @FindBy(id = "confirm_test_result") private WebElement finishTestButton;
     @FindBy(id = "oneTimePassword") private WebElement pinInputField;
     @FindBy(id = "testStatus") private WebElement testStatus;
-    @FindBy(id = "confirm_test_result") private WebElement finishAndPrintButton;
     @FindBy(id = "start_inspection_button") private WebElement startReinspectionButton;
     @FindBy(id = "motTestType") private WebElement testTypePrompt;
     @FindBy(id = "declarationStatement") private WebElement declarationElement;
@@ -42,9 +41,8 @@ public class TestSummaryPage extends Page {
 
     public TestCompletePage finishTestAndPrint(){
         pinInputField.sendKeys("123456");
-        finishTestButton.click();
 
-        return new TestCompletePage(driver);
+        return clickFinishButton();
     }
 
     public TestSummaryPage fillSiteIdInput(String siteId) {
@@ -53,8 +51,10 @@ public class TestSummaryPage extends Page {
         return this;
     }
 
-    public void clickFinishButton() {
-        finishAndPrintButton.click();
+    public TestCompletePage clickFinishButton() {
+        finishTestButton.click();
+
+        return new TestCompletePage(driver);
     }
 
     public void clickStartReinspectionButton() {

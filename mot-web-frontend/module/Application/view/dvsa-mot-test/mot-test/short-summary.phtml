@@ -83,7 +83,7 @@ $this->layout()->setVariable('pageTitle', 'MOT Test');
 </div>
 
 <nav class="module-content-navigation">
-    <?php if($canAbortTestAtSite): ?>
+    <?php if($canAbortTest): ?>
         <a class="button-warning" id="sln-action-abort" href="<?php echo $urlToReasonForAborting ?>">Abort MOT Test</a>
     <?php endif; ?>
     <ul class="content-navigation_secondary">

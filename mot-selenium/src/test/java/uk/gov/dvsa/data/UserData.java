@@ -9,6 +9,10 @@ public class UserData extends UserService{
 
     public UserData() {}
 
+    public User createUserWithoutRole() throws IOException {
+        return createUserWithNoRole();
+    }
+
     public User createTester(int siteId) throws IOException {
         return createUserAsTester(siteId);
     }

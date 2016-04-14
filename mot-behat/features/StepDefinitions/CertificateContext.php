@@ -5,6 +5,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Dvsa\Mot\Behat\Support\Api\Certificate;
 use Dvsa\Mot\Behat\Support\Api\MotTest;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
+use DvsaCommon\Enum\MotTestStatusName;
 use PHPUnit_Framework_Assert as PHPUnit;
 use Smalot\PdfParser\Document;
 
@@ -197,6 +198,39 @@ class CertificateContext implements Context
             $documentContent = json_decode($motTest['document']['document_content'], true);
             $documentOdometerHistory = $documentContent['OdometerHistory'];
             $this->validateOdometerHistory($fullOdometerHistory, $documentOdometerHistory, $motTest['startedDate']);
+        }
+    }
+
+    /**
+     * @Then document has only :number odometer readings from newest passed tests
+     */
+    public function documentHasOnlyOdometerReadingsFromPassedTests($number)
+    {
+        $odometerHistoryNotShown = [];
+        $passedTestsReadings = [];
+        foreach($this->motTestContext->getMotTests() as $motTest) {
+            if($motTest['status'] != MotTestStatusName::PASSED){
+                $odometerHistoryNotShown[] = $motTest['odometerReading']['value'];
+            } else {
+                $passedTestsReadings[] = $motTest['odometerReading']['value'];
+            }
+        }
+
+        // remove 4 latest MOT tests
+        $passedTestsReadings = array_slice($passedTestsReadings, $number);
+
+        foreach ($passedTestsReadings as $passedTestReadingThatShouldntBeShown) {
+            $odometerHistoryNotShown[] = $passedTestReadingThatShouldntBeShown;
+        }
+
+        foreach($this->motTestContext->getMotTests() as $motTest) {
+            $documentContent = json_decode($motTest['document']['document_content'], true);
+            if(isset($documentContent['OdometerHistory'])){
+                $documentOdometerHistory = $documentContent['OdometerHistory'];
+                foreach ($odometerHistoryNotShown as $odometerReading) {
+                    PHPUnit::assertFalse(strpos($documentOdometerHistory, $odometerReading));
+                }
+            }
         }
     }
 
