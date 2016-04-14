@@ -23,6 +23,7 @@ public abstract class DslTest {
     protected AeData aeData = new AeData();
     protected SiteData siteData = new SiteData();
     protected UserData userData = new UserData();
+    protected QualificationDetailsData qualificationDetailsData = new QualificationDetailsData();
     protected VehicleData vehicleData = new VehicleData();
     protected MotApi motApi = new MotApi();
     protected MotUI motUI;

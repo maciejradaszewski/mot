@@ -4,12 +4,13 @@ use DvsaCommon\Utility\ArrayUtils;
 
 $errorMessages = $dayElement->getMessages();
 $errorMessage = ArrayUtils::firstOrNull($errorMessages);
+$groupLabel = !empty($this->groupLabel) ? $this->groupLabel : 'Date of birth';
 ?>
 
 <div class="form-group <?php if ($errorMessage): echo "has-error"; endif; ?>">
     <fieldset>
         <legend class="form-label">
-            Date of birth
+            <?php echo $groupLabel; ?>
         </legend>
         <div class="form-date">
 

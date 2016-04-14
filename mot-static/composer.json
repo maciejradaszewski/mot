@@ -5,9 +5,9 @@
         "dvsa/gds-toolkit": "dev-develop"
     },
     "repositories": [
-        {
-            "type": "git",
-            "url": "http://gitlab.clb.npm/mot/gds-toolkit.git"
-        }
+      {
+        "type": "composer",
+        "url": "https://packages.motdev.org.uk"
+      }
     ]
 }

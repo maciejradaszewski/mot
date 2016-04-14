@@ -2,30 +2,22 @@
 
 namespace Site\UpdateVtsProperty\Process;
 
-use DvsaClient\Mapper\SiteMapper;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Enum\SiteContactTypeCode;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\Model\VehicleTestingStation;
+use Site\UpdateVtsProperty\AbstractSingleStepVtsProcess;
 use Site\UpdateVtsProperty\Process\Form\EmailPropertyForm;
 use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
-use Site\UpdateVtsProperty\UpdateVtsPropertyProcessInterface;
 
-class UpdateVtsEmailProcess implements UpdateVtsPropertyProcessInterface, AutoWireableInterface
+class UpdateVtsEmailProcess extends AbstractSingleStepVtsProcess implements AutoWireableInterface
 {
     private $propertyName = UpdateVtsPropertyAction::VTS_EMAIL_PROPERTY;
     private $permission = PermissionAtSite::VTS_UPDATE_EMAIL;
-    private $requiresReview = false;
     private $submitButtonText = "Change email address";
     private $successfulEditMessage = "Email address has been successfully changed.";
     private $formPageTitle = "Change email address";
     private $formPartial = "site/update-vts-property/partials/edit-email";
-    private $siteMapper;
-
-    public function __construct(SiteMapper $siteMapper)
-    {
-        $this->siteMapper = $siteMapper;
-    }
 
     public function getPropertyName()
     {
@@ -47,9 +39,9 @@ class UpdateVtsEmailProcess implements UpdateVtsPropertyProcessInterface, AutoWi
         return $this->submitButtonText;
     }
 
-    public function getPrePopulatedData($vtsId)
+    public function getPrePopulatedData()
     {
-        $contact = $this->siteMapper->getById($vtsId)->getContactByType(SiteContactTypeCode::BUSINESS);
+        $contact = $this->siteMapper->getById($this->context->getVtsId())->getContactByType(SiteContactTypeCode::BUSINESS);
 
         return [$this->propertyName => $contact->getPrimaryEmailAddress()];
     }
@@ -64,18 +56,13 @@ class UpdateVtsEmailProcess implements UpdateVtsPropertyProcessInterface, AutoWi
         return $this->successfulEditMessage;
     }
 
-    public function getFormPageTitle()
+    public function getEditStepPageTitle()
     {
         return $this->formPageTitle;
     }
 
-    public function update($vtsId, $formData)
+    public function update($formData)
     {
-        $this->siteMapper->updateVtsContactProperty($vtsId, VehicleTestingStation::PATCH_PROPERTY_EMAIL, $formData[$this->propertyName]);
-    }
-
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
+        $this->siteMapper->updateVtsContactProperty($this->context->getVtsId(), VehicleTestingStation::PATCH_PROPERTY_EMAIL, $formData[$this->propertyName]);
     }
 }

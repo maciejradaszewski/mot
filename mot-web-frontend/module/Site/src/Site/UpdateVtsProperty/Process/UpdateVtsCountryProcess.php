@@ -8,20 +8,17 @@ use DvsaClient\Mapper\SiteMapper;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Enum\CountryCode;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
-use Site\UpdateVtsProperty\Process\Form\CountryPropertyForm;
 use DvsaCommon\Model\VehicleTestingStation;
+use Site\UpdateVtsProperty\AbstractSingleStepVtsProcess;
+use Site\UpdateVtsProperty\Process\Form\CountryPropertyForm;
 use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
-use Site\UpdateVtsProperty\UpdateVtsReviewProcessInterface;
-use Zend\Form\Element\Radio;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
+use Zend\View\Helper\Url;
 
-class UpdateVtsCountryProcess implements UpdateVtsReviewProcessInterface, AutoWireableInterface
+class UpdateVtsCountryProcess extends AbstractSingleStepVtsProcess implements AutoWireableInterface
 {
     private $breadcrumbLabel = "Change site country";
     private $propertyName = UpdateVtsPropertyAction::VTS_COUNTRY_PROPERTY;
     private $permission = PermissionAtSite::VTS_UPDATE_COUNTRY;
-    private $requiresReview = false;
     private $submitButtonText = "Change country";
     private $successfulEditMessage = "Country has been successfully changed.";
     private $formPageTitle = "Change country";
@@ -29,27 +26,21 @@ class UpdateVtsCountryProcess implements UpdateVtsReviewProcessInterface, AutoWi
     private $reviewPageTitle = "";
     private $reviewPageLede = "";
     private $reviewPageButtonText = "";
-    private $siteMapper;
 
     /**
      * @var CountryCatalog
      */
     private $countryCatalog;
 
-    public function __construct(SiteMapper $siteMapper, CountryCatalog $vtsCountryCatalog)
+    public function __construct(SiteMapper $siteMapper, CountryCatalog $vtsCountryCatalog, Url $urlHelper)
     {
-        $this->siteMapper = $siteMapper;
+        parent::__construct($siteMapper, $urlHelper);
         $this->countryCatalog = $vtsCountryCatalog;
     }
 
     public function getPropertyName()
     {
         return $this->propertyName;
-    }
-
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
     }
 
     public function getFormPartial()
@@ -67,9 +58,9 @@ class UpdateVtsCountryProcess implements UpdateVtsReviewProcessInterface, AutoWi
         return $this->submitButtonText;
     }
 
-    public function getPrePopulatedData($vtsId)
+    public function getPrePopulatedData()
     {
-        $vtsData = $this->siteMapper->getById($vtsId);
+        $vtsData = $this->siteMapper->getById($this->context->getVtsId());
         $country = CountryCode::ENGLAND;
 
         if ($vtsData->isDualLanguage()) {
@@ -86,10 +77,10 @@ class UpdateVtsCountryProcess implements UpdateVtsReviewProcessInterface, AutoWi
         return $this->permission;
     }
 
-    public function update($vtsId, $formData)
+    public function update($formData)
     {
         $this->siteMapper->updateVtsProperty(
-            $vtsId,
+            $this->context->getVtsId(),
             VehicleTestingStation::PATCH_PROPERTY_COUNTRY,
             $formData[$this->propertyName]
         );
@@ -100,7 +91,7 @@ class UpdateVtsCountryProcess implements UpdateVtsReviewProcessInterface, AutoWi
         return $this->successfulEditMessage;
     }
 
-    public function getFormPageTitle()
+    public function getEditStepPageTitle()
     {
         return $this->formPageTitle;
     }

@@ -1,0 +1,28 @@
+
+<?php echo $this->partial('errorMessages', array('getFromFlash' => true)); ?>
+
+<div class="text">
+    <p>By removing this certificate the group status will change from Demo test needed to Not applied.</p>
+</div>
+
+<?php
+echo $this->partial(
+    'partial/gds/gds-table/gds-key-value-table',
+    [
+        'table' => $this->viewModel->table,
+    ]
+);
+?>
+
+<form novalidate="" autocomplete="off" method="POST" action="">
+    <?php echo $this->csrfToken(); ?>
+    <nav class="content-navigation">
+        <input type="submit" class="button-warning" value="Remove certificate" id="confirm-button">
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo $this->url($this->viewModel->backUrl, ['id' => $this->viewModel->personId]); ?>">Cancel and return to qualification status</a>
+            </li>
+        </ul>
+    </nav>
+</form>
+

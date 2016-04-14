@@ -31,8 +31,7 @@ class PhonePropertyForm extends Form
             ->setLabel('Telephone number')
             ->setAttribute('id', 'phoneTextBox')
             ->setAttribute('required', true)
-            ->setAttribute('group', true)
-        ;
+            ->setAttribute('group', true);
 
         $this->add($this->phoneElement);
 

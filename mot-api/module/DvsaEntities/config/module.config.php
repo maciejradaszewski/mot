@@ -1,6 +1,13 @@
 <?php
 
 use DvsaEntities\Factory\Repository\AuthForAeStatusRepositoryFactory;
+use DvsaEntities\Factory\Repository\MotTestingCertificateRepositoryFactory;
+use DvsaEntities\Factory\Repository\AuthorisationForTestingMotRepositoryFactory;
+use DvsaEntities\Factory\Repository\AuthorisationForTestingMotStatusRepositoryFactory;
+use DvsaEntities\Factory\Repository\VehicleClassRepositoryFactory;
+use DvsaEntities\Factory\Repository\VehicleClassGroupRepositoryFactory;
+use DvsaEntities\Factory\Repository\PersonRepositoryFactory;
+use DvsaEntities\Factory\Repository\EventPersonMapRepositoryFactory;
 use DvsaEntities\Factory\Repository\CompanyTypeRepositoryFactory;
 use DvsaEntities\Factory\Repository\OrganisationContactTypeRepositoryFactory;
 use DvsaEntities\Factory\Repository\OrganisationRepositoryFactory;
@@ -14,6 +21,13 @@ use DvsaEntities\Repository\OrganisationRepository;
 use DvsaEntities\Repository\PhoneContactTypeRepository;
 use DvsaEntities\Repository\RbacRepository;
 use DvsaEntities\Repository\SiteRepository;
+use DvsaEntities\Repository\QualificationAwardRepository;
+use DvsaEntities\Repository\VehicleClassGroupRepository;
+use DvsaEntities\Repository\PersonRepository;
+use DvsaEntities\Repository\EventPersonMapRepository;
+use DvsaEntities\Repository\AuthorisationForTestingMotRepository;
+use DvsaEntities\Repository\AuthorisationForTestingMotStatusRepository;
+use DvsaEntities\Repository\VehicleClassRepository;
 
 return [
     'service_manager' => [
@@ -27,7 +41,14 @@ return [
             OrganisationRepository::class => OrganisationRepositoryFactory::class,
             PhoneContactTypeRepository::class => PhoneContactTypeRepositoryFactory::class,
             AuthForAeStatusRepository::class => AuthForAeStatusRepositoryFactory::class,
+            QualificationAwardRepository::class => MotTestingCertificateRepositoryFactory::class,
+            AuthorisationForTestingMotRepository::class => AuthorisationForTestingMotRepositoryFactory::class,
+            AuthorisationForTestingMotStatusRepository::class => AuthorisationForTestingMotStatusRepositoryFactory::class,
+            VehicleClassRepository::class => VehicleClassRepositoryFactory::class,
+            VehicleClassGroupRepository::class => VehicleClassGroupRepositoryFactory::class,
+            PersonRepository::class => PersonRepositoryFactory::class,
             SiteRepository::class => SiteRepositoryFactory::class,
+            EventPersonMapRepository::class => EventPersonMapRepositoryFactory::class,
         ],
     ],
     'doctrine'        => [

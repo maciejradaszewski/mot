@@ -1,0 +1,40 @@
+<?php
+use Dvsa\Mot\Frontend\PersonModule\ViewModel\QualificationDetailsViewModel;
+
+/**
+ * @var QualificationDetailsViewModel $viewModel
+ */
+
+?>
+<?php echo $this->partial('infoMessages', ['getFromFlash' => true]); ?>
+<?php
+$successMessages = $this->layout()->flashMessenger->getSuccessMessages();
+echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
+?>
+<?php echo $this->partial('errorMessages', array('getFromFlash' => true)); ?>
+<div>
+    <h3 class="summary-heading">Group A</h3>
+    <?php echo $this->partial(
+        'partial/gds/gds-table/gds-summary-smaller-key-table',
+        [
+            'table' => $viewModel->getQualificationDetailsGroupAViewModel()->getTable('group-A'),
+        ]
+    );?>
+
+    <h3 class="summary-heading">Group B</h3>
+    <?php echo $this->partial(
+        'partial/gds/gds-table/gds-summary-smaller-key-table',
+        [
+            'table' => $viewModel->getQualificationDetailsGroupBViewModel()->getTable('group-B'),
+        ]
+    );?>
+
+
+    <nav class="content-navigation">
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo $viewModel->getReturnLink() ?>"><?php echo $viewModel->getReturnLinkText() ?></a>
+            </li>
+        </ul>
+    </nav>
+</div>

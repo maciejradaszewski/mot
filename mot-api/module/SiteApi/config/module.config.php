@@ -312,6 +312,18 @@ return [
                         'controller' => SiteSearchController::class,
                     ],
                 ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'search-by-vts-number' => [
+                      'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/number[/:id]',
+                            'defaults' => [
+                                'controller' => SiteSearchController::class,
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ],
     ],

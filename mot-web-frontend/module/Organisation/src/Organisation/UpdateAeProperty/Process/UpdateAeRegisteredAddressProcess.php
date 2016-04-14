@@ -4,22 +4,20 @@ namespace Organisation\UpdateAeProperty\Process;
 
 use Core\Formatting\AddressFormatter;
 use Core\ViewModel\Gds\Table\GdsTable;
-use DvsaClient\Mapper\OrganisationMapper;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Dto\Contact\AddressDto;
 use DvsaCommon\Enum\OrganisationContactTypeCode;
-use DvsaCommon\Model\AuthorisedExaminerPatchModel;
-use Organisation\UpdateAeProperty\Process\Form\AddressPropertyForm;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
+use DvsaCommon\Model\AuthorisedExaminerPatchModel;
+use Organisation\UpdateAeProperty\AbstractTwoStepAeProcess;
+use Organisation\UpdateAeProperty\Process\Form\AddressPropertyForm;
 use Organisation\UpdateAeProperty\UpdateAePropertyAction;
-use Organisation\UpdateAeProperty\UpdateAeReviewProcessInterface;
 
-class UpdateAeRegisteredAddressProcess implements UpdateAeReviewProcessInterface, AutoWireableInterface
+class UpdateAeRegisteredAddressProcess extends AbstractTwoStepAeProcess implements AutoWireableInterface
 {
     protected $propertyName = UpdateAePropertyAction::AE_REGISTERED_ADDRESS_PROPERTY;
     protected $permission = PermissionAtOrganisation::AE_UPDATE_REGISTERED_OFFICE_ADDRESS;
     protected $requiresReview = true;
-    protected $breadcrumbLabel = "Change registered office address";
     protected $submitButtonText = "Review registered office address";
     protected $successfulEditMessage = "Registered office address has been successfully changed.";
     protected $formPageTitle = "Change registered office address";
@@ -27,24 +25,10 @@ class UpdateAeRegisteredAddressProcess implements UpdateAeReviewProcessInterface
     protected $reviewPageTitle = "Review registered address";
     protected $reviewPageLede = "Please check the address below is correct.";
     protected $reviewPageButtonText = "Change registered address";
-    /**
-     * @var OrganisationMapper
-     */
-    protected $organisationMapper;
-
-    public function __construct(OrganisationMapper $siteMapper)
-    {
-        $this->organisationMapper = $siteMapper;
-    }
 
     public function getPropertyName()
     {
         return $this->propertyName;
-    }
-
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
     }
 
     public function getFormPartial()
@@ -62,9 +46,9 @@ class UpdateAeRegisteredAddressProcess implements UpdateAeReviewProcessInterface
         return $this->submitButtonText;
     }
 
-    public function getPrePopulatedData($aeId)
+    public function getPrePopulatedData()
     {
-        $authorisedExaminer = $this->organisationMapper->getAuthorisedExaminer($aeId);
+        $authorisedExaminer = $this->organisationMapper->getAuthorisedExaminer($this->context->getAeId());
         $contact = $authorisedExaminer->getContactByType(OrganisationContactTypeCode::REGISTERED_COMPANY);
         if (empty($contact) || empty($contact->getAddress())) {
             return [];
@@ -79,15 +63,15 @@ class UpdateAeRegisteredAddressProcess implements UpdateAeReviewProcessInterface
         return $this->permission;
     }
 
-    public function update($aeId, $formData)
+    public function update($formData)
     {
-        $this->organisationMapper->updateAePropertiesWithArray($aeId,[
+        $this->organisationMapper->updateAePropertiesWithArray($this->context->getAeId(), [
             AuthorisedExaminerPatchModel::REGISTERED_ADDRESS_POSTCODE => $formData[AddressPropertyForm::FIELD_POSTCODE],
-            AuthorisedExaminerPatchModel::REGISTERED_ADDRESS_COUNTRY => $formData[AddressPropertyForm::FIELD_COUNTRY],
-            AuthorisedExaminerPatchModel::REGISTERED_ADDRESS_LINE_1 => $formData[AddressPropertyForm::FIELD_ADDRESS_LINE_1],
-            AuthorisedExaminerPatchModel::REGISTERED_ADDRESS_LINE_2 => $formData[AddressPropertyForm::FIELD_ADDRESS_LINE_2],
-            AuthorisedExaminerPatchModel::REGISTERED_ADDRESS_LINE_3 => $formData[AddressPropertyForm::FIELD_ADDRESS_LINE_3],
-            AuthorisedExaminerPatchModel::REGISTERED_ADDRESS_TOWN => $formData[AddressPropertyForm::FIELD_TOWN],
+            AuthorisedExaminerPatchModel::REGISTERED_ADDRESS_COUNTRY  => $formData[AddressPropertyForm::FIELD_COUNTRY],
+            AuthorisedExaminerPatchModel::REGISTERED_ADDRESS_LINE_1   => $formData[AddressPropertyForm::FIELD_ADDRESS_LINE_1],
+            AuthorisedExaminerPatchModel::REGISTERED_ADDRESS_LINE_2   => $formData[AddressPropertyForm::FIELD_ADDRESS_LINE_2],
+            AuthorisedExaminerPatchModel::REGISTERED_ADDRESS_LINE_3   => $formData[AddressPropertyForm::FIELD_ADDRESS_LINE_3],
+            AuthorisedExaminerPatchModel::REGISTERED_ADDRESS_TOWN     => $formData[AddressPropertyForm::FIELD_TOWN],
         ]);
     }
 
@@ -96,15 +80,15 @@ class UpdateAeRegisteredAddressProcess implements UpdateAeReviewProcessInterface
         return $this->successfulEditMessage;
     }
 
-    public function getFormPageTitle()
+    public function getEditStepPageTitle()
     {
         return $this->formPageTitle;
     }
 
-    public function transformFormIntoGdsTable($aeId, array $formData)
+    public function transformFormIntoGdsTable(array $formData)
     {
         $table = new GdsTable();
-        $authorisedExaminer = $this->organisationMapper->getAuthorisedExaminer($aeId);
+        $authorisedExaminer = $this->organisationMapper->getAuthorisedExaminer($this->context->getAeId());
         $table->newRow()->setLabel('Authorised Examiner')->setValue($authorisedExaminer->getName());
         $table->newRow("address")->setLabel("Address")
             ->setValue((new AddressFormatter())->escapeAddressToMultiLine(
@@ -116,7 +100,7 @@ class UpdateAeRegisteredAddressProcess implements UpdateAeReviewProcessInterface
                 $formData[AddressPropertyForm::FIELD_COUNTRY],
                 $formData[AddressPropertyForm::FIELD_POSTCODE]
             )
-            ,false);
+                , false);
 
         return $table;
     }
@@ -136,11 +120,6 @@ class UpdateAeRegisteredAddressProcess implements UpdateAeReviewProcessInterface
         return $this->reviewPageButtonText;
     }
 
-    public function getBreadcrumbLabel()
-    {
-        return $this->breadcrumbLabel;
-    }
-
     /**
      * @param AddressDto $address
      * @return array
@@ -148,9 +127,9 @@ class UpdateAeRegisteredAddressProcess implements UpdateAeReviewProcessInterface
     protected function prepopulateFromAddressDto($address)
     {
         return [
-            AddressPropertyForm::FIELD_TOWN => $address->getTown(),
-            AddressPropertyForm::FIELD_POSTCODE => $address->getPostcode(),
-            AddressPropertyForm::FIELD_COUNTRY => $address->getCountry(),
+            AddressPropertyForm::FIELD_TOWN           => $address->getTown(),
+            AddressPropertyForm::FIELD_POSTCODE       => $address->getPostcode(),
+            AddressPropertyForm::FIELD_COUNTRY        => $address->getCountry(),
             AddressPropertyForm::FIELD_ADDRESS_LINE_1 => $address->getAddressLine1(),
             AddressPropertyForm::FIELD_ADDRESS_LINE_2 => $address->getAddressLine2(),
             AddressPropertyForm::FIELD_ADDRESS_LINE_3 => $address->getAddressLine3(),

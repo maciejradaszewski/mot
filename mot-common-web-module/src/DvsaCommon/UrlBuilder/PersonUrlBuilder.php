@@ -26,6 +26,9 @@ class PersonUrlBuilder extends AbstractUrlBuilder
     const MANAGE_INTERNAL_ROLES = '/roles';
     const PASSWORD = '/password';
     const EVENT = '/event';
+    const DEMO_TEST_REQUEST = '/demo-test-request';
+    const MOT_TESTING_CERTIFICATE = '/mot-testing-certificate/:group';
+    const MOT_TESTING_CERTIFICATE_VALIDATE = '/mot-testing-certificate/validate';
 
     protected $routesStructure
         = [
@@ -43,6 +46,9 @@ class PersonUrlBuilder extends AbstractUrlBuilder
                         self::BY_REMOVE_ROLE_ID => '',
                     ],
                     self::PASSWORD                       => '',
+                    self::DEMO_TEST_REQUEST              => '',
+                    self::MOT_TESTING_CERTIFICATE        => '',
+                    self::MOT_TESTING_CERTIFICATE_VALIDATE => '',
                 ],
                 self::BY_IDENTIFIER => '',
             ],
@@ -220,5 +226,21 @@ class PersonUrlBuilder extends AbstractUrlBuilder
     public static function personPassword($personId)
     {
         return self::byId($personId)->appendRoutesAndParams(self::PASSWORD);
+    }
+
+    public static function demoTestRequest($personId)
+    {
+        return self::byId($personId)->appendRoutesAndParams(self::DEMO_TEST_REQUEST);
+    }
+
+    public static function qualificationDetails($personId, $group)
+    {
+        return self::byId($personId)->appendRoutesAndParams(self::MOT_TESTING_CERTIFICATE)
+            ->routeParam('group', $group);
+    }
+
+    public static function validateQualificationDetails($personId)
+    {
+        return self::byId($personId)->appendRoutesAndParams(self::MOT_TESTING_CERTIFICATE_VALIDATE);
     }
 }

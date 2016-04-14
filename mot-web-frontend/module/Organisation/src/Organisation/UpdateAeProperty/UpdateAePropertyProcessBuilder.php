@@ -2,30 +2,36 @@
 
 namespace Organisation\UpdateAeProperty;
 
-use DvsaClient\Mapper\OrganisationMapper;
+use Core\TwoStepForm\ProcessBuilderInterface;
+use Core\TwoStepForm\SingleStepProcessInterface;
 use DvsaCommon\Utility\ArrayUtils;
+use Site\UpdateVtsProperty\AbstractSingleStepVtsProcess;
 
-class UpdateAePropertyProcessBuilder
+/**
+ * Class UpdateAePropertyProcessBuilder
+ * @package Organisation\UpdateAeProperty
+ *
+ * @deprecated remove class
+ */
+class UpdateAePropertyProcessBuilder implements ProcessBuilderInterface
 {
     /**
-     * @var UpdateAePropertyProcessInterface[]
+     * @var SingleStepProcessInterface[]
      */
     private $processes = [];
-
-    private $organisationMapper;
 
     public function __construct()
     {
     }
 
-    public function add(UpdateAePropertyProcessInterface $process)
+    public function add(AbstractSingleStepAeProcess $process)
     {
         $this->processes[$process->getPropertyName()] = $process;
     }
 
     public function get($propertyName)
     {
-        /** @var UpdateAePropertyProcessInterface $process */
+        /** @var SingleStepProcessInterface $process */
         $process = ArrayUtils::tryGet($this->processes, $propertyName);
 
         if ($process === null) {

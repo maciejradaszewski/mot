@@ -48,6 +48,7 @@ abstract class AbstractRegistrationStep extends AbstractStep
     protected function getFieldNameMapping()
     {
         $fieldNameMapping = [
+            DetailsInputFilter::FIELD_PHONE => 'Telephone number',
             DetailsInputFilter::FIELD_EMAIL_CONFIRM => 'Re-type your email address',
             AddressInputFilter::FIELD_ADDRESS_1 => 'Address line 1',
             AddressInputFilter::FIELD_ADDRESS_2 => 'Address line 2',

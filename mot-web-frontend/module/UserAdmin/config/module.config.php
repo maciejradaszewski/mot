@@ -2,6 +2,7 @@
 
 use UserAdmin\Controller\SecurityQuestionController;
 use UserAdmin\Controller\ChangeQualificationStatusController;
+use UserAdmin\Controller\DemoTestRequestsController;
 use UserAdmin\Controller\UserSearchController;
 use UserAdmin\Factory\Controller\ResetAccountClaimByPostControllerFactory;
 use UserAdmin\Factory\Controller\SecurityQuestionControllerFactory;
@@ -56,6 +57,30 @@ return [
                             ],
                         ],
                         'may_terminate' => true,
+                    ],
+                    'demo-test-requests' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/demo-test-requests',
+                            'defaults' => [
+                                'controller' => DemoTestRequestsController::class,
+                                'action' => 'index'
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'download-csv' => [
+                                'type' => 'segment',
+                                'options' => [
+                                    'route' => '/csv',
+                                    'defaults' => [
+                                        'controller' => DemoTestRequestsController::class,
+                                        'action' => 'downloadCsv'
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                        ],
                     ],
                     'user-search-results' => [
                         'type' => 'segment',

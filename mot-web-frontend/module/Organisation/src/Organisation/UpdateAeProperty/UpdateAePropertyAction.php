@@ -2,15 +2,10 @@
 
 namespace Organisation\UpdateAeProperty;
 
-use Core\Action\ActionResult;
-use Core\Action\RedirectToRoute;
-use Core\Routing\AeRouteList;
-use DvsaClient\Mapper\OrganisationMapper;
-use DvsaCommon\Auth\MotAuthorisationServiceInterface;
+use Core\TwoStepForm\EditStepAction;
+use Core\TwoStepForm\FormContextInterface;
+use Core\TwoStepForm\SingleStepProcessInterface;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
-use DvsaCommon\HttpRestJson\Exception\ValidationException;
-use Zend\Form\Form;
-use Zend\View\Helper\Url;
 
 class UpdateAePropertyAction implements AutoWireableInterface
 {
@@ -28,137 +23,21 @@ class UpdateAePropertyAction implements AutoWireableInterface
     const AE_CORRESPONDENCE_TELEPHONE_PROPERTY = 'correspondence-telephone';
     const AE_COMPANY_NUMBER_PROPERTY = 'company-number';
 
-    private $formSession;
-
-    private $organisationMapper;
-
-    private $authorisationService;
-    /**
-     * @var UpdateAePropertyProcessBuilder
-     */
     private $processBuilder;
 
-    private $urlHelper;
+    private $editStepProcess;
 
     public function __construct(
-        UpdateAePropertyFormSession $session,
-        OrganisationMapper $organisationMapper,
-        MotAuthorisationServiceInterface $authorisationService,
         UpdateAePropertyProcessBuilder $processBuilder,
-        Url $urlHelper
+        EditStepAction $editStepProcess
     )
     {
-        $this->formSession = $session;
-        $this->organisationMapper = $organisationMapper;
-        $this->authorisationService = $authorisationService;
         $this->processBuilder = $processBuilder;
-        $this->urlHelper = $urlHelper;
+        $this->editStepProcess = $editStepProcess;
     }
 
-    public function execute($isPost, $propertyName, $aeId, $formUuid, array $formData = [])
+    public function execute($isPost, SingleStepProcessInterface $process, FormContextInterface $context, $formUuid, array $formData = [])
     {
-        if ($isPost) {
-            return $this->executePost($propertyName, $aeId, $formData);
-        } else {
-            return $this->executeGet($propertyName, $aeId, $formUuid);
-        }
-    }
-
-    private function executeGet($propertyName, $aeId, $formUuid)
-    {
-        $process = $this->processBuilder->get($propertyName);
-
-        $permission = $process->getPermission();
-        $this->authorisationService->assertGrantedAtOrganisation($permission, $aeId);
-
-        if ($formUuid) {
-            $formData = $this->formSession->get($aeId, $propertyName, $formUuid);
-            if ($formData === null) {
-                return $this->redirectBackWithoutTheFormUuidInQuery($aeId, $propertyName);
-            }
-        } else {
-            $formData = $process->getPrePopulatedData($aeId);
-        }
-
-        $form = $process->createEmptyForm();
-        $form->setData($formData);
-
-        return $this->buildActionResult($aeId, $process, $form);
-    }
-
-    private function executePost($propertyName, $aeId, array $formData = [])
-    {
-        $process = $this->processBuilder->get($propertyName);
-
-        $permission = $process->getPermission();
-        $this->authorisationService->assertGrantedAtOrganisation($permission, $aeId);
-
-        $form = $process->createEmptyForm();
-        $form->setData($formData);
-
-        $errors = [];
-        if ($form->isValid()) {
-            if ($process->getRequiresReview()) {
-                return $this->storeFormInSessionAndRedirectToReviewChangesPage($aeId, $propertyName, $formData);
-            }
-
-            try {
-                return $this->updateAndRedirectToAePage($process, $aeId, $formData);
-            } catch (ValidationException $exception) {
-                $errors = $exception->getDisplayMessages();
-            }
-        }
-
-        return $this->buildActionResult($aeId, $process, $form, $errors);
-    }
-
-    private function updateAndRedirectToAePage(UpdateAePropertyProcessInterface $process, $aeId, array $formData)
-    {
-        $process->update($aeId, $formData);
-        $result = new RedirectToRoute(AeRouteList::AE, ['id' => $aeId]);
-        $result->addSuccessMessage($process->getSuccessfulEditMessage());
-
-        return $result;
-    }
-
-    private function storeFormInSessionAndRedirectToReviewChangesPage($aeId, $propertyName, $formData)
-    {
-        $formUuid = $this->formSession->store($aeId, $propertyName, $formData);
-
-        return new RedirectToRoute(AeRouteList::AE_EDIT_PROPERTY_REVIEW,
-            ['id' => $aeId, 'propertyName' => $propertyName, 'formUuid' => $formUuid]
-        );
-    }
-
-    private function redirectBackWithoutTheFormUuidInQuery($aeId, $propertyName)
-    {
-        return new RedirectToRoute(AeRouteList::AE_EDIT_PROPERTY, ['id' => $aeId, 'propertyName' => $propertyName]);
-    }
-
-    private function buildActionResult($aeId, UpdateAePropertyProcessInterface $process, Form $form, $errors = [])
-    {
-        $updateAePropertyBreadcrumbs = new UpdateAePropertyBreadcrumbs(
-            $this->organisationMapper->getAuthorisedExaminer($aeId),
-            $this->authorisationService,
-            $this->urlHelper,
-            $process->getFormPageTitle()
-        );
-        $breadcrumbs = $updateAePropertyBreadcrumbs->create();
-
-        $vm = new UpdateAePropertyViewModel(
-            $aeId, $process->getPropertyName(), $process->getFormPartial(), $process->getSubmitButtonText(), $form
-        );
-
-        $actionResult = new ActionResult();
-        $actionResult->setViewModel($vm);
-        $actionResult->addErrorMessages($errors);
-
-        $actionResult->layout()->setPageTitle($process->getFormPageTitle());
-        $actionResult->layout()->setPageSubTitle("Authorised Examiner");
-
-        $actionResult->layout()->setTemplate('layout/layout-govuk.phtml');
-        $actionResult->layout()->setBreadcrumbs($breadcrumbs);
-
-        return $actionResult;
+        return $this->editStepProcess->execute($isPost, $process, $context, $formUuid, $formData);
     }
 }

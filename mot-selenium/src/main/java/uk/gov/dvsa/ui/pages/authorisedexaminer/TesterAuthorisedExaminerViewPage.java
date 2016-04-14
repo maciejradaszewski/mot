@@ -7,6 +7,9 @@ import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.cpms.ChoosePaymentTypePage;
 import uk.gov.dvsa.ui.pages.cpms.SlotRefundPage;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class TesterAuthorisedExaminerViewPage extends AuthorisedExaminerViewPage {
     private static String PAGE_TITLE = "Authorised Examiner";
 
@@ -75,5 +78,31 @@ public class TesterAuthorisedExaminerViewPage extends AuthorisedExaminerViewPage
 
     public boolean isAEStatusRowDisplayed() {
         return PageInteractionHelper.isElementDisplayed(authStatus);
+    }
+
+    public boolean areAllChangeLinksHidden(){
+        List<WebElement> webElements = Arrays.asList(
+                aeAuthtatus,
+                changeNameLink,
+                changeTradingNameLink,
+                changeBusinessTypeLink,
+                changeAuthStatusLink,
+                authStatus,
+                changeDAOLink,
+                changeRegOfficeAddressLink,
+                changeRegOfficeEmailLink,
+                changeRegOfficeTelephoneLink,
+                changeCorrespondenceAddressLink,
+                changeCorrespondenceEmailLink,
+                changeCorrespondenceTelephoneLink
+        );
+
+        for (WebElement webElement: webElements) {
+            if(PageInteractionHelper.isElementDisplayed(webElement)){
+                return false;
+            }
+        }
+
+        return true;
     }
 }

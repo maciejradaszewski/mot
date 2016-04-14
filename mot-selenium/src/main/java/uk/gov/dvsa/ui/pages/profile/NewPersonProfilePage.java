@@ -3,14 +3,12 @@ package uk.gov.dvsa.ui.pages.profile;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import uk.gov.dvsa.domain.navigation.MotPageFactory;
 import uk.gov.dvsa.framework.config.webdriver.MotAppDriver;
 import uk.gov.dvsa.helper.PageInteractionHelper;
 import uk.gov.dvsa.ui.pages.ChangeEmailDetailsPage;
 import uk.gov.dvsa.ui.pages.ChangeTelephoneDetailsPage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
-import uk.gov.dvsa.ui.pages.dvsa.UserSearchResultsPage;
-import uk.gov.dvsa.ui.pages.vts.ChangeDetails.ChangeDetailsAddressPage;
+import uk.gov.dvsa.ui.pages.profile.qualificationdetails.QualificationDetailsPage;
 
 public class NewPersonProfilePage extends ProfilePage {
 
@@ -26,6 +24,7 @@ public class NewPersonProfilePage extends ProfilePage {
     @FindBy(id = "related") private WebElement related;
     @FindBy(id = "account_security") private WebElement accountSecurity;
     @FindBy(id = "roles-and-associations") private WebElement rolesAndAssociationsLink;
+    @FindBy(id = "qualification-details") private WebElement qualificationDetails;
     @FindBy(css = "#email-address a") private WebElement changeEmailLink;
     @FindBy(css = "#full-address a") private WebElement changeAddressLink;
     @FindBy(css = "#email-address") private WebElement userEmail;
@@ -142,5 +141,10 @@ public class NewPersonProfilePage extends ProfilePage {
     public ChangeAddressPage clickChangeAddressLink() {
         changeAddressLink.click();
         return new ChangeAddressPage(driver);
+    }
+
+    public QualificationDetailsPage clickQualificationDetailsLink(){
+        qualificationDetails.click();
+        return new QualificationDetailsPage(driver);
     }
 }

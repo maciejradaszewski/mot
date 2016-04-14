@@ -2,6 +2,8 @@
 
 namespace TestSupport\Service;
 
+use DvsaCommon\Exception\UnauthorisedException;
+use DvsaCommon\HttpRestJson\Client;
 use TestSupport\Helper\NotificationsHelper;
 use TestSupport\Service\AccountDataService;
 use TestSupport\Helper\TestSupportAccessTokenManager;
@@ -9,6 +11,15 @@ use DvsaCommon\Constants\Role;
 
 class UserService
 {
+    /**
+     * @var \DvsaCommon\HttpRestJson\Client
+     */
+    private $restClient;
+
+    /**
+     * @var TestSupportAccessTokenManager
+     */
+    private $tokenManager;
 
     /**
      * @var AccountDataService
@@ -22,8 +33,12 @@ class UserService
 
     public function __construct(
         AccountDataService $accountDataService,
-        NotificationsHelper $notificationsHelper
-    ) {
+        NotificationsHelper $notificationsHelper,
+        Client $restClient,
+        TestSupportAccessTokenManager $tokenManager)
+    {
+        $this->restClient   = $restClient;
+        $this->tokenManager = $tokenManager;
         $this->accountDataService = $accountDataService;
         $this->notificationsHelper = $notificationsHelper;
     }
@@ -41,4 +56,36 @@ class UserService
         $this->accountDataService->addRole($resultJson->data['personId'], Role::USER);
         return $resultJson;
     }
+
+    /**
+     * Creates mot testing certificate
+     * @param $data
+     * @return mixed
+     * @throws UnauthorisedException
+     * @throws \Exception
+     */
+    public function addQualificationDetails($data)
+    {
+        $accessToken = $this->tokenManager->getToken($data['userName'], $data['userPassword']);
+
+        $this->restClient->setAccessToken($accessToken);
+        try {
+            $result = $this->restClient->post(
+                sprintf('person/%s/mot-testing-certificate', $data['userId']),
+                [
+                    "id"=> null,
+                    "vehicleClassGroupCode"=> $data['vehicleClassGroupCode'],
+                    "siteNumber"=> $data['siteNumber'],
+                    "certificateNumber"=> $data['certificateNumber'],
+                    "dateOfQualification"=> $data['dateOfQualification']
+                ]
+            );
+
+            return $result['data'];
+        } catch (UnauthorisedException $e){
+            throw new UnauthorisedException('Cannot create certificate: ' . $e->getMessage());
+        }
+    }
+
+
 }

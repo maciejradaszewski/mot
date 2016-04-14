@@ -6,10 +6,9 @@ use Application\Helper\PrgHelper;
 use Application\Service\CatalogService;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use Dashboard\Authorisation\ViewTradeRolesAssertion;
-use DvsaClient\Entity\TesterAuthorisation;
+use DvsaCommon\Model\TesterAuthorisation;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
-use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonTest\Bootstrap;
@@ -31,7 +30,6 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
     /** @var PersonRoleManagementService | \PHPUnit_Framework_MockObject_MockObject */
     private $personRoleManagementService;
     private $catalogService;
-    private $config;
 
     public function setUp()
     {
@@ -47,7 +45,6 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
             ->willReturn(new TesterAuthorisation());
         $this->personRoleManagementService = XMock::of(PersonRoleManagementService::class);
         $this->catalogService = XMock::of(CatalogService::class);
-        $this->config = XMock::of(MotConfig::class);
 
         $this->setController(
             new UserProfileController(
@@ -56,7 +53,6 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
                 $this->testerGroupAuthorisationMapper,
                 $this->personRoleManagementService,
                 $this->catalogService,
-                $this->config,
                 XMock::of(ViewTradeRolesAssertion::class)
             )
         );
@@ -153,17 +149,11 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
                         'params' => [self::PERSON_ID],
                         'result' => $this->createEmptyPersonHelpDeskProfileDto(),
                     ],
-                    [
-                        'class'  => 'config',
-                        'method' => 'get',
-                        'params' => ['feature_toggle', '2fa.method.visible'],
-                        'result' => true,
-                    ],
+
                 ],
                 'expect' => [
                     'viewModel' => true,
                     'viewModelVariables' => [
-                        'display2FAMethod' => true,
                     ],
                 ],
             ],
@@ -183,17 +173,11 @@ class UserProfileControllerTest extends AbstractFrontendControllerTestCase
                         'params' => [self::PERSON_ID],
                         'result' => $this->createEmptyPersonHelpDeskProfileDto(),
                     ],
-                    [
-                        'class'  => 'config',
-                        'method' => 'get',
-                        'params' => ['feature_toggle', '2fa.method.visible'],
-                        'result' => false,
-                    ],
+
                 ],
                 'expect' => [
                     'viewModel' => true,
                     'viewModelVariables' => [
-                        'display2FAMethod' => false,
                     ],
                 ],
             ],

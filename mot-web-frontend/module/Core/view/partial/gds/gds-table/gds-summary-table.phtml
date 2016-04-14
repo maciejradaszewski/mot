@@ -8,6 +8,7 @@ if (!isset($table) || !$table instanceof GdsTable) {
 
 ?>
 <table class="table-summary">
+    <?php if ($table->isHeaderSet()): ?>
     <thead>
     <tr>
         <th class="table-summary__heading"
@@ -19,6 +20,7 @@ if (!isset($table) || !$table instanceof GdsTable) {
         </th>
     </tr>
     </thead>
+    <?php endif; ?>
 
     <tbody>
     <?php if ($table->hasBody()): ?>
@@ -33,6 +35,7 @@ if (!isset($table) || !$table instanceof GdsTable) {
                 <td class="table-summary__value">
                     <span<?php
                         echo($row->getHtmlId() ? ' id="' . $this->escapeHtmlAttr($row->getHtmlId()) . '"' : '');
+                        echo $row->isHtmlClassSet() ? ' class="' . $this->escapeHtmlAttr($row->getHtmlClass()) .'"' : '';
                         ?>>
                         <?php echo $row->getValue()->isEscapeRequired() ? $this->escapeHtml($value) : $value; ?>
                     </span>

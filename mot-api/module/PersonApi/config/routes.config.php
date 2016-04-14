@@ -2,6 +2,7 @@
 
 use PersonApi\Controller\AuthorisedExaminerController;
 use PersonApi\Controller\DashboardController;
+use PersonApi\Controller\DemoTestRequestsController;
 use PersonApi\Controller\MotTestingAuthorisationController;
 use PersonApi\Controller\PasswordExpiryController;
 use PersonApi\Controller\PasswordController;
@@ -26,6 +27,8 @@ use PersonApi\Controller\UserStatsController;
 use UserApi\SpecialNotice\Controller\SpecialNoticeController;
 use PersonApi\Controller\UpdatePersonDateOfBirthController;
 use PersonApi\Controller\EditTelephoneController;
+use PersonApi\Controller\MotTestingCertificateController;
+use PersonApi\Controller\MotTestingCertificateValidateController;
 
 return [
     'routes' => [
@@ -49,6 +52,16 @@ return [
                     'controller' => PasswordExpiryController::class,
                 ]
             ]
+        ],
+        'demo-test-requests' => [
+            'type' => 'segment',
+            'options' => [
+                'route' => '/demo-test-requests',
+                'defaults' => [
+                    'controller' => DemoTestRequestsController::class,
+                ],
+            ],
+            'may_terminate' => true,
         ],
         'person'           => [
             'type'          => 'segment',
@@ -305,7 +318,30 @@ return [
                             'controller' => UpdateAddressController::class,
                         ]
                     ]
-                ]
+                ],
+                'mot-testing-certificate' => [
+                    'type' => 'segment',
+                    'options' => [
+                        'route' => '/mot-testing-certificate[/:group]',
+                        'defaults' => [
+                            'controller' => MotTestingCertificateController::class,
+                        ],
+                        'constraints' => [
+                            'group' => 'a|b'
+                        ],
+                    ],
+                    'may_terminate' => true,
+                ],
+                'mot-testing-certificate-validate' => [
+                    'type' => 'segment',
+                    'options' => [
+                        'route' => '/mot-testing-certificate/validate',
+                        'defaults' => [
+                            'controller' => MotTestingCertificateValidateController::class,
+                        ],
+                    ],
+                    'may_terminate' => true,
+                ],
             ],
         ],
     ],

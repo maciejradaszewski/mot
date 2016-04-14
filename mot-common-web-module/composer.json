@@ -10,7 +10,7 @@
     "repositories": [
         {
             "type": "composer",
-            "url": "http://artifacts.mot.npm"
+            "url": "https://packages.motdev.org.uk"
         }
     ],
     "autoload": {

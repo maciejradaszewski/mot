@@ -165,7 +165,7 @@ class PersonalDetailsService extends AbstractService
      *
      * @throws UnauthorisedException
      */
-    private function assertViewGranted(Person $person)
+    public function assertViewGranted(Person $person)
     {
         if ($this->authorisationService->isGranted(PermissionInSystem::VIEW_OTHER_USER_PROFILE)) {
             return;

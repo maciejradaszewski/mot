@@ -15,7 +15,6 @@ use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionInSystem;
-use DvsaCommon\Configuration\MotConfig;
 use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Enum\MessageTypeCode;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
@@ -62,11 +61,6 @@ class UserProfileController extends AbstractDvsaMotTestController
     private $personRoleManagementService;
 
     /**
-     * @var MotConfig
-     */
-    private $config;
-
-    /**
      * @var ViewTradeRolesAssertion
      */
     private $viewTradeRolesAssertion;
@@ -77,7 +71,6 @@ class UserProfileController extends AbstractDvsaMotTestController
      * @param TesterGroupAuthorisationMapper   $testerGroupAuthorisationMapper
      * @param PersonRoleManagementService      $personRoleManagementService
      * @param CatalogService                   $catalogService
-     * @param MotConfig                        $config
      * @param ViewTradeRolesAssertion          $viewTradeRolesAssertion
      */
     public function __construct(
@@ -86,7 +79,6 @@ class UserProfileController extends AbstractDvsaMotTestController
         TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper,
         PersonRoleManagementService $personRoleManagementService,
         CatalogService $catalogService,
-        MotConfig $config,
         ViewTradeRolesAssertion $viewTradeRolesAssertion
     ) {
         $this->userAccountAdminService = $userAccountAdminService;
@@ -94,7 +86,6 @@ class UserProfileController extends AbstractDvsaMotTestController
         $this->testerGroupAuthorisationMapper = $testerGroupAuthorisationMapper;
         $this->personRoleManagementService = $personRoleManagementService;
         $this->catalogService = $catalogService;
-        $this->config = $config;
         $this->viewTradeRolesAssertion = $viewTradeRolesAssertion;
     }
 
@@ -121,10 +112,7 @@ class UserProfileController extends AbstractDvsaMotTestController
         );
         $presenter->setPersonId($personId);
 
-        $display2FAMethod = $this->config->get('feature_toggle', '2fa.method.visible');
-
         $viewModel = $this->createViewModel($personId, $presenter->displayTitleAndFullName(), $presenter, true);
-        $viewModel->setVariable('display2FAMethod', $display2FAMethod);
         $viewModel->setTemplate($presenter->getTemplate());
 
         if ($this->viewTradeRolesAssertion->shouldViewLink($personId, $presenter->hasDvsaRoles(), $presenter->hasTradeRoles())) {

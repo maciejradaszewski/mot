@@ -25,7 +25,6 @@ class UserProfileControllerFactory implements FactoryInterface
         $testerGroupAuthorisationMapper = $appServiceLocator->get(TesterGroupAuthorisationMapper::class);
         $personRoleManagementService = $appServiceLocator->get(PersonRoleManagementService::class);
         $catalogService = $appServiceLocator->get("CatalogService");
-        $config = $appServiceLocator->get(MotConfig::class);
 
         $viewTradeRolesAssertion = $appServiceLocator->get(ViewTradeRolesAssertion::class);
 
@@ -35,7 +34,6 @@ class UserProfileControllerFactory implements FactoryInterface
             $testerGroupAuthorisationMapper,
             $personRoleManagementService,
             $catalogService,
-            $config,
             $viewTradeRolesAssertion
         );
 

@@ -7,24 +7,19 @@ use DvsaClient\MapperFactory;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\Model\AuthorisedExaminerPatchModel;
+use Organisation\UpdateAeProperty\AbstractSingleStepAeProcess;
 use Organisation\UpdateAeProperty\Process\Form\StatusPropertyForm;
 use Organisation\UpdateAeProperty\UpdateAePropertyAction;
-use Organisation\UpdateAeProperty\UpdateAePropertyProcessInterface;
-use Zend\Form\Element\Text;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
-use Zend\Validator\NotEmpty;
+use Zend\View\Helper\Url;
 
-class UpdateAeStatusProcess implements UpdateAePropertyProcessInterface, AutoWireableInterface
+class UpdateAeStatusProcess extends AbstractSingleStepAeProcess implements AutoWireableInterface
 {
     private $propertyName = UpdateAePropertyAction::AE_STATUS_PROPERTY;
     private $permission = PermissionAtOrganisation::AE_UPDATE_STATUS;
-    private $requiresReview = false;
     private $submitButtonText = "Change status";
     private $successfulEditMessage = "Status has been successfully changed.";
     private $formPageTitle = "Change status";
     private $formPartial = "organisation/update-ae-property/partials/edit-status";
-    private $organisationMapper;
 
     /**
      * @var AuthForAuthorisedExaminerStatusCatalog
@@ -35,27 +30,21 @@ class UpdateAeStatusProcess implements UpdateAePropertyProcessInterface, AutoWir
      */
     private $mapper;
 
-
     public function __construct(
         OrganisationMapper $organisationMapper,
         AuthForAuthorisedExaminerStatusCatalog $authForAuthorisedExaminerStatusCatalog,
-        MapperFactory $mapper
+        MapperFactory $mapper,
+        Url $url
     )
     {
-        $this->organisationMapper = $organisationMapper;
+        parent::__construct($organisationMapper, $url);
         $this->authForAuthorisedExaminerStatusCatalog = $authForAuthorisedExaminerStatusCatalog;
         $this->mapper = $mapper;
     }
 
-
     public function getPropertyName()
     {
         return $this->propertyName;
-    }
-
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
     }
 
     public function getFormPartial()
@@ -73,9 +62,9 @@ class UpdateAeStatusProcess implements UpdateAePropertyProcessInterface, AutoWir
         return $this->submitButtonText;
     }
 
-    public function getPrePopulatedData($aeId)
+    public function getPrePopulatedData()
     {
-        $aeData = $this->organisationMapper->getAuthorisedExaminer($aeId);
+        $aeData = $this->organisationMapper->getAuthorisedExaminer($this->context->getAeId());
         return [$this->propertyName => $aeData->getAuthorisedExaminerAuthorisation()->getStatus()->getCode()];
     }
 
@@ -84,9 +73,9 @@ class UpdateAeStatusProcess implements UpdateAePropertyProcessInterface, AutoWir
         return $this->permission;
     }
 
-    public function update($aeId, $formData)
+    public function update($formData)
     {
-        $this->organisationMapper->updateAeProperty($aeId, AuthorisedExaminerPatchModel::STATUS, $formData[$this->propertyName]);
+        $this->organisationMapper->updateAeProperty($this->context->getAeId(), AuthorisedExaminerPatchModel::STATUS, $formData[$this->propertyName]);
     }
 
     public function getSuccessfulEditMessage()
@@ -94,7 +83,7 @@ class UpdateAeStatusProcess implements UpdateAePropertyProcessInterface, AutoWir
         return $this->successfulEditMessage;
     }
 
-    public function getFormPageTitle()
+    public function getEditStepPageTitle()
     {
         return $this->formPageTitle;
     }

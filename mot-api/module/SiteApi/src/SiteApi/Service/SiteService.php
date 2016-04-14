@@ -415,6 +415,15 @@ class SiteService extends AbstractService
         return $this->vtsMapper->toDto($site);
     }
 
+    /**
+     * Used when tester gets information for site where demo test should happen
+     * @param $siteNumber
+     */
+    public function getSiteByNumber($siteNumber)
+    {
+
+    }
+
     public function getSiteName($id)
     {
         $this->authService->assertGrantedAtSite(PermissionAtSite::VEHICLE_TESTING_STATION_READ, $id);

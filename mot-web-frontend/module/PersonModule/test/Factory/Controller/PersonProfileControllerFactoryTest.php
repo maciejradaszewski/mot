@@ -5,7 +5,7 @@
  * @link http://gitlab.clb.npm/mot/mot
  */
 
-namespace Dvsa\Mot\Frontend\PersonModuleTest\Factory\Security;
+namespace Dvsa\Mot\Frontend\PersonModuleTest\Factory\Controller;
 
 use Application\Data\ApiPersonalDetails;
 use Application\Service\CatalogService;

@@ -7,40 +7,30 @@ use DvsaClient\Mapper\SiteMapper;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\Model\VehicleTestingStation;
+use Site\UpdateVtsProperty\AbstractSingleStepVtsProcess;
 use Site\UpdateVtsProperty\Process\Form\TypePropertyForm;
 use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
-use Site\UpdateVtsProperty\UpdateVtsPropertyProcessInterface;
+use Zend\View\Helper\Url;
 
-class UpdateVtsTypeProcess implements UpdateVtsPropertyProcessInterface, AutoWireableInterface
+class UpdateVtsTypeProcess extends AbstractSingleStepVtsProcess implements AutoWireableInterface
 {
     private $propertyName = UpdateVtsPropertyAction::VTS_TYPE_PROPERTY;
     private $permission = PermissionAtSite::VTS_UPDATE_TYPE;
-    private $requiresReview = false;
     private $submitButtonText = "Change site type";
     private $successfulEditMessage = "Site type has been successfully changed.";
     private $formPageTitle = "Change site type";
     private $formPartial = "site/update-vts-property/partials/edit-type";
-    private $siteMapper;
-
-    /**
-     * @var VtsTypeCatalog
-     */
     private $vtsTypeCatalog;
 
-    public function __construct(SiteMapper $siteMapper, VtsTypeCatalog $vtsTypeCatalog)
+    public function __construct(SiteMapper $siteMapper, VtsTypeCatalog $vtsTypeCatalog, Url $urlHelper)
     {
-        $this->siteMapper = $siteMapper;
+        parent::__construct($siteMapper, $urlHelper);
         $this->vtsTypeCatalog = $vtsTypeCatalog;
     }
 
     public function getPropertyName()
     {
         return $this->propertyName;
-    }
-
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
     }
 
     public function getFormPartial()
@@ -58,9 +48,9 @@ class UpdateVtsTypeProcess implements UpdateVtsPropertyProcessInterface, AutoWir
         return $this->submitButtonText;
     }
 
-    public function getPrePopulatedData($vtsId)
+    public function getPrePopulatedData()
     {
-        $vtsData = $this->siteMapper->getById($vtsId);
+        $vtsData = $this->siteMapper->getById($this->context->getVtsId());
         return [$this->propertyName => $vtsData->getType()];
     }
 
@@ -69,9 +59,9 @@ class UpdateVtsTypeProcess implements UpdateVtsPropertyProcessInterface, AutoWir
         return $this->permission;
     }
 
-    public function update($vtsId, $formData)
+    public function update($formData)
     {
-        $this->siteMapper->updateVtsProperty($vtsId, VehicleTestingStation::PATCH_PROPERTY_TYPE, $formData[$this->propertyName]);
+        $this->siteMapper->updateVtsProperty($this->context->getVtsId(), VehicleTestingStation::PATCH_PROPERTY_TYPE, $formData[$this->propertyName]);
     }
 
     public function getSuccessfulEditMessage()
@@ -79,7 +69,7 @@ class UpdateVtsTypeProcess implements UpdateVtsPropertyProcessInterface, AutoWir
         return $this->successfulEditMessage;
     }
 
-    public function getFormPageTitle()
+    public function getEditStepPageTitle()
     {
         return $this->formPageTitle;
     }

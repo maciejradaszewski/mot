@@ -1,5 +1,6 @@
 package uk.gov.dvsa.data;
 
+import uk.gov.dvsa.domain.model.QualificationCertificate;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.service.UserService;
 

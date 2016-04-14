@@ -3,7 +3,7 @@
 namespace UserAdminTest\Controller;
 
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
-use DvsaClient\Entity\TesterAuthorisation;
+use DvsaCommon\Model\TesterAuthorisation;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaCommon\Dto\Person\PersonHelpDeskProfileDto;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;

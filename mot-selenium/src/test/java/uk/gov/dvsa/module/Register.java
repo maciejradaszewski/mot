@@ -21,25 +21,25 @@ public class Register {
         return pageNavigator.goToCreateAnAccountPage();
     }
 
-    public void completeDetailsWithDefaultValues(String email) throws IOException {
-        SummaryPage summaryPage = enterDetails(ContactDetailsHelper.generateUniqueName(), ContactDetailsHelper.generateUniqueName(), email);
+    public void completeDetailsWithDefaultValues(String email, String telephone) throws IOException {
+        SummaryPage summaryPage = enterDetails(ContactDetailsHelper.generateUniqueName(), ContactDetailsHelper.generateUniqueName(), email, telephone);
 
         AccountCreatedPage createdPage = summaryPage.clickCreateYourAccount();
 
         accountCreated = createdPage.isAccountCreatedTextDisplayed();
     }
 
-    public void completeDetailsWithCustomValues(String name, String surname, String emailAddress) throws IOException {
+    public void completeDetailsWithCustomValues(String name, String surname, String emailAddress, String telephone) throws IOException {
 
-        SummaryPage summaryPage = enterDetails(name, surname, emailAddress);
+        SummaryPage summaryPage = enterDetails(name, surname, emailAddress, telephone);
 
         duplicateEmailAddress = summaryPage.emailAlreadyUsedMessage();
 
         summaryPage.clickCreateYourAccount();
     }
 
-    private SummaryPage enterDetails(String name, String surname, String emailAddress) throws IOException {DetailsPage detailsPage = createAnAccount().details();
-        detailsPage.enterYourDetails(emailAddress, name, surname);
+    private SummaryPage enterDetails(String name, String surname, String emailAddress, String telephone) throws IOException {DetailsPage detailsPage = createAnAccount().details();
+        detailsPage.enterYourDetails(emailAddress, name, surname, telephone);
 
         AddressPage addressPage = detailsPage.clickContinue();
         addressPage.enterAddress();

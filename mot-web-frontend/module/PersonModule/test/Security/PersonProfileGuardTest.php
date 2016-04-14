@@ -11,8 +11,8 @@ use Dashboard\Model\PersonalDetails;
 use Dashboard\Service\TradeRolesAssociationsService;
 use Dvsa\Mot\Frontend\PersonModule\Security\PersonProfileGuard;
 use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
-use DvsaClient\Entity\TesterAuthorisation;
-use DvsaClient\Entity\TesterGroupAuthorisationStatus;
+use DvsaCommon\Model\TesterAuthorisation;
+use DvsaCommon\Model\TesterGroupAuthorisationStatus;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\MotIdentityInterface;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
@@ -48,6 +48,11 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
     private $tradeRolesAndAssociations;
 
     /**
+     * @var array
+     */
+    private $loggedInPersonTradeRolesAndAssociations;
+
+    /**
      * @var PersonalDetails
      */
     private $personalDetails;
@@ -80,6 +85,8 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->tradeRolesAndAssociations = [];
+
+        $this->loggedInPersonTradeRolesAndAssociations = [];
 
         $this->personalDetails = $this
             ->getMockBuilder(PersonalDetails::class)
@@ -1442,8 +1449,13 @@ class PersonProfileGuardTest extends \PHPUnit_Framework_TestCase
             ->method('getIdentity')
             ->willReturn($motIdentity);
 
-        return new PersonProfileGuard($this->authorisationService, $this->identityProvider, $this->personalDetails,
-            $this->testerAuthorisation, $this->tradeRolesAndAssociations, $this->context);
+        return new PersonProfileGuard(
+            $this->authorisationService,
+            $this->identityProvider,
+            $this->personalDetails,
+            $this->testerAuthorisation,
+            $this->tradeRolesAndAssociations,
+            $this->context);
     }
 
     /**

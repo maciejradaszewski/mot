@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "807fbc731064ef5f18d5d81ce271ab9d",
-    "content-hash": "a18d493f9d87d2bf77e55adca53d9ef8",
+    "hash": "0b35f9ae0d34c497b646d3df7603cf98",
+    "content-hash": "be918dfc599aaf4885a3058209297af7",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -131,7 +131,7 @@
             "version": "v1.22.1",
             "source": {
                 "type": "git",
-                "url": "git@gitlab.clb.npm:cpms/cpms-client.git",
+                "url": "git@gitlab.motdev.org.uk:cpms/cpms-client.git",
                 "reference": "9572cd02fe214d306554e64f26c3126224b0d6e7"
             },
             "require": {
@@ -167,7 +167,7 @@
             "version": "v1.22",
             "source": {
                 "type": "git",
-                "url": "git@gitlab.clb.npm:cpms/shared-reports.git",
+                "url": "git@gitlab.motdev.org.uk:cpms/shared-reports.git",
                 "reference": "771998f495f823f924d268aede96e656bb951bc9"
             },
             "require": {
@@ -1019,7 +1019,7 @@
             "version": "v1.3.0",
             "source": {
                 "type": "git",
-                "url": "http://gitlab.clb.npm/mot/dvsa-application-logger.git",
+                "url": "git@gitlab.motdev.org.uk:mot/dvsa-application-logger.git",
                 "reference": "34da62e20b980a569bbca4a5d7cf9dbe2810bbd4"
             },
             "require": {
@@ -1063,7 +1063,7 @@
             "version": "v1.1.3",
             "source": {
                 "type": "git",
-                "url": "git@gitlab.clb.npm:mot/dvsa-doctrine-module.git",
+                "url": "git@gitlab.motdev.org.uk:mot/dvsa-doctrine-module.git",
                 "reference": "93bc7be62d7485a17c72963e1c0e1512ff3b2756"
             },
             "require": {
@@ -1093,7 +1093,7 @@
             "version": "1.3.0",
             "source": {
                 "type": "git",
-                "url": "http://gitlab.clb.npm/sc/dvsa-document-module.git",
+                "url": "git@gitlab.motdev.org.uk:mot/dvsa-document-module.git",
                 "reference": "da37395f85f0d7d92315156cb23d38d65992c788"
             },
             "require": {
@@ -1122,7 +1122,7 @@
             "version": "v1.1.0",
             "source": {
                 "type": "git",
-                "url": "http://gitlab.clb.npm/mot/dvsa-logger.git",
+                "url": "git@gitlab.motdev.org.uk:mot/dvsa-logger.git",
                 "reference": "0b3ea38a2f132333c6a5480a3f17f4b1add58607"
             },
             "require": {
@@ -1167,7 +1167,7 @@
             "version": "v1.9.5",
             "source": {
                 "type": "git",
-                "url": "http://gitlab.clb.npm/mot/dvsa-openam-client.git",
+                "url": "git@gitlab.motdev.org.uk:mot/dvsa-openam-client.git",
                 "reference": "26b428061cd69fd341cdc738e717c9a091483834"
             },
             "require": {
@@ -1202,7 +1202,7 @@
             "version": "v1.1.1",
             "source": {
                 "type": "git",
-                "url": "http://gitlab.clb.npm/mot/featuretoggle.git",
+                "url": "git@gitlab.motdev.org.uk:mot/featuretoggle.git",
                 "reference": "2ca85b84d5b20959a5f4fe899fd989f92602403f"
             },
             "require": {
@@ -1231,7 +1231,7 @@
             "version": "v2.0.3",
             "source": {
                 "type": "git",
-                "url": "http://gitlab.clb.npm/mot/dvsa-scripts.git",
+                "url": "git@gitlab.motdev.org.uk:mot/dvsa-scripts.git",
                 "reference": "936bd13932b4f121150ff78ee23b7438b46cb3a9"
             },
             "type": "library",
@@ -1637,11 +1637,11 @@
         },
         {
             "name": "slot-purchase/backend-api",
-            "version": "v3.6.9",
+            "version": "v3.6.10",
             "source": {
                 "type": "git",
-                "url": "git@gitlab.clb.npm:slot-purchase/backend-api.git",
-                "reference": "05566dca74bcd7e37b3f38d3e0ccd64cf02027cc"
+                "url": "git@gitlab.motdev.org.uk:mot/slot-purchase-backend-api.git",
+                "reference": "57badff867d2d331a408162d109eb6b71cd4204d"
             },
             "require": {
                 "cpms/client": "1.22.*",
@@ -1681,7 +1681,7 @@
                 "proprietary"
             ],
             "description": "API for slot purchasing and related features",
-            "time": "2016-03-24 09:29:15"
+            "time": "2016-04-13 08:54:09"
         },
         {
             "name": "soflomo/purifier",
@@ -1915,12 +1915,12 @@
             "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:zendframework/ZendPdf.git",
-                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0"
+                "url": "https://github.com/zendframework/ZendPdf.git",
+                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "shasum": ""
             },

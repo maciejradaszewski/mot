@@ -29,6 +29,7 @@ parameters:
           Dvsa\Mot\Behat\Support\History: dvsa.http_client
           Dvsa\Mot\Behat\Support\Helper\TestSupportHelper: dvsa.test_support_helper
           Dvsa\Mot\Behat\Utility\ArrayAccess: dvsa.array_access
+          Dvsa\Mot\Behat\Support\Api\MotTestingCertificate: dvsa.mot_testing_certificate
 
 services:
     dvsa.argument_resolver:

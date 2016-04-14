@@ -93,7 +93,6 @@ class UberEntityTest extends \PHPUnit_Framework_TestCase
         $this->stack[] = new Entity\Payment();
         $this->stack[] = new Entity\Person();
         $this->stack[] = new Entity\Phone();
-        $this->stack[] = new Entity\QualificationAward();
         $this->stack[] = new Entity\Qualification();
         $this->stack[] = new Entity\QualificationType();
         $this->stack[] = new Entity\ReasonForRefusal();

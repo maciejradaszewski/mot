@@ -3,18 +3,17 @@
 namespace DvsaClient\Mapper;
 
 use Application\Service\CatalogService;
-use DvsaClient\Entity\TesterAuthorisation;
-use DvsaClient\Entity\TesterGroupAuthorisationStatus;
+use DvsaCommon\Model\TesterAuthorisation;
+use DvsaCommon\Model\TesterGroupAuthorisationStatus;
 use DvsaCommon\Enum\VehicleClassGroupCode;
 use DvsaCommon\Model\VehicleClassGroup;
 use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\Mapper\TesterGroupAuthorisationMapperInterface;
 
-class TesterGroupAuthorisationMapper
+class TesterGroupAuthorisationMapper implements TesterGroupAuthorisationMapperInterface
 {
     private $testerAuthorisationMapper;
     private $catalog;
-
-    const DEFAULT_NO_STATUS = 'Not Applied';
 
     const ERR_MSG_DIFFERENT_CLASSES_IN_GROUP = 'All classes in the group %s should have same status';
     const ERR_MSG_UNEXPECTED_CLASSES = 'Unexpected Vehicle class (%s) spotted';

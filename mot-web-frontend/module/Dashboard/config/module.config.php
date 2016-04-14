@@ -2,12 +2,14 @@
 
 use Dashboard\Controller\MyApplicationsController;
 use Dashboard\Controller\NotificationController;
+use Dvsa\Mot\Frontend\PersonModule\Controller\QualificationDetailsController;
 use Dashboard\Controller\UserStatsController;
 use Dashboard\Factory\Controller\UserHomeControllerFactory;
 use Dashboard\Factory\Controller\SecurityQuestionControllerFactory;
 use Dashboard\Controller\UserTradeRolesController;
 use Dashboard\Factory\Controller\PasswordControllerFactory;
 use Dashboard\Factory\Controller\UserTradeRolesControllerFactory;
+use Dvsa\Mot\Frontend\PersonModule\Factory\Service\QualificationDetailsServiceFactory;
 
 return [
 
@@ -87,6 +89,19 @@ return [
                                             'defaults'    => [
                                                 'controller' => UserTradeRolesController::class,
                                                 'action' => 'index',
+                                            ],
+                                        ],
+                                    ],
+                                    'qualification-details' => [
+                                        'type'          => 'segment',
+                                        'options'       => [
+                                            'route'       => '/:propertyName',
+                                            'constraints' => [
+                                                'propertyName' => 'qualification-details'
+                                            ],
+                                            'defaults'    => [
+                                                'controller' => QualificationDetailsController::class,
+                                                'action' => 'view',
                                             ],
                                         ],
                                     ],
@@ -235,6 +250,11 @@ return [
         ],
         'template_path_stack' => [
             __DIR__ . '/../view',
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
+            QualificationDetailsController::class => QualificationDetailsServiceFactory::class,
         ],
     ],
 ];

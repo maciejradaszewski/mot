@@ -51,6 +51,13 @@ use UserAdmin\Controller\UserSearchController;
             </a> (comparison of tests available)
         </li>
     <?php endif; ?>
+    <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::VIEW_USERS_IN_DEMO_TEST_NEEDED_STATE)): ?>
+        <li>
+            <a id="demo-test-requests" href="<?php echo $this->url('user_admin/demo-test-requests'); ?>">
+                Demo test requests
+            </a>
+        </li>
+    <?php endif; ?>
     <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::SLOTS_TRANSACTION_READ_FULL)): ?>
         <li>
             <a id="transactions" href="<?php echo $this->url('transaction-search'); ?>">

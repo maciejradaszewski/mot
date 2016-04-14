@@ -53,8 +53,8 @@ final class AuthorisationServiceMock implements MotAuthorisationServiceInterface
 
     public function isGrantedAtSite($permissionName, $siteId)
     {
-        $idxExists = isset($this->siteMap[$siteId]);
-        return $idxExists && in_array($permissionName, $this->siteMap[$siteId]);
+        $idExists = isset($this->siteMap[$siteId]);
+        return $idExists && in_array($permissionName, $this->siteMap[$siteId]);
     }
 
     public function isGrantedAtAnySite($permissionName)
@@ -71,8 +71,8 @@ final class AuthorisationServiceMock implements MotAuthorisationServiceInterface
 
     public function isGrantedAtOrganisation($permissionName, $orgId)
     {
-        $idxExists = isset($this->organisationMap[$orgId]);
-        return $idxExists && in_array($permissionName, $this->organisationMap[$orgId]);
+        $idExists = isset($this->organisationMap[$orgId]);
+        return $idExists && in_array($permissionName, $this->organisationMap[$orgId]);
     }
 
     public function assertGranted($permissionName)

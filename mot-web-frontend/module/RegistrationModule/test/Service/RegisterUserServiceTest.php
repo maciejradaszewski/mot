@@ -105,6 +105,7 @@ class RegisterUserServiceTest extends \PHPUnit_Framework_TestCase
                 DetailsInputFilter::FIELD_FIRST_NAME    => 'Fred',
                 DetailsInputFilter::FIELD_MIDDLE_NAME   => '',
                 DetailsInputFilter::FIELD_LAST_NAME     => 'Flintstone',
+                DetailsInputFilter::FIELD_PHONE         => '123123123',
                 DetailsInputFilter::FIELD_EMAIL         => 'registeruserservicetest@' . EmailAddressValidator::TEST_DOMAIN,
                 DetailsInputFilter::FIELD_EMAIL_CONFIRM => 'registeruserservicetest@' . EmailAddressValidator::TEST_DOMAIN,
             ],

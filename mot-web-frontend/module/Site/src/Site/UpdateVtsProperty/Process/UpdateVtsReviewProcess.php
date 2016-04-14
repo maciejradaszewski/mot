@@ -2,32 +2,36 @@
 
 namespace Site\UpdateVtsProperty\Process;
 
+use Core\Action\AbstractRedirectActionResult;
+use Core\Action\RedirectToRoute;
+use Core\Routing\VtsRouteList;
+use Core\TwoStepForm\TwoStepProcessInterface;
+use Core\ViewModel\Gds\Table\GdsTable;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
-use Site\UpdateVtsProperty\UpdateVtsReviewProcessInterface;
+use DvsaCommon\Utility\ArrayUtils;
+use Site\UpdateVtsProperty\UpdateVtsPropertyReviewViewModel;
 use Zend\Form\Form;
 
-class UpdateVtsReviewProcess implements UpdateVtsReviewProcessInterface, AutoWireableInterface
+/**
+ *
+ * todo rename this to testProcess
+ * Class UpdateVtsReviewProcess
+ * @package Site\UpdateVtsProperty\Process
+ */
+class UpdateVtsReviewProcess extends UpdateVtsPropertyProcess implements TwoStepProcessInterface, AutoWireableInterface
 {
     private $formToGdsTableTransformer;
     private $reviewPageTitle;
     private $reviewPageLede;
     private $reviewPageButtonText;
-    private $propertyName;
-    private $permission;
     private $requiresReview;
-    private $form;
-    private $submitButtonText;
-    private $formPartial;
-    private $currentValuesExtractor;
-    private $valueUpdater;
-    private $successfulEditMessage;
-    private $formPageTitle;
-    private $breadCrumb;
+
+    /** @deprecated Verify if required and used */
+    const SESSION_KEY = 'SESSION_KEY';
 
     public function __construct(
         $propertyName,
-        $permission,
-        $requiresReview,
+        $permission, $requiresReview,
         $formPartial,
         Form $form,
         $submitButtonText,
@@ -37,6 +41,7 @@ class UpdateVtsReviewProcess implements UpdateVtsReviewProcessInterface, AutoWir
         $formPageTitle,
         $formToGdsTransformer,
         $reviewPageTitle,
+        $pageSubTitle,
         $reviewPageLede,
         $reviewPageButtonText,
         $breadCrumb
@@ -57,64 +62,18 @@ class UpdateVtsReviewProcess implements UpdateVtsReviewProcessInterface, AutoWir
         $this->successfulEditMessage = $successfulEditMessage;
         $this->formPageTitle = $formPageTitle;
         $this->breadCrumb = $breadCrumb;
+        $this->pageSubTitle = $pageSubTitle;
     }
 
-    public function getPropertyName()
+    public function transformFormIntoGdsTable(array $formData)
     {
-        return $this->propertyName;
-    }
+        $table = new GdsTable();
 
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
-    }
+        $value = ArrayUtils::firstOrNull($formData);
 
-    public function getFormPartial()
-    {
-        return $this->formPartial;
-    }
+        $table->newRow()->setValue($value);
 
-    public function createEmptyForm()
-    {
-        return $this->form;
-    }
-
-    public function getSubmitButtonText()
-    {
-        return $this->submitButtonText;
-    }
-
-    public function getPrePopulatedData($vtsId)
-    {
-        $function = $this->currentValuesExtractor;
-        return $function($vtsId);
-    }
-
-    public function getPermission()
-    {
-        return $this->permission;
-    }
-
-    public function update($vtsId, $formData)
-    {
-        $valueUpdater = $this->valueUpdater;
-        $valueUpdater($vtsId, $formData);
-    }
-
-    public function getSuccessfulEditMessage()
-    {
-        return $this->successfulEditMessage;
-    }
-
-    public function getFormPageTitle()
-    {
-        return $this->formPageTitle;
-    }
-
-    public function transformFormIntoGdsTable($vtsId, array $formData)
-    {
-        $transformer = $this->formToGdsTableTransformer;
-        return $transformer($formData);
+        return $table;
     }
 
     public function getReviewPageTitle()
@@ -132,8 +91,35 @@ class UpdateVtsReviewProcess implements UpdateVtsReviewProcessInterface, AutoWir
         return $this->reviewPageButtonText;
     }
 
-    public function getBreadcrumbLabel()
+    /**
+     * @param $formUuid
+     * @param $formData
+     * @param GdsTable $table
+     * @return Object Anything you want to pass to the view file
+     * @internal param $entityId
+     */
+    public function buildReviewStepViewModel($formUuid, $formData, GdsTable $table)
     {
-        return $this->breadCrumb;
+        return new UpdateVtsPropertyReviewViewModel($this->context->getVtsId(), $this->context->getPropertyName(), $formUuid, $this->getReviewPageButtonText(), $formData, $table);
+    }
+
+    public function redirectToReviewPage($formUuid)
+    {
+        return new RedirectToRoute(VtsRouteList::VTS_EDIT_PROPERTY_REVIEW,
+            ['id' => $this->context->getVtsId(), 'propertyName' => $this->context->getPropertyName(), 'formUuid' => $formUuid]
+        );
+    }
+
+    /**
+     * A two step form data needs to be saved in session to allow switching between form screens.
+     * Data will be stored in the session under the key this method provides.
+     *
+     * @return string
+     *
+     * @deprecated ask if it's possible to use formUuid only
+     */
+    public function getSessionStoreKey()
+    {
+        return self::SESSION_KEY;
     }
 }

@@ -26,7 +26,7 @@ class TestSlotTransactionAmendment extends Entity
     /**
      * @var TestSlotTransaction
      *
-     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\TestSlotTransaction")
+     * @ORM\ManyToOne(targetEntity="DvsaEntities\Entity\TestSlotTransaction", inversedBy="transactionAmendments")
      * @ORM\JoinColumn(name="test_slot_transaction_id", referencedColumnName="id")
      */
     private $testSlotTransaction;

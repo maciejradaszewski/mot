@@ -27,6 +27,7 @@ default:
                 - MotTestLogContext
                 - MotTestSearchContext
                 - MotTestHistoryContext
+                - MotTestingCertificateContext
                 - NotificationsContext
                 - OdometerReadingContext
                 - PasswordContext

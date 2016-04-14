@@ -1,6 +1,7 @@
 <?php
 
 namespace DvsaCommon\Date;
+use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 
 /**
  * Injectable DateTime container that SHOULD be used to access current date time.
@@ -11,7 +12,7 @@ namespace DvsaCommon\Date;
  *
  * @package DvsaCommon\Date
  */
-class DateTimeHolder implements DateTimeHolderInterface
+class DateTimeHolder implements DateTimeHolderInterface, AutoWireableInterface
 {
     /**
      * Returns current datetime

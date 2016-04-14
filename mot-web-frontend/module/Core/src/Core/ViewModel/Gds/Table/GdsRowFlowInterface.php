@@ -5,6 +5,8 @@ namespace Core\ViewModel\Gds\Table;
 interface GdsRowFlowInterface extends GdsTableFlowInterface
 {
     public function getHtmlId();
+    public function isHtmlClassSet();
+    public function getHtmlClass();
 
     /**
      * @param $content
@@ -48,7 +50,7 @@ interface GdsRowFlowInterface extends GdsTableFlowInterface
      * @param string $tooltip
      * @return GdsTableActionLink
      */
-    public function setActionLink($text, $url, $tooltip = ' ');
+    public function addActionLink($text, $url, $tooltip = ' ');
 
     /**
      * @return GdsTableActionLink

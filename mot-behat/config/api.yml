@@ -131,3 +131,7 @@ services:
     dvsa.slot_report:
         class: Dvsa\Mot\Behat\Support\Api\SlotReport
         parent: dvsa.rest
+
+    dvsa.mot_testing_certificate:
+            class: Dvsa\Mot\Behat\Support\Api\MotTestingCertificate
+            parent: dvsa.api

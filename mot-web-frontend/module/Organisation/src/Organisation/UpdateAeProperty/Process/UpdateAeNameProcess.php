@@ -1,38 +1,25 @@
 <?php
 namespace Organisation\UpdateAeProperty\Process;
 
-use DvsaClient\Mapper\OrganisationMapper;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\Model\AuthorisedExaminerPatchModel;
-use Organisation\UpdateAeProperty\UpdateAePropertyAction;
+use Organisation\UpdateAeProperty\AbstractSingleStepAeProcess;
 use Organisation\UpdateAeProperty\Process\Form\NamePropertyForm;
-use Organisation\UpdateAeProperty\UpdateAePropertyProcessInterface;
+use Organisation\UpdateAeProperty\UpdateAePropertyAction;
 
-class UpdateAeNameProcess implements UpdateAePropertyProcessInterface, AutoWireableInterface
+class UpdateAeNameProcess extends AbstractSingleStepAeProcess implements AutoWireableInterface
 {
     private $propertyName = UpdateAePropertyAction::AE_NAME_PROPERTY;
     private $permission = PermissionAtOrganisation::AE_UPDATE_NAME;
-    private $requiresReview = false;
     private $submitButtonText = "Change business name";
     private $successfulEditMessage = "Business name has been successfully changed.";
     private $formPageTitle = "Change business name";
     private $formPartial = "organisation/update-ae-property/partials/edit-name";
-    private $organisationMapper;
-
-    public function __construct(OrganisationMapper $organisationMapper)
-    {
-        $this->organisationMapper = $organisationMapper;
-    }
 
     public function getPropertyName()
     {
         return $this->propertyName;
-    }
-
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
     }
 
     public function getFormPartial()
@@ -50,9 +37,9 @@ class UpdateAeNameProcess implements UpdateAePropertyProcessInterface, AutoWirea
         return $this->submitButtonText;
     }
 
-    public function getPrePopulatedData($aeId)
+    public function getPrePopulatedData()
     {
-        $aeData = $this->organisationMapper->getAuthorisedExaminer($aeId);
+        $aeData = $this->organisationMapper->getAuthorisedExaminer($this->context->getAeId());
         return [$this->propertyName => $aeData->getName()];
     }
 
@@ -61,9 +48,9 @@ class UpdateAeNameProcess implements UpdateAePropertyProcessInterface, AutoWirea
         return $this->permission;
     }
 
-    public function update($aeId, $formData)
+    public function update($formData)
     {
-        $this->organisationMapper->updateAeProperty($aeId, AuthorisedExaminerPatchModel::NAME, $formData[$this->propertyName]);
+        $this->organisationMapper->updateAeProperty($this->context->getAeId(), AuthorisedExaminerPatchModel::NAME, $formData[$this->propertyName]);
     }
 
     public function getSuccessfulEditMessage()
@@ -71,7 +58,7 @@ class UpdateAeNameProcess implements UpdateAePropertyProcessInterface, AutoWirea
         return $this->successfulEditMessage;
     }
 
-    public function getFormPageTitle()
+    public function getEditStepPageTitle()
     {
         return $this->formPageTitle;
     }

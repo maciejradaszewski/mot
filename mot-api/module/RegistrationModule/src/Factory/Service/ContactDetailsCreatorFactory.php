@@ -10,6 +10,7 @@ namespace Dvsa\Mot\Api\RegistrationModule\Factory\Service;
 use Doctrine\ORM\EntityManager;
 use Dvsa\Mot\Api\RegistrationModule\Service\ContactDetailsCreator;
 use DvsaEntities\Entity\PersonContactType;
+use DvsaEntities\Entity\PhoneContactType;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -30,10 +31,12 @@ class ContactDetailsCreatorFactory implements FactoryInterface
         /** @var EntityManager $entityManager */
         $entityManager = $serviceLocator->get(EntityManager::class);
         $personContactTypeRepository = $entityManager->getRepository(PersonContactType::class);
+        $phoneContactTypeRepository = $entityManager->getRepository(PhoneContactType::class);
 
         $service = new ContactDetailsCreator(
             $entityManager,
-            $personContactTypeRepository
+            $personContactTypeRepository,
+            $phoneContactTypeRepository
         );
 
         return $service;

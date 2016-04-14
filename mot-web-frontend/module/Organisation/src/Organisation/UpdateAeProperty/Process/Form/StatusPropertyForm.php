@@ -2,19 +2,15 @@
 
 namespace Organisation\UpdateAeProperty\Process\Form;
 
-use Core\Catalog\Authorisation\AuthForAuthorisedExaminerStatus;
 use Core\Catalog\Authorisation\AuthForAuthorisedExaminerStatusCatalog;
 use DvsaCommon\Model\AuthorisationForAuthorisedExaminerStatus;
-use DvsaCommon\Utility\ArrayUtils;
 use Organisation\UpdateAeProperty\UpdateAePropertyAction;
+use Zend\Form\Element\Select;
 use Zend\Form\Form;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
-use Zend\Validator\EmailAddress;
 use Zend\Validator\InArray;
 use Zend\Validator\NotEmpty;
-use Zend\Validator\StringLength;
-use Zend\Form\Element\Select;
 
 class StatusPropertyForm extends Form
 {
@@ -36,7 +32,7 @@ class StatusPropertyForm extends Form
         $options = [];
         foreach (AuthorisationForAuthorisedExaminerStatus::getPossibleAuthForAuthorisedExaminerStatuses() as $statusCode) {
             $status = $authForAuthorisedExaminerStatusCatalog->getByCode($statusCode);
-            if($status){
+            if ($status) {
                 $options[$status->getCode()] = $status->getName();
             }
         }
@@ -57,7 +53,7 @@ class StatusPropertyForm extends Form
         $statusEmptyValidator = (new NotEmpty())->setMessage(self::STATUS_EMPTY_MSG, NotEmpty::IS_EMPTY);
         $statusInArrayValidator = (new InArray())
             ->setHaystack(AuthorisationForAuthorisedExaminerStatus::getPossibleAuthForAuthorisedExaminerStatuses()
-        );
+            );
         $statusInArrayValidator->setMessage(" you must choose a status");
 
         $statusInput = new Input(self::FIELD_STATUS);
@@ -77,6 +73,4 @@ class StatusPropertyForm extends Form
     {
         return $this->statusElement;
     }
-
-
 }

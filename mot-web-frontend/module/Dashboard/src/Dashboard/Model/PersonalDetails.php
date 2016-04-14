@@ -203,6 +203,13 @@ class PersonalDetails
         return $roles['system']['roles'];
     }
 
+    public function getSitesRolesAndAssociations()
+    {
+        $roles = $this->getRolesAndAssociations();
+
+        return $roles['sites'];
+    }
+
     /**
      * Returns an array of all site and organisation roles,
      * @return array

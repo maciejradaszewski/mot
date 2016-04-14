@@ -10,6 +10,7 @@ namespace DvsaCommonTest\InputFilter\Registration;
 use DvsaCommon\Factory\InputFilter\Registration\DetailsInputFilterFactory;
 use DvsaCommon\InputFilter\Registration\DetailsInputFilter;
 use DvsaCommon\Validator\EmailAddressValidator;
+use DvsaCommon\Validator\TelephoneNumberValidator;
 use DvsaCommonTest\Bootstrap;
 use Zend\Validator\EmailAddress;
 use Zend\Validator\Identical;
@@ -60,11 +61,13 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
                     'Joe',
                     'Light',
                     'Brown',
+                    '123123123',
                     'detailsinputfiltertest@' . EmailAddressValidator::TEST_DOMAIN,
                     'detailsinputfiltertest@' . EmailAddressValidator::TEST_DOMAIN
                 ),
                 'isValid' => true,
                 'errorMessages' => $this->prepareMessages(
+                    [],
                     [],
                     [],
                     [],
@@ -75,6 +78,7 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
             [
                 // Test Empty Data Set
                 'data' => $this->prepareData(
+                    '',
                     '',
                     '',
                     '',
@@ -93,6 +97,9 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
                         Regex::NOT_MATCH => DetailsInputFilter::MSG_NAME_NO_PATTERN_MATCH,
                     ],
                     [
+                        NotEmpty::IS_EMPTY => DetailsInputFilter::MSG_PHONE_INVALID,
+                    ],
+                    [
                         EmailAddressValidator::INVALID_FORMAT => DetailsInputFilter::MSG_EMAIL_INVALID,
                         NotEmpty::IS_EMPTY => DetailsInputFilter::MSG_EMAIL_INVALID,
                     ],
@@ -107,6 +114,7 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
                     'J0£',
                     'L1ght',
                     'Br0wn',
+                    '123123123',
                     'detailsinputfiltertest@' . EmailAddressValidator::TEST_DOMAIN,
                     'detailsinputfiltertest@' . EmailAddressValidator::TEST_DOMAIN
                 ),
@@ -116,6 +124,7 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
                     [Regex::NOT_MATCH => DetailsInputFilter::MSG_NAME_NO_PATTERN_MATCH],
                     [Regex::NOT_MATCH => DetailsInputFilter::MSG_NAME_NO_PATTERN_MATCH],
                     [],
+                    [],
                     []
                 ),
             ],
@@ -124,11 +133,13 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
                     'Joe',
                     'light',
                     'Brown',
+                    '123123123',
                     'detailsinputfiltertest@' . EmailAddressValidator::TEST_DOMAIN,
                     'detailsinputfiltertestdifferent@' . EmailAddressValidator::TEST_DOMAIN
                 ),
                 'isValid' => false,
                 'errorMessages' => $this->prepareMessages(
+                    [],
                     [],
                     [],
                     [],
@@ -151,6 +162,7 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
         $firstName,
         $middleName,
         $lastName,
+        $phone,
         $email,
         $emailConfirm
     ) {
@@ -158,6 +170,7 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
             DetailsInputFilter::FIELD_FIRST_NAME => $firstName,
             DetailsInputFilter::FIELD_MIDDLE_NAME => $middleName,
             DetailsInputFilter::FIELD_LAST_NAME => $lastName,
+            DetailsInputFilter::FIELD_PHONE => $phone,
             DetailsInputFilter::FIELD_EMAIL => $email,
             DetailsInputFilter::FIELD_EMAIL_CONFIRM => $emailConfirm,
         ];
@@ -175,6 +188,7 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
         $firstNameMessages = [],
         $middleNameMessages = [],
         $lastNameMessages = [],
+        $phoneMessages = [],
         $emailMessages = [],
         $emailConfirmMessages = []
     ) {
@@ -188,6 +202,9 @@ class DetailsInputFilterTest extends \PHPUnit_Framework_TestCase
         }
         if (!empty($lastNameMessages)) {
             $messages[DetailsInputFilter::FIELD_LAST_NAME] = $lastNameMessages;
+        }
+        if (!empty($phoneMessages)) {
+            $messages[DetailsInputFilter::FIELD_PHONE] = $phoneMessages;
         }
         if (!empty($emailMessages)) {
             $messages[DetailsInputFilter::FIELD_EMAIL] = $emailMessages;

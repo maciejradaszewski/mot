@@ -21,6 +21,7 @@ use DvsaCommonTest\Bootstrap;
 use DvsaCommonTest\TestUtils\XMock;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
 use Organisation\Controller\AuthorisedExaminerPrincipalController;
+use Organisation\UpdateAeProperty\UpdateAePropertyProcessBuilder;
 use Organisation\ViewModel\AuthorisedExaminer\AeRemovePrincipalViewModel;
 use PHPUnit_Framework_MockObject_MockObject as MockObj;
 use Zend\View\Model\ViewModel;
@@ -79,7 +80,8 @@ class AuthorisedExaminerPrincipalControllerTest extends AbstractFrontendControll
             $this->mockAuth,
             $this->mockMapperFactory,
             XMock::of(UpdateAePropertyAction::class),
-            XMock::of(UpdateAePropertyReviewAction::class)
+            XMock::of(UpdateAePropertyReviewAction::class),
+            XMock::of(UpdateAePropertyProcessBuilder::class)
     )
         );
 

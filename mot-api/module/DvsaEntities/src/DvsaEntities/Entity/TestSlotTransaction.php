@@ -101,11 +101,19 @@ class TestSlotTransaction extends Entity
     private $completedOn;
 
     /**
+     * @var TestSlotTransactionAmendment[]
+     *
+     * @ORM\OneToMany(targetEntity="SlotPurchaseApi\Entity\SlotTransactionAmendment", mappedBy="testSlotTransaction")
+     */
+    private $transactionAmendments;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->created = new \DateTime('now');
+        $this->transactionAmendments = [];
     }
 
     /**
@@ -368,5 +376,21 @@ class TestSlotTransaction extends Entity
         $this->uniqueIdentifier = $uniqueIdentifier;
 
         return $this;
+    }
+
+    /**
+     * @return TestSlotTransactionAmendment[]
+     */
+    public function getTransactionAmendments()
+    {
+        return $this->transactionAmendments;
+    }
+
+    /**
+     * @param $transactionAmendments
+     */
+    public function setTransactionAmendments($transactionAmendments)
+    {
+        $this->transactionAmendments = $transactionAmendments;
     }
 }

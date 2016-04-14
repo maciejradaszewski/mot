@@ -19,9 +19,9 @@ class UpdateAeCorrespondenceAddressProcess extends UpdateAeRegisteredAddressProc
     protected $reviewPageTitle = "Review correspondence address";
     protected $reviewPageButtonText = "Change correspondence address";
 
-    public function getPrePopulatedData($aeId)
+    public function getPrePopulatedData()
     {
-        $authorisedExaminer = $this->organisationMapper->getAuthorisedExaminer($aeId);
+        $authorisedExaminer = $this->organisationMapper->getAuthorisedExaminer($this->context->getAeId());
         $contact = $authorisedExaminer->getContactByType(OrganisationContactTypeCode::CORRESPONDENCE);
         if (empty($contact) || empty($contact->getAddress())) {
             return [];
@@ -30,15 +30,15 @@ class UpdateAeCorrespondenceAddressProcess extends UpdateAeRegisteredAddressProc
         return $this->prepopulateFromAddressDto($address);
     }
 
-    public function update($aeId, $formData)
+    public function update($formData)
     {
-        $this->organisationMapper->updateAePropertiesWithArray($aeId,[
+        $this->organisationMapper->updateAePropertiesWithArray($this->context->getAeId(), [
             AuthorisedExaminerPatchModel::CORRESPONDENCE_ADDRESS_POSTCODE => $formData[AddressPropertyForm::FIELD_POSTCODE],
-            AuthorisedExaminerPatchModel::CORRESPONDENCE_ADDRESS_COUNTRY => $formData[AddressPropertyForm::FIELD_COUNTRY],
-            AuthorisedExaminerPatchModel::CORRESPONDENCE_ADDRESS_LINE_1 => $formData[AddressPropertyForm::FIELD_ADDRESS_LINE_1],
-            AuthorisedExaminerPatchModel::CORRESPONDENCE_ADDRESS_LINE_2 => $formData[AddressPropertyForm::FIELD_ADDRESS_LINE_2],
-            AuthorisedExaminerPatchModel::CORRESPONDENCE_ADDRESS_LINE_3 => $formData[AddressPropertyForm::FIELD_ADDRESS_LINE_3],
-            AuthorisedExaminerPatchModel::CORRESPONDENCE_ADDRESS_TOWN => $formData[AddressPropertyForm::FIELD_TOWN],
+            AuthorisedExaminerPatchModel::CORRESPONDENCE_ADDRESS_COUNTRY  => $formData[AddressPropertyForm::FIELD_COUNTRY],
+            AuthorisedExaminerPatchModel::CORRESPONDENCE_ADDRESS_LINE_1   => $formData[AddressPropertyForm::FIELD_ADDRESS_LINE_1],
+            AuthorisedExaminerPatchModel::CORRESPONDENCE_ADDRESS_LINE_2   => $formData[AddressPropertyForm::FIELD_ADDRESS_LINE_2],
+            AuthorisedExaminerPatchModel::CORRESPONDENCE_ADDRESS_LINE_3   => $formData[AddressPropertyForm::FIELD_ADDRESS_LINE_3],
+            AuthorisedExaminerPatchModel::CORRESPONDENCE_ADDRESS_TOWN     => $formData[AddressPropertyForm::FIELD_TOWN],
         ]);
     }
 }

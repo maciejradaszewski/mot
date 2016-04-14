@@ -43,14 +43,14 @@ class BusinessTypePropertyForm extends Form
         $options = [];
         foreach (CompanyType::getPossibleCompanyTypes() as $typeCode) {
             $companyType = $organisationCompanyTypeCatalog->getByCode($typeCode);
-            if($companyType){
+            if ($companyType) {
                 $option = [
                     'label'     => $companyType->getName(),
                     'value'     => $companyType->getCode(),
                     'key'       => $companyType->getName(),
                     'inputName' => self::FIELD_TYPE,
                 ];
-                if($typeCode == CompanyTypeCode::COMPANY){
+                if ($typeCode == CompanyTypeCode::COMPANY) {
                     $option['dataTarget'] = static::FIELD_COMPANY_NUMBER;
                 }
                 $options[] = $option;
@@ -82,7 +82,7 @@ class BusinessTypePropertyForm extends Form
         $typeInArrayValidator = (new InArray())
             ->setHaystack(CompanyType::getPossibleCompanyTypes())
             ->setMessage(self::TYPE_EMPTY_MSG, InArray::NOT_IN_ARRAY);
-        
+
         $typeEmptyValidator = (new NotEmpty())
             ->setMessage(self::TYPE_EMPTY_MSG, NotEmpty::IS_EMPTY);
 
@@ -119,7 +119,7 @@ class BusinessTypePropertyForm extends Form
     public function isValid()
     {
         $valid = parent::isValid();
-        if(!$valid){
+        if (!$valid) {
             return false;
         }
 

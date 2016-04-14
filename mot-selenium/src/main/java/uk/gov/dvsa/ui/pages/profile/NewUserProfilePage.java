@@ -11,7 +11,8 @@ import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
 import uk.gov.dvsa.ui.pages.dvsa.ManageRolesPage;
 import uk.gov.dvsa.ui.pages.dvsa.RolesAndAssociationsPage;
 import uk.gov.dvsa.ui.pages.dvsa.UserSearchResultsPage;
-import uk.gov.dvsa.ui.pages.vts.SearchResultsPage;
+import uk.gov.dvsa.ui.pages.profile.qualificationdetails.QualificationDetailsGroupAPage;
+import uk.gov.dvsa.ui.pages.profile.qualificationdetails.QualificationDetailsPage;
 
 public class NewUserProfilePage extends ProfilePage {
     private static final String PAGE_TITLE = "User profile";
@@ -29,6 +30,7 @@ public class NewUserProfilePage extends ProfilePage {
     @FindBy(id = "change-group-b-qualification") private WebElement groupB_qualification;
     @FindBy(id = "personal_details") private WebElement personalDetailsTable;
     @FindBy(id = "dateOfBirth") private WebElement dateOfBirth;
+    @FindBy(id = "qualification-details") private WebElement qualificationDetails;
     @FindBy(css = "#drivingLicence a") protected WebElement changeDrivingLicenceLink;
     @FindBy(css = "#email-address a") protected WebElement changeEmailLink;
     @FindBy(css = "#telephone-number a") protected WebElement changeTelephoneLink;
@@ -177,5 +179,10 @@ public class NewUserProfilePage extends ProfilePage {
     public UserSearchResultsPage clickCancelAndReturnToSearchResults() {
         cancelAndReturnToSearchResults.click();
         return MotPageFactory.newPage(driver, UserSearchResultsPage.class);
+    }
+
+    public QualificationDetailsPage clickQualificationDetailsLink(){
+        qualificationDetails.click();
+        return MotPageFactory.newPage(driver, QualificationDetailsPage.class);
     }
 }

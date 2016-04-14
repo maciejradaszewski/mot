@@ -1,42 +1,25 @@
 <?php
 namespace Organisation\UpdateAeProperty\Process;
 
-use DvsaClient\Mapper\OrganisationMapper;
 use DvsaCommon\Auth\PermissionAtOrganisation;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\Model\AuthorisedExaminerPatchModel;
+use Organisation\UpdateAeProperty\AbstractSingleStepAeProcess;
 use Organisation\UpdateAeProperty\Process\Form\AreaOfficePropertyForm;
 use Organisation\UpdateAeProperty\UpdateAePropertyAction;
-use Organisation\UpdateAeProperty\UpdateAePropertyProcessInterface;
-use Zend\Form\Element\Text;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
-use Zend\Validator\NotEmpty;
 
-class UpdateAeAreaOfficeProcess implements UpdateAePropertyProcessInterface, AutoWireableInterface
+class UpdateAeAreaOfficeProcess extends AbstractSingleStepAeProcess implements AutoWireableInterface
 {
     private $propertyName = UpdateAePropertyAction::AE_DVSA_AREA_OFFICE_STATUS_PROPERTY;
     private $permission = PermissionAtOrganisation::AE_UPDATE_DVSA_AREA_OFFICE;
-    private $requiresReview = false;
     private $submitButtonText = "Change area office";
     private $successfulEditMessage = "Area office has been successfully changed.";
     private $formPageTitle = "Change area office";
     private $formPartial = "organisation/update-ae-property/partials/edit-areaoffice";
-    private $organisationMapper;
-
-    public function __construct(OrganisationMapper $organisationMapper)
-    {
-        $this->organisationMapper = $organisationMapper;
-    }
 
     public function getPropertyName()
     {
         return $this->propertyName;
-    }
-
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
     }
 
     public function getFormPartial()
@@ -54,9 +37,9 @@ class UpdateAeAreaOfficeProcess implements UpdateAePropertyProcessInterface, Aut
         return $this->submitButtonText;
     }
 
-    public function getPrePopulatedData($aeId)
+    public function getPrePopulatedData()
     {
-        $aeData = $this->organisationMapper->getAuthorisedExaminer($aeId);
+        $aeData = $this->organisationMapper->getAuthorisedExaminer($this->context->getAeId());
         return [$this->propertyName => ltrim($aeData->getAuthorisedExaminerAuthorisation()->getAssignedAreaOffice()->getSiteNumber(), '0')];
     }
 
@@ -65,9 +48,9 @@ class UpdateAeAreaOfficeProcess implements UpdateAePropertyProcessInterface, Aut
         return $this->permission;
     }
 
-    public function update($aeId, $formData)
+    public function update($formData)
     {
-        $this->organisationMapper->updateAeProperty($aeId, AuthorisedExaminerPatchModel::AREA_OFFICE, $formData[$this->propertyName]);
+        $this->organisationMapper->updateAeProperty($this->context->getAeId(), AuthorisedExaminerPatchModel::AREA_OFFICE, $formData[$this->propertyName]);
     }
 
     public function getSuccessfulEditMessage()
@@ -75,7 +58,7 @@ class UpdateAeAreaOfficeProcess implements UpdateAePropertyProcessInterface, Aut
         return $this->successfulEditMessage;
     }
 
-    public function getFormPageTitle()
+    public function getEditStepPageTitle()
     {
         return $this->formPageTitle;
     }

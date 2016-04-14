@@ -27,6 +27,12 @@ class TableOptions extends AbstractOptions
      * @var string
      */
     private $footerViewScript = 'table/footer';
+    /**
+     * the text that will replace the "[...]", in:
+     * Showing 1 – 20 of 40 [...]
+     * @var string
+     */
+    private $itemsText = 'items';
 
     /**
      * @return int
@@ -95,4 +101,23 @@ class TableOptions extends AbstractOptions
         $this->footerViewScript = $footerViewScript;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getItemsText()
+    {
+        return $this->itemsText;
+    }
+
+    /**
+     * @param string $itemsText
+     * @return $this
+     */
+    public function setItemsText($itemsText)
+    {
+        $this->itemsText = $itemsText;
+        return $this;
+    }
+
 }

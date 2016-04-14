@@ -36,7 +36,7 @@ class UpdateVtsPropertyViewModel
         return $this->form;
     }
 
-    public function getAeId()
+    public function getVtsId()
     {
         return $this->vtsId;
     }

@@ -13,6 +13,8 @@ use DvsaCommon\HttpRestJson\Exception\RestApplicationException;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use Organisation\Traits\OrganisationServicesTrait;
+use Organisation\UpdateAeProperty\UpdateAeContext;
+use Organisation\UpdateAeProperty\UpdateAePropertyProcessBuilder;
 use Organisation\ViewModel\AuthorisedExaminer\AeRemovePrincipalViewModel;
 use Organisation\UpdateAeProperty\UpdateAePropertyAction;
 use Organisation\UpdateAeProperty\UpdateAePropertyReviewAction;
@@ -39,19 +41,21 @@ class AuthorisedExaminerPrincipalController extends AbstractAuthActionController
     private $mapper;
     private $updateAction;
     private $reviewAction;
+    private $processBuilder;
 
-    public function __construct
-    (
+    public function __construct(
         MotAuthorisationServiceInterface $authorisationService,
         MapperFactory $mapper,
         UpdateAePropertyAction $updateAction,
-        UpdateAePropertyReviewAction $reviewAction
+        UpdateAePropertyReviewAction $reviewAction,
+        UpdateAePropertyProcessBuilder $processBuilder
     )
     {
         $this->authorisationService = $authorisationService;
         $this->mapper = $mapper;
         $this->updateAction = $updateAction;
         $this->reviewAction = $reviewAction;
+        $this->processBuilder = $processBuilder;
     }
 
     public function createAction()
@@ -62,7 +66,7 @@ class AuthorisedExaminerPrincipalController extends AbstractAuthActionController
         $formData = $this->getRequest()->getPost()->getArrayCopy();
         $formUuid = $this->params()->fromQuery('formUuid');
 
-        $actionResult = $this->updateAction->execute($isPost, $propertyName, $aeId, $formUuid, $formData);
+        $actionResult = $this->updateAction->execute($isPost, $this->processBuilder->get($propertyName), new UpdateAeContext($aeId, $propertyName), $formUuid, $formData);
 
         return $this->applyActionResult($actionResult);
     }
@@ -74,7 +78,7 @@ class AuthorisedExaminerPrincipalController extends AbstractAuthActionController
         $aeId = $this->params()->fromRoute('id');
         $formUuid = $this->params()->fromRoute('formUuid');
 
-        $actionResult = $this->reviewAction->execute($isPost, $propertyName, $aeId, $formUuid);
+        $actionResult = $this->reviewAction->execute($isPost, $this->processBuilder->get($propertyName), new UpdateAeContext($aeId, $propertyName), $formUuid);
 
         return $this->applyActionResult($actionResult);
     }

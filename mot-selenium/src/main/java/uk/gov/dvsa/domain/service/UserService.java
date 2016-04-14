@@ -2,6 +2,7 @@ package uk.gov.dvsa.domain.service;
 
 import com.jayway.restassured.response.Response;
 import uk.gov.dvsa.domain.api.request.*;
+import uk.gov.dvsa.domain.model.QualificationCertificate;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.model.mot.TestGroup;
 import uk.gov.dvsa.framework.config.webdriver.WebDriverConfigurator;

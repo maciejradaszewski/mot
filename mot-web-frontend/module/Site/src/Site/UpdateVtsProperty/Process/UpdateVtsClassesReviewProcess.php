@@ -3,21 +3,18 @@
 namespace Site\UpdateVtsProperty\Process;
 
 use Core\ViewModel\Gds\Table\GdsTable;
-use DvsaClient\Mapper\SiteMapper;
 use DvsaCommon\Auth\PermissionAtSite;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use DvsaCommon\Model\VehicleTestingStation;
 use DvsaCommon\Utility\ArrayUtils;
-use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
-use Site\UpdateVtsProperty\UpdateVtsReviewProcessInterface;
+use Site\UpdateVtsProperty\AbstractTwoStepVtsProcess;
 use Site\UpdateVtsProperty\Process\Form\ClassesPropertyForm;
+use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
 
-class UpdateVtsClassesReviewProcess implements UpdateVtsReviewProcessInterface, AutoWireableInterface
+class UpdateVtsClassesReviewProcess extends AbstractTwoStepVtsProcess implements AutoWireableInterface
 {
     private $propertyName = UpdateVtsPropertyAction::VTS_CLASSES_PROPERTY;
     private $permission = PermissionAtSite::VTS_UPDATE_CLASSES;
-    private $requiresReview = true;
-    private $breadcrumbLabel = "Change site classes";
     private $submitButtonText = "Review classes";
     private $successfulEditMessage = "Classes have been successfully changed.";
     private $formPageTitle = "Change classes";
@@ -25,29 +22,10 @@ class UpdateVtsClassesReviewProcess implements UpdateVtsReviewProcessInterface, 
     private $reviewPageTitle = "Review classes";
     private $reviewPageLede = "Please check the classes below are correct.";
     private $reviewPageButtonText = "Change classes";
-    private $siteMapper;
-    private $formToGdsTableTransformer;
-
-    public function __construct(SiteMapper $siteMapper)
-    {
-        $this->siteMapper = $siteMapper;
-        $this->formToGdsTableTransformer =
-            function (array $formData) {
-                $table = new GdsTable();
-                $classesAsText = join(', ', $formData[$this->propertyName]);
-                $table->newRow()->setLabel("Classes")->setValue($classesAsText);
-                return $table;
-            };
-    }
 
     public function getPropertyName()
     {
         return $this->propertyName;
-    }
-
-    public function getRequiresReview()
-    {
-        return $this->requiresReview;
     }
 
     public function getFormPartial()
@@ -65,9 +43,9 @@ class UpdateVtsClassesReviewProcess implements UpdateVtsReviewProcessInterface, 
         return $this->submitButtonText;
     }
 
-    public function getPrePopulatedData($vtsId)
+    public function getPrePopulatedData()
     {
-        $vtsData = $this->siteMapper->getById($vtsId);
+        $vtsData = $this->siteMapper->getById($this->context->getVtsId());
         return [$this->propertyName => $vtsData->getTestClasses()];
     }
 
@@ -76,13 +54,13 @@ class UpdateVtsClassesReviewProcess implements UpdateVtsReviewProcessInterface, 
         return $this->permission;
     }
 
-    public function update($vtsId, $formData)
+    public function update($formData)
     {
         $patchData = ArrayUtils::map($formData[$this->propertyName], function ($classAsString) {
             return (int)$classAsString;
         });
 
-        $this->siteMapper->updateVtsProperty($vtsId, VehicleTestingStation::PATCH_PROPERTY_CLASSES, $patchData);
+        $this->siteMapper->updateVtsProperty($this->context->getVtsId(), VehicleTestingStation::PATCH_PROPERTY_CLASSES, $patchData);
     }
 
     public function getSuccessfulEditMessage()
@@ -90,19 +68,19 @@ class UpdateVtsClassesReviewProcess implements UpdateVtsReviewProcessInterface, 
         return $this->successfulEditMessage;
     }
 
-    public function getFormPageTitle()
+    public function getEditStepPageTitle()
     {
         return $this->formPageTitle;
     }
 
-    public function transformFormIntoGdsTable($vtsId, array $formData)
+    public function transformFormIntoGdsTable(array $formData)
     {
         $table = new GdsTable();
 
         $classesData = $formData[$this->propertyName];
         $classesAsText = $classesData ? join(', ', $classesData) : 'None';
 
-        $table->newRow()->setLabel("Vehicle Testing Station")->setValue($this->siteMapper->getById($vtsId)->getName());
+        $table->newRow()->setLabel("Vehicle Testing Station")->setValue($this->siteMapper->getById($this->context->getVtsId())->getName());
         $table->newRow($this->propertyName)->setLabel("Classes")->setValue($classesAsText);
         return $table;
     }
@@ -120,10 +98,5 @@ class UpdateVtsClassesReviewProcess implements UpdateVtsReviewProcessInterface, 
     public function getReviewPageButtonText()
     {
         return $this->reviewPageButtonText;
-    }
-
-    public function getBreadcrumbLabel()
-    {
-        return $this->breadcrumbLabel;
     }
 }

@@ -35,6 +35,7 @@ if (!isset($table) || !$table instanceof GdsTable) {
             <td class="key-value-list__value"
                 <?php
             echo $id ? ' id="' . $this->escapeHtmlAttr($id) .'"' : '';
+            echo $row->isHtmlClassSet() ? ' class="' . $this->escapeHtmlAttr($row->getHtmlClass()) .'"' : '';
             echo $colspan ? ' colspan="' . $this->escapeHtmlAttr($colspan) .'"' : '';
             ?>>
                 <?php echo $escape ? $this->escapeHtml($value) : $value; ?>

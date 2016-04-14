@@ -13,9 +13,9 @@ class GdsTable implements GdsTableFlowInterface
     private $headerCssClass = '';
     private $headerText = '';
 
-    public function newRow($htmlId = null)
+    public function newRow($htmlId = null, $htmlClass = null)
     {
-        $row = new GdsRow($this, $htmlId);
+        $row = new GdsRow($this, $htmlId, $htmlClass);
         $this->rows[] = $row;
         return $row;
     }

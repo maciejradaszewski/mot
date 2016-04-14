@@ -1,0 +1,61 @@
+<?php
+use Dvsa\Mot\Frontend\PersonModule\Form\QualificationDetailsForm;
+/** @var QualificationDetailsForm $form */
+$form = $this->viewModel->form;
+?>
+<?php echo $this->partial('zendFormErrorMessages', ['form' => $form]); ?>
+<?php echo $this->partial('errorMessages', array('getFromFlash' => true)); ?>
+<form action="" method="POST" autocomplete="off" novalidate="">
+
+    <?php echo $this->csrfToken() ?>
+
+    <fieldset>
+        <h3 class="form-title heading-medium">Certificate details</h3>
+        <?php echo $this->partial('partial/gds/form/control', [
+            'element' => $form->get(QualificationDetailsForm::FIELD_CERT_NUMBER)
+        ]);
+        ?>
+
+        <?php echo $this->partial('partial/gds/form/control-dob-group', [
+            'groupLabel' => 'Date awarded',
+            'dayElement' => $form->get(QualificationDetailsForm::FIELD_DATE_DAY),
+            'monthElement' => $form->get(QualificationDetailsForm::FIELD_DATE_MONTH),
+            'yearElement' => $form->get(QualificationDetailsForm::FIELD_DATE_YEAR),
+        ]);
+        ?>
+    </fieldset>
+
+    <fieldset>
+        <h3 class="form-title heading-medium">
+            Location of Demo test
+        </h3>
+        <p>
+            This is the ID of the garage you'd like to take the Demo test.
+        </p>
+        <legend class="form-title heading-medium visuallyhidden">
+            VTS ID
+        </legend>
+
+        <?php echo $this->partial('partial/gds/form/control', [
+            'element' => $form->get(QualificationDetailsForm::FIELD_VTS_ID),
+        ]);
+        ?>
+    </fieldset>
+
+    <nav class="content-navigation">
+        <!--
+        <a href="review-certificates-add-change" class="button">
+            Review certificate details
+        </a>
+        -->
+        <input type="submit" class="button" value="Review certificate details" id="submit-button"/>
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo $this->viewModel->backUrl ?>">
+                    Cancel and return to qualification details
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</form>

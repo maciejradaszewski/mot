@@ -265,18 +265,7 @@ public class AEChangeDetailsTests extends DslTest {
 
         //Then There is not change links
         //And status row
-        assertThat(testerAuthorisedExaminerViewPage.isChangeNameLinkDisplayed(), is(false));
-        assertThat(testerAuthorisedExaminerViewPage.isChangeTradingNameLinkDisplayed(), is(false));
-        assertThat(testerAuthorisedExaminerViewPage.isChangeBusinessTypeLinkDisplayed(), is(false));
-        assertThat(testerAuthorisedExaminerViewPage.isChangeDVSAAreaOfficeLinkDisplayed(), is(false));
-        assertThat(testerAuthorisedExaminerViewPage.isAEStatusRowDisplayed(), is(false));
-        assertThat(testerAuthorisedExaminerViewPage.isChangeAEStatusLinkDisplayed(), is(false));
-        assertThat(testerAuthorisedExaminerViewPage.isChangeCorrespondenceAddressLinkDisplayed(), is(false));
-        assertThat(testerAuthorisedExaminerViewPage.isChangeCorrespondenceEmailLinkDisplayed(), is(false));
-        assertThat(testerAuthorisedExaminerViewPage.isChangeCorrespondenceTelephoneLinkDisplayed(), is(false));
-        assertThat(testerAuthorisedExaminerViewPage.isChangeRegOfficeAddressLinkDisplayed(), is(false));
-        assertThat(testerAuthorisedExaminerViewPage.isChangeRegOfficeEmailLinkDisplayed(), is(false));
-        assertThat(testerAuthorisedExaminerViewPage.isChangeRegOfficeTelephoneLinkDisplayed(), is(false));
+        assertThat(testerAuthorisedExaminerViewPage.areAllChangeLinksHidden(), is(true));
     }
 
 }

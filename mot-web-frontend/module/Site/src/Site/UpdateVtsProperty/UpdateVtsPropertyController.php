@@ -9,14 +9,18 @@ class UpdateVtsPropertyController extends AbstractAuthActionController implement
 {
     private $updateAction;
     private $reviewAction;
+    /** todo deprecated remove */
+    private $processBuilder;
 
     public function __construct(
         UpdateVtsPropertyAction $updateAction,
-        UpdateVtsPropertyReviewAction $reviewAction
+        UpdateVtsPropertyReviewAction $reviewAction,
+        UpdateVtsPropertyProcessBuilder $processBuilder
     )
     {
         $this->updateAction = $updateAction;
         $this->reviewAction = $reviewAction;
+        $this->processBuilder = $processBuilder;
     }
 
     public function editAction()
@@ -27,7 +31,7 @@ class UpdateVtsPropertyController extends AbstractAuthActionController implement
         $formData = $this->getRequest()->getPost()->getArrayCopy();
         $formUuid = $this->params()->fromQuery('formUuid');
 
-        $actionResult = $this->updateAction->execute($isPost, $propertyName, $vtsId, $formUuid, $formData);
+        $actionResult = $this->updateAction->execute($isPost, $this->processBuilder->get($propertyName), new UpdateVtsContext($vtsId, $propertyName), $formUuid, $formData);
 
         return $this->applyActionResult($actionResult);
     }
@@ -39,7 +43,7 @@ class UpdateVtsPropertyController extends AbstractAuthActionController implement
         $vtsId = $this->params()->fromRoute('id');
         $formUuid = $this->params()->fromRoute('formUuid');
 
-        $actionResult = $this->reviewAction->execute($isPost, $propertyName, $vtsId, $formUuid);
+        $actionResult = $this->reviewAction->execute($isPost, $this->processBuilder->get($propertyName), new UpdateVtsContext($vtsId, $propertyName), $formUuid);
 
         return $this->applyActionResult($actionResult);
     }

@@ -3,8 +3,6 @@
 
 namespace Site\UpdateVtsProperty\Factory;
 
-
-use Core\Catalog\Vts\VtsCountryCatalog;
 use DvsaClient\Mapper\SiteMapper;
 use Site\UpdateVtsProperty\Process\UpdateVtsAddressProcess;
 use Site\UpdateVtsProperty\Process\UpdateVtsClassesReviewProcess;

@@ -69,4 +69,12 @@ class Session extends MotApi
 
         return $this->startSession($tester->data['username'], $tester->data['password']);
     }
+
+    public function logInAsNewUser(TestSupportHelper $helper)
+    {
+        $service = $helper->getUserService();
+        $user = $service->create([]);
+
+        return $this->startSession($user->data['username'], $user->data['password']);
+    }
 }

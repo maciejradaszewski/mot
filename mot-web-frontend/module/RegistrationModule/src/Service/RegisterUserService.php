@@ -104,6 +104,7 @@ class RegisterUserService
             DetailsInputFilter::FIELD_FIRST_NAME    => $this->dataExists($detailsData, DetailsInputFilter::FIELD_FIRST_NAME),
             DetailsInputFilter::FIELD_MIDDLE_NAME   => $this->dataExists($detailsData, DetailsInputFilter::FIELD_MIDDLE_NAME),
             DetailsInputFilter::FIELD_LAST_NAME     => $this->dataExists($detailsData, DetailsInputFilter::FIELD_LAST_NAME),
+            DetailsInputFilter::FIELD_PHONE         => $this->dataExists($detailsData, DetailsInputFilter::FIELD_PHONE),
             DetailsInputFilter::FIELD_EMAIL         => $this->dataExists($detailsData, DetailsInputFilter::FIELD_EMAIL),
             DetailsInputFilter::FIELD_EMAIL_CONFIRM => $this->dataExists($detailsData, DetailsInputFilter::FIELD_EMAIL_CONFIRM),
         ];

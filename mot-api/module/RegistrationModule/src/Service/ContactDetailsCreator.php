@@ -18,6 +18,9 @@ use DvsaEntities\Entity\Email;
 use DvsaEntities\Entity\Person;
 use DvsaEntities\Entity\PersonContact;
 use DvsaEntities\Entity\PersonContactType;
+use DvsaEntities\Entity\Phone;
+use DvsaCommon\Enum\PhoneContactTypeCode;
+use DvsaEntities\Entity\PhoneContactType;
 
 /**
  * Class ContactDetailsCreator.
@@ -32,9 +35,20 @@ class ContactDetailsCreator extends AbstractPersistableService
     private $personContactTypeRepository;
 
     /**
+     *
+     * @var EntityRepository
+     */
+    private $phoneContactTypeRepository;
+
+    /**
      * @var Email
      */
     private $email;
+
+    /**
+     * @var Phone
+     */
+    private $phone;
 
     /**
      * @var Address
@@ -59,13 +73,16 @@ class ContactDetailsCreator extends AbstractPersistableService
     /**
      * @param EntityManager    $entityManager
      * @param EntityRepository $personContactTypeRepository
+     * @param EntityRepository $phoneContactTypeRepository
      */
     public function __construct(
         EntityManager $entityManager,
-        EntityRepository $personContactTypeRepository
+        EntityRepository $personContactTypeRepository,
+        EntityRepository $phoneContactTypeRepository
     ) {
         parent::__construct($entityManager);
         $this->personContactTypeRepository = $personContactTypeRepository;
+        $this->phoneContactTypeRepository = $phoneContactTypeRepository;
     }
 
     /**
@@ -81,6 +98,7 @@ class ContactDetailsCreator extends AbstractPersistableService
         $this->data = $data;
 
         $this->email = new Email();
+        $this->phone = new Phone();
         $this->address = new Address();
         $this->contactDetail = new ContactDetail();
 
@@ -116,6 +134,15 @@ class ContactDetailsCreator extends AbstractPersistableService
             ->setAddressLine1($this->data[$this->getAddressStepName()][AddressInputFilter::FIELD_ADDRESS_1])
             ->setTown($this->data[$this->getAddressStepName()][AddressInputFilter::FIELD_TOWN_OR_CITY])
             ->setPostcode($this->data[$this->getAddressStepName()][AddressInputFilter::FIELD_POSTCODE]);
+
+
+        /** @var PhoneContactType $phoneContactType */
+        $phoneContactType = $this->phoneContactTypeRepository->findOneBy(['code' => PhoneContactTypeCode::PERSONAL]);
+
+        $this->phone
+            ->setIsPrimary(true)
+            ->setNumber($this->data[$this->getDetailsStepName()][DetailsInputFilter::FIELD_PHONE])
+            ->setContactType($phoneContactType);
     }
 
     /**
@@ -143,6 +170,7 @@ class ContactDetailsCreator extends AbstractPersistableService
             ->setIsPrimary(true);
 
         $this->contactDetail->addEmail($this->email)
-            ->setAddress($this->address);
+            ->setAddress($this->address)
+            ->addPhone($this->phone);
     }
 }

@@ -3,11 +3,12 @@
 namespace DvsaCommon\Database;
 
 use Doctrine\ORM\EntityManager;
+use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 
 /**
  * Wraps around entity manager and provides only functions related to handling transaction
  */
-class Transaction
+class Transaction implements AutoWireableInterface
 {
     private $entityManager;
 

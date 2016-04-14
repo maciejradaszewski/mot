@@ -1,0 +1,32 @@
+<?php
+
+use DvsaCommon\Dto\Search\SearchParamsDto;
+use Report\Table\TableOptions;
+use Zend\View\Renderer\PhpRenderer;
+
+/**
+ * @var \Zend\Paginator\Paginator $paginator
+ * @var TableOptions $tableOptions
+ * @var  SearchParamsDto $searchParams
+ * @var PhpRenderer $this
+ */
+
+$searchParams = $this->searchParams;
+?>
+
+<?php
+$paginator->setPageRange(5);
+echo $this->paginationControl(
+    $paginator,
+    'Sliding',
+    'table/gds-paginator',
+    [
+        'route'        => null,
+        'searchParams' => $searchParams,
+        'tableOptions' => $tableOptions,
+        'routeOptions' => [
+            'query' => $searchParams->toQueryParams()->toArray(),
+        ]
+    ]
+);
+?>

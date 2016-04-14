@@ -34,6 +34,11 @@ class DetailsStep extends AbstractRegistrationStep
     /**
      * @var string
      */
+    private $phone;
+
+    /**
+     * @var string
+     */
     private $emailAddress;
 
     /**
@@ -73,6 +78,7 @@ class DetailsStep extends AbstractRegistrationStep
             $this->setFirstName($values[DetailsInputFilter::FIELD_FIRST_NAME]);
             $this->setMiddleName($values[DetailsInputFilter::FIELD_MIDDLE_NAME]);
             $this->setLastName($values[DetailsInputFilter::FIELD_LAST_NAME]);
+            $this->setPhone($values[DetailsInputFilter::FIELD_PHONE]);
             $this->setEmailAddress($values[DetailsInputFilter::FIELD_EMAIL]);
             $this->setConfirmEmailAddress($values[DetailsInputFilter::FIELD_EMAIL_CONFIRM]);
         }
@@ -89,6 +95,7 @@ class DetailsStep extends AbstractRegistrationStep
             DetailsInputFilter::FIELD_FIRST_NAME     => $this->getFirstName(),
             DetailsInputFilter::FIELD_MIDDLE_NAME    => $this->getMiddleName(),
             DetailsInputFilter::FIELD_LAST_NAME      => $this->getLastName(),
+            DetailsInputFilter::FIELD_PHONE          => $this->getPhone(),
             DetailsInputFilter::FIELD_EMAIL          => $this->getEmailAddress(),
             DetailsInputFilter::FIELD_EMAIL_CONFIRM  => $this->getConfirmEmailAddress(),
         ];
@@ -103,6 +110,7 @@ class DetailsStep extends AbstractRegistrationStep
             DetailsInputFilter::FIELD_FIRST_NAME,
             DetailsInputFilter::FIELD_MIDDLE_NAME,
             DetailsInputFilter::FIELD_LAST_NAME,
+            DetailsInputFilter::FIELD_PHONE,
             DetailsInputFilter::FIELD_EMAIL,
             DetailsInputFilter::FIELD_EMAIL_CONFIRM,
         ];
@@ -194,6 +202,22 @@ class DetailsStep extends AbstractRegistrationStep
     public function setEmailAddress($emailAddress)
     {
         $this->emailAddress = $emailAddress;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhone()
+    {
+        return $this->phone;
+    }
+
+    /**
+     * @param string $phone
+     */
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
     }
 
     /**

@@ -8,7 +8,6 @@ use Zend\Form\Element\Text;
 use Zend\Form\Form;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
-use Zend\Validator\EmailAddress;
 use Zend\Validator\StringLength;
 
 class RegisteredEmailPropertyForm extends Form

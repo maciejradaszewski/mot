@@ -16,6 +16,8 @@ use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
 use Dvsa\Mot\Behat\Support\Response;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Exception\UnauthorisedException;
+use DvsaCommon\Utility\ArrayUtils;
+use DvsaCommon\Enum\VehicleClassGroupCode;
 use PHPUnit_Framework_Assert as PHPUnit;
 
 class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingContext
@@ -1633,6 +1635,34 @@ class PersonContext implements Context, \Behat\Behat\Context\SnippetAcceptingCon
         }
 
         PHPUnit::assertEquals($actualStatus, $expectedStatus);
+    }
+
+    /**
+     * @Given I have :status status for group :group
+     */
+    public function iHaveStatusForGroup($status, $group)
+    {
+        $this->setQualificationStatus($this->sessionContext->getCurrentUserId(), $status, $group);
+    }
+
+    public function setQualificationStatus($personId, $status, $group)
+    {
+        if (!VehicleClassGroupCode::exists($group)) {
+            throw new InvalidArgumentException("Group '" . $group . "' does not exist.");
+        }
+
+        if ($status === 'NOT_APPLIED') {
+            $this->testSupportHelper->getTesterService()->removeTesterQualificationStatusForGroup($personId, $group);
+            return;
+        }
+
+        $allowedStatuses = [
+            'INITIAL_TRAINING_NEEDED' => AuthorisationForTestingMotStatusCode::INITIAL_TRAINING_NEEDED
+        ];
+
+        $code = ArrayUtils::tryGet($allowedStatuses, $status);
+
+        $this->testSupportHelper->getTesterService()->insertTesterQualificationStatus($personId, $group, $code);
     }
 
 }

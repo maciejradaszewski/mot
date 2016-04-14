@@ -47,23 +47,6 @@ public class HelpDeskTests extends DslTest {
         motUI.helpDesk.page().isEmailUpdateSuccessful(email);
     }
 
-    @Test(groups = {"Regression", "VM-11326"},
-            description = "Test that validates the authorised DVSA user can see authentication method of user",
-            dataProvider = "createDvsaUser")
-    public void testAuthenticationMethodIsDisplayedForDvsaUser(User dvsaUser) throws IOException {
-        isAuthenticationMethodDisplayedForUser(dvsaUser, tester);
-    }
-
-    private void isAuthenticationMethodDisplayedForUser(User dvsaUser, User tester) throws IOException {
-        HelpDeskUserProfilePage helpDeskUserProfilePage =
-                pageNavigator.goToUserHelpDeskProfilePage(dvsaUser, tester.getId());
-        if (service.getToggleValue("2fa.method.visible")) {
-            assertThat(helpDeskUserProfilePage.isPersonAuthenticationMethodIsDisplayed(), is(true));
-        } else {
-            assertThat(helpDeskUserProfilePage.isPersonAuthenticationMethodIsDisplayed(), is(false));
-        }
-    }
-
     @DataProvider(name = "createDvsaUser")
     private Object[][] createDvsaUser() throws IOException {
         return new Object[][]{{userData.createVehicleExaminer(randomName, false)},

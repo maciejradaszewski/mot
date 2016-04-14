@@ -3,10 +3,7 @@ package uk.gov.dvsa.module.profile;
 import uk.gov.dvsa.domain.model.User;
 import uk.gov.dvsa.domain.navigation.PageNavigator;
 import uk.gov.dvsa.helper.ConfigHelper;
-import uk.gov.dvsa.module.userprofile.ChangeAddress;
-import uk.gov.dvsa.module.userprofile.ChangeDOB;
-import uk.gov.dvsa.module.userprofile.ChangeEmail;
-import uk.gov.dvsa.module.userprofile.ChangeName;
+import uk.gov.dvsa.module.userprofile.*;
 import uk.gov.dvsa.ui.pages.ChangeTelephoneDetailsPage;
 import uk.gov.dvsa.ui.pages.HomePage;
 import uk.gov.dvsa.ui.pages.changedriverlicence.ChangeDrivingLicencePage;
@@ -18,6 +15,7 @@ import uk.gov.dvsa.ui.pages.profile.NewPersonProfilePage;
 import uk.gov.dvsa.ui.pages.profile.NewUserProfilePage;
 import uk.gov.dvsa.ui.pages.profile.PersonProfilePage;
 import uk.gov.dvsa.ui.pages.profile.ProfilePage;
+import uk.gov.dvsa.ui.pages.profile.qualificationdetails.QualificationDetailsPage;
 import uk.gov.dvsa.ui.pages.vts.VehicleTestingStationPage;
 
 import java.io.IOException;
@@ -27,6 +25,7 @@ public class Profile {
     private ProfilePage profilePage;
     private ChangeName changeName;
     private ChangeAddress changeAddress;
+    private ChangeQualificationDetails changeQualificationDetails;
 
     public Profile(final PageNavigator pageNavigator) {
         this.pageNavigator = pageNavigator;
@@ -53,6 +52,17 @@ public class Profile {
         }
 
         return profilePage;
+    }
+
+    public QualificationDetailsPage userDisplayQualificationDetailsPage(final User userViewingProfile, final User userProfileToView) throws Exception {
+
+        String newQueryPath = String.format(QualificationDetailsPage.PATH, userProfileToView.getId());
+
+        if(ConfigHelper.isNewPersonProfileEnabled()){
+            return pageNavigator.navigateToPage(userViewingProfile, newQueryPath, QualificationDetailsPage.class);
+        } else {
+            throw new Exception("Not supported");
+        }
     }
 
     public ProfilePage tradeViewUserProfile(final User userViewingProfile, final User userProfileToView) throws IOException {
@@ -147,5 +157,12 @@ public class Profile {
             return this.changeAddress = new ChangeAddress(page());
         }
         return changeAddress;
+    }
+
+    public ChangeQualificationDetails qualificationDetails() {
+        if (changeQualificationDetails == null) {
+            return this.changeQualificationDetails = new ChangeQualificationDetails(page());
+        }
+        return changeQualificationDetails;
     }
 }

@@ -5,6 +5,7 @@
  * @link http://gitlab.clb.npm/mot/mot
  */
 
+use Dvsa\Mot\Frontend\PersonModule\Controller\QualificationDetailsController;
 use Dashboard\Factory\Controller\SecurityQuestionControllerFactory;
 use Dvsa\Mot\Frontend\PersonModule\Controller\ChangeNameController;
 use Dvsa\Mot\Frontend\PersonModule\Controller\ChangeAddressController;
@@ -132,6 +133,85 @@ return [
                             'defaults'    => [
                                 'controller' => UserTradeRolesController::class,
                                 'action' => 'index',
+                            ],
+                        ],
+                    ],
+                    'qualification-details' => [
+                        'type'          => 'segment',
+                        'options'       => [
+                            'route'       => '/qualification-details',
+                            'defaults'    => [
+                                'controller' => QualificationDetailsController::class,
+                                'action' => 'view',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'add' => [
+                                'type'    => 'segment',
+                                'options' => [
+                                    'route'       => '/:group/add',
+                                    'constraints' => [
+                                        'group' => 'a|b',
+                                    ],
+                                    'defaults'    => [
+                                        'controller' => QualificationDetailsController::class,
+                                        'action'     => 'add',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'review' => [
+                                        'type' => 'segment',
+                                        'options' => [
+                                            'route' => '/review/:formUuid',
+                                            'defaults' => [
+                                                'controller' => QualificationDetailsController::class,
+                                                'action' => 'addReview',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'edit' => [
+                                'type' => 'segment',
+                                'options' => [
+                                    'route' => '/:group/edit',
+                                    'constraints' => [
+                                        'group' => 'a|b',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => QualificationDetailsController::class,
+                                        'action' => 'edit',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'review' => [
+                                        'type' => 'segment',
+                                        'options' => [
+                                            'route' => '/review/:formUuid',
+                                            'defaults' => [
+                                                'controller' => QualificationDetailsController::class,
+                                                'action' => 'editReview',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'remove' => [
+                                'type' => 'segment',
+                                'options' => [
+                                    'route' => '/:group/remove',
+                                    'constraints' => [
+                                        'group' => 'a|b',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => QualificationDetailsController::class,
+                                        'action' => 'remove',
+                                    ],
+                                ],
+                                'may_terminate' => true,
                             ],
                         ],
                     ],
@@ -355,6 +435,85 @@ return [
                             'defaults'    => [
                                 'controller' => UserTradeRolesController::class,
                                 'action' => 'index',
+                            ],
+                        ],
+                    ],
+                    'qualification-details' => [
+                        'type'          => 'segment',
+                        'options'       => [
+                            'route'       => '/qualification-details',
+                            'defaults'    => [
+                                'controller' => QualificationDetailsController::class,
+                                'action' => 'view',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'add' => [
+                                'type'    => 'segment',
+                                'options' => [
+                                    'route'       => '/:group/add',
+                                    'constraints' => [
+                                        'group' => 'a|b',
+                                    ],
+                                    'defaults'    => [
+                                        'controller' => QualificationDetailsController::class,
+                                        'action'     => 'add',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'review' => [
+                                        'type' => 'segment',
+                                        'options' => [
+                                            'route' => '/review/:formUuid',
+                                            'defaults' => [
+                                                'controller' => QualificationDetailsController::class,
+                                                'action' => 'addReview',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'edit' => [
+                                'type' => 'segment',
+                                'options' => [
+                                    'route' => '/:group/edit',
+                                    'constraints' => [
+                                        'group' => 'a|b',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => QualificationDetailsController::class,
+                                        'action' => 'edit',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'review' => [
+                                        'type' => 'segment',
+                                        'options' => [
+                                            'route' => '/review/:formUuid',
+                                            'defaults' => [
+                                                'controller' => QualificationDetailsController::class,
+                                                'action' => 'editReview',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'remove' => [
+                                'type' => 'segment',
+                                'options' => [
+                                    'route' => '/:group/remove',
+                                    'constraints' => [
+                                        'group' => 'a|b',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => QualificationDetailsController::class,
+                                        'action' => 'remove',
+                                    ],
+                                ],
+                                'may_terminate' => true,
                             ],
                         ],
                     ],
@@ -698,6 +857,85 @@ return [
                             ],
                         ],
                     ],
+                    'qualification-details' => [
+                        'type'          => 'segment',
+                        'options'       => [
+                            'route'       => '/qualification-details',
+                            'defaults'    => [
+                                'controller' => QualificationDetailsController::class,
+                                'action' => 'view',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'add' => [
+                                'type'    => 'segment',
+                                'options' => [
+                                    'route'       => '/:group/add',
+                                    'constraints' => [
+                                        'group' => 'a|b',
+                                    ],
+                                    'defaults'    => [
+                                        'controller' => QualificationDetailsController::class,
+                                        'action'     => 'add',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'review' => [
+                                        'type' => 'segment',
+                                        'options' => [
+                                            'route' => '/review/:formUuid',
+                                            'defaults' => [
+                                                'controller' => QualificationDetailsController::class,
+                                                'action' => 'addReview',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'edit' => [
+                                'type' => 'segment',
+                                'options' => [
+                                    'route' => '/:group/edit',
+                                    'constraints' => [
+                                        'group' => 'a|b',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => QualificationDetailsController::class,
+                                        'action' => 'edit',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'review' => [
+                                        'type' => 'segment',
+                                        'options' => [
+                                            'route' => '/review/:formUuid',
+                                            'defaults' => [
+                                                'controller' => QualificationDetailsController::class,
+                                                'action' => 'editReview',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'remove' => [
+                                'type'    => 'segment',
+                                'options' => [
+                                    'route'       => '/:group/remove',
+                                    'constraints' => [
+                                        'group' => 'a|b',
+                                    ],
+                                    'defaults'    => [
+                                        'controller' => QualificationDetailsController::class,
+                                        'action'     => 'remove',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+                        ],
+                    ],
                     'remove-ae-role' => [
                         'type'    => 'segment',
                         'options' => [
@@ -747,7 +985,6 @@ return [
                                 ],
                             ],
                         ],
-
                     ],
                     'username-recover' => [
                         'type' => 'Segment',
@@ -931,17 +1168,82 @@ return [
                             ],
                         ],
                     ],
-                    'remove-ae-role' => [
-                        'type'    => 'segment',
-                        'options' => [
-                            'route'    => '/remove-ae-role/:entityId/:positionId',
-                            'constraints' => [
-                                'entityId'   => '[0-9]+',
-                                'positionId' => '[0-9]+',
+                    'qualification-details' => [
+                        'type'          => 'segment',
+                        'options'       => [
+                            'route'       => '/qualification-details',
+                            'defaults'    => [
+                                'controller' => QualificationDetailsController::class,
+                                'action' => 'view',
                             ],
-                            'defaults' => [
-                                'controller' => UserTradeRolesController::class,
-                                'action' => 'removeAeRole'
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'add' => [
+                                'type'    => 'segment',
+                                'options' => [
+                                    'route'       => '/:group/add',
+                                    'constraints' => [
+                                        'group' => 'a|b',
+                                    ],
+                                    'defaults'    => [
+                                        'controller' => QualificationDetailsController::class,
+                                        'action'     => 'add',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'review' => [
+                                        'type' => 'segment',
+                                        'options' => [
+                                            'route' => '/review/:formUuid',
+                                            'defaults' => [
+                                                'controller' => QualificationDetailsController::class,
+                                                'action' => 'addReview',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'edit' => [
+                                'type' => 'segment',
+                                'options' => [
+                                    'route' => '/:group/edit',
+                                    'constraints' => [
+                                        'group' => 'a|b',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => QualificationDetailsController::class,
+                                        'action' => 'edit',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'review' => [
+                                        'type' => 'segment',
+                                        'options' => [
+                                            'route' => '/review/:formUuid',
+                                            'defaults' => [
+                                                'controller' => QualificationDetailsController::class,
+                                                'action' => 'editReview',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'remove' => [
+                                'type' => 'segment',
+                                'options' => [
+                                    'route' => '/:group/remove',
+                                    'constraints' => [
+                                        'group' => 'a|b',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => QualificationDetailsController::class,
+                                        'action' => 'remove',
+                                    ],
+                                ],
+                                'may_terminate' => true,
                             ],
                         ],
                     ],

@@ -9,6 +9,7 @@ use Zend\View\Model\JsonModel;
 use TestSupport\Helper\TestSupportRestClientHelper;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Connection;
 
 class TesterAuthorisationStatusService
 {
@@ -60,6 +61,24 @@ class TesterAuthorisationStatusService
 
         $this->deleteTesterQualificationStatus($testerId);
 
+        return $this->insert($testerId, $qualifications);
+    }
+
+    public function insertTesterQualificationStatus($testerId, $qualifications)
+    {
+        if (!$this->validateQualifications($qualifications)) {
+            throw new \Exception('Invalid qualification status provided');
+        }
+
+        foreach ($qualifications as $group => $status) {
+            $this->deleteTesterQualificationStatusForGroup($testerId, $group);
+        }
+
+        return $this->insert($testerId, $qualifications);
+    }
+
+    private function insert($testerId, $qualifications)
+    {
         $qryInsertQualification = $this->entityManager->getConnection()->prepare(
             "INSERT INTO auth_for_testing_mot (person_id, status_id, vehicle_class_id, created_by)
              VALUES (:testerId, :statusId, :vehicleClassId, 1)"
@@ -88,6 +107,18 @@ class TesterAuthorisationStatusService
         }
 
         return $this->getResultSet();
+    }
+
+    public function deleteTesterQualificationStatusForGroup($personId, $group)
+    {
+        $classes = VehicleClassGroup::getClassesForGroup($group);
+
+        $conn = $this->entityManager->getConnection();
+        $conn->executeQuery(
+            "DELETE FROM auth_for_testing_mot WHERE person_id = :personId AND vehicle_class_id IN (:classes)",
+            ["personId" => $personId, "classes" => $classes],
+            ["personId" => \Pdo::PARAM_INT, "classes" => Connection::PARAM_STR_ARRAY]
+        );
     }
 
     private function deleteTesterQualificationStatus($personId)

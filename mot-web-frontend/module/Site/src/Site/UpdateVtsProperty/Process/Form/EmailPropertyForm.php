@@ -8,7 +8,6 @@ use Zend\Form\Element\Text;
 use Zend\Form\Form;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
-use Zend\Validator\EmailAddress;
 use Zend\Validator\StringLength;
 
 class EmailPropertyForm extends Form
@@ -31,8 +30,7 @@ class EmailPropertyForm extends Form
             ->setAttribute('id', 'email')
             ->setAttribute('required', false)
             ->setAttribute('group', true)
-            ->setAttribute('divModifier', 'form-group-compound')
-        ;
+            ->setAttribute('divModifier', 'form-group-compound');
 
         $this->add($this->emailElement);
 
@@ -47,8 +45,7 @@ class EmailPropertyForm extends Form
             ->setRequired(false)
             ->getValidatorChain()
             ->attach($emailInvalidValidator)
-            ->attach($emailEmptyValidator)
-        ;
+            ->attach($emailEmptyValidator);
 
         $filter = new InputFilter();
         $filter->add($emailFilter);

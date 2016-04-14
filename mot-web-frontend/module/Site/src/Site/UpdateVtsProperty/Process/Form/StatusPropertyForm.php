@@ -4,11 +4,10 @@ namespace Site\UpdateVtsProperty\Process\Form;
 
 use DvsaCommon\Model\VtsStatus;
 use Site\UpdateVtsProperty\UpdateVtsPropertyAction;
-use Zend\Form\Element\Text;
+use Zend\Form\Element\Select;
 use Zend\Form\Form;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
-use Zend\Form\Element\Select;
 use Zend\Validator\NotEmpty;
 
 class StatusPropertyForm extends Form
