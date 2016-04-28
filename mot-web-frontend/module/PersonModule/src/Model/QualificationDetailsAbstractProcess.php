@@ -67,6 +67,8 @@ abstract class QualificationDetailsAbstractProcess implements TwoStepProcessInte
 
     /** @var QualificationDetailsContext */
     protected $context;
+    
+    abstract protected function getBackLinkText();
 
     public function setContext(FormContextInterface $context)
     {
@@ -214,7 +216,7 @@ abstract class QualificationDetailsAbstractProcess implements TwoStepProcessInte
      */
     public function getReviewPageTitle()
     {
-        return 'Review certificate details';
+        return 'Review certificate and demo test details';
     }
 
     /**
@@ -224,7 +226,7 @@ abstract class QualificationDetailsAbstractProcess implements TwoStepProcessInte
      */
     public function getReviewPageLede()
     {
-        return 'Please check that the details below are correct.';
+        return 'Check that the details below are correct';
     }
 
     /**
@@ -252,6 +254,8 @@ abstract class QualificationDetailsAbstractProcess implements TwoStepProcessInte
                 'formData' => $formData,
                 'table' => $table,
                 'site' => $site,
+                'isViewingHimself' => $this->isViewingHimself(),
+                'backUrlText' => $this->getBackLinkText(),
                 'backUrl' => $this->getReviewStepBackUrl($formUuid),
             ]);
     }
@@ -299,5 +303,10 @@ abstract class QualificationDetailsAbstractProcess implements TwoStepProcessInte
         }
 
         return null;
+    }
+
+    private function isViewingHimself()
+    {
+        return ContextProvider::YOUR_PROFILE_CONTEXT === $this->contextProvider->getContext();
     }
 }

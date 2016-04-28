@@ -27,6 +27,7 @@ use DvsaEntities\Repository\AuthorisationForTestingMotRepository;
 use DvsaEntities\Repository\AuthorisationForTestingMotStatusRepository;
 use DvsaEntities\Repository\VehicleClassRepository;
 use PersonApi\Service\MotTestingCertificate\RemoveMotTestingCertificateService;
+use PersonApi\Service\MotTestingCertificate\MotTestingCertificateNotification;
 
 class MotTestingCertificateService implements AutoWireableInterface
 {
@@ -50,6 +51,7 @@ class MotTestingCertificateService implements AutoWireableInterface
     private $authorisationForTestingMotStatusRepository;
     private $vehicleClassRepository;
     private $removeMotTestingCertificateService;
+    private $notification;
 
     public function __construct(
         ReadMotTestingCertificateAssertion $readMotTestingCertificateAssertion,
@@ -69,7 +71,8 @@ class MotTestingCertificateService implements AutoWireableInterface
         AuthorisationForTestingMotRepository $authorisationForTestingMotRepository,
         AuthorisationForTestingMotStatusRepository $authorisationForTestingMotStatusRepository,
         VehicleClassRepository $vehicleClassRepository,
-        RemoveMotTestingCertificateService $removeMotTestingCertificateService
+        RemoveMotTestingCertificateService $removeMotTestingCertificateService,
+        MotTestingCertificateNotification $notification
     ){
         $this->readMotTestingCertificateAssertion = $readMotTestingCertificateAssertion;
         $this->createMotTestingCertificateAssertion = $createMotTestingCertificateAssertion;
@@ -89,6 +92,7 @@ class MotTestingCertificateService implements AutoWireableInterface
         $this->authorisationForTestingMotStatusRepository = $authorisationForTestingMotStatusRepository;
         $this->vehicleClassRepository = $vehicleClassRepository;
         $this->removeMotTestingCertificateService = $removeMotTestingCertificateService;
+        $this->notification = $notification;
     }
 
     /**
@@ -144,6 +148,7 @@ class MotTestingCertificateService implements AutoWireableInterface
         $this->changeQualificationStatus($person, $dto->getVehicleClassGroupCode());
 
         $this->event->sendCreateEvent($motTestingCertificate);
+        $this->notification->sendCreateNotification($motTestingCertificate);
 
         return $this->motTestingCertificateMapper->toDto($motTestingCertificate);
     }

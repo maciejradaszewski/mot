@@ -1,6 +1,6 @@
 <?php
 
-namespace Dvsa\Mot\Frontend\MotTestModuleTest\Service;
+namespace Dvsa\Mot\Frontend\MotTestModuletest\Service;
 
 use Dvsa\Mot\Frontend\MotTestModule\Service\SurveyService;
 use DvsaCommon\HttpRestJson\Client;
@@ -8,41 +8,20 @@ use DvsaCommon\HttpRestJson\Client;
 class SurveyServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Client $serviceMock
+     * @var Client|\PHPUnit_Framework_MockObject_MockObject
      */
     private $clientMock;
-
-    /**
-     * @var SurveyService $serviceMock
-     */
-    private $serviceMock;
 
     const API_URL = 'survey';
 
     public function setUp()
     {
         $this->clientMock = $this->getMockBuilder(Client::class)->getMock();
-
-        $this->serviceMock = new SurveyService($this->clientMock);
     }
 
     /**
-     * @dataProvider testSubmitSurveyDataProvider
-     * @group survey_service_tests
+     * @return array
      */
-    public function testSubmitSurveyResult($feedback, $expected)
-    {
-        $this->clientMock
-            ->expects($this->once())
-            ->method('post')
-            ->with(self::API_URL, $feedback)
-            ->willReturn([$feedback]);
-
-        $result = $this->serviceMock->submitSurveyResult($feedback);
-
-        $this->assertSame($result, $expected);
-    }
-
     public function testSubmitSurveyDataProvider()
     {
         return [
@@ -67,5 +46,78 @@ class SurveyServiceTest extends \PHPUnit_Framework_TestCase
                 ['5'],
             ],
         ];
+    }
+
+    /**
+     * @dataProvider testSubmitSurveyDataProvider
+     * @group survey_service_tests
+     *
+     * @param $feedback
+     * @param $expected
+     */
+    public function testSubmitSurveyResult($feedback, $expected)
+    {
+        $service = $this->createService();
+        $this->clientMock
+            ->expects($this->once())
+            ->method('post')
+            ->with(self::API_URL, $feedback)
+            ->willReturn([$feedback]);
+
+        $result = $service->submitSurveyResult($feedback);
+
+        $this->assertSame($result, $expected);
+    }
+
+    /**
+     * @return array
+     */
+    public function testGetSurveyReportsDataProvider()
+    {
+        return [
+            [
+                'month' => '2016-04',
+                'size' => 0,
+                'csv' => '',
+            ],
+            [
+                'month' => '2016-03',
+                'size' => 100,
+                'csv' => 'a,different,csv,file',
+            ],
+            [
+                'month' => '2016-02',
+                'size' => 420,
+                'csv' => 'a,more,different,csv,file',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider testGetSurveyReportsDataProvider
+     * @group survey_service_tests
+     *
+     * @param $report
+     */
+    public function testGetSurveyReports($report)
+    {
+        $service = $this->createService();
+        $this->clientMock
+            ->expects($this->once())
+            ->method('get')
+            ->with()
+            ->willReturn($report);
+
+        $result = $service->getSurveyReports();
+
+        $this->assertSame($result, $report);
+    }
+
+    /**
+     * @return SurveyService
+     */
+    private function createService()
+    {
+        return new SurveyService($this->clientMock);
     }
 }

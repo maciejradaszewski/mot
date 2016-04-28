@@ -36,6 +36,7 @@ use DvsaEntities\Repository\AuthorisationForTestingMotRepository;
 use DvsaEntities\Repository\AuthorisationForTestingMotStatusRepository;
 use DvsaEntities\Repository\VehicleClassRepository;
 use PersonApi\Service\MotTestingCertificate\RemoveMotTestingCertificateService;
+use PersonApi\Service\MotTestingCertificate\MotTestingCertificateNotification;
 
 class MotTestingCertificateServiceTest extends AbstractServiceTestCase
 {
@@ -79,6 +80,9 @@ class MotTestingCertificateServiceTest extends AbstractServiceTestCase
 
     /** @var AuthorisationForTestingMotRepository */
     private $authorisationForTestingMotRepository;
+
+    /** @var MotTestingCertificateNotification */
+    private $notification;
 
     public function setUp()
     {
@@ -129,6 +133,8 @@ class MotTestingCertificateServiceTest extends AbstractServiceTestCase
         $this->updateMotTestingCertificateAssertion = XMock::of(UpdateMotTestingCertificateAssertion::class);
 
         $this->authorisationForTestingMotRepository = XMock::of(AuthorisationForTestingMotRepository::class);
+
+        $this->notification = XMock::of(MotTestingCertificateNotification::class);
     }
 
     /**
@@ -248,6 +254,11 @@ class MotTestingCertificateServiceTest extends AbstractServiceTestCase
             ->event
             ->expects($this->once())
             ->method("sendCreateEvent");
+
+        $this
+            ->notification
+            ->expects($this->once())
+            ->method("sendCreateNotification");
 
         $dto = $this->createMotTestingCertificateService()->create($data->getVehicleClassGroupCode(), $data);
 
@@ -414,7 +425,8 @@ class MotTestingCertificateServiceTest extends AbstractServiceTestCase
             $this->authorisationForTestingMotRepository,
             XMock::of(AuthorisationForTestingMotStatusRepository::class),
             XMock::of(VehicleClassRepository::class),
-            XMock::of(RemoveMotTestingCertificateService::class)
+            XMock::of(RemoveMotTestingCertificateService::class),
+            $this->notification
         );
     }
 

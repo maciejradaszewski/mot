@@ -18,15 +18,15 @@ use Zend\Form\Element\DateTimeLocal;
 class DemoTestRequestsSearchParamTest extends AbstractServiceTestCase
 {
     const USER = 'user';
-    const USER_SORTED_PARAMETER = 'pe.username';
+    const USER_SORTED_PARAMETER = 'person.username';
     const CONTACT = 'contact';
-    const CONTACT_SORTED_PARAMETER = 'e.email';
+    const CONTACT_SORTED_PARAMETER = 'email.email';
     const GROUP = 'group';
-    const GROUP_SORTED_PARAMETER = 'vcg.code';
+    const GROUP_SORTED_PARAMETER = 'vehicle_class_group.code';
     const VTS = 'vts_postcode';
-    const VTS_SORTED_PARAMETER = 'a.postcode';
+    const VTS_SORTED_PARAMETER = 'address.postcode';
     const DATE_ADDED = 'date_added';
-    const DATE_ADDED_SORTED_PARAMETER = 'qa.createdOn';
+    const DATE_ADDED_SORTED_PARAMETER = 'qualification_award.createdOn';
 
     public function testDemoTestRequestsSearchParam()
     {

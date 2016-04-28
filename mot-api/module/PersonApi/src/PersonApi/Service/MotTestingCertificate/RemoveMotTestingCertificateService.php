@@ -48,7 +48,7 @@ class RemoveMotTestingCertificateService implements AutoWireableInterface
         $this->transaction->begin();
         try {
             $this->event->sendRemoveEvent($certificate);
-            $this->notification->send($certificate);
+            $this->notification->sendRemoveNotification($certificate);
             $this->personQualificationStatusService->removeStatus(
                 $certificate->getPerson(),
                 $group

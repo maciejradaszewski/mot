@@ -109,12 +109,6 @@ public class PageNavigator {
         return new HomePage(driver);
     }
 
-    public AccountClaimPage gotoAccountClaimPage(User user) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, AccountClaimPage.PATH);
-
-        return new AccountClaimPage(driver);
-    }
-
     public HelpDeskUserProfilePage goToUserHelpDeskProfilePage(User user, String profileId) throws IOException {
         injectOpenAmCookieAndNavigateToPath(user, String.format(HelpDeskUserProfilePage.PATH, profileId));
         return new HelpDeskUserProfilePage(driver);
@@ -162,11 +156,6 @@ public class PageNavigator {
     public ProfilePage goToUserSearchedProfilePageViaUserSearch(User loggedUser, User searchedUser) throws IOException, URISyntaxException {
         return navigateToPage(loggedUser, UserSearchPage.PATH, UserSearchPage.class).searchForUserByUsername(searchedUser.getUsername())
                 .clickSearchButton(UserSearchResultsPage.class).chooseUser(0);
-    }
-
-    public ChangeDrivingLicencePage goToChangeDrivingLicencePage(User user, String userId) throws IOException {
-        injectOpenAmCookieAndNavigateToPath(user, String.format(ChangeDrivingLicencePage.PATH, userId));
-        return new ChangeDrivingLicencePage(driver);
     }
 
     public CreateNewVehicleRecordIdentificationPage gotoCreateNewVehicleRecordIdentificationPage(User user) throws IOException {

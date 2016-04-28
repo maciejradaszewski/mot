@@ -4,13 +4,16 @@
  *
  * @link http://gitlab.clb.npm/mot/mot
  */
-
 namespace Dvsa\Mot\Frontend\MotTestModule\Controller;
 
 use Core\Controller\AbstractAuthActionController;
 use Dvsa\Mot\Frontend\MotTestModule\Service\SurveyService;
+use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\FeatureToggle;
+use Zend\Http\Headers;
+use Zend\Http\PhpEnvironment\Response;
 use Zend\View\Model\ViewModel;
+use DateTime;
 
 /**
  * Class SurveyPageController.
@@ -22,6 +25,11 @@ class SurveyPageController extends AbstractAuthActionController
      */
     private $surveyService;
 
+    /**
+     * @var array
+     */
+    private $reports;
+
     const VERY_SATISFIED = 5;
     const SATISFIED = 4;
     const NEITHER_SATISFIED_NOR_DISSATISFIED = 3;
@@ -29,6 +37,11 @@ class SurveyPageController extends AbstractAuthActionController
     const VERY_DISSATISFIED = 1;
 
     const SATISFACTION_RATING = 'satisfactionRating';
+
+    /**
+     * @var
+     */
+    protected $csvHandle;
 
     /**
      * SurveyPageController constructor.
@@ -76,6 +89,9 @@ class SurveyPageController extends AbstractAuthActionController
         );
     }
 
+    /**
+     * @return array|ViewModel
+     */
     public function thanksAction()
     {
         $ref = $_SERVER['HTTP_REFERER'];
@@ -95,6 +111,59 @@ class SurveyPageController extends AbstractAuthActionController
     }
 
     /**
+     * @return ViewModel
+     */
+    public function reportsAction()
+    {
+        $this->assertGranted(PermissionInSystem::GENERATE_SATISFACTION_SURVEY_REPORT);
+        if (!$this->isFeatureEnabled(FeatureToggle::SURVEY_PAGE)) {
+            return $this->notFoundAction();
+        }
+
+        $this->layout('layout/layout-govuk.phtml');
+
+        $this->reports = $this->surveyService->getSurveyReports();
+
+        return $this->createViewModel('survey-reports/reports.phtml',
+            [
+                'reports' => $this->reports,
+            ]
+        );
+    }
+
+    /**
+     * @return Response
+     */
+    public function downloadReportCsvAction()
+    {
+        $this->assertGranted(PermissionInSystem::GENERATE_SATISFACTION_SURVEY_REPORT);
+        if (!$this->isFeatureEnabled(FeatureToggle::SURVEY_PAGE)) {
+            return $this->notFoundAction();
+        }
+
+        $reportMonth = $this->params()->fromRoute('month');
+
+        $headers = (new Headers())->addHeaders([
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="'.$reportMonth.'.csv"',
+            'Accept-Ranges' => 'bytes',
+            'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
+            'Pragma' => 'no-cache',
+        ]);
+
+        $this->response = new Response();
+        $this->response->setHeaders($headers);
+        $this->response->sendHeaders();
+
+        $this->csvHandle = fopen('php://output', 'w');
+        fputs($this->csvHandle, $this->getCsvDataForMonth($reportMonth));
+        flush();
+        fclose($this->csvHandle);
+
+        return $this->response;
+    }
+
+    /**
      * @param string $template
      * @param array  $variables
      *
@@ -107,5 +176,32 @@ class SurveyPageController extends AbstractAuthActionController
         $viewModel->setVariables($variables);
 
         return $viewModel;
+    }
+
+    /**
+     * @param $month
+     *
+     * @return string
+     */
+    private function getCsvDataForMonth($month)
+    {
+        $this->reports = $this->surveyService->getSurveyReports();
+
+        if (empty($this->reports)) {
+            return '';
+        }
+
+        foreach ($this->reports['data'] as $report) {
+            if (strtolower($this->getMonthNameFromReportMonth($report['month'])) == strtolower($month)) {
+                return $report['csv'];
+            }
+        }
+    }
+
+    private function getMonthNameFromReportMonth($reportMonth)
+    {
+        $date = DateTime::createFromFormat('Y-m', $reportMonth);
+
+        return $date->format('F');
     }
 }

@@ -359,6 +359,7 @@ Feature: MOT Test
       | class4.roller.invalid.high  | FAILED  |
 
   @survey
+  @wip
   Scenario Outline: Tester submits a survey response
     Given I am logged in as a Tester
     And I submit a survey response of <response>
@@ -371,3 +372,34 @@ Feature: MOT Test
       | 3        |
       | 4        |
       | 5        |
+
+  @brake-test
+  Scenario: Putting vehicle weight in brake test updates vehicle record for MOT test
+    Given I am logged in as a Tester
+    And I start an MOT Test
+    And the Tester adds an Odometer Reading
+    When the Tester adds a Class 3-7 Plate Brake Test
+    And the Tester Passes the Mot Test
+    Then vehicle weight is updated
+
+  @brake-test
+  Scenario: Putting vehicle weight in brake test does not update vehicle record for demo test
+    Given I am logged in as a Tester
+    And I start a Demo MOT Test
+    And the Tester adds an Odometer Reading
+    When the Tester adds a Class 3-7 Plate Brake Test
+    And the Tester Passes the Mot Test
+    Then vehicle weight is not updated
+    
+  @survey
+  @wip
+  Scenario Outline: Scheme user or scheme manager wants to generate a survey report
+    Given I am logged in as a Scheme Manager
+    And There exist survey responses of <1> <2> <3> <4> <5>
+    And I want to generate a survey report
+    Then I can download the report
+
+    Examples:
+    | 1 | 2 | 3 | 4 | 5 |
+    | 0 | 0 | 0 | 0 | 0 |
+    | 1 | 2 | 3 | 4 | 5 |

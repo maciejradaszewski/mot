@@ -13,6 +13,7 @@ class QualificationAwardRepository extends AbstractMutableRepository
 {
     const DEMO_TEST_NEEDED = 'Demo Test Needed';
     const CONTACT_TYPE_PERSONAL = 'PERSONAL';
+    const IS_PRIMARY = true;
     /**
      * @param $personId
      * @return QualificationAward[]
@@ -101,45 +102,48 @@ class QualificationAwardRepository extends AbstractMutableRepository
 
     private function findAllDemoTestRequestsUsers($isCount, DemoTestRequestsSearchParam $searchParam)
     {
-        $select = ($isCount === true ? 'qa.id'
+        $select = ($isCount === true ? 'qualification_award.id'
             : '
-            qa.id,
-            pe.username,
-            p.number,
-            e.email,
-            pe.firstName,
-            pe.middleName,
-            pe.familyName,
-            vcg.code,
-            s.siteNumber,
-            a.postcode,
-            qa.createdOn'
+            qualification_award.id,
+            person.username,
+            phone.number,
+            email.email,
+            person.firstName,
+            person.middleName,
+            person.familyName,
+            vehicle_class_group.code,
+            site.siteNumber,
+            address.postcode,
+            qualification_award.createdOn'
         );
-        $queryBuilder = $this->createQueryBuilder('qa');
+        $queryBuilder = $this->createQueryBuilder('qualification_award');
         $queryBuilder
             ->distinct(true)
             ->select($select)
-            ->leftJoin("qa.site", "s")
-            ->leftJoin("qa.vehicleClassGroup","vcg")
-            ->leftJoin("s.contacts","scdm")
-            ->leftJoin("scdm.contactDetail","cds")
-            ->leftJoin("cds.address","a")
-            ->leftJoin("qa.person","pe")
-            ->leftJoin("pe.contacts","pecdm")
-            ->leftJoin("pecdm.contactDetail","cd")
-            ->leftJoin("pecdm.type","pt")
-            ->leftJoin("cd.emails","e")
-            ->leftJoin("cd.phones","p")
-            ->leftJoin("pe.authorisationsForTestingMot","aftm")
-            ->leftJoin("aftm.vehicleClass","vc")
-            ->leftJoin("aftm.status","ast")
-            ->where('pt.name = :contactTypePersonal')
-            ->andWhere('ast.name = :demoTestNeeded')
-            ->andWhere('qa.vehicleClassGroup = vc.group')
+            ->leftJoin("qualification_award.site", "site")
+            ->leftJoin("qualification_award.vehicleClassGroup","vehicle_class_group")
+            ->leftJoin("site.contacts","site_contact_details_map")
+            ->leftJoin("site_contact_details_map.contactDetail","site_contact_details")
+            ->leftJoin("site_contact_details.address","address")
+            ->leftJoin("qualification_award.person","person")
+            ->leftJoin("person.contacts","person_contact_details_map")
+            ->leftJoin("person_contact_details_map.contactDetail","person_contact_details")
+            ->leftJoin("person_contact_details_map.type","person_contact_details_type")
+            ->leftJoin("person_contact_details.emails","email")
+            ->leftJoin("person_contact_details.phones","phone")
+            ->leftJoin("person.authorisationsForTestingMot","authorisation_for_testing_mot")
+            ->leftJoin("authorisation_for_testing_mot.vehicleClass","vehicle_class")
+            ->leftJoin("authorisation_for_testing_mot.status","authorisation_for_testing_mot_status")
+            ->where('person_contact_details_type.name = :contactTypePersonal OR person_contact_details_type.id IS NULL')
+            ->andWhere('authorisation_for_testing_mot_status.name = :demoTestNeeded')
+            ->andWhere('qualification_award.vehicleClassGroup = vehicle_class.group')
+            ->andWhere('phone.isPrimary = :isPrimary OR phone.id IS NULL')
+            ->andWhere('email.isPrimary = :isPrimary OR email.id IS NULL')
             ->setParameters(
                 [
                     'contactTypePersonal' => self::CONTACT_TYPE_PERSONAL,
                     'demoTestNeeded'      => self::DEMO_TEST_NEEDED,
+                    'isPrimary'           => self::IS_PRIMARY,
                 ]
             );
 
@@ -153,7 +157,6 @@ class QualificationAwardRepository extends AbstractMutableRepository
                 $queryBuilder->setMaxResults($searchParam->getRowCount());
             }
         }
-
 
         return $queryBuilder->getQuery();
     }

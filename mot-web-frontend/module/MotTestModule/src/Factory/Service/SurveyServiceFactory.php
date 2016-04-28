@@ -11,6 +11,7 @@ class SurveyServiceFactory implements FactoryInterface
 {
     /**
      * @param ServiceLocatorInterface $serviceLocator
+     *
      * @return SurveyService
      */
     public function createService(ServiceLocatorInterface $serviceLocator)

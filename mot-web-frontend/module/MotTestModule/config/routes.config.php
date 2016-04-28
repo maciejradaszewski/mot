@@ -52,6 +52,29 @@ return [
                             ],
                         ],
                     ],
+                    'reports'                           => [
+                        'type'    => 'segment',
+                        'options' => [
+                            'route'    => '/reports',
+                            'defaults' => [
+                                'controller' => SurveyPageController::class,
+                                'action'     => 'reports',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'downloadCsv' => [
+                                'type' => 'segment',
+                                'options' => [
+                                    'route' => '/download/:month',
+                                    'defaults' => [
+                                        'controller' => SurveyPageController::class,
+                                        'action' => 'downloadReportCsv'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
                 ],
             ],
         ],

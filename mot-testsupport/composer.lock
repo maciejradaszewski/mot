@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "22c121c6efdfc25373b1ce3113354747",
+    "hash": "c05ab9f87c62d13c0ccc16e9a2fc4ef6",
+    "content-hash": "da1090d5977f3b24ce48ef6e39afc13d",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -718,7 +719,7 @@
             "version": "v1.1.1",
             "source": {
                 "type": "git",
-                "url": "git@gitlab.clb.npm:mot/featuretoggle.git",
+                "url": "git@gitlab.motdev.org.uk:mot/featuretoggle.git",
                 "reference": "2ca85b84d5b20959a5f4fe899fd989f92602403f"
             },
             "require": {
@@ -1328,12 +1329,12 @@
             "target-dir": "Symfony/Component/Console",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Console.git",
+                "url": "https://github.com/symfony/console.git",
                 "reference": "748beed2a1e73179c3f5154d33fe6ae100c1aeb1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/748beed2a1e73179c3f5154d33fe6ae100c1aeb1",
+                "url": "https://api.github.com/repos/symfony/console/zipball/748beed2a1e73179c3f5154d33fe6ae100c1aeb1",
                 "reference": "748beed2a1e73179c3f5154d33fe6ae100c1aeb1",
                 "shasum": ""
             },

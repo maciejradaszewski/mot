@@ -13,14 +13,14 @@ use DvsaCommonApi\Model\SearchParam;
 class DemoTestRequestsSearchParam extends SearchParam
 {
 
-    const DEFAULT_SORT_COLUMN = 'pe.username';
+    const DEFAULT_SORT_COLUMN = 'person.username';
 
     private static $sortCriteria = [
-        DemoTestRequestsSearchParamsDto::SORT_BY_USERNAME => ['pe.username'],
-        DemoTestRequestsSearchParamsDto::SORT_BY_CONTACT => ['e.email'],
-        DemoTestRequestsSearchParamsDto::SORT_BY_GROUP => ['vcg.code'],
-        DemoTestRequestsSearchParamsDto::SORT_BY_VTS_POSTCODE => ['a.postcode'],
-        DemoTestRequestsSearchParamsDto::SORT_BY_DATE_ADDED => ['qa.createdOn'],
+        DemoTestRequestsSearchParamsDto::SORT_BY_USERNAME => ['person.username'],
+        DemoTestRequestsSearchParamsDto::SORT_BY_CONTACT => ['email.email'],
+        DemoTestRequestsSearchParamsDto::SORT_BY_GROUP => ['vehicle_class_group.code'],
+        DemoTestRequestsSearchParamsDto::SORT_BY_VTS_POSTCODE => ['address.postcode'],
+        DemoTestRequestsSearchParamsDto::SORT_BY_DATE_ADDED => ['qualification_award.createdOn'],
     ];
 
     /**

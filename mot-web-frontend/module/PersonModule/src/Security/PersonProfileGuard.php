@@ -21,6 +21,7 @@ use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\Enum\RoleCode;
 use DvsaCommon\Model\OrganisationBusinessRoleCode;
+use DvsaCommon\Model\TesterGroupAuthorisationStatus;
 use InvalidArgumentException;
 use PersonApi\Dto\PersonDetails;
 
@@ -540,6 +541,14 @@ class PersonProfileGuard
             $vehicleClassGroupCode,
             $this->testerAuthorisation
         );
+    }
+
+    public function canViewGuidance($vehicleClassAGroupCode, $vehicleClassBGroupCode)
+    {
+        return $this->isViewingOwnProfile() ?
+            (($this->canCreateQualificationDetails($vehicleClassAGroupCode)) ||
+                ($this->canCreateQualificationDetails($vehicleClassBGroupCode))) :
+            false ;
     }
 
     private function getStatusForGroup($vehicleClassGroupCode)

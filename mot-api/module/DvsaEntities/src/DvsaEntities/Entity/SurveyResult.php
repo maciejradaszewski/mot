@@ -18,7 +18,8 @@ use DvsaEntities\EntityTrait\CommonIdentityTrait;
  *         )
  *      }
  *   )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="DvsaEntities\Repository\SurveyResultRepository")
+ *
  */
 class SurveyResult extends Entity
 {

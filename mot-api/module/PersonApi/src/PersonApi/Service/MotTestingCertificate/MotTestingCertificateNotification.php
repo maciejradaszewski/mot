@@ -21,15 +21,25 @@ class MotTestingCertificateNotification implements AutoWireableInterface
         $this->notificationService = $notificationService;
     }
 
+    public function sendCreateNotification(QualificationAward $motTestingCertificate)
+    {
+        return $this->send($motTestingCertificate, Notification::TEMPLATE_MOT_TESTING_CERTIFICATE_CREATED);
+    }
+
     /**
      * @param QualificationAward $motTestingCertificate
      * @return int
      */
-    public function send(QualificationAward $motTestingCertificate)
+    public function sendRemoveNotification(QualificationAward $motTestingCertificate)
+    {
+        return $this->send($motTestingCertificate, Notification::TEMPLATE_MOT_TESTING_CERTIFICATE_REMOVAL);
+    }
+
+    private function send(QualificationAward $motTestingCertificate, $templateId)
     {
         $data = (new Notification())
             ->setRecipient($motTestingCertificate->getPerson()->getId())
-            ->setTemplate(Notification::TEMPLATE_MOT_TESTING_CERTIFICATE_REMOVAL)
+            ->setTemplate($templateId)
             ->addField("group", $motTestingCertificate->getVehicleClassGroup()->getCode())
             ->addField("user", $this->motIdentityProvider->getIdentity()->getUsername())
             ->addField("certificateNumber", $motTestingCertificate->getCertificateNumber())
@@ -37,6 +47,5 @@ class MotTestingCertificateNotification implements AutoWireableInterface
             ->toArray();
 
         return $this->notificationService->add($data);
-
     }
 }

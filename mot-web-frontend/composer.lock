@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "516e572fff7ea31f99cb05b0394c0fe0",
-    "content-hash": "3c94984006aa68d94e8c47c9ef2393c2",
+    "hash": "a729d91019fd9796d671ebb446257001",
+    "content-hash": "f5db4814ba155d5a8c25d2c627b7914a",
     "packages": [
         {
             "name": "cpms/client",
@@ -1028,11 +1028,11 @@
         },
         {
             "name": "dvsa/web-frontend-assets",
-            "version": "v0.7.10",
+            "version": "v0.7.11",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.motdev.org.uk:mot/web-frontend-assets.git",
-                "reference": "62fc5549ba76c64ec2ce9d86cac0acf7b53e2d08"
+                "reference": "e6ad8a842639a6bc744c486a2a9c8ad15c2cfb53"
             },
             "type": "library",
             "authors": [
@@ -1041,7 +1041,7 @@
                     "email": ""
                 }
             ],
-            "time": "2016-03-14 13:34:02"
+            "time": "2016-04-01 14:10:11"
         },
         {
             "name": "erusev/parsedown",
@@ -1639,6 +1639,7 @@
                     "ZendPdf\\": "library/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],

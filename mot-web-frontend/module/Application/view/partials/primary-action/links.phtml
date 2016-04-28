@@ -1,9 +1,11 @@
 <?php
 /** @var $dashboard \Dashboard\Model\Dashboard */
 use DvsaCommon\Auth\PermissionInSystem;
+use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\UrlBuilder\AuthorisedExaminerUrlBuilderWeb;
 use DvsaMotTest\Controller\VehicleSearchController;
 use UserAdmin\Controller\UserSearchController;
+use Dvsa\Mot\Frontend\MotTestModule\Controller\SurveyPageController;
 
 ?>
 <ul class="list-unstyled">
@@ -69,6 +71,15 @@ use UserAdmin\Controller\UserSearchController;
         <li>
             <a id="transactions" href="<?php echo $this->url('direct-debit-search'); ?>">
                 Direct Debit
+            </a>
+        </li>
+    <?php endif; ?>
+    <?php if ($this->authorisationHelper()->isGranted(PermissionInSystem::GENERATE_SATISFACTION_SURVEY_REPORT)
+                && $this->isFeatureEnabled(FeatureToggle::SURVEY_PAGE)): ?>
+        <li>
+            <a href="<?php echo $this->url('survey/reports'); ?>"
+               id="action-start-survey-reports">
+                Generate survey report
             </a>
         </li>
     <?php endif; ?>
