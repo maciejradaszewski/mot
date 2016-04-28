@@ -615,6 +615,32 @@ return [
                         'controller' => SurveyController::class,
                     ],
                 ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'report' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/reports',
+                            'defaults' => [
+                                'controller' => SurveyController::class,
+                                'action' => 'getReports',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'generate' => [
+                                'type' => 'segment',
+                                'options' => [
+                                    'route' => '/generate',
+                                    'defaults' => [
+                                        'controller' => SurveyController::class,
+                                        'action' => 'generateReports',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ],//end of 'routes =>'
     ], // end of 'router =>'

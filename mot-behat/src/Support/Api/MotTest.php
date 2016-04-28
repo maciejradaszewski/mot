@@ -13,6 +13,7 @@ class MotTest extends AbstractMotTest
     const PATH_SEARCH = 'mot-test-search';
     const PATH_RECENT_CERTIFICATE = 'mot-recent-certificate';
     const PATH_SURVEY = '/survey';
+    const PATH_SURVEY_REPORTS = '/reports';
 
     /**
      * @var Person
@@ -189,6 +190,28 @@ class MotTest extends AbstractMotTest
             self::PATH_SURVEY,
             ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '. $token],
             $body
+        ));
+    }
+
+    /**
+     * @param $token
+     * @return \Dvsa\Mot\Behat\Support\Response
+     */
+    public function generateSurveyReports($token)
+    {
+        return $this->client->request(new Request(
+            MotApi::METHOD_GET,
+            self::PATH_SURVEY.self::PATH_SURVEY_REPORTS.'/generate',
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '. $token]
+        ));
+    }
+    
+    public function getSurveyReports($token)
+    {
+        return $this->client->request(new Request(
+            MotApi::METHOD_GET,
+            self::PATH_SURVEY.self::PATH_SURVEY_REPORTS,
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '. $token]
         ));
     }
 }

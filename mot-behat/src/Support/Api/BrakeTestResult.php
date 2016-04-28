@@ -7,6 +7,7 @@ use Dvsa\Mot\Behat\Support\Request;
 class BrakeTestResult extends MotApi
 {
     const PATH = 'mot-test/{mot_test_number}/brake-test-result';
+    const VEHICLE_WEIGHT = 100;
 
     public function addBrakeTestRollerClass3To7($token, $motNumber)
     {
@@ -301,6 +302,39 @@ class BrakeTestResult extends MotApi
         return $this->client->request(new Request(
             'POST',
             str_replace('{mot_test_number}', $motNumber, self::PATH),
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
+            $body
+        ));
+    }
+
+    public function addBrakeTestPlateClass3to7($token, $motTestNumber)
+    {
+        $body = json_encode([
+          'serviceBrake1Data' => [
+              'effortNearsideAxle1' => 90,
+              'effortOffsideAxle1' => 90,
+              'effortNearsideAxle2' => 90,
+              'effortOffsideAxle2' => 90,
+          ],
+          'parkingBrakeEfficiencyPass' => true,
+          'isCommercialVehicle' => false,
+          'isParkingBrakeOnTwoWheels' => true,
+          'isSingleInFront' => null,
+          'numberOfAxles' => 2,
+          'parkingBrakeNumberOfAxles' => 1,
+          'parkingBrakeTestType' => 'GRADT',
+          'serviceBrake1TestType' => 'PLATE',
+          'serviceBrake2TestType' => null,
+          'serviceBrakeControlsCount' => 0,
+          'serviceBrakeIsSingleLine' => false,
+          'vehicleWeight' => self::VEHICLE_WEIGHT,
+          'weightIsUnladen' => false,
+          'weightType' => 'VSI',
+        ]);
+
+        return $this->client->request(new Request(
+            'POST',
+            str_replace('{mot_test_number}', $motTestNumber, self::PATH),
             ['Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$token],
             $body
         ));

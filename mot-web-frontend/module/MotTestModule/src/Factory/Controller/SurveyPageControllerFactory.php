@@ -2,20 +2,19 @@
 
 namespace Dvsa\Mot\Frontend\MotTestModule\Factory\Controller;
 
-
 use Dvsa\Mot\Frontend\MotTestModule\Controller\SurveyPageController;
 use Dvsa\Mot\Frontend\MotTestModule\Service\SurveyService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class SurveyPageControllerFactory
- * @package DvsaMotTest\Factory\Controller
+ * Class SurveyPageControllerFactory.
  */
 class SurveyPageControllerFactory implements FactoryInterface
 {
     /**
      * @param ServiceLocatorInterface $serviceLocator
+     *
      * @return SurveyPageController
      */
     public function createService(ServiceLocatorInterface $serviceLocator)

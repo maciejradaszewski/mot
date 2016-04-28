@@ -12,8 +12,32 @@ $successMessages = $this->layout()->flashMessenger->getSuccessMessages();
 echo $this->partial('partial/gds/general/system-message', ['messages' => $successMessages, 'type' => 'success']);
 ?>
 <?php echo $this->partial('errorMessages', array('getFromFlash' => true)); ?>
+
+
+<?php if ($viewModel->canUserSeeGuidance()): ?>
+    <div class="text">
+        <p class="lede">
+            Add your training certificate to request a Demo test with a Vehicle Examiner
+        </p>
+        <p>
+            Once you’ve added a certificate to a group we will contact you to arrange your test.
+        </p>
+    </div>
+<?php endif ?>
+
+<div class="message--important">
+    <p>
+        Only use this section if you're part of the MOT tester training pilot and been told to by DVSA or your training provider.
+    </p>
+</div>
+
 <div>
-    <h3 class="summary-heading">Group A</h3>
+    <h3 class="summary-heading">
+        Group A
+        <span class="summary-heading__action">
+            Class 1 and 2
+        </span>
+    </h3>
     <?php echo $this->partial(
         'partial/gds/gds-table/gds-summary-smaller-key-table',
         [
@@ -21,7 +45,12 @@ echo $this->partial('partial/gds/general/system-message', ['messages' => $succes
         ]
     );?>
 
-    <h3 class="summary-heading">Group B</h3>
+    <h3 class="summary-heading">
+        Group B
+        <span class="summary-heading__action">
+            Class 3, 4, 5 and 7
+        </span>
+    </h3>
     <?php echo $this->partial(
         'partial/gds/gds-table/gds-summary-smaller-key-table',
         [

@@ -122,4 +122,9 @@ class QualificationDetailsAddProcess extends QualificationDetailsAbstractProcess
     {
         return 'Add a certificate';
     }
+
+    public function getBackLinkText()
+    {
+        return 'Back to add a certificate';
+    }
 }

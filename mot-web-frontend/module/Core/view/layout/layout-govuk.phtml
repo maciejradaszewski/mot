@@ -66,15 +66,7 @@ use Core\ViewModel\Sidebar\SidebarInterface;
     <!--[if IE 6]><link href="/assets/stylesheets/dvsa-ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
     <!--[if IE 7]><link href="/assets/stylesheets/dvsa-ie7.css" rel="stylesheet" type="text/css" /><![endif]-->
     <!--[if IE 8]><link href="/assets/stylesheets/dvsa-ie8.css" rel="stylesheet" type="text/css" /><![endif]-->
-    <script>
-        // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        // (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        // m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        // })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-        // ga('create', 'UA-49672752-1', 'govuk-elements.herokuapp.com');
-        // ga('send', 'pageview');
-    </script>
     <?php $hashedUserId = $this->identity() ? hash('sha1', $this->identity()->getUserId() . '.'
             . $this->identity()->getUsername()) : null; ?>
     <?php if ($hashedUserId): ?>

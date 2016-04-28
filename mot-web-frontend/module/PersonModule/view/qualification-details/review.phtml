@@ -1,0 +1,106 @@
+<?php
+use Core\Formatting\AddressFormatter;
+use DvsaCommon\Enum\SiteContactTypeCode;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
+
+/** @var \DvsaCommon\Dto\Site\VehicleTestingStationDto $site */
+
+$site = $this->viewModel->site;
+$siteAddress = null;
+if(!is_null($site)){
+    $contact = $site->getContactByType(SiteContactTypeCode::BUSINESS);
+    if(!is_null($contact)){
+        $siteAddress = $contact->getAddress();
+    }
+}
+
+?>
+<?php echo $this->partial('errorMessages', array('getFromFlash' => true)); ?>
+<h3 class="summary-heading">Certificate details</h3>
+
+
+<?php
+echo $this->partial(
+    'partial/gds/gds-table/gds-key-value-table',
+    [
+        'table' => $this->viewModel->table,
+    ]
+);
+?>
+
+<h3 class="summary-heading">Demo test location</h3>
+
+<table class="key-value-list">
+    <tbody>
+    <tr>
+        <th class="key-value-list__key">
+            VTS ID
+        </th>
+        <td class="key-value-list__value">
+            <?php echo $site ? $site->getSiteNumber() : 'Not recorded' ?>
+        </td>
+    </tr>
+    <tr>
+        <th class="key-value-list__key">
+            Vehicle Testing Station
+        </th>
+        <td class="key-value-list__value">
+            <?php echo $site ? $site->getName() : 'Unknown' ?>
+            <span class="key-value-list__meta"><?php echo $siteAddress ? (new AddressFormatter())
+                    ->setAddressPartsGlue(', ')
+                    ->escapedDtoToMultiLine($siteAddress)
+                : '' ?></span
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<?php if ($this->viewModel->isViewingHimself): ?>
+    <h3 class="heading-medium">
+        By confirming these details you agree to the following:
+    </h3>
+    <div class="message--important">
+        <h3 class="message__heading">
+            Declaration
+        </h3>
+        <p>
+            I understand that as an authorised MOT tester:
+        </p>
+        <ul class="list-bullet">
+            <li>
+                I will be legally responsible for the MOT test certificate and any other official documents I use
+            </li>
+            <li>
+                I will notify the Authorised Examiner at my testing station if my driving licence is suspended or restricted
+            </li>
+            <li>
+                I will carry out MOT tests to DVSA standards
+            </li>
+            <li>
+                I must not have any unspent criminal convictions related to the motor trade or involving acts of violence or intimidation
+            </li>
+            <li>
+                I will notify DVSA of any future criminal convictions relating to the motor trade or acts of violence or intimidation
+            </li>
+        </ul>
+        <p>
+            I am aware that I may be disqualified from testing if the DVSA discovers that I have not met the terms of this declaration.
+        </p>
+    </div>
+    <p>
+        After you confirm we’ll be in touch to arrange a demo test.
+    </p>
+<?php endif ?>
+
+<form novalidate="" autocomplete="off" method="POST" action="">
+    <?php echo $this->csrfToken(); ?>
+
+    <nav class="content-navigation">
+        <input type="submit" class="button" value="Confirm details" id="confirm-button">
+        <ul class="content-navigation__secondary">
+            <li>
+                <a href="<?php echo $this->viewModel->backUrl ?>"><?php echo $this->viewModel->backUrlText ?></a>
+            </li>
+        </ul>
+    </nav>
+</form>

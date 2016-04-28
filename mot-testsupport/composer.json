@@ -9,8 +9,8 @@
     },
     "repositories": [
         {
-            "type": "git",
-            "url": "git@gitlab.clb.npm:mot/featuretoggle.git"
+            "type": "composer",
+            "url": "https://packages.motdev.org.uk"
         }
     ],
     "autoload" : {

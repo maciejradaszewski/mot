@@ -34,6 +34,7 @@ class Notification
     const TEMPLATE_USER_REMOVED_OWN_ROLE = 25;
     const TEMPLATE_PERSONAL_DETAILS_CHANGED = 26;
     const TEMPLATE_MOT_TESTING_CERTIFICATE_REMOVAL = 27;
+    const TEMPLATE_MOT_TESTING_CERTIFICATE_CREATED = 28;
 
     /** @var $template int */
     private $template;

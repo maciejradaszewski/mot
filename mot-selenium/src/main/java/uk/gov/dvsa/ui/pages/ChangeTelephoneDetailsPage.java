@@ -49,6 +49,19 @@ public class ChangeTelephoneDetailsPage extends Page {
         return MotPageFactory.newPage(driver, page.getClass());
     }
 
+    public <T extends Page> T clickCancelButton(boolean isYourProfile){
+        cancelAndReturnToYourProfile.click();
+        if (isYourProfile){
+            return (T)MotPageFactory.newPage(driver, NewPersonProfilePage.class);
+        }
+        return (T)MotPageFactory.newPage(driver, NewUserProfilePage.class);
+    }
+
+    public <T extends Page> T clickSubmitButton(Class<T> clazz) {
+        submitTelephone.click();
+        return MotPageFactory.newPage(driver, clazz);
+    }
+
     public String getValidationMessage() {
         return validationMessage.getText();
     }

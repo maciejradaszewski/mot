@@ -3,6 +3,7 @@
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Dvsa\Mot\Behat\Support\Api\BrakeTestResult;
 use Dvsa\Mot\Behat\Support\Response;
 use Dvsa\Mot\Behat\Support\Api\Vehicle;
 use Dvsa\Mot\Behat\Support\Helper\TestSupportHelper;
@@ -369,4 +370,22 @@ class VehicleContext implements Context
 
         return $this->vehicleDetailsResponse;
     }
+
+    /**
+     * @Then vehicle weight is updated
+     */
+    public function vehicleWeightIsUpdated()
+    {
+        PHPUnit::assertSame(BrakeTestResult::VEHICLE_WEIGHT, $this->getCurrentVehicleData()['data']['weight']);
+    }
+
+    /**
+     * @Then vehicle weight is not updated
+     */
+    public function vehicleWeightIsNotUpdated()
+    {
+        PHPUnit::assertSame(null, $this->getCurrentVehicleData()['data']['weight']);
+    }
+
+
 }

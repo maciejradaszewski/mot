@@ -158,6 +158,17 @@ class BrakeTestResultContext implements Context
     }
 
     /**
+     * @When the Tester adds a Class 3-7 Plate Brake Test
+     */
+    public function theTesterAddsAClass3to7PlateBrakeTest()
+    {
+        $this->brakeTestResultResponse = $this->brakeTestResult->addBrakeTestPlateClass3to7(
+            $this->sessionContext->getCurrentAccessToken(),
+            $this->motTestContext->getMotTestNumber()
+        );
+    }
+
+    /**
      * @Given /^the Tester adds a Class 3-7 Roller Brake Test Result with custom (.*)$/
      */
     public function theTesterAddsAClass3RollerBrakeTestResultWithCustom($scenario)

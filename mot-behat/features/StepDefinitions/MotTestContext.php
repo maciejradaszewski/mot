@@ -156,6 +156,11 @@ class MotTestContext implements Context, SnippetAcceptingContext
     private $satisfactionRating;
 
     /**
+     * @var array
+     */
+    private $satisfactionRatings;
+
+    /**
      * @var Response $satisfactionRating
      */
     private $satisfactionRatingResponse;
@@ -262,6 +267,19 @@ class MotTestContext implements Context, SnippetAcceptingContext
         $vehicleId = $this->vehicleContext->createVehicle();
 
         $this->motTestData = $this->demoTest->startMotTest(
+            $this->sessionContext->getCurrentAccessToken(),
+            $vehicleId
+        );
+    }
+
+    /**
+     * @When I start an MOT Test
+     */
+    public function iStartMotTest()
+    {
+        $vehicleId = $this->vehicleContext->createVehicle();
+
+        $this->motTestData = $this->motTest->startMotTest(
             $this->sessionContext->getCurrentAccessToken(),
             $vehicleId
         );
@@ -1394,6 +1412,68 @@ class MotTestContext implements Context, SnippetAcceptingContext
             $satisfactionRating
         );
     }
+
+    /**
+     * @Given /^There exist survey responses of (.*) (.*) (.*) (.*) (.*)$/
+     *
+     * @param $rating1
+     * @param $rating2
+     * @param $rating3
+     * @param $rating4
+     * @param $rating5
+     */
+    public function thereExistSurveyResponsesOf($rating1, $rating2, $rating3, $rating4, $rating5)
+    {
+        $this->satisfactionRatings['rating1'] = $rating1;
+        $this->satisfactionRatings['rating2'] = $rating2;
+        $this->satisfactionRatings['rating3'] = $rating3;
+        $this->satisfactionRatings['rating4'] = $rating4;
+        $this->satisfactionRatings['rating5'] = $rating5;
+
+        $this->motTest->submitSurveyResponse(
+            $this->sessionContext->getCurrentAccessToken(),
+            $rating1
+        );
+        $this->motTest->submitSurveyResponse(
+            $this->sessionContext->getCurrentAccessToken(),
+            $rating2
+        );
+        $this->motTest->submitSurveyResponse(
+            $this->sessionContext->getCurrentAccessToken(),
+            $rating3
+        );
+        $this->motTest->submitSurveyResponse(
+            $this->sessionContext->getCurrentAccessToken(),
+            $rating4
+        );
+        $this->motTest->submitSurveyResponse(
+            $this->sessionContext->getCurrentAccessToken(),
+            $rating5
+        );
+    }
+
+    /**
+     * @Given /^I want to generate a survey report$/
+     */
+    public function iWantToGenerateASurveyReport()
+    {
+        $this->motTest->generateSurveyReports(
+            $this->sessionContext->getCurrentAccessToken()
+        );
+    }
+
+    /**
+     * @Then /^I can download the report$/
+     */
+    public function iCanDownloadTheReport()
+    {
+        $reportResponse = $this->motTest->getSurveyReports(
+            $this->sessionContext->getCurrentAccessToken()
+        );
+
+        PHPUnit::assertNotNull($reportResponse->getBody()['data']);
+    }
+
 
     /**
      * @Then /^The survey response is saved$/

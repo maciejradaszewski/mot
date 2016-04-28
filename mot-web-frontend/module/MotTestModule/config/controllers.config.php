@@ -4,7 +4,6 @@
  *
  * @link http://gitlab.clb.npm/mot/mot
  */
-
 use Dvsa\Mot\Frontend\MotTestModule\Controller\ContingencyTestController;
 use Dvsa\Mot\Frontend\MotTestModule\Controller\SurveyPageController;
 use Dvsa\Mot\Frontend\MotTestModule\Factory\Controller\ContingencyTestControllerFactory;
@@ -13,6 +12,6 @@ use Dvsa\Mot\Frontend\MotTestModule\Factory\Controller\SurveyPageControllerFacto
 return [
     'factories' => [
         ContingencyTestController::class => ContingencyTestControllerFactory::class,
-        SurveyPageController::class      => SurveyPageControllerFactory::class,
+        SurveyPageController::class => SurveyPageControllerFactory::class,
     ],
 ];

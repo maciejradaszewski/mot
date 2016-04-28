@@ -119,4 +119,8 @@ class QualificationDetailsEditProcess extends QualificationDetailsAbstractProces
         return 'Change a certificate';
     }
 
+    public function getBackLinkText()
+    {
+        return 'Back to change a certificate';
+    }
 }

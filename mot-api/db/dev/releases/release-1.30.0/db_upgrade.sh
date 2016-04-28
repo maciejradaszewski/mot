@@ -5,6 +5,7 @@ db_name=mot_v195_rel4
 
 # add files here in intended run order for release
 
+upgradefiles+=('2016-03-30-BL-1531-generate-survey-report-to-be-sent-to-GDS-STORY.sql');
 upgradefiles+=('2016-03-10-BL-1568-view-qualification-details-page-permissions-STORY.sql');
 upgradefiles+=('2016-03-21-BL-1236-create-new-table-STORY.sql');
 upgradefiles+=('2016-03-24-BL-1236-create-new-permissions-for-create-and-update-cert-STORY.sql');

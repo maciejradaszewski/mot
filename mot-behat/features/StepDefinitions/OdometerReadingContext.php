@@ -66,8 +66,9 @@ class OdometerReadingContext implements Context
 
     /**
      * @Given /^the Tester adds an Odometer Reading of (\d+) (mi|km)$/
+     * @Given the Tester adds an Odometer Reading
      */
-    public function theTesterAddsAnOdometerReadingOfMiles($value, $unit)
+    public function theTesterAddsAnOdometerReadingOfMiles($value = 1000, $unit = 'km')
     {
         $response = $this->odometerReading->addMeterReading($this->sessionContext->getCurrentAccessToken(), $this->motTestContext->getMotTestNumber(), $value, $unit);
 

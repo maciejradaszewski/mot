@@ -5,20 +5,21 @@ namespace Dvsa\Mot\Frontend\MotTestModule\Service;
 use DvsaCommon\HttpRestJson\Client;
 
 /**
- * Class SurveyService
- * @package DvsaMotTest\Service
+ * Class SurveyService.
  */
 class SurveyService
 {
     const API_URL = 'survey';
+    const REPORT_ENDPOINT = '/reports';
 
     /**
-     * @var Client $restClient
+     * @var Client
      */
     private $restClient;
 
     /**
      * SurveyService constructor.
+     *
      * @param Client $restClient
      */
     public function __construct(
@@ -29,11 +30,23 @@ class SurveyService
 
     /**
      * @param $data
+     *
      * @return mixed|string
      */
     public function submitSurveyResult($data)
     {
         $result = $this->restClient->post(self::API_URL, $data);
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSurveyReports()
+    {
+        $result = $this->restClient->get(self::API_URL.self::REPORT_ENDPOINT);
+
         return $result;
     }
 }

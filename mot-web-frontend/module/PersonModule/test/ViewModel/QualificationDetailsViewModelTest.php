@@ -24,6 +24,7 @@ class QualificationDetailsViewModelTest extends \PHPUnit_Framework_TestCase
     private $groupAViewModelMock;
     /** @var  QualificationDetailsGroupViewModel */
     private $groupBViewModelMock;
+    private $isGuidanceShown = TRUE;
 
     public function setup()
     {
@@ -34,7 +35,8 @@ class QualificationDetailsViewModelTest extends \PHPUnit_Framework_TestCase
             self::RETURN_LINK,
             self::PAGE_SUBTITLE,
             $this->groupAViewModelMock,
-            $this->groupBViewModelMock
+            $this->groupBViewModelMock,
+            $this->isGuidanceShown
         );
     }
 
@@ -52,5 +54,10 @@ class QualificationDetailsViewModelTest extends \PHPUnit_Framework_TestCase
     public function testGetReturnLink()
     {
         $this->assertSame(self::RETURN_LINK, $this->view->getReturnLink());
+    }
+
+    public function testCanUserSeeGuidance()
+    {
+        $this->assertSame(true, $this->view->canUserSeeGuidance());
     }
 }

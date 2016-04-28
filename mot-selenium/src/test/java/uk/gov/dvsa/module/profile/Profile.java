@@ -26,6 +26,7 @@ public class Profile {
     private ChangeName changeName;
     private ChangeAddress changeAddress;
     private ChangeQualificationDetails changeQualificationDetails;
+    private ChangeTelephone changeTelephone;
 
     public Profile(final PageNavigator pageNavigator) {
         this.pageNavigator = pageNavigator;
@@ -164,5 +165,20 @@ public class Profile {
             return this.changeQualificationDetails = new ChangeQualificationDetails(page());
         }
         return changeQualificationDetails;
+    }
+
+    public ProfilePage changeYourTelephoneTo(String phoneNumber) {
+        return new ChangeTelephone(pageNavigator, profilePage).changeYourTelephoneTo(phoneNumber);
+    }
+
+    public ProfilePage changeUserTelephoneAsDvsaTo(String phoneNumber) {
+        return new ChangeTelephone(pageNavigator, profilePage).changeUserTelephoneAsDvsaTo(phoneNumber);
+    }
+
+    public ChangeTelephone changeTelephone() {
+        if (changeTelephone == null) {
+            return this.changeTelephone = new ChangeTelephone(pageNavigator, page());
+        }
+        return changeTelephone;
     }
 }

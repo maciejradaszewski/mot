@@ -84,7 +84,12 @@ class QualificationDetailsAction extends AbstractAuthActionController implements
             $this->getGroupViewModel($personId, $testerAuthorisation->getGroupAStatus(),
                 VehicleClassGroupCode::BIKES, $controller, $personProfileGuard),
             $this->getGroupViewModel($personId, $testerAuthorisation->getGroupBStatus(),
-                VehicleClassGroupCode::CARS_ETC, $controller, $personProfileGuard)
+                VehicleClassGroupCode::CARS_ETC, $controller, $personProfileGuard),
+            $this->isGuidanceShown(
+                VehicleClassGroupCode::BIKES,
+                VehicleClassGroupCode::CARS_ETC,
+                $personProfileGuard
+                )
         );
 
         $breadcrumbs = $this->personProfileBreadcrumbs->getBreadcrumbs($personId, $controller, $vm->getPageTitle());
@@ -111,6 +116,13 @@ class QualificationDetailsAction extends AbstractAuthActionController implements
     {
         return ContextProvider::YOUR_PROFILE_CONTEXT === $context ? self::SUBTITLE_YOUR_PROFILE :
             self::SUBTITLE_USER_PROFILE;
+    }
+
+    private function isGuidanceShown($vehicleClassGroupACode,
+                                     $vehicleClassGroupBCode,
+                                     PersonProfileGuard $personProfileGuard)
+    {
+        return $personProfileGuard->canViewGuidance($vehicleClassGroupACode, $vehicleClassGroupBCode);
     }
 
     private function getGroupViewModel($personId, $status, $group, AbstractAuthActionController $controller, PersonProfileGuard $personProfileGuard) {

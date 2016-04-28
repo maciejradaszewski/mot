@@ -91,28 +91,28 @@ class QualificationDetailsController extends AbstractAuthActionController implem
     public function addAction()
     {
         return $this->runQualificationDetailsProcessAction($this->qualificationDetailsAddProcess,
-            $this->editStepAction, 'qualification-details/add'
+            $this->editStepAction, 'qualification-details/add-or-edit'
         );
     }
 
     public function addReviewAction()
     {
         return $this->runQualificationDetailsProcessAction($this->qualificationDetailsAddProcess,
-            $this->reviewStepAction, 'qualification-details/add-review'
+            $this->reviewStepAction, 'qualification-details/review'
         );
     }
 
     public function editAction()
     {
         return $this->runQualificationDetailsProcessAction($this->qualificationDetailsEditProcess,
-            $this->editStepAction, 'qualification-details/edit'
+            $this->editStepAction, 'qualification-details/add-or-edit'
         );
     }
 
     public function editReviewAction()
     {
         return $this->runQualificationDetailsProcessAction($this->qualificationDetailsEditProcess,
-            $this->reviewStepAction, 'qualification-details/edit-review'
+            $this->reviewStepAction, 'qualification-details/review'
         );
     }
 

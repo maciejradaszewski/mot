@@ -54,11 +54,26 @@ class MotTestingCertificateNotificationTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getQualificationAward
      */
-    public function testSendNotification(QualificationAward $qualificationAward)
+    public function testSendRemoveNotification(QualificationAward $qualificationAward)
     {
-        $this->createService()->send($qualificationAward);
+        $this->createService()->sendRemoveNotification($qualificationAward);
 
         $this->assertEquals(Notification::TEMPLATE_MOT_TESTING_CERTIFICATE_REMOVAL, $this->getParamFromSpy("template"));
+        $this->assertEquals(self::RECIPIENT_ID, $this->getParamFromSpy("recipient"));
+        $this->assertEquals($qualificationAward->getVehicleClassGroup()->getCode(), $this->getParamFromSpy("fields")["group"]);
+        $this->assertEquals($qualificationAward->getCertificateNumber(), $this->getParamFromSpy("fields")["certificateNumber"]);
+        $this->assertEquals(DateTimeDisplayFormat::date($qualificationAward->getDateOfQualification()), $this->getParamFromSpy("fields")["dateOfQualification"]);
+
+    }
+
+    /**
+     * @dataProvider getQualificationAward
+     */
+    public function testSendCreateNotification(QualificationAward $qualificationAward)
+    {
+        $this->createService()->sendCreateNotification($qualificationAward);
+
+        $this->assertEquals(Notification::TEMPLATE_MOT_TESTING_CERTIFICATE_CREATED, $this->getParamFromSpy("template"));
         $this->assertEquals(self::RECIPIENT_ID, $this->getParamFromSpy("recipient"));
         $this->assertEquals($qualificationAward->getVehicleClassGroup()->getCode(), $this->getParamFromSpy("fields")["group"]);
         $this->assertEquals($qualificationAward->getCertificateNumber(), $this->getParamFromSpy("fields")["certificateNumber"]);

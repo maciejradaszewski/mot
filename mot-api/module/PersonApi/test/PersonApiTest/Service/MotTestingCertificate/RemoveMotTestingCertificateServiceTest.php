@@ -56,7 +56,7 @@ class RemoveMotTestingCertificateServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertion->expects($this->once())->method("assertGranted");
         $this->transaction->expects($this->once())->method("begin");
         $this->event->expects($this->once())->method("sendRemoveEvent");
-        $this->notification->expects($this->once())->method("send");
+        $this->notification->expects($this->once())->method("sendRemoveNotification");
         $this->personQualificationStatusService->expects($this->once())->method("removeStatus");
         $this->qualificationAwardRepository->expects($this->once())->method("remove");
         $this->qualificationAwardRepository->expects($this->once())->method("flush");
@@ -97,7 +97,7 @@ class RemoveMotTestingCertificateServiceTest extends \PHPUnit_Framework_TestCase
             ->willThrowException(new \Exception())
         ;
 
-        $this->notification->expects($this->exactly(0))->method("send");
+        $this->notification->expects($this->exactly(0))->method("sendRemoveNotification");
         $this->personQualificationStatusService->expects($this->exactly(0))->method("removeStatus");
         $this->qualificationAwardRepository->expects($this->exactly(0))->method("remove");
         $this->qualificationAwardRepository->expects($this->exactly(0))->method("flush");
@@ -121,7 +121,7 @@ class RemoveMotTestingCertificateServiceTest extends \PHPUnit_Framework_TestCase
         $this
             ->notification
             ->expects($this->once())
-            ->method("send")
+            ->method("sendRemoveNotification")
             ->willThrowException(new \Exception())
         ;
 
@@ -144,7 +144,7 @@ class RemoveMotTestingCertificateServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertion->expects($this->once())->method("assertGranted");
         $this->transaction->expects($this->once())->method("begin");
         $this->event->expects($this->once())->method("sendRemoveEvent");
-        $this->notification->expects($this->once())->method("send");
+        $this->notification->expects($this->once())->method("sendRemoveNotification");
 
         $this
             ->personQualificationStatusService
@@ -170,7 +170,7 @@ class RemoveMotTestingCertificateServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertion->expects($this->once())->method("assertGranted");
         $this->transaction->expects($this->once())->method("begin");
         $this->event->expects($this->once())->method("sendRemoveEvent");
-        $this->notification->expects($this->once())->method("send");
+        $this->notification->expects($this->once())->method("sendRemoveNotification");
         $this->personQualificationStatusService->expects($this->exactly(1))->method("removeStatus");
         $this->qualificationAwardRepository->expects($this->once())->method("remove");
         $this->transaction->expects($this->exactly(0))->method("commit");

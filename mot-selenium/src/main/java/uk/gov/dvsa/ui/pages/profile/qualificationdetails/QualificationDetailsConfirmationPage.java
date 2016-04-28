@@ -9,7 +9,7 @@ import uk.gov.dvsa.ui.pages.Page;
 
 public class QualificationDetailsConfirmationPage extends Page {
 
-    private static final String PAGE_TITLE = "Review certificate details";
+    private static final String PAGE_TITLE = "Review certificate and demo test details";
 
     @FindBy (id = "confirm-button") private WebElement submit;
 

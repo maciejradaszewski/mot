@@ -12,17 +12,21 @@ class QualificationDetailsViewModel
     private $returnLink;
     private $pageSubtitle;
     private $qualificationDetailsGroupBViewModel;
+    private $isGuidanceShown;
 
     public function __construct(
         $returnLink,
         $pageSubtitle,
         QualificationDetailsGroupViewModel $qualificationDetailsGroupAViewModel,
-        QualificationDetailsGroupViewModel $qualificationDetailsGroupBViewModel)
+        QualificationDetailsGroupViewModel $qualificationDetailsGroupBViewModel,
+        $isGuidanceShown
+    )
     {
         $this->returnLink = $returnLink;
         $this->pageSubtitle = $pageSubtitle;
         $this->qualificationDetailsGroupAViewModel = $qualificationDetailsGroupAViewModel;
         $this->qualificationDetailsGroupBViewModel = $qualificationDetailsGroupBViewModel;
+        $this->isGuidanceShown = $isGuidanceShown;
     }
 
     public function getTemplate()
@@ -58,5 +62,10 @@ class QualificationDetailsViewModel
     public function getReturnLink()
     {
         return $this->returnLink;
+    }
+
+    public function canUserSeeGuidance()
+    {
+        return $this->isGuidanceShown;
     }
 }
