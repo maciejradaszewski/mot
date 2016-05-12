@@ -18,6 +18,7 @@ use DvsaClient\MapperFactory;
 use DvsaCommon\ApiClient\Person\PersonTradeRoles\PersonTradeRolesApiResource;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 
 /**
  * Class UserTradeRolesControllerFactory.
@@ -40,6 +41,9 @@ class UserTradeRolesControllerFactory extends AbstractFrontendControllerFactory
         /** @var PersonProfileUrlGenerator $personProfileUrlGenerator */
         $personProfileUrlGenerator = $serviceLocator->get(PersonProfileUrlGenerator::class);
 
+        /** @var ContextProvider $contextProvider */
+        $contextProvider = $serviceLocator->get(ContextProvider::class);
+
         return new UserTradeRolesController(
             $serviceLocator->get('MotIdentityProvider'),
             $serviceLocator->get(TradeRolesAssociationsService::class),
@@ -51,7 +55,8 @@ class UserTradeRolesControllerFactory extends AbstractFrontendControllerFactory
             $serviceLocator->get(EnumCatalog::class),
             $serviceLocator->get('AuthorisationService'),
             $serviceLocator->get(PersonTradeRoleSorterService::class),
-            $personProfileUrlGenerator
+            $personProfileUrlGenerator,
+            $contextProvider
         );
     }
 }

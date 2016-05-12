@@ -15,6 +15,7 @@ use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use DvsaMotTest\Controller\AbstractDvsaMotTestController;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 
 class ChangeQualificationStatusController extends AbstractDvsaMotTestController
 {
@@ -40,12 +41,18 @@ class ChangeQualificationStatusController extends AbstractDvsaMotTestController
 
     private $personalDetails;
 
+    /**
+     * @var ContextProvider
+     */
+    private $contextProvider;
+
     public function __construct(
         MotAuthorisationServiceInterface $authorisationServiceInterface,
         Container $container,
         PersonMapper $personMapper,
         HttpRestJsonClient $client,
-        TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper
+        TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper,
+        ContextProvider $contextProvider
     ) {
         $this->sessionContainer = $container;
         $this->authorisationService = $authorisationServiceInterface;
@@ -53,6 +60,7 @@ class ChangeQualificationStatusController extends AbstractDvsaMotTestController
         $this->client = $client;
         $this->testerGroupAuthorisationMapper = $testerGroupAuthorisationMapper;
         $this->personalDetails = new ApiPersonalDetails($client);
+        $this->contextProvider = $contextProvider;
     }
 
     public function indexAction()
@@ -68,7 +76,7 @@ class ChangeQualificationStatusController extends AbstractDvsaMotTestController
         $this->authorisationService->assertGranted(PermissionInSystem::ALTER_TESTER_AUTHORISATION_STATUS);
 
         $personId = true === $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
-            $this->params()->fromRoute('id') :
+            $this->getPersonId() :
             $this->params()->fromRoute('personId');
 
         $tester = true === $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE) ?
@@ -227,5 +235,16 @@ class ChangeQualificationStatusController extends AbstractDvsaMotTestController
         }
 
         return $url . '?' . http_build_query($params);
+    }
+
+    /**
+     * @return int
+     */
+    private function getPersonId()
+    {
+        $context = $this->contextProvider->getContext();
+
+        return $context === ContextProvider::YOUR_PROFILE_CONTEXT ?
+            $this->getIdentity()->getUserId() : (int) $this->params()->fromRoute('id', null);
     }
 }

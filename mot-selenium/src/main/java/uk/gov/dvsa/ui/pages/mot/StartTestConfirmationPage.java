@@ -1,5 +1,6 @@
 package uk.gov.dvsa.ui.pages.mot;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.CacheLookup;
 import org.openqa.selenium.support.FindBy;
@@ -26,6 +27,9 @@ public class StartTestConfirmationPage extends Page {
     @FindBy(id = "primary-colour") @CacheLookup private WebElement primaryColor;
     @FindBy(id = "secondary-colour") private WebElement secondaryColour;
     @FindBy(id = "refuse-to-test") private WebElement refuseToTestVehicle;
+
+    private By vinLocator = By.id("vehicleVINnumber");
+    private By registrationLocator = By.id("vehicleRegistrationNumber");
 
     public StartTestConfirmationPage(MotAppDriver driver) {
         super(driver);
@@ -72,5 +76,13 @@ public class StartTestConfirmationPage extends Page {
     public StartTestConfirmationPage selectClass(String classNumber){
         FormCompletionHelper.selectFromDropDownByVisibleText(classDropdown, classNumber);
         return this;
+    }
+
+    public String getVin() {
+        return driver.findElement(vinLocator).getText();
+    }
+
+    public String getRegistration() {
+        return driver.findElement(registrationLocator).getText();
     }
 }

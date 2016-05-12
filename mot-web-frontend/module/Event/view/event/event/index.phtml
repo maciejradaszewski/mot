@@ -5,7 +5,6 @@ use DvsaCommon\Date\DateTimeDisplayFormat;
 // $this->headLink()->appendStylesheet('/css/jquery.dataTables.css');
 // $this->headLink()->appendStylesheet('/assets/stylesheets/dataTables.css');
 
-
 /**
  * @var \Event\ViewModel\Event\EventViewModel                   $viewModel
  * @var \DvsaCommon\Dto\Organisation\OrganisationDto            $organisation
@@ -16,16 +15,18 @@ use DvsaCommon\Date\DateTimeDisplayFormat;
  * @var \DvsaClient\ViewModel\DateTimeViewModel                 $dateTo
  */
 
-//  --  get search parameters   --
 $formModel = $viewModel->getFormModel();
 $isShowDate = $formModel->isShowDate();
 $search = $formModel->getSearch();
 $dateFrom = $formModel->getDateFrom();
 $dateTo = $formModel->getDateTo();
 
-//  --  get event list   --
 $events = $viewModel->getEventList()->getEvents();
+
+$goBackLink = $viewModel->getGoBackLink();
+
 ?>
+
 <div class="">
 
 <?php
@@ -67,6 +68,7 @@ $events = $viewModel->getEventList()->getEvents();
                     </thead>
                     <tbody>
                     <?php $i = 0;?>
+                    <input name="go_back_link" value="<?php echo $goBackLink ?>" style="display: none">
                     <?php foreach ($events as $event): ?>
                         <?php $escClass = ($i++ % 2 == 0 ? 'even' : 'odd');?>
                         <tr class="<?php echo $escClass; ?>">

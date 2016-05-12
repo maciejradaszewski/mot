@@ -10,6 +10,7 @@ use Core\Controller\AbstractAuthActionController;
 use Dvsa\Mot\Frontend\MotTestModule\Service\SurveyService;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\FeatureToggle;
+use DvsaCommon\Constants\MotTestNumberConstraint;
 use Zend\Http\Headers;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\View\Model\ViewModel;
@@ -37,6 +38,7 @@ class SurveyPageController extends AbstractAuthActionController
     const VERY_DISSATISFIED = 1;
 
     const SATISFACTION_RATING = 'satisfactionRating';
+    const MOT_TEST_NUMBER = 'motTestId';
 
     /**
      * @var
@@ -60,7 +62,11 @@ class SurveyPageController extends AbstractAuthActionController
     public function indexAction()
     {
         $ref = $_SERVER['HTTP_REFERER'];
-        if (strpos($ref, 'test-result') === false && strpos($ref, 'survey') === false) {
+
+        $noTestResult = strpos($ref, 'test-result') === false;
+        $noSurvey = strpos($ref, 'survey') === false;
+
+        if ($noTestResult && $noSurvey) {
             return $this->notFoundAction();
         }
         if (true !== $this->isFeatureEnabled(FeatureToggle::SURVEY_PAGE)) {
@@ -71,9 +77,15 @@ class SurveyPageController extends AbstractAuthActionController
 
         if ($this->getRequest()->isPost()) {
             $satisfactionRating = $this->getRequest()->getPost(self::SATISFACTION_RATING);
+            $motTestNumber = $this->getRequest()->getPost(self::MOT_TEST_NUMBER);
+
+            $surveyData = [
+                'mot_test_number'     => $motTestNumber,
+                'satisfaction_rating' => $satisfactionRating,
+            ];
 
             $this->surveyService->submitSurveyResult(
-                $satisfactionRating
+                $surveyData
             );
 
             if (is_null($satisfactionRating)) {
@@ -83,9 +95,13 @@ class SurveyPageController extends AbstractAuthActionController
             }
         }
 
+        $matches = [];
+        preg_match('/'.MotTestNumberConstraint::FORMAT_REGEX.'/', $ref, $matches);
+        $motTestId = $matches[0];
+
         return $this->createViewModel(
             'survey-page/index.phtml',
-            []
+            ['motTestId' => $motTestId]
         );
     }
 
@@ -105,7 +121,8 @@ class SurveyPageController extends AbstractAuthActionController
 
         $this->layout('layout/layout-govuk.phtml');
 
-        return $this->createViewModel('survey-page/thanks.phtml',
+        return $this->createViewModel(
+            'survey-page/thanks.phtml',
             []
         );
     }
@@ -124,7 +141,8 @@ class SurveyPageController extends AbstractAuthActionController
 
         $this->reports = $this->surveyService->getSurveyReports();
 
-        return $this->createViewModel('survey-reports/reports.phtml',
+        return $this->createViewModel(
+            'survey-reports/reports.phtml',
             [
                 'reports' => $this->reports,
             ]
@@ -143,13 +161,15 @@ class SurveyPageController extends AbstractAuthActionController
 
         $reportMonth = $this->params()->fromRoute('month');
 
-        $headers = (new Headers())->addHeaders([
-            'Content-Type' => 'text/csv; charset=utf-8',
-            'Content-Disposition' => 'attachment; filename="'.$reportMonth.'.csv"',
-            'Accept-Ranges' => 'bytes',
-            'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
-            'Pragma' => 'no-cache',
-        ]);
+        $headers = (new Headers())->addHeaders(
+            [
+                'Content-Type' => 'text/csv; charset=utf-8',
+                'Content-Disposition' => 'attachment; filename="'.$reportMonth.'.csv"',
+                'Accept-Ranges' => 'bytes',
+                'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
+                'Pragma' => 'no-cache',
+            ]
+        );
 
         $this->response = new Response();
         $this->response->setHeaders($headers);

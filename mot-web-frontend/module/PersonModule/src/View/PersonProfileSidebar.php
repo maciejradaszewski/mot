@@ -18,6 +18,7 @@ use Dvsa\Mot\Frontend\PersonModule\Security\PersonProfileGuard;
 use DvsaCommon\Model\TesterAuthorisation;
 use DvsaCommon\Enum\AuthorisationForTestingMotStatusCode;
 use DvsaCommon\UrlBuilder\PersonUrlBuilderWeb;
+use Event\Controller\EventController;
 
 /**
  * PersonProfile Sidebar.
@@ -148,9 +149,9 @@ class PersonProfileSidebar extends GeneralSidebar
             return;
         }
 
-        $changePasswordUrl = ($this->newProfileEnabled ? sprintf('%s%d/', self::NEW_USER_PROFILE_URL, $this->personId)
+        $changePasswordUrl = ($this->newProfileEnabled ? self::NEW_USER_PROFILE_URL
                 : self::OLD_USER_PROFILE_URL) . 'change-password';
-        $resetPinUrl = $this->newProfileEnabled ? sprintf('%s%d/security-question', self::NEW_USER_PROFILE_URL, $this->personId)
+        $resetPinUrl = $this->newProfileEnabled ? self::NEW_USER_PROFILE_URL . 'security-question'
             : PersonUrlBuilderWeb::securityQuestions();
 
         $accountSecurityBox = new GeneralSidebarLinkList('Account security');
@@ -286,7 +287,8 @@ class PersonProfileSidebar extends GeneralSidebar
                 new GeneralSidebarLink(
                     'event-history',
                     'Event history',
-                    '/event/list/person/' . $this->personId . '?previousRoute=' . $this->currentUrl
+                    sprintf('%s%s?%s=%s', '/event/list/person/', $this->personId,
+                        EventController::PERSON_PROFILE_GO_BACK_PARAMETER, urlencode($this->currentUrl))
                 )
             );
         }

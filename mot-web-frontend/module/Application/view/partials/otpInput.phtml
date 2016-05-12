@@ -18,8 +18,8 @@ $shortMessage = !empty($shortErrorMessage) ? $shortErrorMessage : $errorMessage;
             <span class="validation-message"><?php echo $shortMessage; //this is HTML content ?></span>
         <?php endif; ?>
         <?php // Blacnk, hidden password input to prevent browser autofilling ?>
-        <input type="password" style="display:none;" aria-hidden="true" />
-        <input type="password" name="oneTimePassword" id="oneTimePassword" class="form-control" />
+        <input type="password" name="IDToken2" id="IDToken2" value="" maxlength="100"  tabindex="-1" style="width: 1px; position: absolute; left: -9999px;" aria-hidden="true"  autocomplete="off" />
+        <input type="password" name="oneTimePassword" id="oneTimePassword" class="form-control" autocomplete="off" />
     </div>
     <div class="info-alert" style="border-left: 4px solid #bfc1c3;background-color: #f8f8f8;background-position:10px 10px">
         <p id="declarationStatement" style="font-weight:normal;padding-left: 15px;padding-top: 10px">

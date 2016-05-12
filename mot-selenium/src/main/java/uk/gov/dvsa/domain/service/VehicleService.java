@@ -12,7 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VehicleService extends Service {
-    private static final String CREATE_PATH = "/testsupport/vehicle/create";
+    private static final String CREATE_DVSA_VEHICLE_PATH = "/testsupport/vehicle/create";
+    private static final String CREATE_DVLA_VEHICLE_PATH = "/testsupport/dvla-vehicle/create";
     private static final String oneTimePassword = "123456";
     private AuthService authService = new AuthService();
 
@@ -20,15 +21,49 @@ public class VehicleService extends Service {
         super(WebDriverConfigurator.testSupportUrl());
     }
 
+    @Deprecated
     protected Vehicle createVehicle(User user) throws IOException {
-        return createVehicle(VehicleClass.four, user, null);
+        Map<String, String> vehicleDataMap = prepareDvsaPayload(VehicleClass.four, null);
+        return createVehicle(vehicleDataMap, user, CREATE_DVSA_VEHICLE_PATH);
     }
 
+    protected Vehicle createVehicle() throws IOException {
+        Map<String, String> vehicleDataMap = prepareDvsaPayload(VehicleClass.four, null);
+        return createVehicle(vehicleDataMap, null, CREATE_DVSA_VEHICLE_PATH);
+    }
+
+    @Deprecated
     protected Vehicle createVehicle(Integer vehicleWeight, User user) throws IOException {
-        return createVehicle(VehicleClass.four, user, vehicleWeight);
+        Map<String, String> vehicleDataMap = prepareDvsaPayload(VehicleClass.four, vehicleWeight);
+        return createVehicle(vehicleDataMap, user, CREATE_DVSA_VEHICLE_PATH);
     }
 
-    protected Vehicle createVehicle(VehicleClass vehicleClass, User user, Integer vehicleWeight) throws IOException {
+    protected Vehicle createVehicle(Integer vehicleWeight) throws IOException {
+        Map<String, String> vehicleDataMap = prepareDvsaPayload(VehicleClass.four, vehicleWeight);
+        return createVehicle(vehicleDataMap, null, CREATE_DVSA_VEHICLE_PATH);
+    }
+
+    @Deprecated
+    protected Vehicle createDvlaVehicle(User user) throws IOException {
+        Map<String, String> vehicleDataMap = prepareDvlaPayload();
+        return createVehicle(vehicleDataMap, user, CREATE_DVLA_VEHICLE_PATH);
+    }
+
+    protected Vehicle createDvlaVehicle() throws IOException {
+        Map<String, String> vehicleDataMap = prepareDvlaPayload();
+        return createVehicle(vehicleDataMap, null, CREATE_DVLA_VEHICLE_PATH);
+    }
+
+    protected Vehicle createVehicle(Map<String, String> vehicleDataMap, User user, String path) throws IOException {
+
+        String vehicleRequest = jsonHandler.convertToString(vehicleDataMap);
+
+        Response response = postRequest(user, vehicleRequest, path);
+
+        return new Vehicle(vehicleDataMap, ServiceResponse.createResponse(response, String.class));
+    }
+
+    private Map<String, String> prepareDvsaPayload(VehicleClass vehicleClass, Integer vehicleWeight) {
         Map<String, String> vehicleDataMap = new HashMap<>();
         VehicleDetails vehicleDetails = VehicleDetails.MercedesBenz_300D;
 
@@ -57,12 +92,20 @@ public class VehicleService extends Service {
         vehicleDataMap.put("returnOriginalId", String.valueOf(true));
         vehicleDataMap.put("weight", null == vehicleWeight ? null : Integer.toString(vehicleWeight));
 
-        String vehicleRequest = jsonHandler.convertToString(vehicleDataMap);
-        
-        Response response = motClient.createVehicle(
-                vehicleRequest, CREATE_PATH, authService.createSessionTokenForUser(user));
+        return vehicleDataMap;
+    }
 
-        return new Vehicle(vehicleDataMap, ServiceResponse.createResponse(response, String.class));
+    private Map<String, String> prepareDvlaPayload() {
+        Map<String, String> vehicleDataMap = new HashMap<>();
+
+        vehicleDataMap.put("registration", generateCarRegistration());
+        vehicleDataMap.put("vin", getRandomVin());
+
+        return vehicleDataMap;
+    }
+
+    private Response postRequest(User user, String vehicleRequest, String path) throws IOException {
+        return motClient.createVehicle(vehicleRequest, path, user != null ? authService.createSessionTokenForUser(user) : "");
     }
 
     private String generateCarRegistration() {

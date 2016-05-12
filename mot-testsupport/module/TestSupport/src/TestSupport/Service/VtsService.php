@@ -150,14 +150,26 @@ class VtsService
             $dataGenerator = DataGeneratorHelper::buildForDifferentiator($data);
 
             $stmt = $this->em->getConnection()->prepare("
-                INSERT INTO organisation_site_map
-                (organisation_id, site_id, trading_name, status_id, start_date, end_date, status_changed_on, created_by)
-                VALUES (?, ?, ?, 2, LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 YEAR)), LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 WEEK)), NOW(), (SELECT `id` FROM `person` WHERE `user_reference` = 'Static Data' OR `username` = 'static data'))"
+                INSERT INTO organisation_site_map (
+                  organisation_id,
+                  site_id,
+                  trading_name,
+                  status_id,
+                  start_date,
+                  end_date,
+                  status_changed_on,
+                  created_by
+                ) VALUES (?, ?, ?, ?, ?, ?, NOW(),
+                  (SELECT `id` FROM `person` WHERE `user_reference` = 'Static Data' OR `username` = 'static data')
+                )"
             );
 
             $stmt->bindValue(1, $data['aeId']);
             $stmt->bindValue(2, $siteId);
             $stmt->bindValue(3, ArrayUtils::tryGet($data, 'siteName', $dataGenerator->siteName()));
+            $stmt->bindValue(4, self::STATUS_APPROVED);
+            $stmt->bindValue(5, date('Y-m-d H:i:s', strtotime('-6 months')));
+            $stmt->bindValue(6, date('Y-m-d H:i:s', strtotime('+6 months')));
             $stmt->execute();
         }
 

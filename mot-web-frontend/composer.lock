@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a729d91019fd9796d671ebb446257001",
-    "content-hash": "f5db4814ba155d5a8c25d2c627b7914a",
+    "hash": "d45b62c9a2be559342eeb3dc68908d61",
+    "content-hash": "c90ae3212768875e6dd49884619236d6",
     "packages": [
         {
             "name": "cpms/client",
@@ -1028,11 +1028,11 @@
         },
         {
             "name": "dvsa/web-frontend-assets",
-            "version": "v0.7.11",
+            "version": "v0.7.12",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.motdev.org.uk:mot/web-frontend-assets.git",
-                "reference": "e6ad8a842639a6bc744c486a2a9c8ad15c2cfb53"
+                "reference": "1a48ad99410120b50cbd363cea2d9473633b4daa"
             },
             "type": "library",
             "authors": [
@@ -1041,7 +1041,7 @@
                     "email": ""
                 }
             ],
-            "time": "2016-04-01 14:10:11"
+            "time": "2016-04-25 11:07:07"
         },
         {
             "name": "erusev/parsedown",
@@ -1340,14 +1340,14 @@
         },
         {
             "name": "slot-purchase/web-frontend",
-            "version": "v3.6.8",
+            "version": "v3.8.0",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.motdev.org.uk:mot/slot-purchase-web-frontend.git",
-                "reference": "f43e9408a8a151c3b996aa48d1f8adf0418d463e"
+                "reference": "02c23fac6758c0c9789d17de30effb3d7dff4fdf"
             },
             "require": {
-                "cpms/cpms-forms": "1.22.*",
+                "cpms/cpms-forms": "^1.22.0",
                 "dvsa/dvsa-document-module": "dev-develop",
                 "php": ">=5.5",
                 "zendframework/zendframework": "<2.5"
@@ -1379,7 +1379,7 @@
                 "proprietary"
             ],
             "description": "Slot Purchase Frontend",
-            "time": "2016-04-13 08:56:40"
+            "time": "2016-05-10 11:27:13"
         },
         {
             "name": "soflomo/purifier",
@@ -1497,12 +1497,12 @@
             "version": "2.4.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/zf2.git",
+                "url": "https://github.com/zendframework/zendframework.git",
                 "reference": "84cad41e1ee549d634c109de18c4626e51cc6b29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/84cad41e1ee549d634c109de18c4626e51cc6b29",
+                "url": "https://api.github.com/repos/zendframework/zendframework/zipball/84cad41e1ee549d634c109de18c4626e51cc6b29",
                 "reference": "84cad41e1ee549d634c109de18c4626e51cc6b29",
                 "shasum": ""
             },
@@ -1615,11 +1615,11 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/ZendPdf.git",
-                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
+                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793",
                 "shasum": ""
             },
@@ -1639,7 +1639,6 @@
                     "ZendPdf\\": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],

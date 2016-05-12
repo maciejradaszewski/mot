@@ -8,6 +8,7 @@
 namespace Event\Controller;
 
 use Core\Controller\AbstractAuthActionController;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Date\DateUtils;
@@ -31,6 +32,8 @@ class EventController extends AbstractAuthActionController
 {
     use OrganisationServicesTrait;
 
+    const PERSON_PROFILE_GO_BACK_PARAMETER = 'goBack';
+
     const DATE_FROM_BEFORE_TO = 'Date From can\'t be after Date To';
     const DATE_INVALID = 'Date %s: Given date does not exist ("%s")';
     const DATE_RANGE_INVALID = 'Date %s must be between 01 January 1900 and today';
@@ -41,6 +44,21 @@ class EventController extends AbstractAuthActionController
     const ROUTE_LIST = 'event-list';
 
     const TYPE_AE = 'ae';
+
+    /**
+     * @var ContextProvider
+     */
+    private $contextProvider;
+
+    /**
+     * EventController constructor.
+     * 
+     * @param ContextProvider $contextProvider
+     */
+    public function __construct(ContextProvider $contextProvider)
+    {
+        $this->contextProvider = $contextProvider;
+    }
 
     /**
      * This is the common action who allow us to get the information needed
@@ -77,7 +95,7 @@ class EventController extends AbstractAuthActionController
         $formData = $request->getQuery()->toArray();
 
         // get the previous route from url until /event/list is refactored to new profile
-        $previousRoute = $this->getRequest()->getQuery('previousRoute');
+        $previousRoute = urldecode($this->getRequest()->getQuery(self::PERSON_PROFILE_GO_BACK_PARAMETER));
 
         $viewModel = new EventViewModel(
             $this->getOrganisation($id, $type),
@@ -90,9 +108,10 @@ class EventController extends AbstractAuthActionController
             $previousRoute
         );
 
-        $viewModel->setEventList(
-            $this->getEvents($id, $type, $this->validateForm($viewModel->getFormModel(), $request->isXmlHttpRequest()))
-        );
+        $events = $this->getEvents($id, $type, $this->validateForm($viewModel->getFormModel(),
+            $request->isXmlHttpRequest()));
+
+        $viewModel->setEventList($events);
 
         if ($request->isXmlHttpRequest()) {
             return $viewModel->getJsonModel();
@@ -106,7 +125,7 @@ class EventController extends AbstractAuthActionController
             'canRecordEvent',
             $this->getAuthorizationService()->isGranted(PermissionInSystem::EVENT_CREATE)
         );
-        $viewModel->setVariable('previousRoute', $previousRoute);
+        $viewModel->setVariable(self::PERSON_PROFILE_GO_BACK_PARAMETER, $previousRoute);
 
         return $viewModel;
     }
@@ -320,7 +339,7 @@ class EventController extends AbstractAuthActionController
         }
 
         // get the previous route from url until /event/list is refactored to new profile
-        $previousRoute = $this->getRequest()->getQuery('previousRoute');
+        $previousRoute = urldecode($this->getRequest()->getQuery(self::PERSON_PROFILE_GO_BACK_PARAMETER));
 
         /* @var Request $request */
         $request = $this->getRequest();

@@ -25,6 +25,7 @@ use DvsaCommonTest\Bootstrap;
 use Dvsa\Mot\Frontend\Test\StubIdentityAdapter;
 use DvsaCommonTest\TestUtils\XMock;
 use DvsaMotTest\Controller\MotTestController;
+use DvsaMotTest\Service\SurveyService;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Session\Container;
 use Core\Service\MotFrontendAuthorisationServiceInterface;
@@ -37,11 +38,18 @@ class MotTestControllerTest extends AbstractDvsaMotTestTestCase
     /* @var MotFrontendAuthorisationServiceInterface $authServiceMock */
     private $authServiceMock;
 
+    /** @var SurveyService $surveyServiceMock */
+    private $surveyServiceMock;
+
     protected function setUp()
     {
         $this->authServiceMock = XMock::of(MotFrontendAuthorisationServiceInterface::class);
+        $this->surveyServiceMock = $this->getMockBuilder(SurveyService::class)
+            ->disableOriginalConstructor()
+            ->setMethods([])
+            ->getMock();
 
-        $this->controller = new MotTestController($this->authServiceMock);
+        $this->controller = new MotTestController($this->authServiceMock, $this->surveyServiceMock);
 
         $serviceManager = Bootstrap::getServiceManager();
         $this->controller->setServiceLocator($serviceManager);

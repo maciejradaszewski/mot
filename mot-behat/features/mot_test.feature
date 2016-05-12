@@ -359,7 +359,6 @@ Feature: MOT Test
       | class4.roller.invalid.high  | FAILED  |
 
   @survey
-  @wip
   Scenario Outline: Tester submits a survey response
     Given I am logged in as a Tester
     And I submit a survey response of <response>
@@ -392,7 +391,7 @@ Feature: MOT Test
     Then vehicle weight is not updated
     
   @survey
-  @wip
+  @survey_report
   Scenario Outline: Scheme user or scheme manager wants to generate a survey report
     Given I am logged in as a Scheme Manager
     And There exist survey responses of <1> <2> <3> <4> <5>
@@ -403,3 +402,47 @@ Feature: MOT Test
     | 1 | 2 | 3 | 4 | 5 |
     | 0 | 0 | 0 | 0 | 0 |
     | 1 | 2 | 3 | 4 | 5 |
+
+  @survey
+  Scenario: Survey is displayed when no surveys have been completed
+    Given No survey has been completed
+    And I am logged in as a Tester
+    And I start an MOT Test
+    And the Tester adds an Odometer Reading
+    When the Tester adds a Class 3-7 Plate Brake Test
+    And the Tester Passes the Mot Test
+    Then the survey is displayed to the user
+
+  @survey
+  Scenario: Survey is displayed after the configured number of normal tests
+    Given A survey has been completed
+    And the next normal MOT test should display the survey
+    And I am logged in as a Tester
+    And I start an MOT Test
+    And the Tester adds an Odometer Reading
+    When the Tester adds a Class 3-7 Plate Brake Test
+    And the Tester Passes the Mot Test
+    Then the survey is displayed to the user
+
+  @survey
+  Scenario: Survey is not displayed if user has completed survey too recently
+    Given I am logged in as a Tester
+    And A survey has been completed by that tester
+    And the next normal MOT test should display the survey
+    And I start an MOT Test
+    And the Tester adds an Odometer Reading
+    When the Tester adds a Class 3-7 Plate Brake Test
+    And the Tester Passes the Mot Test
+    Then the survey is not displayed to the user
+
+  @survey
+  Scenario: Survey is not displayed if user completes a non-normal MOT test
+    Given A survey has been completed
+    And the next normal MOT test should display the survey
+    And I am logged in as a Tester
+    And I start a Demo MOT Test
+    And the Tester adds an Odometer Reading
+    When the Tester adds a Class 3-7 Plate Brake Test
+    And the Tester Passes the Mot Test
+    Then the survey is not displayed to the user
+

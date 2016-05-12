@@ -20,6 +20,7 @@ use DvsaCommon\Exception\UnauthorisedException;
 use Exception;
 use DvsaCommon\Constants\FeatureToggle;
 use Dvsa\Mot\Frontend\PersonModule\Controller\PersonProfileController;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 
 /**
  * Class DrivingLicenceController
@@ -71,24 +72,32 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
     private $validationErrors;
 
     /**
+     * @var ContextProvider
+     */
+    private $contextProvider;
+
+    /**
      * @param HelpdeskAccountAdminService $accountAdminService
      * @param MotAuthorisationServiceInterface $authorisationService
      * @param TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper
      * @param SessionService $sessionService
      * @param PersonRoleManagementService $personRoleManagementService
+     * @param ContextProvider $contextProvider
      */
     public function __construct(
         HelpdeskAccountAdminService $accountAdminService,
         MotAuthorisationServiceInterface $authorisationService,
         TesterGroupAuthorisationMapper $testerGroupAuthorisationMapper,
         SessionService $sessionService,
-        PersonRoleManagementService $personRoleManagementService
+        PersonRoleManagementService $personRoleManagementService,
+        ContextProvider $contextProvider
     ) {
         $this->accountAdminService = $accountAdminService;
         $this->authorisationService = $authorisationService;
         $this->testerGroupAuthorisationMapper = $testerGroupAuthorisationMapper;
         $this->sessionService = $sessionService;
         $this->personRoleManagementService = $personRoleManagementService;
+        $this->contextProvider = $contextProvider;
     }
 
     /**
@@ -100,7 +109,7 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
         $this->authorisationService->assertGranted(PermissionInSystem::ADD_EDIT_DRIVING_LICENCE);
 
         if ($this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE)) {
-            $personId = $this->params()->fromRoute('id');
+            $personId = $this->getPersonId();
         } else {
             $personId = $this->params()->fromRoute('personId');
         }
@@ -364,6 +373,17 @@ class DrivingLicenceController extends AbstractDvsaMotTestController
             $this->testerGroupAuthorisationMapper->getAuthorisation($personId),
             $this->authorisationService
         );
+    }
+
+    /**
+     * @return int
+     */
+    private function getPersonId()
+    {
+        $context = $this->contextProvider->getContext();
+
+        return $context === ContextProvider::YOUR_PROFILE_CONTEXT ?
+            $this->getIdentity()->getUserId() : (int) $this->params()->fromRoute('id', null);
     }
 
     private function getBreadcrumbBase($presenter, $personId)

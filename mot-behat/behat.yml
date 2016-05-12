@@ -42,6 +42,7 @@ default:
                 - SlotsReportContext
                 - SlotsRefreshPaymentsContext
                 - SpecialNoticeContext
+                - SurveyContext
                 - TempPasswordChangeContext
                 - VehicleContext
                 - VtsContext

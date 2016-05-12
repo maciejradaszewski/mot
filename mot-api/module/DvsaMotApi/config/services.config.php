@@ -1,40 +1,98 @@
 <?php
 
+use DvsaCommon\Configuration\MotConfig;
+use DvsaCommon\Configuration\MotConfigFactory;
 use DvsaCommonApi\Transaction\ServiceTransactionAwareInitializer;
 use DvsaEntities\Repository\TestItemCategoryRepository;
+use DvsaMotApi\Factory\AmazonS3ServiceFactory;
+use DvsaMotApi\Factory\AmazonSDKServiceFactory;
+use DvsaMotApi\Factory\AwsCredentialsProviderFactory;
+use DvsaMotApi\Factory\CertificateReplacementRepositoryFactory;
+use DvsaMotApi\Factory\CertificateStorageServiceFactory;
+use DvsaMotApi\Factory\ConfigurationRepositoryFactory;
 use DvsaMotApi\Factory\Helper\RoleEventHelperFactory;
 use DvsaMotApi\Factory\Helper\RoleNotificationHelperFactory;
 use DvsaMotApi\Factory\Helper\TesterQualificationStatusChangeEventHelperFactory;
+use DvsaMotApi\Factory\MotTestCertificatesServiceFactory;
+use DvsaMotApi\Factory\MotTestRepositoryFactory;
+use DvsaMotApi\Factory\MotTestTypeRepositoryFactory;
+use DvsaMotApi\Factory\OdometerReadingRepositoryFactory;
+use DvsaMotApi\Factory\ReplacementCertificateDraftRepositoryFactory;
+use DvsaMotApi\Factory\RfrRepositoryFactory;
+use DvsaMotApi\Factory\Service\BrakeTestResultServiceFactory;
+use DvsaMotApi\Factory\Service\CertificateChangeServiceFactory;
+use DvsaMotApi\Factory\Service\CertificateCreationServiceFactory;
+use DvsaMotApi\Factory\Service\CertificateExpiryServiceFactory;
 use DvsaMotApi\Factory\Service\CertificatePdfServiceFactory;
+use DvsaMotApi\Factory\Service\CreateMotTestServiceFactory;
 use DvsaMotApi\Factory\Service\DemoTestAssessmentServiceFactory;
+use DvsaMotApi\Factory\Service\EmergencyServiceFactory;
+use DvsaMotApi\Factory\Service\EnforcementMotTestResultServiceFactory;
+use DvsaMotApi\Factory\Service\EnforcementSiteAssessmentServiceFactory;
+use DvsaMotApi\Factory\Service\Mapper\MotTestMapperFactory;
+use DvsaMotApi\Factory\Service\MotTestCompareServiceFactory;
+use DvsaMotApi\Factory\Service\MotTestDateHelperFactory;
 use DvsaMotApi\Factory\Service\MotTestOptionsServiceFactory;
-use DvsaEntities\Repository\CertificateTypeRepository;
+use DvsaMotApi\Factory\Service\MotTestReasonForRejectionServiceFactory;
 use DvsaMotApi\Factory\Service\MotTestRecentCertificateServiceFactory;
+use DvsaMotApi\Factory\Service\MotTestSecurityServiceFactory;
+use DvsaMotApi\Factory\Service\MotTestServiceFactory;
+use DvsaMotApi\Factory\Service\MotTestShortSummaryServiceFactory;
+use DvsaMotApi\Factory\Service\MotTestStatusChangeNotificationFactory;
+use DvsaMotApi\Factory\Service\MotTestStatusChangeServiceFactory;
+use DvsaMotApi\Factory\Service\MotTestStatusServiceFactory;
+use DvsaMotApi\Factory\Service\MotTestTypeServiceFactory;
+use DvsaMotApi\Factory\Service\OdometerReadingQueryServiceFactory;
+use DvsaMotApi\Factory\Service\OdometerReadingUpdatingServiceFactory;
+use DvsaMotApi\Factory\Service\ReplacementCertificateDraftCreatorFactory;
+use DvsaMotApi\Factory\Service\ReplacementCertificateDraftUpdaterFactory;
+use DvsaMotApi\Factory\Service\ReplacementCertificateServiceFactory;
+use DvsaMotApi\Factory\Service\ReplacementCertificateUpdaterFactory;
+use DvsaMotApi\Factory\Service\TesterExpiryServiceFactory;
 use DvsaMotApi\Factory\Service\TesterMotTestLogServiceFactory;
+use DvsaMotApi\Factory\Service\TesterSearchServiceFactory;
+use DvsaMotApi\Factory\Service\TesterServiceFactory;
+use DvsaMotApi\Factory\Service\TestingOutsideOpeningHoursNotificationServiceFactory;
+use DvsaMotApi\Factory\Service\TestItemSelectorServiceFactory;
+use DvsaMotApi\Factory\Service\UserServiceFactory;
+use DvsaMotApi\Factory\Service\Validator\MotTestChangeValidatorFactory;
+use DvsaMotApi\Factory\Service\Validator\MotTestValidatorFactory;
+use DvsaMotApi\Factory\Service\Validator\OdometerReadingDeltaAnomalyCheckerFactory;
+use DvsaMotApi\Factory\Service\Validator\ReplacementCertificateDraftChangeValidatorFactory;
 use DvsaMotApi\Factory\Service\Validator\RetestEligibilityValidatorFactory;
 use DvsaMotApi\Factory\Service\VehicleHistoryServiceFactory;
+use DvsaMotApi\Factory\Service\VehicleServiceFactory;
+use DvsaMotApi\Factory\SurveyServiceFactory;
 use DvsaMotApi\Factory\TestItemCategoryRepositoryFactory;
+use DvsaMotApi\Factory\VehicleRepositoryFactory;
 use DvsaMotApi\Helper\RoleEventHelper;
 use DvsaMotApi\Helper\RoleNotificationHelper;
 use DvsaMotApi\Helper\TesterQualificationStatusChangeEventHelper;
+use DvsaMotApi\Service\AmazonS3Service;
+use DvsaMotApi\Service\AmazonSDKService;
+use DvsaMotApi\Service\AwsCredentialsProviderService;
 use DvsaMotApi\Service\CertificateCreationService;
 use DvsaMotApi\Service\CertificatePdfService;
+use DvsaMotApi\Service\CertificateStorageService;
 use DvsaMotApi\Service\CreateMotTestService;
 use DvsaMotApi\Service\DemoTestAssessmentService;
 use DvsaMotApi\Service\EmergencyService;
-use DvsaMotApi\Service\EmergencyServiceFactory;
+use DvsaMotApi\Service\MotTestCertificatesService;
 use DvsaMotApi\Service\MotTestDateHelper;
 use DvsaMotApi\Service\MotTestDateHelperService;
 use DvsaMotApi\Service\MotTestOptionsService;
 use DvsaMotApi\Service\MotTestReasonForRejectionService;
 use DvsaMotApi\Service\MotTestRecentCertificateService;
 use DvsaMotApi\Service\MotTestStatusChangeNotificationService;
+use DvsaMotApi\Service\SurveyService;
 use DvsaMotApi\Service\TesterMotTestLogService;
 use DvsaMotApi\Service\TestingOutsideOpeningHoursNotificationService;
 use DvsaMotApi\Service\UserService;
 use DvsaMotApi\Service\Validator\BrakeTestConfigurationValidator;
 use DvsaMotApi\Service\Validator\BrakeTestResultValidator;
 use DvsaMotApi\Service\Validator\MotTestStatusChangeValidator;
+use DvsaMotApi\Service\Validator\ReplacementCertificateDraftChangeValidator;
+use DvsaMotApi\Service\Validator\RetestEligibility\RetestEligibilityValidator;
 use DvsaMotApi\Service\VehicleHistoryService;
 
 return [
@@ -46,52 +104,52 @@ return [
         'transactionAware'                                  => ServiceTransactionAwareInitializer::class,
     ],
     'factories'  => [
-        UserService::class                                   => \DvsaMotApi\Factory\Service\UserServiceFactory::class,
-        'VehicleService'                                     => \DvsaMotApi\Factory\Service\VehicleServiceFactory::class,
-        EmergencyService::class                              => \DvsaMotApi\Factory\Service\EmergencyServiceFactory::class,
-        'EnforcementMotTestResultService'                    => \DvsaMotApi\Factory\Service\EnforcementMotTestResultServiceFactory::class,
-        'EnforcementSiteAssessmentService'                   => \DvsaMotApi\Factory\Service\EnforcementSiteAssessmentServiceFactory::class,
-        'TestItemSelectorService'                            => \DvsaMotApi\Factory\Service\TestItemSelectorServiceFactory::class,
-        'TesterService'                                      => \DvsaMotApi\Factory\Service\TesterServiceFactory::class,
-        'TesterSearchService'                                => \DvsaMotApi\Factory\Service\TesterSearchServiceFactory::class,
-        'TesterExpiryService'                                => \DvsaMotApi\Factory\Service\TesterExpiryServiceFactory::class,
-        'BrakeTestResultService'                             => \DvsaMotApi\Factory\Service\BrakeTestResultServiceFactory::class,
-        'MotTestSecurityService'                             => \DvsaMotApi\Factory\Service\MotTestSecurityServiceFactory::class,
-        CreateMotTestService::class                          => \DvsaMotApi\Factory\Service\CreateMotTestServiceFactory::class,
-        'MotTestService'                                     => \DvsaMotApi\Factory\Service\MotTestServiceFactory::class,
-        'MotTestShortSummaryService'                         => \DvsaMotApi\Factory\Service\MotTestShortSummaryServiceFactory::class,
-        'MotTestStatusService'                               => \DvsaMotApi\Factory\Service\MotTestStatusServiceFactory::class,
-        'MotTestStatusChangeService'                         => \DvsaMotApi\Factory\Service\MotTestStatusChangeServiceFactory::class,
-        MotTestStatusChangeNotificationService::class        => \DvsaMotApi\Factory\Service\MotTestStatusChangeNotificationFactory::class,
-        TestingOutsideOpeningHoursNotificationService::class => \DvsaMotApi\Factory\Service\TestingOutsideOpeningHoursNotificationServiceFactory::class,
-        MotTestDateHelperService::class                      => \DvsaMotApi\Factory\Service\MotTestDateHelperFactory::class,
-        'TestSlotTransactionService'                         => \DvsaMotApi\Factory\Service\TestSlotTransactionServiceFactory::class,
-        'MotTestTypeService'                                 => \DvsaMotApi\Factory\Service\MotTestTypeServiceFactory::class,
-        'MotTestCompareService'                              => \DvsaMotApi\Factory\Service\MotTestCompareServiceFactory::class,
-        'MotTestValidator'                                   => \DvsaMotApi\Factory\Service\Validator\MotTestValidatorFactory::class,
-        MotTestStatusChangeValidator::class                  => \DvsaMotApi\Factory\Service\Validator\MotTestChangeValidatorFactory::class,
-        'MotTestRepository'                                  => \DvsaMotApi\Factory\MotTestRepositoryFactory::class,
-        'MotTestTypeRepository'                              => \DvsaMotApi\Factory\MotTestTypeRepositoryFactory::class,
+        UserService::class                                   => UserServiceFactory::class,
+        'VehicleService'                                     => VehicleServiceFactory::class,
+        EmergencyService::class                              => EmergencyServiceFactory::class,
+        'EnforcementMotTestResultService'                    => EnforcementMotTestResultServiceFactory::class,
+        'EnforcementSiteAssessmentService'                   => EnforcementSiteAssessmentServiceFactory::class,
+        'TestItemSelectorService'                            => TestItemSelectorServiceFactory::class,
+        'TesterService'                                      => TesterServiceFactory::class,
+        'TesterSearchService'                                => TesterSearchServiceFactory::class,
+        'TesterExpiryService'                                => TesterExpiryServiceFactory::class,
+        'BrakeTestResultService'                             => BrakeTestResultServiceFactory::class,
+        'MotTestSecurityService'                             => MotTestSecurityServiceFactory::class,
+        CreateMotTestService::class                          => CreateMotTestServiceFactory::class,
+        'MotTestService'                                     => MotTestServiceFactory::class,
+        'MotTestShortSummaryService'                         => MotTestShortSummaryServiceFactory::class,
+        'MotTestStatusService'                               => MotTestStatusServiceFactory::class,
+        'MotTestStatusChangeService'                         => MotTestStatusChangeServiceFactory::class,
+        MotTestStatusChangeNotificationService::class        => MotTestStatusChangeNotificationFactory::class,
+        TestingOutsideOpeningHoursNotificationService::class => TestingOutsideOpeningHoursNotificationServiceFactory::class,
+        MotTestDateHelperService::class                      => MotTestDateHelperFactory::class,
+        'TestSlotTransactionService'                         => TestSlotTransactionServiceFactory::class,
+        'MotTestTypeService'                                 => MotTestTypeServiceFactory::class,
+        'MotTestCompareService'                              => MotTestCompareServiceFactory::class,
+        'MotTestValidator'                                   => MotTestValidatorFactory::class,
+        MotTestStatusChangeValidator::class                  => MotTestChangeValidatorFactory::class,
+        'MotTestRepository'                                  => MotTestRepositoryFactory::class,
+        'MotTestTypeRepository'                              => MotTestTypeRepositoryFactory::class,
         RetestEligibilityValidator::class                    => RetestEligibilityValidatorFactory::class,
-        'VehicleRepository'                                  => \DvsaMotApi\Factory\VehicleRepositoryFactory::class,
-        'CertificateExpiryService'                           => \DvsaMotApi\Factory\Service\CertificateExpiryServiceFactory::class,
-        'ConfigurationRepository'                            => \DvsaMotApi\Factory\ConfigurationRepositoryFactory::class,
-        'RfrRepository'                                      => \DvsaMotApi\Factory\RfrRepositoryFactory::class,
-        'OdometerReadingDeltaAnomalyChecker'                 => \DvsaMotApi\Factory\Service\Validator\OdometerReadingDeltaAnomalyCheckerFactory::class,
-        'OdometerReadingRepository'                          => \DvsaMotApi\Factory\OdometerReadingRepositoryFactory::class,
-        'OdometerReadingUpdatingService'                     => \DvsaMotApi\Factory\Service\OdometerReadingUpdatingServiceFactory::class,
-        'OdometerReadingQueryService'                        => \DvsaMotApi\Factory\Service\OdometerReadingQueryServiceFactory::class,
-        'MotTestMapper'                                      => \DvsaMotApi\Factory\Service\Mapper\MotTestMapperFactory::class,
+        'VehicleRepository'                                  => VehicleRepositoryFactory::class,
+        'CertificateExpiryService'                           => CertificateExpiryServiceFactory::class,
+        'ConfigurationRepository'                            => ConfigurationRepositoryFactory::class,
+        'RfrRepository'                                      => RfrRepositoryFactory::class,
+        'OdometerReadingDeltaAnomalyChecker'                 => OdometerReadingDeltaAnomalyCheckerFactory::class,
+        'OdometerReadingRepository'                          => OdometerReadingRepositoryFactory::class,
+        'OdometerReadingUpdatingService'                     => OdometerReadingUpdatingServiceFactory::class,
+        'OdometerReadingQueryService'                        => OdometerReadingQueryServiceFactory::class,
+        'MotTestMapper'                                      => MotTestMapperFactory::class,
         //  @ARCHIVE VM-4532    MotDemoTestService
-        CertificateCreationService::class                   => \DvsaMotApi\Factory\Service\CertificateCreationServiceFactory::class,
-        'CertificateReplacementRepository'                  => \DvsaMotApi\Factory\CertificateReplacementRepositoryFactory::class,
-        'ReplacementCertificateUpdater'                     => \DvsaMotApi\Factory\Service\ReplacementCertificateUpdaterFactory::class,
-        'ReplacementCertificateDraftRepository'             => \DvsaMotApi\Factory\ReplacementCertificateDraftRepositoryFactory::class,
-        'ReplacementCertificateDraftCreator'                => \DvsaMotApi\Factory\Service\ReplacementCertificateDraftCreatorFactory::class,
-        'ReplacementCertificateDraftUpdater'                => \DvsaMotApi\Factory\Service\ReplacementCertificateDraftUpdaterFactory::class,
-        'ReplacementCertificateService'                     => \DvsaMotApi\Factory\Service\ReplacementCertificateServiceFactory::class,
-        'CertificateChangeService'                          => \DvsaMotApi\Factory\Service\CertificateChangeServiceFactory::class,
-        MotTestReasonForRejectionService::class             => \DvsaMotApi\Factory\Service\MotTestReasonForRejectionServiceFactory::class,
+        CertificateCreationService::class                   => CertificateCreationServiceFactory::class,
+        'CertificateReplacementRepository'                  => CertificateReplacementRepositoryFactory::class,
+        'ReplacementCertificateUpdater'                     => ReplacementCertificateUpdaterFactory::class,
+        'ReplacementCertificateDraftRepository'             => ReplacementCertificateDraftRepositoryFactory::class,
+        'ReplacementCertificateDraftCreator'                => ReplacementCertificateDraftCreatorFactory::class,
+        'ReplacementCertificateDraftUpdater'                => ReplacementCertificateDraftUpdaterFactory::class,
+        'ReplacementCertificateService'                     => ReplacementCertificateServiceFactory::class,
+        'CertificateChangeService'                          => CertificateChangeServiceFactory::class,
+        MotTestReasonForRejectionService::class             => MotTestReasonForRejectionServiceFactory::class,
         TestItemCategoryRepository::class                   => TestItemCategoryRepositoryFactory::class,
         VehicleHistoryService::class                        => VehicleHistoryServiceFactory::class,
         MotTestOptionsService::class                        => MotTestOptionsServiceFactory::class,
@@ -99,6 +157,14 @@ return [
         TesterQualificationStatusChangeEventHelper::class   => TesterQualificationStatusChangeEventHelperFactory::class,
         TesterMotTestLogService::class                      => TesterMotTestLogServiceFactory::class,
         RoleEventHelper::class                              => RoleEventHelperFactory::class,
-        RoleNotificationHelper::class                       => RoleNotificationHelperFactory::class
+        RoleNotificationHelper::class                       => RoleNotificationHelperFactory::class,
+        SurveyService::class                                => SurveyServiceFactory::class,
+        MotConfig::class                                    => MotConfigFactory::class,
+        ReplacementCertificateDraftChangeValidator::class   => ReplacementCertificateDraftChangeValidatorFactory::class,
+        MotTestCertificatesService::class                   => MotTestCertificatesServiceFactory::class,
+        CertificateStorageService::class                    => CertificateStorageServiceFactory::class,
+        AmazonS3Service::class                              => AmazonS3ServiceFactory::class,
+        AmazonSDKService::class                             => AmazonSDKServiceFactory::class,
+        AwsCredentialsProviderService::class                => AwsCredentialsProviderFactory::class,
     ],
 ];

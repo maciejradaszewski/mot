@@ -8,7 +8,6 @@
 namespace Event\ViewModel\Event;
 
 use DvsaClient\Entity\Person;
-use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\Date\DateTimeDisplayFormat;
 use DvsaCommon\Dto\Event\EventFormDto;
 use DvsaCommon\Dto\Event\EventListDto;
@@ -19,6 +18,7 @@ use DvsaCommon\UrlBuilder\EventUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\SiteUrlBuilderWeb;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
 use DvsaFeature\FeatureToggles;
+use Event\Controller\EventController;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -27,18 +27,36 @@ use Zend\View\Model\ViewModel;
  */
 class EventViewModel
 {
-    /** @var int */
+    /**
+     * @var int
+     */
     private $id;
-    /** @var OrganisationDto */
+
+    /**
+     * @var OrganisationDto
+     */
     private $organisation;
-    /** @var VehicleTestingStationDto */
+
+    /**
+     * @var VehicleTestingStationDto
+     */
     private $site;
-    /** @var Person */
+
+    /**
+     * @var Person
+     */
     private $person;
-    /** @var EventFormDto */
+
+    /**
+     * @var EventFormDto
+     */
     private $formModel;
-    /** @var EventListDto list of extracted Dto events prepared for list */
+
+    /**
+     * @var EventListDto list of extracted Dto events prepared for list
+     */
     private $eventList;
+
     /**
      * @var bool featureToggles
      */
@@ -89,12 +107,13 @@ class EventViewModel
      */
     public function getEventDetailLink($eventId)
     {
-        $url = EventUrlBuilderWeb::of()->eventDetail($this->getId(), $eventId, $this->getEventType())->toString();
-        if ($this->newProfileEnabled) {
-            return $url . '?previousRoute=' . $this->previousRoute;
-        } else {
-            return $url;
-        }
+        $baseUrl = EventUrlBuilderWeb::of()->eventDetail($this->getId(), $eventId, $this->getEventType())->toString();
+
+        $url = true === $this->newProfileEnabled
+            ? sprintf('%s?%s=%s', $baseUrl, EventController::PERSON_PROFILE_GO_BACK_PARAMETER, urlencode($this->previousRoute))
+            : $baseUrl;
+
+        return $url;
     }
 
     /**
@@ -112,11 +131,12 @@ class EventViewModel
             case 'person':
                 if ($this->newProfileEnabled) {
                     if (null === $this->previousRoute) {
-                        return '/your-profile/' . $this->person->getId();
+                        return '/your-profile';
                     } else {
-                        return $this->previousRoute;
+                        return urldecode($this->previousRoute);
                     }
                 }
+
                 return UserAdminUrlBuilderWeb::userProfile($this->person->getId());
         }
 
@@ -174,29 +194,29 @@ class EventViewModel
         return;
     }
 
+    /**
+     * @return array
+     */
     public function parseEventForJson()
     {
         $result = [];
         foreach ($this->getEventList()->getEvents() as $event) {
-
-            $finalDescription = '';
             $tempDescription = $event->getDescription();
             $tempOutcome = $event->getEventOutcomeDescription();
 
-            if(!empty($tempOutcome)) {
-
+            if (!empty($tempOutcome)) {
                 $finalDescription = $tempOutcome . '. ' . $tempDescription;
-
             } else {
-
-                $finalDescription =$tempDescription;
+                $finalDescription = $tempDescription;
             }
+
+            $extraQueryParameters = $this->formModel->toArray();
+            $url = $this->appendQueryParameters($this->getEventDetailLink($event->getId()), $extraQueryParameters);
 
             $result[] = [
                 'type' => [
                     'type' => $event->getType(),
-                    'url'  => $this->getEventDetailLink($event->getId()) . '?' .
-                        http_build_query($this->formModel->toArray()),
+                    'url'  => $url,
                 ],
                 'date'        => DateTimeDisplayFormat::textDateTimeShort($event->getDate()),
                 'description' => $finalDescription,
@@ -381,5 +401,36 @@ class EventViewModel
         $this->id = $id;
 
         return $this;
+    }
+
+    /**
+     * @param string $originalUrl
+     * @param array  $extraQueryParameters
+     *
+     * @return string
+     */
+    private function appendQueryParameters($originalUrl, array $extraQueryParameters)
+    {
+        $url = '';
+        $urlComponents = parse_url($originalUrl);
+        foreach (['scheme', 'host', 'port', 'user', 'pass', 'path'] as $k) {
+            if (!isset($urlComponents[$k])) {
+                continue;
+            }
+
+            $url .= (string) $urlComponents[$k];
+        }
+
+        parse_str(isset($urlComponents['query']) ? $urlComponents['query'] : '', $queryParameters);
+        $queryParameters = array_replace($queryParameters, is_array($extraQueryParameters) ? $extraQueryParameters : []);
+        if (!empty($queryParameters)) {
+            $url .= '?' . http_build_query($queryParameters);
+        }
+
+        if (isset($urlComponents['fragment'])) {
+            $url .= '#' . (string) $urlComponents['fragment'];
+        }
+
+        return $url;
     }
 }

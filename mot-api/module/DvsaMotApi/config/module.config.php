@@ -640,6 +640,16 @@ return [
                             ],
                         ],
                     ],
+                    'shouldDisplay' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/shouldDisplay',
+                            'defaults' => [
+                                'controller' => SurveyController::class,
+                                'action' => 'shouldDisplaySurvey'
+                            ]
+                        ]
+                    ]
                 ],
             ],
         ],//end of 'routes =>'

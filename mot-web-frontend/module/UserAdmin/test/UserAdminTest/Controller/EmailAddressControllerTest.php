@@ -5,6 +5,8 @@ namespace UserAdminTest\Controller;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
 use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
+use DvsaCommon\Auth\MotIdentityInterface;
+use DvsaCommon\Auth\MotIdentityProvider;
 use DvsaCommon\Model\TesterAuthorisation;
 use DvsaClient\Mapper\TesterGroupAuthorisationMapper;
 use DvsaClient\MapperFactory;
@@ -45,6 +47,10 @@ class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
      */
     private $contextProvider;
 
+    private $motIdentityProviderMock;
+
+    private $motIdentity;
+
     public function setUp()
     {
         $serviceManager = Bootstrap::getServiceManager();
@@ -65,13 +71,42 @@ class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
 
         $this->personProfileUrlGenerator = $this
             ->getMockBuilder(PersonProfileUrlGenerator::class)
+            ->setMethods(['toPersonProfile'])
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->personProfileUrlGenerator->method('toPersonProfile')->willReturn('/your-profile');
 
         $this->contextProvider = $this
             ->getMockBuilder(ContextProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->motIdentityProviderMock = $this
+            ->getMockBuilder(MotIdentityProvider::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getIdentity', 'setZendAuthenticationService'])
+            ->getMock();
+
+        $motIdentityMock = $this
+            ->getMockBuilder(MotIdentityInterface::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getUserId'])
+            ->getMockForAbstractClass();
+
+        $this->serviceManager->setService('MotIdentityProvider', $this->motIdentityProviderMock);
+
+        $motIdentityMock->method('getUserId')->willReturn(self::PERSON_ID);
+
+        $this
+            ->motIdentityProviderMock
+            ->method('getIdentity')
+            ->willReturn($motIdentityMock);
+
+        $this
+            ->contextProvider
+            ->method('getContext')
+            ->willReturn(ContextProvider::YOUR_PROFILE_CONTEXT);
 
         $this->setController(
             new EmailAddressController(
@@ -85,7 +120,7 @@ class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
         );
 
         $this->getController()->setServiceLocator($serviceManager);
-        $this->withFeatureToggles([FeatureToggle::NEW_PERSON_PROFILE => false]);
+        $this->withFeatureToggles([FeatureToggle::NEW_PERSON_PROFILE => true]);
 
         $this->createHttpRequestForController('index');
 
@@ -196,7 +231,7 @@ class EmailAddressControllerTest extends AbstractFrontendControllerTestCase
                 ],
                 'expect' => [
                     'viewModel' => false,
-                    'url'       => UserAdminUrlBuilderWeb::of()->UserProfile(self::PERSON_ID),
+                    'url'       => '/your-profile',
                 ],
             ],
             // -- non-matching email fields --

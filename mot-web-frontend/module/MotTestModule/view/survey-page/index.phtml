@@ -9,7 +9,11 @@ $this->layout()->setVariable('pageTitle', 'Give feedback');
     <?php echo $this->csrfToken(); ?>
     <fieldset>
         <legend class="form-label">Overall, how did you feel about the service you received today?</legend>
+
+        <input type="hidden" name="motTestId" value="<?php echo $this->motTestId?>"/>
+
         <?php
+
         echo $this->partial(
             'partial/gds/form/control-radio-group',
             [

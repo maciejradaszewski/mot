@@ -10,6 +10,7 @@ use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Container;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 
 /**
  * Factory for {@link \UserAdmin\Controller\UpdateQualificationController}
@@ -30,12 +31,16 @@ class ChangeQualificationStatusControllerFactory implements FactoryInterface
         /** @var TesterGroupAuthorisationMapper $testerGtoupAuthorisationMapper */
         $testerGroupAuthorisationMapper = $serviceLocator->get(TesterGroupAuthorisationMapper::class);
 
+        /** @var ContextProvider $contextProvider */
+        $contextProvider = $serviceLocator->get(ContextProvider::class);
+
         $controller = new ChangeQualificationStatusController(
             $serviceLocator->get('AuthorisationService'),
             new Container(ChangeQualificationStatusController::SESSION_CONTAINER_NAME),
             $mapperFactory->Person,
             $httpRestJsonClient,
-            $testerGroupAuthorisationMapper
+            $testerGroupAuthorisationMapper,
+            $contextProvider
         );
 
         return $controller;

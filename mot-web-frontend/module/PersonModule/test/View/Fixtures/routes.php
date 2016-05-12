@@ -11,7 +11,7 @@ return [
     ContextProvider::YOUR_PROFILE_PARENT_ROUTE => [
         'type'    => 'segment',
         'options' => [
-            'route'    => '/your-profile[/:id]',
+            'route'    => '/your-profile',
         ],
         'may_terminate' => true,
         'child_routes' => [

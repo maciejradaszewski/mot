@@ -7,27 +7,31 @@ use Zend\Loader\AutoloaderFactory;
 use Zend\Mvc\Service\ServiceManagerConfig;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\ArrayUtils;
-use Zend\Mvc\MvcEvent;
 
 error_reporting(E_ALL | E_STRICT);
 date_default_timezone_set("UTC");
 ini_set('memory_limit', '512M');
 
 /**
- * Class Bootstrap
- *
- * @package DvsaCommonTest
+ * Class Bootstrap.
  */
 class Bootstrap
 {
-    /** @var ServiceManager */
+    /**
+     * @var ServiceManager
+     */
     private static $serviceManager;
+
+    /**
+     * @var array
+     */
     private static $config;
-    private static $bootstrap;
 
-    public static function init(array $appTestConfig = array())
+    /**
+     * @param array $appTestConfig
+     */
+    public static function init(array $appTestConfig = [])
     {
-
         $zf2ModulePaths = [];
 
         $modulePaths = ['module', 'vendor'];
@@ -39,29 +43,36 @@ class Bootstrap
 
         $zf2ModulePaths = implode(PATH_SEPARATOR, $zf2ModulePaths) . PATH_SEPARATOR;
         $zf2ModulePaths .= getenv('ZF2_MODULES_TEST_PATHS')
-            ? : (defined('ZF2_MODULES_TEST_PATHS') ? ZF2_MODULES_TEST_PATHS : '');
+            ?: (defined('ZF2_MODULES_TEST_PATHS') ? ZF2_MODULES_TEST_PATHS : '');
 
         static::initAutoloader($appTestConfig);
 
         // use ModuleManager to load this module and it's dependencies
-        $env = getenv('APPLICATION_ENV') ? : 'development';
+        $env = getenv('APPLICATION_ENV') ?: 'development';
 
         $baseConfig = [
             'module_listener_options' => [
                 'module_paths' => explode(PATH_SEPARATOR, $zf2ModulePaths),
                 'config_glob_paths' => [
                     "config/autoload/{,*.}{global,local,$env}.php",
-                    'local-test.php'
-                ]
-            ]
+                    'local-test.php',
+                ],
+            ],
         ];
 
         static::$config = ArrayUtils::merge($baseConfig, $appTestConfig);
         static::setupServiceManager();
-        //self::setupElasticSearch($serviceManager);
     }
 
-    public static function setupServiceManager()    //  $testConfig)
+    /**
+     * @return array
+     */
+    public static function getApplicationConfig()
+    {
+        return static::$config;
+    }
+
+    public static function setupServiceManager()
     {
         $serviceManager = new ServiceManager(new ServiceManagerConfig());
         $serviceManager->setService('ApplicationConfig', self::$config);
@@ -130,7 +141,7 @@ class Bootstrap
             $loader = include $vendorPath . '/autoload.php';
         } else {
             $zf2Path = getenv('ZF2_PATH')
-                ? : (defined('ZF2_PATH') ? ZF2_PATH
+                ?: (defined('ZF2_PATH') ? ZF2_PATH
                     : (is_dir($vendorPath . '/ZF2/library') ? $vendorPath . '/ZF2/library' : false));
 
             if (!$zf2Path) {
@@ -138,7 +149,6 @@ class Bootstrap
             }
 
             include $zf2Path . '/Zend/Loader/AutoloaderFactory.php';
-
         }
 
         if (isset($testConfig['test_namespaces'])) {
@@ -146,7 +156,7 @@ class Bootstrap
                 [
                     'Zend\Loader\StandardAutoloader' => [
                         'autoregister_zf' => true,
-                        'namespaces'      => $testConfig['test_namespaces']
+                        'namespaces'      => $testConfig['test_namespaces'],
                     ],
                 ]
             );
@@ -164,6 +174,7 @@ class Bootstrap
             }
             $previousDir = $dir;
         }
+
         return $dir . '/' . $path;
     }
 }

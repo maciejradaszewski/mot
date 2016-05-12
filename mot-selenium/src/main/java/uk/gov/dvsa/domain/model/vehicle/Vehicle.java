@@ -6,6 +6,7 @@ public class Vehicle {
 
     private Map<String, String> vehicleData;
     private String registrationNumber;
+    private String registration;
     private String vehicleId;
     private String vin;
     private String make;
@@ -33,6 +34,10 @@ public class Vehicle {
         return vehicleData.get("registrationNumber");
     }
 
+    public String getDvlaRegistration() {
+        return vehicleData.get("registration");
+    }
+
     public String getVin() {
         return vehicleData.get("vin");
     }
@@ -53,7 +58,7 @@ public class Vehicle {
         return vehicleData.get("modelOther");
     }
 
-    public String getMakeModel() { return vehicleData.get("makeName")+" "+vehicleData.get("modelName"); }
+    public String getMakeModel() { return vehicleData.get("makeName")+" "+ vehicleData.get("modelName"); }
 
     public String getColour() {
         return vehicleData.get("colour");
@@ -97,5 +102,31 @@ public class Vehicle {
 
     public String getWeight() {
         return vehicleData.get("weight");
+    }
+
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+                "vehicleData=" + vehicleData +
+                ", registrationNumber='" + registrationNumber + '\'' +
+                ", registration='" + registration + '\'' +
+                ", vehicleId='" + vehicleId + '\'' +
+                ", vin='" + vin + '\'' +
+                ", make='" + make + '\'' +
+                ", makeOther='" + makeOther + '\'' +
+                ", model='" + model + '\'' +
+                ", modelOther='" + modelOther + '\'' +
+                ", makeModel='" + makeModel + '\'' +
+                ", colour='" + colour + '\'' +
+                ", secondaryColour='" + secondaryColour + '\'' +
+                ", dateOfFirstUse='" + dateOfFirstUse + '\'' +
+                ", fuelType='" + fuelType + '\'' +
+                ", testClass='" + testClass + '\'' +
+                ", countryOfRegistration='" + countryOfRegistration + '\'' +
+                ", cylinderCapacity='" + cylinderCapacity + '\'' +
+                ", transmissionType='" + transmissionType + '\'' +
+                ", bodyType='" + bodyType + '\'' +
+                ", weight='" + weight + '\'' +
+                '}';
     }
 }

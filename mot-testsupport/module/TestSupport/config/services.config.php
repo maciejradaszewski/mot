@@ -31,6 +31,7 @@ use TestSupport\Service\InactiveTesterService;
 use TestSupport\Service\JsonErrorHandlingListener;
 use TestSupport\Service\MotService;
 use TestSupport\Service\PasswordResetService;
+use TestSupport\Service\PaymentNotificationsAuditService;
 use TestSupport\Service\SchemeManagerService;
 use TestSupport\Service\SchemeUserService;
 use TestSupport\Service\SiteUserDataService;
@@ -44,6 +45,8 @@ use TestSupport\Service\VM10519UserService;
 use TestSupport\Service\VM10619RoleManagementUpgradeService;
 use TestSupport\Service\VtsService;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use TestSupport\Service\GdsSurveyService;
+use TestSupport\Factory\GdsSurveyServiceFactory;
 
 return [
     'factories' => [
@@ -84,6 +87,10 @@ return [
         DvlaVehicleService::class                  =>
             function (ServiceLocatorInterface $sm) {
                 return new DvlaVehicleService($sm->get(EntityManager::class));
+            },
+        PaymentNotificationsAuditService::class                  =>
+            function (ServiceLocatorInterface $sm) {
+                return new PaymentNotificationsAuditService($sm->get(EntityManager::class));
             },
         SlotTransactionService::class          =>
             function (ServiceLocatorInterface $sm) {
@@ -131,6 +138,7 @@ return [
         TesterAuthorisationStatusService::class => TesterAuthorisationStatusServiceFactory::class,
         AedmService::class                 => \TestSupport\Factory\AedmServiceFactory::class,
         DocumentService::class             => \TestSupport\Factory\DocumentServiceFactory::class,
-        GVTSTesterService::class           => \TestSupport\Factory\GVTSTesterServiceFactory::class
+        GVTSTesterService::class           => \TestSupport\Factory\GVTSTesterServiceFactory::class,
+        GdsSurveyService::class            => GdsSurveyServiceFactory::class,
     ]
 ];

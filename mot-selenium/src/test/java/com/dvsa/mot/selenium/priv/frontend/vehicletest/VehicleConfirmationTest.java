@@ -11,7 +11,10 @@ import com.dvsa.mot.selenium.framework.BaseTest;
 import com.dvsa.mot.selenium.framework.api.MotTestApi;
 import com.dvsa.mot.selenium.framework.util.validation.ValidationSummary;
 import com.dvsa.mot.selenium.priv.frontend.user.UserDashboardPage;
-import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.*;
+import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.MotTestPage;
+import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.MotTestStartedPage;
+import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.StartTestConfirmation1Page;
+import com.dvsa.mot.selenium.priv.frontend.vehicletest.pages.TestSummary;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.testng.annotations.Test;
@@ -150,30 +153,6 @@ public class VehicleConfirmationTest extends BaseTest {
 
         assertThat("Assert error message", ValidationSummary.isValidationSummaryDisplayed(driver),
                 is(true));
-    }
-
-    //TODO return test to Regression suite after stabilising
-    @Test(groups = {"Unstable", "VM-2197", "Sprint 21", "MOT Testing"},
-            description = "User search a vehicle which is not in the VTR table.All DVLA V5 info is imported in the confirmation page in order to create a new register in VTR table with all DVSA V5 data")
-    public void testDVLAdataIsImportedWhenSearchVehicleWithoutVTRRecord() {
-
-        Vehicle vehicle = Vehicle.VEHICLE_CLASS4_EXIST_ONLY_IN_DVSA_VEHICLE_INFO;
-
-        StartTestConfirmation1Page startTestConfirmation1Page = StartTestConfirmation1Page
-                .navigateHereFromLoginPageAsMotTest(driver, login, vehicle);
-
-        assertThat("Assert vehicle registration", startTestConfirmation1Page.getRegistration(),
-                is(vehicle.carReg));
-        assertThat("Assert vehicle VIN", startTestConfirmation1Page.getVIN(), is(vehicle.fullVIN));
-        assertThat("Assert vehicle make and model", startTestConfirmation1Page.getCarMakeAndModel(),
-                is(vehicle.getCarMakeAndModel()));
-        assertThat("Assert vehicle fuel type", startTestConfirmation1Page.getFuel(),
-                is(vehicle.fuelType.getFuelName()));
-        assertThat("Assert vehicle primary colour", startTestConfirmation1Page.getPrimaryColor(),
-                is(vehicle.primaryColour.getColourName()));
-        assertThat("Assert vehicle secondary colour",
-                startTestConfirmation1Page.getSecondaryColor(),
-                is(vehicle.secondaryColour.getColourName()));
     }
 
     @Test(groups = {"Regression", "Sprint 23", "MOT Testing", "VM-2728", "VM-2726", "VM-2725"},

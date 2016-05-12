@@ -9,19 +9,17 @@ namespace Dvsa\Mot\Frontend\PersonModuleTest\Controller;
 
 use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use Dvsa\Mot\Frontend\Test\HttpControllerTestCase;
+use DvsaCommon\Constants\FeatureToggle;
 
 class PersonProfileControllerTest extends HttpControllerTestCase
 {
-    public function setUp()
+    public function testNotFoundExceptionIsThrownIfNewProfileFeatureToggleIsDisabled()
     {
-        // Avoid calling parent::setUp as it will cause an Error.
-    }
+        $this->markTestIncomplete('Passes locally but not on other environments.');
 
-    public function testNotFoundExceptionThrownIfNewProfileFeatureToggleIsDisabled()
-    {
-        $this->markTestSkipped('Skipped until HttpControllerTestCase becomes functional');
+        $this->withFeatureToggles([FeatureToggle::NEW_PERSON_PROFILE => false]);
 
-        $url = $this->url(ContextProvider::YOUR_PROFILE_PARENT_ROUTE);
+        $url = $this->generateUrlFromRoute(ContextProvider::YOUR_PROFILE_PARENT_ROUTE);
         $this->dispatch($url);
     }
 }

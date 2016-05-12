@@ -101,7 +101,7 @@ class ChangeAddressController extends AbstractDvsaMotTestController
      */
     public function indexAction()
     {
-        $personId = $this->getPersonIdFromRequest();
+        $personId = $this->getPersonId();
         $profile = $this->accountAdminService->getUserProfile($personId);
         $context = $this->contextProvider->getContext();
         $personalDetails = new PersonalDetails($this
@@ -195,7 +195,7 @@ class ChangeAddressController extends AbstractDvsaMotTestController
 
     public function reviewAction()
     {
-        $personId = $this->getPersonIdFromRequest();
+        $personId = $this->getPersonId();
         $request = $this->getRequest();
         $personalDetails = new PersonalDetails($this
             ->personalDetailsService
@@ -275,16 +275,12 @@ class ChangeAddressController extends AbstractDvsaMotTestController
     /**
      * @return int
      */
-    private function getPersonIdFromRequest()
+    private function getPersonId()
     {
-        $personId = (int) $this->params()->fromRoute('id', null);
-        $identity = $this->getIdentity();
+        $context = $this->contextProvider->getContext();
 
-        if ($personId == 0) {
-            $personId = $identity->getUserId();
-        }
-
-        return $personId;
+        return $context === ContextProvider::YOUR_PROFILE_CONTEXT ?
+            $this->getIdentity()->getUserId() : (int) $this->params()->fromRoute('id', null);
     }
 
     /**

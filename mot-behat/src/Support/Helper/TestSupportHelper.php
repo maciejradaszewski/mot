@@ -18,6 +18,7 @@ use TestSupport\Service\DVLAManagerService;
 use TestSupport\Service\DVLAOperativeService;
 use TestSupport\Service\DvlaVehicleService;
 use TestSupport\Service\FinanceUserService;
+use TestSupport\Service\GdsSurveyService;
 use TestSupport\Service\GVTSTesterService;
 use TestSupport\Service\MotService;
 use TestSupport\Service\PasswordResetService;
@@ -337,6 +338,14 @@ class TestSupportHelper
     public function getCertificateReplacementService()
     {
         return $this->getServiceManager()->get(CertificateReplacementService::class);
+    }
+
+    /**
+     * @return \TestSupport\Service\GdsSurveyService
+     */
+    public function getGdsSurveyService()
+    {
+        return $this->getServiceManager()->get(GdsSurveyService::class);
     }
 
 }
