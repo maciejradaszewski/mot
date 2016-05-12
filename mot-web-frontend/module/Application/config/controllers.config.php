@@ -57,5 +57,6 @@ return [
         CertificatePrintingController::class      => CertificatePrintingControllerFactory::class,
         ReplacementCertificateController::class   => ReplacementCertificateControllerFactory::class,
         MotTestCertificatesController::class      => MotTestCertificatesControllerFactory::class,
+        MotTestController::class                  => MotTestControllerFactory::class,
     ],
 ];

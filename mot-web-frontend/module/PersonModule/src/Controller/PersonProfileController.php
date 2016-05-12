@@ -125,7 +125,7 @@ class PersonProfileController extends AbstractAuthActionController
         /** @var PersonalDetails $personDetails */
         $personDetails = $data['personalDetails'];
 
-        $personId = $this->getPersonIdFromRequest();
+        $personId = $this->getPersonId();
         $context = $this->contextProvider->getContext();
         $personProfileGuard = $this->personProfileGuardBuilder->createPersonProfileGuard($personDetails, $context);
         $profileSidebar = $this->createProfileSidebar($personId, $personProfileGuard);
@@ -225,7 +225,7 @@ class PersonProfileController extends AbstractAuthActionController
      */
     private function getAuthenticatedData($personalDetailsData = [])
     {
-        $personId = $this->getPersonIdFromRequest();
+        $personId = $this->getPersonId();
         $identity = $this->getIdentity();
 
         $personalDetailsData = array_merge(
@@ -250,16 +250,12 @@ class PersonProfileController extends AbstractAuthActionController
     /**
      * @return int
      */
-    private function getPersonIdFromRequest()
+    private function getPersonId()
     {
-        $personId = (int) $this->params()->fromRoute('id', null);
-        $identity = $this->getIdentity();
+        $context = $this->contextProvider->getContext();
 
-        if ($personId == 0) {
-            $personId = $identity->getUserId();
-        }
-
-        return $personId;
+        return $context === ContextProvider::YOUR_PROFILE_CONTEXT ?
+            $this->getIdentity()->getUserId() : (int) $this->params()->fromRoute('id', null);
     }
 
     /**

@@ -100,13 +100,11 @@ class PasswordExpiryNotificationService
     /**
      * Return the correct URL for taking the user to the change-password page.
      *
-     * @param int $personId Logged in user's ID
-     *
      * @return string
      */
-    private function getChangePasswordUrl($personId) {
-        if ($this->featureToggles->isEnabled(FeatureToggle::NEW_PERSON_PROFILE)) {
-            return '/your-profile/' . $personId . '/change-password';
+    private function getChangePasswordUrl() {
+        if (true === $this->featureToggles->isEnabled(FeatureToggle::NEW_PERSON_PROFILE)) {
+            return '/your-profile/change-password';
         } else {
             return '/profile/change-password';
         }

@@ -22,6 +22,7 @@ parameters:
           Dvsa\Mot\Behat\Support\Api\SlotPurchase: dvsa.slot_purchase
           Dvsa\Mot\Behat\Support\Api\SlotReport: dvsa.slot_report
           Dvsa\Mot\Behat\Support\Api\SpecialNotice: dvsa.special_notice
+          Dvsa\Mot\Behat\Support\Api\Survey: dvsa.survey
           Dvsa\Mot\Behat\Support\Api\TempPasswordChange: dvsa.temp_password_change
           Dvsa\Mot\Behat\Support\Api\Tester: dvsa.tester
           Dvsa\Mot\Behat\Support\Api\Vehicle: dvsa.vehicle

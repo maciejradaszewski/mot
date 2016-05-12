@@ -2,6 +2,7 @@
 
 namespace UserAdmin\Factory\Controller;
 
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use UserAdmin\Controller\DrivingLicenceController;
 use UserAdmin\Service\PersonRoleManagementService;
 use Zend\ServiceManager\FactoryInterface;
@@ -28,7 +29,8 @@ class DrivingLicenceControllerFactory implements FactoryInterface
             $serviceLocator->get("AuthorisationService"),
             $serviceLocator->get(TesterGroupAuthorisationMapper::class),
             $serviceLocator->get(UserAdminSessionService::class),
-            $serviceLocator->get(PersonRoleManagementService::class)
+            $serviceLocator->get(PersonRoleManagementService::class),
+            $serviceLocator->get(ContextProvider::class)
         );
     }
 }

@@ -181,9 +181,11 @@ class MotTest extends AbstractMotTest
         );
     }
 
-    public function submitSurveyResponse($token, $satisfactionRating)
+    public function submitSurveyResponse($token, $motTestId, $satisfactionRating)
     {
-        $body = '{"satisfaction_rating": ' . ($satisfactionRating == "" ? 'null' : $satisfactionRating) . '}';
+        $body = json_encode(
+            ['mot_test_number' => $motTestId, 'satisfaction_rating' => $satisfactionRating]
+        );
 
         return $this->client->request(new Request(
             MotApi::METHOD_POST,

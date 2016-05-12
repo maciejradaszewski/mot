@@ -12,6 +12,8 @@ use Core\Service\LazyMotFrontendAuthorisationService;
 use Core\Service\MotFrontendIdentityProvider;
 use CoreTest\Service\StubCatalogService;
 use Dvsa\Mot\Frontend\AuthenticationModule\Model\Identity;
+use Dvsa\OpenAM\OpenAMClient;
+use Dvsa\OpenAM\OpenAMClientInterface;
 use DvsaCommon\Auth\MotIdentityProvider;
 use DvsaCommon\HttpRestJson\Client as HttpRestJsonClient;
 use DvsaCommon\Model\ListOfRolesAndPermissions;
@@ -20,6 +22,7 @@ use DvsaFeature\FeatureToggles;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Result;
 use Zend\Authentication\Storage\NonPersistent;
+use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
@@ -34,22 +37,23 @@ abstract class HttpControllerTestCase extends AbstractHttpControllerTestCase
 
     public function setUp()
     {
-        $config = $this->prepareTestConfig(require $this->getRootDir() . '/test/test.config.php');
-        $this->setApplicationConfig($config);
+        putenv('APPLICATION_ENV=development');
+        $config = require_once $this->getRootDir() . '/config/application.config.php';
+        $this->setApplicationConfig($this->processApplicationConfig($config));
 
         parent::setUp();
 
+        $this->init();
+    }
+
+    protected function init()
+    {
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
 
-        /** @var HttpRestJsonClient $restClient */
-        $restClient = $this
-            ->getMockBuilder(HttpRestJsonClient::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $serviceManager->setService(OpenAMClientInterface::class, $this->createOpenAMClient());
         $serviceManager->setService('CatalogService', new StubCatalogService());
-        $serviceManager->setService(HttpRestJsonClient::class, $restClient);
+        $serviceManager->setService(HttpRestJsonClient::class, $this->createRestClient());
         $this->setupAuthenticationServiceForIdentity(StubIdentityAdapter::asAnonymous());
     }
 
@@ -76,6 +80,22 @@ abstract class HttpControllerTestCase extends AbstractHttpControllerTestCase
         $this->getApplicationServiceLocator()->setService('Feature\FeatureToggles', $featureToggles);
 
         return $this;
+    }
+
+    /**
+     * Generates a URL based on a route.
+     *
+     * @param string     $route   RouteInterface name
+     * @param array      $params  Parameters to use in url generation, if any
+     * @param array|bool $options RouteInterface-specific options to use in url generation, if any.
+     *
+     * @return string
+     */
+    protected function generateUrlFromRoute($route, $params = [], $options = [])
+    {
+        $options['name'] = $route;
+
+        return $this->getApplicationServiceLocator()->get('Router')->assemble($params, $options);
     }
 
     /**
@@ -108,7 +128,7 @@ abstract class HttpControllerTestCase extends AbstractHttpControllerTestCase
      * @param array $grantedPermissions
      * @param array $grantedRoles
      */
-    protected function setupAuthorizationService($grantedPermissions = [], $grantedRoles = [])
+    protected function setupAuthorisationService($grantedPermissions = [], $grantedRoles = [])
     {
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
@@ -156,27 +176,53 @@ abstract class HttpControllerTestCase extends AbstractHttpControllerTestCase
     }
 
     /**
-     * @param array $testConfig
+     * Mocks the OpenAMClient that is now used from the web frontend.
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createOpenAMClient()
+    {
+        $mockOpenAMClient = $this->getMockBuilder(OpenAMClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['validateCredentials'])
+            ->getMock();
+        $mockOpenAMClient->expects($this->any())
+            ->method('validateCredentials')
+            ->will($this->returnValue(true));
+
+        return $mockOpenAMClient;
+    }
+
+    /**
+     * @return HttpRestJsonClient
+     */
+    private function createRestClient()
+    {
+        return $this
+            ->getMockBuilder(HttpRestJsonClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * @param array $appConfig
      *
      * @return array
      */
-    private function prepareTestConfig($testConfig)
+    private function processApplicationConfig($appConfig)
     {
-        unset($testConfig['test_namespaces']);
+        unset($appConfig['module_listener_options']['config_glob_paths']);
 
-        $testConfig = array_merge_recursive([
+        return  ArrayUtils::merge($appConfig, [
             'module_listener_options' => [
-                'module_paths'      => [
-                    $this->getRootDir() . '/module',
-                    $this->getRootDir() . '/vendor',
+                'config_glob_paths' => [
+                    'config/testing/global.php',
+                    'local-test.php',
                 ],
-                'config_glob_paths' => [],
                 'config_cache_enabled'     => false,
                 'module_map_cache_enabled' => false,
                 'check_dependencies'       => true,
             ],
-        ], $testConfig);
-
-        return $testConfig;
+        ]);
     }
 }

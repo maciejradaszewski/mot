@@ -6,6 +6,7 @@ use Account\Service\SecurityQuestionService;
 use Account\ViewModel\PasswordResetFormModel;
 use Application\Helper\PrgHelper;
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
+use Dvsa\Mot\Frontend\PersonModule\View\PersonProfileUrlGenerator;
 use DvsaClient\Entity\Person;
 use DvsaCommon\Auth\PermissionInSystem;
 use DvsaCommon\UrlBuilder\UserAdminUrlBuilderWeb;
@@ -36,6 +37,11 @@ class SecurityQuestionControllerTest extends AbstractFrontendControllerTestCase
     {
         $serviceManager = Bootstrap::getServiceManager();
         $serviceManager->setAllowOverride(true);
+        $personProfileUrlGeneratorMock = $this->getMockBuilder(PersonProfileUrlGenerator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $serviceManager->setService(PersonProfileUrlGenerator::class, $personProfileUrlGeneratorMock);
         $this->setServiceManager($serviceManager);
 
         $this->securityQuestionService = XMock::of(SecurityQuestionService::class);

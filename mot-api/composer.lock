@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0b35f9ae0d34c497b646d3df7603cf98",
-    "content-hash": "be918dfc599aaf4885a3058209297af7",
+    "hash": "3e1ed886d0d0283e63972d18a7134518",
+    "content-hash": "9d421878aef234a8e71ca9cc988ce8ed",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -128,17 +128,21 @@
         },
         {
             "name": "cpms/client",
-            "version": "v1.22.1",
+            "version": "1.25.1",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.motdev.org.uk:cpms/cpms-client.git",
-                "reference": "9572cd02fe214d306554e64f26c3126224b0d6e7"
+                "reference": "fdad79dca556b8dfd75e7e9f67b54d82ba6edfdb"
             },
             "require": {
+                "cpms/cpms-notifications": "^4.0",
+                "cpms/cpms-queues": "^1.6",
                 "zendframework/zendframework": "<2.5"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.0.*"
+                "cpms/cpms-storyplayer": "^1.0.2",
+                "mockery/mockery": "^0.9.4",
+                "phpunit/phpunit": "^4.0"
             },
             "type": "project",
             "extra": {
@@ -160,25 +164,92 @@
                 "proprietary"
             ],
             "description": "CPMS Common Client Module",
-            "time": "2015-08-04 21:25:21"
+            "time": "2016-04-07 09:56:15"
+        },
+        {
+            "name": "cpms/cpms-notifications",
+            "version": "4.1.0",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.motdev.org.uk:cpms/cpms-notifications.git",
+                "reference": "8ac15ef8017ff70840a12fcb546c64cd233fc537"
+            },
+            "require": {
+                "cpms/cpms-queues": "^1.6",
+                "php": ">= 5.5|^7.0",
+                "ramsey/uuid": "^3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DVSA\\CPMS\\Notifications\\": "src"
+                }
+            },
+            "license": [
+                "Proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Stuart Herbert",
+                    "email": "stuart.herbert@bjss.com"
+                }
+            ],
+            "time": "2016-04-05 12:42:35"
+        },
+        {
+            "name": "cpms/cpms-queues",
+            "version": "1.7.0",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.motdev.org.uk:cpms/cpms-queues.git",
+                "reference": "ca5da5e8fc6ad535765ebf6f8367ee1f464d6c3d"
+            },
+            "require": {
+                "aws/aws-sdk-php": "^3.9",
+                "ganbarodigital/php-reflection": "^2.16",
+                "php": ">= 5.5|^7.0",
+                "ramsey/uuid": "^3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DVSA\\CPMS\\Queues\\": "src"
+                }
+            },
+            "license": [
+                "Proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Stuart Herbert",
+                    "email": "stuart.herbert@bjss.com"
+                }
+            ],
+            "time": "2016-04-07 14:15:48"
         },
         {
             "name": "cpms/shared-reports",
-            "version": "v1.22",
+            "version": "1.22.2",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.motdev.org.uk:cpms/shared-reports.git",
-                "reference": "771998f495f823f924d268aede96e656bb951bc9"
+                "reference": "9a539694bf93e9f4703bf7f2f87d7f2538144202"
             },
             "require": {
-                "cpms/client": "1.22.*",
+                "cpms/client": "^1.23",
                 "php": ">=5.5",
                 "zendframework/zendframework": "<2.5"
             },
             "require-dev": {
-                "cpms/common": "1.22.*",
-                "cpms/payment-test": "1.22.*",
-                "phpunit/phpunit": "4.0.*"
+                "cpms/common": "^1.22",
+                "cpms/payment-test": "^1.22",
+                "phpunit/phpunit": "^4.0"
             },
             "type": "library",
             "extra": {
@@ -200,7 +271,7 @@
                 "proprietary"
             ],
             "description": "Shared module for displaying reports",
-            "time": "2015-08-04 18:04:55"
+            "time": "2016-01-08 13:29:52"
         },
         {
             "name": "danielstjules/stringy",
@@ -1283,6 +1354,167 @@
             "time": "2015-08-05 01:03:42"
         },
         {
+            "name": "ganbarodigital/php-defensive",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ganbarodigital/php-defensive.git",
+                "reference": "57ef49c3580aa4844d08a60fe58318e22c2608de"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ganbarodigital/php-defensive/zipball/57ef49c3580aa4844d08a60fe58318e22c2608de",
+                "reference": "57ef49c3580aa4844d08a60fe58318e22c2608de",
+                "shasum": ""
+            },
+            "require": {
+                "ganbarodigital/php-exceptions": "^1.2",
+                "php": ">= 5.5"
+            },
+            "require-dev": {
+                "ganbarodigital/php-unit-test-helpers": "^2.0",
+                "phpunit/phpunit": "^4.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "GanbaroDigital\\Defensive\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Stuart Herbert",
+                    "email": "stuart@stuartherbert.com"
+                }
+            ],
+            "time": "2015-07-23 07:58:58"
+        },
+        {
+            "name": "ganbarodigital/php-exceptions",
+            "version": "1.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ganbarodigital/php-exceptions.git",
+                "reference": "e3d48cdd16f035e4a5aaf9b42d341b383e98fa95"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ganbarodigital/php-exceptions/zipball/e3d48cdd16f035e4a5aaf9b42d341b383e98fa95",
+                "reference": "e3d48cdd16f035e4a5aaf9b42d341b383e98fa95",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 5.5"
+            },
+            "require-dev": {
+                "ganbarodigital/php-unit-test-helpers": "^2.1",
+                "phpunit/phpunit": "^4.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "GanbaroDigital\\Exceptions\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Stuart Herbert",
+                    "email": "stuart@stuartherbert.com"
+                }
+            ],
+            "time": "2015-12-18 09:51:56"
+        },
+        {
+            "name": "ganbarodigital/php-reflection",
+            "version": "2.16.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ganbarodigital/php-reflection.git",
+                "reference": "9cfd00338287da8aaf95dd2c4d4baf9d16c0365d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ganbarodigital/php-reflection/zipball/9cfd00338287da8aaf95dd2c4d4baf9d16c0365d",
+                "reference": "9cfd00338287da8aaf95dd2c4d4baf9d16c0365d",
+                "shasum": ""
+            },
+            "require": {
+                "ganbarodigital/php-defensive": "^1.0",
+                "ganbarodigital/php-exceptions": "^1.3",
+                "ganbarodigital/php-static-data-cache": "^1.0",
+                "php": ">= 5.5"
+            },
+            "require-dev": {
+                "ganbarodigital/php-unit-test-helpers": "^2.1",
+                "phpunit/phpunit": "^4.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "GanbaroDigital\\Reflection\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Stuart Herbert",
+                    "email": "stuart@stuartherbert.com"
+                }
+            ],
+            "time": "2016-02-23 07:24:21"
+        },
+        {
+            "name": "ganbarodigital/php-static-data-cache",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ganbarodigital/php-static-data-cache.git",
+                "reference": "930980cd35a78ec4dc45e0e1305306f32b5c8f63"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ganbarodigital/php-static-data-cache/zipball/930980cd35a78ec4dc45e0e1305306f32b5c8f63",
+                "reference": "930980cd35a78ec4dc45e0e1305306f32b5c8f63",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 5.5"
+            },
+            "require-dev": {
+                "ganbarodigital/php-unit-test-helpers": "^2.0",
+                "phpunit/phpunit": "^4.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "GanbaroDigital\\DataContainers\\Caches\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Stuart Herbert",
+                    "email": "stuart@stuartherbert.com"
+                }
+            ],
+            "description": "Convenient static data cache for speeding up expensive operations",
+            "time": "2015-07-10 14:48:16"
+        },
+        {
             "name": "gedmo/doctrine-extensions",
             "version": "v2.3.12",
             "source": {
@@ -1587,6 +1819,54 @@
             "time": "2015-05-27 17:21:31"
         },
         {
+            "name": "paragonie/random_compat",
+            "version": "v2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paragonie/random_compat.git",
+                "reference": "088c04e2f261c33bed6ca5245491cfca69195ccf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/088c04e2f261c33bed6ca5245491cfca69195ccf",
+                "reference": "088c04e2f261c33bed6ca5245491cfca69195ccf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*|5.*"
+            },
+            "suggest": {
+                "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/random.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paragon Initiative Enterprises",
+                    "email": "security@paragonie.com",
+                    "homepage": "https://paragonie.com"
+                }
+            ],
+            "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
+            "keywords": [
+                "csprng",
+                "pseudorandom",
+                "random"
+            ],
+            "time": "2016-04-03 06:00:07"
+        },
+        {
             "name": "psr/http-message",
             "version": "1.0",
             "source": {
@@ -1636,16 +1916,95 @@
             "time": "2015-05-04 20:22:00"
         },
         {
+            "name": "ramsey/uuid",
+            "version": "3.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ramsey/uuid.git",
+                "reference": "f44f53e5ceb7474a83b6e11e6623ff9d6f6da598"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/f44f53e5ceb7474a83b6e11e6623ff9d6f6da598",
+                "reference": "f44f53e5ceb7474a83b6e11e6623ff9d6f6da598",
+                "shasum": ""
+            },
+            "require": {
+                "paragonie/random_compat": "^1.0|^2.0",
+                "php": ">=5.4"
+            },
+            "replace": {
+                "rhumsaa/uuid": "self.version"
+            },
+            "require-dev": {
+                "apigen/apigen": "^4.1",
+                "ircmaxell/random-lib": "^1.1",
+                "jakub-onderka/php-parallel-lint": "^0.9.0",
+                "mockery/mockery": "^0.9.4",
+                "moontoast/math": "^1.1",
+                "phpunit/phpunit": "^4.7|^5.0",
+                "satooshi/php-coveralls": "^0.6.1",
+                "squizlabs/php_codesniffer": "^2.3"
+            },
+            "suggest": {
+                "ext-libsodium": "Provides the PECL libsodium extension for use with the SodiumRandomGenerator",
+                "ext-uuid": "Provides the PECL UUID extension for use with the PeclUuidTimeGenerator and PeclUuidRandomGenerator",
+                "ircmaxell/random-lib": "Provides RandomLib for use with the RandomLibAdapter",
+                "moontoast/math": "Provides support for converting UUID to 128-bit integer (in string form).",
+                "ramsey/uuid-console": "A console application for generating UUIDs with ramsey/uuid",
+                "ramsey/uuid-doctrine": "Allows the use of Ramsey\\Uuid\\Uuid as Doctrine field type."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ramsey\\Uuid\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marijn Huizendveld",
+                    "email": "marijn.huizendveld@gmail.com"
+                },
+                {
+                    "name": "Thibaud Fabre",
+                    "email": "thibaud@aztech.io"
+                },
+                {
+                    "name": "Ben Ramsey",
+                    "email": "ben@benramsey.com",
+                    "homepage": "https://benramsey.com"
+                }
+            ],
+            "description": "Formerly rhumsaa/uuid. A PHP 5.4+ library for generating RFC 4122 version 1, 3, 4, and 5 universally unique identifiers (UUID).",
+            "homepage": "https://github.com/ramsey/uuid",
+            "keywords": [
+                "guid",
+                "identifier",
+                "uuid"
+            ],
+            "time": "2016-03-22 18:40:53"
+        },
+        {
             "name": "slot-purchase/backend-api",
-            "version": "v3.6.10",
+            "version": "v3.8.0",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.motdev.org.uk:mot/slot-purchase-backend-api.git",
-                "reference": "57badff867d2d331a408162d109eb6b71cd4204d"
+                "reference": "0c51e351250335f3badfa6c4fcc0420d937e6a2c"
             },
             "require": {
-                "cpms/client": "1.22.*",
-                "cpms/shared-reports": "1.22.*",
+                "cpms/client": "^1.25.0",
+                "cpms/cpms-notifications": "^4.0",
+                "cpms/shared-reports": "^1.22.2",
                 "doctrine/doctrine-module": "~0.8",
                 "doctrine/doctrine-orm-module": "~0.8",
                 "gedmo/doctrine-extensions": "2.3.*",
@@ -1681,7 +2040,7 @@
                 "proprietary"
             ],
             "description": "API for slot purchasing and related features",
-            "time": "2016-04-13 08:54:09"
+            "time": "2016-05-10 11:35:54"
         },
         {
             "name": "soflomo/purifier",
@@ -1798,12 +2157,12 @@
             "version": "2.4.7",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/zf2.git",
+                "url": "https://github.com/zendframework/zendframework.git",
                 "reference": "b13b45e0baa609321ca6544abc7615414fcbf073"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/b13b45e0baa609321ca6544abc7615414fcbf073",
+                "url": "https://api.github.com/repos/zendframework/zendframework/zipball/b13b45e0baa609321ca6544abc7615414fcbf073",
                 "reference": "b13b45e0baa609321ca6544abc7615414fcbf073",
                 "shasum": ""
             },
@@ -1916,11 +2275,11 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/ZendPdf.git",
-                "reference": "041f90c339cff63a3c4d03a28ef1ea5188059793"
+                "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/041f90c339cff63a3c4d03a28ef1ea5188059793",
+                "url": "https://api.github.com/repos/zendframework/ZendPdf/zipball/ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "reference": "ebdb5723df7a33af5b4247999188db03b241f4d0",
                 "shasum": ""
             },

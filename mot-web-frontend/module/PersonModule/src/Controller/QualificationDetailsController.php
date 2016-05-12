@@ -13,6 +13,7 @@ use Dvsa\Mot\Frontend\PersonModule\Model\QualificationDetailsContext;
 use Dvsa\Mot\Frontend\PersonModule\Model\QualificationDetailsAbstractProcess;
 use Dvsa\Mot\Frontend\PersonModule\Model\QualificationDetailsEditProcess;
 use Dvsa\Mot\Frontend\PersonModule\Service\RemoveCertificateDetailsService;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use DvsaClient\MapperFactory;
 use DvsaCommon\Factory\AutoWire\AutoWireableInterface;
 use Zend\View\Model\ViewModel;
@@ -29,6 +30,11 @@ class QualificationDetailsController extends AbstractAuthActionController implem
 
     private $breadcrumbs;
 
+    /**
+     * @var ContextProvider
+     */
+    private $contextProvider;
+
     public function __construct(
         QualificationDetailsAction $viewAction,
         EditStepAction $editStepAction,
@@ -36,7 +42,8 @@ class QualificationDetailsController extends AbstractAuthActionController implem
         QualificationDetailsAddProcess $qualificationDetailsAddProcess,
         QualificationDetailsEditProcess $qualificationDetailsEditProcess,
         RemoveCertificateDetailsService $removeCertificateDetailsService,
-        QualificationDetailsBreadcrumbs $breadcrumbs
+        QualificationDetailsBreadcrumbs $breadcrumbs,
+        ContextProvider $contextProvider
     )
     {
         $this->viewAction = $viewAction;
@@ -46,11 +53,12 @@ class QualificationDetailsController extends AbstractAuthActionController implem
         $this->qualificationDetailsEditProcess = $qualificationDetailsEditProcess;
         $this->removeCertificateDetailsService = $removeCertificateDetailsService;
         $this->breadcrumbs = $breadcrumbs;
+        $this->contextProvider = $contextProvider;
     }
 
     public function viewAction()
     {
-        $personId = $this->params()->fromRoute('id');
+        $personId = $this->getPersonId();
 
         $actionResult = $this->viewAction->execute($personId, $this);
 
@@ -62,7 +70,7 @@ class QualificationDetailsController extends AbstractAuthActionController implem
     {
         $isPost = $this->getRequest()->isPost();
         $context = new QualificationDetailsContext(
-            $this->params()->fromRoute('id'),
+            $this->getPersonId(),
             $this->params()->fromRoute('group'),
             $this
         );
@@ -118,7 +126,7 @@ class QualificationDetailsController extends AbstractAuthActionController implem
 
     public function removeAction()
     {
-        $personId = (int) $this->params()->fromRoute('id');
+        $personId = $this->getPersonId();
         $group = $this->params()->fromRoute('group');
 
         $breadcrumbs = $this->breadcrumbs->getBreadcrumbs($personId, $this, "Remove certificate");
@@ -133,5 +141,16 @@ class QualificationDetailsController extends AbstractAuthActionController implem
         );
 
         return $this->applyActionResult($result);
+    }
+
+    /**
+     * @return int
+     */
+    private function getPersonId()
+    {
+        $context = $this->contextProvider->getContext();
+
+        return $context === ContextProvider::YOUR_PROFILE_CONTEXT ?
+            $this->getIdentity()->getUserId() : (int) $this->params()->fromRoute('id');
     }
 }

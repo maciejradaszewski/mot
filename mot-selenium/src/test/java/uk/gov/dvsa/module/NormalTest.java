@@ -104,10 +104,9 @@ public class NormalTest {
 
     public void startTestConfirmationPage(User user, Vehicle vehicle) throws IOException, URISyntaxException {
         confirmationPage = pageNavigator.goToStartTestConfirmationPage(user, vehicle);
-        expectedText = confirmationPage.getVehicleWeight();
     }
 
-    public void changeClass(String classNumber){
+    public void changeClass(String classNumber) {
         VehicleDetailsChangedPage changedPage = confirmationPage.selectClass(classNumber)
                 .clickStartMotTest(VehicleDetailsChangedPage.class);
         setDeclarationStatementStatus(changedPage);
@@ -124,7 +123,7 @@ public class NormalTest {
     }
 
     public TestCompletePage finishTrainingTest(TestSummaryPage testSummaryPage) throws IOException, URISyntaxException {
-         return testSummaryPage.clickFinishButton();
+        return testSummaryPage.clickFinishButton();
     }
 
     public void refuseToTestVehicle(User tester, Vehicle vehicle, ReasonForVehicleRefusal reason) throws IOException, URISyntaxException {
@@ -172,5 +171,17 @@ public class NormalTest {
     public String addManualAdvisoryWithProfaneDescription(String description) {
         ManualAdvisoryModalPage advisoryModalPage = testResultsEntryPage.clickAddFRFButton().addManualAdvisory();
         return advisoryModalPage.addAdvisoryWithProfaneDescription(description).getValidationMessage();
+    }
+
+    public String getVehicleWeight() {
+        return new StartTestConfirmationPage(driver).getVehicleWeight();
+    }
+
+    public String getVin() {
+        return new StartTestConfirmationPage(driver).getVin();
+    }
+
+    public String getRegistration() {
+        return new StartTestConfirmationPage(driver).getRegistration();
     }
 }

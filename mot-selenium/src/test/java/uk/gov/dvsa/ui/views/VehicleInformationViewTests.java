@@ -53,7 +53,7 @@ public class VehicleInformationViewTests extends DslTest {
         motUI.normalTest.startTestConfirmationPage(tester, vehicle);
 
         //Then I want to see the vehicle's weight
-        motUI.normalTest.isTextPresent("1250 kg");
+        assertThat("Correct weight is Displayed", motUI.normalTest.getVehicleWeight(), is("1250 kg"));
     }
 
     @Test(groups = {"BVT", "Regression"}, description = "BL-46")
@@ -65,7 +65,7 @@ public class VehicleInformationViewTests extends DslTest {
         motUI.normalTest.startTestConfirmationPage(tester, vehicle);
 
         //Then I should see its weight displayed as "Unknown"
-        motUI.normalTest.isTextPresent("Unknown");
+        assertThat("Correct weight is Displayed", motUI.normalTest.getVehicleWeight(), is("Unknown"));
     }
 
     @Test(groups = {"BVT", "Regression"})
@@ -79,5 +79,19 @@ public class VehicleInformationViewTests extends DslTest {
 
         //Then I submit the new class successfully
         assertThat(motUI.normalTest.isDeclarationStatementDisplayed(), is(true));
+    }
+
+    @Test(groups = {"BVT", "Regression"})
+    public void vehicleSearchReturnsVehicleOnlyInDvlaTable() throws IOException, URISyntaxException {
+        //Given I have a vehicle in the DVLA table only
+        User tester = userData.createTester(siteData.createSite().getId());
+        Vehicle dvlaVehicle = vehicleData.getNewDvlaVehicle(tester);
+
+        //When I search for that Vehicle
+        motUI.normalTest.startTestConfirmationPage(tester, dvlaVehicle);
+
+        //Then I should find the vehicle
+        assertThat(motUI.normalTest.getVin(), is(dvlaVehicle.getVin()));
+        assertThat(motUI.normalTest.getRegistration(), is(dvlaVehicle.getDvlaRegistration()));
     }
 }

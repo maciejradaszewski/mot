@@ -170,6 +170,16 @@ class MotTestContext implements Context, SnippetAcceptingContext
      */
     private $slotsReport;
 
+    /**
+     * @var OdometerReadingContext
+     */
+    private $odometerReadingContext;
+
+    /**
+     * @var BrakeTestResultContext
+     */
+    private $brakeTestResultContext;
+
     public function __construct(
         BrakeTestResult $brakeTestResult,
         MotTest $motTest,
@@ -209,6 +219,8 @@ class MotTestContext implements Context, SnippetAcceptingContext
         $this->vtsContext = $scope->getEnvironment()->getContext(VtsContext::class);
         $this->aeContext = $scope->getEnvironment()->getContext(AuthorisedExaminerContext::class);
         $this->motTestLogContext = $scope->getEnvironment()->getContext(MotTestLogContext::class);
+        $this->odometerReadingContext = $scope->getEnvironment()->getContext(OdometerReadingContext::class);
+        $this->brakeTestResultContext = $scope->getEnvironment()->getContext(BrakeTestResultContext::class);
     }
 
     /**
@@ -231,10 +243,13 @@ class MotTestContext implements Context, SnippetAcceptingContext
     /**
      * @Given a logged in Tester, starts an MOT Test
      * @Given I start an MOT test as a Tester
+     * @param bool $useCurrentTester - use the currently logged in tester instead of a new one
      */
-    public function iStartMotTestAsTester()
+    public function iStartMotTestAsTester($useCurrentTester = false)
     {
-        $this->sessionContext->iAmLoggedInAsATester();
+        if (!$useCurrentTester) {
+            $this->sessionContext->iAmLoggedInAsATester();
+        }
         $this->startMotTest($this->sessionContext->getCurrentUserId(), $this->sessionContext->getCurrentAccessToken());
     }
 
@@ -1404,11 +1419,15 @@ class MotTestContext implements Context, SnippetAcceptingContext
     /**
      * @Given /^I submit a survey response of (.*)$/
      */
-    public function iSubmitASurveyResponse($satisfactionRating)
+    public function iSubmitASurveyResponse($satisfactionRating, $useCurrentTester = false)
     {
         $this->satisfactionRating = $satisfactionRating;
+
+        $this->createNormalMotTestPass($useCurrentTester);
+
         $this->satisfactionRatingResponse = $this->motTest->submitSurveyResponse(
             $this->sessionContext->getCurrentAccessToken(),
+            $this->getMotTestNumber(),
             $satisfactionRating
         );
     }
@@ -1430,26 +1449,11 @@ class MotTestContext implements Context, SnippetAcceptingContext
         $this->satisfactionRatings['rating4'] = $rating4;
         $this->satisfactionRatings['rating5'] = $rating5;
 
-        $this->motTest->submitSurveyResponse(
-            $this->sessionContext->getCurrentAccessToken(),
-            $rating1
-        );
-        $this->motTest->submitSurveyResponse(
-            $this->sessionContext->getCurrentAccessToken(),
-            $rating2
-        );
-        $this->motTest->submitSurveyResponse(
-            $this->sessionContext->getCurrentAccessToken(),
-            $rating3
-        );
-        $this->motTest->submitSurveyResponse(
-            $this->sessionContext->getCurrentAccessToken(),
-            $rating4
-        );
-        $this->motTest->submitSurveyResponse(
-            $this->sessionContext->getCurrentAccessToken(),
-            $rating5
-        );
+        $this->iSubmitASurveyResponse($rating1);
+        $this->iSubmitASurveyResponse($rating2);
+        $this->iSubmitASurveyResponse($rating3);
+        $this->iSubmitASurveyResponse($rating4);
+        $this->iSubmitASurveyResponse($rating5);
     }
 
     /**
@@ -1481,9 +1485,47 @@ class MotTestContext implements Context, SnippetAcceptingContext
     public function theSurveyResponseIsSaved()
     {
         PHPUnit::assertSame(200, $this->satisfactionRatingResponse->getStatusCode());
-        PHPUnit::assertTrue(
-            $this->satisfactionRating ==
-            $this->satisfactionRatingResponse->getBody()['data']['satisfaction_rating']
-        );
+        if (is_int((int)$this->satisfactionRating)) {
+            PHPUnit::assertTrue(
+                $this->satisfactionRating ==
+                $this->satisfactionRatingResponse->getBody()['data']['satisfaction_rating']
+            );
+        } else {
+            PHPUnit::assertNull($this->satisfactionRatingResponse->getBody()['data']['satisfaction_rating']);
+        }
+    }
+
+    /**
+     * Retrieve details of most recent MOT test and format them for endpoint to determine if survey should be displayed
+     * @return \StdClass
+     */
+    public function getMotTestDetailsForSurveyCheck()
+    {
+        $motTestDetails = new \StdClass();
+        $motTestDetails->testType = new \StdClass();
+        $motTestDetails->testType->code = $this->statusData->getBody()['data']['testType']['code'];
+        $motTestDetails->tester = new \StdClass();
+        $motTestDetails->tester->id = $this->statusData->getBody()['data']['tester']['id'];
+
+        return $motTestDetails;
+    }
+    
+    public function getMotTestIdFromNumber($motTestNumber)
+    {
+        return $this->motTest->getMotData(
+            $this->sessionContext->getCurrentAccessToken(),
+            $motTestNumber
+        )->getBody()['data']['id'];
+    }
+
+    public function createNormalMotTestPass($useCurrentTester = false)
+    {
+        $this->iStartMotTestAsTester($useCurrentTester);
+        $this->odometerReadingContext->theTesterAddsAnOdometerReadingOfMiles(1000);
+        $this->brakeTestResultContext->theTesterAddsAClass3to7PlateBrakeTest();
+        $this->theTesterPassesTheMotTest();
+
+        $motTestId = $this->getMotTestIdFromNumber($this->getMotTestNumber());
+        return $motTestId;
     }
 }

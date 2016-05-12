@@ -4,7 +4,8 @@ use Application\Controller as Application;
 use Application\Navigation\Breadcrumbs\Handler\OrganisationNameBySiteResolver;
 use Application\Navigation\Breadcrumbs\Handler\SimpleResolver;
 use Application\Navigation\Breadcrumbs\Handler\SiteNameResolver;
-use Application\View\HelperFactory\ResourcesOnGovUkFactory;
+use Application\View\Helper\CamelCaseToFirstUppercaseReadable;
+use Application\View\Helper\CamelCaseToReadable;
 use Application\View\HelperFactory\AuthorisationHelperFactory;
 use Application\View\HelperFactory\CurrentMotTestFactory;
 use Application\View\HelperFactory\DashboardDataProviderFactory;
@@ -12,22 +13,22 @@ use Application\View\HelperFactory\GetSiteCountFactory;
 use Application\View\HelperFactory\GetSitesFactory;
 use Application\View\HelperFactory\IdentityHelperFactory;
 use Application\View\HelperFactory\LocationSelectorFactory;
-use DvsaCommon\Factory\AutoWire\AutoWireFactory;
 use Application\View\HelperFactory\ManualsAndGuidesFactory;
+use Application\View\HelperFactory\ResourcesOnGovUkFactory;
+use Dvsa\Mot\Frontend\Plugin\AjaxResponsePlugin;
+use Dvsa\OpenAM\OpenAMClientInterface;
+use DvsaCommon\Constants\MotTestNumberConstraint;
+use DvsaCommon\Factory\AutoWire\AutoWireFactory;
 use DvsaMotEnforcement\Controller as Enforcement;
+use DvsaMotEnforcement\Controller\MotTestController as EnforcementMotTestController;
 use DvsaMotEnforcement\Controller\MotTestSearchController as EnforcementMotTestSearchController;
 use DvsaMotEnforcementApi\Controller as Ajax;
 use DvsaMotTest\Controller as MotTest;
-use Dvsa\OpenAM\OpenAMClientInterface;
-use DvsaMotEnforcement\Controller\MotTestController as EnforcementMotTestController;
+use DvsaMotTest\Controller\MotTestCertificatesController;
+use DvsaMotTest\Controller\MotTestController;
 use DvsaMotTest\Factory\Service\MotChecklistPdfServiceFactory;
 use DvsaMotTest\Form\Validator\SpecialNoticePublishDateValidator;
-use Application\View\Helper\CamelCaseToReadable;
-use Application\View\Helper\CamelCaseToFirstUppercaseReadable;
-use Dvsa\Mot\Frontend\Plugin\AjaxResponsePlugin;
-use DvsaCommon\Constants\MotTestNumberConstraint;
 use DvsaMotTest\NewVehicle\Controller\CreateVehicleController;
-use DvsaMotTest\Controller\MotTestCertificatesController;
 use DvsaMotTest\Service\MotChecklistPdfService;
 
 return [
@@ -416,7 +417,7 @@ return [
                         'motTestNumber' => MotTestNumberConstraint::FORMAT_REGEX,
                     ],
                     'defaults'    => [
-                        'controller' => MotTest\MotTestController::class,
+                        'controller' => MotTestController::class,
                         'action'     => 'index',
                     ],
                 ],
@@ -450,7 +451,7 @@ return [
                         'options' => [
                             'route'    => '/odometer-update',
                             'defaults' => [
-                                'controller' => MotTest\MotTestController::class,
+                                'controller' => MotTestController::class,
                                 'action'     => 'updateOdometer',
                             ],
                         ],
@@ -490,7 +491,7 @@ return [
                         'options' => [
                             'route'    => '/submit-test-results',
                             'defaults' => [
-                                'controller' => MotTest\MotTestController::class,
+                                'controller' => MotTestController::class,
                                 'action'     => 'submitTestResults',
                             ],
                         ],
@@ -500,7 +501,7 @@ return [
                         'options' => [
                             'route'    => '/test-summary',
                             'defaults' => [
-                                'controller' => MotTest\MotTestController::class,
+                                'controller' => MotTestController::class,
                                 'action'     => 'displayTestSummary',
                             ],
                         ],
@@ -510,7 +511,7 @@ return [
                         'options' => [
                             'route'    => '/cancel',
                             'defaults' => [
-                                'controller' => MotTest\MotTestController::class,
+                                'controller' => MotTestController::class,
                                 'action'     => 'cancelMotTest',
                             ],
                         ],
@@ -520,7 +521,7 @@ return [
                         'options' => [
                             'route'    => '/cancelled',
                             'defaults' => [
-                                'controller' => MotTest\MotTestController::class,
+                                'controller' => MotTestController::class,
                                 'action'     => 'cancelledMotTest',
                             ],
                         ],
@@ -530,7 +531,7 @@ return [
                         'options' => [
                             'route'    => '/short-summary',
                             'defaults' => [
-                                'controller' => MotTest\MotTestController::class,
+                                'controller' => MotTestController::class,
                                 'action'     => 'shortSummary',
                             ],
                         ],
@@ -540,7 +541,7 @@ return [
                         'options' => [
                             'route'    => '/reason-for-aborting',
                             'defaults' => [
-                                'controller' => MotTest\MotTestController::class,
+                                'controller' => MotTestController::class,
                                 'action'     => 'reasonForAbortingMotTest',
                             ],
                         ],
@@ -550,7 +551,7 @@ return [
                         'options' => [
                             'route'    => '/abort-success',
                             'defaults' => [
-                                'controller' => MotTest\MotTestController::class,
+                                'controller' => MotTestController::class,
                                 'action'     => 'abortedMotTest',
                                 'success'    => true,
                             ],
@@ -561,7 +562,7 @@ return [
                         'options' => [
                             'route'    => '/abort-fail',
                             'defaults' => [
-                                'controller' => MotTest\MotTestController::class,
+                                'controller' => MotTestController::class,
                                 'action'     => 'abortedMotTest',
                                 'success'    => false,
                             ],
@@ -572,7 +573,7 @@ return [
                         'options' => [
                             'route'    => '/test-result',
                             'defaults' => [
-                                'controller' => MotTest\MotTestController::class,
+                                'controller' => MotTestController::class,
                                 'action'     => 'testResult',
                             ],
                         ],
@@ -582,7 +583,7 @@ return [
                         'options' => [
                             'route'    => '/print-duplicate-test-result',
                             'defaults' => [
-                                'controller' => MotTest\MotTestController::class,
+                                'controller' => MotTestController::class,
                                 'action'     => 'printDuplicateCertificateResult',
                             ],
                         ],
@@ -616,7 +617,7 @@ return [
                                 'rfr-id' => '[0-9]+',
                             ],
                             'defaults'    => [
-                                'controller' => MotTest\MotTestController::class,
+                                'controller' => MotTestController::class,
                                 'action'     => 'deleteReasonForRejection',
                             ],
                         ],
@@ -772,7 +773,7 @@ return [
                         'motTestNumber' => \DvsaCommon\Constants\MotTestNumberConstraint::FORMAT_REGEX,
                     ],
                     'defaults'    => [
-                        'controller' => MotTest\MotTestController::class,
+                        'controller' => MotTestController::class,
                         'action'     => 'displayCertificateSummary',
                     ],
                 ],

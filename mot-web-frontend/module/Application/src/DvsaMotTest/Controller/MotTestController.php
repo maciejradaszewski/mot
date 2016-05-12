@@ -5,7 +5,6 @@ namespace DvsaMotTest\Controller;
 use Application\Helper\PrgHelper;
 use Application\Service\ContingencySessionManager;
 use Core\Authorisation\Assertion\WebPerformMotTestAssertion;
-use Core\Service\MotFrontendAuthorisationServiceInterface;
 use DvsaCommon\Auth\Assertion\AbandonVehicleTestAssertion;
 use DvsaCommon\Auth\MotAuthorisationServiceInterface;
 use DvsaCommon\Auth\PermissionAtSite;
@@ -35,6 +34,7 @@ use DvsaCommon\Utility\ArrayUtils;
 use DvsaCommonApi\Service\Exception\UnauthenticatedException;
 use DvsaMotTest\Model\OdometerReadingViewObject;
 use DvsaMotTest\Model\OdometerUpdate;
+use DvsaMotTest\Service\SurveyService;
 use DvsaMotTest\View\Model\MotPrintModel;
 use DvsaMotTest\View\Model\MotTestTitleModel;
 use Zend\Http\Response;
@@ -46,7 +46,7 @@ use Zend\View\Model\ViewModel;
  *
  * @package DvsaMotTest\Controller
  */
-class MotTestController extends AbstractDvsaMotTestController implements AutoWireableInterface
+class MotTestController extends AbstractDvsaMotTestController
 {
     const DATE_FORMAT = 'j F Y';
     const DATETIME_FORMAT = 'd M Y H:i';
@@ -62,8 +62,15 @@ class MotTestController extends AbstractDvsaMotTestController implements AutoWir
     /** @var MotAuthorisationServiceInterface */
     private $authorisationService;
 
-    public function __construct(MotAuthorisationServiceInterface $authorisationService) {
+    /** @var SurveyService $surveyService */
+    private $surveyService;
+
+    public function __construct(
+        MotAuthorisationServiceInterface $authorisationService,
+        SurveyService $surveyService
+    ) {
         $this->authorisationService = $authorisationService;
+        $this->surveyService = $surveyService;
     }
 
     public function indexAction()
@@ -605,8 +612,10 @@ class MotTestController extends AbstractDvsaMotTestController implements AutoWir
                 'motDetails'    => $motDetails,
                 'motTestNumber' => $motTestNumber,
                 'isDuplicate'   => false,
-                'shouldDisplaySurvey' => $motDetails->getTestType()->getCode() === 'NT'
-                                        && $this->isFeatureEnabled(FeatureToggle::SURVEY_PAGE),
+                'shouldDisplaySurvey' => $this->isFeatureEnabled(FeatureToggle::SURVEY_PAGE) &&
+                    $this->surveyService->surveyShouldDisplay(
+                        $motDetails
+                    )
             ]
         );
         /** @var MotTestDto $motDetails */

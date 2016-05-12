@@ -12,6 +12,7 @@ use DataCatalogApi\Service\DataCatalogService;
 use DvsaCommon\Date\DateUtils;
 use DvsaMotApi\Service\MotTestDate;
 use DvsaCommon\Utility\ArrayUtils;
+use Exception;
 
 /**
  * Mot Test Certificate Mapper
@@ -104,6 +105,8 @@ class MotTestCertificateMapper extends AbstractMotTestMapper
     {
         if (empty($this->data)) {
             return;
+        } else if(empty($this->data['expiryDate'])) {
+            throw new Exception('Expiry date for passed test is mandatory, test number: ' . $this->data['motTestNumber']);
         }
 
         $date = DateUtils::toDateTime($this->data['expiryDate'], false);

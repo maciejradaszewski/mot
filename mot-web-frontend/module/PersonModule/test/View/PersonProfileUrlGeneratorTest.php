@@ -62,7 +62,7 @@ class PersonProfileUrlGeneratorTest extends PHPUnit_Framework_TestCase
     public function toPersonProfileProvider()
     {
         return [
-            ['/your-profile/105/trade-roles', '/your-profile/105'],
+            ['/your-profile/trade-roles', '/your-profile'],
             ['/authorised-examiner/1/user/105/trade-roles', '/authorised-examiner/1/user/105'],
             ['/vehicle-testing-station/2/user/105/trade-roles', '/vehicle-testing-station/2/user/105'],
             ['/user-admin/user/105/trade-roles', '/user-admin/user/105'],
@@ -92,7 +92,7 @@ class PersonProfileUrlGeneratorTest extends PHPUnit_Framework_TestCase
     public function toPersonProfileWithUnknownContextProvider()
     {
         return [
-            ['/your-profile/105/trade-roles', self::DEFAULT_URL],
+            ['/your-profile/trade-roles', self::DEFAULT_URL],
             ['/authorised-examiner/1/user/105/trade-roles', self::DEFAULT_URL],
             ['/vehicle-testing-station/2/user/105/trade-roles', self::DEFAULT_URL],
             ['/user-admin/user/105/trade-roles', self::DEFAULT_URL],
@@ -130,8 +130,7 @@ class PersonProfileUrlGeneratorTest extends PHPUnit_Framework_TestCase
     public function fromPersonProfileProvider()
     {
         return [
-            ['/your-profile', ['trade-roles'], '/your-profile/105/trade-roles'],
-            ['/your-profile/105', ['trade-roles'], '/your-profile/105/trade-roles'],
+            ['/your-profile', ['trade-roles'], '/your-profile/trade-roles'],
             ['/authorised-examiner/1/user/105', ['trade-roles'], '/authorised-examiner/1/user/105/trade-roles'],
             ['/vehicle-testing-station/2/user/105', ['trade-roles'], '/vehicle-testing-station/2/user/105/trade-roles'],
             ['/user-admin/user/105', ['trade-roles'], '/user-admin/user/105/trade-roles'],
@@ -171,7 +170,6 @@ class PersonProfileUrlGeneratorTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['/your-profile', ['trade-roles'], self::DEFAULT_URL],
-            ['/your-profile/105', ['trade-roles'], self::DEFAULT_URL],
             ['/authorised-examiner/1/user/105', ['trade-roles'], self::DEFAULT_URL],
             ['/vehicle-testing-station/2/user/105', ['trade-roles'], self::DEFAULT_URL],
             ['/user-admin/user/105', ['trade-roles'], self::DEFAULT_URL],

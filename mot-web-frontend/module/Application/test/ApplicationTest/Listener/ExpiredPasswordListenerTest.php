@@ -168,7 +168,7 @@ class ExpiredPasswordListenerTest extends \PHPUnit_Framework_TestCase
         $this->withFeatureToggles([FeatureToggle::NEW_PERSON_PROFILE => true]);
         $this->router
             ->method('assemble')
-            ->will($this->returnValue('your-profile/105/change-password'));
+            ->will($this->returnValue('your-profile/change-password'));
         return $this;
     }
 

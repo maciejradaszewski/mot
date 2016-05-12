@@ -2,6 +2,7 @@
 
 namespace DvsaMotApiTest\Service\ReplacementCertificate;
 
+use DateTime;
 use DvsaAuthorisation\Service\AuthorisationServiceInterface;
 use DvsaCommon\Auth\MotIdentity;
 use DvsaCommon\Auth\MotIdentityProviderInterface;
@@ -78,6 +79,7 @@ class ReplacementCertificateUpdaterTest extends PHPUnit_Framework_TestCase
             ->setVin(rand(0,999999999999))
             ->setVrm(rand(0, 999999));
         $draft->getOdometerReading()->setValue(rand(0,999999));
+        $draft->setExpiryDate(new DateTime());
         $draft->getMake()->setCode(rand(0,999999));
         $draft->getMotTest()->setPrsMotTest(MotTestObjectsFactory::motTest());
         $draft->getPrimaryColour()->setCode(rand(0, 100000));
@@ -88,7 +90,6 @@ class ReplacementCertificateUpdaterTest extends PHPUnit_Framework_TestCase
         $motTest = $this->createSut()->update($draft);
 
         $checkIfTestIsUpdatedFromDraft = function(ReplacementCertificateDraft $draft, MotTest $motTest){
-            $this->assertEquals($draft->getExpiryDate(), $motTest->getExpiryDate());
             $this->assertEquals($draft->getOdometerReading(),$motTest->getOdometerReading());
             $this->assertEquals($draft->getPrimaryColour(), $motTest->getPrimaryColour());
             $this->assertEquals($draft->getSecondaryColour(), $motTest->getSecondaryColour());
@@ -102,6 +103,8 @@ class ReplacementCertificateUpdaterTest extends PHPUnit_Framework_TestCase
 
         $checkIfTestIsUpdatedFromDraft($draft, $motTest);
         $checkIfTestIsUpdatedFromDraft($draft, $motTest->getPrsMotTest());
+        $this->assertEquals($draft->getExpiryDate(), $motTest->getExpiryDate());
+        $this->assertNotEquals($draft->getExpiryDate(), $motTest->getPrsMotTest()->getExpiryDate());
 
     }
 

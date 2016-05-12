@@ -11,15 +11,14 @@ use Event\Controller\EventOutcomeController;
 use Event\Controller\EventSummaryController;
 use Event\Controller\EventRecordController;
 use Event\Factory\Controllers\EventCompletedControllerFactory;
+use Event\Factory\Controllers\EventControllerFactory;
 use Event\Factory\Controllers\EventOutcomeControllerFactory;
 use Event\Factory\Controllers\EventSummaryControllerFactory;
 use Event\Factory\Controllers\EventRecordControllerFactory;
 
 return [
-    'invokables' => [
-        EventController::class => EventController::class,
-    ],
     'factories' => [
+        EventController::class => EventControllerFactory::class,
         EventCompletedController::class => EventCompletedControllerFactory::class,
         EventOutcomeController::class => EventOutcomeControllerFactory::class,
         EventSummaryController::class => EventSummaryControllerFactory::class,

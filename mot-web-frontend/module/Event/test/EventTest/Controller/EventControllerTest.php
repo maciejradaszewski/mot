@@ -3,6 +3,7 @@
 namespace EventTest\Controller;
 
 use CoreTest\Controller\AbstractFrontendControllerTestCase;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 use DvsaClient\Mapper\EventMapper;
 use DvsaClient\Mapper\SiteMapper;
 use DvsaClient\MapperFactory;
@@ -16,6 +17,8 @@ use DvsaClient\Mapper\OrganisationMapper;
 use DvsaClient\Mapper\PersonMapper;
 use Event\Controller\EventController;
 use Zend\ServiceManager\ServiceManager;
+use Zend\Http\PhpEnvironment\Request;
+use Zend\Mvc\Router\Http\TreeRouteStack as Router;
 
 /**
  * Class MotTestLogControllerTest
@@ -39,7 +42,9 @@ class EventControllerTest extends AbstractFrontendControllerTestCase
         $this->serviceManager->setAllowOverride(true);
         $this->setServiceManager($this->serviceManager);
 
-        $this->setController(new EventController());
+        $contextProvider = new ContextProvider(new Router(), new Request());
+
+        $this->setController(new EventController($contextProvider));
         $this->getController()->setServiceLocator($this->serviceManager);
 
         parent::setUp();

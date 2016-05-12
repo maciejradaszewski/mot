@@ -25,6 +25,7 @@ use DvsaEntities\DqlBuilder\SearchParam\MotTestSearchParam;
 use DvsaEntities\Entity\Make;
 use DvsaEntities\Entity\Model;
 use DvsaEntities\Entity\MotTest;
+use DvsaEntities\Entity\MotTestSurveyResult;
 use DvsaEntities\Entity\MotTestType;
 use DvsaEntities\Entity\OrganisationSiteMap;
 use DvsaEntities\Entity\Person;
@@ -1359,6 +1360,34 @@ class MotTestRepository extends AbstractMutableRepository
         $result = $qb->getQuery()->getOneOrNullResult();
 
         return $result !== null;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNormalMotTestCountSinceLastSurvey()
+    {
+        $qb = $this->_em->createQueryBuilder();
+        
+        /** @var MotTestSurveyResultRepository $motTestSurveyRepository */
+        $motTestSurveyRepository = $this->_em->getRepository(MotTestSurveyResult::class);
+
+        /** @var MotTest $lastSurveyMotTest */
+        $lastSurveyMotTest = $motTestSurveyRepository->getLastUserSurveyTest();
+        $lastTestId = $lastSurveyMotTest->getId();
+
+        $qb->select('COUNT(mt.id)')
+            ->from(MotTest::class, 'mt')
+            ->join('mt.motTestType', 't')
+            ->where('t.code = :testTypeCode')
+            ->andWhere('mt.id > :previousTest');
+
+        $qb->setParameter('testTypeCode', MotTestTypeCode::NORMAL_TEST);
+        $qb->setParameter('previousTest', $lastTestId);
+
+        $count = $qb->getQuery()->getSingleScalarResult();
+
+        return $count;
     }
 
     /**

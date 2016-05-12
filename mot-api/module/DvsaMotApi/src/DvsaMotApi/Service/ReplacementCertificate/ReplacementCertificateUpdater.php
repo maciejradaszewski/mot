@@ -8,6 +8,7 @@ use Api\Check\CheckResultExceptionTranslator;
 use DvsaCommonApi\Service\Exception\ForbiddenException;
 use DvsaEntities\Entity\MotTest;
 use DvsaEntities\Entity\ReplacementCertificateDraft;
+use DvsaEntities\Entity\Vehicle;
 use DvsaMotApi\Service\MotTestSecurityService;
 use Zend\Authentication\AuthenticationService;
 
@@ -74,8 +75,10 @@ class ReplacementCertificateUpdater
         }
 
         $this->updateMotTestFromDraft($draft, $motTest, $hasFullRights);
-        if($motTest->getPrsMotTest()){
-            $motTest->setPrsMotTest($this->updateMotTestFromDraft($draft, $motTest->getPrsMotTest(), $hasFullRights));
+        $prsTest = $motTest->getPrsMotTest();
+        if($prsTest){
+            $updatedPrsMotTest = $this->updatePrsMotTestFromDraft($draft, $prsTest, $hasFullRights);
+            $motTest->setPrsMotTest($updatedPrsMotTest);
         }
 
         return $motTest;
@@ -89,14 +92,69 @@ class ReplacementCertificateUpdater
      */
     protected function updateMotTestFromDraft(ReplacementCertificateDraft $draft, MotTest $motTest, $hasFullRights)
     {
-        $motTest->setOdometerReading($draft->getOdometerReading())
-            ->setExpiryDate($draft->getExpiryDate())
-            ->setPrimaryColour($draft->getPrimaryColour())
+        $motTest->setExpiryDate($draft->getExpiryDate());
+
+        return $this->updateMotTestAndVehicle($draft, $motTest, $hasFullRights);
+    }
+
+    protected function updatePrsMotTestFromDraft(ReplacementCertificateDraft $draft, MotTest $motTest, $hasFullRights)
+    {
+        return $this->updateMotTestAndVehicle($draft, $motTest, $hasFullRights);
+    }
+
+    /**
+     * @param ReplacementCertificateDraft $draft
+     * @param MotTest $motTest
+     * @param $hasFullRights
+     * @return MotTest
+     */
+    protected function updateMotTestAndVehicle(ReplacementCertificateDraft $draft, MotTest $motTest, $hasFullRights)
+    {
+        $vehicle = $motTest->getVehicle();
+        $this->changeVehicleFromDraft($vehicle, $draft, $hasFullRights);
+        $this->changeMotTestCommonFields($draft, $motTest, $hasFullRights, $vehicle);
+
+        return $motTest;
+    }
+
+    /**
+     * @param Vehicle $vehicle
+     * @param ReplacementCertificateDraft $draft
+     * @param $hasFullRights
+     * @return Vehicle
+     */
+    private function changeVehicleFromDraft(Vehicle $vehicle, ReplacementCertificateDraft $draft, $hasFullRights)
+    {
+        $vehicle
+            ->setColour($draft->getPrimaryColour())
             ->setSecondaryColour($draft->getSecondaryColour());
 
-        $vehicle = $motTest->getVehicle();
+        if ($hasFullRights) {
+            $vehicle->setVin($draft->getVin())
+                ->setRegistration($draft->getVrm())
+                ->setCountryOfRegistration($draft->getCountryOfRegistration())
+                ->setEmptyVinReason(null)
+                ->setEmptyVrmReason(null);
 
-        $vehicle->setColour($draft->getPrimaryColour())
+            if (!$draft->getMakeName() && !$draft->getModelName()) {
+                $vehicle->setMake($draft->getMake())->setModel($draft->getModel());
+            }
+        }
+
+        return $vehicle;
+    }
+
+    /**
+     * @param ReplacementCertificateDraft $draft
+     * @param MotTest $motTest
+     * @param $hasFullRights
+     * @param $vehicle
+     * @return MotTest
+     */
+    protected function changeMotTestCommonFields(ReplacementCertificateDraft $draft, MotTest $motTest, $hasFullRights, Vehicle $vehicle)
+    {
+        $motTest->setOdometerReading($draft->getOdometerReading())
+            ->setPrimaryColour($draft->getPrimaryColour())
             ->setSecondaryColour($draft->getSecondaryColour());
 
         if ($hasFullRights) {
@@ -120,16 +178,6 @@ class ReplacementCertificateUpdater
             if ($draft->getModelName()) {
                 $motTest->setModel(null);
                 $motTest->setFreeTextModelName($draft->getModelName());
-            }
-
-            $vehicle->setVin($draft->getVin())
-                ->setRegistration($draft->getVrm())
-                ->setCountryOfRegistration($draft->getCountryOfRegistration())
-                ->setEmptyVinReason(null)
-                ->setEmptyVrmReason(null);
-
-            if (!$draft->getMakeName() && !$draft->getModelName()) {
-                $vehicle->setMake($draft->getMake())->setModel($draft->getModel());
             }
         }
 

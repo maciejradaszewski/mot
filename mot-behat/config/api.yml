@@ -104,6 +104,10 @@ services:
         class: Dvsa\Mot\Behat\Support\Api\Vts
         parent: dvsa.api
 
+    dvsa.survey:
+        class: Dvsa\Mot\Behat\Support\Api\Survey
+        parent: dvsa.api
+
     dvsa.http_client:
         class: Dvsa\Mot\Behat\Support\HttpClient\TraceableHttpClient
         arguments:

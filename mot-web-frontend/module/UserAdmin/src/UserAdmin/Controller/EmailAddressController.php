@@ -105,7 +105,7 @@ class EmailAddressController extends AbstractDvsaMotTestController
     public function indexAction()
     {
         $isNewPersonProfileEnabled = $this->isFeatureEnabled(FeatureToggle::NEW_PERSON_PROFILE);
-        $personId = $this->params()->fromRoute(true === $isNewPersonProfileEnabled ? 'id' : 'personId');
+        $personId = $this->getPersonId();
 
         if (true === $isNewPersonProfileEnabled) {
             $context = $this->contextProvider->getContext();
@@ -258,6 +258,17 @@ class EmailAddressController extends AbstractDvsaMotTestController
         );
 
         return $resultViewModel;
+    }
+
+    /**
+     * @return int
+     */
+    private function getPersonId()
+    {
+        $context = $this->contextProvider->getContext();
+
+        return $context === ContextProvider::YOUR_PROFILE_CONTEXT ?
+            $this->getIdentity()->getUserId() : (int) $this->params()->fromRoute('id', null);
     }
 
     /**

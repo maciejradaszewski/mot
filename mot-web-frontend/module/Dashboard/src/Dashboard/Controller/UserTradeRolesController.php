@@ -29,6 +29,7 @@ use DvsaCommon\Constants\FeatureToggle;
 use DvsaCommon\HttpRestJson\Exception\ValidationException;
 use DvsaCommon\Utility\ArrayUtils;
 use Zend\View\Model\ViewModel;
+use Dvsa\Mot\Frontend\PersonModule\View\ContextProvider;
 
 /**
  * UserTradeRoles Controller.
@@ -95,6 +96,11 @@ class UserTradeRolesController extends AbstractAuthActionController
     private $personProfileUrlGenerator;
 
     /**
+     * @var ContextProvider
+     */
+    private $contextProvider;
+
+    /**
      * UserTradeRolesController constructor.
      *
      * @param MotFrontendIdentityProviderInterface     $identityProvider
@@ -108,6 +114,7 @@ class UserTradeRolesController extends AbstractAuthActionController
      * @param MotAuthorizationRefresherInterface       $authorisationRefresher
      * @param PersonTradeRoleSorterService             $personTradeRoleSorter
      * @param PersonProfileUrlGenerator                $personProfileUrlGenerator
+     * @param ContextProvider                          $contextProvider
      */
     public function __construct(
         MotFrontendIdentityProviderInterface $identityProvider,
@@ -120,7 +127,8 @@ class UserTradeRolesController extends AbstractAuthActionController
         EnumCatalog $catalog,
         MotAuthorizationRefresherInterface $authorisationRefresher,
         PersonTradeRoleSorterService $personTradeRoleSorter,
-        PersonProfileUrlGenerator $personProfileUrlGenerator
+        PersonProfileUrlGenerator $personProfileUrlGenerator,
+        ContextProvider $contextProvider
     ) {
         $this->identityProvider = $identityProvider;
         $this->tradeRolesAssociationsService = $tradeRolesAssociationsService;
@@ -133,6 +141,7 @@ class UserTradeRolesController extends AbstractAuthActionController
         $this->authorisationRefresher = $authorisationRefresher;
         $this->personTradeRoleSorter = $personTradeRoleSorter;
         $this->personProfileUrlGenerator = $personProfileUrlGenerator;
+        $this->contextProvider = $contextProvider;
     }
 
     /**
@@ -142,7 +151,7 @@ class UserTradeRolesController extends AbstractAuthActionController
      */
     public function indexAction()
     {
-        $personId = (int) $this->params()->fromRoute('id');
+        $personId = $this->getPersonId();
 
         $this->viewTradeRolesAssertion->assertGratedViewProfileTradeRolesPage($personId);
 
@@ -190,6 +199,17 @@ class UserTradeRolesController extends AbstractAuthActionController
     }
 
     /**
+     * @return int
+     */
+    private function getPersonId()
+    {
+        $context = $this->contextProvider->getContext();
+
+        return $context === ContextProvider::YOUR_PROFILE_CONTEXT ?
+            $this->getIdentity()->getUserId() : (int) $this->params()->fromRoute('id', null);
+    }
+
+    /**
      * @param BusinessPositionMapperInterface $positionMapper
      * @param $roleType
      *
@@ -201,7 +221,7 @@ class UserTradeRolesController extends AbstractAuthActionController
     {
         $positionId = $this->params()->fromRoute('positionId');
         $entityId = $this->params()->fromRoute('entityId');
-        $personId = $this->params()->fromRoute('id');
+        $personId = $this->getPersonId();
 
         $this->viewTradeRolesAssertion->assertGrantedViewRemoveRolePage($personId);
 

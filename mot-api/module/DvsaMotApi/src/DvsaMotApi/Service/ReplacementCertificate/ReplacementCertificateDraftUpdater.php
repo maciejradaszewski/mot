@@ -27,6 +27,8 @@ use Zend\Authentication\AuthenticationService;
 class ReplacementCertificateDraftUpdater implements TransactionAwareInterface
 {
 
+    const EXPIRY_DATE_FORMAT = 'Y-m-d';
+
     use TransactionAwareTrait;
 
     /**
@@ -408,8 +410,9 @@ class ReplacementCertificateDraftUpdater implements TransactionAwareInterface
         ReplacementCertificateDraft $draft,
         ReplacementCertificateDraftChangeDTO $updated
     ) {
+        $oldDate = !empty($draft->getExpiryDate()) ? $draft->getExpiryDate()->format(self::EXPIRY_DATE_FORMAT) : '';
 
         return $updated->isExpiryDateSet() &&
-        strcmp($draft->getExpiryDate()->format('Y-m-d'), $updated->getExpiryDate()) != 0;
+            strcmp($oldDate, $updated->getExpiryDate()) != 0;
     }
 }

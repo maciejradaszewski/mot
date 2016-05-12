@@ -273,14 +273,10 @@ class ChangeTelephoneController extends AbstractAuthActionController
      */
     private function getPersonId()
     {
-        $personId = (int) $this->params()->fromRoute('id', null);
-        $identity = $this->getIdentity();
+        $context = $this->contextProvider->getContext();
 
-        if ($personId == 0) {
-            $personId = $identity->getUserId();
-        }
-
-        return $personId;
+        return $context === ContextProvider::YOUR_PROFILE_CONTEXT ?
+            $this->getIdentity()->getUserId() : (int) $this->params()->fromRoute('id', null);
     }
 
     /**

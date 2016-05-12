@@ -7,8 +7,10 @@ readonly MYSQL_USER=motdbuser
 readonly MYSQL_ADMIN_PASSWORD=password
 
 # Add files here in intended run order for release.
+upgrade_files+=('2016-01-13-BL-403-payment-notification-STORY.sql')
 upgrade_files+=('2016-04-21-BL-1510-screw-is-being-listed-as-profanity-STORY.sql')
 upgrade_files+=('2016-04-18-BL-1715-new-notification-STORY.sql');
+upgradefiles+=('2016-04-13-BL-1530-gds-survey-display-after-configurable-time.sql');
 
 # Necessary for first deployment.
 $(mysql -h ${MYSQL_HOST} -u ${MYSQL_USER} -p${MYSQL_ADMIN_PASSWORD} ${MYSQL_DB_NAME} -e "CREATE TABLE IF NOT EXISTS db_upgrade (
