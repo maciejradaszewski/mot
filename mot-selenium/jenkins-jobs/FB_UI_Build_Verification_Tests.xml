@@ -1,0 +1,312 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<maven2-moduleset plugin="maven-plugin@2.13">
+  <actions/>
+  <description>BVT suite, run on Development CI server</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.buildblocker.BuildBlockerProperty plugin="build-blocker-plugin@1.7.3">
+      <useBuildBlocker>false</useBuildBlocker>
+      <blockLevel>GLOBAL</blockLevel>
+      <scanQueueFor>DISABLED</scanQueueFor>
+      <blockingJobs></blockingJobs>
+    </hudson.plugins.buildblocker.BuildBlockerProperty>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>7</daysToKeep>
+        <numToKeep>-1</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.2.3">
+      <gitLabConnection>http://gitlab.motdev.org.uk:8888/</gitLabConnection>
+    </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.17.1">
+      <optOut>false</optOut>
+    </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.9.11">
+      <taskName>UI Build Verification Tests</taskName>
+      <stageName>Integration</stageName>
+    </se.diabol.jenkins.pipeline.PipelineProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <org.jvnet.jenkins.plugins.nodelabelparameter.LabelParameterDefinition plugin="nodelabelparameter@1.7.2">
+          <name>ENVIRONMENT</name>
+          <description></description>
+          <defaultValue>ci</defaultValue>
+          <allNodesMatchingLabel>false</allNodesMatchingLabel>
+          <triggerIfResult>allCases</triggerIfResult>
+          <nodeEligibility class="org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility"/>
+        </org.jvnet.jenkins.plugins.nodelabelparameter.LabelParameterDefinition>
+        <hudson.plugins.global__variable__string__parameter.GlobalVariableStringParameterDefinition plugin="global-variable-string-parameter@1.2">
+          <name>MOT_BUILD_BRANCH</name>
+          <description></description>
+          <defaultValue>${MOT_BUILD_BRANCH}</defaultValue>
+        </hudson.plugins.global__variable__string__parameter.GlobalVariableStringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>threads</name>
+          <description></description>
+          <defaultValue>10</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>SELENIUMHUB</name>
+          <description></description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>http://selenium-1.fbmgmt.mot.aws.dvsa:4444/wd/hub/</string>
+              <string>http://selenium-1.prd.mgmt.aws.dvsa:4444/wd/hub/</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>TOGGLE_CHECK</name>
+          <description>Ticking that checkbox will trigger Feature_Toggle section in FB_UI_Build_Verification_Tests_w_FT.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>TOGGLE_NAME</name>
+          <description>Put here name of the feature toggle you want to enable during Build Verification Tests
+This action will be only performed if you checked TOGGLE_CHECK above</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@1.9.0">
+      <maxConcurrentPerNode>1</maxConcurrentPerNode>
+      <maxConcurrentTotal>0</maxConcurrentTotal>
+      <categories class="java.util.concurrent.CopyOnWriteArrayList">
+        <string>MOT-Pipeline</string>
+      </categories>
+      <throttleEnabled>true</throttleEnabled>
+      <throttleOption>category</throttleOption>
+      <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+      <paramsToUseForLimit></paramsToUseForLimit>
+    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    <EnvInjectJobProperty plugin="envinject@1.92.1">
+      <info>
+        <propertiesContent>SELENIUM_DRIVER_PROPERTIES=$WORKSPACE/mot-selenium/target/classes/selenium/driver/grid/firefoxNoVersionLinux.properties
+SELENIUM_ENV_PROPERTIES=$WORKSPACE/selenium.properties
+M2_HOME=/opt/apache-maven-3.2.5</propertiesContent>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+      <on>true</on>
+      <keepJenkinsSystemVariables>true</keepJenkinsSystemVariables>
+      <keepBuildVariables>true</keepBuildVariables>
+      <overrideBuildParameters>false</overrideBuildParameters>
+      <contributors/>
+    </EnvInjectJobProperty>
+  </properties>
+  <scm class="org.jenkinsci.plugins.multiplescms.MultiSCM" plugin="multiple-scms@0.6">
+    <scms>
+      <hudson.plugins.git.GitSCM plugin="git@2.4.4">
+        <configVersion>2</configVersion>
+        <userRemoteConfigs>
+          <hudson.plugins.git.UserRemoteConfig>
+            <url>git@gitlab.motdev.org.uk:mot/mot.git</url>
+            <credentialsId>9d55e769-d497-400e-a9bb-503a5d7496ae</credentialsId>
+          </hudson.plugins.git.UserRemoteConfig>
+        </userRemoteConfigs>
+        <branches>
+          <hudson.plugins.git.BranchSpec>
+            <name>${MOT_BUILD_BRANCH}</name>
+          </hudson.plugins.git.BranchSpec>
+        </branches>
+        <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+        <submoduleCfg class="list"/>
+        <extensions/>
+      </hudson.plugins.git.GitSCM>
+      <hudson.plugins.git.GitSCM plugin="git@2.4.4">
+        <configVersion>2</configVersion>
+        <userRemoteConfigs>
+          <hudson.plugins.git.UserRemoteConfig>
+            <url>git@gitlab.motdev.org.uk:mot/ansible-toolkit.git</url>
+            <credentialsId>175c5f1c-9489-49a0-9e8a-bfb3dac3f901</credentialsId>
+          </hudson.plugins.git.UserRemoteConfig>
+        </userRemoteConfigs>
+        <branches>
+          <hudson.plugins.git.BranchSpec>
+            <name>*/master</name>
+          </hudson.plugins.git.BranchSpec>
+        </branches>
+        <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+        <submoduleCfg class="list"/>
+        <extensions>
+          <hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
+            <relativeTargetDir>tools</relativeTargetDir>
+          </hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
+        </extensions>
+      </hudson.plugins.git.GitSCM>
+    </scms>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>true</concurrentBuild>
+  <rootModule>
+    <groupId>dvsa-mot.gov</groupId>
+    <artifactId>selenium</artifactId>
+  </rootModule>
+  <rootPOM>mot-selenium/pom.xml</rootPOM>
+  <goals>test -Dtest.screenshots.error.folder=$WORKSPACE/selenium-screenshots/error -DtestngFile=bvt.xml -X</goals>
+  <mavenOpts>-Xmx1024m</mavenOpts>
+  <aggregatorStyleBuild>true</aggregatorStyleBuild>
+  <incrementalBuild>false</incrementalBuild>
+  <ignoreUpstremChanges>true</ignoreUpstremChanges>
+  <ignoreUnsuccessfulUpstreams>false</ignoreUnsuccessfulUpstreams>
+  <archivingDisabled>false</archivingDisabled>
+  <siteArchivingDisabled>false</siteArchivingDisabled>
+  <fingerprintingDisabled>false</fingerprintingDisabled>
+  <resolveDependencies>false</resolveDependencies>
+  <processPlugins>false</processPlugins>
+  <mavenValidationLevel>-1</mavenValidationLevel>
+  <runHeadless>false</runHeadless>
+  <disableTriggerDownstreamProjects>false</disableTriggerDownstreamProjects>
+  <blockTriggerWhenBuilding>true</blockTriggerWhenBuilding>
+  <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+  <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+  <reporters/>
+  <publishers>
+    <org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher plugin="flexible-publish@0.15.2">
+      <publishers>
+        <org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+          <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition" plugin="run-condition@1.0">
+            <arg1>${TOGGLE_CHECK}</arg1>
+            <arg2>true</arg2>
+            <ignoreCase>true</ignoreCase>
+          </condition>
+          <publisherList>
+            <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.30">
+              <configs>
+                <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+                  <configs>
+                    <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/>
+                  </configs>
+                  <projects>FB_UI_Build_Verification_Tests_w_FT</projects>
+                  <condition>FAILED_OR_BETTER</condition>
+                  <triggerWithNoParameters>false</triggerWithNoParameters>
+                </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+              </configs>
+            </hudson.plugins.parameterizedtrigger.BuildTrigger>
+          </publisherList>
+          <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0"/>
+          <executionStrategy class="org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy"/>
+        </org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+        <org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+          <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition" plugin="run-condition@1.0">
+            <arg1>${TOGGLE_CHECK}</arg1>
+            <arg2>false</arg2>
+            <ignoreCase>true</ignoreCase>
+          </condition>
+          <publisherList>
+            <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.30">
+              <configs>
+                <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+                  <configs>
+                    <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/>
+                  </configs>
+                  <projects>UI_Regression_Tests</projects>
+                  <condition>FAILED_OR_BETTER</condition>
+                  <triggerWithNoParameters>false</triggerWithNoParameters>
+                </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+              </configs>
+            </hudson.plugins.parameterizedtrigger.BuildTrigger>
+          </publisherList>
+          <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0"/>
+          <executionStrategy class="org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy"/>
+        </org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+      </publishers>
+    </org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>selenium-screenshots/**/*</artifacts>
+      <allowEmptyArchive>true</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.29">
+      <deleteDirs>false</deleteDirs>
+      <cleanupParameter></cleanupParameter>
+      <externalDelete></externalDelete>
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+    <com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper>
+      <varPasswordPairs>
+        <varPasswordPair var="AWS_ACCESS_KEY_ID" password="JyLm7fzTvUlkUJmna0nLTxxRISF1k26fxrpRXFd1vcTOwAnfE2/tsGjbfqPan6z+"/>
+        <varPasswordPair var="AWS_SECRET_ACCESS_KEY" password="5jCicPJ4RcFMoWy1VYP+yy4qOnzA7VBmlIDTTIz50cMMBoeJQzwS8XShEcae8HNH6wRFzgjhS/soi3ZbO6QHGA=="/>
+      </varPasswordPairs>
+    </com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper>
+    <EnvInjectBuildWrapper plugin="envinject@1.92.1">
+      <info>
+        <propertiesContent>ANSIBLE_HOST_KEY_CHECKING=no
+ANSIBLE_FORCE_COLOR=true
+ANSIBLE_HOSTS=${WORKSPACE}/tools/ec2.py
+EC2_INI_PATH=${WORKSPACE}/tools/ec2.ini
+PYTHONUNBUFFERED=true
+AWS_DEFAULT_REGION=eu-west-1</propertiesContent>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+    </EnvInjectBuildWrapper>
+    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@1.11">
+      <credentialIds>
+        <string>ad038c3e-8673-4334-bfa5-700b071eacc7</string>
+      </credentialIds>
+      <ignoreMissing>false</ignoreMissing>
+    </com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
+  </buildWrappers>
+  <prebuilders>
+    <hudson.tasks.Shell>
+      <command>echo ${MOT_BUILD_BRANCH}
+
+sed -ie &quot;s/thread-count=\&quot;[0-9]*\&quot;/thread-count=\&quot;${threads}\&quot;/g&quot; mot-selenium/src/test/resources/bvt.xml
+
+mkdir -p $WORKSPACE/selenium-screenshots/error
+cd $WORKSPACE/selenium-screenshots
+
+#if [ -L &quot;error&quot; ]; then
+#  echo &quot;Symbolic link exists&quot;
+#else
+#  echo &quot;Create Symbolic link&quot;
+#  ln -s /home/jenkins-slave/workspace/screenshots/error error
+#fi
+
+cd $WORKSPACE
+mkdir -p $WORKSPACE/mot-selenium/target/surefire-reports
+mkdir -p $WORKSPACE/mot-selenium/target/allure-results
+mkdir -p $WORKSPACE/mot-selenium/target/site/allure-maven-plugin
+
+cp /home/jenkins-slave/selenium.properties $WORKSPACE/selenium.properties
+
+sed -ie &quot;s|test.gridUrl=.*|test.gridUrl=${SELENIUMHUB}|g&quot; $WORKSPACE/selenium.properties
+
+cat $WORKSPACE/selenium.properties</command>
+    </hudson.tasks.Shell>
+  </prebuilders>
+  <postbuilders>
+    <hudson.tasks.Shell>
+      <command>if [ $TOGGLE_CHECK == true ] &amp;&amp; [ ${TOGGLE_NAME} != &apos;&apos; ]; then
+  cd tools/ft-chk-status
+  ansible-playbook check_app_status.yaml -i ../ec2.py --extra-vars=&quot;node=tag_fbnode_${ENVIRONMENT}_testsupport username=deploy toggle_name=${TOGGLE_NAME} toggle_value=true feature_build=${ENVIRONMENT}&quot;
+  echo &quot;Test whether variable is pass ${MOT_BUILD_BRANCH}&quot;
+else
+  TOGGLE_CHECK=&apos;false&apos;
+fi;
+
+cd $WORKSPACE
+</command>
+    </hudson.tasks.Shell>
+  </postbuilders>
+  <runPostStepsIfResult>
+    <name>FAILURE</name>
+    <ordinal>2</ordinal>
+    <color>RED</color>
+    <completeBuild>true</completeBuild>
+  </runPostStepsIfResult>
+</maven2-moduleset>
